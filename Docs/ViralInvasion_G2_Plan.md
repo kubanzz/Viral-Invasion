@@ -1,6 +1,6 @@
 # G2 接口与实现计划
 
-状态：设计草案，尚未实现。G1 源码锁定期间仅新增本文档。用户已授权按技术验收连续推进 G1–G4，不需要再次申请阶段授权。
+状态：v0.3.0 / 5745dab G2技术子集已实现并验收；本文保留当时接口规划，实际差异和90单测/24unique浏览器最终证据见ViralInvasion_G2_Acceptance.md。用户已授权按技术验收连续推进G1–G4，不再申请阶段授权。
 
 依据：原始 GDD v1.3 §4.3、§5.2–5.4，以及开发验收 M06、M08、M09。本文参数是下一轮可测试的默认配置，不代表已经通过玩法验收。
 
@@ -8,8 +8,8 @@
 
 | 负责人 | 独占文件 | 交付内容 |
 | --- | --- | --- |
-| evolution agent | `src/game/battleEvolution.ts`、`src/game/evolutionTypes.ts`、`tests/unit/evolution.test.ts` | 纯函数行为窗口、合法性过滤、概率上限、种子抽样与 1000-seed 检查 |
-| growth agent | `src/game/growth.ts`、`src/game/growthTypes.ts`、`src/game/growthConfig.ts`、`tests/unit/growth.test.ts` | 协议、奖励、草案、配装与研究的独立控制器 |
+| evolution agent | `src/game/evolution.ts`、`src/game/evolutionTypes.ts`、`tests/unit/evolution.test.ts` | 纯函数行为窗口、合法性过滤、概率上限、种子抽样与 1000-seed 检查 |
+| growth agent | `src/game/growth.ts`、`src/game/growthTypes.ts`、`src/game/protocols.ts`、`tests/unit/growth.test.ts` | 协议、奖励、草案、配装与研究的独立控制器 |
 | renderer agent | `src/render/growthVisuals.ts`、现有 renderer 接入处 | 协议效果、灯塔/轨迹/连锁、研究设施；只读控制器状态 |
 | root | `session.ts`、`battle.ts`、`types.ts`、`battleTypes.ts`、`main.ts`、CSS、浏览器测试与证据 | 统一事件与伤害入口、暂停/输入生命周期、DOM 选择面板与系统集成 |
 
