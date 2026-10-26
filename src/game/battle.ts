@@ -1,6 +1,6 @@
 import { clamp, distance, moveWithCollision, normalized, wallHit } from '../actors/collision';
 import { SeedRng } from '../core/rng';
-import { activeWorld, BALANCE, type Effect, type GameEvent, type GameState, type InputFrame, type Target, type Vec } from './types';
+import { activeWorld, BALANCE, type Effect, type GameEvent, type GameState, type InputFrame, type MessagePriority, type Target, type Vec } from './types';
 import type { BattleState, CampaignOptions, TraitId } from './battleTypes';
 import { BATTLE_BALANCE as B, TRAITS } from './battleConfig';
 import { recordBehavior, chooseEvolution } from './evolution';
@@ -8,7 +8,7 @@ import { recordBehavior, chooseEvolution } from './evolution';
 export interface BattleHost {
   state: GameState;
   emit(type: string, data: GameEvent['data']): void;
-  message(text: string, seconds?: number): void;
+  message(text: string, seconds?: number, priority?: MessagePriority): void;
   effect(kind: Effect['kind'], from: Vec, to: Vec, radius: number, duration: number): void;
   finish(success: boolean, reason: string): void;
   slowFactor?(targetId: string): number;
@@ -63,11 +63,11 @@ export class BattleDirector {
   constructor(private host: BattleHost) {}
   private get s() { return this.host.state; }
   private get b() { return this.s.battle!; }
-  notice(text: string, seconds = 5): void {
+  notice(text: string, seconds = 5, priority: MessagePriority = 1): void {
     this.b.recentNotice = text;
     this.b.history.push({ at: this.s.elapsed, text });
     if (this.b.history.length > 128) this.b.history.shift();
-    this.host.message(text, seconds);
+    this.host.message(text, seconds, priority);
   }
 
   recordEvent(event: GameEvent): void {
@@ -136,7 +136,7 @@ export class BattleDirector {
       if (target.role === 'elite') {
         b.stats.eliteClears++;
         for (const trait of target.traits ?? []) if (!b.defeatedTraits.includes(trait)) b.defeatedTraits.push(trait);
-        this.host.emit('ELITE_CLEARED', { id: target.id, trait: target.traits?.join('+') ?? '' });
+        this.host.emit('ELITE_CLEARED', { id: target.id, organId: b.organId, trait: target.traits?.join('+') ?? '' });
         this.notice(`变异精英已清除（${b.stats.eliteClears}/2）。保持组织，继续诊断。`);
       }
       if (target.role !== 'core' && target.traits?.includes('FISSION') && (target.generation ?? 0) === 0) {
@@ -266,7 +266,7 @@ export class BattleDirector {
       } else if (b.forcedFirstTrait && b.traits.length === 0) trait = b.forcedFirstTrait;
       b.warning = { trait, startedAt: s.elapsed, applyAt: s.elapsed + B.warningDuration };
       this.host.emit('EVOLUTION_WARNING', { trait, duration: B.warningDuration, applyAt: b.warning.applyAt });
-      this.notice(`变异预警 · ${TRAITS[trait].name}：${TRAITS[trait].ability}。代价：${TRAITS[trait].cost}。反制：${TRAITS[trait].counter}`, B.warningDuration);
+      this.notice(`变异预警 · ${TRAITS[trait].name}：${TRAITS[trait].ability}。代价：${TRAITS[trait].cost}。反制：${TRAITS[trait].counter}`, B.warningDuration, 2);
     }
     if (!b.warning || s.elapsed + 1e-9 < b.warning.applyAt) return;
     const trait = b.warning.trait;
@@ -285,7 +285,7 @@ export class BattleDirector {
       b.eliteSpawned++;
       this.host.effect('evolution', { x: 785, y: 390 }, { x: 785, y: 390 }, 110, 1.4);
       this.host.emit('EVOLUTION_APPLIED', { trait, warningDuration: s.elapsed - b.warning.startedAt, traits: b.traits.join('+') });
-      this.notice(`${TRAITS[trait].symbol} ${TRAITS[trait].name}已出现。弱点：${TRAITS[trait].counter}`, 7);
+      this.notice(`${TRAITS[trait].symbol} ${TRAITS[trait].name}已出现。弱点：${TRAITS[trait].counter}`, 7, 2);
     }
     b.warning = null; b.nextEvolutionAt = s.elapsed + B.secondWarningDelay;
   }
@@ -407,12 +407,15 @@ export class BattleDirector {
     if (p.organAlarm) {
       if (b.organLowSince === null) {
         b.organLowSince = s.elapsed;
-        this.notice('器官警报：完整度低于 30%。8 秒后开始影响全身稳定，请用 3 抢修！', 7);
+        this.notice('器官警报：完整度低于 30%。8 秒后开始影响全身稳定，请用 3 抢修！', 8, 3);
         this.host.emit('ORGAN_ALARM', { organId: b.organId, integrity: s.tissue.hp, graceSeconds: B.organCollapseDelay });
       }
       if (s.elapsed - b.organLowSince >= B.organCollapseDelay) p.vitality = Math.max(0, p.vitality - (s.tissue.hp <= 0 ? 1.5 : .5) * BALANCE.step);
     } else {
-      if (b.organLowSince !== null) this.notice('组织抢修成功：器官警报解除，全身稳定缓慢恢复。');
+      if (b.organLowSince !== null) {
+        this.host.emit('ORGAN_ALARM_CLEARED', { organId: b.organId });
+        this.notice('组织抢修成功：器官警报解除，全身稳定缓慢恢复。', 5, 3);
+      }
       b.organLowSince = null;
       if (s.tissue.hp >= 50) p.vitality = Math.min(100, p.vitality + .25 * BALANCE.step);
     }
@@ -421,13 +424,13 @@ export class BattleDirector {
       if (p.criticalSince === null) {
         p.criticalSince = s.elapsed; p.crisisReason = '感染失控';
         this.host.emit('INFECTION_CRISIS_STARTED', { deadline: s.elapsed + B.crisisDuration });
-        this.notice('感染负荷 100！15 秒内净化感染源/感染体或抢修，降低感染即可解除危机。', B.crisisDuration);
+        this.notice('感染负荷 100！15 秒内净化感染源/感染体或抢修，降低感染即可解除危机。', B.crisisDuration, 3);
       }
       if (s.elapsed - p.criticalSince + 1e-9 >= B.crisisDuration) this.host.finish(false, '感染失控：负荷 100 持续 15 秒。');
     } else if (p.criticalSince !== null) {
       p.criticalSince = null; p.crisisReason = '';
       this.host.emit('INFECTION_CRISIS_RECOVERED', { infection: p.infection });
-      this.notice('感染负荷下降，致命倒计时解除。继续净化并修复组织。');
+      this.notice('感染负荷下降，致命倒计时解除。继续净化并修复组织。', 5, 3);
     }
     if (s.player.hp <= 0) this.host.finish(false, '救援体耐久耗尽：避开带齿轮廓的攻击预警，利用冲刺脱离。');
     else if (p.vitality <= 0) this.host.finish(false, '身体崩溃：器官低完整度持续损伤全身稳定。');

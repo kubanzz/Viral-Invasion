@@ -2,7 +2,7 @@ import { FixedClock } from '../core/clock';
 import { EventBus } from '../core/events';
 import { SeedRng } from '../core/rng';
 import { clamp, distance, moveWithCollision, normalized, rayCircle, wallHit } from '../actors/collision';
-import { activeWorld, BALANCE, type Effect, type GameEvent, type GameState, type InputFrame, type Target, type Tool, type Vec } from './types';
+import { activeWorld, BALANCE, type Effect, type GameEvent, type GameState, type InputFrame, type MessagePriority, type Target, type Tool, type Vec } from './types';
 import { BattleDirector, initializeBattle } from './battle';
 import type { CampaignOptions } from './battleTypes';
 import { GrowthController, growthContext } from './growth';
@@ -13,6 +13,7 @@ import { MotherCoreController, MOTHER_CORE_BALANCE } from './motherCore';
 import type { MotherCoreCommand, MotherCoreContext } from './motherCoreTypes';
 import { BATTLE_BALANCE as B } from './battleConfig';
 import { sourceTarget } from './organConfig';
+import { recordTacticalEvent } from './tacticalFeedback';
 
 // Exporting the clock here is convenient for hosts, while it remains independently testable.
 export { FixedClock };
@@ -125,6 +126,8 @@ export class GameSession {
     this.state.events.push(event);
     // The training log is bounded, even if the player spends hours experimenting.
     if (this.state.events.length > 512) this.state.events.shift();
+    const feedback = recordTacticalEvent(this.state, event);
+    if (feedback && feedback.toast !== false) this.message(feedback.text, feedback.seconds, feedback.priority);
     this.battleDirector?.recordEvent(event);
     this.growthController?.recordEvent(event, growthContext(this.state));
     this.campaignController?.recordEvent(event, this.state);
@@ -135,9 +138,13 @@ export class GameSession {
     this.bus.emit('event', event);
   }
 
-  message(text: string, seconds = 3): void {
+  message(text: string, seconds = 3, priority: MessagePriority = 0): void {
+    // Presentation priority expires on simulation time, including across pauses.
+    // Ordinary tool feedback never replaces a live crisis/decision explanation.
+    if (this.state.elapsed < this.state.messageUntil && priority < (this.state.messagePriority ?? 0)) return;
     this.state.message = text;
     this.state.messageUntil = this.state.elapsed + seconds;
+    this.state.messagePriority = priority;
   }
 
   effect(kind: Effect['kind'], from: Vec, to: Vec, radius: number, duration: number): void {
@@ -413,7 +420,7 @@ export class GameSession {
         if (arena.organLowSince === null) {
           arena.organLowSince = state.elapsed;
           this.emit('ORGAN_ALARM', { organId: arena.organId, integrity: arena.tissue.hp, graceSeconds: B.organCollapseDelay });
-          this.message(`${arena.organId === 'heart' ? '心脏' : '肺部'}低于 30%！8 秒后全身稳定开始下降，前往抢修可解除。`, 7);
+          this.message(`${arena.organId === 'heart' ? '心脏' : '肺部'}低于 30%！8 秒后全身稳定开始下降，前往抢修可解除。`, 8, 3);
         }
         if (state.elapsed - arena.organLowSince >= B.organCollapseDelay) drain += arena.tissue.hp <= 0 ? 1.5 : .5;
       } else if (arena.organLowSince !== null) {
@@ -464,7 +471,7 @@ export class GameSession {
       const state = this.state, campaign = state.campaign, director = this.campaignController;
       if (!campaign || !director || this.checkFailure()) break;
       if (command.kind === 'log') { this.emit(command.type, command.data); continue; }
-      if (command.kind === 'notice') { this.message(command.text, command.seconds); continue; }
+      if (command.kind === 'notice') { this.message(command.text, command.seconds, command.priority ?? 1); continue; }
       if (!resolveDeferred && (command.kind === 'travel' || command.kind === 'retest')) { this.deferredCampaign.push(command); continue; }
       const eventId = 'eventId' in command ? command.eventId : undefined;
       if (eventId && this.campaignTransactions.has(eventId)) continue;

@@ -1,5 +1,5 @@
 import type { OrganGraph, OrganId, OrganNode, PulseState, TraitId } from './battleTypes';
-import type { GameEvent, Target, Tissue, Vec, WorldGeometry } from './types';
+import type { GameEvent, MessagePriority, Target, Tissue, Vec, WorldGeometry } from './types';
 import type { MotherCoreState } from './motherCoreTypes';
 
 export interface LungFlowState {
@@ -48,7 +48,7 @@ export type CampaignCommand =
   | { kind: 'setRoute'; organId: OrganId; nodeId: string; open: boolean; eventId: string }
   | { kind: 'travel'; from: OrganId; to: OrganId; entry: Vec; eventId: string }
   | { kind: 'log'; type: string; data: GameEvent['data'] }
-  | { kind: 'notice'; text: string; seconds: number }
+  | { kind: 'notice'; text: string; seconds: number; priority?: MessagePriority }
   | { kind: 'retest'; success: boolean; reason: string };
 export interface CampaignInteraction { handled: boolean; commands: CampaignCommand[] }
 export interface OrganDefinition {

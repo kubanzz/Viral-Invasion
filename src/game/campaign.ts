@@ -1,5 +1,5 @@
 import { distance, moveWithCollision, normalized } from '../actors/collision';
-import { BALANCE, activeWorld, type GameEvent, type GameState, type Target, type Vec } from './types';
+import { BALANCE, activeWorld, type GameEvent, type GameState, type MessagePriority, type Target, type Vec } from './types';
 import type { OrganId, OrganNode } from './battleTypes';
 import { CAMPAIGN_BALANCE as B, createOrganArena, getOrganDefinition } from './organConfig';
 import { advanceLungFlow, toggleAirway } from './organRules';
@@ -33,9 +33,9 @@ export class CampaignDirector {
     game.world=heart.geometry;game.battle.organId='heart';
   }
 
-  private notice(text:string,game:GameState,seconds=5):CampaignCommand {
+  private notice(text:string,game:GameState,seconds=5,priority:MessagePriority=1):CampaignCommand {
     this.state.history.push({at:game.elapsed,text});if(this.state.history.length>128)this.state.history.shift();
-    return{kind:'notice',text,seconds};
+    return{kind:'notice',text,seconds,priority};
   }
   private log(type:string,data:GameEvent['data']):CampaignCommand{return{kind:'log',type,data};}
 
@@ -219,7 +219,7 @@ export class CampaignDirector {
     }
     if(migration.status==='blocking'){
       const gate=this.state.arenas.heart.graph.nodes.find(node=>node.id==='gate');
-      if(game.battle!.organId!=='heart'||!gate||distance(game.player,gate)>BALANCE.interactionRange){migration.status='warning';migration.blockStartedAt=null;commands.push(this.notice('已离开隔离闸，封锁取消；迁移倒数继续。',game,3));}
+      if(game.battle!.organId!=='heart'||!gate||distance(game.player,gate)>BALANCE.interactionRange){migration.status='warning';migration.blockStartedAt=null;commands.push(this.log('MIGRATION_BLOCK_CANCELLED',{eventId:migration.id}),this.notice('已离开隔离闸，封锁取消；迁移倒数继续。',game,3,2));}
       else if(migration.blockStartedAt!==null&&game.elapsed+1e-9>=migration.blockStartedAt+B.blockDuration&&migration.blockStartedAt+B.blockDuration<=migration.deadline+1e-9)commands.push(...this.resolveChoice('block',game));
     }
     if(['warning','blocking'].includes(migration.status)&&migration.choice===null&&game.elapsed+1e-9>=migration.deadline)commands.push(...this.resolveChoice('ignore',game));

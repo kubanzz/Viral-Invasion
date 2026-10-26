@@ -22,12 +22,19 @@ export interface Target extends Vec {
 }
 export interface Tissue extends Vec { hp: number; maxHp: number; radius: number }
 export interface GameEvent { type: string; tick: number; data: Record<string, string | number | boolean> }
+export type MessagePriority = 0 | 1 | 2 | 3;
+export interface TacticalRecord {
+  key: string; eventType: string; firstAt: number; at: number; text: string; count: number;
+}
 export interface Effect { id: number; kind: 'beam' | 'burst' | 'scan' | 'heal' | 'dash' | 'hit' | 'success' | 'pulse' | 'evolution' | 'danger' | 'flow' | 'chain'; from: Vec; to: Vec; radius: number; born: number; duration: number; angle?: number }
 export interface GameState {
   game: 'viral-invasion'; schemaVersion: 1; seed: number; phase: Phase; tick: number; elapsed: number;
   player: Player; targets: Target[]; tissue: Tissue; terminal: Vec; tool: Tool;
   cooldowns: Record<Tool, number>; scanReady: number; scanUntil: number;
   effects: Effect[]; events: GameEvent[]; message: string; messageUntil: number;
+  /** Presentation only: finite event categories survive eviction from the recent raw log. */
+  tacticalRecords?: TacticalRecord[];
+  messagePriority?: MessagePriority;
   shots: number; hits: number; scans: number; dashes: number; result: null | { success: boolean; reason: string };
   battle?: BattleState;
   growth?: GrowthState;
