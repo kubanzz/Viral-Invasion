@@ -163,4 +163,23 @@
 
 G0最小动画的受击触发已补：进入训练→操作指南→受击演练，耐久−5且保底1，出现模拟事件、受击动画与音效，重开恢复。截图artifacts/screenshots/hurt.png。
 
-完整G0验收仍待真实OS失焦补证及用户确认；实际浏览器Ctrl+/-缩放、真人视觉理解、最终手绘品质待验证。VIS-05–12未执行；详见ViralInvasion_TestMatrix.md。
+该次G0记录仍缺真实OS失焦补证；实际浏览器Ctrl+/-缩放、真人视觉理解、最终手绘品质待验证。用户现已明确授权“按技术验收连续推进 G1–G4”，不再停等逐阶段用户确认。此授权不将上述未验证项记为通过；G1后续实施登记如下，原始设计文件保留不改。
+
+## 11. G1 实施登记 · 2026-10-26
+
+G1沿用同一3/4投影、接地锚点与Y排序，扩展暖红组织纹理、瓣膜节律、节点流向及三种实际变异形态。Canvas原始绘制代码保存在 `src/render/battleVisuals.ts` 与 `renderer.ts`，冲流预览几何为 `pulsePreview.ts`；没有引用其他游戏工程或资产。
+
+| 项目 | 当前技术证据 | 状态边界 |
+|---|---|---|
+| VIS-05 轮廓 | `artifacts/g1-visual/silhouettes.png` 同尺度直接复用实际 `traceVirusOutline` 与玩家 `drawPlayer`，普通短突起、晶壳不对称结晶、裂殖四瓣、潜伏流线软膜的外轮廓清楚；主代理与独立QA均已查看 | 图中明确标为绘制代码派生对照，非战斗截图。实际变异战斗图/录屏与最终两浏览器三trait日志已归档；技术轮廓审阅通过，没有真人辨识数据。 |
+| VIS-06 心脏冲流 | `initial.png`、`valve-preview.png`、`pulse-active.png` 位于 `artifacts/g1-visual/`，为真实键鼠运行图。`tests/unit/pulsePreview.test.ts` 2项与 `g1-audit.test.ts` 的实际E推力覆盖扇区边界、射程、障碍裁剪与击退后可达 | 预览使用同源 `BATTLE_BALANCE`，不是仅画动画。最终4场G1录屏与pushed1/exposed1断言已在B1通过，报告/截图位于artifacts/G1。 |
+| VIS-07 必要信号 | 危险：双圈/齿形时间弧/叉；弱点：壳片缺口/◇/暴露倒数；扫描：扩圈/显影虚线及潜伏周期扰动；修复：十字/组织结构回填。`artifacts/g1-visual/dense-standard.png` / `dense-low.png` 为达到24活体后的真实密集战斗图 | 独立QA已查看，普通/低特效均保留危险双线、组织十字和精英结晶轮廓；普通晶壳名称明显重叠，列G2可读性债。不是所有单位均独立可辨，也不声称真人辨识通过。G2协议特效继续扩验。 |
+
+最终v0.2.0 / dev-zbj / 56a5973：全量49项单测通过（G0基础30、battle12、独立audit5与preview2）；加强实际推开/破壳断言后的单worker复跑20/20通过，约5.6分钟，Chrome/Edge各8项G0+2项G1。最终20张实机图与固定报告见 `artifacts/G1/`；四场G1完整录屏见 `artifacts/e2e-results/g1-*/video.webm`。VIS05/06技术子项通过；VIS07已核实密集/低特效核心信号，但名称重叠和后续G2协议效果继续登记未完成。具体映射见 `ViralInvasion_G1_Acceptance.md` 与矩阵。
+
+密集截图由 `scripts/capture-g1-density.mjs` 采集：Chrome离线file://，合法键鼠移动、持续修复保留两源，76.15秒达到24活体后Q，再实际Esc→低特效→继续；未写实体或时钟。`density-evidence.json` 中两快照均24活体、玩家耐久100，tick4619/4657，相差38步；切换恢复后组织继续受伤，因此它们是同一持续场景的画质对照，不是相同状态/同帧A/B，不能单独证明普通/低特效判定一致。远程请求和pageerror均0。
+
+真实OS失焦、实际浏览器Ctrl+/-缩放、G4普通/低特效规则一致性与帧率、五位新玩家视觉辨识与趣味性仍分别未验证。代码形状审阅和机器脚本通关不能代替真人理解或复玩意愿。
+
+
+并发尝试记录：`artifacts/g1-parallel-attempt.json` 保留密集录制与双worker同时执行时的G0失败/超时及主动中断，不计最终通过；原因未被独立证明。最终在密集采集结束后以配置单worker完整20/20通过，不能删除失败过程或把并发负载推测写成已证明原因。
