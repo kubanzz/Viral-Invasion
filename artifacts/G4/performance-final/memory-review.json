@@ -1,0 +1,563 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-26T18:03:45.007Z",
+  "inputs": {
+    "report": "artifacts/G4/performance-final/report.json",
+    "reportSha256": "44fed17dbdfc2b54aa0d6cee41320d4129b6b595a0f913bbda6d0ced3d0e7420",
+    "measurementScript": "artifacts/G4/performance-final/measurement-script.mjs",
+    "measurementScriptSha256": "6f882f5eaaca9adcda315ed5d82d598f8e41745096f5401a6b5810b8c4aae7ee",
+    "measurementScriptMatchesReport": true,
+    "releaseGameJsSha256": "b44cc8b615093f5204604bf8c98d7e25659328669ef79102dc97cd5b6de9e16c"
+  },
+  "method": {
+    "readOnlyAnalysis": true,
+    "newBrowserOrTestRun": false,
+    "units": "All heap/storage values are exact CDP sample byte counts; wall-time windows use seconds since observer start.",
+    "sampling": "Runtime.getHeapUsage approximately every five seconds; 119 observations. No forced GC. RAF chunks are drained into the Node harness approximately every five seconds.",
+    "fields": {
+      "used": "CDP usedSize",
+      "total": "CDP totalSize",
+      "embedderHeapUsed": "CDP embedderHeapUsedSize",
+      "backingStorage": "CDP backingStorageSize"
+    },
+    "interpretation": "These separately reported heap/storage counters are not a complete process RSS measurement; do not sum them into total process memory or infer object retention paths."
+  },
+  "observedDuration": {
+    "wallMilliseconds": 604775,
+    "activeSimulationSeconds": 604.4833333333333,
+    "sampledFirstWallSeconds": 0.036,
+    "sampledLastWallSeconds": 599.717,
+    "sampleCount": 119
+  },
+  "allSamples": {
+    "sampleCount": 119,
+    "wallFirstSeconds": 0.036,
+    "wallLastSeconds": 599.717,
+    "used": {
+      "min": 3426848,
+      "median": 8212812,
+      "max": 10486832
+    },
+    "total": {
+      "min": 6623232,
+      "median": 19468288,
+      "max": 19992576
+    },
+    "embedderHeapUsed": {
+      "min": 1694248,
+      "median": 5431200,
+      "max": 39066968
+    },
+    "backingStorage": {
+      "min": 261882,
+      "median": 263698,
+      "max": 266383
+    }
+  },
+  "minuteBins": [
+    {
+      "minute": 1,
+      "windowWallSeconds": [
+        0,
+        60
+      ],
+      "sampleCount": 12,
+      "wallFirstSeconds": 0.036,
+      "wallLastSeconds": 55.783,
+      "used": {
+        "min": 3426848,
+        "median": 3897948,
+        "max": 6415260
+      },
+      "total": {
+        "min": 6623232,
+        "median": 8851456,
+        "max": 13176832
+      },
+      "embedderHeapUsed": {
+        "min": 1694248,
+        "median": 4734788,
+        "max": 39066968
+      },
+      "backingStorage": {
+        "min": 262503,
+        "median": 263376.5,
+        "max": 264530
+      }
+    },
+    {
+      "minute": 2,
+      "windowWallSeconds": [
+        60,
+        120
+      ],
+      "sampleCount": 12,
+      "wallFirstSeconds": 60.868,
+      "wallLastSeconds": 116.95,
+      "used": {
+        "min": 4007572,
+        "median": 4871716,
+        "max": 10486832
+      },
+      "total": {
+        "min": 13176832,
+        "median": 13701120,
+        "max": 16846848
+      },
+      "embedderHeapUsed": {
+        "min": 2277552,
+        "median": 5591820,
+        "max": 7997856
+      },
+      "backingStorage": {
+        "min": 262984,
+        "median": 263738.5,
+        "max": 265375
+      }
+    },
+    {
+      "minute": 3,
+      "windowWallSeconds": [
+        120,
+        180
+      ],
+      "sampleCount": 12,
+      "wallFirstSeconds": 122.034,
+      "wallLastSeconds": 177.898,
+      "used": {
+        "min": 3854596,
+        "median": 8146496,
+        "max": 9665256
+      },
+      "total": {
+        "min": 16322560,
+        "median": 19468288,
+        "max": 19730432
+      },
+      "embedderHeapUsed": {
+        "min": 1883928,
+        "median": 4934476,
+        "max": 9173632
+      },
+      "backingStorage": {
+        "min": 262589,
+        "median": 264279,
+        "max": 265428
+      }
+    },
+    {
+      "minute": 4,
+      "windowWallSeconds": [
+        180,
+        240
+      ],
+      "sampleCount": 12,
+      "wallFirstSeconds": 182.967,
+      "wallLastSeconds": 238.834,
+      "used": {
+        "min": 3952200,
+        "median": 8461942,
+        "max": 9592028
+      },
+      "total": {
+        "min": 19206144,
+        "median": 19337216,
+        "max": 19468288
+      },
+      "embedderHeapUsed": {
+        "min": 1959456,
+        "median": 5847932,
+        "max": 9267032
+      },
+      "backingStorage": {
+        "min": 262593,
+        "median": 264277,
+        "max": 265879
+      }
+    },
+    {
+      "minute": 5,
+      "windowWallSeconds": [
+        240,
+        300
+      ],
+      "sampleCount": 12,
+      "wallFirstSeconds": 243.917,
+      "wallLastSeconds": 299.717,
+      "used": {
+        "min": 7342736,
+        "median": 8294118,
+        "max": 9766112
+      },
+      "total": {
+        "min": 19206144,
+        "median": 19468288,
+        "max": 19468288
+      },
+      "embedderHeapUsed": {
+        "min": 2510192,
+        "median": 5238624,
+        "max": 10107152
+      },
+      "backingStorage": {
+        "min": 261882,
+        "median": 264048,
+        "max": 266383
+      }
+    },
+    {
+      "minute": 6,
+      "windowWallSeconds": [
+        300,
+        360
+      ],
+      "sampleCount": 11,
+      "wallFirstSeconds": 304.999,
+      "wallLastSeconds": 355.951,
+      "used": {
+        "min": 4092308,
+        "median": 7821040,
+        "max": 9288404
+      },
+      "total": {
+        "min": 19468288,
+        "median": 19468288,
+        "max": 19730432
+      },
+      "embedderHeapUsed": {
+        "min": 2402640,
+        "median": 4333384,
+        "max": 8289472
+      },
+      "backingStorage": {
+        "min": 262268,
+        "median": 262768,
+        "max": 264200
+      }
+    },
+    {
+      "minute": 7,
+      "windowWallSeconds": [
+        360,
+        420
+      ],
+      "sampleCount": 12,
+      "wallFirstSeconds": 361.035,
+      "wallLastSeconds": 416.916,
+      "used": {
+        "min": 8106448,
+        "median": 8903072,
+        "max": 9706288
+      },
+      "total": {
+        "min": 19468288,
+        "median": 19599360,
+        "max": 19992576
+      },
+      "embedderHeapUsed": {
+        "min": 4511512,
+        "median": 7000920,
+        "max": 9454032
+      },
+      "backingStorage": {
+        "min": 262768,
+        "median": 264159.5,
+        "max": 265566
+      }
+    },
+    {
+      "minute": 8,
+      "windowWallSeconds": [
+        420,
+        480
+      ],
+      "sampleCount": 12,
+      "wallFirstSeconds": 421.999,
+      "wallLastSeconds": 477.866,
+      "used": {
+        "min": 8099628,
+        "median": 9040752,
+        "max": 9734792
+      },
+      "total": {
+        "min": 19468288,
+        "median": 19730432,
+        "max": 19992576
+      },
+      "embedderHeapUsed": {
+        "min": 4647296,
+        "median": 7366392,
+        "max": 9534760
+      },
+      "backingStorage": {
+        "min": 262768,
+        "median": 263483.5,
+        "max": 265121
+      }
+    },
+    {
+      "minute": 9,
+      "windowWallSeconds": [
+        480,
+        540
+      ],
+      "sampleCount": 12,
+      "wallFirstSeconds": 482.95,
+      "wallLastSeconds": 538.767,
+      "used": {
+        "min": 8021152,
+        "median": 8805818,
+        "max": 9657708
+      },
+      "total": {
+        "min": 19468288,
+        "median": 19730432,
+        "max": 19992576
+      },
+      "embedderHeapUsed": {
+        "min": 4270520,
+        "median": 6990472,
+        "max": 9585488
+      },
+      "backingStorage": {
+        "min": 262764,
+        "median": 263940.5,
+        "max": 265567
+      }
+    },
+    {
+      "minute": 10,
+      "windowWallSeconds": [
+        540,
+        600
+      ],
+      "sampleCount": 12,
+      "wallFirstSeconds": 543.852,
+      "wallLastSeconds": 599.717,
+      "used": {
+        "min": 8036664,
+        "median": 8811512,
+        "max": 9601800
+      },
+      "total": {
+        "min": 19468288,
+        "median": 19730432,
+        "max": 19992576
+      },
+      "embedderHeapUsed": {
+        "min": 4665160,
+        "median": 6951336,
+        "max": 9582888
+      },
+      "backingStorage": {
+        "min": 262764,
+        "median": 263930.5,
+        "max": 265127
+      }
+    }
+  ],
+  "windows": {
+    "earlySteady120to180": {
+      "sampleCount": 12,
+      "wallFirstSeconds": 122.034,
+      "wallLastSeconds": 177.898,
+      "used": {
+        "min": 3854596,
+        "median": 8146496,
+        "max": 9665256
+      },
+      "total": {
+        "min": 16322560,
+        "median": 19468288,
+        "max": 19730432
+      },
+      "embedderHeapUsed": {
+        "min": 1883928,
+        "median": 4934476,
+        "max": 9173632
+      },
+      "backingStorage": {
+        "min": 262589,
+        "median": 264279,
+        "max": 265428
+      }
+    },
+    "final540plus": {
+      "sampleCount": 12,
+      "wallFirstSeconds": 543.852,
+      "wallLastSeconds": 599.717,
+      "used": {
+        "min": 8036664,
+        "median": 8811512,
+        "max": 9601800
+      },
+      "total": {
+        "min": 19468288,
+        "median": 19730432,
+        "max": 19992576
+      },
+      "embedderHeapUsed": {
+        "min": 4665160,
+        "median": 6951336,
+        "max": 9582888
+      },
+      "backingStorage": {
+        "min": 262764,
+        "median": 263930.5,
+        "max": 265127
+      }
+    },
+    "late360plus": {
+      "sampleCount": 48,
+      "wallFirstSeconds": 361.035,
+      "wallLastSeconds": 599.717,
+      "used": {
+        "min": 8021152,
+        "median": 8964918,
+        "max": 9734792
+      },
+      "total": {
+        "min": 19468288,
+        "median": 19730432,
+        "max": 19992576
+      },
+      "embedderHeapUsed": {
+        "min": 4270520,
+        "median": 7173612,
+        "max": 9585488
+      },
+      "backingStorage": {
+        "min": 262764,
+        "median": 263708.5,
+        "max": 265567
+      }
+    }
+  },
+  "finalMinusEarlyBytes": {
+    "used": {
+      "min": 4182068,
+      "median": 665016,
+      "max": -63456
+    },
+    "total": {
+      "min": 3145728,
+      "median": 262144,
+      "max": 262144
+    },
+    "embedderHeapUsed": {
+      "min": 2781232,
+      "median": 2016860,
+      "max": 409256
+    },
+    "backingStorage": {
+      "min": 175,
+      "median": -348.5,
+      "max": -301
+    }
+  },
+  "observedDownwardTransitions": {
+    "used": {
+      "count": 61,
+      "late360plusCount": 23,
+      "largest": {
+        "fromWallSeconds": 132.184,
+        "toWallSeconds": 137.268,
+        "beforeBytes": 9448564,
+        "afterBytes": 4158424,
+        "deltaBytes": -5290140
+      },
+      "largestLate360plus": {
+        "fromWallSeconds": 528.635,
+        "toWallSeconds": 533.701,
+        "beforeBytes": 9657708,
+        "afterBytes": 8021152,
+        "deltaBytes": -1636556
+      }
+    },
+    "total": {
+      "count": 17,
+      "late360plusCount": 7,
+      "largest": {
+        "fromWallSeconds": 116.95,
+        "toWallSeconds": 122.034,
+        "beforeBytes": 16846848,
+        "afterBytes": 16322560,
+        "deltaBytes": -524288
+      },
+      "largestLate360plus": {
+        "fromWallSeconds": 381.334,
+        "toWallSeconds": 386.417,
+        "beforeBytes": 19992576,
+        "afterBytes": 19468288,
+        "deltaBytes": -524288
+      }
+    },
+    "embedderHeapUsed": {
+      "count": 61,
+      "late360plusCount": 23,
+      "largest": {
+        "fromWallSeconds": 5.083,
+        "toWallSeconds": 10.134,
+        "beforeBytes": 39066968,
+        "afterBytes": 5904856,
+        "deltaBytes": -33162112
+      },
+      "largestLate360plus": {
+        "fromWallSeconds": 528.635,
+        "toWallSeconds": 533.701,
+        "beforeBytes": 9585488,
+        "afterBytes": 4270520,
+        "deltaBytes": -5314968
+      }
+    },
+    "backingStorage": {
+      "count": 61,
+      "late360plusCount": 23,
+      "largest": {
+        "fromWallSeconds": 284.5,
+        "toWallSeconds": 289.565,
+        "beforeBytes": 264704,
+        "afterBytes": 261882,
+        "deltaBytes": -2822
+      },
+      "largestLate360plus": {
+        "fromWallSeconds": 528.635,
+        "toWallSeconds": 533.701,
+        "beforeBytes": 265567,
+        "afterBytes": 262768,
+        "deltaBytes": -2799
+      }
+    }
+  },
+  "privacyRoundedWebMemory": {
+    "unique": [
+      {
+        "used": 10000000,
+        "total": 10000000
+      }
+    ],
+    "allSamplesFixedTenMillion": true,
+    "interpretation": "This web API returned a fixed privacy-rounded value and is excluded from trend conclusions."
+  },
+  "boundedGameplayTelemetry": {
+    "peakAlive": 24,
+    "peakRetainedActors": 24,
+    "peakRawEvents": 512,
+    "peakTacticalRecords": 2,
+    "peakEffects": 11
+  },
+  "findings": [
+    "Early120–180 and final540+ used-heap minima differ by +4,182,068 bytes. This is a real difference in sampled counters and must not be hidden behind the fixed web-memory 10 MB reading.",
+    "The same windows used-heap medians differ by only +665,016 bytes, while maxima differ by -63,456 bytes. Minimum-only comparisons are sensitive to sample/reclamation phase.",
+    "Minutes7–10 used minima are 8,106,448 / 8,099,628 / 8,021,152 / 8,036,664 bytes, with medians 8,903,072 / 9,040,752 / 8,805,818 / 8,811,512 bytes. This is an observed late plateau, not continuing monotonic growth.",
+    "Late total-heap capacity remains within 19,468,288–19,992,576 bytes; backing storage remains about 263–266 kB. Embedder samples fluctuate with repeated substantial decreases instead of accumulating monotonically.",
+    "Negative adjacent sample deltas demonstrate naturally occurring decreases without forced GC. They are compatible with reclamation/allocation cycles but do not identify GC type, object retention causes, or prove absence of leaks."
+  ],
+  "conclusion": {
+    "scope": "Local Windows Chrome headless, 1366×768, one legal-input heart pressure session reaching 24 live actors; standard effects then low effects. It does not cover every organ/core/protocol stress combination, foreground-device behavior, other hardware, or longer sessions.",
+    "frameBudget": true,
+    "memoryTrend": "No continuing monotonic late-session heap growth is visible in this ten-minute observation; a higher late used-heap baseline and earlier capacity growth remain observed. The data supports a bounded late working-set observation, not a leak-free guarantee.",
+    "acceptanceBoundary": "Keep frame/density/error pass separate from memory interpretation. Do not claim exact flat heap across ten minutes or use this report alone as proof of no long-term leaks.",
+    "risk": "The +4.18 MB early-vs-final sampled floor rise cannot be causally classified without retained-object/longer-run evidence. Late plateau and repeated decreases reduce concern about an immediate unbounded accumulation in this specific scene, but do not resolve all memory risks."
+  }
+}

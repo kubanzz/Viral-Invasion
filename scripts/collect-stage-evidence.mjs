@@ -10,6 +10,8 @@ await mkdir(join(destination, 'screenshots'), { recursive: true });
 const reportPath=process.env.VI_E2E_REPORT ?? 'artifacts/e2e-report.json';
 const resultsDirectory=process.env.VI_E2E_OUTPUT ?? 'artifacts/e2e-results';
 const buildDirectory=process.env.VI_DIST_DIR ?? 'dist';
+const screenshotPrefix=process.env.VI_SCREENSHOT_PREFIX ?? '';
+if(!/^[a-zA-Z0-9-]*$/.test(screenshotPrefix))throw new Error('VI_SCREENSHOT_PREFIX must use letters, digits or hyphens only.');
 const report = JSON.parse(await readFile(reportPath, 'utf8'));
 const rerunPaths=process.argv.slice(3);
 const reports=[report,...await Promise.all(rerunPaths.map(async path=>JSON.parse(await readFile(path,'utf8'))))];
@@ -42,22 +44,29 @@ async function files(directory) {
 const buildMeta=JSON.parse(await readFile(join(buildDirectory,'build-meta.json'),'utf8'));
 const sourcePaths = [...await files('src'),'package.json','package-lock.json','scripts/build-offline.mjs'].sort();
 const sourceManifest = buildMeta.sourceManifest ?? Object.fromEntries(await Promise.all(sourcePaths.map(async path=>[path.replaceAll('\\','/'),createHash('sha256').update(await readFile(path)).digest('hex')])));
-const screenshots=[];
+const screenshots=[],sessions=[];
+await mkdir(join(destination,'sessions'),{recursive:true});
 for (const directory of await readdir(resultsDirectory, { withFileTypes: true })) {
   if (!directory.isDirectory() || !directory.name.toLowerCase().startsWith(stage.toLowerCase())) continue;
-  for (const name of await readdir(join(resultsDirectory, directory.name))) if(name.endsWith('.png')) {
-    const output=join(destination,'screenshots',`${directory.name}-${name}`);
-    await copyFile(join(resultsDirectory,directory.name,name),output); screenshots.push(relative('.',output).replaceAll('\\','/'));
+  for (const name of await readdir(join(resultsDirectory, directory.name))) {
+    if(name.endsWith('.png')) {
+      const output=join(destination,'screenshots',`${screenshotPrefix}${directory.name}-${name}`);
+      await copyFile(join(resultsDirectory,directory.name,name),output); screenshots.push(relative('.',output).replaceAll('\\','/'));
+    } else if(name==='win.json'||name==='defeat.json') {
+      const output=join(destination,'sessions',`${screenshotPrefix}${directory.name}-${name}`);
+      await copyFile(join(resultsDirectory,directory.name,name),output);sessions.push(relative('.',output).replaceAll('\\','/'));
+    }
   }
 }
 const summary={stage,version:buildMeta.version,collectedAt:new Date().toISOString(),
+  sourceCommit:process.env.VI_SOURCE_COMMIT ?? null,
   gitHeadAtCollection:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),
   worktreeStatusAtCollection:execFileSync('git',['status','--short'],{encoding:'utf8'}).trim(),
   sourceTreeSha256:createHash('sha256').update(JSON.stringify(sourceManifest)).digest('hex'),sourceManifest,sourceManifestScope:buildMeta.sourceManifest?'Bundled entry inputs, CSS, HTML, package manifests and build script recorded at build time.':'All source files recorded at evidence collection time (legacy build metadata).',
   releaseGameJsSha256:createHash('sha256').update(await readFile(join(buildDirectory,'game.js'))).digest('hex'),
   unit:{total:unit.numTotalTests,passed:unit.numPassedTests,failed:unit.numFailedTests},
   browser:{expected:cases.filter(c=>c.status==='passed').length,unexpected:cases.filter(c=>c.status!=='passed'&&c.status!=='skipped').length,skipped:cases.filter(c=>c.status==='skipped').length,cases,
-    executions:reports.map((item,index)=>({reportIndex:index,path:index?rerunPaths[index-1]:reportPath,stats:item.stats})),resolution:'Latest result for each complete suite/title/browser identity; earlier results retained in previousResults and raw reports.'},screenshots,
+    executions:reports.map((item,index)=>({reportIndex:index,path:index?rerunPaths[index-1]:reportPath,stats:item.stats})),resolution:'Latest result for each complete suite/title/browser identity; earlier results retained in previousResults and raw reports.'},screenshots,sessions,
   provenance:'Browser cases use actual keyboard and mouse inputs with read-only diagnostics. Unit fixtures are separate system tests. Human playtests have not been performed.',
   limitations:['Physical OS blur/minimize and real browser Ctrl+/- zoom remain unverified.','No claim of human comprehension, enjoyment, or retention is made.']};
 await writeFile(join(destination,'verification-summary.json'),JSON.stringify(summary,null,2));

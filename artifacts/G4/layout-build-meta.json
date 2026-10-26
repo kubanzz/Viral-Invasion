@@ -1,0 +1,761 @@
+{
+  "game": "viral-invasion",
+  "version": "0.5.0",
+  "stage": "G4",
+  "format": "iife",
+  "sourceManifest": {
+    "index.html": "240abc27cb391518456a6d81b8360a88946d837888c769c2756415ef9cdc84af",
+    "package-lock.json": "1d0a4a6212f64b26a6a87a49944ad75c9a9304a3689344a030238ce27a7242e3",
+    "package.json": "bb72d002ca35022dbf73858de09e6cb7ca27d33e95bfdd62e61411b9a060eb4b",
+    "scripts/build-offline.mjs": "0e899f1174fb20ca34edba6cad8a800b0be44d2c2b097c62eaa5033fe37de3a8",
+    "src/actors/collision.ts": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+    "src/audio.ts": "a25b84c45747b82e088e74728e701fe6f492a32b9317569ce3de34d3b11437cc",
+    "src/core/clock.ts": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+    "src/core/events.ts": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+    "src/core/rng.ts": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+    "src/game/battle.ts": "52c2ab42bf8ccd16225293d1cf7540aeb4282a0f1d32a8ced9c9b792ed821758",
+    "src/game/battleConfig.ts": "937a2c91827c7184bcabf0eae13db315d52d0517d75b1696e2217f4e2c0de072",
+    "src/game/campaign.ts": "5fc2a019ce577e4482aee3ec378e2985004bfe113c21848f7936085ab93bd754",
+    "src/game/evolution.ts": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+    "src/game/growth.ts": "f621e8b7fd0683e9713e1ade33ae74b192f8cc001612b0b0f92ee0baddabb975",
+    "src/game/motherCore.ts": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+    "src/game/organConfig.ts": "e7b0d4f1a43b71e1fcfa203895dff4235a2b26f69b99385973d1b0d6a6a1fae9",
+    "src/game/organRules.ts": "3fccda4e75963f8459de595871d90a009651976cc5d61f83113b51eb3e29ebcf",
+    "src/game/protocols.ts": "03c089102ff9943a18047ea9aa94e5377d575192b2793e2b045212fd63543675",
+    "src/game/session.ts": "db58e2ce5ed758fffc5b9d73a7dd04f2047c09453b42095b1888c332f609b315",
+    "src/game/types.ts": "207c94962390ec0ac853ee9489116295609aea481cfa9074fc390c032a194393",
+    "src/input/controller.ts": "0b2be9d6f5f29b29f3df2219970c6e089f19d872dae6d56064f0d802c3d7ff72",
+    "src/main.ts": "3ac989689b0d9456a7f3575ce32b3fd399cf51232b8ca4a574578cda49669fc4",
+    "src/meta/profile.ts": "0712967432258bf41c8728de94bafda563ef8b415ce709b31f40b917c6a4a3d1",
+    "src/render/battleVisuals.ts": "eb018bf5de39ce3ebd11cc1813b2befa8448e378c8b9f11938b8066fccc508f4",
+    "src/render/camera.ts": "72eaf55ebc474a63cfa2ff5aac2e40db14e8a9d0372a58ff42852a6c9393a077",
+    "src/render/depthSort.ts": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+    "src/render/growthVisuals.ts": "1d3c5fd2e7120711dce01749d458d0e9700e43e4e0da3124065b1c5e311a203a",
+    "src/render/layers.ts": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+    "src/render/lungVisuals.ts": "48439104c1e701e7f07b2427019ba8cca7fcb74e1a5809835d54510e2aaf398f",
+    "src/render/occlusion.ts": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+    "src/render/pulsePreview.ts": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+    "src/render/renderer.ts": "9e545268844541159cb3692e4350e3ca3be8e5dde4fffbf27695fbb649f869ae",
+    "src/style.css": "97d22f0b15442fabaf9635161de4d3234ddbf223655ba75163b91c9093b24aa5",
+    "src/ui/battleHud.ts": "0b5e727fa7379f571b646b95e9f15a9abeac455531f6863d08a7b268899f40cc",
+    "src/ui/campaignHud.ts": "14a72cda97308e9b2ae943acab9ebbb09faf25e4b4a6b7b262e83995fa128639",
+    "src/ui/growthHud.ts": "ae65a2688d62410e43ec4b0283060cc3c0b84bcd64034dc5ef2849c4ad2f0bf3",
+    "src/ui/profile.css": "768e6f59157b6706a98355e682018f655b4de5ef6a489e0217f52c37784e86c8",
+    "src/ui/profileHud.ts": "18086bb6a83eacbaa092ca35d937e6bea9602a988f9a7bc390862ecebf2444f5"
+  },
+  "inputs": {
+    "src/style.css": {
+      "bytes": 21525,
+      "imports": []
+    },
+    "src/core/clock.ts": {
+      "bytes": 1156,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/core/events.ts": {
+      "bytes": 887,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/core/rng.ts": {
+      "bytes": 680,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/game/types.ts": {
+      "bytes": 3189,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/actors/collision.ts": {
+      "bytes": 2408,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/battleConfig.ts": {
+      "bytes": 1664,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/game/evolution.ts": {
+      "bytes": 8002,
+      "imports": [
+        {
+          "path": "src/core/rng.ts",
+          "kind": "import-statement",
+          "original": "../core/rng"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/battle.ts": {
+      "bytes": 28409,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/core/rng.ts",
+          "kind": "import-statement",
+          "original": "../core/rng"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "./battleConfig"
+        },
+        {
+          "path": "src/game/evolution.ts",
+          "kind": "import-statement",
+          "original": "./evolution"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/protocols.ts": {
+      "bytes": 4309,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/game/growth.ts": {
+      "bytes": 22500,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/core/rng.ts",
+          "kind": "import-statement",
+          "original": "../core/rng"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/protocols.ts",
+          "kind": "import-statement",
+          "original": "./protocols"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/organConfig.ts": {
+      "bytes": 4656,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/core/rng.ts",
+          "kind": "import-statement",
+          "original": "../core/rng"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "./battleConfig"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/organRules.ts": {
+      "bytes": 2803,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/organConfig.ts",
+          "kind": "import-statement",
+          "original": "./organConfig"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/campaign.ts": {
+      "bytes": 26926,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/organConfig.ts",
+          "kind": "import-statement",
+          "original": "./organConfig"
+        },
+        {
+          "path": "src/game/organRules.ts",
+          "kind": "import-statement",
+          "original": "./organRules"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/motherCore.ts": {
+      "bytes": 17472,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/session.ts": {
+      "bytes": 34298,
+      "imports": [
+        {
+          "path": "src/core/clock.ts",
+          "kind": "import-statement",
+          "original": "../core/clock"
+        },
+        {
+          "path": "src/core/events.ts",
+          "kind": "import-statement",
+          "original": "../core/events"
+        },
+        {
+          "path": "src/core/rng.ts",
+          "kind": "import-statement",
+          "original": "../core/rng"
+        },
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/battle.ts",
+          "kind": "import-statement",
+          "original": "./battle"
+        },
+        {
+          "path": "src/game/growth.ts",
+          "kind": "import-statement",
+          "original": "./growth"
+        },
+        {
+          "path": "src/game/campaign.ts",
+          "kind": "import-statement",
+          "original": "./campaign"
+        },
+        {
+          "path": "src/game/motherCore.ts",
+          "kind": "import-statement",
+          "original": "./motherCore"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "./battleConfig"
+        },
+        {
+          "path": "src/game/organConfig.ts",
+          "kind": "import-statement",
+          "original": "./organConfig"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/input/controller.ts": {
+      "bytes": 2800,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/render/camera.ts": {
+      "bytes": 1148,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/render/depthSort.ts": {
+      "bytes": 368,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/render/occlusion.ts": {
+      "bytes": 554,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/layers.ts": {
+      "bytes": 129,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/render/battleVisuals.ts": {
+      "bytes": 22972,
+      "imports": [
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/battleConfig"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/motherCore.ts",
+          "kind": "import-statement",
+          "original": "../game/motherCore"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/pulsePreview.ts": {
+      "bytes": 858,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/battleConfig"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/growthVisuals.ts": {
+      "bytes": 8427,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/render/lungVisuals.ts": {
+      "bytes": 11358,
+      "imports": [
+        {
+          "path": "src/game/organRules.ts",
+          "kind": "import-statement",
+          "original": "../game/organRules"
+        },
+        {
+          "path": "src/game/organConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/organConfig"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/renderer.ts": {
+      "bytes": 44731,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/render/camera.ts",
+          "kind": "import-statement",
+          "original": "./camera"
+        },
+        {
+          "path": "src/render/depthSort.ts",
+          "kind": "import-statement",
+          "original": "./depthSort"
+        },
+        {
+          "path": "src/render/occlusion.ts",
+          "kind": "import-statement",
+          "original": "./occlusion"
+        },
+        {
+          "path": "src/render/layers.ts",
+          "kind": "import-statement",
+          "original": "./layers"
+        },
+        {
+          "path": "src/render/battleVisuals.ts",
+          "kind": "import-statement",
+          "original": "./battleVisuals"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/battleConfig"
+        },
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/render/pulsePreview.ts",
+          "kind": "import-statement",
+          "original": "./pulsePreview"
+        },
+        {
+          "path": "src/render/growthVisuals.ts",
+          "kind": "import-statement",
+          "original": "./growthVisuals"
+        },
+        {
+          "path": "src/game/protocols.ts",
+          "kind": "import-statement",
+          "original": "../game/protocols"
+        },
+        {
+          "path": "src/render/lungVisuals.ts",
+          "kind": "import-statement",
+          "original": "./lungVisuals"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/audio.ts": {
+      "bytes": 1715,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/ui/campaignHud.ts": {
+      "bytes": 23425,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/battleConfig"
+        },
+        {
+          "path": "src/game/organConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/organConfig"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/battleHud.ts": {
+      "bytes": 11317,
+      "imports": [
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/battleConfig"
+        },
+        {
+          "path": "src/ui/campaignHud.ts",
+          "kind": "import-statement",
+          "original": "./campaignHud"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/growthHud.ts": {
+      "bytes": 6408,
+      "imports": [
+        {
+          "path": "src/game/protocols.ts",
+          "kind": "import-statement",
+          "original": "../game/protocols"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/meta/profile.ts": {
+      "bytes": 23527,
+      "imports": [
+        {
+          "path": "../game/battleConfig",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "src/game/protocols.ts",
+          "kind": "import-statement",
+          "original": "../game/protocols"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/profileHud.ts": {
+      "bytes": 13960,
+      "imports": [
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/battleConfig"
+        },
+        {
+          "path": "src/game/protocols.ts",
+          "kind": "import-statement",
+          "original": "../game/protocols"
+        },
+        {
+          "path": "src/meta/profile.ts",
+          "kind": "import-statement",
+          "original": "../meta/profile"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/profile.css": {
+      "bytes": 17009,
+      "imports": []
+    },
+    "src/main.ts": {
+      "bytes": 20003,
+      "imports": [
+        {
+          "path": "src/style.css",
+          "kind": "import-statement",
+          "original": "./style.css"
+        },
+        {
+          "path": "src/game/session.ts",
+          "kind": "import-statement",
+          "original": "./game/session"
+        },
+        {
+          "path": "src/core/clock.ts",
+          "kind": "import-statement",
+          "original": "./core/clock"
+        },
+        {
+          "path": "src/input/controller.ts",
+          "kind": "import-statement",
+          "original": "./input/controller"
+        },
+        {
+          "path": "src/render/renderer.ts",
+          "kind": "import-statement",
+          "original": "./render/renderer"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./game/types"
+        },
+        {
+          "path": "src/audio.ts",
+          "kind": "import-statement",
+          "original": "./audio"
+        },
+        {
+          "path": "src/ui/battleHud.ts",
+          "kind": "import-statement",
+          "original": "./ui/battleHud"
+        },
+        {
+          "path": "src/ui/growthHud.ts",
+          "kind": "import-statement",
+          "original": "./ui/growthHud"
+        },
+        {
+          "path": "src/meta/profile.ts",
+          "kind": "import-statement",
+          "original": "./meta/profile"
+        },
+        {
+          "path": "src/ui/profileHud.ts",
+          "kind": "import-statement",
+          "original": "./ui/profileHud"
+        },
+        {
+          "path": "src/ui/profile.css",
+          "kind": "import-statement",
+          "original": "./ui/profile.css"
+        }
+      ],
+      "format": "esm"
+    }
+  },
+  "outputs": {
+    "dist/game.js": {
+      "imports": [],
+      "exports": [],
+      "entryPoint": "src/main.ts",
+      "cssBundle": "dist/game.css",
+      "inputs": {
+        "src/style.css": {
+          "bytesInOutput": 0
+        },
+        "src/core/clock.ts": {
+          "bytesInOutput": 544
+        },
+        "src/core/events.ts": {
+          "bytesInOutput": 275
+        },
+        "src/core/rng.ts": {
+          "bytesInOutput": 360
+        },
+        "src/game/types.ts": {
+          "bytesInOutput": 473
+        },
+        "src/actors/collision.ts": {
+          "bytesInOutput": 844
+        },
+        "src/game/battleConfig.ts": {
+          "bytesInOutput": 1655
+        },
+        "src/game/evolution.ts": {
+          "bytesInOutput": 3315
+        },
+        "src/game/battle.ts": {
+          "bytesInOutput": 20222
+        },
+        "src/game/protocols.ts": {
+          "bytesInOutput": 3735
+        },
+        "src/game/growth.ts": {
+          "bytesInOutput": 14617
+        },
+        "src/game/organConfig.ts": {
+          "bytesInOutput": 3040
+        },
+        "src/game/organRules.ts": {
+          "bytesInOutput": 1934
+        },
+        "src/game/campaign.ts": {
+          "bytesInOutput": 21999
+        },
+        "src/game/motherCore.ts": {
+          "bytesInOutput": 10182
+        },
+        "src/game/session.ts": {
+          "bytesInOutput": 22166
+        },
+        "src/input/controller.ts": {
+          "bytesInOutput": 2111
+        },
+        "src/render/camera.ts": {
+          "bytesInOutput": 664
+        },
+        "src/render/depthSort.ts": {
+          "bytesInOutput": 126
+        },
+        "src/render/occlusion.ts": {
+          "bytesInOutput": 155
+        },
+        "src/render/layers.ts": {
+          "bytesInOutput": 93
+        },
+        "src/render/battleVisuals.ts": {
+          "bytesInOutput": 12853
+        },
+        "src/render/pulsePreview.ts": {
+          "bytesInOutput": 226
+        },
+        "src/render/growthVisuals.ts": {
+          "bytesInOutput": 4684
+        },
+        "src/render/lungVisuals.ts": {
+          "bytesInOutput": 6687
+        },
+        "src/render/renderer.ts": {
+          "bytesInOutput": 25617
+        },
+        "src/audio.ts": {
+          "bytesInOutput": 1069
+        },
+        "src/ui/campaignHud.ts": {
+          "bytesInOutput": 25238
+        },
+        "src/ui/battleHud.ts": {
+          "bytesInOutput": 12409
+        },
+        "src/ui/growthHud.ts": {
+          "bytesInOutput": 6679
+        },
+        "src/meta/profile.ts": {
+          "bytesInOutput": 17031
+        },
+        "src/ui/profileHud.ts": {
+          "bytesInOutput": 13185
+        },
+        "src/ui/profile.css": {
+          "bytesInOutput": 0
+        },
+        "src/main.ts": {
+          "bytesInOutput": 16478
+        }
+      },
+      "bytes": 250691
+    },
+    "dist/game.css": {
+      "imports": [],
+      "inputs": {
+        "src/style.css": {
+          "bytesInOutput": 21363
+        },
+        "src/ui/profile.css": {
+          "bytesInOutput": 16942
+        }
+      },
+      "bytes": 38306
+    }
+  }
+}

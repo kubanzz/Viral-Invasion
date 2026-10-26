@@ -1,0 +1,756 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-26T18:01:33.082Z",
+  "complete": true,
+  "pass": true,
+  "method": "Independent fixture imports the actual Renderer. One captured snapshot and two independent structuredClone states are checked after repeated real Canvas2D renders at a fixed source tick.",
+  "scope": [
+    "Technical rendering comparison derived from a read-only snapshot; no main.ts, GameSession.step(), live release state writes, or game-time advancement.",
+    "Complete JSON equality plus SHA-256 of full state, HP, damage records, and collision geometry are checked at render-call boundaries.",
+    "Not a same-input gameplay replay, browser victory, ten-minute performance measurement, visual readability acceptance, or human playtest.",
+    "This verifies rendering does not change gameplay state. Shared danger/collision geometry remains covered separately by existing coreVisuals and geometry unit tests.",
+    "Images are Canvas2D backing stores only, with no HUD. Visual differences between normal/low effects are permitted."
+  ],
+  "options": {
+    "input": "artifacts/G4/performance-final/dense-state.json",
+    "output": "artifacts/G4/render-invariance-final",
+    "frames": 12,
+    "width": 1366,
+    "height": 768,
+    "dpr": 1,
+    "channel": "chrome"
+  },
+  "input": {
+    "path": "artifacts/G4/performance-final/dense-state.json",
+    "fileSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+    "shape": "GameState",
+    "unchanged": true
+  },
+  "errors": [],
+  "remoteRequests": [],
+  "sourceManifest": {
+    "src/actors/collision.ts": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+    "src/core/rng.ts": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+    "src/game/battleConfig.ts": "937a2c91827c7184bcabf0eae13db315d52d0517d75b1696e2217f4e2c0de072",
+    "src/game/motherCore.ts": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+    "src/game/organConfig.ts": "e7b0d4f1a43b71e1fcfa203895dff4235a2b26f69b99385973d1b0d6a6a1fae9",
+    "src/game/organRules.ts": "3fccda4e75963f8459de595871d90a009651976cc5d61f83113b51eb3e29ebcf",
+    "src/game/protocols.ts": "03c089102ff9943a18047ea9aa94e5377d575192b2793e2b045212fd63543675",
+    "src/game/types.ts": "bd416eebd70e5061e6825c9f871f4414fc4523170ee76d84cbe7a34791d131af",
+    "src/render/battleVisuals.ts": "eb018bf5de39ce3ebd11cc1813b2befa8448e378c8b9f11938b8066fccc508f4",
+    "src/render/camera.ts": "72eaf55ebc474a63cfa2ff5aac2e40db14e8a9d0372a58ff42852a6c9393a077",
+    "src/render/depthSort.ts": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+    "src/render/growthVisuals.ts": "1d3c5fd2e7120711dce01749d458d0e9700e43e4e0da3124065b1c5e311a203a",
+    "src/render/layers.ts": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+    "src/render/lungVisuals.ts": "48439104c1e701e7f07b2427019ba8cca7fcb74e1a5809835d54510e2aaf398f",
+    "src/render/occlusion.ts": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+    "src/render/pulsePreview.ts": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+    "src/render/renderer.ts": "9e545268844541159cb3692e4350e3ca3be8e5dde4fffbf27695fbb649f869ae",
+    "tests/fixtures/renderProbe.ts": "01ec59fb39df34ddbac9dc2c45d4fe5178c42706671b5915a2b1aacfca166ccc"
+  },
+  "sourceManifestSha256": "6e8d0365cca979de3c683b92780d1285f6c8e7fceb6f5a1387f63721a1a3360f",
+  "fixtureBundleSha256": "e228b42442317b525fd499b075d1d50cb7db8dfede693eba705e0536e49da319",
+  "checks": {
+    "pass": true,
+    "seed": 130026,
+    "tick": 4624,
+    "elapsed": 77.06666666666666,
+    "phase": "playing",
+    "organ": "heart",
+    "aliveActors": 24,
+    "framesPerMode": 12,
+    "aim": {
+      "x": 779.9999713897705,
+      "y": 609.9999944368999
+    },
+    "baseline": {
+      "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+      "fullJsonBytes": 100656,
+      "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+      "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+      "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+    },
+    "observations": [
+      {
+        "frame": 0,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 0,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 0,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 1,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 1,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 1,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 2,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 2,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 2,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 3,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 3,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 3,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 4,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 4,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 4,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 5,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 5,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 5,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 6,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 6,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 6,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 7,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 7,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 7,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 8,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 8,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 8,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 9,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 9,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 9,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 10,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 10,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 10,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 11,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 11,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 11,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 12,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 12,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 12,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 13,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 13,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 13,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0",
+          "fullJsonBytes": 100656,
+          "hpSha256": "ed20ee9e5d400faa69fe7530f382ed3796a2d22fef375c269715420d46317ac3",
+          "damageSha256": "8e9f6e8bf25f1d1c6779213bf592e6f1481fbc467b08b9ad95dcd93086f3bc26",
+          "collisionGeometrySha256": "80651ea3a18a9adf7a25d5be8a6d97fc52bb6376dcde2bbcb4296916b7b69cf7"
+        },
+        "unchanged": true
+      }
+    ],
+    "canvas": {
+      "context": "real CanvasRenderingContext2D",
+      "normal": {
+        "width": 1366,
+        "height": 768
+      },
+      "low": {
+        "width": 1366,
+        "height": 768
+      },
+      "dpr": 1
+    },
+    "rendererDiagnostics": {
+      "normal": {
+        "depthOrder": [
+          "exit",
+          "gate",
+          "valve",
+          "fold-a",
+          "source-a",
+          "source-b",
+          "elite-9",
+          "virus-2",
+          "virus-22",
+          "virus-4",
+          "virus-1",
+          "virus-11",
+          "virus-13",
+          "virus-15",
+          "virus-17",
+          "virus-19",
+          "virus-21",
+          "virus-6",
+          "virus-8",
+          "virus-3",
+          "virus-10",
+          "virus-12",
+          "virus-14",
+          "virus-16",
+          "virus-18",
+          "virus-20",
+          "virus-5",
+          "virus-7",
+          "fold-b",
+          "player",
+          "tissue",
+          "terminal",
+          "research"
+        ],
+        "occluded": true,
+        "foregroundOpacity": 0.23,
+        "layerOrder": [
+          "distant",
+          "terrain",
+          "contact-shadows",
+          "world-y-sorted",
+          "foreground",
+          "effects",
+          "hud"
+        ]
+      },
+      "low": {
+        "depthOrder": [
+          "exit",
+          "gate",
+          "valve",
+          "fold-a",
+          "source-a",
+          "source-b",
+          "elite-9",
+          "virus-2",
+          "virus-22",
+          "virus-4",
+          "virus-1",
+          "virus-11",
+          "virus-13",
+          "virus-15",
+          "virus-17",
+          "virus-19",
+          "virus-21",
+          "virus-6",
+          "virus-8",
+          "virus-3",
+          "virus-10",
+          "virus-12",
+          "virus-14",
+          "virus-16",
+          "virus-18",
+          "virus-20",
+          "virus-5",
+          "virus-7",
+          "fold-b",
+          "player",
+          "tissue",
+          "terminal",
+          "research"
+        ],
+        "occluded": true,
+        "foregroundOpacity": 0.23,
+        "layerOrder": [
+          "distant",
+          "terrain",
+          "contact-shadows",
+          "world-y-sorted",
+          "foreground",
+          "effects",
+          "hud"
+        ]
+      }
+    }
+  },
+  "images": {
+    "normal": {
+      "path": "artifacts/G4/render-invariance-final/same-tick-normal.png",
+      "sha256": "48780b2f40e98dfcac90bf38e29237626d8d15b2ff66f63ccaf773c98719677b",
+      "bytes": 1132981,
+      "tick": 4624,
+      "elapsed": 77.06666666666666
+    },
+    "low": {
+      "path": "artifacts/G4/render-invariance-final/same-tick-low.png",
+      "sha256": "73805187912cc5f4fafe89ff77984d929177b999d12817bb0dbe43c74a8d220b",
+      "bytes": 1119899,
+      "tick": 4624,
+      "elapsed": 77.06666666666666
+    }
+  },
+  "browser": {
+    "channel": "chrome",
+    "version": "155.0.8059.85",
+    "headless": true,
+    "offline": true
+  },
+  "sourceUnchanged": true,
+  "finishedAt": "2026-10-26T18:01:35.011Z"
+}

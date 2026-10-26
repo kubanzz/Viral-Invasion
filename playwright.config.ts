@@ -1,5 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
+const leanEvidence = process.env.VI_E2E_LEAN === '1';
+
 export default defineConfig({
   testDir: './tests/e2e',
   timeout: 90_000,
@@ -20,8 +22,8 @@ export default defineConfig({
     deviceScaleFactor: 1,
     actionTimeout: 8_000,
     screenshot: 'only-on-failure',
-    video: { mode: 'on', size: { width: 1366, height: 768 } },
-    trace: 'retain-on-failure',
+    video: leanEvidence ? 'off' : { mode: 'on', size: { width: 1366, height: 768 } },
+    trace: leanEvidence ? 'off' : 'retain-on-failure',
   },
   projects: [
     { name: 'chrome', use: { channel: 'chrome' } },

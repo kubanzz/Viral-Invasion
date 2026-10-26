@@ -1,0 +1,735 @@
+{
+  "stage": "G4",
+  "version": "0.5.0",
+  "collectedAt": "2026-10-26T17:51:02.182Z",
+  "sourceCommit": "e8a956e",
+  "gitHeadAtCollection": "7bfef6c2b6e438e5afbcccf6d2e88af69f6e013e",
+  "worktreeStatusAtCollection": "M Docs/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md\n M Docs/ViralInvasion_G4_Plan.md\n M Docs/ViralInvasion_ImplementationPlan.md\n M Docs/ViralInvasion_TestMatrix.md\n M README.md\n M artifacts/G4/unit-results.json\n M artifacts/e2e-report.json\n M artifacts/g4-full-system-seeds.json\n M artifacts/unit-results.json\n M scripts/collect-stage-evidence.mjs\n M scripts/measure-performance.mjs\n?? Docs/ViralInvasion_G4_Acceptance.md\n?? artifacts/G4/browser-route-summary.json\n?? artifacts/G4/e2e-report.json\n?? artifacts/G4/full-system-seeds-before-feedback.json\n?? artifacts/G4/layout-build-meta.json\n?? artifacts/G4/performance-final/\n?? artifacts/G4/performance/\n?? artifacts/G4/release-smoke/\n?? artifacts/G4/render-invariance/\n?? artifacts/G4/screenshots/\n?? artifacts/G4/sessions/\n?? artifacts/G4/smoke-report.json\n?? artifacts/G4/smoke/\n?? artifacts/G4/unit-results-functional-first.json\n?? artifacts/G4/verification-functional-first.json\n?? artifacts/G4/verification-summary.json\n?? artifacts/g4-browser-report.json\n?? artifacts/g4-density-protocols/\n?? artifacts/g4-final-browser-report.json\n?? artifacts/g4-layout-rerun.json\n?? artifacts/g4-smoke.json\n?? artifacts/profile-ui-check.mjs\n?? artifacts/profile-ui-check/\n?? scripts/capture-g4-density-protocols.mjs\n?? scripts/check-render-invariance.mjs\n?? scripts/verify-release.mjs\n?? tests/fixtures/",
+  "sourceTreeSha256": "4e4e964448afae3b6639d56c9f3153344f848440faf54d4703e661e7b000af8e",
+  "sourceManifest": {
+    "index.html": "240abc27cb391518456a6d81b8360a88946d837888c769c2756415ef9cdc84af",
+    "package-lock.json": "1d0a4a6212f64b26a6a87a49944ad75c9a9304a3689344a030238ce27a7242e3",
+    "package.json": "bb72d002ca35022dbf73858de09e6cb7ca27d33e95bfdd62e61411b9a060eb4b",
+    "scripts/build-offline.mjs": "0e899f1174fb20ca34edba6cad8a800b0be44d2c2b097c62eaa5033fe37de3a8",
+    "src/actors/collision.ts": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+    "src/audio.ts": "a25b84c45747b82e088e74728e701fe6f492a32b9317569ce3de34d3b11437cc",
+    "src/core/clock.ts": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+    "src/core/events.ts": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+    "src/core/rng.ts": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+    "src/game/battle.ts": "f9cce5b8dd14f20b217c5d72c76d305798680f2de13168330c2a55865805eb29",
+    "src/game/battleConfig.ts": "937a2c91827c7184bcabf0eae13db315d52d0517d75b1696e2217f4e2c0de072",
+    "src/game/campaign.ts": "e06d6b8e98b2e81bf3ab1d81c5b526125e8977973e22cd35d0922a90c087d60e",
+    "src/game/evolution.ts": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+    "src/game/growth.ts": "f621e8b7fd0683e9713e1ade33ae74b192f8cc001612b0b0f92ee0baddabb975",
+    "src/game/motherCore.ts": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+    "src/game/organConfig.ts": "e7b0d4f1a43b71e1fcfa203895dff4235a2b26f69b99385973d1b0d6a6a1fae9",
+    "src/game/organRules.ts": "3fccda4e75963f8459de595871d90a009651976cc5d61f83113b51eb3e29ebcf",
+    "src/game/protocols.ts": "03c089102ff9943a18047ea9aa94e5377d575192b2793e2b045212fd63543675",
+    "src/game/session.ts": "257a92d0f9f1ecebc38816e4ed27c61bbcb977bc5245ede8e0507ebf8d1f0d23",
+    "src/game/tacticalFeedback.ts": "d3e312dc585fde5149c0e21bd8514fc86ed716868825b43b17b53cdfb5f52143",
+    "src/game/types.ts": "bd416eebd70e5061e6825c9f871f4414fc4523170ee76d84cbe7a34791d131af",
+    "src/input/controller.ts": "0b2be9d6f5f29b29f3df2219970c6e089f19d872dae6d56064f0d802c3d7ff72",
+    "src/main.ts": "3ac989689b0d9456a7f3575ce32b3fd399cf51232b8ca4a574578cda49669fc4",
+    "src/meta/profile.ts": "0712967432258bf41c8728de94bafda563ef8b415ce709b31f40b917c6a4a3d1",
+    "src/render/battleVisuals.ts": "eb018bf5de39ce3ebd11cc1813b2befa8448e378c8b9f11938b8066fccc508f4",
+    "src/render/camera.ts": "72eaf55ebc474a63cfa2ff5aac2e40db14e8a9d0372a58ff42852a6c9393a077",
+    "src/render/depthSort.ts": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+    "src/render/growthVisuals.ts": "1d3c5fd2e7120711dce01749d458d0e9700e43e4e0da3124065b1c5e311a203a",
+    "src/render/layers.ts": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+    "src/render/lungVisuals.ts": "48439104c1e701e7f07b2427019ba8cca7fcb74e1a5809835d54510e2aaf398f",
+    "src/render/occlusion.ts": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+    "src/render/pulsePreview.ts": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+    "src/render/renderer.ts": "9e545268844541159cb3692e4350e3ca3be8e5dde4fffbf27695fbb649f869ae",
+    "src/style.css": "97d22f0b15442fabaf9635161de4d3234ddbf223655ba75163b91c9093b24aa5",
+    "src/ui/battleHud.ts": "aaf74c1fea93321652e875b011f7c2865ab4b2bb3a767d79158f8fc1dda90a97",
+    "src/ui/campaignHud.ts": "f1564937decbd9955d7282574481479f3510e3d153ffd4066974a5946ca1f552",
+    "src/ui/growthHud.ts": "ae65a2688d62410e43ec4b0283060cc3c0b84bcd64034dc5ef2849c4ad2f0bf3",
+    "src/ui/profile.css": "768e6f59157b6706a98355e682018f655b4de5ef6a489e0217f52c37784e86c8",
+    "src/ui/profileHud.ts": "18086bb6a83eacbaa092ca35d937e6bea9602a988f9a7bc390862ecebf2444f5",
+    "src/ui/tacticalHistory.ts": "c159a53e514049043f0a41dfb07b435a8774630993d039d68832fbb1c4db137b"
+  },
+  "sourceManifestScope": "Bundled entry inputs, CSS, HTML, package manifests and build script recorded at build time.",
+  "releaseGameJsSha256": "b44cc8b615093f5204604bf8c98d7e25659328669ef79102dc97cd5b6de9e16c",
+  "unit": {
+    "total": 172,
+    "passed": 172,
+    "failed": 0
+  },
+  "browser": {
+    "expected": 21,
+    "unexpected": 0,
+    "skipped": 15,
+    "cases": [
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 1, archive persistence and clean seed replay > chrome",
+        "name": "G4: complete browser seed 1, archive persistence and clean seed replay",
+        "browser": "chrome",
+        "status": "passed",
+        "durationMs": 59928,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 7, archive persistence and clean seed replay > chrome",
+        "name": "G4: complete browser seed 7, archive persistence and clean seed replay",
+        "browser": "chrome",
+        "status": "passed",
+        "durationMs": 57071,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 13, archive persistence and clean seed replay > chrome",
+        "name": "G4: complete browser seed 13, archive persistence and clean seed replay",
+        "browser": "chrome",
+        "status": "passed",
+        "durationMs": 70442,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 29, archive persistence and clean seed replay > chrome",
+        "name": "G4: complete browser seed 29, archive persistence and clean seed replay",
+        "browser": "chrome",
+        "status": "passed",
+        "durationMs": 58537,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 41, archive persistence and clean seed replay > chrome",
+        "name": "G4: complete browser seed 41, archive persistence and clean seed replay",
+        "browser": "chrome",
+        "status": "passed",
+        "durationMs": 56241,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 57, archive persistence and clean seed replay > chrome",
+        "name": "G4: complete browser seed 57, archive persistence and clean seed replay",
+        "browser": "chrome",
+        "status": "skipped",
+        "durationMs": 270,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [
+          {
+            "type": "skip",
+            "description": "Ten distinct seeds are split across Chrome and Edge.",
+            "location": {
+              "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+              "line": 14,
+              "column": 8
+            }
+          }
+        ],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 73, archive persistence and clean seed replay > chrome",
+        "name": "G4: complete browser seed 73, archive persistence and clean seed replay",
+        "browser": "chrome",
+        "status": "skipped",
+        "durationMs": 271,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [
+          {
+            "type": "skip",
+            "description": "Ten distinct seeds are split across Chrome and Edge.",
+            "location": {
+              "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+              "line": 14,
+              "column": 8
+            }
+          }
+        ],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 91, archive persistence and clean seed replay > chrome",
+        "name": "G4: complete browser seed 91, archive persistence and clean seed replay",
+        "browser": "chrome",
+        "status": "skipped",
+        "durationMs": 281,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [
+          {
+            "type": "skip",
+            "description": "Ten distinct seeds are split across Chrome and Edge.",
+            "location": {
+              "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+              "line": 14,
+              "column": 8
+            }
+          }
+        ],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 127, archive persistence and clean seed replay > chrome",
+        "name": "G4: complete browser seed 127, archive persistence and clean seed replay",
+        "browser": "chrome",
+        "status": "skipped",
+        "durationMs": 255,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [
+          {
+            "type": "skip",
+            "description": "Ten distinct seeds are split across Chrome and Edge.",
+            "location": {
+              "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+              "line": 14,
+              "column": 8
+            }
+          }
+        ],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 233, archive persistence and clean seed replay > chrome",
+        "name": "G4: complete browser seed 233, archive persistence and clean seed replay",
+        "browser": "chrome",
+        "status": "skipped",
+        "durationMs": 252,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [
+          {
+            "type": "skip",
+            "description": "Ten distinct seeds are split across Chrome and Edge.",
+            "location": {
+              "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+              "line": 14,
+              "column": 8
+            }
+          }
+        ],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: real defeat seed 17, one saved loss and independent retry > chrome",
+        "name": "G4: real defeat seed 17, one saved loss and independent retry",
+        "browser": "chrome",
+        "status": "passed",
+        "durationMs": 13100,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: real defeat seed 31, one saved loss and independent retry > chrome",
+        "name": "G4: real defeat seed 31, one saved loss and independent retry",
+        "browser": "chrome",
+        "status": "passed",
+        "durationMs": 14621,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: real defeat seed 59, one saved loss and independent retry > chrome",
+        "name": "G4: real defeat seed 59, one saved loss and independent retry",
+        "browser": "chrome",
+        "status": "passed",
+        "durationMs": 12583,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: real defeat seed 83, one saved loss and independent retry > chrome",
+        "name": "G4: real defeat seed 83, one saved loss and independent retry",
+        "browser": "chrome",
+        "status": "skipped",
+        "durationMs": 256,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [
+          {
+            "type": "skip",
+            "description": "Five failure seeds are split across Chrome and Edge.",
+            "location": {
+              "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+              "line": 52,
+              "column": 8
+            }
+          }
+        ],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: real defeat seed 97, one saved loss and independent retry > chrome",
+        "name": "G4: real defeat seed 97, one saved loss and independent retry",
+        "browser": "chrome",
+        "status": "skipped",
+        "durationMs": 248,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [
+          {
+            "type": "skip",
+            "description": "Five failure seeds are split across Chrome and Edge.",
+            "location": {
+              "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+              "line": 52,
+              "column": 8
+            }
+          }
+        ],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: corrupt, old and unavailable storage fault fixtures still boot with a visible explanation > chrome",
+        "name": "G4: corrupt, old and unavailable storage fault fixtures still boot with a visible explanation",
+        "browser": "chrome",
+        "status": "passed",
+        "durationMs": 2702,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 1, archive persistence and clean seed replay > edge",
+        "name": "G4: complete browser seed 1, archive persistence and clean seed replay",
+        "browser": "edge",
+        "status": "skipped",
+        "durationMs": 606,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [
+          {
+            "type": "skip",
+            "description": "Ten distinct seeds are split across Chrome and Edge.",
+            "location": {
+              "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+              "line": 14,
+              "column": 8
+            }
+          }
+        ],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 7, archive persistence and clean seed replay > edge",
+        "name": "G4: complete browser seed 7, archive persistence and clean seed replay",
+        "browser": "edge",
+        "status": "skipped",
+        "durationMs": 309,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [
+          {
+            "type": "skip",
+            "description": "Ten distinct seeds are split across Chrome and Edge.",
+            "location": {
+              "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+              "line": 14,
+              "column": 8
+            }
+          }
+        ],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 13, archive persistence and clean seed replay > edge",
+        "name": "G4: complete browser seed 13, archive persistence and clean seed replay",
+        "browser": "edge",
+        "status": "skipped",
+        "durationMs": 260,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [
+          {
+            "type": "skip",
+            "description": "Ten distinct seeds are split across Chrome and Edge.",
+            "location": {
+              "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+              "line": 14,
+              "column": 8
+            }
+          }
+        ],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 29, archive persistence and clean seed replay > edge",
+        "name": "G4: complete browser seed 29, archive persistence and clean seed replay",
+        "browser": "edge",
+        "status": "skipped",
+        "durationMs": 248,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [
+          {
+            "type": "skip",
+            "description": "Ten distinct seeds are split across Chrome and Edge.",
+            "location": {
+              "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+              "line": 14,
+              "column": 8
+            }
+          }
+        ],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 41, archive persistence and clean seed replay > edge",
+        "name": "G4: complete browser seed 41, archive persistence and clean seed replay",
+        "browser": "edge",
+        "status": "skipped",
+        "durationMs": 288,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [
+          {
+            "type": "skip",
+            "description": "Ten distinct seeds are split across Chrome and Edge.",
+            "location": {
+              "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+              "line": 14,
+              "column": 8
+            }
+          }
+        ],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 57, archive persistence and clean seed replay > edge",
+        "name": "G4: complete browser seed 57, archive persistence and clean seed replay",
+        "browser": "edge",
+        "status": "passed",
+        "durationMs": 72037,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 73, archive persistence and clean seed replay > edge",
+        "name": "G4: complete browser seed 73, archive persistence and clean seed replay",
+        "browser": "edge",
+        "status": "passed",
+        "durationMs": 60004,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 91, archive persistence and clean seed replay > edge",
+        "name": "G4: complete browser seed 91, archive persistence and clean seed replay",
+        "browser": "edge",
+        "status": "passed",
+        "durationMs": 57683,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 127, archive persistence and clean seed replay > edge",
+        "name": "G4: complete browser seed 127, archive persistence and clean seed replay",
+        "browser": "edge",
+        "status": "passed",
+        "durationMs": 71001,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: complete browser seed 233, archive persistence and clean seed replay > edge",
+        "name": "G4: complete browser seed 233, archive persistence and clean seed replay",
+        "browser": "edge",
+        "status": "passed",
+        "durationMs": 59637,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: real defeat seed 17, one saved loss and independent retry > edge",
+        "name": "G4: real defeat seed 17, one saved loss and independent retry",
+        "browser": "edge",
+        "status": "skipped",
+        "durationMs": 248,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [
+          {
+            "type": "skip",
+            "description": "Five failure seeds are split across Chrome and Edge.",
+            "location": {
+              "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+              "line": 52,
+              "column": 8
+            }
+          }
+        ],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: real defeat seed 31, one saved loss and independent retry > edge",
+        "name": "G4: real defeat seed 31, one saved loss and independent retry",
+        "browser": "edge",
+        "status": "skipped",
+        "durationMs": 230,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [
+          {
+            "type": "skip",
+            "description": "Five failure seeds are split across Chrome and Edge.",
+            "location": {
+              "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+              "line": 52,
+              "column": 8
+            }
+          }
+        ],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: real defeat seed 59, one saved loss and independent retry > edge",
+        "name": "G4: real defeat seed 59, one saved loss and independent retry",
+        "browser": "edge",
+        "status": "skipped",
+        "durationMs": 245,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [
+          {
+            "type": "skip",
+            "description": "Five failure seeds are split across Chrome and Edge.",
+            "location": {
+              "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+              "line": 52,
+              "column": 8
+            }
+          }
+        ],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: real defeat seed 83, one saved loss and independent retry > edge",
+        "name": "G4: real defeat seed 83, one saved loss and independent retry",
+        "browser": "edge",
+        "status": "passed",
+        "durationMs": 12403,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: real defeat seed 97, one saved loss and independent retry > edge",
+        "name": "G4: real defeat seed 97, one saved loss and independent retry",
+        "browser": "edge",
+        "status": "passed",
+        "durationMs": 13251,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4.spec.ts > G4: corrupt, old and unavailable storage fault fixtures still boot with a visible explanation > edge",
+        "name": "G4: corrupt, old and unavailable storage fault fixtures still boot with a visible explanation",
+        "browser": "edge",
+        "status": "passed",
+        "durationMs": 2627,
+        "reportIndex": 0,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4-acceptance-gaps.spec.ts > RUN04 gap: G1 fixture real FISSION mother -> two finite children -> one basic area clear, no grandchildren > chrome",
+        "name": "RUN04 gap: G1 fixture real FISSION mother -> two finite children -> one basic area clear, no grandchildren",
+        "browser": "chrome",
+        "status": "passed",
+        "durationMs": 30037,
+        "reportIndex": 1,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4-acceptance-gaps.spec.ts > RUN09 gap: G1 fixture real infection 100 -> legal repair cancels countdown -> fresh same-seed real HP death > chrome",
+        "name": "RUN09 gap: G1 fixture real infection 100 -> legal repair cancels countdown -> fresh same-seed real HP death",
+        "browser": "chrome",
+        "status": "passed",
+        "durationMs": 129621,
+        "reportIndex": 1,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4-acceptance-gaps.spec.ts > RUN04 gap: G1 fixture real FISSION mother -> two finite children -> one basic area clear, no grandchildren > edge",
+        "name": "RUN04 gap: G1 fixture real FISSION mother -> two finite children -> one basic area clear, no grandchildren",
+        "browser": "edge",
+        "status": "passed",
+        "durationMs": 30092,
+        "reportIndex": 2,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      },
+      {
+        "id": "g4-acceptance-gaps.spec.ts > RUN09 gap: G1 fixture real infection 100 -> legal repair cancels countdown -> fresh same-seed real HP death > edge",
+        "name": "RUN09 gap: G1 fixture real infection 100 -> legal repair cancels countdown -> fresh same-seed real HP death",
+        "browser": "edge",
+        "status": "passed",
+        "durationMs": 131161,
+        "reportIndex": 2,
+        "previousResults": [],
+        "annotations": [],
+        "evidence": {}
+      }
+    ],
+    "executions": [
+      {
+        "reportIndex": 0,
+        "path": "artifacts/g4-final-browser-report.json",
+        "stats": {
+          "startTime": "2026-10-26T17:38:56.045Z",
+          "duration": 701341.028,
+          "expected": 17,
+          "skipped": 15,
+          "unexpected": 0,
+          "flaky": 0
+        }
+      },
+      {
+        "reportIndex": 1,
+        "path": "artifacts/g4-gaps-first-chrome.json",
+        "stats": {
+          "startTime": "2026-10-26T17:27:17.512Z",
+          "duration": 161053.693,
+          "expected": 2,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        }
+      },
+      {
+        "reportIndex": 2,
+        "path": "artifacts/g4-gaps-first-edge.json",
+        "stats": {
+          "startTime": "2026-10-26T17:30:35.882Z",
+          "duration": 162658.789,
+          "expected": 2,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        }
+      }
+    ],
+    "resolution": "Latest result for each complete suite/title/browser identity; earlier results retained in previousResults and raw reports."
+  },
+  "screenshots": [
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-02880-tence-and-clean-seed-replay-edge-archive.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-02880-tence-and-clean-seed-replay-edge-core.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-02880-tence-and-clean-seed-replay-edge-migration.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-02880-tence-and-clean-seed-replay-edge-result.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-0417b-tence-and-clean-seed-replay-edge-archive.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-0417b-tence-and-clean-seed-replay-edge-core.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-0417b-tence-and-clean-seed-replay-edge-lung.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-0417b-tence-and-clean-seed-replay-edge-migration.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-0417b-tence-and-clean-seed-replay-edge-result.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-0d5ed-tence-and-clean-seed-replay-chrome-archive.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-0d5ed-tence-and-clean-seed-replay-chrome-core.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-0d5ed-tence-and-clean-seed-replay-chrome-lung.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-0d5ed-tence-and-clean-seed-replay-chrome-migration.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-0d5ed-tence-and-clean-seed-replay-chrome-result.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-64e8f-tence-and-clean-seed-replay-edge-archive.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-64e8f-tence-and-clean-seed-replay-edge-core.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-64e8f-tence-and-clean-seed-replay-edge-lung.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-64e8f-tence-and-clean-seed-replay-edge-migration.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-64e8f-tence-and-clean-seed-replay-edge-result.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-9818f-tence-and-clean-seed-replay-chrome-archive.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-9818f-tence-and-clean-seed-replay-chrome-core.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-9818f-tence-and-clean-seed-replay-chrome-lung.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-9818f-tence-and-clean-seed-replay-chrome-migration.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-9818f-tence-and-clean-seed-replay-chrome-result.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-a29a1-tence-and-clean-seed-replay-chrome-archive.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-a29a1-tence-and-clean-seed-replay-chrome-core.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-a29a1-tence-and-clean-seed-replay-chrome-migration.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-a29a1-tence-and-clean-seed-replay-chrome-result.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-afaac-tence-and-clean-seed-replay-edge-archive.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-afaac-tence-and-clean-seed-replay-edge-core.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-afaac-tence-and-clean-seed-replay-edge-lung.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-afaac-tence-and-clean-seed-replay-edge-migration.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-afaac-tence-and-clean-seed-replay-edge-result.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-ba143-tence-and-clean-seed-replay-chrome-archive.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-ba143-tence-and-clean-seed-replay-chrome-core-1366.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-ba143-tence-and-clean-seed-replay-chrome-core-compact.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-ba143-tence-and-clean-seed-replay-chrome-core.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-ba143-tence-and-clean-seed-replay-chrome-lung.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-ba143-tence-and-clean-seed-replay-chrome-migration.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-ba143-tence-and-clean-seed-replay-chrome-result-collapsed.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-ba143-tence-and-clean-seed-replay-chrome-result.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-fd2e9-tence-and-clean-seed-replay-chrome-archive.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-fd2e9-tence-and-clean-seed-replay-chrome-core.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-fd2e9-tence-and-clean-seed-replay-chrome-migration.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-fd2e9-tence-and-clean-seed-replay-chrome-result.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-ffc25-tence-and-clean-seed-replay-edge-archive.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-ffc25-tence-and-clean-seed-replay-edge-core.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-ffc25-tence-and-clean-seed-replay-edge-lung.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-ffc25-tence-and-clean-seed-replay-edge-migration.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-complete-browser-see-ffc25-tence-and-clean-seed-replay-edge-result.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-corrupt-old-and-unav-90c40--with-a-visible-explanation-chrome-corrupt.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-corrupt-old-and-unav-90c40--with-a-visible-explanation-chrome-old.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-corrupt-old-and-unav-90c40--with-a-visible-explanation-chrome-unavailable.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-corrupt-old-and-unav-90c40--with-a-visible-explanation-edge-corrupt.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-corrupt-old-and-unav-90c40--with-a-visible-explanation-edge-old.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-corrupt-old-and-unav-90c40--with-a-visible-explanation-edge-unavailable.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-real-defeat-seed-17--5d374--loss-and-independent-retry-chrome-defeat.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-real-defeat-seed-31--f2131--loss-and-independent-retry-chrome-defeat.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-real-defeat-seed-59--ff6a4--loss-and-independent-retry-chrome-defeat.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-real-defeat-seed-83--f7c0c--loss-and-independent-retry-edge-defeat.png",
+    "artifacts/G4/screenshots/final-e8a956e-g4-G4-real-defeat-seed-97--dbe6d--loss-and-independent-retry-edge-defeat.png"
+  ],
+  "sessions": [
+    "artifacts/G4/sessions/final-e8a956e-g4-G4-complete-browser-see-02880-tence-and-clean-seed-replay-edge-win.json",
+    "artifacts/G4/sessions/final-e8a956e-g4-G4-complete-browser-see-0417b-tence-and-clean-seed-replay-edge-win.json",
+    "artifacts/G4/sessions/final-e8a956e-g4-G4-complete-browser-see-0d5ed-tence-and-clean-seed-replay-chrome-win.json",
+    "artifacts/G4/sessions/final-e8a956e-g4-G4-complete-browser-see-64e8f-tence-and-clean-seed-replay-edge-win.json",
+    "artifacts/G4/sessions/final-e8a956e-g4-G4-complete-browser-see-9818f-tence-and-clean-seed-replay-chrome-win.json",
+    "artifacts/G4/sessions/final-e8a956e-g4-G4-complete-browser-see-a29a1-tence-and-clean-seed-replay-chrome-win.json",
+    "artifacts/G4/sessions/final-e8a956e-g4-G4-complete-browser-see-afaac-tence-and-clean-seed-replay-edge-win.json",
+    "artifacts/G4/sessions/final-e8a956e-g4-G4-complete-browser-see-ba143-tence-and-clean-seed-replay-chrome-win.json",
+    "artifacts/G4/sessions/final-e8a956e-g4-G4-complete-browser-see-fd2e9-tence-and-clean-seed-replay-chrome-win.json",
+    "artifacts/G4/sessions/final-e8a956e-g4-G4-complete-browser-see-ffc25-tence-and-clean-seed-replay-edge-win.json",
+    "artifacts/G4/sessions/final-e8a956e-g4-G4-real-defeat-seed-17--5d374--loss-and-independent-retry-chrome-defeat.json",
+    "artifacts/G4/sessions/final-e8a956e-g4-G4-real-defeat-seed-31--f2131--loss-and-independent-retry-chrome-defeat.json",
+    "artifacts/G4/sessions/final-e8a956e-g4-G4-real-defeat-seed-59--ff6a4--loss-and-independent-retry-chrome-defeat.json",
+    "artifacts/G4/sessions/final-e8a956e-g4-G4-real-defeat-seed-83--f7c0c--loss-and-independent-retry-edge-defeat.json",
+    "artifacts/G4/sessions/final-e8a956e-g4-G4-real-defeat-seed-97--dbe6d--loss-and-independent-retry-edge-defeat.json"
+  ],
+  "provenance": "Browser cases use actual keyboard and mouse inputs with read-only diagnostics. Unit fixtures are separate system tests. Human playtests have not been performed.",
+  "limitations": [
+    "Physical OS blur/minimize and real browser Ctrl+/- zoom remain unverified.",
+    "No claim of human comprehension, enjoyment, or retention is made."
+  ]
+}

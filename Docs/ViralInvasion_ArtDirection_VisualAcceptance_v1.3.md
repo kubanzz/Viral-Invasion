@@ -192,3 +192,78 @@ G1沿用同一3/4投影、接地锚点与Y排序，扩展暖红组织纹理、�
 VIS08技术审阅通过：`artifacts/G2/screenshots/` 共18张真实游戏图，包含Chrome/Edge同场before/warning/after三状态；summary中的 `g2-evolution-frames` 保存原始快照。独立QA已查看：未变异普通形态→8秒能力/代价/反制预警→晶壳精英结晶外形/扫描显形，构筑与器官风险仍可见。两浏览器RUN06实际合法共振+连锁3跳、研究替换后显影+灯塔优先标记攻击的图与事件一致；无真人辨识结论。
 
 最终90/90单测；24唯一浏览器用例最终通过（原24整轮22过2失败，再精确运动计量补测2/2），原失败与lineage见artifacts/G2，不写成单次24全绿。草案Tab/Esc/操作指南返回及synthetic blur保持同draft/时钟/配装，明确不是原生OS失焦。G1原生失焦/缩放、G4规则同帧对照/压力帧率与五人盲测限制保留；技术图像不能证明玩家愿意复玩。
+
+## 13. G3 v0.4.0 技术实施登记 · 2026-10-27
+
+G3 的构建来源与采集记录见 `artifacts/G3/verification-summary.json`：`sourceCommit=24012e4`，发行 `game.js` SHA-256 为 `e46c7626081a1be9669ad8fcf54981e4ad2469186d7ed4d90f9e32eaa176df24`。这是归档构建标识，不能用采集时已进入 G4 的工作区 HEAD 代替。139/139 单测通过；32 个唯一浏览器用例最终通过。首轮整测为 **27 通过、5 失败**，`e2e-first-full.json` 与 `e2e-report.json` 保留该轮原始结果；随后两份精确补测报告的 5 个失败项全部通过，32项最终解析结果在 `verification-summary.json`。不将该过程写成一次整轮 32 项全绿。
+
+| 条目 | 实现与实际证据 | 技术结论及边界 |
+|---|---|---|
+| VIS-09 心肺差异 | 心脏保持暖红肌理、瓣膜和定向冲流；肺部独立绘制肺泡囊、分岔气道、半透明膜及肺泡障碍。两器官使用同一相机、角色比例和接地排序。`lungVisuals.ts` 的地面箭头直接调用实际 `lungFlowDirection`，吸气聚拢、呼气分散，关闭气道会停止实际位移和传播。最终图见 `artifacts/G3/screenshots/final-*`。 | **技术子项通过**。同窗口心肺实机图和实际开关气道、返回原器官的输入/事件证据共同支持器官差异；真人“不看名称辨认器官”尚未执行。 |
+| 几何与危险可视化 | `activeWorld(state)` 同时供应移动、射线、障碍实体、阴影、前景淡化和冲流裁剪。母巢按本次真实 `combat.attack` 绘制晶壳扇区、裂殖定点圆、组织侵蚀和两个有限分裂落点；当前特性、真实破绽与核膜保护线在 HUD 显示。`coreVisuals.test.ts` 4 项检查扇形角度/射程、当前世界遮挡和三类圆形/落点半径；另有 `organRules.test.ts`、`campaign.test.ts`、`motherCore.test.ts`。 | 实机中玩家、落点圈、组织十字与母巢状态可同时读取。晶壳、裂殖、潜伏仍有形态与文字信号。母巢附近的本体标签、倒数与背后肺门文字略密，登记为可读性改进项，不能外推为所有密集场景均已清楚。 |
+| 迁移与完整局 HUD | 顶中迁移卡显示真实 12 秒倒数、装置位置限制、2 秒封锁进度和追击拦截状态；与母巢栏互斥。右下器官图显示激活状态、完整度及离场损伤。肺部 HUD 改为呼吸/气道状态；目标使用中文特性名称、真实跨器官源计数。提前关闭心脏隔离闸会自动封堵迁移，其心脏滞留后果已写入提示与帮助。 | 1366×768 的最终图技术审阅未发现 HUD 遮住玩家、实际落点或十字组织。首轮测试中的失败与后续补测分开记录；只以最终 `final-*` 图及对应报告说明已修正路径。 |
+
+代表性最终实机图：
+
+- [心脏迁移预警](../artifacts/G3/screenshots/final-g3-rerun-chrome-g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-chrome-migration-warning.png)
+- [肺部首次抵达](../artifacts/G3/screenshots/final-g3-rerun-chrome-g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-chrome-lung-first-arrival.png)
+- [母巢潜伏阶段](../artifacts/G3/screenshots/final-g3-rerun-chrome-g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-chrome-mother-MIMIC.png)
+- [Edge 肺部有源压力后返回心脏](../artifacts/G3/screenshots/final-g3-rerun-edge-g3-G3-180-seconds-under-a--20258-es-repair-and-legal-retreat-edge-retreated-heart.png)
+
+以上是实际游戏运行截图，来源为浏览器合法键鼠输入，没有写实体、耐久或阶段来伪造通关。单张图片仅证明对应时刻的画面；气流位移、开关代价、迁移抉择、180 秒有源肺部压力与合法撤离等行为结论以对应浏览器报告、快照和事件为依据。
+
+## 14. G4 v0.5.0 技术记录 · 2026-10-27（技术证据已补记；真人门槛未关闭）
+
+### 14.1 构建和证据必须分代
+
+1. **G4 功能包**：`artifacts/G4/verification-functional-first.json` 记录 `sourceCommit=64d45dd`，发行 `game.js` SHA-256 为 `13a86c667381bd27d7b794283a0136852c108bbaaef029e34810b972fa86a41e`。163/163 单测；`artifacts/g4-browser-report.json` 为 17 项通过、15 项按浏览器项目分配跳过，覆盖 10 个不同胜利种子、5 个不同真实失败与独立重试种子，以及两浏览器存储异常回退。跳过项未计入执行覆盖。该包的实机图归档于 `artifacts/G4/screenshots/`。
+2. **结算复盘修复包**：`d24d074` / `game.js` SHA-256 `ea12b8ce311a905480238f1e5e88da65aee4700f4c2d1691c7fa3e6f9e336a76` 将附加复盘改成默认折叠的原生 `details.profile-recap`，保留结果页原有实际建议常显，并加宽/压缩结果面板。相对功能包的差异为结算结构与 CSS。修复后 Chrome seed 1 重新完整胜利，另验证 summary 首屏可见、默认折叠、实际展开与档案入口，记录见 `artifacts/g4-layout-rerun.json` 和 `artifacts/g4-layout-rerun/`。下述第一轮 10 分钟性能和同 tick 派生渲染的原始快照均来自这一代。
+3. **长局提示修复后的最终候选包**：源码补修 `e8a956e`，发行 `game.js` SHA-256 为 `b44cc8b615093f5204604bf8c98d7e25659328669ef79102dc97cd5b6de9e16c`。本次密集双协议和实际效果图均以该包正式离线入口采集；采集时 Git HEAD 为 `82f9689`，不能用该 HEAD 代替 bundle 哈希。该包10分钟帧率、同tick派生渲染及独立CDP趋势审查已完成，见14.4；内存结论保留后段平台、早期低点抬升和非RSS的适用范围。
+
+前述三分辨率核心战截图属于功能包；结算修复图属于后续修复包；密集双协议图属于最终候选包。即使游戏规则和相机相同，也不得将旧图标注为新包截图，或把两次运行写成同帧 A/B。构建哈希和各次报告保留各自来源。
+
+最终b44包已重新完成17项G4病例，并重采三种尺寸核心图、结算与档案；新图在 `artifacts/G4/screenshots/final-e8a956e-*`，与旧功能图分开。该包随后32项既有阶段回归首轮全过，新增图前缀为 `base-e8a956e-*`；分批浏览器总53通过/15项目分配skip，不把新图覆盖旧图或跳过项当通过。
+
+### 14.2 VIS-10 至 VIS-12 当前状态
+
+| 条目 | 当前证据 | 状态与未验证边界 |
+|---|---|---|
+| VIS-10 多分辨率 HUD | 功能包 seed 1 的 `core.png`（1920×1080）、`core-1366.png`（1366×768）、`core-compact.png`（紧凑窗口）位于 `artifacts/G4/screenshots/g4-G4-complete-browser-see-ba143-tence-and-clean-seed-replay-chrome-*`。已逐图审阅：玩家、实际分裂落点、弱点和组织十字保持可见；紧凑布局的左右侧栏、成长栏和工具栏未相互覆盖。 | **已列窗口的技术布局子项通过**。这组证据来自 CSS viewport 调整，不能代替实际浏览器 Ctrl+/- 缩放或真人阅读速度测试，也不能扩展为任意窗口均通过。 |
+| 结算与局外档案 | 功能包档案图的三种变异卡、未知项、记录统计、关闭/返回控件完整。旧结算第一屏的附加复盘标题曾被下缘切半；修复包 [result-collapsed.png](../artifacts/g4-layout-rerun/g4-G4-complete-browser-see-ba143-tence-and-clean-seed-replay-chrome/result-collapsed.png) 已目检：1366×768 下原建议、主要操作和“展开病例复盘：抗体路线与下次战术”完整可见。展开与打开档案由该次实际浏览器断言验证。 | 原 P2 首屏裁切问题已修复。附加内容的滚动发生在用户主动展开之后。母巢本体/肺门标签略密的改进项仍保留。 |
+| VIS-11 最终包密集双协议 | `artifacts/g4-density-protocols/seed-1-chrome-rerun-1/` 的标准/低特效图，两张截图前后括号均为 24 活体、双源存活、真实共振+连锁配装及前景遮挡；两模式起始 tick 相差 23。另有真实协议命中效果图。 | **所列技术子项通过**。这是持续运行同局的画质对照，不是同 tick/同状态 A/B；装备与实际效果分开记录，不能据此单独证明伤害判定一致或真人密集辨识通过。 |
+| VIS-11 旧轮同 tick 派生渲染 | `artifacts/G4/render-invariance/report.json`：来自旧修复包实机只读快照的 24 活体、tick 4617，普通/低特效各 12 帧；每次绘制前后完整 JSON、HP、伤害记录和碰撞几何指纹不变。 | **旧轮渲染不修改状态的技术子项通过**。使用实际 Renderer 的独立派生 fixture，固定快照绘制且没有推进 GameSession；图片仅 Canvas，无 HUD。不是最终包的实时同输入复局，也不是帧率或真人理解证据。 |
+| VIS-11 第一轮性能 | `artifacts/G4/performance/report.json`：旧 `d24d074` / `ea12b8…` 包，604.18 秒有效模拟、最大 24 活体；标准 59.98485 FPS、低特效 60.00120 FPS，两者帧时间 p95 均为 16.8 ms。 | **旧包已测场景的帧率子项通过**。本机 headless 心脏场景且未装备多协议，不能外推全部设备。`performance.memory` 恒为 10,000,000 字节，不能证明真实堆大小稳定或无泄漏；该旧接口数据与最终轮 CDP 测量分开记录。 |
+| VIS-11 最终包同 tick 派生渲染 | `artifacts/G4/render-invariance-final/report.json`：最终包本轮真实快照 tick 4624、24 活体，普通/低特效各 12 帧；完整状态、HP、伤害记录和碰撞几何不变，18/18 manifest 源码指纹与当前文件逐项匹配。 | **最终轮渲染不修改状态的技术子项通过**。新两图已分别目检；仍是独立派生 fixture 的 Canvas 图，无 HUD，不是实时同输入复局或真人辨识证据。 |
+| VIS-11 最终包 10 分钟帧率 | `artifacts/G4/performance-final/report.json`：`b44cc8…` 包，604.48 秒有效模拟、最大 24 活体；标准 59.97507 FPS、低特效 60.00121 FPS，两者 p95 均为 16.8 ms，页面错误和远程请求均为 0。 | **最终包已测场景的帧率子项通过**。本机 headless 心脏密集场景，未装备协议；独立于先前双协议截图。CDP独立审查见14.4，不作全程内存恒定或无泄漏证明。 |
+| VIS-12 新玩家视觉辨识 | 真人盲测原始记录仍为 **0 / 5**。 | **未执行**。代理审阅、自动通关、代码派生剪影和性能测试均不计为首玩者样本。 |
+
+修复包的默认折叠结果已再次用实际截图审阅；功能包中的 1920/1366/紧凑核心图也已分别审阅。单张档案或结果图未覆盖声音/特效控件的所有入口，相关可达性依各次实际浏览器操作记录，不能只靠这些静态图补记通过。
+
+### 14.3 密集协议、实际效果与派生检查的证据边界
+
+最终包密集采集脚本为 `scripts/capture-g4-density-protocols.mjs`，命令使用 `--seed 1 --capture-effects`。新离线上下文以正式 `file://` 入口和 `?seed=1` 启动，Chrome headless、1366×768、DPR 1。实际键鼠完成普通体净化、首次变异诊断、经验草案和样本研究，合法装入均衡共振裂解与均衡连锁净化；保留两感染源，持续修复等待自然增殖。没有注入时钟、写入 HP/装备/实体，也没有移除遮挡 UI。`density-evidence.json` 保存 bundle 哈希、输入、事件、取样和截图前后快照。
+
+- [标准特效密集实机图](../artifacts/g4-density-protocols/seed-1-chrome-rerun-1/dense-standard.png)：快照括号 tick 4821–4835，前后均 24 活体、前景遮挡 `true`；两感染源均为 238 HP。
+- [低特效密集实机图](../artifacts/g4-density-protocols/seed-1-chrome-rerun-1/dense-low.png)：通过实际 Esc→特效切换→继续采集，括号 tick 4844–4857，前后同样为 24 活体、双源和前景遮挡。相对标准图起始 tick 晚 23 步，期间组织仍会受伤；不得称为同帧不变性验证。
+- [后续真实协议效果图](../artifacts/g4-density-protocols/seed-1-chrome-rerun-1/effects-live.png)：同局完成密集对照后，以实际 WASD 接近节律装置，并在真实冲流相位用工具 2 攻击聚集群。tick 5168 记录 **10 条 `PROTOCOL_RESONANCE_HIT` 与 26 条 `PROTOCOL_CHAIN_HIT`**，图片括号 tick 5171–5185、前后 **3 活体**。事件证明该次合法输入实际触发两类协议，图中仍可见壳片/连锁序号；此图属于后续低特效战斗，不能冒充 24 体特效叠加 A/B。装备记录本身不作为效果发生的证明。
+
+三张图已逐图技术审阅，页面错误、控制台错误和远程请求均为 0。玩家与必要 HUD 保持可见，但聚集单位存在互相覆盖，不能据活体计数声称 24 个单位均可独立辨识。首轮失败保留在 `artifacts/g4-density-protocols/seed-1-chrome/`：战斗按住鼠标跨越草案出现帧，释放时误选卡片，随后意图选择的按钮已消失并超时；最大 17 活体，仅装备连锁。采集脚本修正为移到视口空角后释放、重新只读取草案并等待选择生效，新目录重跑成功。失败图与日志不删除，也不计入通过。
+
+旧轮同 tick 图来自独立 [render-invariance 报告](../artifacts/G4/render-invariance/report.json) 与 `same-tick-normal.png` / `same-tick-low.png`，使用第一轮性能的 `dense-state.json`（旧 `d24d074` / `ea12b8…` 包，tick 4617）。实际 Renderer 对原快照及两份独立克隆重复绘制，普通/低特效各 12 帧；完整状态等值与指纹不变只说明这些绘制调用没有修改模拟状态。当前 `src/render/*` 与旧报告中的指纹一致；完整 18 文件 manifest 中 17 项一致，`src/game/types.ts` 因新增展示用 `MessagePriority`、`TacticalRecord` 和可选状态字段不同，不能把旧轮全部 manifest 写成未变，也不能将旧 fixture 标为最终 bundle 实机图。
+
+第一轮性能报告的设备为 Windows / i7-10700K / Chrome 155 headless，合法修复/Q 输入、离线入口，原始帧时间保存在 `frame-times.json`。固定10MB的接口读数不能作为真实堆测量；最终候选包的帧率和CDP审查以下另记，不与旧轮混用。
+
+### 14.4 最终包帧率与新同 tick 派生渲染 · 2026-10-27
+
+[performance-final/report.json](../artifacts/G4/performance-final/report.json) 的发行脚本哈希精确匹配 `b44cc8b615093f5204604bf8c98d7e25659328669ef79102dc97cd5b6de9e16c`。本机 Windows / i7-10700K / Chrome 155 headless，1366×768、DPR 1、正式离线入口和合法 DOM 键鼠运行；墙钟 604.775 秒、有效模拟 604.4833 秒，最大 24 活体。标准模式平均 **59.9750695 FPS**、低特效 **60.0012143 FPS**，两者帧时间 p95 均 **16.8 ms**；最大单帧分别为 100 ms 与 16.9 ms。页面错误和远程请求均为 0，原始帧时间保留在同目录 `frame-times.json`。该测量覆盖本机心脏压力路线，未装备协议，不能据此证明其他硬件、所有关卡或多协议压力均达预算。
+
+本轮 [render-invariance-final/report.json](../artifacts/G4/render-invariance-final/report.json) 读取 `performance-final/dense-state.json`，快照 SHA-256 为 `5abfca3c48e33b7795b1cb7ebd5e70e97c34b54bc9e01d6369e0d05282d280a0`；来源为 seed 130026 的实际心脏运行，tick **4624**、77.0667 秒、24 活体。普通/低特效各绘制 **12 帧**，对原快照和两份独立克隆的完整 JSON、HP、伤害记录与碰撞几何指纹逐次检查均不变，原输入快照亦未修改。独立只读逐项复核报告 manifest 的 **18/18** 文件与当前源码一致，manifest SHA-256 为 `6e8d0365cca979de3c683b92780d1285f6c8e7fceb6f5a1387f63721a1a3360f`。本轮无页面错误或远程请求。
+
+- [最终快照普通特效派生图](../artifacts/G4/render-invariance-final/same-tick-normal.png)
+- [最终快照低特效派生图](../artifacts/G4/render-invariance-final/same-tick-low.png)
+
+两张新图已分别目检：玩家、前景淡化、组织十字、感染源、晶壳轮廓及装置位置保持可读。聚集感染体仍有互相覆盖，不把 24 体计数等同于每体都可辨。两图由实际 Renderer 导入独立 fixture 后在固定 tick 绘制，仅包含 Canvas backing store、无实时 HUD，也没有推进 `GameSession.step()`；因此只支持“渲染调用不改变这些模拟状态”的技术结论，不能代替实时同输入普通/低特效复局、致命警示全场景验收或真人观察。实时 24 体双协议截图与本轮无协议派生图保持各自来源。
+
+**最终轮 CDP 堆趋势已独立复核**，见 [memory-review.json](../artifacts/G4/performance-final/memory-review.json) 与 [堆计数曲线](../artifacts/G4/performance-final/heap-counters.png)。119次精确采样、无强制GC；第7–10分钟used最低值8106448/8099628/8021152/8036664字节，后段进入平台，后240秒有23次下降。早期120–180秒至末分钟的used低点仍抬升4182068字节、中位抬升665016字节，原因未确定；不能称全程内存恒定或已证明无泄漏。四项CDP计数不是进程RSS，不能相加；旧轮固定10MB接口值不参与本轮结论。曲线由原始采样经Matplotlib绘制，没有平滑或删除异常点。
+
+真实 OS 失焦/最小化与实际浏览器 Ctrl+/- 缩放仍保留未验证。观察到的高速脚本胜利（例如 seed 1 结果约 57 秒）证明该条合法路径可以完成，不证明 10–15 分钟首玩节奏、玩家是否理解反制、是否愿意复玩或商业孵化价值。上述判断仍需独立的真人原始观察。
