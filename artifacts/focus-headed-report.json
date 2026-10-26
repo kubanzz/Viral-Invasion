@@ -1,0 +1,311 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--headed",
+      "--grep",
+      "focus loss",
+      "--output",
+      "artifacts/focus-headed-results",
+      "--reporter",
+      "json"
+    ],
+    "configFile": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\playwright.config.ts",
+    "rootDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/focus-headed-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chrome",
+        "name": "chrome",
+        "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/focus-headed-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "edge",
+        "name": "edge",
+        "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\focus-headed-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "chrome",
+        "testDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
+        "snapshotDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 90000,
+        "use": {
+          "browserName": "chromium",
+          "headless": false,
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "deviceScaleFactor": 1,
+          "actionTimeout": 8000,
+          "screenshot": "only-on-failure",
+          "video": {
+            "mode": "on",
+            "size": {
+              "width": 1366,
+              "height": 768
+            }
+          },
+          "trace": "retain-on-failure",
+          "channel": "chrome"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "chrome"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\focus-headed-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "edge",
+        "testDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
+        "snapshotDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 90000,
+        "use": {
+          "browserName": "chromium",
+          "headless": false,
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "deviceScaleFactor": 1,
+          "actionTimeout": 8000,
+          "screenshot": "only-on-failure",
+          "video": {
+            "mode": "on",
+            "size": {
+              "width": 1366,
+              "height": 768
+            }
+          },
+          "trace": "retain-on-failure",
+          "channel": "msedge"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "edge"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "g0.spec.ts",
+      "file": "g0.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "focus loss clears movement and does not catch up background time; provenance recorded",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [
+                {
+                  "type": "focus-provenance",
+                  "description": "Headless tab switch did not emit blur/hidden. Used a synthetic window blur event; real OS focus loss remains manual."
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3979,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T13:06:08.677Z",
+                  "annotations": [
+                    {
+                      "type": "focus-provenance",
+                      "description": "Headless tab switch did not emit blur/hidden. Used a synthetic window blur event; real OS focus loss remains manual."
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "focus-test-provenance",
+                      "contentType": "application/json",
+                      "body": "ewogICJhY3R1YWxGb2N1c0xvc3MiOiBmYWxzZSwKICAibWV0aG9kIjogInN5bnRoZXRpYy13aW5kb3ctYmx1ci1mYWxsYmFjayIsCiAgInBhdXNlZCI6IHsKICAgICJnYW1lIjogInZpcmFsLWludmFzaW9uIiwKICAgICJzY2hlbWFWZXJzaW9uIjogMSwKICAgICJzZWVkIjogMTMwMDI2LAogICAgInBoYXNlIjogInBhdXNlZCIsCiAgICAidGljayI6IDM5LAogICAgImVsYXBzZWQiOiAwLjY1LAogICAgInBsYXllciI6IHsKICAgICAgIngiOiA0NTkuMjUwMDAwMDAwMDAwNiwKICAgICAgInkiOiA0NDAsCiAgICAgICJocCI6IDEwMCwKICAgICAgInJhZGl1cyI6IDE5LAogICAgICAiZmFjaW5nIjogLTAuMTU5OTEzMTIzMTU4MjIwMDcsCiAgICAgICJtb3ZpbmciOiBmYWxzZSwKICAgICAgImRhc2hVbnRpbCI6IDAsCiAgICAgICJkYXNoUmVhZHkiOiAwLAogICAgICAiaHVydFVudGlsIjogMCwKICAgICAgImFjdGlvblVudGlsIjogMAogICAgfSwKICAgICJ0YXJnZXRzIjogWwogICAgICB7CiAgICAgICAgImlkIjogInNpbmdsZS0xIiwKICAgICAgICAia2luZCI6ICJzaW5nbGUiLAogICAgICAgICJ4IjogNTkyLAogICAgICAgICJ5IjogMzI5LAogICAgICAgICJyYWRpdXMiOiAyNSwKICAgICAgICAiaHAiOiAxMDAsCiAgICAgICAgIm1heEhwIjogMTAwLAogICAgICAgICJoaXRVbnRpbCI6IDAsCiAgICAgICAgInNjYW5uZWQiOiBmYWxzZQogICAgICB9LAogICAgICB7CiAgICAgICAgImlkIjogImNsdXN0ZXItMSIsCiAgICAgICAgImtpbmQiOiAiY2x1c3RlciIsCiAgICAgICAgIngiOiA4MjgsCiAgICAgICAgInkiOiAzOTMsCiAgICAgICAgInJhZGl1cyI6IDIxLAogICAgICAgICJocCI6IDYwLAogICAgICAgICJtYXhIcCI6IDYwLAogICAgICAgICJoaXRVbnRpbCI6IDAsCiAgICAgICAgInNjYW5uZWQiOiBmYWxzZQogICAgICB9LAogICAgICB7CiAgICAgICAgImlkIjogImNsdXN0ZXItMiIsCiAgICAgICAgImtpbmQiOiAiY2x1c3RlciIsCiAgICAgICAgIngiOiA4NzQsCiAgICAgICAgInkiOiA0MjYsCiAgICAgICAgInJhZGl1cyI6IDIxLAogICAgICAgICJocCI6IDYwLAogICAgICAgICJtYXhIcCI6IDYwLAogICAgICAgICJoaXRVbnRpbCI6IDAsCiAgICAgICAgInNjYW5uZWQiOiBmYWxzZQogICAgICB9LAogICAgICB7CiAgICAgICAgImlkIjogImNsdXN0ZXItMyIsCiAgICAgICAgImtpbmQiOiAiY2x1c3RlciIsCiAgICAgICAgIngiOiA4MDksCiAgICAgICAgInkiOiA0NjEsCiAgICAgICAgInJhZGl1cyI6IDIxLAogICAgICAgICJocCI6IDYwLAogICAgICAgICJtYXhIcCI6IDYwLAogICAgICAgICJoaXRVbnRpbCI6IDAsCiAgICAgICAgInNjYW5uZWQiOiBmYWxzZQogICAgICB9CiAgICBdLAogICAgInRpc3N1ZSI6IHsKICAgICAgIngiOiA3ODAsCiAgICAgICJ5IjogNjEwLAogICAgICAiaHAiOiAyNSwKICAgICAgIm1heEhwIjogMTAwLAogICAgICAicmFkaXVzIjogNDMKICAgIH0sCiAgICAidGVybWluYWwiOiB7CiAgICAgICJ4IjogMzQwLAogICAgICAieSI6IDYxMAogICAgfSwKICAgICJ0b29sIjogMSwKICAgICJjb29sZG93bnMiOiB7CiAgICAgICIxIjogMCwKICAgICAgIjIiOiAwLAogICAgICAiMyI6IDAKICAgIH0sCiAgICAic2NhblJlYWR5IjogMCwKICAgICJzY2FuVW50aWwiOiAwLAogICAgImVmZmVjdHMiOiBbXSwKICAgICJldmVudHMiOiBbCiAgICAgIHsKICAgICAgICAidHlwZSI6ICJSVU5fU1RBUlRFRCIsCiAgICAgICAgInRpY2siOiAwLAogICAgICAgICJkYXRhIjogewogICAgICAgICAgInNlZWQiOiAxMzAwMjYsCiAgICAgICAgICAibW9kZSI6ICJ0cmFpbmluZyIsCiAgICAgICAgICAic3RhcnRBdFRpY2siOiAwCiAgICAgICAgfQogICAgICB9LAogICAgICB7CiAgICAgICAgInR5cGUiOiAiUlVOX1BBVVNFRCIsCiAgICAgICAgInRpY2siOiAzOSwKICAgICAgICAiZGF0YSI6IHt9CiAgICAgIH0KICAgIF0sCiAgICAibWVzc2FnZSI6ICLlhYjlh4DljJbkuKTnsbvpnbbmoIfvvIzlho3kv67lpI3lj5fmjZ/nu4Tnu4fjgIIiLAogICAgIm1lc3NhZ2VVbnRpbCI6IDgsCiAgICAic2hvdHMiOiAwLAogICAgImhpdHMiOiAwLAogICAgInNjYW5zIjogMCwKICAgICJkYXNoZXMiOiAwLAogICAgInJlc3VsdCI6IG51bGwKICB9LAogICJyZXN1bWVkIjogewogICAgImdhbWUiOiAidmlyYWwtaW52YXNpb24iLAogICAgInNjaGVtYVZlcnNpb24iOiAxLAogICAgInNlZWQiOiAxMzAwMjYsCiAgICAicGhhc2UiOiAicGxheWluZyIsCiAgICAidGljayI6IDU2LAogICAgImVsYXBzZWQiOiAwLjkzMzMzMzMzMzMzMzMzMzMsCiAgICAicGxheWVyIjogewogICAgICAieCI6IDQ1OS4yNTAwMDAwMDAwMDA2LAogICAgICAieSI6IDQ0MCwKICAgICAgImhwIjogMTAwLAogICAgICAicmFkaXVzIjogMTksCiAgICAgICJmYWNpbmciOiAtMC4xNjQyODQ0NTYzODkxNDYwNCwKICAgICAgIm1vdmluZyI6IGZhbHNlLAogICAgICAiZGFzaFVudGlsIjogMCwKICAgICAgImRhc2hSZWFkeSI6IDAsCiAgICAgICJodXJ0VW50aWwiOiAwLAogICAgICAiYWN0aW9uVW50aWwiOiAwCiAgICB9LAogICAgInRhcmdldHMiOiBbCiAgICAgIHsKICAgICAgICAiaWQiOiAic2luZ2xlLTEiLAogICAgICAgICJraW5kIjogInNpbmdsZSIsCiAgICAgICAgIngiOiA1OTIsCiAgICAgICAgInkiOiAzMjksCiAgICAgICAgInJhZGl1cyI6IDI1LAogICAgICAgICJocCI6IDEwMCwKICAgICAgICAibWF4SHAiOiAxMDAsCiAgICAgICAgImhpdFVudGlsIjogMCwKICAgICAgICAic2Nhbm5lZCI6IGZhbHNlCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAiaWQiOiAiY2x1c3Rlci0xIiwKICAgICAgICAia2luZCI6ICJjbHVzdGVyIiwKICAgICAgICAieCI6IDgyOCwKICAgICAgICAieSI6IDM5MywKICAgICAgICAicmFkaXVzIjogMjEsCiAgICAgICAgImhwIjogNjAsCiAgICAgICAgIm1heEhwIjogNjAsCiAgICAgICAgImhpdFVudGlsIjogMCwKICAgICAgICAic2Nhbm5lZCI6IGZhbHNlCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAiaWQiOiAiY2x1c3Rlci0yIiwKICAgICAgICAia2luZCI6ICJjbHVzdGVyIiwKICAgICAgICAieCI6IDg3NCwKICAgICAgICAieSI6IDQyNiwKICAgICAgICAicmFkaXVzIjogMjEsCiAgICAgICAgImhwIjogNjAsCiAgICAgICAgIm1heEhwIjogNjAsCiAgICAgICAgImhpdFVudGlsIjogMCwKICAgICAgICAic2Nhbm5lZCI6IGZhbHNlCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAiaWQiOiAiY2x1c3Rlci0zIiwKICAgICAgICAia2luZCI6ICJjbHVzdGVyIiwKICAgICAgICAieCI6IDgwOSwKICAgICAgICAieSI6IDQ2MSwKICAgICAgICAicmFkaXVzIjogMjEsCiAgICAgICAgImhwIjogNjAsCiAgICAgICAgIm1heEhwIjogNjAsCiAgICAgICAgImhpdFVudGlsIjogMCwKICAgICAgICAic2Nhbm5lZCI6IGZhbHNlCiAgICAgIH0KICAgIF0sCiAgICAidGlzc3VlIjogewogICAgICAieCI6IDc4MCwKICAgICAgInkiOiA2MTAsCiAgICAgICJocCI6IDI1LAogICAgICAibWF4SHAiOiAxMDAsCiAgICAgICJyYWRpdXMiOiA0MwogICAgfSwKICAgICJ0ZXJtaW5hbCI6IHsKICAgICAgIngiOiAzNDAsCiAgICAgICJ5IjogNjEwCiAgICB9LAogICAgInRvb2wiOiAxLAogICAgImNvb2xkb3ducyI6IHsKICAgICAgIjEiOiAwLAogICAgICAiMiI6IDAsCiAgICAgICIzIjogMAogICAgfSwKICAgICJzY2FuUmVhZHkiOiAwLAogICAgInNjYW5VbnRpbCI6IDAsCiAgICAiZWZmZWN0cyI6IFtdLAogICAgImV2ZW50cyI6IFsKICAgICAgewogICAgICAgICJ0eXBlIjogIlJVTl9TVEFSVEVEIiwKICAgICAgICAidGljayI6IDAsCiAgICAgICAgImRhdGEiOiB7CiAgICAgICAgICAic2VlZCI6IDEzMDAyNiwKICAgICAgICAgICJtb2RlIjogInRyYWluaW5nIiwKICAgICAgICAgICJzdGFydEF0VGljayI6IDAKICAgICAgICB9CiAgICAgIH0sCiAgICAgIHsKICAgICAgICAidHlwZSI6ICJSVU5fUEFVU0VEIiwKICAgICAgICAidGljayI6IDM5LAogICAgICAgICJkYXRhIjoge30KICAgICAgfSwKICAgICAgewogICAgICAgICJ0eXBlIjogIlJVTl9SRVNVTUVEIiwKICAgICAgICAidGljayI6IDM5LAogICAgICAgICJkYXRhIjoge30KICAgICAgfQogICAgXSwKICAgICJtZXNzYWdlIjogIuWFiOWHgOWMluS4pOexu+mdtuagh++8jOWGjeS/ruWkjeWPl+aNn+e7hOe7h+OAgiIsCiAgICAibWVzc2FnZVVudGlsIjogOCwKICAgICJzaG90cyI6IDAsCiAgICAiaGl0cyI6IDAsCiAgICAic2NhbnMiOiAwLAogICAgImRhc2hlcyI6IDAsCiAgICAicmVzdWx0IjogbnVsbAogIH0KfQ=="
+                    },
+                    {
+                      "name": "offline-network-and-console",
+                      "contentType": "application/json",
+                      "body": "ewogICJyZW1vdGVSZXF1ZXN0cyI6IFtdLAogICJwYWdlRXJyb3JzIjogW10sCiAgImNvbnNvbGVFcnJvcnMiOiBbXSwKICAiYnJvd3NlclZlcnNpb24iOiAiMTU1LjAuODA1OS44NSIsCiAgIm9mZmxpbmUiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\focus-headed-results\\g0-focus-loss-clears-movem-bba76-nd-time-provenance-recorded-chrome\\video-1.webm"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\focus-headed-results\\g0-focus-loss-clears-movem-bba76-nd-time-provenance-recorded-chrome\\video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b8b2b18e158aa28071e7-0e57b44e760e7ce33454",
+          "file": "g0.spec.ts",
+          "line": 310,
+          "column": 1
+        },
+        {
+          "title": "focus loss clears movement and does not catch up background time; provenance recorded",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [
+                {
+                  "type": "focus-provenance",
+                  "description": "Headless tab switch did not emit blur/hidden. Used a synthetic window blur event; real OS focus loss remains manual."
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "edge",
+              "projectName": "edge",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3884,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T13:06:13.980Z",
+                  "annotations": [
+                    {
+                      "type": "focus-provenance",
+                      "description": "Headless tab switch did not emit blur/hidden. Used a synthetic window blur event; real OS focus loss remains manual."
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "focus-test-provenance",
+                      "contentType": "application/json",
+                      "body": "ewogICJhY3R1YWxGb2N1c0xvc3MiOiBmYWxzZSwKICAibWV0aG9kIjogInN5bnRoZXRpYy13aW5kb3ctYmx1ci1mYWxsYmFjayIsCiAgInBhdXNlZCI6IHsKICAgICJnYW1lIjogInZpcmFsLWludmFzaW9uIiwKICAgICJzY2hlbWFWZXJzaW9uIjogMSwKICAgICJzZWVkIjogMTMwMDI2LAogICAgInBoYXNlIjogInBhdXNlZCIsCiAgICAidGljayI6IDQyLAogICAgImVsYXBzZWQiOiAwLjcsCiAgICAicGxheWVyIjogewogICAgICAieCI6IDQ3MS4wMDAwMDAwMDAwMDA3LAogICAgICAieSI6IDQ0MCwKICAgICAgImhwIjogMTAwLAogICAgICAicmFkaXVzIjogMTksCiAgICAgICJmYWNpbmciOiAtMC4xNzM3Nzc5MDQ4NDQ5MzEyMiwKICAgICAgIm1vdmluZyI6IGZhbHNlLAogICAgICAiZGFzaFVudGlsIjogMCwKICAgICAgImRhc2hSZWFkeSI6IDAsCiAgICAgICJodXJ0VW50aWwiOiAwLAogICAgICAiYWN0aW9uVW50aWwiOiAwCiAgICB9LAogICAgInRhcmdldHMiOiBbCiAgICAgIHsKICAgICAgICAiaWQiOiAic2luZ2xlLTEiLAogICAgICAgICJraW5kIjogInNpbmdsZSIsCiAgICAgICAgIngiOiA1OTIsCiAgICAgICAgInkiOiAzMjksCiAgICAgICAgInJhZGl1cyI6IDI1LAogICAgICAgICJocCI6IDEwMCwKICAgICAgICAibWF4SHAiOiAxMDAsCiAgICAgICAgImhpdFVudGlsIjogMCwKICAgICAgICAic2Nhbm5lZCI6IGZhbHNlCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAiaWQiOiAiY2x1c3Rlci0xIiwKICAgICAgICAia2luZCI6ICJjbHVzdGVyIiwKICAgICAgICAieCI6IDgyOCwKICAgICAgICAieSI6IDM5MywKICAgICAgICAicmFkaXVzIjogMjEsCiAgICAgICAgImhwIjogNjAsCiAgICAgICAgIm1heEhwIjogNjAsCiAgICAgICAgImhpdFVudGlsIjogMCwKICAgICAgICAic2Nhbm5lZCI6IGZhbHNlCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAiaWQiOiAiY2x1c3Rlci0yIiwKICAgICAgICAia2luZCI6ICJjbHVzdGVyIiwKICAgICAgICAieCI6IDg3NCwKICAgICAgICAieSI6IDQyNiwKICAgICAgICAicmFkaXVzIjogMjEsCiAgICAgICAgImhwIjogNjAsCiAgICAgICAgIm1heEhwIjogNjAsCiAgICAgICAgImhpdFVudGlsIjogMCwKICAgICAgICAic2Nhbm5lZCI6IGZhbHNlCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAiaWQiOiAiY2x1c3Rlci0zIiwKICAgICAgICAia2luZCI6ICJjbHVzdGVyIiwKICAgICAgICAieCI6IDgwOSwKICAgICAgICAieSI6IDQ2MSwKICAgICAgICAicmFkaXVzIjogMjEsCiAgICAgICAgImhwIjogNjAsCiAgICAgICAgIm1heEhwIjogNjAsCiAgICAgICAgImhpdFVudGlsIjogMCwKICAgICAgICAic2Nhbm5lZCI6IGZhbHNlCiAgICAgIH0KICAgIF0sCiAgICAidGlzc3VlIjogewogICAgICAieCI6IDc4MCwKICAgICAgInkiOiA2MTAsCiAgICAgICJocCI6IDI1LAogICAgICAibWF4SHAiOiAxMDAsCiAgICAgICJyYWRpdXMiOiA0MwogICAgfSwKICAgICJ0ZXJtaW5hbCI6IHsKICAgICAgIngiOiAzNDAsCiAgICAgICJ5IjogNjEwCiAgICB9LAogICAgInRvb2wiOiAxLAogICAgImNvb2xkb3ducyI6IHsKICAgICAgIjEiOiAwLAogICAgICAiMiI6IDAsCiAgICAgICIzIjogMAogICAgfSwKICAgICJzY2FuUmVhZHkiOiAwLAogICAgInNjYW5VbnRpbCI6IDAsCiAgICAiZWZmZWN0cyI6IFtdLAogICAgImV2ZW50cyI6IFsKICAgICAgewogICAgICAgICJ0eXBlIjogIlJVTl9TVEFSVEVEIiwKICAgICAgICAidGljayI6IDAsCiAgICAgICAgImRhdGEiOiB7CiAgICAgICAgICAic2VlZCI6IDEzMDAyNiwKICAgICAgICAgICJtb2RlIjogInRyYWluaW5nIiwKICAgICAgICAgICJzdGFydEF0VGljayI6IDAKICAgICAgICB9CiAgICAgIH0sCiAgICAgIHsKICAgICAgICAidHlwZSI6ICJSVU5fUEFVU0VEIiwKICAgICAgICAidGljayI6IDQyLAogICAgICAgICJkYXRhIjoge30KICAgICAgfQogICAgXSwKICAgICJtZXNzYWdlIjogIuWFiOWHgOWMluS4pOexu+mdtuagh++8jOWGjeS/ruWkjeWPl+aNn+e7hOe7h+OAgiIsCiAgICAibWVzc2FnZVVudGlsIjogOCwKICAgICJzaG90cyI6IDAsCiAgICAiaGl0cyI6IDAsCiAgICAic2NhbnMiOiAwLAogICAgImRhc2hlcyI6IDAsCiAgICAicmVzdWx0IjogbnVsbAogIH0sCiAgInJlc3VtZWQiOiB7CiAgICAiZ2FtZSI6ICJ2aXJhbC1pbnZhc2lvbiIsCiAgICAic2NoZW1hVmVyc2lvbiI6IDEsCiAgICAic2VlZCI6IDEzMDAyNiwKICAgICJwaGFzZSI6ICJwbGF5aW5nIiwKICAgICJ0aWNrIjogNTcsCiAgICAiZWxhcHNlZCI6IDAuOTUsCiAgICAicGxheWVyIjogewogICAgICAieCI6IDQ3MS4wMDAwMDAwMDAwMDA3LAogICAgICAieSI6IDQ0MCwKICAgICAgImhwIjogMTAwLAogICAgICAicmFkaXVzIjogMTksCiAgICAgICJmYWNpbmciOiAtMC4xNzg5NDM3ODg4NzY3MjU4OCwKICAgICAgIm1vdmluZyI6IGZhbHNlLAogICAgICAiZGFzaFVudGlsIjogMCwKICAgICAgImRhc2hSZWFkeSI6IDAsCiAgICAgICJodXJ0VW50aWwiOiAwLAogICAgICAiYWN0aW9uVW50aWwiOiAwCiAgICB9LAogICAgInRhcmdldHMiOiBbCiAgICAgIHsKICAgICAgICAiaWQiOiAic2luZ2xlLTEiLAogICAgICAgICJraW5kIjogInNpbmdsZSIsCiAgICAgICAgIngiOiA1OTIsCiAgICAgICAgInkiOiAzMjksCiAgICAgICAgInJhZGl1cyI6IDI1LAogICAgICAgICJocCI6IDEwMCwKICAgICAgICAibWF4SHAiOiAxMDAsCiAgICAgICAgImhpdFVudGlsIjogMCwKICAgICAgICAic2Nhbm5lZCI6IGZhbHNlCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAiaWQiOiAiY2x1c3Rlci0xIiwKICAgICAgICAia2luZCI6ICJjbHVzdGVyIiwKICAgICAgICAieCI6IDgyOCwKICAgICAgICAieSI6IDM5MywKICAgICAgICAicmFkaXVzIjogMjEsCiAgICAgICAgImhwIjogNjAsCiAgICAgICAgIm1heEhwIjogNjAsCiAgICAgICAgImhpdFVudGlsIjogMCwKICAgICAgICAic2Nhbm5lZCI6IGZhbHNlCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAiaWQiOiAiY2x1c3Rlci0yIiwKICAgICAgICAia2luZCI6ICJjbHVzdGVyIiwKICAgICAgICAieCI6IDg3NCwKICAgICAgICAieSI6IDQyNiwKICAgICAgICAicmFkaXVzIjogMjEsCiAgICAgICAgImhwIjogNjAsCiAgICAgICAgIm1heEhwIjogNjAsCiAgICAgICAgImhpdFVudGlsIjogMCwKICAgICAgICAic2Nhbm5lZCI6IGZhbHNlCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAiaWQiOiAiY2x1c3Rlci0zIiwKICAgICAgICAia2luZCI6ICJjbHVzdGVyIiwKICAgICAgICAieCI6IDgwOSwKICAgICAgICAieSI6IDQ2MSwKICAgICAgICAicmFkaXVzIjogMjEsCiAgICAgICAgImhwIjogNjAsCiAgICAgICAgIm1heEhwIjogNjAsCiAgICAgICAgImhpdFVudGlsIjogMCwKICAgICAgICAic2Nhbm5lZCI6IGZhbHNlCiAgICAgIH0KICAgIF0sCiAgICAidGlzc3VlIjogewogICAgICAieCI6IDc4MCwKICAgICAgInkiOiA2MTAsCiAgICAgICJocCI6IDI1LAogICAgICAibWF4SHAiOiAxMDAsCiAgICAgICJyYWRpdXMiOiA0MwogICAgfSwKICAgICJ0ZXJtaW5hbCI6IHsKICAgICAgIngiOiAzNDAsCiAgICAgICJ5IjogNjEwCiAgICB9LAogICAgInRvb2wiOiAxLAogICAgImNvb2xkb3ducyI6IHsKICAgICAgIjEiOiAwLAogICAgICAiMiI6IDAsCiAgICAgICIzIjogMAogICAgfSwKICAgICJzY2FuUmVhZHkiOiAwLAogICAgInNjYW5VbnRpbCI6IDAsCiAgICAiZWZmZWN0cyI6IFtdLAogICAgImV2ZW50cyI6IFsKICAgICAgewogICAgICAgICJ0eXBlIjogIlJVTl9TVEFSVEVEIiwKICAgICAgICAidGljayI6IDAsCiAgICAgICAgImRhdGEiOiB7CiAgICAgICAgICAic2VlZCI6IDEzMDAyNiwKICAgICAgICAgICJtb2RlIjogInRyYWluaW5nIiwKICAgICAgICAgICJzdGFydEF0VGljayI6IDAKICAgICAgICB9CiAgICAgIH0sCiAgICAgIHsKICAgICAgICAidHlwZSI6ICJSVU5fUEFVU0VEIiwKICAgICAgICAidGljayI6IDQyLAogICAgICAgICJkYXRhIjoge30KICAgICAgfSwKICAgICAgewogICAgICAgICJ0eXBlIjogIlJVTl9SRVNVTUVEIiwKICAgICAgICAidGljayI6IDQyLAogICAgICAgICJkYXRhIjoge30KICAgICAgfQogICAgXSwKICAgICJtZXNzYWdlIjogIuWFiOWHgOWMluS4pOexu+mdtuagh++8jOWGjeS/ruWkjeWPl+aNn+e7hOe7h+OAgiIsCiAgICAibWVzc2FnZVVudGlsIjogOCwKICAgICJzaG90cyI6IDAsCiAgICAiaGl0cyI6IDAsCiAgICAic2NhbnMiOiAwLAogICAgImRhc2hlcyI6IDAsCiAgICAicmVzdWx0IjogbnVsbAogIH0KfQ=="
+                    },
+                    {
+                      "name": "offline-network-and-console",
+                      "contentType": "application/json",
+                      "body": "ewogICJyZW1vdGVSZXF1ZXN0cyI6IFtdLAogICJwYWdlRXJyb3JzIjogW10sCiAgImNvbnNvbGVFcnJvcnMiOiBbXSwKICAiYnJvd3NlclZlcnNpb24iOiAiMTU2LjAuNDMxNC40MiIsCiAgIm9mZmxpbmUiOiB0cnVlCn0="
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\focus-headed-results\\g0-focus-loss-clears-movem-bba76-nd-time-provenance-recorded-edge\\video-1.webm"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\focus-headed-results\\g0-focus-loss-clears-movem-bba76-nd-time-provenance-recorded-edge\\video.webm"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b8b2b18e158aa28071e7-172d3c498ac943888709",
+          "file": "g0.spec.ts",
+          "line": 310,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-26T13:06:08.050Z",
+    "duration": 10735.068000000001,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "date": "2026-10-26",
+  "codeCommit": "5cf55e1c0817cdeadf8b00274d06ea0f2d694bc6",
+  "branch": "dev-zbj",
+  "workspace": ".clean-check",
+  "method": "git clone --no-hardlinks --branch dev-zbj . .clean-check",
+  "node": "v24.19.0",
+  "npm": "11.6.2",
+  "commands": [
+    {
+      "command": "npm ci",
+      "exitCode": 0
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0
+    },
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "passed": 26,
+      "failed": 0
+    },
+    {
+      "command": "npm.cmd run dev -- --port 5174",
+      "result": "Vite ready, HTTP GET / returned 200; temporary service then stopped"
+    }
+  ],
+  "releaseGameJsSha256": "5941c21c12d981426f584e330195b4ab23df8ed32a500cb0c6f1a2283f1feaeb",
+  "cleanGameJsSha256": "5941c21c12d981426f584e330195b4ab23df8ed32a500cb0c6f1a2283f1feaeb",
+  "buildsIdentical": true,
+  "independent": "The clean clone contains no .tools, node_modules, dist or uncommitted source from the main workspace. npm is supplied on PATH as an external development tool."
+}
