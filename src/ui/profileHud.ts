@@ -66,7 +66,7 @@ export function profileOverlay(data: ProfileData, status: ProfileStatus): string
 
 /** Append inside the intro card; `profile` is handled by the host alongside close-profile. */
 export function profileMenuMarkup(data: ProfileData, status: ProfileStatus): string {
-  return `<div class="profile-menu"><button data-action="profile" class="profile-menu-button"><span class="profile-menu-icon" aria-hidden="true">◈</span><span><strong>局外档案</strong><small>${data.stats.runs ? `${data.stats.runs} 份病例 · ${data.discoveredTraits.length} 种变异 · ${data.achievements.length} 项里程碑` : '记录发现 · 收藏战术 · 再访病例'}</small></span><span class="profile-menu-arrow" aria-hidden="true">↗</span></button>${storageMarkup(status, true)}</div>`;
+  return `<div class="profile-menu"><button data-action="profile" class="profile-menu-button"><span class="profile-menu-icon" aria-hidden="true">◈</span><span><strong>局外档案</strong><small>${data.stats.runs ? `${data.stats.runs} 份病例 · ${data.discoveredTraits.length} 种变异 · ${data.achievements.length} 项里程碑` : '记录发现 · 收藏战术 · 再访病例'}</small></span><span class="profile-menu-arrow" aria-hidden="true">↗</span></button><div class="switches profile-menu-settings"><button data-action="sound">声音 ${data.settings.sound?'开':'关'}</button><button data-action="effects">特效：${data.settings.lowEffects?'低':'标准'}</button></div>${storageMarkup(status, true)}</div>`;
 }
 
 /** Append to a result modal. All history, reasons and advice are escaped before rendering. */

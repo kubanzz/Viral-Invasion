@@ -140,6 +140,7 @@ function updateOverlay() {
     host.innerHTML = (!help && !history && state.phase === 'paused' ? draftOverlay(state) : null) ?? battleOverlay(state, help, resumeAfterHelp, lowEffects, history) ?? '';
     if (state.growth && help) host.querySelector('.help-grid')?.insertAdjacentHTML('afterend', growthHelpMarkup);
     if (state.growth && history) host.querySelector('h2')?.insertAdjacentHTML('afterend', growthHistoryMarkup(state));
+    if (state.campaign) host.querySelector('.switches')?.insertAdjacentHTML('beforeend', `<button data-action="sound">声音 ${sound.enabled?'开':'关'}</button>`);
     if (state.campaign && state.phase === 'menu' && !help && !history) host.querySelector('.intro-card')?.insertAdjacentHTML('beforeend', profileMenuMarkup(profile.data, profile.status));
     if (state.campaign && state.phase === 'result' && !help && !history) host.querySelector('.modal')?.insertAdjacentHTML('beforeend', profileResultMarkup(state, profile.data, profile.status));
     return;
@@ -185,7 +186,7 @@ function updateCommonHud() {
   el('scan-ready').textContent = s.scanReady > s.elapsed ? `${(s.scanReady-s.elapsed).toFixed(1)}s`:'就绪';
   el('run-time').textContent = `SEED ${s.seed}　 /　${formatTime(s.elapsed)}`;
   document.querySelectorAll<HTMLButtonElement>('.tool').forEach((button,index)=>{const tool=(index+1) as Tool;button.classList.toggle('selected',s.tool===tool);button.setAttribute('aria-pressed',String(s.tool===tool));el(`charge-${tool}`).style.width=`${Math.max(0,1-Math.max(0,s.cooldowns[tool]-s.elapsed)/BALANCE.cooldowns[tool])*100}%`;});
-  document.querySelector<HTMLButtonElement>('[data-action="sound"]')!.textContent = `声音 ${sound.enabled?'开':'关'}`;
+  document.querySelectorAll<HTMLButtonElement>('[data-action="sound"]').forEach(button => { button.textContent = `声音 ${sound.enabled?'开':'关'}`; });
   document.querySelector<HTMLButtonElement>('[data-action="pause"]')!.hidden = s.phase === 'menu' || s.phase === 'result';
 }
 let lastHud = 0;

@@ -8,13 +8,14 @@ import type {MigrationChoice} from '../../src/game/campaignTypes';
 import {PROFILE_STORAGE_KEY} from '../../src/meta/profile';
 
 const entry=pathToFileURL(resolve(process.env.VI_ENTRY??'dist/index.html')).href;
+test.use({ video: 'off', trace: 'off' });
 const seeds=[1,7,13,29,41,57,73,91,127,233];
 for(const [index,seed]of seeds.entries())test(`G4: complete browser seed ${seed}, archive persistence and clean seed replay`,async({page,context},info)=>{
   test.skip(info.project.name!==(index<5?'chrome':'edge'),'Ten distinct seeds are split across Chrome and Edge.');test.setTimeout(180000);
   const errors:string[]=[],remote:string[]=[];page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url()))remote.push(r.url());});
   await context.setOffline(true);if(index===0)await page.setViewportSize({width:1920,height:1080});
   await page.goto(`${entry}?seed=${seed}`);
-  if(index===0)await page.locator('[data-action="sound"]').click();
+  if(index===0)await page.locator('.profile-menu [data-action="sound"]').click();
   await page.locator('[data-action="start"]').click();
   const choice=(['pursue','block','ignore'] as MigrationChoice[])[index%3];
   await fullRun(page,choice,async name=>{
@@ -32,7 +33,7 @@ for(const [index,seed]of seeds.entries())test(`G4: complete browser seed ${seed}
   await page.screenshot({path:info.outputPath('result.png')});writeFileSync(info.outputPath('win.json'),JSON.stringify({seed,choice,final,saved,errors,remote},null,2));
   await page.locator('[data-action="new"]').click();expect((await readState(page)).seed).not.toBe(seed);
   await page.reload();expect((await readState(page)).phase).toBe('menu');
-  if(index===0)await expect(page.locator('[data-action="sound"]')).toContainText('关');
+  if(index===0)await expect(page.locator('.profile-menu [data-action="sound"]')).toContainText('关');
   await page.locator('[data-action="profile"]').click();await expect(page.locator('.profile-dialog')).toBeVisible();
   await page.screenshot({path:info.outputPath('archive.png')});
   await page.locator(`[data-action="replay-record"][data-seed="${seed}"]`).first().click();
