@@ -5,6 +5,8 @@ import { clamp, distance, moveWithCollision, normalized, rayCircle, wallHit } fr
 import { BALANCE, type Effect, type GameEvent, type GameState, type InputFrame, type Target, type Tool, type Vec } from './types';
 import { BattleDirector, initializeBattle } from './battle';
 import type { CampaignOptions } from './battleTypes';
+import { GrowthController, growthContext } from './growth';
+import type { DamageOrigin, DraftIntent, DraftResolution, GrowthCommand } from './growthTypes';
 
 // Exporting the clock here is convenient for hosts, while it remains independently testable.
 export { FixedClock };
@@ -19,10 +21,20 @@ export class GameSession {
   private effectId = 0;
   private dashDirection: Vec = { x: 1, y: 0 };
   private battleDirector: BattleDirector | undefined;
+  private growthController: GrowthController | undefined;
+  private runSerial = 0;
+  private draftPauseId: string | null = null;
 
   constructor(seed = 130026, private readonly options: CampaignOptions = {}) {
     this.state = this.initial(seed);
     if (options.campaign) this.battleDirector = new BattleDirector(this);
+    this.resetGrowth();
+  }
+
+  private resetGrowth(): void {
+    this.draftPauseId = null;
+    this.growthController = this.state.battle && this.state.battle.milestone !== 'G1' ? new GrowthController(this.state.seed, `${this.state.seed}:${++this.runSerial}`) : undefined;
+    if (this.growthController) this.state.growth = this.growthController.state;
   }
 
   private initial(seed: number): GameState {
@@ -51,6 +63,7 @@ export class GameSession {
     this.effectId = 0;
     this.dashDirection = { x: 1, y: 0 };
     this.state = this.initial(seed);
+    this.resetGrowth();
     this.state.phase = 'playing';
     this.emit('RUN_STARTED', { seed: this.state.seed, mode: this.state.battle ? 'campaign' : 'training', startAtTick: 0 });
   }
@@ -66,6 +79,7 @@ export class GameSession {
 
   resume(): void {
     if (this.state.phase !== 'paused') return;
+    if (this.state.growth?.draft) return;
     this.state.phase = 'playing';
     this.emit('RUN_RESUMED', {});
   }
@@ -73,6 +87,7 @@ export class GameSession {
   menu(): void {
     const seed = this.state.seed;
     this.state = this.initial(seed);
+    this.resetGrowth();
     this.effectId = 0;
   }
 
@@ -91,6 +106,8 @@ export class GameSession {
     this.state.events.push(event);
     // The training log is bounded, even if the player spends hours experimenting.
     if (this.state.events.length > 512) this.state.events.shift();
+    this.battleDirector?.recordEvent(event);
+    this.growthController?.recordEvent(event, growthContext(this.state));
     this.bus.emit('event', event);
   }
 
@@ -161,6 +178,8 @@ export class GameSession {
     if (input.fire) this.fire(input.aim);
     if (input.interact) this.interact();
     if (state.phase === 'playing') this.battleDirector?.afterInput();
+    if (state.phase === 'playing' && this.growthController) this.applyGrowthCommands(this.growthController.afterInput(growthContext(state)));
+    if (state.phase === 'playing' && state.growth?.draft) { this.draftPauseId = state.growth.draft.id; this.pause(); }
   }
 
   private scan(): void {
@@ -180,6 +199,7 @@ export class GameSession {
     this.emit('SCAN_COMPLETED', { found, radius: BALANCE.scanRadius });
     this.message(found ? `诊断：发现 ${found} 个训练靶。单核用 1，簇群可用 2；受损组织用 3。` : '诊断：附近靶标已净化，检查受损组织并返回复测台。', 4);
     this.battleDirector?.scan();
+    if (this.growthController) this.applyGrowthCommands(this.growthController.onScan(growthContext(state)));
   }
 
   private fire(aim: Vec): void {
@@ -246,23 +266,74 @@ export class GameSession {
     this.battleDirector?.repairMimics(aim, (target, damage) => this.damage(target, damage));
   }
 
-  private damage(target: Target, amount: number): void {
+  private damage(target: Target, amount: number, origin: DamageOrigin = { cause: 'basic' }): void {
     const state = this.state;
     if (target.hp <= 0) return;
-    if (this.battleDirector) amount = this.battleDirector.modifiedDamage(target, amount);
+    const wasPulseExposed = origin.wasPulseExposed ?? (target.exposedUntil ?? 0) > state.elapsed;
+    if (this.battleDirector && origin.cause === 'basic') amount = this.battleDirector.modifiedDamage(target, amount);
+    const beforeHp = target.hp;
     target.hp = Math.max(0, target.hp - amount);
     target.hitUntil = state.elapsed + .18;
-    state.hits++;
+    if (origin.cause === 'basic') state.hits++;
     this.effect('hit', target, target, target.radius, .3);
-    this.emit('TARGET_HIT', { id: target.id, damage: amount, remainingHp: target.hp, tool: state.tool });
+    this.emit('TARGET_HIT', { id: target.id, damage: beforeHp - target.hp, rawDamage: amount, remainingHp: target.hp, tool: state.tool, cause: origin.cause });
     if (target.hp === 0) {
       this.emit('TARGET_CLEARED', { id: target.id, kind: target.kind });
       if (this.battleDirector) this.battleDirector.cleared(target);
       else this.message(state.targets.every(t => t.hp === 0) ? '全部靶标已净化！按 3 修复十字标记组织，再到复测台按 E。' : '训练靶已净化。继续处理其他靶标。');
+      if (this.growthController) this.applyGrowthCommands(this.growthController.onKill(growthContext(state), target, { ...origin, wasPulseExposed }));
+    } else if (this.growthController && origin.cause === 'basic' && (state.tool === 1 || state.tool === 2)) {
+      this.applyGrowthCommands(this.growthController.onHit(growthContext(state), target, { ...origin, wasPulseExposed }));
     }
   }
 
+  private applyGrowthCommands(commands: readonly GrowthCommand[]): void {
+    for (const command of commands) {
+      const state = this.state;
+      if (command.kind === 'log') { this.emit(command.type, command.data); continue; }
+      if (!state.battle || command.organId !== state.battle.organId || state.phase === 'result') continue;
+      if (command.kind === 'damage') {
+        const target = state.targets.find(t => t.id === command.targetId && t.hp > 0);
+        if (target) this.damage(target, command.amount, { cause: 'protocol', rootId: command.rootId, protocolId: command.protocolId, allowChain: command.allowChain });
+      } else if (command.kind === 'expose') {
+        const target = state.targets.find(t => t.id === command.targetId && t.hp > 0);
+        if (target) { target.exposedUntil = Math.max(target.exposedUntil ?? 0, command.until); target.revealedUntil = Math.max(target.revealedUntil ?? 0, command.revealUntil); }
+      } else if (command.kind === 'effect') this.effect(command.effect, command.from, command.to, command.radius, command.duration);
+      else if (command.kind === 'organCost') {
+        const before = state.tissue.hp; state.tissue.hp = Math.max(0, before - command.amount);
+        this.emit('ORGAN_INTEGRITY_CHANGED', { organId: state.battle.organId, before, after: state.tissue.hp, reason: 'protocol-pressure', protocolId: command.protocolId });
+      }
+    }
+  }
+
+  slowFactor(targetId: string): number { return this.growthController?.slowFactor(targetId, this.state.battle!.organId, this.state.elapsed) ?? 1; }
+
+  chooseDraft(intent: DraftIntent): DraftResolution {
+    if (!this.growthController) return { kind: 'rejected', reason: 'no-growth' };
+    const result = this.growthController.chooseDraft(intent);
+    this.resolveDraftPause(result, intent.draftId); return result;
+  }
+  discardDraft(draftId: string): DraftResolution {
+    if (!this.growthController) return { kind: 'rejected', reason: 'no-growth' };
+    const result = this.growthController.discardDraft(draftId, this.state.growth!.runId);
+    this.resolveDraftPause(result, draftId); return result;
+  }
+  backToDraft(draftId: string): void { this.growthController?.backToDraft(draftId, this.state.growth!.runId); }
+  private resolveDraftPause(result: DraftResolution, draftId: string): void {
+    if (result.kind === 'rejected' || this.draftPauseId !== draftId) return;
+    if (this.state.growth?.draft) this.draftPauseId = this.state.growth.draft.id;
+    else { this.draftPauseId = null; this.resume(); }
+  }
+
   private interact(): void {
+    if (this.growthController && this.state.battle) {
+      const nearest = this.state.battle.graph.nodes.filter(n => ['valve','gate','retest','research','exit'].includes(n.kind)).sort((a,b)=>distance(a,this.state.player)-distance(b,this.state.player))[0];
+      if (nearest?.kind === 'research' && distance(nearest,this.state.player) <= BALANCE.interactionRange) {
+        const result = this.growthController.openResearch(nearest.id, growthContext(this.state));
+        if (result.kind === 'rejected') this.message(result.reason === 'insufficient-samples' ? `研究需要更多样本，还差 ${result.missing ?? 1}。清除感染源或首次诊断变异可收集。` : '当前研究草案尚未完成。');
+        return;
+      }
+    }
     if (this.battleDirector) { this.battleDirector.interact(); return; }
     const state = this.state;
     if (distance(state.player, state.terminal) > BALANCE.interactionRange) {

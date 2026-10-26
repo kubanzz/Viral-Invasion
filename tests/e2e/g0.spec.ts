@@ -16,7 +16,8 @@ type ReadonlyDiagnostics = {
   toWorld(point: Vec): Vec;
   diagnostics(): Diagnostics;
 };
-declare global { interface Window { readonly __viral: ReadonlyDiagnostics } }
+type InputBoundary = { code: string; down: boolean; tick: number };
+declare global { interface Window { readonly __viral: ReadonlyDiagnostics; __movementProbe?: { events: InputBoundary[]; dispose(): void } } }
 
 const entry = `${pathToFileURL(resolve('dist/index.html')).href}?scenario=training`;
 type Audit = { remoteRequests: string[]; pageErrors: string[]; consoleErrors: string[]; browserVersion: string; offline: boolean };
@@ -80,8 +81,8 @@ async function hold(page: Page, keys: string[], milliseconds: number): Promise<v
   for (const key of keys) await page.keyboard.up(key);
 }
 async function holdSimulationTicks(page: Page, keys: string[], ticks: number): Promise<void> {
-  const startingTick = (await snapshot(page)).tick;
   for (const key of keys) await page.keyboard.down(key);
+  const startingTick = (await snapshot(page)).tick;
   try {
     await expect.poll(async () => (await snapshot(page)).tick - startingTick,
       { timeout: 8_000, intervals: [10, 20, 30] }).toBeGreaterThanOrEqual(ticks);
@@ -213,12 +214,25 @@ test('AC-M02-02 and VIS-02: eight-way motion, 360-degree aim, scan, dash, tool f
   ];
   const routeLog: unknown[] = [];
   for (const route of routes) {
+    await page.evaluate(() => {
+      const events: InputBoundary[]=[];
+      const listener=(event:KeyboardEvent)=>{if(['KeyW','KeyA','KeyS','KeyD'].includes(event.code))events.push({code:event.code,down:event.type==='keydown',tick:window.__viral.snapshot().tick});};
+      window.addEventListener('keydown',listener);window.addEventListener('keyup',listener);
+      window.__movementProbe={events,dispose(){window.removeEventListener('keydown',listener);window.removeEventListener('keyup',listener);}};
+    });
     const before = await snapshot(page);
     // Wait for actual simulation steps, rather than assuming a 140ms wall-clock
     // hold includes frames during browser startup or a loaded CI render process.
     await holdSimulationTicks(page, route.keys, 8);
     const after = await snapshot(page);
-    await jsonEvidence(info, `movement-${route.keys.join('-')}`, { route, before, after });
+    const boundaries=await page.evaluate(()=>{const probe=window.__movementProbe!;probe.dispose();delete window.__movementProbe;return probe.events;});
+    const held=new Set<string>();let previousTick=before.tick, expectedX=0, expectedY=0;
+    for(const boundary of [...boundaries,{code:'',down:false,tick:after.tick}]) {
+      const x=Number(held.has('KeyD'))-Number(held.has('KeyA')),y=Number(held.has('KeyS'))-Number(held.has('KeyW')),length=Math.hypot(x,y)||1;
+      expectedX+=x/length*235/60*(boundary.tick-previousTick);expectedY+=y/length*235/60*(boundary.tick-previousTick);
+      if(boundary.down)held.add(boundary.code);else held.delete(boundary.code);previousTick=boundary.tick;
+    }
+    await jsonEvidence(info, `movement-${route.keys.join('-')}`, { route, before, after, boundaries, expectedX, expectedY });
     const dx = after.player.x - before.player.x, dy = after.player.y - before.player.y;
     if (route.x) expect(dx * route.x).toBeGreaterThan(12); else expect(Math.abs(dx)).toBeLessThan(1);
     if (route.y) expect(dy * route.y).toBeGreaterThan(12); else expect(Math.abs(dy)).toBeLessThan(1);
@@ -226,14 +240,10 @@ test('AC-M02-02 and VIS-02: eight-way motion, 360-degree aim, scan, dash, tool f
     // Browser scheduling may add stationary frames around the key hold. It must
     // never create a diagonal speed boost, and the requested input must move.
     expect(Math.hypot(dx, dy) / simulatedSeconds).toBeLessThanOrEqual(235.01);
-    expect(Math.hypot(dx, dy) / simulatedSeconds).toBeGreaterThan(120);
-    if (route.x && route.y) {
-      // Playwright sends keydown/keyup sequentially: at most one simulation
-      // boundary at each end can contain just one of the two held keys.
-      // The diagonal itself stays normalized (covered exactly by unit tests).
-      const sequentialKeyBoundaryBudget = 235 / 60 * 2 + 1e-6;
-      expect(Math.abs(Math.abs(dx) - Math.abs(dy))).toBeLessThanOrEqual(sequentialKeyBoundaryBudget);
-    }
+    // Sequential browser IPC can span several ticks. Integrate the observed
+    // real key boundaries instead of assuming only one tick per event pair.
+    expect(dx).toBeCloseTo(expectedX,5);expect(dy).toBeCloseTo(expectedY,5);
+    expect(Math.hypot(dx,dy)).toBeGreaterThanOrEqual(235/60*8-1e-6);
     routeLog.push({ keys: route.keys, before: before.player, after: after.player, tick: after.tick });
   }
   const angles: unknown[] = [];

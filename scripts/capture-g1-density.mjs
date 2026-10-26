@@ -9,7 +9,7 @@ try {
   const page=await context.newPage(), errors=[],remote=[];
   page.on('pageerror',e=>errors.push(e.message));
   page.on('request',r=>{if(/^https?:/i.test(r.url()))remote.push(r.url());});
-  await page.goto(`${pathToFileURL(resolve('dist/index.html')).href}?seed=130026&trait=CARAPACE`);
+  await page.goto(`${pathToFileURL(resolve('dist/index.html')).href}?fixture=G1&seed=130026&trait=CARAPACE`);
   await page.locator('[data-action="start"]').click();
   await page.keyboard.down('KeyA');await page.waitForTimeout(215);await page.keyboard.up('KeyA');
   await page.keyboard.down('KeyS');await page.waitForTimeout(675);await page.keyboard.up('KeyS');

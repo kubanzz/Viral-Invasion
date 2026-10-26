@@ -7,11 +7,11 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   retries: 0,
-  outputDir: 'artifacts/e2e-results',
+  outputDir: process.env.VI_E2E_OUTPUT ?? 'artifacts/e2e-results',
   reporter: [
     ['list'],
-    ['json', { outputFile: 'artifacts/e2e-report.json' }],
-    ['html', { outputFolder: 'artifacts/playwright-report', open: 'never' }],
+    ['json', { outputFile: process.env.VI_E2E_REPORT ?? 'artifacts/e2e-report.json' }],
+    ['html', { outputFolder: process.env.VI_E2E_HTML ?? 'artifacts/playwright-report', open: 'never' }],
   ],
   use: {
     browserName: 'chromium',

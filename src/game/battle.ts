@@ -3,6 +3,7 @@ import { SeedRng } from '../core/rng';
 import { BALANCE, type Effect, type GameEvent, type GameState, type InputFrame, type Target, type Vec } from './types';
 import type { BattleState, CampaignOptions, TraitId } from './battleTypes';
 import { BATTLE_BALANCE as B, TRAITS } from './battleConfig';
+import { recordBehavior, chooseEvolution } from './evolution';
 
 export interface BattleHost {
   state: GameState;
@@ -10,6 +11,7 @@ export interface BattleHost {
   message(text: string, seconds?: number): void;
   effect(kind: Effect['kind'], from: Vec, to: Vec, radius: number, duration: number): void;
   finish(success: boolean, reason: string): void;
+  slowFactor?(targetId: string): number;
 }
 
 const BRANCHES: TraitId[] = ['CARAPACE', 'FISSION', 'MIMIC'];
@@ -26,13 +28,14 @@ export function initializeBattle(state: GameState, options: CampaignOptions): vo
     { id: 'tissue', kind: 'tissue', x: state.tissue.x, y: state.tissue.y, active: true, infected: false },
     { id: 'retest', kind: 'retest', ...state.terminal, active: true, infected: false },
   ];
+  if (options.milestone && options.milestone !== 'G1') nodes.push({ id: 'research', kind: 'research', x: 475, y: 610, active: true, infected: false });
   const edges = [['source-a', 'gate'], ['gate', 'tissue'], ['source-b', 'valve'], ['valve', 'tissue']].map(([from, to]) => {
     const a = nodes.find(node => node.id === from)!;
     const b = nodes.find(node => node.id === to)!;
     return { id: `${from}:${to}`, from, to, open: true, nextSpread: B.spreadInterval, flowDirection: normalized(b.x - a.x, b.y - a.y) };
   });
   state.battle = {
-    milestone: 'G1', organId: 'heart', graph: { nodes, edges },
+    milestone: options.milestone ?? 'G1', organId: 'heart', graph: { nodes, edges },
     pressure: { infection: 26, vitality: 100, criticalSince: null, organAlarm: false, crisisReason: '' },
     pulse: { phase: 'charge', phaseRemaining: 2, readyAt: 0, activeUntil: 0, origin: { x: 730, y: 230 }, direction: Math.PI / 2, uses: 0 },
     warning: null, traits: [], defeatedTraits: [], nextEvolutionAt: B.firstWarningAt,
@@ -40,6 +43,7 @@ export function initializeBattle(state: GameState, options: CampaignOptions): vo
     lastAim: { x: 610, y: 330 }, stats: { kills: 0, sourceClears: 0, eliteClears: 0, repairs: 0, pulses: 0, playerDamage: 0, tissueDamage: 0, scans: 0 },
     nextSpawnAt: { 'source-a': B.spawnInterval, 'source-b': B.spawnInterval + 2 }, nextActorId: 0,
     firstTrait, recentNotice: '', gateChangedAt: -10, organLowSince: null, eliteSpawned: 0, history: [],
+    ...(options.milestone && options.milestone !== 'G1' ? { forcedFirstTrait: options.firstTrait, behaviorHistory: [], evolutionDecisions: [] } : {}),
   };
   for (const node of nodes.filter(n => n.kind === 'source')) {
     state.targets.push({ ...node, id: node.id, kind: 'single', role: 'source', hp: B.sourceHp, maxHp: B.sourceHp, radius: 34, hitUntil: 0, scanned: false, traits: [], facing: 0, born: 0 });
@@ -63,6 +67,18 @@ export class BattleDirector {
     this.b.history.push({ at: this.s.elapsed, text });
     if (this.b.history.length > 128) this.b.history.shift();
     this.host.message(text, seconds);
+  }
+
+  recordEvent(event: GameEvent): void {
+    if (this.b.milestone === 'G1') return;
+    const data = event.data;
+    const kind = event.type === 'TARGET_HIT' && data.cause !== 'protocol' ? data.tool === 1 ? 'precisionDamage' : data.tool === 2 ? 'areaDamage' : undefined
+      : event.type === 'SCAN_COMPLETED' ? 'scan'
+      : event.type === 'ROUTE_CHANGED' && data.open === false ? 'isolate'
+      : event.type === 'ORGAN_INTEGRITY_CHANGED' && data.reason === 'repair' && Number(data.after) > Number(data.before) ? 'repair' : undefined;
+    if (!kind) return;
+    const amount = kind === 'precisionDamage' || kind === 'areaDamage' ? Number(data.damage) : kind === 'repair' ? Number(data.after) - Number(data.before) : 1;
+    this.b.behaviorHistory = recordBehavior(this.b.behaviorHistory ?? [], { tick: event.tick, kind, amount });
   }
 
   beforeInput(input: InputFrame): void {
@@ -236,7 +252,14 @@ export class BattleDirector {
   private evolution(): void {
     const { s, b } = this;
     if (!b.warning && b.traits.length < 2 && s.elapsed >= b.nextEvolutionAt && (b.traits.length === 0 || b.stats.eliteClears >= 1)) {
-      const trait = b.traits.length === 0 ? b.firstTrait : BRANCHES[(BRANCHES.indexOf(b.firstTrait) + 1 + (s.seed % 2)) % 3];
+      let trait = b.traits.length === 0 ? b.firstTrait : BRANCHES[(BRANCHES.indexOf(b.firstTrait) + 1 + (s.seed % 2)) % 3];
+      if (b.milestone !== 'G1' && !(b.traits.length === 0 && b.forcedFirstTrait)) {
+        const decision = chooseEvolution({ seed: s.seed, evolutionIndex: b.traits.length, tick: s.tick, organId: b.organId, integrity: s.tissue.hp, seen: b.traits, history: b.behaviorHistory ?? [], counterAvailable: { CARAPACE: true, FISSION: true, MIMIC: true } });
+        if (decision.kind !== 'warn') return;
+        trait = decision.trait;
+        b.evolutionDecisions?.push(decision);
+        this.host.emit('EVOLUTION_ROLLED', { trait, roll: decision.roll, candidates: JSON.stringify(decision.candidates), summary: JSON.stringify(decision.summary) });
+      } else if (b.forcedFirstTrait && b.traits.length === 0) trait = b.forcedFirstTrait;
       b.warning = { trait, startedAt: s.elapsed, applyAt: s.elapsed + B.warningDuration };
       this.host.emit('EVOLUTION_WARNING', { trait, duration: B.warningDuration, applyAt: b.warning.applyAt });
       this.notice(`变异预警 · ${TRAITS[trait].name}：${TRAITS[trait].ability}。代价：${TRAITS[trait].cost}。反制：${TRAITS[trait].counter}`, B.warningDuration);
@@ -334,6 +357,7 @@ export class BattleDirector {
         let speed: number = B.enemySpeed;
         if (target.traits?.includes('CARAPACE')) speed *= B.carapaceSpeed;
         if (mimic) speed *= B.mimicSpeed;
+        speed *= this.host.slowFactor?.(target.id) ?? 1;
         const step = { x: dir.x * speed * BALANCE.step, y: dir.y * speed * BALANCE.step };
         let pos = moveWithCollision(target, step, target.radius);
         // If a fold blocks the direct route, follow its tangent until the goal is clear.
@@ -367,7 +391,13 @@ export class BattleDirector {
     const tissueInfected = b.graph.nodes.find(n => n.id === 'tissue')!.infected;
     const growth = sources ? openSources * .14 + this.aliveCount() * .014 + (tissueInfected ? .12 : 0) : -.65;
     p.infection = clamp(p.infection + growth * BALANCE.step, 0, 100);
-    if (tissueInfected) s.tissue.hp = Math.max(0, s.tissue.hp - .12 * BALANCE.step);
+    // Batch the slow tissue erosion once per simulation second, so the same
+    // actual loss drives HUD, protection rewards and bounded diagnostic logs.
+    if (tissueInfected && s.tick % 60 === 0) {
+      const before = s.tissue.hp;
+      s.tissue.hp = Math.max(0, before - B.tissueInfectionDamage);
+      if (s.tissue.hp < before) this.host.emit('ORGAN_INTEGRITY_CHANGED', { organId: b.organId, before, after: s.tissue.hp, reason: 'infection' });
+    }
     p.organAlarm = s.tissue.hp < B.organAlarmAt;
     if (p.organAlarm) {
       if (b.organLowSince === null) {

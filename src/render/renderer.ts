@@ -3,11 +3,13 @@ import { Camera } from './camera';
 import { depthSort } from './depthSort';
 import { foregroundOpacity, isForegroundOccluded } from './occlusion';
 import { LAYER_ORDER } from './layers';
-import { drawBattleTarget } from './battleVisuals';
+import { drawBattleLabels, drawBattleTarget } from './battleVisuals';
 import type { OrganNode } from '../game/battleTypes';
 import { BATTLE_BALANCE } from '../game/battleConfig';
 import { wallHit } from '../actors/collision';
 import { pulsePreviewPolygon } from './pulsePreview';
+import { GrowthVisuals } from './growthVisuals';
+import { GROWTH_BALANCE } from '../game/protocols';
 
 const TAU = Math.PI * 2;
 const hash = (n: number): number => { const a = Math.sin(n * 127.1 + 311.7) * 43758.5453123; return a - Math.floor(a); };
@@ -52,6 +54,7 @@ export class Renderer {
   private width = 1440;
   private height = 900;
   private dpr = 1;
+  private readonly growthVisuals = new GrowthVisuals();
 
   constructor(private readonly canvas: HTMLCanvasElement) {
     const context = canvas.getContext('2d', { alpha: false });
@@ -83,7 +86,8 @@ export class Renderer {
       ...state.targets.map((target, index) => ({ id: target.id, y: target.y, kind: 'target', index })),
       { id: 'tissue', y: state.tissue.y, kind: 'tissue' },
       { id: 'terminal', y: state.terminal.y, kind: 'terminal' },
-      ...(state.battle?.graph.nodes.filter(node => node.kind === 'valve' || node.kind === 'gate').map(node => ({ id: node.id, y: node.y, kind: 'device' })) ?? []),
+      ...(state.battle?.graph.nodes.filter(node => node.kind === 'valve' || node.kind === 'gate' || node.kind === 'research').map(node => ({ id: node.id, y: node.y, kind: 'device' })) ?? []),
+      ...(state.growth?.beacon && state.growth.beacon.organId === state.battle?.organId && state.growth.beacon.until > state.elapsed ? [{ id: state.growth.beacon.id, y: state.growth.beacon.y, kind: 'beacon' }] : []),
       ...WORLD.obstacles.map(obstacle => ({ id: obstacle.id, y: obstacle.y, kind: 'obstacle' })),
     ];
   }
@@ -96,6 +100,7 @@ export class Renderer {
     ctx.save(); this.camera.apply(ctx);
     this.drawAtmosphere(ctx, state, Boolean(opts.lowEffects));
     this.drawGroundSignals(ctx, state, aim);
+    this.growthVisuals.drawGround(ctx, state, state.growth, Boolean(opts.lowEffects));
     this.drawShadows(ctx, state);
     for (const entity of depthSort(this.entities(state))) {
       if (entity.kind === 'player') this.drawPlayer(ctx, state);
@@ -104,10 +109,17 @@ export class Renderer {
       if (entity.kind === 'terminal') this.drawTerminal(ctx, state);
       if (entity.kind === 'obstacle') this.drawObstacle(ctx, WORLD.obstacles.find(obstacle => obstacle.id === entity.id)!);
       if (entity.kind === 'device') this.drawBattleDevice(ctx, state.battle!.graph.nodes.find(node => node.id === entity.id)!, state);
+      if (entity.kind === 'beacon') this.growthVisuals.drawBeacon(ctx, state, state.growth);
     }
     this.drawForeground(ctx, state);
-    if (state.battle) this.drawBattleDangers(ctx, state);
     this.drawEffects(ctx, state, Boolean(opts.lowEffects));
+    this.growthVisuals.drawMarks(ctx, state, state.growth);
+    this.growthVisuals.drawProtocolHits(ctx, state, state.growth);
+    if (state.battle) {
+      this.drawBattleDangers(ctx, state);
+      drawBattleLabels(ctx, state);
+      this.drawTissueMarker(ctx, state);
+    }
     this.drawCrosshair(ctx, state, aim);
     ctx.restore();
   }
@@ -310,7 +322,7 @@ export class Renderer {
         const phase = battle.pulse.phase === 'charge' ? '蓄力' : surge ? '冲流节律' : '舒缓';
         text(ctx, `${phase} · 鼠标定向`, 0, -69, '#f6dfbb', 11);
       }
-    } else {
+    } else if (node.kind === 'gate') {
       const closed = !battle.graph.edges.filter(edge => edge.from === node.id || edge.to === node.id).some(edge => edge.open);
       for (const x of [-25, 25]) {
         ctx.beginPath(); ctx.roundRect(x - 8, -39, 16, 43, 5); ctx.fillStyle = '#51645d'; ctx.fill(); ctx.strokeStyle = '#aac5ac'; ctx.lineWidth = 1.5; ctx.stroke();
@@ -323,6 +335,18 @@ export class Renderer {
       } else line(ctx, [-18, -3, 18, -3], '#bba98b66', 2);
       text(ctx, closed ? '隔离闸 · 已关闭' : '隔离闸 · 已开放', 0, 28, '#d2dbc0', 11);
       if (near) text(ctx, closed ? '[ E ] 恢复通路' : '[ E ] 截断传播', 0, -57, '#e4efd3', 11);
+    } else {
+      ellipse(ctx, 0, 3, 34, 11, '#36544e', '#a5bc9f');
+      ctx.beginPath(); ctx.roundRect(-28, -30, 56, 29, 6); ctx.fillStyle = '#809f8c'; ctx.fill(); ctx.strokeStyle = '#cbd5b4'; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(0, -29, 28, 9, 0, 0, TAU); ctx.fillStyle = '#c8d6b6'; ctx.fill(); ctx.strokeStyle = '#e4debd'; ctx.stroke();
+      for (const x of [-16, 0, 16]) {
+        ctx.beginPath(); ctx.roundRect(x - 4, -50, 8, 21, 3); ctx.fillStyle = '#d0e9cb'; ctx.fill(); ctx.strokeStyle = '#658f7f'; ctx.stroke();
+        line(ctx, [x, -44, x, -34], '#72baa6', 3); ellipse(ctx, x, -50, 4, 2, '#f0e6c6');
+      }
+      const samples = Math.floor(state.growth?.research ?? 0);
+      text(ctx, '抗体研究台', 0, 28, '#d2e7cd', 11);
+      text(ctx, `样本 ${samples} / ${GROWTH_BALANCE.researchCost}`, 0, 44, '#b6cfb7', 10);
+      if (near) text(ctx, '[ E ] 研究 / 校准', 0, -70, '#e4efd3', 11);
     }
     ctx.restore();
   }
@@ -470,6 +494,14 @@ export class Renderer {
     ctx.fillStyle = ratio === 1 ? '#9be4b7' : '#e5ae80'; ctx.beginPath(); ctx.roundRect(-37, 12, Math.max(1, 74 * ratio), 5, 2); ctx.fill();
     text(ctx, ratio === 1 ? '组织修复完成' : `受损组织  ${Math.round(tissue.hp)}%`, 0, 35, ratio === 1 ? '#b9eec5' : '#f1d6bb', 12);
     text(ctx, '03  /  组织修复注射', 0, 52, '#c9aaa1', 9);
+    ctx.restore();
+  }
+
+  private drawTissueMarker(ctx: CanvasRenderingContext2D, state: GameState): void {
+    // This is an information marker, not a second draw of the tissue entity.
+    ctx.save(); ctx.translate(state.tissue.x, state.tissue.y); ctx.scale(1, 1 / .72);
+    ctx.lineWidth = 1.5; ellipse(ctx, 30, -10, 12, 12, '#d5edcf', '#31594f');
+    line(ctx, [24, -10, 36, -10], '#2d7265', 3); line(ctx, [30, -16, 30, -4], '#2d7265', 3);
     ctx.restore();
   }
 

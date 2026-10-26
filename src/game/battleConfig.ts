@@ -20,4 +20,5 @@ export const BATTLE_BALANCE = {
   mimicSpeed: .5, mimicPeriod: 6, mimicDisturbance: 1.2, scanReveal: 5,
   crisisDuration: 15, organAlarmAt: 30, organCollapseDelay: 8,
   sourceRelief: 14, killRelief: 1.25, repairRelief: 1.5,
+  tissueInfectionDamage: .12,
 } as const;

@@ -1,4 +1,5 @@
 import type { Vec } from './types';
+import type { BehaviorBin, EvolutionDecision } from './evolutionTypes';
 
 export type TraitId = 'CARAPACE' | 'FISSION' | 'MIMIC';
 export type OrganId = 'heart' | 'lung';
@@ -31,6 +32,7 @@ export interface BattleState {
   nextActorId: number; firstTrait: TraitId; recentNotice: string;
   gateChangedAt: number; organLowSince: number | null; eliteSpawned: number;
   history: Array<{ at: number; text: string }>;
+  forcedFirstTrait?: TraitId; behaviorHistory?: BehaviorBin[]; evolutionDecisions?: EvolutionDecision[];
 }
-export interface CampaignOptions { campaign?: boolean; firstTrait?: TraitId }
+export interface CampaignOptions { campaign?: boolean; firstTrait?: TraitId; milestone?: 'G1' | 'G2' | 'G3' }
 export interface TraitInfo { id: TraitId; name: string; symbol: string; ability: string; cost: string; counter: string }

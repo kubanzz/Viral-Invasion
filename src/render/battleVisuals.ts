@@ -58,7 +58,8 @@ export function drawBattleTarget(ctx: CanvasRenderingContext2D, target: Target, 
   const t = state.elapsed, r = target.radius;
   const trait = target.traits?.[0];
   const exposed = (target.exposedUntil ?? 0) > t;
-  const revealed = (target.revealedUntil ?? 0) > t || exposed || state.scanUntil > t;
+  const traced = state.growth?.marks.some(mark => mark.targetId === target.id && mark.organId === state.battle?.organId && mark.until > t) ?? false;
+  const revealed = (target.revealedUntil ?? 0) > t || exposed || state.scanUntil > t || traced;
   const mimic = target.traits?.includes('MIMIC') && !revealed;
   const source = target.role === 'source';
   const elite = target.role === 'elite' || target.role === 'core';
@@ -163,19 +164,69 @@ export function drawBattleTarget(ctx: CanvasRenderingContext2D, target: Target, 
 
   // Every actor retains its exact ground anchor, even while its body disguises.
   ctx.lineWidth = 1; ellipse(ctx, 0, 1, 9, 4, '#f1ca8b0b', mimic ? '#d9ab8c55' : '#efc69aa0');
-  if (!mimic || revealed) {
-    const barY = -r * 1.96 - (elite ? 17 : 7);
-    ctx.fillStyle = '#21182c'; ctx.beginPath(); ctx.roundRect(-r, barY, r * 2, elite ? 5 : 3, 2); ctx.fill();
-    ctx.fillStyle = exposed ? '#ffe4a1' : source ? '#f4af9b' : '#f2bd9c';
-    ctx.beginPath(); ctx.roundRect(-r, barY, Math.max(1, r * 2 * target.hp / target.maxHp), elite ? 5 : 3, 2); ctx.fill();
-    if (source || elite || revealed || target.scanned) {
-      const role = source ? '感染源' : target.role === 'core' ? '母巢' : elite ? '精英' : (target.generation ?? 0) > 0 ? '裂殖小体' : '';
-      const name = target.traits?.map(value => TRAIT_NAME[value]).join('·') ?? '';
-      label(ctx, `${role}${role && name ? ' · ' : ''}${name}`, 0, barY - 7, exposed ? '#ffe6ae' : '#f0d8c2', 10);
-    }
-    if (exposed) {
-      label(ctx, `◇ 破绽 ${Math.ceil((target.exposedUntil ?? 0) - t)}s`, 0, 23, '#ffe6b0', 11);
-    }
-  }
   ctx.restore();
+}
+
+const TRAIT_SYMBOL: Record<TraitId, string> = { CARAPACE: '◇', FISSION: '⋈', MIMIC: '◌' };
+type LabelBox = { left: number; right: number; top: number; bottom: number };
+const overlaps = (a: LabelBox, b: LabelBox): boolean => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+
+/** Information floats above entities; ordinary names cannot drown an elite or weakness. */
+export function drawBattleLabels(ctx: CanvasRenderingContext2D, state: GameState): void {
+  const time = state.elapsed, aim = state.battle?.lastAim;
+  const aimed = (target: Target): boolean => !!aim && Math.hypot(target.x - aim.x, target.y - aim.y) <= target.radius + 12;
+  const priority = (target: Target): number => target.role === 'core' ? 0 : target.role === 'elite' ? 1 : target.role === 'source' ? 2 : aimed(target) ? 3 : 4;
+  const targets = state.targets.filter(target => target.hp > 0).sort((a, b) => priority(a) - priority(b) || a.id.localeCompare(b.id));
+  const occupied: LabelBox[] = [];
+  for (const target of targets) {
+    const full = target.role === 'source' || target.role === 'elite' || target.role === 'core';
+    const exposed = (target.exposedUntil ?? 0) > time;
+    const traced = state.growth?.marks.some(mark => mark.targetId === target.id && mark.organId === state.battle?.organId && mark.until > time) ?? false;
+    const mimic = target.traits?.includes('MIMIC') && (target.revealedUntil ?? 0) <= time && state.scanUntil <= time && !exposed && !traced;
+    if (mimic) continue;
+    const focused = aimed(target), bar = full || focused || target.hitUntil > time;
+    const symbols = target.traits?.map(id => TRAIT_SYMBOL[id]).join('') ?? '';
+    if (!full && !bar && (!symbols || !target.scanned)) continue;
+    const role = target.role === 'core' ? '母巢' : target.role === 'elite' ? '精英' : '感染源';
+    const name = full ? `${role}${target.traits?.length ? ' · ' + target.traits.map(id => TRAIT_NAME[id]).join('·') : ''}` : symbols;
+    const width = Math.max(target.radius * 2, name.length * 10 + 10), baseY = -target.radius * 1.96 - (target.role === 'elite' || target.role === 'core' ? 17 : 7);
+    const offsets = full || focused ? [0, -16, -32, -48, -64] : [0, -14];
+    let chosen: number | undefined;
+    for (const offset of offsets) {
+      const box = { left: target.x - width / 2 - 4, right: target.x + width / 2 + 4, top: target.y * .72 + baseY + offset - 18, bottom: target.y * .72 + baseY + offset + 7 };
+      if (!occupied.some(other => overlaps(other, box))) { occupied.push(box); chosen = offset; break; }
+    }
+    // Bodies retain their distinct silhouette, so an obscured ordinary badge can
+    // yield its tiny area to the clinically useful labels above it.
+    if (chosen === undefined && !full && !focused) continue;
+    const offset = chosen ?? -64;
+    ctx.save(); ctx.translate(target.x, target.y); ctx.scale(1, 1 / .72);
+    if (offset < -5) line(ctx, [0, baseY - 2, 0, baseY + offset + 5], '#d1c3aa59', 1);
+    const y = baseY + offset;
+    if (bar) {
+      ctx.fillStyle = '#21182ce0'; ctx.beginPath(); ctx.roundRect(-target.radius, y, target.radius * 2, full ? 5 : 3, 2); ctx.fill();
+      ctx.fillStyle = exposed ? '#ffe4a1' : '#f2bd9c';
+      ctx.beginPath(); ctx.roundRect(-target.radius, y, Math.max(1, target.radius * 2 * target.hp / target.maxHp), full ? 5 : 3, 2); ctx.fill();
+    }
+    if (name) {
+      ctx.font = `500 ${full ? 10 : 11}px "Microsoft YaHei", "Segoe UI", sans-serif`; ctx.textAlign = 'center';
+      ctx.strokeStyle = '#241b2ce0'; ctx.lineWidth = 3; ctx.strokeText(name, 0, y - 7);
+      ctx.fillStyle = full ? '#f4dcc2' : '#e6d0b9'; ctx.fillText(name, 0, y - 7);
+    }
+    ctx.restore();
+  }
+
+  const groups: Target[][] = [];
+  for (const target of targets.filter(target => (target.exposedUntil ?? 0) > time)) {
+    const group = groups.find(items => Math.hypot(items[0].x - target.x, items[0].y - target.y) < 65);
+    if (group) group.push(target); else groups.push([target]);
+  }
+  for (const group of groups) {
+    const target = group[0], seconds = Math.ceil(Math.min(...group.map(item => item.exposedUntil!)) - time);
+    ctx.save(); ctx.translate(target.x, target.y); ctx.scale(1, 1 / .72);
+    const value = `◇ 破绽 ${seconds}s${group.length > 1 ? ` ×${group.length}` : ''}`;
+    ctx.font = '500 11px "Microsoft YaHei", "Segoe UI", sans-serif'; ctx.textAlign = 'center';
+    ctx.strokeStyle = '#241b2cf0'; ctx.lineWidth = 4; ctx.strokeText(value, 0, 23);
+    ctx.fillStyle = '#ffe6b0'; ctx.fillText(value, 0, 23); ctx.restore();
+  }
 }

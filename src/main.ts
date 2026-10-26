@@ -7,6 +7,8 @@ import { BALANCE, type Tool } from './game/types';
 import { Soundscape } from './audio';
 import { battleHudMarkup, battleOverlay, updateBattleHud } from './ui/battleHud';
 import type { TraitId } from './game/battleTypes';
+import type { ProtocolId } from './game/growthTypes';
+import { draftOverlay, growthHudMarkup, updateGrowthHud, growthHelpMarkup, growthHistoryMarkup } from './ui/growthHud';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
 const app = document.querySelector<HTMLDivElement>('#app')!;
@@ -16,7 +18,8 @@ const initialSeed = seedParam > 0 && Number.isFinite(seedParam) ? seedParam >>> 
 // The old slice is an explicit regression fixture; the player enters the campaign.
 const trainingFixture = params.get('scenario') === 'training';
 const firstTrait = ['CARAPACE', 'FISSION', 'MIMIC'].includes(params.get('trait') ?? '') ? params.get('trait') as TraitId : undefined;
-const session = new GameSession(initialSeed, { campaign: !trainingFixture, firstTrait });
+const milestone = params.get('fixture') === 'G1' ? 'G1' : 'G2';
+const session = new GameSession(initialSeed, { campaign: !trainingFixture, firstTrait, milestone });
 const clock = new FixedClock();
 const renderer = new Renderer(canvas);
 const sound = new Soundscape();
@@ -41,7 +44,8 @@ if (!trainingFixture) {
   document.querySelector('.objective')!.remove();
   document.querySelector('.telemetry')!.remove();
   document.querySelector('#hud')!.insertAdjacentHTML('afterbegin', battleHudMarkup);
-  document.querySelector('.micro-footer')!.textContent = 'G1 · 心脏防线 / 架空生物幻想';
+  if (session.state.growth) document.querySelector('#hud')!.insertAdjacentHTML('beforeend', growthHudMarkup);
+  document.querySelector('.micro-footer')!.textContent = `${milestone} · 心脏防线 / 架空生物幻想`;
 }
 const input = new Controller(canvas, () => togglePause(), () => {
   if (session.state.phase === 'playing') session.pause();
@@ -70,6 +74,15 @@ app.addEventListener('click', event => {
   const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-action]');
   if (!button) return;
   const action = button.dataset.action!;
+  if (action.startsWith('draft-')) {
+    const growth = session.state.growth;
+    if (!growth) return;
+    input.clear(); clock.reset();
+    if (action === 'draft-option' || action === 'draft-replace') session.chooseDraft({ runId: growth.runId, draftId: button.dataset.draft!, optionId: button.dataset.option!, ...(action === 'draft-replace' ? { slotIndex: Number(button.dataset.slot), expectedPreviousProtocolId: button.dataset.previous as ProtocolId } : {}) });
+    if (action === 'draft-discard') session.discardDraft(button.dataset.draft!);
+    if (action === 'draft-back') session.backToDraft(button.dataset.draft!);
+    overlayKey = ''; button.blur(); return;
+  }
   if (action.startsWith('tool-')) { input.select(Number(action.at(-1)) as Tool); return; }
   if (action === 'start' || action === 'retry') start();
   if (action === 'new') start((session.state.seed + 2654435761) >>> 0);
@@ -86,12 +99,18 @@ app.addEventListener('click', event => {
 });
 function updateOverlay() {
   const state = session.state;
-  const key = `${state.phase}:${help}:${lowEffects}:${history}`;
+  const draft = state.growth?.draft;
+  const key = `${state.phase}:${help}:${lowEffects}:${history}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}`;
   if (key === overlayKey) return;
   overlayKey = key;
   el('hud').hidden = state.phase === 'menu' || state.phase === 'result';
   const host = el('overlay-host');
-  if (state.battle) { host.innerHTML = battleOverlay(state, help, resumeAfterHelp, lowEffects, history) ?? ''; return; }
+  if (state.battle) {
+    host.innerHTML = (!help && !history && state.phase === 'paused' ? draftOverlay(state) : null) ?? battleOverlay(state, help, resumeAfterHelp, lowEffects, history) ?? '';
+    if (state.growth && help) host.querySelector('.help-grid')?.insertAdjacentHTML('afterend', growthHelpMarkup);
+    if (state.growth && history) host.querySelector('h2')?.insertAdjacentHTML('afterend', growthHistoryMarkup(state));
+    return;
+  }
   if (help) {
     host.innerHTML = `<div class="overlay"><section class="modal" role="dialog" aria-modal="true" aria-label="操作指南"><div class="eyebrow">FIELD MANUAL / 操作指南</div><h2>小小战士，深入心脏。</h2><p>这是可自由练习的基础训练场。先清除单体与簇群靶，再将组织修复至 100%，靠近下方的复测终端按 E。</p><div class="help-grid">${BINDINGS.map(([key,label])=>`<div><kbd>${key}</kbd>${label}</div>`).join('')}</div><p>点击靶标的底部瞄准环。范围裂解显示真实半径；组织修复只作用于组织。遮挡你的前景会淡化，组织隆起则需要绕行。</p><div class="switches"><button data-action="effects">特效：${lowEffects?'低':'标准'}</button>${state.phase === 'paused'?`<button data-action="practice-hit">受击演练 · 耐久 −${BALANCE.trainingHitDamage}，保底 1</button>`:''}</div><div class="actions"><button class="primary" data-action="close-help">返回${resumeAfterHelp?'训练':'上一级'}</button></div></section></div>`;
   } else if (state.phase === 'menu') {
@@ -106,6 +125,7 @@ function updateHud() {
   const s = session.state;
   if (s.battle) {
     updateBattleHud(s);
+    updateGrowthHud(s);
     el('message').textContent = s.messageUntil > s.elapsed ? s.message : s.battle.objective;
     updateCommonHud();
     return;
@@ -149,7 +169,7 @@ renderer.resize(); updateOverlay(); updateHud(); requestAnimationFrame(frame);
 
 // Read-only diagnostics for browser regression. Inputs always use the real DOM.
 Object.defineProperty(window, '__viral', { value: Object.freeze({
-  version: '0.2.0-G1', snapshot: () => session.snapshot(),
+  version: '0.3.0-G2', snapshot: () => session.snapshot(),
   toScreen: (point: { x: number; y: number }) => renderer.camera.worldToScreen(point),
   toWorld: (point: { x: number; y: number }) => renderer.camera.screenToWorld(point),
   diagnostics: () => renderer.diagnostics(session.state),

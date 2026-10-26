@@ -10,7 +10,7 @@ for(const firstTrait of ['CARAPACE','MIMIC'] as const) test(`G1 ${firstTrait}: o
   page.on('pageerror',error=>errors.push(error.message));
   await context.setOffline(true);
   await context.route(/^https?:/i,async route=>{remote.push(route.request().url());await route.abort();});
-  await page.goto(`${entry}?seed=130026&trait=${firstTrait}`);
+  await page.goto(`${entry}?fixture=G1&seed=130026&trait=${firstTrait}`);
   await expect(page.getByRole('button',{name:'进入心脏防线'})).toBeVisible();
   await page.screenshot({path:info.outputPath('g1-menu.png')});
   await page.locator('[data-action="start"]').click();

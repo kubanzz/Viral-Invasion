@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test';
 import type { GameState, Vec } from '../../src/game/types';
 import { WORLD } from '../../src/game/types';
 import { normalized, wallHit } from '../../src/actors/collision';
+import type { ProtocolId } from '../../src/game/growthTypes';
 
 export const readState = (page: Page): Promise<GameState> => page.evaluate(() => window.__viral.snapshot());
 export async function aim(page: Page, target: Vec): Promise<void> {
@@ -38,18 +39,25 @@ function route(from: Vec, target: Vec): Vec {
 }
 export async function walk(page: Page, target: Vec, tolerance=30): Promise<void> {
   const deadline=Date.now()+12000;
-  while(Date.now()<deadline){const s=await readState(page);if(s.phase!=='playing')throw new Error(`Walk interrupted: ${s.phase}`);if(Math.hypot(s.player.x-target.x,s.player.y-target.y)<tolerance)return;await keyMove(page,s.player,route(s.player,target));}
+  while(Date.now()<deadline){const s=await readState(page);if(s.phase==='paused'&&s.growth?.draft){await chooseDraftInput(page);continue;}if(s.phase!=='playing')throw new Error(`Walk interrupted: ${s.phase}`);if(Math.hypot(s.player.x-target.x,s.player.y-target.y)<tolerance)return;await keyMove(page,s.player,route(s.player,target));}
   throw new Error(`Unreachable waypoint ${JSON.stringify(target)}`);
+}
+export async function chooseDraftInput(page: Page, priorities: readonly ProtocolId[] = ['PULSE_BREAK','PURIFY_CHAIN','EXPOSE_TRACE','IMMUNE_BEACON']): Promise<void> {
+  const state=await readState(page), draft=state.growth?.draft;if(!draft)return;
+  if(draft.status==='replacing') {await page.locator('[data-action="draft-replace"]').first().click();return;}
+  const options=draft.options.slice().sort((a,b)=>Number(a.kind==='retune')-Number(b.kind==='retune')||priorities.indexOf(a.protocolId)-priorities.indexOf(b.protocolId));
+  await page.locator(`[data-action="draft-option"][data-option="${options[0].id}"]`).click();
 }
 
 export interface DriveEvidence { states: GameState[]; pulses: number; warningSeen: boolean; revealed: boolean }
-export async function completeHeart(page: Page, onWarning?: (state: GameState)=>Promise<void>, onPulse?: (state: GameState)=>Promise<void>): Promise<DriveEvidence> {
+export async function completeHeart(page: Page, onWarning?: (state: GameState)=>Promise<void>, onPulse?: (state: GameState)=>Promise<void>, onDraft?: (state: GameState)=>Promise<void>): Promise<DriveEvidence> {
   const evidence:DriveEvidence={states:[],pulses:0,warningSeen:false,revealed:false};
   const deadline=Date.now()+100000;
   let lastScan=-9, lastPulse=-9, warned=false;
   while(Date.now()<deadline) {
     const s=await readState(page), b=s.battle!;
     if(s.phase==='result') { if(!s.result?.success) throw new Error(`Campaign failed: ${s.result?.reason}`);return evidence; }
+    if(s.phase==='paused'&&s.growth?.draft){await page.mouse.up();if(onDraft)await onDraft(s);await chooseDraftInput(page);continue;}
     if(s.phase!=='playing')throw new Error(`Unexpected phase: ${s.phase}`);
     if(b.warning&&!warned) { warned=true;evidence.warningSeen=true;evidence.states.push(s);if(onWarning)await onWarning(s); }
     if(s.elapsed-lastScan>3.3){await page.keyboard.press('KeyQ');lastScan=s.elapsed;evidence.revealed=true;}
@@ -59,7 +67,8 @@ export async function completeHeart(page: Page, onWarning?: (state: GameState)=>
     if(elite&&s.elapsed-lastPulse>8.2&&b.pulse.readyAt<=s.elapsed) {
       await page.mouse.up();
       await walk(page,valve,80);
-      const fresh=(await readState(page)).targets.find(t=>t.id===elite.id)!;
+      const fresh=(await readState(page)).targets.find(t=>t.id===elite.id&&t.hp>0);
+      if(!fresh)continue; // A legal beacon may finish this enemy during travel.
       await aim(page,fresh);await page.keyboard.press('KeyE');lastPulse=s.elapsed;evidence.pulses++;
       await page.waitForTimeout(100);
       const afterPulse=await readState(page);evidence.states.push(afterPulse);if(onPulse)await onPulse(afterPulse);
