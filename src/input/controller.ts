@@ -11,11 +11,12 @@ export class Controller {
   private practiceHit = false;
   private tool: Tool | undefined;
   pointer: Vec = { x: innerWidth / 2, y: innerHeight / 2 };
-  constructor(canvas: HTMLCanvasElement, onPause: () => void, onBlur: () => void) {
+  constructor(canvas: HTMLCanvasElement, onPause: () => void, onBlur: () => void, acceptsGameInput: () => boolean = () => true) {
     window.addEventListener('keydown', e => {
-      if (e.target instanceof HTMLInputElement) return;
-      if (['Space', 'Tab', 'ArrowUp', 'ArrowDown'].includes(e.code)) e.preventDefault();
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || (e.target instanceof HTMLElement && e.target.isContentEditable)) return;
       if (e.code === 'Escape') { if (!e.repeat) onPause(); return; }
+      if (!acceptsGameInput() || e.ctrlKey || e.altKey || e.metaKey) return;
+      if (e.code === 'Space') e.preventDefault();
       if (e.repeat) return;
       if (!this.keys.has(e.code)) this.pressed.add(e.code);
       this.keys.add(e.code);
@@ -24,7 +25,7 @@ export class Controller {
     window.addEventListener('keyup', e => this.keys.delete(e.code));
     const updatePointer = (e: PointerEvent) => { const r = canvas.getBoundingClientRect(); this.pointer = { x: e.clientX - r.left, y: e.clientY - r.top }; };
     canvas.addEventListener('pointermove', updatePointer);
-    canvas.addEventListener('pointerdown', e => { updatePointer(e); if (e.button === 0) { this.fire = true; this.firePressed = true; canvas.setPointerCapture(e.pointerId); } });
+    canvas.addEventListener('pointerdown', e => { updatePointer(e); if (e.button === 0 && acceptsGameInput()) { this.fire = true; this.firePressed = true; canvas.setPointerCapture(e.pointerId); } });
     window.addEventListener('pointerup', () => { this.fire = false; });
     canvas.addEventListener('pointercancel', () => this.clear());
     canvas.addEventListener('contextmenu', e => e.preventDefault());

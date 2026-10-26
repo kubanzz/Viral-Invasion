@@ -29,6 +29,68 @@ describe('G4 local profile repository', () => {
     expect(store.load()).toEqual({ data: store.data, status: store.status });
   });
 
+  it('loads a schema-1 archive with two discovered traits without assuming its migration guide was read', () => {
+    const storage = new MemoryStorage(), previous = new ProfileStore(storage), state = result(true, 0);
+    state.battle!.traits = ['CARAPACE', 'FISSION'];
+    previous.updateSettings({ sound: false }); previous.recordRun(state, 'legacy-run');
+    const { onboarding: omitted, ...legacy } = JSON.parse(storage.getItem(PROFILE_STORAGE_KEY)!);
+    storage.items.set(PROFILE_STORAGE_KEY, JSON.stringify(legacy));
+    const loaded = new ProfileStore(storage);
+    expect(loaded.status.code).toBe('loaded');
+    expect(loaded.data.discoveredTraits).toEqual(['CARAPACE', 'FISSION']);
+    expect(loaded.data.stats.runs).toBe(1); expect(loaded.data.recentRuns[0].seed).toBe(0);
+    expect(loaded.data.settings.sound).toBe(false);
+    expect(loaded.data.onboarding.migrationGuideAcknowledged).toBe(false);
+    expect(JSON.parse(storage.getItem(PROFILE_STORAGE_KEY)!).onboarding).toBeUndefined();
+    loaded.updateSettings({ lowEffects: true });
+    expect(new ProfileStore(storage).data.onboarding.migrationGuideAcknowledged).toBe(false);
+  });
+
+  it('persists only an explicit migration-guide acknowledgement, once, independently of run discoveries', () => {
+    const storage = new MemoryStorage(), store = new ProfileStore(storage), state = result();
+    state.battle!.traits = ['CARAPACE', 'FISSION'];
+    store.recordRun(state, 'unacknowledged-guide');
+    expect(new ProfileStore(storage).data.onboarding.migrationGuideAcknowledged).toBe(false);
+    const before = store.data, writes = storage.writes;
+    store.acknowledgeMigrationGuide();
+    expect(storage.writes).toBe(writes + 1);
+    const loaded = new ProfileStore(storage);
+    expect(loaded.data).toEqual({ ...before, onboarding: { migrationGuideAcknowledged: true } });
+    const afterProbe = storage.writes;
+    loaded.acknowledgeMigrationGuide();
+    expect(storage.writes).toBe(afterProbe);
+    expect(loaded.data.stats.runs).toBe(1);
+  });
+
+  it('defaults an older empty onboarding object to unread while ignoring unknown presentation fields', () => {
+    const storage = new MemoryStorage();
+    storage.items.set(PROFILE_STORAGE_KEY, JSON.stringify({ ...emptyProfile(), onboarding: { unrelatedHint: true } }));
+    const store = new ProfileStore(storage);
+    expect(store.status.code).toBe('loaded');
+    expect(store.data.onboarding).toEqual({ migrationGuideAcknowledged: false });
+  });
+
+  it.each([null, [], true, { migrationGuideAcknowledged: 'true' }])('does not infer acknowledgement from malformed onboarding data: %s', onboarding => {
+    const storage = new MemoryStorage(); storage.items.set(PROFILE_STORAGE_KEY, JSON.stringify({ ...emptyProfile(), onboarding }));
+    const store = new ProfileStore(storage);
+    expect(store.status.code).toBe('corrupt');
+    expect(store.data.onboarding.migrationGuideAcknowledged).toBe(false);
+  });
+
+  it('keeps an acknowledgement only for the current session if its storage write fails', () => {
+    const storage = new MemoryStorage(), store = new ProfileStore(storage);
+    store.recordRun(result(), 'before-storage-failure');
+    storage.rejectWrite = true;
+    store.acknowledgeMigrationGuide();
+    expect(store.status.code).toBe('write-failed'); expect(store.status.mode).toBe('session');
+    expect(store.data.onboarding.migrationGuideAcknowledged).toBe(true);
+    expect(store.data.stats.runs).toBe(1);
+    storage.rejectWrite = false;
+    const reloaded = new ProfileStore(storage);
+    expect(reloaded.data.onboarding.migrationGuideAcknowledged).toBe(false);
+    expect(reloaded.data.stats.runs).toBe(1);
+  });
+
   it('round-trips discovered traits, observed weaknesses, protocols, settings and compact results', () => {
     const storage = new MemoryStorage(), store = new ProfileStore(storage), state = result(true, 0, 122);
     state.battle!.traits = ['CARAPACE', 'FISSION']; state.battle!.defeatedTraits = ['CARAPACE'];

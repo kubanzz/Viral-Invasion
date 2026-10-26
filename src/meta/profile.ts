@@ -39,6 +39,7 @@ export interface ProfileData {
   game: 'viral-invasion'; schemaVersion: typeof PROFILE_SCHEMA_VERSION;
   discoveredTraits: TraitId[]; discoveredWeaknesses: TraitId[]; unlockedProtocols: ProtocolId[];
   achievements: AchievementId[]; settings: ProfileSettings;
+  onboarding: { migrationGuideAcknowledged: boolean };
   stats: { runs: number; wins: number; losses: number; kills: number; sourceClears: number; coreClears: number };
   best: { fastestVictory: { runId: string; seed: number; durationSeconds: number } | null; mostKills: number; mostSources: number; longestRunSeconds: number };
   recentRuns: RunRecord[];
@@ -82,6 +83,7 @@ export function emptyProfile(): ProfileData {
     game: 'viral-invasion', schemaVersion: PROFILE_SCHEMA_VERSION,
     discoveredTraits: [], discoveredWeaknesses: [], unlockedProtocols: [], achievements: [],
     settings: { sound: true, lowEffects: false },
+    onboarding: { migrationGuideAcknowledged: false },
     stats: { runs: 0, wins: 0, losses: 0, kills: 0, sourceClears: 0, coreClears: 0 },
     best: { fastestVictory: null, mostKills: 0, mostSources: 0, longestRunSeconds: 0 },
     recentRuns: [], recordedRunIds: [],
@@ -113,6 +115,8 @@ function parseProfile(value: unknown): ProfileData | null {
     || !value.discoveredWeaknesses.every(trait => (value.discoveredTraits as TraitId[]).includes(trait))
     || !enumArray(value.unlockedProtocols, PROTOCOL_IDS) || !enumArray(value.achievements, ACHIEVEMENT_IDS)
     || !ownObject(value.settings) || typeof value.settings.sound !== 'boolean' || typeof value.settings.lowEffects !== 'boolean'
+    || value.onboarding !== undefined && (!ownObject(value.onboarding)
+      || value.onboarding.migrationGuideAcknowledged !== undefined && typeof value.onboarding.migrationGuideAcknowledged !== 'boolean')
     || !ownObject(value.stats) || !PROFILE_STAT_KEYS.every(key => count((value.stats as Record<string, unknown>)[key]))
     || !ownObject(value.best) || !count(value.best.mostKills) || !count(value.best.mostSources) || !duration(value.best.longestRunSeconds)
     || !strings(value.recordedRunIds) || !Array.isArray(value.recentRuns) || value.recentRuns.length > 10) return null;
@@ -135,6 +139,8 @@ function parseProfile(value: unknown): ProfileData | null {
     game: 'viral-invasion', schemaVersion: PROFILE_SCHEMA_VERSION,
     discoveredTraits: [...value.discoveredTraits], discoveredWeaknesses: [...value.discoveredWeaknesses], unlockedProtocols: [...value.unlockedProtocols], achievements: [...value.achievements],
     settings: { sound: value.settings.sound, lowEffects: value.settings.lowEffects },
+    // Additive schema-1 field: old discoveries never imply that a guide was acknowledged.
+    onboarding: { migrationGuideAcknowledged: ownObject(value.onboarding) && value.onboarding.migrationGuideAcknowledged === true },
     stats: Object.fromEntries(PROFILE_STAT_KEYS.map(key => [key, stats[key]])) as unknown as ProfileData['stats'],
     best: { fastestVictory, mostKills: value.best.mostKills, mostSources: value.best.mostSources, longestRunSeconds: value.best.longestRunSeconds },
     recentRuns, recordedRunIds: [...value.recordedRunIds],
@@ -255,6 +261,14 @@ export class ProfileStore {
       this.value.settings[key] = patch[key]; changed = true;
     }
     if (changed) this.persist();
+    return this.load();
+  }
+  /** Only an explicit button/Escape dismissal acknowledges the guide, not discovering traits or showing it. */
+  acknowledgeMigrationGuide(): ProfileSnapshot {
+    if (!this.value.onboarding.migrationGuideAcknowledged) {
+      this.value.onboarding.migrationGuideAcknowledged = true;
+      this.persist();
+    }
     return this.load();
   }
   /** The host supplies a globally unique run ID; seed and local run serial alone are not unique across reloads. */

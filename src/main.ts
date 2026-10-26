@@ -16,8 +16,9 @@ import './ui/profile.css';
 const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
 const app = document.querySelector<HTMLDivElement>('#app')!;
 const params = new URL(location.href).searchParams;
-const seedParam = Number(params.get('seed'));
-const initialSeed = seedParam > 0 && Number.isFinite(seedParam) ? seedParam >>> 0 : 130026;
+const seedText = params.get('seed');
+const seedParam = seedText !== null && seedText.trim() !== '' ? Number(seedText) : NaN;
+const initialSeed = Number.isInteger(seedParam) && seedParam >= 0 && seedParam <= 0xffffffff ? seedParam : 130026;
 // The old slice is an explicit regression fixture; the player enters the campaign.
 const trainingFixture = params.get('scenario') === 'training';
 const firstTrait = ['CARAPACE', 'FISSION', 'MIMIC'].includes(params.get('trait') ?? '') ? params.get('trait') as TraitId : undefined;
@@ -40,7 +41,7 @@ let resumeAfterProfile = false;
 let runId = '';
 let migrationGuide = false;
 let migrationGuidePending = false;
-let migrationGuideSeen = profile.data.discoveredTraits.length >= 2;
+let migrationGuideSeen = profile.data.onboarding.migrationGuideAcknowledged;
 
 app.innerHTML = `
   <header class="topbar"><div class="brand"><div class="brand-icon">+</div><div><strong>Viral Invasion</strong><small>病毒入侵 · 微观幻想</small></div></div><nav class="top-actions"><span class="status-chip">HEART / 01</span><button class="small" data-action="sound" aria-label="声音开关">声音 开</button><button class="small" data-action="help">操作指南</button><button class="small" data-action="pause">暂停 <kbd>Esc</kbd></button></nav></header>
@@ -62,7 +63,7 @@ if (!trainingFixture) {
 const input = new Controller(canvas, () => togglePause(), () => {
   if (session.state.phase === 'playing') session.pause();
   clock.reset();
-});
+}, () => session.state.phase === 'playing' && !help && !history && !profileOpen && !migrationGuide);
 session.bus.on('event', event => {
   if (event.type === 'INPUT_RESET_REQUESTED') { input.clear(); resetClockAfterStep = true; }
   if (event.type === 'RUN_ENDED' && session.state.campaign && runId) profile.recordRun(session.state, runId);
@@ -73,7 +74,7 @@ const formatTime = (seconds: number) => `${Math.floor(seconds/60).toString().pad
 function togglePause() {
   input.clear(); clock.reset();
   if (profileOpen) { profileOpen = false; if (resumeAfterProfile) session.resume(); resumeAfterProfile = false; return; }
-  if (migrationGuide) { migrationGuide = false; session.resume(); return; }
+  if (migrationGuide) { closeMigrationGuide(); return; }
   if (history) { history = false; if (resumeAfterHistory) session.resume(); resumeAfterHistory = false; return; }
   if (help) { help = false; if (resumeAfterHelp) session.resume(); resumeAfterHelp = false; return; }
   if (session.state.phase === 'playing') session.pause();
@@ -87,9 +88,16 @@ function start(newSeed?: number) {
   sound.unlock(); session.start(newSeed ?? session.state.seed);
 }
 function showHelp() {
+  if (profileOpen || migrationGuide || history || help) return;
   resumeAfterHelp = session.state.phase === 'playing';
   if (resumeAfterHelp) session.pause();
   input.clear(); clock.reset(); help = true;
+}
+function closeMigrationGuide() {
+  if (!migrationGuide) return;
+  migrationGuide = false;
+  profile.acknowledgeMigrationGuide();
+  session.resume(); input.clear(); clock.reset();
 }
 app.addEventListener('click', event => {
   const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-action]');
@@ -98,7 +106,7 @@ app.addEventListener('click', event => {
   if (action === 'profile') { resumeAfterProfile = session.state.phase === 'playing'; session.pause(); profileOpen = true; input.clear(); clock.reset(); button.blur(); return; }
   if (action === 'close-profile') { profileOpen = false; if (resumeAfterProfile) session.resume(); resumeAfterProfile = false; input.clear(); clock.reset(); button.blur(); return; }
   if (action === 'replay-record') { const seed = Number(button.dataset.seed); if (Number.isInteger(seed) && seed >= 0 && seed <= 0xffffffff) start(seed); return; }
-  if (action === 'close-migration-guide') { migrationGuide = false; session.resume(); input.clear(); clock.reset(); return; }
+  if (action === 'close-migration-guide') { closeMigrationGuide(); return; }
   if (action.startsWith('migration-')) {
     session.chooseMigration(action.slice(10) as 'pursue' | 'block' | 'ignore', button.dataset.migration!);
     input.clear(); button.blur(); return;
@@ -133,6 +141,10 @@ function updateOverlay() {
   if (key === overlayKey) return;
   overlayKey = key;
   el('hud').hidden = state.phase === 'menu' || state.phase === 'result';
+  // Keep keyboard navigation inside the visible overlay as well as mouse input.
+  const modalActive = profileOpen || migrationGuide || help || history || state.phase !== 'playing';
+  document.querySelector<HTMLElement>('.topbar')!.inert = modalActive;
+  el('hud').inert = modalActive;
   const host = el('overlay-host');
   if (profileOpen) { host.innerHTML = profileOverlay(profile.data, profile.status); return; }
   if (migrationGuide) { host.innerHTML = `<div class="overlay"><section class="modal" role="dialog" aria-modal="true" aria-label="首次迁移指引"><div class="eyebrow">THE NEXT CHAMBER / 首次迁移</div><h2>病毒要去另一个器官了。</h2><p>倒数已暂停。你可以去右上出口按 E 追击，或在左上隔离闸按 E 留守 2 秒封锁。放任会让肺部新增感染源，仍可补救。</p><p>追击后清掉迁移小体，或关闭肺部气道；器官图会显示心脏残留风险，出口可双向返回。此说明之后可在作战手册回看。</p><div class="actions"><button class="primary" data-action="close-migration-guide">明白了，继续作战</button></div></section></div>`; return; }
@@ -208,7 +220,7 @@ renderer.resize(); updateOverlay(); updateHud(); requestAnimationFrame(frame);
 
 // Read-only diagnostics for browser regression. Inputs always use the real DOM.
 Object.defineProperty(window, '__viral', { value: Object.freeze({
-  version: '0.5.0-G4', snapshot: () => session.snapshot(),
+  version: '0.5.1-G4', snapshot: () => session.snapshot(),
   toScreen: (point: { x: number; y: number }) => renderer.camera.worldToScreen(point),
   toWorld: (point: { x: number; y: number }) => renderer.camera.screenToWorld(point),
   diagnostics: () => renderer.diagnostics(session.state),
