@@ -3,6 +3,8 @@ import { EventBus } from '../core/events';
 import { SeedRng } from '../core/rng';
 import { clamp, distance, moveWithCollision, normalized, rayCircle, wallHit } from '../actors/collision';
 import { BALANCE, type Effect, type GameEvent, type GameState, type InputFrame, type Target, type Tool, type Vec } from './types';
+import { BattleDirector, initializeBattle } from './battle';
+import type { CampaignOptions } from './battleTypes';
 
 // Exporting the clock here is convenient for hosts, while it remains independently testable.
 export { FixedClock };
@@ -16,9 +18,11 @@ export class GameSession {
   readonly bus = new EventBus<SessionEvents>();
   private effectId = 0;
   private dashDirection: Vec = { x: 1, y: 0 };
+  private battleDirector: BattleDirector | undefined;
 
-  constructor(seed = 130026) {
+  constructor(seed = 130026, private readonly options: CampaignOptions = {}) {
     this.state = this.initial(seed);
+    if (options.campaign) this.battleDirector = new BattleDirector(this);
   }
 
   private initial(seed: number): GameState {
@@ -30,7 +34,7 @@ export class GameSession {
       maxHp: kind === 'single' ? 100 : 60,
       hitUntil: 0, scanned: false,
     });
-    return {
+    const state: GameState = {
       game: 'viral-invasion', schemaVersion: 1, seed: seed >>> 0, phase: 'menu', tick: 0, elapsed: 0,
       player: { x: 330, y: 440, hp: 100, radius: 19, facing: 0, moving: false, dashUntil: 0, dashReady: 0, hurtUntil: 0, actionUntil: 0 },
       targets: [target('single-1', 'single', 590, 330), target('cluster-1', 'cluster', 820, 400), target('cluster-2', 'cluster', 870, 430), target('cluster-3', 'cluster', 815, 460)],
@@ -39,6 +43,8 @@ export class GameSession {
       message: '先净化两类靶标，再修复受损组织。', messageUntil: 8,
       shots: 0, hits: 0, scans: 0, dashes: 0, result: null,
     };
+    if (this.options.campaign) initializeBattle(state, this.options);
+    return state;
   }
 
   start(seed = this.state.seed): void {
@@ -46,7 +52,7 @@ export class GameSession {
     this.dashDirection = { x: 1, y: 0 };
     this.state = this.initial(seed);
     this.state.phase = 'playing';
-    this.emit('RUN_STARTED', { seed: this.state.seed, mode: 'training', startAtTick: 0 });
+    this.emit('RUN_STARTED', { seed: this.state.seed, mode: this.state.battle ? 'campaign' : 'training', startAtTick: 0 });
   }
 
   restart(seed = this.state.seed): void { this.start(seed); }
@@ -80,7 +86,7 @@ export class GameSession {
 
   snapshot(): GameState { return structuredClone(this.state); }
 
-  private emit(type: string, data: GameEvent['data']): void {
+  emit(type: string, data: GameEvent['data']): void {
     const event: GameEvent = { type, tick: this.state.tick, data };
     this.state.events.push(event);
     // The training log is bounded, even if the player spends hours experimenting.
@@ -88,12 +94,12 @@ export class GameSession {
     this.bus.emit('event', event);
   }
 
-  private message(text: string, seconds = 3): void {
+  message(text: string, seconds = 3): void {
     this.state.message = text;
     this.state.messageUntil = this.state.elapsed + seconds;
   }
 
-  private effect(kind: Effect['kind'], from: Vec, to: Vec, radius: number, duration: number): void {
+  effect(kind: Effect['kind'], from: Vec, to: Vec, radius: number, duration: number): void {
     this.state.effects.push({ id: ++this.effectId, kind, from: { x: from.x, y: from.y }, to: { x: to.x, y: to.y }, radius, born: this.state.elapsed, duration });
   }
 
@@ -107,6 +113,7 @@ export class GameSession {
     state.tick++;
     state.elapsed = state.tick * BALANCE.step;
     state.effects = state.effects.filter(effect => state.elapsed - effect.born < effect.duration);
+    this.battleDirector?.beforeInput(input);
     if (input.tool && input.tool !== state.tool) {
       state.tool = input.tool;
       this.emit('TOOL_SELECTED', { tool: input.tool });
@@ -140,7 +147,7 @@ export class GameSession {
     if ((velocity.x || velocity.y) && distance({ x: before.x + desired.x, y: before.y + desired.y }, after) > .1 && state.tick % 20 === 0) {
       this.emit('COLLISION_BLOCKED', { x: after.x, y: after.y });
     }
-    if (input.practiceHit) {
+    if (input.practiceHit && !state.battle) {
       // Optional training exercise, not an enemy attack: it cannot kill the
       // player and never affects objective progress or tissue integrity.
       const damage = Math.max(0, Math.min(BALANCE.trainingHitDamage, state.player.hp - 1));
@@ -153,6 +160,7 @@ export class GameSession {
     if (input.scan) this.scan();
     if (input.fire) this.fire(input.aim);
     if (input.interact) this.interact();
+    if (state.phase === 'playing') this.battleDirector?.afterInput();
   }
 
   private scan(): void {
@@ -171,6 +179,7 @@ export class GameSession {
     this.effect('scan', state.player, state.player, BALANCE.scanRadius, 1.1);
     this.emit('SCAN_COMPLETED', { found, radius: BALANCE.scanRadius });
     this.message(found ? `诊断：发现 ${found} 个训练靶。单核用 1，簇群可用 2；受损组织用 3。` : '诊断：附近靶标已净化，检查受损组织并返回复测台。', 4);
+    this.battleDirector?.scan();
   }
 
   private fire(aim: Vec): void {
@@ -230,14 +239,17 @@ export class GameSession {
     const before = state.tissue.hp;
     state.tissue.hp = clamp(state.tissue.hp + BALANCE.repair, 0, state.tissue.maxHp);
     const amount = state.tissue.hp - before;
-    this.emit('ORGAN_INTEGRITY_CHANGED', { organId: 'heart', before, after: state.tissue.hp, reason: 'repair' });
+    this.emit('ORGAN_INTEGRITY_CHANGED', { organId: state.battle?.organId ?? 'heart', before, after: state.tissue.hp, reason: 'repair' });
     if (amount > 0) this.message(state.tissue.hp === state.tissue.maxHp ? '组织修复完成！清空靶标后返回复测台，按 E。' : `组织修复 +${amount}，完整度 ${state.tissue.hp}%。`);
     else this.message('组织已经完全修复。');
+    this.battleDirector?.repaired(amount);
+    this.battleDirector?.repairMimics(aim, (target, damage) => this.damage(target, damage));
   }
 
   private damage(target: Target, amount: number): void {
     const state = this.state;
     if (target.hp <= 0) return;
+    if (this.battleDirector) amount = this.battleDirector.modifiedDamage(target, amount);
     target.hp = Math.max(0, target.hp - amount);
     target.hitUntil = state.elapsed + .18;
     state.hits++;
@@ -245,11 +257,13 @@ export class GameSession {
     this.emit('TARGET_HIT', { id: target.id, damage: amount, remainingHp: target.hp, tool: state.tool });
     if (target.hp === 0) {
       this.emit('TARGET_CLEARED', { id: target.id, kind: target.kind });
-      this.message(state.targets.every(t => t.hp === 0) ? '全部靶标已净化！按 3 修复十字标记组织，再到复测台按 E。' : '训练靶已净化。继续处理其他靶标。');
+      if (this.battleDirector) this.battleDirector.cleared(target);
+      else this.message(state.targets.every(t => t.hp === 0) ? '全部靶标已净化！按 3 修复十字标记组织，再到复测台按 E。' : '训练靶已净化。继续处理其他靶标。');
     }
   }
 
   private interact(): void {
+    if (this.battleDirector) { this.battleDirector.interact(); return; }
     const state = this.state;
     if (distance(state.player, state.terminal) > BALANCE.interactionRange) {
       this.message('请靠近左下方的复测台，再按 E。');

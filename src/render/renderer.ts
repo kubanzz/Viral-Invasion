@@ -3,6 +3,11 @@ import { Camera } from './camera';
 import { depthSort } from './depthSort';
 import { foregroundOpacity, isForegroundOccluded } from './occlusion';
 import { LAYER_ORDER } from './layers';
+import { drawBattleTarget } from './battleVisuals';
+import type { OrganNode } from '../game/battleTypes';
+import { BATTLE_BALANCE } from '../game/battleConfig';
+import { wallHit } from '../actors/collision';
+import { pulsePreviewPolygon } from './pulsePreview';
 
 const TAU = Math.PI * 2;
 const hash = (n: number): number => { const a = Math.sin(n * 127.1 + 311.7) * 43758.5453123; return a - Math.floor(a); };
@@ -78,6 +83,7 @@ export class Renderer {
       ...state.targets.map((target, index) => ({ id: target.id, y: target.y, kind: 'target', index })),
       { id: 'tissue', y: state.tissue.y, kind: 'tissue' },
       { id: 'terminal', y: state.terminal.y, kind: 'terminal' },
+      ...(state.battle?.graph.nodes.filter(node => node.kind === 'valve' || node.kind === 'gate').map(node => ({ id: node.id, y: node.y, kind: 'device' })) ?? []),
       ...WORLD.obstacles.map(obstacle => ({ id: obstacle.id, y: obstacle.y, kind: 'obstacle' })),
     ];
   }
@@ -97,8 +103,10 @@ export class Renderer {
       if (entity.kind === 'tissue') this.drawTissue(ctx, state);
       if (entity.kind === 'terminal') this.drawTerminal(ctx, state);
       if (entity.kind === 'obstacle') this.drawObstacle(ctx, WORLD.obstacles.find(obstacle => obstacle.id === entity.id)!);
+      if (entity.kind === 'device') this.drawBattleDevice(ctx, state.battle!.graph.nodes.find(node => node.id === entity.id)!, state);
     }
     this.drawForeground(ctx, state);
+    if (state.battle) this.drawBattleDangers(ctx, state);
     this.drawEffects(ctx, state, Boolean(opts.lowEffects));
     this.drawCrosshair(ctx, state, aim);
     ctx.restore();
@@ -163,7 +171,7 @@ export class Renderer {
     // Printed floor annotations, visually grounded rather than floating HUD.
     ctx.save(); ctx.globalAlpha = .33;
     text(ctx, 'A T R I U M   /   0 1', 735, 150, '#f1c5a1', 16);
-    text(ctx, 'HEART  ·  TRAINING CHAMBER', 630, 716, '#e1b09e', 11);
+    text(ctx, 'HEART  ·  ATRIUM', 630, 716, '#e1b09e', 11);
     ctx.restore();
   }
 
@@ -179,10 +187,13 @@ export class Renderer {
     const glow = ctx.createRadialGradient(650, 90, 0, 650, 90, 400);
     glow.addColorStop(0, `rgba(247,135,90,${.07 + Math.sin(time * 1.5) * .015})`); glow.addColorStop(1, '#f69a6000');
     ctx.fillStyle = glow; ctx.fillRect(250, -110, 800, 500);
+    if (state.battle) this.drawHeartRhythm(ctx, state, low);
   }
 
   private drawGroundSignals(ctx: CanvasRenderingContext2D, state: GameState, aim: Vec): void {
+    if (state.battle) this.drawBattleGround(ctx, state, aim);
     for (const target of state.targets) if (target.hp > 0) {
+      if (state.battle) continue;
       ctx.save(); ctx.setLineDash([3, 7]); ctx.lineWidth = 1;
       ellipse(ctx, target.x, target.y, target.radius + 12, target.radius + 12, '#ff926508', '#e9a47c55'); ctx.restore();
     }
@@ -197,6 +208,148 @@ export class Renderer {
     // Decorative endpoint ticks share the exact physical floor boundary.
     for (const [x, y, dx, dy] of [[80, 125, 25, 25], [1120, 125, -25, 25], [80, 720, 25, -25], [1120, 720, -25, -25]]) {
       line(ctx, [x, y + dy, x, y, x + dx, y], '#d48d6765', 2);
+    }
+  }
+
+  private drawHeartRhythm(ctx: CanvasRenderingContext2D, state: GameState, low: boolean): void {
+    const battle = state.battle!, time = state.elapsed;
+    const surge = battle.pulse.phase === 'surge';
+    const strength = surge ? .9 : battle.pulse.phase === 'charge' ? .45 : .14;
+    // These upper-rim leaflets breathe above the walkable floor; they never
+    // create collision shapes or obscure a grounded actor.
+    for (let i = 0; i < 3; i++) {
+      const x = 440 + i * 145, stretch = Math.sin(time * TAU / BATTLE_BALANCE.pulseCycle) * 6;
+      ctx.save(); ctx.translate(x, 91);
+      ctx.beginPath(); ctx.moveTo(-63, -28); ctx.bezierCurveTo(-42, -80, -7, -37 + stretch, 0, 20);
+      ctx.bezierCurveTo(14, -30 + stretch, 43, -79, 65, -25); ctx.quadraticCurveTo(15, 7, 0, 30); ctx.quadraticCurveTo(-25, 4, -63, -28);
+      ctx.fillStyle = '#843648'; ctx.fill(); ctx.strokeStyle = `rgba(242,154,122,${.23 + strength * .23})`; ctx.lineWidth = 2; ctx.stroke();
+      line(ctx, [0, 24, 0, -7], '#ffc59766', 1.5);
+      ctx.restore();
+    }
+    if (!low) {
+      const beats = ctx.createRadialGradient(655, 165, 10, 655, 165, 310);
+      beats.addColorStop(0, `rgba(240,104,81,${strength * .06})`); beats.addColorStop(1, '#ed996700');
+      ctx.fillStyle = beats; ctx.fillRect(345, -145, 620, 620);
+    }
+  }
+
+  private drawBattleGround(ctx: CanvasRenderingContext2D, state: GameState, aim: Vec): void {
+    const battle = state.battle!, time = state.elapsed;
+    for (const edge of battle.graph.edges) {
+      const from = battle.graph.nodes.find(node => node.id === edge.from), to = battle.graph.nodes.find(node => node.id === edge.to);
+      if (!from || !to) continue;
+      const angle = Math.atan2(to.y - from.y, to.x - from.x), length = Math.hypot(to.x - from.x, to.y - from.y);
+      const infected = from.infected && from.active;
+      line(ctx, [from.x, from.y, to.x, to.y], '#26162477', 14);
+      ctx.save(); ctx.setLineDash(edge.open ? [] : [5, 8]);
+      line(ctx, [from.x, from.y, to.x, to.y], !edge.open ? '#b7c4b24a' : infected ? '#db8d7655' : '#c29c8333', 2);
+      ctx.restore();
+      for (let i = 1; i <= Math.floor(length / 85); i++) {
+        const fraction = i / (Math.floor(length / 85) + 1), x = from.x + (to.x - from.x) * fraction, y = from.y + (to.y - from.y) * fraction;
+        ctx.save(); ctx.translate(x, y); ctx.rotate(angle);
+        if (edge.open) line(ctx, [-5, -5, 0, 0, -5, 5], infected ? '#eab89777' : '#ceb29644', 1.5);
+        else { line(ctx, [-3, -4, 3, 4], '#d8c9b577', 1.5); line(ctx, [-3, 4, 3, -4], '#d8c9b577', 1.5); }
+        ctx.restore();
+      }
+      if (edge.open && infected) {
+        const fraction = 1 - clamp((edge.nextSpread - time) / BATTLE_BALANCE.spreadInterval, 0, 1);
+        ellipse(ctx, from.x + (to.x - from.x) * fraction, from.y + (to.y - from.y) * fraction, 5, 3, '#efb98e91');
+      }
+    }
+    for (const node of battle.graph.nodes) {
+      if (node.kind === 'source' && node.active) {
+        ctx.save(); ctx.setLineDash([3, 5]); ellipse(ctx, node.x, node.y, 48, 48, '#f09c7910', '#db947766'); ctx.restore();
+      }
+      if (node.kind === 'gate') {
+        const closed = !battle.graph.edges.filter(edge => edge.from === node.id || edge.to === node.id).some(edge => edge.open);
+        ellipse(ctx, node.x, node.y, 42, 29, '#a2f1c80a', closed ? '#a7dac282' : '#d7b68b5d');
+      }
+    }
+    const valve = battle.graph.nodes.find(node => node.kind === 'valve');
+    if (valve && state.phase === 'playing' && Math.hypot(state.player.x - valve.x, state.player.y - valve.y) <= BALANCE.interactionRange) {
+      const ready = time >= battle.pulse.readyAt;
+      const angle = Math.atan2(aim.y - valve.y, aim.x - valve.x);
+      this.drawPulseSector(ctx, valve, angle, BATTLE_BALANCE.pulseRange, ready ? '#ffd89a0e' : '#c7b4a309', ready ? '#f4cb8d99' : '#bba69355', !ready);
+    }
+  }
+
+  private drawPulseSector(ctx: CanvasRenderingContext2D, origin: Vec, angle: number, radius: number, fill: string, outline: string, dashed = false): void {
+    ctx.save(); ctx.beginPath(); ctx.moveTo(origin.x, origin.y);
+    // Use the simulation's occluders: the preview cannot promise an impulse
+    // behind a fold that the real pulse will reject.
+    for (const point of pulsePreviewPolygon(origin, angle, radius).slice(1)) ctx.lineTo(point.x, point.y);
+    ctx.closePath();
+    ctx.fillStyle = fill; ctx.fill(); ctx.strokeStyle = outline; ctx.lineWidth = 1.5;
+    if (dashed) ctx.setLineDash([5, 7]); ctx.stroke(); ctx.setLineDash([]);
+    for (const fraction of [.3, .55, .8]) {
+      const limit = wallHit(origin, { x: Math.cos(angle), y: Math.sin(angle) }, radius) ?? radius;
+      if (radius * fraction > limit) continue;
+      const x = origin.x + Math.cos(angle) * radius * fraction, y = origin.y + Math.sin(angle) * radius * fraction;
+      ctx.save(); ctx.translate(x, y); ctx.rotate(angle); line(ctx, [-8, -6, 0, 0, -8, 6], outline, 2); ctx.restore();
+    }
+    ctx.restore();
+  }
+
+  private drawBattleDevice(ctx: CanvasRenderingContext2D, node: OrganNode, state: GameState): void {
+    const battle = state.battle!, time = state.elapsed;
+    const near = Math.hypot(state.player.x - node.x, state.player.y - node.y) <= BALANCE.interactionRange;
+    ctx.save(); ctx.translate(node.x, node.y); ctx.scale(1, 1 / .72);
+    if (node.kind === 'valve') {
+      const ready = time >= battle.pulse.readyAt, surge = battle.pulse.phase === 'surge';
+      ellipse(ctx, 0, 3, 37, 12, '#6f3b46', '#c79076');
+      const movement = surge ? 9 : Math.sin(time * 2) * 2;
+      for (const sign of [-1, 1]) {
+        ctx.beginPath(); ctx.moveTo(0, -6); ctx.bezierCurveTo(sign * 12, -37 - movement, sign * 45, -57, sign * 35, -26);
+        ctx.quadraticCurveTo(sign * 29, -5, 0, -6); ctx.fillStyle = '#be7970'; ctx.fill(); ctx.strokeStyle = '#e4aa87'; ctx.lineWidth = 1.5; ctx.stroke();
+      }
+      ellipse(ctx, 0, -17, 11, 17, '#71394a', ready ? '#f7d397' : '#a99988');
+      line(ctx, [-5, -17, 0, -23, 5, -17, 0, -10, -5, -17], ready ? '#ffe0a8' : '#ad9a8b', 2);
+      text(ctx, '定向冲流阀', 0, 28, '#f4d3ac', 11);
+      text(ctx, ready ? `E · 组织 -${BATTLE_BALANCE.pulseCost}` : `${Math.ceil(battle.pulse.readyAt - time)}s 充能`, 0, 44, ready ? '#f6dba9' : '#bbaba0', 10);
+      if (near) {
+        const phase = battle.pulse.phase === 'charge' ? '蓄力' : surge ? '冲流节律' : '舒缓';
+        text(ctx, `${phase} · 鼠标定向`, 0, -69, '#f6dfbb', 11);
+      }
+    } else {
+      const closed = !battle.graph.edges.filter(edge => edge.from === node.id || edge.to === node.id).some(edge => edge.open);
+      for (const x of [-25, 25]) {
+        ctx.beginPath(); ctx.roundRect(x - 8, -39, 16, 43, 5); ctx.fillStyle = '#51645d'; ctx.fill(); ctx.strokeStyle = '#aac5ac'; ctx.lineWidth = 1.5; ctx.stroke();
+        ellipse(ctx, x, -37, 7, 4, '#d2d6b6', '#eae3c1');
+      }
+      if (closed) {
+        ctx.fillStyle = '#a5d9c426'; ctx.fillRect(-17, -33, 34, 32);
+        for (let y = -29; y < 0; y += 8) line(ctx, [-17, y, 17, y], '#c2e4cb88', 1.5);
+        line(ctx, [-5, -25, 5, -10], '#e0edcf', 2); line(ctx, [-5, -10, 5, -25], '#e0edcf', 2);
+      } else line(ctx, [-18, -3, 18, -3], '#bba98b66', 2);
+      text(ctx, closed ? '隔离闸 · 已关闭' : '隔离闸 · 已开放', 0, 28, '#d2dbc0', 11);
+      if (near) text(ctx, closed ? '[ E ] 恢复通路' : '[ E ] 截断传播', 0, -57, '#e4efd3', 11);
+    }
+    ctx.restore();
+  }
+
+  private drawBattleDangers(ctx: CanvasRenderingContext2D, state: GameState): void {
+    for (const target of state.targets) {
+      if ((target.splitAt ?? 0) > state.elapsed) {
+        const remaining = (target.splitAt ?? 0) - state.elapsed;
+        for (const landing of target.splitPositions ?? []) {
+          ctx.save(); ctx.setLineDash([3, 4]); ctx.lineWidth = 1.7;
+          ellipse(ctx, landing.x, landing.y, 18, 18, '#f7cf8f12', '#f3cf95'); ctx.setLineDash([]);
+          line(ctx, [landing.x - 5, landing.y, landing.x + 5, landing.y], '#ffdfab', 1.5);
+          text(ctx, `⋈ ${remaining.toFixed(1)}s`, landing.x, landing.y - 25, '#f4d7a3', 11);
+          ctx.restore();
+        }
+      }
+      if (target.hp <= 0 || !target.attackAim || (target.attackAt ?? 0) <= state.elapsed) continue;
+      const center = target.attackAim, radius = BATTLE_BALANCE.attackRadius;
+      const remaining = (target.attackAt ?? 0) - state.elapsed;
+      const progress = 1 - clamp(remaining / BATTLE_BALANCE.attackWindup, 0, 1);
+      ctx.save(); ctx.lineWidth = 2;
+      ellipse(ctx, center.x, center.y, radius, radius, '#e97d5c13', '#ffbd8b');
+      ctx.setLineDash([4, 5]); ellipse(ctx, center.x, center.y, radius * .76, radius * .76, '#00000000', '#f6b1819a'); ctx.setLineDash([]);
+      ctx.beginPath(); ctx.arc(center.x, center.y, radius + 5, -Math.PI / 2, -Math.PI / 2 + TAU * progress); ctx.strokeStyle = '#ffe0a2'; ctx.lineWidth = 3; ctx.stroke();
+      line(ctx, [center.x - 5, center.y - 4, center.x + 5, center.y + 4], '#ffd3a0', 2);
+      line(ctx, [center.x - 5, center.y + 4, center.x + 5, center.y - 4], '#ffd3a0', 2);
+      ctx.restore();
     }
   }
 
@@ -253,6 +406,7 @@ export class Renderer {
   }
 
   private drawTarget(ctx: CanvasRenderingContext2D, target: Target, state: GameState): void {
+    if (state.battle) { drawBattleTarget(ctx, target, state); return; }
     const live = target.hp > 0;
     ctx.save(); ctx.translate(target.x, target.y); ctx.scale(1, 1 / .72);
     if (!live) {
@@ -314,13 +468,13 @@ export class Renderer {
     line(ctx, [30, -16, 30, -4], '#2d7265', 3);
     ctx.fillStyle = '#211d30'; ctx.beginPath(); ctx.roundRect(-37, 12, 74, 5, 2); ctx.fill();
     ctx.fillStyle = ratio === 1 ? '#9be4b7' : '#e5ae80'; ctx.beginPath(); ctx.roundRect(-37, 12, Math.max(1, 74 * ratio), 5, 2); ctx.fill();
-    text(ctx, ratio === 1 ? '组织修复完成' : `受损组织  ${tissue.hp}%`, 0, 35, ratio === 1 ? '#b9eec5' : '#f1d6bb', 12);
+    text(ctx, ratio === 1 ? '组织修复完成' : `受损组织  ${Math.round(tissue.hp)}%`, 0, 35, ratio === 1 ? '#b9eec5' : '#f1d6bb', 12);
     text(ctx, '03  /  组织修复注射', 0, 52, '#c9aaa1', 9);
     ctx.restore();
   }
 
   private drawTerminal(ctx: CanvasRenderingContext2D, state: GameState): void {
-    const position = state.terminal, ready = state.targets.every(t => t.hp <= 0) && state.tissue.hp >= state.tissue.maxHp;
+    const position = state.terminal, ready = state.battle ? state.battle.readyToRetest : state.targets.every(t => t.hp <= 0) && state.tissue.hp >= state.tissue.maxHp;
     const near = Math.hypot(position.x - state.player.x, position.y - state.player.y) <= BALANCE.interactionRange;
     ctx.save(); ctx.translate(position.x, position.y); ctx.scale(1, 1 / .72);
     ellipse(ctx, 0, 2, 35, 11, '#193e45', '#81b6a6');
@@ -332,7 +486,7 @@ export class Renderer {
     ellipse(ctx, -14, -20, 2, 2, ready ? '#b8f2b5' : '#f1bf80'); ellipse(ctx, 13, -20, 2, 2, '#8ed7d1');
     if (near && state.phase === 'playing') {
       ctx.fillStyle = '#173c42e8'; ctx.beginPath(); ctx.roundRect(-68, -104, 136, 25, 6); ctx.fill(); ctx.strokeStyle = '#8acfc0'; ctx.lineWidth = 1; ctx.stroke();
-      text(ctx, ready ? '[ E ]  完成复测' : '[ E ]  查看训练进度', 0, -87, '#e1f0d3', 11);
+      text(ctx, ready ? '[ E ]  完成复测' : state.battle ? '[ E ]  查看复测条件' : '[ E ]  查看训练进度', 0, -87, '#e1f0d3', 11);
     }
     text(ctx, '复测终端', 0, 28, '#d6e5cc', 12); text(ctx, 'RETURN  /  E', 0, 44, '#9ab8af', 9);
     ctx.restore();
@@ -356,7 +510,7 @@ export class Renderer {
   private drawForeground(ctx: CanvasRenderingContext2D, state: GameState): void {
     const area = WORLD.foreground;
     ctx.save();
-    const baseOpacity = foregroundOpacity(state.player);
+    const baseOpacity = state.battle ? Math.min(foregroundOpacity(state.player), ...state.targets.filter(target => target.hp > 0).map(target => foregroundOpacity(target))) : foregroundOpacity(state.player);
     const x = area.x + area.width * .5, y = area.y + area.height * .5;
     ctx.save(); ctx.translate(x, y); ctx.scale(1, 1 / .72);
     const g = ctx.createLinearGradient(0, -110, 0, 70); g.addColorStop(0, '#c08079'); g.addColorStop(.45, '#794259'); g.addColorStop(1, '#3d2943');
@@ -404,6 +558,22 @@ export class Renderer {
       } else if (effect.kind === 'success') {
         ellipse(ctx, effect.to.x, effect.to.y, effect.radius * progress, effect.radius * progress, '#b4f7bc08', '#caffbd');
         if (!low) this.sparks(ctx, effect, progress, '#ffdfa3', 25);
+      } else if (effect.kind === 'pulse') {
+        const angle = effect.angle ?? Math.atan2(effect.to.y - effect.from.y, effect.to.x - effect.from.x);
+        this.drawPulseSector(ctx, effect.from, angle, effect.radius, '#ffd99f0d', '#ffdf9d', false);
+        this.drawPulseSector(ctx, effect.from, angle, effect.radius * (.2 + progress * .8), '#00000000', '#ffedc5', false);
+        if (!low) this.sparks(ctx, effect, progress, '#ffe0aa', 8);
+      } else if (effect.kind === 'evolution') {
+        ctx.setLineDash([6, 6]); ellipse(ctx, effect.to.x, effect.to.y, effect.radius * (.4 + progress * .6), effect.radius * (.4 + progress * .6), '#e6bd9d08', '#f8c6a5'); ctx.setLineDash([]);
+        text(ctx, '◇', effect.to.x, effect.to.y - 55 - progress * 20, '#f3d3af', 26);
+      } else if (effect.kind === 'flow') {
+        const position = { x: effect.from.x + (effect.to.x - effect.from.x) * progress, y: effect.from.y + (effect.to.y - effect.from.y) * progress };
+        ellipse(ctx, position.x, position.y, 8, 5, '#edb08e8a', '#ffdbad');
+      } else if (effect.kind === 'chain') {
+        const angle = Math.atan2(effect.to.y - effect.from.y, effect.to.x - effect.from.x);
+        line(ctx, [effect.from.x, effect.from.y, effect.to.x, effect.to.y], '#b5ffe066', 5);
+        line(ctx, [effect.from.x, effect.from.y, effect.to.x, effect.to.y], '#e4fff1', 1.5);
+        this.drawAntibody(ctx, effect.to, angle);
       }
       ctx.restore();
     }

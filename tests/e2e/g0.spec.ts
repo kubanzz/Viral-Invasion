@@ -18,7 +18,7 @@ type ReadonlyDiagnostics = {
 };
 declare global { interface Window { readonly __viral: ReadonlyDiagnostics } }
 
-const entry = pathToFileURL(resolve('dist/index.html')).href;
+const entry = `${pathToFileURL(resolve('dist/index.html')).href}?scenario=training`;
 type Audit = { remoteRequests: string[]; pageErrors: string[]; consoleErrors: string[]; browserVersion: string; offline: boolean };
 const audits = new WeakMap<Page, Audit>();
 

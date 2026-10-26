@@ -5,12 +5,18 @@ import { Controller, BINDINGS } from './input/controller';
 import { Renderer } from './render/renderer';
 import { BALANCE, type Tool } from './game/types';
 import { Soundscape } from './audio';
+import { battleHudMarkup, battleOverlay, updateBattleHud } from './ui/battleHud';
+import type { TraitId } from './game/battleTypes';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
 const app = document.querySelector<HTMLDivElement>('#app')!;
-const seedParam = Number(new URL(location.href).searchParams.get('seed'));
+const params = new URL(location.href).searchParams;
+const seedParam = Number(params.get('seed'));
 const initialSeed = seedParam > 0 && Number.isFinite(seedParam) ? seedParam >>> 0 : 130026;
-const session = new GameSession(initialSeed);
+// The old slice is an explicit regression fixture; the player enters the campaign.
+const trainingFixture = params.get('scenario') === 'training';
+const firstTrait = ['CARAPACE', 'FISSION', 'MIMIC'].includes(params.get('trait') ?? '') ? params.get('trait') as TraitId : undefined;
+const session = new GameSession(initialSeed, { campaign: !trainingFixture, firstTrait });
 const clock = new FixedClock();
 const renderer = new Renderer(canvas);
 const sound = new Soundscape();
@@ -18,6 +24,8 @@ let lowEffects = false;
 let help = false;
 let resumeAfterHelp = false;
 let overlayKey = '';
+let history = false;
+let resumeAfterHistory = false;
 
 app.innerHTML = `
   <header class="topbar"><div class="brand"><div class="brand-icon">+</div><div><strong>Viral Invasion</strong><small>病毒入侵 · 微观幻想</small></div></div><nav class="top-actions"><span class="status-chip">HEART / 01</span><button class="small" data-action="sound" aria-label="声音开关">声音 开</button><button class="small" data-action="help">操作指南</button><button class="small" data-action="pause">暂停 <kbd>Esc</kbd></button></nav></header>
@@ -28,6 +36,13 @@ app.innerHTML = `
     <div class="dock-wrap"><div class="ability"><kbd>Space</kbd>冲刺<em id="dash-ready">就绪</em></div><div class="tool-dock">${([[1,'精确净化','单点 · 快速冷却'],[2,'范围裂解','群体 · 94 范围'],[3,'组织修复','治疗 · +25 完整度']] as const).map(([id,title,subtitle])=>`<button class="tool" data-action="tool-${id}" aria-label="${id} ${title}"><kbd>${id}</kbd><strong>${title}</strong><small>${subtitle}</small><i class="charge" id="charge-${id}"></i></button>`).join('')}</div><div class="ability"><kbd>Q</kbd>扫描<em id="scan-ready">就绪</em></div></div>
     <div class="micro-footer">G0 · 基础训练 / 架空生物幻想</div><div class="run-time" id="run-time"></div>
   </main><div id="overlay-host"></div>`;
+if (!trainingFixture) {
+  app.classList.add('campaign');
+  document.querySelector('.objective')!.remove();
+  document.querySelector('.telemetry')!.remove();
+  document.querySelector('#hud')!.insertAdjacentHTML('afterbegin', battleHudMarkup);
+  document.querySelector('.micro-footer')!.textContent = 'G1 · 心脏防线 / 架空生物幻想';
+}
 const input = new Controller(canvas, () => togglePause(), () => {
   if (session.state.phase === 'playing') session.pause();
   clock.reset();
@@ -36,12 +51,14 @@ const el = (id: string) => document.getElementById(id)!;
 const formatTime = (seconds: number) => `${Math.floor(seconds/60).toString().padStart(2,'0')}:${Math.floor(seconds%60).toString().padStart(2,'0')}`;
 function togglePause() {
   input.clear(); clock.reset();
+  if (history) { history = false; if (resumeAfterHistory) session.resume(); resumeAfterHistory = false; return; }
   if (help) { help = false; if (resumeAfterHelp) session.resume(); resumeAfterHelp = false; return; }
   if (session.state.phase === 'playing') session.pause();
   else if (session.state.phase === 'paused') session.resume();
 }
 function start(newSeed?: number) {
-  input.clear(); clock.reset(); help = false;
+  input.clear(); clock.reset(); help = false; history = false; resumeAfterHelp = false; resumeAfterHistory = false;
+  document.body.classList.remove('crisis');
   sound.unlock(); session.start(newSeed ?? session.state.seed);
 }
 function showHelp() {
@@ -57,21 +74,24 @@ app.addEventListener('click', event => {
   if (action === 'start' || action === 'retry') start();
   if (action === 'new') start((session.state.seed + 2654435761) >>> 0);
   if (action === 'pause' || action === 'continue') togglePause();
-  if (action === 'menu') { input.clear(); clock.reset(); help = false; session.menu(); }
+  if (action === 'menu') { input.clear(); clock.reset(); help = false; history = false; session.menu(); document.body.classList.remove('crisis'); }
   if (action === 'help') showHelp();
   if (action === 'close-help') { help = false; input.clear(); clock.reset(); if (resumeAfterHelp) session.resume(); resumeAfterHelp = false; }
   if (action === 'practice-hit') { help = false; input.clear(); clock.reset(); session.resume(); input.queuePracticeHit(); resumeAfterHelp = false; }
   if (action === 'sound') { sound.unlock(); sound.toggle(); }
   if (action === 'effects') { lowEffects = !lowEffects; overlayKey = ''; }
+  if (action === 'history') { resumeAfterHistory = help ? resumeAfterHelp : session.state.phase === 'playing'; help = false; resumeAfterHelp = false; history = true; session.pause(); input.clear(); clock.reset(); }
+  if (action === 'close-history') { history = false; if (resumeAfterHistory) session.resume(); resumeAfterHistory = false; input.clear(); clock.reset(); }
   button.blur();
 });
 function updateOverlay() {
   const state = session.state;
-  const key = `${state.phase}:${help}:${lowEffects}`;
+  const key = `${state.phase}:${help}:${lowEffects}:${history}`;
   if (key === overlayKey) return;
   overlayKey = key;
   el('hud').hidden = state.phase === 'menu' || state.phase === 'result';
   const host = el('overlay-host');
+  if (state.battle) { host.innerHTML = battleOverlay(state, help, resumeAfterHelp, lowEffects, history) ?? ''; return; }
   if (help) {
     host.innerHTML = `<div class="overlay"><section class="modal" role="dialog" aria-modal="true" aria-label="操作指南"><div class="eyebrow">FIELD MANUAL / 操作指南</div><h2>小小战士，深入心脏。</h2><p>这是可自由练习的基础训练场。先清除单体与簇群靶，再将组织修复至 100%，靠近下方的复测终端按 E。</p><div class="help-grid">${BINDINGS.map(([key,label])=>`<div><kbd>${key}</kbd>${label}</div>`).join('')}</div><p>点击靶标的底部瞄准环。范围裂解显示真实半径；组织修复只作用于组织。遮挡你的前景会淡化，组织隆起则需要绕行。</p><div class="switches"><button data-action="effects">特效：${lowEffects?'低':'标准'}</button>${state.phase === 'paused'?`<button data-action="practice-hit">受击演练 · 耐久 −${BALANCE.trainingHitDamage}，保底 1</button>`:''}</div><div class="actions"><button class="primary" data-action="close-help">返回${resumeAfterHelp?'训练':'上一级'}</button></div></section></div>`;
   } else if (state.phase === 'menu') {
@@ -84,6 +104,12 @@ function updateOverlay() {
 }
 function updateHud() {
   const s = session.state;
+  if (s.battle) {
+    updateBattleHud(s);
+    el('message').textContent = s.messageUntil > s.elapsed ? s.message : s.battle.objective;
+    updateCommonHud();
+    return;
+  }
   const cleared = s.targets.filter(t=>t.hp<=0).length;
   el('target-count').textContent = `${cleared} / ${s.targets.length}`;
   const allCleared = cleared === s.targets.length;
@@ -97,6 +123,10 @@ function updateHud() {
   el('tissue-label').textContent = `${s.tissue.hp}%`;
   el('tissue-meter').style.width = `${s.tissue.hp}%`;
   el('message').textContent = s.messageUntil > s.elapsed ? s.message : allCleared?(repaired?'靠近复测终端，按 E 确认训练成果':'按 3 · 点击右下方受损组织，修复至 100%'):'按 Q 扫描 · 按 1 或 2 净化靶标底部的瞄准环';
+  updateCommonHud();
+}
+function updateCommonHud() {
+  const s = session.state;
   el('dash-ready').textContent = s.player.dashReady > s.elapsed ? `${(s.player.dashReady-s.elapsed).toFixed(1)}s`:'就绪';
   el('scan-ready').textContent = s.scanReady > s.elapsed ? `${(s.scanReady-s.elapsed).toFixed(1)}s`:'就绪';
   el('run-time').textContent = `SEED ${s.seed}　 /　${formatTime(s.elapsed)}`;
@@ -119,7 +149,7 @@ renderer.resize(); updateOverlay(); updateHud(); requestAnimationFrame(frame);
 
 // Read-only diagnostics for browser regression. Inputs always use the real DOM.
 Object.defineProperty(window, '__viral', { value: Object.freeze({
-  version: '0.1.1-G0', snapshot: () => session.snapshot(),
+  version: '0.2.0-G1', snapshot: () => session.snapshot(),
   toScreen: (point: { x: number; y: number }) => renderer.camera.worldToScreen(point),
   toWorld: (point: { x: number; y: number }) => renderer.camera.screenToWorld(point),
   diagnostics: () => renderer.diagnostics(session.state),
