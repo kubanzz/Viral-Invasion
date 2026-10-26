@@ -1,0 +1,29 @@
+# G4 v0.5.1 补丁交付与验收
+
+2026-10-27 · 源码提交 `ec1cdce` · 分支 `dev-zbj`。
+
+本次修复三个实际问题，并保留v0.5.0发行包及其历史证据：
+
+- 首次迁移指引使用独立确认标志；原schema-1存档缺该标志时默认未读，保留旧发现和战绩。实际按钮或Esc关闭后才持久化，显示后直接刷新仍会再次出现；不可写存储仅保存于当前页面。
+- 菜单、暂停、草案和档案不再拦截游戏按键；Tab、Shift+Tab和方向键保留浏览器行为。弹窗出现时，背景HUD与顶栏设为inert，避免键盘打开背后的帮助。战斗继续后恢复正常输入。
+- URL接受完整uint32种子范围，包含0；缺失、空值、小数、负数或越界值使用默认种子。只读诊断版本同步为0.5.1。
+
+## 新一轮证据
+
+TypeScript检查通过。单元与系统测试180/180通过，其中8项新存档回归覆盖旧档兼容、确认幂等、未确认结果和写失败回退。1000个完整公开输入模拟会话全部获胜、0不变量失败，seed91重放一致；报告位于 `artifacts/G4-patch/full-system-seeds.json`。游戏规则与模拟源指纹仍为 `5aeafbf67fb6950111c3c603f86da4d218edf2327634d33726e3e20bd877cefb`。这不是真人首玩、浏览器通关或性能测量。
+
+最终同包Chrome/Edge定向浏览器检查 **10/10首轮通过，0跳过、0失败**，耗时187.54秒。包含两浏览器各一局默认seed130026的真实公开键鼠胜利、旧双变异档案显示指引、未确认刷新后再显示、Esc/按钮确认、保存重载与同seed干净重试；还覆盖Tab/Shift+Tab/Enter/Space、方向键档案滚动、手册与历史返回、seed范围及训练/fixture入口、八向移动/全角瞄准/Q/冲刺/工具/E拒绝反馈/碰撞和失焦清输入。两浏览器失焦检查都实际使用synthetic blur回退，原始注解保留，不能证明物理窗口失焦。
+
+`artifacts/G4-patch/final-report.json`和`final/`保存原始报告、状态及截图；结果索引为 `verification-summary.json`。此前另一构建的六项浏览器检查也通过，保存在`ui-first-report.json`与`ui-first-build-meta.json`，发生于诊断版本同步和背景inert隔离之前，未合算为最终包16项。
+
+最终离线 `game.js` SHA256为 `b1e7608cd94424b9fbff70c2645a29a73f804f8ae765999a1c2fac66bf935fcc`。构建记录的40项输入逐一匹配工作区和源码提交`ec1cdce`。发行 `releases/Viral-Invasion-G4-v0.5.1.zip`，94384字节，ZIP SHA256为 `7dd1f990d237f6968229de94ed8cf3ee0c45f746da855d7256fd9ebdc62bfda1`。完整解压后三发行文件与已测dist逐字节相同，Chrome/Edge离线file入口、移动、暂停冻结、继续和Q冒烟通过。见 `release-manifest.json`、`release-smoke/report.json`；冒烟不另外计为完整胜利。
+
+v0.5.0的53项浏览器回归、10分钟性能、24体渲染对照和原ZIP冒烟保留在旧路径，不能算作v0.5.1全量通过。本次改动没有触碰战斗、器官、协议、母巢或渲染规则；旧结果仅作为对应未变模块的历史证据。
+
+## 未关闭项
+
+真人盲测仍为0/5，AC-M13-01首玩约10–15分钟尚未通过。趣味、认知、自发再开与孵化价值仍需真实玩家记录，执行包见 [五位新玩家盲测](ViralInvasion_Playtest.md)。
+
+再次尝试物理Windows窗口验收时，Computer Use在读取本游戏浏览器状态时因无法可靠确认本地file URL而中止。没有发出任何点击、缩放、Alt+Tab或最小化输入；隔离探针已关闭。两次启动只得到菜单tick0观察，其中第一次因非交互stdin立即结束，第二次在工具中止后正常保存并关闭。物理失焦/最小化和真实Ctrl+/-仍未验证，不能用现有headless/synthetic blur、viewport或DPR结果替代。原始工具理由与B44来源记录见 `artifacts/G4-patch/native-attempt.json`。
+
+没有Git remote，本轮提交仅保存在本机，未推送。

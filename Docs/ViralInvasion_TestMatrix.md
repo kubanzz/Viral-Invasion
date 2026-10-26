@@ -1,5 +1,7 @@
 # Viral Invasion：独立新项目验收项追踪矩阵（v1.3）
 
+> 当前发行补至v0.5.1，迁移指引、键盘导航与seed入口的补丁及独立证据见 [v0.5.1记录](ViralInvasion_G4_v0.5.1.md)。下述L节及旧版全量报告继续归属于v0.5.0/b44包。
+
 > 2026-10-27最终技术登记：原设计v1.3保持不变。源码e8a956e/game.js b44cc8…：172/172单元、1000完整会话通过；同包分批53项真实浏览器检查通过（G0–G3既有32＋G4病例17＋机制专项4），15项按浏览器分配跳过不计通过。604秒本机headless压力达到帧率预算，精确堆后段平台但保留早期低点抬升；ZIP解压/双浏览器冒烟通过。M13-01节奏未通过、真人0/5、真实OS失焦/Ctrl缩放未执行；完整产品验收仍未关闭。
 
 ## 填写规范
@@ -318,7 +320,7 @@ e8a956e后完整1000seed已重跑：artifacts/g4-full-system-seeds.json的源码
 
 ## L. 最终技术候选归档 · 2026-10-27
 
-本节取代J/K节当时的进行中状态；历史报告、失败及不同bundle来源不删除。最终游戏源码e8a956e，game.js SHA256 `b44cc8b615093f5204604bf8c98d7e25659328669ef79102dc97cd5b6de9e16c`，全部已测生产源manifest仍匹配当前文件。
+本节取代J/K节当时的进行中状态；历史报告、失败及不同bundle来源不删除。当时最终游戏源码e8a956e，game.js SHA256 `b44cc8b615093f5204604bf8c98d7e25659328669ef79102dc97cd5b6de9e16c`，归档时全部已测生产源manifest匹配文件。后续v0.5.1已单独记录。
 
 - 全量单元/系统172/172，包含1000合法完整会话；`artifacts/G4/unit-results.json`、`artifacts/g4-full-system-seeds.json`，源指纹5aeafbf67fb6950111c3c603f86da4d218edf2327634d33726e3e20bd877cefb。
 - 同一bundle分四批浏览器回归：`g4.spec.ts` 17通过/15分配skip；`g4-acceptance-gaps.spec.ts` Chrome2与Edge2；`g0.spec.ts g1.spec.ts g2.spec.ts g3.spec.ts` 32/32。共53通过/15跳过/0未解决失败，全部正式键鼠与只读诊断，机制fixture明示范围；不是单次53项命令。原始报告g4-final-browser-report、g4-gaps-first-chrome/edge、g4-base-final-report均保留。最终解析及源码/包分代在 `artifacts/G4/verification-summary.json`。
@@ -327,3 +329,13 @@ e8a956e后完整1000seed已重跑：artifacts/g4-full-system-seeds.json的源码
 - ZIP `releases/Viral-Invasion-G4-v0.5.0.zip` 为94244字节，SHA256 `4f634f0f9737ebdde2729f8e443140702a7ecfa8bbaa93822672c99cf0a11910`。完整解压后三发行文件哈希相同，Chrome/Edge真实离线启动/移动/暂停/Q冒烟通过；`artifacts/G4/release-manifest.json` 与release-smoke/report给出来源。
 
 完整产品门槛仍未关闭：M13-01约10–15分钟首玩、真人盲测0/5、物理OS失焦/最小化与真实Ctrl缩放。自动化不能证明有趣、留存或孵化价值；五人执行包待真实原始观察。源码保存在本地dev-zbj，无remote，未推送。
+
+## M. v0.5.1 定向补丁 · 2026-10-27
+
+源码 `ec1cdce`；game.js SHA256 `b1e7608cd94424b9fbff70c2645a29a73f804f8ae765999a1c2fac66bf935fcc`。迁移指引改为实际确认后保存；恢复菜单Tab/方向键并隔离模态背景输入；URL支持seed0且校验完整uint32范围。40项构建输入均匹配当前和提交文件。
+
+`artifacts/G4-patch/verification-summary.json`索引180/180单元系统、1000/1000完整模拟和最终同包10/10浏览器定向检查（0失败/跳过）。最终浏览器包含两浏览器各一真实完整胜局、旧存档指引/刷新/确认/重载、干净同seed重试、菜单/档案/帮助/历史/暂停键盘返回、seed与fixture入口、基础输入和synthetic blur清输入。首轮另一构建的6项通过单独保留，未与最终10项合算；两轮新证据也不与L节53项拼接为新包全量。
+
+ZIP `releases/Viral-Invasion-G4-v0.5.1.zip`，94384字节，SHA256 `7dd1f990d237f6968229de94ed8cf3ee0c45f746da855d7256fd9ebdc62bfda1`。完整解压后三发行文件哈希相同，Chrome/Edge离线启动、移动、暂停、继续、Q冒烟均通过。见新`release-manifest.json`和`release-smoke/report.json`。
+
+物理窗口检查再次在读取状态时被Computer Use工具中止（无法可靠确认Windows浏览器本地URL），没有发出原生输入；B44来源与原始理由在新`native-attempt.json`。真人0/5、M13-01节奏、真实OS失焦/最小化与Ctrl缩放仍未通过，趣味与孵化价值仍需真实观察。详情见 [v0.5.1记录](ViralInvasion_G4_v0.5.1.md)。
