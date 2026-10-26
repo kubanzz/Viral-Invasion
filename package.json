@@ -1,0 +1,23 @@
+{
+  "name": "viral-invasion",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Viral Invasion — 病毒入侵，离线生物幻想动作游戏",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && node scripts/build-offline.mjs",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:all": "npm test && npm run build && npm run test:e2e"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^24.10.0",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
+  }
+}
