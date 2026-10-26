@@ -1,11 +1,10 @@
 {
   "date": "2026-10-26",
-  "codeCommit": "5cf55e1c0817cdeadf8b00274d06ea0f2d694bc6",
+  "version": "0.1.1-G0",
+  "codeCommit": "4d54dc16545940e0c5ab1365ca6fc519ceb5877c",
   "branch": "dev-zbj",
-  "workspace": ".clean-check",
-  "method": "git clone --no-hardlinks --branch dev-zbj . .clean-check",
-  "node": "v24.19.0",
-  "npm": "11.6.2",
+  "workspace": ".tools/g0-audit-clean-check",
+  "method": "Fresh git clone --no-hardlinks --branch dev-zbj, then npm ci, npm run build, npm test",
   "commands": [
     {
       "command": "npm ci",
@@ -18,16 +17,13 @@
     {
       "command": "npm test",
       "exitCode": 0,
-      "passed": 26,
+      "passed": 30,
       "failed": 0
-    },
-    {
-      "command": "npm.cmd run dev -- --port 5174",
-      "result": "Vite ready, HTTP GET / returned 200; temporary service then stopped"
     }
   ],
-  "releaseGameJsSha256": "5941c21c12d981426f584e330195b4ab23df8ed32a500cb0c6f1a2283f1feaeb",
-  "cleanGameJsSha256": "5941c21c12d981426f584e330195b4ab23df8ed32a500cb0c6f1a2283f1feaeb",
+  "releaseGameJsSha256": "063d3b033397934825079c773f18b9ea3476753bd991e24fc341e553dba26fb1",
+  "cleanGameJsSha256": "063d3b033397934825079c773f18b9ea3476753bd991e24fc341e553dba26fb1",
   "buildsIdentical": true,
-  "independent": "The clean clone contains no .tools, node_modules, dist or uncommitted source from the main workspace. npm is supplied on PATH as an external development tool."
+  "node": "v24.19.0",
+  "npm": "11.6.2"
 }

@@ -35,6 +35,8 @@ for await (const line of input) {
   if (label === 'finish') break;
   await checkpoint(label);
 }
+input.close();
+process.stdin.pause();
 await checkpoint('final');
 await context.close();
 await browser.close();
