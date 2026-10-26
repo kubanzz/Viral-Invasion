@@ -79,6 +79,14 @@ async function hold(page: Page, keys: string[], milliseconds: number): Promise<v
   await page.waitForTimeout(milliseconds);
   for (const key of keys) await page.keyboard.up(key);
 }
+async function holdSimulationTicks(page: Page, keys: string[], ticks: number): Promise<void> {
+  const startingTick = (await snapshot(page)).tick;
+  for (const key of keys) await page.keyboard.down(key);
+  try {
+    await expect.poll(async () => (await snapshot(page)).tick - startingTick,
+      { timeout: 8_000, intervals: [10, 20, 30] }).toBeGreaterThanOrEqual(ticks);
+  } finally { for (const key of keys) await page.keyboard.up(key); }
+}
 
 // Every movement is a real key hold. Diagnostic snapshots only decide when to release.
 // The caller supplies waypoints around visible tissue footprints when necessary.
@@ -206,8 +214,11 @@ test('AC-M02-02 and VIS-02: eight-way motion, 360-degree aim, scan, dash, tool f
   const routeLog: unknown[] = [];
   for (const route of routes) {
     const before = await snapshot(page);
-    await hold(page, route.keys, 140);
+    // Wait for actual simulation steps, rather than assuming a 140ms wall-clock
+    // hold includes frames during browser startup or a loaded CI render process.
+    await holdSimulationTicks(page, route.keys, 8);
     const after = await snapshot(page);
+    await jsonEvidence(info, `movement-${route.keys.join('-')}`, { route, before, after });
     const dx = after.player.x - before.player.x, dy = after.player.y - before.player.y;
     if (route.x) expect(dx * route.x).toBeGreaterThan(12); else expect(Math.abs(dx)).toBeLessThan(1);
     if (route.y) expect(dy * route.y).toBeGreaterThan(12); else expect(Math.abs(dy)).toBeLessThan(1);
