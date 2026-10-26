@@ -7,6 +7,9 @@ import { g3Input, g3EnduranceInput, waypoint } from '../helpers/g3Driver';
 import type { MigrationChoice } from '../../src/game/campaignTypes';
 
 const entry=pathToFileURL(resolve(process.env.VI_ENTRY ?? 'dist/index.html')).href;
+// Full snapshots already have explicit JSON evidence; tracing every clone can
+// produce gigabytes of redundant diagnostic data during the 180-second run.
+test.use({ video: 'off', trace: 'off' });
 for(const choice of ['pursue','block','ignore'] as MigrationChoice[]){
   test(`G3: offline ${choice} migration, fused mother core and active retest through real input`,async({page,context},info)=>{
     test.setTimeout(180000);
@@ -69,6 +72,7 @@ test('G3: 180 seconds under a live lung source, breath cycles, repair and legal 
     if(began!==null&&s.battle!.organId==='heart'){
       writeFileSync(info.outputPath('lung-pressure.json'),JSON.stringify({duration:s.elapsed-began,phases:[...phases],spawned:[...spawned],final:s},null,2));
       expect(s.elapsed-began).toBeGreaterThanOrEqual(180);expect(phases.size).toBe(2);expect(spawned.size).toBeGreaterThan(15);
+      expect(s.campaign!.arenas.lung.targets.some(t=>t.role==='source'&&t.hp>0)).toBe(true);
       await page.screenshot({path:info.outputPath('retreated-heart.png')});return;
     }
     const input=began===null?g3Input(s,'pursue'):g3EnduranceInput(s);

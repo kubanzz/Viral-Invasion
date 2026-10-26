@@ -1,4 +1,4 @@
-import { distance, normalized, wallHit } from '../../src/actors/collision';
+import { distance, normalized, rayCircle, wallHit } from '../../src/actors/collision';
 import { activeWorld, type GameState, type InputFrame, type Target, type Vec } from '../../src/game/types';
 import type { MigrationChoice } from '../../src/game/campaignTypes';
 
@@ -47,7 +47,11 @@ export function g3Input(s: GameState, choice: MigrationChoice): InputFrame {
 
 /** Keeps a real source producing pressure; only clears its mobile defenders. */
 export function g3EnduranceInput(s:GameState):InputFrame {
-  const target=s.targets.filter(t=>t.hp>0&&t.role!=='source'&&t.role!=='core').sort((a,b)=>distance(a,s.player)-distance(b,s.player))[0];
+  const sources=s.targets.filter(t=>t.hp>0&&t.role==='source');
+  const target=s.targets.filter(t=>t.hp>0&&t.role!=='source'&&t.role!=='core').filter(t=>{
+    const dir=normalized(t.x-s.player.x,t.y-s.player.y),hit=rayCircle(s.player,dir,t,t.radius,530);
+    return hit!==null&&!sources.some(source=>{const obstruction=rayCircle(s.player,dir,source,source.radius,530);return obstruction!==null&&obstruction<hit;});
+  }).sort((a,b)=>distance(a,s.player)-distance(b,s.player))[0];
   const heal=s.tissue.hp<70||(s.player.hp<80&&s.tissue.hp<99);
   const destination=heal?{x:690,y:560}:{x:620,y:520},next=waypoint(s,destination);
   const move=distance(s.player,destination)>20?normalized(next.x-s.player.x,next.y-s.player.y):{x:0,y:0};
