@@ -1,15 +1,16 @@
-import { BALANCE, WORLD, type Effect, type GameState, type Target, type Vec } from '../game/types';
+import { activeWorld, BALANCE, WORLD, type Effect, type GameState, type Target, type Vec, type WorldGeometry } from '../game/types';
 import { Camera } from './camera';
 import { depthSort } from './depthSort';
 import { foregroundOpacity, isForegroundOccluded } from './occlusion';
 import { LAYER_ORDER } from './layers';
-import { drawBattleLabels, drawBattleTarget } from './battleVisuals';
+import { drawBattleLabels, drawBattleTarget, drawMotherCoreDangers } from './battleVisuals';
 import type { OrganNode } from '../game/battleTypes';
 import { BATTLE_BALANCE } from '../game/battleConfig';
 import { wallHit } from '../actors/collision';
 import { pulsePreviewPolygon } from './pulsePreview';
 import { GrowthVisuals } from './growthVisuals';
 import { GROWTH_BALANCE } from '../game/protocols';
+import { drawLungAirflow, drawLungAirway, drawLungEnvironment, drawLungForeground, drawLungObstacle } from './lungVisuals';
 
 const TAU = Math.PI * 2;
 const hash = (n: number): number => { const a = Math.sin(n * 127.1 + 311.7) * 43758.5453123; return a - Math.floor(a); };
@@ -51,6 +52,7 @@ export class Renderer {
   readonly camera = new Camera();
   private readonly ctx: CanvasRenderingContext2D;
   private readonly background: HTMLCanvasElement;
+  private lungBackground: HTMLCanvasElement | undefined;
   private width = 1440;
   private height = 900;
   private dpr = 1;
@@ -77,7 +79,7 @@ export class Renderer {
   }
 
   diagnostics(state: GameState): { depthOrder: string[]; occluded: boolean; foregroundOpacity: number; layerOrder: typeof LAYER_ORDER } {
-    return { depthOrder: depthSort(this.entities(state)).map(entity => entity.id), occluded: isForegroundOccluded(state.player), foregroundOpacity: foregroundOpacity(state.player), layerOrder: LAYER_ORDER };
+    return { depthOrder: depthSort(this.entities(state)).map(entity => entity.id), occluded: isForegroundOccluded(state.player, activeWorld(state)), foregroundOpacity: foregroundOpacity(state.player, activeWorld(state)), layerOrder: LAYER_ORDER };
   }
 
   private entities(state: GameState): { id: string; y: number; kind: string; index?: number }[] {
@@ -86,9 +88,9 @@ export class Renderer {
       ...state.targets.map((target, index) => ({ id: target.id, y: target.y, kind: 'target', index })),
       { id: 'tissue', y: state.tissue.y, kind: 'tissue' },
       { id: 'terminal', y: state.terminal.y, kind: 'terminal' },
-      ...(state.battle?.graph.nodes.filter(node => node.kind === 'valve' || node.kind === 'gate' || node.kind === 'research').map(node => ({ id: node.id, y: node.y, kind: 'device' })) ?? []),
+      ...(state.battle?.graph.nodes.filter(node => node.kind === 'valve' || node.kind === 'gate' || node.kind === 'research' || node.kind === 'exit').map(node => ({ id: node.id, y: node.y, kind: 'device' })) ?? []),
       ...(state.growth?.beacon && state.growth.beacon.organId === state.battle?.organId && state.growth.beacon.until > state.elapsed ? [{ id: state.growth.beacon.id, y: state.growth.beacon.y, kind: 'beacon' }] : []),
-      ...WORLD.obstacles.map(obstacle => ({ id: obstacle.id, y: obstacle.y, kind: 'obstacle' })),
+      ...activeWorld(state).obstacles.map(obstacle => ({ id: obstacle.id, y: obstacle.y, kind: 'obstacle' })),
     ];
   }
 
@@ -96,7 +98,11 @@ export class Renderer {
     const ctx = this.ctx;
     ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     ctx.fillStyle = '#120d1b'; ctx.fillRect(0, 0, this.width, this.height);
-    ctx.drawImage(this.background, this.camera.offsetX, this.camera.offsetY, 1440 * this.camera.scale, 900 * this.camera.scale);
+    if (state.battle?.organId === 'lung' && !this.lungBackground) {
+      this.lungBackground = document.createElement('canvas'); this.lungBackground.width = 1440; this.lungBackground.height = 900;
+      const bg = this.lungBackground.getContext('2d')!; const staticCamera = new Camera(); staticCamera.apply(bg); drawLungEnvironment(bg, activeWorld(state));
+    }
+    ctx.drawImage(state.battle?.organId === 'lung' ? this.lungBackground! : this.background, this.camera.offsetX, this.camera.offsetY, 1440 * this.camera.scale, 900 * this.camera.scale);
     ctx.save(); this.camera.apply(ctx);
     this.drawAtmosphere(ctx, state, Boolean(opts.lowEffects));
     this.drawGroundSignals(ctx, state, aim);
@@ -107,7 +113,10 @@ export class Renderer {
       if (entity.kind === 'target') this.drawTarget(ctx, state.targets[entity.index!], state);
       if (entity.kind === 'tissue') this.drawTissue(ctx, state);
       if (entity.kind === 'terminal') this.drawTerminal(ctx, state);
-      if (entity.kind === 'obstacle') this.drawObstacle(ctx, WORLD.obstacles.find(obstacle => obstacle.id === entity.id)!);
+      if (entity.kind === 'obstacle') {
+        const obstacle = activeWorld(state).obstacles.find(obstacle => obstacle.id === entity.id)!;
+        if (state.battle?.organId === 'lung') drawLungObstacle(ctx, obstacle); else this.drawObstacle(ctx, obstacle);
+      }
       if (entity.kind === 'device') this.drawBattleDevice(ctx, state.battle!.graph.nodes.find(node => node.id === entity.id)!, state);
       if (entity.kind === 'beacon') this.growthVisuals.drawBeacon(ctx, state, state.growth);
     }
@@ -117,6 +126,7 @@ export class Renderer {
     this.growthVisuals.drawProtocolHits(ctx, state, state.growth);
     if (state.battle) {
       this.drawBattleDangers(ctx, state);
+      if (state.campaign?.core.combat) drawMotherCoreDangers(ctx, state, state.campaign.core.combat);
       drawBattleLabels(ctx, state);
       this.drawTissueMarker(ctx, state);
     }
@@ -188,6 +198,8 @@ export class Renderer {
   }
 
   private drawAtmosphere(ctx: CanvasRenderingContext2D, state: GameState, low: boolean): void {
+    const flow = state.battle?.organId === 'lung' ? state.campaign?.arenas.lung.flow : undefined;
+    if (flow) { drawLungAirflow(ctx, state, flow, low); return; }
     const time = state.elapsed;
     if (!low) for (let i = 0; i < 24; i++) {
       const x = 95 + ((hash(i * 2) * 1000 + time * (4 + hash(i) * 6)) % 1030);
@@ -281,20 +293,20 @@ export class Renderer {
     if (valve && state.phase === 'playing' && Math.hypot(state.player.x - valve.x, state.player.y - valve.y) <= BALANCE.interactionRange) {
       const ready = time >= battle.pulse.readyAt;
       const angle = Math.atan2(aim.y - valve.y, aim.x - valve.x);
-      this.drawPulseSector(ctx, valve, angle, BATTLE_BALANCE.pulseRange, ready ? '#ffd89a0e' : '#c7b4a309', ready ? '#f4cb8d99' : '#bba69355', !ready);
+      this.drawPulseSector(ctx, valve, angle, BATTLE_BALANCE.pulseRange, ready ? '#ffd89a0e' : '#c7b4a309', ready ? '#f4cb8d99' : '#bba69355', !ready, activeWorld(state));
     }
   }
 
-  private drawPulseSector(ctx: CanvasRenderingContext2D, origin: Vec, angle: number, radius: number, fill: string, outline: string, dashed = false): void {
+  private drawPulseSector(ctx: CanvasRenderingContext2D, origin: Vec, angle: number, radius: number, fill: string, outline: string, dashed = false, world: WorldGeometry = WORLD): void {
     ctx.save(); ctx.beginPath(); ctx.moveTo(origin.x, origin.y);
     // Use the simulation's occluders: the preview cannot promise an impulse
     // behind a fold that the real pulse will reject.
-    for (const point of pulsePreviewPolygon(origin, angle, radius).slice(1)) ctx.lineTo(point.x, point.y);
+    for (const point of pulsePreviewPolygon(origin, angle, radius, world).slice(1)) ctx.lineTo(point.x, point.y);
     ctx.closePath();
     ctx.fillStyle = fill; ctx.fill(); ctx.strokeStyle = outline; ctx.lineWidth = 1.5;
     if (dashed) ctx.setLineDash([5, 7]); ctx.stroke(); ctx.setLineDash([]);
     for (const fraction of [.3, .55, .8]) {
-      const limit = wallHit(origin, { x: Math.cos(angle), y: Math.sin(angle) }, radius) ?? radius;
+      const limit = wallHit(origin, { x: Math.cos(angle), y: Math.sin(angle) }, radius, world) ?? radius;
       if (radius * fraction > limit) continue;
       const x = origin.x + Math.cos(angle) * radius * fraction, y = origin.y + Math.sin(angle) * radius * fraction;
       ctx.save(); ctx.translate(x, y); ctx.rotate(angle); line(ctx, [-8, -6, 0, 0, -8, 6], outline, 2); ctx.restore();
@@ -306,7 +318,22 @@ export class Renderer {
     const battle = state.battle!, time = state.elapsed;
     const near = Math.hypot(state.player.x - node.x, state.player.y - node.y) <= BALANCE.interactionRange;
     ctx.save(); ctx.translate(node.x, node.y); ctx.scale(1, 1 / .72);
-    if (node.kind === 'valve') {
+    const flow = state.battle?.organId === 'lung' ? state.campaign?.arenas.lung.flow : undefined;
+    if (node.id === 'airway' && flow) {
+      drawLungAirway(ctx, state, flow, near);
+    } else if (node.kind === 'exit') {
+      const destination = state.battle?.organId === 'lung' ? '心脏' : '肺部';
+      const readyAt = state.campaign?.travelReadyAt ?? 0, ready = node.active && time >= readyAt;
+      ellipse(ctx, 0, 2, 34, 11, '#36556a', node.active ? '#b8ddd3' : '#7c9497');
+      ctx.beginPath(); ctx.roundRect(-26, -58, 52, 54, 17); ctx.fillStyle = '#618290'; ctx.fill(); ctx.strokeStyle = node.active ? '#c2ded4' : '#9baaa4'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.beginPath(); ctx.roundRect(-19, -51, 38, 45, 12); ctx.fillStyle = '#18364b'; ctx.fill();
+      const sign = state.battle?.organId === 'lung' ? -1 : 1;
+      line(ctx, [-sign * 10, -29, sign * 10, -29], ready ? '#d8f1d8' : '#889b98', 2.5);
+      line(ctx, [sign * 3, -36, sign * 10, -29, sign * 3, -22], ready ? '#d8f1d8' : '#889b98', 2.5);
+      text(ctx, `通往${destination}`, 0, 28, '#d8e8d9', 11);
+      text(ctx, !node.active ? '迁移阶段开启' : ready ? '双向通道 · E' : `通行冷却 ${Math.ceil(readyAt - time)}s`, 0, 44, '#b5cbc4', 9);
+      if (near) text(ctx, !node.active ? '通道尚未开启' : ready ? `[ E ] ${state.campaign?.migration.status === 'warning' ? '追击至' : '前往'}${destination}` : '通行充能中', 0, -76, '#e4f0d9', 11);
+    } else if (node.kind === 'valve') {
       const ready = time >= battle.pulse.readyAt, surge = battle.pulse.phase === 'surge';
       ellipse(ctx, 0, 3, 37, 12, '#6f3b46', '#c79076');
       const movement = surge ? 9 : Math.sin(time * 2) * 2;
@@ -363,8 +390,9 @@ export class Renderer {
           ctx.restore();
         }
       }
+      if (target.role === 'core' && state.campaign?.core.combat?.coreId === target.id) continue;
       if (target.hp <= 0 || !target.attackAim || (target.attackAt ?? 0) <= state.elapsed) continue;
-      const center = target.attackAim, radius = BATTLE_BALANCE.attackRadius;
+      const center = target.attackAim, radius = target.attackRadius ?? BATTLE_BALANCE.attackRadius;
       const remaining = (target.attackAt ?? 0) - state.elapsed;
       const progress = 1 - clamp(remaining / BATTLE_BALANCE.attackWindup, 0, 1);
       ctx.save(); ctx.lineWidth = 2;
@@ -382,7 +410,7 @@ export class Renderer {
     ellipse(ctx, state.player.x + 6, state.player.y + 8, 25, 13, '#100e218a');
     ellipse(ctx, state.tissue.x + 8, state.tissue.y + 8, 54, 28, '#150e2266');
     ellipse(ctx, state.terminal.x + 8, state.terminal.y + 8, 47, 24, '#160d2366');
-    for (const o of WORLD.obstacles) ellipse(ctx, o.x + 9, o.y + 15, o.radius + 8, o.radius * .7, '#160e2277');
+    for (const o of activeWorld(state).obstacles) ellipse(ctx, o.x + 9, o.y + 15, o.radius + 8, o.radius * .7, '#160e2277');
   }
 
   private drawPlayer(ctx: CanvasRenderingContext2D, state: GameState): void {
@@ -540,9 +568,10 @@ export class Renderer {
   }
 
   private drawForeground(ctx: CanvasRenderingContext2D, state: GameState): void {
-    const area = WORLD.foreground;
+    const world = activeWorld(state), area = world.foreground;
     ctx.save();
-    const baseOpacity = state.battle ? Math.min(foregroundOpacity(state.player), ...state.targets.filter(target => target.hp > 0).map(target => foregroundOpacity(target))) : foregroundOpacity(state.player);
+    const baseOpacity = state.battle ? Math.min(foregroundOpacity(state.player, world), ...state.targets.filter(target => target.hp > 0).map(target => foregroundOpacity(target, world))) : foregroundOpacity(state.player, world);
+    if (state.battle?.organId === 'lung') { drawLungForeground(ctx, state, world, baseOpacity); ctx.restore(); return; }
     const x = area.x + area.width * .5, y = area.y + area.height * .5;
     ctx.save(); ctx.translate(x, y); ctx.scale(1, 1 / .72);
     const g = ctx.createLinearGradient(0, -110, 0, 70); g.addColorStop(0, '#c08079'); g.addColorStop(.45, '#794259'); g.addColorStop(1, '#3d2943');
@@ -592,8 +621,8 @@ export class Renderer {
         if (!low) this.sparks(ctx, effect, progress, '#ffdfa3', 25);
       } else if (effect.kind === 'pulse') {
         const angle = effect.angle ?? Math.atan2(effect.to.y - effect.from.y, effect.to.x - effect.from.x);
-        this.drawPulseSector(ctx, effect.from, angle, effect.radius, '#ffd99f0d', '#ffdf9d', false);
-        this.drawPulseSector(ctx, effect.from, angle, effect.radius * (.2 + progress * .8), '#00000000', '#ffedc5', false);
+        this.drawPulseSector(ctx, effect.from, angle, effect.radius, '#ffd99f0d', '#ffdf9d', false, activeWorld(state));
+        this.drawPulseSector(ctx, effect.from, angle, effect.radius * (.2 + progress * .8), '#00000000', '#ffedc5', false, activeWorld(state));
         if (!low) this.sparks(ctx, effect, progress, '#ffe0aa', 8);
       } else if (effect.kind === 'evolution') {
         ctx.setLineDash([6, 6]); ellipse(ctx, effect.to.x, effect.to.y, effect.radius * (.4 + progress * .6), effect.radius * (.4 + progress * .6), '#e6bd9d08', '#f8c6a5'); ctx.setLineDash([]);

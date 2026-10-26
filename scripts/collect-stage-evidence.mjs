@@ -35,8 +35,9 @@ async function files(directory) {
   }
   return list;
 }
+const buildMeta=JSON.parse(await readFile('dist/build-meta.json','utf8'));
 const sourcePaths = [...await files('src'),'package.json','package-lock.json','scripts/build-offline.mjs'].sort();
-const sourceManifest = Object.fromEntries(await Promise.all(sourcePaths.map(async path=>[path.replaceAll('\\','/'),createHash('sha256').update(await readFile(path)).digest('hex')])));
+const sourceManifest = buildMeta.sourceManifest ?? Object.fromEntries(await Promise.all(sourcePaths.map(async path=>[path.replaceAll('\\','/'),createHash('sha256').update(await readFile(path)).digest('hex')])));
 const screenshots=[];
 for (const directory of await readdir('artifacts/e2e-results', { withFileTypes: true })) {
   if (!directory.isDirectory() || !directory.name.toLowerCase().startsWith(stage.toLowerCase())) continue;
@@ -48,7 +49,7 @@ for (const directory of await readdir('artifacts/e2e-results', { withFileTypes: 
 const summary={stage,version:JSON.parse(await readFile('package.json','utf8')).version,collectedAt:new Date().toISOString(),
   gitHeadAtCollection:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),
   worktreeStatusAtCollection:execFileSync('git',['status','--short'],{encoding:'utf8'}).trim(),
-  sourceTreeSha256:createHash('sha256').update(JSON.stringify(sourceManifest)).digest('hex'),sourceManifest,
+  sourceTreeSha256:createHash('sha256').update(JSON.stringify(sourceManifest)).digest('hex'),sourceManifest,sourceManifestScope:buildMeta.sourceManifest?'Bundled entry inputs, CSS, HTML, package manifests and build script recorded at build time.':'All source files recorded at evidence collection time (legacy build metadata).',
   releaseGameJsSha256:createHash('sha256').update(await readFile('dist/game.js')).digest('hex'),
   unit:{total:unit.numTotalTests,passed:unit.numPassedTests,failed:unit.numFailedTests},
   browser:{expected:cases.filter(c=>c.status==='passed').length,unexpected:cases.filter(c=>c.status!=='passed'&&c.status!=='skipped').length,skipped:cases.filter(c=>c.status==='skipped').length,cases,

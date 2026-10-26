@@ -1,7 +1,7 @@
 import { distance, normalized, wallHit, moveWithCollision } from '../actors/collision';
 import { SeedRng } from '../core/rng';
 import type { OrganId } from './battleTypes';
-import type { GameEvent, GameState, Target, Vec } from './types';
+import { activeWorld, type GameEvent, type GameState, type Target, type Vec, type WorldGeometry } from './types';
 import { BEACON_CONFIG, CHAIN_CONFIG, GROWTH_BALANCE as B, makeDraftOption, PROTOCOL_IDS, PROTOCOLS, PULSE_CONFIG, TRACE_CONFIG, TUNINGS } from './protocols';
 import type { DamageOrigin, DraftIntent, DraftOption, DraftResolution, EquippedProtocol, GrowthCommand, GrowthContext, GrowthState, ProtocolDraft, ProtocolId, ResearchResult } from './growthTypes';
 
@@ -10,15 +10,15 @@ export type { GrowthCommand, GrowthContext, GrowthState, DamageOrigin, DraftInte
 export function growthContext(state: GameState): GrowthContext {
   return { tick: state.tick, elapsed: state.elapsed, active: state.phase === 'playing', organId: state.battle?.organId ?? 'heart',
     rhythm: state.battle?.pulse.phase ?? 'rest', deviceOrigin: state.battle?.pulse.origin ?? state.terminal,
-    player: state.player, aim: state.battle?.lastAim ?? state.player, tissue: state.tissue, targets: state.targets, tool: state.tool };
+    player: state.player, aim: state.battle?.lastAim ?? state.player, tissue: state.tissue, targets: state.targets, tool: state.tool, geometry: activeWorld(state), rhythmCycle: state.battle?.pulse.cycleIndex };
 }
 const hashString = (value: string, start = 2166136261): number => {
   let hash = start >>> 0; for (const char of value) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619) >>> 0; return hash;
 };
 const point = (value: Vec): Vec => ({ x: value.x, y: value.y });
-const unobstructed = (from: Vec, to: Target): boolean => {
+const unobstructed = (from: Vec, to: Target, geometry?: WorldGeometry): boolean => {
   const length = distance(from, to), direction = normalized(to.x-from.x,to.y-from.y);
-  const wall = wallHit(from,direction,length); return wall === null || wall >= length-to.radius;
+  const wall = wallHit(from,direction,length,geometry); return wall === null || wall >= length-to.radius;
 };
 const stableNearest = (from: Vec, targets: readonly Target[]): Target[] => [...targets].sort((a,b)=>distance(from,a)-distance(from,b)||(a.id<b.id?-1:a.id>b.id?1:0));
 
@@ -208,9 +208,9 @@ export class GrowthController {
     if(beacon&&context.elapsed+1e-9>=this.state.beaconReadyAt) {
       const config=BEACON_CONFIG[beacon.tuning];
       const direction=normalized(context.aim.x-context.player.x,context.aim.y-context.player.y),length=Math.min(B.beaconPlacementRange,distance(context.player,context.aim));
-      const wall=wallHit(context.player,direction,length);
+      const wall=wallHit(context.player,direction,length,context.geometry);
       const travel=Math.max(0,Math.min(length,wall===null?length:wall-18));
-      const position=moveWithCollision(context.player,{x:direction.x*travel,y:direction.y*travel},12);
+      const position=moveWithCollision(context.player,{x:direction.x*travel,y:direction.y*travel},12,context.geometry);
       this.state.beacon={...point(position),id:`${rootId}:beacon`,organId:context.organId,born:context.elapsed,until:context.elapsed+config.duration,
         radius:config.radius,damage:config.damage,interval:config.interval,nextAttackAt:context.elapsed+.1,tuning:beacon.tuning};
       this.state.beaconReadyAt=context.elapsed+config.cooldown;
@@ -228,7 +228,7 @@ export class GrowthController {
     if(this.state.ended||!context.active||origin.cause!=='basic'||target.hp<=0||context.tool===3)return[];
     const slot=this.equipped('PULSE_BREAK');if(!slot||context.rhythm!=='surge')return[];
     const config=PULSE_CONFIG[slot.tuning];if(distance(context.player,context.deviceOrigin)>config.deviceRange)return[];
-    const cycle=Math.floor(context.elapsed/6);
+    const cycle=context.rhythmCycle??Math.floor(context.elapsed/6);
     if(this.state.resonance.some(hit=>hit.targetId===target.id&&hit.organId===context.organId&&hit.cycle===cycle))return[];
     const rootId=origin.rootId??`${this.state.runId}:hit:${context.tick}:${target.id}`,base={protocolId:'PULSE_BREAK' as const,rootId,organId:context.organId};
     const commands:GrowthCommand[]=[{...base,kind:'expose',targetId:target.id,until:context.elapsed+config.exposeSeconds,revealUntil:context.elapsed+config.exposeSeconds},
@@ -251,7 +251,7 @@ export class GrowthController {
     const visited=new Set([target.id]),commands:GrowthCommand[]=[];
     let from:Vec=target,actual=0;
     for(let hop=1;hop<=hops;hop++) {
-      const next=stableNearest(from,context.targets.filter(t=>t.hp>0&&!visited.has(t.id)&&distance(from,t)<=config.range&&unobstructed(from,t)))[0];
+      const next=stableNearest(from,context.targets.filter(t=>t.hp>0&&!visited.has(t.id)&&distance(from,t)<=config.range&&unobstructed(from,t,context.geometry)))[0];
       if(!next)break;
       visited.add(next.id);actual++;
       const base={protocolId:'PURIFY_CHAIN' as const,rootId,organId:context.organId};
@@ -275,7 +275,7 @@ export class GrowthController {
     if(!context.active)return logs;
     const liveIds=new Set(context.targets.filter(target=>target.hp>0).map(target=>target.id));
     s.marks=s.marks.filter(mark=>mark.until>context.elapsed&&(mark.organId!==context.organId||liveIds.has(mark.targetId)));
-    s.resonance=s.resonance.filter(hit=>hit.organId===context.organId&&hit.cycle===Math.floor(context.elapsed/6)&&liveIds.has(hit.targetId));
+    s.resonance=s.resonance.filter(hit=>hit.organId===context.organId&&hit.cycle===(context.rhythmCycle??Math.floor(context.elapsed/6))&&liveIds.has(hit.targetId));
     if(!this.equipped('EXPOSE_TRACE'))s.marks=[];
     if(!this.equipped('IMMUNE_BEACON'))s.beacon=null;
     if(s.beacon&&(s.beacon.until<=context.elapsed||s.beacon.organId!==context.organId))s.beacon=null;
@@ -283,7 +283,7 @@ export class GrowthController {
     if(beacon&&context.elapsed+1e-9>=beacon.nextAttackAt) {
       // At most one attack per fixed update. No catch-up burst after pause or organ travel.
       beacon.nextAttackAt=context.elapsed+beacon.interval;
-      const eligible=context.targets.filter(target=>target.hp>0&&distance(beacon,target)<=beacon.radius&&unobstructed(beacon,target));
+      const eligible=context.targets.filter(target=>target.hp>0&&distance(beacon,target)<=beacon.radius&&unobstructed(beacon,target,context.geometry));
       const traced=this.equipped('EXPOSE_TRACE')?eligible.filter(target=>s.marks.some(mark=>mark.targetId===target.id&&mark.organId===context.organId&&mark.until>context.elapsed)):[];
       const target=stableNearest(beacon,traced.length?traced:eligible)[0];
       if(target) {

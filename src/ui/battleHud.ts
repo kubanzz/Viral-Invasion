@@ -1,5 +1,6 @@
 import type { GameState } from '../game/types';
 import { TRAITS } from '../game/battleConfig';
+import { campaignHudMarkup, campaignOverlay, updateCampaignHud } from './campaignHud';
 
 const escape = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]!));
 const time = (seconds: number) => `${Math.floor(seconds / 60).toString().padStart(2, '0')}:${Math.floor(seconds % 60).toString().padStart(2, '0')}`;
@@ -9,12 +10,12 @@ export const battleHudMarkup = `
   <section class="objective battle-objective"><div class="eyebrow" id="battle-stage">HEART / 心脏防线</div><h2 id="objective-title">阻止感染扩散</h2><p id="battle-objective"></p><div class="battle-progress" id="battle-progress"></div><p class="interaction-hint" id="interaction-hint">靠近装置 · E 交互</p></section>
   <aside class="telemetry battle-telemetry">
     <div class="readout"><label>战士耐久 <b id="hp-label">100</b></label><div class="meter"><i id="hp-meter"></i></div></div>
-    <div class="readout"><label>心脏完整度 <b id="tissue-label">70%</b></label><div class="meter"><i id="tissue-meter"></i></div><p>按 3 瞄准十字节点抢修</p></div>
+    <div class="readout"><label><span id="organ-integrity-name">心脏完整度</span><b id="tissue-label">70%</b></label><div class="meter"><i id="tissue-meter"></i></div><p>按 3 瞄准十字节点抢修</p></div>
     <div class="readout pressure"><label>感染负荷 <b id="infection-label">0%</b></label><div class="meter"><i id="infection-meter"></i></div><p id="crisis-label">净化感染源，截断传播</p><div class="vitality">全身稳定 <b id="vitality-label">100%</b></div></div>
-    <div class="pulse-readout"><span id="pulse-phase"></span><b id="pulse-ready"></b><small>阀门附近 E · 朝鼠标冲流<br>击退 / 破壳 · 消耗组织完整度</small></div>
+    <div class="pulse-readout"><span id="pulse-phase"></span><b id="pulse-ready"></b><small id="pulse-explanation">阀门附近 E · 朝鼠标冲流<br>击退 / 破壳 · 消耗组织完整度</small></div>
   </aside>
   <div class="evolution-card" id="evolution-card" role="status" hidden></div>
-  <div class="trait-strip" id="trait-strip"></div>`;
+  <div class="trait-strip" id="trait-strip"></div>${campaignHudMarkup}`;
 
 export function updateBattleHud(state: GameState): void {
   const battle = state.battle!;
@@ -44,9 +45,11 @@ export function updateBattleHud(state: GameState): void {
     card.innerHTML = `<div class="warning-title"><strong>△ 变异前兆 · ${trait.name}</strong><b>${Math.max(0, warning.applyAt-state.elapsed).toFixed(1)}s</b></div><p>${escape(trait.ability)}</p><div><span>代价</span>${escape(trait.cost)}</div><div class="counter"><span>反制</span>${escape(trait.counter)}</div>`;
   }
   get('trait-strip').innerHTML = battle.traits.map(id => `<span title="${escape(TRAITS[id].counter)}">${TRAITS[id].symbol} ${TRAITS[id].name}</span>`).join('');
+  updateCampaignHud(state);
 }
 
 export function battleOverlay(state: GameState, help: boolean, resumeAfterHelp: boolean, lowEffects: boolean, history: boolean): string | null {
+  if (state.campaign) return campaignOverlay(state, help, resumeAfterHelp, lowEffects, history);
   const b = state.battle!;
   const effects = `<div class="switches"><button data-action="effects">特效：${lowEffects ? '低' : '标准'}</button></div>`;
   const modal = (content: string, label: string) => `<div class="overlay"><section class="modal battle-modal" role="dialog" aria-modal="true" aria-label="${label}">${content}</section></div>`;

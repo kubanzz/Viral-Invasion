@@ -1,5 +1,5 @@
 import type { OrganId } from './battleTypes';
-import type { Effect, GameEvent, GameState, Target, Tool, Vec } from './types';
+import type { Effect, GameEvent, GameState, Target, Tool, Vec, WorldGeometry } from './types';
 
 export type ProtocolId = 'PULSE_BREAK' | 'PURIFY_CHAIN' | 'IMMUNE_BEACON' | 'EXPOSE_TRACE';
 export type Tuning = 'balanced' | 'focused' | 'extended';
@@ -38,6 +38,8 @@ export interface GrowthContext {
   tick: number; elapsed: number; organId: OrganId; active: boolean; rhythm: 'charge' | 'surge' | 'rest';
   player: Vec; aim: Vec; tissue: GameState['tissue']; deviceOrigin: Vec;
   targets: readonly Target[]; tool: Tool;
+  geometry?: WorldGeometry;
+  rhythmCycle?: number;
 }
 export interface DamageOrigin { cause: 'basic' | 'protocol'; rootId?: string; wasPulseExposed?: boolean; protocolId?: ProtocolId; allowChain?: boolean }
 interface ProtocolCommandBase { protocolId: ProtocolId; rootId: string; organId: OrganId }

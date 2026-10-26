@@ -1,6 +1,6 @@
 import { clamp, distance, moveWithCollision, normalized, wallHit } from '../actors/collision';
 import { SeedRng } from '../core/rng';
-import { BALANCE, type Effect, type GameEvent, type GameState, type InputFrame, type Target, type Vec } from './types';
+import { activeWorld, BALANCE, type Effect, type GameEvent, type GameState, type InputFrame, type Target, type Vec } from './types';
 import type { BattleState, CampaignOptions, TraitId } from './battleTypes';
 import { BATTLE_BALANCE as B, TRAITS } from './battleConfig';
 import { recordBehavior, chooseEvolution } from './evolution';
@@ -12,6 +12,7 @@ export interface BattleHost {
   effect(kind: Effect['kind'], from: Vec, to: Vec, radius: number, duration: number): void;
   finish(success: boolean, reason: string): void;
   slowFactor?(targetId: string): number;
+  isMigratingActor?(targetId: string): boolean;
 }
 
 const BRANCHES: TraitId[] = ['CARAPACE', 'FISSION', 'MIMIC'];
@@ -84,6 +85,7 @@ export class BattleDirector {
   beforeInput(input: InputFrame): void {
     this.b.lastAim = { ...input.aim };
     const pulse = this.b.pulse;
+    pulse.cycleIndex = Math.floor(this.s.elapsed / B.pulseCycle);
     pulse.direction = Math.atan2(input.aim.y - pulse.origin.y, input.aim.x - pulse.origin.x);
     const beat = this.s.elapsed % B.pulseCycle;
     pulse.phase = beat < B.chargeDuration ? 'charge' : beat < B.chargeDuration + B.surgeDuration ? 'surge' : 'rest';
@@ -127,7 +129,7 @@ export class BattleDirector {
       b.stats.sourceClears++;
       b.pressure.infection = Math.max(0, b.pressure.infection - B.sourceRelief);
       this.host.emit('INFECTION_SOURCE_CLEARED', { organId: b.organId, nodeId: target.id, actor: 'player' });
-      this.notice(`感染源已净化（${b.stats.sourceClears}/2），停止增殖，感染负荷 -${B.sourceRelief}。`);
+      this.notice(`感染源已净化${s.campaign ? `（本局累计 ${b.stats.sourceClears}）` : `（${b.stats.sourceClears}/2）`}，停止增殖，感染负荷 -${B.sourceRelief}。`);
     } else {
       b.stats.kills++;
       b.pressure.infection = Math.max(0, b.pressure.infection - B.killRelief);
@@ -137,9 +139,9 @@ export class BattleDirector {
         this.host.emit('ELITE_CLEARED', { id: target.id, trait: target.traits?.join('+') ?? '' });
         this.notice(`变异精英已清除（${b.stats.eliteClears}/2）。保持组织，继续诊断。`);
       }
-      if (target.traits?.includes('FISSION') && (target.generation ?? 0) === 0) {
+      if (target.role !== 'core' && target.traits?.includes('FISSION') && (target.generation ?? 0) === 0) {
         target.splitAt = s.elapsed + B.fissionDelay;
-        target.splitPositions = [-1, 1].map(offset => moveWithCollision({ x: target.x, y: target.y }, { x: offset * 27, y: 10 }, 14));
+        target.splitPositions = [-1, 1].map(offset => moveWithCollision({ x: target.x, y: target.y }, { x: offset * 27, y: 10 }, 14, activeWorld(s)));
         this.host.emit('FISSION_WARNING', { parentId: target.id, children: 2, applyAt: target.splitAt });
       }
     }
@@ -206,23 +208,25 @@ export class BattleDirector {
     const p = b.pulse;
     const end = { x: p.origin.x + Math.cos(p.direction) * B.pulseRange, y: p.origin.y + Math.sin(p.direction) * B.pulseRange };
     this.host.effect('pulse', p.origin, end, B.pulseRange, .65);
-    let pushed = 0; let exposed = 0;
+    let pushed = 0; let exposed = 0; let coreHit = false;
     for (const target of s.targets) if (target.hp > 0 && target.role !== 'source') {
       const length = distance(p.origin, target);
       const direction = normalized(target.x - p.origin.x, target.y - p.origin.y);
       if (length > B.pulseRange + target.radius || (length > target.radius && direction.x * Math.cos(p.direction) + direction.y * Math.sin(p.direction) < Math.cos(B.pulseHalfAngle))) continue;
-      const block = wallHit(p.origin, direction, length);
+      const block = wallHit(p.origin, direction, length, activeWorld(s));
       if (block !== null && block < length - target.radius) continue;
-      const pos = moveWithCollision(target, { x: direction.x * B.pulsePush, y: direction.y * B.pulsePush }, target.radius);
+      const push = target.role === 'core' ? 0 : B.pulsePush;
+      const pos = moveWithCollision(target, { x: direction.x * push, y: direction.y * push }, target.radius, activeWorld(s));
+      if (target.role === 'core') coreHit = true;
       target.x = pos.x; target.y = pos.y;
       target.attackAt = undefined; target.attackAim = undefined;
       target.attackTarget = undefined;
       target.attackReady = s.elapsed + 1.3;
       if (target.traits?.includes('CARAPACE')) { target.exposedUntil = s.elapsed + B.pulseExpose; exposed++; }
       target.revealedUntil = s.elapsed + B.scanReveal;
-      pushed++;
+      if (target.role !== 'core') pushed++;
     }
-    this.host.emit('PULSE_TRIGGERED', { organId: b.organId, direction: p.direction, range: B.pulseRange, halfAngle: B.pulseHalfAngle, pushed, exposed, tissueCost: B.pulseCost });
+    this.host.emit('PULSE_TRIGGERED', { organId: b.organId, direction: p.direction, range: B.pulseRange, halfAngle: B.pulseHalfAngle, pushed, exposed, coreHit, tissueCost: B.pulseCost });
     this.notice(`定向冲流：推开 ${pushed} 体，破壳 ${exposed} 体；组织承压 -${B.pulseCost}，冷却 ${B.pulseCooldown} 秒。`, 4);
   }
 
@@ -242,7 +246,7 @@ export class BattleDirector {
     const child = generation > 0;
     const hp = child ? B.childHp : role === 'elite' ? B.eliteHp : B.ordinaryHp;
     const radius = child ? 14 : role === 'elite' ? 30 : 22;
-    const pos = moveWithCollision({ x: position.x, y: position.y }, { x: 0, y: 0 }, radius);
+    const pos = moveWithCollision({ x: position.x, y: position.y }, { x: 0, y: 0 }, radius, activeWorld(this.s));
     const target: Target = { ...pos, id: `${role}-${++this.b.nextActorId}`, role, kind: traits.includes('FISSION') ? 'cluster' : 'single', radius, hp, maxHp: hp, hitUntil: 0, scanned: false, traits: [...traits], facing: 0, born: this.s.elapsed, attackReady: this.s.elapsed + 1.5, generation, sourceId };
     this.s.targets.push(target);
     this.host.emit('ACTOR_SPAWNED', { id: target.id, role, generation, sourceId: sourceId ?? '', traits: traits.join('+') });
@@ -305,10 +309,10 @@ export class BattleDirector {
       b.nextSpawnAt[source.id] = s.elapsed + B.spawnInterval;
       const edge = b.graph.edges.find(e => e.from === source.id);
       if (!edge?.open) continue;
-      this.spawn(moveWithCollision(source, { x: -45, y: 45 }, 22), 'virus', b.traits.length ? [b.traits.at(-1)!] : [], 0, source.id);
+      this.spawn(moveWithCollision(source, { x: -45, y: 45 }, 22, activeWorld(s)), 'virus', b.traits.length ? [b.traits.at(-1)!] : [], 0, source.id);
     }
     // Clearing both origins allows the remaining local tissue infection to recover.
-    if (b.stats.sourceClears === 2 && !s.targets.some(t => t.hp > 0 && distance(t, s.tissue) < 120)) {
+    if (!b.graph.nodes.some(n => n.kind === 'source' && n.active) && !s.targets.some(t => t.hp > 0 && distance(t, s.tissue) < 120)) {
       for (const node of b.graph.nodes) if (node.kind !== 'source') node.infected = false;
     }
   }
@@ -325,7 +329,7 @@ export class BattleDirector {
         }
         continue;
       }
-      if (target.role === 'source') continue;
+      if (target.role === 'source' || target.role === 'core' || this.host.isMigratingActor?.(target.id)) continue;
       const mimic = target.traits?.includes('MIMIC');
       const goal = mimic || distance(target, s.player) > 270 ? s.tissue : s.player;
       const dir = normalized(goal.x - target.x, goal.y - target.y);
@@ -359,16 +363,16 @@ export class BattleDirector {
         if (mimic) speed *= B.mimicSpeed;
         speed *= this.host.slowFactor?.(target.id) ?? 1;
         const step = { x: dir.x * speed * BALANCE.step, y: dir.y * speed * BALANCE.step };
-        let pos = moveWithCollision(target, step, target.radius);
+        let pos = moveWithCollision(target, step, target.radius, activeWorld(s));
         // If a fold blocks the direct route, follow its tangent until the goal is clear.
         if (distance(target, pos) < speed * BALANCE.step * .4) {
           const side = target.id.length % 2 ? 1 : -1;
-          pos = moveWithCollision(target, { x: -dir.y * speed * BALANCE.step * side, y: dir.x * speed * BALANCE.step * side }, target.radius);
+          pos = moveWithCollision(target, { x: -dir.y * speed * BALANCE.step * side, y: dir.x * speed * BALANCE.step * side }, target.radius, activeWorld(s));
         }
         target.x = pos.x; target.y = pos.y;
       } else if (s.elapsed >= (target.attackReady ?? 0)) {
         const line = normalized(goal.x - target.x, goal.y - target.y);
-        const block = wallHit(target, line, distance(target, goal));
+        const block = wallHit(target, line, distance(target, goal), activeWorld(s));
         if (block !== null && block < distance(target, goal) - 20) continue;
         target.attackAt = s.elapsed + B.attackWindup;
         target.attackAim = { x: goal.x, y: goal.y };
@@ -398,6 +402,7 @@ export class BattleDirector {
       s.tissue.hp = Math.max(0, before - B.tissueInfectionDamage);
       if (s.tissue.hp < before) this.host.emit('ORGAN_INTEGRITY_CHANGED', { organId: b.organId, before, after: s.tissue.hp, reason: 'infection' });
     }
+    if (!s.campaign) {
     p.organAlarm = s.tissue.hp < B.organAlarmAt;
     if (p.organAlarm) {
       if (b.organLowSince === null) {
@@ -410,6 +415,7 @@ export class BattleDirector {
       if (b.organLowSince !== null) this.notice('组织抢修成功：器官警报解除，全身稳定缓慢恢复。');
       b.organLowSince = null;
       if (s.tissue.hp >= 50) p.vitality = Math.min(100, p.vitality + .25 * BALANCE.step);
+    }
     }
     if (p.infection >= 100) {
       if (p.criticalSince === null) {
@@ -429,6 +435,7 @@ export class BattleDirector {
 
   private objectives(): void {
     const { s, b } = this;
+    if (s.campaign) return;
     b.readyToRetest = b.stats.sourceClears >= 2 && b.stats.eliteClears >= 2 && s.tissue.hp >= 50 && b.pressure.infection < 35;
     b.stage = b.readyToRetest ? 3 : b.traits.length ? b.traits.length : 0;
     b.stageLabel = b.readyToRetest ? 'Ⅳ · 心脏复测' : b.traits.length === 2 ? 'Ⅲ · 二次变异' : b.traits.length === 1 ? 'Ⅱ · 变异应对' : 'Ⅰ · 初始感染';

@@ -17,6 +17,7 @@ export interface PressureState { infection: number; vitality: number; criticalSi
 export interface PulseState {
   phase: 'charge' | 'surge' | 'rest'; phaseRemaining: number; readyAt: number;
   activeUntil: number; origin: Vec; direction: number; uses: number;
+  cycleIndex?: number;
 }
 export interface EvolutionWarning { trait: TraitId; startedAt: number; applyAt: number }
 export interface BattleStats {

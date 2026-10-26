@@ -8,7 +8,7 @@ test('G2: seeded evolution, event-driven paused drafts, real build and clean ret
   test.setTimeout(150000);
   const errors:string[]=[],remote:string[]=[];page.on('pageerror',e=>errors.push(e.message));
   await context.setOffline(true);await context.route(/^https?:/i,async route=>{remote.push(route.request().url());await route.abort();});
-  await page.goto(`${entry}?seed=130026`);await page.locator('[data-action="start"]').click();
+  await page.goto(`${entry}?fixture=G2&seed=130026`);await page.locator('[data-action="start"]').click();
   let firstDraftSeen=false;
   await completeHeart(page,async()=>{await page.screenshot({path:info.outputPath('g2-warning.png')});},async()=>{await page.screenshot({path:info.outputPath('g2-pulse.png')});},async state=>{
     if(firstDraftSeen)return;firstDraftSeen=true;await page.screenshot({path:info.outputPath('g2-draft.png')});
@@ -40,7 +40,7 @@ test('G2: seeded evolution, event-driven paused drafts, real build and clean ret
 test('G2 RUN-06: legally acquire both pairs, trigger their real effects, research a fourth and replace',async({page,context},info)=>{
   test.setTimeout(180000);await context.setOffline(true);
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto(`${entry}?seed=130026&trait=CARAPACE`);await page.locator('[data-action="start"]').click();
+  await page.goto(`${entry}?fixture=G2&seed=130026&trait=CARAPACE`);await page.locator('[data-action="start"]').click();
   await walk(page,{x:620,y:520},35);await page.keyboard.press('KeyQ');
   let lastScan=-9;const deadline=Date.now()+90000;
   const evolutionFrames:Record<string,Awaited<ReturnType<typeof readState>>>={};

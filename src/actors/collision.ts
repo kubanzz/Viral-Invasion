@@ -1,4 +1,4 @@
-import { WORLD, type Vec } from '../game/types';
+import { WORLD, type Vec, type WorldGeometry } from '../game/types';
 
 export function distance(a: Vec, b: Vec): number {
   return Math.hypot(a.x - b.x, a.y - b.y);
@@ -26,9 +26,9 @@ export function rayCircle(origin: Vec, direction: Vec, center: Vec, radius: numb
   return t >= 0 && t <= range ? t : null;
 }
 
-export function wallHit(origin: Vec, direction: Vec, range: number): number | null {
+export function wallHit(origin: Vec, direction: Vec, range: number, world: WorldGeometry = WORLD): number | null {
   let nearest: number | null = null;
-  for (const obstacle of WORLD.obstacles) {
+  for (const obstacle of world.obstacles) {
     const hit = rayCircle(origin, direction, obstacle, obstacle.radius, range);
     if (hit !== null && (nearest === null || hit < nearest)) nearest = hit;
   }
@@ -36,13 +36,13 @@ export function wallHit(origin: Vec, direction: Vec, range: number): number | nu
 }
 
 /** Substeps prevent dash tunnelling. Only visible ground footprints block movement. */
-export function moveWithCollision(position: Vec, delta: Vec, radius: number): Vec {
+export function moveWithCollision(position: Vec, delta: Vec, radius: number, world: WorldGeometry = WORLD): Vec {
   const count = Math.max(1, Math.ceil(Math.hypot(delta.x, delta.y) / Math.max(4, radius * .5)));
   const result = { ...position };
   for (let i = 0; i < count; i++) {
     result.x += delta.x / count;
     result.y += delta.y / count;
-    for (const obstacle of WORLD.obstacles) {
+    for (const obstacle of world.obstacles) {
       const gap = distance(result, obstacle);
       const minimum = radius + obstacle.radius;
       if (gap < minimum) {
@@ -51,8 +51,8 @@ export function moveWithCollision(position: Vec, delta: Vec, radius: number): Ve
         result.y = obstacle.y + normal.y * minimum;
       }
     }
-    result.x = clamp(result.x, WORLD.bounds.left + radius, WORLD.bounds.right - radius);
-    result.y = clamp(result.y, WORLD.bounds.top + radius, WORLD.bounds.bottom - radius);
+    result.x = clamp(result.x, world.bounds.left + radius, world.bounds.right - radius);
+    result.y = clamp(result.y, world.bounds.top + radius, world.bounds.bottom - radius);
   }
   return result;
 }

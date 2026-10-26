@@ -18,7 +18,7 @@ const initialSeed = seedParam > 0 && Number.isFinite(seedParam) ? seedParam >>> 
 // The old slice is an explicit regression fixture; the player enters the campaign.
 const trainingFixture = params.get('scenario') === 'training';
 const firstTrait = ['CARAPACE', 'FISSION', 'MIMIC'].includes(params.get('trait') ?? '') ? params.get('trait') as TraitId : undefined;
-const milestone = params.get('fixture') === 'G1' ? 'G1' : 'G2';
+const milestone = params.get('fixture') === 'G1' ? 'G1' : params.get('fixture') === 'G2' ? 'G2' : 'G3';
 const session = new GameSession(initialSeed, { campaign: !trainingFixture, firstTrait, milestone });
 const clock = new FixedClock();
 const renderer = new Renderer(canvas);
@@ -29,6 +29,7 @@ let resumeAfterHelp = false;
 let overlayKey = '';
 let history = false;
 let resumeAfterHistory = false;
+let resetClockAfterStep = false;
 
 app.innerHTML = `
   <header class="topbar"><div class="brand"><div class="brand-icon">+</div><div><strong>Viral Invasion</strong><small>病毒入侵 · 微观幻想</small></div></div><nav class="top-actions"><span class="status-chip">HEART / 01</span><button class="small" data-action="sound" aria-label="声音开关">声音 开</button><button class="small" data-action="help">操作指南</button><button class="small" data-action="pause">暂停 <kbd>Esc</kbd></button></nav></header>
@@ -45,11 +46,14 @@ if (!trainingFixture) {
   document.querySelector('.telemetry')!.remove();
   document.querySelector('#hud')!.insertAdjacentHTML('afterbegin', battleHudMarkup);
   if (session.state.growth) document.querySelector('#hud')!.insertAdjacentHTML('beforeend', growthHudMarkup);
-  document.querySelector('.micro-footer')!.textContent = `${milestone} · 心脏防线 / 架空生物幻想`;
+  document.querySelector('.micro-footer')!.textContent = `${milestone} · ${milestone === 'G3' ? '器官联防' : '心脏防线'} / 架空生物幻想`;
 }
 const input = new Controller(canvas, () => togglePause(), () => {
   if (session.state.phase === 'playing') session.pause();
   clock.reset();
+});
+session.bus.on('event', event => {
+  if (event.type === 'INPUT_RESET_REQUESTED') { input.clear(); resetClockAfterStep = true; }
 });
 const el = (id: string) => document.getElementById(id)!;
 const formatTime = (seconds: number) => `${Math.floor(seconds/60).toString().padStart(2,'0')}:${Math.floor(seconds%60).toString().padStart(2,'0')}`;
@@ -74,6 +78,10 @@ app.addEventListener('click', event => {
   const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-action]');
   if (!button) return;
   const action = button.dataset.action!;
+  if (action.startsWith('migration-')) {
+    session.chooseMigration(action.slice(10) as 'pursue' | 'block' | 'ignore', button.dataset.migration!);
+    input.clear(); button.blur(); return;
+  }
   if (action.startsWith('draft-')) {
     const growth = session.state.growth;
     if (!growth) return;
@@ -147,6 +155,7 @@ function updateHud() {
 }
 function updateCommonHud() {
   const s = session.state;
+  document.querySelector('.status-chip')!.textContent = s.battle?.organId === 'lung' ? 'LUNG / 02' : 'HEART / 01';
   el('dash-ready').textContent = s.player.dashReady > s.elapsed ? `${(s.player.dashReady-s.elapsed).toFixed(1)}s`:'就绪';
   el('scan-ready').textContent = s.scanReady > s.elapsed ? `${(s.scanReady-s.elapsed).toFixed(1)}s`:'就绪';
   el('run-time').textContent = `SEED ${s.seed}　 /　${formatTime(s.elapsed)}`;
@@ -158,6 +167,7 @@ let lastHud = 0;
 function frame(now: number) {
   const aim = renderer.camera.screenToWorld(input.pointer);
   clock.advance(now, dt => session.step(input.frame(aim), dt), session.state.phase === 'playing');
+  if (resetClockAfterStep) { clock.reset(); resetClockAfterStep = false; }
   renderer.render(session.state, aim, { lowEffects });
   sound.update(session.state);
   updateOverlay();
@@ -169,7 +179,7 @@ renderer.resize(); updateOverlay(); updateHud(); requestAnimationFrame(frame);
 
 // Read-only diagnostics for browser regression. Inputs always use the real DOM.
 Object.defineProperty(window, '__viral', { value: Object.freeze({
-  version: '0.3.0-G2', snapshot: () => session.snapshot(),
+  version: '0.4.0-G3', snapshot: () => session.snapshot(),
   toScreen: (point: { x: number; y: number }) => renderer.camera.worldToScreen(point),
   toWorld: (point: { x: number; y: number }) => renderer.camera.screenToWorld(point),
   diagnostics: () => renderer.diagnostics(session.state),
