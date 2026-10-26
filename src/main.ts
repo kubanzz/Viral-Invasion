@@ -9,6 +9,9 @@ import { battleHudMarkup, battleOverlay, updateBattleHud } from './ui/battleHud'
 import type { TraitId } from './game/battleTypes';
 import type { ProtocolId } from './game/growthTypes';
 import { draftOverlay, growthHudMarkup, updateGrowthHud, growthHelpMarkup, growthHistoryMarkup } from './ui/growthHud';
+import { ProfileStore } from './meta/profile';
+import { profileOverlay, profileMenuMarkup, profileResultMarkup } from './ui/profileHud';
+import './ui/profile.css';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
 const app = document.querySelector<HTMLDivElement>('#app')!;
@@ -23,13 +26,21 @@ const session = new GameSession(initialSeed, { campaign: !trainingFixture, first
 const clock = new FixedClock();
 const renderer = new Renderer(canvas);
 const sound = new Soundscape();
-let lowEffects = false;
+const profile = new ProfileStore();
+sound.enabled = profile.data.settings.sound;
+let lowEffects = profile.data.settings.lowEffects;
 let help = false;
 let resumeAfterHelp = false;
 let overlayKey = '';
 let history = false;
 let resumeAfterHistory = false;
 let resetClockAfterStep = false;
+let profileOpen = false;
+let resumeAfterProfile = false;
+let runId = '';
+let migrationGuide = false;
+let migrationGuidePending = false;
+let migrationGuideSeen = profile.data.discoveredTraits.length >= 2;
 
 app.innerHTML = `
   <header class="topbar"><div class="brand"><div class="brand-icon">+</div><div><strong>Viral Invasion</strong><small>病毒入侵 · 微观幻想</small></div></div><nav class="top-actions"><span class="status-chip">HEART / 01</span><button class="small" data-action="sound" aria-label="声音开关">声音 开</button><button class="small" data-action="help">操作指南</button><button class="small" data-action="pause">暂停 <kbd>Esc</kbd></button></nav></header>
@@ -46,7 +57,7 @@ if (!trainingFixture) {
   document.querySelector('.telemetry')!.remove();
   document.querySelector('#hud')!.insertAdjacentHTML('afterbegin', battleHudMarkup);
   if (session.state.growth) document.querySelector('#hud')!.insertAdjacentHTML('beforeend', growthHudMarkup);
-  document.querySelector('.micro-footer')!.textContent = `${milestone} · ${milestone === 'G3' ? '器官联防' : '心脏防线'} / 架空生物幻想`;
+  document.querySelector('.micro-footer')!.textContent = `${milestone === 'G3' ? 'G4' : milestone} · ${milestone === 'G3' ? '器官联防' : '心脏防线'} / 架空生物幻想`;
 }
 const input = new Controller(canvas, () => togglePause(), () => {
   if (session.state.phase === 'playing') session.pause();
@@ -54,11 +65,15 @@ const input = new Controller(canvas, () => togglePause(), () => {
 });
 session.bus.on('event', event => {
   if (event.type === 'INPUT_RESET_REQUESTED') { input.clear(); resetClockAfterStep = true; }
+  if (event.type === 'RUN_ENDED' && session.state.campaign && runId) profile.recordRun(session.state, runId);
+  if (event.type === 'MIGRATION_WARNING' && !migrationGuideSeen) migrationGuidePending = true;
 });
 const el = (id: string) => document.getElementById(id)!;
 const formatTime = (seconds: number) => `${Math.floor(seconds/60).toString().padStart(2,'0')}:${Math.floor(seconds%60).toString().padStart(2,'0')}`;
 function togglePause() {
   input.clear(); clock.reset();
+  if (profileOpen) { profileOpen = false; if (resumeAfterProfile) session.resume(); resumeAfterProfile = false; return; }
+  if (migrationGuide) { migrationGuide = false; session.resume(); return; }
   if (history) { history = false; if (resumeAfterHistory) session.resume(); resumeAfterHistory = false; return; }
   if (help) { help = false; if (resumeAfterHelp) session.resume(); resumeAfterHelp = false; return; }
   if (session.state.phase === 'playing') session.pause();
@@ -66,6 +81,8 @@ function togglePause() {
 }
 function start(newSeed?: number) {
   input.clear(); clock.reset(); help = false; history = false; resumeAfterHelp = false; resumeAfterHistory = false;
+  profileOpen = false; migrationGuide = false; migrationGuidePending = false;
+  runId = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}:${performance.now()}:${Math.random().toString(36).slice(2)}`;
   document.body.classList.remove('crisis');
   sound.unlock(); session.start(newSeed ?? session.state.seed);
 }
@@ -78,6 +95,10 @@ app.addEventListener('click', event => {
   const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-action]');
   if (!button) return;
   const action = button.dataset.action!;
+  if (action === 'profile') { resumeAfterProfile = session.state.phase === 'playing'; session.pause(); profileOpen = true; input.clear(); clock.reset(); button.blur(); return; }
+  if (action === 'close-profile') { profileOpen = false; if (resumeAfterProfile) session.resume(); resumeAfterProfile = false; input.clear(); clock.reset(); button.blur(); return; }
+  if (action === 'replay-record') { const seed = Number(button.dataset.seed); if (Number.isInteger(seed) && seed >= 0 && seed <= 0xffffffff) start(seed); return; }
+  if (action === 'close-migration-guide') { migrationGuide = false; session.resume(); input.clear(); clock.reset(); return; }
   if (action.startsWith('migration-')) {
     session.chooseMigration(action.slice(10) as 'pursue' | 'block' | 'ignore', button.dataset.migration!);
     input.clear(); button.blur(); return;
@@ -95,12 +116,12 @@ app.addEventListener('click', event => {
   if (action === 'start' || action === 'retry') start();
   if (action === 'new') start((session.state.seed + 2654435761) >>> 0);
   if (action === 'pause' || action === 'continue') togglePause();
-  if (action === 'menu') { input.clear(); clock.reset(); help = false; history = false; session.menu(); document.body.classList.remove('crisis'); }
+  if (action === 'menu') { input.clear(); clock.reset(); help = false; history = false; profileOpen = false; migrationGuide = false; migrationGuidePending = false; session.menu(); document.body.classList.remove('crisis'); }
   if (action === 'help') showHelp();
   if (action === 'close-help') { help = false; input.clear(); clock.reset(); if (resumeAfterHelp) session.resume(); resumeAfterHelp = false; }
   if (action === 'practice-hit') { help = false; input.clear(); clock.reset(); session.resume(); input.queuePracticeHit(); resumeAfterHelp = false; }
-  if (action === 'sound') { sound.unlock(); sound.toggle(); }
-  if (action === 'effects') { lowEffects = !lowEffects; overlayKey = ''; }
+  if (action === 'sound') { sound.unlock(); sound.toggle(); profile.updateSettings({ sound: sound.enabled }); overlayKey = ''; }
+  if (action === 'effects') { lowEffects = !lowEffects; profile.updateSettings({ lowEffects }); overlayKey = ''; }
   if (action === 'history') { resumeAfterHistory = help ? resumeAfterHelp : session.state.phase === 'playing'; help = false; resumeAfterHelp = false; history = true; session.pause(); input.clear(); clock.reset(); }
   if (action === 'close-history') { history = false; if (resumeAfterHistory) session.resume(); resumeAfterHistory = false; input.clear(); clock.reset(); }
   button.blur();
@@ -108,15 +129,19 @@ app.addEventListener('click', event => {
 function updateOverlay() {
   const state = session.state;
   const draft = state.growth?.draft;
-  const key = `${state.phase}:${help}:${lowEffects}:${history}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}`;
+  const key = `${state.phase}:${help}:${lowEffects}:${history}:${profileOpen}:${migrationGuide}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}`;
   if (key === overlayKey) return;
   overlayKey = key;
   el('hud').hidden = state.phase === 'menu' || state.phase === 'result';
   const host = el('overlay-host');
+  if (profileOpen) { host.innerHTML = profileOverlay(profile.data, profile.status); return; }
+  if (migrationGuide) { host.innerHTML = `<div class="overlay"><section class="modal" role="dialog" aria-modal="true" aria-label="首次迁移指引"><div class="eyebrow">THE NEXT CHAMBER / 首次迁移</div><h2>病毒要去另一个器官了。</h2><p>倒数已暂停。你可以去右上出口按 E 追击，或在左上隔离闸按 E 留守 2 秒封锁。放任会让肺部新增感染源，仍可补救。</p><p>追击后清掉迁移小体，或关闭肺部气道；器官图会显示心脏残留风险，出口可双向返回。此说明之后可在作战手册回看。</p><div class="actions"><button class="primary" data-action="close-migration-guide">明白了，继续作战</button></div></section></div>`; return; }
   if (state.battle) {
     host.innerHTML = (!help && !history && state.phase === 'paused' ? draftOverlay(state) : null) ?? battleOverlay(state, help, resumeAfterHelp, lowEffects, history) ?? '';
     if (state.growth && help) host.querySelector('.help-grid')?.insertAdjacentHTML('afterend', growthHelpMarkup);
     if (state.growth && history) host.querySelector('h2')?.insertAdjacentHTML('afterend', growthHistoryMarkup(state));
+    if (state.campaign && state.phase === 'menu' && !help && !history) host.querySelector('.intro-card')?.insertAdjacentHTML('beforeend', profileMenuMarkup(profile.data, profile.status));
+    if (state.campaign && state.phase === 'result' && !help && !history) host.querySelector('.modal')?.insertAdjacentHTML('beforeend', profileResultMarkup(state, profile.data, profile.status));
     return;
   }
   if (help) {
@@ -168,6 +193,9 @@ function frame(now: number) {
   const aim = renderer.camera.screenToWorld(input.pointer);
   clock.advance(now, dt => session.step(input.frame(aim), dt), session.state.phase === 'playing');
   if (resetClockAfterStep) { clock.reset(); resetClockAfterStep = false; }
+  if (migrationGuidePending && session.state.phase === 'playing' && !session.state.growth?.draft) {
+    migrationGuidePending = false; migrationGuideSeen = true; migrationGuide = true; session.pause(); input.clear(); clock.reset();
+  }
   renderer.render(session.state, aim, { lowEffects });
   sound.update(session.state);
   updateOverlay();
@@ -179,7 +207,7 @@ renderer.resize(); updateOverlay(); updateHud(); requestAnimationFrame(frame);
 
 // Read-only diagnostics for browser regression. Inputs always use the real DOM.
 Object.defineProperty(window, '__viral', { value: Object.freeze({
-  version: '0.4.0-G3', snapshot: () => session.snapshot(),
+  version: '0.5.0-G4', snapshot: () => session.snapshot(),
   toScreen: (point: { x: number; y: number }) => renderer.camera.worldToScreen(point),
   toWorld: (point: { x: number; y: number }) => renderer.camera.screenToWorld(point),
   diagnostics: () => renderer.diagnostics(session.state),
