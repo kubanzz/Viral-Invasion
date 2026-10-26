@@ -1,8 +1,13 @@
 import { readFile, writeFile, mkdir, readdir, copyFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 
 const report = JSON.parse(await readFile('artifacts/e2e-report.json', 'utf8'));
 const unit = JSON.parse(await readFile('artifacts/unit-results.json', 'utf8'));
+const { version } = JSON.parse(await readFile('package.json', 'utf8'));
+const codeCommit = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+const releaseGameJsSha256 = createHash('sha256').update(await readFile('dist/game.js')).digest('hex');
 const cases = [];
 function visit(suites) {
   for (const suite of suites ?? []) {
@@ -21,6 +26,7 @@ const wanted = new Map([
   ['chrome-training-success.png', 'success.png'], ['chrome-tissue-repaired.png', 'repair.png'],
   ['chrome-player-behind-terminal.png', 'depth-behind.png'], ['chrome-player-in-front-of-terminal.png', 'depth-front.png'],
   ['chrome-foreground-fades-and-player-remains-readable.png', 'foreground.png'],
+  ['chrome-player-hit-exercise.png', 'hurt.png'],
   ['chrome-1920x1080-dpr2-pointer-hit.png', 'dpr2.png'], ['chrome-1100x700-dpr1.5-pointer-hit.png', 'dpr1.5.png'],
 ]);
 for (const dir of await readdir('artifacts/e2e-results', { withFileTypes: true })) {
@@ -31,10 +37,12 @@ for (const dir of await readdir('artifacts/e2e-results', { withFileTypes: true }
   if (dir.name.includes('RUN-01') && dir.name.endsWith('-chrome')) await copyFile(join('artifacts/e2e-results', dir.name, 'video.webm'), 'artifacts/g0-training.webm');
 }
 const summary = {
-  version: '0.1.0-G0', design: 'v1.3', date: '2026-10-26',
+  version: `${version}-G0`, design: 'v1.3', date: '2026-10-26',
+  codeCommit, releaseGameJsSha256,
   unit: { total: unit.numTotalTests, passed: unit.numPassedTests, failed: unit.numFailedTests },
   browser: { expected: report.stats.expected, unexpected: report.stats.unexpected, skipped: report.stats.skipped, cases },
   provenance: 'Real Chrome/Edge browser keyboard and mouse input against file:// release, offline browser contexts. No state injection. Human playtesting has not been performed.',
+  limitations: ['Physical OS Alt+Tab/minimize and real browser Ctrl+/- zoom are unverified. Browser focus tests identify their synthetic fallback explicitly.', 'Human playtesting and G1-G4 gameplay remain unexecuted.'],
 };
 await writeFile('artifacts/verification-summary.json', JSON.stringify(summary, null, 2));
 console.log(JSON.stringify({ unit: summary.unit, browsers: cases.map(test => ({ name: test.name, browser: test.browser, status: test.status })), screenshots: [...wanted.values()] }, null, 2));

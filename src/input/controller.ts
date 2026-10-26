@@ -8,6 +8,7 @@ export class Controller {
   private pressed = new Set<string>();
   private fire = false;
   private firePressed = false;
+  private practiceHit = false;
   private tool: Tool | undefined;
   pointer: Vec = { x: innerWidth / 2, y: innerHeight / 2 };
   constructor(canvas: HTMLCanvasElement, onPause: () => void, onBlur: () => void) {
@@ -31,9 +32,10 @@ export class Controller {
     document.addEventListener('visibilitychange', () => { if (document.hidden) { this.clear(); onBlur(); } });
   }
   select(tool: Tool) { this.tool = tool; }
-  clear() { this.keys.clear(); this.pressed.clear(); this.fire = false; this.firePressed = false; this.tool = undefined; }
+  queuePracticeHit() { this.practiceHit = true; }
+  clear() { this.keys.clear(); this.pressed.clear(); this.fire = false; this.firePressed = false; this.practiceHit = false; this.tool = undefined; }
   frame(aim: Vec): InputFrame {
-    const frame = { moveX: Number(this.keys.has('KeyD')) - Number(this.keys.has('KeyA')), moveY: Number(this.keys.has('KeyS')) - Number(this.keys.has('KeyW')), aim, fire: this.fire || this.firePressed, tool: this.tool, dash: this.pressed.has('Space'), scan: this.pressed.has('KeyQ'), interact: this.pressed.has('KeyE') };
-    this.pressed.clear(); this.tool = undefined; this.firePressed = false; return frame;
+    const frame = { moveX: Number(this.keys.has('KeyD')) - Number(this.keys.has('KeyA')), moveY: Number(this.keys.has('KeyS')) - Number(this.keys.has('KeyW')), aim, fire: this.fire || this.firePressed, tool: this.tool, dash: this.pressed.has('Space'), scan: this.pressed.has('KeyQ'), interact: this.pressed.has('KeyE'), practiceHit: this.practiceHit };
+    this.pressed.clear(); this.tool = undefined; this.firePressed = false; this.practiceHit = false; return frame;
   }
 }

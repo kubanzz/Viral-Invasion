@@ -208,13 +208,12 @@ export class Renderer {
     for (const o of WORLD.obstacles) ellipse(ctx, o.x + 9, o.y + 15, o.radius + 8, o.radius * .7, '#160e2277');
   }
 
-  private drawPlayer(ctx: CanvasRenderingContext2D, state: GameState, outline = false): void {
+  private drawPlayer(ctx: CanvasRenderingContext2D, state: GameState): void {
     const p = state.player, time = state.elapsed;
     const walk = p.moving ? Math.sin(time * 19) : Math.sin(time * 3) * .2;
     const bob = p.moving ? Math.abs(walk) * 2.2 : Math.sin(time * 2.5) * .8;
     const direction = Math.atan2(Math.sin(p.facing) * .72, Math.cos(p.facing));
     ctx.save(); ctx.translate(p.x, p.y); ctx.scale(1, 1 / .72);
-    if (outline) { ctx.shadowColor = '#a2f6ef'; ctx.shadowBlur = 8; ctx.globalAlpha = .8; }
     ellipse(ctx, 0, 2, 23, 8, '#78eee80b', '#93f8ed98');
     // Chunky boots, backpack and the visible front establish the elevated view.
     ctx.save(); ctx.translate(0, -bob);
@@ -375,7 +374,6 @@ export class Renderer {
       for (let j = 0; j < 4; j++) ellipse(ctx, sx + hash(i * 8 + j) * 31 - 15, sy - j * 17, 4 + j, 2 + j * .3, '#dba88b24');
     }
     ctx.restore(); ctx.restore();
-    if (isForegroundOccluded(state.player)) this.drawPlayer(ctx, state, true);
   }
 
   private drawEffects(ctx: CanvasRenderingContext2D, state: GameState, low: boolean): void {

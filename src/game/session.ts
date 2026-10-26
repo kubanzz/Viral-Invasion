@@ -133,8 +133,22 @@ export class GameSession {
     const after = moveWithCollision(state.player, desired, state.player.radius);
     state.player.x = after.x;
     state.player.y = after.y;
+    // Dash chooses its travel direction from the pre-move aim, but the muzzle
+    // must face from the actual post-collision position used by the shot below.
+    const finalAim = normalized(input.aim.x - after.x, input.aim.y - after.y);
+    if (finalAim.x || finalAim.y) state.player.facing = Math.atan2(finalAim.y, finalAim.x);
     if ((velocity.x || velocity.y) && distance({ x: before.x + desired.x, y: before.y + desired.y }, after) > .1 && state.tick % 20 === 0) {
       this.emit('COLLISION_BLOCKED', { x: after.x, y: after.y });
+    }
+    if (input.practiceHit) {
+      // Optional training exercise, not an enemy attack: it cannot kill the
+      // player and never affects objective progress or tissue integrity.
+      const damage = Math.max(0, Math.min(BALANCE.trainingHitDamage, state.player.hp - 1));
+      state.player.hp -= damage;
+      state.player.hurtUntil = state.elapsed + BALANCE.trainingHitDuration;
+      this.effect('hit', state.player, state.player, state.player.radius, .3);
+      this.emit('PLAYER_HURT', { damage, remainingHp: state.player.hp, reason: 'training-exercise' });
+      this.message(`受击演练：耐久 -${damage}（训练保底 1）。重新开始可恢复耐久。`, 4);
     }
     if (input.scan) this.scan();
     if (input.fire) this.fire(input.aim);

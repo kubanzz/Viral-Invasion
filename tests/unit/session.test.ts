@@ -108,6 +108,46 @@ describe('training session', () => {
     expect(axis.state.dashes).toBe(2);
   });
 
+  it.each([
+    { dash: false, aimX: 332 },
+    { dash: true, aimX: 340 },
+  ])('keeps muzzle and shot aligned when movement crosses the aim point (dash=$dash)', ({ dash, aimX }) => {
+    const session = new GameSession();
+    session.start();
+    session.step({ ...idle({ x: aimX, y: 440 }), moveX: 1, fire: true, dash });
+    const state = session.state;
+    const beam = state.effects.find(effect => effect.kind === 'beam')!;
+    expect(state.player.x).toBeGreaterThan(aimX);
+    expect(beam.from).toEqual({ x: state.player.x, y: state.player.y });
+    expect(beam.to.x).toBeLessThan(beam.from.x);
+    expect(state.player.facing).toBeCloseTo(Math.PI);
+    expect(state.player.facing).toBeCloseTo(Math.atan2(beam.to.y - beam.from.y, beam.to.x - beam.from.x));
+    const fired = state.events.find(event => event.type === 'TOOL_FIRED')!;
+    expect(fired.data).toMatchObject({ tool: 1, x: aimX, y: 440 });
+    if (dash) {
+      // The dash still travels right from the original aim, even though the
+      // player must turn the muzzle left after passing that nearby point.
+      expect(state.player.x).toBe(330 + BALANCE.dashSpeed * BALANCE.step);
+    }
+  });
+
+  it('aims the muzzle and shot from the resolved position after a collision', () => {
+    const session = new GameSession();
+    session.start();
+    session.state.player.x = 440;
+    session.state.player.y = 362;
+    const aim = { x: 450, y: 300 };
+    session.step({ ...idle(aim), moveY: -1, fire: true });
+    const state = session.state;
+    const desiredY = 362 - BALANCE.speed * BALANCE.step;
+    expect(state.player.y).toBeGreaterThan(desiredY);
+    expect(state.player.y).toBe(361); // visible fold radius 47 + player radius 19
+    const beam = state.effects.find(effect => effect.kind === 'beam')!;
+    const expected = Math.atan2(aim.y - state.player.y, aim.x - state.player.x);
+    expect(state.player.facing).toBeCloseTo(expected, 10);
+    expect(Math.atan2(beam.to.y - beam.from.y, beam.to.x - beam.from.x)).toBeCloseTo(expected, 10);
+  });
+
   it('scan reveals in-range targets and cannot spam during cooldown', () => {
     const session = new GameSession();
     session.start();
@@ -117,6 +157,25 @@ describe('training session', () => {
     session.step({ ...idle(), scan: true });
     expect(session.state.scans).toBe(1);
     expect(session.state.effects.some(effect => effect.kind === 'scan')).toBe(true);
+  });
+
+  it('offers a deterministic nonlethal training hit with a live hurt animation window', () => {
+    const session = new GameSession();
+    session.start();
+    session.step({ ...idle(), practiceHit: true });
+    expect(session.state.player.hp).toBe(95);
+    expect(session.state.player.hurtUntil).toBeGreaterThan(session.state.elapsed);
+    expect(session.state.events.at(-1)).toMatchObject({ type: 'PLAYER_HURT', data: { damage: 5, remainingHp: 95, reason: 'training-exercise' } });
+    expect(session.state.tissue.hp).toBe(25);
+    expect(session.state.targets.every(target => target.hp === target.maxHp)).toBe(true);
+    wait(session, .6);
+    expect(session.state.player.hurtUntil).toBeLessThan(session.state.elapsed);
+    for (let i = 0; i < 30; i++) session.step({ ...idle(), practiceHit: true });
+    expect(session.state.player.hp).toBe(1);
+    expect(session.state.phase).toBe('playing');
+    session.restart();
+    expect(session.state.player.hp).toBe(100);
+    expect(session.state.player.hurtUntil).toBe(0);
   });
 
   it('rejects wrong tools and out-of-range interactions without changing health', () => {

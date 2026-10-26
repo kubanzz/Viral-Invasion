@@ -45,6 +45,21 @@ async function diagnostics(page: Page): Promise<Diagnostics> {
 async function pointOnScreen(page: Page, point: Vec): Promise<Vec> {
   return page.evaluate(p => window.__viral.toScreen(p), point);
 }
+async function terminalOverlapPixel(page: Page): Promise<{ r: number; g: number; b: number; brightness: number }> {
+  return page.evaluate(() => {
+    const terminal = window.__viral.snapshot().terminal;
+    const anchor = window.__viral.toScreen(terminal);
+    const scale = window.__viral.toScreen({ x: terminal.x + 1, y: terminal.y }).x - anchor.x;
+    // A flat part of the terminal screen is covered by the player's suit when
+    // behind and helmet when in front. Read the final Canvas, not sort metadata.
+    const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
+    const [r, g, b] = canvas.getContext('2d')!.getImageData(
+      Math.round((anchor.x + 12 * scale) * devicePixelRatio),
+      Math.round((anchor.y - 40 * scale) * devicePixelRatio), 1, 1,
+    ).data;
+    return { r, g, b, brightness: (r + g + b) / 3 };
+  });
+}
 async function aimAt(page: Page, point: Vec): Promise<void> {
   const screen = await pointOnScreen(page, point);
   await page.mouse.move(screen.x, screen.y);
@@ -270,6 +285,18 @@ test('AC-M02-02 and VIS-02: eight-way motion, 360-degree aim, scan, dash, tool f
   expect(state.player.y).toBeGreaterThan(345);
   await imageEvidence(page, info, 'visible-fold-collision');
   await jsonEvidence(info, 'eight-way-and-360-input-log', { routeLog, angles, beforeDash, afterDash, quickClick: { before: beforeQuickClick, after: afterQuickClick }, collision: state.player });
+  await page.locator('[data-action="help"]').first().click();
+  await page.locator('[data-action="practice-hit"]').click();
+  await expect.poll(async () => (await snapshot(page)).player.hp).toBe(95);
+  const hurt = await snapshot(page);
+  expect(hurt.phase).toBe('playing');
+  expect(hurt.player.hurtUntil).toBeGreaterThan(hurt.elapsed);
+  expect(hurt.events.some(event => event.type === 'PLAYER_HURT' && event.data.reason === 'training-exercise')).toBe(true);
+  await imageEvidence(page, info, 'player-hit-exercise');
+  await expect(page.locator('#message')).toContainText('受击演练');
+  await page.waitForTimeout(650);
+  const afterHurt = await snapshot(page);
+  expect(afterHurt.player.hurtUntil).toBeLessThan(afterHurt.elapsed);
 });
 
 test('AC-M01-02: real 30-second pause freezes simulation and resuming clears held attack', async ({ page }, info) => {
@@ -344,11 +371,15 @@ test('VIS-04 and RUN-11: foot-anchor Y sorting and walkable foreground fade', as
   await moveTo(page, { x: 350, y: 580 });
   let order = (await diagnostics(page)).depthOrder;
   expect(order.indexOf('player')).toBeLessThan(order.indexOf('terminal'));
+  const behindPixel = await terminalOverlapPixel(page);
+  expect(behindPixel.brightness, 'The terminal screen must occlude a player standing behind it').toBeLessThan(120);
   await imageEvidence(page, info, 'player-behind-terminal');
   const behind = { state: await snapshot(page), render: await diagnostics(page) };
   await moveTo(page, { x: 350, y: 640 });
   order = (await diagnostics(page)).depthOrder;
   expect(order.indexOf('player')).toBeGreaterThan(order.indexOf('terminal'));
+  const frontPixel = await terminalOverlapPixel(page);
+  expect(frontPixel.brightness, 'The player helmet must cover the terminal when standing in front').toBeGreaterThan(behindPixel.brightness + 60);
   await imageEvidence(page, info, 'player-in-front-of-terminal');
   const front = { state: await snapshot(page), render: await diagnostics(page) };
   await moveTo(page, { x: 260, y: 600 });
@@ -362,7 +393,7 @@ test('VIS-04 and RUN-11: foot-anchor Y sorting and walkable foreground fade', as
   expect((await diagnostics(page)).occluded).toBe(false);
   expect((await diagnostics(page)).foregroundOpacity).toBeGreaterThan(.9);
   await imageEvidence(page, info, 'foreground-restored-outside-occlusion');
-  await jsonEvidence(info, 'depth-sort-and-foreground-boundary', { behind, front, foreground, outside: await diagnostics(page) });
+  await jsonEvidence(info, 'depth-sort-and-foreground-boundary', { behind, front, behindPixel, frontPixel, foreground, outside: await diagnostics(page) });
 });
 
 for (const condition of [
