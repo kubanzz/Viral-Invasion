@@ -33,16 +33,16 @@ export function g3Input(s: GameState, choice: MigrationChoice): InputFrame {
   else if((m.status==='warning'||m.status==='blocking')&&choice!=='ignore')interaction=b.graph.nodes.find(n=>choice==='block'?n.id==='gate':n.kind==='exit');
   else if(m.choice!==null&&m.status!=='pursuing'){
     const other=c.arenas[b.organId==='heart'?'lung':'heart'];
-    const otherNeedsWork=other.activated&&other.targets.some(t=>t.hp>0&&(t.role==='source'||t.role==='elite'));
+    const otherNeedsWork=other.activated&&(other.targets.some(t=>t.hp>0&&(t.role==='source'||t.role==='elite'))||(c.core.status==='cleared'&&other.tissue.hp<50&&s.tissue.hp>=65));
     const localNeedsWork=live.some(t=>t.role==='source'||t.role==='elite');
-    if(!localNeedsWork&&(otherNeedsWork||c.core.organId!==b.organId&&c.core.status!=='locked'))interaction=b.graph.nodes.find(n=>n.kind==='exit');
+    if(!localNeedsWork&&(otherNeedsWork||c.core.organId!==b.organId&&['ready','active'].includes(c.core.status)))interaction=b.graph.nodes.find(n=>n.kind==='exit');
   }
-  if((c.core.status==='ready'&&c.core.organId===b.organId)||b.readyToRetest)interaction=s.terminal;
+  if((c.core.status==='ready'&&c.core.organId===b.organId&&(b.organId!=='lung'||c.stats.airwayUses>0))||b.readyToRetest)interaction=s.terminal;
   if(interaction)destination=interaction;
   else if(target&&!healing){const d=distance(s.player,target),line=normalized(target.x-s.player.x,target.y-s.player.y),wall=wallHit(s.player,line,d,activeWorld(s));if(d>390||wall!==null&&wall<d-target.radius)destination=target;}
   const next=waypoint(s,destination),move=distance(s.player,destination)>18?normalized(next.x-s.player.x,next.y-s.player.y):{x:0,y:0};
   return {moveX:move.x,moveY:move.y,aim:healing?s.tissue:target??destination,tool:healing?3:s.cooldowns[2]<=s.elapsed?2:1,
-    fire:healing||!!target,scan:s.tick%190===0,interact:!!interaction&&distance(s.player,interaction)<85&&s.tick%15===0};
+    fire:healing||!!target,scan:s.tick%190===0,interact:!!interaction&&distance(s.player,interaction)<85};
 }
 
 /** Keeps a real source producing pressure; only clears its mobile defenders. */
