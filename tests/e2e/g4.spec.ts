@@ -30,6 +30,12 @@ for(const [index,seed]of seeds.entries())test(`G4: complete browser seed ${seed}
   const final=await readState(page);expect(final.result).toMatchObject({success:true});expect(final.campaign!.stats.migrationChoice).toBe(choice);
   const saved=await page.evaluate(key=>JSON.parse(localStorage.getItem(key)!),PROFILE_STORAGE_KEY);
   expect(saved.stats.runs).toBe(1);expect(saved.stats.wins).toBe(1);expect(saved.recentRuns[0].seed).toBe(seed);expect(saved.discoveredTraits).toHaveLength(2);
+  if(index===0){
+    const recap=page.locator('details.profile-recap');await expect(recap).not.toHaveAttribute('open');
+    const summary=recap.locator('summary'),box=await summary.boundingBox();expect(box).not.toBeNull();expect(box!.y+box!.height).toBeLessThanOrEqual(page.viewportSize()!.height);
+    await page.screenshot({path:info.outputPath('result-collapsed.png')});await summary.click();await expect(recap).toHaveAttribute('open');
+    await page.locator('.profile-result-link').click();await expect(page.locator('.profile-dialog')).toBeVisible();await page.locator('[data-action="close-profile"]').last().click();
+  }
   await page.screenshot({path:info.outputPath('result.png')});writeFileSync(info.outputPath('win.json'),JSON.stringify({seed,choice,final,saved,errors,remote},null,2));
   await page.locator('[data-action="new"]').click();expect((await readState(page)).seed).not.toBe(seed);
   await page.reload();expect((await readState(page)).phase).toBe('menu');
