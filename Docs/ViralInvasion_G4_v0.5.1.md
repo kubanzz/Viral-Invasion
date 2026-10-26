@@ -27,3 +27,11 @@ v0.5.0的53项浏览器回归、10分钟性能、24体渲染对照和原ZIP冒�
 再次尝试物理Windows窗口验收时，Computer Use在读取本游戏浏览器状态时因无法可靠确认本地file URL而中止。没有发出任何点击、缩放、Alt+Tab或最小化输入；隔离探针已关闭。两次启动只得到菜单tick0观察，其中第一次因非交互stdin立即结束，第二次在工具中止后正常保存并关闭。物理失焦/最小化和真实Ctrl+/-仍未验证，不能用现有headless/synthetic blur、viewport或DPR结果替代。原始工具理由与B44来源记录见 `artifacts/G4-patch/native-attempt.json`。
 
 没有Git remote，本轮提交仅保存在本机，未推送。
+
+## 外部验收阻塞复核 · 2026-10-27
+
+后续使用相同B1包的正常本机HTTP入口补测。静态入口成功启动，非本机网络被拦截；开始/结束构建哈希一致、无远程请求或页面异常，仍只观察到菜单tick0。Computer Use再次在`get_window_state`阶段以无法可靠确认Windows浏览器当前URL为由中止，没有任何原生点击、按键、切窗或缩放。探针和本机服务均正常关闭。原始观察及范围修正保存在 `artifacts/G4-patch/native-http-launch.json`、`native-http-attempt.json`；HTTP也未获得物理验收结果。
+
+最近连续三轮均缺少同一批真人原始记录。当前P01–P05仍全部未开始；独立只读复核未发现另一项能替代这些门槛的必做开发功能。完整目标由外部证据阻塞，尚不能标为完成；复核索引为 `artifacts/G4-patch/external-gates-audit.json`。
+
+继续验收需要按 [五人执行包](ViralInvasion_Playtest.md) 收集5份真实匿名原始记录，包含实际首玩计时、无口头指路完成情况、已遭遇变异与反制解释、两局策略变化、自发再开行为及原因原话。另需用户实机提供Chrome/Edge切窗或最小化、真实Ctrl缩放、暂停恢复与HUD操作记录，或等待原生窗口工具可正常确认地址。未遇到的内容保持“未覆盖”，不能用代理或脚本填入真人记录。游戏发行包仍为上述v0.5.1/B1。

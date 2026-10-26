@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-27",
+  "goalStatusBeforeAudit": "active",
+  "previousGoalTurnClassification": "progress: v0.5.1 fixed onboarding/input/seed defects, completed regression and release work",
+  "condition": "Five real first-time-player records remain absent; physical OS focus/minimize and browser zoom remain unverified because native UI state inspection is blocked.",
+  "turns": [
+    {
+      "id": "01a17991-acae-7750-b530-268ebb390c6f",
+      "status": "inProgress",
+      "startedAt": 1793040952,
+      "evidence": "Current turn: Playtest P01–P05 remain empty; local HTTP native attempt stopped before any input."
+    },
+    {
+      "id": "01a1797b-8130-70a2-bbfe-cd1e0040b799",
+      "status": "completed",
+      "startedAt": 1793039499,
+      "evidence": [
+        "已按授权推进至 **G4，交付 v0.5.1 可玩候选**，包含双器官、三类变异、抗体构筑、迁移决策、母巢战与局外档案。本轮修复了迁移指引、键盘导航和 seed 0 入口。\n\n- [离线游戏包](D:/Workspace/Projects/xsj/Viral-Invasion/releases/Viral-Invasion-G4-v0.5.1.zip)：解压后双击 `Open-Game.cmd`。\n- 验证通过：180/180 测试、1000/1000 种子会话、10/10 双浏览器定向检查及解压冒烟。\n- [验收记录](D:/Workspace/Projects/xsj/Viral-Invasion/Docs/ViralInvasion_G4_v0.5.1.md)。代码已本地提交，仓库无远端，未推送。\n\n完整产品验收仍待五人盲测与首玩节奏数据，趣味和复玩价值尚需真实玩家验证。\n\n真实窗口操作因工具无法可靠确认本地 URL 被中止，物理失焦与浏览器缩放仍待验收。"
+      ]
+    },
+    {
+      "id": "01a17899-0d14-7490-bb8a-74e2385d8c0d",
+      "status": "completed",
+      "startedAt": 1793024658,
+      "evidence": [
+        "设计验收要求 5 位新玩家真实盲测，目前为 0/5。技术回归完成后，你能安排 5 人试玩并按 Docs/ViralInvasion_Playtest.md 提供原始观察吗？这用于验证节奏、反制理解和复玩意愿，脚本无法替代。\n- 可以安排，按试玩表记录\n- 先交付技术候选，真人试玩随后补",
+        "已交付 **v0.5.0 可玩候选版**，包含心肺战场、病毒变异、抗体构筑、跨器官迁移、双特性母巢和局外档案。\n\n[下载试玩包](D:/Workspace/Projects/xsj/Viral-Invasion/releases/Viral-Invasion-G4-v0.5.0.zip) · [验收报告](D:/Workspace/Projects/xsj/Viral-Invasion/Docs/ViralInvasion_G4_Acceptance.md)\n\n解压后双击 `Open-Game.cmd`。\n\n已通过172项单测、1000种子模拟及分批53项浏览器检查；本机 headless 十分钟压力约60 FPS。\n\n**整体验收尚未完成**：真人盲测0/5，首局10–15分钟节奏、物理失焦与实际缩放仍待验证。趣味和孵化价值需要真实玩家反馈。\n\n代码已本地提交，工作区干净；未配置远程仓库，因此未推送。"
+      ]
+    }
+  ],
+  "inspectedSources": [
+    "Docs/ViralInvasion_Playtest.md: actual 0/5 and P01–P05 marked not started",
+    "Docs/ViralInvasion_G4_v0.5.1.md: technical candidate delivered, human and physical gates open",
+    "artifacts/G4-patch/verification-summary.json: 180 tests, 1000 sessions, 10 final browser checks; automation scope only"
+  ],
+  "completion": "not proven; no complete status",
+  "independentReview": "Read-only QA found no further required development feature that can substitute for the remaining human/device evidence.",
+  "nativeAttempt": "artifacts/G4-patch/native-http-attempt.json",
+  "blockersObservedInConsecutiveGoalTurns": 3,
+  "outstandingEvidence": {
+    "blindPlaytests": {
+      "completed": 0,
+      "required": 5,
+      "minimumCriteria": [
+        "4/5 explain observed mutations and counters",
+        "4/5 complete onboarding without verbal coaching",
+        "3/5 spontaneously replay with recorded reason",
+        "real first-run wall/game/pause times and bottlenecks",
+        "same player's actual strategy changes across two runs with underlying state and original remarks"
+      ]
+    },
+    "physicalWindow": "Real Chrome/Edge Alt+Tab/minimize and Ctrl zoom, tied to version/URL, with observed pause/input-clear/restoration/HUD results; headless or synthetic events are insufficient."
+  },
+  "nextAction": "Wait for actual anonymous playtest records and user-operated physical window evidence, or an external change that enables policy-compliant native inspection. No further native input attempts after the tool stop in this turn."
+}
