@@ -277,14 +277,27 @@ test('AC-M02-02 and VIS-02: eight-way motion, 360-degree aim, scan, dash, tool f
   await page.locator('[data-action="close-help"]').click();
   await expect.poll(async () => (await snapshot(page)).phase).toBe('playing');
 
-  // The visible fold at (440,295) must stop upward travel rather than tunnelling.
+  // The visible fold must block penetration. Off-centre input can legitimately
+  // slide along its circular rim, so test the trajectory, not a fixed final Y.
   await moveTo(page, { x: 440, y: 440 });
-  await hold(page, ['KeyW'], 900);
+  const beforeFold = await snapshot(page);
+  const foldPath: Array<{ x: number; y: number; elapsed: number }> = [];
+  await page.keyboard.down('KeyW');
+  try {
+    for (let sample = 0; sample < 9; sample++) {
+      await page.waitForTimeout(100);
+      const observed = await snapshot(page);
+      foldPath.push({ x: observed.player.x, y: observed.player.y, elapsed: observed.elapsed });
+    }
+  } finally { await page.keyboard.up('KeyW'); }
   state = await snapshot(page);
+  expect(foldPath.every(point => Math.hypot(point.x - 440, point.y - 295) >= 65.9)).toBe(true);
+  expect(foldPath.some(point => Math.hypot(point.x - 440, point.y - 295) < 68), 'The real input route must actually contact the visible fold').toBe(true);
   expect(Math.hypot(state.player.x - 440, state.player.y - 295)).toBeGreaterThanOrEqual(65.9);
-  expect(state.player.y).toBeGreaterThan(345);
+  const unobstructedY = beforeFold.player.y - 235 * (state.elapsed - beforeFold.elapsed);
+  expect(state.player.y - unobstructedY, 'Collision must impede the route compared with unobstructed travel').toBeGreaterThan(20);
   await imageEvidence(page, info, 'visible-fold-collision');
-  await jsonEvidence(info, 'eight-way-and-360-input-log', { routeLog, angles, beforeDash, afterDash, quickClick: { before: beforeQuickClick, after: afterQuickClick }, collision: state.player });
+  await jsonEvidence(info, 'eight-way-and-360-input-log', { routeLog, angles, beforeDash, afterDash, quickClick: { before: beforeQuickClick, after: afterQuickClick }, collision: { player: state.player, foldPath, unobstructedY } });
   await page.locator('[data-action="help"]').first().click();
   await page.locator('[data-action="practice-hit"]').click();
   await expect.poll(async () => (await snapshot(page)).player.hp).toBe(95);
