@@ -1,0 +1,72 @@
+{
+  "source": ".tools/catalysis-v085-source",
+  "seeds": [
+    7,
+    71,
+    19
+  ],
+  "strategies": [
+    "accept",
+    "decline"
+  ],
+  "goalWaves": 15,
+  "independentCases": 6,
+  "predeterminedReplay": {
+    "strategy": "accept",
+    "seed": 71
+  },
+  "totalCases": 7,
+  "simulationSeconds": 900,
+  "simulationSecondsPerWave": 120,
+  "retries": 0,
+  "sharedGrowthPriorities": [
+    "nova",
+    "immune",
+    "multishot",
+    "power",
+    "haste",
+    "pierce",
+    "vitality",
+    "dash",
+    "scan"
+  ],
+  "policy": "Original saved v082 active movement/aim/Q/protocol-discard/modal loop; area input selects tool2 when ready, otherwise1. Both prefer nova then immune. Accept prioritizes catalysis; decline filters catalysis out of each real offered draft. No forced offers, equipment, targets, positions, HP or time.",
+  "outcome": "All real deaths, stalls, timeouts and errors retained; no seed replacement or extra runs. Card availability and2-to-cell coverage may legitimately be absent. No speed, win or universal-strength requirement.",
+  "cases": [
+    {
+      "strategy": "accept",
+      "seed": 7,
+      "replay": false
+    },
+    {
+      "strategy": "accept",
+      "seed": 71,
+      "replay": false
+    },
+    {
+      "strategy": "accept",
+      "seed": 19,
+      "replay": false
+    },
+    {
+      "strategy": "decline",
+      "seed": 7,
+      "replay": false
+    },
+    {
+      "strategy": "decline",
+      "seed": 71,
+      "replay": false
+    },
+    {
+      "strategy": "decline",
+      "seed": 19,
+      "replay": false
+    },
+    {
+      "strategy": "accept",
+      "seed": 71,
+      "replay": true
+    }
+  ]
+}

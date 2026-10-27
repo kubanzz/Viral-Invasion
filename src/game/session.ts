@@ -1,7 +1,7 @@
 import { FixedClock } from '../core/clock';
 import { EventBus } from '../core/events';
 import { SeedRng } from '../core/rng';
-import { clamp, distance, moveWithCollision, normalized, rayCircle, wallHit } from '../actors/collision';
+import { clamp, distance, isLegalPosition, moveWithCollision, normalized, rayCircle, wallHit } from '../actors/collision';
 import { activeWorld, BALANCE, type Effect, type GameEvent, type GameState, type InputFrame, type MessagePriority, type Target, type Tool, type Vec } from './types';
 import { BattleDirector, initializeBattle } from './battle';
 import type { CampaignOptions } from './battleTypes';
@@ -17,14 +17,19 @@ import { recordTacticalEvent } from './tacticalFeedback';
 import { createRunMetrics, reduceRunMetrics } from './runMetrics';
 import { EndlessDirector, initializeEndless } from './endless';
 import { createEndlessGrowth, offerEndlessUpgrade, chooseEndlessUpgrade, endlessCombatStats } from './endlessGrowth';
-import type { EndlessUpgradeId } from './endlessGrowthTypes';
-import { summonImmuneCells } from './immuneCells';
+import type { EndlessUpgradeId, PendingCatalysisBatch } from './endlessGrowthTypes';
+import { IMMUNE_CELL_BALANCE, summonImmuneCells } from './immuneCells';
+import { activeCatalysisBatch, activeCatalysisTargets, CATALYSIS_BALANCE, catalysisBurstTargets, makeCatalysisBatch } from './catalysis';
 
 // Exporting the clock here is convenient for hosts, while it remains independently testable.
 export { FixedClock };
 
 interface SessionEvents {
   event: GameEvent;
+}
+interface ClaimedCatalysis {
+  state: GameState; runId: string | undefined; batch: PendingCatalysisBatch; center: Vec;
+  triggerTargetId: string; trigger: 'precision' | 'immune-cell'; immuneCellId?: string;
 }
 
 export class GameSession {
@@ -44,6 +49,9 @@ export class GameSession {
   private metricsSequence = 0;
   private endlessDirector: EndlessDirector | undefined;
   private endlessDashHits = new Set<string>();
+  private catalysisSerial = 0;
+  private acceptedBiteTick = -1;
+  private acceptedBiteCells = new Set<string>();
 
   constructor(seed = 130026, private options: CampaignOptions = {}) {
     this.options = { ...options, ...(options.mode === 'endless' ? { campaign: true, milestone: 'G3' } : {}) };
@@ -65,6 +73,7 @@ export class GameSession {
   private resetCampaign(): void {
     this.campaignTransactions.clear(); this.deferredCampaign = []; this.motherController = undefined;
     this.endlessDashHits.clear();
+    this.catalysisSerial = 0; this.acceptedBiteTick = -1; this.acceptedBiteCells.clear();
     this.endlessDirector = this.state.endless ? new EndlessDirector(this) : undefined;
     this.campaignController = !this.state.endless && this.state.battle?.milestone === 'G3' ? new CampaignDirector(this.state.seed, this.state) : undefined;
     if (this.campaignController) this.state.campaign = this.campaignController.state;
@@ -144,10 +153,13 @@ export class GameSession {
 
   finish(success: boolean, reason: string): void {
     if (this.state.phase === 'result' || this.state.phase === 'menu') return;
+    const state = this.state;
     this.state.result = { success, reason };
     this.state.phase = 'result';
     this.state.player.moving = false;
     if (this.state.endlessGrowth) this.state.endlessGrowth.draft = null;
+    this.clearCatalysis('run-ended');
+    if (this.state !== state) return;
     this.emit('RUN_ENDED', { success, reason, seed: this.state.seed, durationSimMs: Math.round(this.state.elapsed * 1000) });
   }
 
@@ -195,6 +207,8 @@ export class GameSession {
     dt = BALANCE.step;
     state.tick++;
     state.elapsed = state.tick * BALANCE.step;
+    this.pruneCatalysis();
+    if (this.state !== state) return;
     state.effects = state.effects.filter(effect => state.elapsed - effect.born < effect.duration);
     this.battleDirector?.beforeInput(input);
     this.endlessDirector?.beforeInput();
@@ -245,9 +259,18 @@ export class GameSession {
       this.emit('PLAYER_HURT', { damage, remainingHp: state.player.hp, reason: 'training-exercise' });
       this.message(`受击演练：耐久 -${damage}（训练保底 1）。重新开始可恢复耐久。`, 4);
     }
-    if (input.scan) this.scan();
-    if (input.fire) this.fire(input.aim);
-    if (input.interact) this.interact();
+    if (input.scan) {
+      this.scan();
+      if (this.state !== state || state.phase !== 'playing') return;
+    }
+    if (input.fire) {
+      this.fire(input.aim);
+      if (this.state !== state || state.phase !== 'playing') return;
+    }
+    if (input.interact) {
+      this.interact();
+      if (this.state !== state || state.phase !== 'playing') return;
+    }
     if (state.phase === 'playing') this.battleDirector?.afterInput();
     if (state.phase === 'playing' && state.endless && this.checkFailure()) return;
     if (state.phase === 'playing') this.campaignController?.captureCurrent(state);
@@ -256,6 +279,8 @@ export class GameSession {
       if (context && this.motherController) this.applyCoreCommands(this.motherController.tick(context));
     }
     if (state.phase === 'playing' && this.growthController) this.applyGrowthCommands(this.growthController.afterInput(growthContext(state)));
+    if (state.phase === 'playing') this.pruneCatalysis();
+    if (this.state !== state) return;
     if (state.phase === 'playing' && !this.checkFailure()) this.endlessDirector?.afterInput();
     if (state.phase === 'playing' && this.campaignController) {
       this.applyCampaignCommands(this.campaignController.afterInput(state));
@@ -341,7 +366,11 @@ export class GameSession {
             .sort((a, b) => a.at - b.at).slice(0, 1 + combat.pierceCount);
           const endAt = hits.length > combat.pierceCount ? hits.at(-1)!.at : limit;
           this.effect('beam', state.player, { x: state.player.x + shot.x * endAt, y: state.player.y + shot.y * endAt }, 0, .14);
-          for (const hit of hits) { this.damage(hit.target, BALANCE.damage[1] * combat.damageMultiplier); hitCount++; }
+          for (const hit of hits) {
+            this.damage(hit.target, BALANCE.damage[1] * combat.damageMultiplier, { cause: 'basic', basicTool: 1 });
+            if (this.state !== state || state.phase !== 'playing') return;
+            hitCount++;
+          }
         }
         this.emit('TOOL_FIRED', { tool, x: aim.x, y: aim.y, hit: hitCount > 0, rays: combat.shotRays, pierce: combat.pierceCount });
         return;
@@ -356,7 +385,7 @@ export class GameSession {
       const end = { x: state.player.x + direction.x * limit, y: state.player.y + direction.y * limit };
       this.effect('beam', state.player, end, 0, .14);
       this.emit('TOOL_FIRED', { tool, x: aim.x, y: aim.y, hit: !!nearest });
-      if (nearest) this.damage(nearest, BALANCE.damage[1]);
+      if (nearest) this.damage(nearest, BALANCE.damage[1], { cause: 'basic', basicTool: 1 });
       else if (distance(aim, state.tissue) < state.tissue.radius + 20) this.message('这是受损组织：按 3 切换组织修复注射。');
       else if (wall !== null && wall < aimDistance) this.message('组织褶皱挡住射线，请绕到另一侧。');
       else if (aimDistance > range) this.message('目标超出净化射程，请靠近。');
@@ -368,7 +397,11 @@ export class GameSession {
     if (tool === 2) {
       state.shots++;
       const radius = combat?.areaRadius ?? BALANCE.areaRadius;
-      this.effect('burst', aim, aim, radius, .55);
+      const catalyst = !!state.endless && !!combat && combat.catalysisDamage > 0;
+      const fullDamage = BALANCE.damage[2] * (combat?.damageMultiplier ?? 1) * (combat?.areaDamageMultiplier ?? 1);
+      const primerIds: string[] = [];
+      let armed = false;
+      this.effect(catalyst ? 'scan' : 'burst', aim, aim, radius, .55);
       let count = 0;
       for (const target of state.targets) {
         if (target.hp > 0 && distance(aim, target) <= radius + target.radius) {
@@ -376,8 +409,11 @@ export class GameSession {
           const targetDistance = distance(aim, target);
           const localWall = wallHit(aim, toTarget, targetDistance, activeWorld(state));
           if (localWall !== null && localWall < targetDistance - target.radius) continue;
-          this.damage(target, BALANCE.damage[2] * (combat?.damageMultiplier ?? 1) * (combat?.areaDamageMultiplier ?? 1));
-          if ((state.campaign || state.endless) && target.hp > 0 && target.role !== 'source' && target.role !== 'core') {
+          const actual = this.damage(target, catalyst ? Math.min(CATALYSIS_BALANCE.directDamageCap, fullDamage) : fullDamage,
+            { cause: 'basic', basicTool: 2 });
+          if (this.state !== state || state.phase !== 'playing') return;
+          if (catalyst && actual > 0 && target.hp > 0) primerIds.push(target.id);
+          if (!catalyst && (state.campaign || state.endless) && target.hp > 0 && target.role !== 'source' && target.role !== 'core') {
             const direction = normalized(target.x - aim.x, target.y - aim.y);
             const fallback = normalized(target.x - state.player.x, target.y - state.player.y);
             const moved = moveWithCollision(target, { x: (direction.x || direction.y ? direction.x : fallback.x) * 85, y: (direction.x || direction.y ? direction.y : fallback.y) * 85 }, target.radius, activeWorld(state));
@@ -390,11 +426,25 @@ export class GameSession {
               this.emit('AREA_DISPLACED', { targetId: target.id, distance: pushed });
             }
           }
-          count++;
+          if (!catalyst || actual > 0) count++;
         }
       }
-      if (count) this.message(`范围裂解命中 ${count} 个${state.endless ? '感染体' : '靶标'}。`);
-      else if (distance(aim, state.tissue) < state.tissue.radius + BALANCE.areaRadius) this.message('范围裂解不能修复组织，请按 3。');
+      if (catalyst && this.state === state && state.phase === 'playing') {
+        const batch = makeCatalysisBatch(state, `${state.growth?.runId ?? state.seed}:catalysis:${this.catalysisSerial + 1}`, primerIds, aim, combat!.catalysisDamage);
+        if (batch) {
+          const previous = state.endlessGrowth!.pendingCatalysis;
+          this.catalysisSerial++; state.endlessGrowth!.pendingCatalysis = batch;
+          this.emit('CATALYSIS_ARMED', { batchId: batch.id, organId: batch.organId, targets: batch.targetIds.join(','),
+            count: batch.targetIds.length, until: batch.until, damage: batch.damage,
+            ...(previous ? { replacedBatchId: previous.id } : {}) });
+          if (this.state !== state || state.phase !== 'playing') return;
+          armed = true;
+          this.message('催化已铺设 · 4 秒内用 1 或真实细胞引爆，整批一次。', 3, 2);
+        }
+      }
+      if (catalyst && !armed) this.message(count ? `催化直伤命中 ${count} 体，本次没有可铺设的存活目标。` : '本次没有铺设新的催化标记。', 3, 2);
+      else if (!armed && count) this.message(`范围裂解命中 ${count} 个${state.endless ? '感染体' : '靶标'}。`);
+      else if (!armed && distance(aim, state.tissue) < state.tissue.radius + BALANCE.areaRadius) this.message('范围裂解不能修复组织，请按 3。');
       return;
     }
     this.effect('heal', state.player, aim, 35, .55);
@@ -414,9 +464,10 @@ export class GameSession {
     this.battleDirector?.repairMimics(aim, (target, damage) => this.damage(target, damage));
   }
 
-  private damage(target: Target, amount: number, origin: DamageOrigin = { cause: 'basic' }): void {
+  private damage(target: Target, amount: number, origin: DamageOrigin = { cause: 'basic' }): number {
     const state = this.state;
-    if (target.hp <= 0) return;
+    if (target.hp <= 0) return 0;
+    const immuneCellId = this.verifiedImmuneBite(target, origin);
     const wasPulseExposed = origin.wasPulseExposed ?? (target.exposedUntil ?? 0) > state.elapsed;
     if (this.battleDirector && origin.cause === 'basic') amount = this.battleDirector.modifiedDamage(target, amount);
     const rawDamage = amount;
@@ -426,28 +477,117 @@ export class GameSession {
       if (allowed < amount && state.tick % 30 === 0) this.message('核膜保护至 50%：躲开或反制标出的前摇，展示两种特性后即可击破。', 3);
       amount = allowed;
     }
-    if (amount <= 0) return;
+    if (amount <= 0) return 0;
     const beforeHp = target.hp;
     target.hp = Math.max(0, target.hp - amount);
+    const actual = beforeHp - target.hp;
+    if (immuneCellId && Number.isFinite(actual) && actual > 0) this.acceptedBiteCells.add(immuneCellId);
+    const claimed = this.claimCatalysis(target, origin, actual, immuneCellId);
     target.hitUntil = state.elapsed + .18;
     if (origin.cause === 'basic') state.hits++;
     this.effect('hit', target, target, target.radius, .3);
     this.emit('TARGET_HIT', { id: target.id, organId: state.battle?.organId ?? 'heart', damage: beforeHp - target.hp, rawDamage, remainingHp: target.hp, tool: state.tool, cause: origin.cause,
       ...(origin.rootId ? { rootId: origin.rootId } : {}), ...(origin.protocolId ? { protocolId: origin.protocolId } : {}),
-      ...(origin.ability ? { ability: origin.ability } : {}) });
+      ...(origin.ability ? { ability: origin.ability } : {}), ...(immuneCellId && actual > 0 ? { immuneCellId } : {}),
+      ...(state.endlessGrowth?.ranks.catalysis && origin.basicTool ? { basicTool: origin.basicTool } : {}) });
+    if (this.state !== state || state.phase !== 'playing') return actual;
+    if (claimed) {
+      if (!this.currentCatalysisTransaction(claimed)) return actual;
+      this.emit('CATALYSIS_CONSUMED', { batchId: claimed.batch.id, organId: claimed.batch.organId,
+        targetId: target.id, trigger: claimed.trigger, triggerDamage: actual, ...(immuneCellId ? { immuneCellId } : {}) });
+      if (!this.currentCatalysisTransaction(claimed)) return actual;
+    }
     if (target.hp === 0) {
       this.emit('TARGET_CLEARED', { id: target.id, kind: target.kind });
+      if (this.state !== state || state.phase !== 'playing') return actual;
       if (this.battleDirector) this.battleDirector.cleared(target);
       else this.message(state.targets.every(t => t.hp === 0) ? '全部靶标已净化！按 3 修复十字标记组织，再到复测台按 E。' : '训练靶已净化。继续处理其他靶标。');
-      if (this.growthController) this.applyGrowthCommands(this.growthController.onKill(growthContext(state), target, { ...origin, wasPulseExposed }));
+      if (this.state !== state || state.phase !== 'playing') return actual;
+      if (this.growthController && origin.ability !== 'catalysis') this.applyGrowthCommands(this.growthController.onKill(growthContext(state), target, { ...origin, wasPulseExposed }));
       if (coreContext && this.motherController) this.applyCoreCommands(this.motherController.notifyCleared(coreContext));
     } else if (this.growthController && origin.cause === 'basic' && (state.tool === 1 || state.tool === 2)) {
       this.applyGrowthCommands(this.growthController.onHit(growthContext(state), target, { ...origin, wasPulseExposed }));
     }
+    if (claimed) this.detonateCatalysis(claimed);
+    return actual;
+  }
+
+  /** Only a newly accepted physical bite can carry this provenance into catalysis. */
+  private verifiedImmuneBite(target: Target, origin: DamageOrigin): string | undefined {
+    const state = this.state, beacon = state.growth?.beacon;
+    if (!state.endless || !state.endlessGrowth?.ranks.catalysis || origin.cause !== 'protocol'
+      || origin.protocolId !== 'IMMUNE_BEACON' || !origin.immuneCellId || target.role === 'core' || !beacon
+      || state.phase !== 'playing' || beacon.organId !== state.battle?.organId
+      || !Number.isFinite(beacon.until) || beacon.until <= state.elapsed) return;
+    if (this.acceptedBiteTick !== state.tick) { this.acceptedBiteTick = state.tick; this.acceptedBiteCells.clear(); }
+    if (this.acceptedBiteCells.has(origin.immuneCellId)) return;
+    const cell = state.growth?.cells?.find(unit => unit.id === origin.immuneCellId);
+    if (!cell || cell.beaconId !== beacon.id || cell.organId !== beacon.organId || !Number.isFinite(cell.until) || cell.until <= state.elapsed
+      || cell.born > state.elapsed || cell.targetId !== target.id || cell.activity !== 'biting'
+      || ![cell.born, cell.updatedAt, cell.attackReadyAt, cell.attackUntil, cell.damage, cell.radius].every(Number.isFinite)
+      || cell.damage <= 0 || cell.radius <= 0 || !Number.isFinite(target.radius) || target.radius <= 0
+      || Math.abs(cell.updatedAt - state.elapsed) > 1e-9 || !Number.isFinite(cell.interval) || cell.interval <= 0
+      || Math.abs(cell.attackReadyAt - (state.elapsed + cell.interval)) > 1e-9
+      || Math.abs(cell.attackUntil - (state.elapsed + IMMUNE_CELL_BALANCE.attackPose)) > 1e-9
+      || !isLegalPosition(cell, cell.radius, activeWorld(state))) return;
+    const gap = distance(cell, target);
+    if (!Number.isFinite(gap) || gap > cell.radius + target.radius + IMMUNE_CELL_BALANCE.biteReach + 1e-7) return;
+    const wall = wallHit(cell, normalized(target.x - cell.x, target.y - cell.y), gap, activeWorld(state));
+    return wall === null || wall >= gap - target.radius ? cell.id : undefined;
+  }
+
+  private claimCatalysis(target: Target, origin: DamageOrigin, actual: number, immuneCellId?: string): ClaimedCatalysis | undefined {
+    const state = this.state, batch = activeCatalysisBatch(state);
+    const precision = origin.cause === 'basic' && origin.basicTool === 1;
+    if (!batch || state.phase !== 'playing' || !Number.isFinite(actual) || actual <= 0 || !batch.targetIds.includes(target.id)
+      || origin.ability === 'catalysis' || !precision && !immuneCellId) return;
+    // Remove the entire transaction before TARGET_HIT or any recursive protocol callback.
+    delete state.endlessGrowth!.pendingCatalysis;
+    return { state, runId: state.growth?.runId, batch, center: { x: target.x, y: target.y }, triggerTargetId: target.id,
+      trigger: precision ? 'precision' : 'immune-cell', ...(immuneCellId ? { immuneCellId } : {}) };
+  }
+
+  private currentCatalysisTransaction(claimed: ClaimedCatalysis): boolean {
+    const state = this.state;
+    return state === claimed.state && state.growth?.runId === claimed.runId && state.phase === 'playing'
+      && state.battle?.organId === claimed.batch.organId && state.player.hp > 0 && state.tissue.hp > 0;
+  }
+
+  private detonateCatalysis(claimed: ClaimedCatalysis): void {
+    if (!this.currentCatalysisTransaction(claimed)) return;
+    const targets = catalysisBurstTargets(this.state, claimed.center);
+    this.effect('burst', claimed.center, claimed.center, CATALYSIS_BALANCE.radius, .55);
+    this.emit('CATALYSIS_DETONATED', { batchId: claimed.batch.id, organId: claimed.batch.organId,
+      targetId: claimed.triggerTargetId, radius: CATALYSIS_BALANCE.radius, candidates: targets.length, damage: claimed.batch.damage });
+    let hits = 0, totalDamage = 0;
+    for (const target of targets) {
+      if (!this.currentCatalysisTransaction(claimed)) break;
+      const actual = this.damage(target, claimed.batch.damage, { cause: 'ability', ability: 'catalysis', rootId: claimed.batch.id });
+      if (Number.isFinite(actual) && actual > 0) { hits++; totalDamage += actual; }
+    }
+    if (!this.currentCatalysisTransaction(claimed)) return;
+    this.emit('CATALYSIS_RESOLVED', { batchId: claimed.batch.id, organId: claimed.batch.organId, hits, damage: totalDamage });
+    if (this.currentCatalysisTransaction(claimed)) this.message(`催化兑现 · 实际命中 ${hits} 体。`, 3, 2);
+  }
+
+  private clearCatalysis(reason: string): void {
+    const batch = this.state.endlessGrowth?.pendingCatalysis;
+    if (!batch) return;
+    delete this.state.endlessGrowth!.pendingCatalysis;
+    this.emit('CATALYSIS_EXPIRED', { batchId: batch.id, organId: batch.organId, reason });
+  }
+
+  private pruneCatalysis(): void {
+    const batch = this.state.endlessGrowth?.pendingCatalysis;
+    if (!batch) return;
+    if (!activeCatalysisBatch(this.state)) this.clearCatalysis(batch.until <= this.state.elapsed ? 'timeout' : 'inactive');
+    else if (!activeCatalysisTargets(this.state).length) this.clearCatalysis('targets-cleared');
   }
 
   private applyGrowthCommands(commands: readonly GrowthCommand[]): void {
+    const commandState = this.state;
     for (const command of commands) {
+      if (this.state !== commandState || commandState.phase === 'result') return;
       const state = this.state;
       if (command.kind === 'log') { this.emit(command.type, command.data); continue; }
       if (!state.battle || command.organId !== state.battle.organId || state.phase === 'result') continue;
@@ -456,7 +596,8 @@ export class GameSession {
         const multiplier = state.endlessGrowth ? endlessCombatStats(state.endlessGrowth) : undefined;
         if (target) this.damage(target, command.amount * (multiplier?.damageMultiplier ?? 1)
           * (command.protocolId === 'IMMUNE_BEACON' ? multiplier?.cellDamageMultiplier ?? 1 : 1),
-          { cause: 'protocol', rootId: command.rootId, protocolId: command.protocolId, allowChain: command.allowChain });
+          { cause: 'protocol', rootId: command.rootId, protocolId: command.protocolId, allowChain: command.allowChain,
+            ...(command.immuneCellId ? { immuneCellId: command.immuneCellId } : {}) });
       } else if (command.kind === 'expose') {
         const target = state.targets.find(t => t.id === command.targetId && t.hp > 0);
         if (target) { target.exposedUntil = Math.max(target.exposedUntil ?? 0, command.until); target.revealedUntil = Math.max(target.revealedUntil ?? 0, command.revealUntil); }
@@ -505,6 +646,8 @@ export class GameSession {
   completeWave(wave: number): void {
     const state = this.state;
     if (!state.endless || !state.endlessGrowth || state.phase !== 'playing') return;
+    this.clearCatalysis('wave-cleared');
+    if (this.state !== state || state.phase !== 'playing') return;
     offerEndlessUpgrade(state.endlessGrowth, wave);
     this.growthController?.rewardEndlessWave(wave, state.elapsed);
     this.growthController?.rewardEndlessMilestone(wave, growthContext(state));

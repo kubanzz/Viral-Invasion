@@ -205,7 +205,7 @@ export function advanceImmuneCells(cells: readonly ImmuneCellState[], beacon: Ce
     remainingHp.set(target.id, Math.max(0, (remainingHp.get(target.id) ?? target.hp) - amount));
     const rootId = `${cell.id}:bite:${context.tick}`, base = { protocolId: 'IMMUNE_BEACON' as const, rootId, organId: context.organId };
     commands.push({ ...base, kind: 'effect', effect: 'hit', from: point(cell), to: point(target), radius: target.radius + 4, duration: .2 },
-      { ...base, kind: 'damage', targetId: target.id, amount, cause: 'protocol', hop: 0 },
+      { ...base, kind: 'damage', targetId: target.id, amount, cause: 'protocol', hop: 0, immuneCellId: cell.id },
       { kind: 'log', type: beacon.mode === 'patrol' ? 'IMMUNE_PATROL_HIT' : 'PROTOCOL_BEACON_HIT', data: {
         protocolId: beacon.mode === 'patrol' ? 'BASE_PATROL' : 'IMMUNE_BEACON', rootId, cellId: cell.id, targetId: target.id,
         damage: amount, prioritizedTrace: traced.has(target.id), x: cell.x, y: cell.y,

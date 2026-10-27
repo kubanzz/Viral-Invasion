@@ -500,7 +500,7 @@ export class GrowthController {
   }
   onKill(context:GrowthContext,target:Target,origin:DamageOrigin={cause:'basic'}):GrowthCommand[] {
     this.observeTime(context.elapsed);
-    if(this.state.ended||!context.active||origin.cause==='protocol'&&!(origin.protocolId==='PULSE_BREAK'&&origin.allowChain))return[];
+    if(this.state.ended||!context.active||origin.ability==='catalysis'||origin.cause==='protocol'&&!(origin.protocolId==='PULSE_BREAK'&&origin.allowChain))return[];
     const slot=this.equipped('PURIFY_CHAIN');if(!slot)return[];
     const rootId=origin.rootId??`${this.state.runId}:hit:${context.tick}:${target.id}`;
     if(this.state.chainRoots.includes(rootId))return[];

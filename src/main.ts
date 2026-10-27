@@ -335,9 +335,13 @@ function updateCommonHud() {
     button.classList.toggle('selected',s.tool===tool);button.setAttribute('aria-pressed',String(s.tool===tool));
     el(`charge-${tool}`).style.width=`${Math.max(0,1-Math.max(0,s.cooldowns[tool]-s.elapsed)/cooldown)*100}%`;
     if (tool === 1) button.querySelector('small')!.textContent = combat ? `${combat.shotRays} 束 · 贯穿 +${combat.pierceCount}` : '单点 · 快速冷却';
-    if (tool === 2) button.querySelector('small')!.textContent = combat ? `范围 ${combat.areaRadius} · 击退` : s.campaign ? '群体 · 击退打断' : '群体 · 94 范围';
+    if (tool === 2) {
+      const catalytic = (combat?.catalysisDamage ?? 0) > 0;
+      button.querySelector('strong')!.textContent = catalytic ? '催化裂解' : '范围裂解';
+      button.querySelector('small')!.textContent = catalytic ? '直伤≤8 · 1/细胞引爆' : combat ? `范围 ${combat.areaRadius} · 击退` : s.campaign ? '群体 · 击退打断' : '群体 · 94 范围';
+    }
   });
-  document.querySelector('.micro-footer')!.textContent = s.endless ? 'v0.8.4 · 连续进化挑战 / 架空生物幻想' : `${milestone === 'G3' ? 'G4' : milestone} · ${s.battle ? '器官联防' : '基础训练'} / 架空生物幻想`;
+  document.querySelector('.micro-footer')!.textContent = s.endless ? 'v0.8.5 · 连续进化挑战 / 架空生物幻想' : `${milestone === 'G3' ? 'G4' : milestone} · ${s.battle ? '器官联防' : '基础训练'} / 架空生物幻想`;
   document.querySelectorAll<HTMLButtonElement>('[data-action="sound"]').forEach(button => { button.textContent = `声音 ${sound.enabled?'开':'关'}`; });
   document.querySelector<HTMLButtonElement>('[data-action="pause"]')!.hidden = s.phase === 'menu' || s.phase === 'result';
 }
@@ -362,7 +366,7 @@ renderer.resize(); renderer.prepareCamera(session.state); updateOverlay(); updat
 
 // Read-only diagnostics for browser regression. Inputs always use the real DOM.
 Object.defineProperty(window, '__viral', { value: Object.freeze({
-  version: '0.8.4-G4', snapshot: () => session.snapshot(),
+  version: '0.8.5-G4', snapshot: () => session.snapshot(),
   toScreen: (point: { x: number; y: number }) => renderer.camera.worldToScreen(point),
   toWorld: (point: { x: number; y: number }) => renderer.camera.screenToWorld(point),
   diagnostics: () => renderer.diagnostics(session.state),

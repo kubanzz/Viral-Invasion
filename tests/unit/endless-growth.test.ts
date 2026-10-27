@@ -12,7 +12,7 @@ const commit = (growth: EndlessGrowthState, wave: number, pick?: EndlessUpgradeI
 };
 
 describe('continuous endless upgrades', () => {
-  it('offers three distinct choices from nine routes and guarantees meaningful first-wave mechanisms', () => {
+  it('preserves the nine-route opening pool and first-wave multishot/immune showcase', () => {
     const seen = new Set<EndlessUpgradeId>();
     for (let seed = 0; seed < 160; seed++) {
       const growth = createEndlessGrowth(seed); offerEndlessUpgrade(growth, 1);
@@ -21,12 +21,13 @@ describe('continuous endless upgrades', () => {
       expect(new Set(options.map(option => option.id)).size).toBe(3);
       expect(options.map(option => option.id)).toContain('multishot');
       expect(options.map(option => option.id)).toContain('immune');
+      expect(options.map(option => option.id)).not.toContain('catalysis');
       for (const option of options) {
         seen.add(option.id); expect(option.description).toContain('→');
         expect(option.nextRank).toBe(option.currentRank + 1);
       }
     }
-    expect([...seen].sort()).toEqual([...ENDLESS_UPGRADE_IDS].sort());
+    expect([...seen].sort()).toEqual(ENDLESS_UPGRADE_IDS.filter(id => id !== 'catalysis').sort());
   });
 
   it('is deterministic across serialized restores and ignores unrelated history truncation', () => {
@@ -76,7 +77,7 @@ describe('continuous endless upgrades', () => {
 
   it('keeps learning new mechanics possible after acquiring a starting route', () => {
     const growth = createEndlessGrowth(28); commit(growth, 1, 'multishot');
-    for (let wave = 2; wave <= 5; wave++) {
+    for (let wave = 2; wave <= 4; wave++) {
       offerEndlessUpgrade(growth, wave);
       expect(growth.draft!.options.some(option => ENDLESS_UPGRADES[option.id].newMechanic && !growth.ranks[option.id])).toBe(true);
       const learned = growth.draft!.options.find(option => ENDLESS_UPGRADES[option.id].newMechanic && !growth.ranks[option.id])!;
@@ -87,7 +88,7 @@ describe('continuous endless upgrades', () => {
   it('projects distinct attack, movement, Q, immune and capacity changes with explicit bounded mechanics', () => {
     const growth = createEndlessGrowth(1), base = endlessCombatStats(growth);
     expect(base).toMatchObject({ damageMultiplier: 1, shotRays: 1, pierceCount: 0, areaRadius: 94, primaryCooldown: .18,
-      areaCooldown: 1.2, dashDamage: 0, scanDamage: 0, maxHp: 100, cellDamageMultiplier: 1, scanCooldown: 3, cellDurationBonus: 0, cellCooldownMultiplier: 1 });
+      areaCooldown: 1.2, dashDamage: 0, scanDamage: 0, maxHp: 100, cellDamageMultiplier: 1, scanCooldown: 3, cellDurationBonus: 0, cellCooldownMultiplier: 1, catalysisDamage: 0 });
     growth.ranks = { power: 2, multishot: 2, pierce: 3, nova: 6, dash: 1, scan: 1, vitality: 3, haste: 7, immune: 2 };
     const upgraded = endlessCombatStats(growth);
     expect(upgraded).toMatchObject({ shotRays: 5, pierceCount: 3, areaRadius: 178, areaCooldown: .6, primaryCooldown: .1,

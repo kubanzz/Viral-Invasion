@@ -72,10 +72,14 @@ export interface GrowthContext {
   acceptedMetrics?: RunMetrics;
   acceptedEvents?: readonly GameEvent[];
 }
-export interface DamageOrigin { cause: 'basic' | 'protocol' | 'ability'; ability?: 'nova' | 'scan' | 'dash'; rootId?: string; wasPulseExposed?: boolean; protocolId?: ProtocolId; allowChain?: boolean }
+export interface DamageOrigin {
+  cause: 'basic' | 'protocol' | 'ability'; ability?: 'nova' | 'scan' | 'dash' | 'catalysis';
+  basicTool?: Tool; immuneCellId?: string;
+  rootId?: string; wasPulseExposed?: boolean; protocolId?: ProtocolId; allowChain?: boolean;
+}
 interface ProtocolCommandBase { protocolId: ProtocolId; rootId: string; organId: OrganId }
 export type GrowthCommand =
-  | (ProtocolCommandBase & { kind: 'damage'; targetId: string; amount: number; cause: 'protocol'; hop: number; allowChain?: boolean })
+  | (ProtocolCommandBase & { kind: 'damage'; targetId: string; amount: number; cause: 'protocol'; hop: number; allowChain?: boolean; immuneCellId?: string })
   | (ProtocolCommandBase & { kind: 'expose'; targetId: string; until: number; revealUntil: number })
   | (ProtocolCommandBase & { kind: 'effect'; effect: Effect['kind']; from: Vec; to: Vec; radius: number; duration: number })
   | (ProtocolCommandBase & { kind: 'organCost'; amount: number })

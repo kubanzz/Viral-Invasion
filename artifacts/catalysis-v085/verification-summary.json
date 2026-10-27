@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "version": "0.8.5",
+  "at": "2026-10-27T21:11:29.877Z",
+  "technicalCandidate": true,
+  "regression": {
+    "files": 93,
+    "passed": 842,
+    "strictTypecheckExitCode": 0,
+    "completeCampaignSessions": 1000,
+    "campaignWins": 1000,
+    "campaignReplayPairsEqual": 2
+  },
+  "source": {
+    "pass": true,
+    "measuredInputs": 36,
+    "emittedProductionInputs": 34,
+    "deliveryInputs": 139
+  },
+  "comparison": {
+    "uniqueRuns": 6,
+    "predeterminedReplays": 1,
+    "bothStrategies15WaveClears": 3,
+    "accept": {
+      "cases": 3,
+      "elapsed": 567.3833333333333,
+      "playerDamage": 0,
+      "organDamage": 198,
+      "actualTotalDamage": 76199.99999999997,
+      "actualClears": 1482,
+      "armed": 216,
+      "consumed": 215,
+      "detonated": 215,
+      "overwritten": 1,
+      "expired": 0,
+      "precisionPath": 207,
+      "realCellPath": 8,
+      "actualCatalysisDamage": 10650.540000000003,
+      "actualCatalysisClears": 297,
+      "tool2PostCardHits": 452,
+      "tool2PostCardDisplacements": 0,
+      "resolved": 215,
+      "positiveBlastBatches": 165,
+      "zeroBlastBatches": 50,
+      "precisePositiveBlastBatches": 160,
+      "cellPositiveBlastBatches": 5,
+      "cellZeroBlastBatches": 3,
+      "protocolOrganCost": 198,
+      "enemyOrganDamage": 0
+    },
+    "decline": {
+      "cases": 3,
+      "elapsed": 543.25,
+      "playerDamage": 28,
+      "organDamage": 183,
+      "actualTotalDamage": 76199.99999999997,
+      "actualClears": 1482,
+      "armed": 0,
+      "consumed": 0,
+      "detonated": 0,
+      "overwritten": 0,
+      "expired": 0,
+      "precisionPath": 0,
+      "realCellPath": 0,
+      "actualCatalysisDamage": 0,
+      "actualCatalysisClears": 0,
+      "tool2PostCardHits": 0,
+      "tool2PostCardDisplacements": 0,
+      "resolved": 0,
+      "positiveBlastBatches": 0,
+      "zeroBlastBatches": 0,
+      "precisePositiveBlastBatches": 0,
+      "cellPositiveBlastBatches": 0,
+      "cellZeroBlastBatches": 0,
+      "protocolOrganCost": 183,
+      "enemyOrganDamage": 0
+    },
+    "replayEqual": true
+  },
+  "browser": {
+    "installed": [
+      "chrome",
+      "edge"
+    ],
+    "realInputTestsPassed": 2,
+    "results": [
+      {
+        "project": "chrome",
+        "raw": "artifacts/catalysis-v085/browser-attempt-1/chrome/output/catalysis-v085-naturally-a-9ba5b-paused-readable-preparation-chrome/natural-catalysis.json",
+        "viewport": "1366x768",
+        "demonstrations": [
+          {
+            "trigger": "precision",
+            "batchId": "71:2:catalysis:1",
+            "actualTriggerDamage": 8.999999999999993,
+            "actualBlastHits": 0,
+            "actualBlastDamage": 0
+          },
+          {
+            "trigger": "immune-cell",
+            "batchId": "71:2:catalysis:2",
+            "actualTriggerDamage": 14.399999999999999,
+            "actualBlastHits": 2,
+            "actualBlastDamage": 75
+          }
+        ],
+        "opportunityLosses": 0,
+        "errors": [],
+        "remote": []
+      },
+      {
+        "project": "edge",
+        "raw": "artifacts/catalysis-v085/browser-attempt-1/edge/output/catalysis-v085-naturally-a-9ba5b-paused-readable-preparation-edge/natural-catalysis.json",
+        "viewport": "1100x560",
+        "demonstrations": [
+          {
+            "trigger": "precision",
+            "batchId": "71:2:catalysis:1",
+            "actualTriggerDamage": 10.2,
+            "actualBlastHits": 1,
+            "actualBlastDamage": 19.199999999999992
+          },
+          {
+            "trigger": "immune-cell",
+            "batchId": "71:2:catalysis:2",
+            "actualTriggerDamage": 14.4,
+            "actualBlastHits": 1,
+            "actualBlastDamage": 14.999999999999991
+          }
+        ],
+        "opportunityLosses": 0,
+        "errors": [],
+        "remote": []
+      }
+    ],
+    "independentlyDecodedOfflineModeGroups": 4,
+    "visualReview": "Four original screenshots inspected. Actual choice cards and paused summaries fit1366x768 and1100x560. Prepared screenshots contain pause overlay; they do not independently establish unobstructed in-battle marker readability."
+  },
+  "release": {
+    "zip": "releases/Viral-Invasion-G4-v0.8.5.zip",
+    "bytes": 5263693,
+    "sha256": "ae46b2a43170c765ac2c36cf587263ec1b8a5612c36f82e82e74fa51014e057c",
+    "gameSha256": "e0a4e92aad26c05bb0ea28cc27e2f8bda6fe176d18e039e01e85e0c640542bac",
+    "independentZipCrc32Pass": true,
+    "decodedFiles": 5
+  },
+  "humanBlindPlaytests": {
+    "completed": 0,
+    "required": 5
+  },
+  "limitations": [
+    "Three independent accept and three independent decline cases through15 waves only. Predetermined accept71 replay is determinism evidence, not a fourth independent accept outcome.",
+    "Accept is slower in all3 pairs by4.9833–11.1333 simulation seconds; no universal speed, strength, safety or balance claim.",
+    "Player damage0 versus28 and protocol organ cost198 versus183 are observed outcomes of different state/input/gear trajectories. All organ cost here is actual beacon protocol cost; enemy organ damage is0. Do not attribute all differences solely to catalysis.",
+    "Each pair clears the same finite HP/body budget: aggregate actual damage76200 and1482 clears per strategy. Burst damage redistributes the route; it does not show more total available damage or more enemies cleared.",
+    "Accept triggers215 batches, but50 have legitimate0 explosion hits. Eight real-cell trigger paths include5 positive-explosion outcomes and3 legal zero-explosion outcomes; do not present all triggers as extra damage.",
+    "Only1 natural overwrite and0 natural expiration cases occurred. This matrix does not independently establish timeout, end/cross-mode cleanup, counterfactual invalid input or all reentry paths.",
+    "Original public protocol-discard and fixed nova/immune-first priorities remain. No arbitrary build, equipped PULSE_BREAK/PURIFY_CHAIN/EXPOSE_TRACE combination, campaign/core/travel or15+ wave validation is claimed by this matrix.",
+    "Observed live population peaks9–10 in accept and9–10 in decline; these cases do not establish24-body stress or browser FPS/memory behavior.",
+    "State-dependent inputs and later offers/ranks differ after a real optional choice; comparisons are route outcomes, not fixed-state causal damage experiments.",
+    "No browser, human comprehension, fun, first-session duration, replay-intent, retention or incubation-value conclusion. Standard blind test remains0/5.",
+    "No new600-second browser performance or memory claim.",
+    "Human fun, comprehension, replay intent and incubation value remain unverified."
+  ],
+  "scripts": [
+    {
+      "path": "artifacts/catalysis-v085/tools/init-catalysis-v085.mjs",
+      "sha256": "7e7fa7694606cec428876d4fc7e6c743995d6225c232a1f258b7220325f43854"
+    },
+    {
+      "path": "artifacts/catalysis-v085/tools/integrate-catalysis-v085.mjs",
+      "sha256": "24adb8d2877bfbf180c436859ac844df693cf95124e5c2e92aa95a910753fc2b"
+    },
+    {
+      "path": "artifacts/catalysis-v085/tools/compare-catalysis-v085.mjs",
+      "sha256": "d401e96113827b3619eaf2c52cab5ec1d307bdbb36f8866bf8100b08313b650b"
+    },
+    {
+      "path": "artifacts/catalysis-v085/tools/run-catalysis-v085-checks.mjs",
+      "sha256": "6b922d4f483dcadb13633204666c31fdd9bfad78f858ba45f251c355f7343a1a"
+    },
+    {
+      "path": "artifacts/catalysis-v085/tools/run-catalysis-v085-browser.mjs",
+      "sha256": "5f8900130210cfed36bc191d6242314f95e970443661363caf092cbde955d3f8"
+    },
+    {
+      "path": "artifacts/catalysis-v085/tools/prepare-delivery-v085.mjs",
+      "sha256": "f023c48dac36f1ae82f8c6e9f11680fd0f7d94bfa03edb6af2a62a7dcba78a54"
+    },
+    {
+      "path": "artifacts/catalysis-v085/tools/inspect-v085-release.mjs",
+      "sha256": "030fb39475344d42b1002abc0612837fda2a16d38d47ff7a9d106453bad55183"
+    },
+    {
+      "path": "artifacts/catalysis-v085/tools/verify-offline-v085.mjs",
+      "sha256": "20b8792a024a70919f6e265b3d6a27a3f0345a87cd699094ea5dbe665f15d482"
+    },
+    {
+      "path": "artifacts/catalysis-v085/tools/finalize-evidence-v085.mjs",
+      "sha256": "70fdc3dea065d6a70a37f9c0114df3299ff94fd5a70a4b5bfd5b4f88547ef589"
+    }
+  ],
+  "references": [
+    {
+      "path": "Docs/ViralInvasion_Catalysis_v0.8.5.md",
+      "sha256": "33ef83a5c8ca35e31f247ea3a69c22d8fdfb5e31e68b8b00947a8ea23409389f"
+    },
+    {
+      "path": "Docs/ViralInvasion_Playtest.md",
+      "sha256": "0c2deefa340ebb9ffd46b11ac2b5bec2c70ef2c436079b155a1ae9d56046a19c"
+    },
+    {
+      "path": "artifacts/catalysis-v085/regression/main-nonseed-results.json",
+      "sha256": "1da226fd5accff259645ad0242397bb7ec64c8b1adfbccedcb0230386c058405"
+    },
+    {
+      "path": "artifacts/catalysis-v085/regression/full-system-seeds.json",
+      "sha256": "adc2478ef7ef96fd14026e07523f99a679651e1370dd58cd7558688e59cbb78e"
+    },
+    {
+      "path": "artifacts/catalysis-v085/comparison-attempt-1/report.json",
+      "sha256": "a774554c54961fd1c8a3a52f4fb81426f31867af10b18d3df0605131bf96c76a"
+    },
+    {
+      "path": "artifacts/catalysis-v085/comparison-attempt-1/derived-review.json",
+      "sha256": "be12698eab5d60afb9bc2aead9d7585848e19a40deeae1183a730ad3369856e2"
+    },
+    {
+      "path": "artifacts/catalysis-v085/integration/final-source-lineage.json",
+      "sha256": "ba504beeeef3335727541b9511cea22d41507c69540d4fc0a3a5be19ce7e73e2"
+    },
+    {
+      "path": "artifacts/catalysis-v085/browser-attempt-1/summary.json",
+      "sha256": "72e1e9759e355ccc83dd0bb1fe536ace142276def88edb2c3c6b4125ad4b9109"
+    },
+    {
+      "path": "artifacts/catalysis-v085/browser-attempt-1/actual-path-review.json",
+      "sha256": "66e0a1e4bff709417b580f53884e157f56bbc3986d82f96c00bcafdc5fed38be"
+    },
+    {
+      "path": "artifacts/catalysis-v085/release/inspection-1/inspection.json",
+      "sha256": "3680883df5bfa4f08e271561920413ff7377cb7c034772f131b3f9fd95843eb0"
+    },
+    {
+      "path": "artifacts/catalysis-v085/release/offline-smoke-1/report.json",
+      "sha256": "59431c909e299f4734abbefae672ad846ffdba673ae4bb7f3db9e6c67c0c1be4"
+    },
+    {
+      "path": "artifacts/releases/v0.8.5/release-package.json",
+      "sha256": "9066b005e31d7f58ce35015546a7e6c4f81a7c71a3aac6e2adbabe37a94ee69c"
+    },
+    {
+      "path": "dist/game.js",
+      "sha256": "e0a4e92aad26c05bb0ea28cc27e2f8bda6fe176d18e039e01e85e0c640542bac"
+    },
+    {
+      "path": "dist/build-meta.json",
+      "sha256": "4f57fc2d01253fd53e632794b1136a078612d772e6680c389d52db54734cd9bb"
+    }
+  ]
+}

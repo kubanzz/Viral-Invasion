@@ -3,13 +3,14 @@ import type { ProtocolId } from '../game/growthTypes';
 import { describeProtocol, GROWTH_BALANCE, PATROL_CONFIG, PROTOCOLS, TUNING_NAMES, protocolRank, protocolAction, RANK_NAMES } from '../game/protocols';
 import { availableResearchDirections, RESEARCH_DIRECTIONS } from '../game/research';
 import { immuneFocusStatusMarkup, updateImmuneFocusHud } from './immuneFocusHud';
+import { catalysisStatusMarkup, updateCatalysisHud } from './catalysisHud';
 
 const escape = (value: string) => value.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 // Container-keyed caches let detached HUDs and their children be collected.
 const slotViews = new WeakMap<HTMLElement, { signature: string; counts: (HTMLElement | null)[] }>();
 const feedbackViews = new WeakMap<HTMLElement, { title: string; hint: string }>();
 export const growthDetailsEntryMarkup = `<button class="growth-details-entry" data-action="growth-details">当前配装详情</button>`;
-export const growthHudMarkup = `<aside class="growth-panel"><div class="growth-heading"><span>我的进化 · 抗体构筑</span><b id="growth-research">样本 0</b></div><div class="xp-label" id="growth-xp"></div><div class="meter"><i id="xp-meter"></i></div><div id="protocol-slots" class="protocol-slots"></div>${immuneFocusStatusMarkup}${growthDetailsEntryMarkup}<p id="research-hint">Q 诊断 → 研究台 E 选方向 · Q 指敌围猎</p></aside><div id="evolution-feedback" class="evolution-feedback" role="status" hidden></div>`;
+export const growthHudMarkup = `<aside class="growth-panel"><div class="growth-heading"><span>我的进化 · 抗体构筑</span><b id="growth-research">样本 0</b></div><div class="xp-label" id="growth-xp"></div><div class="meter"><i id="xp-meter"></i></div><div id="protocol-slots" class="protocol-slots"></div>${immuneFocusStatusMarkup}${catalysisStatusMarkup}${growthDetailsEntryMarkup}<p id="research-hint">Q 诊断 → 研究台 E 选方向 · Q 指敌围猎</p></aside><div id="evolution-feedback" class="evolution-feedback" role="status" hidden></div>`;
 export const growthHelpMarkup = `<p><b>我的进化：</b>经验来自清源、精英、首次诊断与保护组织；达标时三选一。四种协议是四条不同的规则路线，每次显示三个候选，可装备 ${GROWTH_BALANCE.slots} 种。重复选择已有协议先升至Ⅱ/Ⅲ阶，实际提高效果；Ⅲ阶后才改变校准取向。</p><p><b>诊断 → 定向研究：</b>Q 实际诊断过的变异会开放对应研究方向。靠近研究台按 E，先选择方向；确认时才消耗 ${GROWTH_BALANCE.researchCost} 样本并生成三选一草案，选方向前取消免费。定向候选保证包含相关主协议与联动伙伴，仍可自由选择任意候选；通用研究保持随机。草案生成后放弃不退样本，研究与经验共用同一套配装，研究和草案期间暂停。</p><p><b>免疫协同：</b>没有协议时，Q 也能召来一只短时侦巡细胞协助清理。装备免疫灯塔后，Q 变为三只免疫细胞小队，在标记区移动、追击并接触吞噬；小队会带来组织承压。Q 就绪时，准星对准敌体可下达短时围猎指令；对准空地则部署区域。指定目标结束后，小队恢复自动选敌；未指定围猎时优先显影体。</p><p><b>组合打法：</b>共振裂解需要靠近装置、配合冲流相位命中；与连锁净化搭配，破绽清除可增加一跳，总计最多 3 跳。槽位下方会显示使用提示和实际命中／显影施加记录，草案同时展示前后变化与代价。</p>`;
 function preparationCopy(state: GameState): string {
   const growth=state.growth;
@@ -70,6 +71,7 @@ export function campaignImmuneResearchHint(state: GameState): string {
 }
 
 export function updateGrowthHud(state: GameState): void {
+  updateCatalysisHud(state);
   updateImmuneFocusHud(state);
   const growth=state.growth;if(!growth)return;
   document.getElementById('growth-research')!.textContent=`样本 ${growth.research}`;

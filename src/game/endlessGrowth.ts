@@ -4,7 +4,10 @@ import { BALANCE } from './types';
 
 export type * from './endlessGrowthTypes';
 
-export const ENDLESS_UPGRADE_IDS: readonly EndlessUpgradeId[] = ['power', 'multishot', 'pierce', 'nova', 'dash', 'scan', 'vitality', 'haste', 'immune'];
+export const ENDLESS_UPGRADE_IDS: readonly EndlessUpgradeId[] = ['power', 'multishot', 'pierce', 'nova', 'dash', 'scan', 'vitality', 'haste', 'immune', 'catalysis'];
+export const CATALYSIS_UPGRADE_BALANCE = {
+  minimumChoice: 6, maxTargets: 3, duration: 4, radius: 110, damageMultiplier: 1.25, primerDamageCap: 8,
+} as const;
 const PRIMARY_BASE_TICKS = Math.ceil(BALANCE.cooldowns[1] / BALANCE.step);
 // The old .09s floor already fired every six 60Hz ticks. Keep that real floor,
 // and use one fewer tick per rank so no accepted haste rank is a dead choice.
@@ -14,12 +17,13 @@ export const ENDLESS_UPGRADES: Record<EndlessUpgradeId, { title: string; maxRank
   power: { title: '净化突破', newMechanic: false },
   multishot: { title: '扇形抗体', maxRank: 2, newMechanic: true },
   pierce: { title: '贯穿净化', maxRank: 3, newMechanic: true },
-  nova: { title: '裂解新星', maxRank: 6, newMechanic: true },
+  nova: { title: '裂解新星', maxRank: 6, newMechanic: false },
   dash: { title: '冲刺斩', newMechanic: true },
   scan: { title: '扫描爆发', newMechanic: true },
   vitality: { title: '生命扩容', newMechanic: false },
   haste: { title: '急速净化', maxRank: PRIMARY_BASE_TICKS - PRIMARY_MIN_TICKS, newMechanic: false },
-  immune: { title: '免疫军团', newMechanic: true },
+  immune: { title: '免疫军团', newMechanic: false },
+  catalysis: { title: '催化裂解', maxRank: 1, newMechanic: true },
 };
 
 const MAX_COUNT = Number.MAX_SAFE_INTEGER;
@@ -37,12 +41,13 @@ export function endlessCombatStats(growth: EndlessGrowthState): EndlessCombatSta
   const power = rank(growth, 'power'), multishot = effectiveRank(growth, 'multishot'), pierce = effectiveRank(growth, 'pierce');
   const nova = effectiveRank(growth, 'nova'), dash = rank(growth, 'dash'), scan = rank(growth, 'scan');
   const vitality = rank(growth, 'vitality'), haste = effectiveRank(growth, 'haste'), immune = rank(growth, 'immune');
+  const damageMultiplier = 1 + power * .18, areaDamageMultiplier = 1 + nova * .15;
   return {
-    damageMultiplier: 1 + power * .18,
+    damageMultiplier,
     shotRays: 1 + multishot * 2,
     pierceCount: pierce,
     areaRadius: 94 + nova * 14,
-    areaDamageMultiplier: 1 + nova * .15,
+    areaDamageMultiplier,
     primaryCooldown: haste === 0 ? BALANCE.cooldowns[1] : Math.max(PRIMARY_MIN_TICKS, PRIMARY_BASE_TICKS - haste) * BALANCE.step,
     areaCooldown: Math.max(.6, Number((1.2 - nova * .1).toFixed(6))),
     dashDamage: dash * 40,
@@ -52,6 +57,8 @@ export function endlessCombatStats(growth: EndlessGrowthState): EndlessCombatSta
     scanCooldown: Math.max(1.5, 3 / (1 + immune * .12)),
     cellDurationBonus: Math.min(8, immune * 1.25),
     cellCooldownMultiplier: Math.max(.5, 1 / (1 + immune * .15)),
+    catalysisDamage: effectiveRank(growth, 'catalysis') > 0
+      ? BALANCE.damage[2] * damageMultiplier * areaDamageMultiplier * CATALYSIS_UPGRADE_BALANCE.damageMultiplier : 0,
   };
 }
 
@@ -61,6 +68,7 @@ function optionFor(growth: EndlessGrowthState, id: EndlessUpgradeId): EndlessUpg
   const before = endlessCombatStats(growth), after = endlessCombatStats({ ...growth, ranks: { ...growth.ranks, [id]: nextRank } });
   const beforeShotTicks = Math.ceil(before.primaryCooldown / BALANCE.step - 1e-9), afterShotTicks = Math.ceil(after.primaryCooldown / BALANCE.step - 1e-9);
   const change = (a: number, b: number) => `${display(a)} → ${display(b)}`;
+  const areaDamage = BALANCE.damage[2] * before.damageMultiplier * before.areaDamageMultiplier;
   const description: Record<EndlessUpgradeId, string> = {
     power: `基础净化伤害倍率 ×${display(before.damageMultiplier)} → ×${display(after.damageMultiplier)}；强化现有攻击。`,
     multishot: `精准净化 ${change(before.shotRays, after.shotRays)} 束；向左右同时发射更多抗体。`,
@@ -71,6 +79,7 @@ function optionFor(growth: EndlessGrowthState, id: EndlessUpgradeId): EndlessUpg
     vitality: `最大耐久 ${change(before.maxHp, after.maxHp)}；本次补给按新的耐久上限结算。`,
     haste: `精准净化间隔约 ${change(beforeShotTicks * BALANCE.step, afterShotTicks * BALANCE.step)} 秒；射速约 ${change(1 / (beforeShotTicks * BALANCE.step), 1 / (afterShotTicks * BALANCE.step))} 发/秒；整组扇射共用一次间隔。`,
     immune: `免疫细胞伤害倍率 ${change(before.cellDamageMultiplier, after.cellDamageMultiplier)}，额外寿命 ${change(before.cellDurationBonus, after.cellDurationBonus)} 秒；Q 冷却 ${change(before.scanCooldown, after.scanCooldown)} 秒，小队独立冷却倍率 ${change(before.cellCooldownMultiplier, after.cellCooldownMultiplier)}。`,
+    catalysis: `改变工具 2：直伤 ${change(areaDamage, Math.min(CATALYSIS_UPGRADE_BALANCE.primerDamageCap, areaDamage))}，取消击退。最多 ${CATALYSIS_UPGRADE_BALANCE.maxTargets} 个实际受击存活目标铺标 ${CATALYSIS_UPGRADE_BALANCE.duration} 秒；随后用 1 正伤命中或真实细胞接触咬击，整批引爆一次。爆发半径 ${CATALYSIS_UPGRADE_BALANCE.radius}、最多 ${CATALYSIS_UPGRADE_BALANCE.maxTargets} 体，每体伤害 ${display(after.catalysisDamage)}（原工具 2 完整成长伤害 ×${CATALYSIS_UPGRADE_BALANCE.damageMultiplier}，按本次铺标捕获）。再次 2 的有效铺标覆盖旧批，不叠加。`,
   };
   return { id, title: ENDLESS_UPGRADES[id].title, description: description[id], currentRank, nextRank };
 }
@@ -78,6 +87,8 @@ function optionFor(growth: EndlessGrowthState, id: EndlessUpgradeId): EndlessUpg
 function available(growth: EndlessGrowthState, id: EndlessUpgradeId): boolean {
   const current = rank(growth, id);
   if (current >= (ENDLESS_UPGRADES[id].maxRank ?? MAX_COUNT)) return false;
+  if (id === 'catalysis' && (count(growth.level) < CATALYSIS_UPGRADE_BALANCE.minimumChoice - 1
+    || rank(growth, 'nova') < 1 && rank(growth, 'immune') < 1)) return false;
   const before = endlessCombatStats(growth), after = endlessCombatStats({ ...growth, ranks: { ...growth.ranks, [id]: current + 1 } });
   // Even at the finite representation limit, never offer an upgrade whose
   // actual projected parameters would be unchanged by floating-point rounding.

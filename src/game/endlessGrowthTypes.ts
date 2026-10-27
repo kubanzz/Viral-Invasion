@@ -1,4 +1,6 @@
-export type EndlessUpgradeId = 'power' | 'multishot' | 'pierce' | 'nova' | 'dash' | 'scan' | 'vitality' | 'haste' | 'immune';
+import type { OrganId } from './battleTypes';
+
+export type EndlessUpgradeId = 'power' | 'multishot' | 'pierce' | 'nova' | 'dash' | 'scan' | 'vitality' | 'haste' | 'immune' | 'catalysis';
 
 export interface EndlessUpgradeOption {
   /** The exact ID passed to chooseEndlessUpgrade. */
@@ -27,6 +29,17 @@ export interface EndlessGrowthHistoryEntry extends EndlessGrowthChoice {
   rank: number;
 }
 
+/** The host owns one batch, at most three target IDs and four simulation seconds. */
+export interface PendingCatalysisBatch {
+  id: string;
+  organId: OrganId;
+  createdAt: number;
+  until: number;
+  targetIds: string[];
+  /** Complete damage captured at application; never multiply it again. */
+  damage: number;
+}
+
 export interface EndlessGrowthState {
   seed: number;
   ranks: Partial<Record<EndlessUpgradeId, number>>;
@@ -37,9 +50,10 @@ export interface EndlessGrowthState {
   offeredThroughWave: number;
   lastChoice?: EndlessGrowthChoice;
   history: EndlessGrowthHistoryEntry[];
+  pendingCatalysis?: PendingCatalysisBatch;
 }
 
-/** All values are finite. Damage values below are before damageMultiplier. */
+/** All values are finite. Base damage excludes damageMultiplier unless explicitly noted. */
 export interface EndlessCombatStats {
   /** Multiplier for base combat damage; the host applies it once per hit. */
   damageMultiplier: number;
@@ -69,4 +83,6 @@ export interface EndlessCombatStats {
   cellDurationBonus: number;
   /** Multiplier applied to the beacon's independent base cooldown. */
   cellCooldownMultiplier: number;
+  /** Complete per-target explosion damage, including power/nova and the 1.25 factor; 0 is locked. */
+  catalysisDamage: number;
 }
