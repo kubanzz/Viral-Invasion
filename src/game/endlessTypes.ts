@@ -1,6 +1,16 @@
 import type { TraitId } from './battleTypes';
 import type { Effect, GameEvent, GameState, MessagePriority } from './types';
 
+export type EndlessFormation = 'front' | 'cross' | 'fission-pack' | 'mixed';
+export type EndlessSpawnRole = 'ordinary' | 'support' | 'elite';
+export interface EndlessBatch {
+  /** Seconds after this wave actually enters combat, not a wall-clock deadline. */
+  at: number;
+  sector: number;
+  spread: number;
+  roles: EndlessSpawnRole[];
+}
+
 /** Run-local challenge progress. Arrays contain only the current finite wave. */
 export interface EndlessState {
   schemaVersion: 1;
@@ -28,6 +38,12 @@ export interface EndlessState {
   spawnSerial: number;
   pendingChildren: number;
   directions: string[];
+  formation: EndlessFormation;
+  formationLabel: string;
+  batchSchedule: EndlessBatch[];
+  batchIndex: number;
+  batchMemberIndex: number;
+  supportRemaining: number;
 }
 
 export interface EndlessHost {

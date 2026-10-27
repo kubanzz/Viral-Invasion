@@ -1,0 +1,2362 @@
+{
+  "schemaVersion": 1,
+  "measuredAtUtc": "2026-10-27T15:44:53.096Z",
+  "command": "node .tools/endless-build-comparison.mjs --attempt=1",
+  "scope": "Six natural public-input GameSession runs from one frozen production simulation bundle. No browser,performance,memory or human-fun acceptance.",
+  "goalWaves": 12,
+  "assertionPolicy": "No forced win,damage,synergy or kill count. Real failures,stalls and measurement errors remain in raw per-run files.",
+  "mutationScope": "Only GameSession.start/step/chooseDraft/chooseCombatUpgrade/cancelResearch/resume. No HP,position,time,wave,target,world or equipment-state injection.",
+  "strategy": {
+    "combatUpgradePriorities": {
+      "shooting": [
+        "multishot",
+        "pierce",
+        "power",
+        "haste",
+        "nova",
+        "immune",
+        "scan",
+        "vitality",
+        "dash"
+      ],
+      "area": [
+        "nova",
+        "haste",
+        "power",
+        "multishot",
+        "pierce",
+        "immune",
+        "scan",
+        "vitality",
+        "dash"
+      ],
+      "immune": [
+        "immune",
+        "scan",
+        "vitality",
+        "power",
+        "haste",
+        "nova",
+        "multishot",
+        "pierce",
+        "dash"
+      ]
+    },
+    "shooting": "Precision primary;AOE only with4 nearby enemies;normal threat evasion,Q and repair as needed.",
+    "area": "Always use ready tool2,fill gaps with precision;prioritize nova/haste/power;normal threat evasion,Q and repair.",
+    "immune": "Prioritize immune/scan;Q toward enemies whenever ready;beacon+trace protocol route;cover threats,let active reachable cells finish remote fodder.",
+    "shared": "Reads visible footprints/current frozen telegraphs;normal WASD navigation,space dash,Q/2/3/E as needed;every pending modal uses public selection APIs with replacement confirmation."
+  },
+  "measurementScript": {
+    "path": "measurement-script.mjs",
+    "sha256": "b88b153c3fabf8e9807610a8793833cc3757a753333d0b39af1df6df60acbc1a"
+  },
+  "bundle": {
+    "path": "simulation-bundle.mjs",
+    "sha256": "54c27c47fe6e94a038eab1f5ce6fb0b08aaa5fd51cfe9c25437fc796b28d0b96"
+  },
+  "fingerprints": [
+    {
+      "path": "src/game/session.ts",
+      "sha256": "1c77a5a623cb1f0dad24dc39f41d5ae1ceb3a0586e5f6591fd0c35a0e78f5c5e"
+    },
+    {
+      "path": "src/game/battle.ts",
+      "sha256": "284c08fc0bd3a15cb5d633ec31415d861d87dbc3234025cd00dca673b2cb4d7c"
+    },
+    {
+      "path": "src/game/endless.ts",
+      "sha256": "ebc4a61195a6a1631c0eb61efda0582dd891363bbdc052aa342571c771a1b281"
+    },
+    {
+      "path": "src/game/endlessTypes.ts",
+      "sha256": "6c2ac05fcf98e5568834afddcd944f298774b80f55ad42c859dbf3db4b3f32dd"
+    },
+    {
+      "path": "src/game/enemyTactics.ts",
+      "sha256": "5756bc8247bf72fb3db833ac191eeb3c58afe3b8f0505e1d1e65f8d1f28a64e4"
+    },
+    {
+      "path": "src/game/enemyTacticsTypes.ts",
+      "sha256": "7575280b131eb2c4faeb1d3ae886a056f1b13274c9c3683f78170ce8a09613a9"
+    },
+    {
+      "path": "src/game/endlessGrowth.ts",
+      "sha256": "65b58828e4f509d13049b0bf538748ad0333903519654d6d8781da756413515d"
+    },
+    {
+      "path": "src/game/endlessGrowthTypes.ts",
+      "sha256": "c72b05c08cf5b43a8611d18656f8b67f8069114d9989367ff97967a6c2d19c3c"
+    },
+    {
+      "path": "src/game/growth.ts",
+      "sha256": "85b7eacab58b0b640f3a8d6fd75fc6fd8338f0b9ae4a712772f739ae74c3eadc"
+    },
+    {
+      "path": "src/game/protocols.ts",
+      "sha256": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea"
+    },
+    {
+      "path": "src/game/immuneCells.ts",
+      "sha256": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80"
+    },
+    {
+      "path": "src/actors/collision.ts",
+      "sha256": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0"
+    },
+    {
+      "path": "src/actors/enemyNavigation.ts",
+      "sha256": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd"
+    },
+    {
+      "path": "src/actors/enemyCrowd.ts",
+      "sha256": "0058ef0430088c57ad39a2bb1e48708bf1feb18c9910e018f60277c60ce4ca97"
+    },
+    {
+      "path": "tests/helpers/g3Driver.ts",
+      "sha256": "2dcaa812ae1aa99d5ada5c6e3f4d6e431047483f0e0dd399ed36328b446e6f3b"
+    }
+  ],
+  "fingerprintsAfter": [
+    {
+      "path": "src/game/session.ts",
+      "sha256": "1c77a5a623cb1f0dad24dc39f41d5ae1ceb3a0586e5f6591fd0c35a0e78f5c5e"
+    },
+    {
+      "path": "src/game/battle.ts",
+      "sha256": "284c08fc0bd3a15cb5d633ec31415d861d87dbc3234025cd00dca673b2cb4d7c"
+    },
+    {
+      "path": "src/game/endless.ts",
+      "sha256": "ebc4a61195a6a1631c0eb61efda0582dd891363bbdc052aa342571c771a1b281"
+    },
+    {
+      "path": "src/game/endlessTypes.ts",
+      "sha256": "6c2ac05fcf98e5568834afddcd944f298774b80f55ad42c859dbf3db4b3f32dd"
+    },
+    {
+      "path": "src/game/enemyTactics.ts",
+      "sha256": "5756bc8247bf72fb3db833ac191eeb3c58afe3b8f0505e1d1e65f8d1f28a64e4"
+    },
+    {
+      "path": "src/game/enemyTacticsTypes.ts",
+      "sha256": "7575280b131eb2c4faeb1d3ae886a056f1b13274c9c3683f78170ce8a09613a9"
+    },
+    {
+      "path": "src/game/endlessGrowth.ts",
+      "sha256": "65b58828e4f509d13049b0bf538748ad0333903519654d6d8781da756413515d"
+    },
+    {
+      "path": "src/game/endlessGrowthTypes.ts",
+      "sha256": "c72b05c08cf5b43a8611d18656f8b67f8069114d9989367ff97967a6c2d19c3c"
+    },
+    {
+      "path": "src/game/growth.ts",
+      "sha256": "85b7eacab58b0b640f3a8d6fd75fc6fd8338f0b9ae4a712772f739ae74c3eadc"
+    },
+    {
+      "path": "src/game/protocols.ts",
+      "sha256": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea"
+    },
+    {
+      "path": "src/game/immuneCells.ts",
+      "sha256": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80"
+    },
+    {
+      "path": "src/actors/collision.ts",
+      "sha256": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0"
+    },
+    {
+      "path": "src/actors/enemyNavigation.ts",
+      "sha256": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd"
+    },
+    {
+      "path": "src/actors/enemyCrowd.ts",
+      "sha256": "0058ef0430088c57ad39a2bb1e48708bf1feb18c9910e018f60277c60ce4ca97"
+    },
+    {
+      "path": "tests/helpers/g3Driver.ts",
+      "sha256": "2dcaa812ae1aa99d5ada5c6e3f4d6e431047483f0e0dd399ed36328b446e6f3b"
+    }
+  ],
+  "sourceFilesUnchangedDuringMeasurement": true,
+  "results": [
+    {
+      "seed": 7,
+      "build": "shooting",
+      "stop": "twelve-waves-cleared",
+      "error": null,
+      "elapsed": 189.55,
+      "phase": "playing",
+      "result": null,
+      "wave": 12,
+      "clearedWaves": 12,
+      "rawKills": 362,
+      "directorKills": 362,
+      "score": 9536,
+      "finalPlayerHp": 100,
+      "finalTissueHp": 100,
+      "cumulativePlayerDamage": 0,
+      "cumulativeTissueLoss": 78,
+      "damage": {
+        "basic": 10326.527999999997,
+        "protocol": 8203.472000000002,
+        "ability": 0,
+        "immuneSubset": 356.39200000000005
+      },
+      "damageHits": {
+        "basic": 327,
+        "protocol": 221,
+        "ability": 0,
+        "immuneSubset": 29
+      },
+      "toolDamage": {
+        "1": 9977.527999999997,
+        "2": 349
+      },
+      "protocolDamage": {
+        "IMMUNE_BEACON": 356.39200000000005,
+        "PURIFY_CHAIN": 7847.0800000000045
+      },
+      "abilityDamage": {},
+      "killCauses": {
+        "basic": 180,
+        "protocol": 182
+      },
+      "playerDamageByReason": {},
+      "tissueLossByReason": {
+        "protocol-pressure": 54,
+        "pulse-pressure": 24
+      },
+      "acceptedMarkedImmuneBites": 0,
+      "maxLiving": 8,
+      "maxConcurrent": 2,
+      "maxCells": 3,
+      "shots": 347,
+      "scans": 18,
+      "dashes": 0,
+      "inputFrames": 11373,
+      "inputCounts": {
+        "movingFrames": 3922,
+        "fireTool1": 2845,
+        "scanRequests": 18,
+        "interactRequests": 6,
+        "fireTool2": 7
+      },
+      "inputSha256": "73b7244141795efd07b94a9cdb55c2dbd3da79c83566ea79605e99af2e8025ae",
+      "finalRanks": {
+        "multishot": 2,
+        "pierce": 3,
+        "scan": 1,
+        "power": 2,
+        "nova": 1,
+        "immune": 3
+      },
+      "finalEquipped": [
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced",
+          "rank": 3
+        },
+        {
+          "id": "PURIFY_CHAIN",
+          "tuning": "balanced",
+          "rank": 3
+        },
+        {
+          "id": "EXPOSE_TRACE",
+          "tuning": "balanced"
+        }
+      ],
+      "waves": [
+        {
+          "wave": 1,
+          "enteredAt": 0,
+          "combatAt": 2,
+          "clearedAt": 6.766666666666667,
+          "kills": 8,
+          "damage": {
+            "basic": 480,
+            "protocol": 64,
+            "ability": 0,
+            "immuneSubset": 64
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 0,
+          "maxLiving": 5,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 2,
+          "enteredAt": 7.766666666666667,
+          "combatAt": 9.766666666666666,
+          "clearedAt": 15.6,
+          "kills": 10,
+          "damage": {
+            "basic": 664,
+            "protocol": 16,
+            "ability": 0,
+            "immuneSubset": 16
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 0,
+          "maxLiving": 4,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 3,
+          "enteredAt": 16.6,
+          "combatAt": 24.6,
+          "clearedAt": 31.683333333333334,
+          "kills": 12,
+          "damage": {
+            "basic": 562,
+            "protocol": 254,
+            "ability": 0,
+            "immuneSubset": 0
+          },
+          "damageTaken": 0,
+          "organDamage": 7,
+          "telegraphs": 0,
+          "maxLiving": 6,
+          "hpAtClear": 100,
+          "tissueAtClear": 93
+        },
+        {
+          "wave": 4,
+          "enteredAt": 32.68333333333333,
+          "combatAt": 34.68333333333333,
+          "clearedAt": 44.36666666666667,
+          "kills": 14,
+          "damage": {
+            "basic": 690,
+            "protocol": 262,
+            "ability": 0,
+            "immuneSubset": 8
+          },
+          "damageTaken": 0,
+          "organDamage": 7,
+          "telegraphs": 1,
+          "maxLiving": 4,
+          "hpAtClear": 100,
+          "tissueAtClear": 93
+        },
+        {
+          "wave": 5,
+          "enteredAt": 45.36666666666667,
+          "combatAt": 53.36666666666667,
+          "clearedAt": 63.06666666666666,
+          "kills": 38,
+          "damage": {
+            "basic": 990,
+            "protocol": 650,
+            "ability": 0,
+            "immuneSubset": 0
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 1,
+          "maxLiving": 6,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 6,
+          "enteredAt": 64.06666666666666,
+          "combatAt": 66.06666666666666,
+          "clearedAt": 75.85,
+          "kills": 42,
+          "damage": {
+            "basic": 852,
+            "protocol": 900,
+            "ability": 0,
+            "immuneSubset": 24
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 1,
+          "maxLiving": 5,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 7,
+          "enteredAt": 76.85,
+          "combatAt": 78.85,
+          "clearedAt": 93.46666666666667,
+          "kills": 48,
+          "damage": {
+            "basic": 962.1600000000001,
+            "protocol": 1013.8399999999999,
+            "ability": 0,
+            "immuneSubset": 92.8
+          },
+          "damageTaken": 0,
+          "organDamage": 14,
+          "telegraphs": 1,
+          "maxLiving": 6,
+          "hpAtClear": 100,
+          "tissueAtClear": 86
+        },
+        {
+          "wave": 8,
+          "enteredAt": 94.46666666666667,
+          "combatAt": 96.46666666666667,
+          "clearedAt": 109.98333333333333,
+          "kills": 52,
+          "damage": {
+            "basic": 1048.2,
+            "protocol": 1107.8,
+            "ability": 0,
+            "immuneSubset": 84.52
+          },
+          "damageTaken": 0,
+          "organDamage": 10,
+          "telegraphs": 0,
+          "maxLiving": 6,
+          "hpAtClear": 100,
+          "tissueAtClear": 88
+        },
+        {
+          "wave": 9,
+          "enteredAt": 110.98333333333333,
+          "combatAt": 112.98333333333333,
+          "clearedAt": 126.35,
+          "kills": 56,
+          "damage": {
+            "basic": 1017.7040000000001,
+            "protocol": 1318.2960000000003,
+            "ability": 0,
+            "immuneSubset": 22.656
+          },
+          "damageTaken": 0,
+          "organDamage": 10,
+          "telegraphs": 0,
+          "maxLiving": 8,
+          "hpAtClear": 100,
+          "tissueAtClear": 90
+        },
+        {
+          "wave": 10,
+          "enteredAt": 127.35,
+          "combatAt": 135.35,
+          "clearedAt": 151.15,
+          "kills": 26,
+          "damage": {
+            "basic": 1055.824,
+            "protocol": 814.1759999999999,
+            "ability": 0,
+            "immuneSubset": 22.656
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 2,
+          "maxLiving": 4,
+          "hpAtClear": 100,
+          "tissueAtClear": 94
+        },
+        {
+          "wave": 11,
+          "enteredAt": 152.15,
+          "combatAt": 154.15,
+          "clearedAt": 170.3,
+          "kills": 28,
+          "damage": {
+            "basic": 1003.6800000000001,
+            "protocol": 900.3199999999999,
+            "ability": 0,
+            "immuneSubset": 21.760000000000005
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 0,
+          "maxLiving": 4,
+          "hpAtClear": 100,
+          "tissueAtClear": 94
+        },
+        {
+          "wave": 12,
+          "enteredAt": 171.3,
+          "combatAt": 173.3,
+          "clearedAt": 189.55,
+          "kills": 28,
+          "damage": {
+            "basic": 1000.96,
+            "protocol": 903.04,
+            "ability": 0,
+            "immuneSubset": 0
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 2,
+          "maxLiving": 3,
+          "hpAtClear": 100,
+          "tissueAtClear": 94
+        }
+      ],
+      "eventCounts": {
+        "ENDLESS_WAVE_STARTED": 12,
+        "ACTOR_SPAWNED": 362,
+        "ENDLESS_REINFORCEMENTS": 80,
+        "SCAN_COMPLETED": 18,
+        "BATTLE_DIAGNOSED": 18,
+        "ORGAN_INTEGRITY_CHANGED": 36,
+        "PROTOCOL_BEACON_CREATED": 18,
+        "TARGET_HIT": 548,
+        "TOOL_FIRED": 347,
+        "TARGET_CLEARED": 362,
+        "PROTOCOL_BEACON_HIT": 29,
+        "ENDLESS_WAVE_CLEARED": 12,
+        "RUN_PAUSED": 12,
+        "INPUT_RESET_REQUESTED": 24,
+        "COMBAT_UPGRADE_COMMITTED": 12,
+        "RUN_RESUMED": 12,
+        "GROWTH_REWARD": 8,
+        "GROWTH_LEVEL_GAINED": 5,
+        "PREPARATION_REPAID": 1,
+        "ENDLESS_WAVE_WARNING": 11,
+        "PROTOCOL_DRAFT_OPENED": 6,
+        "PROTOCOL_EQUIPPED": 6,
+        "PROTOCOL_DRAFT_COMMITTED": 6,
+        "PROTOCOL_CHAIN_HIT": 148,
+        "PULSE_TRIGGERED": 6,
+        "TOOL_SELECTED": 14,
+        "AREA_DISPLACED": 1,
+        "COLLISION_BLOCKED": 3,
+        "ATTACK_TELEGRAPHED": 8,
+        "ENEMY_TACTIC_COMMITTED": 8,
+        "FISSION_WARNING": 68,
+        "ELITE_CLEARED": 2,
+        "FISSION_SPAWNED": 68,
+        "ENDLESS_PROTOCOL_REWARD_QUEUED": 2,
+        "COMBAT_ABILITY_TRIGGERED": 13,
+        "PROTOCOL_RICOCHET_HIT": 44,
+        "TOOL_REJECTED": 1,
+        "PROTOCOL_TRACE_APPLIED": 4
+      },
+      "castOutcomes": {
+        "killed-during-windup": 8
+      }
+    },
+    {
+      "seed": 7,
+      "build": "area",
+      "stop": "twelve-waves-cleared",
+      "error": null,
+      "elapsed": 189.1,
+      "phase": "playing",
+      "result": null,
+      "wave": 12,
+      "clearedWaves": 12,
+      "rawKills": 362,
+      "directorKills": 362,
+      "score": 9106,
+      "finalPlayerHp": 100,
+      "finalTissueHp": 100,
+      "cumulativePlayerDamage": 0,
+      "cumulativeTissueLoss": 78,
+      "damage": {
+        "basic": 10154.039999999997,
+        "protocol": 8375.960000000003,
+        "ability": 0,
+        "immuneSubset": 216.67999999999995
+      },
+      "damageHits": {
+        "basic": 288,
+        "protocol": 209,
+        "ability": 0,
+        "immuneSubset": 20
+      },
+      "toolDamage": {
+        "1": 7011.439999999996,
+        "2": 3142.6000000000004
+      },
+      "protocolDamage": {
+        "IMMUNE_BEACON": 216.67999999999995,
+        "PURIFY_CHAIN": 8159.2800000000025
+      },
+      "abilityDamage": {},
+      "killCauses": {
+        "basic": 183,
+        "protocol": 179
+      },
+      "playerDamageByReason": {},
+      "tissueLossByReason": {
+        "protocol-pressure": 54,
+        "pulse-pressure": 24
+      },
+      "acceptedMarkedImmuneBites": 0,
+      "maxLiving": 8,
+      "maxConcurrent": 1,
+      "maxCells": 3,
+      "shots": 337,
+      "scans": 18,
+      "dashes": 0,
+      "inputFrames": 11346,
+      "inputCounts": {
+        "movingFrames": 3299,
+        "fireTool2": 73,
+        "scanRequests": 18,
+        "fireTool1": 2179,
+        "interactRequests": 6
+      },
+      "inputSha256": "e1c074bcc9102c6bcd624ff35a9d0907f446302dacabc26af8c4c441862ed1b4",
+      "finalRanks": {
+        "multishot": 2,
+        "pierce": 2,
+        "power": 2,
+        "nova": 2,
+        "haste": 3,
+        "immune": 1
+      },
+      "finalEquipped": [
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced",
+          "rank": 3
+        },
+        {
+          "id": "PURIFY_CHAIN",
+          "tuning": "balanced",
+          "rank": 3
+        },
+        {
+          "id": "EXPOSE_TRACE",
+          "tuning": "balanced"
+        }
+      ],
+      "waves": [
+        {
+          "wave": 1,
+          "enteredAt": 0,
+          "combatAt": 2,
+          "clearedAt": 6.6,
+          "kills": 8,
+          "damage": {
+            "basic": 514,
+            "protocol": 30,
+            "ability": 0,
+            "immuneSubset": 30
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 0,
+          "maxLiving": 4,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 2,
+          "enteredAt": 7.6,
+          "combatAt": 9.6,
+          "clearedAt": 15.083333333333334,
+          "kills": 10,
+          "damage": {
+            "basic": 664,
+            "protocol": 16,
+            "ability": 0,
+            "immuneSubset": 16
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 0,
+          "maxLiving": 4,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 3,
+          "enteredAt": 16.083333333333332,
+          "combatAt": 24.083333333333332,
+          "clearedAt": 31,
+          "kills": 12,
+          "damage": {
+            "basic": 601,
+            "protocol": 215,
+            "ability": 0,
+            "immuneSubset": 3
+          },
+          "damageTaken": 0,
+          "organDamage": 7,
+          "telegraphs": 0,
+          "maxLiving": 6,
+          "hpAtClear": 100,
+          "tissueAtClear": 93
+        },
+        {
+          "wave": 4,
+          "enteredAt": 32,
+          "combatAt": 34,
+          "clearedAt": 43.88333333333333,
+          "kills": 14,
+          "damage": {
+            "basic": 676.7600000000001,
+            "protocol": 275.24,
+            "ability": 0,
+            "immuneSubset": 0
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 1,
+          "maxLiving": 3,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 5,
+          "enteredAt": 44.88333333333333,
+          "combatAt": 52.88333333333333,
+          "clearedAt": 62.6,
+          "kills": 38,
+          "damage": {
+            "basic": 958.88,
+            "protocol": 681.12,
+            "ability": 0,
+            "immuneSubset": 0
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 1,
+          "maxLiving": 5,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 6,
+          "enteredAt": 63.6,
+          "combatAt": 65.6,
+          "clearedAt": 75.56666666666666,
+          "kills": 42,
+          "damage": {
+            "basic": 839.84,
+            "protocol": 912.1600000000001,
+            "ability": 0,
+            "immuneSubset": 14.16
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 1,
+          "maxLiving": 7,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 7,
+          "enteredAt": 76.56666666666666,
+          "combatAt": 78.56666666666666,
+          "clearedAt": 93.25,
+          "kills": 48,
+          "damage": {
+            "basic": 949.48,
+            "protocol": 1026.52,
+            "ability": 0,
+            "immuneSubset": 99.11999999999999
+          },
+          "damageTaken": 0,
+          "organDamage": 14,
+          "telegraphs": 0,
+          "maxLiving": 6,
+          "hpAtClear": 100,
+          "tissueAtClear": 86
+        },
+        {
+          "wave": 8,
+          "enteredAt": 94.25,
+          "combatAt": 96.25,
+          "clearedAt": 109.75,
+          "kills": 52,
+          "damage": {
+            "basic": 1085.68,
+            "protocol": 1070.32,
+            "ability": 0,
+            "immuneSubset": 32.64
+          },
+          "damageTaken": 0,
+          "organDamage": 10,
+          "telegraphs": 0,
+          "maxLiving": 6,
+          "hpAtClear": 100,
+          "tissueAtClear": 88
+        },
+        {
+          "wave": 9,
+          "enteredAt": 110.75,
+          "combatAt": 112.75,
+          "clearedAt": 126.23333333333333,
+          "kills": 56,
+          "damage": {
+            "basic": 1172.96,
+            "protocol": 1163.04,
+            "ability": 0,
+            "immuneSubset": 0
+          },
+          "damageTaken": 0,
+          "organDamage": 14,
+          "telegraphs": 1,
+          "maxLiving": 8,
+          "hpAtClear": 100,
+          "tissueAtClear": 86
+        },
+        {
+          "wave": 10,
+          "enteredAt": 127.23333333333333,
+          "combatAt": 135.23333333333332,
+          "clearedAt": 150.85,
+          "kills": 26,
+          "damage": {
+            "basic": 942.48,
+            "protocol": 927.52,
+            "ability": 0,
+            "immuneSubset": 0
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 1,
+          "maxLiving": 3,
+          "hpAtClear": 100,
+          "tissueAtClear": 92
+        },
+        {
+          "wave": 11,
+          "enteredAt": 151.85,
+          "combatAt": 153.85,
+          "clearedAt": 169.95,
+          "kills": 28,
+          "damage": {
+            "basic": 932.96,
+            "protocol": 971.04,
+            "ability": 0,
+            "immuneSubset": 21.760000000000005
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 0,
+          "maxLiving": 3,
+          "hpAtClear": 100,
+          "tissueAtClear": 94
+        },
+        {
+          "wave": 12,
+          "enteredAt": 170.95,
+          "combatAt": 172.95,
+          "clearedAt": 189.1,
+          "kills": 28,
+          "damage": {
+            "basic": 816,
+            "protocol": 1088,
+            "ability": 0,
+            "immuneSubset": 0
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 0,
+          "maxLiving": 3,
+          "hpAtClear": 100,
+          "tissueAtClear": 94
+        }
+      ],
+      "eventCounts": {
+        "ENDLESS_WAVE_STARTED": 12,
+        "ACTOR_SPAWNED": 362,
+        "ENDLESS_REINFORCEMENTS": 80,
+        "TOOL_SELECTED": 146,
+        "SCAN_COMPLETED": 18,
+        "BATTLE_DIAGNOSED": 18,
+        "ORGAN_INTEGRITY_CHANGED": 36,
+        "PROTOCOL_BEACON_CREATED": 18,
+        "TOOL_FIRED": 337,
+        "TARGET_HIT": 497,
+        "AREA_DISPLACED": 8,
+        "TARGET_CLEARED": 362,
+        "PROTOCOL_BEACON_HIT": 20,
+        "ENDLESS_WAVE_CLEARED": 12,
+        "RUN_PAUSED": 12,
+        "INPUT_RESET_REQUESTED": 24,
+        "COMBAT_UPGRADE_COMMITTED": 12,
+        "RUN_RESUMED": 12,
+        "GROWTH_REWARD": 8,
+        "GROWTH_LEVEL_GAINED": 5,
+        "PREPARATION_REPAID": 1,
+        "ENDLESS_WAVE_WARNING": 11,
+        "TOOL_REJECTED": 20,
+        "PROTOCOL_DRAFT_OPENED": 6,
+        "PROTOCOL_EQUIPPED": 6,
+        "PROTOCOL_DRAFT_COMMITTED": 6,
+        "PROTOCOL_CHAIN_HIT": 164,
+        "PULSE_TRIGGERED": 6,
+        "COLLISION_BLOCKED": 8,
+        "ATTACK_TELEGRAPHED": 5,
+        "ENEMY_TACTIC_COMMITTED": 5,
+        "FISSION_WARNING": 68,
+        "ELITE_CLEARED": 2,
+        "FISSION_SPAWNED": 68,
+        "ENDLESS_PROTOCOL_REWARD_QUEUED": 2,
+        "PROTOCOL_RICOCHET_HIT": 25,
+        "PROTOCOL_TRACE_APPLIED": 4
+      },
+      "castOutcomes": {
+        "killed-during-windup": 5
+      }
+    },
+    {
+      "seed": 7,
+      "build": "immune",
+      "stop": "twelve-waves-cleared",
+      "error": null,
+      "elapsed": 205.7,
+      "phase": "playing",
+      "result": null,
+      "wave": 12,
+      "clearedWaves": 12,
+      "rawKills": 360,
+      "directorKills": 360,
+      "score": 9884,
+      "finalPlayerHp": 160,
+      "finalTissueHp": 100,
+      "cumulativePlayerDamage": 0,
+      "cumulativeTissueLoss": 81,
+      "damage": {
+        "basic": 13514.423999999999,
+        "protocol": 4464.144000000003,
+        "ability": 507.43199999999996,
+        "immuneSubset": 2803.232000000003
+      },
+      "damageHits": {
+        "basic": 408,
+        "protocol": 185,
+        "ability": 21,
+        "immuneSubset": 148
+      },
+      "toolDamage": {
+        "1": 9900.527999999998,
+        "2": 3613.8960000000006
+      },
+      "protocolDamage": {
+        "IMMUNE_BEACON": 2803.232000000003,
+        "PURIFY_CHAIN": 1660.912
+      },
+      "abilityDamage": {
+        "scan": 507.43199999999996
+      },
+      "killCauses": {
+        "protocol": 69,
+        "basic": 271,
+        "ability": 20
+      },
+      "playerDamageByReason": {},
+      "tissueLossByReason": {
+        "protocol-pressure": 57,
+        "pulse-pressure": 24
+      },
+      "acceptedMarkedImmuneBites": 82,
+      "maxLiving": 10,
+      "maxConcurrent": 2,
+      "maxCells": 3,
+      "shots": 363,
+      "scans": 57,
+      "dashes": 0,
+      "inputFrames": 12342,
+      "inputCounts": {
+        "movingFrames": 5279,
+        "fireTool2": 30,
+        "scanRequests": 57,
+        "fireTool1": 2785,
+        "interactRequests": 6
+      },
+      "inputSha256": "824929cf1ab288114d6f9c99c58bb15ccd9ae781e2e5bd2c6c16db46e77bc376",
+      "finalRanks": {
+        "immune": 2,
+        "vitality": 3,
+        "power": 3,
+        "scan": 4
+      },
+      "finalEquipped": [
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced",
+          "rank": 3
+        },
+        {
+          "id": "EXPOSE_TRACE",
+          "tuning": "balanced",
+          "rank": 3
+        },
+        {
+          "id": "PURIFY_CHAIN",
+          "tuning": "balanced"
+        }
+      ],
+      "waves": [
+        {
+          "wave": 1,
+          "enteredAt": 0,
+          "combatAt": 2,
+          "clearedAt": 7.3999999999999995,
+          "kills": 8,
+          "damage": {
+            "basic": 429,
+            "protocol": 115,
+            "ability": 0,
+            "immuneSubset": 115
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 0,
+          "maxLiving": 5,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 2,
+          "enteredAt": 8.4,
+          "combatAt": 10.4,
+          "clearedAt": 17.383333333333333,
+          "kills": 10,
+          "damage": {
+            "basic": 641.6,
+            "protocol": 38.400000000000006,
+            "ability": 0,
+            "immuneSubset": 38.400000000000006
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 0,
+          "maxLiving": 6,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 3,
+          "enteredAt": 18.383333333333333,
+          "combatAt": 26.383333333333333,
+          "clearedAt": 32.95,
+          "kills": 12,
+          "damage": {
+            "basic": 748,
+            "protocol": 68,
+            "ability": 0,
+            "immuneSubset": 68
+          },
+          "damageTaken": 0,
+          "organDamage": 7,
+          "telegraphs": 1,
+          "maxLiving": 6,
+          "hpAtClear": 120,
+          "tissueAtClear": 93
+        },
+        {
+          "wave": 4,
+          "enteredAt": 33.95,
+          "combatAt": 35.95,
+          "clearedAt": 45.7,
+          "kills": 14,
+          "damage": {
+            "basic": 856.152,
+            "protocol": 95.84800000000001,
+            "ability": 0,
+            "immuneSubset": 95.84800000000001
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 1,
+          "maxLiving": 6,
+          "hpAtClear": 120,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 5,
+          "enteredAt": 46.7,
+          "combatAt": 54.699999999999996,
+          "clearedAt": 65.76666666666667,
+          "kills": 38,
+          "damage": {
+            "basic": 1539.144,
+            "protocol": 78.85600000000001,
+            "ability": 22,
+            "immuneSubset": 78.85600000000001
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 1,
+          "maxLiving": 7,
+          "hpAtClear": 120,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 6,
+          "enteredAt": 66.76666666666667,
+          "combatAt": 68.76666666666667,
+          "clearedAt": 80.81666666666666,
+          "kills": 40,
+          "damage": {
+            "basic": 1458.688,
+            "protocol": 191.22400000000005,
+            "ability": 58.088,
+            "immuneSubset": 191.22400000000005
+          },
+          "damageTaken": 0,
+          "organDamage": 10,
+          "telegraphs": 2,
+          "maxLiving": 10,
+          "hpAtClear": 140,
+          "tissueAtClear": 90
+        },
+        {
+          "wave": 7,
+          "enteredAt": 81.81666666666666,
+          "combatAt": 83.81666666666666,
+          "clearedAt": 98.58333333333333,
+          "kills": 48,
+          "damage": {
+            "basic": 1186.8400000000001,
+            "protocol": 515.248,
+            "ability": 273.912,
+            "immuneSubset": 515.248
+          },
+          "damageTaken": 0,
+          "organDamage": 14,
+          "telegraphs": 2,
+          "maxLiving": 7,
+          "hpAtClear": 140,
+          "tissueAtClear": 86
+        },
+        {
+          "wave": 8,
+          "enteredAt": 99.58333333333333,
+          "combatAt": 101.58333333333333,
+          "clearedAt": 116.31666666666666,
+          "kills": 52,
+          "damage": {
+            "basic": 1728.368,
+            "protocol": 389.856,
+            "ability": 37.77600000000001,
+            "immuneSubset": 389.856
+          },
+          "damageTaken": 0,
+          "organDamage": 10,
+          "telegraphs": 2,
+          "maxLiving": 7,
+          "hpAtClear": 140,
+          "tissueAtClear": 88
+        },
+        {
+          "wave": 9,
+          "enteredAt": 117.31666666666666,
+          "combatAt": 119.31666666666666,
+          "clearedAt": 136.23333333333332,
+          "kills": 56,
+          "damage": {
+            "basic": 1788.032,
+            "protocol": 504.448,
+            "ability": 43.52000000000001,
+            "immuneSubset": 504.448
+          },
+          "damageTaken": 0,
+          "organDamage": 10,
+          "telegraphs": 2,
+          "maxLiving": 8,
+          "hpAtClear": 160,
+          "tissueAtClear": 90
+        },
+        {
+          "wave": 10,
+          "enteredAt": 137.23333333333332,
+          "combatAt": 145.23333333333332,
+          "clearedAt": 164.58333333333334,
+          "kills": 26,
+          "damage": {
+            "basic": 1456.0159999999998,
+            "protocol": 376.448,
+            "ability": 37.536000000000016,
+            "immuneSubset": 376.448
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 3,
+          "maxLiving": 6,
+          "hpAtClear": 160,
+          "tissueAtClear": 94
+        },
+        {
+          "wave": 11,
+          "enteredAt": 165.58333333333334,
+          "combatAt": 167.58333333333334,
+          "clearedAt": 184.26666666666665,
+          "kills": 28,
+          "damage": {
+            "basic": 671.5840000000001,
+            "protocol": 1216.776,
+            "ability": 15.64,
+            "immuneSubset": 194.62399999999994
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 2,
+          "maxLiving": 6,
+          "hpAtClear": 160,
+          "tissueAtClear": 94
+        },
+        {
+          "wave": 12,
+          "enteredAt": 185.26666666666665,
+          "combatAt": 187.26666666666665,
+          "clearedAt": 205.7,
+          "kills": 28,
+          "damage": {
+            "basic": 1011.0000000000001,
+            "protocol": 874.04,
+            "ability": 18.959999999999994,
+            "immuneSubset": 235.27999999999997
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 1,
+          "maxLiving": 6,
+          "hpAtClear": 160,
+          "tissueAtClear": 94
+        }
+      ],
+      "eventCounts": {
+        "ENDLESS_WAVE_STARTED": 12,
+        "ACTOR_SPAWNED": 360,
+        "ENDLESS_REINFORCEMENTS": 80,
+        "TOOL_SELECTED": 66,
+        "SCAN_COMPLETED": 57,
+        "BATTLE_DIAGNOSED": 57,
+        "ORGAN_INTEGRITY_CHANGED": 37,
+        "PROTOCOL_BEACON_CREATED": 19,
+        "TOOL_FIRED": 363,
+        "TARGET_HIT": 614,
+        "AREA_DISPLACED": 6,
+        "TARGET_CLEARED": 360,
+        "PROTOCOL_BEACON_HIT": 149,
+        "IMMUNE_SQUAD_REDIRECTED": 36,
+        "ENDLESS_WAVE_CLEARED": 12,
+        "RUN_PAUSED": 12,
+        "INPUT_RESET_REQUESTED": 24,
+        "COMBAT_UPGRADE_COMMITTED": 12,
+        "RUN_RESUMED": 12,
+        "GROWTH_REWARD": 8,
+        "GROWTH_LEVEL_GAINED": 5,
+        "PREPARATION_REPAID": 1,
+        "ENDLESS_WAVE_WARNING": 11,
+        "PROTOCOL_DRAFT_OPENED": 6,
+        "PROTOCOL_EQUIPPED": 6,
+        "PROTOCOL_DRAFT_COMMITTED": 6,
+        "ATTACK_TELEGRAPHED": 17,
+        "ENEMY_TACTIC_COMMITTED": 17,
+        "PULSE_TRIGGERED": 6,
+        "PROTOCOL_TRACE_APPLIED": 46,
+        "COMBAT_ABILITY_TRIGGERED": 46,
+        "PROTOCOL_SYNERGY": 82,
+        "ELITE_CLEARED": 2,
+        "FISSION_WARNING": 67,
+        "FISSION_SPAWNED": 67,
+        "ENDLESS_PROTOCOL_REWARD_QUEUED": 2,
+        "COLLISION_BLOCKED": 1,
+        "PROTOCOL_CHAIN_HIT": 37
+      },
+      "castOutcomes": {
+        "killed-during-windup": 17
+      }
+    },
+    {
+      "seed": 71,
+      "build": "shooting",
+      "stop": "twelve-waves-cleared",
+      "error": null,
+      "elapsed": 187.06666666666666,
+      "phase": "playing",
+      "result": null,
+      "wave": 12,
+      "clearedWaves": 12,
+      "rawKills": 338,
+      "directorKills": 338,
+      "score": 9720,
+      "finalPlayerHp": 100,
+      "finalTissueHp": 100,
+      "cumulativePlayerDamage": 0,
+      "cumulativeTissueLoss": 66,
+      "damage": {
+        "basic": 9667.283999999994,
+        "protocol": 8334.716000000002,
+        "ability": 0,
+        "immuneSubset": 656.6679999999999
+      },
+      "damageHits": {
+        "basic": 362,
+        "protocol": 223,
+        "ability": 0,
+        "immuneSubset": 45
+      },
+      "toolDamage": {
+        "1": 9522.371999999994,
+        "2": 144.912
+      },
+      "protocolDamage": {
+        "IMMUNE_BEACON": 656.6679999999999,
+        "PURIFY_CHAIN": 7678.048000000001
+      },
+      "abilityDamage": {},
+      "killCauses": {
+        "basic": 164,
+        "protocol": 174
+      },
+      "playerDamageByReason": {},
+      "tissueLossByReason": {
+        "protocol-pressure": 54,
+        "pulse-pressure": 12
+      },
+      "acceptedMarkedImmuneBites": 0,
+      "maxLiving": 6,
+      "maxConcurrent": 2,
+      "maxCells": 3,
+      "shots": 364,
+      "scans": 18,
+      "dashes": 1,
+      "inputFrames": 11224,
+      "inputCounts": {
+        "movingFrames": 3590,
+        "fireTool1": 3195,
+        "scanRequests": 18,
+        "interactRequests": 3,
+        "dashRequests": 1,
+        "fireTool2": 2
+      },
+      "inputSha256": "5c8e9332f17142ea3bc179959fe2aab3e254d22abbf0661b51f5e7f522d8343f",
+      "finalRanks": {
+        "multishot": 2,
+        "power": 6,
+        "pierce": 2,
+        "nova": 1,
+        "scan": 1
+      },
+      "finalEquipped": [
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced",
+          "rank": 3
+        },
+        {
+          "id": "PURIFY_CHAIN",
+          "tuning": "balanced",
+          "rank": 3
+        },
+        {
+          "id": "EXPOSE_TRACE",
+          "tuning": "balanced"
+        }
+      ],
+      "waves": [
+        {
+          "wave": 1,
+          "enteredAt": 0,
+          "combatAt": 2,
+          "clearedAt": 6.766666666666667,
+          "kills": 8,
+          "damage": {
+            "basic": 488,
+            "protocol": 56,
+            "ability": 0,
+            "immuneSubset": 56
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 0,
+          "maxLiving": 5,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 2,
+          "enteredAt": 7.766666666666667,
+          "combatAt": 9.766666666666666,
+          "clearedAt": 15.233333333333333,
+          "kills": 10,
+          "damage": {
+            "basic": 648,
+            "protocol": 32,
+            "ability": 0,
+            "immuneSubset": 32
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 0,
+          "maxLiving": 5,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 3,
+          "enteredAt": 16.233333333333334,
+          "combatAt": 24.233333333333334,
+          "clearedAt": 30.766666666666666,
+          "kills": 12,
+          "damage": {
+            "basic": 404.76000000000005,
+            "protocol": 411.24,
+            "ability": 0,
+            "immuneSubset": 0
+          },
+          "damageTaken": 0,
+          "organDamage": 7,
+          "telegraphs": 0,
+          "maxLiving": 6,
+          "hpAtClear": 100,
+          "tissueAtClear": 93
+        },
+        {
+          "wave": 4,
+          "enteredAt": 31.766666666666666,
+          "combatAt": 33.766666666666666,
+          "clearedAt": 42.35,
+          "kills": 14,
+          "damage": {
+            "basic": 656.4,
+            "protocol": 295.59999999999997,
+            "ability": 0,
+            "immuneSubset": 9.44
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 0,
+          "maxLiving": 4,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 5,
+          "enteredAt": 43.35,
+          "combatAt": 51.35,
+          "clearedAt": 60.6,
+          "kills": 16,
+          "damage": {
+            "basic": 414.028,
+            "protocol": 741.972,
+            "ability": 0,
+            "immuneSubset": 66.07999999999998
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 2,
+          "maxLiving": 6,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 6,
+          "enteredAt": 61.6,
+          "combatAt": 63.6,
+          "clearedAt": 73.7,
+          "kills": 18,
+          "damage": {
+            "basic": 606.8720000000001,
+            "protocol": 617.128,
+            "ability": 0,
+            "immuneSubset": 37.75999999999999
+          },
+          "damageTaken": 0,
+          "organDamage": 7,
+          "telegraphs": 1,
+          "maxLiving": 4,
+          "hpAtClear": 100,
+          "tissueAtClear": 93
+        },
+        {
+          "wave": 7,
+          "enteredAt": 74.7,
+          "combatAt": 76.7,
+          "clearedAt": 89.06666666666666,
+          "kills": 20,
+          "damage": {
+            "basic": 476.81600000000026,
+            "protocol": 883.1840000000001,
+            "ability": 0,
+            "immuneSubset": 83.77600000000001
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 1,
+          "maxLiving": 4,
+          "hpAtClear": 100,
+          "tissueAtClear": 94
+        },
+        {
+          "wave": 8,
+          "enteredAt": 90.06666666666666,
+          "combatAt": 92.06666666666666,
+          "clearedAt": 105.45,
+          "kills": 22,
+          "damage": {
+            "basic": 873.7999999999995,
+            "protocol": 622.1999999999999,
+            "ability": 0,
+            "immuneSubset": 57.32400000000001
+          },
+          "damageTaken": 0,
+          "organDamage": 10,
+          "telegraphs": 1,
+          "maxLiving": 5,
+          "hpAtClear": 100,
+          "tissueAtClear": 90
+        },
+        {
+          "wave": 9,
+          "enteredAt": 106.45,
+          "combatAt": 108.45,
+          "clearedAt": 121.41666666666667,
+          "kills": 24,
+          "damage": {
+            "basic": 666.8079999999998,
+            "protocol": 965.1920000000001,
+            "ability": 0,
+            "immuneSubset": 15.36800000000001
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 1,
+          "maxLiving": 5,
+          "hpAtClear": 100,
+          "tissueAtClear": 94
+        },
+        {
+          "wave": 10,
+          "enteredAt": 122.41666666666667,
+          "combatAt": 130.41666666666666,
+          "clearedAt": 147.03333333333333,
+          "kills": 62,
+          "damage": {
+            "basic": 1538.4,
+            "protocol": 1123.6,
+            "ability": 0,
+            "immuneSubset": 53.52
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 2,
+          "maxLiving": 5,
+          "hpAtClear": 100,
+          "tissueAtClear": 94
+        },
+        {
+          "wave": 11,
+          "enteredAt": 148.03333333333333,
+          "combatAt": 150.03333333333333,
+          "clearedAt": 167,
+          "kills": 66,
+          "damage": {
+            "basic": 1703.3999999999999,
+            "protocol": 1036.6,
+            "ability": 0,
+            "immuneSubset": 157.4
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 1,
+          "maxLiving": 4,
+          "hpAtClear": 100,
+          "tissueAtClear": 94
+        },
+        {
+          "wave": 12,
+          "enteredAt": 168,
+          "combatAt": 170,
+          "clearedAt": 187.06666666666666,
+          "kills": 66,
+          "damage": {
+            "basic": 1190,
+            "protocol": 1550,
+            "ability": 0,
+            "immuneSubset": 88
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 0,
+          "maxLiving": 5,
+          "hpAtClear": 100,
+          "tissueAtClear": 94
+        }
+      ],
+      "eventCounts": {
+        "ENDLESS_WAVE_STARTED": 12,
+        "ACTOR_SPAWNED": 338,
+        "ENDLESS_REINFORCEMENTS": 80,
+        "SCAN_COMPLETED": 18,
+        "BATTLE_DIAGNOSED": 18,
+        "ORGAN_INTEGRITY_CHANGED": 33,
+        "PROTOCOL_BEACON_CREATED": 18,
+        "TARGET_HIT": 585,
+        "TOOL_FIRED": 364,
+        "TARGET_CLEARED": 338,
+        "PROTOCOL_BEACON_HIT": 46,
+        "ENDLESS_WAVE_CLEARED": 12,
+        "RUN_PAUSED": 12,
+        "INPUT_RESET_REQUESTED": 24,
+        "COMBAT_UPGRADE_COMMITTED": 12,
+        "RUN_RESUMED": 12,
+        "GROWTH_REWARD": 8,
+        "GROWTH_LEVEL_GAINED": 5,
+        "PREPARATION_REPAID": 1,
+        "ENDLESS_WAVE_WARNING": 11,
+        "COLLISION_BLOCKED": 3,
+        "PROTOCOL_DRAFT_OPENED": 6,
+        "PROTOCOL_EQUIPPED": 6,
+        "PROTOCOL_DRAFT_COMMITTED": 6,
+        "PROTOCOL_CHAIN_HIT": 124,
+        "PULSE_TRIGGERED": 3,
+        "CARAPACE_RESISTED": 131,
+        "ATTACK_TELEGRAPHED": 9,
+        "ENEMY_TACTIC_COMMITTED": 9,
+        "PROTOCOL_RICOCHET_HIT": 54,
+        "PLAYER_DASHED": 1,
+        "ELITE_CLEARED": 2,
+        "ENEMY_TACTIC_RESOLVED": 1,
+        "ENDLESS_PROTOCOL_REWARD_QUEUED": 2,
+        "TOOL_SELECTED": 4,
+        "FISSION_WARNING": 56,
+        "FISSION_SPAWNED": 56,
+        "PROTOCOL_TRACE_APPLIED": 4
+      },
+      "castOutcomes": {
+        "killed-during-windup": 8,
+        "resolved": 1
+      }
+    },
+    {
+      "seed": 71,
+      "build": "area",
+      "stop": "twelve-waves-cleared",
+      "error": null,
+      "elapsed": 185.93333333333334,
+      "phase": "playing",
+      "result": null,
+      "wave": 12,
+      "clearedWaves": 12,
+      "rawKills": 338,
+      "directorKills": 338,
+      "score": 9528,
+      "finalPlayerHp": 100,
+      "finalTissueHp": 100,
+      "cumulativePlayerDamage": 0,
+      "cumulativeTissueLoss": 70,
+      "damage": {
+        "basic": 9229.737999999994,
+        "protocol": 8772.262,
+        "ability": 0,
+        "immuneSubset": 512.592
+      },
+      "damageHits": {
+        "basic": 322,
+        "protocol": 221,
+        "ability": 0,
+        "immuneSubset": 30
+      },
+      "toolDamage": {
+        "1": 5168.035999999997,
+        "2": 4061.702
+      },
+      "protocolDamage": {
+        "IMMUNE_BEACON": 512.592,
+        "PURIFY_CHAIN": 8259.669999999998
+      },
+      "abilityDamage": {},
+      "killCauses": {
+        "basic": 182,
+        "protocol": 156
+      },
+      "playerDamageByReason": {},
+      "tissueLossByReason": {
+        "protocol-pressure": 54,
+        "pulse-pressure": 16
+      },
+      "acceptedMarkedImmuneBites": 1,
+      "maxLiving": 7,
+      "maxConcurrent": 1,
+      "maxCells": 3,
+      "shots": 336,
+      "scans": 18,
+      "dashes": 0,
+      "inputFrames": 11156,
+      "inputCounts": {
+        "movingFrames": 3110,
+        "fireTool2": 84,
+        "scanRequests": 18,
+        "fireTool1": 2144,
+        "interactRequests": 4
+      },
+      "inputSha256": "6a9e208a8d6ca4f500efa7f62c86927cfcd534b90205ceb28e511e04763181e5",
+      "finalRanks": {
+        "multishot": 1,
+        "nova": 3,
+        "immune": 1,
+        "haste": 1,
+        "scan": 1,
+        "power": 4,
+        "pierce": 1
+      },
+      "finalEquipped": [
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced",
+          "rank": 3
+        },
+        {
+          "id": "PURIFY_CHAIN",
+          "tuning": "balanced",
+          "rank": 3
+        },
+        {
+          "id": "EXPOSE_TRACE",
+          "tuning": "balanced"
+        }
+      ],
+      "waves": [
+        {
+          "wave": 1,
+          "enteredAt": 0,
+          "combatAt": 2,
+          "clearedAt": 6.783333333333333,
+          "kills": 8,
+          "damage": {
+            "basic": 520,
+            "protocol": 24,
+            "ability": 0,
+            "immuneSubset": 24
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 0,
+          "maxLiving": 4,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 2,
+          "enteredAt": 7.783333333333333,
+          "combatAt": 9.783333333333333,
+          "clearedAt": 15.083333333333334,
+          "kills": 10,
+          "damage": {
+            "basic": 656,
+            "protocol": 24,
+            "ability": 0,
+            "immuneSubset": 24
+          },
+          "damageTaken": 0,
+          "organDamage": 7,
+          "telegraphs": 0,
+          "maxLiving": 4,
+          "hpAtClear": 100,
+          "tissueAtClear": 93
+        },
+        {
+          "wave": 3,
+          "enteredAt": 16.083333333333332,
+          "combatAt": 24.083333333333332,
+          "clearedAt": 30.45,
+          "kills": 12,
+          "damage": {
+            "basic": 528,
+            "protocol": 288,
+            "ability": 0,
+            "immuneSubset": 0
+          },
+          "damageTaken": 0,
+          "organDamage": 7,
+          "telegraphs": 0,
+          "maxLiving": 6,
+          "hpAtClear": 100,
+          "tissueAtClear": 93
+        },
+        {
+          "wave": 4,
+          "enteredAt": 31.45,
+          "combatAt": 33.45,
+          "clearedAt": 41.666666666666664,
+          "kills": 14,
+          "damage": {
+            "basic": 596,
+            "protocol": 356,
+            "ability": 0,
+            "immuneSubset": 0
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 0,
+          "maxLiving": 3,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 5,
+          "enteredAt": 42.666666666666664,
+          "combatAt": 50.666666666666664,
+          "clearedAt": 59.93333333333333,
+          "kills": 16,
+          "damage": {
+            "basic": 584.5500000000002,
+            "protocol": 571.45,
+            "ability": 0,
+            "immuneSubset": 32.6
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 1,
+          "maxLiving": 5,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 6,
+          "enteredAt": 60.93333333333333,
+          "combatAt": 62.93333333333333,
+          "clearedAt": 72.91666666666667,
+          "kills": 18,
+          "damage": {
+            "basic": 674.8,
+            "protocol": 549.2,
+            "ability": 0,
+            "immuneSubset": 34
+          },
+          "damageTaken": 0,
+          "organDamage": 7,
+          "telegraphs": 1,
+          "maxLiving": 5,
+          "hpAtClear": 100,
+          "tissueAtClear": 93
+        },
+        {
+          "wave": 7,
+          "enteredAt": 73.91666666666667,
+          "combatAt": 75.91666666666667,
+          "clearedAt": 87.93333333333334,
+          "kills": 20,
+          "damage": {
+            "basic": 483,
+            "protocol": 877,
+            "ability": 0,
+            "immuneSubset": 34
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 0,
+          "maxLiving": 3,
+          "hpAtClear": 100,
+          "tissueAtClear": 94
+        },
+        {
+          "wave": 8,
+          "enteredAt": 88.93333333333334,
+          "combatAt": 90.93333333333334,
+          "clearedAt": 104.88333333333333,
+          "kills": 22,
+          "damage": {
+            "basic": 718.3919999999999,
+            "protocol": 777.6080000000001,
+            "ability": 0,
+            "immuneSubset": 0
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 1,
+          "maxLiving": 5,
+          "hpAtClear": 100,
+          "tissueAtClear": 94
+        },
+        {
+          "wave": 9,
+          "enteredAt": 105.88333333333333,
+          "combatAt": 107.88333333333333,
+          "clearedAt": 120.31666666666666,
+          "kills": 24,
+          "damage": {
+            "basic": 645.7280000000001,
+            "protocol": 986.2719999999999,
+            "ability": 0,
+            "immuneSubset": 0
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 1,
+          "maxLiving": 4,
+          "hpAtClear": 100,
+          "tissueAtClear": 94
+        },
+        {
+          "wave": 10,
+          "enteredAt": 121.31666666666666,
+          "combatAt": 129.31666666666666,
+          "clearedAt": 145.85,
+          "kills": 62,
+          "damage": {
+            "basic": 1320.66,
+            "protocol": 1341.34,
+            "ability": 0,
+            "immuneSubset": 109.76
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 0,
+          "maxLiving": 7,
+          "hpAtClear": 100,
+          "tissueAtClear": 94
+        },
+        {
+          "wave": 11,
+          "enteredAt": 146.85,
+          "combatAt": 148.85,
+          "clearedAt": 165.8,
+          "kills": 66,
+          "damage": {
+            "basic": 1265.152,
+            "protocol": 1474.8480000000002,
+            "ability": 0,
+            "immuneSubset": 155.20799999999997
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 0,
+          "maxLiving": 6,
+          "hpAtClear": 100,
+          "tissueAtClear": 94
+        },
+        {
+          "wave": 12,
+          "enteredAt": 166.8,
+          "combatAt": 168.8,
+          "clearedAt": 185.93333333333334,
+          "kills": 66,
+          "damage": {
+            "basic": 1237.4560000000001,
+            "protocol": 1502.5439999999999,
+            "ability": 0,
+            "immuneSubset": 99.024
+          },
+          "damageTaken": 0,
+          "organDamage": 10,
+          "telegraphs": 0,
+          "maxLiving": 7,
+          "hpAtClear": 100,
+          "tissueAtClear": 90
+        }
+      ],
+      "eventCounts": {
+        "ENDLESS_WAVE_STARTED": 12,
+        "ACTOR_SPAWNED": 338,
+        "ENDLESS_REINFORCEMENTS": 80,
+        "TOOL_SELECTED": 167,
+        "SCAN_COMPLETED": 18,
+        "BATTLE_DIAGNOSED": 18,
+        "ORGAN_INTEGRITY_CHANGED": 34,
+        "PROTOCOL_BEACON_CREATED": 18,
+        "TOOL_FIRED": 336,
+        "TARGET_HIT": 543,
+        "AREA_DISPLACED": 9,
+        "TARGET_CLEARED": 338,
+        "PROTOCOL_BEACON_HIT": 30,
+        "ENDLESS_WAVE_CLEARED": 12,
+        "RUN_PAUSED": 12,
+        "INPUT_RESET_REQUESTED": 24,
+        "COMBAT_UPGRADE_COMMITTED": 12,
+        "RUN_RESUMED": 12,
+        "GROWTH_REWARD": 8,
+        "GROWTH_LEVEL_GAINED": 5,
+        "PREPARATION_REPAID": 1,
+        "ENDLESS_WAVE_WARNING": 11,
+        "PULSE_TRIGGERED": 4,
+        "TOOL_REJECTED": 9,
+        "PROTOCOL_DRAFT_OPENED": 6,
+        "PROTOCOL_EQUIPPED": 6,
+        "PROTOCOL_DRAFT_COMMITTED": 6,
+        "PROTOCOL_CHAIN_HIT": 156,
+        "COLLISION_BLOCKED": 1,
+        "CARAPACE_RESISTED": 89,
+        "PROTOCOL_RICOCHET_HIT": 35,
+        "ATTACK_TELEGRAPHED": 4,
+        "ENEMY_TACTIC_COMMITTED": 4,
+        "ELITE_CLEARED": 2,
+        "ENDLESS_PROTOCOL_REWARD_QUEUED": 2,
+        "COMBAT_ABILITY_TRIGGERED": 13,
+        "FISSION_WARNING": 56,
+        "FISSION_SPAWNED": 56,
+        "PROTOCOL_TRACE_APPLIED": 4,
+        "PROTOCOL_SYNERGY": 1
+      },
+      "castOutcomes": {
+        "killed-during-windup": 4
+      }
+    },
+    {
+      "seed": 71,
+      "build": "immune",
+      "stop": "twelve-waves-cleared",
+      "error": null,
+      "elapsed": 212.08333333333334,
+      "phase": "playing",
+      "result": null,
+      "wave": 12,
+      "clearedWaves": 12,
+      "rawKills": 334,
+      "directorKills": 334,
+      "score": 9806,
+      "finalPlayerHp": 140,
+      "finalTissueHp": 99,
+      "cumulativePlayerDamage": 0,
+      "cumulativeTissueLoss": 93,
+      "damage": {
+        "basic": 10527.035999999993,
+        "protocol": 6040.087999999997,
+        "ability": 1346.8760000000004,
+        "immuneSubset": 3655.863999999999
+      },
+      "damageHits": {
+        "basic": 406,
+        "protocol": 228,
+        "ability": 33,
+        "immuneSubset": 158
+      },
+      "toolDamage": {
+        "1": 8172.871999999985,
+        "2": 2354.1639999999998
+      },
+      "protocolDamage": {
+        "IMMUNE_BEACON": 3655.863999999999,
+        "PURIFY_CHAIN": 2384.2239999999997
+      },
+      "abilityDamage": {
+        "scan": 1346.8760000000004
+      },
+      "killCauses": {
+        "basic": 189,
+        "protocol": 116,
+        "ability": 29
+      },
+      "playerDamageByReason": {},
+      "tissueLossByReason": {
+        "protocol-pressure": 69,
+        "pulse-pressure": 24
+      },
+      "acceptedMarkedImmuneBites": 90,
+      "maxLiving": 9,
+      "maxConcurrent": 2,
+      "maxCells": 3,
+      "shots": 416,
+      "scans": 71,
+      "dashes": 1,
+      "inputFrames": 12725,
+      "inputCounts": {
+        "movingFrames": 5884,
+        "fireTool1": 3610,
+        "scanRequests": 71,
+        "fireTool2": 19,
+        "interactRequests": 6,
+        "dashRequests": 1
+      },
+      "inputSha256": "1184f1fa35821147a8b329ca37bb34860b38b39b443327507f5f2dbe67113620",
+      "finalRanks": {
+        "immune": 3,
+        "scan": 3,
+        "power": 4,
+        "vitality": 2
+      },
+      "finalEquipped": [
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced",
+          "rank": 3
+        },
+        {
+          "id": "EXPOSE_TRACE",
+          "tuning": "balanced",
+          "rank": 3
+        },
+        {
+          "id": "PURIFY_CHAIN",
+          "tuning": "balanced"
+        }
+      ],
+      "waves": [
+        {
+          "wave": 1,
+          "enteredAt": 0,
+          "combatAt": 2,
+          "clearedAt": 7.583333333333333,
+          "kills": 8,
+          "damage": {
+            "basic": 432,
+            "protocol": 112,
+            "ability": 0,
+            "immuneSubset": 112
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 0,
+          "maxLiving": 6,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 2,
+          "enteredAt": 8.583333333333334,
+          "combatAt": 10.583333333333334,
+          "clearedAt": 16.866666666666667,
+          "kills": 10,
+          "damage": {
+            "basic": 651.2,
+            "protocol": 28.800000000000004,
+            "ability": 0,
+            "immuneSubset": 28.800000000000004
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 0,
+          "maxLiving": 6,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 3,
+          "enteredAt": 17.866666666666667,
+          "combatAt": 25.866666666666667,
+          "clearedAt": 33.85,
+          "kills": 12,
+          "damage": {
+            "basic": 763.8000000000001,
+            "protocol": 52.199999999999996,
+            "ability": 0,
+            "immuneSubset": 52.199999999999996
+          },
+          "damageTaken": 0,
+          "organDamage": 7,
+          "telegraphs": 1,
+          "maxLiving": 6,
+          "hpAtClear": 100,
+          "tissueAtClear": 93
+        },
+        {
+          "wave": 4,
+          "enteredAt": 34.85,
+          "combatAt": 36.85,
+          "clearedAt": 46.733333333333334,
+          "kills": 14,
+          "damage": {
+            "basic": 817.2,
+            "protocol": 134.79999999999998,
+            "ability": 0,
+            "immuneSubset": 134.79999999999998
+          },
+          "damageTaken": 0,
+          "organDamage": 3,
+          "telegraphs": 0,
+          "maxLiving": 6,
+          "hpAtClear": 100,
+          "tissueAtClear": 97
+        },
+        {
+          "wave": 5,
+          "enteredAt": 47.733333333333334,
+          "combatAt": 55.733333333333334,
+          "clearedAt": 66.76666666666667,
+          "kills": 16,
+          "damage": {
+            "basic": 803.7999999999998,
+            "protocol": 275.1999999999999,
+            "ability": 77,
+            "immuneSubset": 275.1999999999999
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 3,
+          "maxLiving": 7,
+          "hpAtClear": 100,
+          "tissueAtClear": 94
+        },
+        {
+          "wave": 6,
+          "enteredAt": 67.76666666666667,
+          "combatAt": 69.76666666666667,
+          "clearedAt": 84.26666666666667,
+          "kills": 18,
+          "damage": {
+            "basic": 847.6000000000001,
+            "protocol": 127.2,
+            "ability": 249.2,
+            "immuneSubset": 127.2
+          },
+          "damageTaken": 0,
+          "organDamage": 10,
+          "telegraphs": 2,
+          "maxLiving": 8,
+          "hpAtClear": 100,
+          "tissueAtClear": 90
+        },
+        {
+          "wave": 7,
+          "enteredAt": 85.26666666666667,
+          "combatAt": 87.26666666666667,
+          "clearedAt": 101.51666666666667,
+          "kills": 20,
+          "damage": {
+            "basic": 807.74,
+            "protocol": 352.712,
+            "ability": 199.548,
+            "immuneSubset": 352.712
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 2,
+          "maxLiving": 6,
+          "hpAtClear": 100,
+          "tissueAtClear": 94
+        },
+        {
+          "wave": 8,
+          "enteredAt": 102.51666666666667,
+          "combatAt": 104.51666666666667,
+          "clearedAt": 122.39999999999999,
+          "kills": 22,
+          "damage": {
+            "basic": 1062.7039999999995,
+            "protocol": 259.76000000000005,
+            "ability": 173.536,
+            "immuneSubset": 259.76000000000005
+          },
+          "damageTaken": 0,
+          "organDamage": 17,
+          "telegraphs": 2,
+          "maxLiving": 8,
+          "hpAtClear": 100,
+          "tissueAtClear": 83
+        },
+        {
+          "wave": 9,
+          "enteredAt": 123.39999999999999,
+          "combatAt": 125.39999999999999,
+          "clearedAt": 140.35,
+          "kills": 24,
+          "damage": {
+            "basic": 441.504,
+            "protocol": 853.3360000000001,
+            "ability": 337.15999999999997,
+            "immuneSubset": 853.3360000000001
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 1,
+          "maxLiving": 8,
+          "hpAtClear": 100,
+          "tissueAtClear": 89
+        },
+        {
+          "wave": 10,
+          "enteredAt": 141.35,
+          "combatAt": 149.35,
+          "clearedAt": 169.08333333333334,
+          "kills": 58,
+          "damage": {
+            "basic": 1822.2319999999997,
+            "protocol": 650.616,
+            "ability": 101.15199999999999,
+            "immuneSubset": 650.616
+          },
+          "damageTaken": 0,
+          "organDamage": 13,
+          "telegraphs": 3,
+          "maxLiving": 9,
+          "hpAtClear": 100,
+          "tissueAtClear": 87
+        },
+        {
+          "wave": 11,
+          "enteredAt": 170.08333333333334,
+          "combatAt": 172.08333333333334,
+          "clearedAt": 190.68333333333334,
+          "kills": 66,
+          "damage": {
+            "basic": 942.6960000000001,
+            "protocol": 1661.304,
+            "ability": 136,
+            "immuneSubset": 652.568
+          },
+          "damageTaken": 0,
+          "organDamage": 6,
+          "telegraphs": 2,
+          "maxLiving": 6,
+          "hpAtClear": 120,
+          "tissueAtClear": 93
+        },
+        {
+          "wave": 12,
+          "enteredAt": 191.68333333333334,
+          "combatAt": 193.68333333333334,
+          "clearedAt": 212.08333333333334,
+          "kills": 66,
+          "damage": {
+            "basic": 1134.56,
+            "protocol": 1532.1599999999999,
+            "ability": 73.28,
+            "immuneSubset": 156.67200000000003
+          },
+          "damageTaken": 0,
+          "organDamage": 13,
+          "telegraphs": 2,
+          "maxLiving": 8,
+          "hpAtClear": 120,
+          "tissueAtClear": 87
+        }
+      ],
+      "eventCounts": {
+        "ENDLESS_WAVE_STARTED": 12,
+        "ACTOR_SPAWNED": 334,
+        "ENDLESS_REINFORCEMENTS": 80,
+        "SCAN_COMPLETED": 71,
+        "BATTLE_DIAGNOSED": 71,
+        "ORGAN_INTEGRITY_CHANGED": 41,
+        "PROTOCOL_BEACON_CREATED": 23,
+        "TARGET_HIT": 667,
+        "TOOL_FIRED": 416,
+        "PROTOCOL_BEACON_HIT": 159,
+        "TOOL_SELECTED": 50,
+        "TARGET_CLEARED": 334,
+        "IMMUNE_SQUAD_REDIRECTED": 48,
+        "ENDLESS_WAVE_CLEARED": 12,
+        "RUN_PAUSED": 12,
+        "INPUT_RESET_REQUESTED": 24,
+        "COMBAT_UPGRADE_COMMITTED": 12,
+        "RUN_RESUMED": 12,
+        "GROWTH_REWARD": 8,
+        "GROWTH_LEVEL_GAINED": 5,
+        "PREPARATION_REPAID": 1,
+        "ENDLESS_WAVE_WARNING": 11,
+        "AREA_DISPLACED": 18,
+        "PROTOCOL_DRAFT_OPENED": 6,
+        "PROTOCOL_EQUIPPED": 6,
+        "PROTOCOL_DRAFT_COMMITTED": 6,
+        "COMBAT_ABILITY_TRIGGERED": 66,
+        "ATTACK_TELEGRAPHED": 18,
+        "ENEMY_TACTIC_COMMITTED": 18,
+        "PULSE_TRIGGERED": 6,
+        "PROTOCOL_TRACE_APPLIED": 60,
+        "CARAPACE_RESISTED": 130,
+        "PROTOCOL_SYNERGY": 90,
+        "PLAYER_DASHED": 1,
+        "ELITE_CLEARED": 2,
+        "ENEMY_TACTIC_RESOLVED": 3,
+        "COLLISION_BLOCKED": 2,
+        "ENDLESS_PROTOCOL_REWARD_QUEUED": 2,
+        "FISSION_WARNING": 54,
+        "FISSION_SPAWNED": 54,
+        "PROTOCOL_CHAIN_HIT": 70,
+        "TOOL_REJECTED": 1
+      },
+      "castOutcomes": {
+        "killed-during-windup": 15,
+        "resolved": 3
+      }
+    }
+  ]
+}

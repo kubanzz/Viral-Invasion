@@ -1,0 +1,606 @@
+{
+  "schemaVersion": 1,
+  "measuredAtUtc": "2026-10-27T15:12:59.983Z",
+  "purpose": "Real GameSession stationary precision-only pressure baseline; gameplay simulation,not a browser/performance/human-fun acceptance.",
+  "command": "node .tools/endless-pressure-baseline.mjs",
+  "strategy": {
+    "movement": false,
+    "attacks": "tool1 held,aim nearest unobstructed living target every tick",
+    "unused": [
+      "Q",
+      "tool2",
+      "tool3",
+      "dash",
+      "interact"
+    ],
+    "combatUpgradePriority": [
+      "multishot",
+      "power",
+      "haste",
+      "pierce",
+      "vitality",
+      "immune",
+      "nova",
+      "dash",
+      "scan"
+    ],
+    "protocolDrafts": "Public discardDraft; initial IMMUNE_BEACON remains inactive because Q is never used.",
+    "stop": "10 actual completed waves,real failure,or120 simulation seconds on one wave; no automatic wall navigation.",
+    "mutationScope": "Only public GameSession start/step/discardDraft/chooseCombatUpgrade/resume actions; no HP,world,target,position,wave,clock or equipment-state injection."
+  },
+  "fingerprints": [
+    {
+      "path": "src/game/session.ts",
+      "sha256": "d8f0d0c839bdd386236577016dd3d45bb5fa396e19586348b9b9828997b7bdf1"
+    },
+    {
+      "path": "src/game/battle.ts",
+      "sha256": "bfafda15e7652089c2c6542e4bab5f79fb65b9cb8003677d2a7f9ef89212d3b2"
+    },
+    {
+      "path": "src/game/endless.ts",
+      "sha256": "542aa6a3fcf7a557c10cc1558a81bd9051c8456c28b0d29d81b8a7aa541e1e04"
+    },
+    {
+      "path": "src/game/endlessGrowth.ts",
+      "sha256": "65b58828e4f509d13049b0bf538748ad0333903519654d6d8781da756413515d"
+    },
+    {
+      "path": "src/game/growth.ts",
+      "sha256": "111f46f0296967297c0bb0203a9d7a2c2f061ae35204bd90bc54275bb9c9dd17"
+    },
+    {
+      "path": ".tools/endless-pressure-baseline.mjs",
+      "sha256": "bb43e28dd25d00527fe0967a16667c60f7ae7508dfb04a2d228c4e83c1bd658a"
+    }
+  ],
+  "results": [
+    {
+      "seed": 7,
+      "stop": "ten-waves-cleared",
+      "elapsed": 180.96666666666667,
+      "phase": "playing",
+      "wave": 10,
+      "clearedWaves": 10,
+      "result": null,
+      "finalPlayerHp": 120,
+      "finalTissueHp": 100,
+      "totalPlayerDamage": 0,
+      "totalOrganDamage": 0,
+      "telegraphs": 0,
+      "maxConcurrentTelegraphs": 0,
+      "maxLiving": 6,
+      "acceptedPositiveHits": 480,
+      "shots": 472,
+      "inputs": {
+        "movement": 0,
+        "scan": 0,
+        "dashes": 0,
+        "toolsUsed": [
+          1
+        ],
+        "interact": false,
+        "inputSha256": "a9f38c97c75c210d004bbc00f6fa21c781861a34d57a2ddf102584bdfb7b40ad"
+      },
+      "finalPosition": {
+        "x": 1100,
+        "y": 800
+      },
+      "finalGrowth": {
+        "level": 10,
+        "ranks": {
+          "multishot": 2,
+          "pierce": 2,
+          "power": 4,
+          "vitality": 1,
+          "haste": 1
+        }
+      },
+      "waves": [
+        {
+          "wave": 1,
+          "enteredAt": 0,
+          "combatStartedAt": 3,
+          "clearedAt": 7.566666666666666,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 16,
+          "maxLiving": 3,
+          "playerHpAtClear": 100,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 2,
+          "enteredAt": 10.566666666666666,
+          "combatStartedAt": 13.566666666666666,
+          "clearedAt": 22.133333333333333,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 20,
+          "maxLiving": 4,
+          "playerHpAtClear": 100,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 3,
+          "enteredAt": 25.133333333333333,
+          "combatStartedAt": 28.133333333333333,
+          "clearedAt": 34.916666666666664,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 24,
+          "maxLiving": 4,
+          "playerHpAtClear": 100,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 4,
+          "enteredAt": 37.916666666666664,
+          "combatStartedAt": 40.916666666666664,
+          "clearedAt": 51.4,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 28,
+          "maxLiving": 3,
+          "playerHpAtClear": 100,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 5,
+          "enteredAt": 54.4,
+          "combatStartedAt": 62.4,
+          "clearedAt": 74.18333333333334,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 56,
+          "maxLiving": 5,
+          "playerHpAtClear": 100,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 6,
+          "enteredAt": 77.18333333333334,
+          "combatStartedAt": 80.18333333333334,
+          "clearedAt": 92.26666666666667,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 60,
+          "maxLiving": 6,
+          "playerHpAtClear": 120,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 7,
+          "enteredAt": 95.26666666666667,
+          "combatStartedAt": 98.26666666666667,
+          "clearedAt": 111.01666666666667,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 68,
+          "maxLiving": 4,
+          "playerHpAtClear": 120,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 8,
+          "enteredAt": 114.01666666666667,
+          "combatStartedAt": 117.01666666666667,
+          "clearedAt": 132.83333333333334,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 74,
+          "maxLiving": 5,
+          "playerHpAtClear": 120,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 9,
+          "enteredAt": 135.83333333333334,
+          "combatStartedAt": 138.83333333333334,
+          "clearedAt": 153.15,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 80,
+          "maxLiving": 5,
+          "playerHpAtClear": 120,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 10,
+          "enteredAt": 156.15,
+          "combatStartedAt": 164.15,
+          "clearedAt": 180.96666666666667,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 54,
+          "maxLiving": 5,
+          "playerHpAtClear": 120,
+          "tissueHpAtClear": 100
+        }
+      ],
+      "elites": [
+        {
+          "id": "elite-47",
+          "wave": 5,
+          "bornAt": 62.4,
+          "traits": [
+            "FISSION"
+          ],
+          "hp": 136,
+          "distanceAtBirth": 582.945762849413,
+          "firstTelegraphAt": null,
+          "clearedAt": 63.88333333333333
+        },
+        {
+          "id": "elite-283",
+          "wave": 10,
+          "bornAt": 164.15,
+          "traits": [
+            "MIMIC"
+          ],
+          "hp": 170,
+          "distanceAtBirth": 483.0916859675199,
+          "firstTelegraphAt": null,
+          "clearedAt": 165
+        }
+      ],
+      "choices": [
+        {
+          "wave": 1,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 2,
+          "type": "protocol-discard",
+          "id": "7:2:draft:1"
+        },
+        {
+          "wave": 2,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 3,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 4,
+          "type": "protocol-discard",
+          "id": "7:2:draft:2"
+        },
+        {
+          "wave": 4,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 5,
+          "type": "protocol-discard",
+          "id": "7:2:draft:3"
+        },
+        {
+          "wave": 5,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        },
+        {
+          "wave": 6,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 7,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 8,
+          "type": "protocol-discard",
+          "id": "7:2:draft:4"
+        },
+        {
+          "wave": 8,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 9,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 10,
+          "type": "combat-upgrade",
+          "id": "power"
+        }
+      ],
+      "liveAtStop": [],
+      "damageByActor": {}
+    },
+    {
+      "seed": 71,
+      "stop": "ten-waves-cleared",
+      "elapsed": 194.08333333333334,
+      "phase": "playing",
+      "wave": 10,
+      "clearedWaves": 10,
+      "result": null,
+      "finalPlayerHp": 120,
+      "finalTissueHp": 100,
+      "totalPlayerDamage": 0,
+      "totalOrganDamage": 0,
+      "telegraphs": 0,
+      "maxConcurrentTelegraphs": 0,
+      "maxLiving": 7,
+      "acceptedPositiveHits": 611,
+      "shots": 598,
+      "inputs": {
+        "movement": 0,
+        "scan": 0,
+        "dashes": 0,
+        "toolsUsed": [
+          1
+        ],
+        "interact": false,
+        "inputSha256": "45edbc54c9979a39f68423c94e8dbd4c6d9cf66ce7fe45d8a406992da48a0399"
+      },
+      "finalPosition": {
+        "x": 1100,
+        "y": 800
+      },
+      "finalGrowth": {
+        "level": 10,
+        "ranks": {
+          "multishot": 2,
+          "power": 4,
+          "pierce": 3,
+          "vitality": 1
+        }
+      },
+      "waves": [
+        {
+          "wave": 1,
+          "enteredAt": 0,
+          "combatStartedAt": 3,
+          "clearedAt": 11.516666666666666,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 16,
+          "maxLiving": 3,
+          "playerHpAtClear": 100,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 2,
+          "enteredAt": 14.516666666666666,
+          "combatStartedAt": 17.516666666666666,
+          "clearedAt": 24.066666666666666,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 20,
+          "maxLiving": 4,
+          "playerHpAtClear": 100,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 3,
+          "enteredAt": 27.066666666666666,
+          "combatStartedAt": 30.066666666666666,
+          "clearedAt": 37.21666666666667,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 24,
+          "maxLiving": 4,
+          "playerHpAtClear": 100,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 4,
+          "enteredAt": 40.21666666666667,
+          "combatStartedAt": 43.21666666666667,
+          "clearedAt": 52.86666666666667,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 28,
+          "maxLiving": 4,
+          "playerHpAtClear": 100,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 5,
+          "enteredAt": 55.86666666666667,
+          "combatStartedAt": 63.86666666666667,
+          "clearedAt": 78.36666666666666,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 82,
+          "maxLiving": 7,
+          "playerHpAtClear": 100,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 6,
+          "enteredAt": 81.36666666666666,
+          "combatStartedAt": 84.36666666666666,
+          "clearedAt": 99.65,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 84,
+          "maxLiving": 7,
+          "playerHpAtClear": 120,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 7,
+          "enteredAt": 102.64999999999999,
+          "combatStartedAt": 105.64999999999999,
+          "clearedAt": 121.08333333333333,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 82,
+          "maxLiving": 6,
+          "playerHpAtClear": 120,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 8,
+          "enteredAt": 124.08333333333333,
+          "combatStartedAt": 127.08333333333333,
+          "clearedAt": 143.58333333333334,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 89,
+          "maxLiving": 6,
+          "playerHpAtClear": 120,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 9,
+          "enteredAt": 146.58333333333334,
+          "combatStartedAt": 149.58333333333334,
+          "clearedAt": 166.65,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 96,
+          "maxLiving": 6,
+          "playerHpAtClear": 120,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 10,
+          "enteredAt": 169.65,
+          "combatStartedAt": 177.65,
+          "clearedAt": 194.08333333333334,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 90,
+          "maxLiving": 6,
+          "playerHpAtClear": 120,
+          "tissueHpAtClear": 100
+        }
+      ],
+      "elites": [
+        {
+          "id": "elite-47",
+          "wave": 5,
+          "bornAt": 63.86666666666667,
+          "traits": [
+            "CARAPACE"
+          ],
+          "hp": 136,
+          "distanceAtBirth": 430.5382740776986,
+          "firstTelegraphAt": null,
+          "clearedAt": 65.9
+        },
+        {
+          "id": "elite-147",
+          "wave": 10,
+          "bornAt": 177.65,
+          "traits": [
+            "FISSION"
+          ],
+          "hp": 170,
+          "distanceAtBirth": 544.1602137777955,
+          "firstTelegraphAt": null,
+          "clearedAt": 178.95
+        }
+      ],
+      "choices": [
+        {
+          "wave": 1,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 2,
+          "type": "protocol-discard",
+          "id": "71:2:draft:1"
+        },
+        {
+          "wave": 2,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 3,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 4,
+          "type": "protocol-discard",
+          "id": "71:2:draft:2"
+        },
+        {
+          "wave": 4,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 5,
+          "type": "protocol-discard",
+          "id": "71:2:draft:3"
+        },
+        {
+          "wave": 5,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        },
+        {
+          "wave": 6,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 7,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 8,
+          "type": "protocol-discard",
+          "id": "71:2:draft:4"
+        },
+        {
+          "wave": 8,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 9,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 10,
+          "type": "combat-upgrade",
+          "id": "power"
+        }
+      ],
+      "liveAtStop": [],
+      "damageByActor": {}
+    }
+  ]
+}

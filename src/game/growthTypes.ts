@@ -22,7 +22,7 @@ export interface DraftOption {
   rank?: ProtocolRank; change?: string; actionHint?: string;
 }
 export interface ProtocolDraft {
-  id: string; source: 'xp' | 'research'; serial: number; level?: number;
+  id: string; source: 'xp' | 'research' | 'endless'; serial: number; level?: number; endlessWave?: number;
   options: [DraftOption, DraftOption, DraftOption];
   status: 'choosing' | 'replacing'; selectedOptionId?: string;
   researchDirection?: ResearchDirectionId;
@@ -42,6 +42,8 @@ export interface GrowthState {
   /** Independent run evidence: accepted equipment commits survive bounded logs and replacement. */
   carriedProtocols?: ProtocolId[];
   equipped: EquippedProtocol[]; draft: ProtocolDraft | null; pendingLevels: number[];
+  /** Compact FIFO of earned consecutive elite milestones; no per-wave ledger. */
+  lastMilestoneWave?: number; nextMilestoneWave?: number | null;
   consumedDraftIds: string[]; rewardedKeys: string[]; sourceKillCounts: Record<string, number>;
   damageTakenByOrgan: Record<OrganId, number>; protectionNeeded: Record<OrganId, boolean>;
   draftSerial: number; historyHash: number; ended: boolean;

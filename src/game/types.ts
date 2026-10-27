@@ -4,6 +4,7 @@ import type { CampaignState } from './campaignTypes';
 import type { RunMetrics } from './runMetrics';
 import type { EndlessState } from './endlessTypes';
 import type { EndlessGrowthState } from './endlessGrowthTypes';
+import type { EnemyAttackPlan, EnemyCharge, EnemyTactic } from './enemyTacticsTypes';
 export interface Vec { x: number; y: number }
 export interface WorldGeometry {
   width: number; height: number;
@@ -22,6 +23,11 @@ export interface Target extends Vec {
   splitAt?: number; splitPositions?: Vec[];
   attackTarget?: 'player' | 'tissue';
   attackRadius?: number;
+  tactic?: EnemyTactic;
+  attackPlan?: EnemyAttackPlan;
+  attackWindup?: number;
+  charge?: EnemyCharge;
+  recoverUntil?: number;
 }
 export interface Tissue extends Vec { hp: number; maxHp: number; radius: number }
 export interface GameEvent { type: string; tick: number; data: Record<string, string | number | boolean> }

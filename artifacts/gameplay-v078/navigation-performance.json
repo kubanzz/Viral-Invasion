@@ -1,0 +1,106 @@
+{
+  "benchmark": "Bounded isolated CPU microbenchmark; not browser frame/performance acceptance",
+  "generatedAt": "2026-10-27T15:26:41.982Z",
+  "baselineCommit": "ac3341ef728e1d57fe2ed92bb38721aa419a4ef9",
+  "baselineCollisionSha256": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+  "sourceHashes": {
+    "src/actors/collision.ts": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0",
+    "src/actors/enemyNavigation.ts": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd"
+  },
+  "navigation": {
+    "actors": 24,
+    "simulationFrames": 2400,
+    "calls": 57600,
+    "goalPerFrameStep": 4,
+    "goalMaximumOscillation": 28,
+    "replans": 2352,
+    "replanFraction": 0.04083333333333333,
+    "retainedRoutes": 24,
+    "allFrames": {
+      "samples": 2400,
+      "totalMs": 109.57089999999963,
+      "medianMs": 0.013700000000028467,
+      "p95Ms": 0.05680000000000973,
+      "p99Ms": 0.6936999999999784,
+      "maxMs": 10.443399999999997
+    },
+    "replanFrames": {
+      "samples": 98,
+      "totalMs": 70.87139999999997,
+      "medianMs": 0.49169999999998026,
+      "p95Ms": 1.3383000000000038,
+      "p99Ms": 10.443399999999997,
+      "maxMs": 10.443399999999997
+    },
+    "checksum": 76052652.75522803,
+    "note": "Every actor is held at an obstructed starting position, exercising cache/route cost without crowd or combat cost. Half radius22/half30; real moving bodies usually exit the obstruction fast path."
+  },
+  "collision": {
+    "callsPerSample": 100000,
+    "pairedCollision": [
+      {
+        "round": 0,
+        "baseline": {
+          "ms": 16.688199999999995,
+          "checksum": 145190000.00027192
+        },
+        "current": {
+          "ms": 21.267899999999997,
+          "checksum": 145190000.00027192
+        },
+        "identicalChecksum": true
+      },
+      {
+        "round": 1,
+        "current": {
+          "ms": 22.40319999999997,
+          "checksum": 145190000.00027192
+        },
+        "baseline": {
+          "ms": 17.47739999999999,
+          "checksum": 145190000.00027192
+        },
+        "identicalChecksum": true
+      },
+      {
+        "round": 2,
+        "baseline": {
+          "ms": 20.949299999999994,
+          "checksum": 145190000.00027192
+        },
+        "current": {
+          "ms": 20.595500000000015,
+          "checksum": 145190000.00027192
+        },
+        "identicalChecksum": true
+      },
+      {
+        "round": 3,
+        "current": {
+          "ms": 20.297600000000045,
+          "checksum": 145190000.00027192
+        },
+        "baseline": {
+          "ms": 17.925099999999986,
+          "checksum": 145190000.00027192
+        },
+        "identicalChecksum": true
+      },
+      {
+        "round": 4,
+        "baseline": {
+          "ms": 16.642499999999984,
+          "checksum": 145190000.00027192
+        },
+        "current": {
+          "ms": 20.697100000000034,
+          "checksum": 145190000.00027192
+        },
+        "identicalChecksum": true
+      }
+    ],
+    "baselineMedianMs": 17.47739999999999,
+    "currentMedianMs": 20.697100000000034,
+    "note": "Same unobstructed legal trajectories and identical checksums; alternating same-process comparison after warmup. New legality checks add finite CPU cost. Concurrent host load can affect timings."
+  }
+}

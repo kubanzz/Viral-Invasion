@@ -45,7 +45,7 @@ export interface EnemySpacingOptions {
 export function planEnemySpacing(targets: readonly Target[], world: WorldGeometry, options: EnemySpacingOptions): ReadonlyMap<string, Vec> {
   const live = targets.filter(target => target.hp > 0).slice().sort(byId);
   const fixed = (target: Target) => target.role === 'source' || target.role === 'core'
-    || target.attackAt !== undefined || !!options.isMigrating?.(target);
+    || target.attackAt !== undefined || target.charge !== undefined || target.recoverUntil !== undefined || !!options.isMigrating?.(target);
   const result = new Map<string, Vec>();
   for (const target of live) {
     if (fixed(target)) continue;

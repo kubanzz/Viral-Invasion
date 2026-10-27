@@ -9,6 +9,8 @@ import { ENCOUNTER_CONFIGS } from './encounterConfig';
 import { acceptedFirstCounter } from './counterLesson';
 import { ENEMY_CROWD, moveEnemyThroughCrowd, planEnemySpacing } from '../actors/enemyCrowd';
 import { endlessCombatStats } from './endlessGrowth';
+import { EnemyNavigator } from '../actors/enemyNavigation';
+import { enemyAttackPlan, enemyAttackHits, enemyRayEnd, segmentDistance } from './enemyTactics';
 
 export interface BattleHost {
   state: GameState;
@@ -77,6 +79,7 @@ export function initializeBattle(state: GameState, options: CampaignOptions): vo
 
 /** G1 rules attach to the shared session; tools/movement/time stay in GameSession. */
 export class BattleDirector {
+  private readonly navigator = new EnemyNavigator();
   constructor(private host: BattleHost) {}
   private get s() { return this.host.state; }
   private get b() { return this.s.battle!; }
@@ -133,6 +136,12 @@ export class BattleDirector {
     let count = 0;
     for (const target of this.s.targets) if (target.hp > 0 && distance(this.s.player, target) <= BALANCE.scanRadius) {
       target.revealedUntil = this.s.elapsed + B.scanReveal;
+      if (target.attackPlan?.kind === 'mimic-corrosion' && target.attackAt !== undefined) {
+        this.recoverEnemy(target, 2);
+        target.attackReady = this.s.elapsed + 2;
+        this.host.emit('ENDLESS_CORROSION_INTERRUPTED', { actorId: target.id, method: 'scan', exposedSeconds: 2 });
+        this.host.effect('burst', target, target, 65, .4);
+      }
       count++;
     }
     this.b.stats.scans++;
@@ -158,6 +167,8 @@ export class BattleDirector {
     target.attackAt = undefined;
     target.attackAim = undefined;
     target.attackTarget = undefined;
+    target.attackPlan = undefined; target.attackWindup = undefined;
+    target.charge = undefined; target.recoverUntil = undefined;
     target.revealedUntil = 0;
     target.exposedUntil = 0;
     if (target.role === 'source') {
@@ -266,6 +277,7 @@ export class BattleDirector {
       target.x = pos.x; target.y = pos.y;
       target.attackAt = undefined; target.attackAim = undefined;
       target.attackTarget = undefined;
+      target.attackPlan = undefined; target.attackWindup = undefined; target.charge = undefined; target.recoverUntil = undefined;
       target.attackReady = s.elapsed + 1.3;
       if (target.traits?.includes('CARAPACE')) { target.exposedUntil = s.elapsed + B.pulseExpose; exposed++; exposedTargetIds.push(target.id); }
       target.revealedUntil = s.elapsed + B.scanReveal;
@@ -370,8 +382,87 @@ export class BattleDirector {
     }
   }
 
+  private damagePlayer(target: Target, amount: number, reason: string): boolean {
+    const { s, b } = this;
+    if (s.player.hp <= 0 || s.elapsed < s.player.dashUntil || amount <= 0) return false;
+    const before = s.player.hp;
+    s.player.hp = Math.max(0, before - amount); b.stats.playerDamage += before - s.player.hp;
+    s.player.hurtUntil = s.elapsed + .5;
+    this.host.emit('PLAYER_HURT', { damage: before - s.player.hp, remainingHp: s.player.hp, reason, actorId: target.id });
+    this.host.effect('hit', s.player, s.player, 22, .3);
+    return true;
+  }
+
+  private damageTissue(target: Target, amount: number): boolean {
+    const { s, b } = this;
+    if (s.tissue.hp <= 0 || amount <= 0) return false;
+    const before = s.tissue.hp;
+    s.tissue.hp = Math.max(0, before - amount); b.stats.tissueDamage += before - s.tissue.hp;
+    this.host.emit('ORGAN_INTEGRITY_CHANGED', { organId: b.organId, before, after: s.tissue.hp, reason: 'enemy-attack', actorId: target.id });
+    this.host.effect('hit', s.tissue, s.tissue, 45, .3);
+    return true;
+  }
+
+  private recoverEnemy(target: Target, exposure: number): void {
+    target.attackAt = undefined; target.attackAim = undefined; target.attackTarget = undefined;
+    target.attackPlan = undefined; target.attackWindup = undefined; target.charge = undefined;
+    if (exposure > 0) {
+      target.recoverUntil = this.s.elapsed + exposure;
+      target.exposedUntil = Math.max(target.exposedUntil ?? 0, target.recoverUntil);
+    } else target.recoverUntil = undefined;
+  }
+
+  private advanceCharge(target: Target): void {
+    const { s } = this, charge = target.charge!;
+    const from = { x: target.x, y: target.y }, remaining = distance(from, charge.to);
+    const direction = normalized(charge.to.x - from.x, charge.to.y - from.y);
+    const travel = Math.min(remaining, charge.speed * BALANCE.step);
+    const to = moveWithCollision(from, { x: direction.x * travel, y: direction.y * travel }, target.radius, activeWorld(s));
+    // Only the real travelled segment can hurt. The drawn promised lane never
+    // deals damage ahead of the moving body, through a fold, or twice per rush.
+    if (!charge.hitPlayer && segmentDistance(s.player, from, to) <= charge.radius + s.player.radius) {
+      const gap = distance(to, s.player), block = wallHit(to, normalized(s.player.x - to.x, s.player.y - to.y), gap, activeWorld(s));
+      if ((block === null || block >= gap - s.player.radius) && this.damagePlayer(target, charge.playerDamage, 'crystal-charge')) charge.hitPlayer = true;
+    }
+    if (!charge.hitTissue && charge.tissueDamage > 0 && segmentDistance(s.tissue, from, to) <= charge.radius + s.tissue.radius) {
+      const gap = distance(to, s.tissue), block = wallHit(to, normalized(s.tissue.x - to.x, s.tissue.y - to.y), gap, activeWorld(s));
+      if ((block === null || block >= gap - s.tissue.radius) && this.damageTissue(target, charge.tissueDamage)) charge.hitTissue = true;
+    }
+    target.x = to.x; target.y = to.y;
+    if (remaining <= travel + .1 || s.elapsed + 1e-9 >= charge.endsAt || distance(from, to) < travel * .5) {
+      const hitPlayer = charge.hitPlayer;
+      this.recoverEnemy(target, charge.recoveryExposure); target.attackReady = s.elapsed + Math.max(charge.interval, charge.recoveryExposure);
+      this.host.emit('ENEMY_CHARGE_ENDED', { actorId: target.id, hitPlayer, x: to.x, y: to.y, exposedSeconds: charge.recoveryExposure });
+    }
+  }
+
+  private resolveTactic(target: Target): void {
+    const { s } = this, plan = target.attackPlan!;
+    if (plan.kind === 'crystal-charge' && plan.chargeEnd && plan.chargeSpeed) {
+      const length = distance(target, plan.chargeEnd);
+      target.charge = { from: { x: target.x, y: target.y }, to: { ...plan.chargeEnd }, startedAt: s.elapsed,
+        endsAt: s.elapsed + length / plan.chargeSpeed, speed: plan.chargeSpeed, radius: plan.radius, hitPlayer: false, hitTissue: false,
+        playerDamage: plan.playerDamage, tissueDamage: plan.tissueDamage, recoveryExposure: plan.recoveryExposure, interval: plan.interval };
+      target.attackAt = undefined; target.attackAim = undefined; target.attackTarget = undefined;
+      target.attackPlan = undefined; target.attackWindup = undefined;
+      this.host.emit('ENEMY_CHARGE_STARTED', { actorId: target.id, x: target.x, y: target.y, endX: plan.chargeEnd.x, endY: plan.chargeEnd.y, duration: length / plan.chargeSpeed });
+      return;
+    }
+    const hitPlayer = plan.playerDamage > 0 && enemyAttackHits(plan, s.player, s.player.radius, activeWorld(s))
+      && this.damagePlayer(target, plan.playerDamage, plan.kind);
+    const hitTissue = plan.tissueDamage > 0 && enemyAttackHits(plan, s.tissue, s.tissue.radius, activeWorld(s))
+      && this.damageTissue(target, plan.tissueDamage);
+    for (const center of plan.landings) this.host.effect('burst', center, center, plan.radius, .32);
+    if (plan.kind === 'thin-ray') this.host.effect('beam', plan.origin, enemyRayEnd(plan, activeWorld(s)), 0, .2);
+    this.host.emit('ENEMY_TACTIC_RESOLVED', { actorId: target.id, tactic: plan.kind, hitPlayer, hitTissue });
+    this.recoverEnemy(target, plan.recoveryExposure);
+    target.attackReady = s.elapsed + Math.max(plan.interval, plan.recoveryExposure);
+  }
+
   private enemies(): void {
     const { s, b } = this;
+    this.navigator.prune(s.targets);
+    for (const target of s.targets) if (target.recoverUntil !== undefined && target.recoverUntil <= s.elapsed) target.recoverUntil = undefined;
     const wave = s.endless?.wave ?? 1;
     const speed = (target: Target) => B.enemySpeed * (s.endless ? 1 + Math.min(.9, (wave - 1) * .035) : 1) * (target.traits?.includes('CARAPACE') ? B.carapaceSpeed : 1)
       * (target.traits?.includes('MIMIC') ? B.mimicSpeed : 1) * (this.host.slowFactor?.(target.id) ?? 1);
@@ -394,9 +485,28 @@ export class BattleDirector {
         continue;
       }
       if (target.role === 'source' || target.role === 'core' || this.host.isMigratingActor?.(target.id)) continue;
-      const mimic = target.traits?.includes('MIMIC');
+      if (target.charge) { this.advanceCharge(target); continue; }
+      if (target.recoverUntil !== undefined) continue;
+      const mimic = target.tactic === 'mimic-corrosion' || (!target.tactic || target.tactic === 'melee') && target.traits?.includes('MIMIC');
       const goal = mimic || !s.endless && distance(target, s.player) > 270 ? s.tissue : s.player;
       const dir = normalized(goal.x - target.x, goal.y - target.y);
+      if (target.attackPlan && target.attackAt !== undefined) {
+        if (s.elapsed + 1e-9 >= target.attackAt) this.resolveTactic(target);
+        continue;
+      }
+      const special = !!s.endless && !!target.tactic && target.tactic !== 'melee';
+      const plan = special ? enemyAttackPlan(target, s) : undefined;
+      if (special && plan) {
+        target.facing = Math.atan2(plan.aim.y - target.y, plan.aim.x - target.x);
+        if (s.elapsed >= (target.attackReady ?? 0) && s.targets.filter(actor => actor.hp > 0 && (actor.attackAt !== undefined || actor.charge !== undefined)).length < 3) {
+          target.attackPlan = plan; target.attackAt = s.elapsed + plan.windup;
+          target.attackWindup = plan.windup; target.attackAim = { ...plan.aim }; target.attackRadius = plan.radius;
+          target.attackTarget = plan.kind === 'mimic-corrosion' ? 'tissue' : 'player';
+          this.host.emit('ATTACK_TELEGRAPHED', { actorId: target.id, target: target.attackTarget, tactic: plan.kind, resolveAt: target.attackAt });
+          this.host.emit('ENEMY_TACTIC_COMMITTED', { actorId: target.id, tactic: plan.kind, windup: plan.windup, x: plan.origin.x, y: plan.origin.y, aimX: plan.aim.x, aimY: plan.aim.y });
+        }
+        continue;
+      }
       if (target.attackAt !== undefined) {
         if (s.elapsed + 1e-9 < target.attackAt) continue;
         const aim = target.attackAim!;
@@ -424,27 +534,32 @@ export class BattleDirector {
       target.facing = Math.atan2(dir.y, dir.x);
       const eliteBlast = !!s.endless && target.role === 'elite' && goal === s.player;
       const reach = eliteBlast ? 250 : B.attackRadius + (goal === s.tissue ? s.tissue.radius : s.player.radius) - 8;
-      if (distance(target, goal) > reach) {
+      const block = wallHit(target, dir, distance(target, goal), activeWorld(s));
+      const lineClear = block === null || block >= distance(target, goal) - 20;
+      if (special || distance(target, goal) > reach || !lineClear) {
         // Relaxation already used this body's movement budget. Do not cancel
         // it with an immediate pursuit step back into the same exact stack.
         if (spacing.has(target.id)) continue;
         const movementSpeed = speed(target);
-        const step = { x: dir.x * movementSpeed * BALANCE.step, y: dir.y * movementSpeed * BALANCE.step };
+        const next = this.navigator.waypoint(target, goal, activeWorld(s), s.elapsed);
+        const motion = normalized(next.x - target.x, next.y - target.y);
+        const step = { x: motion.x * movementSpeed * BALANCE.step, y: motion.y * movementSpeed * BALANCE.step };
         let pos = moveEnemyThroughCrowd(target, step, s.targets, activeWorld(s));
         // If a fold blocks the direct route, follow its tangent until the goal is clear.
         if (distance(target, pos) < movementSpeed * BALANCE.step * .4) {
           const side = target.id.length % 2 ? 1 : -1;
-          pos = moveEnemyThroughCrowd(target, { x: -dir.y * movementSpeed * BALANCE.step * side, y: dir.x * movementSpeed * BALANCE.step * side }, s.targets, activeWorld(s));
+          pos = moveEnemyThroughCrowd(target, { x: -motion.y * movementSpeed * BALANCE.step * side, y: motion.x * movementSpeed * BALANCE.step * side }, s.targets, activeWorld(s));
         }
         target.x = pos.x; target.y = pos.y;
       } else if (s.elapsed >= (target.attackReady ?? 0)) {
         // Reserve a slot before committing a new aim. Accepted telegraphs are
         // never retargeted or cancelled to make room for another attacker.
-        if (s.endless && s.targets.filter(actor => actor.hp > 0 && actor.attackAt !== undefined).length >= 3) continue;
+        if (s.endless && s.targets.filter(actor => actor.hp > 0 && (actor.attackAt !== undefined || actor.charge !== undefined)).length >= 3) continue;
         const line = normalized(goal.x - target.x, goal.y - target.y);
         const block = wallHit(target, line, distance(target, goal), activeWorld(s));
         if (block !== null && block < distance(target, goal) - 20) continue;
         target.attackAt = s.elapsed + (eliteBlast ? 1.1 : B.attackWindup);
+        target.attackWindup = eliteBlast ? 1.1 : B.attackWindup;
         if (s.endless) target.attackRadius = eliteBlast ? 105 : B.attackRadius;
         target.attackAim = { x: goal.x, y: goal.y };
         target.attackTarget = goal === s.tissue ? 'tissue' : 'player';

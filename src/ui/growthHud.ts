@@ -52,7 +52,7 @@ export function updateGrowthHud(state: GameState): void {
   document.getElementById('growth-xp')!.textContent=growth.starterDebt===1 ? `预装待结清 · ${growth.xp}/${GROWTH_BALANCE.xpThresholds[0]} XP · 下份草案 ${GROWTH_BALANCE.xpThresholds[1]}` : `${growth.preparation?.starterProtocolId?'预支已结清 · ':`进化 Lv.${growth.level} · `}经验 ${growth.xp}${growth.nextXp===null?' / 已达本局上限':` / ${growth.nextXp}`}`;
   if (state.endless) {
     document.getElementById('growth-research')!.textContent = '清波获得协议经验';
-    document.getElementById('growth-xp')!.textContent = growth.nextXp === null ? '协议经验已完成 · 战斗进化继续'
+    document.getElementById('growth-xp')!.textContent = growth.nextXp === null ? '每5波联动重配 · 战斗进化继续'
       : `协议 Lv.${growth.level} · ${growth.xp} / ${growth.nextXp} XP`;
   }
   const floor=GROWTH_BALANCE.xpThresholds[growth.level-1]??0;
@@ -86,6 +86,8 @@ export function updateGrowthHud(state: GameState): void {
   document.getElementById('research-hint')!.textContent=beacon&&beacon.until>state.elapsed?`${beacon.mode==='patrol'?'免疫侦巡':'免疫小队'} ${growth.cells?.length??0} 体 · ${Math.max(0,beacon.until-state.elapsed).toFixed(1)}s`:hasBeacon&&growth.beaconReadyAt>state.elapsed?`小队再召集 ${Math.ceil(growth.beaconReadyAt-state.elapsed)}s · E 研究`:`Q 诊断 · E 研究（${diagnosed?`可定向 ${diagnosed} 类`:'诊断后可定向'}）`;
   if (state.endless && !(beacon && beacon.until > state.elapsed)) document.getElementById('research-hint')!.textContent =
     hasBeacon && growth.beaconReadyAt > state.elapsed ? `小队再召集 ${Math.ceil(growth.beaconReadyAt-state.elapsed)}s` : '朝敌群按 Q · 部署免疫小队';
+  if(hasBeacon&&beacon&&beacon.mode!=='patrol'&&beacon.until>state.elapsed&&growth.beaconReadyAt>state.elapsed)
+    document.getElementById('research-hint')!.textContent=`小队 ${growth.cells?.length??0} 体 · ${Math.max(0,beacon.until-state.elapsed).toFixed(1)}s · Q 指挥转向，不续命`;
   const feedback=document.getElementById('evolution-feedback');
   if(feedback){
     const evolution=growth.lastEvolution;feedback.hidden=!evolution||state.elapsed>=evolution.until;
@@ -114,7 +116,9 @@ export function researchDirectionOverlay(state: GameState): string | null {
 }
 
 function researchDraftContext(state: GameState): string {
-  const draft=state.growth?.draft;if(draft?.source!=='research')return '';
+  const draft=state.growth?.draft;
+  if(draft?.source==='endless')return `<div class="research-draft-context" data-endless-wave="${draft.endlessWave??0}"><strong>第 ${draft.endlessWave??0} 波 · 精英波联动重配</strong><span>优先补齐已有协议的联动伙伴；三槽内选择新装、进阶或改变取向。新协议入满槽必须替换，原效果会结束。</span><small>免样本、可放弃；不会抵消本波战斗成长。当前草案结束后继续处理已获得的奖励。</small></div>`;
+  if(draft?.source!=='research')return '';
   const direction=draft.researchDirection??'general',info=RESEARCH_DIRECTIONS[direction];
   return `<div class="research-draft-context" data-research-direction="${direction}"><strong>研究方向 · ${escape(info.title)}</strong><span>${escape(info.description)} 仍可自由选择本次任意候选。</span><small>本次已消耗 ${GROWTH_BALANCE.researchCost} 样本；放弃草案不会退还。</small></div>`;
 }
@@ -124,7 +128,7 @@ export function draftOverlay(state: GameState): string | null {
   const selected=draft.options.find(option=>option.id===draft.selectedOptionId);
   const data=`data-draft="${escape(draft.id)}"`;
   const researchContext=researchDraftContext(state);
-  const sourceLabel=draft.source==='xp'?'战斗经验':`样本研究 · ${RESEARCH_DIRECTIONS[draft.researchDirection??'general'].title}`;
+  const sourceLabel=draft.source==='xp'?'战斗经验':draft.source==='endless'?'精英波联动重配':`样本研究 · ${RESEARCH_DIRECTIONS[draft.researchDirection??'general'].title}`;
   if(draft.status==='replacing'&&selected) return `<div class="overlay"><section class="modal growth-draft" role="dialog" aria-modal="true" aria-label="替换抗体协议"><div class="eyebrow">THREE SLOTS / 构筑取舍</div><h2>为${escape(PROTOCOLS[selected.protocolId].name)}腾出一席。</h2>${researchContext}<p>三个槽位已满。选择替换一个协议，其效果会立即结束；或放弃本次草案。</p><div class="draft-grid">${growth.equipped.map((old,index)=>`<button class="draft-choice replacement" data-action="draft-replace" ${data} data-option="${escape(selected.id)}" data-slot="${index}" data-previous="${old.id}"><span class="protocol-symbol">${PROTOCOLS[old.id].symbol}</span><h3>替换 ${PROTOCOLS[old.id].name} ${RANK_NAMES[protocolRank(old)]}</h3><p>失去：${escape(describeProtocol(old.id,old.tuning,protocolRank(old)).effect)}</p><strong>装入 ${escape(selected.title)} ↗</strong></button>`).join('')}</div><div class="actions"><button data-action="draft-back" ${data}>重新查看候选</button><button class="quiet" data-action="draft-discard" ${data}>放弃本次草案</button>${growthDetailsEntryMarkup}</div><div class="seed">模拟已暂停 · 选择不会消耗战场时间</div></section></div>`;
   return `<div class="overlay"><section class="modal growth-draft" role="dialog" aria-modal="true" aria-label="抗体协议草案"><div class="eyebrow">ANTIBODY EVOLUTION / ${sourceLabel}</div><h2>选择一条，马上改变打法。</h2><p>四种协议路线 · 最多装备三种 · 每次三选一。已有协议优先进阶至Ⅲ阶，之后才调整取向。${draft.source==='research'?'本次研究已消耗样本，放弃不会退还。':''}</p>${researchContext}<div class="draft-grid">${draft.options.map(option=>{const current=growth.equipped.find(item=>item.id===option.protocolId),upgrading=!!current&&(option.rank??1)>protocolRank(current);return `<button class="draft-choice" data-action="draft-option" ${data} data-option="${escape(option.id)}"><span class="protocol-symbol">${PROTOCOLS[option.protocolId].symbol}</span><h3>${escape(option.title)}</h3><div class="draft-tags">${option.tags.map(tag=>`<span>${tag}</span>`).join('')}</div><p class="draft-change"><b>${upgrading?'本次提升':current?'改变取向':'获得新能力'}</b>${escape(option.change??option.effect)}</p><p class="draft-action"><b>选完这样用</b>${escape(option.actionHint??option.trigger)}</p><p class="draft-effect">${escape(option.effect)}</p><p class="draft-cost"><b>取舍</b>${escape(option.cost)}</p><strong>${upgrading?`进阶至 ${RANK_NAMES[option.rank??1]}`:option.kind==='retune'?'调整校准取向':'解锁此打法'} ↗</strong></button>`;}).join('')}</div><div class="draft-current">当前配装：${growth.equipped.map(item=>`${PROTOCOLS[item.id].name} ${RANK_NAMES[protocolRank(item)]} · ${TUNING_NAMES[item.tuning]}`).join(' / ')||'暂无协议 · Q 已有一只基础免疫侦巡，灯塔可将它强化为三体小队'}</div><div class="actions"><button class="quiet" data-action="draft-discard" ${data}>放弃本次草案</button><button class="quiet" data-action="help">查看作战手册</button>${growthDetailsEntryMarkup}</div><div class="seed">模拟已暂停 · 选择不会消耗战场时间</div></section></div>`;
 }

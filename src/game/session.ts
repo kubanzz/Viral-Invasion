@@ -303,7 +303,13 @@ export class GameSession {
       }
     }
     if (combat && combat.scanDamage > 0) this.endlessRadialAttack(state.player, 260, combat.scanDamage * combat.damageMultiplier, 'scan');
-    if (state.endless) this.message('Q 显影并召集免疫小队：细胞会靠近目标并咬击，朝敌群方向扫描可部署在前线。', 3);
+    if (state.endless) {
+      const redirected = state.events.some(event => event.tick === state.tick && event.type === 'IMMUNE_SQUAD_REDIRECTED');
+      const interrupted = state.events.some(event => event.tick === state.tick && event.type === 'ENDLESS_CORROSION_INTERRUPTED');
+      this.message(interrupted ? '侵蚀已被扫描打断！抓住破绽净化精英。'
+        : redirected ? '免疫小队正在转向新战线；保留原持续时间，继续移动接敌。'
+          : 'Q 显影并召集免疫小队：朝敌群部署，细胞会靠近目标并咬击。', 3);
+    }
   }
 
   private fire(aim: Vec): void {
@@ -376,6 +382,8 @@ export class GameSession {
             const pushed = distance(target, moved); target.x = moved.x; target.y = moved.y;
             if (pushed > 1) {
               target.attackAt = undefined; target.attackAim = undefined; target.attackTarget = undefined;
+              target.attackPlan = undefined; target.attackWindup = undefined;
+              target.charge = undefined; target.recoverUntil = undefined;
               target.attackReady = Math.max(target.attackReady ?? 0, state.elapsed + .45);
               this.emit('AREA_DISPLACED', { targetId: target.id, distance: pushed });
             }
@@ -496,6 +504,7 @@ export class GameSession {
     if (!state.endless || !state.endlessGrowth || state.phase !== 'playing') return;
     offerEndlessUpgrade(state.endlessGrowth, wave);
     this.growthController?.rewardEndlessWave(wave, state.elapsed);
+    this.growthController?.rewardEndlessMilestone(wave, growthContext(state));
     this.effect('success', state.player, state.player, 110, .8);
     this.message(`第 ${wave} 波清除！选择一次实战进化；确认后恢复耐久和组织。`, 5, 2);
   }

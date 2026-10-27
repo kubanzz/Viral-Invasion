@@ -3,6 +3,7 @@ import type { GameState, Target, Vec } from '../game/types';
 import { BATTLE_BALANCE } from '../game/battleConfig';
 import { activeWorld } from '../game/types';
 import { wallHit } from '../actors/collision';
+import { ENEMY_TACTIC_INFO } from '../game/enemyTacticInfo';
 import { MOTHER_CORE_BALANCE, motherCoreDisturbed } from '../game/motherCore';
 import type { MotherCoreState } from '../game/motherCoreTypes';
 import type { SceneLabelSink } from './sceneLabels';
@@ -356,18 +357,19 @@ export function drawBattleLabels(ctx: CanvasRenderingContext2D, state: GameState
   if (labels) {
     for (const target of targets) {
       const full = target.role === 'source' || target.role === 'elite' || target.role === 'core', focused = aimed(target);
+      const tacticName = target.tactic && target.tactic !== 'melee' ? ENEMY_TACTIC_INFO[target.tactic].name : '';
       const exposed = (target.exposedUntil ?? 0) > time;
       const traced = state.growth?.marks.some(mark => mark.targetId === target.id && mark.organId === state.battle?.organId && mark.until > time) ?? false;
       const mimic = target.traits?.includes('MIMIC') && (target.revealedUntil ?? 0) <= time && state.scanUntil <= time && !exposed && !traced;
       if (mimic) continue;
-      if (full || focused || exposed) reserveTargetFeatures(labels, target, state);
-      const bar = full || focused || target.hitUntil > time, symbols = target.traits?.map(id => TRAIT_SYMBOL[id]).join('') ?? '';
+      if (full || tacticName || focused || exposed) reserveTargetFeatures(labels, target, state);
+      const bar = full || !!tacticName || focused || target.hitUntil > time, symbols = target.traits?.map(id => TRAIT_SYMBOL[id]).join('') ?? '';
       if (!full && !bar && (!symbols || !target.scanned)) continue;
       const role = target.role === 'core' ? '母巢' : target.role === 'elite' ? '精英' : '感染源';
-      const name = full ? `${role}${target.traits?.length ? ' · ' + target.traits.map(id => TRAIT_NAME[id]).join('·') : ''}` : symbols;
+      const name = full ? `${role}${tacticName ? ' · ' + tacticName : target.traits?.length ? ' · ' + target.traits.map(id => TRAIT_NAME[id]).join('·') : ''}` : tacticName || symbols;
       const baseY = -target.radius * 1.96 - (target.role === 'elite' || target.role === 'core' ? 17 : 7);
       labels.add({ id: `target:${target.id}`, anchor: { x: target.x, y: target.y }, offset: { x: 0, y: baseY - 7 },
-        priority: focused || exposed ? 90 : target.role === 'core' ? 85 : target.role === 'elite' ? 80 : target.role === 'source' ? 70 : bar ? 65 : 35,
+        priority: focused || exposed ? 90 : target.role === 'core' ? 85 : target.role === 'elite' ? 80 : target.role === 'source' || tacticName ? 70 : bar ? 65 : 35,
         essential: bar || exposed, lines: name ? [{ text: name, color: full ? '#f4dcc2' : '#e6d0b9', size: full ? 10 : 11 }] : [],
         ...(bar ? { bar: { ratio: target.hp / target.maxHp, color: exposed ? '#ffe4a1' : '#f2bd9c', width: target.radius * 2 } } : {}) });
     }
@@ -386,15 +388,16 @@ export function drawBattleLabels(ctx: CanvasRenderingContext2D, state: GameState
   const occupied: LabelBox[] = [];
   for (const target of targets) {
     const full = target.role === 'source' || target.role === 'elite' || target.role === 'core';
+    const tacticName = target.tactic && target.tactic !== 'melee' ? ENEMY_TACTIC_INFO[target.tactic].name : '';
     const exposed = (target.exposedUntil ?? 0) > time;
     const traced = state.growth?.marks.some(mark => mark.targetId === target.id && mark.organId === state.battle?.organId && mark.until > time) ?? false;
     const mimic = target.traits?.includes('MIMIC') && (target.revealedUntil ?? 0) <= time && state.scanUntil <= time && !exposed && !traced;
     if (mimic) continue;
-    const focused = aimed(target), bar = full || focused || target.hitUntil > time;
+    const focused = aimed(target), bar = full || !!tacticName || focused || target.hitUntil > time;
     const symbols = target.traits?.map(id => TRAIT_SYMBOL[id]).join('') ?? '';
     if (!full && !bar && (!symbols || !target.scanned)) continue;
     const role = target.role === 'core' ? '母巢' : target.role === 'elite' ? '精英' : '感染源';
-    const name = full ? `${role}${target.traits?.length ? ' · ' + target.traits.map(id => TRAIT_NAME[id]).join('·') : ''}` : symbols;
+    const name = full ? `${role}${tacticName ? ' · ' + tacticName : target.traits?.length ? ' · ' + target.traits.map(id => TRAIT_NAME[id]).join('·') : ''}` : tacticName || symbols;
     const width = Math.max(target.radius * 2, name.length * 10 + 10), baseY = -target.radius * 1.96 - (target.role === 'elite' || target.role === 'core' ? 17 : 7);
     const offsets = full || focused ? [0, -16, -32, -48, -64] : [0, -14];
     let chosen: number | undefined;

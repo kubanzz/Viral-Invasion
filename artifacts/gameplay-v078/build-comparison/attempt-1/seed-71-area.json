@@ -1,0 +1,1411 @@
+{
+  "seed": 71,
+  "build": "area",
+  "stop": "twelve-waves-cleared",
+  "error": null,
+  "elapsed": 185.93333333333334,
+  "phase": "playing",
+  "result": null,
+  "wave": 12,
+  "clearedWaves": 12,
+  "rawKills": 338,
+  "directorKills": 338,
+  "score": 9528,
+  "finalPlayerHp": 100,
+  "finalTissueHp": 100,
+  "cumulativePlayerDamage": 0,
+  "cumulativeTissueLoss": 70,
+  "damage": {
+    "basic": 9229.737999999994,
+    "protocol": 8772.262,
+    "ability": 0,
+    "immuneSubset": 512.592
+  },
+  "damageHits": {
+    "basic": 322,
+    "protocol": 221,
+    "ability": 0,
+    "immuneSubset": 30
+  },
+  "toolDamage": {
+    "1": 5168.035999999997,
+    "2": 4061.702
+  },
+  "protocolDamage": {
+    "IMMUNE_BEACON": 512.592,
+    "PURIFY_CHAIN": 8259.669999999998
+  },
+  "abilityDamage": {},
+  "killCauses": {
+    "basic": 182,
+    "protocol": 156
+  },
+  "playerDamageByReason": {},
+  "tissueLossByReason": {
+    "protocol-pressure": 54,
+    "pulse-pressure": 16
+  },
+  "acceptedMarkedImmuneBites": 1,
+  "maxLiving": 7,
+  "maxConcurrent": 1,
+  "maxCells": 3,
+  "shots": 336,
+  "scans": 18,
+  "dashes": 0,
+  "inputFrames": 11156,
+  "inputCounts": {
+    "movingFrames": 3110,
+    "fireTool2": 84,
+    "scanRequests": 18,
+    "fireTool1": 2144,
+    "interactRequests": 4
+  },
+  "inputSha256": "6a9e208a8d6ca4f500efa7f62c86927cfcd534b90205ceb28e511e04763181e5",
+  "choices": [
+    {
+      "type": "combat",
+      "tick": 407,
+      "wave": 1,
+      "draftId": "endless:71:wave:1:level:1",
+      "available": [
+        {
+          "id": "scan",
+          "title": "扫描爆发",
+          "description": "Q 扫描同时引爆身边 260 范围，基础伤害 0 → 30；扫描显形继续生效。",
+          "currentRank": 0,
+          "nextRank": 1
+        },
+        {
+          "id": "multishot",
+          "title": "扇形抗体",
+          "description": "精准净化 1 → 3 束；向左右同时发射更多抗体。",
+          "currentRank": 0,
+          "nextRank": 1
+        },
+        {
+          "id": "immune",
+          "title": "免疫军团",
+          "description": "免疫细胞伤害倍率 1 → 1.2，额外寿命 0 → 1.25 秒；Q 冷却 3 → 2.679 秒，小队独立冷却倍率 1 → 0.87。",
+          "currentRank": 0,
+          "nextRank": 1
+        }
+      ],
+      "selected": {
+        "id": "multishot",
+        "title": "扇形抗体",
+        "description": "精准净化 1 → 3 束；向左右同时发射更多抗体。",
+        "currentRank": 0,
+        "nextRank": 1
+      },
+      "accepted": true
+    },
+    {
+      "type": "protocol",
+      "tick": 905,
+      "wave": 2,
+      "draftId": "71:2:draft:1",
+      "available": [
+        {
+          "id": "PULSE_BREAK:equip:balanced:rank1",
+          "kind": "equip",
+          "protocolId": "PULSE_BREAK",
+          "tuning": "balanced",
+          "rank": 1,
+          "title": "共振裂解 Ⅰ · 均衡",
+          "trigger": "靠近节律装置，在冲流相位用基础工具命中",
+          "change": "解锁新打法 · 靠近器官装置，趁冲流亮起用 1 / 2 命中，触发破壳冲击。",
+          "actionHint": "靠近器官装置，趁冲流亮起用 1 / 2 命中，触发破壳冲击。",
+          "effect": "距装置 240 内，冲流相位命中追加 18 共振伤害，破壳 4 秒；每目标每节律最多一次。",
+          "cost": "需要接近装置并配合节律；无时机时不追加。",
+          "tags": [
+            "PULSE",
+            "BREAK"
+          ]
+        },
+        {
+          "id": "PURIFY_CHAIN:equip:balanced:rank1",
+          "kind": "equip",
+          "protocolId": "PURIFY_CHAIN",
+          "tuning": "balanced",
+          "rank": 1,
+          "title": "连锁净化 Ⅰ · 均衡",
+          "trigger": "基础工具清除感染体或感染源",
+          "change": "解锁新打法 · 把感染体引到一起，用 1 / 2 收尾，观察净化电弧连续跳跃。",
+          "actionHint": "把感染体引到一起，用 1 / 2 收尾，观察净化电弧连续跳跃。",
+          "effect": "清除后向 170 范围内邻体跳 2 次，每跳 38 伤害；共振破绽清除可增为 3 跳。",
+          "cost": "单体无邻体时无额外收益；跳跃检查视线，协议伤害不再开新链。",
+          "tags": [
+            "CHAIN",
+            "PURIFY"
+          ]
+        },
+        {
+          "id": "IMMUNE_BEACON:retune:balanced:rank2",
+          "kind": "retune",
+          "protocolId": "IMMUNE_BEACON",
+          "tuning": "balanced",
+          "rank": 2,
+          "title": "免疫灯塔 Ⅱ · 进阶",
+          "trigger": "Q 标记鼠标区域，召集三只临时免疫细胞",
+          "change": "小队每轮总伤害 24 → 36；持续 6 → 8 秒。",
+          "actionHint": "现在按 Q 标记鼠标区域，召集三只免疫细胞追击、吞噬。",
+          "effect": "召集三只免疫细胞，持续 8 秒；活动范围 215，每 0.8 秒每轮总伤害 36。显影联动优先围猎标记体。",
+          "cost": "独立冷却 12 秒；每次组织承压 −3；同时一支小队，替换后撤离。",
+          "tags": [
+            "SUMMON",
+            "ZONE"
+          ]
+        }
+      ],
+      "selected": {
+        "id": "PURIFY_CHAIN:equip:balanced:rank1",
+        "kind": "equip",
+        "protocolId": "PURIFY_CHAIN",
+        "tuning": "balanced",
+        "rank": 1,
+        "title": "连锁净化 Ⅰ · 均衡",
+        "trigger": "基础工具清除感染体或感染源",
+        "change": "解锁新打法 · 把感染体引到一起，用 1 / 2 收尾，观察净化电弧连续跳跃。",
+        "actionHint": "把感染体引到一起，用 1 / 2 收尾，观察净化电弧连续跳跃。",
+        "effect": "清除后向 170 范围内邻体跳 2 次，每跳 38 伤害；共振破绽清除可增为 3 跳。",
+        "cost": "单体无邻体时无额外收益；跳跃检查视线，协议伤害不再开新链。",
+        "tags": [
+          "CHAIN",
+          "PURIFY"
+        ]
+      },
+      "before": [
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced"
+        }
+      ],
+      "replacement": null,
+      "result": {
+        "kind": "committed",
+        "draftId": "71:2:draft:1"
+      }
+    },
+    {
+      "type": "combat",
+      "tick": 905,
+      "wave": 2,
+      "draftId": "endless:71:wave:2:level:2",
+      "available": [
+        {
+          "id": "immune",
+          "title": "免疫军团",
+          "description": "免疫细胞伤害倍率 1 → 1.2，额外寿命 0 → 1.25 秒；Q 冷却 3 → 2.679 秒，小队独立冷却倍率 1 → 0.87。",
+          "currentRank": 0,
+          "nextRank": 1
+        },
+        {
+          "id": "power",
+          "title": "净化突破",
+          "description": "基础净化伤害倍率 ×1 → ×1.18；强化现有攻击。",
+          "currentRank": 0,
+          "nextRank": 1
+        },
+        {
+          "id": "nova",
+          "title": "裂解新星",
+          "description": "范围裂解半径 94 → 108，伤害倍率 1 → 1.15，冷却 1.2 → 1.1 秒。",
+          "currentRank": 0,
+          "nextRank": 1
+        }
+      ],
+      "selected": {
+        "id": "nova",
+        "title": "裂解新星",
+        "description": "范围裂解半径 94 → 108，伤害倍率 1 → 1.15，冷却 1.2 → 1.1 秒。",
+        "currentRank": 0,
+        "nextRank": 1
+      },
+      "accepted": true
+    },
+    {
+      "type": "combat",
+      "tick": 1827,
+      "wave": 3,
+      "draftId": "endless:71:wave:3:level:3",
+      "available": [
+        {
+          "id": "dash",
+          "title": "冲刺斩",
+          "description": "Space 沿实际冲刺路径斩击周围敌人，基础伤害 0 → 40，判定半径 64。",
+          "currentRank": 0,
+          "nextRank": 1
+        },
+        {
+          "id": "scan",
+          "title": "扫描爆发",
+          "description": "Q 扫描同时引爆身边 260 范围，基础伤害 0 → 30；扫描显形继续生效。",
+          "currentRank": 0,
+          "nextRank": 1
+        },
+        {
+          "id": "immune",
+          "title": "免疫军团",
+          "description": "免疫细胞伤害倍率 1 → 1.2，额外寿命 0 → 1.25 秒；Q 冷却 3 → 2.679 秒，小队独立冷却倍率 1 → 0.87。",
+          "currentRank": 0,
+          "nextRank": 1
+        }
+      ],
+      "selected": {
+        "id": "immune",
+        "title": "免疫军团",
+        "description": "免疫细胞伤害倍率 1 → 1.2，额外寿命 0 → 1.25 秒；Q 冷却 3 → 2.679 秒，小队独立冷却倍率 1 → 0.87。",
+        "currentRank": 0,
+        "nextRank": 1
+      },
+      "accepted": true
+    },
+    {
+      "type": "protocol",
+      "tick": 2500,
+      "wave": 4,
+      "draftId": "71:2:draft:2",
+      "available": [
+        {
+          "id": "PULSE_BREAK:equip:balanced:rank1",
+          "kind": "equip",
+          "protocolId": "PULSE_BREAK",
+          "tuning": "balanced",
+          "rank": 1,
+          "title": "共振裂解 Ⅰ · 均衡",
+          "trigger": "靠近节律装置，在冲流相位用基础工具命中",
+          "change": "解锁新打法 · 靠近器官装置，趁冲流亮起用 1 / 2 命中，触发破壳冲击。",
+          "actionHint": "靠近器官装置，趁冲流亮起用 1 / 2 命中，触发破壳冲击。",
+          "effect": "距装置 240 内，冲流相位命中追加 18 共振伤害，破壳 4 秒；每目标每节律最多一次。",
+          "cost": "需要接近装置并配合节律；无时机时不追加。",
+          "tags": [
+            "PULSE",
+            "BREAK"
+          ]
+        },
+        {
+          "id": "IMMUNE_BEACON:retune:balanced:rank2",
+          "kind": "retune",
+          "protocolId": "IMMUNE_BEACON",
+          "tuning": "balanced",
+          "rank": 2,
+          "title": "免疫灯塔 Ⅱ · 进阶",
+          "trigger": "Q 标记鼠标区域，召集三只临时免疫细胞",
+          "change": "小队每轮总伤害 24 → 36；持续 6 → 8 秒。",
+          "actionHint": "现在按 Q 标记鼠标区域，召集三只免疫细胞追击、吞噬。",
+          "effect": "召集三只免疫细胞，持续 8 秒；活动范围 215，每 0.8 秒每轮总伤害 36。显影联动优先围猎标记体。",
+          "cost": "独立冷却 12 秒；每次组织承压 −3；同时一支小队，替换后撤离。",
+          "tags": [
+            "SUMMON",
+            "ZONE"
+          ]
+        },
+        {
+          "id": "PURIFY_CHAIN:retune:balanced:rank2",
+          "kind": "retune",
+          "protocolId": "PURIFY_CHAIN",
+          "tuning": "balanced",
+          "rank": 2,
+          "title": "连锁净化 Ⅱ · 进阶",
+          "trigger": "基础工具清除感染体或感染源",
+          "change": "每跳伤害 38 → 54；新能力：持续命中存活目标，每3次向邻体折射。",
+          "actionHint": "用 1 / 2 持续命中存活目标，每 3 次命中自动向邻体折射；清除后仍会连锁。",
+          "effect": "清除后向 200 范围内邻体跳 2 次，每跳 54 伤害；共振破绽清除可增为 3 跳。持续命中存活目标，每3次向一个邻体折射54伤害。",
+          "cost": "单体无邻体时无额外收益；跳跃检查视线，协议伤害不再开新链。",
+          "tags": [
+            "CHAIN",
+            "PURIFY"
+          ]
+        }
+      ],
+      "selected": {
+        "id": "PURIFY_CHAIN:retune:balanced:rank2",
+        "kind": "retune",
+        "protocolId": "PURIFY_CHAIN",
+        "tuning": "balanced",
+        "rank": 2,
+        "title": "连锁净化 Ⅱ · 进阶",
+        "trigger": "基础工具清除感染体或感染源",
+        "change": "每跳伤害 38 → 54；新能力：持续命中存活目标，每3次向邻体折射。",
+        "actionHint": "用 1 / 2 持续命中存活目标，每 3 次命中自动向邻体折射；清除后仍会连锁。",
+        "effect": "清除后向 200 范围内邻体跳 2 次，每跳 54 伤害；共振破绽清除可增为 3 跳。持续命中存活目标，每3次向一个邻体折射54伤害。",
+        "cost": "单体无邻体时无额外收益；跳跃检查视线，协议伤害不再开新链。",
+        "tags": [
+          "CHAIN",
+          "PURIFY"
+        ]
+      },
+      "before": [
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced"
+        },
+        {
+          "id": "PURIFY_CHAIN",
+          "tuning": "balanced"
+        }
+      ],
+      "replacement": null,
+      "result": {
+        "kind": "committed",
+        "draftId": "71:2:draft:2"
+      }
+    },
+    {
+      "type": "combat",
+      "tick": 2500,
+      "wave": 4,
+      "draftId": "endless:71:wave:4:level:4",
+      "available": [
+        {
+          "id": "scan",
+          "title": "扫描爆发",
+          "description": "Q 扫描同时引爆身边 260 范围，基础伤害 0 → 30；扫描显形继续生效。",
+          "currentRank": 0,
+          "nextRank": 1
+        },
+        {
+          "id": "haste",
+          "title": "急速净化",
+          "description": "精准净化冷却 0.18 → 0.162 秒；整组扇射共用一次冷却。",
+          "currentRank": 0,
+          "nextRank": 1
+        },
+        {
+          "id": "multishot",
+          "title": "扇形抗体",
+          "description": "精准净化 3 → 5 束；向左右同时发射更多抗体。",
+          "currentRank": 1,
+          "nextRank": 2
+        }
+      ],
+      "selected": {
+        "id": "haste",
+        "title": "急速净化",
+        "description": "精准净化冷却 0.18 → 0.162 秒；整组扇射共用一次冷却。",
+        "currentRank": 0,
+        "nextRank": 1
+      },
+      "accepted": true
+    },
+    {
+      "type": "protocol",
+      "tick": 3596,
+      "wave": 5,
+      "draftId": "71:2:draft:3",
+      "available": [
+        {
+          "id": "IMMUNE_BEACON:retune:balanced:rank2",
+          "kind": "retune",
+          "protocolId": "IMMUNE_BEACON",
+          "tuning": "balanced",
+          "rank": 2,
+          "title": "免疫灯塔 Ⅱ · 进阶",
+          "trigger": "Q 标记鼠标区域，召集三只临时免疫细胞",
+          "change": "小队每轮总伤害 24 → 36；持续 6 → 8 秒。",
+          "actionHint": "现在按 Q 标记鼠标区域，召集三只免疫细胞追击、吞噬。",
+          "effect": "召集三只免疫细胞，持续 8 秒；活动范围 215，每 0.8 秒每轮总伤害 36。显影联动优先围猎标记体。",
+          "cost": "独立冷却 12 秒；每次组织承压 −3；同时一支小队，替换后撤离。",
+          "tags": [
+            "SUMMON",
+            "ZONE"
+          ]
+        },
+        {
+          "id": "PULSE_BREAK:equip:balanced:rank1",
+          "kind": "equip",
+          "protocolId": "PULSE_BREAK",
+          "tuning": "balanced",
+          "rank": 1,
+          "title": "共振裂解 Ⅰ · 均衡",
+          "trigger": "靠近节律装置，在冲流相位用基础工具命中",
+          "change": "解锁新打法 · 靠近器官装置，趁冲流亮起用 1 / 2 命中，触发破壳冲击。",
+          "actionHint": "靠近器官装置，趁冲流亮起用 1 / 2 命中，触发破壳冲击。",
+          "effect": "距装置 240 内，冲流相位命中追加 18 共振伤害，破壳 4 秒；每目标每节律最多一次。",
+          "cost": "需要接近装置并配合节律；无时机时不追加。",
+          "tags": [
+            "PULSE",
+            "BREAK"
+          ]
+        },
+        {
+          "id": "EXPOSE_TRACE:equip:balanced:rank1",
+          "kind": "equip",
+          "protocolId": "EXPOSE_TRACE",
+          "tuning": "balanced",
+          "rank": 1,
+          "title": "异常显影 Ⅰ · 均衡",
+          "trigger": "Q 扫描当前范围内活跃感染体",
+          "change": "解锁新打法 · 现在按 Q，让敌群显形并减速；搭配免疫细胞优先围猎标记体。",
+          "actionHint": "现在按 Q，让敌群显形并减速；搭配免疫细胞优先围猎标记体。",
+          "effect": "标记与显形 9 秒，前 3 秒移动速度 ×0.7；免疫小队优先追踪标记目标。",
+          "cost": "占用一个协议槽位，没有直接伤害。",
+          "tags": [
+            "SCAN",
+            "REVEAL"
+          ]
+        }
+      ],
+      "selected": {
+        "id": "IMMUNE_BEACON:retune:balanced:rank2",
+        "kind": "retune",
+        "protocolId": "IMMUNE_BEACON",
+        "tuning": "balanced",
+        "rank": 2,
+        "title": "免疫灯塔 Ⅱ · 进阶",
+        "trigger": "Q 标记鼠标区域，召集三只临时免疫细胞",
+        "change": "小队每轮总伤害 24 → 36；持续 6 → 8 秒。",
+        "actionHint": "现在按 Q 标记鼠标区域，召集三只免疫细胞追击、吞噬。",
+        "effect": "召集三只免疫细胞，持续 8 秒；活动范围 215，每 0.8 秒每轮总伤害 36。显影联动优先围猎标记体。",
+        "cost": "独立冷却 12 秒；每次组织承压 −3；同时一支小队，替换后撤离。",
+        "tags": [
+          "SUMMON",
+          "ZONE"
+        ]
+      },
+      "before": [
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced"
+        },
+        {
+          "id": "PURIFY_CHAIN",
+          "tuning": "balanced",
+          "rank": 2
+        }
+      ],
+      "replacement": null,
+      "result": {
+        "kind": "committed",
+        "draftId": "71:2:draft:3",
+        "nextDraftId": "71:2:draft:4"
+      }
+    },
+    {
+      "type": "protocol",
+      "tick": 3596,
+      "wave": 5,
+      "draftId": "71:2:draft:4",
+      "available": [
+        {
+          "id": "IMMUNE_BEACON:retune:balanced:rank3",
+          "kind": "retune",
+          "protocolId": "IMMUNE_BEACON",
+          "tuning": "balanced",
+          "rank": 3,
+          "title": "免疫灯塔 Ⅲ · 进阶",
+          "trigger": "Q 标记鼠标区域，召集三只临时免疫细胞",
+          "change": "小队每轮总伤害 36 → 48；持续 8 → 10 秒。",
+          "actionHint": "现在按 Q 标记鼠标区域，召集三只免疫细胞追击、吞噬。",
+          "effect": "召集三只免疫细胞，持续 10 秒；活动范围 240，每 0.8 秒每轮总伤害 48。显影联动优先围猎标记体。",
+          "cost": "独立冷却 12 秒；每次组织承压 −3；同时一支小队，替换后撤离。",
+          "tags": [
+            "SUMMON",
+            "ZONE"
+          ]
+        },
+        {
+          "id": "PULSE_BREAK:equip:balanced:rank1",
+          "kind": "equip",
+          "protocolId": "PULSE_BREAK",
+          "tuning": "balanced",
+          "rank": 1,
+          "title": "共振裂解 Ⅰ · 均衡",
+          "trigger": "靠近节律装置，在冲流相位用基础工具命中",
+          "change": "解锁新打法 · 靠近器官装置，趁冲流亮起用 1 / 2 命中，触发破壳冲击。",
+          "actionHint": "靠近器官装置，趁冲流亮起用 1 / 2 命中，触发破壳冲击。",
+          "effect": "距装置 240 内，冲流相位命中追加 18 共振伤害，破壳 4 秒；每目标每节律最多一次。",
+          "cost": "需要接近装置并配合节律；无时机时不追加。",
+          "tags": [
+            "PULSE",
+            "BREAK"
+          ]
+        },
+        {
+          "id": "EXPOSE_TRACE:equip:balanced:rank1",
+          "kind": "equip",
+          "protocolId": "EXPOSE_TRACE",
+          "tuning": "balanced",
+          "rank": 1,
+          "title": "异常显影 Ⅰ · 均衡",
+          "trigger": "Q 扫描当前范围内活跃感染体",
+          "change": "解锁新打法 · 现在按 Q，让敌群显形并减速；搭配免疫细胞优先围猎标记体。",
+          "actionHint": "现在按 Q，让敌群显形并减速；搭配免疫细胞优先围猎标记体。",
+          "effect": "标记与显形 9 秒，前 3 秒移动速度 ×0.7；免疫小队优先追踪标记目标。",
+          "cost": "占用一个协议槽位，没有直接伤害。",
+          "tags": [
+            "SCAN",
+            "REVEAL"
+          ]
+        }
+      ],
+      "selected": {
+        "id": "IMMUNE_BEACON:retune:balanced:rank3",
+        "kind": "retune",
+        "protocolId": "IMMUNE_BEACON",
+        "tuning": "balanced",
+        "rank": 3,
+        "title": "免疫灯塔 Ⅲ · 进阶",
+        "trigger": "Q 标记鼠标区域，召集三只临时免疫细胞",
+        "change": "小队每轮总伤害 36 → 48；持续 8 → 10 秒。",
+        "actionHint": "现在按 Q 标记鼠标区域，召集三只免疫细胞追击、吞噬。",
+        "effect": "召集三只免疫细胞，持续 10 秒；活动范围 240，每 0.8 秒每轮总伤害 48。显影联动优先围猎标记体。",
+        "cost": "独立冷却 12 秒；每次组织承压 −3；同时一支小队，替换后撤离。",
+        "tags": [
+          "SUMMON",
+          "ZONE"
+        ]
+      },
+      "before": [
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced",
+          "rank": 2
+        },
+        {
+          "id": "PURIFY_CHAIN",
+          "tuning": "balanced",
+          "rank": 2
+        }
+      ],
+      "replacement": null,
+      "result": {
+        "kind": "committed",
+        "draftId": "71:2:draft:4"
+      }
+    },
+    {
+      "type": "combat",
+      "tick": 3596,
+      "wave": 5,
+      "draftId": "endless:71:wave:5:level:5",
+      "available": [
+        {
+          "id": "vitality",
+          "title": "生命扩容",
+          "description": "最大耐久 100 → 120；本次补给按新的耐久上限结算。",
+          "currentRank": 0,
+          "nextRank": 1
+        },
+        {
+          "id": "scan",
+          "title": "扫描爆发",
+          "description": "Q 扫描同时引爆身边 260 范围，基础伤害 0 → 30；扫描显形继续生效。",
+          "currentRank": 0,
+          "nextRank": 1
+        },
+        {
+          "id": "dash",
+          "title": "冲刺斩",
+          "description": "Space 沿实际冲刺路径斩击周围敌人，基础伤害 0 → 40，判定半径 64。",
+          "currentRank": 0,
+          "nextRank": 1
+        }
+      ],
+      "selected": {
+        "id": "scan",
+        "title": "扫描爆发",
+        "description": "Q 扫描同时引爆身边 260 范围，基础伤害 0 → 30；扫描显形继续生效。",
+        "currentRank": 0,
+        "nextRank": 1
+      },
+      "accepted": true
+    },
+    {
+      "type": "combat",
+      "tick": 4375,
+      "wave": 6,
+      "draftId": "endless:71:wave:6:level:6",
+      "available": [
+        {
+          "id": "nova",
+          "title": "裂解新星",
+          "description": "范围裂解半径 108 → 122，伤害倍率 1.15 → 1.3，冷却 1.1 → 1 秒。",
+          "currentRank": 1,
+          "nextRank": 2
+        },
+        {
+          "id": "dash",
+          "title": "冲刺斩",
+          "description": "Space 沿实际冲刺路径斩击周围敌人，基础伤害 0 → 40，判定半径 64。",
+          "currentRank": 0,
+          "nextRank": 1
+        },
+        {
+          "id": "power",
+          "title": "净化突破",
+          "description": "基础净化伤害倍率 ×1 → ×1.18；强化现有攻击。",
+          "currentRank": 0,
+          "nextRank": 1
+        }
+      ],
+      "selected": {
+        "id": "nova",
+        "title": "裂解新星",
+        "description": "范围裂解半径 108 → 122，伤害倍率 1.15 → 1.3，冷却 1.1 → 1 秒。",
+        "currentRank": 1,
+        "nextRank": 2
+      },
+      "accepted": true
+    },
+    {
+      "type": "combat",
+      "tick": 5276,
+      "wave": 7,
+      "draftId": "endless:71:wave:7:level:7",
+      "available": [
+        {
+          "id": "power",
+          "title": "净化突破",
+          "description": "基础净化伤害倍率 ×1 → ×1.18；强化现有攻击。",
+          "currentRank": 0,
+          "nextRank": 1
+        },
+        {
+          "id": "pierce",
+          "title": "贯穿净化",
+          "description": "每束精准射线额外贯穿 0 → 1 个敌体，遵循组织碰撞。",
+          "currentRank": 0,
+          "nextRank": 1
+        },
+        {
+          "id": "dash",
+          "title": "冲刺斩",
+          "description": "Space 沿实际冲刺路径斩击周围敌人，基础伤害 0 → 40，判定半径 64。",
+          "currentRank": 0,
+          "nextRank": 1
+        }
+      ],
+      "selected": {
+        "id": "power",
+        "title": "净化突破",
+        "description": "基础净化伤害倍率 ×1 → ×1.18；强化现有攻击。",
+        "currentRank": 0,
+        "nextRank": 1
+      },
+      "accepted": true
+    },
+    {
+      "type": "protocol",
+      "tick": 6293,
+      "wave": 8,
+      "draftId": "71:2:draft:5",
+      "available": [
+        {
+          "id": "PURIFY_CHAIN:retune:balanced:rank3",
+          "kind": "retune",
+          "protocolId": "PURIFY_CHAIN",
+          "tuning": "balanced",
+          "rank": 3,
+          "title": "连锁净化 Ⅲ · 进阶",
+          "trigger": "基础工具清除感染体或感染源",
+          "change": "每跳伤害 54 → 70；折射蓄能：3次命中 → 2次。",
+          "actionHint": "用 1 / 2 持续命中存活目标，每 2 次命中自动向邻体折射；清除后仍会连锁。",
+          "effect": "清除后向 230 范围内邻体跳 2 次，每跳 70 伤害；共振破绽清除可增为 3 跳。持续命中存活目标，每2次向一个邻体折射70伤害。",
+          "cost": "单体无邻体时无额外收益；跳跃检查视线，协议伤害不再开新链。",
+          "tags": [
+            "CHAIN",
+            "PURIFY"
+          ]
+        },
+        {
+          "id": "PULSE_BREAK:equip:balanced:rank1",
+          "kind": "equip",
+          "protocolId": "PULSE_BREAK",
+          "tuning": "balanced",
+          "rank": 1,
+          "title": "共振裂解 Ⅰ · 均衡",
+          "trigger": "靠近节律装置，在冲流相位用基础工具命中",
+          "change": "解锁新打法 · 靠近器官装置，趁冲流亮起用 1 / 2 命中，触发破壳冲击。",
+          "actionHint": "靠近器官装置，趁冲流亮起用 1 / 2 命中，触发破壳冲击。",
+          "effect": "距装置 240 内，冲流相位命中追加 18 共振伤害，破壳 4 秒；每目标每节律最多一次。",
+          "cost": "需要接近装置并配合节律；无时机时不追加。",
+          "tags": [
+            "PULSE",
+            "BREAK"
+          ]
+        },
+        {
+          "id": "IMMUNE_BEACON:retune:focused:rank3",
+          "kind": "retune",
+          "protocolId": "IMMUNE_BEACON",
+          "tuning": "focused",
+          "rank": 3,
+          "title": "免疫灯塔 Ⅲ · 战术改造",
+          "trigger": "Q 标记鼠标区域，召集三只临时免疫细胞",
+          "change": "均衡 → 聚焦，保持 Ⅲ 阶；改变取向，不额外升级。",
+          "actionHint": "现在按 Q 标记鼠标区域，召集三只免疫细胞追击、吞噬。",
+          "effect": "召集三只免疫细胞，持续 8 秒；活动范围 200，每 0.5 秒每轮总伤害 48。显影联动优先围猎标记体。",
+          "cost": "独立冷却 12 秒；每次组织承压 −3；同时一支小队，替换后撤离。",
+          "tags": [
+            "SUMMON",
+            "ZONE"
+          ]
+        }
+      ],
+      "selected": {
+        "id": "PURIFY_CHAIN:retune:balanced:rank3",
+        "kind": "retune",
+        "protocolId": "PURIFY_CHAIN",
+        "tuning": "balanced",
+        "rank": 3,
+        "title": "连锁净化 Ⅲ · 进阶",
+        "trigger": "基础工具清除感染体或感染源",
+        "change": "每跳伤害 54 → 70；折射蓄能：3次命中 → 2次。",
+        "actionHint": "用 1 / 2 持续命中存活目标，每 2 次命中自动向邻体折射；清除后仍会连锁。",
+        "effect": "清除后向 230 范围内邻体跳 2 次，每跳 70 伤害；共振破绽清除可增为 3 跳。持续命中存活目标，每2次向一个邻体折射70伤害。",
+        "cost": "单体无邻体时无额外收益；跳跃检查视线，协议伤害不再开新链。",
+        "tags": [
+          "CHAIN",
+          "PURIFY"
+        ]
+      },
+      "before": [
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced",
+          "rank": 3
+        },
+        {
+          "id": "PURIFY_CHAIN",
+          "tuning": "balanced",
+          "rank": 2
+        }
+      ],
+      "replacement": null,
+      "result": {
+        "kind": "committed",
+        "draftId": "71:2:draft:5"
+      }
+    },
+    {
+      "type": "combat",
+      "tick": 6293,
+      "wave": 8,
+      "draftId": "endless:71:wave:8:level:8",
+      "available": [
+        {
+          "id": "vitality",
+          "title": "生命扩容",
+          "description": "最大耐久 100 → 120；本次补给按新的耐久上限结算。",
+          "currentRank": 0,
+          "nextRank": 1
+        },
+        {
+          "id": "dash",
+          "title": "冲刺斩",
+          "description": "Space 沿实际冲刺路径斩击周围敌人，基础伤害 0 → 40，判定半径 64。",
+          "currentRank": 0,
+          "nextRank": 1
+        },
+        {
+          "id": "power",
+          "title": "净化突破",
+          "description": "基础净化伤害倍率 ×1.18 → ×1.36；强化现有攻击。",
+          "currentRank": 1,
+          "nextRank": 2
+        }
+      ],
+      "selected": {
+        "id": "power",
+        "title": "净化突破",
+        "description": "基础净化伤害倍率 ×1.18 → ×1.36；强化现有攻击。",
+        "currentRank": 1,
+        "nextRank": 2
+      },
+      "accepted": true
+    },
+    {
+      "type": "combat",
+      "tick": 7219,
+      "wave": 9,
+      "draftId": "endless:71:wave:9:level:9",
+      "available": [
+        {
+          "id": "multishot",
+          "title": "扇形抗体",
+          "description": "精准净化 3 → 5 束；向左右同时发射更多抗体。",
+          "currentRank": 1,
+          "nextRank": 2
+        },
+        {
+          "id": "dash",
+          "title": "冲刺斩",
+          "description": "Space 沿实际冲刺路径斩击周围敌人，基础伤害 0 → 40，判定半径 64。",
+          "currentRank": 0,
+          "nextRank": 1
+        },
+        {
+          "id": "nova",
+          "title": "裂解新星",
+          "description": "范围裂解半径 122 → 136，伤害倍率 1.3 → 1.45，冷却 1 → 0.9 秒。",
+          "currentRank": 2,
+          "nextRank": 3
+        }
+      ],
+      "selected": {
+        "id": "nova",
+        "title": "裂解新星",
+        "description": "范围裂解半径 122 → 136，伤害倍率 1.3 → 1.45，冷却 1 → 0.9 秒。",
+        "currentRank": 2,
+        "nextRank": 3
+      },
+      "accepted": true
+    },
+    {
+      "type": "protocol",
+      "tick": 8751,
+      "wave": 10,
+      "draftId": "71:2:draft:6",
+      "available": [
+        {
+          "id": "IMMUNE_BEACON:retune:extended:rank3",
+          "kind": "retune",
+          "protocolId": "IMMUNE_BEACON",
+          "tuning": "extended",
+          "rank": 3,
+          "title": "免疫灯塔 Ⅲ · 战术改造",
+          "trigger": "Q 标记鼠标区域，召集三只临时免疫细胞",
+          "change": "均衡 → 延展，保持 Ⅲ 阶；改变取向，不额外升级。 取舍：持续秒数 10 → 12；活动范围 240 → 290；咬击间隔 0.8 → 1.1；组织承压 3 → 4。",
+          "actionHint": "现在按 Q 标记鼠标区域，召集三只免疫细胞追击、吞噬。",
+          "effect": "召集三只免疫细胞，持续 12 秒；活动范围 290，每 1.1 秒每轮总伤害 48。显影联动优先围猎标记体。",
+          "cost": "独立冷却 12 秒；每次组织承压 −4；同时一支小队，替换后撤离。",
+          "tags": [
+            "SUMMON",
+            "ZONE"
+          ]
+        },
+        {
+          "id": "EXPOSE_TRACE:equip:balanced:rank1",
+          "kind": "equip",
+          "protocolId": "EXPOSE_TRACE",
+          "tuning": "balanced",
+          "rank": 1,
+          "title": "异常显影 Ⅰ · 均衡",
+          "trigger": "Q 扫描当前范围内活跃感染体",
+          "change": "解锁新打法 · 现在按 Q，让敌群显形并减速；搭配免疫细胞优先围猎标记体。",
+          "actionHint": "现在按 Q，让敌群显形并减速；搭配免疫细胞优先围猎标记体。",
+          "effect": "标记与显形 9 秒，前 3 秒移动速度 ×0.7；免疫小队优先追踪标记目标。",
+          "cost": "占用一个协议槽位，没有直接伤害。",
+          "tags": [
+            "SCAN",
+            "REVEAL"
+          ]
+        },
+        {
+          "id": "PULSE_BREAK:equip:balanced:rank1",
+          "kind": "equip",
+          "protocolId": "PULSE_BREAK",
+          "tuning": "balanced",
+          "rank": 1,
+          "title": "共振裂解 Ⅰ · 均衡",
+          "trigger": "靠近节律装置，在冲流相位用基础工具命中",
+          "change": "解锁新打法 · 靠近器官装置，趁冲流亮起用 1 / 2 命中，触发破壳冲击。",
+          "actionHint": "靠近器官装置，趁冲流亮起用 1 / 2 命中，触发破壳冲击。",
+          "effect": "距装置 240 内，冲流相位命中追加 18 共振伤害，破壳 4 秒；每目标每节律最多一次。",
+          "cost": "需要接近装置并配合节律；无时机时不追加。",
+          "tags": [
+            "PULSE",
+            "BREAK"
+          ]
+        }
+      ],
+      "selected": {
+        "id": "EXPOSE_TRACE:equip:balanced:rank1",
+        "kind": "equip",
+        "protocolId": "EXPOSE_TRACE",
+        "tuning": "balanced",
+        "rank": 1,
+        "title": "异常显影 Ⅰ · 均衡",
+        "trigger": "Q 扫描当前范围内活跃感染体",
+        "change": "解锁新打法 · 现在按 Q，让敌群显形并减速；搭配免疫细胞优先围猎标记体。",
+        "actionHint": "现在按 Q，让敌群显形并减速；搭配免疫细胞优先围猎标记体。",
+        "effect": "标记与显形 9 秒，前 3 秒移动速度 ×0.7；免疫小队优先追踪标记目标。",
+        "cost": "占用一个协议槽位，没有直接伤害。",
+        "tags": [
+          "SCAN",
+          "REVEAL"
+        ]
+      },
+      "before": [
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced",
+          "rank": 3
+        },
+        {
+          "id": "PURIFY_CHAIN",
+          "tuning": "balanced",
+          "rank": 3
+        }
+      ],
+      "replacement": null,
+      "result": {
+        "kind": "committed",
+        "draftId": "71:2:draft:6"
+      }
+    },
+    {
+      "type": "combat",
+      "tick": 8751,
+      "wave": 10,
+      "draftId": "endless:71:wave:10:level:10",
+      "available": [
+        {
+          "id": "power",
+          "title": "净化突破",
+          "description": "基础净化伤害倍率 ×1.36 → ×1.54；强化现有攻击。",
+          "currentRank": 2,
+          "nextRank": 3
+        },
+        {
+          "id": "scan",
+          "title": "扫描爆发",
+          "description": "Q 扫描同时引爆身边 260 范围，基础伤害 30 → 60；扫描显形继续生效。",
+          "currentRank": 1,
+          "nextRank": 2
+        },
+        {
+          "id": "dash",
+          "title": "冲刺斩",
+          "description": "Space 沿实际冲刺路径斩击周围敌人，基础伤害 0 → 40，判定半径 64。",
+          "currentRank": 0,
+          "nextRank": 1
+        }
+      ],
+      "selected": {
+        "id": "power",
+        "title": "净化突破",
+        "description": "基础净化伤害倍率 ×1.36 → ×1.54；强化现有攻击。",
+        "currentRank": 2,
+        "nextRank": 3
+      },
+      "accepted": true
+    },
+    {
+      "type": "combat",
+      "tick": 9948,
+      "wave": 11,
+      "draftId": "endless:71:wave:11:level:11",
+      "available": [
+        {
+          "id": "pierce",
+          "title": "贯穿净化",
+          "description": "每束精准射线额外贯穿 0 → 1 个敌体，遵循组织碰撞。",
+          "currentRank": 0,
+          "nextRank": 1
+        },
+        {
+          "id": "power",
+          "title": "净化突破",
+          "description": "基础净化伤害倍率 ×1.54 → ×1.72；强化现有攻击。",
+          "currentRank": 3,
+          "nextRank": 4
+        },
+        {
+          "id": "scan",
+          "title": "扫描爆发",
+          "description": "Q 扫描同时引爆身边 260 范围，基础伤害 30 → 60；扫描显形继续生效。",
+          "currentRank": 1,
+          "nextRank": 2
+        }
+      ],
+      "selected": {
+        "id": "power",
+        "title": "净化突破",
+        "description": "基础净化伤害倍率 ×1.54 → ×1.72；强化现有攻击。",
+        "currentRank": 3,
+        "nextRank": 4
+      },
+      "accepted": true
+    },
+    {
+      "type": "combat",
+      "tick": 11156,
+      "wave": 12,
+      "draftId": "endless:71:wave:12:level:12",
+      "available": [
+        {
+          "id": "dash",
+          "title": "冲刺斩",
+          "description": "Space 沿实际冲刺路径斩击周围敌人，基础伤害 0 → 40，判定半径 64。",
+          "currentRank": 0,
+          "nextRank": 1
+        },
+        {
+          "id": "scan",
+          "title": "扫描爆发",
+          "description": "Q 扫描同时引爆身边 260 范围，基础伤害 30 → 60；扫描显形继续生效。",
+          "currentRank": 1,
+          "nextRank": 2
+        },
+        {
+          "id": "pierce",
+          "title": "贯穿净化",
+          "description": "每束精准射线额外贯穿 0 → 1 个敌体，遵循组织碰撞。",
+          "currentRank": 0,
+          "nextRank": 1
+        }
+      ],
+      "selected": {
+        "id": "pierce",
+        "title": "贯穿净化",
+        "description": "每束精准射线额外贯穿 0 → 1 个敌体，遵循组织碰撞。",
+        "currentRank": 0,
+        "nextRank": 1
+      },
+      "accepted": true
+    }
+  ],
+  "finalRanks": {
+    "multishot": 1,
+    "nova": 3,
+    "immune": 1,
+    "haste": 1,
+    "scan": 1,
+    "power": 4,
+    "pierce": 1
+  },
+  "finalEquipped": [
+    {
+      "id": "IMMUNE_BEACON",
+      "tuning": "balanced",
+      "rank": 3
+    },
+    {
+      "id": "PURIFY_CHAIN",
+      "tuning": "balanced",
+      "rank": 3
+    },
+    {
+      "id": "EXPOSE_TRACE",
+      "tuning": "balanced"
+    }
+  ],
+  "waves": [
+    {
+      "wave": 1,
+      "enteredAt": 0,
+      "combatAt": 2,
+      "clearedAt": 6.783333333333333,
+      "kills": 8,
+      "damage": {
+        "basic": 520,
+        "protocol": 24,
+        "ability": 0,
+        "immuneSubset": 24
+      },
+      "damageTaken": 0,
+      "organDamage": 3,
+      "telegraphs": 0,
+      "maxLiving": 4,
+      "hpAtClear": 100,
+      "tissueAtClear": 97
+    },
+    {
+      "wave": 2,
+      "enteredAt": 7.783333333333333,
+      "combatAt": 9.783333333333333,
+      "clearedAt": 15.083333333333334,
+      "kills": 10,
+      "damage": {
+        "basic": 656,
+        "protocol": 24,
+        "ability": 0,
+        "immuneSubset": 24
+      },
+      "damageTaken": 0,
+      "organDamage": 7,
+      "telegraphs": 0,
+      "maxLiving": 4,
+      "hpAtClear": 100,
+      "tissueAtClear": 93
+    },
+    {
+      "wave": 3,
+      "enteredAt": 16.083333333333332,
+      "combatAt": 24.083333333333332,
+      "clearedAt": 30.45,
+      "kills": 12,
+      "damage": {
+        "basic": 528,
+        "protocol": 288,
+        "ability": 0,
+        "immuneSubset": 0
+      },
+      "damageTaken": 0,
+      "organDamage": 7,
+      "telegraphs": 0,
+      "maxLiving": 6,
+      "hpAtClear": 100,
+      "tissueAtClear": 93
+    },
+    {
+      "wave": 4,
+      "enteredAt": 31.45,
+      "combatAt": 33.45,
+      "clearedAt": 41.666666666666664,
+      "kills": 14,
+      "damage": {
+        "basic": 596,
+        "protocol": 356,
+        "ability": 0,
+        "immuneSubset": 0
+      },
+      "damageTaken": 0,
+      "organDamage": 3,
+      "telegraphs": 0,
+      "maxLiving": 3,
+      "hpAtClear": 100,
+      "tissueAtClear": 97
+    },
+    {
+      "wave": 5,
+      "enteredAt": 42.666666666666664,
+      "combatAt": 50.666666666666664,
+      "clearedAt": 59.93333333333333,
+      "kills": 16,
+      "damage": {
+        "basic": 584.5500000000002,
+        "protocol": 571.45,
+        "ability": 0,
+        "immuneSubset": 32.6
+      },
+      "damageTaken": 0,
+      "organDamage": 3,
+      "telegraphs": 1,
+      "maxLiving": 5,
+      "hpAtClear": 100,
+      "tissueAtClear": 97
+    },
+    {
+      "wave": 6,
+      "enteredAt": 60.93333333333333,
+      "combatAt": 62.93333333333333,
+      "clearedAt": 72.91666666666667,
+      "kills": 18,
+      "damage": {
+        "basic": 674.8,
+        "protocol": 549.2,
+        "ability": 0,
+        "immuneSubset": 34
+      },
+      "damageTaken": 0,
+      "organDamage": 7,
+      "telegraphs": 1,
+      "maxLiving": 5,
+      "hpAtClear": 100,
+      "tissueAtClear": 93
+    },
+    {
+      "wave": 7,
+      "enteredAt": 73.91666666666667,
+      "combatAt": 75.91666666666667,
+      "clearedAt": 87.93333333333334,
+      "kills": 20,
+      "damage": {
+        "basic": 483,
+        "protocol": 877,
+        "ability": 0,
+        "immuneSubset": 34
+      },
+      "damageTaken": 0,
+      "organDamage": 6,
+      "telegraphs": 0,
+      "maxLiving": 3,
+      "hpAtClear": 100,
+      "tissueAtClear": 94
+    },
+    {
+      "wave": 8,
+      "enteredAt": 88.93333333333334,
+      "combatAt": 90.93333333333334,
+      "clearedAt": 104.88333333333333,
+      "kills": 22,
+      "damage": {
+        "basic": 718.3919999999999,
+        "protocol": 777.6080000000001,
+        "ability": 0,
+        "immuneSubset": 0
+      },
+      "damageTaken": 0,
+      "organDamage": 6,
+      "telegraphs": 1,
+      "maxLiving": 5,
+      "hpAtClear": 100,
+      "tissueAtClear": 94
+    },
+    {
+      "wave": 9,
+      "enteredAt": 105.88333333333333,
+      "combatAt": 107.88333333333333,
+      "clearedAt": 120.31666666666666,
+      "kills": 24,
+      "damage": {
+        "basic": 645.7280000000001,
+        "protocol": 986.2719999999999,
+        "ability": 0,
+        "immuneSubset": 0
+      },
+      "damageTaken": 0,
+      "organDamage": 6,
+      "telegraphs": 1,
+      "maxLiving": 4,
+      "hpAtClear": 100,
+      "tissueAtClear": 94
+    },
+    {
+      "wave": 10,
+      "enteredAt": 121.31666666666666,
+      "combatAt": 129.31666666666666,
+      "clearedAt": 145.85,
+      "kills": 62,
+      "damage": {
+        "basic": 1320.66,
+        "protocol": 1341.34,
+        "ability": 0,
+        "immuneSubset": 109.76
+      },
+      "damageTaken": 0,
+      "organDamage": 6,
+      "telegraphs": 0,
+      "maxLiving": 7,
+      "hpAtClear": 100,
+      "tissueAtClear": 94
+    },
+    {
+      "wave": 11,
+      "enteredAt": 146.85,
+      "combatAt": 148.85,
+      "clearedAt": 165.8,
+      "kills": 66,
+      "damage": {
+        "basic": 1265.152,
+        "protocol": 1474.8480000000002,
+        "ability": 0,
+        "immuneSubset": 155.20799999999997
+      },
+      "damageTaken": 0,
+      "organDamage": 6,
+      "telegraphs": 0,
+      "maxLiving": 6,
+      "hpAtClear": 100,
+      "tissueAtClear": 94
+    },
+    {
+      "wave": 12,
+      "enteredAt": 166.8,
+      "combatAt": 168.8,
+      "clearedAt": 185.93333333333334,
+      "kills": 66,
+      "damage": {
+        "basic": 1237.4560000000001,
+        "protocol": 1502.5439999999999,
+        "ability": 0,
+        "immuneSubset": 99.024
+      },
+      "damageTaken": 0,
+      "organDamage": 10,
+      "telegraphs": 0,
+      "maxLiving": 7,
+      "hpAtClear": 100,
+      "tissueAtClear": 90
+    }
+  ],
+  "eventCounts": {
+    "ENDLESS_WAVE_STARTED": 12,
+    "ACTOR_SPAWNED": 338,
+    "ENDLESS_REINFORCEMENTS": 80,
+    "TOOL_SELECTED": 167,
+    "SCAN_COMPLETED": 18,
+    "BATTLE_DIAGNOSED": 18,
+    "ORGAN_INTEGRITY_CHANGED": 34,
+    "PROTOCOL_BEACON_CREATED": 18,
+    "TOOL_FIRED": 336,
+    "TARGET_HIT": 543,
+    "AREA_DISPLACED": 9,
+    "TARGET_CLEARED": 338,
+    "PROTOCOL_BEACON_HIT": 30,
+    "ENDLESS_WAVE_CLEARED": 12,
+    "RUN_PAUSED": 12,
+    "INPUT_RESET_REQUESTED": 24,
+    "COMBAT_UPGRADE_COMMITTED": 12,
+    "RUN_RESUMED": 12,
+    "GROWTH_REWARD": 8,
+    "GROWTH_LEVEL_GAINED": 5,
+    "PREPARATION_REPAID": 1,
+    "ENDLESS_WAVE_WARNING": 11,
+    "PULSE_TRIGGERED": 4,
+    "TOOL_REJECTED": 9,
+    "PROTOCOL_DRAFT_OPENED": 6,
+    "PROTOCOL_EQUIPPED": 6,
+    "PROTOCOL_DRAFT_COMMITTED": 6,
+    "PROTOCOL_CHAIN_HIT": 156,
+    "COLLISION_BLOCKED": 1,
+    "CARAPACE_RESISTED": 89,
+    "PROTOCOL_RICOCHET_HIT": 35,
+    "ATTACK_TELEGRAPHED": 4,
+    "ENEMY_TACTIC_COMMITTED": 4,
+    "ELITE_CLEARED": 2,
+    "ENDLESS_PROTOCOL_REWARD_QUEUED": 2,
+    "COMBAT_ABILITY_TRIGGERED": 13,
+    "FISSION_WARNING": 56,
+    "FISSION_SPAWNED": 56,
+    "PROTOCOL_TRACE_APPLIED": 4,
+    "PROTOCOL_SYNERGY": 1
+  },
+  "casts": [
+    {
+      "actorId": "elite-47",
+      "wave": 5,
+      "tactic": "crystal-charge",
+      "role": "elite",
+      "bornAt": 50.666666666666664,
+      "committedAt": 51.13333333333333,
+      "spawnToCastSeconds": 0.46666666666666856,
+      "resolveAt": 52.333333333333336,
+      "outcome": "killed-during-windup",
+      "finishedAt": 51.53333333333333
+    },
+    {
+      "actorId": "virus-68",
+      "wave": 6,
+      "tactic": "thin-ray",
+      "role": "virus",
+      "bornAt": 63.63333333333333,
+      "committedAt": 63.833333333333336,
+      "spawnToCastSeconds": 0.20000000000000284,
+      "resolveAt": 64.88333333333334,
+      "outcome": "killed-during-windup",
+      "finishedAt": 64.06666666666666
+    },
+    {
+      "actorId": "virus-106",
+      "wave": 8,
+      "tactic": "thin-ray",
+      "role": "virus",
+      "bornAt": 91.53333333333333,
+      "committedAt": 91.73333333333333,
+      "spawnToCastSeconds": 0.20000000000000284,
+      "resolveAt": 92.78333333333333,
+      "outcome": "killed-during-windup",
+      "finishedAt": 91.96666666666667
+    },
+    {
+      "actorId": "virus-128",
+      "wave": 9,
+      "tactic": "thin-ray",
+      "role": "virus",
+      "bornAt": 108.33333333333333,
+      "committedAt": 108.53333333333333,
+      "spawnToCastSeconds": 0.20000000000000284,
+      "resolveAt": 109.58333333333333,
+      "outcome": "killed-during-windup",
+      "finishedAt": 108.58333333333333
+    }
+  ],
+  "castOutcomes": {
+    "killed-during-windup": 4
+  },
+  "liveAtStop": []
+}

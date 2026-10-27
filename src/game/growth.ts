@@ -37,6 +37,32 @@ const unobstructed = (from: Vec, to: Target, geometry?: WorldGeometry): boolean 
   const wall = wallHit(from,direction,length,geometry); return wall === null || wall >= length-to.radius;
 };
 const stableNearest = (from: Vec, targets: readonly Target[]): Target[] => [...targets].sort((a,b)=>distance(from,a)-distance(from,b)||(a.id<b.id?-1:a.id>b.id?1:0));
+function beaconPosition(context: GrowthContext): Vec {
+  const direction=normalized(context.aim.x-context.player.x,context.aim.y-context.player.y),length=Math.min(B.beaconPlacementRange,distance(context.player,context.aim));
+  const wall=wallHit(context.player,direction,length,context.geometry);
+  const travel=Math.max(0,Math.min(length,wall===null?length:wall-18));
+  return point(moveWithCollision(context.player,{x:direction.x*travel,y:direction.y*travel},12,context.geometry));
+}
+const SYNERGY_PARTNER: Record<ProtocolId, ProtocolId> = {
+  PULSE_BREAK: 'PURIFY_CHAIN', PURIFY_CHAIN: 'PULSE_BREAK', IMMUNE_BEACON: 'EXPOSE_TRACE', EXPOSE_TRACE: 'IMMUNE_BEACON',
+};
+function calibrationTradeoff(current: EquippedProtocol, next: DraftOption): string {
+  const rank=protocolRank(current),change=(name:string,a:number,b:number)=>`${name} ${a} → ${b}`;
+  if(current.id==='PULSE_BREAK'){
+    const a=getPulseConfig(current.tuning,rank),b=getPulseConfig(next.tuning,rank);
+    return [change('装置范围',a.deviceRange,b.deviceRange),change('共振伤害',a.bonusDamage,b.bonusDamage),change('破绽秒数',a.exposeSeconds,b.exposeSeconds)].join('；');
+  }
+  if(current.id==='PURIFY_CHAIN'){
+    const a=getChainConfig(current.tuning,rank),b=getChainConfig(next.tuning,rank);
+    return [change('连锁范围',a.range,b.range),change('每跳伤害',a.damage,b.damage)].join('；');
+  }
+  if(current.id==='IMMUNE_BEACON'){
+    const a=getBeaconConfig(current.tuning,rank),b=getBeaconConfig(next.tuning,rank);
+    return [change('持续秒数',a.duration,b.duration),change('活动范围',a.radius,b.radius),change('咬击间隔',a.interval,b.interval),change('组织承压',a.tissueCost,b.tissueCost)].join('；');
+  }
+  const a=getTraceConfig(current.tuning,rank),b=getTraceConfig(next.tuning,rank);
+  return [change('显影秒数',a.duration,b.duration),change('减速秒数',a.slowDuration,b.slowDuration),change('敌人移速倍率',a.factor,b.factor)].join('；');
+}
 
 /** Independent run-local state. All world mutations return through the host's common damage path. */
 export class GrowthController {
@@ -49,6 +75,7 @@ export class GrowthController {
     this.state = { runId, seed: seed >>> 0, lastElapsed: 0, xp: 0, level: 0, nextXp: B.xpThresholds[0], research: 0,
       preparation: initialPreparation, starterDebt: starter ? 1 : 0, carriedProtocols: starter ? [starter] : [],
       equipped: starter ? [{ id: starter, tuning: 'balanced' }] : [], draft: null, pendingLevels: [], consumedDraftIds: [], rewardedKeys: [], sourceKillCounts: {},
+      lastMilestoneWave: 0, nextMilestoneWave: null,
       damageTakenByOrgan: { heart: 0, lung: 0 }, protectionNeeded: { heart: false, lung: false },
       draftSerial: 0, historyHash: 2166136261, ended: false, pendingResearch: null, researchSerial: 0,
       beacon: null, beaconReadyAt: 0, cells: [], activations: {}, marks: [], resonance: [], chainRoots: [], protocolHistory: [], pendingLogs: [],
@@ -137,7 +164,7 @@ export class GrowthController {
   recordEvent(event: GameEvent, context?: GrowthContext): void {
     const s=this.state, data=event.data, elapsed=context?.elapsed??event.tick/60;
     this.observeTime(elapsed);
-    if(event.type==='RUN_ENDED') { s.ended=true;s.draft=null;s.pendingResearch=null;s.pendingLevels=[];s.beacon=null;s.cells=[];s.marks=[];s.resonance=[];this.acceptedHistory.clear();return; }
+    if(event.type==='RUN_ENDED') { s.ended=true;s.draft=null;s.pendingResearch=null;s.pendingLevels=[];s.nextMilestoneWave=null;s.beacon=null;s.cells=[];s.marks=[];s.resonance=[];this.acceptedHistory.clear();return; }
     if(s.ended)return;
     this.recordAcceptedEffect(event, context, elapsed);
     // Continuous challenges reward completed waves. Per-actor reward ledgers
@@ -183,20 +210,38 @@ export class GrowthController {
     this.openNextLevel();
   }
 
+  /** The host calls once per fifth clear. Pending consecutive milestones use two numbers. */
+  rewardEndlessMilestone(wave: number, context: GrowthContext): void {
+    const s=this.state, last=s.lastMilestoneWave??0;
+    if(s.ended||!context.active||!context.endless||!Number.isSafeInteger(wave)||wave<5||wave%5!==0||wave<=last)return;
+    // A paused run cannot earn another wave. While a reward is waiting, only the
+    // next consecutive milestone can extend its compact queue; gaps are not invented.
+    if(s.nextMilestoneWave!=null&&wave!==last+5)return;
+    this.observeTime(context.elapsed);
+    s.nextMilestoneWave??=wave;s.lastMilestoneWave=wave;
+    this.log('ENDLESS_PROTOCOL_REWARD_QUEUED',{wave,cost:0});
+    this.openNextLevel();
+  }
+
   private shuffled<T>(values: readonly T[], rng: SeedRng): T[] {
     const result=[...values];for(let i=result.length-1;i>0;i--){const j=rng.int(0,i);[result[i],result[j]]=[result[j],result[i]];}return result;
   }
-  private createDraft(source: ProtocolDraft['source'], level?: number, researchDirection?: ResearchDirectionId, requestId?: string): ProtocolDraft {
+  private createDraft(source: ProtocolDraft['source'], level?: number, researchDirection?: ResearchDirectionId, requestId?: string, endlessWave?: number): ProtocolDraft {
     const s=this.state, serial=++s.draftSerial;
     const equipment=s.equipped.map(slot=>`${slot.id}:${slot.tuning}:${protocolRank(slot)}`).sort().join('|');
-    const focusHash=source==='research'&&researchDirection&&researchDirection!=='general'?hashString(`research:${researchDirection}`):0;
+    const focusHash=source==='endless'?hashString(`endless:${endlessWave}`):source==='research'&&researchDirection&&researchDirection!=='general'?hashString(`research:${researchDirection}`):0;
     const rng=new SeedRng((s.seed^Math.imul(serial,0x9e3779b1)^hashString(equipment,s.historyHash)^focusHash)>>>0);
     const newOptions:DraftOption[]=[],retunes:DraftOption[]=[];
     for(const id of PROTOCOL_IDS) {
       const current=this.equipped(id);
       if(!current)newOptions.push(makeDraftOption(id,'balanced','equip'));
       else if (protocolRank(current) < B.maxRank) retunes.push(makeDraftOption(id,current.tuning,'retune',(protocolRank(current)+1) as ProtocolRank,current));
-      else {const options=TUNINGS.filter(tuning=>tuning!==current.tuning);retunes.push(makeDraftOption(id,options[rng.int(0,options.length-1)],'retune',protocolRank(current),current));}
+      else {
+        const options=TUNINGS.filter(tuning=>tuning!==current.tuning),index=source==='endless'?(Math.floor((endlessWave??5)/5)+s.seed)%options.length:rng.int(0,options.length-1);
+        const option=makeDraftOption(id,options[index],'retune',protocolRank(current),current);
+        if(source==='endless')option.change+=` 取舍：${calibrationTradeoff(current,option)}。`;
+        retunes.push(option);
+      }
     }
     const shuffledNew=this.shuffled(newOptions,rng);
     // The opening presents different attack loops, including an immediately usable summon.
@@ -204,7 +249,15 @@ export class GrowthController {
     const firstChoices=opening?[shuffledNew.find(o=>o.protocolId==='IMMUNE_BEACON')!,shuffledNew.find(o=>o.protocolId==='PURIFY_CHAIN')!,shuffledNew.find(o=>o.protocolId!=='IMMUNE_BEACON'&&o.protocolId!=='PURIFY_CHAIN')!]:shuffledNew;
     let ordered:DraftOption[];
     const upgrades=retunes.filter(option=>(option.rank??1)>protocolRank(this.equipped(option.protocolId)));
-    if(source==='research'&&researchDirection&&researchDirection!=='general'){
+    if(source==='endless'){
+      const pool=[...newOptions,...retunes];
+      const missing=[...new Set(s.equipped.map(slot=>SYNERGY_PARTNER[slot.id]).filter(id=>!this.equipped(id)))];
+      const partners=this.shuffled(missing,rng).map(id=>pool.find(option=>option.protocolId===id)!);
+      const selected=new Set(partners.map(option=>option.protocolId));
+      const upgrade=this.shuffled(upgrades.filter(option=>!selected.has(option.protocolId)),rng)[0];
+      if(upgrade&&partners.length<3){partners.push(upgrade);selected.add(upgrade.protocolId);}
+      ordered=[...partners,...this.shuffled(pool.filter(option=>!selected.has(option.protocolId)),rng)].slice(0,3);
+    }else if(source==='research'&&researchDirection&&researchDirection!=='general'){
       const info=RESEARCH_DIRECTIONS[researchDirection],pool=[...newOptions,...retunes];
       const guaranteed=[info.primary!,info.partner!].map(id=>pool.find(option=>option.protocolId===id)!);
       const ids=new Set(guaranteed.map(option=>option.protocolId));
@@ -218,13 +271,21 @@ export class GrowthController {
     }else ordered=[...firstChoices,...this.shuffled(retunes,rng)].slice(0,3);
     if(ordered.length!==3)throw new Error('Protocol candidate pool must provide three legal distinct choices');
     const options=this.shuffled(ordered,rng) as ProtocolDraft['options'];
-    const draft:ProtocolDraft={id:`${s.runId}:draft:${serial}`,source,serial,level,options,status:'choosing',...(source==='research'&&researchDirection?{researchDirection}:{})};
-    s.draft=draft;this.log('PROTOCOL_DRAFT_OPENED',{draftId:draft.id,source,serial,level:level??0,...(source==='research'?{researchDirection:researchDirection??'general',...(requestId?{requestId}:{})}:{})});
+    const draft:ProtocolDraft={id:`${s.runId}:draft:${serial}`,source,serial,level,options,status:'choosing',...(source==='endless'?{endlessWave}:{}),...(source==='research'&&researchDirection?{researchDirection}:{})};
+    s.draft=draft;this.log('PROTOCOL_DRAFT_OPENED',{draftId:draft.id,source,serial,level:level??0,...(source==='endless'?{wave:endlessWave??0,cost:0}:{}),...(source==='research'?{researchDirection:researchDirection??'general',...(requestId?{requestId}:{})}:{})});
     if(source==='research')this.remember('PROTOCOL_DRAFT_OPENED',`${RESEARCH_DIRECTIONS[researchDirection??'general'].title}：三种不同协议候选已就绪，可新装、进阶或改造。`);
+    if(source==='endless')this.remember('PROTOCOL_DRAFT_OPENED',`第 ${endlessWave} 波联动重配：免样本，可放弃；三槽内补齐联动、进阶或改变取向，战斗进化照常获得。`);
     return draft;
   }
   private openNextLevel(): void {
-    if(!this.state.draft&&!this.state.pendingResearch&&!this.state.ended&&this.state.pendingLevels.length)this.createDraft('xp',this.state.pendingLevels.shift()!);
+    const s=this.state;
+    if(s.draft||s.pendingResearch||s.ended)return;
+    if(s.pendingLevels.length){this.createDraft('xp',s.pendingLevels.shift()!);return;}
+    if(s.nextMilestoneWave!=null){
+      const wave=s.nextMilestoneWave;
+      s.nextMilestoneWave=wave<(s.lastMilestoneWave??0)?wave+5:null;
+      this.createDraft('endless',undefined,undefined,undefined,wave);
+    }
   }
   requestResearch(nodeId: string, context: GrowthContext): ResearchRequestResult {
     this.observeTime(context.elapsed);
@@ -283,6 +344,7 @@ export class GrowthController {
   }
   private finishDraft(kind:'committed'|'discarded',draft:ProtocolDraft): DraftResolution {
     const s=this.state;s.consumedDraftIds.push(draft.id);s.draft=null;
+    if(s.consumedDraftIds.length>128)s.consumedDraftIds.splice(0,s.consumedDraftIds.length-128);
     s.historyHash=hashString(`${kind}:${draft.serial}:${s.equipped.map(e=>`${e.id}:${e.tuning}:${protocolRank(e)}`).join('|')}`,s.historyHash);
     this.log(kind==='committed'?'PROTOCOL_DRAFT_COMMITTED':'PROTOCOL_DRAFT_DISCARDED',{draftId:draft.id,source:draft.source});
     this.openNextLevel();const nextDraft=s.draft as ProtocolDraft|null;return{kind,draftId:draft.id,nextDraftId:nextDraft?.id};
@@ -364,10 +426,7 @@ export class GrowthController {
     }
     if(!beacon||context.elapsed+1e-9>=this.state.beaconReadyAt) {
       const config=beacon?getBeaconConfig(beacon.tuning,protocolRank(beacon)):{...PATROL_CONFIG,tissueCost:0};
-      const direction=normalized(context.aim.x-context.player.x,context.aim.y-context.player.y),length=Math.min(B.beaconPlacementRange,distance(context.player,context.aim));
-      const wall=wallHit(context.player,direction,length,context.geometry);
-      const travel=Math.max(0,Math.min(length,wall===null?length:wall-18));
-      const position=moveWithCollision(context.player,{x:direction.x*travel,y:direction.y*travel},12,context.geometry);
+      const position=beaconPosition(context);
       this.state.beacon={...point(position),id:`${rootId}:beacon`,organId:context.organId,born:context.elapsed,until:context.elapsed+config.duration,
         radius:config.radius,damage:config.damage,interval:config.interval,nextAttackAt:context.elapsed+.1,tuning:beacon?.tuning??'balanced',mode:beacon?'protocol':'patrol'};
       this.state.cells=summonImmuneCells(this.state.beacon,context,beacon?3:1);
@@ -377,6 +436,18 @@ export class GrowthController {
       commands.push({...base,kind:'effect',effect:'scan',from:point(position),to:point(position),radius:config.radius,duration:.6},
         {kind:'log',type:beacon?'PROTOCOL_BEACON_CREATED':'IMMUNE_PATROL_CREATED',data:{...(beacon?{protocolId:'IMMUNE_BEACON'}:{}),rootId,x:position.x,y:position.y,duration:config.duration,cost:config.tissueCost,cooldown:config.cooldown,cells:beacon?3:1}});
       this.remember(beacon?'PROTOCOL_BEACON_CREATED':'IMMUNE_PATROL_CREATED',beacon?`三只免疫细胞出击，组织承压 −${config.tissueCost}。`:'Q 召来一只免疫侦巡细胞，短时协助清理。',context.elapsed);
+    }else if(this.state.beacon&&this.state.beacon.until>context.elapsed&&this.state.beacon.organId===context.organId
+      &&this.state.beacon.mode!=='patrol'&&this.state.cells?.some(cell=>cell.beaconId===this.state.beacon!.id&&cell.until>context.elapsed)) {
+      const old=this.state.beacon,position=beaconPosition(context);
+      // Repoint the zone, never the bodies. Preserve every unit's independent
+      // bite clock and lifetime; normal fixed updates perform the actual travel.
+      this.state.beacon={...old,...position};
+      this.state.cells=this.state.cells.map(cell=>({...cell,waypoint:null,navigationAt:0}));
+      const base={protocolId:'IMMUNE_BEACON' as const,rootId,organId:context.organId};
+      commands.push({...base,kind:'effect',effect:'scan',from:point(position),to:point(position),radius:old.radius,duration:.6},
+        {kind:'log',type:'IMMUNE_SQUAD_REDIRECTED',data:{protocolId:'IMMUNE_BEACON',rootId,beaconId:old.id,
+          fromX:old.x,fromY:old.y,x:position.x,y:position.y,cells:this.state.cells.length,until:old.until,readyAt:this.state.beaconReadyAt,cost:0}});
+      this.remember('IMMUNE_SQUAD_REDIRECTED','免疫小队转向新战线；保持原剩余寿命与吞噬冷却，不消耗组织。',context.elapsed);
     }
     const accepted=this.budget(context,commands);
     if(commands.length&&!accepted.length){this.state.marks=previous.marks;this.state.beacon=previous.beacon;this.state.cells=previous.cells;this.state.beaconReadyAt=previous.readyAt;this.state.protocolHistory=previous.history;}

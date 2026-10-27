@@ -1,0 +1,136 @@
+{
+  "version": "0.7.8",
+  "candidate": "formations-continuous-synergy",
+  "generatedAt": "2026-10-27T15:52:39.582Z",
+  "baselineCommit": "ac3341ef728e1d57fe2ed92bb38721aa419a4ef9",
+  "design": "DesignDoc_v1.3/ViralInvasion_GDD_v1.3.md",
+  "build": {
+    "sourcePaths": 73,
+    "savedInputPaths": 148,
+    "savedSourcesMatch": true,
+    "gameSha256": "113def7d0250c991234993cb1364d379b9873d050934a723ccf8c37a0d1b8f93",
+    "indexSha256": "7f5e171c9798f4445a451e42d20d5a89e598016de183ad1531bb678f3a3027a0",
+    "metadataSha256": "9bfe6b53631a19b23e17e2c7ec05a81b67a7d47a2d67585cafc1eb4ce464bd48"
+  },
+  "typecheck": {
+    "command": "node node_modules/typescript/bin/tsc --noEmit",
+    "exitCode": 0
+  },
+  "unit": {
+    "path": "artifacts/gameplay-v078/unit-final.json",
+    "files": 67,
+    "passed": 564,
+    "failed": 0,
+    "excluded": [
+      "tests/unit/full-system-seeds.test.ts"
+    ],
+    "scope": "Ordinary suite includes campaign branches, failures, growth, migration and 72000-tick battle; old 1000-session full-system strategy audit not repeated."
+  },
+  "finalPresentation": {
+    "path": "artifacts/gameplay-v078/presentation-final.json",
+    "passed": 56,
+    "changeAfterFullSuite": "Only move new special-tactic captions beside the frozen warning lane; no simulation changes."
+  },
+  "browser": [
+    {
+      "path": "artifacts/gameplay-v078/chrome-final-report.json",
+      "sha256": "6249f38612156a73690f379af479af82e6025d26f863766d9f3b32f53d93f0dc",
+      "startTime": "2026-10-27T15:49:03.521Z",
+      "duration": 69931.934,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    {
+      "path": "artifacts/gameplay-v078/edge-final-report.json",
+      "sha256": "1da1b7dbc64faeff22efdc7f11305f35b6f205460c107c181371e456cfd5f33a",
+      "startTime": "2026-10-27T15:49:03.534Z",
+      "duration": 69396.82699999999,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    {
+      "path": "artifacts/gameplay-v078/chrome-mode-final-report.json",
+      "sha256": "b1f5d645b5be0863bec2b27c3938d8a873c37a6fe42bdfbd87cbd23caad4a1f9",
+      "startTime": "2026-10-27T15:50:01.294Z",
+      "duration": 5889.928,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    {
+      "path": "artifacts/gameplay-v078/edge-mode-final-report.json",
+      "sha256": "e5d537af9eefbf0d01d4a1c1ba19191400b4b680ab3b312f7c54b11b853137a2",
+      "startTime": "2026-10-27T15:50:01.296Z",
+      "duration": 6288.489,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  ],
+  "browserScope": [
+    "Offline file entry, real DOM inputs and read-only snapshots",
+    "Five natural clears per browser; same-ID squad redirect, real bites, upgrades and fifth-wave protocol reward",
+    "Real support/elite tell visibility and paused tick freeze",
+    "Campaign/challenge isolation and 1100x560 panels"
+  ],
+  "navigation": {
+    "path": "artifacts/gameplay-v078/navigation-integration-final-v3.json",
+    "scope": "Explicitly adjusted GameSession fixtures; not natural survival or human difficulty proof."
+  },
+  "naturalBuilds": {
+    "path": "artifacts/gameplay-v078/build-comparison/attempt-1/report.json",
+    "runs": 6,
+    "scope": "Public fixed-step actions and all choice transactions; no simulation state injection; all six strategies clear12 with zero player damage. Natural population6–10, not24-body performance."
+  },
+  "stationary": {
+    "path": "artifacts/gameplay-v078/pressure-final.json",
+    "runs": 2,
+    "scope": "No mobility, squad or area tools. Nearest-visible exact aim1 and public upgrade/discard transactions. One seed remains untouched; one suffers38 accepted damage; neither fails."
+  },
+  "release": {
+    "path": "artifacts/gameplay-v078/release-package.json",
+    "zip": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-G4-v0.7.8.zip",
+    "bytes": 165569,
+    "sha256": "40541ad6ec9a202fe8e025a737764342146f5777edc50023b82344f4dd0ecfd7",
+    "smoke": "artifacts/gameplay-v078/release-smoke/report.json",
+    "pass": true
+  },
+  "retainedFailures": [
+    {
+      "path": "artifacts/gameplay-v078/navigation-integration.json",
+      "reason": "Thin ray center LOS could commit while the real thick lane was clipped short; fixed using shared hit geometry."
+    },
+    {
+      "path": "artifacts/gameplay-v078/navigation-integration-final-v2.json",
+      "reason": "Earlier valid charge run exposed a later zero-distance idle; fixed using a legal, telegraphed close-range charge direction."
+    },
+    {
+      "path": "artifacts/gameplay-v078/unit-first.json",
+      "reason": "Four previous director timing/formation assertions required updating to deliberate new schedules; all other549-suite cases retained."
+    },
+    {
+      "path": "artifacts/gameplay-v078/host-first.json",
+      "reason": "Old simultaneous-elite fixture timing and a test assuming Q has no documented tissue cost; corrected test expectations."
+    },
+    {
+      "path": "artifacts/gameplay-v078/chrome-first-report.json",
+      "reason": "Test read the beacon before queued Q reached the next fixed step; waits for actual acceptance."
+    },
+    {
+      "path": "artifacts/gameplay-v078/edge-first-report.json",
+      "reason": "Same input-acceptance timing issue."
+    }
+  ],
+  "limits": [
+    "Human fun, first-play comprehension, retention and incubation value remain unvalidated; user deferred human tests.",
+    "Accurate automated strategies can suppress early threats; no claim that idle shooting is impossible or difficulty is balanced.",
+    "No new browser FPS/memory, native focus/minimize or real zoom qualification.",
+    "Phaser/Krita visual migration is coordinated separately and not marked complete. User assets and unrelated design-document changes preserved."
+  ]
+}

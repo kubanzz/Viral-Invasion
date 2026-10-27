@@ -35,11 +35,58 @@ export function wallHit(origin: Vec, direction: Vec, range: number, world: World
   return nearest;
 }
 
+const COLLISION_EPSILON = 1e-7;
+/** A body's complete footprint must satisfy the boundary and every fold together. */
+export function isLegalPosition(point: Vec, radius: number, world: WorldGeometry = WORLD): boolean {
+  if (point.x < world.bounds.left + radius - COLLISION_EPSILON || point.x > world.bounds.right - radius + COLLISION_EPSILON
+    || point.y < world.bounds.top + radius - COLLISION_EPSILON || point.y > world.bounds.bottom - radius + COLLISION_EPSILON) return false;
+  return world.obstacles.every(obstacle => {
+    const minimum = radius + obstacle.radius - COLLISION_EPSILON;
+    return (point.x - obstacle.x) ** 2 + (point.y - obstacle.y) ** 2 >= minimum * minimum;
+  });
+}
+
+/** Bounded recovery for a newly supplied invalid spawn, never for a legal moving body. */
+function projectInvalidPosition(point: Vec, radius: number, world: WorldGeometry): Vec {
+  const left = world.bounds.left + radius, right = world.bounds.right - radius;
+  const top = world.bounds.top + radius, bottom = world.bounds.bottom - radius;
+  const clipped = { x: clamp(point.x, left, right), y: clamp(point.y, top, bottom) };
+  const candidates: Vec[] = [clipped];
+  const add = (x: number, y: number) => candidates.push({ x, y });
+  for (const obstacle of world.obstacles) {
+    const extent = radius + obstacle.radius;
+    const direction = normalized(point.x - obstacle.x, point.y - obstacle.y);
+    add(obstacle.x + (direction.x || direction.y ? direction.x : 1) * extent, obstacle.y + direction.y * extent);
+    // Boundary/circle intersections resolve folds which meet the chamber edge.
+    for (const x of [left, right]) {
+      const square = extent * extent - (x - obstacle.x) ** 2;
+      if (square >= 0) { const dy = Math.sqrt(square); add(x, obstacle.y - dy); add(x, obstacle.y + dy); }
+    }
+    for (const y of [top, bottom]) {
+      const square = extent * extent - (y - obstacle.y) ** 2;
+      if (square >= 0) { const dx = Math.sqrt(square); add(obstacle.x - dx, y); add(obstacle.x + dx, y); }
+    }
+    for (let sample = 0; sample < 16; sample++) {
+      const angle = sample * Math.PI / 8; add(obstacle.x + Math.cos(angle) * extent, obstacle.y + Math.sin(angle) * extent);
+    }
+  }
+  for (const x of [left, right]) for (const y of [top, bottom]) add(x, y);
+  let best: Vec | undefined, bestDistance = Infinity;
+  for (const candidate of candidates) if (isLegalPosition(candidate, radius, world)) {
+    const square = (candidate.x - point.x) ** 2 + (candidate.y - point.y) ** 2;
+    if (square < bestDistance) { best = candidate; bestDistance = square; }
+  }
+  // A completely filled/impossible chamber has no legal recovery candidate.
+  return best ?? clipped;
+}
+
 /** Substeps prevent dash tunnelling. Only visible ground footprints block movement. */
 export function moveWithCollision(position: Vec, delta: Vec, radius: number, world: WorldGeometry = WORLD): Vec {
   const count = Math.max(1, Math.ceil(Math.hypot(delta.x, delta.y) / Math.max(4, radius * .5)));
   const result = { ...position };
+  if (!isLegalPosition(result, radius, world)) Object.assign(result, projectInvalidPosition(result, radius, world));
   for (let i = 0; i < count; i++) {
+    const previousX = result.x, previousY = result.y;
     result.x += delta.x / count;
     result.y += delta.y / count;
     for (const obstacle of world.obstacles) {
@@ -53,6 +100,9 @@ export function moveWithCollision(position: Vec, delta: Vec, radius: number, wor
     }
     result.x = clamp(result.x, world.bounds.left + radius, world.bounds.right - radius);
     result.y = clamp(result.y, world.bounds.top + radius, world.bounds.bottom - radius);
+    // A clamp can undo a circle projection at a boundary. Keep the last legal
+    // substep instead of embedding or relocating an already legal moving body.
+    if (!isLegalPosition(result, radius, world)) { result.x = previousX; result.y = previousY; break; }
   }
   return result;
 }

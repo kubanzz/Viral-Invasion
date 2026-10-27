@@ -1,5 +1,6 @@
 import { activeWorld, BALANCE, WORLD, type Effect, type GameState, type Target, type Vec, type WorldGeometry } from '../game/types';
 import { endlessCombatStats } from '../game/endlessGrowth';
+import { drawEnemyTacticDangers } from './enemyTacticVisuals';
 import { Camera } from './camera';
 import { depthSort } from './depthSort';
 import { foregroundOpacity, isForegroundOccluded } from './occlusion';
@@ -172,6 +173,7 @@ export class Renderer {
     if (state.battle) {
       drawEncounterDangers(ctx, state, Boolean(opts.lowEffects), this.labels);
       this.drawBattleDangers(ctx, state);
+      drawEnemyTacticDangers(ctx, state, this.labels);
       if (state.campaign?.core.combat) drawMotherCoreDangers(ctx, state, state.campaign.core.combat, this.labels);
       drawBattleLabels(ctx, state, this.labels);
       this.drawTissueMarker(ctx, state);
@@ -452,11 +454,12 @@ export class Renderer {
         }
       }
       if (target.role === 'core' && state.campaign?.core.combat?.coreId === target.id) continue;
+      if (target.attackPlan) continue;
       if (target.hp <= 0 || !target.attackAim || (target.attackAt ?? 0) <= state.elapsed) continue;
       const center = target.attackAim, radius = target.attackRadius ?? BATTLE_BALANCE.attackRadius;
       this.reserveLabelPoint(center, 9, 9, 9);
       const remaining = (target.attackAt ?? 0) - state.elapsed;
-      const progress = 1 - clamp(remaining / BATTLE_BALANCE.attackWindup, 0, 1);
+      const progress = 1 - clamp(remaining / (target.attackWindup ?? BATTLE_BALANCE.attackWindup), 0, 1);
       ctx.save(); ctx.lineWidth = 2;
       ellipse(ctx, center.x, center.y, radius, radius, '#e97d5c13', '#ffbd8b');
       ctx.setLineDash([4, 5]); ellipse(ctx, center.x, center.y, radius * .76, radius * .76, '#00000000', '#f6b1819a'); ctx.setLineDash([]);

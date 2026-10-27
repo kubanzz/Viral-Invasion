@@ -1,0 +1,1298 @@
+{
+  "schemaVersion": 1,
+  "measuredAtUtc": "2026-10-27T15:37:35.439Z",
+  "purpose": "Real GameSession stationary precision-only pressure after formations/tactics; gameplay simulation,not a browser/performance/human-fun acceptance.",
+  "command": "node .tools/endless-pressure-ray-fix.mjs",
+  "strategy": {
+    "movement": false,
+    "attacks": "tool1 held,aim nearest unobstructed living target every tick",
+    "unused": [
+      "Q",
+      "tool2",
+      "tool3",
+      "dash",
+      "interact"
+    ],
+    "combatUpgradePriority": [
+      "multishot",
+      "power",
+      "haste",
+      "pierce",
+      "vitality",
+      "immune",
+      "nova",
+      "dash",
+      "scan"
+    ],
+    "protocolDrafts": "Public discardDraft; initial IMMUNE_BEACON remains inactive because Q is never used.",
+    "stop": "10 actual completed waves,real failure,or120 simulation seconds on one wave; no automatic wall navigation.",
+    "mutationScope": "Only public GameSession start/step/discardDraft/chooseCombatUpgrade/resume actions; no HP,world,target,position,wave,clock or equipment-state injection."
+  },
+  "fingerprints": [
+    {
+      "path": "src/game/session.ts",
+      "sha256": "1c77a5a623cb1f0dad24dc39f41d5ae1ceb3a0586e5f6591fd0c35a0e78f5c5e"
+    },
+    {
+      "path": "src/game/battle.ts",
+      "sha256": "284c08fc0bd3a15cb5d633ec31415d861d87dbc3234025cd00dca673b2cb4d7c"
+    },
+    {
+      "path": "src/game/endless.ts",
+      "sha256": "ebc4a61195a6a1631c0eb61efda0582dd891363bbdc052aa342571c771a1b281"
+    },
+    {
+      "path": "src/game/enemyTactics.ts",
+      "sha256": "a0fc17d7a809bcec948ba937a0a697753472759f02d03804c997b027d7b06165"
+    },
+    {
+      "path": "src/game/enemyTacticsTypes.ts",
+      "sha256": "7575280b131eb2c4faeb1d3ae886a056f1b13274c9c3683f78170ce8a09613a9"
+    },
+    {
+      "path": "src/actors/collision.ts",
+      "sha256": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0"
+    },
+    {
+      "path": "src/actors/enemyNavigation.ts",
+      "sha256": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd"
+    },
+    {
+      "path": "src/game/endlessGrowth.ts",
+      "sha256": "65b58828e4f509d13049b0bf538748ad0333903519654d6d8781da756413515d"
+    },
+    {
+      "path": "src/game/growth.ts",
+      "sha256": "85b7eacab58b0b640f3a8d6fd75fc6fd8338f0b9ae4a712772f739ae74c3eadc"
+    },
+    {
+      "path": ".tools/endless-pressure-ray-fix.mjs",
+      "sha256": "a145abce2bb5ec9af3f7924dfdbdbd7019f84c4eb05243052d1d6cd40bfaf84d"
+    }
+  ],
+  "fingerprintsAfter": [
+    {
+      "path": "src/game/session.ts",
+      "sha256": "1c77a5a623cb1f0dad24dc39f41d5ae1ceb3a0586e5f6591fd0c35a0e78f5c5e"
+    },
+    {
+      "path": "src/game/battle.ts",
+      "sha256": "284c08fc0bd3a15cb5d633ec31415d861d87dbc3234025cd00dca673b2cb4d7c"
+    },
+    {
+      "path": "src/game/endless.ts",
+      "sha256": "ebc4a61195a6a1631c0eb61efda0582dd891363bbdc052aa342571c771a1b281"
+    },
+    {
+      "path": "src/game/enemyTactics.ts",
+      "sha256": "a0fc17d7a809bcec948ba937a0a697753472759f02d03804c997b027d7b06165"
+    },
+    {
+      "path": "src/game/enemyTacticsTypes.ts",
+      "sha256": "7575280b131eb2c4faeb1d3ae886a056f1b13274c9c3683f78170ce8a09613a9"
+    },
+    {
+      "path": "src/actors/collision.ts",
+      "sha256": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0"
+    },
+    {
+      "path": "src/actors/enemyNavigation.ts",
+      "sha256": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd"
+    },
+    {
+      "path": "src/game/endlessGrowth.ts",
+      "sha256": "65b58828e4f509d13049b0bf538748ad0333903519654d6d8781da756413515d"
+    },
+    {
+      "path": "src/game/growth.ts",
+      "sha256": "85b7eacab58b0b640f3a8d6fd75fc6fd8338f0b9ae4a712772f739ae74c3eadc"
+    },
+    {
+      "path": ".tools/endless-pressure-ray-fix.mjs",
+      "sha256": "a145abce2bb5ec9af3f7924dfdbdbd7019f84c4eb05243052d1d6cd40bfaf84d"
+    }
+  ],
+  "sourceFilesUnchangedDuringRun": true,
+  "results": [
+    {
+      "seed": 7,
+      "stop": "ten-waves-cleared",
+      "elapsed": 154.5,
+      "phase": "playing",
+      "wave": 10,
+      "clearedWaves": 10,
+      "result": null,
+      "finalPlayerHp": 120,
+      "finalTissueHp": 100,
+      "totalPlayerDamage": 0,
+      "totalOrganDamage": 0,
+      "telegraphs": 8,
+      "maxConcurrentTelegraphs": 1,
+      "maxLiving": 7,
+      "acceptedPositiveHits": 480,
+      "shots": 343,
+      "inputs": {
+        "movement": 0,
+        "scan": 0,
+        "dashes": 0,
+        "toolsUsed": [
+          1
+        ],
+        "interact": false,
+        "inputSha256": "5a7bf04f946ee48f48ac50c6e79aa2ef6bf73e005ed7f99c4a8143ee5daf6f10"
+      },
+      "finalPosition": {
+        "x": 1100,
+        "y": 800
+      },
+      "finalGrowth": {
+        "level": 10,
+        "ranks": {
+          "multishot": 2,
+          "pierce": 2,
+          "power": 4,
+          "vitality": 1,
+          "haste": 1
+        }
+      },
+      "waves": [
+        {
+          "wave": 1,
+          "enteredAt": 0,
+          "combatStartedAt": 2,
+          "clearedAt": 6.766666666666667,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 16,
+          "maxLiving": 5,
+          "playerHpAtClear": 100,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 2,
+          "enteredAt": 7.766666666666667,
+          "combatStartedAt": 9.766666666666666,
+          "clearedAt": 15.416666666666666,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 20,
+          "maxLiving": 4,
+          "playerHpAtClear": 100,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 3,
+          "enteredAt": 16.416666666666668,
+          "combatStartedAt": 24.416666666666668,
+          "clearedAt": 31.433333333333334,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 24,
+          "maxLiving": 6,
+          "playerHpAtClear": 100,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 4,
+          "enteredAt": 32.43333333333333,
+          "combatStartedAt": 34.43333333333333,
+          "clearedAt": 45.416666666666664,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 1,
+          "acceptedHits": 28,
+          "maxLiving": 4,
+          "playerHpAtClear": 100,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 5,
+          "enteredAt": 46.416666666666664,
+          "combatStartedAt": 54.416666666666664,
+          "clearedAt": 64.3,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 1,
+          "acceptedHits": 56,
+          "maxLiving": 6,
+          "playerHpAtClear": 100,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 6,
+          "enteredAt": 65.3,
+          "combatStartedAt": 67.3,
+          "clearedAt": 77.63333333333333,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 1,
+          "acceptedHits": 60,
+          "maxLiving": 6,
+          "playerHpAtClear": 120,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 7,
+          "enteredAt": 78.63333333333333,
+          "combatStartedAt": 80.63333333333333,
+          "clearedAt": 95.16666666666667,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 2,
+          "acceptedHits": 68,
+          "maxLiving": 6,
+          "playerHpAtClear": 120,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 8,
+          "enteredAt": 96.16666666666667,
+          "combatStartedAt": 98.16666666666667,
+          "clearedAt": 112.06666666666666,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 1,
+          "acceptedHits": 74,
+          "maxLiving": 7,
+          "playerHpAtClear": 120,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 9,
+          "enteredAt": 113.06666666666666,
+          "combatStartedAt": 115.06666666666666,
+          "clearedAt": 128.71666666666667,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 80,
+          "maxLiving": 6,
+          "playerHpAtClear": 120,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 10,
+          "enteredAt": 129.71666666666667,
+          "combatStartedAt": 137.71666666666667,
+          "clearedAt": 154.5,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 2,
+          "acceptedHits": 54,
+          "maxLiving": 5,
+          "playerHpAtClear": 120,
+          "tissueHpAtClear": 100
+        }
+      ],
+      "elites": [
+        {
+          "id": "elite-47",
+          "wave": 5,
+          "bornAt": 54.416666666666664,
+          "traits": [
+            "FISSION"
+          ],
+          "hp": 136,
+          "distanceAtBirth": 470.52542380522925,
+          "firstTelegraphAt": 54.766666666666666,
+          "clearedAt": 55.35
+        },
+        {
+          "id": "elite-283",
+          "wave": 10,
+          "bornAt": 137.71666666666667,
+          "traits": [
+            "MIMIC"
+          ],
+          "hp": 170,
+          "distanceAtBirth": 415.0509366486221,
+          "firstTelegraphAt": 138.06666666666666,
+          "clearedAt": 138.56666666666666
+        }
+      ],
+      "choices": [
+        {
+          "wave": 1,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 2,
+          "type": "protocol-discard",
+          "id": "7:2:draft:1"
+        },
+        {
+          "wave": 2,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 3,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 4,
+          "type": "protocol-discard",
+          "id": "7:2:draft:2"
+        },
+        {
+          "wave": 4,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 5,
+          "type": "protocol-discard",
+          "id": "7:2:draft:3"
+        },
+        {
+          "wave": 5,
+          "type": "protocol-discard",
+          "id": "7:2:draft:4"
+        },
+        {
+          "wave": 5,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        },
+        {
+          "wave": 6,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 7,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 8,
+          "type": "protocol-discard",
+          "id": "7:2:draft:5"
+        },
+        {
+          "wave": 8,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 9,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 10,
+          "type": "protocol-discard",
+          "id": "7:2:draft:6"
+        },
+        {
+          "wave": 10,
+          "type": "combat-upgrade",
+          "id": "power"
+        }
+      ],
+      "casts": [
+        {
+          "id": "virus-35:2078",
+          "actorId": "virus-35",
+          "wave": 4,
+          "tactic": "thin-ray",
+          "role": "virus",
+          "bornAt": 34.43333333333333,
+          "committedAt": 34.63333333333333,
+          "spawnToCastSeconds": 0.20000000000000284,
+          "resolveAt": 35.68333333333333,
+          "windup": 1.05,
+          "frozenPlan": {
+            "kind": "thin-ray",
+            "origin": {
+              "x": 1542.863705080422,
+              "y": 893.2614839277237
+            },
+            "aim": {
+              "x": 1100,
+              "y": 800
+            },
+            "range": 530,
+            "windup": 1.05,
+            "interval": 3.2,
+            "radius": 18,
+            "landings": [],
+            "playerDamage": 7,
+            "tissueDamage": 0,
+            "recoveryExposure": 0
+          },
+          "outcome": "killed-during-windup",
+          "finishedAt": 35
+        },
+        {
+          "id": "elite-47:3286",
+          "actorId": "elite-47",
+          "wave": 5,
+          "tactic": "fission-burst",
+          "role": "elite",
+          "bornAt": 54.416666666666664,
+          "committedAt": 54.766666666666666,
+          "spawnToCastSeconds": 0.3500000000000014,
+          "resolveAt": 56.016666666666666,
+          "windup": 1.25,
+          "frozenPlan": {
+            "kind": "fission-burst",
+            "origin": {
+              "x": 1152.3995540554813,
+              "y": 1267.5986111847183
+            },
+            "aim": {
+              "x": 1100,
+              "y": 800
+            },
+            "range": 500,
+            "windup": 1.25,
+            "interval": 3.8,
+            "radius": 62,
+            "landings": [
+              {
+                "x": 1100,
+                "y": 800
+              },
+              {
+                "x": 1274.905225955605,
+                "y": 780.3999506781546
+              }
+            ],
+            "playerDamage": 13,
+            "tissueDamage": 0,
+            "recoveryExposure": 1.5
+          },
+          "outcome": "killed-during-windup",
+          "finishedAt": 55.35
+        },
+        {
+          "id": "virus-90:4092",
+          "actorId": "virus-90",
+          "wave": 6,
+          "tactic": "thin-ray",
+          "role": "virus",
+          "bornAt": 68,
+          "committedAt": 68.2,
+          "spawnToCastSeconds": 0.20000000000000284,
+          "resolveAt": 69.25,
+          "windup": 1.05,
+          "frozenPlan": {
+            "kind": "thin-ray",
+            "origin": {
+              "x": 837.958036088927,
+              "y": 450.45012125807295
+            },
+            "aim": {
+              "x": 1100,
+              "y": 800
+            },
+            "range": 530,
+            "windup": 1.05,
+            "interval": 3.2,
+            "radius": 18,
+            "landings": [],
+            "playerDamage": 8,
+            "tissueDamage": 0,
+            "recoveryExposure": 0
+          },
+          "outcome": "killed-during-windup",
+          "finishedAt": 68.6
+        },
+        {
+          "id": "virus-129:4850",
+          "actorId": "virus-129",
+          "wave": 7,
+          "tactic": "thin-ray",
+          "role": "virus",
+          "bornAt": 80.63333333333333,
+          "committedAt": 80.83333333333333,
+          "spawnToCastSeconds": 0.20000000000000284,
+          "resolveAt": 81.88333333333333,
+          "windup": 1.05,
+          "frozenPlan": {
+            "kind": "thin-ray",
+            "origin": {
+              "x": 1589.691552032359,
+              "y": 868.8850384528073
+            },
+            "aim": {
+              "x": 1100,
+              "y": 800
+            },
+            "range": 530,
+            "windup": 1.05,
+            "interval": 3.2,
+            "radius": 18,
+            "landings": [],
+            "playerDamage": 8,
+            "tissueDamage": 0,
+            "recoveryExposure": 0
+          },
+          "outcome": "killed-during-windup",
+          "finishedAt": 81.15
+        },
+        {
+          "id": "virus-132:4884",
+          "actorId": "virus-132",
+          "wave": 7,
+          "tactic": "thin-ray",
+          "role": "virus",
+          "bornAt": 81.18333333333334,
+          "committedAt": 81.4,
+          "spawnToCastSeconds": 0.21666666666666856,
+          "resolveAt": 82.45,
+          "windup": 1.05,
+          "frozenPlan": {
+            "kind": "thin-ray",
+            "origin": {
+              "x": 1519.6248884899826,
+              "y": 870.2138853325819
+            },
+            "aim": {
+              "x": 1100,
+              "y": 800
+            },
+            "range": 530,
+            "windup": 1.05,
+            "interval": 3.2,
+            "radius": 18,
+            "landings": [],
+            "playerDamage": 8,
+            "tissueDamage": 0,
+            "recoveryExposure": 0
+          },
+          "outcome": "killed-during-windup",
+          "finishedAt": 81.48333333333333
+        },
+        {
+          "id": "virus-180:5938",
+          "actorId": "virus-180",
+          "wave": 8,
+          "tactic": "thin-ray",
+          "role": "virus",
+          "bornAt": 98.76666666666667,
+          "committedAt": 98.96666666666667,
+          "spawnToCastSeconds": 0.20000000000000284,
+          "resolveAt": 100.01666666666667,
+          "windup": 1.05,
+          "frozenPlan": {
+            "kind": "thin-ray",
+            "origin": {
+              "x": 835.6606424542133,
+              "y": 410.2184847758904
+            },
+            "aim": {
+              "x": 1100,
+              "y": 800
+            },
+            "range": 530,
+            "windup": 1.05,
+            "interval": 3.2,
+            "radius": 18,
+            "landings": [],
+            "playerDamage": 8,
+            "tissueDamage": 0,
+            "recoveryExposure": 0
+          },
+          "outcome": "killed-during-windup",
+          "finishedAt": 99.18333333333334
+        },
+        {
+          "id": "elite-283:8284",
+          "actorId": "elite-283",
+          "wave": 10,
+          "tactic": "mimic-corrosion",
+          "role": "elite",
+          "bornAt": 137.71666666666667,
+          "committedAt": 138.06666666666666,
+          "spawnToCastSeconds": 0.3499999999999943,
+          "resolveAt": 139.86666666666667,
+          "windup": 1.8,
+          "frozenPlan": {
+            "kind": "mimic-corrosion",
+            "origin": {
+              "x": 691.1729589519362,
+              "y": 871.608173561286
+            },
+            "aim": {
+              "x": 1200,
+              "y": 900
+            },
+            "range": 650,
+            "windup": 1.8,
+            "interval": 5.2,
+            "radius": 53,
+            "landings": [],
+            "playerDamage": 0,
+            "tissueDamage": 7,
+            "recoveryExposure": 1.5
+          },
+          "outcome": "killed-during-windup",
+          "finishedAt": 138.56666666666666
+        },
+        {
+          "id": "virus-288:8317",
+          "actorId": "virus-288",
+          "wave": 10,
+          "tactic": "thin-ray",
+          "role": "virus",
+          "bornAt": 138.41666666666666,
+          "committedAt": 138.61666666666667,
+          "spawnToCastSeconds": 0.20000000000001705,
+          "resolveAt": 139.66666666666669,
+          "windup": 1.05,
+          "frozenPlan": {
+            "kind": "thin-ray",
+            "origin": {
+              "x": 1026.0782221125517,
+              "y": 1276.2440289808255
+            },
+            "aim": {
+              "x": 1100,
+              "y": 800
+            },
+            "range": 530,
+            "windup": 1.05,
+            "interval": 3.2,
+            "radius": 18,
+            "landings": [],
+            "playerDamage": 9,
+            "tissueDamage": 0,
+            "recoveryExposure": 0
+          },
+          "outcome": "killed-during-windup",
+          "finishedAt": 139.23333333333332
+        }
+      ],
+      "acceptedEventCounts": {
+        "ENEMY_TACTIC_COMMITTED": 8
+      },
+      "castOutcomes": {
+        "killed-during-windup": 8
+      },
+      "liveAtStop": [],
+      "damageByActor": {}
+    },
+    {
+      "seed": 71,
+      "stop": "ten-waves-cleared",
+      "elapsed": 154.61666666666667,
+      "phase": "playing",
+      "wave": 10,
+      "clearedWaves": 10,
+      "result": null,
+      "finalPlayerHp": 120,
+      "finalTissueHp": 100,
+      "totalPlayerDamage": 38,
+      "totalOrganDamage": 0,
+      "telegraphs": 8,
+      "maxConcurrentTelegraphs": 2,
+      "maxLiving": 7,
+      "acceptedPositiveHits": 611,
+      "shots": 413,
+      "inputs": {
+        "movement": 0,
+        "scan": 0,
+        "dashes": 0,
+        "toolsUsed": [
+          1
+        ],
+        "interact": false,
+        "inputSha256": "bbf70bd00322f6aadd0726c6073a0350703fbbd3bd15c02598136190ff178955"
+      },
+      "finalPosition": {
+        "x": 1100,
+        "y": 800
+      },
+      "finalGrowth": {
+        "level": 10,
+        "ranks": {
+          "multishot": 2,
+          "power": 4,
+          "pierce": 3,
+          "vitality": 1
+        }
+      },
+      "waves": [
+        {
+          "wave": 1,
+          "enteredAt": 0,
+          "combatStartedAt": 2,
+          "clearedAt": 6.95,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 16,
+          "maxLiving": 5,
+          "playerHpAtClear": 100,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 2,
+          "enteredAt": 7.95,
+          "combatStartedAt": 9.95,
+          "clearedAt": 15.916666666666666,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 20,
+          "maxLiving": 5,
+          "playerHpAtClear": 100,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 3,
+          "enteredAt": 16.916666666666668,
+          "combatStartedAt": 24.916666666666668,
+          "clearedAt": 32.4,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 24,
+          "maxLiving": 6,
+          "playerHpAtClear": 100,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 4,
+          "enteredAt": 33.4,
+          "combatStartedAt": 35.4,
+          "clearedAt": 44.166666666666664,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 28,
+          "maxLiving": 3,
+          "playerHpAtClear": 100,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 5,
+          "enteredAt": 45.166666666666664,
+          "combatStartedAt": 53.166666666666664,
+          "clearedAt": 63.333333333333336,
+          "playerDamage": 8,
+          "organDamage": 0,
+          "telegraphs": 2,
+          "acceptedHits": 82,
+          "maxLiving": 6,
+          "playerHpAtClear": 92,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 6,
+          "enteredAt": 64.33333333333333,
+          "combatStartedAt": 66.33333333333333,
+          "clearedAt": 79,
+          "playerDamage": 8,
+          "organDamage": 0,
+          "telegraphs": 2,
+          "acceptedHits": 84,
+          "maxLiving": 7,
+          "playerHpAtClear": 112,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 7,
+          "enteredAt": 80,
+          "combatStartedAt": 82,
+          "clearedAt": 94.75,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 1,
+          "acceptedHits": 82,
+          "maxLiving": 6,
+          "playerHpAtClear": 120,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 8,
+          "enteredAt": 95.75,
+          "combatStartedAt": 97.75,
+          "clearedAt": 112.16666666666667,
+          "playerDamage": 8,
+          "organDamage": 0,
+          "telegraphs": 1,
+          "acceptedHits": 89,
+          "maxLiving": 6,
+          "playerHpAtClear": 112,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 9,
+          "enteredAt": 113.16666666666667,
+          "combatStartedAt": 115.16666666666667,
+          "clearedAt": 128.63333333333333,
+          "playerDamage": 0,
+          "organDamage": 0,
+          "telegraphs": 0,
+          "acceptedHits": 96,
+          "maxLiving": 6,
+          "playerHpAtClear": 120,
+          "tissueHpAtClear": 100
+        },
+        {
+          "wave": 10,
+          "enteredAt": 129.63333333333333,
+          "combatStartedAt": 137.63333333333333,
+          "clearedAt": 154.61666666666667,
+          "playerDamage": 14,
+          "organDamage": 0,
+          "telegraphs": 2,
+          "acceptedHits": 90,
+          "maxLiving": 6,
+          "playerHpAtClear": 106,
+          "tissueHpAtClear": 100
+        }
+      ],
+      "elites": [
+        {
+          "id": "elite-47",
+          "wave": 5,
+          "bornAt": 53.166666666666664,
+          "traits": [
+            "CARAPACE"
+          ],
+          "hp": 136,
+          "distanceAtBirth": 385.85459670983244,
+          "firstTelegraphAt": 53.516666666666666,
+          "clearedAt": 55.199999999999996
+        },
+        {
+          "id": "elite-147",
+          "wave": 10,
+          "bornAt": 137.63333333333333,
+          "traits": [
+            "FISSION"
+          ],
+          "hp": 170,
+          "distanceAtBirth": 448.97789654321963,
+          "firstTelegraphAt": 137.98333333333332,
+          "clearedAt": 139.3
+        }
+      ],
+      "choices": [
+        {
+          "wave": 1,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 2,
+          "type": "protocol-discard",
+          "id": "71:2:draft:1"
+        },
+        {
+          "wave": 2,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 3,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 4,
+          "type": "protocol-discard",
+          "id": "71:2:draft:2"
+        },
+        {
+          "wave": 4,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 5,
+          "type": "protocol-discard",
+          "id": "71:2:draft:3"
+        },
+        {
+          "wave": 5,
+          "type": "protocol-discard",
+          "id": "71:2:draft:4"
+        },
+        {
+          "wave": 5,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        },
+        {
+          "wave": 6,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 7,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 8,
+          "type": "protocol-discard",
+          "id": "71:2:draft:5"
+        },
+        {
+          "wave": 8,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 9,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 10,
+          "type": "protocol-discard",
+          "id": "71:2:draft:6"
+        },
+        {
+          "wave": 10,
+          "type": "combat-upgrade",
+          "id": "power"
+        }
+      ],
+      "casts": [
+        {
+          "id": "virus-49:3202",
+          "actorId": "virus-49",
+          "wave": 5,
+          "tactic": "thin-ray",
+          "role": "virus",
+          "bornAt": 53.166666666666664,
+          "committedAt": 53.36666666666667,
+          "spawnToCastSeconds": 0.20000000000000284,
+          "resolveAt": 54.416666666666664,
+          "windup": 1.05,
+          "frozenPlan": {
+            "kind": "thin-ray",
+            "origin": {
+              "x": 850.8691091164204,
+              "y": 467.9306336949799
+            },
+            "aim": {
+              "x": 1100,
+              "y": 800
+            },
+            "range": 530,
+            "windup": 1.05,
+            "interval": 3.2,
+            "radius": 18,
+            "landings": [],
+            "playerDamage": 8,
+            "tissueDamage": 0,
+            "recoveryExposure": 0
+          },
+          "outcome": "resolved",
+          "finishedAt": 54.416666666666664,
+          "receipt": {
+            "type": "ENEMY_TACTIC_RESOLVED",
+            "data": {
+              "actorId": "virus-49",
+              "tactic": "thin-ray",
+              "hitPlayer": true,
+              "hitTissue": false
+            }
+          }
+        },
+        {
+          "id": "elite-47:3211",
+          "actorId": "elite-47",
+          "wave": 5,
+          "tactic": "crystal-charge",
+          "role": "elite",
+          "bornAt": 53.166666666666664,
+          "committedAt": 53.516666666666666,
+          "spawnToCastSeconds": 0.3500000000000014,
+          "resolveAt": 54.71666666666667,
+          "windup": 1.2,
+          "frozenPlan": {
+            "kind": "crystal-charge",
+            "origin": {
+              "x": 1413.0995415176458,
+              "y": 1025.5048711304203
+            },
+            "aim": {
+              "x": 1100,
+              "y": 800
+            },
+            "range": 500,
+            "windup": 1.2,
+            "interval": 3.8,
+            "radius": 34,
+            "landings": [],
+            "playerDamage": 13,
+            "tissueDamage": 0,
+            "recoveryExposure": 2,
+            "chargeEnd": {
+              "x": 1026.9700063783896,
+              "y": 747.4013305146648
+            },
+            "chargeSpeed": 520
+          },
+          "outcome": "killed-during-charge",
+          "finishedAt": 55.199999999999996,
+          "chargeStartedAt": 54.71666666666667
+        },
+        {
+          "id": "virus-65:3992",
+          "actorId": "virus-65",
+          "wave": 6,
+          "tactic": "thin-ray",
+          "role": "virus",
+          "bornAt": 66.33333333333333,
+          "committedAt": 66.53333333333333,
+          "spawnToCastSeconds": 0.20000000000000284,
+          "resolveAt": 67.58333333333333,
+          "windup": 1.05,
+          "frozenPlan": {
+            "kind": "thin-ray",
+            "origin": {
+              "x": 866.0754422847905,
+              "y": 434.6050642666682
+            },
+            "aim": {
+              "x": 1100,
+              "y": 800
+            },
+            "range": 530,
+            "windup": 1.05,
+            "interval": 3.2,
+            "radius": 18,
+            "landings": [],
+            "playerDamage": 8,
+            "tissueDamage": 0,
+            "recoveryExposure": 0
+          },
+          "outcome": "resolved",
+          "finishedAt": 67.58333333333333,
+          "receipt": {
+            "type": "ENEMY_TACTIC_RESOLVED",
+            "data": {
+              "actorId": "virus-65",
+              "tactic": "thin-ray",
+              "hitPlayer": true,
+              "hitTissue": false
+            }
+          }
+        },
+        {
+          "id": "virus-68:4034",
+          "actorId": "virus-68",
+          "wave": 6,
+          "tactic": "thin-ray",
+          "role": "virus",
+          "bornAt": 67.03333333333333,
+          "committedAt": 67.23333333333333,
+          "spawnToCastSeconds": 0.20000000000000284,
+          "resolveAt": 68.28333333333333,
+          "windup": 1.05,
+          "frozenPlan": {
+            "kind": "thin-ray",
+            "origin": {
+              "x": 1335.4278930315413,
+              "y": 1130.3996506694602
+            },
+            "aim": {
+              "x": 1100,
+              "y": 800
+            },
+            "range": 530,
+            "windup": 1.05,
+            "interval": 3.2,
+            "radius": 18,
+            "landings": [],
+            "playerDamage": 8,
+            "tissueDamage": 0,
+            "recoveryExposure": 0
+          },
+          "outcome": "killed-during-windup",
+          "finishedAt": 67.81666666666666
+        },
+        {
+          "id": "virus-86:4965",
+          "actorId": "virus-86",
+          "wave": 7,
+          "tactic": "thin-ray",
+          "role": "virus",
+          "bornAt": 82.55,
+          "committedAt": 82.75,
+          "spawnToCastSeconds": 0.20000000000000284,
+          "resolveAt": 83.8,
+          "windup": 1.05,
+          "frozenPlan": {
+            "kind": "thin-ray",
+            "origin": {
+              "x": 820.3854292886175,
+              "y": 443.4513305587238
+            },
+            "aim": {
+              "x": 1100,
+              "y": 800
+            },
+            "range": 530,
+            "windup": 1.05,
+            "interval": 3.2,
+            "radius": 18,
+            "landings": [],
+            "playerDamage": 8,
+            "tissueDamage": 0,
+            "recoveryExposure": 0
+          },
+          "outcome": "killed-during-windup",
+          "finishedAt": 83.48333333333333
+        },
+        {
+          "id": "virus-106:5935",
+          "actorId": "virus-106",
+          "wave": 8,
+          "tactic": "thin-ray",
+          "role": "virus",
+          "bornAt": 98.35,
+          "committedAt": 98.91666666666667,
+          "spawnToCastSeconds": 0.5666666666666771,
+          "resolveAt": 99.96666666666667,
+          "windup": 1.05,
+          "frozenPlan": {
+            "kind": "thin-ray",
+            "origin": {
+              "x": 681.2767145031156,
+              "y": 748.1016676481407
+            },
+            "aim": {
+              "x": 1100,
+              "y": 800
+            },
+            "range": 530,
+            "windup": 1.05,
+            "interval": 3.2,
+            "radius": 18,
+            "landings": [],
+            "playerDamage": 8,
+            "tissueDamage": 0,
+            "recoveryExposure": 0
+          },
+          "outcome": "resolved",
+          "finishedAt": 99.96666666666667,
+          "receipt": {
+            "type": "ENEMY_TACTIC_RESOLVED",
+            "data": {
+              "actorId": "virus-106",
+              "tactic": "thin-ray",
+              "hitPlayer": true,
+              "hitTissue": false
+            }
+          }
+        },
+        {
+          "id": "elite-147:8279",
+          "actorId": "elite-147",
+          "wave": 10,
+          "tactic": "fission-burst",
+          "role": "elite",
+          "bornAt": 137.63333333333333,
+          "committedAt": 137.98333333333332,
+          "spawnToCastSeconds": 0.3499999999999943,
+          "resolveAt": 139.23333333333332,
+          "windup": 1.25,
+          "frozenPlan": {
+            "kind": "fission-burst",
+            "origin": {
+              "x": 1190.4351982290373,
+              "y": 1239.7756547441534
+            },
+            "aim": {
+              "x": 1100,
+              "y": 800
+            },
+            "range": 500,
+            "windup": 1.25,
+            "interval": 3.8,
+            "radius": 62,
+            "landings": [
+              {
+                "x": 1100,
+                "y": 800
+              },
+              {
+                "x": 927.6072924059408,
+                "y": 835.4507315635267
+              }
+            ],
+            "playerDamage": 14,
+            "tissueDamage": 0,
+            "recoveryExposure": 1.5
+          },
+          "outcome": "resolved",
+          "finishedAt": 139.23333333333332,
+          "receipt": {
+            "type": "ENEMY_TACTIC_RESOLVED",
+            "data": {
+              "actorId": "elite-147",
+              "tactic": "fission-burst",
+              "hitPlayer": true,
+              "hitTissue": false
+            }
+          }
+        },
+        {
+          "id": "virus-152:8312",
+          "actorId": "virus-152",
+          "wave": 10,
+          "tactic": "thin-ray",
+          "role": "virus",
+          "bornAt": 138.33333333333334,
+          "committedAt": 138.53333333333333,
+          "spawnToCastSeconds": 0.19999999999998863,
+          "resolveAt": 139.58333333333334,
+          "windup": 1.05,
+          "frozenPlan": {
+            "kind": "thin-ray",
+            "origin": {
+              "x": 1508.9005368393732,
+              "y": 886.6846147502854
+            },
+            "aim": {
+              "x": 1100,
+              "y": 800
+            },
+            "range": 530,
+            "windup": 1.05,
+            "interval": 3.2,
+            "radius": 18,
+            "landings": [],
+            "playerDamage": 9,
+            "tissueDamage": 0,
+            "recoveryExposure": 0
+          },
+          "outcome": "killed-during-windup",
+          "finishedAt": 138.75
+        }
+      ],
+      "acceptedEventCounts": {
+        "ENEMY_TACTIC_COMMITTED": 8,
+        "ENEMY_TACTIC_RESOLVED": 4,
+        "ENEMY_CHARGE_STARTED": 1
+      },
+      "castOutcomes": {
+        "resolved": 4,
+        "killed-during-charge": 1,
+        "killed-during-windup": 3
+      },
+      "liveAtStop": [],
+      "damageByActor": {
+        "virus-49": 8,
+        "virus-65": 8,
+        "virus-106": 8,
+        "elite-147": 14
+      }
+    }
+  ]
+}

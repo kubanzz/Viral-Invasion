@@ -1,10 +1,20 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { GameSession } from '../../src/game/session';
 import { offerEndlessUpgrade } from '../../src/game/endlessGrowth';
+import { ENEMY_TACTIC_INFO } from '../../src/game/enemyTacticInfo';
+import type { EnemyTactic } from '../../src/game/enemyTacticsTypes';
 import { emptyEndlessProfile, EndlessProfileStore } from '../../src/meta/endlessProfile';
 import { endlessHudMarkup, endlessMenuEntry, endlessOverlay, endlessRemaining, updateEndlessHud } from '../../src/ui/endlessHud';
 
 const session = () => { const value = new GameSession(919, { mode: 'endless' }); value.start(); return value; };
+function mountHud() {
+  const nodes = new Map<string, { textContent: string; style: { width: string }; title: string; dataset: Record<string, string> }>();
+  for (const match of endlessHudMarkup().matchAll(/id="([^"]+)"/g)) {
+    if (match[1] !== 'endless-minimap') nodes.set(match[1], { textContent: '', style: { width: '' }, title: '', dataset: {} });
+  }
+  vi.stubGlobal('document', { getElementById: (id: string) => id === 'endless-minimap' ? { getContext: () => null } : nodes.get(id) ?? null });
+  return nodes;
+}
 afterEach(() => vi.unstubAllGlobals());
 
 describe('continuous challenge UI contracts', () => {
@@ -46,7 +56,12 @@ describe('continuous challenge UI contracts', () => {
     const before = structuredClone(state);
     const help = endlessOverlay(state, true, false)!;
     expect(help).toContain('连续挑战操作指南'); expect(help).toContain('data-action="close-help"');
-    expect(help).toContain('250'); expect(help).toContain('1.1 秒'); expect(help).toContain('细胞会实际移动并吞噬');
+    expect(help).toContain('细胞会实际移动并吞噬');
+    for (const obsolete of ['250 距离', '1.1 秒', '范围 105', '注意定点爆破']) expect(help).not.toContain(obsolete);
+    for (const info of Object.entries(ENEMY_TACTIC_INFO).filter(([id]) => id !== 'melee').map(([, info]) => info)) {
+      expect(help).toContain(info.name); expect(help).toContain(info.counter);
+    }
+    for (const copy of ['让开路线后反打', '两个固定落点', '每5波协议联动重配', '免样本、可放弃', '不会抵消本波战斗成长', '不续命、不重置咬击冷却、不额外耗组织']) expect(help).toContain(copy);
     expect(help).not.toContain('data-action="endless-upgrade"');
     expect(endlessOverlay(state, false, false)).toContain('data-action="endless-upgrade"');
     expect(state).toEqual(before);
@@ -86,11 +101,7 @@ describe('continuous challenge UI contracts', () => {
     Object.assign(state.endless!, { remainingToSpawn: 4, pendingChildren: 2 });
     state.battle!.pressure.criticalSince = 10; state.elapsed = 13;
     const before = structuredClone(state);
-    const nodes = new Map<string, { textContent: string; style: { width: string }; title: string; dataset: Record<string, string> }>();
-    for (const match of endlessHudMarkup().matchAll(/id="([^"]+)"/g)) {
-      if (match[1] !== 'endless-minimap') nodes.set(match[1], { textContent: '', style: { width: '' }, title: '', dataset: {} });
-    }
-    vi.stubGlobal('document', { getElementById: (id: string) => id === 'endless-minimap' ? { getContext: () => null } : nodes.get(id) ?? null });
+    const nodes = mountHud();
     updateEndlessHud(state);
     expect(nodes.get('endless-hp')!.textContent).toBe('112 / 140');
     expect(nodes.get('endless-hp-meter')!.style.width).toBe('80%');
@@ -107,5 +118,32 @@ describe('continuous challenge UI contracts', () => {
     const markup = endlessMenuEntry({ data, status: { mode: 'session', code: 'unavailable', message: '<unsafe status>' } });
     expect(markup).toContain('data-action="endless-start"'); expect(markup).toContain('最高通关 6 波');
     expect(markup).toContain('&lt;unsafe status&gt;'); expect(markup).toContain('is-temporary');
+    expect(markup).toContain('每5波精英与协议联动重配');
+  });
+
+  it.each<EnemyTactic>(['thin-ray', 'crystal-charge', 'fission-burst', 'mimic-corrosion'])('shows the actual %s counter in the existing formation panel', tactic => {
+    const state = session().state, nodes = mountHud();
+    Object.assign(state.endless!, { phase: 'combat', formationLabel: '交叉夹击' });
+    state.targets = [{ id: 'active-tactic', x: 900, y: 600, role: 'elite', kind: 'single', radius: 30, hp: 136, maxHp: 136, scanned: false, hitUntil: 0, tactic }];
+    const before = structuredClone(state);
+    updateEndlessHud(state);
+    expect(nodes.get('endless-phase')!.textContent).toContain('交叉夹击');
+    expect(nodes.get('endless-objective')!.textContent).toContain(ENEMY_TACTIC_INFO[tactic].counter);
+    expect(nodes.get('endless-objective')!.textContent.length).toBeLessThan(80);
+    expect(state).toEqual(before);
+  });
+
+  it('prioritizes a pending free milestone over the simultaneous combat card without consuming either', () => {
+    const game = session(), state = game.state, nodes = mountHud();
+    game.completeWave(5);
+    Object.assign(state.endless!, { phase: 'intermission', clearedWaves: 5 });
+    expect(state.growth!.draft!.source).toBe('endless');
+    expect(state.endlessGrowth!.draft).not.toBeNull();
+    const before = structuredClone(state);
+    updateEndlessHud(state);
+    expect(nodes.get('endless-objective')!.textContent).toContain('精英波联动重配');
+    expect(nodes.get('endless-objective')!.textContent).toContain('免样本、可放弃');
+    expect(nodes.get('endless-objective')!.textContent).toContain('战斗进化照常获得');
+    expect(state).toEqual(before);
   });
 });

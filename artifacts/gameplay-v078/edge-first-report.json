@@ -1,0 +1,214 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\node_modules\\playwright\\cli.js",
+      "test",
+      "tests/e2e/gameplay-v078.spec.ts",
+      "--project=edge"
+    ],
+    "configFile": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\playwright.config.ts",
+    "rootDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/gameplay-v078/edge-first-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chrome",
+        "name": "chrome",
+        "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/gameplay-v078/edge-first-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "edge",
+        "name": "edge",
+        "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\gameplay-v078\\edge-first-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "edge",
+        "testDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
+        "snapshotDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 90000,
+        "use": {
+          "browserName": "chromium",
+          "headless": true,
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "deviceScaleFactor": 1,
+          "actionTimeout": 8000,
+          "screenshot": "only-on-failure",
+          "video": "off",
+          "trace": "off",
+          "channel": "msedge"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "edge"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/gameplay-v078/edge-first-report.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "artifacts/gameplay-v078/edge-first-html",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "gameplay-v078.spec.ts",
+      "file": "gameplay-v078.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "five natural waves expose support and elite tells, redirect the same squad, and grant milestone reconfiguration",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "edge",
+              "projectName": "edge",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 4427,
+                  "error": {
+                    "message": "TypeError: Cannot read properties of null (reading 'until')",
+                    "stack": "TypeError: Cannot read properties of null (reading 'until')\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\gameplay-v078.spec.ts:72:148",
+                    "location": {
+                      "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\gameplay-v078.spec.ts",
+                      "column": 148,
+                      "line": 72
+                    },
+                    "snippet": "  70 |       if (visible && deployedAt < 0) {\n  71 |         await aim(page, visible); await page.keyboard.press('KeyQ'); deployedAt = state.elapsed;\n> 72 |         const deployed = await readState(page); initialIds = deployed.growth!.cells!.map(cell => cell.id); initialUntil = deployed.growth!.beacon!.until;\n     |                                                                                                                                                    ^\n  73 |         observations.push({ initialSquad: deployed.growth });\n  74 |       } else if (!redirected && state.elapsed - deployedAt > 3.15 && state.growth?.beacon && state.growth.cells?.length) {\n  75 |         await aim(page, { x: state.player.x + 220, y: state.player.y - 180 }); await page.keyboard.press('KeyQ');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\gameplay-v078.spec.ts",
+                        "column": 148,
+                        "line": 72
+                      },
+                      "message": "TypeError: Cannot read properties of null (reading 'until')\n\n  70 |       if (visible && deployedAt < 0) {\n  71 |         await aim(page, visible); await page.keyboard.press('KeyQ'); deployedAt = state.elapsed;\n> 72 |         const deployed = await readState(page); initialIds = deployed.growth!.cells!.map(cell => cell.id); initialUntil = deployed.growth!.beacon!.until;\n     |                                                                                                                                                    ^\n  73 |         observations.push({ initialSquad: deployed.growth });\n  74 |       } else if (!redirected && state.elapsed - deployedAt > 3.15 && state.growth?.beacon && state.growth.cells?.length) {\n  75 |         await aim(page, { x: state.player.x + 220, y: state.player.y - 180 }); await page.keyboard.press('KeyQ');\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\gameplay-v078.spec.ts:72:148"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-27T15:42:42.693Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\gameplay-v078\\edge-first-results\\gameplay-v078-five-natural-8b897-t-milestone-reconfiguration-edge\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\gameplay-v078\\edge-first-results\\gameplay-v078-five-natural-8b897-t-milestone-reconfiguration-edge\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\gameplay-v078.spec.ts",
+                    "column": 148,
+                    "line": 72
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "3b790cd53c03be2ade47-d6e7f7bcec1772df36c0",
+          "file": "gameplay-v078.spec.ts",
+          "line": 13,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-27T15:42:41.481Z",
+    "duration": 6948.7970000000005,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

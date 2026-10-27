@@ -195,7 +195,7 @@ describe('real session continuous challenge loop', () => {
     const choices: string[] = []; choosePending(session, choices);
     expect(s.phase).toBe('playing'); expect(s.endless!.phase).toBe('intermission');
     expect(s.endlessGrowth!.level).toBe(1);
-    for (let i = 0; i < 180; i++) session.step(idle());
+    for (let i = 0; i < 60; i++) session.step(idle());
     expect(s.endless!.wave).toBe(11); expect(s.endless!.phase).toBe('warning');
     expect(s.events.filter(event => event.type === 'ENDLESS_WAVE_CLEARED')).toHaveLength(1);
   });

@@ -45,10 +45,11 @@ describe('continuous endless wave director', () => {
     }
   });
 
-  it('spawns the first finite batch at warning expiry, with legal distant multi-direction arrivals and two-shot ordinary HP', () => {
-    const f = fixture(); f.advance(2.99); expect(f.state.targets).toHaveLength(0); f.advance(.01);
+  it('spawns the first coherent front batch at warning expiry, with legal distant arrivals and two-shot ordinary HP', () => {
+    const f = fixture(); f.advance(E.warningSeconds - .01); expect(f.state.targets).toHaveLength(0); f.advance(.01);
     expect(f.state.endless!.phase).toBe('combat'); expect(f.state.targets).toHaveLength(3);
-    expect(new Set(f.state.endless!.directions).size).toBe(3);
+    expect(f.state.endless!.formation).toBe('front');
+    expect(f.state.endless!.batchSchedule[0].sector).toBe(f.state.endless!.batchSchedule[1].sector);
     for (const target of f.state.targets) {
       expect(distance(target, f.state.player)).toBeGreaterThanOrEqual(340);
       expect(distance(target, f.state.player)).toBeLessThanOrEqual(600);
@@ -72,10 +73,10 @@ describe('continuous endless wave director', () => {
     const f = fixture(); f.advance(3); f.finishWave();
     expect(f.completed).toEqual([1]); expect(f.state.endless!.clearedWaves).toBe(1);
     for (let i = 0; i < 4; i++) f.director.afterInput(); expect(f.completed).toEqual([1]);
-    f.advance(2.99); expect(f.state.endless!.wave).toBe(1);
+    f.advance(E.intermissionSeconds - .01); expect(f.state.endless!.wave).toBe(1);
     f.advance(.01); expect(f.state.endless!.wave).toBe(2); expect(f.state.endless!.phase).toBe('warning');
     expect(f.state.endless!.spawnedIds).toEqual([]); expect(f.state.endless!.creditedKillIds).toEqual([]);
-    f.advance(3); expect(f.state.targets.some(target => target.hp > 0 && target.sourceId === 'endless:wave:2')).toBe(true);
+    f.advance(E.warningSeconds); expect(f.state.targets.some(target => target.hp > 0 && target.sourceId === 'endless:wave:2')).toBe(true);
   });
 
   it('waits for pending fission, then for its real child, and credits each parent/child kill once', () => {
@@ -128,12 +129,13 @@ describe('continuous endless wave director', () => {
     const eliteTraits: string[] = [];
     for (let wave = 1; wave <= 31; wave++) {
       if (wave > 1) {
-        f.advance(3); expect(f.state.endless!.wave).toBe(wave);
+        f.advance(E.intermissionSeconds); expect(f.state.endless!.wave).toBe(wave);
         const warning = f.state.endless!.warningSeconds;
-        expect(warning).toBe(wave % 5 === 0 ? 8 : 3);
+        expect(warning).toBe(wave % 5 === 0 || wave === 3 ? E.traitWarningSeconds : E.warningSeconds);
         f.advance(warning - .01); expect(f.state.endless!.phase).toBe('warning'); f.advance(.01);
       }
       if (wave % 5 === 0) {
+        if (wave >= 30) f.advance(f.state.endless!.batchSchedule[1].at);
         const elites = f.state.targets.filter(target => target.hp > 0 && target.role === 'elite');
         expect(elites.length).toBe(wave >= 30 ? 2 : 1); eliteTraits.push(elites[0].traits![0]);
         for (const elite of elites) { expect(elite.hp).toBeLessThanOrEqual(204); expect(elite.traits!.length).toBeLessThanOrEqual(1); }
