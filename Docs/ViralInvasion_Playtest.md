@@ -8,7 +8,7 @@
 
 本轮收到的一份真实试玩反馈与处理记录见 [v0.6.0反馈](ViralInvasion_PlaytestFeedback_v0.6.0.md)。该意见未按下列五位新玩家流程采集，不计入P01–P05，也不补造原始观察。
 
-当前技术候选为 **v0.7.3**，离线入口为 [Viral-Invasion-G4-v0.7.3.zip](../releases/Viral-Invasion-G4-v0.7.3.zip)。[本包验收](ViralInvasion_v0.7.3_Acceptance.md)、[最终来源核对](../artifacts/completion-v073/provenance-final.json)与[验证汇总](../artifacts/completion-v073/verification-summary.json)登记369项测试／1000局模拟、完整浏览器84通过／26分配skip及独立干净检出通过；独立四窗口结果页、ZIP五文件／双浏览器断网冒烟、本机600秒帧率预算均通过。定向10通过／4skip单独保留，不累加为唯一覆盖；119自然内存样本与终后GC／10重开观察不关闭完整内存稳定。旧v0.7.2[验收](ViralInvasion_v0.7.2_Acceptance.md)独立保留，现场填写实际文件版本与哈希。以上技术结果不填入下列真人观察。
+当前技术候选为 **v0.7.4**，离线入口为[Viral-Invasion-G4-v0.7.4.zip](../releases/Viral-Invasion-G4-v0.7.4.zip)。[本包验收](ViralInvasion_v0.7.4_Acceptance.md)与[验证汇总](../artifacts/completion-v074/verification-summary.json)登记实际技术结果及范围；50文件396项含1000会话、90浏览器通过/26分配skip、独立构建和离线双端均通过。100事件/600秒与有限内存另记，不填入下列真人观察。标准5人仍0/5，现场填写实际ZIP版本及哈希；用户最初反馈单独保留。
 
 现有大图、Ⅰ–Ⅲ阶进化、三细胞、定向研究、阶段危机、初始抗体方案及真实行动结算继续保留；本版补修冲流实际位移反馈和1366×768结果首屏复盘入口。首局依旧使用独立空档默认现场应答；自愿第二局时不提示方案答案，记录玩家是否主动查看、选择并改变操作。本次更新没有新增真人记录。
 

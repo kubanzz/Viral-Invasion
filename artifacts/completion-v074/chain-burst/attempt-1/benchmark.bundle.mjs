@@ -1,0 +1,6855 @@
+// src/core/events.ts
+var EventBus = class {
+  listeners = /* @__PURE__ */ new Map();
+  on(type, listener) {
+    let group = this.listeners.get(type);
+    if (!group) this.listeners.set(type, group = /* @__PURE__ */ new Set());
+    group.add(listener);
+    return () => {
+      group?.delete(listener);
+      if (group?.size === 0) this.listeners.delete(type);
+    };
+  }
+  emit(type, payload) {
+    const group = this.listeners.get(type);
+    if (!group) return;
+    for (const listener of [...group]) listener(payload);
+  }
+  clear() {
+    this.listeners.clear();
+  }
+};
+
+// src/core/rng.ts
+var SeedRng = class {
+  value;
+  constructor(seed) {
+    this.value = seed >>> 0;
+  }
+  next() {
+    this.value = this.value + 1831565813 >>> 0;
+    let n = this.value;
+    n = Math.imul(n ^ n >>> 15, n | 1);
+    n ^= n + Math.imul(n ^ n >>> 7, n | 61);
+    return ((n ^ n >>> 14) >>> 0) / 4294967296;
+  }
+  int(min, max) {
+    if (!Number.isInteger(min) || !Number.isInteger(max) || max < min) {
+      throw new RangeError("Invalid random integer interval");
+    }
+    return min + Math.floor(this.next() * (max - min + 1));
+  }
+};
+
+// src/game/types.ts
+var WORLD = { width: 1200, height: 800, bounds: { left: 65, right: 1135, top: 110, bottom: 735 }, obstacles: [{ id: "fold-a", x: 440, y: 295, radius: 47 }, { id: "fold-b", x: 1005, y: 575, radius: 53 }], foreground: { x: 155, y: 550, width: 190, height: 125 } };
+var activeWorld = (state) => state.world ?? WORLD;
+var BALANCE = { step: 1 / 60, speed: 235, dashSpeed: 780, dashDuration: 0.16, dashCooldown: 1.5, scanRadius: 650, scanCooldown: 3, range: 530, areaRadius: 94, cooldowns: { 1: 0.18, 2: 1.2, 3: 0.7 }, damage: { 1: 34, 2: 65 }, repair: 25, interactionRange: 110, trainingHitDamage: 5, trainingHitDuration: 0.55 };
+
+// src/actors/collision.ts
+function distance(a, b) {
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+function normalized(x, y) {
+  const length = Math.hypot(x, y);
+  return length > 0 ? { x: x / length, y: y / length } : { x: 0, y: 0 };
+}
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+function rayCircle(origin, direction, center, radius, range) {
+  const ox = origin.x - center.x;
+  const oy = origin.y - center.y;
+  const b = ox * direction.x + oy * direction.y;
+  const c = ox * ox + oy * oy - radius * radius;
+  if (c <= 0) return 0;
+  const discriminant = b * b - c;
+  if (discriminant < 0) return null;
+  const t = -b - Math.sqrt(discriminant);
+  return t >= 0 && t <= range ? t : null;
+}
+function wallHit(origin, direction, range, world = WORLD) {
+  let nearest = null;
+  for (const obstacle of world.obstacles) {
+    const hit = rayCircle(origin, direction, obstacle, obstacle.radius, range);
+    if (hit !== null && (nearest === null || hit < nearest)) nearest = hit;
+  }
+  return nearest;
+}
+function moveWithCollision(position, delta, radius, world = WORLD) {
+  const count3 = Math.max(1, Math.ceil(Math.hypot(delta.x, delta.y) / Math.max(4, radius * 0.5)));
+  const result = { ...position };
+  for (let i = 0; i < count3; i++) {
+    result.x += delta.x / count3;
+    result.y += delta.y / count3;
+    for (const obstacle of world.obstacles) {
+      const gap = distance(result, obstacle);
+      const minimum = radius + obstacle.radius;
+      if (gap < minimum) {
+        const normal = gap > 1e-8 ? normalized(result.x - obstacle.x, result.y - obstacle.y) : { x: 1, y: 0 };
+        result.x = obstacle.x + normal.x * minimum;
+        result.y = obstacle.y + normal.y * minimum;
+      }
+    }
+    result.x = clamp(result.x, world.bounds.left + radius, world.bounds.right - radius);
+    result.y = clamp(result.y, world.bounds.top + radius, world.bounds.bottom - radius);
+  }
+  return result;
+}
+
+// src/game/battleConfig.ts
+var TRAITS = {
+  CARAPACE: { id: "CARAPACE", name: "\u6676\u58F3", symbol: "\u25C7", ability: "\u6B63\u9762\u5C04\u51FB\u4F24\u5BB3\u964D\u4F4E 70%", cost: "\u79FB\u52A8\u901F\u5EA6\u964D\u4F4E 38%", counter: "\u7ED5\u540E\u5C04\u51FB\uFF1B\u9600\u95E8 E \u51B2\u6D41\u4F7F\u6676\u58F3\u66B4\u9732 4 \u79D2" },
+  FISSION: { id: "FISSION", name: "\u88C2\u6B96", symbol: "\u22C8", ability: "\u6BCD\u4F53\u6B7B\u4EA1\u540E\u5206\u51FA 2 \u4E2A\u5C0F\u4F53", cost: "\u5C0F\u4F53\u4EC5 22 \u8010\u4E45\u4E14\u4E0D\u80FD\u7EE7\u7EED\u5206\u88C2", counter: "2 \u8303\u56F4\u88C2\u89E3\uFF1B\u7FA4\u4F53\u4FDD\u6301\u805A\u96C6\u65F6\u4E00\u5E76\u6E05\u9664" },
+  MIMIC: { id: "MIMIC", name: "\u6F5C\u4F0F", symbol: "\u25CC", ability: "\u62DF\u6001\u7EC4\u7EC7\uFF0C\u4F18\u5148\u4FB5\u8680\u7EC4\u7EC7", cost: "\u79FB\u52A8\u901F\u5EA6\u964D\u4F4E 50%\uFF1B\u6BCF 6 \u79D2\u6270\u52A8 1.2 \u79D2", counter: "Q \u626B\u63CF\u663E\u5F62 5 \u79D2\uFF1B\u57FA\u7840\u5C04\u51FB\u4ECD\u6709\u6548\uFF1B3 \u4FEE\u590D\u7EC4\u7EC7\uFF0C\u540C\u65F6\u4F24\u5BB3\u5E76\u663E\u9732\u9644\u8FD1\u6F5C\u4F0F\u4F53" }
+};
+var BATTLE_BALANCE = {
+  maxActors: 24,
+  spreadInterval: 6,
+  spawnInterval: 8,
+  warningDuration: 8,
+  firstWarningAt: 14,
+  secondWarningDelay: 10,
+  enemySpeed: 64,
+  attackWindup: 0.72,
+  attackInterval: 2.2,
+  attackRadius: 58,
+  playerDamage: 7,
+  tissueDamage: 4,
+  ordinaryHp: 68,
+  sourceHp: 238,
+  eliteHp: 238,
+  childHp: 22,
+  fissionDelay: 0.8,
+  pulseRange: 470,
+  pulseHalfAngle: 0.64,
+  pulsePush: 145,
+  pulseCooldown: 8,
+  pulseCost: 4,
+  pulseExpose: 4,
+  pulseCycle: 6,
+  chargeDuration: 2,
+  surgeDuration: 1,
+  carapaceSpeed: 0.62,
+  carapaceResistance: 0.3,
+  mimicSpeed: 0.5,
+  mimicPeriod: 6,
+  mimicDisturbance: 1.2,
+  scanReveal: 5,
+  crisisDuration: 15,
+  organAlarmAt: 30,
+  organCollapseDelay: 8,
+  sourceRelief: 14,
+  killRelief: 1.25,
+  repairRelief: 1.5,
+  tissueInfectionDamage: 0.12
+};
+
+// src/game/evolution.ts
+var EVOLUTION_BALANCE = {
+  windowTicks: 90 * 60,
+  probabilityCap: 0.55,
+  maxTraits: 2,
+  warningSeconds: 8,
+  damageConfidence: 200,
+  scanReference: 12,
+  isolationReference: 8,
+  repairReference: 100
+};
+var TRAIT_IDS = ["CARAPACE", "FISSION", "MIMIC"];
+var nonnegative = (value) => Number.isFinite(value) ? Math.max(0, value) : 0;
+var unit = (value) => Math.max(0, Math.min(1, Number.isFinite(value) ? value : 0));
+var validTick = (tick) => Number.isSafeInteger(tick) && tick >= 0;
+var emptyBin = (tick) => ({ tick, precisionDamage: 0, areaDamage: 0, scans: 0, isolations: 0, repaired: 0 });
+function recordBehavior(history, event, nowTick = event.tick) {
+  if (!validTick(nowTick)) return [];
+  const bins = /* @__PURE__ */ new Map();
+  const cutoff = nowTick - EVOLUTION_BALANCE.windowTicks;
+  for (const previous of history) {
+    if (!validTick(previous.tick) || previous.tick < cutoff || previous.tick > nowTick) continue;
+    const current = bins.get(previous.tick) ?? emptyBin(previous.tick);
+    current.precisionDamage += nonnegative(previous.precisionDamage);
+    current.areaDamage += nonnegative(previous.areaDamage);
+    current.scans += nonnegative(previous.scans);
+    current.isolations += nonnegative(previous.isolations);
+    current.repaired += nonnegative(previous.repaired);
+    bins.set(previous.tick, current);
+  }
+  if (validTick(event.tick) && event.tick >= cutoff && event.tick <= nowTick) {
+    const amount2 = event.kind === "scan" || event.kind === "isolate" ? 1 : nonnegative(event.amount ?? 0);
+    if (amount2 > 0) {
+      const current = bins.get(event.tick) ?? emptyBin(event.tick);
+      if (event.kind === "precisionDamage") current.precisionDamage += amount2;
+      else if (event.kind === "areaDamage") current.areaDamage += amount2;
+      else if (event.kind === "scan") current.scans++;
+      else if (event.kind === "isolate") current.isolations++;
+      else if (event.kind === "repair") current.repaired += amount2;
+      bins.set(event.tick, current);
+    }
+  }
+  return [...bins.values()].sort((a, b) => a.tick - b.tick);
+}
+function summarizeBehavior(history, nowTick) {
+  const tick = validTick(nowTick) ? nowTick : 0;
+  const fromTick = Math.max(0, tick - EVOLUTION_BALANCE.windowTicks);
+  let precisionDamage = 0;
+  let areaDamage = 0;
+  let scans = 0;
+  let isolations = 0;
+  let repaired = 0;
+  let sampleCount = 0;
+  for (const bin of history) {
+    if (!validTick(bin.tick) || bin.tick < fromTick || bin.tick > tick) continue;
+    precisionDamage += nonnegative(bin.precisionDamage);
+    areaDamage += nonnegative(bin.areaDamage);
+    scans += nonnegative(bin.scans);
+    isolations += nonnegative(bin.isolations);
+    repaired += nonnegative(bin.repaired);
+    sampleCount++;
+  }
+  const total = precisionDamage + areaDamage;
+  return { precisionDamage, areaDamage, precisionRatio: total > 0 ? precisionDamage / total : 0, areaRatio: total > 0 ? areaDamage / total : 0, scans, isolations, repaired, sampleCount, fromTick, toTick: tick };
+}
+function capSelectionProbabilities(rawWeights, cap = EVOLUTION_BALANCE.probabilityCap) {
+  const count3 = rawWeights.length;
+  if (!count3) return [];
+  if (!Number.isFinite(cap) || cap <= 0 || cap > 1 || count3 * cap < 1 - 1e-12) {
+    throw new RangeError("Probability cap cannot accommodate this candidate count");
+  }
+  const cleaned = rawWeights.map(nonnegative);
+  const maximum = Math.max(...cleaned);
+  const weights = maximum > 0 ? cleaned.map((weight) => weight / maximum) : cleaned.map(() => 1);
+  const probabilities = rawWeights.map(() => 0);
+  let remaining = weights.map((_, index) => index);
+  let mass = 1;
+  while (remaining.length) {
+    const total = remaining.reduce((sum2, index) => sum2 + weights[index], 0);
+    const allocation = (index) => total > 0 ? mass * weights[index] / total : mass / remaining.length;
+    const capped = remaining.filter((index) => allocation(index) > cap + 1e-14);
+    if (!capped.length) {
+      for (const index of remaining) probabilities[index] = allocation(index);
+      break;
+    }
+    for (const index of capped) {
+      probabilities[index] = cap;
+      mass -= cap;
+    }
+    remaining = remaining.filter((index) => !capped.includes(index));
+  }
+  return probabilities;
+}
+function evolutionSeed(seed, index) {
+  let value = seed >>> 0 ^ 1163284300 ^ Math.imul((index >>> 0) + 1, 2654435761);
+  value = Math.imul(value ^ value >>> 16, 2146121005);
+  value = Math.imul(value ^ value >>> 15, 2221713035);
+  return (value ^ value >>> 16) >>> 0;
+}
+function rawWeight(trait2, context, summary) {
+  const damage = summary.precisionDamage + summary.areaDamage;
+  const confidence = damage / (damage + EVOLUTION_BALANCE.damageConfidence);
+  const scans = unit(summary.scans / EVOLUTION_BALANCE.scanReference);
+  const isolated = unit(summary.isolations / EVOLUTION_BALANCE.isolationReference);
+  const repairs = unit(summary.repaired / EVOLUTION_BALANCE.repairReference);
+  const organDamage = 1 - unit(context.integrity / 100);
+  let environmentBias = 0;
+  let responseBias = 0;
+  if (trait2 === "CARAPACE") {
+    environmentBias = context.organId === "heart" ? 0.12 : 0;
+    responseBias = 0.35 * summary.precisionRatio * confidence + 0.05 * scans - 0.05 * isolated + 0.05 * organDamage;
+  } else if (trait2 === "FISSION") {
+    environmentBias = context.organId === "lung" ? 0.12 : 0;
+    responseBias = 0.12 * summary.areaRatio * confidence + 0.08 * scans + 0.05 * isolated - 0.05 * organDamage;
+  } else {
+    environmentBias = context.organId === "lung" ? 0.06 : 0;
+    responseBias = 0.2 * summary.areaRatio * confidence - 0.12 * scans + 0.1 * isolated + 0.1 * repairs;
+  }
+  return Math.max(0.1, 1 + environmentBias + responseBias);
+}
+function chooseEvolution(context) {
+  const seen = new Set(context.seen);
+  if (seen.size >= EVOLUTION_BALANCE.maxTraits) return { kind: "stop", reason: "trait-cap" };
+  const permitted = new Set(context.eligibleTraits ?? TRAIT_IDS);
+  const eligible = TRAIT_IDS.filter((trait2) => permitted.has(trait2) && !seen.has(trait2) && context.counterAvailable[trait2]);
+  if (!eligible.length) return { kind: "defer", reason: "no-candidates" };
+  if (eligible.length * EVOLUTION_BALANCE.probabilityCap < 1) return { kind: "defer", reason: "insufficient-diversity" };
+  const summary = summarizeBehavior(context.history, context.tick);
+  const weights = eligible.map((trait2) => rawWeight(trait2, context, summary));
+  const probabilities = capSelectionProbabilities(weights);
+  const roll = new SeedRng(evolutionSeed(context.seed, context.evolutionIndex)).next();
+  let cumulative = 0;
+  let selected = eligible.at(-1);
+  for (let index = 0; index < eligible.length; index++) {
+    cumulative += probabilities[index];
+    if (roll < cumulative) {
+      selected = eligible[index];
+      break;
+    }
+  }
+  return {
+    kind: "warn",
+    trait: selected,
+    warningSeconds: EVOLUTION_BALANCE.warningSeconds,
+    roll,
+    candidates: eligible.map((trait2, index) => ({ trait: trait2, rawWeight: weights[index], probability: probabilities[index] })),
+    summary
+  };
+}
+
+// src/game/organConfig.ts
+var CAMPAIGN_BALANCE = {
+  migrationWarning: 12,
+  blockDuration: 2,
+  interceptDuration: 12,
+  travelCooldown: 3,
+  backgroundInterval: 5,
+  backgroundGrace: 10,
+  backgroundDamage: 0.75,
+  backgroundInfection: 0.8,
+  backgroundTripBudget: 15,
+  returnAttackGrace: 1,
+  airwayCooldown: 1,
+  closeAirwayCost: 3,
+  openAirwayCost: 1,
+  airwayPressureDuration: 4,
+  inhaleDuration: 4,
+  exhaleDuration: 3,
+  airflowStrength: 36,
+  retainedSourceHp: 238,
+  migratedSourceHp: 238,
+  carrierHp: 44,
+  carrierSpeed: 62,
+  ignoreOrganCost: 10,
+  ignoreInfection: 8,
+  blockOrganCost: 4,
+  blockInfection: 3
+};
+var HEART_WORLD = {
+  width: 2400,
+  height: 1500,
+  bounds: { left: 85, right: 2315, top: 145, bottom: 1415 },
+  obstacles: [
+    { id: "fold-a", x: 730, y: 650, radius: 85 },
+    { id: "fold-b", x: 1630, y: 1190, radius: 90 },
+    { id: "fold-c", x: 1350, y: 540, radius: 72 },
+    { id: "fold-d", x: 2120, y: 720, radius: 85 },
+    { id: "fold-e", x: 780, y: 980, radius: 70 }
+  ],
+  foreground: { x: 1110, y: 1195, width: 275, height: 150 }
+};
+var LUNG_WORLD = {
+  width: 2400,
+  height: 1500,
+  bounds: { left: 85, right: 2315, top: 145, bottom: 1415 },
+  obstacles: [
+    { id: "alveolus-a", x: 850, y: 650, radius: 100 },
+    { id: "alveolus-b", x: 1740, y: 1090, radius: 105 },
+    { id: "alveolus-c", x: 1900, y: 360, radius: 78 },
+    { id: "alveolus-d", x: 650, y: 1330, radius: 68 }
+  ],
+  foreground: { x: 1010, y: 1220, width: 285, height: 150 }
+};
+var ORGAN_DEFINITIONS = {
+  heart: {
+    id: "heart",
+    geometry: HEART_WORLD,
+    playerStart: { x: 450, y: 1070 },
+    entry: { x: 2100, y: 330 },
+    exit: { x: 2170, y: 280 },
+    tissue: { x: 850, y: 1190 },
+    terminal: { x: 350, y: 1180 },
+    research: { x: 350, y: 690 },
+    gate: { x: 1070, y: 280 },
+    device: { x: 1440, y: 950 },
+    sourcePositions: [{ x: 1020, y: 650 }, { x: 2010, y: 1090 }],
+    elitePosition: { x: 1610, y: 470 },
+    corePosition: { x: 1900, y: 650 },
+    migrationGoal: { x: 2170, y: 280 },
+    retainedSource: { x: 1730, y: 1020 },
+    migratedSource: { x: 2010, y: 1090 },
+    carrierStarts: [{ x: 2060, y: 420 }, { x: 2110, y: 460 }, { x: 2150, y: 420 }],
+    flowOrigin: { x: 1440, y: 950 },
+    regions: [
+      { id: "arrival", label: "\u590D\u82CF\u524D\u5EAD", x: 430, y: 1120, radius: 240 },
+      { id: "research", label: "\u6297\u4F53\u7814\u7A76\u533A", x: 350, y: 690, radius: 220 },
+      { id: "rhythm", label: "\u8282\u5F8B\u67A2\u7EBD", x: 1440, y: 950, radius: 300 },
+      { id: "infection", label: "\u611F\u67D3\u524D\u7EBF", x: 1040, y: 650, radius: 255 },
+      { id: "core", label: "\u6DF1\u5C42\u75C5\u7076", x: 1940, y: 780, radius: 350 }
+    ]
+  },
+  lung: {
+    id: "lung",
+    geometry: LUNG_WORLD,
+    playerStart: { x: 450, y: 1060 },
+    entry: { x: 450, y: 1060 },
+    exit: { x: 350, y: 1060 },
+    tissue: { x: 1260, y: 1120 },
+    terminal: { x: 350, y: 650 },
+    research: { x: 800, y: 1150 },
+    gate: { x: 1250, y: 330 },
+    device: { x: 1250, y: 330 },
+    sourcePositions: [{ x: 1570, y: 600 }],
+    elitePosition: { x: 1730, y: 560 },
+    corePosition: { x: 1880, y: 700 },
+    migrationGoal: { x: 1660, y: 360 },
+    retainedSource: { x: 1570, y: 600 },
+    migratedSource: { x: 2050, y: 1110 },
+    carrierStarts: [{ x: 540, y: 1020 }, { x: 580, y: 1080 }, { x: 530, y: 1130 }],
+    flowOrigin: { x: 1470, y: 800 },
+    regions: [
+      { id: "arrival", label: "\u652F\u6C14\u7BA1\u5165\u53E3", x: 440, y: 1030, radius: 230 },
+      { id: "research", label: "\u514D\u75AB\u96C6\u7ED3\u533A", x: 900, y: 1150, radius: 240 },
+      { id: "airway", label: "\u6C14\u9053\u67A2\u7EBD", x: 1250, y: 330, radius: 280 },
+      { id: "infection", label: "\u611F\u67D3\u80BA\u6CE1", x: 1570, y: 600, radius: 250 },
+      { id: "core", label: "\u6DF1\u5C42\u80BA\u6CE1", x: 1990, y: 850, radius: 330 }
+    ]
+  }
+};
+var getOrganDefinition = (id) => ORGAN_DEFINITIONS[id];
+function sourceTarget(id, position, hp) {
+  return { ...position, id, kind: "single", role: "source", radius: 34, hp, maxHp: hp, hitUntil: 0, scanned: false, traits: [], facing: 0, born: 0 };
+}
+function createOrganArena(id, seed) {
+  const config = getOrganDefinition(id), geometry = config.geometry;
+  const rng = new SeedRng((seed ^ (id === "lung" ? 1819635303 : 1751474546)) >>> 0);
+  const sourceId = id === "lung" ? "lung-source-a" : "source-a";
+  const sourcePosition = config.sourcePositions[0];
+  const tissue = { ...config.tissue, hp: id === "lung" ? 76 : 62, maxHp: 100, radius: 43 };
+  const deviceId = id === "lung" ? "airway" : "valve";
+  const nodes = [
+    { id: sourceId, kind: "source", ...sourcePosition, active: true, infected: true },
+    { id: deviceId, kind: id === "lung" ? "gate" : "valve", ...config.device, active: true, infected: false },
+    { id: "tissue", kind: "tissue", ...tissue, active: true, infected: false },
+    { id: "retest", kind: "retest", ...config.terminal, active: true, infected: false },
+    { id: "research", kind: "research", ...config.research, active: true, infected: false },
+    { id: "exit", kind: "exit", ...config.exit, active: true, infected: false }
+  ];
+  const edges = [[sourceId, deviceId], [deviceId, "tissue"]].map(([from, to]) => {
+    const a = nodes.find((n) => n.id === from), b = nodes.find((n) => n.id === to);
+    return { id: `${from}:${to}`, from, to, open: true, nextSpread: BATTLE_BALANCE.spreadInterval, flowDirection: normalized(b.x - a.x, b.y - a.y) };
+  });
+  const targets = [sourceTarget(sourceId, sourcePosition, BATTLE_BALANCE.sourceHp)];
+  for (let index = 0; index < 2; index++) {
+    const position = moveWithCollision(sourcePosition, { x: rng.int(-60, 60), y: rng.int(-45, 45) }, 22, geometry);
+    targets.push({ ...position, id: `${id}-initial-${index}`, kind: "single", role: "virus", radius: 22, hp: 68, maxHp: 68, hitUntil: 0, scanned: false, traits: [], facing: 0, born: 0, attackReady: 1.5, generation: 0, sourceId });
+  }
+  return {
+    organId: id,
+    activated: id === "heart",
+    geometry,
+    targets,
+    tissue,
+    terminal: { ...config.terminal },
+    graph: { nodes, edges },
+    pulse: { phase: "charge", phaseRemaining: 2, readyAt: 0, activeUntil: 0, origin: { ...config.device }, direction: Math.PI / 2, uses: 0 },
+    nextSpawnAt: { [sourceId]: BATTLE_BALANCE.spawnInterval },
+    gateChangedAt: -10,
+    organLowSince: null,
+    departedAt: null,
+    nextBackgroundAt: CAMPAIGN_BALANCE.backgroundInterval,
+    backgroundLoss: 0,
+    backgroundReason: "",
+    offscreenElapsed: 0,
+    nextBackgroundElapsed: CAMPAIGN_BALANCE.backgroundGrace,
+    lastPressureAt: 0,
+    totalBackgroundLoss: 0,
+    ...id === "lung" ? { flow: { phase: "inhale", phaseRemaining: CAMPAIGN_BALANCE.inhaleDuration, airwayOpen: true, changedAt: -10, pressureUntil: 0, origin: { ...config.flowOrigin }, direction: { x: 0, y: 1 }, strength: CAMPAIGN_BALANCE.airflowStrength } } : {}
+  };
+}
+
+// src/game/encounterConfig.ts
+var ENCOUNTER_CONFIGS = {
+  "campaign-1": { firstWarningFallback: 14, warningDuration: 8, initialOrdinary: 2, openingOrdinaryCap: 4, openingSpawnBudget: 2, introGuardian: { x: 1600, y: 930 } },
+  "fixture-1": { firstWarningFallback: 14, warningDuration: 8, initialOrdinary: 4 }
+};
+
+// src/game/counterLesson.ts
+function acceptedFirstCounter(state, event, target) {
+  if (event.type !== "TARGET_HIT" || event.tick !== state.tick || event.data.cause !== "basic" || event.data.tool !== 1 || !Number.isFinite(Number(event.data.damage)) || !(Number(event.data.damage) > 0) || !target.traits?.includes("CARAPACE") || event.data.id !== target.id) return;
+  const incoming = Math.atan2(state.player.y - target.y, state.player.x - target.x);
+  if (Math.cos(incoming - (target.facing ?? 0)) <= 0.2) return "rear";
+  if ((target.exposedUntil ?? 0) <= state.elapsed) return;
+  const pulse = state.events.some((item) => item.type === "PULSE_TRIGGERED" && item.tick <= event.tick && event.tick * BALANCE.step - item.tick * BALANCE.step < BATTLE_BALANCE.pulseExpose && typeof item.data.exposedTargetIds === "string" && item.data.exposedTargetIds.split(",").includes(target.id));
+  if (pulse) return "pulse";
+}
+
+// src/game/battle.ts
+var BRANCHES = ["CARAPACE", "FISSION", "MIMIC"];
+function initializeBattle(state, options) {
+  const rng = new SeedRng(state.seed);
+  const formal = options.milestone === "G3" && options.encounterMode !== "fixture";
+  const guideVariant = formal && options.counterGuide !== "adaptive" && (!options.firstTrait || options.firstTrait === "CARAPACE") ? "guided" : "adaptive";
+  const sampledTrait = options.firstTrait ?? BRANCHES[rng.int(0, 2)];
+  const firstTrait = guideVariant === "guided" ? "CARAPACE" : sampledTrait;
+  const layout = options.milestone === "G3" ? getOrganDefinition("heart") : void 0;
+  if (layout) {
+    state.world = layout.geometry;
+    Object.assign(state.player, layout.playerStart);
+    Object.assign(state.tissue, layout.tissue);
+    state.terminal = { ...layout.terminal };
+  }
+  state.tissue.hp = 62;
+  state.targets = [];
+  const nodes = [
+    { id: "source-a", kind: "source", ...layout?.sourcePositions[0] ?? { x: 610, y: 330 }, active: true, infected: true },
+    { id: "source-b", kind: "source", ...layout?.sourcePositions[1] ?? { x: 920, y: 435 }, active: true, infected: true },
+    { id: "gate", kind: "gate", ...layout?.gate ?? { x: 335, y: 230 }, active: true, infected: false },
+    { id: "valve", kind: "valve", ...layout?.device ?? { x: 730, y: 230 }, active: true, infected: false },
+    { id: "tissue", kind: "tissue", x: state.tissue.x, y: state.tissue.y, active: true, infected: false },
+    { id: "retest", kind: "retest", ...state.terminal, active: true, infected: false }
+  ];
+  if (options.milestone && options.milestone !== "G1") nodes.push({ id: "research", kind: "research", ...layout?.research ?? { x: 475, y: 610 }, active: true, infected: false });
+  const edges = [["source-a", "gate"], ["gate", "tissue"], ["source-b", "valve"], ["valve", "tissue"]].map(([from, to]) => {
+    const a = nodes.find((node) => node.id === from);
+    const b = nodes.find((node) => node.id === to);
+    return { id: `${from}:${to}`, from, to, open: true, nextSpread: BATTLE_BALANCE.spreadInterval, flowDirection: normalized(b.x - a.x, b.y - a.y) };
+  });
+  state.battle = {
+    milestone: options.milestone ?? "G1",
+    organId: "heart",
+    graph: { nodes, edges },
+    pressure: { infection: 26, vitality: 100, criticalSince: null, organAlarm: false, crisisReason: "" },
+    pulse: { phase: "charge", phaseRemaining: 2, readyAt: 0, activeUntil: 0, origin: { ...layout?.device ?? { x: 730, y: 230 } }, direction: Math.PI / 2, uses: 0 },
+    warning: null,
+    traits: [],
+    defeatedTraits: [],
+    nextEvolutionAt: BATTLE_BALANCE.firstWarningAt,
+    stage: 0,
+    stageLabel: "\u2160 \xB7 \u521D\u59CB\u611F\u67D3",
+    objective: "Q \u8BCA\u65AD\u611F\u67D3\u6E90\uFF1B\u6E05\u9664\u4E24\u5904\u611F\u67D3\u6E90\u5E76\u4FDD\u62A4\u5341\u5B57\u7EC4\u7EC7\u3002",
+    readyToRetest: false,
+    lastAim: { ...layout?.sourcePositions[0] ?? { x: 610, y: 330 } },
+    stats: { kills: 0, sourceClears: 0, eliteClears: 0, repairs: 0, pulses: 0, playerDamage: 0, tissueDamage: 0, scans: 0 },
+    nextSpawnAt: { "source-a": BATTLE_BALANCE.spawnInterval, "source-b": BATTLE_BALANCE.spawnInterval + 2 },
+    nextActorId: 0,
+    firstTrait,
+    recentNotice: "",
+    gateChangedAt: -10,
+    organLowSince: null,
+    eliteSpawned: 0,
+    history: [],
+    ...options.milestone && options.milestone !== "G1" ? { forcedFirstTrait: options.firstTrait, behaviorHistory: [], evolutionDecisions: [] } : {},
+    encounter: { configId: formal ? "campaign-1" : "fixture-1", guideVariant, openingSpawned: 0, firstCounter: { status: "opening", guideStatus: guideVariant === "guided" ? "active" : "inactive", targetId: null, warnedAt: null, appliedAt: null, resolvedAt: null, skippedAt: null, completedAt: null, counterHit: null } }
+  };
+  for (const node of nodes.filter((n) => n.kind === "source")) {
+    state.targets.push({ ...node, id: node.id, kind: "single", role: "source", hp: BATTLE_BALANCE.sourceHp, maxHp: BATTLE_BALANCE.sourceHp, radius: 34, hitUntil: 0, scanned: false, traits: [], facing: 0, born: 0 });
+  }
+  const initialOrdinary = formal ? ENCOUNTER_CONFIGS["campaign-1"].initialOrdinary : ENCOUNTER_CONFIGS["fixture-1"].initialOrdinary;
+  for (let i = 0; i < initialOrdinary; i++) {
+    const source = formal ? nodes[i % 2] : i < 2 ? nodes[0] : nodes[1];
+    const position = moveWithCollision(source, { x: rng.int(-80, 80), y: rng.int(-65, 65) }, 22, activeWorld(state));
+    state.targets.push({ ...position, id: `virus-${++state.battle.nextActorId}`, kind: "single", role: "virus", radius: 22, hp: BATTLE_BALANCE.ordinaryHp, maxHp: BATTLE_BALANCE.ordinaryHp, hitUntil: 0, scanned: false, traits: [], facing: 0, born: 0, attackReady: 1 + i * 0.3, generation: 0, sourceId: source.id });
+  }
+  state.message = "\u611F\u67D3\u6B63\u5728\u6CBF\u8840\u7BA1\u4F20\u64AD\u3002Q \u8BCA\u65AD\uFF0C1 \u7CBE\u51C6\u51C0\u5316\uFF0C2 \u6E05\u7FA4\uFF0C3 \u4FEE\u590D\uFF1B\u9760\u8FD1\u88C5\u7F6E\u6309 E\u3002";
+  state.messageUntil = 10;
+}
+var BattleDirector = class {
+  constructor(host) {
+    this.host = host;
+  }
+  host;
+  get s() {
+    return this.host.state;
+  }
+  get b() {
+    return this.s.battle;
+  }
+  notice(text2, seconds = 5, priority = 1) {
+    this.b.recentNotice = text2;
+    this.b.history.push({ at: this.s.elapsed, text: text2 });
+    if (this.b.history.length > 128) this.b.history.shift();
+    this.host.message(text2, seconds, priority);
+  }
+  recordEvent(event) {
+    const encounter = this.b.encounter, lesson = encounter?.firstCounter;
+    if (encounter?.configId === "campaign-1" && lesson?.targetId && !lesson.counterHit) {
+      const target = this.s.targets.find((item) => item.id === lesson.targetId);
+      const method = target && acceptedFirstCounter(this.s, event, target);
+      if (method) {
+        lesson.counterHit = { tick: event.tick, at: this.s.elapsed, targetId: target.id, method, damage: Number(event.data.damage) };
+        if (encounter.guideVariant === "guided" && lesson.guideStatus !== "completed") {
+          lesson.guideStatus = "completed";
+          lesson.completedAt = this.s.elapsed;
+          this.host.emit("COUNTER_GUIDE_COMPLETED", { id: target.id, method, damage: Number(event.data.damage), tick: event.tick });
+        }
+      }
+    }
+    if (this.b.milestone === "G1") return;
+    const data = event.data;
+    const kind = event.type === "TARGET_HIT" && data.cause !== "protocol" ? data.tool === 1 ? "precisionDamage" : data.tool === 2 ? "areaDamage" : void 0 : event.type === "SCAN_COMPLETED" ? "scan" : event.type === "ROUTE_CHANGED" && data.open === false ? "isolate" : event.type === "ORGAN_INTEGRITY_CHANGED" && data.reason === "repair" && Number(data.after) > Number(data.before) ? "repair" : void 0;
+    if (!kind) return;
+    const amount2 = kind === "precisionDamage" || kind === "areaDamage" ? Number(data.damage) : kind === "repair" ? Number(data.after) - Number(data.before) : 1;
+    this.b.behaviorHistory = recordBehavior(this.b.behaviorHistory ?? [], { tick: event.tick, kind, amount: amount2 });
+  }
+  skipCounterGuide() {
+    const encounter = this.b.encounter, lesson = encounter?.firstCounter;
+    if (encounter?.guideVariant !== "guided" || lesson?.guideStatus !== "active") return false;
+    lesson.guideStatus = "skipped";
+    lesson.skippedAt = this.s.elapsed;
+    this.host.emit("COUNTER_GUIDE_SKIPPED", { id: lesson.targetId ?? "", at: this.s.elapsed });
+    return true;
+  }
+  beforeInput(input) {
+    this.b.lastAim = { ...input.aim };
+    const pulse = this.b.pulse;
+    pulse.cycleIndex = Math.floor(this.s.elapsed / BATTLE_BALANCE.pulseCycle);
+    pulse.direction = Math.atan2(input.aim.y - pulse.origin.y, input.aim.x - pulse.origin.x);
+    const beat = this.s.elapsed % BATTLE_BALANCE.pulseCycle;
+    pulse.phase = beat < BATTLE_BALANCE.chargeDuration ? "charge" : beat < BATTLE_BALANCE.chargeDuration + BATTLE_BALANCE.surgeDuration ? "surge" : "rest";
+    pulse.phaseRemaining = (pulse.phase === "charge" ? BATTLE_BALANCE.chargeDuration : pulse.phase === "surge" ? BATTLE_BALANCE.chargeDuration + BATTLE_BALANCE.surgeDuration : BATTLE_BALANCE.pulseCycle) - beat;
+  }
+  scan() {
+    let count3 = 0;
+    for (const target of this.s.targets) if (target.hp > 0 && distance(this.s.player, target) <= BALANCE.scanRadius) {
+      target.revealedUntil = this.s.elapsed + BATTLE_BALANCE.scanReveal;
+      count3++;
+    }
+    this.b.stats.scans++;
+    this.host.emit("BATTLE_DIAGNOSED", { count: count3, revealSeconds: BATTLE_BALANCE.scanReveal });
+    this.host.message(`\u8BCA\u65AD ${count3} \u4E2A\u611F\u67D3\u4F53\u3002\u25C7 \u6676\u58F3\u7ED5\u540E/\u51B2\u6D41\uFF1B\u22C8 \u88C2\u6B96\u7528 2\uFF1B\u25CC \u6F5C\u4F0F\u7528 Q/\u7EC4\u7EC7\u4FEE\u590D\u3002`, 6);
+  }
+  modifiedDamage(target, damage) {
+    if (target.traits?.includes("CARAPACE") && (target.exposedUntil ?? 0) <= this.s.elapsed) {
+      const incoming = Math.atan2(this.s.player.y - target.y, this.s.player.x - target.x);
+      const frontal = Math.cos(incoming - (target.facing ?? 0)) > 0.2;
+      if (frontal && this.s.tool === 1) {
+        this.host.emit("CARAPACE_RESISTED", { id: target.id, raw: damage, actual: damage * BATTLE_BALANCE.carapaceResistance });
+        return damage * BATTLE_BALANCE.carapaceResistance;
+      }
+    }
+    return damage;
+  }
+  cleared(target) {
+    const { s, b } = this;
+    target.deadAt = s.elapsed;
+    target.attackAt = void 0;
+    target.attackAim = void 0;
+    target.attackTarget = void 0;
+    target.revealedUntil = 0;
+    target.exposedUntil = 0;
+    if (target.role === "source") {
+      const node = b.graph.nodes.find((n) => n.id === target.id);
+      node.active = false;
+      node.infected = false;
+      b.stats.sourceClears++;
+      b.pressure.infection = Math.max(0, b.pressure.infection - BATTLE_BALANCE.sourceRelief);
+      this.host.emit("INFECTION_SOURCE_CLEARED", { organId: b.organId, nodeId: target.id, actor: "player" });
+      this.notice(`\u611F\u67D3\u6E90\u5DF2\u51C0\u5316${s.campaign ? `\uFF08\u672C\u5C40\u7D2F\u8BA1 ${b.stats.sourceClears}\uFF09` : `\uFF08${b.stats.sourceClears}/2\uFF09`}\uFF0C\u505C\u6B62\u589E\u6B96\uFF0C\u611F\u67D3\u8D1F\u8377 -${BATTLE_BALANCE.sourceRelief}\u3002`);
+    } else {
+      b.stats.kills++;
+      b.pressure.infection = Math.max(0, b.pressure.infection - BATTLE_BALANCE.killRelief);
+      if (target.role === "elite") {
+        b.stats.eliteClears++;
+        const first = b.encounter?.firstCounter;
+        if (first?.targetId === target.id && first.status !== "resolved") {
+          first.status = "resolved";
+          first.resolvedAt = s.elapsed;
+          this.host.emit("FIRST_COUNTER_RESOLVED", { id: target.id, organId: b.organId, countered: first.counterHit !== null });
+        }
+        for (const trait2 of target.traits ?? []) if (!b.defeatedTraits.includes(trait2)) b.defeatedTraits.push(trait2);
+        this.host.emit("ELITE_CLEARED", { id: target.id, organId: b.organId, trait: target.traits?.join("+") ?? "" });
+        this.notice(`\u53D8\u5F02\u7CBE\u82F1\u5DF2\u6E05\u9664\uFF08${b.stats.eliteClears}/2\uFF09\u3002\u4FDD\u6301\u7EC4\u7EC7\uFF0C\u7EE7\u7EED\u8BCA\u65AD\u3002`);
+      }
+      if (target.role !== "core" && target.traits?.includes("FISSION") && (target.generation ?? 0) === 0) {
+        target.splitAt = s.elapsed + BATTLE_BALANCE.fissionDelay;
+        target.splitPositions = [-1, 1].map((offset) => moveWithCollision({ x: target.x, y: target.y }, { x: offset * 27, y: 10 }, 14, activeWorld(s)));
+        this.host.emit("FISSION_WARNING", { parentId: target.id, children: 2, applyAt: target.splitAt });
+      }
+    }
+  }
+  repaired(amount2) {
+    if (amount2 <= 0) return;
+    this.b.stats.repairs++;
+    this.b.pressure.infection = Math.max(0, this.b.pressure.infection - BATTLE_BALANCE.repairRelief);
+    if (distance(this.s.player, this.s.tissue) < 200) this.s.player.hp = Math.min(100, this.s.player.hp + 4);
+    this.host.emit("PRESSURE_RELIEVED", { reason: "repair", amount: BATTLE_BALANCE.repairRelief });
+    this.host.message(`\u7EC4\u7EC7\u4FEE\u590D +${Math.round(amount2)}\uFF1B\u611F\u67D3\u8D1F\u8377 -${BATTLE_BALANCE.repairRelief}\u3002\u8FD1\u8DDD\u79BB\u4FEE\u590D\u53EF\u6062\u590D\u8010\u4E45\u3002`, 3);
+  }
+  /** Repair can also reveal and damage tissue mimics; it never damages normal tissue. */
+  repairMimics(aim, damage) {
+    if (distance(aim, this.s.tissue) > this.s.tissue.radius + 12) return;
+    for (const target of [...this.s.targets]) if (target.hp > 0 && target.traits?.includes("MIMIC") && distance(target, this.s.tissue) < 110) {
+      target.revealedUntil = this.s.elapsed + BATTLE_BALANCE.scanReveal;
+      damage(target, 35);
+      this.host.emit("MIMIC_PURGED", { id: target.id, damage: 35 });
+    }
+  }
+  interact() {
+    const { s, b } = this;
+    const interactables = b.graph.nodes.filter((n) => ["valve", "gate", "retest"].includes(n.kind));
+    const node = interactables.sort((a, c) => distance(s.player, a) - distance(s.player, c))[0];
+    if (!node || distance(s.player, node) > BALANCE.interactionRange) {
+      this.host.message("\u9760\u8FD1\u9600\u95E8 E \u51B2\u6D41\u3001\u9694\u79BB\u95F8 E \u622A\u65AD\u4F20\u64AD\uFF0C\u6216\u5DE6\u4E0B\u590D\u6D4B\u53F0 E \u68C0\u67E5\u76EE\u6807\u3002");
+      this.host.emit("INTERACTION_REJECTED", { reason: "distance" });
+      return;
+    }
+    if (node.kind === "gate") {
+      if (s.elapsed - b.gateChangedAt < 1) {
+        this.host.message("\u9694\u79BB\u95F8\u6B63\u5728\u5207\u6362\u3002", 1);
+        return;
+      }
+      node.active = !node.active;
+      node.infected = false;
+      for (const edge of b.graph.edges.filter((e) => e.from === node.id || e.to === node.id)) {
+        edge.open = node.active;
+        edge.nextSpread = s.elapsed + BATTLE_BALANCE.spreadInterval;
+      }
+      b.gateChangedAt = s.elapsed;
+      this.host.emit("ROUTE_CHANGED", { nodeId: node.id, open: node.active, nextSpread: s.elapsed + BATTLE_BALANCE.spreadInterval });
+      this.notice(node.active ? "\u9694\u79BB\u95F8\u5F00\u542F\uFF1A\u4F20\u64AD\u8DEF\u5F84\u6062\u590D\uFF0C6 \u79D2\u540E\u53EF\u518D\u6B21\u4F20\u64AD\u3002" : "\u9694\u79BB\u95F8\u5173\u95ED\uFF1A\u5DE6\u4FA7\u8840\u7BA1\u505C\u6B62\u4F20\u64AD\uFF1B\u53F3\u4FA7\u4ECD\u9700\u51C0\u5316\u611F\u67D3\u6E90\u3002");
+      return;
+    }
+    if (node.kind === "valve") {
+      this.pulse();
+      return;
+    }
+    if (!b.readyToRetest) {
+      this.host.emit("INTERACTION_REJECTED", { reason: "objectives" });
+      this.host.message(`\u590D\u6D4B\u6761\u4EF6\uFF1A\u6E90 ${b.stats.sourceClears}/2\u3001\u7CBE\u82F1 ${b.stats.eliteClears}/2\u3001\u7EC4\u7EC7 \u226550%\u3001\u611F\u67D3 <35\u3002${b.objective}`, 6);
+      return;
+    }
+    this.host.effect("success", s.terminal, s.terminal, 180, 1.5);
+    this.host.emit("RETEST_COMPLETED", { integrity: s.tissue.hp, infection: b.pressure.infection });
+    this.host.finish(true, "\u5FC3\u810F\u5207\u7247\u590D\u6D4B\u901A\u8FC7\uFF1A\u611F\u67D3\u6E90\u53CA\u4E24\u79CD\u53D8\u5F02\u7CBE\u82F1\u6E05\u9664\uFF0C\u7EC4\u7EC7\u6062\u590D\u7A33\u5B9A\u3002");
+  }
+  pulse() {
+    const { s, b } = this;
+    if (s.elapsed < b.pulse.readyAt) {
+      this.host.message(`\u51B2\u6D41\u5145\u80FD\u8FD8\u9700 ${Math.ceil(b.pulse.readyAt - s.elapsed)} \u79D2\u3002`);
+      return;
+    }
+    b.pulse.readyAt = s.elapsed + BATTLE_BALANCE.pulseCooldown;
+    b.pulse.activeUntil = s.elapsed + 0.6;
+    b.pulse.uses++;
+    b.stats.pulses++;
+    const before = s.tissue.hp;
+    s.tissue.hp = Math.max(0, s.tissue.hp - BATTLE_BALANCE.pulseCost);
+    this.host.emit("ORGAN_INTEGRITY_CHANGED", { organId: b.organId, before, after: s.tissue.hp, reason: "pulse-pressure" });
+    const p = b.pulse;
+    const end = { x: p.origin.x + Math.cos(p.direction) * BATTLE_BALANCE.pulseRange, y: p.origin.y + Math.sin(p.direction) * BATTLE_BALANCE.pulseRange };
+    this.host.effect("pulse", p.origin, end, BATTLE_BALANCE.pulseRange, 0.65);
+    let pushed = 0;
+    let exposed = 0;
+    let coreHit = false;
+    const exposedTargetIds = [];
+    for (const target of s.targets) if (target.hp > 0 && target.role !== "source") {
+      const length = distance(p.origin, target);
+      const direction = normalized(target.x - p.origin.x, target.y - p.origin.y);
+      if (length > BATTLE_BALANCE.pulseRange + target.radius || length > target.radius && direction.x * Math.cos(p.direction) + direction.y * Math.sin(p.direction) < Math.cos(BATTLE_BALANCE.pulseHalfAngle)) continue;
+      const block = wallHit(p.origin, direction, length, activeWorld(s));
+      if (block !== null && block < length - target.radius) continue;
+      const push = target.role === "core" ? 0 : BATTLE_BALANCE.pulsePush;
+      const pos = moveWithCollision(target, { x: direction.x * push, y: direction.y * push }, target.radius, activeWorld(s));
+      if (target.role === "core") coreHit = true;
+      if (target.role !== "core" && distance(target, pos) > 1e-6) pushed++;
+      target.x = pos.x;
+      target.y = pos.y;
+      target.attackAt = void 0;
+      target.attackAim = void 0;
+      target.attackTarget = void 0;
+      target.attackReady = s.elapsed + 1.3;
+      if (target.traits?.includes("CARAPACE")) {
+        target.exposedUntil = s.elapsed + BATTLE_BALANCE.pulseExpose;
+        exposed++;
+        exposedTargetIds.push(target.id);
+      }
+      target.revealedUntil = s.elapsed + BATTLE_BALANCE.scanReveal;
+    }
+    this.host.emit("PULSE_TRIGGERED", { organId: b.organId, direction: p.direction, range: BATTLE_BALANCE.pulseRange, halfAngle: BATTLE_BALANCE.pulseHalfAngle, pushed, exposed, exposedTargetIds: exposedTargetIds.join(","), coreHit, tissueCost: BATTLE_BALANCE.pulseCost });
+    this.notice(`\u5B9A\u5411\u51B2\u6D41\uFF1A\u63A8\u5F00 ${pushed} \u4F53\uFF0C\u7834\u58F3 ${exposed} \u4F53\uFF1B\u7EC4\u7EC7\u627F\u538B -${BATTLE_BALANCE.pulseCost}\uFF0C\u51B7\u5374 ${BATTLE_BALANCE.pulseCooldown} \u79D2\u3002`, 4);
+  }
+  afterInput() {
+    this.evolution();
+    this.spread();
+    this.enemies();
+    this.pressure();
+    this.objectives();
+    this.s.targets = this.s.targets.filter((t) => t.hp > 0 || t.role === "source" || this.s.elapsed - (t.deadAt ?? this.s.elapsed) < 1.5);
+  }
+  aliveCount() {
+    return this.s.targets.filter((t) => t.hp > 0).length;
+  }
+  spawn(position, role, traits = this.b.traits, generation = 0, sourceId) {
+    if (this.aliveCount() >= BATTLE_BALANCE.maxActors) return;
+    const encounter = this.b.encounter, opening = role === "virus" && encounter?.configId === "campaign-1" && encounter.firstCounter.status !== "resolved";
+    if (opening && (this.s.targets.filter((target2) => target2.hp > 0 && target2.role === "virus").length >= ENCOUNTER_CONFIGS["campaign-1"].openingOrdinaryCap || encounter.guideVariant === "guided" && encounter.openingSpawned >= ENCOUNTER_CONFIGS["campaign-1"].openingSpawnBudget)) return;
+    const child = generation > 0;
+    const hp = child ? BATTLE_BALANCE.childHp : role === "elite" ? BATTLE_BALANCE.eliteHp : BATTLE_BALANCE.ordinaryHp;
+    const radius = child ? 14 : role === "elite" ? 30 : 22;
+    const pos = moveWithCollision({ x: position.x, y: position.y }, { x: 0, y: 0 }, radius, activeWorld(this.s));
+    const target = { ...pos, id: `${role}-${++this.b.nextActorId}`, role, kind: traits.includes("FISSION") ? "cluster" : "single", radius, hp, maxHp: hp, hitUntil: 0, scanned: false, traits: [...traits], facing: 0, born: this.s.elapsed, attackReady: this.s.elapsed + 1.5, generation, sourceId };
+    this.s.targets.push(target);
+    if (opening) encounter.openingSpawned++;
+    this.host.emit("ACTOR_SPAWNED", { id: target.id, role, generation, sourceId: sourceId ?? "", traits: traits.join("+") });
+    return target;
+  }
+  evolution() {
+    const { s, b } = this;
+    const formal = b.encounter?.configId === "campaign-1", first = b.encounter?.firstCounter;
+    const firstReady = formal ? s.elapsed >= ENCOUNTER_CONFIGS["campaign-1"].firstWarningFallback || b.stats.sourceClears > 0 && b.stats.scans > 0 : s.elapsed >= b.nextEvolutionAt;
+    const secondReady = formal ? first?.status === "resolved" : s.elapsed >= b.nextEvolutionAt && b.stats.eliteClears >= 1;
+    if (!b.warning && b.traits.length < 2 && (b.traits.length === 0 ? firstReady : secondReady)) {
+      let trait3 = b.traits.length === 0 ? b.firstTrait : BRANCHES[(BRANCHES.indexOf(b.firstTrait) + 1 + s.seed % 2) % 3];
+      if (b.milestone !== "G1" && !(b.traits.length === 0 && (b.forcedFirstTrait || b.encounter?.guideVariant === "guided"))) {
+        const decision = chooseEvolution({ seed: s.seed, evolutionIndex: b.traits.length, tick: s.tick, organId: b.organId, integrity: s.tissue.hp, seen: b.traits, history: b.behaviorHistory ?? [], counterAvailable: { CARAPACE: true, FISSION: true, MIMIC: true } });
+        if (decision.kind !== "warn") return;
+        trait3 = decision.trait;
+        b.evolutionDecisions?.push(decision);
+        this.host.emit("EVOLUTION_ROLLED", { trait: trait3, roll: decision.roll, candidates: JSON.stringify(decision.candidates), summary: JSON.stringify(decision.summary) });
+      } else if (b.forcedFirstTrait && b.traits.length === 0) trait3 = b.forcedFirstTrait;
+      const warningDuration = formal ? ENCOUNTER_CONFIGS["campaign-1"].warningDuration : BATTLE_BALANCE.warningDuration;
+      b.warning = { trait: trait3, startedAt: s.elapsed, applyAt: s.elapsed + warningDuration };
+      if (b.traits.length === 0 && first) {
+        first.status = "warning";
+        first.warnedAt = s.elapsed;
+      }
+      this.host.emit("EVOLUTION_WARNING", { trait: trait3, duration: BATTLE_BALANCE.warningDuration, applyAt: b.warning.applyAt });
+      this.notice(`\u53D8\u5F02\u9884\u8B66 \xB7 ${TRAITS[trait3].name}\uFF1A${TRAITS[trait3].ability}\u3002\u4EE3\u4EF7\uFF1A${TRAITS[trait3].cost}\u3002\u53CD\u5236\uFF1A${TRAITS[trait3].counter}`, BATTLE_BALANCE.warningDuration, 2);
+    }
+    if (!b.warning || s.elapsed + 1e-9 < b.warning.applyAt) return;
+    const trait2 = b.warning.trait;
+    if (!b.traits.includes(trait2)) {
+      b.traits.push(trait2);
+      for (const target of s.targets) if (target.hp > 0 && target.role !== "source") {
+        target.traits = [trait2];
+        target.kind = trait2 === "FISSION" ? "cluster" : "single";
+      }
+      if (!formal && this.aliveCount() >= BATTLE_BALANCE.maxActors) {
+        const ordinary = s.targets.find((t) => t.hp > 0 && t.role === "virus");
+        if (ordinary) {
+          ordinary.hp = 0;
+          ordinary.deadAt = s.elapsed;
+          ordinary.attackAt = void 0;
+        }
+      }
+      const elitePosition = formal && b.traits.length === 1 && b.encounter?.guideVariant === "guided" ? ENCOUNTER_CONFIGS["campaign-1"].introGuardian : s.campaign ? getOrganDefinition(b.organId).elitePosition : { x: 785, y: 390 };
+      const elite = this.spawn(elitePosition, "elite", [trait2]);
+      if (b.traits.length === 1 && first && elite) {
+        first.status = "active";
+        first.appliedAt = s.elapsed;
+        first.targetId = elite.id;
+      }
+      b.eliteSpawned++;
+      this.host.effect("evolution", elitePosition, elitePosition, 110, 1.4);
+      this.host.emit("EVOLUTION_APPLIED", { trait: trait2, warningDuration: s.elapsed - b.warning.startedAt, traits: b.traits.join("+") });
+      this.notice(`${TRAITS[trait2].symbol} ${TRAITS[trait2].name}\u5DF2\u51FA\u73B0\u3002\u5F31\u70B9\uFF1A${TRAITS[trait2].counter}`, 7, 2);
+    }
+    b.warning = null;
+    b.nextEvolutionAt = s.elapsed + BATTLE_BALANCE.secondWarningDelay;
+  }
+  spread() {
+    const { s, b } = this;
+    const infectedBefore = new Set(b.graph.nodes.filter((n) => n.active && n.infected).map((n) => n.id));
+    for (const edge of b.graph.edges) {
+      if (s.elapsed + 1e-9 < edge.nextSpread) continue;
+      edge.nextSpread = s.elapsed + BATTLE_BALANCE.spreadInterval;
+      if (!edge.open || !infectedBefore.has(edge.from)) continue;
+      const node = b.graph.nodes.find((n) => n.id === edge.to);
+      if (!node.active || node.infected) continue;
+      node.infected = true;
+      this.host.emit("INFECTION_SPREAD", { organId: b.organId, edgeId: edge.id, from: edge.from, to: edge.to });
+      const from = b.graph.nodes.find((n) => n.id === edge.from);
+      this.host.effect("flow", from, node, 12, 1.4);
+    }
+    for (const source of b.graph.nodes.filter((n) => n.kind === "source" && n.active)) {
+      if (s.elapsed + 1e-9 < (b.nextSpawnAt[source.id] ?? Infinity)) continue;
+      b.nextSpawnAt[source.id] = s.elapsed + BATTLE_BALANCE.spawnInterval;
+      const edge = b.graph.edges.find((e) => e.from === source.id);
+      if (!edge?.open) continue;
+      this.spawn(moveWithCollision(source, { x: -45, y: 45 }, 22, activeWorld(s)), "virus", b.traits.length ? [b.traits.at(-1)] : [], 0, source.id);
+    }
+    if (!b.graph.nodes.some((n) => n.kind === "source" && n.active) && !s.targets.some((t) => t.hp > 0 && distance(t, s.tissue) < 120)) {
+      for (const node of b.graph.nodes) if (node.kind !== "source") node.infected = false;
+    }
+  }
+  enemies() {
+    const { s, b } = this;
+    for (const target of s.targets) {
+      if (target.hp <= 0) {
+        if (target.splitAt !== void 0 && s.elapsed + 1e-9 >= target.splitAt) {
+          let children = 0;
+          for (const pos of target.splitPositions ?? []) if (this.spawn(pos, "virus", target.traits, 1, target.sourceId)) children++;
+          this.host.emit("FISSION_SPAWNED", { parentId: target.id, children, generation: 1 });
+          target.splitAt = void 0;
+          target.splitPositions = void 0;
+        }
+        continue;
+      }
+      if (target.role === "source" || target.role === "core" || this.host.isMigratingActor?.(target.id)) continue;
+      const mimic = target.traits?.includes("MIMIC");
+      const goal = mimic || distance(target, s.player) > 270 ? s.tissue : s.player;
+      const dir = normalized(goal.x - target.x, goal.y - target.y);
+      if (target.attackAt !== void 0) {
+        if (s.elapsed + 1e-9 < target.attackAt) continue;
+        const aim = target.attackAim;
+        const attackingTissue = target.attackTarget === "tissue";
+        if (attackingTissue) {
+          if (distance(target, s.tissue) <= BATTLE_BALANCE.attackRadius + s.tissue.radius) {
+            const before = s.tissue.hp;
+            s.tissue.hp = Math.max(0, before - BATTLE_BALANCE.tissueDamage);
+            b.stats.tissueDamage += before - s.tissue.hp;
+            this.host.emit("ORGAN_INTEGRITY_CHANGED", { organId: b.organId, before, after: s.tissue.hp, reason: "enemy-attack", actorId: target.id });
+            this.host.effect("hit", s.tissue, s.tissue, 45, 0.3);
+          }
+        } else if (distance(s.player, aim) <= BATTLE_BALANCE.attackRadius + s.player.radius && s.elapsed >= s.player.dashUntil) {
+          const before = s.player.hp;
+          s.player.hp = Math.max(0, before - BATTLE_BALANCE.playerDamage);
+          b.stats.playerDamage += before - s.player.hp;
+          s.player.hurtUntil = s.elapsed + 0.5;
+          this.host.emit("PLAYER_HURT", { damage: before - s.player.hp, remainingHp: s.player.hp, reason: "enemy-attack", actorId: target.id });
+          this.host.effect("hit", s.player, s.player, 22, 0.3);
+        }
+        target.attackAt = void 0;
+        target.attackAim = void 0;
+        target.attackTarget = void 0;
+        target.attackReady = s.elapsed + BATTLE_BALANCE.attackInterval;
+      }
+      target.facing = Math.atan2(dir.y, dir.x);
+      const reach = BATTLE_BALANCE.attackRadius + (goal === s.tissue ? s.tissue.radius : s.player.radius) - 8;
+      if (distance(target, goal) > reach) {
+        let speed = BATTLE_BALANCE.enemySpeed;
+        if (target.traits?.includes("CARAPACE")) speed *= BATTLE_BALANCE.carapaceSpeed;
+        if (mimic) speed *= BATTLE_BALANCE.mimicSpeed;
+        speed *= this.host.slowFactor?.(target.id) ?? 1;
+        const step = { x: dir.x * speed * BALANCE.step, y: dir.y * speed * BALANCE.step };
+        let pos = moveWithCollision(target, step, target.radius, activeWorld(s));
+        if (distance(target, pos) < speed * BALANCE.step * 0.4) {
+          const side = target.id.length % 2 ? 1 : -1;
+          pos = moveWithCollision(target, { x: -dir.y * speed * BALANCE.step * side, y: dir.x * speed * BALANCE.step * side }, target.radius, activeWorld(s));
+        }
+        target.x = pos.x;
+        target.y = pos.y;
+      } else if (s.elapsed >= (target.attackReady ?? 0)) {
+        const line6 = normalized(goal.x - target.x, goal.y - target.y);
+        const block = wallHit(target, line6, distance(target, goal), activeWorld(s));
+        if (block !== null && block < distance(target, goal) - 20) continue;
+        target.attackAt = s.elapsed + BATTLE_BALANCE.attackWindup;
+        target.attackAim = { x: goal.x, y: goal.y };
+        target.attackTarget = goal === s.tissue ? "tissue" : "player";
+        this.host.effect("danger", target, target.attackAim, BATTLE_BALANCE.attackRadius, BATTLE_BALANCE.attackWindup);
+        this.host.emit("ATTACK_TELEGRAPHED", { actorId: target.id, target: goal === s.tissue ? "tissue" : "player", resolveAt: target.attackAt });
+      }
+    }
+  }
+  pressure() {
+    const { s, b } = this;
+    const p = b.pressure;
+    if (s.player.hp <= 0) {
+      this.host.finish(false, "\u6551\u63F4\u4F53\u8010\u4E45\u8017\u5C3D\uFF1A\u907F\u5F00\u5E26\u9F7F\u8F6E\u5ED3\u7684\u653B\u51FB\u9884\u8B66\uFF0C\u5229\u7528\u51B2\u523A\u8131\u79BB\u3002");
+      return;
+    }
+    if (p.vitality <= 0) {
+      this.host.finish(false, "\u8EAB\u4F53\u5D29\u6E83\uFF1A\u5668\u5B98\u4F4E\u5B8C\u6574\u5EA6\u6301\u7EED\u635F\u4F24\u5168\u8EAB\u7A33\u5B9A\u3002");
+      return;
+    }
+    const sources = b.graph.nodes.filter((n) => n.kind === "source" && n.active).length;
+    const openSources = b.graph.nodes.filter((n) => n.kind === "source" && n.active && b.graph.edges.some((e) => e.from === n.id && e.open)).length;
+    const tissueInfected = b.graph.nodes.find((n) => n.id === "tissue").infected;
+    const growth = sources ? openSources * 0.14 + this.aliveCount() * 0.014 + (tissueInfected ? 0.12 : 0) : -0.65;
+    p.infection = clamp(p.infection + growth * BALANCE.step, 0, 100);
+    if (tissueInfected && s.tick % 60 === 0) {
+      const before = s.tissue.hp;
+      s.tissue.hp = Math.max(0, before - BATTLE_BALANCE.tissueInfectionDamage);
+      if (s.tissue.hp < before) this.host.emit("ORGAN_INTEGRITY_CHANGED", { organId: b.organId, before, after: s.tissue.hp, reason: "infection" });
+    }
+    if (!s.campaign) {
+      p.organAlarm = s.tissue.hp < BATTLE_BALANCE.organAlarmAt;
+      if (p.organAlarm) {
+        if (b.organLowSince === null) {
+          b.organLowSince = s.elapsed;
+          this.notice("\u5668\u5B98\u8B66\u62A5\uFF1A\u5B8C\u6574\u5EA6\u4F4E\u4E8E 30%\u30028 \u79D2\u540E\u5F00\u59CB\u5F71\u54CD\u5168\u8EAB\u7A33\u5B9A\uFF0C\u8BF7\u7528 3 \u62A2\u4FEE\uFF01", 8, 3);
+          this.host.emit("ORGAN_ALARM", { organId: b.organId, integrity: s.tissue.hp, graceSeconds: BATTLE_BALANCE.organCollapseDelay });
+        }
+        if (s.elapsed - b.organLowSince >= BATTLE_BALANCE.organCollapseDelay) p.vitality = Math.max(0, p.vitality - (s.tissue.hp <= 0 ? 1.5 : 0.5) * BALANCE.step);
+      } else {
+        if (b.organLowSince !== null) {
+          this.host.emit("ORGAN_ALARM_CLEARED", { organId: b.organId });
+          this.notice("\u5668\u5B98\u8B66\u62A5\u89E3\u9664\uFF1B\u5B8C\u6574\u5EA6\u8FBE\u5230 50% \u540E\uFF0C\u5168\u8EAB\u7A33\u5B9A\u624D\u4F1A\u7F13\u6162\u6062\u590D\u3002", 5, 3);
+        }
+        b.organLowSince = null;
+        if (s.tissue.hp >= 50) p.vitality = Math.min(100, p.vitality + 0.25 * BALANCE.step);
+      }
+    }
+    if (p.infection >= 100) {
+      if (p.criticalSince === null) {
+        p.criticalSince = s.elapsed;
+        p.crisisReason = "\u611F\u67D3\u5931\u63A7";
+        this.host.emit("INFECTION_CRISIS_STARTED", { deadline: s.elapsed + BATTLE_BALANCE.crisisDuration });
+        this.notice("\u611F\u67D3\u8D1F\u8377 100\uFF0115 \u79D2\u5185\u51C0\u5316\u611F\u67D3\u6E90/\u611F\u67D3\u4F53\u6216\u62A2\u4FEE\uFF0C\u964D\u4F4E\u611F\u67D3\u5373\u53EF\u89E3\u9664\u5371\u673A\u3002", BATTLE_BALANCE.crisisDuration, 3);
+      }
+      if (s.elapsed - p.criticalSince + 1e-9 >= BATTLE_BALANCE.crisisDuration) this.host.finish(false, "\u611F\u67D3\u5931\u63A7\uFF1A\u8D1F\u8377 100 \u6301\u7EED 15 \u79D2\u3002");
+    } else if (p.criticalSince !== null) {
+      p.criticalSince = null;
+      p.crisisReason = "";
+      this.host.emit("INFECTION_CRISIS_RECOVERED", { infection: p.infection });
+      this.notice("\u611F\u67D3\u8D1F\u8377\u4E0B\u964D\uFF0C\u81F4\u547D\u5012\u8BA1\u65F6\u89E3\u9664\u3002\u7EE7\u7EED\u51C0\u5316\u5E76\u4FEE\u590D\u7EC4\u7EC7\u3002", 5, 3);
+    }
+    if (s.player.hp <= 0) this.host.finish(false, "\u6551\u63F4\u4F53\u8010\u4E45\u8017\u5C3D\uFF1A\u907F\u5F00\u5E26\u9F7F\u8F6E\u5ED3\u7684\u653B\u51FB\u9884\u8B66\uFF0C\u5229\u7528\u51B2\u523A\u8131\u79BB\u3002");
+    else if (p.vitality <= 0) this.host.finish(false, "\u8EAB\u4F53\u5D29\u6E83\uFF1A\u5668\u5B98\u4F4E\u5B8C\u6574\u5EA6\u6301\u7EED\u635F\u4F24\u5168\u8EAB\u7A33\u5B9A\u3002");
+  }
+  objectives() {
+    const { s, b } = this;
+    if (s.campaign) return;
+    b.readyToRetest = b.stats.sourceClears >= 2 && b.stats.eliteClears >= 2 && s.tissue.hp >= 50 && b.pressure.infection < 35;
+    b.stage = b.readyToRetest ? 3 : b.traits.length ? b.traits.length : 0;
+    b.stageLabel = b.readyToRetest ? "\u2163 \xB7 \u5FC3\u810F\u590D\u6D4B" : b.traits.length === 2 ? "\u2162 \xB7 \u4E8C\u6B21\u53D8\u5F02" : b.traits.length === 1 ? "\u2161 \xB7 \u53D8\u5F02\u5E94\u5BF9" : "\u2160 \xB7 \u521D\u59CB\u611F\u67D3";
+    b.objective = b.readyToRetest ? "\u8FD4\u56DE\u5DE6\u4E0B\u590D\u6D4B\u53F0\uFF0C\u6309 E \u5B8C\u6210\u5FC3\u810F\u5207\u7247\u3002" : b.stats.sourceClears < 2 ? `\u51C0\u5316\u611F\u67D3\u6E90 ${b.stats.sourceClears}/2\uFF1B\u53D8\u5F02\u7CBE\u82F1 ${b.stats.eliteClears}/2\uFF1B\u4FDD\u62A4\u7EC4\u7EC7 \u226550%\u3002` : b.stats.eliteClears < 2 ? `\u53D8\u5F02\u7CBE\u82F1 ${b.stats.eliteClears}/2\uFF1B\u9884\u8B66\u65F6\u5148\u8BFB\u5F31\u70B9\uFF0C\u9760\u8FD1\u9600\u95E8 E \u51B2\u6D41\u3002` : s.tissue.hp < 50 ? "3 \u4FEE\u590D\u5341\u5B57\u7EC4\u7EC7\u81F3 \u226550%\uFF0C\u518D\u8FD4\u56DE\u590D\u6D4B\u53F0\u3002" : "\u51C0\u5316\u5269\u4F59\u611F\u67D3\u4F53\uFF0C\u4F7F\u8D1F\u8377\u964D\u81F3 <35\uFF0C\u518D\u8FD4\u56DE\u590D\u6D4B\u53F0\u3002";
+  }
+};
+
+// src/game/protocols.ts
+var PROTOCOL_IDS = ["PULSE_BREAK", "PURIFY_CHAIN", "IMMUNE_BEACON", "EXPOSE_TRACE"];
+var TUNINGS = ["balanced", "focused", "extended"];
+var TUNING_NAMES = { balanced: "\u5747\u8861", focused: "\u805A\u7126", extended: "\u5EF6\u5C55" };
+var PROTOCOLS = {
+  PULSE_BREAK: { id: "PULSE_BREAK", name: "\u5171\u632F\u88C2\u89E3", symbol: "\u25C7", trigger: "\u9760\u8FD1\u8282\u5F8B\u88C5\u7F6E\uFF0C\u5728\u51B2\u6D41\u76F8\u4F4D\u7528\u57FA\u7840\u5DE5\u5177\u547D\u4E2D", tags: ["PULSE", "BREAK"] },
+  PURIFY_CHAIN: { id: "PURIFY_CHAIN", name: "\u8FDE\u9501\u51C0\u5316", symbol: "\u2301", trigger: "\u57FA\u7840\u5DE5\u5177\u6E05\u9664\u611F\u67D3\u4F53\u6216\u611F\u67D3\u6E90", tags: ["CHAIN", "PURIFY"] },
+  IMMUNE_BEACON: { id: "IMMUNE_BEACON", name: "\u514D\u75AB\u706F\u5854", symbol: "\u271A", trigger: "Q \u6807\u8BB0\u9F20\u6807\u533A\u57DF\uFF0C\u53EC\u96C6\u4E09\u53EA\u4E34\u65F6\u514D\u75AB\u7EC6\u80DE", tags: ["SUMMON", "ZONE"] },
+  EXPOSE_TRACE: { id: "EXPOSE_TRACE", name: "\u5F02\u5E38\u663E\u5F71", symbol: "\u25CC", trigger: "Q \u626B\u63CF\u5F53\u524D\u8303\u56F4\u5185\u6D3B\u8DC3\u611F\u67D3\u4F53", tags: ["SCAN", "REVEAL"] }
+};
+var GROWTH_BALANCE = { slots: 3, xpThresholds: [20, 55, 95, 150, 220], researchCost: 3, maxRank: 3, chainCap: 3, commandBudget: 128, scanRadius: 650, beaconPlacementRange: 420 };
+var PATROL_CONFIG = { radius: 190, damage: 12, interval: 1.2, duration: 3.5, cooldown: 3 };
+var RANK_NAMES = { 1: "\u2160", 2: "\u2161", 3: "\u2162" };
+var protocolRank = (slot) => slot?.rank ?? 1;
+var chainRicochetPeriod = (rank) => rank === 1 ? null : rank === 2 ? 3 : 2;
+var PROTOCOL_ACTIONS = {
+  PULSE_BREAK: "\u9760\u8FD1\u5668\u5B98\u88C5\u7F6E\uFF0C\u8D81\u51B2\u6D41\u4EAE\u8D77\u7528 1 / 2 \u547D\u4E2D\uFF0C\u89E6\u53D1\u7834\u58F3\u51B2\u51FB\u3002",
+  PURIFY_CHAIN: "\u628A\u611F\u67D3\u4F53\u5F15\u5230\u4E00\u8D77\uFF0C\u7528 1 / 2 \u6536\u5C3E\uFF0C\u89C2\u5BDF\u51C0\u5316\u7535\u5F27\u8FDE\u7EED\u8DF3\u8DC3\u3002",
+  IMMUNE_BEACON: "\u73B0\u5728\u6309 Q \u6807\u8BB0\u9F20\u6807\u533A\u57DF\uFF0C\u53EC\u96C6\u4E09\u53EA\u514D\u75AB\u7EC6\u80DE\u8FFD\u51FB\u3001\u541E\u566C\u3002",
+  EXPOSE_TRACE: "\u73B0\u5728\u6309 Q\uFF0C\u8BA9\u654C\u7FA4\u663E\u5F62\u5E76\u51CF\u901F\uFF1B\u642D\u914D\u514D\u75AB\u7EC6\u80DE\u4F18\u5148\u56F4\u730E\u6807\u8BB0\u4F53\u3002"
+};
+var protocolAction = (id, rank = 1) => id === "PURIFY_CHAIN" && rank > 1 ? `\u7528 1 / 2 \u6301\u7EED\u547D\u4E2D\u5B58\u6D3B\u76EE\u6807\uFF0C\u6BCF ${chainRicochetPeriod(rank)} \u6B21\u547D\u4E2D\u81EA\u52A8\u5411\u90BB\u4F53\u6298\u5C04\uFF1B\u6E05\u9664\u540E\u4ECD\u4F1A\u8FDE\u9501\u3002` : PROTOCOL_ACTIONS[id];
+var PULSE_CONFIG = {
+  balanced: { deviceRange: 240, bonusDamage: 18, exposeSeconds: 4 },
+  focused: { deviceRange: 170, bonusDamage: 28, exposeSeconds: 4 },
+  extended: { deviceRange: 330, bonusDamage: 12, exposeSeconds: 5 }
+};
+var CHAIN_CONFIG = {
+  balanced: { range: 170, damage: 38, jumps: 2 },
+  focused: { range: 120, damage: 52, jumps: 2 },
+  extended: { range: 230, damage: 27, jumps: 2 }
+};
+var BEACON_CONFIG = {
+  balanced: { radius: 190, damage: 24, interval: 0.8, duration: 6, cooldown: 12, tissueCost: 3 },
+  focused: { radius: 150, damage: 24, interval: 0.5, duration: 4, cooldown: 12, tissueCost: 3 },
+  extended: { radius: 240, damage: 24, interval: 1.1, duration: 8, cooldown: 12, tissueCost: 4 }
+};
+var TRACE_CONFIG = {
+  balanced: { duration: 9, slowDuration: 3, factor: 0.7 },
+  focused: { duration: 5, slowDuration: 3, factor: 0.45 },
+  extended: { duration: 14, slowDuration: 3, factor: 0.85 }
+};
+function getPulseConfig(tuning, rank = 1) {
+  const base = PULSE_CONFIG[tuning], step = rank - 1;
+  return { ...base, bonusDamage: base.bonusDamage + step * 14, exposeSeconds: base.exposeSeconds + step, deviceRange: base.deviceRange + step * 35 };
+}
+function getChainConfig(tuning, rank = 1) {
+  const base = CHAIN_CONFIG[tuning], step = rank - 1;
+  return { ...base, damage: base.damage + step * 16, range: base.range + step * 30 };
+}
+function getBeaconConfig(tuning, rank = 1) {
+  const base = BEACON_CONFIG[tuning], step = rank - 1;
+  return { ...base, damage: base.damage + step * 12, radius: base.radius + step * 25, duration: base.duration + step * 2 };
+}
+function getTraceConfig(tuning, rank = 1) {
+  const base = TRACE_CONFIG[tuning], step = rank - 1;
+  return { ...base, duration: base.duration + step * 3, slowDuration: base.slowDuration + step * 1.5, factor: Number(Math.max(0.2, base.factor - step * 0.1).toFixed(2)) };
+}
+function protocolUpgradeSummary(id, tuning, before, after) {
+  if (id === "PULSE_BREAK") {
+    const a2 = getPulseConfig(tuning, before), b2 = getPulseConfig(tuning, after);
+    return `\u5171\u632F\u8FFD\u52A0\u4F24\u5BB3 ${a2.bonusDamage} \u2192 ${b2.bonusDamage}\uFF1B\u7834\u7EFD ${a2.exposeSeconds} \u2192 ${b2.exposeSeconds} \u79D2\u3002`;
+  }
+  if (id === "PURIFY_CHAIN") {
+    const a2 = getChainConfig(tuning, before), b2 = getChainConfig(tuning, after);
+    return `\u6BCF\u8DF3\u4F24\u5BB3 ${a2.damage} \u2192 ${b2.damage}\uFF1B${after === 2 ? "\u65B0\u80FD\u529B\uFF1A\u6301\u7EED\u547D\u4E2D\u5B58\u6D3B\u76EE\u6807\uFF0C\u6BCF3\u6B21\u5411\u90BB\u4F53\u6298\u5C04\u3002" : "\u6298\u5C04\u84C4\u80FD\uFF1A3\u6B21\u547D\u4E2D \u2192 2\u6B21\u3002"}`;
+  }
+  if (id === "IMMUNE_BEACON") {
+    const a2 = getBeaconConfig(tuning, before), b2 = getBeaconConfig(tuning, after);
+    return `\u5C0F\u961F\u6BCF\u8F6E\u603B\u4F24\u5BB3 ${a2.damage} \u2192 ${b2.damage}\uFF1B\u6301\u7EED ${a2.duration} \u2192 ${b2.duration} \u79D2\u3002`;
+  }
+  const a = getTraceConfig(tuning, before), b = getTraceConfig(tuning, after);
+  return `\u51CF\u901F\u65F6\u957F ${a.slowDuration} \u2192 ${b.slowDuration} \u79D2\uFF1B\u79FB\u52A8\u901F\u5EA6 \xD7${a.factor} \u2192 \xD7${b.factor}\u3002`;
+}
+function describeProtocol(id, tuning = "balanced", rank = 1) {
+  if (id === "PULSE_BREAK") {
+    const c2 = getPulseConfig(tuning, rank);
+    return { effect: `\u8DDD\u88C5\u7F6E ${c2.deviceRange} \u5185\uFF0C\u51B2\u6D41\u76F8\u4F4D\u547D\u4E2D\u8FFD\u52A0 ${c2.bonusDamage} \u5171\u632F\u4F24\u5BB3\uFF0C\u7834\u58F3 ${c2.exposeSeconds} \u79D2\uFF1B\u6BCF\u76EE\u6807\u6BCF\u8282\u5F8B\u6700\u591A\u4E00\u6B21\u3002`, cost: "\u9700\u8981\u63A5\u8FD1\u88C5\u7F6E\u5E76\u914D\u5408\u8282\u5F8B\uFF1B\u65E0\u65F6\u673A\u65F6\u4E0D\u8FFD\u52A0\u3002" };
+  }
+  if (id === "PURIFY_CHAIN") {
+    const c2 = getChainConfig(tuning, rank);
+    return { effect: `\u6E05\u9664\u540E\u5411 ${c2.range} \u8303\u56F4\u5185\u90BB\u4F53\u8DF3 ${c2.jumps} \u6B21\uFF0C\u6BCF\u8DF3 ${c2.damage} \u4F24\u5BB3\uFF1B\u5171\u632F\u7834\u7EFD\u6E05\u9664\u53EF\u589E\u4E3A 3 \u8DF3\u3002${rank > 1 ? `\u6301\u7EED\u547D\u4E2D\u5B58\u6D3B\u76EE\u6807\uFF0C\u6BCF${chainRicochetPeriod(rank)}\u6B21\u5411\u4E00\u4E2A\u90BB\u4F53\u6298\u5C04${c2.damage}\u4F24\u5BB3\u3002` : ""}`, cost: "\u5355\u4F53\u65E0\u90BB\u4F53\u65F6\u65E0\u989D\u5916\u6536\u76CA\uFF1B\u8DF3\u8DC3\u68C0\u67E5\u89C6\u7EBF\uFF0C\u534F\u8BAE\u4F24\u5BB3\u4E0D\u518D\u5F00\u65B0\u94FE\u3002" };
+  }
+  if (id === "IMMUNE_BEACON") {
+    const c2 = getBeaconConfig(tuning, rank);
+    return { effect: `\u53EC\u96C6\u4E09\u53EA\u514D\u75AB\u7EC6\u80DE\uFF0C\u6301\u7EED ${c2.duration} \u79D2\uFF1B\u6D3B\u52A8\u8303\u56F4 ${c2.radius}\uFF0C\u6BCF ${c2.interval} \u79D2\u6BCF\u8F6E\u603B\u4F24\u5BB3 ${c2.damage}\u3002\u663E\u5F71\u8054\u52A8\u4F18\u5148\u56F4\u730E\u6807\u8BB0\u4F53\u3002`, cost: `\u72EC\u7ACB\u51B7\u5374 ${c2.cooldown} \u79D2\uFF1B\u6BCF\u6B21\u7EC4\u7EC7\u627F\u538B \u2212${c2.tissueCost}\uFF1B\u540C\u65F6\u4E00\u652F\u5C0F\u961F\uFF0C\u66FF\u6362\u540E\u64A4\u79BB\u3002` };
+  }
+  const c = getTraceConfig(tuning, rank);
+  return { effect: `\u6807\u8BB0\u4E0E\u663E\u5F62 ${c.duration} \u79D2\uFF0C\u524D ${c.slowDuration} \u79D2\u79FB\u52A8\u901F\u5EA6 \xD7${c.factor}\uFF1B\u514D\u75AB\u5C0F\u961F\u4F18\u5148\u8FFD\u8E2A\u6807\u8BB0\u76EE\u6807\u3002`, cost: "\u5360\u7528\u4E00\u4E2A\u534F\u8BAE\u69FD\u4F4D\uFF0C\u6CA1\u6709\u76F4\u63A5\u4F24\u5BB3\u3002" };
+}
+function makeDraftOption(protocolId, tuning, kind, rank = 1, previous) {
+  const info = PROTOCOLS[protocolId], description = describeProtocol(protocolId, tuning, rank);
+  const upgrading = kind === "retune" && rank > protocolRank(previous);
+  return {
+    id: `${protocolId}:${kind}:${tuning}:rank${rank}`,
+    kind,
+    protocolId,
+    tuning,
+    rank,
+    title: `${info.name} ${RANK_NAMES[rank]} \xB7 ${upgrading ? "\u8FDB\u9636" : kind === "retune" ? "\u6218\u672F\u6539\u9020" : TUNING_NAMES[tuning]}`,
+    trigger: info.trigger,
+    change: previous ? upgrading ? protocolUpgradeSummary(protocolId, tuning, protocolRank(previous), rank) : `${TUNING_NAMES[previous.tuning]} \u2192 ${TUNING_NAMES[tuning]}\uFF0C\u4FDD\u6301 ${RANK_NAMES[rank]} \u9636\uFF1B\u6539\u53D8\u53D6\u5411\uFF0C\u4E0D\u989D\u5916\u5347\u7EA7\u3002` : `\u89E3\u9501\u65B0\u6253\u6CD5 \xB7 ${PROTOCOL_ACTIONS[protocolId]}`,
+    actionHint: protocolAction(protocolId, rank),
+    effect: description.effect,
+    cost: description.cost,
+    tags: [...info.tags]
+  };
+}
+
+// src/game/immuneCells.ts
+var IMMUNE_CELL_BALANCE = { maximum: 3, radius: 15, speed: 190, biteReach: 9, attackPose: 0.24, navigationInterval: 0.35 };
+var point = (value) => ({ x: value.x, y: value.y });
+var stableId = (a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+function segmentClear(from, to, geometry, radius) {
+  const dx = to.x - from.x, dy = to.y - from.y, squared = dx * dx + dy * dy;
+  return geometry.obstacles.every((obstacle) => {
+    const t = Math.max(0, Math.min(1, ((obstacle.x - from.x) * dx + (obstacle.y - from.y) * dy) / (squared || 1)));
+    return Math.hypot(from.x + dx * t - obstacle.x, from.y + dy * t - obstacle.y) >= obstacle.radius + radius - 1e-7;
+  });
+}
+function nextWaypoint(from, to, geometry, radius) {
+  if (segmentClear(from, to, geometry, radius)) return point(to);
+  const margin = radius + 19;
+  const nodes = [point(from), point(to), ...geometry.obstacles.flatMap((obstacle) => Array.from({ length: 12 }, (_, index2) => ({
+    x: obstacle.x + Math.cos(index2 * Math.PI / 6) * (obstacle.radius + margin),
+    y: obstacle.y + Math.sin(index2 * Math.PI / 6) * (obstacle.radius + margin)
+  })).filter((node) => node.x > geometry.bounds.left + radius && node.x < geometry.bounds.right - radius && node.y > geometry.bounds.top + radius && node.y < geometry.bounds.bottom - radius))];
+  const costs = nodes.map(() => Infinity), previous = nodes.map(() => -1), visited = /* @__PURE__ */ new Set();
+  costs[0] = 0;
+  for (let iteration = 0; iteration < nodes.length; iteration++) {
+    let current = -1;
+    for (let index2 = 0; index2 < nodes.length; index2++) if (!visited.has(index2) && (current < 0 || costs[index2] < costs[current])) current = index2;
+    if (current < 0 || !Number.isFinite(costs[current]) || current === 1) break;
+    visited.add(current);
+    for (let index2 = 0; index2 < nodes.length; index2++) if (!visited.has(index2) && segmentClear(nodes[current], nodes[index2], geometry, radius)) {
+      const cost = costs[current] + distance(nodes[current], nodes[index2]);
+      if (cost < costs[index2]) {
+        costs[index2] = cost;
+        previous[index2] = current;
+      }
+    }
+  }
+  let index = 1;
+  while (previous[index] > 0) index = previous[index];
+  return previous[index] === 0 ? point(nodes[index]) : point(from);
+}
+function summonImmuneCells(beacon, context, count3 = 3) {
+  const total = Math.max(1, Math.min(IMMUNE_CELL_BALANCE.maximum, Math.floor(count3)));
+  return Array.from({ length: total }, (_, index) => {
+    const angle = -Math.PI / 2 + index / total * Math.PI * 2;
+    const position = moveWithCollision(beacon, { x: Math.cos(angle) * 30, y: Math.sin(angle) * 30 }, IMMUNE_CELL_BALANCE.radius, context.geometry);
+    return {
+      ...position,
+      id: `${beacon.id}:cell:${index}`,
+      beaconId: beacon.id,
+      organId: beacon.organId,
+      born: context.elapsed,
+      until: beacon.until,
+      radius: IMMUNE_CELL_BALANCE.radius,
+      facing: angle,
+      damage: beacon.damage / total,
+      interval: beacon.interval,
+      updatedAt: context.elapsed,
+      attackReadyAt: context.elapsed + 0.25 + index * 0.08,
+      attackUntil: 0,
+      targetId: null,
+      activity: "seeking",
+      navigationAt: 0,
+      waypoint: null
+    };
+  });
+}
+function chooseTarget(cell, beacon, context, traceIds, assigned, remainingHp) {
+  const priority = (target) => traceIds.has(target.id) ? 0 : (target.generation ?? 0) > 0 ? 1 : target.role === "virus" ? 2 : target.role === "elite" ? 3 : target.role === "source" ? 4 : 5;
+  return context.targets.filter((target) => target.role !== "core" && (remainingHp.get(target.id) ?? target.hp) > 0 && distance(beacon, target) <= beacon.radius + target.radius).sort((a, b) => priority(a) - priority(b) || (assigned.get(a.id) ?? 0) - (assigned.get(b.id) ?? 0) || distance(cell, a) - distance(cell, b) || stableId(a, b))[0];
+}
+function validPosition(position, radius, geometry = WORLD) {
+  return position.x >= geometry.bounds.left + radius - 1e-7 && position.x <= geometry.bounds.right - radius + 1e-7 && position.y >= geometry.bounds.top + radius - 1e-7 && position.y <= geometry.bounds.bottom - radius + 1e-7 && geometry.obstacles.every((obstacle) => distance(position, obstacle) >= obstacle.radius + radius - 1e-7);
+}
+function contact(position, radius, target, geometry) {
+  const gap = distance(position, target);
+  if (gap > target.radius + radius + IMMUNE_CELL_BALANCE.biteReach + 1e-7) return false;
+  const blocked = wallHit(position, normalized(target.x - position.x, target.y - position.y), gap, geometry);
+  return blocked === null || blocked >= gap - target.radius;
+}
+function contactPosition(cell, target, index, count3, beacon, geometry, reserved) {
+  const angle = Math.atan2(beacon.y - target.y, beacon.x - target.x) + index / count3 * Math.PI * 2;
+  const ring2 = target.radius + cell.radius + 3;
+  const preferred = { x: target.x + Math.cos(angle) * ring2, y: target.y + Math.sin(angle) * ring2 };
+  let best = null, bestScore = Infinity;
+  for (const radius of [ring2, Math.max(cell.radius, ring2 - 8)]) for (let step = 0; step < 24; step++) {
+    const offset = step === 0 ? 0 : Math.ceil(step / 2) * (step % 2 ? 1 : -1) * Math.PI / 12;
+    const raw = { x: target.x + Math.cos(angle + offset) * radius, y: target.y + Math.sin(angle + offset) * radius };
+    const candidate = moveWithCollision(raw, { x: 0, y: 0 }, cell.radius, geometry);
+    if (!validPosition(candidate, cell.radius, geometry) || !contact(candidate, cell.radius, target, geometry)) continue;
+    const crowded = reserved.reduce((sum2, other) => sum2 + Math.max(0, cell.radius + other.radius + 3 - distance(candidate, other.position)), 0);
+    const blockedApproach = segmentClear(cell, candidate, geometry ?? WORLD, cell.radius) ? 0 : 1e3;
+    const score = crowded * 100 + blockedApproach + distance(candidate, preferred) + distance(cell, candidate) * 0.05;
+    if (score < bestScore) {
+      best = candidate;
+      bestScore = score;
+    }
+  }
+  return best;
+}
+function moveCell(cell, waypoint, squad, index, delta, geometry) {
+  const limit = IMMUNE_CELL_BALANCE.speed * delta;
+  if (limit <= 0) return;
+  const toward = normalized(waypoint.x - cell.x, waypoint.y - cell.y), travel = Math.min(limit, distance(cell, waypoint));
+  const approach = { x: toward.x * travel, y: toward.y * travel };
+  const separation = { x: 0, y: 0 };
+  for (const other of squad) if (other.id !== cell.id) {
+    const gap = distance(cell, other), minimum = cell.radius + other.radius + 3;
+    if (gap >= minimum) continue;
+    const angle = index / squad.length * Math.PI * 2;
+    const away = gap > 1e-7 ? normalized(cell.x - other.x, cell.y - other.y) : { x: Math.cos(angle), y: Math.sin(angle) };
+    const weight = (minimum - gap) / minimum;
+    separation.x += away.x * weight * limit;
+    separation.y += away.y * weight * limit;
+  }
+  const score = (position) => distance(position, waypoint) + squad.reduce((sum2, other) => other.id === cell.id ? sum2 : sum2 + Math.max(0, cell.radius + other.radius + 3 - distance(position, other)) * 3, 0);
+  let best = point(cell), bestScore = score(cell);
+  for (const motion of [{ x: approach.x + separation.x * 1.5, y: approach.y + separation.y * 1.5 }, approach, separation]) {
+    const length = Math.hypot(motion.x, motion.y), factor = length > limit ? limit / length : 1;
+    const candidate = moveWithCollision(cell, { x: motion.x * factor, y: motion.y * factor }, cell.radius, geometry);
+    if (!validPosition(candidate, cell.radius, geometry) || distance(cell, candidate) > limit + 1e-7) continue;
+    const value = score(candidate);
+    if (value < bestScore - 1e-7) {
+      best = candidate;
+      bestScore = value;
+    }
+  }
+  cell.x = best.x;
+  cell.y = best.y;
+}
+function advanceImmuneCells(cells, beacon, context, traceIds = []) {
+  if (!context.active) return { cells: cells.map((cell) => ({ ...cell, waypoint: cell.waypoint && point(cell.waypoint) })), commands: [] };
+  if (!beacon || beacon.until <= context.elapsed || beacon.organId !== context.organId) return { cells: [], commands: [] };
+  const active = cells.filter((cell) => cell.beaconId === beacon.id && cell.organId === context.organId && cell.until > context.elapsed).slice().sort(stableId).slice(0, IMMUNE_CELL_BALANCE.maximum).map((cell) => ({ ...cell, waypoint: cell.waypoint && point(cell.waypoint) }));
+  const commands = [], assigned = /* @__PURE__ */ new Map();
+  const reserved = [];
+  const remainingHp = new Map(context.targets.map((target) => [target.id, target.hp]));
+  const traced = new Set(beacon.mode === "patrol" ? [] : traceIds);
+  for (const cell of active) {
+    const delta = Math.max(0, Math.min(1 / 60, context.elapsed - cell.updatedAt));
+    cell.updatedAt = context.elapsed;
+    const target = chooseTarget(cell, beacon, context, traced, assigned, remainingHp);
+    if (target) assigned.set(target.id, (assigned.get(target.id) ?? 0) + 1);
+    const previousTarget = cell.targetId;
+    cell.targetId = target?.id ?? null;
+    const index = Math.max(0, active.findIndex((value) => value.id === cell.id));
+    const orbit = index / Math.max(1, active.length) * Math.PI * 2;
+    const seat = target && active.length > 1 ? contactPosition(cell, target, index, active.length, beacon, context.geometry, reserved) : null;
+    if (seat) reserved.push({ position: seat, radius: cell.radius });
+    const destination = seat ?? target ?? { x: beacon.x + Math.cos(orbit) * 38, y: beacon.y + Math.sin(orbit) * 38 };
+    const reach = target ? target.radius + cell.radius + IMMUNE_CELL_BALANCE.biteReach : 5;
+    const gap = distance(cell, destination);
+    const direction = normalized(destination.x - cell.x, destination.y - cell.y);
+    if (direction.x || direction.y) cell.facing = Math.atan2(direction.y, direction.x);
+    const wasTouching = !!target && contact(cell, cell.radius, target, context.geometry);
+    if (seat ? gap > 3 : !wasTouching && gap > (target ? Math.max(1, reach - 5) : 5)) {
+      if (!cell.waypoint || previousTarget !== cell.targetId || context.elapsed >= cell.navigationAt || distance(cell, cell.waypoint) < 10) {
+        cell.waypoint = context.geometry ? nextWaypoint(cell, destination, context.geometry, cell.radius) : point(destination);
+        cell.navigationAt = context.elapsed + IMMUNE_CELL_BALANCE.navigationInterval;
+      }
+      moveCell(cell, cell.waypoint, active, index, delta, context.geometry);
+      cell.activity = target ? "seeking" : "returning";
+    } else {
+      moveCell(cell, point(cell), active, index, delta, context.geometry);
+      cell.activity = context.elapsed < cell.attackUntil ? "biting" : "guarding";
+    }
+    const canBite = !!target && contact(cell, cell.radius, target, context.geometry);
+    if (target) cell.facing = Math.atan2(target.y - cell.y, target.x - cell.x);
+    if (!canBite || !target || context.elapsed + 1e-9 < cell.attackReadyAt || delta === 0) continue;
+    cell.attackReadyAt = context.elapsed + cell.interval;
+    cell.attackUntil = context.elapsed + IMMUNE_CELL_BALANCE.attackPose;
+    cell.activity = "biting";
+    const amount2 = Math.min(cell.damage, remainingHp.get(target.id) ?? target.hp);
+    remainingHp.set(target.id, Math.max(0, (remainingHp.get(target.id) ?? target.hp) - amount2));
+    const rootId = `${cell.id}:bite:${context.tick}`, base = { protocolId: "IMMUNE_BEACON", rootId, organId: context.organId };
+    commands.push(
+      { ...base, kind: "effect", effect: "hit", from: point(cell), to: point(target), radius: target.radius + 4, duration: 0.2 },
+      { ...base, kind: "damage", targetId: target.id, amount: amount2, cause: "protocol", hop: 0 },
+      { kind: "log", type: beacon.mode === "patrol" ? "IMMUNE_PATROL_HIT" : "PROTOCOL_BEACON_HIT", data: {
+        protocolId: beacon.mode === "patrol" ? "BASE_PATROL" : "IMMUNE_BEACON",
+        rootId,
+        cellId: cell.id,
+        targetId: target.id,
+        damage: amount2,
+        prioritizedTrace: traced.has(target.id),
+        x: cell.x,
+        y: cell.y
+      } }
+    );
+    if (traced.has(target.id)) commands.push({ kind: "log", type: "PROTOCOL_SYNERGY", data: { pair: "EXPOSE_TRACE+IMMUNE_BEACON", rootId, cellId: cell.id, targetId: target.id } });
+  }
+  return { cells: active, commands };
+}
+
+// src/game/research.ts
+var RESEARCH_DIRECTIONS = {
+  general: { id: "general", title: "\u901A\u7528\u7814\u7A76", description: "\u7814\u7A76\u4E09\u6761\u4E0D\u540C\u8DEF\u7EBF\uFF0C\u4FDD\u7559\u6CDB\u7528\u5019\u9009\u4E0E\u5F53\u524D\u534F\u8BAE\u8FDB\u9636\u673A\u4F1A\u3002", primary: null, partner: null },
+  CARAPACE: { id: "CARAPACE", title: "\u6676\u58F3\u53CD\u5236", description: "\u4FDD\u8BC1\u5171\u632F\u88C2\u89E3\u4E0E\u8FDE\u9501\u51C0\u5316\u5019\u9009\uFF0C\u7814\u7A76\u51B2\u6D41\u7834\u7EFD\u548C\u90BB\u4F53\u51C0\u5316\u7684\u7EC4\u5408\u3002", primary: "PULSE_BREAK", partner: "PURIFY_CHAIN" },
+  FISSION: { id: "FISSION", title: "\u88C2\u6B96\u53CD\u5236", description: "\u4FDD\u8BC1\u8FDE\u9501\u51C0\u5316\u4E0E\u5171\u632F\u88C2\u89E3\u5019\u9009\uFF0C\u7814\u7A76\u6536\u5C3E\u8DF3\u8DC3\u4E0E\u7834\u7EFD\u8054\u52A8\u3002", primary: "PURIFY_CHAIN", partner: "PULSE_BREAK" },
+  MIMIC: { id: "MIMIC", title: "\u6F5C\u4F0F\u53CD\u5236", description: "\u4FDD\u8BC1\u5F02\u5E38\u663E\u5F71\u4E0E\u514D\u75AB\u706F\u5854\u5019\u9009\uFF0C\u7814\u7A76\u663E\u5F62\u51CF\u901F\u4E0E\u514D\u75AB\u7EC6\u80DE\u56F4\u730E\u3002", primary: "EXPOSE_TRACE", partner: "IMMUNE_BEACON" }
+};
+function availableResearchDirections(rewardedKeys) {
+  return ["general", ...["CARAPACE", "FISSION", "MIMIC"].filter((trait2) => rewardedKeys.includes(`diagnose:${trait2}`))];
+}
+
+// src/game/preparation.ts
+var PREPARATION_VERSION = 1;
+function preparationForPlan(id) {
+  return { version: PREPARATION_VERSION, starterProtocolId: PROTOCOL_IDS.includes(id) ? id : null };
+}
+function parsePreparation(value) {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) return null;
+  const record = value;
+  if (record.version !== PREPARATION_VERSION || record.starterProtocolId !== null && !PROTOCOL_IDS.includes(record.starterProtocolId)) return null;
+  return { version: PREPARATION_VERSION, starterProtocolId: record.starterProtocolId };
+}
+
+// src/game/growth.ts
+function growthContext(state) {
+  return {
+    tick: state.tick,
+    elapsed: state.elapsed,
+    active: state.phase === "playing",
+    organId: state.battle?.organId ?? "heart",
+    rhythm: state.battle?.pulse.phase ?? "rest",
+    deviceOrigin: state.battle?.pulse.origin ?? state.terminal,
+    player: state.player,
+    aim: state.battle?.lastAim ?? state.player,
+    tissue: state.tissue,
+    targets: state.targets,
+    tool: state.tool,
+    geometry: activeWorld(state),
+    rhythmCycle: state.battle?.pulse.cycleIndex,
+    acceptedMetrics: state.runMetrics,
+    acceptedEvents: state.events
+  };
+}
+function acceptedProtocolHit(event, events, organId) {
+  const protocolId = event.type === "PROTOCOL_RESONANCE_HIT" ? "PULSE_BREAK" : event.type === "PROTOCOL_CHAIN_HIT" || event.type === "PROTOCOL_RICOCHET_HIT" ? "PURIFY_CHAIN" : null;
+  const { rootId, targetId, hop } = event.data;
+  if (!protocolId || event.data.protocolId !== protocolId || typeof rootId !== "string" || !rootId || typeof targetId !== "string" || !targetId || event.type === "PROTOCOL_CHAIN_HIT" && (!Number.isInteger(hop) || Number(hop) < 1 || Number(hop) > 3)) return;
+  return events.find((hit) => hit.type === "TARGET_HIT" && hit.tick === event.tick && hit.data.cause === "protocol" && hit.data.protocolId === protocolId && hit.data.rootId === rootId && hit.data.id === targetId && hit.data.organId === organId && typeof hit.data.damage === "number" && Number.isFinite(hit.data.damage) && hit.data.damage > 0);
+}
+var hashString = (value, start = 2166136261) => {
+  let hash3 = start >>> 0;
+  for (const char of value) hash3 = Math.imul(hash3 ^ char.charCodeAt(0), 16777619) >>> 0;
+  return hash3;
+};
+var point2 = (value) => ({ x: value.x, y: value.y });
+var unobstructed = (from, to, geometry) => {
+  const length = distance(from, to), direction = normalized(to.x - from.x, to.y - from.y);
+  const wall = wallHit(from, direction, length, geometry);
+  return wall === null || wall >= length - to.radius;
+};
+var stableNearest = (from, targets) => [...targets].sort((a, b) => distance(from, a) - distance(from, b) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+var GrowthController = class {
+  state;
+  acceptedHistoryTick = -1;
+  acceptedHistory = /* @__PURE__ */ new Map();
+  constructor(seed, runId = `${seed >>> 0}:growth`, preparation) {
+    const initialPreparation = parsePreparation(preparation) ?? preparationForPlan("field");
+    const starter = initialPreparation.starterProtocolId;
+    this.state = {
+      runId,
+      seed: seed >>> 0,
+      lastElapsed: 0,
+      xp: 0,
+      level: 0,
+      nextXp: GROWTH_BALANCE.xpThresholds[0],
+      research: 0,
+      preparation: initialPreparation,
+      starterDebt: starter ? 1 : 0,
+      carriedProtocols: starter ? [starter] : [],
+      equipped: starter ? [{ id: starter, tuning: "balanced" }] : [],
+      draft: null,
+      pendingLevels: [],
+      consumedDraftIds: [],
+      rewardedKeys: [],
+      sourceKillCounts: {},
+      damageTakenByOrgan: { heart: 0, lung: 0 },
+      protectionNeeded: { heart: false, lung: false },
+      draftSerial: 0,
+      historyHash: 2166136261,
+      ended: false,
+      pendingResearch: null,
+      researchSerial: 0,
+      beacon: null,
+      beaconReadyAt: 0,
+      cells: [],
+      activations: {},
+      marks: [],
+      resonance: [],
+      chainRoots: [],
+      protocolHistory: [],
+      pendingLogs: [],
+      budgetTick: -1,
+      budgetUsed: 0,
+      skippedCommands: 0
+    };
+    if (starter) {
+      const title = `${PROTOCOLS[starter].name} \u2160 \xB7 \u521D\u59CB\u9884\u88C5`;
+      const hint = `${PROTOCOL_ACTIONS[starter]}\u5DF2\u9884\u652F\u9996\u4EFD\u6210\u957F\uFF0C${GROWTH_BALANCE.xpThresholds[0]} XP \u4EC5\u7ED3\u6E05\uFF1B\u4E0B\u4E00\u4EFD\u8349\u6848 ${GROWTH_BALANCE.xpThresholds[1]} XP\u3002`;
+      this.state.lastEvolution = { protocolId: starter, rank: 1, until: 8, title, hint };
+      this.log("PROTOCOL_EQUIPPED", { source: "preparation", protocolId: starter, tuning: "balanced", rank: 1, slots: 1, actionHint: PROTOCOL_ACTIONS[starter] });
+      this.log("PREPARATION_APPLIED", { version: initialPreparation.version, starterProtocolId: starter, prepaidChoices: 1, repaymentXp: GROWTH_BALANCE.xpThresholds[0], nextDraftXp: GROWTH_BALANCE.xpThresholds[1] });
+      this.remember("PROTOCOL_EQUIPPED", `${PROTOCOLS[starter].name}\uFF1A\u521D\u59CB\u9884\u88C5 \u2160 \xB7 \u5747\u8861\u3002`);
+      this.remember("PREPARATION_APPLIED", hint);
+    }
+  }
+  observeTime(elapsed) {
+    if (Number.isFinite(elapsed)) this.state.lastElapsed = Math.max(this.state.lastElapsed, elapsed);
+  }
+  remember(type, text2, at = this.state.lastElapsed) {
+    const entry = { at, type, text: text2 };
+    this.state.protocolHistory.push(entry);
+    if (this.state.protocolHistory.length > 128) this.state.protocolHistory.shift();
+    return entry;
+  }
+  recordAcceptedEffect(event, context, elapsed) {
+    const frame = context?.acceptedMetrics?.frame;
+    if (!context || !frame || frame.tick !== event.tick || event.tick < this.acceptedHistoryTick) return;
+    if (event.tick !== this.acceptedHistoryTick) {
+      this.acceptedHistoryTick = event.tick;
+      this.acceptedHistory.clear();
+    }
+    const rootId = event.data.rootId;
+    if (typeof rootId !== "string" || !rootId) return;
+    if (event.type === "PROTOCOL_SYNERGY" && event.data.pair === "PULSE_BREAK+PURIFY_CHAIN") {
+      const accepted2 = this.acceptedHistory.get(`PROTOCOL_CHAIN_HIT:${rootId}`);
+      if (accepted2 && frame.entries.some((entry) => entry.kind === "pulse-chain" && entry.rootId === rootId)) {
+        accepted2.synergy = true;
+        accepted2.entry.text = this.actualEffectText("PROTOCOL_CHAIN_HIT", accepted2);
+      }
+      return;
+    }
+    const hit = acceptedProtocolHit(event, context.acceptedEvents ?? [], context.organId);
+    if (!hit) return;
+    const kind = event.type === "PROTOCOL_CHAIN_HIT" ? "chain" : event.type === "PROTOCOL_RICOCHET_HIT" ? "ricochet" : "resonance";
+    if (!frame.entries.some((entry) => entry.kind === kind && entry.rootId === rootId && entry.targetId === event.data.targetId && entry.protocolId === hit.data.protocolId)) return;
+    const key = `${event.type}:${rootId}`;
+    let accepted = this.acceptedHistory.get(key);
+    if (!accepted) {
+      accepted = { entry: this.remember(event.type, "", elapsed), targets: /* @__PURE__ */ new Set(), damage: 0, synergy: false };
+      this.acceptedHistory.set(key, accepted);
+    }
+    const targetId = String(event.data.targetId);
+    if (accepted.targets.has(targetId)) return;
+    accepted.targets.add(targetId);
+    accepted.damage += Number(hit.data.damage);
+    if (!this.state.protocolHistory.includes(accepted.entry)) accepted.entry = this.remember(event.type, "", elapsed);
+    accepted.entry.text = this.actualEffectText(event.type, accepted);
+  }
+  actualEffectText(type, accepted) {
+    const damage = Number(accepted.damage.toFixed(2)), count3 = accepted.targets.size;
+    if (type === "PROTOCOL_CHAIN_HIT") return `${accepted.synergy ? "\u5171\u632F\u8054\u52A8 \xB7 " : ""}\u8FDE\u9501\u51C0\u5316\uFF1A\u5B9E\u9645\u547D\u4E2D ${count3} \u8DF3\uFF0C\u5171 ${damage} \u70B9\u4F24\u5BB3\u3002`;
+    if (type === "PROTOCOL_RICOCHET_HIT") return `\u8FDE\u9501\u8FDB\u9636\uFF1A\u5B9E\u9645\u6298\u5C04 ${count3} \u4F53\uFF0C\u5171 ${damage} \u70B9\u4F24\u5BB3\u3002`;
+    return `\u8282\u5F8B\u5171\u632F\uFF1A\u5B9E\u9645\u8FFD\u52A0 ${damage} \u70B9\u4F24\u5BB3\uFF08${count3} \u4F53\uFF09\u3002`;
+  }
+  log(type, data) {
+    this.state.pendingLogs.push({ type, data });
+  }
+  equipped(id) {
+    return this.state.equipped.find((slot) => slot.id === id);
+  }
+  activated(id) {
+    this.state.activations ??= {};
+    this.state.activations[id] = (this.state.activations[id] ?? 0) + 1;
+  }
+  award(key, xp, research, elapsed) {
+    const s = this.state;
+    if (s.rewardedKeys.includes(key)) return;
+    s.rewardedKeys.push(key);
+    s.xp += xp;
+    s.research += research;
+    this.log("GROWTH_REWARD", { key, xp, research, totalXp: s.xp, totalResearch: s.research });
+    this.remember("GROWTH_REWARD", `\u7814\u7A76\u8BC1\u636E +${research}\uFF0C\u7ECF\u9A8C +${xp}\u3002`, elapsed);
+    while (s.level < GROWTH_BALANCE.xpThresholds.length && s.xp >= GROWTH_BALANCE.xpThresholds[s.level]) {
+      ++s.level;
+      this.log("GROWTH_LEVEL_GAINED", { level: s.level, xp: s.xp });
+      if (s.starterDebt === 1) {
+        s.starterDebt = 0;
+        const nextDraftXp = GROWTH_BALANCE.xpThresholds[s.level] ?? null;
+        this.log("PREPARATION_REPAID", { level: s.level, xp: s.xp, nextDraftXp });
+        this.remember("PREPARATION_REPAID", `\u5DF2\u7528\u672C\u6B21\u6210\u957F\u7ED3\u6E05\u521D\u59CB\u9884\u88C5\uFF1B\u7ECF\u9A8C\u4FDD\u7559 ${s.xp}\u3002${nextDraftXp === null ? "\u672C\u5C40\u7ECF\u9A8C\u6210\u957F\u5DF2\u5168\u90E8\u5B8C\u6210\u3002" : s.xp >= nextDraftXp ? `\u4E0B\u4E00\u4EFD\u8349\u6848\u9608\u503C ${nextDraftXp} XP \u5DF2\u8FBE\u5230\uFF0C\u5C06\u7167\u5E38\u6392\u961F\u3002` : `\u4E0B\u4E00\u4EFD\u8349\u6848 ${nextDraftXp} XP\u3002`}`, elapsed);
+      } else s.pendingLevels.push(s.level);
+    }
+    s.nextXp = GROWTH_BALANCE.xpThresholds[s.level] ?? null;
+  }
+  /** Accept only real accepted events. Keys live independently of the bounded diagnostic event log. */
+  recordEvent(event, context) {
+    const s = this.state, data = event.data, elapsed = context?.elapsed ?? event.tick / 60;
+    this.observeTime(elapsed);
+    if (event.type === "RUN_ENDED") {
+      s.ended = true;
+      s.draft = null;
+      s.pendingResearch = null;
+      s.pendingLevels = [];
+      s.beacon = null;
+      s.cells = [];
+      s.marks = [];
+      s.resonance = [];
+      this.acceptedHistory.clear();
+      return;
+    }
+    if (s.ended) return;
+    this.recordAcceptedEffect(event, context, elapsed);
+    const organ3 = data.organId === "lung" ? "lung" : data.organId === "heart" ? "heart" : context?.organId ?? "heart";
+    if (event.type === "INFECTION_SOURCE_CLEARED") {
+      const id = String(data.nodeId ?? data.id ?? "");
+      if (id) this.award(`source:${organ3}:${id}`, 20, 2, elapsed);
+    } else if (event.type === "ELITE_CLEARED") {
+      const id = String(data.id ?? "");
+      if (id) this.award(`elite:${organ3}:${id}`, 30, 2, elapsed);
+    } else if (event.type === "TARGET_CLEARED") {
+      const id = String(data.id ?? "");
+      if (!id) return;
+      const target = context?.targets.find((t) => t.id === id);
+      const role = data.role ?? target?.role;
+      if (role === "source" || role === "elite" || role === "core" || Number(data.generation ?? target?.generation ?? 0) > 0) return;
+      const key = `ordinary:${organ3}:${id}`;
+      if (s.rewardedKeys.includes(key)) return;
+      const source = `${organ3}:${String(data.sourceId ?? target?.sourceId ?? "ambient")}`;
+      const count3 = s.sourceKillCounts[source] ?? 0;
+      if (count3 >= 3) return;
+      s.sourceKillCounts[source] = count3 + 1;
+      this.award(key, [4, 2, 1][count3], 0, elapsed);
+    } else if (event.type === "BATTLE_DIAGNOSED") {
+      const found = context?.targets.filter((t) => t.hp > 0 && distance(context.player, t) <= GROWTH_BALANCE.scanRadius) ?? [];
+      if (found.length || Number(data.count) > 0) this.award("diagnose:baseline", 6, 1, elapsed);
+      for (const trait2 of new Set(found.flatMap((t) => t.traits ?? []))) this.award(`diagnose:${trait2}`, 8, 2, elapsed);
+    } else if (event.type === "ORGAN_INTEGRITY_CHANGED") {
+      const before = Number(data.before), after = Number(data.after);
+      if (!Number.isFinite(before) || !Number.isFinite(after)) return;
+      if (data.reason === "enemy-attack" || data.reason === "infection") {
+        s.damageTakenByOrgan[organ3] += Math.max(0, before - after);
+        if (after < 30) s.protectionNeeded[organ3] = true;
+      }
+      if (data.reason === "repair" && after > before && after >= 50 && s.protectionNeeded[organ3] && s.damageTakenByOrgan[organ3] >= 15) {
+        s.protectionNeeded[organ3] = false;
+        this.award(`protect:${organ3}`, 15, 1, elapsed);
+      }
+    }
+  }
+  shuffled(values, rng) {
+    const result = [...values];
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = rng.int(0, i);
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+  }
+  createDraft(source, level, researchDirection, requestId) {
+    const s = this.state, serial = ++s.draftSerial;
+    const equipment = s.equipped.map((slot) => `${slot.id}:${slot.tuning}:${protocolRank(slot)}`).sort().join("|");
+    const focusHash = source === "research" && researchDirection && researchDirection !== "general" ? hashString(`research:${researchDirection}`) : 0;
+    const rng = new SeedRng((s.seed ^ Math.imul(serial, 2654435761) ^ hashString(equipment, s.historyHash) ^ focusHash) >>> 0);
+    const newOptions = [], retunes = [];
+    for (const id of PROTOCOL_IDS) {
+      const current = this.equipped(id);
+      if (!current) newOptions.push(makeDraftOption(id, "balanced", "equip"));
+      else if (protocolRank(current) < GROWTH_BALANCE.maxRank) retunes.push(makeDraftOption(id, current.tuning, "retune", protocolRank(current) + 1, current));
+      else {
+        const options2 = TUNINGS.filter((tuning) => tuning !== current.tuning);
+        retunes.push(makeDraftOption(id, options2[rng.int(0, options2.length - 1)], "retune", protocolRank(current), current));
+      }
+    }
+    const shuffledNew = this.shuffled(newOptions, rng);
+    const opening = s.equipped.length === 0 && serial === 1;
+    const firstChoices = opening ? [shuffledNew.find((o) => o.protocolId === "IMMUNE_BEACON"), shuffledNew.find((o) => o.protocolId === "PURIFY_CHAIN"), shuffledNew.find((o) => o.protocolId !== "IMMUNE_BEACON" && o.protocolId !== "PURIFY_CHAIN")] : shuffledNew;
+    let ordered;
+    const upgrades = retunes.filter((option) => (option.rank ?? 1) > protocolRank(this.equipped(option.protocolId)));
+    if (source === "research" && researchDirection && researchDirection !== "general") {
+      const info = RESEARCH_DIRECTIONS[researchDirection], pool = [...newOptions, ...retunes];
+      const guaranteed = [info.primary, info.partner].map((id) => pool.find((option) => option.protocolId === id));
+      const ids = new Set(guaranteed.map((option) => option.protocolId));
+      ordered = [...guaranteed, ...this.shuffled(pool.filter((option) => !ids.has(option.protocolId)), rng).slice(0, 1)];
+    } else if (!opening && upgrades.length) {
+      const guaranteed = [this.shuffled(upgrades, rng)[0], ...shuffledNew.length ? [shuffledNew[0]] : []];
+      const selected = new Set(guaranteed.map((option) => option.protocolId));
+      ordered = [...guaranteed, ...this.shuffled([...newOptions, ...retunes].filter((option) => !selected.has(option.protocolId)), rng)].slice(0, 3);
+    } else ordered = [...firstChoices, ...this.shuffled(retunes, rng)].slice(0, 3);
+    if (ordered.length !== 3) throw new Error("Protocol candidate pool must provide three legal distinct choices");
+    const options = this.shuffled(ordered, rng);
+    const draft = { id: `${s.runId}:draft:${serial}`, source, serial, level, options, status: "choosing", ...source === "research" && researchDirection ? { researchDirection } : {} };
+    s.draft = draft;
+    this.log("PROTOCOL_DRAFT_OPENED", { draftId: draft.id, source, serial, level: level ?? 0, ...source === "research" ? { researchDirection: researchDirection ?? "general", ...requestId ? { requestId } : {} } : {} });
+    if (source === "research") this.remember("PROTOCOL_DRAFT_OPENED", `${RESEARCH_DIRECTIONS[researchDirection ?? "general"].title}\uFF1A\u4E09\u79CD\u4E0D\u540C\u534F\u8BAE\u5019\u9009\u5DF2\u5C31\u7EEA\uFF0C\u53EF\u65B0\u88C5\u3001\u8FDB\u9636\u6216\u6539\u9020\u3002`);
+    return draft;
+  }
+  openNextLevel() {
+    if (!this.state.draft && !this.state.pendingResearch && !this.state.ended && this.state.pendingLevels.length) this.createDraft("xp", this.state.pendingLevels.shift());
+  }
+  requestResearch(nodeId, context) {
+    this.observeTime(context.elapsed);
+    const s = this.state;
+    if (s.ended || !context.active) return { kind: "rejected", reason: "run-inactive" };
+    this.openNextLevel();
+    if (s.draft) return { kind: "rejected", reason: "draft-active" };
+    if (s.pendingResearch) return { kind: "rejected", reason: "research-pending" };
+    if (!Number.isFinite(s.research) || s.research < GROWTH_BALANCE.researchCost) return { kind: "rejected", reason: "insufficient-samples", missing: GROWTH_BALANCE.researchCost - s.research };
+    const serial = (s.researchSerial ?? 0) + 1;
+    s.researchSerial = serial;
+    const offer = { id: `${s.runId}:research:${serial}`, runId: s.runId, nodeId, organId: context.organId, directions: availableResearchDirections(s.rewardedKeys) };
+    s.pendingResearch = offer;
+    this.log("RESEARCH_REQUESTED", { requestId: offer.id, nodeId, organId: offer.organId, directions: offer.directions.join(","), cost: GROWTH_BALANCE.researchCost });
+    this.remember("RESEARCH_REQUESTED", "\u7814\u7A76\u65B9\u5411\u5F85\u786E\u8BA4\uFF1A\u4EC5\u5B9E\u9645\u8BCA\u65AD\u7684\u53D8\u5F02\u53EF\u4F5C\u5B9A\u5411\u4F9D\u636E\uFF0C\u786E\u8BA4\u524D\u4E0D\u6D88\u8017\u6837\u672C\u3002");
+    return { kind: "requested", requestId: offer.id };
+  }
+  confirmResearch(intent) {
+    const s = this.state, offer = s.pendingResearch;
+    if (s.ended) return { kind: "rejected", reason: "run-inactive" };
+    if (intent.runId !== s.runId || !offer || offer.runId !== intent.runId || offer.id !== intent.requestId) return { kind: "rejected", reason: "stale-request-or-run" };
+    if (s.draft) return { kind: "rejected", reason: "draft-active" };
+    if (!offer.directions.includes(intent.direction)) return { kind: "rejected", reason: "invalid-direction" };
+    if (!Number.isFinite(s.research) || s.research < GROWTH_BALANCE.researchCost) return { kind: "rejected", reason: "insufficient-samples", missing: GROWTH_BALANCE.researchCost - s.research };
+    s.research -= GROWTH_BALANCE.researchCost;
+    s.pendingResearch = null;
+    this.log("RESEARCH_CONFIRMED", { requestId: offer.id, nodeId: offer.nodeId, organId: offer.organId, researchDirection: intent.direction, cost: GROWTH_BALANCE.researchCost });
+    const draft = this.createDraft("research", void 0, intent.direction, offer.id);
+    this.log("RESEARCH_SPENT", { requestId: offer.id, nodeId: offer.nodeId, organId: offer.organId, researchDirection: intent.direction, cost: GROWTH_BALANCE.researchCost, draftId: draft.id, remaining: s.research });
+    this.remember("RESEARCH_CONFIRMED", `\u9009\u62E9${RESEARCH_DIRECTIONS[intent.direction].title}\uFF0C\u6D88\u8017 ${GROWTH_BALANCE.researchCost} \u6837\u672C\uFF1B\u751F\u6210\u540E\u653E\u5F03\u4E0D\u8FD4\u8FD8\u3002`);
+    this.remember("RESEARCH_SPENT", `\u6837\u672C \u2212${GROWTH_BALANCE.researchCost}\uFF0C\u5269\u4F59 ${s.research}\uFF1B${RESEARCH_DIRECTIONS[intent.direction].title}\u8349\u6848\u5DF2\u751F\u6210\u3002`);
+    return { kind: "opened", draftId: draft.id, cost: GROWTH_BALANCE.researchCost, requestId: offer.id };
+  }
+  cancelResearch(intent) {
+    const s = this.state, offer = s.pendingResearch;
+    if (s.ended) return { kind: "rejected", reason: "run-inactive" };
+    if (intent.runId !== s.runId || !offer || offer.runId !== intent.runId || offer.id !== intent.requestId) return { kind: "rejected", reason: "stale-request-or-run" };
+    s.pendingResearch = null;
+    this.log("RESEARCH_CANCELLED", { requestId: offer.id, nodeId: offer.nodeId, organId: offer.organId, cost: 0 });
+    this.remember("RESEARCH_CANCELLED", "\u5DF2\u53D6\u6D88\u7814\u7A76\u65B9\u5411\u786E\u8BA4\uFF0C\u672A\u6D88\u8017\u6837\u672C\u3002");
+    this.openNextLevel();
+    return { kind: "cancelled", requestId: offer.id, ...s.draft ? { nextDraftId: s.draft.id } : {} };
+  }
+  openResearch(nodeId, context) {
+    this.observeTime(context.elapsed);
+    const s = this.state;
+    if (s.ended || !context.active) return { kind: "rejected", reason: "run-inactive" };
+    this.openNextLevel();
+    if (s.draft || s.pendingResearch) return { kind: "rejected", reason: "draft-active" };
+    if (s.research < GROWTH_BALANCE.researchCost) return { kind: "rejected", reason: "insufficient-samples", missing: GROWTH_BALANCE.researchCost - s.research };
+    s.research -= GROWTH_BALANCE.researchCost;
+    const draft = this.createDraft("research");
+    this.log("RESEARCH_SPENT", { nodeId, cost: GROWTH_BALANCE.researchCost, draftId: draft.id, remaining: s.research });
+    return { kind: "opened", draftId: draft.id, cost: GROWTH_BALANCE.researchCost };
+  }
+  currentDraft(draftId, runId) {
+    const s = this.state;
+    if (s.ended || runId !== void 0 && runId !== s.runId || s.consumedDraftIds.includes(draftId) || s.draft?.id !== draftId) return;
+    return s.draft;
+  }
+  finishDraft(kind, draft) {
+    const s = this.state;
+    s.consumedDraftIds.push(draft.id);
+    s.draft = null;
+    s.historyHash = hashString(`${kind}:${draft.serial}:${s.equipped.map((e) => `${e.id}:${e.tuning}:${protocolRank(e)}`).join("|")}`, s.historyHash);
+    this.log(kind === "committed" ? "PROTOCOL_DRAFT_COMMITTED" : "PROTOCOL_DRAFT_DISCARDED", { draftId: draft.id, source: draft.source });
+    this.openNextLevel();
+    const nextDraft = s.draft;
+    return { kind, draftId: draft.id, nextDraftId: nextDraft?.id };
+  }
+  cleanupChanged(previous, next) {
+    const changed = (id) => {
+      const a = previous.find((p) => p.id === id), b = next.find((p) => p.id === id);
+      return a?.tuning !== b?.tuning || !!a !== !!b || protocolRank(a) !== protocolRank(b);
+    };
+    if (changed("IMMUNE_BEACON") && this.state.beacon?.mode !== "patrol") {
+      this.state.beacon = null;
+      this.state.cells = [];
+    }
+    if (changed("EXPOSE_TRACE")) this.state.marks = [];
+    if (changed("PULSE_BREAK")) this.state.resonance = [];
+    if (changed("PURIFY_CHAIN")) this.state.chainCharge = 0;
+  }
+  chooseDraft(intent) {
+    const draft = this.currentDraft(intent.draftId, intent.runId);
+    if (!draft) return { kind: "rejected", reason: "stale-draft-or-run" };
+    const option = draft.options.find((item) => item.id === intent.optionId);
+    if (!option) return { kind: "rejected", reason: "invalid-option" };
+    const s = this.state, previous = s.equipped.map((slot) => ({ ...slot }));
+    if (option.kind === "retune") {
+      if (draft.status !== "choosing") return { kind: "rejected", reason: "replacement-pending" };
+      const index = s.equipped.findIndex((slot) => slot.id === option.protocolId);
+      const current = s.equipped[index], rank = option.rank ?? 1;
+      if (index < 0 || rank < protocolRank(current) || rank > Math.min(GROWTH_BALANCE.maxRank, protocolRank(current) + 1) || current.tuning === option.tuning && protocolRank(current) === rank) return { kind: "rejected", reason: "option-no-longer-legal" };
+      s.equipped[index] = { id: option.protocolId, tuning: option.tuning, ...rank > 1 ? { rank } : {} };
+    } else if (s.equipped.some((slot) => slot.id === option.protocolId)) return { kind: "rejected", reason: "duplicate-protocol" };
+    else if (s.equipped.length < GROWTH_BALANCE.slots) {
+      if (draft.status !== "choosing") return { kind: "rejected", reason: "replacement-pending" };
+      s.equipped.push({ id: option.protocolId, tuning: option.tuning });
+    } else {
+      if (draft.status === "choosing") {
+        if (intent.slotIndex !== void 0) return { kind: "rejected", reason: "replacement-must-be-confirmed" };
+        draft.status = "replacing";
+        draft.selectedOptionId = option.id;
+        return { kind: "replace-required", draftId: draft.id };
+      }
+      if (draft.selectedOptionId !== option.id) return { kind: "rejected", reason: "different-replacement-option" };
+      const index = intent.slotIndex;
+      if (index === void 0 || !Number.isInteger(index) || index < 0 || index >= GROWTH_BALANCE.slots || s.equipped[index]?.id !== intent.expectedPreviousProtocolId) return { kind: "rejected", reason: "invalid-or-stale-slot" };
+      s.equipped[index] = { id: option.protocolId, tuning: option.tuning };
+    }
+    this.cleanupChanged(previous, s.equipped);
+    s.carriedProtocols = PROTOCOL_IDS.filter((id) => id === option.protocolId || s.carriedProtocols?.includes(id));
+    s.lastEvolution = { protocolId: option.protocolId, rank: option.rank ?? 1, until: s.lastElapsed + 8, title: option.title, hint: option.actionHint ?? PROTOCOL_ACTIONS[option.protocolId] };
+    if (option.protocolId === "IMMUNE_BEACON" || option.protocolId === "EXPOSE_TRACE") s.beaconReadyAt = Math.min(s.beaconReadyAt, s.lastElapsed);
+    this.log("PROTOCOL_EQUIPPED", { draftId: draft.id, protocolId: option.protocolId, tuning: option.tuning, rank: option.rank ?? 1, kind: option.kind, slots: s.equipped.length, actionHint: option.actionHint ?? PROTOCOL_ACTIONS[option.protocolId] });
+    this.remember("PROTOCOL_EQUIPPED", `${PROTOCOLS[option.protocolId].name}\uFF1A${option.title}\u3002`);
+    return this.finishDraft("committed", draft);
+  }
+  discardDraft(draftId, runId) {
+    const draft = this.currentDraft(draftId, runId);
+    return draft ? this.finishDraft("discarded", draft) : { kind: "rejected", reason: "stale-draft-or-run" };
+  }
+  backToDraft(draftId, runId) {
+    const draft = this.currentDraft(draftId, runId);
+    if (!draft || draft.status !== "replacing") return { kind: "rejected", reason: "no-replacement" };
+    draft.status = "choosing";
+    delete draft.selectedOptionId;
+    return { kind: "returned", draftId };
+  }
+  budget(context, commands) {
+    const s = this.state;
+    if (s.budgetTick !== context.tick) {
+      s.budgetTick = context.tick;
+      s.budgetUsed = 0;
+      s.skippedCommands = 0;
+    }
+    if (s.budgetUsed + commands.length > GROWTH_BALANCE.commandBudget) {
+      s.skippedCommands += commands.length;
+      return [];
+    }
+    s.budgetUsed += commands.length;
+    return commands;
+  }
+  slowFactor(targetId, organId, elapsed) {
+    if (!this.equipped("EXPOSE_TRACE")) return 1;
+    return this.state.marks.find((mark) => mark.targetId === targetId && mark.organId === organId && mark.slowUntil > elapsed)?.factor ?? 1;
+  }
+  onScan(context) {
+    this.observeTime(context.elapsed);
+    if (this.state.ended || !context.active) return [];
+    const previous = { marks: this.state.marks.map((mark) => ({ ...mark })), beacon: this.state.beacon, cells: this.state.cells, readyAt: this.state.beaconReadyAt, history: this.state.protocolHistory.slice() };
+    const commands = [], trace = this.equipped("EXPOSE_TRACE"), beacon = this.equipped("IMMUNE_BEACON");
+    const rootId = `${this.state.runId}:scan:${context.tick}`;
+    if (trace) {
+      const config = getTraceConfig(trace.tuning, protocolRank(trace));
+      let count3 = 0;
+      for (const target of context.targets) if (target.hp > 0 && distance(context.player, target) <= GROWTH_BALANCE.scanRadius) {
+        const mark = { targetId: target.id, organId: context.organId, until: context.elapsed + config.duration, slowUntil: context.elapsed + config.slowDuration, factor: config.factor };
+        this.state.marks = this.state.marks.filter((old) => old.targetId !== target.id || old.organId !== context.organId);
+        this.state.marks.push(mark);
+        count3++;
+      }
+      commands.push({ kind: "log", type: "PROTOCOL_TRACE_APPLIED", data: { protocolId: "EXPOSE_TRACE", rootId, count: count3, duration: config.duration, slow: config.factor } });
+      this.remember("PROTOCOL_TRACE_APPLIED", `\u663E\u5F71\u8FFD\u8E2A ${count3} \u4F53\uFF0C\u6301\u7EED ${config.duration} \u79D2\u3002`, context.elapsed);
+    }
+    if (!beacon || context.elapsed + 1e-9 >= this.state.beaconReadyAt) {
+      const config = beacon ? getBeaconConfig(beacon.tuning, protocolRank(beacon)) : { ...PATROL_CONFIG, tissueCost: 0 };
+      const direction = normalized(context.aim.x - context.player.x, context.aim.y - context.player.y), length = Math.min(GROWTH_BALANCE.beaconPlacementRange, distance(context.player, context.aim));
+      const wall = wallHit(context.player, direction, length, context.geometry);
+      const travel = Math.max(0, Math.min(length, wall === null ? length : wall - 18));
+      const position = moveWithCollision(context.player, { x: direction.x * travel, y: direction.y * travel }, 12, context.geometry);
+      this.state.beacon = {
+        ...point2(position),
+        id: `${rootId}:beacon`,
+        organId: context.organId,
+        born: context.elapsed,
+        until: context.elapsed + config.duration,
+        radius: config.radius,
+        damage: config.damage,
+        interval: config.interval,
+        nextAttackAt: context.elapsed + 0.1,
+        tuning: beacon?.tuning ?? "balanced",
+        mode: beacon ? "protocol" : "patrol"
+      };
+      this.state.cells = summonImmuneCells(this.state.beacon, context, beacon ? 3 : 1);
+      this.state.beaconReadyAt = context.elapsed + config.cooldown;
+      const base = { protocolId: "IMMUNE_BEACON", rootId, organId: context.organId };
+      if (beacon) commands.push({ ...base, kind: "organCost", amount: config.tissueCost });
+      commands.push(
+        { ...base, kind: "effect", effect: "scan", from: point2(position), to: point2(position), radius: config.radius, duration: 0.6 },
+        { kind: "log", type: beacon ? "PROTOCOL_BEACON_CREATED" : "IMMUNE_PATROL_CREATED", data: { ...beacon ? { protocolId: "IMMUNE_BEACON" } : {}, rootId, x: position.x, y: position.y, duration: config.duration, cost: config.tissueCost, cooldown: config.cooldown, cells: beacon ? 3 : 1 } }
+      );
+      this.remember(beacon ? "PROTOCOL_BEACON_CREATED" : "IMMUNE_PATROL_CREATED", beacon ? `\u4E09\u53EA\u514D\u75AB\u7EC6\u80DE\u51FA\u51FB\uFF0C\u7EC4\u7EC7\u627F\u538B \u2212${config.tissueCost}\u3002` : "Q \u53EC\u6765\u4E00\u53EA\u514D\u75AB\u4FA6\u5DE1\u7EC6\u80DE\uFF0C\u77ED\u65F6\u534F\u52A9\u6E05\u7406\u3002", context.elapsed);
+    }
+    const accepted = this.budget(context, commands);
+    if (commands.length && !accepted.length) {
+      this.state.marks = previous.marks;
+      this.state.beacon = previous.beacon;
+      this.state.cells = previous.cells;
+      this.state.beaconReadyAt = previous.readyAt;
+      this.state.protocolHistory = previous.history;
+    } else if (trace && this.state.marks.some((mark) => mark.organId === context.organId)) this.activated("EXPOSE_TRACE");
+    return accepted;
+  }
+  onHit(context, target, origin = { cause: "basic" }) {
+    this.observeTime(context.elapsed);
+    if (this.state.ended || !context.active || origin.cause !== "basic" || target.hp <= 0 || context.tool === 3) return [];
+    const ricochet = this.ricochetOnHit(context, target, origin);
+    const slot = this.equipped("PULSE_BREAK");
+    if (!slot || context.rhythm !== "surge") return ricochet;
+    const config = getPulseConfig(slot.tuning, protocolRank(slot));
+    if (distance(context.player, context.deviceOrigin) > config.deviceRange) return ricochet;
+    const cycle = context.rhythmCycle ?? Math.floor(context.elapsed / 6);
+    if (this.state.resonance.some((hit) => hit.targetId === target.id && hit.organId === context.organId && hit.cycle === cycle)) return ricochet;
+    const rootId = origin.rootId ?? `${this.state.runId}:hit:${context.tick}:${target.id}`, base = { protocolId: "PULSE_BREAK", rootId, organId: context.organId };
+    const commands = [
+      { ...base, kind: "expose", targetId: target.id, until: context.elapsed + config.exposeSeconds, revealUntil: context.elapsed + config.exposeSeconds },
+      { ...base, kind: "effect", effect: "evolution", from: point2(target), to: point2(target), radius: target.radius + 12, duration: 0.35 },
+      { ...base, kind: "damage", targetId: target.id, amount: config.bonusDamage, cause: "protocol", hop: 0, allowChain: true },
+      { kind: "log", type: "PROTOCOL_RESONANCE_HIT", data: { protocolId: "PULSE_BREAK", rootId, targetId: target.id, bonus: config.bonusDamage, exposeSeconds: config.exposeSeconds, cycle } }
+    ];
+    const accepted = this.budget(context, commands);
+    if (!accepted.length) return ricochet;
+    this.state.resonance.push({ targetId: target.id, organId: context.organId, cycle });
+    this.activated("PULSE_BREAK");
+    this.remember("PROTOCOL_RESONANCE_PLANNED", `\u8282\u5F8B\u5171\u632F\u8BA1\u5212\uFF1A\u5C1D\u8BD5\u8FFD\u52A0 ${config.bonusDamage} \u70B9\u4F24\u5BB3\u3001\u7834\u7EFD ${config.exposeSeconds} \u79D2\uFF1B\u5B9E\u9645\u547D\u4E2D\u53E6\u884C\u8BB0\u5F55\u3002`, context.elapsed);
+    return [...ricochet, ...accepted];
+  }
+  ricochetOnHit(context, target, origin) {
+    const slot = this.equipped("PURIFY_CHAIN");
+    if (!slot) return [];
+    const rank = protocolRank(slot), period = chainRicochetPeriod(rank);
+    if (!period) return [];
+    this.state.chainCharge = Math.min(period, (this.state.chainCharge ?? 0) + 1);
+    if (this.state.chainCharge < period) return [];
+    const config = getChainConfig(slot.tuning, rank);
+    const next = stableNearest(target, context.targets.filter((candidate) => candidate.hp > 0 && candidate.id !== target.id && distance(target, candidate) <= config.range && unobstructed(target, candidate, context.geometry)))[0];
+    if (!next) return [];
+    const rootId = origin.rootId ?? `${this.state.runId}:ricochet:${context.tick}:${target.id}`, base = { protocolId: "PURIFY_CHAIN", rootId, organId: context.organId };
+    const commands = [
+      { ...base, kind: "effect", effect: "chain", from: point2(target), to: point2(next), radius: 12, duration: 0.35 },
+      { ...base, kind: "damage", targetId: next.id, amount: config.damage, cause: "protocol", hop: 1 },
+      { kind: "log", type: "PROTOCOL_RICOCHET_HIT", data: { protocolId: "PURIFY_CHAIN", rootId, targetId: next.id, damage: config.damage, period, rank } }
+    ];
+    const accepted = this.budget(context, commands);
+    if (!accepted.length) return [];
+    this.state.chainCharge = 0;
+    this.activated("PURIFY_CHAIN");
+    this.remember("PROTOCOL_RICOCHET_PLANNED", `\u8FDE\u9501\u8FDB\u9636\u8BA1\u5212\uFF1A${period} \u6B21\u547D\u4E2D\u84C4\u80FD\uFF0C\u5C1D\u8BD5\u6298\u5C04 ${config.damage} \u70B9\u4F24\u5BB3\uFF1B\u5B9E\u9645\u547D\u4E2D\u53E6\u884C\u8BB0\u5F55\u3002`, context.elapsed);
+    return accepted;
+  }
+  onKill(context, target, origin = { cause: "basic" }) {
+    this.observeTime(context.elapsed);
+    if (this.state.ended || !context.active || origin.cause === "protocol" && !(origin.protocolId === "PULSE_BREAK" && origin.allowChain)) return [];
+    const slot = this.equipped("PURIFY_CHAIN");
+    if (!slot) return [];
+    const rootId = origin.rootId ?? `${this.state.runId}:hit:${context.tick}:${target.id}`;
+    if (this.state.chainRoots.includes(rootId)) return [];
+    const synergy = !!this.equipped("PULSE_BREAK") && !!origin.wasPulseExposed;
+    const config = getChainConfig(slot.tuning, protocolRank(slot)), hops = Math.min(GROWTH_BALANCE.chainCap, config.jumps + (synergy ? 1 : 0));
+    const visited = /* @__PURE__ */ new Set([target.id]), commands = [];
+    let from = target, actual = 0;
+    for (let hop = 1; hop <= hops; hop++) {
+      const next = stableNearest(from, context.targets.filter((t) => t.hp > 0 && !visited.has(t.id) && distance(from, t) <= config.range && unobstructed(from, t, context.geometry)))[0];
+      if (!next) break;
+      visited.add(next.id);
+      actual++;
+      const base = { protocolId: "PURIFY_CHAIN", rootId, organId: context.organId };
+      commands.push(
+        { ...base, kind: "effect", effect: "chain", from: point2(from), to: point2(next), radius: 12, duration: 0.35 },
+        { ...base, kind: "damage", targetId: next.id, amount: config.damage, cause: "protocol", hop },
+        { kind: "log", type: "PROTOCOL_CHAIN_HIT", data: { protocolId: "PURIFY_CHAIN", rootId, targetId: next.id, hop, damage: config.damage } }
+      );
+      from = next;
+    }
+    if (!actual) return [];
+    if (synergy) commands.push({ kind: "log", type: "PROTOCOL_SYNERGY", data: { pair: "PULSE_BREAK+PURIFY_CHAIN", rootId, hops: actual, cap: GROWTH_BALANCE.chainCap } });
+    const accepted = this.budget(context, commands);
+    if (!accepted.length) return [];
+    this.state.chainRoots.push(rootId);
+    if (this.state.chainRoots.length > 256) this.state.chainRoots.shift();
+    this.activated("PURIFY_CHAIN");
+    this.remember("PROTOCOL_CHAIN_PLANNED", `${synergy ? "\u5171\u632F\u8054\u52A8 \xB7 " : ""}\u8FDE\u9501\u51C0\u5316\u8BA1\u5212\uFF1A\u5C1D\u8BD5 ${actual} \u8DF3\uFF1B\u5B9E\u9645\u547D\u4E2D\u53E6\u884C\u8BB0\u5F55\u3002`, context.elapsed);
+    return accepted;
+  }
+  afterInput(context) {
+    this.observeTime(context.elapsed);
+    const s = this.state;
+    if (s.ended) return [];
+    const logs = s.pendingLogs.splice(0).map((log2) => ({ kind: "log", ...log2 }));
+    if (!context.active) return logs;
+    const liveIds = new Set(context.targets.filter((target) => target.hp > 0).map((target) => target.id));
+    s.marks = s.marks.filter((mark) => mark.until > context.elapsed && (mark.organId !== context.organId || liveIds.has(mark.targetId)));
+    s.resonance = s.resonance.filter((hit) => hit.organId === context.organId && hit.cycle === (context.rhythmCycle ?? Math.floor(context.elapsed / 6)) && liveIds.has(hit.targetId));
+    if (!this.equipped("EXPOSE_TRACE")) s.marks = [];
+    if (!this.equipped("IMMUNE_BEACON") && s.beacon?.mode !== "patrol") s.beacon = null;
+    if (s.beacon && (s.beacon.until <= context.elapsed || s.beacon.organId !== context.organId)) s.beacon = null;
+    const traced = this.equipped("EXPOSE_TRACE") ? s.marks.filter((mark) => mark.organId === context.organId && mark.until > context.elapsed).map((mark) => mark.targetId) : [];
+    const advanced = advanceImmuneCells(s.cells ?? [], s.beacon, context, s.beacon?.mode === "patrol" ? [] : traced);
+    const cellCommands = this.budget(context, advanced.commands);
+    if (!advanced.commands.length || cellCommands.length) s.cells = advanced.cells;
+    if (!s.beacon) s.cells = [];
+    for (const command of cellCommands) if (command.kind === "log" && command.type === "PROTOCOL_BEACON_HIT") this.activated("IMMUNE_BEACON");
+    logs.push(...cellCommands);
+    if (s.skippedCommands) {
+      logs.push({ kind: "log", type: "PROTOCOL_BUDGET_SKIPPED", data: { tick: context.tick, skipped: s.skippedCommands, budget: GROWTH_BALANCE.commandBudget } });
+      s.skippedCommands = 0;
+    }
+    this.openNextLevel();
+    logs.push(...s.pendingLogs.splice(0).map((log2) => ({ kind: "log", ...log2 })));
+    return logs;
+  }
+};
+
+// src/game/organRules.ts
+function lungFlowDirection(flow, position) {
+  if (!flow.airwayOpen) return { x: 0, y: 0 };
+  return flow.phase === "inhale" ? normalized((flow.origin.x - position.x) * 1.6, (flow.origin.y - position.y) * 0.35) : normalized(Math.sign(position.x - flow.origin.x) * 0.55, 1);
+}
+function advanceLungFlow(flow, game) {
+  if (game.phase !== "playing" || game.battle?.organId !== "lung") return [];
+  const period = CAMPAIGN_BALANCE.inhaleDuration + CAMPAIGN_BALANCE.exhaleDuration, beat = game.elapsed % period;
+  const phase = beat < CAMPAIGN_BALANCE.inhaleDuration ? "inhale" : "exhale";
+  const commands = [];
+  if (flow.phase !== phase) commands.push({ kind: "log", type: "LUNG_PHASE_CHANGED", data: { phase, airwayOpen: flow.airwayOpen, organId: "lung" } });
+  flow.phase = phase;
+  flow.phaseRemaining = (phase === "inhale" ? CAMPAIGN_BALANCE.inhaleDuration : period) - beat;
+  flow.direction = phase === "inhale" ? { x: 0, y: -1 } : { x: 0, y: 1 };
+  if (!flow.airwayOpen) return commands;
+  for (const target of game.targets) {
+    const bounds = activeWorld(game).bounds;
+    if (target.hp <= 0 || target.role === "source" || target.role === "core" || target.x < bounds.left || target.x > bounds.right || target.y < bounds.top || target.y > bounds.bottom) continue;
+    const mass = target.traits?.includes("CARAPACE") ? 0.35 : (target.generation ?? 0) > 0 ? 1.45 : target.role === "elite" ? 0.6 : 1;
+    const direction = lungFlowDirection(flow, target);
+    commands.push({ kind: "moveActor", organId: "lung", targetId: target.id, delta: { x: direction.x * flow.strength * mass * BALANCE.step, y: direction.y * flow.strength * mass * BALANCE.step } });
+  }
+  return commands;
+}
+function toggleAirway(flow, game) {
+  if (game.phase !== "playing" || game.battle?.organId !== "lung") return [];
+  if (game.elapsed - flow.changedAt < CAMPAIGN_BALANCE.airwayCooldown) return [{ kind: "notice", text: "\u6C14\u9053\u6B63\u5728\u5207\u6362\uFF0C\u8BF7\u7A0D\u5019\u3002", seconds: 1 }];
+  flow.airwayOpen = !flow.airwayOpen;
+  flow.changedAt = game.elapsed;
+  flow.pressureUntil = game.elapsed + CAMPAIGN_BALANCE.airwayPressureDuration;
+  const cost = flow.airwayOpen ? CAMPAIGN_BALANCE.openAirwayCost : CAMPAIGN_BALANCE.closeAirwayCost, eventId = `lung-airway:${game.tick}`;
+  return [
+    { kind: "setRoute", organId: "lung", nodeId: "airway", open: flow.airwayOpen, eventId },
+    { kind: "organDamage", organId: "lung", amount: cost, reason: "airway-pressure", eventId: `${eventId}:cost` },
+    { kind: "log", type: "AIRWAY_CHANGED", data: { organId: "lung", open: flow.airwayOpen, tissueCost: cost } },
+    { kind: "notice", text: flow.airwayOpen ? `\u6C14\u9053\u5F00\u542F\uFF1A\u6062\u590D\u805A\u6563\u6C14\u6D41\u4E0E\u4F20\u64AD\uFF0C\u80BA\u90E8\u627F\u538B \u2212${cost}\u3002` : `\u6C14\u9053\u5173\u95ED\uFF1A\u622A\u65AD\u4F20\u64AD\u548C\u6C14\u6D41\uFF0C\u80BA\u90E8\u627F\u538B \u2212${cost}\uFF1B\u73A9\u5BB6\u51FA\u53E3\u4ECD\u53EF\u901A\u884C\u3002`, seconds: 5 }
+  ];
+}
+
+// src/game/campaignEncounters.ts
+var ORGAN_CRISIS_BALANCE = { hp: 68, chargeSeconds: 8, damage: 6, maximumImpacts: 3, maximumGuards: 2 };
+var ORGAN_CRISIS_POSITIONS = { heart: { x: 1570, y: 790 }, lung: { x: 1210, y: 610 } };
+var log = (type, data) => ({ kind: "log", type, data });
+var notice = (text2, seconds = 6) => ({ kind: "notice", text: text2, seconds, priority: 2 });
+function createCampaignEncounters(elapsed) {
+  return {
+    configId: "campaign-1",
+    stage: "I",
+    branch: null,
+    currentObjective: "",
+    stages: {
+      I: { enteredAt: elapsed, completedAt: null, targetId: null },
+      II: { enteredAt: null, completedAt: null, targetId: null },
+      III: { enteredAt: null, completedAt: null, targetId: null },
+      IV: { enteredAt: null, completedAt: null, targetId: null },
+      V: { enteredAt: null, completedAt: null, targetId: "mother-core" }
+    },
+    crisis: {
+      status: "locked",
+      organId: "heart",
+      sourceId: "heart-crisis-source",
+      position: { ...ORGAN_CRISIS_POSITIONS.heart },
+      armedAt: null,
+      startedAt: null,
+      clearedAt: null,
+      chargeRemaining: ORGAN_CRISIS_BALANCE.chargeSeconds,
+      nextImpactAt: null,
+      lastActiveAt: null,
+      impacts: 0,
+      guardsRequested: false,
+      blockedByAirway: false,
+      interruptions: 0,
+      lastInterruptedAt: null,
+      lastInterruptReason: null,
+      acceptedEventKeys: []
+    }
+  };
+}
+function completeStage(encounter, stage, game, commands) {
+  const record = encounter.stages[stage];
+  if (record.completedAt !== null) return;
+  record.completedAt = game.elapsed;
+  commands.push(log("CAMPAIGN_STAGE_COMPLETED", { stage, at: game.elapsed, targetId: record.targetId ?? "" }));
+}
+function enterStage(encounter, stage, game, commands) {
+  const record = encounter.stages[stage];
+  if (record.enteredAt !== null) return;
+  record.enteredAt = game.elapsed;
+  encounter.stage = stage;
+  commands.push(log("CAMPAIGN_STAGE_ENTERED", { stage, at: game.elapsed, targetId: record.targetId ?? "" }));
+}
+function viable(game) {
+  return game.phase === "playing" && game.player.hp > 0 && (game.battle?.pressure.vitality ?? 0) > 0;
+}
+function recordCampaignEncounterEvent(campaign, event, game) {
+  const encounter = campaign.encounters;
+  if (!encounter || !viable(game) || event.tick !== game.tick) return [];
+  const commands = [], crisis = encounter.crisis, data = event.data;
+  const organ3 = data.organId === "lung" ? "lung" : data.organId === "heart" ? "heart" : game.battle.organId;
+  const id = String(data.nodeId ?? data.id ?? "");
+  if (event.type === "INFECTION_SOURCE_CLEARED" && encounter.stage === "I" && organ3 === "heart" && campaign.requiredSourceIds.heart.includes(id)) {
+    encounter.stages.I.targetId = id;
+    completeStage(encounter, "I", game, commands);
+    enterStage(encounter, "II", game, commands);
+  }
+  if (event.type === "ACTOR_SPAWNED" && id === crisis.sourceId && organ3 === crisis.organId && crisis.status === "arming") {
+    const actor = campaign.arenas[organ3].targets.find((target) => target.id === id && target.hp > 0);
+    if (actor && campaign.arenas[organ3].graph.nodes.some((node) => node.id === id && node.active)) {
+      crisis.status = "charging";
+      crisis.startedAt = game.elapsed;
+      crisis.position = { x: actor.x, y: actor.y };
+      crisis.lastActiveAt = game.elapsed;
+      crisis.blockedByAirway = organ3 === "lung" && !campaign.arenas.lung.flow.airwayOpen;
+      crisis.nextImpactAt = crisis.blockedByAirway ? null : game.elapsed + crisis.chargeRemaining;
+      const tissue = campaign.arenas[organ3].tissue;
+      commands.push(
+        log("ORGAN_CRISIS_STARTED", { organId: organ3, sourceId: id, x: actor.x, y: actor.y, targetX: tissue.x, targetY: tissue.y, chargeSeconds: ORGAN_CRISIS_BALANCE.chargeSeconds, maximumImpacts: ORGAN_CRISIS_BALANCE.maximumImpacts, blockedByAirway: crisis.blockedByAirway }),
+        notice(crisis.blockedByAirway ? "\u80BA\u90E8\u4F20\u64AD\u652F\u70B9\u5DF2\u51FA\u73B0\uFF0C\u6C14\u9053\u4FDD\u6301\u5173\u95ED\uFF0C\u51B2\u51FB\u5145\u80FD\u6682\u505C\u3002\u53EF\u5148\u7528 3 \u62A2\u4FEE\uFF0C\u518D\u7528 1/2 \u51C0\u5316\u652F\u70B9\uFF1B\u91CD\u65B0\u5F00\u653E\u6C14\u9053\u540E\u5145\u80FD\u5C06\u7EE7\u7EED\u3002" : `\u4F20\u64AD\u652F\u70B9\u6B63\u5728\u84C4\u80FD\uFF1A8 \u79D2\u540E\u51B2\u51FB${organ3 === "heart" ? "\u5FC3\u810F" : "\u80BA\u90E8"}\u7EC4\u7EC7 \u22126\uFF0C\u6700\u591A\u4E09\u6B21\u30021 \u8FDC\u7A0B\u62C6\u9664\uFF1B${organ3 === "heart" ? "E \u5B9A\u5411\u51B2\u6D41\u547D\u4E2D\u652F\u70B9\u53EF\u6253\u65AD\u84C4\u80FD" : "E \u5173\u95ED\u6C14\u9053\u53EF\u622A\u65AD\u84C4\u80FD"}\u3002\u7EC4\u7EC7\u5371\u6025\u65F6\u53EF\u5148\u7528 3 \u62A2\u4FEE\u3002`, 9)
+      );
+    }
+  }
+  if (event.type === "INFECTION_SOURCE_CLEARED" && id === crisis.sourceId && organ3 === crisis.organId && !["locked", "cleared"].includes(crisis.status)) {
+    crisis.status = "cleared";
+    crisis.clearedAt = game.elapsed;
+    crisis.nextImpactAt = null;
+    crisis.lastActiveAt = null;
+    commands.push(
+      log("ORGAN_CRISIS_CLEARED", { sourceId: id, organId: organ3, impacts: crisis.impacts, interruptions: crisis.interruptions }),
+      notice("\u5371\u673A\u6E90\u5DF2\u51C0\u5316\uFF0C\u7EC4\u7EC7\u51B2\u51FB\u5DF2\u505C\u6B62\u3002\u7EE7\u7EED\u6E05\u7406\u4E3B\u8981\u611F\u67D3\u4E0E\u7CBE\u82F1\uFF0C\u51C6\u5907\u5B9A\u4F4D\u6BCD\u5DE2\u3002", 5)
+    );
+    completeStage(encounter, "IV", game, commands);
+    enterStage(encounter, "V", game, commands);
+  }
+  if (event.type === "RETEST_COMPLETED" && encounter.stage === "V" && campaign.core.status === "cleared") completeStage(encounter, "V", game, commands);
+  if (crisis.status !== "charging" || game.battle.organId !== crisis.organId || organ3 !== crisis.organId) return commands;
+  let reason = null;
+  if (event.type === "PULSE_TRIGGERED" && organ3 === "heart") {
+    const origin = game.battle.pulse.origin, toward = normalized(crisis.position.x - origin.x, crisis.position.y - origin.y), length = distance(origin, crisis.position);
+    const direction = typeof data.direction === "number" ? data.direction : game.battle.pulse.direction;
+    const range = typeof data.range === "number" ? data.range : BATTLE_BALANCE.pulseRange;
+    const halfAngle = typeof data.halfAngle === "number" ? data.halfAngle : BATTLE_BALANCE.pulseHalfAngle;
+    const block = wallHit(origin, toward, length, campaign.arenas.heart.geometry);
+    if (length <= range + 34 && (length <= 34 || toward.x * Math.cos(direction) + toward.y * Math.sin(direction) >= Math.cos(halfAngle)) && (block === null || block >= length - 34)) reason = "pulse";
+  } else if (event.type === "AIRWAY_CHANGED" && organ3 === "lung") {
+    crisis.blockedByAirway = !campaign.arenas.lung.flow.airwayOpen;
+    if (data.open === false && crisis.blockedByAirway) reason = "airway";
+    else if (data.open === true && !crisis.blockedByAirway) {
+      crisis.lastActiveAt = game.elapsed;
+      crisis.nextImpactAt = game.elapsed + crisis.chargeRemaining;
+    }
+  }
+  const key = `${event.type}:${event.tick}`;
+  if (reason && !crisis.acceptedEventKeys.includes(key)) {
+    crisis.acceptedEventKeys.push(key);
+    if (crisis.acceptedEventKeys.length > 16) crisis.acceptedEventKeys.shift();
+    crisis.interruptions++;
+    crisis.lastInterruptedAt = game.elapsed;
+    crisis.lastInterruptReason = reason;
+    crisis.chargeRemaining = ORGAN_CRISIS_BALANCE.chargeSeconds;
+    crisis.lastActiveAt = game.elapsed;
+    crisis.nextImpactAt = crisis.blockedByAirway ? null : game.elapsed + crisis.chargeRemaining;
+    commands.push(
+      log("ORGAN_CRISIS_INTERRUPTED", { sourceId: crisis.sourceId, organId: organ3, reason, interruptions: crisis.interruptions, chargeSeconds: crisis.chargeRemaining }),
+      notice(reason === "pulse" ? "\u51B2\u6D41\u5DF2\u6253\u65AD\u652F\u70B9\u84C4\u80FD\uFF0C\u83B7\u5F97\u5B8C\u6574 8 \u79D2\u62C6\u9664\u7A97\u53E3\uFF1B\u652F\u70B9\u4ECD\u9700\u771F\u5B9E\u51C0\u5316\u3002" : "\u6C14\u9053\u5DF2\u622A\u65AD\u652F\u70B9\u84C4\u80FD\u3002\u4FDD\u6301\u5173\u95ED\u53EF\u5148\u62A2\u4FEE\uFF0C\u968F\u540E\u7528 1/2 \u62C6\u9664\u652F\u70B9\u3002")
+    );
+  }
+  return commands;
+}
+function advanceCampaignEncounters(campaign, game) {
+  const encounter = campaign.encounters;
+  if (!encounter || !viable(game)) return [];
+  const commands = [], first = game.battle.encounter?.firstCounter, crisis = encounter.crisis;
+  if (encounter.stage === "II") {
+    encounter.stages.II.targetId = first?.targetId ?? null;
+    if (first?.status === "resolved" && first.targetId && campaign.clearedEliteIds.includes(`heart:${first.targetId}`)) {
+      encounter.stages.III.targetId = campaign.migration.id;
+      completeStage(encounter, "II", game, commands);
+      enterStage(encounter, "III", game, commands);
+    }
+  }
+  if (encounter.stage === "III" && campaign.migration.status === "resolved" && campaign.migration.choice !== null) {
+    encounter.branch = campaign.migration.choice;
+    completeStage(encounter, "III", game, commands);
+    enterStage(encounter, "IV", game, commands);
+    crisis.status = "arming";
+    crisis.organId = campaign.core.organId;
+    crisis.sourceId = `${crisis.organId}-crisis-source`;
+    crisis.position = { ...ORGAN_CRISIS_POSITIONS[crisis.organId] };
+    crisis.armedAt = game.elapsed;
+    encounter.stages.IV.targetId = crisis.sourceId;
+    if (!campaign.requiredSourceIds[crisis.organId].includes(crisis.sourceId)) campaign.requiredSourceIds[crisis.organId].push(crisis.sourceId);
+    commands.push(log("ORGAN_CRISIS_ARMED", { sourceId: crisis.sourceId, organId: crisis.organId, branch: encounter.branch, x: crisis.position.x, y: crisis.position.y }));
+  }
+  if (crisis.status === "arming" && crisis.organId === game.battle.organId) {
+    const eventId = `crisis-source:${campaign.seed}:${crisis.organId}`;
+    if (!campaign.transactionIds.includes(eventId)) {
+      campaign.transactionIds.push(eventId);
+      commands.push({
+        kind: "spawnSource",
+        organId: crisis.organId,
+        id: crisis.sourceId,
+        position: { ...crisis.position },
+        hp: ORGAN_CRISIS_BALANCE.hp,
+        connectTo: "tissue",
+        disableSpawn: true,
+        spreadEnabled: false,
+        eventId
+      });
+    }
+  }
+  if (crisis.status !== "charging") return commands;
+  if (game.battle.organId !== crisis.organId) {
+    crisis.lastActiveAt = null;
+    crisis.nextImpactAt = null;
+    return commands;
+  }
+  const actor = campaign.arenas[crisis.organId].targets.find((target) => target.id === crisis.sourceId && target.hp > 0);
+  if (!actor) {
+    crisis.lastActiveAt = game.elapsed;
+    crisis.nextImpactAt = null;
+    return commands;
+  }
+  const delta = crisis.lastActiveAt === null ? 0 : Math.max(0, game.elapsed - crisis.lastActiveAt);
+  crisis.lastActiveAt = game.elapsed;
+  crisis.blockedByAirway = crisis.organId === "lung" && !campaign.arenas.lung.flow.airwayOpen;
+  if (crisis.blockedByAirway) {
+    crisis.nextImpactAt = null;
+    return commands;
+  }
+  crisis.chargeRemaining = Math.max(0, crisis.chargeRemaining - delta);
+  crisis.nextImpactAt = game.elapsed + crisis.chargeRemaining;
+  if (crisis.chargeRemaining > 1e-9) return commands;
+  crisis.impacts++;
+  const impactId = `crisis-impact:${campaign.seed}:${crisis.organId}:${crisis.impacts}`;
+  commands.push(
+    { kind: "organDamage", organId: crisis.organId, amount: ORGAN_CRISIS_BALANCE.damage, reason: "organ-crisis-impact", eventId: impactId },
+    log("ORGAN_CRISIS_IMPACT", { sourceId: crisis.sourceId, organId: crisis.organId, impact: crisis.impacts, amount: ORGAN_CRISIS_BALANCE.damage, eventId: impactId })
+  );
+  if (!crisis.guardsRequested) {
+    crisis.guardsRequested = true;
+    const arena = campaign.arenas[crisis.organId], slots = Math.max(0, BATTLE_BALANCE.maxActors - arena.targets.filter((target) => target.hp > 0).length);
+    for (let index = 0; index < Math.min(ORGAN_CRISIS_BALANCE.maximumGuards, slots); index++) {
+      const position = moveWithCollision(crisis.position, { x: index ? 85 : -85, y: 62 }, 22, arena.geometry);
+      const guard = {
+        ...position,
+        id: `${crisis.sourceId}:guard:${index}`,
+        kind: "single",
+        role: "virus",
+        radius: 22,
+        hp: 68,
+        maxHp: 68,
+        traits: [],
+        generation: 0,
+        sourceId: crisis.sourceId,
+        born: game.elapsed,
+        facing: 0,
+        hitUntil: 0,
+        scanned: false,
+        attackReady: game.elapsed + 1.5
+      };
+      commands.push({ kind: "spawnActor", organId: crisis.organId, target: guard, eventId: `${impactId}:guard:${index}` });
+    }
+  }
+  if (crisis.impacts >= ORGAN_CRISIS_BALANCE.maximumImpacts) {
+    crisis.status = "exhausted";
+    crisis.nextImpactAt = null;
+    crisis.lastActiveAt = null;
+  } else {
+    crisis.chargeRemaining = ORGAN_CRISIS_BALANCE.chargeSeconds;
+    crisis.nextImpactAt = game.elapsed + crisis.chargeRemaining;
+  }
+  return commands;
+}
+function campaignEncounterObjective(campaign, game) {
+  const encounter = campaign.encounters, crisis = encounter.crisis, organ3 = crisis.organId === "heart" ? "\u5FC3\u810F" : "\u80BA\u90E8";
+  if (encounter.stage === "I") return "Q \u8BCA\u65AD\u611F\u67D3\uFF0C1 \u7CBE\u786E\u51C0\u5316\u9996\u4E2A\u611F\u67D3\u6E90\uFF1B\u7EC4\u7EC7\u53D7\u635F\u65F6\u7528 3 \u4FEE\u590D\u3002\u9996\u6B21\u6E05\u6E90\u540E\u8FDB\u5165\u771F\u5B9E\u53D8\u5F02\u53CD\u5236\u3002";
+  if (encounter.stage === "II") return game.battle.encounter?.firstCounter.status === "active" ? "\u6E05\u9664\u9996\u6B21\u53D8\u5F02\u7CBE\u82F1\uFF1B\u8BFB\u53D6\u5176\u7279\u6027\u4EE3\u4EF7\uFF0C\u7528\u57FA\u7840\u5DE5\u5177\u6216\u5668\u5B98\u73AF\u5883\u5B8C\u6210\u53CD\u5236\u3002" : "\u4FDD\u6301\u8BCA\u65AD\u4E0E\u7EC4\u7EC7\u4FEE\u590D\uFF0C\u89C2\u5BDF\u9996\u6B21\u53D8\u5F02\u9884\u8B66\uFF1B\u5FC5\u987B\u6E05\u9664\u8BE5\u6B21\u7CBE\u82F1\u624D\u80FD\u63A8\u8FDB\u3002";
+  if (encounter.stage === "III") return campaign.migration.status === "pursuing" ? "\u8FC1\u79FB\u8FFD\u51FB\uFF1A\u80BA\u90E8\u6E05\u9664\u8FC1\u79FB\u5C0F\u4F53\u6216\u5173\u95ED\u6C14\u9053\u622A\u6D41\uFF1B\u8FD9\u6B21\u6289\u62E9\u7684\u7ED3\u679C\u51B3\u5B9A\u540E\u7EED\u5371\u673A\u6240\u5728\u5668\u5B98\u3002" : ["warning", "blocking"].includes(campaign.migration.status) ? "12 \u79D2\u8FC1\u79FB\u6289\u62E9\uFF1A\u51FA\u53E3 E \u8FFD\u51FB\uFF1B\u9694\u79BB\u95F8 E \u505C\u7559 2 \u79D2\u5C01\u9501\uFF1B\u653E\u4EFB\u4F1A\u5728\u80BA\u90E8\u7ACB\u6E90\u3002" : "\u8BCA\u65AD\u7B2C\u4E8C\u6B21\u53D8\u5F02\u9884\u8B66\u5E76\u4FDD\u62A4\u7EC4\u7EC7\uFF0C\u51C6\u5907\u8DE8\u5668\u5B98\u8FC1\u79FB\u6289\u62E9\u3002";
+  if (encounter.stage === "IV") {
+    if (game.battle.organId !== crisis.organId) return `\u524D\u5F80${organ3}\u5904\u7406\u4F20\u64AD\u652F\u70B9\uFF1B\u672A\u8FDB\u5165\u65F6\u84C4\u80FD\u51BB\u7ED3\u3002\u53EF\u5148\u4FEE\u590D\u5F53\u524D\u5668\u5B98\uFF0C\u518D\u4ECE\u51FA\u53E3 E \u524D\u5F80\u3002`;
+    if (crisis.status === "arming") return `${organ3}\u4F20\u64AD\u652F\u70B9\u6B63\u5728\u51FA\u73B0\uFF1A\u51C6\u5907 1 \u8FDC\u7A0B\u51C0\u5316\uFF0C\u6216\u5148\u7528 3 \u62A2\u4FEE\u7EC4\u7EC7\u3002`;
+    if (crisis.status === "exhausted") return "\u652F\u70B9\u5DF2\u8017\u5C3D\u4E09\u6B21\u51B2\u51FB\uFF0C\u4ECD\u9700\u6E05\u9664\u624D\u80FD\u5B9A\u4F4D\u6BCD\u5DE2\u3002\u53EF\u5148\u4FEE\u590D\uFF0C\u518D\u7528 1/2 \u51C0\u5316\uFF1B\u534F\u8BAE\u53EF\u534F\u52A9\u56F4\u730E\u3002";
+    return `${organ3}\u4F20\u64AD\u652F\u70B9 \u2192 \u7EC4\u7EC7\uFF1A${crisis.blockedByAirway ? "\u6C14\u9053\u622A\u6D41\uFF0C\u84C4\u80FD\u6682\u505C" : `${Math.max(0, crisis.chargeRemaining).toFixed(1)} \u79D2\u540E \u22126`}\uFF08${crisis.impacts}/3\uFF09\u30021 \u8FDC\u7A0B\u62C6\u9664\uFF1B${crisis.organId === "heart" ? "E \u51B2\u6D41\u5BF9\u51C6\u652F\u70B9\u6253\u65AD" : "E \u5173\u95ED\u6C14\u9053\u622A\u6D41"}\uFF0C3 \u53EF\u5148\u62A2\u4FEE\u3002`;
+  }
+  return campaign.core.status === "cleared" ? "\u6BCD\u5DE2\u5DF2\u51C0\u5316\u3002\u5C06\u6240\u6709\u6FC0\u6D3B\u5668\u5B98\u6062\u590D\u81F3 \u226550%\u3001\u611F\u67D3\u964D\u81F3 <35%\uFF0C\u518D\u5230\u590D\u6D4B\u7EC8\u7AEF\u4E3B\u52A8\u6309 E\u3002" : campaign.core.status === "active" ? "\u6E05\u9664\u672C\u5C40\u53CC\u7279\u6027\u6BCD\u5DE2\uFF0C\u89C2\u5BDF\u4EA4\u66FF\u7279\u6027\u4E0E\u524D\u6447\uFF1B\u5668\u5B98\u73AF\u5883\u548C\u57FA\u7840\u5DE5\u5177\u4ECD\u53EF\u7834\u89E3\u3002" : campaign.core.status === "ready" ? `\u524D\u5F80${campaign.core.organId === "heart" ? "\u5FC3\u810F" : "\u80BA\u90E8"}\u590D\u6D4B\u53F0\u6309 E\uFF0C\u542F\u52A8\u53CC\u7279\u6027\u6BCD\u5DE2\u8BCA\u65AD\u3002` : `\u6E05\u9664\u5176\u4F59\u4E3B\u8981\u611F\u67D3\u6E90 ${campaign.progress.sourceClears}/${campaign.progress.sourceTotal}\u3001\u53D8\u5F02\u7CBE\u82F1 ${campaign.progress.eliteClears}/2\uFF0C\u5B9A\u4F4D\u53CC\u7279\u6027\u6BCD\u5DE2\u3002`;
+}
+
+// src/game/campaign.ts
+var point3 = (value) => ({ x: value.x, y: value.y });
+var sourceKey = (organ3, id) => `${organ3}:${id}`;
+var findExit = (arena) => arena.graph.nodes.find((node) => node.kind === "exit");
+var CampaignDirector = class {
+  state;
+  constructor(seed, game) {
+    if (!game.battle) throw new Error("A campaign requires an initialized shared battle");
+    const heart = createOrganArena("heart", seed);
+    heart.targets = game.targets;
+    heart.tissue = game.tissue;
+    heart.terminal = game.terminal;
+    heart.graph = game.battle.graph;
+    heart.pulse = game.battle.pulse;
+    heart.nextSpawnAt = game.battle.nextSpawnAt;
+    heart.gateChangedAt = game.battle.gateChangedAt;
+    heart.organLowSince = game.battle.organLowSince;
+    if (!findExit(heart)) heart.graph.nodes.push({ id: "exit", kind: "exit", ...getOrganDefinition("heart").exit, active: false, infected: false });
+    else findExit(heart).active = false;
+    const lung = createOrganArena("lung", seed);
+    this.state = {
+      seed: seed >>> 0,
+      activeOrganId: "heart",
+      arenas: { heart, lung },
+      phase: "contain",
+      travelReadyAt: 0,
+      migration: { id: `migration:${seed >>> 0}:1`, status: "locked", from: "heart", to: "lung", warnedAt: 0, deadline: 0, choice: null, resolvedAt: null, blockStartedAt: null, carrierIds: [], clearedCarrierIds: [], interceptUntil: null, interceptSucceeded: null, interceptResolvedAt: null },
+      core: { status: "locked", organId: "heart", actorId: "mother-core", traits: [], clearedAt: null },
+      requiredSourceIds: { heart: heart.graph.nodes.filter((node) => node.kind === "source").map((node) => node.id), lung: lung.graph.nodes.filter((node) => node.kind === "source").map((node) => node.id) },
+      clearedSourceIds: [],
+      clearedEliteIds: [],
+      transactionIds: [],
+      pendingCommands: [],
+      history: [],
+      progress: { sourceClears: 0, sourceTotal: 2, eliteClears: 0, coreCleared: false, organConditions: true, infectionCondition: game.battle.pressure.infection < 35 },
+      stats: { travels: 0, airwayUses: 0, backgroundDamage: 0, migrationChoice: null }
+    };
+    if (game.battle.encounter?.configId === "campaign-1") {
+      this.state.encounters = createCampaignEncounters(game.elapsed);
+      this.state.encounters.currentObjective = campaignEncounterObjective(this.state, game);
+      this.state.pendingCommands.push(this.log("CAMPAIGN_STAGE_ENTERED", { stage: "I", at: game.elapsed, targetId: "" }));
+    }
+    game.world = heart.geometry;
+    game.battle.organId = "heart";
+  }
+  notice(text2, game, seconds = 5, priority = 1) {
+    this.state.history.push({ at: game.elapsed, text: text2 });
+    if (this.state.history.length > 128) this.state.history.shift();
+    return { kind: "notice", text: text2, seconds, priority };
+  }
+  log(type, data) {
+    return { kind: "log", type, data };
+  }
+  /** Refreshes array references after shared corpse filtering; it never clones or respawns a world. */
+  captureCurrent(game) {
+    const battle = game.battle;
+    if (!battle) return;
+    const arena = this.state.arenas[battle.organId];
+    arena.targets = game.targets;
+    arena.tissue = game.tissue;
+    arena.terminal = game.terminal;
+    arena.graph = battle.graph;
+    arena.pulse = battle.pulse;
+    arena.nextSpawnAt = battle.nextSpawnAt;
+    arena.gateChangedAt = battle.gateChangedAt;
+    arena.organLowSince = battle.organLowSince;
+    arena.geometry = activeWorld(game);
+    this.state.activeOrganId = battle.organId;
+  }
+  recordEvent(event, game) {
+    if (!game.battle) return;
+    if (event.type === "RUN_ENDED") {
+      this.state.pendingCommands = [];
+      return;
+    }
+    const data = event.data, organ3 = data.organId === "lung" ? "lung" : data.organId === "heart" ? "heart" : game.battle.organId;
+    if (event.type === "TARGET_CLEARED" && this.state.migration.carrierIds.includes(String(data.id)) && !this.state.migration.clearedCarrierIds.includes(String(data.id))) this.state.migration.clearedCarrierIds.push(String(data.id));
+    if (event.type === "INFECTION_SOURCE_CLEARED") {
+      const id = String(data.nodeId ?? data.id ?? "");
+      const key = sourceKey(organ3, id);
+      if (id && !this.state.clearedSourceIds.includes(key)) this.state.clearedSourceIds.push(key);
+    } else if (event.type === "ELITE_CLEARED") {
+      const id = String(data.id ?? "");
+      const key = sourceKey(organ3, id);
+      if (id && !this.state.clearedEliteIds.includes(key)) this.state.clearedEliteIds.push(key);
+    } else if (event.type === "TARGET_CLEARED" && data.id === this.state.core.actorId || event.type === "CORE_CLEARED" && (data.coreId === this.state.core.actorId || data.actorId === this.state.core.actorId)) {
+      if (this.state.core.status === "cleared") return;
+      this.state.core.status = "cleared";
+      this.state.core.clearedAt = game.elapsed;
+      this.state.phase = "retest";
+      this.state.pendingCommands.push(this.log("CAMPAIGN_CORE_CLEARED", { coreId: this.state.core.actorId, organId: organ3 }), this.notice("\u6BCD\u5DE2\u5DF2\u51C0\u5316\u3002\u68C0\u67E5\u6240\u6709\u6FC0\u6D3B\u5668\u5B98 \u226550%\u3001\u611F\u67D3 <35\uFF0C\u518D\u5230\u590D\u6D4B\u7EC8\u7AEF\u6309 E\u3002", game, 7));
+    }
+    this.state.pendingCommands.push(...recordCampaignEncounterEvent(this.state, event, game));
+  }
+  beforeInput(game) {
+    if (game.phase !== "playing" || game.battle?.organId !== "lung") return [];
+    const flow = this.state.arenas.lung.flow;
+    const commands = advanceLungFlow(flow, game);
+    game.battle.pulse.phase = flow.phase === "inhale" ? "charge" : "surge";
+    game.battle.pulse.phaseRemaining = flow.phaseRemaining;
+    game.battle.pulse.cycleIndex = Math.floor(game.elapsed / (CAMPAIGN_BALANCE.inhaleDuration + CAMPAIGN_BALANCE.exhaleDuration));
+    return commands;
+  }
+  isMigratingActor(id) {
+    return this.state.migration.status === "pursuing" && this.state.migration.carrierIds.includes(id);
+  }
+  reserveSource(organId, id, position, eventId) {
+    if (!this.state.requiredSourceIds[organId].includes(id)) this.state.requiredSourceIds[organId].push(id);
+    return { kind: "spawnSource", organId, id, position: point3(position), hp: CAMPAIGN_BALANCE.migratedSourceHp, connectTo: organId === "heart" ? "valve" : "airway", eventId };
+  }
+  planTravel(to, game, eventId) {
+    const from = game.battle.organId;
+    if (from === to) return [];
+    if (game.elapsed + 1e-9 < this.state.travelReadyAt) return [this.notice(`\u5668\u5B98\u901A\u884C\u51B7\u5374\u8FD8\u9700 ${(this.state.travelReadyAt - game.elapsed).toFixed(1)} \u79D2\u3002`, game, 2)];
+    this.state.travelReadyAt = game.elapsed + CAMPAIGN_BALANCE.travelCooldown;
+    return [{ kind: "travel", from, to, entry: point3(getOrganDefinition(to).entry), eventId }];
+  }
+  resolveChoice(choice, game) {
+    const migration = this.state.migration;
+    if (migration.choice !== null) return [];
+    migration.choice = choice;
+    migration.resolvedAt = game.elapsed;
+    migration.blockStartedAt = null;
+    this.state.stats.migrationChoice = choice;
+    this.state.phase = "counterattack";
+    const commands = [this.log("MIGRATION_DECIDED", { eventId: migration.id, choice, from: "heart", to: "lung", at: game.elapsed })];
+    if (choice === "block") {
+      migration.status = "resolved";
+      migration.interceptSucceeded = true;
+      migration.interceptResolvedAt = game.elapsed;
+      this.state.core.organId = "heart";
+      commands.push(
+        { kind: "setRoute", organId: "heart", nodeId: "gate", open: false, eventId: `${migration.id}:block-route` },
+        this.reserveSource("heart", "heart-retained-source", getOrganDefinition("heart").retainedSource, `${migration.id}:retained-source`),
+        { kind: "organDamage", organId: "heart", amount: CAMPAIGN_BALANCE.blockOrganCost, reason: "migration-block-pressure", eventId: `${migration.id}:block-cost` },
+        { kind: "infectionDelta", amount: CAMPAIGN_BALANCE.blockInfection, reason: "migration-retained", eventId: `${migration.id}:retained-load` },
+        this.notice("\u8FC1\u79FB\u5DF2\u5C01\u9501\uFF1A\u80BA\u90E8\u672A\u88AB\u6FC0\u6D3B\u3002\u5FC3\u810F\u7EC4\u7EC7\u627F\u538B \u22124\uFF0C\u5E76\u9762\u4E34\u6EDE\u7559\u611F\u67D3\u6E90\u98CE\u9669\uFF1B\u53D1\u73B0\u65B0\u6E90\u540E\u53CA\u65F6\u6E05\u9664\uFF0C\u518D\u8FCE\u6218\u6BCD\u5DE2\u3002", game, 8)
+      );
+    } else {
+      const lung = this.state.arenas.lung;
+      if (!lung.activated) lung.lastPressureAt = game.elapsed;
+      lung.activated = true;
+      lung.nextBackgroundAt = game.elapsed + Math.max(0, lung.nextBackgroundElapsed - lung.offscreenElapsed);
+      lung.departedAt = game.elapsed;
+      this.state.core.organId = "lung";
+      if (choice === "ignore") {
+        migration.status = "resolved";
+        migration.interceptSucceeded = false;
+        migration.interceptResolvedAt = game.elapsed;
+        commands.push(
+          this.reserveSource("lung", "lung-migrated-source", getOrganDefinition("lung").migratedSource, `${migration.id}:migrated-source`),
+          { kind: "organDamage", organId: "lung", amount: CAMPAIGN_BALANCE.ignoreOrganCost, reason: "migration-established", eventId: `${migration.id}:ignore-cost` },
+          { kind: "infectionDelta", amount: CAMPAIGN_BALANCE.ignoreInfection, reason: "migration-established", eventId: `${migration.id}:ignore-load` },
+          this.notice("\u5DF2\u653E\u4EFB\u8FC1\u79FB\uFF1A\u80BA\u90E8\u5B8C\u6574\u5EA6 \u221210\uFF0C\u611F\u67D3 +8\uFF0C\u5E76\u9762\u4E34\u65B0\u589E\u611F\u67D3\u6E90\u98CE\u9669\u3002\u51FA\u53E3\u4FDD\u6301\u5F00\u653E\uFF0C\u53CA\u65F6\u524D\u5F80\u6551\u63F4\u4ECD\u53EF\u633D\u56DE\u3002", game, 8)
+        );
+      } else {
+        migration.status = "pursuing";
+        migration.interceptUntil = game.elapsed + CAMPAIGN_BALANCE.interceptDuration;
+        migration.carrierIds = Array.from({ length: 3 }, (_, index) => `migration-carrier-${index}`);
+        const positions = getOrganDefinition("lung").carrierStarts;
+        for (let index = 0; index < 3; index++) {
+          const position = moveWithCollision(positions[index], { x: 0, y: 0 }, 18, lung.geometry);
+          const target = {
+            ...point3(position),
+            id: migration.carrierIds[index],
+            kind: "single",
+            role: "virus",
+            radius: 18,
+            hp: CAMPAIGN_BALANCE.carrierHp,
+            maxHp: CAMPAIGN_BALANCE.carrierHp,
+            hitUntil: 0,
+            scanned: false,
+            traits: [...game.battle.traits.slice(-1)],
+            facing: 0,
+            born: game.elapsed,
+            generation: 1,
+            sourceId: "migration",
+            attackReady: game.elapsed + CAMPAIGN_BALANCE.interceptDuration + 1
+          };
+          commands.push({ kind: "spawnActor", organId: "lung", target, eventId: `${migration.id}:carrier:${index}` });
+        }
+        commands.push(...this.planTravel("lung", game, `${migration.id}:pursue-travel`), this.notice("\u8FFD\u51FB\u8FDB\u5165\u80BA\u90E8\uFF1A12 \u79D2\u5185\u6E05\u9664 3 \u4E2A\u8FC1\u79FB\u5C0F\u4F53\u53EF\u963B\u6B62\u65B0\u6E90\u3002\u6C14\u6D41\u4F1A\u6539\u53D8\u5B83\u4EEC\u7684\u4F4D\u7F6E\uFF1B\u5FC3\u810F\u6B8B\u7559\u98CE\u9669\u7EE7\u7EED\u4F4E\u9891\u7ED3\u7B97\u3002", game, 8));
+      }
+    }
+    return commands;
+  }
+  chooseMigration(choice, eventId, game) {
+    const migration = this.state.migration;
+    if (game.phase !== "playing" || eventId !== migration.id || migration.choice !== null || !["warning", "blocking"].includes(migration.status)) return [];
+    if (choice === "ignore") return this.resolveChoice("ignore", game);
+    if (game.elapsed > migration.deadline + 1e-9) return [];
+    if (choice === "pursue") {
+      const exit = findExit(this.state.arenas.heart);
+      if (game.battle.organId !== "heart" || !exit?.active || distance(game.player, exit) > BALANCE.interactionRange) return [];
+      return this.resolveChoice("pursue", game);
+    }
+    const gate = this.state.arenas.heart.graph.nodes.find((node) => node.id === "gate");
+    if (game.battle.organId !== "heart" || !gate || distance(game.player, gate) > BALANCE.interactionRange) return [];
+    if (migration.status === "blocking") return [];
+    if (game.elapsed + CAMPAIGN_BALANCE.blockDuration > migration.deadline + 1e-9) return [this.notice("\u5C01\u9501\u9700\u8981 2 \u79D2\uFF0C\u5F53\u524D\u65F6\u95F4\u4E0D\u8DB3\uFF1B\u53EF\u4EE5\u8FFD\u51FB\u6216\u51C6\u5907\u80BA\u90E8\u6551\u63F4\u3002", game, 3)];
+    migration.status = "blocking";
+    migration.blockStartedAt = game.elapsed;
+    return [this.log("MIGRATION_BLOCK_STARTED", { eventId: migration.id, completeAt: game.elapsed + CAMPAIGN_BALANCE.blockDuration }), this.notice("\u4FDD\u6301\u5728\u9694\u79BB\u95F8\u9644\u8FD1 2 \u79D2\u5B8C\u6210\u5C01\u9501\u3002\u79BB\u5F00\u8303\u56F4\u4F1A\u53D6\u6D88\uFF1B\u6218\u6597\u4ECD\u5728\u8FDB\u884C\u3002", game, 3)];
+  }
+  interact(node, game) {
+    if (game.phase !== "playing" || !game.battle) return { handled: true, commands: [] };
+    if (distance(game.player, node) > BALANCE.interactionRange) return { handled: true, commands: [this.notice("\u8BF7\u9760\u8FD1\u5668\u5B98\u88C5\u7F6E\u518D\u6309 E\u3002", game, 2)] };
+    const migration = this.state.migration;
+    if (node.kind === "retest") {
+      if (this.state.core.status === "ready") {
+        if (game.battle.organId !== this.state.core.organId) return { handled: true, commands: [this.notice(`\u6BCD\u5DE2\u4F4D\u4E8E${this.state.core.organId === "lung" ? "\u80BA\u90E8" : "\u5FC3\u810F"}\uFF0C\u524D\u5F80\u8BE5\u5668\u5B98\u7684\u590D\u6D4B\u53F0\u542F\u52A8\u6700\u7EC8\u8BCA\u65AD\u3002`, game, 5)] };
+        this.state.core.status = "active";
+        this.state.phase = "core";
+        this.state.core.traits = [...game.battle.traits.slice(0, 2)];
+        return { handled: true, commands: [
+          { kind: "spawnCore", organId: this.state.core.organId, coreId: this.state.core.actorId, position: point3(getOrganDefinition(this.state.core.organId).corePosition), traits: [...this.state.core.traits], eventId: `core-spawn:${this.state.seed}` },
+          this.log("CORE_AWAKEN_REQUESTED", { coreId: this.state.core.actorId, organId: this.state.core.organId, traits: this.state.core.traits.join("+") }),
+          this.notice("\u6BCD\u5DE2\u88AB\u5524\u9192\uFF1A\u5B83\u5C06\u4EA4\u66FF\u4F7F\u7528\u672C\u5C40\u4E24\u79CD\u7279\u6027\u3002\u8BFB\u6E05\u524D\u6447\uFF0C\u5229\u7528\u57FA\u7840\u5F31\u70B9\u4E0E\u5668\u5B98\u73AF\u5883\u3002", game, 7)
+        ] };
+      }
+      if (this.canRetest(game)) return { handled: true, commands: [{ kind: "retest", success: true, reason: "\u6BCD\u5DE2\u5DF2\u6E05\u9664\uFF0C\u6240\u6709\u6FC0\u6D3B\u5668\u5B98\u5B8C\u6574\u5EA6 \u226550%\uFF0C\u611F\u67D3\u8D1F\u8377 <35%\uFF0C\u4E3B\u52A8\u590D\u6D4B\u901A\u8FC7\u3002" }] };
+      return { handled: true, commands: [this.notice(`\u590D\u6D4B\u672A\u901A\u8FC7\uFF1A${this.retestReasons(game).join("\uFF1B")}\u3002`, game, 6)] };
+    }
+    if (node.kind === "exit") {
+      if (!node.active || migration.status === "locked") return { handled: true, commands: [this.notice("\u5668\u5B98\u51FA\u53E3\u5C06\u5728\u7B2C\u4E8C\u6B21\u53D8\u5F02\u540E\u5F00\u653E\u3002\u5148\u5904\u7406\u611F\u67D3\u6E90\u4E0E\u8FDB\u5316\u7CBE\u82F1\u3002", game, 4)] };
+      if (game.battle.organId === "heart" && migration.choice === null) return { handled: true, commands: this.chooseMigration("pursue", migration.id, game) };
+      return { handled: true, commands: this.planTravel(game.battle.organId === "heart" ? "lung" : "heart", game, `travel:${this.state.seed}:${game.tick}`) };
+    }
+    if (game.battle.organId === "heart" && node.id === "gate" && migration.choice === null && ["warning", "blocking"].includes(migration.status)) return { handled: true, commands: this.chooseMigration("block", migration.id, game) };
+    if (game.battle.organId === "heart" && node.id === "gate" && migration.choice === "block") return { handled: true, commands: [this.notice("\u8FC1\u79FB\u5C01\u9501\u5DF2\u5B8C\u6210\uFF0C\u9694\u79BB\u95F8\u7EF4\u6301\u5173\u95ED\uFF1B\u5668\u5B98\u65C5\u884C\u51FA\u53E3\u4ECD\u53EF\u901A\u884C\u3002", game, 3)] };
+    if (game.battle.organId === "lung" && (node.id === "airway" || node.kind === "valve" || node.kind === "gate")) {
+      const commands = toggleAirway(this.state.arenas.lung.flow, game);
+      if (commands.some((command) => command.kind === "setRoute")) this.state.stats.airwayUses++;
+      return { handled: true, commands };
+    }
+    return { handled: false, commands: [] };
+  }
+  /** Called by the host only after same-tick damage/failure checks accept the travel intent. */
+  applyTravel(command, game) {
+    if (game.phase !== "playing" || !game.battle || game.battle.organId !== command.from || game.player.hp <= 0 || game.battle.pressure.vitality <= 0) return false;
+    const key = `applied:${command.eventId}`;
+    if (this.state.transactionIds.includes(key)) return false;
+    this.accrueOffscreen(game.elapsed, command.from);
+    this.captureCurrent(game);
+    const previous = this.state.arenas[command.from];
+    previous.departedAt = game.elapsed;
+    previous.nextBackgroundAt = game.elapsed + Math.max(0, previous.nextBackgroundElapsed - previous.offscreenElapsed);
+    previous.backgroundLoss = 0;
+    const arena = this.state.arenas[command.to], wasActivated = arena.activated, departedAt = arena.departedAt;
+    arena.activated = true;
+    arena.departedAt = null;
+    for (const target of arena.targets) {
+      if (target.hp > 0) {
+        target.attackAt = void 0;
+        target.attackAim = void 0;
+        target.attackTarget = void 0;
+        target.attackReady = Math.max(target.attackReady ?? 0, game.elapsed + CAMPAIGN_BALANCE.returnAttackGrace);
+      }
+      if (target.splitAt !== void 0 && departedAt !== null) {
+        target.splitAt = game.elapsed + Math.max(0.3, target.splitAt - departedAt);
+        target.deadAt = game.elapsed;
+      }
+      if (!wasActivated && target.role === "virus" && !target.traits?.length) {
+        target.traits = game.battle.traits.length ? [game.battle.traits.at(-1)] : [];
+        target.kind = target.traits.includes("FISSION") ? "cluster" : "single";
+      }
+    }
+    for (const id of Object.keys(arena.nextSpawnAt)) arena.nextSpawnAt[id] = Math.max(arena.nextSpawnAt[id], game.elapsed + 0.75);
+    for (const edge of arena.graph.edges) edge.nextSpread = Math.max(edge.nextSpread, game.elapsed + 0.75);
+    game.targets = arena.targets;
+    game.tissue = arena.tissue;
+    game.terminal = arena.terminal;
+    game.world = arena.geometry;
+    game.battle.organId = command.to;
+    game.battle.graph = arena.graph;
+    game.battle.pulse = arena.pulse;
+    game.battle.nextSpawnAt = arena.nextSpawnAt;
+    game.battle.gateChangedAt = arena.gateChangedAt;
+    game.battle.organLowSince = arena.organLowSince;
+    const entry = moveWithCollision(command.entry, { x: 0, y: 0 }, game.player.radius, arena.geometry);
+    game.player.x = entry.x;
+    game.player.y = entry.y;
+    game.player.moving = false;
+    game.player.dashUntil = game.elapsed;
+    game.effects = [];
+    game.scanUntil = Math.min(game.scanUntil, game.elapsed);
+    if (game.growth) {
+      game.growth.beacon = null;
+      game.growth.cells = [];
+    }
+    this.state.activeOrganId = command.to;
+    this.state.stats.travels++;
+    this.state.transactionIds.push(key);
+    const crisis = this.state.encounters?.crisis;
+    if (crisis?.status === "charging") {
+      crisis.lastActiveAt = null;
+      crisis.nextImpactAt = null;
+    }
+    this.state.pendingCommands.push(this.log("ORGAN_TRAVELLED", { from: command.from, to: command.to, eventId: command.eventId, backgroundLoss: arena.backgroundLoss }), this.notice(`\u8FDB\u5165${command.to === "lung" ? "\u80BA\u90E8\uFF1A\u5438\u6C14\u805A\u62E2\u3001\u547C\u6C14\u5206\u6563\uFF1BE \u6C14\u9053\u4F1A\u5B9E\u9645\u622A\u6D41" : "\u5FC3\u810F\uFF1A\u5B9A\u5411\u51B2\u6D41\u53EF\u7834\u5F00\u6676\u58F3"}\u3002${arena.backgroundLoss > 0 ? `\u79BB\u573A\u635F\u4F24 ${arena.backgroundLoss.toFixed(1)}\uFF0C\u539F\u56E0\uFF1A${arena.backgroundReason}\u3002` : ""}`, game, 6));
+    return true;
+  }
+  acknowledgeCoreSpawn(coreId, accepted) {
+    if (coreId === this.state.core.actorId && this.state.core.status === "active" && !accepted) {
+      this.state.core.status = "ready";
+      this.state.phase = "core-ready";
+    }
+  }
+  updateMigration(game) {
+    const migration = this.state.migration, commands = [];
+    const firstCounter = game.battle.encounter?.firstCounter;
+    const counterAccepted = this.state.encounters ? firstCounter?.status === "resolved" && !!firstCounter.targetId && this.state.clearedEliteIds.includes(`heart:${firstCounter.targetId}`) : game.battle.stats.eliteClears >= 1;
+    if (migration.status === "locked" && game.battle.traits.length >= 2 && counterAccepted) {
+      const exit = findExit(this.state.arenas.heart);
+      if (!exit) return [];
+      exit.active = true;
+      migration.warnedAt = game.elapsed;
+      migration.deadline = game.elapsed + CAMPAIGN_BALANCE.migrationWarning;
+      const gate = this.state.arenas.heart.graph.nodes.find((node) => node.id === "gate");
+      if (gate && !gate.active) {
+        commands.push(this.log("MIGRATION_PREEMPTIVELY_BLOCKED", { eventId: migration.id }), ...this.resolveChoice("block", game));
+      } else {
+        migration.status = "warning";
+        this.state.phase = "migration";
+        commands.push(this.log("MIGRATION_WARNING", { eventId: migration.id, from: "heart", to: "lung", deadline: migration.deadline }), this.notice("\u75C5\u6BD2\u5411\u80BA\u90E8\u8FC1\u79FB\uFF1A12 \u79D2\u3002\u51FA\u53E3 E \u8FFD\u51FB\uFF1B\u5FC3\u810F\u9694\u79BB\u95F8 E \u4FDD\u6301 2 \u79D2\u5C01\u9501\uFF1B\u4E0D\u54CD\u5E94\u5219\u80BA\u90E8\u5EFA\u7ACB\u65B0\u6E90\u3002", game, 12));
+      }
+    }
+    if (migration.status === "blocking") {
+      const gate = this.state.arenas.heart.graph.nodes.find((node) => node.id === "gate");
+      if (game.battle.organId !== "heart" || !gate || distance(game.player, gate) > BALANCE.interactionRange) {
+        migration.status = "warning";
+        migration.blockStartedAt = null;
+        commands.push(this.log("MIGRATION_BLOCK_CANCELLED", { eventId: migration.id }), this.notice("\u5DF2\u79BB\u5F00\u9694\u79BB\u95F8\uFF0C\u5C01\u9501\u53D6\u6D88\uFF1B\u8FC1\u79FB\u5012\u6570\u7EE7\u7EED\u3002", game, 3, 2));
+      } else if (migration.blockStartedAt !== null && game.elapsed + 1e-9 >= migration.blockStartedAt + CAMPAIGN_BALANCE.blockDuration && migration.blockStartedAt + CAMPAIGN_BALANCE.blockDuration <= migration.deadline + 1e-9) commands.push(...this.resolveChoice("block", game));
+    }
+    if (["warning", "blocking"].includes(migration.status) && migration.choice === null && game.elapsed + 1e-9 >= migration.deadline) commands.push(...this.resolveChoice("ignore", game));
+    if (migration.status === "pursuing") {
+      const lung = this.state.arenas.lung, carriers = lung.targets.filter((target) => migration.carrierIds.includes(target.id));
+      const alive = carriers.filter((target) => target.hp > 0);
+      const atGoal = alive.some((target) => distance(target, getOrganDefinition("lung").migrationGoal) < 42) && lung.flow.airwayOpen;
+      const expired = game.elapsed + 1e-9 >= (migration.interceptUntil ?? Infinity);
+      const removed = migration.carrierIds.length > 0 && migration.carrierIds.every((id) => migration.clearedCarrierIds.includes(id));
+      if (removed || expired || atGoal) {
+        migration.status = "resolved";
+        migration.interceptResolvedAt = game.elapsed;
+        migration.interceptSucceeded = removed || !lung.flow.airwayOpen;
+        if (migration.interceptSucceeded) commands.push(this.log("MIGRATION_INTERCEPTED", { eventId: migration.id, by: removed ? "clear" : "closed-airway" }), this.notice("\u8FC1\u79FB\u88AB\u62E6\u622A\uFF0C\u80BA\u90E8\u672A\u5EFA\u7ACB\u989D\u5916\u611F\u67D3\u6E90\u3002\u7EE7\u7EED\u51C0\u5316\u5DF2\u6709\u611F\u67D3\u6E90\u5E76\u4FDD\u62A4\u5668\u5B98\u3002", game, 6));
+        else commands.push(this.reserveSource("lung", "lung-migrated-source", getOrganDefinition("lung").migratedSource, `${migration.id}:pursuit-missed-source`), { kind: "infectionDelta", amount: 5, reason: "migration-intercept-missed", eventId: `${migration.id}:pursuit-missed-load` }, this.log("MIGRATION_ESTABLISHED", { eventId: migration.id, reason: atGoal ? "arrived" : "intercept-expired" }), this.notice("\u672A\u80FD\u53CA\u65F6\u62E6\u622A\uFF0C\u80BA\u90E8\u9762\u4E34\u65B0\u589E\u611F\u67D3\u6E90\u98CE\u9669\u3002\u53D1\u73B0\u65B0\u6E90\u540E\u53CA\u65F6\u51C0\u5316\uFF0C\u4ECD\u53EF\u633D\u56DE\u3002", game, 6));
+      } else if (game.battle.organId === "lung" && lung.flow.airwayOpen) {
+        const goal = getOrganDefinition("lung").migrationGoal;
+        for (const target of alive) {
+          const direction = normalized(goal.x - target.x, goal.y - target.y);
+          commands.push({ kind: "moveActor", organId: "lung", targetId: target.id, delta: { x: direction.x * CAMPAIGN_BALANCE.carrierSpeed * BALANCE.step, y: direction.y * CAMPAIGN_BALANCE.carrierSpeed * BALANCE.step } });
+        }
+      }
+    }
+    return commands;
+  }
+  accrueOffscreen(elapsed, activeOrganId) {
+    for (const arena of Object.values(this.state.arenas)) {
+      const delta = Math.max(0, elapsed - arena.lastPressureAt);
+      if (arena.activated && arena.organId !== activeOrganId) arena.offscreenElapsed += delta;
+      arena.lastPressureAt = elapsed;
+    }
+  }
+  background(game) {
+    const commands = [];
+    this.accrueOffscreen(game.elapsed, game.battle.organId);
+    for (const arena of Object.values(this.state.arenas)) {
+      if (!arena.activated || arena.organId === game.battle.organId) continue;
+      arena.nextBackgroundAt = game.elapsed + Math.max(0, arena.nextBackgroundElapsed - arena.offscreenElapsed);
+      if (arena.offscreenElapsed + 1e-9 < arena.nextBackgroundElapsed) continue;
+      arena.nextBackgroundElapsed = arena.offscreenElapsed + CAMPAIGN_BALANCE.backgroundInterval;
+      arena.nextBackgroundAt = game.elapsed + CAMPAIGN_BALANCE.backgroundInterval;
+      const openSources = arena.graph.nodes.filter((node) => node.kind === "source" && node.active && arena.graph.edges.some((edge) => edge.from === node.id && edge.open)).length;
+      if (!openSources) continue;
+      const amount2 = Math.min(CAMPAIGN_BALANCE.backgroundDamage, openSources * 0.35, Math.max(0, CAMPAIGN_BALANCE.backgroundTripBudget - arena.backgroundLoss), Math.max(0, arena.tissue.hp));
+      const eventId = `background:${arena.organId}:${game.tick}`;
+      if (amount2 > 0) {
+        arena.backgroundLoss += amount2;
+        arena.totalBackgroundLoss += amount2;
+        arena.backgroundReason = "\u6B8B\u7559\u611F\u67D3\u6E90\u6CBF\u5F00\u653E\u901A\u8DEF\u4FB5\u8680";
+        this.state.stats.backgroundDamage += amount2;
+        commands.push({ kind: "organDamage", organId: arena.organId, amount: amount2, reason: "offscreen-open-sources", eventId });
+      }
+      commands.push({ kind: "infectionDelta", amount: Math.min(CAMPAIGN_BALANCE.backgroundInfection, openSources * 0.35), reason: `offscreen-${arena.organId}`, eventId: `${eventId}:load` }, this.log("BACKGROUND_PRESSURE", { organId: arena.organId, openSources, integrityLoss: amount2, tripLoss: arena.backgroundLoss, totalLoss: arena.totalBackgroundLoss, reason: arena.backgroundReason }));
+    }
+    return commands;
+  }
+  sourcesComplete() {
+    return Object.values(this.state.arenas).filter((arena) => arena.activated).every((arena) => this.state.requiredSourceIds[arena.organId].every((id) => this.state.clearedSourceIds.includes(sourceKey(arena.organId, id))));
+  }
+  retestReasons(game) {
+    const reasons = [];
+    if (this.state.core.status !== "cleared") reasons.push("\u5C1A\u672A\u6E05\u9664\u6BCD\u5DE2");
+    for (const arena of Object.values(this.state.arenas)) if (arena.activated && arena.tissue.hp < 50) reasons.push(`${arena.organId === "heart" ? "\u5FC3\u810F" : "\u80BA\u90E8"}\u5B8C\u6574\u5EA6 ${Math.ceil(arena.tissue.hp)}%\uFF0C\u9700 \u226550%`);
+    if (game.battle.pressure.infection >= 35) reasons.push(`\u611F\u67D3 ${Math.ceil(game.battle.pressure.infection)}%\uFF0C\u9700 <35%`);
+    if (game.player.hp <= 0) reasons.push("\u6218\u58EB\u8010\u4E45\u5DF2\u8017\u5C3D");
+    if (game.battle.pressure.vitality <= 0) reasons.push("\u5168\u8EAB\u7A33\u5B9A\u5DF2\u8017\u5C3D");
+    return reasons;
+  }
+  canRetest(game) {
+    return this.retestReasons(game).length === 0;
+  }
+  objectives(game) {
+    const s = this.state, battle = game.battle, commands = [];
+    const active = Object.values(s.arenas).filter((arena) => arena.activated);
+    const sourceTotal = active.reduce((sum2, arena) => sum2 + s.requiredSourceIds[arena.organId].length, 0);
+    const sourceClears = active.reduce((sum2, arena) => sum2 + s.requiredSourceIds[arena.organId].filter((id) => s.clearedSourceIds.includes(sourceKey(arena.organId, id))).length, 0);
+    s.progress = { sourceClears, sourceTotal, eliteClears: s.clearedEliteIds.length, coreCleared: s.core.status === "cleared", organConditions: active.every((arena) => arena.tissue.hp >= 50), infectionCondition: battle.pressure.infection < 35 };
+    if (s.core.status === "locked" && s.migration.status === "resolved" && battle.traits.length === 2 && s.clearedEliteIds.length >= 2 && this.sourcesComplete() && (!s.encounters || s.encounters.stages.IV.completedAt !== null)) {
+      s.core.status = "ready";
+      s.core.traits = [...battle.traits];
+      s.phase = "core-ready";
+      commands.push(this.log("CORE_LOCATED", { coreId: s.core.actorId, organId: s.core.organId, traits: s.core.traits.join("+") }), this.notice(`\u4E3B\u8981\u611F\u67D3\u6E90\u5DF2\u51C0\u5316\u3002\u524D\u5F80${s.core.organId === "lung" ? "\u80BA\u90E8" : "\u5FC3\u810F"}\u590D\u6D4B\u53F0\u6309 E\uFF0C\u5524\u9192\u672C\u5C40\u53CC\u7279\u6027\u6BCD\u5DE2\u3002`, game, 8));
+    }
+    battle.readyToRetest = this.canRetest(game);
+    if (s.encounters) {
+      const stage = s.encounters.stage;
+      s.phase = stage === "I" ? "contain" : stage === "II" ? "first-counter" : stage === "III" ? "migration" : stage === "IV" ? "organ-crisis" : s.core.status === "cleared" ? "retest" : s.core.status === "active" ? "core" : s.core.status === "ready" ? "core-ready" : "counterattack";
+      battle.stage = { I: 0, II: 1, III: 2, IV: 3, V: 4 }[stage];
+      battle.stageLabel = { I: "\u2160 \xB7 \u5EFA\u7ACB\u9632\u7EBF", II: "\u2161 \xB7 \u9996\u6B21\u53CD\u5236", III: "\u2162 \xB7 \u8DE8\u5668\u5B98\u5371\u673A", IV: "\u2163 \xB7 \u652F\u70B9\u53CD\u51FB", V: s.core.status === "cleared" ? "\u2164 \xB7 \u7A33\u5B9A\u590D\u6D4B" : "\u2164 \xB7 \u6BCD\u5DE2\u51B3\u6218" }[stage];
+      s.encounters.currentObjective = campaignEncounterObjective(s, game);
+      battle.objective = s.encounters.currentObjective;
+      return commands;
+    }
+    battle.stage = s.phase === "contain" ? 0 : s.phase === "migration" ? 2 : s.phase === "counterattack" ? 3 : s.phase === "core-ready" || s.phase === "core" ? 4 : 5;
+    battle.stageLabel = { contain: "\u2160 \xB7 \u5EFA\u7ACB\u9632\u7EBF", "first-counter": "\u2161 \xB7 \u9996\u6B21\u53CD\u5236", migration: "\u2162 \xB7 \u8DE8\u5668\u5B98\u5371\u673A", "organ-crisis": "\u2163 \xB7 \u652F\u70B9\u53CD\u51FB", counterattack: "\u2163 \xB7 \u8054\u52A8\u53CD\u51FB", "core-ready": "\u2164 \xB7 \u6BCD\u5DE2\u5B9A\u4F4D", core: "\u2164 \xB7 \u6838\u5FC3\u51B3\u6218", retest: "\u2165 \xB7 \u7A33\u5B9A\u590D\u6D4B" }[s.phase];
+    battle.objective = battle.readyToRetest ? "\u6BCD\u5DE2\u4E0E\u5668\u5B98\u6307\u6807\u8FBE\u6807\u3002\u9760\u8FD1\u5F53\u524D\u5668\u5B98\u590D\u6D4B\u7EC8\u7AEF\u6309 E\uFF0C\u5B8C\u6210\u672C\u5C40\u3002" : s.core.status === "cleared" ? `\u7A33\u5B9A\u5668\u5B98\u540E\u590D\u6D4B\uFF1A${this.retestReasons(game).join("\uFF1B")}` : s.core.status === "ready" ? `\u524D\u5F80${s.core.organId === "lung" ? "\u80BA\u90E8" : "\u5FC3\u810F"}\u590D\u6D4B\u53F0\u6309 E\uFF0C\u542F\u52A8\u6BCD\u5DE2\u8BCA\u65AD\u3002` : s.core.status === "active" ? `\u6E05\u9664${s.core.organId === "lung" ? "\u80BA\u90E8" : "\u5FC3\u810F"}\u6BCD\u5DE2\uFF1B\u7559\u610F\u672C\u5C40 ${battle.traits.join(" + ")} \u7684\u7EC4\u5408\u4E0E\u7834\u7EFD\u3002` : s.migration.status === "warning" || s.migration.status === "blocking" ? "12 \u79D2\u8FC1\u79FB\u6289\u62E9\uFF1A\u51FA\u53E3 E \u8FFD\u51FB\uFF1B\u9694\u79BB\u95F8 E \u505C\u7559 2 \u79D2\u5C01\u9501\uFF1B\u653E\u4EFB\u4F1A\u611F\u67D3\u80BA\u90E8\u3002" : s.migration.status === "pursuing" ? "\u5728\u80BA\u90E8\u62E6\u622A\u8FC1\u79FB\u5C0F\u4F53\uFF0C\u6216\u5173\u95ED\u6C14\u9053\u963B\u6B62\u7ACB\u6E90\uFF1B\u968F\u540E\u6E05\u9664\u4E3B\u8981\u611F\u67D3\u6E90\u3002" : `\u51C0\u5316\u4E3B\u8981\u611F\u67D3\u6E90 ${sourceClears}/${sourceTotal}\uFF0C\u53D8\u5F02\u7CBE\u82F1 ${s.clearedEliteIds.length}/2\uFF1B\u4FDD\u62A4\u6240\u6709\u6FC0\u6D3B\u5668\u5B98\u3002`;
+    return commands;
+  }
+  afterInput(game) {
+    if (game.phase !== "playing" || !game.battle || game.player.hp <= 0 || game.battle.pressure.vitality <= 0) return [];
+    this.captureCurrent(game);
+    const commands = this.state.pendingCommands.splice(0);
+    commands.push(...this.updateMigration(game), ...this.background(game), ...advanceCampaignEncounters(this.state, game), ...this.objectives(game));
+    return commands;
+  }
+};
+
+// src/game/motherCore.ts
+var MOTHER_CORE_BALANCE = {
+  hp: 680,
+  radius: 52,
+  awakening: 2,
+  returnGrace: 1.2,
+  recovery: 2.4,
+  broodRecovery: 1.4,
+  turnSpeed: 0.75,
+  sweepWindup: 1.2,
+  sweepRange: 330,
+  sweepHalfAngle: 0.66,
+  sweepPlayerDamage: 14,
+  sweepTissueDamage: 6,
+  burstWindup: 1.1,
+  burstRadius: 88,
+  burstPlayerDamage: 12,
+  burstTissueDamage: 6,
+  corrosionWindup: 1.8,
+  corrosionTissueDamage: 12,
+  corrosionInterruptExposure: 3.5,
+  broodThresholds: [0.66, 0.33],
+  broodWindup: 0.9,
+  broodChildren: 2,
+  childHp: 22,
+  childRadius: 14,
+  scanRange: 650,
+  scanReveal: 5,
+  pulseExposure: 4,
+  mimicPeriod: 6,
+  mimicDisturbance: 1.2,
+  membraneFloor: 0.5,
+  membraneTransition: 0.45
+};
+var point4 = (position) => ({ x: position.x, y: position.y });
+var LEGAL_TRAITS = ["CARAPACE", "FISSION", "MIMIC"];
+function turnToward(current, desired, maximum) {
+  const delta = Math.atan2(Math.sin(desired - current), Math.cos(desired - current));
+  return current + Math.max(-maximum, Math.min(maximum, delta));
+}
+function lineClear(from, to, radius, geometry) {
+  const length = distance(from, to);
+  if (length < 1e-8) return true;
+  const hit = wallHit(from, normalized(to.x - from.x, to.y - from.y), length, geometry);
+  return hit === null || hit >= length - radius;
+}
+function coneContains(attack, position, radius, geometry) {
+  const length = distance(attack.origin, position);
+  if (length > attack.range + radius) return false;
+  if (length <= radius) return true;
+  const direction = normalized(position.x - attack.origin.x, position.y - attack.origin.y);
+  return direction.x * Math.cos(attack.angle) + direction.y * Math.sin(attack.angle) >= Math.cos(attack.halfAngle) && lineClear(attack.origin, position, radius, geometry);
+}
+function motherCoreDisturbed(state, elapsed) {
+  return state.activeTrait !== "MIMIC" || state.revealedUntil > elapsed || elapsed % MOTHER_CORE_BALANCE.mimicPeriod < MOTHER_CORE_BALANCE.mimicDisturbance;
+}
+var MotherCoreController = class {
+  state;
+  constructor(options, existingState) {
+    const traits = [...new Set(options.traits.filter((trait2) => LEGAL_TRAITS.includes(trait2)))];
+    if (!traits.length || traits.length > 2) throw new RangeError("Mother core requires one or two encountered traits");
+    if (existingState) {
+      if (existingState.coreId !== options.coreId || existingState.organId !== options.organId) throw new Error("Mother core state belongs to a different actor or organ");
+      this.state = existingState;
+      return;
+    }
+    this.state = {
+      schemaVersion: 1,
+      coreId: options.coreId,
+      organId: options.organId,
+      traits,
+      activeTrait: traits[0],
+      phase: "awakening",
+      phaseIndex: 0,
+      phaseStartedAt: options.elapsed,
+      facing: options.facing ?? 0,
+      nextActionAt: options.elapsed + MOTHER_CORE_BALANCE.awakening,
+      attack: null,
+      exposedUntil: 0,
+      revealedUntil: 0,
+      broodQueued: [],
+      broodReleased: [],
+      attackSerial: 0,
+      attacksResolved: 0,
+      scanInterrupts: 0,
+      cleared: false,
+      clearedAt: null,
+      lastTick: options.tick - 1,
+      introduced: false,
+      lastScanTick: -1,
+      lastPulseTick: -1,
+      seenTraits: [],
+      membrane: { total: traits.length, remaining: traits.length, floorRatio: MOTHER_CORE_BALANCE.membraneFloor, thresholdReached: false }
+    };
+  }
+  get base() {
+    return { coreId: this.state.coreId, organId: this.state.organId };
+  }
+  log(type, data) {
+    return { kind: "log", type, data: { ...this.base, ...data } };
+  }
+  valid(context) {
+    return context.active && context.core.id === this.state.coreId && !this.state.cleared;
+  }
+  pose() {
+    return { ...this.base, kind: "pose", traits: [this.state.activeTrait], facing: this.state.facing };
+  }
+  /**
+   * Public two-membrane rule. Until every encountered trait has resolved one
+   * attack (or had corrosion successfully countered), damage can reach half HP.
+   * Reaching that line calls the next unshown trait into a fully telegraphed turn.
+   * The host must apply this to every core-damage origin, including protocols.
+   */
+  damageLimit(context, requestedDamage) {
+    const s = this.state;
+    if (!this.valid(context) || context.core.hp <= 0 || !Number.isFinite(requestedDamage) || requestedDamage <= 0) return 0;
+    const floor = s.membrane.remaining > 0 ? context.core.maxHp * s.membrane.floorRatio : 0;
+    const amount2 = Math.min(requestedDamage, Math.max(0, context.core.hp - floor));
+    if (s.membrane.remaining > 0 && context.core.hp - amount2 <= floor + 1e-9 && !s.membrane.thresholdReached) {
+      s.membrane.thresholdReached = true;
+      if (!s.attack) s.nextActionAt = Math.min(s.nextActionAt, context.elapsed);
+    }
+    return amount2;
+  }
+  demonstrateTrait(trait2, context) {
+    const s = this.state;
+    if (s.seenTraits.includes(trait2)) return [];
+    s.seenTraits.push(trait2);
+    s.membrane.remaining = Math.max(0, s.membrane.total - s.seenTraits.length);
+    if (s.membrane.remaining === 0) s.membrane.floorRatio = 0;
+    return [
+      this.log("CORE_MEMBRANE_BROKEN", {
+        trait: trait2,
+        remaining: s.membrane.remaining,
+        total: s.membrane.total,
+        floorRatio: s.membrane.floorRatio,
+        seenTraits: s.seenTraits.join("+")
+      }),
+      { ...this.base, kind: "effect", effect: "evolution", from: point4(context.core), to: point4(context.core), radius: context.core.radius + 24, duration: 0.6 },
+      ...s.membrane.remaining === 0 ? [this.log("CORE_MEMBRANES_OPENED", { seenTraits: s.seenTraits.join("+") })] : []
+    ];
+  }
+  tick(context) {
+    const s = this.state;
+    if (!this.valid(context)) return [];
+    if (context.core.hp <= 0) return this.notifyCleared(context);
+    if (context.tick <= s.lastTick) return [];
+    const commands = [];
+    if (!s.introduced) {
+      s.introduced = true;
+      s.phase = "awakening";
+      s.phaseStartedAt = context.elapsed;
+      s.nextActionAt = s.membrane.thresholdReached ? context.elapsed : Math.max(s.nextActionAt, context.elapsed + MOTHER_CORE_BALANCE.awakening);
+      commands.push(this.log("CORE_COMBAT_STARTED", {
+        traits: s.traits.join("+"),
+        warningSeconds: s.membrane.thresholdReached ? 0 : MOTHER_CORE_BALANCE.awakening,
+        membranes: s.membrane.total,
+        floorRatio: s.membrane.floorRatio
+      }));
+    } else if (s.lastTick >= 0 && context.tick - s.lastTick > 1) {
+      s.attack = null;
+      s.phase = "recovery";
+      s.phaseStartedAt = context.elapsed;
+      s.nextActionAt = context.elapsed + MOTHER_CORE_BALANCE.returnGrace;
+      commands.push({ ...this.base, kind: "cancelTelegraph" }, this.log("CORE_REENTRY_GRACE", { duration: MOTHER_CORE_BALANCE.returnGrace }));
+    }
+    s.lastTick = context.tick;
+    s.exposedUntil = Math.max(s.exposedUntil, context.core.exposedUntil ?? 0);
+    s.revealedUntil = Math.max(s.revealedUntil, context.core.revealedUntil ?? 0);
+    if (s.traits.includes("FISSION")) for (const threshold of MOTHER_CORE_BALANCE.broodThresholds) {
+      if (context.core.hp / context.core.maxHp <= threshold && !s.broodReleased.includes(threshold) && !s.broodQueued.includes(threshold)) s.broodQueued.push(threshold);
+    }
+    if (s.phase !== "windup") {
+      const desired = Math.atan2(context.player.y - context.core.y, context.player.x - context.core.x);
+      s.facing = turnToward(s.facing, desired, MOTHER_CORE_BALANCE.turnSpeed * BALANCE.step);
+    }
+    if (s.attack && context.elapsed + 1e-9 >= s.attack.resolveAt) commands.push(...this.resolveAttack(context));
+    if (!s.attack && context.elapsed + 1e-9 >= s.nextActionAt) commands.push(...this.beginAttack(context));
+    commands.push(this.pose());
+    return commands;
+  }
+  beginAttack(context) {
+    const s = this.state;
+    const B = MOTHER_CORE_BALANCE;
+    const priorityTrait = s.membrane.thresholdReached && s.membrane.remaining > 0 ? s.traits.find((trait3) => !s.seenTraits.includes(trait3)) : void 0;
+    const threshold = s.broodQueued[0] !== void 0 && (!priorityTrait || priorityTrait === "FISSION") ? s.broodQueued[0] : void 0;
+    const trait2 = priorityTrait ?? (threshold !== void 0 ? "FISSION" : s.traits[s.phaseIndex % s.traits.length]);
+    s.activeTrait = trait2;
+    s.phase = "windup";
+    s.phaseStartedAt = context.elapsed;
+    const attack = {
+      id: `${s.coreId}:attack:${++s.attackSerial}`,
+      kind: trait2 === "CARAPACE" ? "crystal-sweep" : trait2 === "FISSION" ? "fission-burst" : "corrosion",
+      trait: trait2,
+      startedAt: context.elapsed,
+      resolveAt: context.elapsed + (trait2 === "CARAPACE" ? B.sweepWindup : trait2 === "FISSION" ? B.burstWindup : B.corrosionWindup),
+      origin: point4(context.core),
+      aim: trait2 === "MIMIC" ? point4(context.tissue) : point4(context.player),
+      angle: s.facing,
+      range: trait2 === "CARAPACE" ? B.sweepRange : 0,
+      radius: trait2 === "FISSION" ? B.burstRadius : trait2 === "MIMIC" ? context.tissue.radius + 12 : 0,
+      halfAngle: trait2 === "CARAPACE" ? B.sweepHalfAngle : 0,
+      landings: []
+    };
+    if (threshold !== void 0) {
+      attack.kind = "brood";
+      attack.threshold = threshold;
+      attack.resolveAt = context.elapsed + B.broodWindup;
+      attack.radius = B.childRadius + 5;
+      attack.aim = point4(context.core);
+      attack.landings = [-1, 1].map((side) => moveWithCollision(point4(context.core), { x: side * 78, y: 48 }, B.childRadius, context.geometry));
+    }
+    s.attack = attack;
+    return [
+      this.log("CORE_PHASE_CHANGED", { trait: trait2, phaseIndex: s.phaseIndex }),
+      { ...this.base, kind: "telegraph", attack: structuredClone(attack) },
+      this.log("CORE_ATTACK_TELEGRAPHED", {
+        attackId: attack.id,
+        kind: attack.kind,
+        trait: trait2,
+        resolveAt: attack.resolveAt,
+        x: attack.aim.x,
+        y: attack.aim.y,
+        angle: attack.angle,
+        range: attack.range,
+        radius: attack.radius,
+        halfAngle: attack.halfAngle
+      })
+    ];
+  }
+  resolveAttack(context) {
+    const s = this.state;
+    const B = MOTHER_CORE_BALANCE;
+    const attack = s.attack;
+    const commands = [];
+    const canHurtPlayer = context.elapsed >= context.player.dashUntil;
+    if (attack.kind === "brood") {
+      for (let index = 0; index < attack.landings.length; index++) commands.push({
+        ...this.base,
+        kind: "spawn",
+        actorId: `${s.coreId}:brood:${attack.threshold}:${index}`,
+        sourceId: s.coreId,
+        position: point4(attack.landings[index]),
+        role: "virus",
+        traits: ["FISSION"],
+        generation: 1,
+        hp: B.childHp,
+        radius: B.childRadius
+      });
+      s.broodReleased.push(attack.threshold);
+      s.broodQueued = s.broodQueued.filter((threshold) => threshold !== attack.threshold);
+      commands.push(this.log("CORE_BROOD_RELEASED", { attackId: attack.id, threshold: attack.threshold, children: attack.landings.length, generation: 1 }));
+    } else if (attack.kind === "corrosion") {
+      commands.push({ ...this.base, kind: "damageTissue", amount: B.corrosionTissueDamage, attackId: attack.id, reason: "core-corrosion" });
+    } else if (attack.kind === "crystal-sweep") {
+      if (canHurtPlayer && coneContains(attack, context.player, context.player.radius, context.geometry)) commands.push({ ...this.base, kind: "damagePlayer", amount: B.sweepPlayerDamage, attackId: attack.id, reason: "core-crystal-sweep" });
+      if (coneContains(attack, context.tissue, context.tissue.radius, context.geometry)) commands.push({ ...this.base, kind: "damageTissue", amount: B.sweepTissueDamage, attackId: attack.id, reason: "core-crystal-sweep" });
+    } else {
+      if (canHurtPlayer && distance(attack.aim, context.player) <= attack.radius + context.player.radius && lineClear(attack.aim, context.player, context.player.radius, context.geometry)) commands.push({ ...this.base, kind: "damagePlayer", amount: B.burstPlayerDamage, attackId: attack.id, reason: "core-fission-burst" });
+      if (distance(attack.aim, context.tissue) <= attack.radius + context.tissue.radius && lineClear(attack.aim, context.tissue, context.tissue.radius, context.geometry)) commands.push({ ...this.base, kind: "damageTissue", amount: B.burstTissueDamage, attackId: attack.id, reason: "core-fission-burst" });
+    }
+    s.attacksResolved++;
+    s.attack = null;
+    s.phase = "recovery";
+    s.phaseStartedAt = context.elapsed;
+    commands.push(...this.demonstrateTrait(attack.trait, context));
+    if (attack.kind !== "brood") s.phaseIndex++;
+    const recovery = attack.kind === "brood" ? B.broodRecovery : B.recovery;
+    s.nextActionAt = context.elapsed + recovery;
+    if (s.membrane.thresholdReached && s.membrane.remaining > 0) s.nextActionAt = Math.min(s.nextActionAt, context.elapsed + B.membraneTransition);
+    s.exposedUntil = Math.max(s.exposedUntil, context.elapsed + recovery);
+    s.revealedUntil = Math.max(s.revealedUntil, context.elapsed + recovery);
+    commands.push(
+      { ...this.base, kind: "cancelTelegraph" },
+      { ...this.base, kind: "expose", until: s.exposedUntil, revealUntil: s.revealedUntil, reason: "core-recovery" },
+      { ...this.base, kind: "effect", effect: attack.kind === "corrosion" ? "hit" : "burst", from: attack.origin, to: attack.aim, radius: attack.radius || 50, duration: 0.45 },
+      this.log("CORE_ATTACK_RESOLVED", { attackId: attack.id, kind: attack.kind, recovery, damageCommands: commands.filter((command) => command.kind === "damagePlayer" || command.kind === "damageTissue").length })
+    );
+    return commands;
+  }
+  onScan(context) {
+    const s = this.state;
+    const B = MOTHER_CORE_BALANCE;
+    if (!this.valid(context) || context.core.hp <= 0 || distance(context.player, context.core) > B.scanRange || s.lastScanTick === context.tick) return [];
+    s.lastScanTick = context.tick;
+    s.revealedUntil = Math.max(s.revealedUntil, context.elapsed + B.scanReveal);
+    const commands = [];
+    if (s.attack?.kind === "corrosion" && context.elapsed <= s.attack.resolveAt + 1e-9) {
+      const attackId = s.attack.id;
+      s.attack = null;
+      s.phase = "recovery";
+      s.phaseStartedAt = context.elapsed;
+      s.nextActionAt = context.elapsed + B.recovery;
+      s.exposedUntil = Math.max(s.exposedUntil, context.elapsed + B.corrosionInterruptExposure);
+      s.scanInterrupts++;
+      s.phaseIndex++;
+      commands.push(...this.demonstrateTrait("MIMIC", context));
+      if (s.membrane.thresholdReached && s.membrane.remaining > 0) s.nextActionAt = Math.min(s.nextActionAt, context.elapsed + B.membraneTransition);
+      commands.push({ ...this.base, kind: "cancelTelegraph" }, this.log("CORE_CORROSION_INTERRUPTED", { attackId, by: "scan", exposure: B.corrosionInterruptExposure }));
+    }
+    commands.push(
+      { ...this.base, kind: "expose", until: s.exposedUntil, revealUntil: s.revealedUntil, reason: "core-scan" },
+      this.log("CORE_SCAN_REVEALED", { duration: B.scanReveal, interrupted: commands.length > 0 })
+    );
+    return commands;
+  }
+  /** Called only after the host's real pulse-sector/obstacle hit test succeeds. */
+  onPulse(context) {
+    const s = this.state;
+    const B = MOTHER_CORE_BALANCE;
+    if (!this.valid(context) || context.core.hp <= 0 || s.lastPulseTick === context.tick) return [];
+    s.lastPulseTick = context.tick;
+    s.exposedUntil = Math.max(s.exposedUntil, context.elapsed + B.pulseExposure);
+    s.revealedUntil = Math.max(s.revealedUntil, s.exposedUntil);
+    return [
+      { ...this.base, kind: "expose", until: s.exposedUntil, revealUntil: s.revealedUntil, reason: "environment-pulse" },
+      this.log("CORE_PULSE_EXPOSED", { until: s.exposedUntil })
+    ];
+  }
+  notifyCleared(context) {
+    const s = this.state;
+    if (s.cleared || context.core.id !== s.coreId || context.core.hp > 0) return [];
+    s.cleared = true;
+    s.clearedAt = context.elapsed;
+    s.phase = "defeated";
+    s.attack = null;
+    s.broodQueued = [];
+    s.exposedUntil = 0;
+    s.revealedUntil = 0;
+    return [{ ...this.base, kind: "cancelTelegraph" }, this.log("CORE_CLEARED", { actorId: s.coreId, traits: s.traits.join("+"), elapsed: context.elapsed, scanInterrupts: s.scanInterrupts, broodWaves: s.broodReleased.length })];
+  }
+};
+
+// src/game/tacticalFeedback.ts
+var TACTICAL_RECORD_LIMIT = 64;
+var traitId = (value) => value === "CARAPACE" || value === "FISSION" || value === "MIMIC" ? value : void 0;
+var organ = (value) => value === "lung" ? "\u80BA\u90E8" : value === "heart" ? "\u5FC3\u810F" : "\u5F53\u524D\u5668\u5B98";
+var number = (value) => Number.isFinite(Number(value)) ? Number(value) : 0;
+var organCrisisEvent = (type) => type === "ORGAN_CRISIS_STARTED" || type === "ORGAN_CRISIS_INTERRUPTED" || type === "ORGAN_CRISIS_CLEARED";
+var positive = (value) => typeof value === "number" && Number.isFinite(value) && value > 0;
+var count = (value) => typeof value === "number" && Number.isSafeInteger(value) && value >= 0;
+function organCrisisFeedback(event) {
+  const d = event.data;
+  if (d.organId !== "heart" && d.organId !== "lung" || typeof d.sourceId !== "string" || !d.sourceId.trim() || d.sourceId.length > 128) return;
+  const label5 = organ(d.organId), key = `${event.type}:${d.organId}`;
+  if (event.type === "ORGAN_CRISIS_STARTED") {
+    if (!positive(d.chargeSeconds) || !count(d.maximumImpacts) || typeof d.blockedByAirway !== "boolean") return;
+    return { key, text: d.blockedByAirway ? `${label5}\u4F20\u64AD\u652F\u70B9\u5DF2\u51FA\u73B0\uFF1B\u6C14\u9053\u5DF2\u5173\u95ED\uFF0C\u51B2\u51FB\u5145\u80FD\u6682\u505C\u3002\u53EF\u5148\u62A2\u4FEE\uFF0C\u518D\u51C0\u5316\u652F\u70B9\uFF1B\u91CD\u65B0\u5F00\u653E\u6C14\u9053\u540E\u5145\u80FD\u7EE7\u7EED\u3002` : `${label5}\u4F20\u64AD\u652F\u70B9\u5DF2\u51FA\u73B0\uFF0C\u5F00\u59CB ${d.chargeSeconds} \u79D2\u5145\u80FD\uFF0C\u6700\u591A ${d.maximumImpacts} \u6B21\u7EC4\u7EC7\u51B2\u51FB\u3002\u53EF\u51C0\u5316\u652F\u70B9\uFF0C\u6216\u501F\u5668\u5B98\u88C5\u7F6E\u4E2D\u65AD\u5E76\u62A2\u4FEE\u3002`, priority: 2, seconds: 9 };
+  }
+  if (event.type === "ORGAN_CRISIS_INTERRUPTED") {
+    if (!positive(d.chargeSeconds) || !count(d.interruptions) || d.interruptions === 0) return;
+    if (d.reason === "pulse" && d.organId === "heart") return { key: `${key}:pulse`, text: `${label5}\u51B2\u6D41\u5DF2\u6253\u65AD\u652F\u70B9\u5145\u80FD\uFF0C\u91CD\u7F6E\u4E3A ${d.chargeSeconds} \u79D2\uFF1B\u652F\u70B9\u4ECD\u9700\u51C0\u5316\u3002`, priority: 2, seconds: 6 };
+    if (d.reason === "airway" && d.organId === "lung") return { key: `${key}:airway`, text: `${label5}\u6C14\u9053\u5DF2\u622A\u65AD\u652F\u70B9\u5145\u80FD\uFF0C\u5145\u80FD\u6682\u505C\uFF1B\u53EF\u5148\u62A2\u4FEE\uFF0C\u652F\u70B9\u4ECD\u9700\u51C0\u5316\u3002`, priority: 2, seconds: 6 };
+    return;
+  }
+  if (event.type === "ORGAN_CRISIS_CLEARED") {
+    if (!count(d.impacts) || !count(d.interruptions)) return;
+    return { key, text: `${label5}\u5371\u673A\u6E90\u5DF2\u51C0\u5316\uFF0C\u7EC4\u7EC7\u51B2\u51FB\u5DF2\u505C\u6B62\u3002\u5B9E\u9645\u51B2\u51FB ${d.impacts} \u6B21\u3001\u4E2D\u65AD ${d.interruptions} \u6B21\uFF1B\u53D7\u635F\u7EC4\u7EC7\u4ECD\u9700\u6309\u5B9E\u9645\u5B8C\u6574\u5EA6\u4FEE\u590D\u3002`, priority: 2, seconds: 5 };
+  }
+}
+function tacticalFeedback(event) {
+  if (organCrisisEvent(event.type)) return organCrisisFeedback(event);
+  const d = event.data, trait2 = traitId(d.trait), t = trait2 ? TRAITS[trait2] : void 0;
+  const organKey = d.organId === "lung" ? "lung" : d.organId === "heart" ? "heart" : "current";
+  const item = (text2, priority = 2, seconds = 7, suffix = "", toast = true) => ({ key: `${event.type}${suffix}`, text: text2, priority, seconds, toast });
+  switch (event.type) {
+    case "EVOLUTION_WARNING":
+      return item(`\u53D8\u5F02\u9884\u8B66 \xB7 ${t?.name ?? "\u672A\u77E5\u7279\u6027"}\uFF1A${t?.ability ?? ""}\u3002\u4EE3\u4EF7\uFF1A${t?.cost ?? ""}\u3002\u53CD\u5236\uFF1A${t?.counter ?? "\u5148\u626B\u63CF\u8BCA\u65AD"}\u3002`, 2, Number(d.duration) || 8, `:${trait2 ?? "unknown"}`);
+    case "EVOLUTION_APPLIED":
+      return item(`${t?.symbol ?? "\u25B3"} ${t?.name ?? "\u75C5\u6BD2\u53D8\u5F02"}\u5DF2\u51FA\u73B0\u3002\u5F31\u70B9\uFF1A${t?.counter ?? "\u626B\u63CF\u8BCA\u65AD"}\u3002`, 2, 7, `:${trait2 ?? "unknown"}`);
+    case "INFECTION_CRISIS_STARTED":
+      return item("\u611F\u67D3\u8D1F\u8377 100\uFF0115 \u79D2\u5185\u51C0\u5316\u611F\u67D3\u6E90/\u611F\u67D3\u4F53\u6216\u62A2\u4FEE\uFF0C\u964D\u4F4E\u611F\u67D3\u5373\u53EF\u89E3\u9664\u5371\u673A\u3002", 3, 15);
+    case "INFECTION_CRISIS_RECOVERED":
+      return item("\u611F\u67D3\u8D1F\u8377\u4E0B\u964D\uFF0C\u81F4\u547D\u5012\u8BA1\u65F6\u89E3\u9664\u3002\u7EE7\u7EED\u51C0\u5316\u5E76\u4FEE\u590D\u7EC4\u7EC7\u3002", 3, 5);
+    case "ORGAN_ALARM":
+      return item(`${organ(d.organId)}\u4F4E\u4E8E 30%\uFF018 \u79D2\u540E\u5168\u8EAB\u7A33\u5B9A\u5F00\u59CB\u4E0B\u964D\uFF0C\u8BF7\u53CA\u65F6\u62A2\u4FEE\u3002`, 3, 8, `:${organKey}`);
+    case "ORGAN_ALARM_CLEARED":
+      return item(`${organ(d.organId)}\u62A2\u4FEE\u6210\u529F\uFF0C\u5668\u5B98\u8B66\u62A5\u89E3\u9664\u3002`, 3, 5, `:${organKey}`);
+    case "MIGRATION_WARNING":
+      return item("\u75C5\u6BD2\u5411\u80BA\u90E8\u8FC1\u79FB\uFF1A12 \u79D2\u3002\u51FA\u53E3 E \u8FFD\u51FB\uFF1B\u5FC3\u810F\u9694\u79BB\u95F8 E \u4FDD\u6301 2 \u79D2\u5C01\u9501\uFF1B\u4E0D\u54CD\u5E94\u5219\u80BA\u90E8\u5EFA\u7ACB\u65B0\u6E90\u3002", 2, 12);
+    case "MIGRATION_BLOCK_STARTED":
+      return item("\u4FDD\u6301\u5728\u9694\u79BB\u95F8\u9644\u8FD1 2 \u79D2\u5B8C\u6210\u5C01\u9501\u3002\u79BB\u5F00\u4F1A\u53D6\u6D88\uFF1B\u6218\u6597\u4ECD\u5728\u8FDB\u884C\u3002", 2, 3);
+    case "MIGRATION_BLOCK_CANCELLED":
+      return item("\u5DF2\u79BB\u5F00\u9694\u79BB\u95F8\uFF0C\u5C01\u9501\u53D6\u6D88\uFF1B\u8FC1\u79FB\u5012\u6570\u7EE7\u7EED\u3002", 2, 3);
+    case "MIGRATION_PREEMPTIVELY_BLOCKED":
+      return item("\u9694\u79BB\u95F8\u63D0\u524D\u5173\u95ED\uFF0C\u8FC1\u79FB\u81EA\u52A8\u5C01\u9501\uFF1B\u75C5\u6BD2\u4F1A\u6EDE\u7559\u4E3A\u5FC3\u810F\u65B0\u611F\u67D3\u6E90\u3002");
+    case "MIGRATION_DECIDED": {
+      const choice = d.choice === "pursue" ? "pursue" : d.choice === "block" ? "block" : "ignore";
+      return item(choice === "pursue" ? "\u8FFD\u51FB\u8FDB\u5165\u80BA\u90E8\uFF1A12 \u79D2\u5185\u6E05\u9664\u8FC1\u79FB\u5C0F\u4F53\u6216\u5173\u95ED\u6C14\u9053\uFF0C\u963B\u6B62\u989D\u5916\u611F\u67D3\u6E90\u3002" : choice === "block" ? "\u8FC1\u79FB\u5DF2\u5C01\u9501\uFF1A\u80BA\u90E8\u672A\u88AB\u6FC0\u6D3B\uFF0C\u5FC3\u810F\u627F\u538B \u22124\uFF0C\u5E76\u9762\u4E34\u6EDE\u7559\u611F\u67D3\u6E90\u98CE\u9669\u3002" : "\u653E\u4EFB\u8FC1\u79FB\uFF1A\u80BA\u90E8\u53D7\u635F\u5E76\u9762\u4E34\u65B0\u589E\u611F\u67D3\u6E90\u98CE\u9669\uFF1B\u51FA\u53E3\u5F00\u653E\uFF0C\u4ECD\u53EF\u6551\u63F4\u3002", 2, 8, `:${choice}`);
+    }
+    case "MIGRATION_INTERCEPTED":
+      return item("\u8FC1\u79FB\u88AB\u62E6\u622A\uFF0C\u80BA\u90E8\u672A\u5EFA\u7ACB\u989D\u5916\u611F\u67D3\u6E90\u3002\u7EE7\u7EED\u51C0\u5316\u5E76\u4FDD\u62A4\u5668\u5B98\u3002");
+    case "MIGRATION_ESTABLISHED":
+      return item("\u672A\u80FD\u53CA\u65F6\u62E6\u622A\uFF0C\u80BA\u90E8\u9762\u4E34\u65B0\u589E\u611F\u67D3\u6E90\u98CE\u9669\u3002\u53D1\u73B0\u65B0\u6E90\u540E\u53CA\u65F6\u51C0\u5316\uFF0C\u4ECD\u53EF\u633D\u56DE\u3002");
+    case "CORE_LOCATED":
+      return item(`\u4E3B\u8981\u611F\u67D3\u6E90\u5DF2\u51C0\u5316\u3002\u524D\u5F80${organ(d.organId)}\u590D\u6D4B\u53F0\u6309 E\uFF0C\u5524\u9192\u53CC\u7279\u6027\u6BCD\u5DE2\u3002`, 2, 8);
+    case "CORE_COMBAT_STARTED":
+      return item("\u6BCD\u5DE2\u5DF2\u82CF\u9192\uFF1A\u4EA4\u66FF\u4F7F\u7528\u672C\u5C40\u4E24\u79CD\u7279\u6027\u3002\u8EB2\u5F00\u524D\u6447\u6216 Q \u6253\u65AD\u4FB5\u8680\uFF0C\u9010\u5C42\u6253\u5F00\u6838\u819C\u3002");
+    case "CORE_MEMBRANE_BROKEN":
+      return item(`\u6BCD\u5DE2${t?.name ?? ""}\u6838\u819C\u5DF2\u7834\uFF0C\u5269\u4F59 ${Number(d.remaining) || 0} \u5C42\u3002`, 2, 5, `:${trait2 ?? "unknown"}`);
+    case "CORE_MEMBRANES_OPENED":
+      return item("\u6BCD\u5DE2\u6838\u819C\u5168\u90E8\u6253\u5F00\uFF01\u7EE7\u7EED\u51C0\u5316\u6838\u5FC3\uFF0C\u4FDD\u62A4\u5668\u5B98\u3002", 2, 5);
+    case "CORE_CORROSION_INTERRUPTED":
+      return item("Q \u626B\u63CF\u5DF2\u6253\u65AD\u6BCD\u5DE2\u4FB5\u8680\uFF0C\u5F62\u6210\u7834\u7EFD\u3002", 1, 3);
+    case "CORE_CLEARED":
+      return item("\u6BCD\u5DE2\u5DF2\u51C0\u5316\u3002\u6240\u6709\u6FC0\u6D3B\u5668\u5B98 \u226550%\u3001\u611F\u67D3 <35 \u540E\uFF0C\u5230\u590D\u6D4B\u7EC8\u7AEF\u6309 E\u3002", 2, 7);
+    case "INFECTION_SOURCE_CLEARED":
+      return item(`${organ(d.organId)}\u611F\u67D3\u6E90\u5DF2\u51C0\u5316\uFF0C\u505C\u6B62\u589E\u63F4\u5E76\u964D\u4F4E\u611F\u67D3\u8D1F\u8377\u3002`, 1, 5, `:${organKey}`);
+    case "ELITE_CLEARED":
+      return item(`${organ(d.organId)}${t?.name ?? "\u53D8\u5F02"}\u7CBE\u82F1\u5DF2\u6E05\u9664\u3002\u4FDD\u6301\u7EC4\u7EC7\uFF0C\u7EE7\u7EED\u5904\u7406\u5F53\u524D\u76EE\u6807\u3002`, 1, 5, `:${trait2 ?? "unknown"}`);
+    case "BACKGROUND_PRESSURE":
+      return item(`${organ(d.organId)}\u79BB\u573A\u4ECD\u6709 ${number(d.openSources)} \u4E2A\u5F00\u653E\u611F\u67D3\u6E90\uFF0C\u672C\u6B21\u635F\u4F24 ${number(d.integrityLoss).toFixed(1)}\u3002`, 1, 3, `:${organKey}`, false);
+    case "ORGAN_TRAVELLED":
+      return item(`\u8FDB\u5165${organ(d.to)}\uFF1B\u8BE5\u5668\u5B98\u79BB\u573A\u671F\u95F4\u635F\u4F24 ${number(d.backgroundLoss).toFixed(1)}\u3002`, 1, 5, d.to === "lung" ? ":lung" : ":heart", false);
+    case "RETEST_COMPLETED":
+      return item("\u4E3B\u52A8\u590D\u6D4B\u5DF2\u901A\u8FC7\uFF0C\u5668\u5B98\u4E0E\u611F\u67D3\u95E8\u69DB\u5168\u90E8\u6EE1\u8DB3\u3002", 2, 5);
+    case "RUN_ENDED":
+      return item(String(d.reason || "\u672C\u5C40\u5DF2\u7ED3\u675F\u3002"), 3, 8);
+    default:
+      return;
+  }
+}
+function recordTacticalEvent(state, event) {
+  const crisisEvent = organCrisisEvent(event.type);
+  if (crisisEvent && (state.phase !== "playing" || !Number.isSafeInteger(event.tick) || event.tick !== state.tick || event.tick < 0)) return;
+  const feedback = tacticalFeedback(event);
+  if (!feedback || !state.battle) return;
+  const records = state.tacticalRecords ??= [];
+  const at = event.tick / 60;
+  const existing = records.find((record) => record.key === feedback.key);
+  if (crisisEvent && existing && at <= existing.at) return;
+  if (existing) {
+    existing.at = at;
+    existing.text = feedback.text;
+    existing.count = Math.min(Number.MAX_SAFE_INTEGER, existing.count + 1);
+  } else if (records.length < TACTICAL_RECORD_LIMIT) records.push({ key: feedback.key, eventType: event.type, firstAt: at, at, text: feedback.text, count: 1 });
+  return feedback;
+}
+
+// src/game/runMetrics.ts
+var RUN_METRICS_VERSION = 1;
+var RUN_METRICS_FRAME_LIMIT = 256;
+var TRAITS2 = ["CARAPACE", "FISSION", "MIMIC"];
+var PROTOCOLS2 = ["PULSE_BREAK", "PURIFY_CHAIN", "IMMUNE_BEACON", "EXPOSE_TRACE"];
+var ORGAN_COST_REASONS = ["pulse-pressure", "protocol-pressure", "airway-pressure", "migration-block-pressure"];
+var CONTROL_COUNTS = [
+  "chainTriggers",
+  "chainHops",
+  "ricochetHits",
+  "resonanceHits",
+  "beaconBites",
+  "patrolBites",
+  "synergyPulseChain",
+  "synergyTraceBeacon",
+  "scans",
+  "pulseUses",
+  "crystalExposures",
+  "corePulseHits",
+  "airwayCloses",
+  "airwayOpens",
+  "crisisPulseInterrupts",
+  "crisisAirwayInterrupts",
+  "coreScanInterrupts"
+];
+var object = (value) => !!value && typeof value === "object" && !Array.isArray(value);
+var count2 = (value) => typeof value === "number" && Number.isSafeInteger(value) && value >= 0;
+var amount = (value) => typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= Number.MAX_SAFE_INTEGER;
+var positive2 = (value) => amount(value) && value > 0;
+var identifier = (value) => typeof value === "string" && value.length > 0 && value.length <= 240 && value.trim() === value;
+var organ2 = (value) => value === "heart" || value === "lung";
+var trait = (value) => TRAITS2.includes(value);
+var protocol = (value) => PROTOCOLS2.includes(value);
+var freshOrgan = () => ({ repairActions: 0, repaired: 0, loss: 0, cost: 0 });
+function createRunMetrics(runId) {
+  return {
+    runId,
+    lastSequence: -1,
+    lastTick: -1,
+    ended: false,
+    frame: { tick: -1, entries: [] },
+    summary: {
+      schemaVersion: RUN_METRICS_VERSION,
+      limited: false,
+      care: { repairActions: 0, repaired: 0, organLoss: 0, organCost: 0, playerDamage: 0, organs: { heart: freshOrgan(), lung: freshOrgan() } },
+      control: {
+        ...Object.fromEntries(CONTROL_COUNTS.map((key) => [key, 0])),
+        diagnosedTraits: [],
+        migrationChoice: null,
+        migrationInterception: null,
+        migrationMissed: false,
+        coreMembranes: [],
+        coreCleared: false
+      }
+    }
+  };
+}
+function cloneSummary(summary) {
+  return {
+    ...summary,
+    care: { ...summary.care, organs: { heart: { ...summary.care.organs.heart }, lung: { ...summary.care.organs.lung } } },
+    control: { ...summary.control, diagnosedTraits: [...summary.control.diagnosedTraits], coreMembranes: [...summary.control.coreMembranes] }
+  };
+}
+function limited(state) {
+  return state.summary.limited ? state : { ...state, summary: { ...state.summary, limited: true } };
+}
+function modify(state, update) {
+  const summary = cloneSummary(state.summary);
+  update(summary);
+  return { ...state, summary };
+}
+function sum(summary, current, delta) {
+  const result = current + delta;
+  if (result > Number.MAX_SAFE_INTEGER) {
+    summary.limited = true;
+    return Number.MAX_SAFE_INTEGER;
+  }
+  return result;
+}
+function add(summary, key, delta = 1) {
+  summary.control[key] = sum(summary, summary.control[key], delta);
+}
+function has(state, kind, rootId, targetId, protocolId) {
+  return state.frame.entries.some((entry) => entry.kind === kind && entry.rootId === rootId && (targetId === void 0 || entry.targetId === targetId) && (protocolId === void 0 || entry.protocolId === protocolId));
+}
+function append(state, entry) {
+  if (state.frame.entries.length >= RUN_METRICS_FRAME_LIMIT) return limited(state);
+  return { ...state, frame: { ...state.frame, entries: [...state.frame.entries, entry] } };
+}
+function reduceRunMetrics(previous, input) {
+  if (previous.ended || input.runId !== previous.runId || !count2(input.sequence) || input.sequence <= previous.lastSequence || !count2(input.event.tick) || input.event.tick < previous.lastTick || !object(input.event.data)) return previous;
+  const event = input.event, d = event.data;
+  let state = {
+    ...previous,
+    lastSequence: input.sequence,
+    lastTick: event.tick,
+    frame: event.tick === previous.frame.tick ? previous.frame : { tick: event.tick, entries: [] }
+  };
+  if (event.type === "RUN_ENDED") return { ...state, ended: true, frame: { tick: event.tick, entries: [] } };
+  if (event.type === "TARGET_HIT" && d.cause === "protocol" && positive2(d.damage)) {
+    if (!organ2(d.organId) || !identifier(d.rootId) || !identifier(d.id) || !protocol(d.protocolId)) return limited(state);
+    if (has(state, "hit", d.rootId, d.id, d.protocolId)) return state;
+    return append(state, { kind: "hit", rootId: d.rootId, targetId: d.id, protocolId: d.protocolId });
+  }
+  const hitLogs = {
+    PROTOCOL_CHAIN_HIT: { kind: "chain", protocolId: "PURIFY_CHAIN", count: "chainHops", label: "PURIFY_CHAIN" },
+    PROTOCOL_RICOCHET_HIT: { kind: "ricochet", protocolId: "PURIFY_CHAIN", count: "ricochetHits", label: "PURIFY_CHAIN" },
+    PROTOCOL_RESONANCE_HIT: { kind: "resonance", protocolId: "PULSE_BREAK", count: "resonanceHits", label: "PULSE_BREAK" },
+    PROTOCOL_BEACON_HIT: { kind: "beacon", protocolId: "IMMUNE_BEACON", count: "beaconBites", label: "IMMUNE_BEACON" },
+    IMMUNE_PATROL_HIT: { kind: "patrol", protocolId: "IMMUNE_BEACON", count: "patrolBites", label: "BASE_PATROL" }
+  };
+  const log2 = hitLogs[event.type];
+  if (log2) {
+    if (d.protocolId !== log2.label || !identifier(d.rootId) || !identifier(d.targetId) || event.type === "PROTOCOL_CHAIN_HIT" && (!count2(d.hop) || d.hop < 1 || d.hop > 3) || !has(state, "hit", d.rootId, d.targetId, log2.protocolId) || has(state, log2.kind, d.rootId, d.targetId, log2.protocolId)) return state;
+    if (state.frame.entries.length >= RUN_METRICS_FRAME_LIMIT) return limited(state);
+    const newChain = log2.kind === "chain" && !has(state, "chain", d.rootId);
+    state = append(state, { kind: log2.kind, rootId: d.rootId, targetId: d.targetId, protocolId: log2.protocolId });
+    return modify(state, (summary) => {
+      add(summary, log2.count);
+      if (newChain) add(summary, "chainTriggers");
+    });
+  }
+  if (event.type === "PROTOCOL_SYNERGY" && identifier(d.rootId)) {
+    if (d.pair === "PULSE_BREAK+PURIFY_CHAIN" && has(state, "chain", d.rootId) && !has(state, "pulse-chain", d.rootId)) {
+      if (state.frame.entries.length >= RUN_METRICS_FRAME_LIMIT) return limited(state);
+      state = append(state, { kind: "pulse-chain", rootId: d.rootId, targetId: "", protocolId: "PURIFY_CHAIN" });
+      return modify(state, (summary) => add(summary, "synergyPulseChain"));
+    }
+    if (d.pair === "EXPOSE_TRACE+IMMUNE_BEACON" && identifier(d.targetId) && has(state, "beacon", d.rootId, d.targetId) && !has(state, "trace-beacon", d.rootId, d.targetId)) {
+      if (state.frame.entries.length >= RUN_METRICS_FRAME_LIMIT) return limited(state);
+      state = append(state, { kind: "trace-beacon", rootId: d.rootId, targetId: d.targetId, protocolId: "IMMUNE_BEACON" });
+      return modify(state, (summary) => add(summary, "synergyTraceBeacon"));
+    }
+    return state;
+  }
+  if (event.type === "ORGAN_INTEGRITY_CHANGED" && organ2(d.organId) && amount(d.before) && amount(d.after) && d.before <= 100 && d.after <= 100) {
+    const organId = d.organId, before = d.before, after = d.after;
+    if (d.reason === "repair" && after > before) return modify(state, (summary) => {
+      const care = summary.care, local = care.organs[organId], restored = after - before;
+      care.repairActions = sum(summary, care.repairActions, 1);
+      local.repairActions = sum(summary, local.repairActions, 1);
+      care.repaired = sum(summary, care.repaired, restored);
+      local.repaired = sum(summary, local.repaired, restored);
+    });
+    if (before > after) return modify(state, (summary) => {
+      const care = summary.care, local = care.organs[organId], loss = before - after;
+      care.organLoss = sum(summary, care.organLoss, loss);
+      local.loss = sum(summary, local.loss, loss);
+      if (ORGAN_COST_REASONS.includes(String(d.reason))) {
+        care.organCost = sum(summary, care.organCost, loss);
+        local.cost = sum(summary, local.cost, loss);
+      }
+    });
+    return state;
+  }
+  if (event.type === "PLAYER_HURT" && positive2(d.damage) && d.damage <= 100) return modify(state, (summary) => {
+    summary.care.playerDamage = sum(summary, summary.care.playerDamage, d.damage);
+  });
+  if (event.type === "SCAN_COMPLETED" && count2(d.found)) return modify(state, (summary) => add(summary, "scans"));
+  if (event.type === "GROWTH_REWARD" && typeof d.key === "string" && (positive2(d.xp) || positive2(d.research))) {
+    const diagnosed = d.key.startsWith("diagnose:") ? d.key.slice(9) : void 0;
+    if (trait(diagnosed) && !state.summary.control.diagnosedTraits.includes(diagnosed)) return modify(state, (summary) => {
+      summary.control.diagnosedTraits.push(diagnosed);
+    });
+  }
+  if (event.type === "PULSE_TRIGGERED" && organ2(d.organId)) return modify(state, (summary) => {
+    add(summary, "pulseUses");
+    if (count2(d.exposed)) add(summary, "crystalExposures", d.exposed);
+    else summary.limited = true;
+    if (d.coreHit === true) add(summary, "corePulseHits");
+    else if (d.coreHit !== false) summary.limited = true;
+  });
+  if (event.type === "AIRWAY_CHANGED" && d.organId === "lung" && typeof d.open === "boolean") return modify(state, (summary) => add(summary, d.open ? "airwayOpens" : "airwayCloses"));
+  if (event.type === "ORGAN_CRISIS_INTERRUPTED" && identifier(d.sourceId)) {
+    if (d.organId === "heart" && d.reason === "pulse") return modify(state, (summary) => add(summary, "crisisPulseInterrupts"));
+    if (d.organId === "lung" && d.reason === "airway") return modify(state, (summary) => add(summary, "crisisAirwayInterrupts"));
+  }
+  if (event.type === "MIGRATION_DECIDED" && ["pursue", "block", "ignore"].includes(String(d.choice))) return modify(state, (summary) => {
+    const choice = d.choice;
+    if (summary.control.migrationChoice !== null && summary.control.migrationChoice !== choice) summary.limited = true;
+    else summary.control.migrationChoice = choice;
+  });
+  if (event.type === "MIGRATION_INTERCEPTED" && (d.by === "clear" || d.by === "closed-airway")) return modify(state, (summary) => {
+    summary.control.migrationInterception = d.by;
+  });
+  if (event.type === "MIGRATION_ESTABLISHED") return modify(state, (summary) => {
+    summary.control.migrationMissed = true;
+  });
+  if (event.type === "CORE_MEMBRANE_BROKEN" && trait(d.trait) && identifier(d.coreId) && !state.summary.control.coreMembranes.includes(d.trait)) return modify(state, (summary) => {
+    summary.control.coreMembranes.push(d.trait);
+  });
+  if (event.type === "CORE_CORROSION_INTERRUPTED" && identifier(d.coreId) && identifier(d.attackId) && d.by === "scan") return modify(state, (summary) => add(summary, "coreScanInterrupts"));
+  if (event.type === "CORE_CLEARED" && (identifier(d.coreId) || identifier(d.actorId))) return modify(state, (summary) => {
+    summary.control.coreCleared = true;
+  });
+  return state;
+}
+
+// src/game/session.ts
+var GameSession = class {
+  constructor(seed = 130026, options = {}) {
+    this.options = options;
+    this.options = { ...options };
+    this.state = this.initial(seed);
+    if (options.campaign) this.battleDirector = new BattleDirector(this);
+    this.resetGrowth();
+    this.resetCampaign();
+  }
+  options;
+  state;
+  bus = new EventBus();
+  effectId = 0;
+  dashDirection = { x: 1, y: 0 };
+  battleDirector;
+  growthController;
+  runSerial = 0;
+  draftPauseId = null;
+  campaignController;
+  motherController;
+  campaignTransactions = /* @__PURE__ */ new Set();
+  deferredCampaign = [];
+  metricsSerial = 0;
+  metricsSequence = 0;
+  resetGrowth() {
+    this.draftPauseId = null;
+    this.growthController = this.state.battle && this.state.battle.milestone !== "G1" ? new GrowthController(this.state.seed, `${this.state.seed}:${++this.runSerial}`, this.state.battle.encounter?.configId === "campaign-1" ? this.options.preparation : void 0) : void 0;
+    if (this.growthController) this.state.growth = this.growthController.state;
+  }
+  resetCampaign() {
+    this.campaignTransactions.clear();
+    this.deferredCampaign = [];
+    this.motherController = void 0;
+    this.campaignController = this.state.battle?.milestone === "G3" ? new CampaignDirector(this.state.seed, this.state) : void 0;
+    if (this.campaignController) this.state.campaign = this.campaignController.state;
+  }
+  initial(seed) {
+    const rng = new SeedRng(seed);
+    const target = (id, kind, x, y) => ({
+      id,
+      kind,
+      x: x + rng.int(-8, 8),
+      y: y + rng.int(-8, 8),
+      radius: kind === "single" ? 25 : 21,
+      hp: kind === "single" ? 100 : 60,
+      maxHp: kind === "single" ? 100 : 60,
+      hitUntil: 0,
+      scanned: false
+    });
+    const state = {
+      game: "viral-invasion",
+      schemaVersion: 1,
+      seed: seed >>> 0,
+      phase: "menu",
+      tick: 0,
+      elapsed: 0,
+      player: { x: 330, y: 440, hp: 100, radius: 19, facing: 0, moving: false, dashUntil: 0, dashReady: 0, hurtUntil: 0, actionUntil: 0 },
+      targets: [target("single-1", "single", 590, 330), target("cluster-1", "cluster", 820, 400), target("cluster-2", "cluster", 870, 430), target("cluster-3", "cluster", 815, 460)],
+      tissue: { x: 780, y: 610, hp: 25, maxHp: 100, radius: 43 },
+      terminal: { x: 340, y: 610 },
+      tool: 1,
+      cooldowns: { 1: 0, 2: 0, 3: 0 },
+      scanReady: 0,
+      scanUntil: 0,
+      effects: [],
+      events: [],
+      message: "\u5148\u51C0\u5316\u4E24\u7C7B\u9776\u6807\uFF0C\u518D\u4FEE\u590D\u53D7\u635F\u7EC4\u7EC7\u3002",
+      messageUntil: 8,
+      shots: 0,
+      hits: 0,
+      scans: 0,
+      dashes: 0,
+      result: null
+    };
+    this.metricsSequence = 0;
+    state.runMetrics = createRunMetrics(`${seed >>> 0}:metrics:${++this.metricsSerial}`);
+    if (this.options.campaign) initializeBattle(state, this.options);
+    return state;
+  }
+  start(seed = this.state.seed, runOptions) {
+    if (runOptions) this.options = { ...this.options, ...runOptions };
+    this.effectId = 0;
+    this.dashDirection = { x: 1, y: 0 };
+    this.state = this.initial(seed);
+    this.resetGrowth();
+    this.resetCampaign();
+    this.state.phase = "playing";
+    this.emit("RUN_STARTED", {
+      seed: this.state.seed,
+      mode: this.state.battle ? "campaign" : "training",
+      startAtTick: 0,
+      encounterConfig: this.state.battle?.encounter?.configId ?? (this.state.battle ? "fixture-1" : "training-1"),
+      counterGuide: this.state.battle?.encounter?.guideVariant ?? "adaptive",
+      firstTraitOverride: this.options.firstTrait ?? ""
+    });
+    this.flushPausedGrowthLogs();
+  }
+  restart(seed = this.state.seed) {
+    this.start(seed);
+  }
+  pause() {
+    if (this.state.phase !== "playing") return;
+    this.state.phase = "paused";
+    this.state.player.moving = false;
+    this.emit("RUN_PAUSED", {});
+  }
+  resume() {
+    if (this.state.phase !== "paused") return;
+    if (this.state.growth?.draft || this.state.growth?.pendingResearch) return;
+    this.state.phase = "playing";
+    this.emit("RUN_RESUMED", {});
+  }
+  menu() {
+    const seed = this.state.seed;
+    this.state = this.initial(seed);
+    this.resetGrowth();
+    this.resetCampaign();
+    this.effectId = 0;
+  }
+  finish(success, reason) {
+    if (this.state.phase === "result" || this.state.phase === "menu") return;
+    this.state.result = { success, reason };
+    this.state.phase = "result";
+    this.state.player.moving = false;
+    this.emit("RUN_ENDED", { success, reason, seed: this.state.seed, durationSimMs: Math.round(this.state.elapsed * 1e3) });
+  }
+  snapshot() {
+    return structuredClone(this.state);
+  }
+  emit(type, data) {
+    const event = { type, tick: this.state.tick, data };
+    if (this.state.runMetrics) this.state.runMetrics = reduceRunMetrics(
+      this.state.runMetrics,
+      { runId: this.state.runMetrics.runId, sequence: ++this.metricsSequence, event }
+    );
+    this.state.events.push(event);
+    if (this.state.events.length > 512) this.state.events.shift();
+    const feedback = recordTacticalEvent(this.state, event);
+    if (feedback && feedback.toast !== false) this.message(feedback.text, feedback.seconds, feedback.priority);
+    this.battleDirector?.recordEvent(event);
+    this.growthController?.recordEvent(event, growthContext(this.state));
+    this.campaignController?.recordEvent(event, this.state);
+    if (type === "PULSE_TRIGGERED" && data.coreHit === true) {
+      const context = this.coreContext();
+      if (context && this.motherController) this.applyCoreCommands(this.motherController.onPulse(context));
+    }
+    this.bus.emit("event", event);
+  }
+  message(text2, seconds = 3, priority = 0) {
+    if (this.state.elapsed < this.state.messageUntil && priority < (this.state.messagePriority ?? 0)) return;
+    this.state.message = text2;
+    this.state.messageUntil = this.state.elapsed + seconds;
+    this.state.messagePriority = priority;
+  }
+  effect(kind, from, to, radius, duration) {
+    this.state.effects.push({ id: ++this.effectId, kind, from: { x: from.x, y: from.y }, to: { x: to.x, y: to.y }, radius, born: this.state.elapsed, duration });
+  }
+  step(input, dt = BALANCE.step) {
+    const state = this.state;
+    if (state.phase !== "playing") return;
+    if (!Number.isFinite(dt) || Math.abs(dt - BALANCE.step) > 1e-10) return;
+    dt = BALANCE.step;
+    state.tick++;
+    state.elapsed = state.tick * BALANCE.step;
+    state.effects = state.effects.filter((effect) => state.elapsed - effect.born < effect.duration);
+    this.battleDirector?.beforeInput(input);
+    if (this.campaignController) this.applyCampaignCommands(this.campaignController.beforeInput(state));
+    if (this.checkFailure()) return;
+    if (input.tool && input.tool !== state.tool) {
+      state.tool = input.tool;
+      this.emit("TOOL_SELECTED", { tool: input.tool });
+    }
+    const direction = normalized(input.aim.x - state.player.x, input.aim.y - state.player.y);
+    if (direction.x || direction.y) state.player.facing = Math.atan2(direction.y, direction.x);
+    const move = normalized(input.moveX, input.moveY);
+    state.player.moving = !!(move.x || move.y);
+    if (input.dash) {
+      if (state.elapsed >= state.player.dashReady) {
+        this.dashDirection = state.player.moving ? move : { x: Math.cos(state.player.facing), y: Math.sin(state.player.facing) };
+        state.player.dashUntil = state.elapsed + BALANCE.dashDuration;
+        state.player.dashReady = state.elapsed + BALANCE.dashCooldown;
+        state.dashes++;
+        this.effect("dash", state.player, state.player, 25, 0.3);
+        this.emit("PLAYER_DASHED", { x: state.player.x, y: state.player.y });
+      } else this.message("\u51B2\u523A\u6B63\u5728\u5145\u80FD\u3002", 1);
+    }
+    const dashing = state.elapsed < state.player.dashUntil;
+    const velocity = dashing ? this.dashDirection : move;
+    const speed = dashing ? BALANCE.dashSpeed : BALANCE.speed;
+    const before = { x: state.player.x, y: state.player.y };
+    const desired = { x: velocity.x * speed * dt, y: velocity.y * speed * dt };
+    const after = moveWithCollision(state.player, desired, state.player.radius, activeWorld(state));
+    state.player.x = after.x;
+    state.player.y = after.y;
+    const finalAim = normalized(input.aim.x - after.x, input.aim.y - after.y);
+    if (finalAim.x || finalAim.y) state.player.facing = Math.atan2(finalAim.y, finalAim.x);
+    if ((velocity.x || velocity.y) && distance({ x: before.x + desired.x, y: before.y + desired.y }, after) > 0.1 && state.tick % 20 === 0) {
+      this.emit("COLLISION_BLOCKED", { x: after.x, y: after.y });
+    }
+    if (input.practiceHit && !state.battle) {
+      const damage = Math.max(0, Math.min(BALANCE.trainingHitDamage, state.player.hp - 1));
+      state.player.hp -= damage;
+      state.player.hurtUntil = state.elapsed + BALANCE.trainingHitDuration;
+      this.effect("hit", state.player, state.player, state.player.radius, 0.3);
+      this.emit("PLAYER_HURT", { damage, remainingHp: state.player.hp, reason: "training-exercise" });
+      this.message(`\u53D7\u51FB\u6F14\u7EC3\uFF1A\u8010\u4E45 -${damage}\uFF08\u8BAD\u7EC3\u4FDD\u5E95 1\uFF09\u3002\u91CD\u65B0\u5F00\u59CB\u53EF\u6062\u590D\u8010\u4E45\u3002`, 4);
+    }
+    if (input.scan) this.scan();
+    if (input.fire) this.fire(input.aim);
+    if (input.interact) this.interact();
+    if (state.phase === "playing") this.battleDirector?.afterInput();
+    if (state.phase === "playing") this.campaignController?.captureCurrent(state);
+    if (state.phase === "playing") {
+      const context = this.coreContext();
+      if (context && this.motherController) this.applyCoreCommands(this.motherController.tick(context));
+    }
+    if (state.phase === "playing" && this.growthController) this.applyGrowthCommands(this.growthController.afterInput(growthContext(state)));
+    if (state.phase === "playing" && this.campaignController) {
+      this.applyCampaignCommands(this.campaignController.afterInput(state));
+      this.updateBodyVitality();
+      if (!this.checkFailure()) {
+        const deferred = this.deferredCampaign.splice(0);
+        this.applyCampaignCommands(deferred, true);
+      }
+      this.campaignController.captureCurrent(state);
+    }
+    const growthModal = state.growth?.draft?.id ?? state.growth?.pendingResearch?.id;
+    if (state.phase === "playing" && growthModal) {
+      this.draftPauseId = growthModal;
+      this.pause();
+      this.emit("INPUT_RESET_REQUESTED", { reason: state.growth?.pendingResearch ? "research-direction-opened" : "protocol-draft-opened" });
+    }
+  }
+  scan() {
+    const state = this.state;
+    if (state.elapsed < state.scanReady) {
+      this.message("\u626B\u63CF\u6B63\u5728\u5145\u80FD\u3002", 1);
+      return;
+    }
+    state.scanReady = state.elapsed + BALANCE.scanCooldown;
+    state.scanUntil = state.elapsed + 2;
+    state.scans++;
+    let found = 0;
+    for (const target of state.targets) {
+      if (target.hp > 0 && distance(state.player, target) <= BALANCE.scanRadius) {
+        target.scanned = true;
+        found++;
+      }
+    }
+    this.effect("scan", state.player, state.player, BALANCE.scanRadius, 1.1);
+    this.emit("SCAN_COMPLETED", { found, radius: BALANCE.scanRadius });
+    this.message(found ? `\u8BCA\u65AD\uFF1A\u53D1\u73B0 ${found} \u4E2A\u8BAD\u7EC3\u9776\u3002\u5355\u6838\u7528 1\uFF0C\u7C07\u7FA4\u53EF\u7528 2\uFF1B\u53D7\u635F\u7EC4\u7EC7\u7528 3\u3002` : "\u8BCA\u65AD\uFF1A\u9644\u8FD1\u9776\u6807\u5DF2\u51C0\u5316\uFF0C\u68C0\u67E5\u53D7\u635F\u7EC4\u7EC7\u5E76\u8FD4\u56DE\u590D\u6D4B\u53F0\u3002", 4);
+    this.battleDirector?.scan();
+    const coreContext = this.coreContext();
+    if (coreContext && this.motherController) this.applyCoreCommands(this.motherController.onScan(coreContext));
+    if (this.growthController) this.applyGrowthCommands(this.growthController.onScan(growthContext(state)));
+  }
+  fire(aim) {
+    const state = this.state;
+    const tool = state.tool;
+    if (state.elapsed + 1e-9 < state.cooldowns[tool]) return;
+    state.cooldowns[tool] = state.elapsed + BALANCE.cooldowns[tool];
+    state.player.actionUntil = state.elapsed + 0.15;
+    const direction = normalized(aim.x - state.player.x, aim.y - state.player.y);
+    const aimDistance = distance(state.player, aim);
+    const range = BALANCE.range;
+    const wall = wallHit(state.player, direction, range, activeWorld(state));
+    if (tool === 1) {
+      state.shots++;
+      let nearest;
+      let limit = wall ?? range;
+      for (const target of state.targets) {
+        if (target.hp <= 0) continue;
+        const hit = rayCircle(state.player, direction, target, target.radius, range);
+        if (hit !== null && hit < limit) {
+          nearest = target;
+          limit = hit;
+        }
+      }
+      const end = { x: state.player.x + direction.x * limit, y: state.player.y + direction.y * limit };
+      this.effect("beam", state.player, end, 0, 0.14);
+      this.emit("TOOL_FIRED", { tool, x: aim.x, y: aim.y, hit: !!nearest });
+      if (nearest) this.damage(nearest, BALANCE.damage[1]);
+      else if (distance(aim, state.tissue) < state.tissue.radius + 20) this.message("\u8FD9\u662F\u53D7\u635F\u7EC4\u7EC7\uFF1A\u6309 3 \u5207\u6362\u7EC4\u7EC7\u4FEE\u590D\u6CE8\u5C04\u3002");
+      else if (wall !== null && wall < aimDistance) this.message("\u7EC4\u7EC7\u8936\u76B1\u6321\u4F4F\u5C04\u7EBF\uFF0C\u8BF7\u7ED5\u5230\u53E6\u4E00\u4FA7\u3002");
+      else if (aimDistance > range) this.message("\u76EE\u6807\u8D85\u51FA\u51C0\u5316\u5C04\u7A0B\uFF0C\u8BF7\u9760\u8FD1\u3002");
+      return;
+    }
+    if (aimDistance > range) {
+      this.message("\u76EE\u6807\u8D85\u51FA\u5DE5\u5177\u5C04\u7A0B\uFF0C\u8BF7\u9760\u8FD1\u3002");
+      this.emit("TOOL_REJECTED", { tool, reason: "range" });
+      return;
+    }
+    if (wall !== null && wall < aimDistance - 1) {
+      this.message("\u7EC4\u7EC7\u8936\u76B1\u6321\u4F4F\u5DE5\u5177\uFF0C\u8BF7\u7ED5\u5230\u53E6\u4E00\u4FA7\u3002");
+      this.emit("TOOL_REJECTED", { tool, reason: "blocked" });
+      return;
+    }
+    this.emit("TOOL_FIRED", { tool, x: aim.x, y: aim.y });
+    if (tool === 2) {
+      state.shots++;
+      this.effect("burst", aim, aim, BALANCE.areaRadius, 0.55);
+      let count3 = 0;
+      for (const target of state.targets) {
+        if (target.hp > 0 && distance(aim, target) <= BALANCE.areaRadius + target.radius) {
+          const toTarget = normalized(target.x - aim.x, target.y - aim.y);
+          const targetDistance = distance(aim, target);
+          const localWall = wallHit(aim, toTarget, targetDistance, activeWorld(state));
+          if (localWall !== null && localWall < targetDistance - target.radius) continue;
+          this.damage(target, BALANCE.damage[2]);
+          if (state.campaign && target.hp > 0 && target.role !== "source" && target.role !== "core") {
+            const direction2 = normalized(target.x - aim.x, target.y - aim.y);
+            const fallback = normalized(target.x - state.player.x, target.y - state.player.y);
+            const moved = moveWithCollision(target, { x: (direction2.x || direction2.y ? direction2.x : fallback.x) * 85, y: (direction2.x || direction2.y ? direction2.y : fallback.y) * 85 }, target.radius, activeWorld(state));
+            const pushed = distance(target, moved);
+            target.x = moved.x;
+            target.y = moved.y;
+            if (pushed > 1) {
+              target.attackAt = void 0;
+              target.attackAim = void 0;
+              target.attackTarget = void 0;
+              target.attackReady = Math.max(target.attackReady ?? 0, state.elapsed + 0.45);
+              this.emit("AREA_DISPLACED", { targetId: target.id, distance: pushed });
+            }
+          }
+          count3++;
+        }
+      }
+      if (count3) this.message(`\u8303\u56F4\u88C2\u89E3\u547D\u4E2D ${count3} \u4E2A\u9776\u6807\u3002`);
+      else if (distance(aim, state.tissue) < state.tissue.radius + BALANCE.areaRadius) this.message("\u8303\u56F4\u88C2\u89E3\u4E0D\u80FD\u4FEE\u590D\u7EC4\u7EC7\uFF0C\u8BF7\u6309 3\u3002");
+      return;
+    }
+    this.effect("heal", state.player, aim, 35, 0.55);
+    if (distance(aim, state.tissue) > state.tissue.radius + 12) {
+      this.message("\u4FEE\u590D\u6CE8\u5C04\u4EC5\u4F5C\u7528\u4E8E\u5E26\u5341\u5B57\u6807\u8BB0\u7684\u53D7\u635F\u7EC4\u7EC7\uFF0C\u4E0D\u80FD\u51C0\u5316\u9776\u6807\u3002");
+      return;
+    }
+    const before = state.tissue.hp;
+    state.tissue.hp = clamp(state.tissue.hp + BALANCE.repair, 0, state.tissue.maxHp);
+    const amount2 = state.tissue.hp - before;
+    this.emit("ORGAN_INTEGRITY_CHANGED", { organId: state.battle?.organId ?? "heart", before, after: state.tissue.hp, reason: "repair" });
+    if (amount2 > 0) this.message(state.tissue.hp === state.tissue.maxHp ? "\u7EC4\u7EC7\u4FEE\u590D\u5B8C\u6210\uFF01\u6E05\u7A7A\u9776\u6807\u540E\u8FD4\u56DE\u590D\u6D4B\u53F0\uFF0C\u6309 E\u3002" : `\u7EC4\u7EC7\u4FEE\u590D +${amount2}\uFF0C\u5B8C\u6574\u5EA6 ${state.tissue.hp}%\u3002`);
+    else this.message("\u7EC4\u7EC7\u5DF2\u7ECF\u5B8C\u5168\u4FEE\u590D\u3002");
+    this.battleDirector?.repaired(amount2);
+    this.battleDirector?.repairMimics(aim, (target, damage) => this.damage(target, damage));
+  }
+  damage(target, amount2, origin = { cause: "basic" }) {
+    const state = this.state;
+    if (target.hp <= 0) return;
+    const wasPulseExposed = origin.wasPulseExposed ?? (target.exposedUntil ?? 0) > state.elapsed;
+    if (this.battleDirector && origin.cause === "basic") amount2 = this.battleDirector.modifiedDamage(target, amount2);
+    const rawDamage = amount2;
+    const coreContext = target.role === "core" ? this.coreContext() : void 0;
+    if (coreContext && this.motherController) {
+      const allowed = this.motherController.damageLimit(coreContext, amount2);
+      if (allowed < amount2 && state.tick % 30 === 0) this.message("\u6838\u819C\u4FDD\u62A4\u81F3 50%\uFF1A\u8EB2\u5F00\u6216\u53CD\u5236\u6807\u51FA\u7684\u524D\u6447\uFF0C\u5C55\u793A\u4E24\u79CD\u7279\u6027\u540E\u5373\u53EF\u51FB\u7834\u3002", 3);
+      amount2 = allowed;
+    }
+    if (amount2 <= 0) return;
+    const beforeHp = target.hp;
+    target.hp = Math.max(0, target.hp - amount2);
+    target.hitUntil = state.elapsed + 0.18;
+    if (origin.cause === "basic") state.hits++;
+    this.effect("hit", target, target, target.radius, 0.3);
+    this.emit("TARGET_HIT", {
+      id: target.id,
+      organId: state.battle?.organId ?? "heart",
+      damage: beforeHp - target.hp,
+      rawDamage,
+      remainingHp: target.hp,
+      tool: state.tool,
+      cause: origin.cause,
+      ...origin.rootId ? { rootId: origin.rootId } : {},
+      ...origin.protocolId ? { protocolId: origin.protocolId } : {}
+    });
+    if (target.hp === 0) {
+      this.emit("TARGET_CLEARED", { id: target.id, kind: target.kind });
+      if (this.battleDirector) this.battleDirector.cleared(target);
+      else this.message(state.targets.every((t) => t.hp === 0) ? "\u5168\u90E8\u9776\u6807\u5DF2\u51C0\u5316\uFF01\u6309 3 \u4FEE\u590D\u5341\u5B57\u6807\u8BB0\u7EC4\u7EC7\uFF0C\u518D\u5230\u590D\u6D4B\u53F0\u6309 E\u3002" : "\u8BAD\u7EC3\u9776\u5DF2\u51C0\u5316\u3002\u7EE7\u7EED\u5904\u7406\u5176\u4ED6\u9776\u6807\u3002");
+      if (this.growthController) this.applyGrowthCommands(this.growthController.onKill(growthContext(state), target, { ...origin, wasPulseExposed }));
+      if (coreContext && this.motherController) this.applyCoreCommands(this.motherController.notifyCleared(coreContext));
+    } else if (this.growthController && origin.cause === "basic" && (state.tool === 1 || state.tool === 2)) {
+      this.applyGrowthCommands(this.growthController.onHit(growthContext(state), target, { ...origin, wasPulseExposed }));
+    }
+  }
+  applyGrowthCommands(commands) {
+    for (const command of commands) {
+      const state = this.state;
+      if (command.kind === "log") {
+        this.emit(command.type, command.data);
+        continue;
+      }
+      if (!state.battle || command.organId !== state.battle.organId || state.phase === "result") continue;
+      if (command.kind === "damage") {
+        const target = state.targets.find((t) => t.id === command.targetId && t.hp > 0);
+        if (target) this.damage(target, command.amount, { cause: "protocol", rootId: command.rootId, protocolId: command.protocolId, allowChain: command.allowChain });
+      } else if (command.kind === "expose") {
+        const target = state.targets.find((t) => t.id === command.targetId && t.hp > 0);
+        if (target) {
+          target.exposedUntil = Math.max(target.exposedUntil ?? 0, command.until);
+          target.revealedUntil = Math.max(target.revealedUntil ?? 0, command.revealUntil);
+        }
+      } else if (command.kind === "effect") this.effect(command.effect, command.from, command.to, command.radius, command.duration);
+      else if (command.kind === "organCost") {
+        const before = state.tissue.hp;
+        state.tissue.hp = Math.max(0, before - command.amount);
+        this.emit("ORGAN_INTEGRITY_CHANGED", { organId: state.battle.organId, before, after: state.tissue.hp, reason: "protocol-pressure", protocolId: command.protocolId });
+      }
+    }
+  }
+  slowFactor(targetId) {
+    return this.growthController?.slowFactor(targetId, this.state.battle.organId, this.state.elapsed) ?? 1;
+  }
+  chooseDraft(intent) {
+    if (!this.growthController) return { kind: "rejected", reason: "no-growth" };
+    const result = this.growthController.chooseDraft(intent);
+    if (result.kind === "committed") {
+      const evolved = this.state.growth?.lastEvolution;
+      if (evolved?.protocolId === "IMMUNE_BEACON" || evolved?.protocolId === "EXPOSE_TRACE") this.state.scanReady = Math.min(this.state.scanReady, this.state.elapsed);
+      this.effect("evolution", this.state.player, this.state.player, 55, 1);
+    }
+    this.resolveDraftPause(result, intent.draftId);
+    return result;
+  }
+  discardDraft(draftId) {
+    if (!this.growthController) return { kind: "rejected", reason: "no-growth" };
+    const result = this.growthController.discardDraft(draftId, this.state.growth.runId);
+    this.resolveDraftPause(result, draftId);
+    return result;
+  }
+  backToDraft(draftId) {
+    this.growthController?.backToDraft(draftId, this.state.growth.runId);
+  }
+  ownsResearchPause(intent) {
+    const offer = this.state.growth?.pendingResearch, battle = this.state.battle;
+    if (!offer || !battle || this.state.phase !== "paused" || this.state.player.hp <= 0 || battle.pressure.vitality <= 0 || this.draftPauseId !== intent.requestId || offer.id !== intent.requestId || offer.runId !== intent.runId || offer.organId !== battle.organId) return false;
+    const node = battle.graph.nodes.find((node2) => node2.id === offer.nodeId && node2.kind === "research");
+    return !!node && distance(this.state.player, node) <= BALANCE.interactionRange;
+  }
+  /** UI transactions use the pause that belongs to this exact research request. */
+  confirmResearch(intent) {
+    if (!this.growthController || !this.ownsResearchPause(intent)) return { kind: "rejected", reason: "stale-request-or-run" };
+    const result = this.growthController.confirmResearch(intent);
+    if (result.kind === "opened") {
+      this.draftPauseId = result.draftId;
+      this.flushPausedGrowthLogs();
+      this.emit("INPUT_RESET_REQUESTED", { reason: "research-direction-confirmed" });
+    }
+    return result;
+  }
+  cancelResearch(intent) {
+    if (!this.growthController || !this.ownsResearchPause(intent)) return { kind: "rejected", reason: "stale-request-or-run" };
+    const result = this.growthController.cancelResearch(intent);
+    if (result.kind === "cancelled") {
+      this.flushPausedGrowthLogs();
+      this.draftPauseId = this.state.growth?.draft?.id ?? null;
+      if (!this.draftPauseId) this.resume();
+      this.emit("INPUT_RESET_REQUESTED", { reason: "research-direction-cancelled" });
+    }
+    return result;
+  }
+  flushPausedGrowthLogs() {
+    for (const log2 of this.state.growth?.pendingLogs.splice(0) ?? []) this.emit(log2.type, log2.data);
+  }
+  resolveDraftPause(result, draftId) {
+    if (result.kind === "rejected" || this.draftPauseId !== draftId) return;
+    if (this.state.growth?.draft) this.draftPauseId = this.state.growth.draft.id;
+    else {
+      this.draftPauseId = null;
+      this.resume();
+    }
+  }
+  isMigratingActor(id) {
+    return this.campaignController?.isMigratingActor(id) ?? false;
+  }
+  chooseMigration(choice, eventId) {
+    if (this.campaignController) this.applyCampaignCommands(this.campaignController.chooseMigration(choice, eventId, this.state));
+  }
+  skipCounterGuide() {
+    if (!["playing", "paused"].includes(this.state.phase)) return false;
+    const accepted = this.battleDirector?.skipCounterGuide() ?? false;
+    if (accepted) this.emit("INPUT_RESET_REQUESTED", { reason: "counter-guide-skipped" });
+    return accepted;
+  }
+  coreContext() {
+    const state = this.state, campaign = state.campaign, controller = this.motherController;
+    if (!campaign || !controller) return;
+    const arena = campaign.arenas[controller.state.organId];
+    const core = arena.targets.find((target) => target.id === controller.state.coreId);
+    if (!core) return;
+    return {
+      tick: state.tick,
+      elapsed: state.elapsed,
+      active: state.battle?.organId === arena.organId,
+      core,
+      player: state.player,
+      tissue: arena.tissue,
+      geometry: arena.geometry
+    };
+  }
+  checkFailure() {
+    const state = this.state;
+    if (state.phase !== "playing") return true;
+    if (state.player.hp <= 0) this.finish(false, "\u6551\u63F4\u4F53\u8010\u4E45\u8017\u5C3D\uFF1A\u89C2\u5BDF\u524D\u6447\uFF0C\u51B2\u523A\u8131\u79BB\u5371\u9669\u533A\u57DF\u3002");
+    else if (state.battle && state.battle.pressure.vitality <= 0) this.finish(false, "\u8EAB\u4F53\u5D29\u6E83\uFF1A\u6FC0\u6D3B\u5668\u5B98\u957F\u671F\u6FD2\u5371\uFF0C\u5168\u8EAB\u7A33\u5B9A\u8017\u5C3D\u3002");
+    else if (state.battle?.pressure.criticalSince !== null && state.battle?.pressure.criticalSince !== void 0 && state.battle.pressure.infection >= 100 && state.elapsed - state.battle.pressure.criticalSince + 1e-9 >= BATTLE_BALANCE.crisisDuration) this.finish(false, "\u611F\u67D3\u5931\u63A7\uFF1A\u8D1F\u8377 100 \u6301\u7EED 15 \u79D2\u3002");
+    return state.phase !== "playing";
+  }
+  updateBodyVitality() {
+    const state = this.state, battle = state.battle, campaign = state.campaign;
+    if (this.checkFailure()) return;
+    this.campaignController.captureCurrent(state);
+    let drain = 0;
+    let alarm = false;
+    const arenas = Object.values(campaign.arenas).filter((arena) => arena.activated);
+    for (const arena of arenas) {
+      if (arena.tissue.hp < BATTLE_BALANCE.organAlarmAt) {
+        alarm = true;
+        if (arena.organLowSince === null) {
+          arena.organLowSince = state.elapsed;
+          this.emit("ORGAN_ALARM", { organId: arena.organId, integrity: arena.tissue.hp, graceSeconds: BATTLE_BALANCE.organCollapseDelay });
+          this.message(`${arena.organId === "heart" ? "\u5FC3\u810F" : "\u80BA\u90E8"}\u4F4E\u4E8E 30%\uFF018 \u79D2\u540E\u5168\u8EAB\u7A33\u5B9A\u5F00\u59CB\u4E0B\u964D\uFF0C\u524D\u5F80\u62A2\u4FEE\u53EF\u89E3\u9664\u3002`, 8, 3);
+        }
+        if (state.elapsed - arena.organLowSince >= BATTLE_BALANCE.organCollapseDelay) drain += arena.tissue.hp <= 0 ? 1.5 : 0.5;
+      } else if (arena.organLowSince !== null) {
+        arena.organLowSince = null;
+        this.emit("ORGAN_ALARM_CLEARED", { organId: arena.organId });
+      }
+    }
+    battle.organLowSince = campaign.arenas[battle.organId].organLowSince;
+    battle.pressure.organAlarm = alarm;
+    battle.pressure.vitality = clamp(battle.pressure.vitality + (drain ? -drain : arenas.every((arena) => arena.tissue.hp >= 50) ? 0.25 : 0) * BALANCE.step, 0, 100);
+  }
+  applyCoreCommands(commands) {
+    for (const command of commands) {
+      if (this.state.phase !== "playing") break;
+      if (command.kind === "log") {
+        this.emit(command.type, command.data);
+        continue;
+      }
+      const state = this.state, arena = state.campaign?.arenas[command.organId];
+      const core = arena?.targets.find((target) => target.id === command.coreId);
+      if (!arena || !core) continue;
+      if (command.kind === "pose") {
+        core.traits = [...command.traits];
+        core.facing = command.facing;
+      } else if (command.kind === "telegraph") {
+        core.attackAt = command.attack.resolveAt;
+        core.attackAim = { ...command.attack.aim };
+        core.attackRadius = command.attack.radius;
+        core.attackTarget = command.attack.kind === "corrosion" ? "tissue" : "player";
+      } else if (command.kind === "cancelTelegraph") {
+        core.attackAt = void 0;
+        core.attackAim = void 0;
+        core.attackTarget = void 0;
+      } else if (command.kind === "damagePlayer") {
+        const before = state.player.hp;
+        state.player.hp = Math.max(0, before - command.amount);
+        state.player.hurtUntil = state.elapsed + 0.5;
+        state.battle.stats.playerDamage += before - state.player.hp;
+        this.emit("PLAYER_HURT", { damage: before - state.player.hp, remainingHp: state.player.hp, reason: command.reason, actorId: core.id, attackId: command.attackId });
+      } else if (command.kind === "damageTissue") this.organDamage(command.organId, command.amount, command.reason);
+      else if (command.kind === "spawn") {
+        if (arena.targets.some((target) => target.id === command.actorId)) continue;
+        if (arena.targets.filter((target) => target.hp > 0).length >= BATTLE_BALANCE.maxActors) {
+          this.emit("CORE_SPAWN_CAPPED", { id: command.actorId });
+          continue;
+        }
+        const pos = moveWithCollision(command.position, { x: 0, y: 0 }, command.radius, arena.geometry);
+        arena.targets.push({ ...pos, id: command.actorId, role: command.role, kind: "single", hp: command.hp, maxHp: command.hp, radius: command.radius, traits: [...command.traits], generation: command.generation, sourceId: command.sourceId, hitUntil: 0, scanned: false, facing: 0, born: state.elapsed, attackReady: state.elapsed + 1.5 });
+        this.emit("ACTOR_SPAWNED", { id: command.actorId, role: command.role, generation: command.generation, sourceId: command.sourceId });
+      } else if (command.kind === "expose") {
+        core.exposedUntil = Math.max(core.exposedUntil ?? 0, command.until);
+        core.revealedUntil = Math.max(core.revealedUntil ?? 0, command.revealUntil);
+      } else if (command.kind === "effect" && state.battle.organId === command.organId) this.effect(command.effect, command.from, command.to, command.radius, command.duration);
+      if (this.checkFailure()) break;
+    }
+  }
+  organDamage(organId, amount2, reason) {
+    const state = this.state, arena = state.campaign.arenas[organId], before = arena.tissue.hp;
+    arena.tissue.hp = Math.max(0, before - amount2);
+    state.battle.stats.tissueDamage += before - arena.tissue.hp;
+    this.emit("ORGAN_INTEGRITY_CHANGED", { organId, before, after: arena.tissue.hp, reason });
+  }
+  applyCampaignCommands(commands, resolveDeferred = false) {
+    for (const command of commands) {
+      const state = this.state, campaign = state.campaign, director = this.campaignController;
+      if (!campaign || !director || this.checkFailure()) break;
+      if (command.kind === "log") {
+        this.emit(command.type, command.data);
+        continue;
+      }
+      if (command.kind === "notice") {
+        this.message(command.text, command.seconds, command.priority ?? 1);
+        continue;
+      }
+      if (!resolveDeferred && (command.kind === "travel" || command.kind === "retest")) {
+        this.deferredCampaign.push(command);
+        continue;
+      }
+      const eventId = "eventId" in command ? command.eventId : void 0;
+      if (eventId && this.campaignTransactions.has(eventId)) continue;
+      if (command.kind === "travel") {
+        if (!director.applyTravel(command, state)) continue;
+        this.dashDirection = { x: 1, y: 0 };
+        this.emit("INPUT_RESET_REQUESTED", { reason: "organ-travel" });
+      } else if (command.kind === "retest") {
+        if (!director.canRetest(state)) {
+          this.message(`\u590D\u6D4B\u672A\u901A\u8FC7\uFF1A${director.retestReasons(state).join("\uFF1B")}`, 5);
+          continue;
+        }
+        this.emit("RETEST_COMPLETED", { organs: Object.values(campaign.arenas).filter((arena) => arena.activated).map((arena) => `${arena.organId}:${arena.tissue.hp.toFixed(1)}`).join(","), infection: state.battle.pressure.infection });
+        for (const pending of campaign.pendingCommands.splice(0)) if (pending.kind === "log") this.emit(pending.type, pending.data);
+        this.effect("success", state.terminal, state.terminal, 180, 1.5);
+        this.finish(command.success, command.reason);
+      } else if (command.kind === "infectionDelta") {
+        const pressure = state.battle.pressure;
+        const before = pressure.infection;
+        pressure.infection = clamp(before + command.amount, 0, 100);
+        this.emit("INFECTION_CHANGED", { before, after: pressure.infection, reason: command.reason });
+      } else {
+        const arena = campaign.arenas[command.organId];
+        if (command.kind === "moveActor") {
+          const actor = arena.targets.find((target) => target.id === command.targetId && target.hp > 0);
+          if (actor) Object.assign(actor, moveWithCollision(actor, command.delta, actor.radius, arena.geometry));
+        } else if (command.kind === "organDamage") this.organDamage(command.organId, command.amount, command.reason);
+        else if (command.kind === "setRoute") {
+          const node = arena.graph.nodes.find((node2) => node2.id === command.nodeId);
+          if (node) {
+            node.active = command.open;
+            node.infected = false;
+          }
+          for (const edge of arena.graph.edges.filter((edge2) => edge2.from === command.nodeId || edge2.to === command.nodeId)) {
+            edge.open = command.open;
+            edge.nextSpread = state.elapsed + BATTLE_BALANCE.spreadInterval;
+          }
+          this.emit("ROUTE_CHANGED", { organId: command.organId, nodeId: command.nodeId, open: command.open });
+        } else if (command.kind === "spawnActor" || command.kind === "spawnSource" || command.kind === "spawnCore") {
+          const id = command.kind === "spawnActor" ? command.target.id : command.kind === "spawnSource" ? command.id : command.coreId;
+          if (arena.targets.some((target) => target.id === id)) continue;
+          if (arena.targets.filter((target) => target.hp > 0).length >= BATTLE_BALANCE.maxActors) {
+            if (command.kind === "spawnCore") director.acknowledgeCoreSpawn(id, false);
+            else campaign.pendingCommands.push(command);
+            continue;
+          }
+          if (command.kind === "spawnActor") arena.targets.push(structuredClone(command.target));
+          else if (command.kind === "spawnSource") {
+            const pos = moveWithCollision(command.position, { x: 0, y: 0 }, 34, arena.geometry);
+            arena.targets.push(sourceTarget(command.id, pos, command.hp));
+            arena.graph.nodes.push({ ...pos, id: command.id, kind: "source", active: true, infected: true });
+            const to = arena.graph.nodes.find((node) => node.id === command.connectTo);
+            if (command.spreadEnabled !== false && to) arena.graph.edges.push({ id: `${id}:${to.id}`, from: id, to: to.id, open: to.active, nextSpread: state.elapsed + BATTLE_BALANCE.spreadInterval, flowDirection: normalized(to.x - pos.x, to.y - pos.y) });
+            if (!command.disableSpawn) arena.nextSpawnAt[id] = state.elapsed + BATTLE_BALANCE.spawnInterval;
+          } else {
+            const pos = moveWithCollision(command.position, { x: 0, y: 0 }, MOTHER_CORE_BALANCE.radius, arena.geometry);
+            arena.targets.push({ ...pos, id, role: "core", kind: "single", hp: MOTHER_CORE_BALANCE.hp, maxHp: MOTHER_CORE_BALANCE.hp, radius: MOTHER_CORE_BALANCE.radius, traits: [command.traits[0]], facing: 0, born: state.elapsed, hitUntil: 0, scanned: false });
+            this.motherController = new MotherCoreController({ coreId: id, organId: command.organId, traits: command.traits, tick: state.tick, elapsed: state.elapsed });
+            campaign.core.combat = this.motherController.state;
+            director.acknowledgeCoreSpawn(id, true);
+          }
+          const accepted = arena.targets.find((target) => target.id === id);
+          this.emit("ACTOR_SPAWNED", { organId: command.organId, id, role: command.kind === "spawnCore" ? "core" : command.kind === "spawnSource" ? "source" : command.target.role ?? "virus", x: accepted.x, y: accepted.y });
+        }
+      }
+      if (eventId) this.campaignTransactions.add(eventId);
+    }
+  }
+  interact() {
+    if (this.campaignController && this.state.battle) {
+      const nearest = this.state.battle.graph.nodes.filter((n) => ["valve", "gate", "retest", "research", "exit"].includes(n.kind)).sort((a, b) => distance(a, this.state.player) - distance(b, this.state.player))[0];
+      if (nearest && distance(nearest, this.state.player) <= BALANCE.interactionRange) {
+        const interaction = this.campaignController.interact(nearest, this.state);
+        this.applyCampaignCommands(interaction.commands);
+        if (interaction.handled) return;
+      }
+    }
+    if (this.growthController && this.state.battle) {
+      const nearest = this.state.battle.graph.nodes.filter((n) => ["valve", "gate", "retest", "research", "exit"].includes(n.kind)).sort((a, b) => distance(a, this.state.player) - distance(b, this.state.player))[0];
+      if (nearest?.kind === "research" && distance(nearest, this.state.player) <= BALANCE.interactionRange) {
+        const result = this.state.battle.encounter?.configId === "campaign-1" ? this.growthController.requestResearch(nearest.id, growthContext(this.state)) : this.growthController.openResearch(nearest.id, growthContext(this.state));
+        if (result.kind === "rejected") this.message(result.reason === "insufficient-samples" ? `\u7814\u7A76\u9700\u8981\u66F4\u591A\u6837\u672C\uFF0C\u8FD8\u5DEE ${result.missing ?? 1}\u3002\u6E05\u9664\u611F\u67D3\u6E90\u6216\u9996\u6B21\u8BCA\u65AD\u53D8\u5F02\u53EF\u6536\u96C6\u3002` : "\u5F53\u524D\u7814\u7A76\u8349\u6848\u5C1A\u672A\u5B8C\u6210\u3002");
+        return;
+      }
+    }
+    if (this.battleDirector) {
+      this.battleDirector.interact();
+      return;
+    }
+    const state = this.state;
+    if (distance(state.player, state.terminal) > BALANCE.interactionRange) {
+      this.message("\u8BF7\u9760\u8FD1\u5DE6\u4E0B\u65B9\u7684\u590D\u6D4B\u53F0\uFF0C\u518D\u6309 E\u3002");
+      this.emit("INTERACTION_REJECTED", { reason: "distance" });
+      return;
+    }
+    const remaining = state.targets.filter((t) => t.hp > 0).length;
+    if (remaining || state.tissue.hp < state.tissue.maxHp) {
+      this.message(remaining ? `\u590D\u6D4B\u672A\u901A\u8FC7\uFF1A\u8FD8\u9700\u51C0\u5316 ${remaining} \u4E2A\u9776\u6807\uFF0C\u7EC4\u7EC7\u4FEE\u590D\u81F3 100%\u3002` : "\u590D\u6D4B\u672A\u901A\u8FC7\uFF1A\u8BF7\u7528 3 \u5C06\u53D7\u635F\u7EC4\u7EC7\u4FEE\u590D\u81F3 100%\u3002", 4);
+      this.emit("INTERACTION_REJECTED", { reason: remaining ? "targets" : "tissue" });
+      return;
+    }
+    this.effect("success", state.terminal, state.terminal, 180, 1.5);
+    this.emit("RETEST_COMPLETED", { integrity: state.tissue.hp });
+    this.finish(true, "\u5168\u90E8\u9776\u6807\u5DF2\u51C0\u5316\uFF0C\u5FC3\u810F\u7EC4\u7EC7\u6062\u590D\u7A33\u5B9A\uFF0C\u590D\u6D4B\u901A\u8FC7\u3002");
+  }
+};
+
+// src/render/camera.ts
+var Camera = class {
+  width = 1440;
+  height = 900;
+  scale = 1;
+  offsetX = 0;
+  offsetY = 0;
+  panX = 0;
+  panY = 0;
+  yScale = 0.72;
+  constructor(width = 1440, height = 900) {
+    this.resize(width, height);
+  }
+  resize(width, height) {
+    this.width = Math.max(1, width);
+    this.height = Math.max(1, height);
+    this.scale = Math.min(this.width / 1440, this.height / 900);
+    this.offsetX = (this.width - 1440 * this.scale) / 2;
+    this.offsetY = (this.height - 900 * this.scale) / 2;
+    this.panX = 0;
+    this.panY = 0;
+  }
+  /** Large arenas keep combat readable instead of shrinking the whole organ. */
+  follow(point5, world) {
+    if (world.width <= 1200 && world.height <= 800) {
+      this.resize(this.width, this.height);
+      return;
+    }
+    this.scale = Math.min(this.width / 1152, this.height / 720);
+    this.offsetX = 0;
+    this.offsetY = 0;
+    const clamp3 = (n, min, max) => min > max ? (min + max) / 2 : Math.max(min, Math.min(max, n));
+    const left = -120, right = this.width / this.scale - 120;
+    const top = -150 / this.yScale, bottom = (this.height / this.scale - 150) / this.yScale;
+    this.panX = clamp3(this.width / this.scale * 0.5 - 120 - point5.x, right - world.width - 40, left + 40);
+    this.panY = clamp3((this.height / this.scale * 0.5 - 150) / this.yScale - point5.y, bottom - world.height - 40, top + 80);
+  }
+  worldToScreen(point5) {
+    return { x: this.offsetX + (point5.x + this.panX + 120) * this.scale, y: this.offsetY + ((point5.y + this.panY) * this.yScale + 150) * this.scale };
+  }
+  screenToWorld(point5) {
+    return { x: (point5.x - this.offsetX) / this.scale - 120 - this.panX, y: ((point5.y - this.offsetY) / this.scale - 150) / this.yScale - this.panY };
+  }
+  apply(ctx) {
+    ctx.translate(this.offsetX + (120 + this.panX) * this.scale, this.offsetY + (150 + this.panY * this.yScale) * this.scale);
+    ctx.scale(this.scale, this.scale * this.yScale);
+  }
+};
+
+// src/render/depthSort.ts
+function depthSort(entities) {
+  return entities.map((entity, index) => ({ entity, index })).sort((a, b) => a.entity.y - b.entity.y || a.index - b.index).map((item) => item.entity);
+}
+
+// src/render/occlusion.ts
+function isForegroundOccluded(point5, world = WORLD) {
+  const area = world.foreground;
+  return point5.x >= area.x - 22 && point5.x <= area.x + area.width + 22 && point5.y >= area.y - 40 && point5.y <= area.y + area.height + 36;
+}
+function foregroundOpacity(point5, world = WORLD) {
+  return isForegroundOccluded(point5, world) ? 0.23 : 0.94;
+}
+
+// src/render/layers.ts
+var LAYER_ORDER = ["distant", "terrain", "contact-shadows", "world-y-sorted", "foreground", "effects", "hud"];
+
+// src/render/battleVisuals.ts
+var TAU = Math.PI * 2;
+function ellipse(ctx, x, y, rx, ry, fill, stroke2) {
+  ctx.beginPath();
+  ctx.ellipse(x, y, Math.max(0.1, rx), Math.max(0.1, ry), 0, 0, TAU);
+  ctx.fillStyle = fill;
+  ctx.fill();
+  if (stroke2) {
+    ctx.strokeStyle = stroke2;
+    ctx.stroke();
+  }
+}
+function line(ctx, points, color, width = 1) {
+  ctx.beginPath();
+  ctx.moveTo(points[0], points[1]);
+  for (let i = 2; i < points.length; i += 2) ctx.lineTo(points[i], points[i + 1]);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.stroke();
+}
+function label(ctx, value, x, y, color, size = 10) {
+  ctx.font = `500 ${size}px "Microsoft YaHei", "Segoe UI", sans-serif`;
+  ctx.textAlign = "center";
+  ctx.fillStyle = color;
+  ctx.fillText(value, x, y);
+}
+function groundLabel(ctx, value, x, y, color, size = 11) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(1, 1 / 0.72);
+  label(ctx, value, 0, 0, color, size);
+  ctx.restore();
+}
+function traceVirusOutline(ctx, trait2, radius) {
+  const r = radius;
+  ctx.beginPath();
+  if (trait2 === "CARAPACE") {
+    const points = [-1.05, 0.15, -1.3, -0.23, -0.82, -0.52, -0.88, -1.12, -0.35, -0.85, -0.03, -1.38, 0.35, -0.91, 0.86, -1.05, 0.85, -0.46, 1.28, -0.17, 0.95, 0.25, 1.08, 0.73, 0.45, 0.81, 0.13, 1.03, -0.31, 0.81, -0.91, 0.85];
+    ctx.moveTo(points[0] * r, points[1] * r);
+    for (let i = 2; i < points.length; i += 2) ctx.lineTo(points[i] * r, points[i + 1] * r);
+  } else if (trait2 === "FISSION") {
+    ctx.moveTo(-1.02 * r, 0.15 * r);
+    ctx.bezierCurveTo(-1.55 * r, -0.56 * r, -0.86 * r, -1.3 * r, -0.12 * r, -0.78 * r);
+    ctx.bezierCurveTo(0.41 * r, -1.4 * r, 1.38 * r, -0.95 * r, 1.07 * r, -0.12 * r);
+    ctx.bezierCurveTo(1.55 * r, 0.5 * r, 0.85 * r, 1.21 * r, 0.21 * r, 0.79 * r);
+    ctx.bezierCurveTo(-0.32 * r, 1.3 * r, -1.5 * r, 0.92 * r, -1.02 * r, 0.15 * r);
+  } else if (trait2 === "MIMIC") {
+    ctx.moveTo(-1.68 * r, 0.48 * r);
+    ctx.bezierCurveTo(-0.88 * r, 0.07 * r, -1.03 * r, -0.7 * r, -0.36 * r, -0.96 * r);
+    ctx.bezierCurveTo(0.51 * r, -1.24 * r, 1.24 * r, -0.62 * r, 1.02 * r, 0.09 * r);
+    ctx.bezierCurveTo(0.85 * r, 0.83 * r, 0.28 * r, 1.03 * r, -0.22 * r, 0.74 * r);
+    ctx.bezierCurveTo(-0.83 * r, 0.52 * r, -1.03 * r, 0.88 * r, -1.68 * r, 0.48 * r);
+  } else {
+    for (let i = 0; i <= 48; i++) {
+      const angle = i / 48 * TAU, length = r * (1 + Math.sin(angle * 8) * 0.11);
+      const x = Math.cos(angle) * length, y = Math.sin(angle) * length * 0.86;
+      if (!i) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+  }
+  ctx.closePath();
+}
+var TRAIT_NAME = { CARAPACE: "\u6676\u58F3", FISSION: "\u88C2\u6B96", MIMIC: "\u6F5C\u4F0F" };
+function drawBattleTarget(ctx, target, state) {
+  const core = state.campaign?.core.combat;
+  if (target.role === "core" && core?.coreId === target.id) {
+    drawMotherCore(ctx, target, state, core);
+    return;
+  }
+  const t = state.elapsed, r = target.radius;
+  const trait2 = target.traits?.[0];
+  const exposed = (target.exposedUntil ?? 0) > t;
+  const traced = state.growth?.marks.some((mark) => mark.targetId === target.id && mark.organId === state.battle?.organId && mark.until > t) ?? false;
+  const revealed = (target.revealedUntil ?? 0) > t || exposed || state.scanUntil > t || traced;
+  const mimic = target.traits?.includes("MIMIC") && !revealed;
+  const source = target.role === "source";
+  const elite = target.role === "elite" || target.role === "core";
+  ctx.save();
+  ctx.translate(target.x, target.y);
+  ctx.scale(1, 1 / 0.72);
+  if (target.hp <= 0) {
+    const progress = Math.min(1, Math.max(0, (t - (target.deadAt ?? t - 1)) / 0.6));
+    ctx.globalAlpha = (1 - progress) * 0.8;
+    for (let i = 0; i < 6; i++) {
+      const a = i / 6 * TAU;
+      ellipse(ctx, Math.cos(a) * r * progress, -12 + Math.sin(a) * r * progress, 4 * (1 - progress) + 1, 3, "#e5f5b6");
+    }
+    ctx.globalAlpha = 0.32;
+    ellipse(ctx, 0, 0, r * 0.6, 5, "#a2e9ba21", "#a2e9ba44");
+    if (source) {
+      ctx.globalAlpha = 0.75;
+      label(ctx, "\u2713 \u611F\u67D3\u6E90\u5DF2\u51C0\u5316", 0, 25, "#b8dcc2", 10);
+    }
+    ctx.restore();
+    return;
+  }
+  if (mimic) {
+    const age = (t - (target.born ?? 0)) % BATTLE_BALANCE.mimicPeriod;
+    if (age < BATTLE_BALANCE.mimicDisturbance) {
+      const ripple = age / BATTLE_BALANCE.mimicDisturbance;
+      ctx.globalAlpha = (1 - ripple) * 0.8;
+      ellipse(ctx, 0, 0, r + ripple * 35, (r + ripple * 35) * 0.47, "#00000000", "#e9c3a4");
+      label(ctx, "\u2248", 0, -r * 1.5 - 12, "#f4d1ad", 18);
+      ctx.globalAlpha = 1;
+    }
+  }
+  if (source) {
+    for (let i = 0; i < 7; i++) {
+      const a = i / 7 * TAU, x = Math.cos(a) * r * 1.1, y = Math.sin(a) * r * 0.4;
+      line(ctx, [0, -5, x * 0.7, y - 11, x, y + 4], "#d273715c", 5);
+      ellipse(ctx, x, y + 3, 8, 4, "#af6870", "#e5aa8b");
+    }
+    ellipse(ctx, 0, 0, r * 1.23, r * 0.4, "#6c304c", "#dc9c7e");
+  }
+  const bob = source ? Math.sin(t * 2) * 1.2 : Math.sin(t * 5 + target.x) * 2;
+  const telegraph = (target.attackAt ?? 0) > t;
+  ctx.save();
+  ctx.translate(0, -r * 0.8 + bob);
+  if (elite) {
+    const crownY = -r * 1.08;
+    ctx.beginPath();
+    ctx.moveTo(-r * 0.58, crownY + 4);
+    ctx.lineTo(-r * 0.7, crownY - 11);
+    ctx.lineTo(-r * 0.18, crownY - 4);
+    ctx.lineTo(0, crownY - 18);
+    ctx.lineTo(r * 0.2, crownY - 4);
+    ctx.lineTo(r * 0.67, crownY - 10);
+    ctx.lineTo(r * 0.56, crownY + 5);
+    ctx.closePath();
+    ctx.fillStyle = "#f0c993";
+    ctx.fill();
+    ctx.strokeStyle = "#542b43";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+  const body = ctx.createLinearGradient(-r, -r, r, r);
+  body.addColorStop(0, target.hitUntil > t ? "#fff2c5" : mimic ? "#b17d7a" : trait2 === "CARAPACE" ? "#b997c3" : trait2 === "FISSION" ? "#f1b077" : "#ed8a87");
+  body.addColorStop(0.55, mimic ? "#805663" : trait2 === "CARAPACE" ? "#785c9b" : "#ba5c73");
+  body.addColorStop(1, "#633a58");
+  traceVirusOutline(ctx, trait2, r);
+  ctx.fillStyle = body;
+  ctx.fill();
+  ctx.strokeStyle = revealed && target.traits?.includes("MIMIC") ? "#9cf2e8" : "#3b203d";
+  ctx.lineWidth = revealed ? 2.5 : 2;
+  ctx.stroke();
+  if (trait2 === "CARAPACE") {
+    const facing = target.facing ?? 0;
+    ctx.save();
+    ctx.rotate(Math.atan2(Math.sin(facing) * 0.72, Math.cos(facing)));
+    if (!exposed) {
+      for (let i = -1; i <= 1; i++) {
+        const a = i * 0.61;
+        ctx.beginPath();
+        ctx.moveTo(r * 0.28, 0);
+        ctx.lineTo(Math.cos(a - 0.35) * r * 0.85, Math.sin(a - 0.35) * r * 0.85);
+        ctx.lineTo(Math.cos(a) * r * 1.16, Math.sin(a) * r * 1.16);
+        ctx.lineTo(Math.cos(a + 0.35) * r * 0.85, Math.sin(a + 0.35) * r * 0.85);
+        ctx.closePath();
+        ctx.fillStyle = "#c8b3d0";
+        ctx.fill();
+        ctx.strokeStyle = "#ead7d8a8";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    } else {
+      line(ctx, [r * 0.56, -r * 0.8, r * 0.84, -r * 1.05], "#fff4bf", 3);
+      line(ctx, [r * 0.72, r * 0.65, r * 1.04, r * 0.88], "#fff4bf", 3);
+    }
+    ctx.restore();
+    ellipse(ctx, -0.15 * r, 0.09 * r, r * 0.39, r * 0.43, exposed ? "#ffd68e" : "#d6a4a0", "#e9c5a0");
+    if (exposed) line(ctx, [-r * 0.4, -r * 0.2, -r * 0.14, r * 0.1, r * 0.1, -r * 0.22], "#fff7c9", 3);
+  } else if (trait2 === "FISSION") {
+    ellipse(ctx, -r * 0.48, -r * 0.23, r * 0.35, r * 0.4, "#ffd4a986", "#f4c18e");
+    ellipse(ctx, r * 0.43, -r * 0.14, r * 0.32, r * 0.35, "#fbc4c483", "#f4b6b4");
+    ellipse(ctx, 0, r * 0.42, r * 0.28, r * 0.26, "#ffdf9b77", "#f2d6a3");
+    line(ctx, [0, -r * 0.66, -r * 0.17, -r * 0.27, r * 0.15, r * 0.08, -0.12 * r, r * 0.45, 0.13 * r, 0.73 * r], "#572541", 2.5);
+    if ((target.generation ?? 0) === 0) label(ctx, "\u2161", r * 0.65, r * 0.68, "#ffedc2", 11);
+  } else if (trait2 === "MIMIC") {
+    for (let i = 0; i < 3; i++) ellipse(ctx, (i - 1) * r * 0.42, Math.sin(i * 2) * r * 0.23, r * 0.34, r * 0.2, mimic ? "#b28b8044" : "#bddcce44", "#dfbca76b");
+    if (revealed) {
+      ctx.setLineDash([4, 3]);
+      ellipse(ctx, 0, 0, r * 1.1, r * 1.08, "#00000000", "#b5fbeb");
+      ctx.setLineDash([]);
+      line(ctx, [-r * 0.3, -r * 0.2, r * 0.2, r * 0.1, -0.06 * r, r * 0.45], "#c2ffef", 2);
+    }
+  } else {
+    ellipse(ctx, -3, -r * 0.35, r * 0.57, r * 0.23, "#ffdfb947");
+    ellipse(ctx, 0, 3, r * 0.43, r * 0.44, "#f7b38955", "#f4b27d77");
+  }
+  if (!mimic) {
+    const pupilX = Math.cos(target.facing ?? 0) * 1.3;
+    ellipse(ctx, -r * 0.27, -3, telegraph ? 4 : 3, telegraph ? 2 : 4, "#2e1e38");
+    ellipse(ctx, r * 0.25, -3, telegraph ? 4 : 3, telegraph ? 2 : 4, "#2e1e38");
+    ellipse(ctx, -r * 0.27 + pupilX, -4, 1, 1, "#fff1c1");
+    ellipse(ctx, r * 0.25 + pupilX, -4, 1, 1, "#fff1c1");
+    if (telegraph) label(ctx, "!", 0, -r * 0.88, "#ffdf9f", 16);
+  }
+  ctx.restore();
+  ctx.lineWidth = 1;
+  ellipse(ctx, 0, 1, 9, 4, "#f1ca8b0b", mimic ? "#d9ab8c55" : "#efc69aa0");
+  ctx.restore();
+}
+function drawMotherCore(ctx, target, state, combat) {
+  const r = target.radius, time = state.elapsed, active = combat.activeTrait;
+  const exposed = Math.max(combat.exposedUntil, target.exposedUntil ?? 0) > time;
+  const disturbed = motherCoreDisturbed(combat, time);
+  const hidden = active === "MIMIC" && !disturbed && !exposed;
+  ctx.save();
+  ctx.translate(target.x, target.y);
+  ctx.scale(1, 1 / 0.72);
+  if (target.hp <= 0) {
+    ellipse(ctx, 0, 0, r, 12, "#9cddbd14", "#b1e7ca66");
+    label(ctx, "\u2713 \u6BCD\u5DE2\u6838\u5FC3\u5DF2\u6E05\u9664", 0, -15, "#d4efd4", 12);
+    ctx.restore();
+    return;
+  }
+  for (const sign of [-1, 1]) {
+    ctx.beginPath();
+    ctx.moveTo(sign * r * 0.26, -r * 0.45);
+    ctx.bezierCurveTo(sign * r * 1.3, -r * 0.45, sign * r * 0.8, -8, sign * r * 1.38, 4);
+    ctx.strokeStyle = "#d5a7ad";
+    ctx.lineWidth = 8;
+    ctx.stroke();
+    ctx.strokeStyle = "#754a69";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ellipse(ctx, sign * r * 1.3, 4, r * 0.22, 6, "#80536d", "#d5b4af");
+  }
+  const lift = combat.phase === "windup" ? -3 : combat.phase === "recovery" ? 3 : Math.sin(time * 2.8) * 1.4;
+  ctx.save();
+  ctx.translate(0, -r * 0.96 + lift);
+  ctx.globalAlpha = hidden ? 0.68 : 1;
+  if (combat.traits.includes("MIMIC")) {
+    const mantle = ctx.createLinearGradient(0, -r * 1.3, 0, r);
+    mantle.addColorStop(0, hidden ? "#b5b4b752" : "#bbb4c775");
+    mantle.addColorStop(1, "#706e9560");
+    ctx.beginPath();
+    ctx.moveTo(-r * 1.1, r * 0.55);
+    ctx.bezierCurveTo(-r * 1.6, -r * 0.2, -r * 1.05, -r * 1.7, 0, -r * 1.38);
+    ctx.bezierCurveTo(r * 1.15, -r * 1.67, r * 1.55, -r * 0.2, r * 1.1, r * 0.55);
+    ctx.quadraticCurveTo(r * 0.5, r * 0.22, 0, r * 0.72);
+    ctx.quadraticCurveTo(-r * 0.65, r * 0.21, -r * 1.1, r * 0.55);
+    ctx.fillStyle = mantle;
+    ctx.fill();
+    ctx.strokeStyle = "#d8d6d788";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+  const body = ctx.createLinearGradient(-r, -r * 1.2, r, r * 0.9);
+  body.addColorStop(0, target.hitUntil > time ? "#fff2c5" : "#e4bcc4");
+  body.addColorStop(0.48, "#a57195");
+  body.addColorStop(1, "#654563");
+  ctx.beginPath();
+  ctx.moveTo(-r * 0.85, r * 0.2);
+  ctx.bezierCurveTo(-r * 1.1, -r * 0.4, -r * 0.55, -r * 1.4, 0, -r * 1.21);
+  ctx.bezierCurveTo(r * 0.7, -r * 1.4, r * 1.12, -r * 0.23, r * 0.74, r * 0.39);
+  ctx.quadraticCurveTo(r * 0.43, r * 1.05, 0, r * 0.87);
+  ctx.quadraticCurveTo(-r * 0.62, r * 1.03, -r * 0.85, r * 0.2);
+  ctx.fillStyle = body;
+  ctx.fill();
+  ctx.strokeStyle = "#432d4e";
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  if (combat.traits.includes("FISSION")) {
+    for (const sign of [-1, 1]) {
+      const radius = active === "FISSION" ? r * 0.43 : r * 0.32;
+      ellipse(ctx, sign * r * 0.68, r * 0.13, radius, radius * 1.16, "#c88fa0", active === "FISSION" ? "#ffe1a4" : "#e9bdbe");
+      ellipse(ctx, sign * r * 0.69, r * 0.11, radius * 0.42, radius * 0.61, "#dfb7a6", "#f3d3b5");
+    }
+    line(ctx, [-r * 0.14, -r * 0.91, r * 0.08, -r * 0.55, -r * 0.14, -r * 0.22, r * 0.11, r * 0.15, -r * 0.07, r * 0.66], active === "FISSION" ? "#ffe7b4" : "#65435c", active === "FISSION" ? 3 : 2);
+  }
+  if (combat.traits.includes("CARAPACE")) {
+    const spread = exposed ? 1.3 : 1;
+    for (let i = 0; i < 5; i++) {
+      const angle = -Math.PI + i / 4 * Math.PI;
+      const x = Math.cos(angle) * r * 0.9 * spread, y = Math.sin(angle) * r * 0.92 * spread - r * 0.18;
+      ctx.beginPath();
+      ctx.moveTo(x - 10, y + 9);
+      ctx.lineTo(x - 6, y - 12);
+      ctx.lineTo(x + 5, y - 22);
+      ctx.lineTo(x + 12, y + 4);
+      ctx.closePath();
+      ctx.fillStyle = active === "CARAPACE" && !exposed ? "#d7c1d5" : "#997da8";
+      ctx.fill();
+      ctx.strokeStyle = "#ead5d8";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+  }
+  const coreY = -r * 0.14;
+  ellipse(ctx, 0, coreY, r * 0.38, r * 0.55, exposed ? "#ffe6ac" : "#dfada7", exposed ? "#fff5ce" : "#f1c7b2");
+  ctx.beginPath();
+  ctx.moveTo(-r * 0.22, coreY);
+  ctx.lineTo(0, coreY - r * 0.32);
+  ctx.lineTo(r * 0.22, coreY);
+  ctx.lineTo(0, coreY + r * 0.3);
+  ctx.closePath();
+  ctx.fillStyle = exposed ? "#fffae2" : "#795271";
+  ctx.fill();
+  for (const sign of [-1, 1]) {
+    const x = sign * r * 0.35;
+    ctx.beginPath();
+    ctx.moveTo(x, -r * 0.91);
+    ctx.bezierCurveTo(x * 1.9, -r * 0.35, x * 1.6, r * 0.45, sign * r * 0.12, r * 0.78);
+    ctx.strokeStyle = "#e3b5ba";
+    ctx.lineWidth = 4;
+    ctx.stroke();
+  }
+  if (active === "MIMIC" && disturbed) {
+    ctx.setLineDash([5, 4]);
+    ellipse(ctx, 0, -r * 0.17, r * 1.18, r * 1.31, "#00000000", "#d1efe1");
+    ctx.setLineDash([]);
+  }
+  ctx.restore();
+  if (active === "CARAPACE") {
+    ctx.save();
+    ctx.scale(1, 0.72);
+    ctx.beginPath();
+    const half = Math.acos(0.2);
+    ctx.arc(0, 0, r + 9, combat.facing - half, combat.facing + half);
+    ctx.strokeStyle = exposed ? "#efdac577" : "#e2d0e3";
+    ctx.lineWidth = exposed ? 1 : 3;
+    if (exposed) ctx.setLineDash([5, 10]);
+    ctx.stroke();
+    ctx.restore();
+  }
+  ellipse(ctx, 0, 2, 14, 5, "#ffd99d18", exposed ? "#fff1ba" : "#e7bea4");
+  const traitText = combat.traits.map((trait2) => `${TRAIT_SYMBOL[trait2]}${TRAIT_NAME[trait2]}`).join(" / ");
+  label(ctx, traitText, 0, 28, "#e7ccb8", 10);
+  ctx.restore();
+}
+function drawMotherCoreDangers(ctx, state, combat) {
+  const attack = combat.attack;
+  if (!attack || combat.organId !== state.battle?.organId || attack.resolveAt <= state.elapsed) return;
+  const remaining = attack.resolveAt - state.elapsed, duration = attack.resolveAt - attack.startedAt;
+  const progress = Math.max(0, Math.min(1, (state.elapsed - attack.startedAt) / duration));
+  ctx.save();
+  ctx.lineWidth = 2;
+  if (attack.kind === "crystal-sweep") {
+    ctx.beginPath();
+    ctx.moveTo(attack.origin.x, attack.origin.y);
+    for (let i = 0; i <= 64; i++) {
+      const angle = attack.angle - attack.halfAngle + i / 64 * attack.halfAngle * 2, direction = { x: Math.cos(angle), y: Math.sin(angle) };
+      const distance2 = Math.min(attack.range, wallHit(attack.origin, direction, attack.range, activeWorld(state)) ?? attack.range);
+      ctx.lineTo(attack.origin.x + direction.x * distance2, attack.origin.y + direction.y * distance2);
+    }
+    ctx.closePath();
+    ctx.fillStyle = "#ee976d1b";
+    ctx.fill();
+    ctx.strokeStyle = "#ffd398";
+    ctx.stroke();
+    for (let i = 1; i <= 3; i++) {
+      const radius = attack.range * i / 4, x = attack.origin.x + Math.cos(attack.angle) * radius, y = attack.origin.y + Math.sin(attack.angle) * radius;
+      const block = wallHit(attack.origin, { x: Math.cos(attack.angle), y: Math.sin(attack.angle) }, radius, activeWorld(state));
+      if (block !== null && block < radius) continue;
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(attack.angle);
+      line(ctx, [-7, -6, 0, 0, -7, 6], "#ffdfaa", 2);
+      ctx.restore();
+    }
+  } else {
+    const centers = attack.kind === "brood" ? attack.landings : [attack.aim];
+    for (const center of centers) {
+      ctx.setLineDash(attack.kind === "brood" ? [3, 5] : []);
+      ellipse(ctx, center.x, center.y, attack.radius, attack.radius, "#f5be8b13", "#ffd29b");
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, attack.radius + 5, -Math.PI / 2, -Math.PI / 2 + TAU * progress);
+      ctx.strokeStyle = "#ffe7b1";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      line(ctx, [center.x - 6, center.y - 6, center.x + 6, center.y + 6], "#ffdaa4", 2);
+      line(ctx, [center.x - 6, center.y + 6, center.x + 6, center.y - 6], "#ffdaa4", 2);
+    }
+    if (attack.kind === "corrosion") {
+      ctx.setLineDash([5, 7]);
+      line(ctx, [attack.origin.x, attack.origin.y, attack.aim.x, attack.aim.y], "#f4d9b4", 1.5);
+      ctx.setLineDash([]);
+      const near = Math.hypot(state.player.x - attack.origin.x, state.player.y - attack.origin.y) <= MOTHER_CORE_BALANCE.scanRange;
+      const counter = !near ? "\u9760\u8FD1\u6BCD\u5DE2\u540E Q \u4E2D\u65AD" : state.scanReady > state.elapsed ? `Q \u51B7\u5374 ${(state.scanReady - state.elapsed).toFixed(1)}s \xB7 \u62A2\u4FEE\u7EC4\u7EC7` : "Q \u626B\u63CF\u4E2D\u65AD\u4FB5\u8680";
+      groundLabel(ctx, `${counter} \xB7 ${remaining.toFixed(1)}s`, (attack.origin.x + attack.aim.x) / 2, (attack.origin.y + attack.aim.y) / 2 - 20, "#ffe5b7", 12);
+    }
+  }
+  if (attack.kind !== "corrosion") {
+    const anchor = attack.kind === "crystal-sweep" ? { x: attack.origin.x + Math.cos(attack.angle) * attack.range * 0.6, y: attack.origin.y + Math.sin(attack.angle) * attack.range * 0.6 } : attack.aim;
+    groundLabel(ctx, `${attack.kind === "brood" ? "\u22C8 \u6709\u9650\u5206\u88C2" : attack.kind === "crystal-sweep" ? "\u25C7 \u6676\u58F3\u6A2A\u626B" : "\u22C8 \u88C2\u6B96\u7206\u53D1"} ${remaining.toFixed(1)}s`, anchor.x, anchor.y - 32, "#ffe6b4", 11);
+  }
+  ctx.restore();
+}
+var TRAIT_SYMBOL = { CARAPACE: "\u25C7", FISSION: "\u22C8", MIMIC: "\u25CC" };
+var overlaps = (a, b) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+function drawBattleLabels(ctx, state) {
+  const time = state.elapsed, aim = state.battle?.lastAim;
+  const aimed = (target) => !!aim && Math.hypot(target.x - aim.x, target.y - aim.y) <= target.radius + 12;
+  const priority = (target) => target.role === "core" ? 0 : target.role === "elite" ? 1 : target.role === "source" ? 2 : aimed(target) ? 3 : 4;
+  const targets = state.targets.filter((target) => target.hp > 0).sort((a, b) => priority(a) - priority(b) || a.id.localeCompare(b.id));
+  const occupied = [];
+  for (const target of targets) {
+    const full = target.role === "source" || target.role === "elite" || target.role === "core";
+    const exposed = (target.exposedUntil ?? 0) > time;
+    const traced = state.growth?.marks.some((mark) => mark.targetId === target.id && mark.organId === state.battle?.organId && mark.until > time) ?? false;
+    const mimic = target.traits?.includes("MIMIC") && (target.revealedUntil ?? 0) <= time && state.scanUntil <= time && !exposed && !traced;
+    if (mimic) continue;
+    const focused = aimed(target), bar = full || focused || target.hitUntil > time;
+    const symbols = target.traits?.map((id) => TRAIT_SYMBOL[id]).join("") ?? "";
+    if (!full && !bar && (!symbols || !target.scanned)) continue;
+    const role = target.role === "core" ? "\u6BCD\u5DE2" : target.role === "elite" ? "\u7CBE\u82F1" : "\u611F\u67D3\u6E90";
+    const name = full ? `${role}${target.traits?.length ? " \xB7 " + target.traits.map((id) => TRAIT_NAME[id]).join("\xB7") : ""}` : symbols;
+    const width = Math.max(target.radius * 2, name.length * 10 + 10), baseY = -target.radius * 1.96 - (target.role === "elite" || target.role === "core" ? 17 : 7);
+    const offsets = full || focused ? [0, -16, -32, -48, -64] : [0, -14];
+    let chosen;
+    for (const offset2 of offsets) {
+      const box = { left: target.x - width / 2 - 4, right: target.x + width / 2 + 4, top: target.y * 0.72 + baseY + offset2 - 18, bottom: target.y * 0.72 + baseY + offset2 + 7 };
+      if (!occupied.some((other) => overlaps(other, box))) {
+        occupied.push(box);
+        chosen = offset2;
+        break;
+      }
+    }
+    if (chosen === void 0 && !full && !focused) continue;
+    const offset = chosen ?? -64;
+    ctx.save();
+    ctx.translate(target.x, target.y);
+    ctx.scale(1, 1 / 0.72);
+    if (offset < -5) line(ctx, [0, baseY - 2, 0, baseY + offset + 5], "#d1c3aa59", 1);
+    const y = baseY + offset;
+    if (bar) {
+      ctx.fillStyle = "#21182ce0";
+      ctx.beginPath();
+      ctx.roundRect(-target.radius, y, target.radius * 2, full ? 5 : 3, 2);
+      ctx.fill();
+      ctx.fillStyle = exposed ? "#ffe4a1" : "#f2bd9c";
+      ctx.beginPath();
+      ctx.roundRect(-target.radius, y, Math.max(1, target.radius * 2 * target.hp / target.maxHp), full ? 5 : 3, 2);
+      ctx.fill();
+    }
+    if (name) {
+      ctx.font = `500 ${full ? 10 : 11}px "Microsoft YaHei", "Segoe UI", sans-serif`;
+      ctx.textAlign = "center";
+      ctx.strokeStyle = "#241b2ce0";
+      ctx.lineWidth = 3;
+      ctx.strokeText(name, 0, y - 7);
+      ctx.fillStyle = full ? "#f4dcc2" : "#e6d0b9";
+      ctx.fillText(name, 0, y - 7);
+    }
+    ctx.restore();
+  }
+  const groups = [];
+  for (const target of targets.filter((target2) => (target2.exposedUntil ?? 0) > time)) {
+    const group = groups.find((items) => Math.hypot(items[0].x - target.x, items[0].y - target.y) < 65);
+    if (group) group.push(target);
+    else groups.push([target]);
+  }
+  for (const group of groups) {
+    const target = group[0], seconds = Math.ceil(Math.min(...group.map((item) => item.exposedUntil)) - time);
+    ctx.save();
+    ctx.translate(target.x, target.y);
+    ctx.scale(1, 1 / 0.72);
+    const value = `\u25C7 \u7834\u7EFD ${seconds}s${group.length > 1 ? ` \xD7${group.length}` : ""}`;
+    ctx.font = '500 11px "Microsoft YaHei", "Segoe UI", sans-serif';
+    ctx.textAlign = "center";
+    ctx.strokeStyle = "#241b2cf0";
+    ctx.lineWidth = 4;
+    ctx.strokeText(value, 0, 23);
+    ctx.fillStyle = "#ffe6b0";
+    ctx.fillText(value, 0, 23);
+    ctx.restore();
+  }
+}
+
+// src/render/pulsePreview.ts
+function pulsePreviewPolygon(origin, angle, radius = BATTLE_BALANCE.pulseRange, world = WORLD) {
+  const points = [{ ...origin }];
+  for (let i = 0; i <= 64; i++) {
+    const direction = angle - BATTLE_BALANCE.pulseHalfAngle + i / 64 * BATTLE_BALANCE.pulseHalfAngle * 2;
+    const vector = { x: Math.cos(direction), y: Math.sin(direction) };
+    const distance2 = Math.min(radius, wallHit(origin, vector, radius, world) ?? radius);
+    points.push({ x: origin.x + vector.x * distance2, y: origin.y + vector.y * distance2 });
+  }
+  return points;
+}
+
+// src/render/immuneVisuals.ts
+var TAU2 = Math.PI * 2;
+var font = '"Microsoft YaHei", "Segoe UI", sans-serif';
+var IMMUNE_BODY_LIFT = -13;
+function immuneCellBody(cell, elapsed) {
+  const alpha = cell.until <= elapsed ? 0 : Math.max(0, Math.min(1, (elapsed - cell.born) / 0.2, (cell.until - elapsed) / 0.35));
+  const crawling = cell.activity === "seeking" || cell.activity === "returning", biting = elapsed < cell.attackUntil;
+  const pulse = Math.sin(elapsed * (crawling ? 13 : 4) + cell.born * 3), radius = cell.radius + (biting ? 3 : 0);
+  const outline = Array.from({ length: 37 }, (_, index) => {
+    const angle = index / 36 * TAU2, r = radius * (1 + Math.sin(angle * 5 + elapsed * 3) * 0.085 + (crawling ? pulse * 0.035 : 0));
+    return { x: Math.cos(angle) * r, y: Math.sin(angle) * r * 0.88 };
+  });
+  return { alpha, crawling, biting, pulse, radius, rotation: Math.atan2(Math.sin(cell.facing) * 0.72, Math.cos(cell.facing)), outline };
+}
+function stroke(ctx, from, to, color, width) {
+  ctx.beginPath();
+  ctx.moveTo(from.x, from.y);
+  ctx.lineTo(to.x, to.y);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.stroke();
+}
+function drawImmuneCell(ctx, cell, elapsed, low = false) {
+  if (cell.until <= elapsed) return;
+  const body = immuneCellBody(cell, elapsed), { alpha, crawling, biting, pulse, radius } = body;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.translate(cell.x, cell.y);
+  ctx.beginPath();
+  ctx.ellipse(0, 3, cell.radius + 4, (cell.radius + 4) * 0.46, 0, 0, TAU2);
+  ctx.fillStyle = "#0c252d77";
+  ctx.fill();
+  ctx.scale(1, 1 / 0.72);
+  ctx.save();
+  ctx.translate(0, IMMUNE_BODY_LIFT);
+  ctx.rotate(body.rotation);
+  ctx.beginPath();
+  for (const [index, vertex] of body.outline.entries()) {
+    if (index === 0) ctx.moveTo(vertex.x, vertex.y);
+    else ctx.lineTo(vertex.x, vertex.y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = biting ? "#ecffe4" : "#cdebd7";
+  ctx.fill();
+  ctx.strokeStyle = "#619b89";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.ellipse(-4, -2, 6, 8, -0.4, 0, TAU2);
+  ctx.ellipse(4, 3, 5, 7, 0.4, 0, TAU2);
+  ctx.fillStyle = "#689c9c";
+  ctx.fill();
+  stroke(ctx, { x: -4, y: -1 }, { x: 4, y: -1 }, "#f4ffdd", 2.2);
+  stroke(ctx, { x: 0, y: -5 }, { x: 0, y: 3 }, "#f4ffdd", 2.2);
+  if (!low && crawling) for (const sign of [-1, 1]) {
+    stroke(ctx, { x: -radius - 7, y: sign * 5 }, { x: -radius - 1, y: sign * 5 + pulse * 2 }, "#b1e3ceaa", 1.5);
+  }
+  if (biting) {
+    const open = 0.5 + (cell.attackUntil - elapsed) / 0.24 * 0.8;
+    ctx.beginPath();
+    ctx.arc(0, 0, radius + 7, -0.7 - open, 0.7 + open);
+    ctx.strokeStyle = "#e3ffba";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+  }
+  ctx.restore();
+  const remaining = Math.max(0, Math.min(1, (cell.until - elapsed) / (cell.until - cell.born)));
+  stroke(ctx, { x: -10, y: 8 }, { x: 10, y: 8 }, "#193f3e", 3);
+  stroke(ctx, { x: -10, y: 8 }, { x: -10 + remaining * 20, y: 8 }, "#c7efb5", 2);
+  ctx.restore();
+}
+function drawImmuneSquadLabel(ctx, origin, count3, patrol = false) {
+  if (!count3) return;
+  ctx.save();
+  ctx.translate(origin.x, origin.y);
+  ctx.scale(1, 1 / 0.72);
+  ctx.font = `500 11px ${font}`;
+  ctx.textAlign = "center";
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = "#15242c";
+  ctx.fillStyle = "#d5efd1";
+  const value = patrol ? "\u271A \u514D\u75AB\u4FA6\u5DE1" : `\u271A \u514D\u75AB\u5C0F\u961F \xD7${count3}`;
+  ctx.strokeText(value, 0, -59);
+  ctx.fillText(value, 0, -59);
+  ctx.restore();
+}
+
+// src/render/immuneTraceCues.ts
+var IMMUNE_TRACE_CUE_TICKS = 24;
+function selectImmuneTraceCues(state, growth = state.growth) {
+  const organ3 = state.battle?.organId, beacon = growth?.beacon;
+  if (!growth || growth.ended || !organ3 || !beacon || beacon.mode === "patrol" || beacon.organId !== organ3 || beacon.until <= state.elapsed || state.phase !== "playing" && state.phase !== "paused") return [];
+  const cells = new Map((growth.cells ?? []).filter((cell) => cell.beaconId === beacon.id && cell.organId === organ3 && cell.until > state.elapsed).map((cell) => [cell.id, cell]));
+  const cues = /* @__PURE__ */ new Map();
+  for (const event of state.events) {
+    const age = state.tick - event.tick;
+    if (event.type !== "PROTOCOL_BEACON_HIT" || event.data.protocolId !== "IMMUNE_BEACON" || event.data.prioritizedTrace !== true || !Number.isInteger(event.tick) || age < 0 || age >= IMMUNE_TRACE_CUE_TICKS || !(Number(event.data.damage) > 0)) continue;
+    const cell = cells.get(String(event.data.cellId));
+    if (!cell || event.data.rootId !== `${cell.id}:bite:${event.tick}` || event.tick * BALANCE.step + 1e-9 < Math.max(cell.born, beacon.born)) continue;
+    const target = state.targets.find((item) => item.id === event.data.targetId && item.hp > 0);
+    const x = event.data.x, y = event.data.y;
+    if (!target || typeof x !== "number" || typeof y !== "number" || !Number.isFinite(x) || !Number.isFinite(y)) continue;
+    if ((cues.get(cell.id)?.tick ?? -Infinity) >= event.tick) continue;
+    cues.set(cell.id, { tick: event.tick, cue: { cellId: cell.id, targetId: target.id, from: { x, y }, to: { x: target.x, y: target.y }, targetRadius: target.radius, progress: age / IMMUNE_TRACE_CUE_TICKS } });
+  }
+  return [...cues.values()].map((item) => item.cue);
+}
+
+// src/render/growthVisuals.ts
+var TAU3 = Math.PI * 2;
+function ellipse2(ctx, p, radius, fill, stroke2) {
+  ctx.beginPath();
+  ctx.ellipse(p.x, p.y, radius, radius, 0, 0, TAU3);
+  ctx.fillStyle = fill;
+  ctx.fill();
+  ctx.strokeStyle = stroke2;
+  ctx.stroke();
+}
+function line2(ctx, a, b, color, width = 1) {
+  ctx.beginPath();
+  ctx.moveTo(a.x, a.y);
+  ctx.lineTo(b.x, b.y);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.stroke();
+}
+function label2(ctx, value, x, y, color, size = 10) {
+  ctx.font = `500 ${size}px "Microsoft YaHei", "Segoe UI", sans-serif`;
+  ctx.textAlign = "center";
+  ctx.fillStyle = color;
+  ctx.fillText(value, x, y);
+}
+var GrowthVisuals = class {
+  run = "";
+  lastElapsed = -1;
+  trails = /* @__PURE__ */ new Map();
+  prepare(state, growth) {
+    const run2 = `${growth.runId}:${state.battle?.organId}`;
+    if (this.run !== run2 || state.elapsed < this.lastElapsed) {
+      this.trails.clear();
+      this.run = run2;
+    }
+    this.lastElapsed = state.elapsed;
+    const ids = new Set(growth.marks.filter((mark) => mark.organId === state.battle?.organId && mark.until > state.elapsed).map((mark) => mark.targetId));
+    for (const id of this.trails.keys()) if (!ids.has(id)) this.trails.delete(id);
+    for (const target of state.targets) {
+      if (target.hp <= 0 || !ids.has(target.id)) continue;
+      const trail = this.trails.get(target.id) ?? { at: -Infinity, points: [] };
+      if (state.elapsed - trail.at >= 0.15) {
+        const last = trail.points.at(-1);
+        if (!last || Math.hypot(target.x - last.x, target.y - last.y) > 2) {
+          trail.points.push({ x: target.x, y: target.y });
+          if (trail.points.length > 4) trail.points.shift();
+        }
+        trail.at = state.elapsed;
+      }
+      this.trails.set(target.id, trail);
+    }
+  }
+  drawGround(ctx, state, growth, low) {
+    if (!growth || !state.battle) {
+      this.trails.clear();
+      return;
+    }
+    this.prepare(state, growth);
+    for (const [id, trail] of this.trails) {
+      const target = state.targets.find((item) => item.id === id);
+      if (!target || target.hp <= 0) continue;
+      const points = low ? trail.points.slice(-2) : trail.points;
+      for (let i = 0; i < points.length; i++) {
+        const point5 = points[i];
+        ctx.save();
+        ctx.globalAlpha = 0.18 + (i + 1) / points.length * 0.38;
+        line2(ctx, { x: point5.x - 3, y: point5.y - 3 }, { x: point5.x + 3, y: point5.y + 3 }, "#adefdf", 2);
+        line2(ctx, { x: point5.x - 3, y: point5.y + 3 }, { x: point5.x + 3, y: point5.y - 3 }, "#adefdf", 1);
+        ctx.restore();
+      }
+    }
+    const beacon = growth.beacon;
+    if (!beacon || beacon.organId !== state.battle.organId || beacon.until <= state.elapsed) return;
+    ctx.save();
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([5, 9]);
+    ellipse2(ctx, beacon, beacon.radius, "#9df4dc04", "#a6e9ce66");
+    ctx.setLineDash([]);
+    const remaining = Math.max(0, Math.min(1, (beacon.until - state.elapsed) / (beacon.until - beacon.born)));
+    ellipse2(ctx, beacon, 28, "#a4f3d412", "#a8e9cf77");
+    ctx.beginPath();
+    ctx.arc(beacon.x, beacon.y, 33, -Math.PI / 2, -Math.PI / 2 + TAU3 * remaining);
+    ctx.strokeStyle = "#b7f4d8";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.restore();
+  }
+  drawBeacon(ctx, state, growth) {
+    const beacon = growth?.beacon;
+    if (!beacon || beacon.organId !== state.battle?.organId || beacon.until <= state.elapsed) return;
+    drawImmuneSquadLabel(ctx, beacon, growth?.cells?.length ?? 0, beacon.mode === "patrol");
+    if (beacon.mode === "patrol") return;
+    ctx.save();
+    ctx.translate(beacon.x, beacon.y);
+    ctx.scale(1, 1 / 0.72);
+    ctx.beginPath();
+    ctx.ellipse(0, 2, 22, 8, 0, 0, TAU3);
+    ctx.fillStyle = "#284f4e";
+    ctx.fill();
+    ctx.strokeStyle = "#9bd8bc";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.roundRect(-13, -23, 26, 24, 8);
+    ctx.fillStyle = "#c3e3cf";
+    ctx.fill();
+    ctx.strokeStyle = "#3c7069";
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(0, -22, 13, 5, 0, 0, TAU3);
+    ctx.fillStyle = "#edebd6";
+    ctx.fill();
+    ctx.strokeStyle = "#b0d3bf";
+    ctx.stroke();
+    const y = -38 + Math.sin(state.elapsed * 3) * 1.5;
+    ctx.beginPath();
+    ctx.roundRect(-10, y - 10, 20, 20, 6);
+    ctx.fillStyle = "#e3f3d6";
+    ctx.fill();
+    ctx.strokeStyle = "#4f9a89";
+    ctx.stroke();
+    line2(ctx, { x: -5, y }, { x: 5, y }, "#428e7d", 3);
+    line2(ctx, { x: 0, y: y - 5 }, { x: 0, y: y + 5 }, "#428e7d", 3);
+    label2(ctx, `\u271A \u706F\u5854 ${(beacon.until - state.elapsed).toFixed(1)}s`, 0, 24, "#c3efd5", 10);
+    ctx.restore();
+  }
+  drawMarks(ctx, state, growth) {
+    if (!growth || !state.battle) return;
+    for (const mark of growth.marks) {
+      if (mark.organId !== state.battle.organId || mark.until <= state.elapsed) continue;
+      const target = state.targets.find((item) => item.id === mark.targetId && item.hp > 0);
+      if (!target) continue;
+      ctx.save();
+      ctx.translate(target.x, target.y);
+      ctx.scale(1, 1 / 0.72);
+      ctx.setLineDash([3, 4]);
+      ctx.lineWidth = 1.3;
+      ctx.beginPath();
+      ctx.ellipse(0, -target.radius * 0.7, target.radius * 1.4, target.radius * 1.2, 0, 0, TAU3);
+      ctx.strokeStyle = "#b8f2e1";
+      ctx.stroke();
+      ctx.setLineDash([]);
+      const y = -target.radius * 0.7;
+      for (const sign of [-1, 1]) line2(ctx, { x: sign * (target.radius + 7), y: y - 5 }, { x: sign * (target.radius + 7), y: y + 5 }, "#cdf8e8", 2);
+      ctx.restore();
+    }
+  }
+  drawProtocolHits(ctx, state, growth) {
+    if (!growth || !state.battle) return;
+    const visible = state.events.filter((event) => state.tick >= event.tick && state.tick - event.tick <= 30);
+    for (const event of visible) {
+      if (!["PROTOCOL_RESONANCE_HIT", "PROTOCOL_CHAIN_HIT", "PROTOCOL_RICOCHET_HIT"].includes(event.type)) continue;
+      if (!acceptedProtocolHit(event, state.events, state.battle.organId)) continue;
+      const target = state.targets.find((item) => item.id === event.data.targetId);
+      if (!target) continue;
+      const progress = (state.tick - event.tick) / 30;
+      ctx.save();
+      ctx.globalAlpha = 1 - progress;
+      if (event.type === "PROTOCOL_RESONANCE_HIT") {
+        ctx.translate(target.x, target.y);
+        ctx.scale(1, 1 / 0.72);
+        for (let i = 0; i < 3; i++) {
+          const angle = -Math.PI + i * Math.PI * 0.5, distance2 = target.radius * (1 + progress * 0.8);
+          const x = Math.cos(angle) * distance2, y = -target.radius * 0.8 + Math.sin(angle) * distance2;
+          ctx.beginPath();
+          ctx.moveTo(x - 4, y + 4);
+          ctx.lineTo(x + 2, y - 6);
+          ctx.lineTo(x + 6, y + 3);
+          ctx.closePath();
+          ctx.fillStyle = "#ddd0e4";
+          ctx.fill();
+          ctx.strokeStyle = "#fff0bf";
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      } else if (event.type === "PROTOCOL_CHAIN_HIT" || event.type === "PROTOCOL_RICOCHET_HIT") {
+        const acceptedTargets = /* @__PURE__ */ new Set();
+        for (const prior of state.events) {
+          if (prior.type === "PROTOCOL_CHAIN_HIT" && prior.tick === event.tick && prior.data.rootId === event.data.rootId && acceptedProtocolHit(prior, state.events, state.battle.organId)) acceptedTargets.add(String(prior.data.targetId));
+          if (prior === event) break;
+        }
+        const hop = event.type === "PROTOCOL_RICOCHET_HIT" ? 1 : acceptedTargets.size;
+        if (Number.isInteger(hop) && hop >= 1 && hop <= 3) {
+          ctx.translate(target.x, target.y);
+          ctx.scale(1, 1 / 0.72);
+          ctx.beginPath();
+          ctx.ellipse(target.radius + 7, -target.radius * 0.7, 8, 8, 0, 0, TAU3);
+          ctx.fillStyle = "#254b49";
+          ctx.fill();
+          ctx.strokeStyle = "#bcf8d9";
+          ctx.lineWidth = 1;
+          ctx.stroke();
+          label2(ctx, event.type === "PROTOCOL_RICOCHET_HIT" ? "\u6298" : String(hop), target.radius + 7, -target.radius * 0.7 + 3, "#ddffe7", 10);
+        }
+      }
+      ctx.restore();
+    }
+    for (const cue of selectImmuneTraceCues(state, growth)) {
+      ctx.save();
+      ctx.globalAlpha = 1 - cue.progress;
+      ctx.setLineDash([3, 4]);
+      line2(ctx, cue.from, cue.to, "#153c3a", 3.5);
+      line2(ctx, cue.from, cue.to, "#d3ffe4", 1.5);
+      ctx.setLineDash([]);
+      const r = cue.targetRadius + 10;
+      line2(ctx, { x: cue.to.x - r, y: cue.to.y - r }, { x: cue.to.x - r + 8, y: cue.to.y - r }, "#dbffeb", 2);
+      line2(ctx, { x: cue.to.x - r, y: cue.to.y - r }, { x: cue.to.x - r, y: cue.to.y - r + 8 }, "#dbffeb", 2);
+      line2(ctx, { x: cue.to.x + r, y: cue.to.y + r }, { x: cue.to.x + r - 8, y: cue.to.y + r }, "#dbffeb", 2);
+      line2(ctx, { x: cue.to.x + r, y: cue.to.y + r }, { x: cue.to.x + r, y: cue.to.y + r - 8 }, "#dbffeb", 2);
+      ctx.restore();
+    }
+  }
+};
+
+// src/render/encounterVisuals.ts
+var TAU4 = Math.PI * 2;
+function line3(ctx, from, to) {
+  ctx.beginPath();
+  ctx.moveTo(from.x, from.y);
+  ctx.lineTo(to.x, to.y);
+  ctx.stroke();
+}
+function ring(ctx, point5, radius) {
+  ctx.beginPath();
+  ctx.ellipse(point5.x, point5.y, radius, radius, 0, 0, TAU4);
+  ctx.stroke();
+}
+function label3(ctx, at, value, color) {
+  ctx.save();
+  ctx.translate(at.x, at.y);
+  ctx.scale(1, 1 / 0.72);
+  ctx.font = '500 10px "Microsoft YaHei", "Segoe UI", sans-serif';
+  ctx.textAlign = "center";
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = "#17252dd9";
+  ctx.fillStyle = color;
+  ctx.strokeText(value, 0, 0);
+  ctx.fillText(value, 0, 0);
+  ctx.restore();
+}
+function corners(ctx, at, radius) {
+  for (const x of [-1, 1]) for (const y of [-1, 1]) {
+    ctx.beginPath();
+    ctx.moveTo(at.x + x * (radius - 7), at.y + y * radius);
+    ctx.lineTo(at.x + x * radius, at.y + y * radius);
+    ctx.lineTo(at.x + x * radius, at.y + y * (radius - 7));
+    ctx.stroke();
+  }
+}
+function drawEncounterSignals(ctx, state, lowEffects) {
+  const battle = state.battle;
+  if (!battle || !["playing", "paused"].includes(state.phase)) return;
+  const crisis = state.campaign?.encounters?.crisis;
+  if (crisis && crisis.organId === battle.organId && ["arming", "charging", "exhausted"].includes(crisis.status)) {
+    const source = state.targets.find((target) => target.id === crisis.sourceId && target.hp > 0);
+    if (source) {
+      const tissue = state.tissue, dx = tissue.x - source.x, dy = tissue.y - source.y, length = Math.hypot(dx, dy);
+      const charging = crisis.status === "charging" && !crisis.blockedByAirway && crisis.nextImpactAt !== null;
+      const color = charging ? "#ecc193" : "#b5d6be";
+      ctx.save();
+      const originalAlpha = ctx.globalAlpha;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lowEffects ? 1.5 : 1.7;
+      ctx.setLineDash(crisis.status === "exhausted" ? [2, 8] : [7, 10]);
+      ring(ctx, source, source.radius + 12);
+      ctx.setLineDash([]);
+      corners(ctx, source, source.radius + 17);
+      if (length > source.radius + tissue.radius + 28 && crisis.status !== "exhausted") {
+        const ux = dx / length, uy = dy / length;
+        ctx.globalAlpha = originalAlpha * (charging ? 0.58 : 0.32);
+        ctx.setLineDash([6, 15]);
+        line3(ctx, { x: source.x + ux * (source.radius + 15), y: source.y + uy * (source.radius + 15) }, { x: tissue.x - ux * (tissue.radius + 20), y: tissue.y - uy * (tissue.radius + 20) });
+        ctx.setLineDash([]);
+        for (const fraction of [0.38, 0.68]) {
+          const x = source.x + dx * fraction, y = source.y + dy * fraction;
+          ctx.beginPath();
+          ctx.moveTo(x - ux * 8 - uy * 5, y - uy * 8 + ux * 5);
+          ctx.lineTo(x, y);
+          ctx.lineTo(x - ux * 8 + uy * 5, y - uy * 8 - ux * 5);
+          ctx.stroke();
+        }
+        ctx.globalAlpha = originalAlpha;
+        ctx.setLineDash(charging ? [5, 6] : [2, 9]);
+        ring(ctx, tissue, tissue.radius + 22);
+        ctx.setLineDash([]);
+        const text2 = crisis.blockedByAirway ? "\u622A\u6D41\u6682\u505C" : !charging || state.phase === "paused" ? "\u51B2\u51FB\u6682\u505C" : `\u51B2\u51FB ${Math.max(0, crisis.chargeRemaining).toFixed(1)}s`;
+        label3(ctx, { x: tissue.x, y: tissue.y + tissue.radius + 40 }, text2, color);
+      }
+      label3(ctx, { x: source.x, y: source.y + source.radius + 30 }, crisis.status === "exhausted" ? "\u51B2\u51FB\u505C\u6B62 \xB7 \u51C0\u5316\u5371\u673A\u6E90" : "\u5371\u673A\u6E90 \xB7 \u51C0\u5316\u53EF\u6839\u6CBB", color);
+      ctx.restore();
+    }
+    return;
+  }
+  if (crisis && ["arming", "charging", "exhausted"].includes(crisis.status)) return;
+  const first = battle.encounter?.firstCounter, migration = state.campaign?.migration;
+  if (!first || battle.encounter?.configId !== "campaign-1" || battle.pressure.criticalSince !== null || battle.pressure.organAlarm || migration && ["warning", "blocking", "pursuing"].includes(migration.status)) return;
+  if (first.status !== "active" && first.status !== "warning") return;
+  ctx.save();
+  ctx.strokeStyle = "#b7e7c9aa";
+  ctx.lineWidth = 1.4;
+  const guardian = first.targetId ? state.targets.find((target) => target.id === first.targetId && target.hp > 0) : void 0;
+  if (guardian) {
+    ctx.setLineDash([4, 7]);
+    ring(ctx, guardian, guardian.radius + 10);
+    ctx.setLineDash([]);
+    corners(ctx, guardian, guardian.radius + 15);
+  }
+  const valve = battle.graph.nodes.find((node) => node.kind === "valve");
+  if (valve && battle.encounter.guideVariant === "guided" && first.guideStatus === "active") {
+    const dx = valve.x - state.player.x, dy = valve.y - state.player.y, distance2 = Math.hypot(dx, dy);
+    ring(ctx, valve, 43);
+    if (distance2 > 110) {
+      const ux = dx / distance2, uy = dy / distance2, x = state.player.x + ux * 50, y = state.player.y + uy * 50;
+      ctx.beginPath();
+      ctx.moveTo(x - ux * 11 - uy * 6, y - uy * 11 + ux * 6);
+      ctx.lineTo(x, y);
+      ctx.lineTo(x - ux * 11 + uy * 6, y - uy * 11 - ux * 6);
+      ctx.stroke();
+      label3(ctx, { x: x + ux * 24, y: y + uy * 24 + 20 }, `\u9600\u95E8 \xB7 ${Math.round(distance2)}`, "#c7ead4");
+    } else label3(ctx, { x: valve.x, y: valve.y + 65 }, "E \xB7 \u671D\u5A01\u80C1\u65B9\u5411\u51B2\u6D41", "#c7ead4");
+  }
+  ctx.restore();
+}
+
+// src/render/raisedObstacleGeometry.ts
+var SPRITE_Y_SCALE = 0.72;
+var RAISED_OBSTACLE_FADED_OPACITY = 0.22;
+var FLATNESS = 0.25;
+var OUTLINE_HALF_WIDTH = 1;
+function raisedObstacleCurves(radius, organ3) {
+  const r = radius, left = { x: -r, y: 0 }, right = { x: r, y: 0 };
+  const top = organ3 === "lung" ? { x: -r * 0.1, y: -r * 1.37 } : { x: 3, y: -r * 1.38 };
+  return organ3 === "lung" ? [
+    [left, { x: -r * 1.25, y: -r * 0.45 }, { x: -r * 0.9, y: -r * 1.32 }, top],
+    [top, { x: r * 0.7, y: -r * 1.5 }, { x: r * 1.24, y: -r * 0.6 }, right]
+  ] : [
+    [left, { x: -r * 1.2, y: -r * 0.5 }, { x: -r * 0.25, y: -r * 1.6 }, top],
+    [top, { x: r * 0.6, y: -r * 1.4 }, { x: r * 1.1, y: -r * 0.6 }, right]
+  ];
+}
+function traceRaisedObstacle(ctx, radius, organ3) {
+  const curves = raisedObstacleCurves(radius, organ3);
+  ctx.beginPath();
+  ctx.moveTo(curves[0][0].x, curves[0][0].y);
+  for (const [, a, b, end] of curves) ctx.bezierCurveTo(a.x, a.y, b.x, b.y, end.x, end.y);
+  ctx.quadraticCurveTo(0, radius * (organ3 === "lung" ? 0.32 : 0.35), -radius, 0);
+}
+function flatten(curve, points, depth = 0) {
+  const [a, b, c, d] = curve, dx = d.x - a.x, dy = d.y - a.y, length = Math.hypot(dx, dy);
+  const deviation = (p) => length ? Math.abs(dx * (p.y - a.y) - dy * (p.x - a.x)) / length : Math.hypot(p.x - a.x, p.y - a.y);
+  if (depth >= 8 || Math.max(deviation(b), deviation(c)) <= FLATNESS) {
+    points.push(d);
+    return;
+  }
+  const mid = (p, q) => ({ x: (p.x + q.x) / 2, y: (p.y + q.y) / 2 });
+  const ab = mid(a, b), bc = mid(b, c), cd = mid(c, d), abc = mid(ab, bc), bcd = mid(bc, cd), center = mid(abc, bcd);
+  flatten([a, ab, abc, center], points, depth + 1);
+  flatten([center, bcd, cd, d], points, depth + 1);
+}
+var silhouettes = /* @__PURE__ */ new Map();
+function localUpperSilhouette(radius, organ3) {
+  const key = `${organ3}:${radius}`, cached = silhouettes.get(key);
+  if (cached) return cached;
+  const curves = raisedObstacleCurves(radius, organ3), points = [curves[0][0]];
+  for (const curve of curves) flatten(curve, points);
+  if (silhouettes.size >= 32) silhouettes.delete(silhouettes.keys().next().value);
+  silhouettes.set(key, points);
+  return points;
+}
+function boundsOf(points, pad = 0) {
+  let left = Infinity, right = -Infinity, top = Infinity, bottom = -Infinity;
+  for (const p of points) {
+    left = Math.min(left, p.x);
+    right = Math.max(right, p.x);
+    top = Math.min(top, p.y);
+    bottom = Math.max(bottom, p.y);
+  }
+  return { left: left - pad, top: top - pad, right: right + pad, bottom: bottom + pad };
+}
+function boundsOverlap(a, b) {
+  return a.left <= b.right && a.right >= b.left && a.top <= b.bottom && a.bottom >= b.top;
+}
+function inside(point5, polygon) {
+  let result = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const a = polygon[i], b = polygon[j];
+    if (a.y > point5.y !== b.y > point5.y && point5.x < (b.x - a.x) * (point5.y - a.y) / (b.y - a.y) + a.x) result = !result;
+  }
+  return result;
+}
+function upperSilhouetteOverlapsBounds(polygon, bounds) {
+  const pad = FLATNESS + OUTLINE_HALF_WIDTH;
+  const box = { left: bounds.left - pad, right: bounds.right + pad, top: bounds.top - pad, bottom: bounds.bottom + pad };
+  if (!boundsOverlap(boundsOf(polygon), box)) return false;
+  const inBox = (p) => p.x >= box.left && p.x <= box.right && p.y >= box.top && p.y <= box.bottom;
+  if (polygon.some(inBox) || [{ x: box.left, y: box.top }, { x: box.right, y: box.top }, { x: box.left, y: box.bottom }, { x: box.right, y: box.bottom }].some((p) => inside(p, polygon))) return true;
+  for (let i = 0; i < polygon.length; i++) {
+    const a = polygon[i], b = polygon[(i + 1) % polygon.length], dx = b.x - a.x, dy = b.y - a.y;
+    let start = 0, end = 1;
+    for (const [p, q] of [[-dx, a.x - box.left], [dx, box.right - a.x], [-dy, a.y - box.top], [dy, box.bottom - a.y]]) {
+      if (p === 0) {
+        if (q < 0) {
+          start = 2;
+          break;
+        }
+      } else if (p < 0) start = Math.max(start, q / p);
+      else end = Math.min(end, q / p);
+    }
+    if (start <= end) return true;
+  }
+  return false;
+}
+function drawRaisedBodyLayers(ctx, radius, opacity, draw) {
+  if (opacity >= 1) {
+    draw();
+    return;
+  }
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(-radius * 2, -radius * 2, radius * 4, radius * 2);
+  ctx.clip();
+  ctx.globalAlpha *= opacity;
+  draw();
+  ctx.restore();
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(-radius * 2, 0, radius * 4, radius * 2);
+  ctx.clip();
+  draw();
+  ctx.restore();
+  ctx.beginPath();
+  ctx.ellipse(0, 0, radius, radius * SPRITE_Y_SCALE, 0, 0, Math.PI * 2);
+  ctx.strokeStyle = "#d6b29da6";
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+}
+
+// src/render/lungVisuals.ts
+var TAU5 = Math.PI * 2;
+var hash = (n) => {
+  const value = Math.sin(n * 129.1 + 73.7) * 43158.5453;
+  return value - Math.floor(value);
+};
+function ellipse3(ctx, x, y, rx, ry, fill, stroke2) {
+  ctx.beginPath();
+  ctx.ellipse(x, y, rx, ry, 0, 0, TAU5);
+  ctx.fillStyle = fill;
+  ctx.fill();
+  if (stroke2) {
+    ctx.strokeStyle = stroke2;
+    ctx.stroke();
+  }
+}
+function line4(ctx, values, color, width = 1) {
+  ctx.beginPath();
+  ctx.moveTo(values[0], values[1]);
+  for (let i = 2; i < values.length; i += 2) ctx.lineTo(values[i], values[i + 1]);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.stroke();
+}
+function label4(ctx, text2, x, y, color, size = 11) {
+  ctx.font = `500 ${size}px "Microsoft YaHei", "Segoe UI", sans-serif`;
+  ctx.textAlign = "center";
+  ctx.fillStyle = color;
+  ctx.fillText(text2, x, y);
+}
+function airway(ctx, values, width) {
+  for (const [color, size] of [["#122b3c", width + 8], ["#487184", width], ["#8ab6b74a", 3]]) {
+    ctx.beginPath();
+    ctx.moveTo(values[0], values[1]);
+    ctx.bezierCurveTo(values[2], values[3], values[4], values[5], values[6], values[7]);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = size;
+    ctx.lineCap = "round";
+    ctx.stroke();
+  }
+}
+function drawLungEnvironment(ctx, world) {
+  const bg = ctx.createRadialGradient(650, 300, 60, 600, 400, 1e3);
+  bg.addColorStop(0, "#294d62");
+  bg.addColorStop(0.55, "#1d354c");
+  bg.addColorStop(1, "#111824");
+  ctx.fillStyle = bg;
+  ctx.fillRect(-200, -250, 1650, 1500);
+  for (let i = 0; i < 11; i++) {
+    const x = -10 + i * 123, y = 5 + Math.sin(i * 2.2) * 24, r = 66 + hash(i + 3) * 28;
+    const sac = ctx.createLinearGradient(x - r, y - r * 1.4, x + r, y + r * 1.1);
+    sac.addColorStop(0, "#7393a4");
+    sac.addColorStop(0.38, "#41647c");
+    sac.addColorStop(1, "#233a55");
+    ctx.beginPath();
+    ctx.moveTo(x - r * 0.5, y + r);
+    ctx.bezierCurveTo(x - r * 1.45, y + r * 0.2, x - r * 1.05, y - r * 1.65, x, y - r * 1.3);
+    ctx.bezierCurveTo(x + r * 1.3, y - r * 1.55, x + r * 1.3, y + r * 0.4, x + r * 0.46, y + r);
+    ctx.quadraticCurveTo(x, y + r * 0.62, x - r * 0.5, y + r);
+    ctx.fillStyle = sac;
+    ctx.fill();
+    ctx.strokeStyle = "#a4c5cb4f";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ellipse3(ctx, x - r * 0.22, y - r * 0.45, r * 0.62, r * 0.8, "#bfdae00a", "#bbd5da20");
+    line4(ctx, [x - r * 0.5, y + r * 0.63, x - r * 0.2, y + r * 0.15, x + r * 0.1, y - r * 0.5], "#c8d8db20", 1.2);
+  }
+  const bounds = world.bounds, left = bounds.left, right = bounds.right, top = bounds.top, bottom = bounds.bottom;
+  ctx.save();
+  ctx.shadowColor = "#0b1426";
+  ctx.shadowBlur = 22;
+  ctx.shadowOffsetY = 16;
+  ctx.beginPath();
+  ctx.roundRect(left - 24, top - 24, right - left + 48, bottom - top + 48, 58);
+  ctx.fillStyle = "#365d70";
+  ctx.fill();
+  ctx.restore();
+  ctx.beginPath();
+  ctx.roundRect(left - 9, top - 9, right - left + 18, bottom - top + 18, 39);
+  ctx.fillStyle = "#91bdb530";
+  ctx.fill();
+  const floor = ctx.createLinearGradient(650, top, 650, bottom);
+  floor.addColorStop(0, "#28475b");
+  floor.addColorStop(0.48, "#345967");
+  floor.addColorStop(1, "#243e55");
+  ctx.beginPath();
+  ctx.roundRect(left, top, right - left, bottom - top, 25);
+  ctx.fillStyle = floor;
+  ctx.fill();
+  ctx.strokeStyle = "#b0d7cf64";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.save();
+  ctx.beginPath();
+  ctx.roundRect(left + 1, top + 1, right - left - 2, bottom - top - 2, 24);
+  ctx.clip();
+  for (let i = 0; i < 96; i++) {
+    const x = left + hash(i * 3 + 1) * (right - left), y = top + hash(i * 3 + 2) * (bottom - top), r = 12 + hash(i * 3) * 22;
+    ellipse3(ctx, x, y, r * 1.3, r * 0.62, "#b6d5c412", "#bce0d322");
+    ellipse3(ctx, x - r * 0.17, y - r * 0.09, r * 0.67, r * 0.32, "#9cbac30b", "#c8e0df12");
+  }
+  airway(ctx, [650, top - 25, 650, top + 140, 415, top + 135, 305, top + 285], 29);
+  airway(ctx, [650, top - 25, 650, top + 140, 875, top + 155, 960, top + 320], 29);
+  airway(ctx, [403, top + 190, 320, top + 200, 235, top + 195, 178, top + 305], 15);
+  airway(ctx, [795, top + 175, 900, top + 195, 980, top + 140, 1090, top + 180], 15);
+  airway(ctx, [305, top + 285, 375, top + 410, 535, top + 435, 570, bottom + 25], 14);
+  airway(ctx, [960, top + 320, 900, top + 435, 790, top + 455, 780, bottom + 25], 14);
+  ctx.restore();
+  for (let i = 0; i < 12; i++) {
+    const y = top + 23 + i * 49, x = i % 2 ? right + 10 : left - 10;
+    ellipse3(ctx, x, y, 28 + hash(i) * 5, 30, "#507b8a", "#b0d4d24a");
+    ellipse3(ctx, x - 5, y - 6, 15, 18, "#c7e1d80b", "#daece622");
+  }
+  ctx.save();
+  ctx.globalAlpha = 0.35;
+  label4(ctx, "A L V E O L I   /   0 2", 735, top + 40, "#d0e1d5", 16);
+  label4(ctx, "LUNG  \xB7  AIRWAY CHAMBER", 630, bottom - 19, "#bfdbd1", 11);
+  ctx.restore();
+}
+function drawLungObstacle(ctx, obstacle, opacity = 1) {
+  const r = obstacle.radius;
+  ctx.save();
+  ctx.translate(obstacle.x, obstacle.y);
+  ctx.scale(1, 1 / 0.72);
+  const g = ctx.createLinearGradient(-r, -r * 1.4, r, 8);
+  g.addColorStop(0, "#a6c3c2");
+  g.addColorStop(0.45, "#638c9e");
+  g.addColorStop(1, "#304b68");
+  drawRaisedBodyLayers(ctx, r, opacity, () => {
+    traceRaisedObstacle(ctx, r, "lung");
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = "#c8e0d481";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ellipse3(ctx, -r * 0.18, -r * 0.74, r * 0.52, r * 0.46, "#d8ebe411", "#c9e4dd6a");
+    ctx.beginPath();
+    ctx.ellipse(0, -r * 0.64, r * 0.77, r * 0.6, -0.2, -0.4, 1.8);
+    ctx.strokeStyle = "#e1eee744";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+  ctx.restore();
+}
+function drawLungForeground(ctx, state, world, opacity) {
+  const area = world.foreground, x = area.x + area.width / 2, y = area.y + area.height / 2;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(1, 1 / 0.72);
+  const g = ctx.createLinearGradient(0, -110, 0, 70);
+  g.addColorStop(0, "#b1ccca");
+  g.addColorStop(0.45, "#5d8799");
+  g.addColorStop(1, "#2c465f");
+  for (let i = 0; i < 4; i++) {
+    const sx = -area.width * 0.4 + i * area.width * 0.27, sy = Math.sin(i * 2) * 18;
+    const nearFacility = state.battle?.graph.nodes.some((node) => node.kind !== "source" && Math.abs(x + sx - node.x) < 85 && Math.abs(y - node.y) < 110);
+    ctx.globalAlpha = nearFacility ? Math.min(opacity, 0.15) : opacity * 0.82;
+    ctx.beginPath();
+    ctx.moveTo(sx - 28, sy + 35);
+    ctx.bezierCurveTo(sx - 69, sy - 18, sx - 46, sy - 104, sx, sy - 97);
+    ctx.bezierCurveTo(sx + 64, sy - 103, sx + 60, sy - 12, sx + 34, sy + 35);
+    ctx.closePath();
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = "#d2e6df88";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ellipse3(ctx, sx - 8, sy - 44, 26, 34, "#b9d8cd0a", "#c7e2d649");
+    line4(ctx, [sx - 12, sy + 16, sx - 31, sy - 12, sx - 21, sy - 57, sx, sy - 81], "#d2e8dd55", 1.5);
+  }
+  ctx.restore();
+}
+function drawLungAirflow(ctx, state, flow, low) {
+  for (let i = 0; i < 10; i++) {
+    const x = 330 + i % 5 * 165, y = 300 + Math.floor(i / 5) * 240;
+    const direction = lungFlowDirection(flow, { x, y }), angle = Math.atan2(direction.y, direction.x);
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+    ctx.globalAlpha = flow.airwayOpen ? 0.42 : 0.17;
+    if (flow.airwayOpen) {
+      line4(ctx, [-17, 0, 15, 0], "#c4e9e0", 1.2);
+      line4(ctx, [7, -6, 15, 0, 7, 6], "#d4eee5", 1.8);
+    } else {
+      ctx.setLineDash([3, 5]);
+      line4(ctx, [-15, 0, 15, 0], "#d1dfd7", 1);
+    }
+    ctx.restore();
+  }
+  if (!low && flow.airwayOpen) for (let i = 0; i < 13; i++) {
+    const movement = (state.elapsed * 21 + i * 77) % 160;
+    const point5 = { x: 330 + hash(i * 3) * 620, y: 230 + hash(i * 3 + 1) * 360 }, direction = lungFlowDirection(flow, point5);
+    const x = point5.x + direction.x * movement, y = point5.y + direction.y * movement;
+    ellipse3(ctx, x, y, 2 + hash(i + 2) * 2, 2, "#c8eee62b");
+  }
+  const duration = flow.phase === "inhale" ? CAMPAIGN_BALANCE.inhaleDuration : CAMPAIGN_BALANCE.exhaleDuration;
+  const progress = Math.max(0, Math.min(1, (duration - flow.phaseRemaining) / duration));
+  const expansion = flow.phase === "inhale" ? progress : 1 - progress;
+  for (const x of [385, 525, 835]) {
+    ctx.save();
+    ctx.globalAlpha = 0.2;
+    ctx.lineWidth = 1.5;
+    ellipse3(ctx, x, 66, 42 + expansion * 5, 58 + expansion * 7, "#b7d9d207", "#d3e8df");
+    ctx.restore();
+  }
+  ctx.save();
+  ctx.globalAlpha = 0.65;
+  ctx.translate(670, 165);
+  ctx.scale(1, 1 / 0.72);
+  label4(ctx, `${flow.phase === "inhale" ? "\u5438\u6C14 \xB7 \u805A\u62E2" : "\u547C\u6C14 \xB7 \u6269\u6563"}\u3000${Math.max(0, flow.phaseRemaining).toFixed(1)}s${flow.airwayOpen ? "" : " \xB7 \u6C14\u9053\u5DF2\u5C01\u95ED"}`, 0, 0, "#d0e7dc", 11);
+  ctx.restore();
+}
+function drawLungAirway(ctx, state, flow, near) {
+  ellipse3(ctx, 0, 2, 38, 12, "#375967", "#b7cfc4");
+  for (const sign of [-1, 1]) {
+    ctx.beginPath();
+    ctx.moveTo(sign * 34, -3);
+    ctx.bezierCurveTo(sign * 43, -42, sign * 20, -65, 0, -53);
+    ctx.lineTo(0, -43);
+    ctx.bezierCurveTo(sign * 18, -49, sign * 28, -25, sign * 24, -3);
+    ctx.closePath();
+    ctx.fillStyle = "#719aa7";
+    ctx.fill();
+    ctx.strokeStyle = "#c3ded3";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+  ctx.beginPath();
+  ctx.ellipse(0, -24, 21, 23, 0, 0, TAU5);
+  ctx.fillStyle = flow.airwayOpen ? "#193e56" : "#a6c7c0";
+  ctx.fill();
+  ctx.strokeStyle = "#d7e7d9";
+  ctx.stroke();
+  if (flow.airwayOpen) {
+    line4(ctx, [0, -38, 0, -12], "#c6eee2", 2);
+    line4(ctx, [-5, -18, 0, -12, 5, -18], "#d6f3e5", 2);
+  } else {
+    line4(ctx, [-10, -34, 10, -14], "#416779", 2.5);
+    line4(ctx, [-10, -14, 10, -34], "#416779", 2.5);
+  }
+  label4(ctx, flow.airwayOpen ? "\u6C14\u9053 \xB7 \u5DF2\u5F00\u542F" : "\u6C14\u9053 \xB7 \u5DF2\u5C01\u95ED", 0, 28, "#d6e7db", 11);
+  label4(ctx, flow.airwayOpen ? "\u805A\u6563\u6C14\u6D41 / \u4F20\u64AD" : "\u6C14\u6D41\u4E0E\u4F20\u64AD\u5747\u505C\u6B62", 0, 44, "#b8d4c8", 9);
+  if (near) {
+    const cost = flow.airwayOpen ? CAMPAIGN_BALANCE.closeAirwayCost : CAMPAIGN_BALANCE.openAirwayCost;
+    const cooldown = CAMPAIGN_BALANCE.airwayCooldown - (state.elapsed - flow.changedAt);
+    label4(ctx, cooldown > 0 ? `\u6C14\u9053\u5207\u6362\u51B7\u5374 ${cooldown.toFixed(1)}s` : `[ E ] ${flow.airwayOpen ? "\u5C01\u95ED" : "\u5F00\u542F"} \xB7 \u7EC4\u7EC7 \u2212${cost}`, 0, -72, "#e2efdc", 11);
+  }
+  if (flow.pressureUntil > state.elapsed) label4(ctx, `\u25B3 \u5207\u6362\u627F\u538B ${(flow.pressureUntil - state.elapsed).toFixed(1)}s`, 0, -89, "#f2d1a5", 10);
+}
+
+// src/render/organLandscape.ts
+var TAU6 = Math.PI * 2;
+var random = (seed) => {
+  const v = Math.sin(seed * 127.13 + 31.7) * 45771.37;
+  return v - Math.floor(v);
+};
+function oval(ctx, x, y, rx, ry, fill, stroke2) {
+  ctx.beginPath();
+  ctx.ellipse(x, y, rx, ry, 0, 0, TAU6);
+  ctx.fillStyle = fill;
+  ctx.fill();
+  if (stroke2) {
+    ctx.strokeStyle = stroke2;
+    ctx.lineWidth = 1.4;
+    ctx.stroke();
+  }
+}
+function drawOrganLandscape(ctx, world, organ3) {
+  const lung = organ3 === "lung", b = world.bounds, width = b.right - b.left, height = b.bottom - b.top;
+  const g = ctx.createRadialGradient(world.width * 0.52, world.height * 0.46, 80, world.width * 0.5, world.height * 0.5, world.width * 0.8);
+  g.addColorStop(0, lung ? "#34566c" : "#6a3142");
+  g.addColorStop(0.65, lung ? "#1c344d" : "#321a30");
+  g.addColorStop(1, "#130f1d");
+  ctx.fillStyle = g;
+  ctx.fillRect(-100, -200, world.width + 200, world.height + 350);
+  ctx.save();
+  ctx.shadowColor = "#090914";
+  ctx.shadowBlur = 28;
+  ctx.shadowOffsetY = 18;
+  ctx.beginPath();
+  ctx.roundRect(b.left - 30, b.top - 30, width + 60, height + 60, 65);
+  ctx.fillStyle = lung ? "#507b8b" : "#8c4857";
+  ctx.fill();
+  ctx.restore();
+  const floor = ctx.createLinearGradient(0, b.top, 0, b.bottom);
+  floor.addColorStop(0, lung ? "#2a485d" : "#452536");
+  floor.addColorStop(0.5, lung ? "#345868" : "#613444");
+  floor.addColorStop(1, lung ? "#243b50" : "#3a2336");
+  ctx.beginPath();
+  ctx.roundRect(b.left, b.top, width, height, 34);
+  ctx.fillStyle = floor;
+  ctx.fill();
+  ctx.strokeStyle = lung ? "#c3e0d555" : "#ebaf8b55";
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.save();
+  ctx.clip();
+  for (let i = 0; i < 380; i++) {
+    const x = b.left + random(i * 4 + 1) * width, y = b.top + random(i * 4 + 2) * height, r = 10 + random(i * 4 + 3) * 27;
+    oval(ctx, x, y, r * (lung ? 1.3 : 1), r * 0.65, lung ? "#bad8c715" : "#e8a78b15", lung ? "#c5e0d51c" : "#efa98320");
+    oval(ctx, x + r * 0.15, y - 3, r * 0.35, r * 0.22, "#13172a18");
+  }
+  for (let i = 0; i < 120; i++) {
+    const y = b.top + i / 120 * height;
+    ctx.beginPath();
+    ctx.moveTo(b.left, y);
+    ctx.bezierCurveTo(width * 0.3, y + 50 * Math.sin(i), width * 0.7, y - 60, b.right, y + 12);
+    ctx.strokeStyle = lung ? "#a7c7c10c" : "#f1b28b0c";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  const config = getOrganDefinition(organ3);
+  const hub = { x: world.width * 0.53, y: world.height * 0.59 };
+  for (const point5 of [config.research, config.terminal, config.device, config.exit, config.tissue, ...config.sourcePositions]) {
+    for (const [color, lineWidth] of [[lung ? "#182d42" : "#311b30", 45], [lung ? "#5d879055" : "#b5646755", 29], [lung ? "#c6e0cd26" : "#efb09226", 3]]) {
+      ctx.beginPath();
+      ctx.moveTo(point5.x, point5.y);
+      ctx.bezierCurveTo(point5.x, hub.y, hub.x, point5.y, hub.x, hub.y);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lineWidth;
+      ctx.lineCap = "round";
+      ctx.stroke();
+    }
+  }
+  for (const region of config.regions) {
+    oval(ctx, region.x, region.y, region.radius, region.radius * 0.66, lung ? "#a4d5ce06" : "#ecb28a06", lung ? "#c4e5d920" : "#eeb49520");
+    ctx.font = '500 18px "Microsoft YaHei", sans-serif';
+    ctx.fillStyle = lung ? "#c5dfcf70" : "#f0c8ad70";
+    ctx.textAlign = "center";
+    ctx.fillText(region.label, region.x, region.y + region.radius * 0.58);
+  }
+  ctx.restore();
+  for (let i = 0; i < Math.ceil(width / 125); i++) {
+    const x = b.left + 30 + i * 125, y = b.top - 18, r = 48 + random(i + 33) * 28;
+    oval(ctx, x, y - 24, r, lung ? r * 1.3 : r * 0.7, lung ? "#4f7489" : "#71374b", lung ? "#a9ccc54a" : "#d18d7845");
+    oval(ctx, x - 7, y - 38, r * 0.6, r * 0.45, lung ? "#bdd7d010" : "#df9f8310");
+  }
+  for (let i = 0; i < Math.ceil(height / 85); i++) {
+    const y = b.top + 35 + i * 85;
+    for (const x of [b.left - 14, b.right + 14]) oval(ctx, x, y, 27, 40, lung ? "#466d81" : "#733b4e", lung ? "#b4d4cd35" : "#e1a18430");
+  }
+}
+
+// src/render/navigation.ts
+function navigationTarget(state) {
+  const battle = state.battle, campaign = state.campaign;
+  if (!battle || !campaign) return;
+  if (battle.readyToRetest) return { point: state.terminal, label: "\u4E3B\u52A8\u590D\u6D4B \xB7 E" };
+  if (state.tissue.hp < 45) return { point: state.tissue, label: "\u62A2\u4FEE\u7EC4\u7EC7" };
+  if (campaign.migration.status === "warning" || campaign.migration.status === "blocking") {
+    const nodes = battle.graph.nodes.filter((node) => node.kind === "exit" || node.id === "gate").sort((a, b) => distance(state.player, a) - distance(state.player, b));
+    if (nodes[0]) return { point: nodes[0], label: nodes[0].kind === "exit" ? "\u51FA\u53E3\u8FFD\u51FB \xB7 E" : "\u9694\u79BB\u5C01\u9501 \xB7 E" };
+  }
+  const target = state.targets.filter((target2) => target2.hp > 0 && ["source", "elite", "core"].includes(target2.role ?? "")).sort((a, b) => distance(state.player, a) - distance(state.player, b))[0];
+  if (target) return { point: target, label: target.role === "source" ? "\u51C0\u5316\u611F\u67D3\u6E90" : target.role === "core" ? "\u51FB\u7834\u6BCD\u5DE2" : "\u53CD\u5236\u53D8\u5F02\u7CBE\u82F1" };
+  if (state.growth && !state.growth.equipped.length && state.growth.research >= 3) {
+    const research = battle.graph.nodes.find((node) => node.kind === "research");
+    if (research) return { point: research, label: "\u6297\u4F53\u7814\u7A76 \xB7 E" };
+  }
+  const other = campaign.arenas[battle.organId === "heart" ? "lung" : "heart"];
+  const otherNeedsWork = other.activated && (other.tissue.hp < 50 || other.targets.some((target2) => target2.hp > 0 && (target2.role === "source" || target2.role === "elite")));
+  if (otherNeedsWork || campaign.core.status !== "cleared" && campaign.core.organId !== battle.organId && campaign.migration.choice) {
+    const exit = battle.graph.nodes.find((node) => node.kind === "exit");
+    if (exit) return { point: exit, label: "\u524D\u5F80\u53E6\u4E00\u5668\u5B98 \xB7 E" };
+  }
+  if (state.tissue.hp < 65) return { point: state.tissue, label: "\u62A2\u4FEE\u7EC4\u7EC7" };
+  if (campaign.core.status !== "locked" || battle.readyToRetest) return { point: state.terminal, label: campaign.core.status === "ready" ? "\u5524\u9192\u6BCD\u5DE2 \xB7 E" : "\u4E3B\u52A8\u590D\u6D4B \xB7 E" };
+  return;
+}
+function drawNavigationMap(canvas2, state, visible) {
+  const ctx = canvas2.getContext("2d");
+  if (!ctx || !state.battle) return;
+  const w = canvas2.width, h = canvas2.height, world = activeWorld(state), b = world.bounds;
+  const sx = (w - 16) / (b.right - b.left), sy = (h - 26) / (b.bottom - b.top);
+  const p = (point5) => ({ x: 8 + (point5.x - b.left) * sx, y: 8 + (point5.y - b.top) * sy });
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = "#12151c";
+  ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = "#7da79865";
+  ctx.strokeRect(8, 8, w - 16, h - 26);
+  for (const obstacle of world.obstacles) {
+    const v = p(obstacle);
+    ctx.beginPath();
+    ctx.ellipse(v.x, v.y, obstacle.radius * sx, obstacle.radius * sy, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "#69817b55";
+    ctx.fill();
+  }
+  const from = p(visible.topLeft), to = p(visible.bottomRight);
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(8, 8, w - 16, h - 26);
+  ctx.clip();
+  ctx.fillStyle = "#c7f4e00b";
+  ctx.fillRect(from.x, from.y, to.x - from.x, to.y - from.y);
+  ctx.strokeStyle = "#c7f4e04a";
+  ctx.strokeRect(from.x, from.y, to.x - from.x, to.y - from.y);
+  ctx.restore();
+  const goal = navigationTarget(state), player = p(state.player);
+  if (goal) {
+    const end = p(goal.point);
+    ctx.beginPath();
+    ctx.moveTo(player.x, player.y);
+    ctx.lineTo(end.x, end.y);
+    ctx.strokeStyle = "#f6d39677";
+    ctx.setLineDash([3, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  ctx.font = '9px "Microsoft YaHei",sans-serif';
+  ctx.textAlign = "center";
+  for (const node of state.battle.graph.nodes) {
+    if (node.kind === "source" && !node.active) continue;
+    const v = p(node), label5 = node.kind === "source" ? "\u6E90" : node.kind === "tissue" ? "\u271A" : node.kind === "research" ? "\u7814" : node.kind === "exit" ? "\u51FA" : node.kind === "retest" ? "\u6D4B" : node.id === "gate" ? "\u95F8" : "\u6D41";
+    ctx.fillStyle = node.kind === "source" ? "#f1aa8a" : node.kind === "exit" ? "#e0d4ae" : "#a6ddca";
+    ctx.fillText(label5, v.x, v.y + 3);
+  }
+  ctx.beginPath();
+  ctx.arc(player.x, player.y, 3.5, 0, Math.PI * 2);
+  ctx.fillStyle = "#f4fff1";
+  ctx.fill();
+  ctx.strokeStyle = "#203c36";
+  ctx.stroke();
+  ctx.fillStyle = "#c5c6b4";
+  ctx.font = '9px "Microsoft YaHei",sans-serif';
+  ctx.fillText(goal ? `${goal.label} \xB7 ${Math.round(distance(state.player, goal.point))}m` : "\u767D\u70B9\u4E3A\u4F60 \xB7 \u9634\u5F71\u6846\u4E3A\u5F53\u524D\u89C6\u91CE", w / 2, h - 5);
+}
+
+// src/render/raisedObstacleOcclusion.ts
+var PLAYER_HEAD_SHAPE = { x: 0, y: -48, rx: 22, ry: 21 };
+function playerBodyPose(state) {
+  const p = state.player, time = state.elapsed;
+  const walk = p.moving ? Math.sin(time * 19) : Math.sin(time * 3) * 0.2;
+  return {
+    walk,
+    bob: p.moving ? Math.abs(walk) * 2.2 : Math.sin(time * 2.5) * 0.8,
+    direction: Math.atan2(Math.sin(p.facing) * SPRITE_Y_SCALE, Math.cos(p.facing))
+  };
+}
+var obstacleShapes = /* @__PURE__ */ new WeakMap();
+function projectedRaisedObstacle(obstacle, organ3) {
+  const cached = obstacleShapes.get(obstacle);
+  if (cached && cached.organ === organ3 && cached.x === obstacle.x && cached.y === obstacle.y && cached.radius === obstacle.radius) return cached;
+  const upperSilhouette = localUpperSilhouette(obstacle.radius, organ3).map((p) => ({ x: obstacle.x + p.x, y: obstacle.y * SPRITE_Y_SCALE + p.y }));
+  const result = { organ: organ3, x: obstacle.x, y: obstacle.y, radius: obstacle.radius, upperSilhouette, upperBounds: boundsOf(upperSilhouette, 1.25) };
+  obstacleShapes.set(obstacle, result);
+  return result;
+}
+function projectBounds(local, x, y, lift = 0) {
+  return { left: x + local.left, right: x + local.right, top: y * SPRITE_Y_SCALE + lift + local.top, bottom: y * SPRITE_Y_SCALE + lift + local.bottom };
+}
+function playerBounds(state) {
+  const { bob, direction } = playerBodyPose(state), head = PLAYER_HEAD_SHAPE;
+  const points = [
+    { x: -25, y: -44 },
+    { x: 25, y: 6 },
+    { x: head.x - head.rx - 1, y: head.y - head.ry - 1 },
+    { x: head.x + head.rx + 1, y: head.y + head.ry + 1 }
+  ];
+  const cos = Math.cos(direction), sin = Math.sin(direction), mx = cos * 24, my = sin * 24;
+  for (const [x, y] of [[-11, -6], [18, -6], [18, 6], [-11, 6]]) points.push({ x: mx + x * cos - y * sin, y: my + x * sin + y * cos });
+  for (const [x, y] of [[12, -25], [24, -15], [mx - 4, my - 5], [mx, my]]) {
+    points.push({ x: x - 4, y: y - 4 }, { x: x + 4, y: y + 4 });
+  }
+  return projectBounds(boundsOf(points), state.player.x, state.player.y, -bob);
+}
+var virusBounds = /* @__PURE__ */ new Map();
+function outlineBounds(trait2) {
+  const key = trait2 ?? "ordinary", cached = virusBounds.get(key);
+  if (cached) return cached;
+  const points = [], add2 = (...values) => {
+    for (let i = 0; i < values.length; i += 2) points.push({ x: values[i], y: values[i + 1] });
+  };
+  const recorder = { beginPath() {
+  }, closePath() {
+  }, moveTo: add2, lineTo: add2, bezierCurveTo: add2 };
+  traceVirusOutline(recorder, trait2, 1);
+  const bounds = boundsOf(points);
+  virusBounds.set(key, bounds);
+  return bounds;
+}
+function targetBounds(target, state) {
+  const r = target.radius, t = state.elapsed, source = target.role === "source", core = state.campaign?.core.combat;
+  if (!state.battle) {
+    const appendage = r * 0.93 * 1.28 + (target.kind === "cluster" ? 6 : 5);
+    return projectBounds({ left: -appendage, right: appendage, top: -appendage, bottom: appendage }, target.x, target.y, -r * 0.7 + Math.sin(t * 3.2 + target.x) * 2);
+  }
+  if (target.role === "core" && core?.coreId === target.id) {
+    const lift = core.phase === "windup" ? -3 : core.phase === "recovery" ? 3 : Math.sin(t * 2.8) * 1.4;
+    let width = r * 1.12 + 1.5, top = -r * 1.4 - 1.5, bottom = r * 1.05 + 1.5;
+    if (core.traits.includes("MIMIC")) {
+      width = Math.max(width, r * 1.6 + 0.75);
+      top = Math.min(top, -r * 1.7 - 0.75);
+    }
+    if (core.traits.includes("FISSION")) width = Math.max(width, r * 1.11 + 1);
+    if (core.traits.includes("CARAPACE")) {
+      const spread = Math.max(core.exposedUntil, target.exposedUntil ?? 0) > t ? 1.3 : 1;
+      width = Math.max(width, r * 0.9 * spread + 12.75);
+      top = Math.min(top, -r * 0.92 * spread - r * 0.18 - 22.75);
+    }
+    const local2 = { left: -width, right: width, top, bottom };
+    const result2 = projectBounds(local2, target.x, target.y, -r * 0.96 + lift);
+    result2.left = Math.min(result2.left, target.x - r * 1.52 - 1);
+    result2.right = Math.max(result2.right, target.x + r * 1.52 + 1);
+    result2.bottom = Math.max(result2.bottom, target.y * SPRITE_Y_SCALE + 11);
+    return result2;
+  }
+  const trait2 = target.traits?.[0], b = outlineBounds(trait2), bob = source ? Math.sin(t * 2) * 1.2 : Math.sin(t * 5 + target.x) * 2;
+  const local = { left: b.left * r - 1.25, right: b.right * r + 1.25, top: b.top * r - 1.25, bottom: b.bottom * r + 1.25 };
+  if (trait2 === "CARAPACE") {
+    local.left = Math.min(local.left, -r * 1.16 - 1);
+    local.right = Math.max(local.right, r * 1.16 + 1);
+    local.bottom = Math.max(local.bottom, r * 1.16 + 1);
+  }
+  if (target.role === "elite" || target.role === "core") local.top = Math.min(local.top, -r * 1.08 - 19);
+  const result = projectBounds(local, target.x, target.y, -r * 0.8 + bob);
+  if (source) {
+    result.left = Math.min(result.left, target.x - r * 1.1 - 9);
+    result.right = Math.max(result.right, target.x + r * 1.1 + 9);
+    result.bottom = Math.max(result.bottom, target.y * SPRITE_Y_SCALE + r * 0.4 + 8);
+  }
+  return result;
+}
+function getRaisedActorBodies(state) {
+  const organ3 = state.battle?.organId === "lung" ? "lung" : "heart";
+  const obstacles = activeWorld(state).obstacles.map((obstacle) => ({ obstacle, ...projectedRaisedObstacle(obstacle, organ3) }));
+  const relevant = (groundY, bounds) => obstacles.some((shape) => groundY <= shape.obstacle.y && boundsOverlap(bounds, shape.upperBounds));
+  const result = [];
+  if (state.player.hp > 0) {
+    const bodyBounds = playerBounds(state);
+    if (relevant(state.player.y, bodyBounds)) result.push({ id: "player", kind: "player", groundY: state.player.y, bodyBounds });
+  }
+  for (const target of state.targets) if (target.hp > 0) {
+    const bodyBounds = targetBounds(target, state);
+    if (relevant(target.y, bodyBounds)) result.push({ id: target.id, kind: "target", groundY: target.y, bodyBounds });
+  }
+  for (const cell of state.growth?.cells ?? []) {
+    if (cell.organId !== state.battle?.organId || cell.until <= state.elapsed || cell.born >= state.elapsed) continue;
+    const extent = Math.hypot(cell.radius + 3, (cell.radius + 3) * 0.88) * 1.12 + 1;
+    const broad = { left: cell.x - extent, right: cell.x + extent, top: cell.y * SPRITE_Y_SCALE + IMMUNE_BODY_LIFT - extent, bottom: cell.y * SPRITE_Y_SCALE + IMMUNE_BODY_LIFT + extent };
+    if (!relevant(cell.y, broad)) continue;
+    const body = immuneCellBody(cell, state.elapsed);
+    if (body.alpha <= 0) continue;
+    const cos = Math.cos(body.rotation), sin = Math.sin(body.rotation);
+    const bodyBounds = boundsOf(body.outline.map((p) => ({ x: cell.x + p.x * cos - p.y * sin, y: cell.y * SPRITE_Y_SCALE + IMMUNE_BODY_LIFT + p.x * sin + p.y * cos })), 1);
+    result.push({ id: cell.id, kind: "immune", groundY: cell.y, bodyBounds });
+  }
+  return result;
+}
+function getRaisedObstacleOcclusion(state, obstacle, bodies = getRaisedActorBodies(state)) {
+  const shape = projectedRaisedObstacle(obstacle, state.battle?.organId === "lung" ? "lung" : "heart");
+  const occludedActors = bodies.filter((body) => body.groundY <= obstacle.y && boundsOverlap(body.bodyBounds, shape.upperBounds) && upperSilhouetteOverlapsBounds(shape.upperSilhouette, body.bodyBounds));
+  return { upperOpacity: occludedActors.length ? RAISED_OBSTACLE_FADED_OPACITY : 1, upperSilhouette: shape.upperSilhouette, upperBounds: shape.upperBounds, occludedActors };
+}
+
+// src/render/renderer.ts
+var TAU7 = Math.PI * 2;
+var hash2 = (n) => {
+  const a = Math.sin(n * 127.1 + 311.7) * 43758.5453123;
+  return a - Math.floor(a);
+};
+var clamp2 = (n, a, b) => Math.max(a, Math.min(b, n));
+function ellipse4(ctx, x, y, rx, ry, fill, stroke2) {
+  ctx.beginPath();
+  ctx.ellipse(x, y, Math.max(0.1, rx), Math.max(0.1, ry), 0, 0, TAU7);
+  ctx.fillStyle = fill;
+  ctx.fill();
+  if (stroke2) {
+    ctx.strokeStyle = stroke2;
+    ctx.stroke();
+  }
+}
+function line5(ctx, points, color, width = 1) {
+  ctx.beginPath();
+  ctx.moveTo(points[0], points[1]);
+  for (let i = 2; i < points.length; i += 2) ctx.lineTo(points[i], points[i + 1]);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.stroke();
+}
+function text(ctx, value, x, y, color = "#e4d3c6", size = 12, align = "center") {
+  ctx.font = `500 ${size}px "Microsoft YaHei", "Segoe UI", sans-serif`;
+  ctx.fillStyle = color;
+  ctx.textAlign = align;
+  ctx.fillText(value, x, y);
+}
+function strokeCurve(ctx, points, stroke2, width) {
+  ctx.beginPath();
+  ctx.moveTo(points[0], points[1]);
+  ctx.bezierCurveTo(points[2], points[3], points[4], points[5], points[6], points[7]);
+  ctx.strokeStyle = stroke2;
+  ctx.lineWidth = width;
+  ctx.lineCap = "round";
+  ctx.stroke();
+}
+function organic(ctx, x, y, radius, color, outline, seed, elongate = 1) {
+  ctx.beginPath();
+  for (let i = 0; i <= 80; i++) {
+    const a = i / 80 * TAU7;
+    const r = radius * (1 + Math.sin(a * 5 + seed) * 0.07 + Math.sin(a * 3 - seed) * 0.045);
+    const px = x + Math.cos(a) * r, py = y + Math.sin(a) * r * elongate;
+    if (!i) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.strokeStyle = outline;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+var Renderer = class {
+  constructor(canvas2) {
+    this.canvas = canvas2;
+    const context = canvas2.getContext("2d", { alpha: false });
+    if (!context) throw new Error("Canvas 2D is unavailable");
+    this.ctx = context;
+    this.background = document.createElement("canvas");
+    this.background.width = 1440;
+    this.background.height = 900;
+    const bg = this.background.getContext("2d");
+    const staticCamera = new Camera();
+    staticCamera.apply(bg);
+    this.drawEnvironment(bg);
+    this.resize();
+  }
+  canvas;
+  camera = new Camera();
+  ctx;
+  background;
+  lungBackground;
+  width = 1440;
+  height = 900;
+  dpr = 1;
+  growthVisuals = new GrowthVisuals();
+  landscapes = /* @__PURE__ */ new Map();
+  resize() {
+    const rect = this.canvas.getBoundingClientRect();
+    this.width = Math.max(1, rect.width || window.innerWidth);
+    this.height = Math.max(1, rect.height || window.innerHeight);
+    this.dpr = clamp2(window.devicePixelRatio || 1, 1, 3);
+    this.canvas.width = Math.round(this.width * this.dpr);
+    this.canvas.height = Math.round(this.height * this.dpr);
+    this.camera.resize(this.width, this.height);
+  }
+  prepareCamera(state) {
+    this.camera.follow(state.player, activeWorld(state));
+  }
+  diagnostics(state) {
+    return { depthOrder: depthSort(this.entities(state)).map((entity) => entity.id), occluded: isForegroundOccluded(state.player, activeWorld(state)), foregroundOpacity: foregroundOpacity(state.player, activeWorld(state)), layerOrder: LAYER_ORDER };
+  }
+  entities(state) {
+    return [
+      { id: "player", y: state.player.y, kind: "player" },
+      ...state.targets.map((target, index) => ({ id: target.id, y: target.y, kind: "target", index })),
+      { id: "tissue", y: state.tissue.y, kind: "tissue" },
+      { id: "terminal", y: state.terminal.y, kind: "terminal" },
+      ...state.battle?.graph.nodes.filter((node) => node.kind === "valve" || node.kind === "gate" || node.kind === "research" || node.kind === "exit").map((node) => ({ id: node.id, y: node.y, kind: "device" })) ?? [],
+      ...state.growth?.beacon && state.growth.beacon.organId === state.battle?.organId && state.growth.beacon.until > state.elapsed ? [{ id: state.growth.beacon.id, y: state.growth.beacon.y, kind: "beacon" }] : [],
+      ...state.growth?.cells?.flatMap((cell, index) => cell.organId === state.battle?.organId && cell.until > state.elapsed ? [{ id: cell.id, y: cell.y, kind: "immune", index }] : []) ?? [],
+      ...activeWorld(state).obstacles.map((obstacle) => ({ id: obstacle.id, y: obstacle.y, kind: "obstacle" }))
+    ];
+  }
+  render(state, aim, opts = {}) {
+    this.prepareCamera(state);
+    const ctx = this.ctx;
+    ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+    ctx.fillStyle = "#120d1b";
+    ctx.fillRect(0, 0, this.width, this.height);
+    if (state.battle?.organId === "lung" && activeWorld(state).width <= 1200 && !this.lungBackground) {
+      this.lungBackground = document.createElement("canvas");
+      this.lungBackground.width = 1440;
+      this.lungBackground.height = 900;
+      const bg = this.lungBackground.getContext("2d");
+      const staticCamera = new Camera();
+      staticCamera.apply(bg);
+      drawLungEnvironment(bg, activeWorld(state));
+    }
+    const world = activeWorld(state), large = world.width > 1200;
+    if (!large) ctx.drawImage(state.battle?.organId === "lung" ? this.lungBackground : this.background, this.camera.offsetX, this.camera.offsetY, 1440 * this.camera.scale, 900 * this.camera.scale);
+    ctx.save();
+    this.camera.apply(ctx);
+    if (large) {
+      const organ3 = state.battle?.organId ?? "heart", key = `${organ3}:${world.width}:${world.height}`;
+      if (!this.landscapes.has(key)) {
+        const background = document.createElement("canvas");
+        background.width = world.width + 200;
+        background.height = world.height + 350;
+        const bg = background.getContext("2d");
+        bg.translate(100, 200);
+        drawOrganLandscape(bg, world, organ3);
+        this.landscapes.set(key, background);
+      }
+      ctx.drawImage(this.landscapes.get(key), -100, -200);
+    }
+    this.drawAtmosphere(ctx, state, Boolean(opts.lowEffects));
+    this.drawGroundSignals(ctx, state, aim);
+    drawEncounterSignals(ctx, state, Boolean(opts.lowEffects));
+    this.growthVisuals.drawGround(ctx, state, state.growth, Boolean(opts.lowEffects));
+    this.drawShadows(ctx, state);
+    const raisedActorBodies = getRaisedActorBodies(state);
+    for (const entity of depthSort(this.entities(state))) {
+      if (entity.kind === "player") this.drawPlayer(ctx, state);
+      if (entity.kind === "target") this.drawTarget(ctx, state.targets[entity.index], state);
+      if (entity.kind === "tissue") this.drawTissue(ctx, state);
+      if (entity.kind === "terminal") this.drawTerminal(ctx, state);
+      if (entity.kind === "obstacle") {
+        const obstacle = activeWorld(state).obstacles.find((obstacle2) => obstacle2.id === entity.id);
+        const opacity = getRaisedObstacleOcclusion(state, obstacle, raisedActorBodies).upperOpacity;
+        if (state.battle?.organId === "lung") drawLungObstacle(ctx, obstacle, opacity);
+        else this.drawObstacle(ctx, obstacle, opacity);
+      }
+      if (entity.kind === "device") this.drawBattleDevice(ctx, state.battle.graph.nodes.find((node) => node.id === entity.id), state);
+      if (entity.kind === "beacon") this.growthVisuals.drawBeacon(ctx, state, state.growth);
+      if (entity.kind === "immune") drawImmuneCell(ctx, state.growth.cells[entity.index], state.elapsed, Boolean(opts.lowEffects));
+    }
+    this.drawForeground(ctx, state);
+    this.drawEffects(ctx, state, Boolean(opts.lowEffects));
+    this.growthVisuals.drawMarks(ctx, state, state.growth);
+    this.growthVisuals.drawProtocolHits(ctx, state, state.growth);
+    if (state.battle) {
+      this.drawBattleDangers(ctx, state);
+      if (state.campaign?.core.combat) drawMotherCoreDangers(ctx, state, state.campaign.core.combat);
+      drawBattleLabels(ctx, state);
+      this.drawTissueMarker(ctx, state);
+    }
+    this.drawCrosshair(ctx, state, aim);
+    ctx.restore();
+    const map = document.querySelector("#tactical-map");
+    if (map && state.campaign) drawNavigationMap(map, state, { topLeft: this.camera.screenToWorld({ x: 0, y: 0 }), bottomRight: this.camera.screenToWorld({ x: this.width, y: this.height }) });
+  }
+  drawEnvironment(ctx) {
+    const gradient = ctx.createRadialGradient(650, 360, 80, 600, 420, 1e3);
+    gradient.addColorStop(0, "#542236");
+    gradient.addColorStop(0.52, "#311528");
+    gradient.addColorStop(1, "#130e1b");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(-200, -250, 1650, 1500);
+    for (let i = 0; i < 8; i++) {
+      const x = -70 + i * 190, y = 55 + Math.sin(i * 1.8) * 22;
+      const g = ctx.createLinearGradient(x, y - 190, x, y + 150);
+      g.addColorStop(0, "#8b3e4c");
+      g.addColorStop(0.45, "#572135");
+      g.addColorStop(1, "#261321");
+      ctx.beginPath();
+      ctx.moveTo(x - 130, y - 160);
+      ctx.bezierCurveTo(x - 30, y - 220, x + 140, y - 120, x + 120, y + 42);
+      ctx.bezierCurveTo(x + 105, y + 155, x + 20, y + 100, x - 35, y + 130);
+      ctx.bezierCurveTo(x - 115, y + 120, x - 155, y - 35, x - 130, y - 160);
+      ctx.fillStyle = g;
+      ctx.fill();
+      ctx.strokeStyle = "#9a4a5355";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      for (let j = 0; j < 5; j++) strokeCurve(ctx, [x - 110 + j * 13, y - 110, x - 10, y - 150 + j * 17, x + 95, y + 10, x - 20 + j * 16, y + 84], "#c16a6840", 1.5);
+    }
+    ctx.save();
+    ctx.shadowColor = "#090611";
+    ctx.shadowBlur = 22;
+    ctx.shadowOffsetY = 15;
+    ctx.beginPath();
+    ctx.roundRect(40, 86, 1120, 675, 65);
+    ctx.fillStyle = "#6a293c";
+    ctx.fill();
+    ctx.restore();
+    ctx.beginPath();
+    ctx.roundRect(55, 100, 1090, 647, 45);
+    ctx.fillStyle = "#9b4b4950";
+    ctx.fill();
+    const floor = ctx.createLinearGradient(600, 110, 600, 750);
+    floor.addColorStop(0, "#3c1e31");
+    floor.addColorStop(0.45, "#4d2937");
+    floor.addColorStop(1, "#382136");
+    ctx.beginPath();
+    ctx.roundRect(65, 110, 1070, 625, 25);
+    ctx.fillStyle = floor;
+    ctx.fill();
+    ctx.strokeStyle = "#d97c6552";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(66, 111, 1068, 623, 24);
+    ctx.clip();
+    for (let i = 0; i < 115; i++) {
+      const x = 65 + hash2(i * 4 + 3) * 1070, y = 110 + hash2(i * 4 + 5) * 625;
+      const r = 10 + hash2(i + 17) * 22;
+      ellipse4(ctx, x, y, r, r * 0.62, i % 3 ? "#b56d6530" : "#e09b7828", "#dd95781b");
+      ellipse4(ctx, x + 3, y - 2, r * 0.4, r * 0.21, "#281c2b37");
+      strokeCurve(ctx, [x - r, y + 4, x - r * 0.2, y - r * 0.75, x + r * 0.7, y - r * 0.7, x + r, y], "#d38e781b", 0.8);
+    }
+    for (let i = 0; i < 78; i++) {
+      const y = 125 + i * 8;
+      strokeCurve(ctx, [70, y, 350, y - 30 + Math.sin(i) * 25, 730, y + 46, 1140, y - 13], "#e8976910", 1);
+    }
+    const vessels = [
+      [55, 467, 294, 340, 365, 628, 682, 610],
+      [679, 610, 939, 600, 935, 700, 1165, 686],
+      [53, 231, 312, 182, 472, 180, 680, 221],
+      [685, 220, 902, 246, 1027, 110, 1140, 135]
+    ];
+    for (const points of vessels) {
+      strokeCurve(ctx, points, "#251322", 26);
+      strokeCurve(ctx, points, "#763047", 18);
+      strokeCurve(ctx, points.map((n, i) => n + (i % 2 ? -3 : 0)), "#b75c5d55", 4);
+    }
+    ctx.restore();
+    for (let i = 0; i < 13; i++) {
+      const y = 130 + i * 48, side = i % 2, x = side ? 1144 : 52;
+      ellipse4(ctx, x, y, 32 + hash2(i) * 7, 36, side ? "#65273a" : "#713043", "#d47b6840");
+      strokeCurve(ctx, [x - 10, y - 23, x + 11, y - 16, x + 17, y + 11, x - 6, y + 22], "#d2826d45", 2);
+    }
+    ctx.save();
+    ctx.globalAlpha = 0.33;
+    text(ctx, "A T R I U M   /   0 1", 735, 150, "#f1c5a1", 16);
+    text(ctx, "HEART  \xB7  ATRIUM", 630, 716, "#e1b09e", 11);
+    ctx.restore();
+  }
+  drawAtmosphere(ctx, state, low) {
+    const flow = state.battle?.organId === "lung" ? state.campaign?.arenas.lung.flow : void 0;
+    if (flow) {
+      drawLungAirflow(ctx, state, flow, low);
+      return;
+    }
+    const time = state.elapsed;
+    if (!low) for (let i = 0; i < 24; i++) {
+      const x = 95 + (hash2(i * 2) * 1e3 + time * (4 + hash2(i) * 6)) % 1030;
+      const y = 120 + hash2(i * 2 + 1) * 560 + Math.sin(time * 0.4 + i) * 10;
+      const r = 1 + hash2(i + 5) * 2.5;
+      ellipse4(ctx, x, y, r * 1.5, r, "#edb08a27");
+    }
+    const glow = ctx.createRadialGradient(650, 90, 0, 650, 90, 400);
+    glow.addColorStop(0, `rgba(247,135,90,${0.07 + Math.sin(time * 1.5) * 0.015})`);
+    glow.addColorStop(1, "#f69a6000");
+    ctx.fillStyle = glow;
+    ctx.fillRect(250, -110, 800, 500);
+    if (state.battle) this.drawHeartRhythm(ctx, state, low);
+  }
+  drawGroundSignals(ctx, state, aim) {
+    if (state.battle) this.drawBattleGround(ctx, state, aim);
+    for (const target of state.targets) if (target.hp > 0) {
+      if (state.battle) continue;
+      ctx.save();
+      ctx.setLineDash([3, 7]);
+      ctx.lineWidth = 1;
+      ellipse4(ctx, target.x, target.y, target.radius + 12, target.radius + 12, "#ff926508", "#e9a47c55");
+      ctx.restore();
+    }
+    const t = state.tissue;
+    ctx.save();
+    ctx.setLineDash([6, 9]);
+    ellipse4(ctx, t.x, t.y, t.radius + 15, t.radius + 15, "#7de5ba08", "#7de5ba45");
+    ctx.restore();
+    ellipse4(ctx, state.terminal.x, state.terminal.y, 68, 48, "#67ddea09", "#74d6d22b");
+    if (state.phase === "playing" && state.tool === 2) {
+      const distance2 = Math.hypot(aim.x - state.player.x, aim.y - state.player.y);
+      ctx.save();
+      ctx.setLineDash([5, 6]);
+      ctx.lineWidth = 1.5;
+      ellipse4(ctx, aim.x, aim.y, BALANCE.areaRadius, BALANCE.areaRadius, "#92f5e508", distance2 <= BALANCE.range ? "#a6f2e376" : "#f39c6270");
+      ctx.restore();
+    }
+    for (const [x, y, dx, dy] of [[80, 125, 25, 25], [1120, 125, -25, 25], [80, 720, 25, -25], [1120, 720, -25, -25]]) {
+      line5(ctx, [x, y + dy, x, y, x + dx, y], "#d48d6765", 2);
+    }
+  }
+  drawHeartRhythm(ctx, state, low) {
+    const battle = state.battle, time = state.elapsed;
+    const surge = battle.pulse.phase === "surge";
+    const strength = surge ? 0.9 : battle.pulse.phase === "charge" ? 0.45 : 0.14;
+    for (let i = 0; i < 3; i++) {
+      const x = 440 + i * 145, stretch = Math.sin(time * TAU7 / BATTLE_BALANCE.pulseCycle) * 6;
+      ctx.save();
+      ctx.translate(x, 91);
+      ctx.beginPath();
+      ctx.moveTo(-63, -28);
+      ctx.bezierCurveTo(-42, -80, -7, -37 + stretch, 0, 20);
+      ctx.bezierCurveTo(14, -30 + stretch, 43, -79, 65, -25);
+      ctx.quadraticCurveTo(15, 7, 0, 30);
+      ctx.quadraticCurveTo(-25, 4, -63, -28);
+      ctx.fillStyle = "#843648";
+      ctx.fill();
+      ctx.strokeStyle = `rgba(242,154,122,${0.23 + strength * 0.23})`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      line5(ctx, [0, 24, 0, -7], "#ffc59766", 1.5);
+      ctx.restore();
+    }
+    if (!low) {
+      const beats = ctx.createRadialGradient(655, 165, 10, 655, 165, 310);
+      beats.addColorStop(0, `rgba(240,104,81,${strength * 0.06})`);
+      beats.addColorStop(1, "#ed996700");
+      ctx.fillStyle = beats;
+      ctx.fillRect(345, -145, 620, 620);
+    }
+  }
+  drawBattleGround(ctx, state, aim) {
+    const battle = state.battle, time = state.elapsed;
+    for (const edge of battle.graph.edges) {
+      const from = battle.graph.nodes.find((node) => node.id === edge.from), to = battle.graph.nodes.find((node) => node.id === edge.to);
+      if (!from || !to) continue;
+      const angle = Math.atan2(to.y - from.y, to.x - from.x), length = Math.hypot(to.x - from.x, to.y - from.y);
+      const infected = from.infected && from.active;
+      line5(ctx, [from.x, from.y, to.x, to.y], "#26162477", 14);
+      ctx.save();
+      ctx.setLineDash(edge.open ? [] : [5, 8]);
+      line5(ctx, [from.x, from.y, to.x, to.y], !edge.open ? "#b7c4b24a" : infected ? "#db8d7655" : "#c29c8333", 2);
+      ctx.restore();
+      for (let i = 1; i <= Math.floor(length / 85); i++) {
+        const fraction = i / (Math.floor(length / 85) + 1), x = from.x + (to.x - from.x) * fraction, y = from.y + (to.y - from.y) * fraction;
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        if (edge.open) line5(ctx, [-5, -5, 0, 0, -5, 5], infected ? "#eab89777" : "#ceb29644", 1.5);
+        else {
+          line5(ctx, [-3, -4, 3, 4], "#d8c9b577", 1.5);
+          line5(ctx, [-3, 4, 3, -4], "#d8c9b577", 1.5);
+        }
+        ctx.restore();
+      }
+      if (edge.open && infected) {
+        const fraction = 1 - clamp2((edge.nextSpread - time) / BATTLE_BALANCE.spreadInterval, 0, 1);
+        ellipse4(ctx, from.x + (to.x - from.x) * fraction, from.y + (to.y - from.y) * fraction, 5, 3, "#efb98e91");
+      }
+    }
+    for (const node of battle.graph.nodes) {
+      if (node.kind === "source" && node.active) {
+        ctx.save();
+        ctx.setLineDash([3, 5]);
+        ellipse4(ctx, node.x, node.y, 48, 48, "#f09c7910", "#db947766");
+        ctx.restore();
+      }
+      if (node.kind === "gate") {
+        const closed = !battle.graph.edges.filter((edge) => edge.from === node.id || edge.to === node.id).some((edge) => edge.open);
+        ellipse4(ctx, node.x, node.y, 42, 29, "#a2f1c80a", closed ? "#a7dac282" : "#d7b68b5d");
+      }
+    }
+    const valve = battle.graph.nodes.find((node) => node.kind === "valve");
+    if (valve && state.phase === "playing" && Math.hypot(state.player.x - valve.x, state.player.y - valve.y) <= BALANCE.interactionRange) {
+      const ready = time >= battle.pulse.readyAt;
+      const angle = Math.atan2(aim.y - valve.y, aim.x - valve.x);
+      this.drawPulseSector(ctx, valve, angle, BATTLE_BALANCE.pulseRange, ready ? "#ffd89a0e" : "#c7b4a309", ready ? "#f4cb8d99" : "#bba69355", !ready, activeWorld(state));
+    }
+  }
+  drawPulseSector(ctx, origin, angle, radius, fill, outline, dashed = false, world = WORLD) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(origin.x, origin.y);
+    for (const point5 of pulsePreviewPolygon(origin, angle, radius, world).slice(1)) ctx.lineTo(point5.x, point5.y);
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
+    ctx.strokeStyle = outline;
+    ctx.lineWidth = 1.5;
+    if (dashed) ctx.setLineDash([5, 7]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    for (const fraction of [0.3, 0.55, 0.8]) {
+      const limit = wallHit(origin, { x: Math.cos(angle), y: Math.sin(angle) }, radius, world) ?? radius;
+      if (radius * fraction > limit) continue;
+      const x = origin.x + Math.cos(angle) * radius * fraction, y = origin.y + Math.sin(angle) * radius * fraction;
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      line5(ctx, [-8, -6, 0, 0, -8, 6], outline, 2);
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+  drawBattleDevice(ctx, node, state) {
+    const battle = state.battle, time = state.elapsed;
+    const near = Math.hypot(state.player.x - node.x, state.player.y - node.y) <= BALANCE.interactionRange;
+    ctx.save();
+    ctx.translate(node.x, node.y);
+    ctx.scale(1, 1 / 0.72);
+    const flow = state.battle?.organId === "lung" ? state.campaign?.arenas.lung.flow : void 0;
+    if (node.id === "airway" && flow) {
+      drawLungAirway(ctx, state, flow, near);
+    } else if (node.kind === "exit") {
+      const destination = state.battle?.organId === "lung" ? "\u5FC3\u810F" : "\u80BA\u90E8";
+      const readyAt = state.campaign?.travelReadyAt ?? 0, ready = node.active && time >= readyAt;
+      ellipse4(ctx, 0, 2, 34, 11, "#36556a", node.active ? "#b8ddd3" : "#7c9497");
+      ctx.beginPath();
+      ctx.roundRect(-26, -58, 52, 54, 17);
+      ctx.fillStyle = "#618290";
+      ctx.fill();
+      ctx.strokeStyle = node.active ? "#c2ded4" : "#9baaa4";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.roundRect(-19, -51, 38, 45, 12);
+      ctx.fillStyle = "#18364b";
+      ctx.fill();
+      const sign = state.battle?.organId === "lung" ? -1 : 1;
+      line5(ctx, [-sign * 10, -29, sign * 10, -29], ready ? "#d8f1d8" : "#889b98", 2.5);
+      line5(ctx, [sign * 3, -36, sign * 10, -29, sign * 3, -22], ready ? "#d8f1d8" : "#889b98", 2.5);
+      text(ctx, `\u901A\u5F80${destination}`, 0, 28, "#d8e8d9", 11);
+      text(ctx, !node.active ? "\u8FC1\u79FB\u9636\u6BB5\u5F00\u542F" : ready ? "\u53CC\u5411\u901A\u9053 \xB7 E" : `\u901A\u884C\u51B7\u5374 ${Math.ceil(readyAt - time)}s`, 0, 44, "#b5cbc4", 9);
+      if (near) text(ctx, !node.active ? "\u901A\u9053\u5C1A\u672A\u5F00\u542F" : ready ? `[ E ] ${state.campaign?.migration.status === "warning" ? "\u8FFD\u51FB\u81F3" : "\u524D\u5F80"}${destination}` : "\u901A\u884C\u5145\u80FD\u4E2D", 0, -76, "#e4f0d9", 11);
+    } else if (node.kind === "valve") {
+      const ready = time >= battle.pulse.readyAt, surge = battle.pulse.phase === "surge";
+      ellipse4(ctx, 0, 3, 37, 12, "#6f3b46", "#c79076");
+      const movement = surge ? 9 : Math.sin(time * 2) * 2;
+      for (const sign of [-1, 1]) {
+        ctx.beginPath();
+        ctx.moveTo(0, -6);
+        ctx.bezierCurveTo(sign * 12, -37 - movement, sign * 45, -57, sign * 35, -26);
+        ctx.quadraticCurveTo(sign * 29, -5, 0, -6);
+        ctx.fillStyle = "#be7970";
+        ctx.fill();
+        ctx.strokeStyle = "#e4aa87";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+      ellipse4(ctx, 0, -17, 11, 17, "#71394a", ready ? "#f7d397" : "#a99988");
+      line5(ctx, [-5, -17, 0, -23, 5, -17, 0, -10, -5, -17], ready ? "#ffe0a8" : "#ad9a8b", 2);
+      text(ctx, "\u5B9A\u5411\u51B2\u6D41\u9600", 0, 28, "#f4d3ac", 11);
+      text(ctx, ready ? `E \xB7 \u7EC4\u7EC7 -${BATTLE_BALANCE.pulseCost}` : `${Math.ceil(battle.pulse.readyAt - time)}s \u5145\u80FD`, 0, 44, ready ? "#f6dba9" : "#bbaba0", 10);
+      if (near) {
+        const phase = battle.pulse.phase === "charge" ? "\u84C4\u529B" : surge ? "\u51B2\u6D41\u8282\u5F8B" : "\u8212\u7F13";
+        text(ctx, `${phase} \xB7 \u9F20\u6807\u5B9A\u5411`, 0, -69, "#f6dfbb", 11);
+      }
+    } else if (node.kind === "gate") {
+      const closed = !battle.graph.edges.filter((edge) => edge.from === node.id || edge.to === node.id).some((edge) => edge.open);
+      for (const x of [-25, 25]) {
+        ctx.beginPath();
+        ctx.roundRect(x - 8, -39, 16, 43, 5);
+        ctx.fillStyle = "#51645d";
+        ctx.fill();
+        ctx.strokeStyle = "#aac5ac";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ellipse4(ctx, x, -37, 7, 4, "#d2d6b6", "#eae3c1");
+      }
+      if (closed) {
+        ctx.fillStyle = "#a5d9c426";
+        ctx.fillRect(-17, -33, 34, 32);
+        for (let y = -29; y < 0; y += 8) line5(ctx, [-17, y, 17, y], "#c2e4cb88", 1.5);
+        line5(ctx, [-5, -25, 5, -10], "#e0edcf", 2);
+        line5(ctx, [-5, -10, 5, -25], "#e0edcf", 2);
+      } else line5(ctx, [-18, -3, 18, -3], "#bba98b66", 2);
+      text(ctx, closed ? "\u9694\u79BB\u95F8 \xB7 \u5DF2\u5173\u95ED" : "\u9694\u79BB\u95F8 \xB7 \u5DF2\u5F00\u653E", 0, 28, "#d2dbc0", 11);
+      if (near) text(ctx, closed ? "[ E ] \u6062\u590D\u901A\u8DEF" : "[ E ] \u622A\u65AD\u4F20\u64AD", 0, -57, "#e4efd3", 11);
+    } else {
+      ellipse4(ctx, 0, 3, 34, 11, "#36544e", "#a5bc9f");
+      ctx.beginPath();
+      ctx.roundRect(-28, -30, 56, 29, 6);
+      ctx.fillStyle = "#809f8c";
+      ctx.fill();
+      ctx.strokeStyle = "#cbd5b4";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.ellipse(0, -29, 28, 9, 0, 0, TAU7);
+      ctx.fillStyle = "#c8d6b6";
+      ctx.fill();
+      ctx.strokeStyle = "#e4debd";
+      ctx.stroke();
+      for (const x of [-16, 0, 16]) {
+        ctx.beginPath();
+        ctx.roundRect(x - 4, -50, 8, 21, 3);
+        ctx.fillStyle = "#d0e9cb";
+        ctx.fill();
+        ctx.strokeStyle = "#658f7f";
+        ctx.stroke();
+        line5(ctx, [x, -44, x, -34], "#72baa6", 3);
+        ellipse4(ctx, x, -50, 4, 2, "#f0e6c6");
+      }
+      const samples = Math.floor(state.growth?.research ?? 0);
+      text(ctx, "\u6297\u4F53\u7814\u7A76\u53F0", 0, 28, "#d2e7cd", 11);
+      text(ctx, `\u6837\u672C ${samples} / ${GROWTH_BALANCE.researchCost}`, 0, 44, "#b6cfb7", 10);
+      if (near) text(ctx, "[ E ] \u7814\u7A76 / \u6821\u51C6", 0, -70, "#e4efd3", 11);
+    }
+    ctx.restore();
+  }
+  drawBattleDangers(ctx, state) {
+    for (const target of state.targets) {
+      if ((target.splitAt ?? 0) > state.elapsed) {
+        const remaining2 = (target.splitAt ?? 0) - state.elapsed;
+        for (const landing of target.splitPositions ?? []) {
+          ctx.save();
+          ctx.setLineDash([3, 4]);
+          ctx.lineWidth = 1.7;
+          ellipse4(ctx, landing.x, landing.y, 18, 18, "#f7cf8f12", "#f3cf95");
+          ctx.setLineDash([]);
+          line5(ctx, [landing.x - 5, landing.y, landing.x + 5, landing.y], "#ffdfab", 1.5);
+          text(ctx, `\u22C8 ${remaining2.toFixed(1)}s`, landing.x, landing.y - 25, "#f4d7a3", 11);
+          ctx.restore();
+        }
+      }
+      if (target.role === "core" && state.campaign?.core.combat?.coreId === target.id) continue;
+      if (target.hp <= 0 || !target.attackAim || (target.attackAt ?? 0) <= state.elapsed) continue;
+      const center = target.attackAim, radius = target.attackRadius ?? BATTLE_BALANCE.attackRadius;
+      const remaining = (target.attackAt ?? 0) - state.elapsed;
+      const progress = 1 - clamp2(remaining / BATTLE_BALANCE.attackWindup, 0, 1);
+      ctx.save();
+      ctx.lineWidth = 2;
+      ellipse4(ctx, center.x, center.y, radius, radius, "#e97d5c13", "#ffbd8b");
+      ctx.setLineDash([4, 5]);
+      ellipse4(ctx, center.x, center.y, radius * 0.76, radius * 0.76, "#00000000", "#f6b1819a");
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, radius + 5, -Math.PI / 2, -Math.PI / 2 + TAU7 * progress);
+      ctx.strokeStyle = "#ffe0a2";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      line5(ctx, [center.x - 5, center.y - 4, center.x + 5, center.y + 4], "#ffd3a0", 2);
+      line5(ctx, [center.x - 5, center.y + 4, center.x + 5, center.y - 4], "#ffd3a0", 2);
+      ctx.restore();
+    }
+  }
+  drawShadows(ctx, state) {
+    for (const target of state.targets) if (target.hp > 0) ellipse4(ctx, target.x + 6, target.y + 8, target.radius + 5, target.radius * 0.62, "#180e2378");
+    ellipse4(ctx, state.player.x + 6, state.player.y + 8, 25, 13, "#100e218a");
+    ellipse4(ctx, state.tissue.x + 8, state.tissue.y + 8, 54, 28, "#150e2266");
+    ellipse4(ctx, state.terminal.x + 8, state.terminal.y + 8, 47, 24, "#160d2366");
+    for (const o of activeWorld(state).obstacles) ellipse4(ctx, o.x + 9, o.y + 15, o.radius + 8, o.radius * 0.7, "#160e2277");
+  }
+  drawPlayer(ctx, state) {
+    const p = state.player, time = state.elapsed;
+    const { walk, bob, direction } = playerBodyPose(state);
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.scale(1, 1 / 0.72);
+    ellipse4(ctx, 0, 2, 23, 8, "#78eee80b", "#93f8ed98");
+    for (const [index, slot] of (state.growth?.equipped ?? []).entries()) {
+      const angle = -Math.PI * 0.85 + index * Math.PI * 0.35, x = Math.cos(angle) * 36, y = -35 + Math.sin(angle) * 30;
+      ellipse4(ctx, x, y, 8 + protocolRank(slot), 8 + protocolRank(slot), "#254f48e8", "#c1f3d9");
+      text(ctx, PROTOCOLS[slot.id].symbol, x, y + 4, "#d9ffe5", 11);
+      for (let level = 0; level < protocolRank(slot); level++) ellipse4(ctx, x - 5 + level * 5, y + 14, 1.5, 1.5, "#d4f6ba");
+    }
+    ctx.save();
+    ctx.translate(0, -bob);
+    ctx.fillStyle = "#153b50";
+    ctx.strokeStyle = "#102b3b";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(-23, -41, 15, 29, 5);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#59c3cf";
+    ctx.beginPath();
+    ctx.roundRect(-24, -38, 6, 19, 3);
+    ctx.fill();
+    ellipse4(ctx, -11, -3 + walk * 2, 9, 6, "#b8d6ce", "#224d5e");
+    ellipse4(ctx, 11, -3 - walk * 2, 9, 6, "#cce1d6", "#224d5e");
+    const suit = ctx.createLinearGradient(-12, -42, 20, -9);
+    suit.addColorStop(0, "#f3efce");
+    suit.addColorStop(0.5, "#c3ddd2");
+    suit.addColorStop(1, "#6da5b0");
+    ctx.beginPath();
+    ctx.roundRect(-17, -43, 34, 32, 12);
+    ctx.fillStyle = suit;
+    ctx.fill();
+    ctx.strokeStyle = "#173b50";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = "#e7f7de";
+    ctx.beginPath();
+    ctx.roundRect(-8, -31, 16, 12, 3);
+    ctx.fill();
+    line5(ctx, [-4, -25, 4, -25], "#178b9a", 3);
+    line5(ctx, [0, -29, 0, -21], "#178b9a", 3);
+    const cap = ctx.createLinearGradient(-20, -67, 15, -36);
+    cap.addColorStop(0, "#fff5d8");
+    cap.addColorStop(0.5, "#e8ecdc");
+    cap.addColorStop(1, "#88b7b9");
+    const head = PLAYER_HEAD_SHAPE;
+    ellipse4(ctx, head.x, head.y, head.rx, head.ry, cap, "#173c50");
+    ellipse4(ctx, -2, -57, 17, 10, "#fff8df94");
+    ctx.beginPath();
+    ctx.roundRect(-18, -51, 36, 19, 9);
+    ctx.fillStyle = "#163e56";
+    ctx.fill();
+    ctx.strokeStyle = "#6ad1d6";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.roundRect(-14, -49, 27, 10, 5);
+    ctx.fillStyle = "#50b4ca";
+    ctx.fill();
+    strokeCurve(ctx, [-11, -47, -4, -51, 3, -48, 7, -47], "#d9fff5a1", 1.5);
+    ellipse4(ctx, -20, -45, 4, 6, "#bddece", "#264c59");
+    ellipse4(ctx, 20, -45, 4, 6, "#cde4d5", "#264c59");
+    ellipse4(ctx, 17, -60, 4, 4, state.scanUntil > time ? "#aaffef" : "#54dadd");
+    const mx = Math.cos(direction) * 24, my = Math.sin(direction) * 24;
+    strokeCurve(ctx, [12, -25, 24, -15, mx - 4, my - 5, mx, my], "#c4e3d8", 8);
+    ctx.save();
+    ctx.translate(mx, my);
+    ctx.rotate(direction);
+    ctx.fillStyle = "#d6e8d7";
+    ctx.strokeStyle = "#193d4b";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.roundRect(-10, -5, 26, 10, 4);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = state.tool === 3 ? "#7ae4b2" : "#63e2e5";
+    ctx.fillRect(8, -3, 9, 6);
+    if (p.actionUntil > time) ellipse4(ctx, 20, 0, 7, 5, state.tool === 3 ? "#b0ffd3a0" : "#bcffffa0");
+    ctx.restore();
+    ctx.restore();
+    if (p.hurtUntil > time) {
+      ctx.globalAlpha = 0.5;
+      ellipse4(ctx, 0, -35, 30, 40, "#ff8e7540", "#ffac78");
+    }
+    if (p.dashUntil > time) {
+      line5(ctx, [-28, -24, -48, -24], "#a8f7ec99", 3);
+      line5(ctx, [-27, -12, -41, -12], "#a8f7ec66", 2);
+    }
+    ctx.restore();
+  }
+  drawTarget(ctx, target, state) {
+    if (state.battle) {
+      drawBattleTarget(ctx, target, state);
+      return;
+    }
+    const live = target.hp > 0;
+    ctx.save();
+    ctx.translate(target.x, target.y);
+    ctx.scale(1, 1 / 0.72);
+    if (!live) {
+      ellipse4(ctx, 0, 0, target.radius * 0.6, 7, "#a2e9ba21", "#a2e9ba44");
+      text(ctx, "\u2713", 0, -5, "#a7e9c5", 16);
+      ctx.restore();
+      return;
+    }
+    const t = state.elapsed, bob = Math.sin(t * 3.2 + target.x) * 2;
+    const r = target.radius, isCluster = target.kind === "cluster";
+    ctx.save();
+    ctx.translate(0, -r * 0.7 + bob);
+    for (let i = 0; i < (isCluster ? 6 : 9); i++) {
+      const a = i / (isCluster ? 6 : 9) * TAU7;
+      const x = Math.cos(a) * r * 0.93, y = Math.sin(a) * r * 0.74;
+      strokeCurve(ctx, [x * 0.8, y * 0.8, x * 1.05, y * 1.05, x * 1.23, y * 1.23, x * 1.28, y * 1.28], "#7e374d", 6);
+      ellipse4(ctx, x * 1.28, y * 1.28, isCluster ? 5 : 4, isCluster ? 5 : 4, "#dc9666", "#7a3448");
+    }
+    const body = ctx.createLinearGradient(-r, -r, r, r);
+    body.addColorStop(0, target.hitUntil > t ? "#fff0bc" : isCluster ? "#efb582" : "#f98f77");
+    body.addColorStop(0.5, isCluster ? "#be5b64" : "#cc566b");
+    body.addColorStop(1, "#71374f");
+    organic(ctx, 0, 0, r, body, "#572b48", target.x, 0.83);
+    ellipse4(ctx, -6, -r * 0.35, r * 0.6, r * 0.23, "#ffe7b447");
+    if (isCluster) {
+      ellipse4(ctx, -r * 0.28, 1, r * 0.42, r * 0.5, "#d7a2864b", "#e4b19171");
+      ellipse4(ctx, r * 0.27, 2, r * 0.37, r * 0.44, "#c96e834b", "#e4b19171");
+    } else ellipse4(ctx, 0, 4, r * 0.44, r * 0.5, "#f7b38955", "#f4b27d77");
+    ellipse4(ctx, -r * 0.26, -3, 3, 4, "#311f3d");
+    ellipse4(ctx, r * 0.26, -3, 3, 4, "#311f3d");
+    ellipse4(ctx, -r * 0.29, -4, 1, 1, "#fff1c1");
+    ellipse4(ctx, r * 0.23, -4, 1, 1, "#fff1c1");
+    strokeCurve(ctx, [-4, 7, -1, 10, 2, 10, 5, 7], "#4b2a47", 1.5);
+    ctx.restore();
+    ctx.lineWidth = 1.2;
+    ellipse4(ctx, 0, 1, 11, 5, "#ffdb8b12", "#f5c785b0");
+    line5(ctx, [-4, 1, 4, 1], "#f9dc9a", 1);
+    line5(ctx, [0, -3, 0, 5], "#f9dc9a", 1);
+    const barY = -r * 1.8 - 10;
+    ctx.fillStyle = "#23182e";
+    ctx.beginPath();
+    ctx.roundRect(-r, barY, r * 2, 4, 2);
+    ctx.fill();
+    ctx.fillStyle = "#f3c18a";
+    ctx.beginPath();
+    ctx.roundRect(-r, barY, Math.max(1, r * 2 * target.hp / target.maxHp), 4, 2);
+    ctx.fill();
+    if (target.scanned || state.scanUntil > state.elapsed) {
+      text(ctx, isCluster ? "\u7FA4\u805A\u8BAD\u7EC3\u4F53 \xB7 \u8303\u56F4\u88C2\u89E3" : "\u5355\u4F53\u8BAD\u7EC3\u9776 \xB7 \u7CBE\u786E\u51C0\u5316", 0, barY - 8, "#f0d3ad", 10);
+    }
+    ctx.restore();
+  }
+  drawTissue(ctx, state) {
+    const tissue = state.tissue, ratio = tissue.hp / tissue.maxHp;
+    ctx.save();
+    ctx.translate(tissue.x, tissue.y);
+    ctx.scale(1, 1 / 0.72);
+    const rim = ctx.createLinearGradient(0, -55, 0, 15);
+    rim.addColorStop(0, "#aa6b69");
+    rim.addColorStop(0.6, "#724653");
+    rim.addColorStop(1, "#422d44");
+    organic(ctx, 0, -17, 47, rim, "#c4947e77", 13, 0.65);
+    for (let i = 0; i < 7; i++) {
+      const a = i / 7 * TAU7, x = Math.cos(a) * 29, y = -20 + Math.sin(a) * 17;
+      ellipse4(ctx, x, y, 15, 10, ratio === 1 ? "#96c5a0" : "#c0807b", "#ebc89b66");
+      strokeCurve(ctx, [x - 8, y, x - 4, y - 5, x + 4, y - 5, x + 8, y], "#f6dab333", 1);
+    }
+    ellipse4(ctx, 0, -18, 22, 15, ratio === 1 ? "#6ba588" : "#3b263b", ratio === 1 ? "#a9e9ba" : "#c07574");
+    if (ratio < 1) {
+      line5(ctx, [-15, -18, -7, -22, -2, -12, 4, -19, 15, -16], "#eaaf88", 2);
+    } else {
+      line5(ctx, [-8, -18, 8, -18], "#d8ffd7", 3);
+      line5(ctx, [0, -26, 0, -10], "#d8ffd7", 3);
+    }
+    ellipse4(ctx, 30, -10, 12, 12, "#d5edcf", "#3c7161");
+    line5(ctx, [24, -10, 36, -10], "#2d7265", 3);
+    line5(ctx, [30, -16, 30, -4], "#2d7265", 3);
+    ctx.fillStyle = "#211d30";
+    ctx.beginPath();
+    ctx.roundRect(-37, 12, 74, 5, 2);
+    ctx.fill();
+    ctx.fillStyle = ratio === 1 ? "#9be4b7" : "#e5ae80";
+    ctx.beginPath();
+    ctx.roundRect(-37, 12, Math.max(1, 74 * ratio), 5, 2);
+    ctx.fill();
+    text(ctx, ratio === 1 ? "\u7EC4\u7EC7\u4FEE\u590D\u5B8C\u6210" : `\u53D7\u635F\u7EC4\u7EC7  ${Math.round(tissue.hp)}%`, 0, 35, ratio === 1 ? "#b9eec5" : "#f1d6bb", 12);
+    text(ctx, "03  /  \u7EC4\u7EC7\u4FEE\u590D\u6CE8\u5C04", 0, 52, "#c9aaa1", 9);
+    ctx.restore();
+  }
+  drawTissueMarker(ctx, state) {
+    ctx.save();
+    ctx.translate(state.tissue.x, state.tissue.y);
+    ctx.scale(1, 1 / 0.72);
+    ctx.lineWidth = 1.5;
+    ellipse4(ctx, 30, -10, 12, 12, "#d5edcf", "#31594f");
+    line5(ctx, [24, -10, 36, -10], "#2d7265", 3);
+    line5(ctx, [30, -16, 30, -4], "#2d7265", 3);
+    ctx.restore();
+  }
+  drawTerminal(ctx, state) {
+    const position = state.terminal, ready = state.battle ? state.battle.readyToRetest : state.targets.every((t) => t.hp <= 0) && state.tissue.hp >= state.tissue.maxHp;
+    const near = Math.hypot(position.x - state.player.x, position.y - state.player.y) <= BALANCE.interactionRange;
+    ctx.save();
+    ctx.translate(position.x, position.y);
+    ctx.scale(1, 1 / 0.72);
+    ellipse4(ctx, 0, 2, 35, 11, "#193e45", "#81b6a6");
+    ctx.beginPath();
+    ctx.moveTo(-31, -9);
+    ctx.lineTo(-26, -36);
+    ctx.lineTo(26, -36);
+    ctx.lineTo(31, -9);
+    ctx.quadraticCurveTo(0, 5, -31, -9);
+    ctx.fillStyle = "#496a68";
+    ctx.fill();
+    ctx.strokeStyle = "#a0bba4";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ellipse4(ctx, 0, -36, 26, 10, "#92a897", "#dfd2ad");
+    ctx.beginPath();
+    ctx.roundRect(-27, -65, 54, 37, 9);
+    ctx.fillStyle = "#e1d7b7";
+    ctx.fill();
+    ctx.strokeStyle = "#4f7674";
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.roundRect(-21, -59, 42, 24, 5);
+    ctx.fillStyle = "#173f4b";
+    ctx.fill();
+    line5(ctx, [-16, -47, -9, -47, -5, -53, 0, -41, 5, -49, 10, -47, 16, -47], ready ? "#a7f5c5" : "#7bd6d8", 2);
+    ellipse4(ctx, -14, -20, 2, 2, ready ? "#b8f2b5" : "#f1bf80");
+    ellipse4(ctx, 13, -20, 2, 2, "#8ed7d1");
+    if (near && state.phase === "playing") {
+      ctx.fillStyle = "#173c42e8";
+      ctx.beginPath();
+      ctx.roundRect(-68, -104, 136, 25, 6);
+      ctx.fill();
+      ctx.strokeStyle = "#8acfc0";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      text(ctx, ready ? "[ E ]  \u5B8C\u6210\u590D\u6D4B" : state.battle ? "[ E ]  \u67E5\u770B\u590D\u6D4B\u6761\u4EF6" : "[ E ]  \u67E5\u770B\u8BAD\u7EC3\u8FDB\u5EA6", 0, -87, "#e1f0d3", 11);
+    }
+    text(ctx, "\u590D\u6D4B\u7EC8\u7AEF", 0, 28, "#d6e5cc", 12);
+    text(ctx, "RETURN  /  E", 0, 44, "#9ab8af", 9);
+    ctx.restore();
+  }
+  drawObstacle(ctx, obstacle, opacity = 1) {
+    ctx.save();
+    ctx.translate(obstacle.x, obstacle.y);
+    ctx.scale(1, 1 / 0.72);
+    const r = obstacle.radius;
+    const g = ctx.createLinearGradient(0, -r * 1.4, 0, 6);
+    g.addColorStop(0, "#c37b72");
+    g.addColorStop(0.4, "#965565");
+    g.addColorStop(1, "#522e48");
+    drawRaisedBodyLayers(ctx, r, opacity, () => {
+      traceRaisedObstacle(ctx, r, "heart");
+      ctx.fillStyle = g;
+      ctx.fill();
+      ctx.strokeStyle = "#cf97805e";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      for (let i = 0; i < 6; i++) {
+        const x = -r * 0.8 + i * r * 0.28;
+        strokeCurve(ctx, [x, -5, x - 10, -r * 0.4, x + 4, -r * 0.9, 3 + x * 0.3, -r * 1.25], "#e4ae8952", 1.5);
+      }
+      ellipse4(ctx, 0, -r * 1.05, r * 0.45, r * 0.2, "#ecc49b26");
+    });
+    ctx.restore();
+  }
+  drawForeground(ctx, state) {
+    const world = activeWorld(state), area = world.foreground;
+    ctx.save();
+    const baseOpacity = state.battle ? Math.min(foregroundOpacity(state.player, world), ...state.targets.filter((target) => target.hp > 0).map((target) => foregroundOpacity(target, world))) : foregroundOpacity(state.player, world);
+    if (state.battle?.organId === "lung") {
+      drawLungForeground(ctx, state, world, baseOpacity);
+      ctx.restore();
+      return;
+    }
+    const x = area.x + area.width * 0.5, y = area.y + area.height * 0.5;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(1, 1 / 0.72);
+    const g = ctx.createLinearGradient(0, -110, 0, 70);
+    g.addColorStop(0, "#c08079");
+    g.addColorStop(0.45, "#794259");
+    g.addColorStop(1, "#3d2943");
+    for (let i = 0; i < 5; i++) {
+      const sx = -90 + i * 43, sy = 22 + Math.sin(i * 2) * 18;
+      const nearTerminal = Math.abs(x + sx - state.terminal.x) < 86 && Math.abs(y - state.terminal.y) < 110;
+      ctx.globalAlpha = nearTerminal ? Math.min(baseOpacity, 0.16) : baseOpacity;
+      ctx.beginPath();
+      ctx.moveTo(sx - 28, sy + 35);
+      ctx.bezierCurveTo(sx - 54, sy - 28, sx - 25, sy - 105, sx + 10, sy - 80);
+      ctx.bezierCurveTo(sx + 43, sy - 66, sx + 52, sy + 11, sx + 30, sy + 35);
+      ctx.closePath();
+      ctx.fillStyle = g;
+      ctx.fill();
+      ctx.strokeStyle = "#d2a58a66";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      strokeCurve(ctx, [sx - 10, sy + 16, sx - 22, sy - 19, sx - 4, sy - 66, sx + 10, sy - 66], "#e7bfa665", 2);
+      for (let j = 0; j < 4; j++) ellipse4(ctx, sx + hash2(i * 8 + j) * 31 - 15, sy - j * 17, 4 + j, 2 + j * 0.3, "#dba88b24");
+    }
+    ctx.restore();
+    ctx.restore();
+  }
+  drawEffects(ctx, state, low) {
+    for (const effect of state.effects) {
+      const age = state.elapsed - effect.born, progress = clamp2(age / effect.duration, 0, 1);
+      if (progress >= 1 || age < 0) continue;
+      ctx.save();
+      ctx.globalAlpha = 1 - progress;
+      if (effect.kind === "beam") {
+        line5(ctx, [effect.from.x, effect.from.y, effect.to.x, effect.to.y], state.tool === 3 ? "#9cfcbe44" : "#8bece455", 6);
+        line5(ctx, [effect.from.x, effect.from.y, effect.to.x, effect.to.y], "#e8fff1", 1.6);
+        this.drawAntibody(ctx, { x: effect.from.x + (effect.to.x - effect.from.x) * Math.min(1, progress * 2), y: effect.from.y + (effect.to.y - effect.from.y) * Math.min(1, progress * 2) }, Math.atan2(effect.to.y - effect.from.y, effect.to.x - effect.from.x));
+      } else if (effect.kind === "scan") {
+        ctx.lineWidth = 2.5;
+        ellipse4(ctx, effect.from.x, effect.from.y, effect.radius * progress, effect.radius * progress, "#7debe306", "#9bf8ed");
+        ctx.setLineDash([5, 15]);
+        ellipse4(ctx, effect.from.x, effect.from.y, Math.max(1, effect.radius * progress - 14), Math.max(1, effect.radius * progress - 14), "#a9ffff00", "#75cdc06c");
+      } else if (effect.kind === "burst") {
+        ctx.lineWidth = 2;
+        ellipse4(ctx, effect.to.x, effect.to.y, effect.radius, effect.radius, "#8ce7d712", "#b6ffeb");
+        ellipse4(ctx, effect.to.x, effect.to.y, Math.max(1, effect.radius * progress), Math.max(1, effect.radius * progress), "#8ce7d709", "#c6f8dd");
+        if (state.campaign) for (let i = 0; i < 8; i++) {
+          const angle = i / 8 * TAU7, inner = effect.radius * (0.2 + progress * 0.5), outer = Math.min(effect.radius, inner + 16);
+          line5(ctx, [effect.to.x + Math.cos(angle) * inner, effect.to.y + Math.sin(angle) * inner, effect.to.x + Math.cos(angle) * outer, effect.to.y + Math.sin(angle) * outer], "#d6ffe3", 2);
+        }
+        if (!low) this.sparks(ctx, effect, progress, "#bcffe7", 13);
+      } else if (effect.kind === "heal") {
+        ctx.lineWidth = 2;
+        ellipse4(ctx, effect.to.x, effect.to.y, 44 + progress * 17, 44 + progress * 17, "#a8f7bd0e", "#b0ffc9");
+        const y = effect.to.y - progress * 38;
+        line5(ctx, [effect.to.x - 8, y, effect.to.x + 8, y], "#d8ffcf", 3);
+        line5(ctx, [effect.to.x, y - 11, effect.to.x, y + 11], "#d8ffcf", 3);
+        if (!low) this.sparks(ctx, effect, progress, "#a2f9c3", 8);
+      } else if (effect.kind === "hit") {
+        this.sparks(ctx, effect, progress, "#ffe4a4", low ? 4 : 9);
+      } else if (effect.kind === "dash") {
+        line5(ctx, [effect.from.x, effect.from.y, effect.to.x, effect.to.y], "#b5fff188", 5 * (1 - progress) + 1);
+      } else if (effect.kind === "success") {
+        ellipse4(ctx, effect.to.x, effect.to.y, effect.radius * progress, effect.radius * progress, "#b4f7bc08", "#caffbd");
+        if (!low) this.sparks(ctx, effect, progress, "#ffdfa3", 25);
+      } else if (effect.kind === "pulse") {
+        const angle = effect.angle ?? Math.atan2(effect.to.y - effect.from.y, effect.to.x - effect.from.x);
+        this.drawPulseSector(ctx, effect.from, angle, effect.radius, "#ffd99f0d", "#ffdf9d", false, activeWorld(state));
+        this.drawPulseSector(ctx, effect.from, angle, effect.radius * (0.2 + progress * 0.8), "#00000000", "#ffedc5", false, activeWorld(state));
+        if (!low) this.sparks(ctx, effect, progress, "#ffe0aa", 8);
+      } else if (effect.kind === "evolution") {
+        ctx.setLineDash([6, 6]);
+        ellipse4(ctx, effect.to.x, effect.to.y, effect.radius * (0.4 + progress * 0.6), effect.radius * (0.4 + progress * 0.6), "#e6bd9d08", "#f8c6a5");
+        ctx.setLineDash([]);
+        text(ctx, "\u25C7", effect.to.x, effect.to.y - 55 - progress * 20, "#f3d3af", 26);
+      } else if (effect.kind === "flow") {
+        const position = { x: effect.from.x + (effect.to.x - effect.from.x) * progress, y: effect.from.y + (effect.to.y - effect.from.y) * progress };
+        ellipse4(ctx, position.x, position.y, 8, 5, "#edb08e8a", "#ffdbad");
+      } else if (effect.kind === "chain") {
+        const angle = Math.atan2(effect.to.y - effect.from.y, effect.to.x - effect.from.x);
+        line5(ctx, [effect.from.x, effect.from.y, effect.to.x, effect.to.y], "#b5ffe066", 5);
+        line5(ctx, [effect.from.x, effect.from.y, effect.to.x, effect.to.y], "#e4fff1", 1.5);
+        this.drawAntibody(ctx, effect.to, angle);
+      }
+      ctx.restore();
+    }
+  }
+  sparks(ctx, effect, progress, color, count3) {
+    for (let i = 0; i < count3; i++) {
+      const a = hash2(effect.id * 20 + i) * TAU7, distance2 = (12 + hash2(i + effect.id) * 42) * progress;
+      const x = effect.to.x + Math.cos(a) * distance2, y = effect.to.y + Math.sin(a) * distance2;
+      line5(ctx, [x, y, x + Math.cos(a) * 5, y + Math.sin(a) * 5], color, 1.5);
+    }
+  }
+  drawAntibody(ctx, position, angle) {
+    ctx.save();
+    ctx.translate(position.x, position.y);
+    ctx.rotate(angle);
+    line5(ctx, [-5, 0, 0, 0, 5, -5], "#d5fff3", 2);
+    line5(ctx, [0, 0, 5, 5], "#d5fff3", 2);
+    ctx.restore();
+  }
+  drawCrosshair(ctx, state, aim) {
+    if (state.phase !== "playing") return;
+    const distance2 = Math.hypot(aim.x - state.player.x, aim.y - state.player.y);
+    const color = distance2 <= BALANCE.range ? state.tool === 3 ? "#b5f7c2" : "#b2f8eb" : "#ddb58a";
+    ctx.save();
+    ctx.translate(aim.x, aim.y);
+    ctx.scale(1, 1 / 0.72);
+    ctx.lineWidth = 1.3;
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+    ctx.arc(0, 0, 9, 0.15, 1.4);
+    ctx.arc(0, 0, 9, 1.7, 2.95);
+    ctx.arc(0, 0, 9, 3.3, 4.55);
+    ctx.arc(0, 0, 9, 4.85, 6.1);
+    ctx.stroke();
+    line5(ctx, [-15, 0, -11, 0], color);
+    line5(ctx, [11, 0, 15, 0], color);
+    line5(ctx, [0, -15, 0, -11], color);
+    line5(ctx, [0, 11, 0, 15], color);
+    ellipse4(ctx, 0, 0, 1.4, 1.4, color);
+    ctx.restore();
+  }
+};
+
+// artifacts/completion-v074/chain-burst/benchmark.ts
+var scenarios = ["cap24-hits100", "cap24-resonance-recursion100", "overcap100-clears100"];
+function assert(condition, message) {
+  if (!condition) throw new Error(message);
+}
+var sourceTarget2 = (id, index, hp = 1e6) => ({
+  id,
+  x: 590 + index % 10 * 17,
+  y: 360 + Math.floor(index / 10) * 17,
+  role: "virus",
+  kind: "single",
+  hp,
+  maxHp: hp,
+  radius: 14,
+  hitUntil: 0,
+  scanned: false,
+  traits: [],
+  generation: 0
+});
+function createFixture(scenario, serial) {
+  const session = new GameSession(74e4 + serial, { campaign: true, milestone: "G2", encounterMode: "fixture", counterGuide: "adaptive" });
+  session.start();
+  const host = session;
+  const growth = host.growthController, state = session.state;
+  assert(growth instanceof GrowthController, "The production session must own the actual GrowthController.");
+  assert(state.battle?.encounter?.configId === "fixture-1", "Benchmark must never become a formal encounter.");
+  state.tick = 132;
+  state.elapsed = 2.2;
+  state.tool = 1;
+  Object.assign(state.player, { x: 730, y: 230 });
+  Object.assign(state.battle.pulse, { phase: "surge", cycleIndex: 0 });
+  growth.state.equipped = [{ id: "PULSE_BREAK", tuning: "focused", rank: 3 }, { id: "PURIFY_CHAIN", tuning: "balanced", rank: 3 }];
+  state.targets = Array.from({ length: scenario === "overcap100-clears100" ? 100 : BATTLE_BALANCE.maxActors }, (_, index) => sourceTarget2(`preset-${serial}-${index}`, index));
+  if (scenario === "cap24-resonance-recursion100") {
+    state.targets[0].hp = getPulseConfig("focused", 3).bonusDamage;
+    for (const target of state.targets.slice(1, -1)) target.hp = 20;
+    state.targets.at(-1).hp = 1e6;
+  }
+  if (scenario === "overcap100-clears100") for (const target of state.targets) target.exposedUntil = state.elapsed + 4;
+  state.effects = [];
+  state.events = [];
+  const counts = {
+    requestedBasicHits: 0,
+    acceptedBasicHits: 0,
+    acceptedProtocolHits: 0,
+    acceptedBasicClears: 0,
+    protocolClears: 0,
+    damageCalls: 0,
+    maxDamageDepth: 0,
+    applyCalls: 0,
+    maxApplyDepth: 0,
+    onHitCallbacks: 0,
+    onKillCallbacks: 0,
+    chainKillCallbacks: 0,
+    chainKillReturnedCommands: 0,
+    generatedCommands: 0,
+    generatedDamageCommands: 0,
+    maxHop: 0,
+    observedThreeHopRoots: 0,
+    budgetUsed: 0,
+    skippedBeforeFlush: 0,
+    budgetSkippedEvents: 0,
+    emittedEvents: 0,
+    effects: 0,
+    liveAfter: 0,
+    actorsBefore: state.targets.length,
+    maxMetricEntries: 0,
+    metricsLimited: false
+  };
+  const receipts = [];
+  const commandKinds = {}, generatedRootHops = /* @__PURE__ */ new Map();
+  let damageDepth = 0, applyDepth = 0;
+  const actualDamage = host.damage.bind(session), actualApply = host.applyGrowthCommands.bind(session), actualEmit = session.emit.bind(session);
+  const actualOnHit = growth.onHit.bind(growth), actualOnKill = growth.onKill.bind(growth);
+  const observeCommands = (commands) => {
+    counts.generatedCommands += commands.length;
+    for (const command of commands) {
+      commandKinds[command.kind] = (commandKinds[command.kind] ?? 0) + 1;
+      if (command.kind === "damage") {
+        counts.generatedDamageCommands++;
+        counts.maxHop = Math.max(counts.maxHop, command.hop);
+        if (command.protocolId === "PURIFY_CHAIN") generatedRootHops.set(command.rootId, Math.max(generatedRootHops.get(command.rootId) ?? 0, command.hop));
+      }
+    }
+  };
+  growth.onHit = (...args) => {
+    counts.onHitCallbacks++;
+    const commands = actualOnHit(...args);
+    observeCommands(commands);
+    return commands;
+  };
+  growth.onKill = (...args) => {
+    counts.onKillCallbacks++;
+    const chainOrigin = args[2]?.cause === "protocol" && args[2]?.protocolId === "PURIFY_CHAIN";
+    if (chainOrigin) counts.chainKillCallbacks++;
+    const commands = actualOnKill(...args);
+    if (chainOrigin) counts.chainKillReturnedCommands += commands.length;
+    observeCommands(commands);
+    return commands;
+  };
+  host.damage = (target, amount2, origin) => {
+    counts.damageCalls++;
+    counts.maxDamageDepth = Math.max(counts.maxDamageDepth, ++damageDepth);
+    try {
+      actualDamage(target, amount2, origin);
+    } finally {
+      damageDepth--;
+    }
+  };
+  host.applyGrowthCommands = (commands) => {
+    counts.applyCalls++;
+    counts.maxApplyDepth = Math.max(counts.maxApplyDepth, ++applyDepth);
+    try {
+      actualApply(commands);
+    } finally {
+      applyDepth--;
+    }
+  };
+  session.emit = (type, data) => {
+    actualEmit(type, data);
+    counts.emittedEvents++;
+    if (type === "TARGET_HIT" && Number(data.damage) > 0) {
+      if (data.cause === "basic") counts.acceptedBasicHits++;
+      else if (data.cause === "protocol") counts.acceptedProtocolHits++;
+      if (data.remainingHp === 0) {
+        if (data.cause === "basic") counts.acceptedBasicClears++;
+        else if (data.cause === "protocol") counts.protocolClears++;
+      }
+    }
+    if (type === "PROTOCOL_BUDGET_SKIPPED") counts.budgetSkippedEvents++;
+    counts.maxMetricEntries = Math.max(counts.maxMetricEntries, state.runMetrics?.frame.entries.length ?? 0);
+    if (receipts.length < 512) receipts.push({ type, tick: state.tick, data: { ...data } });
+  };
+  const inputs = Array.from({ length: 100 }, (_, index) => ({
+    target: scenario === "cap24-resonance-recursion100" ? index === 0 ? state.targets[0] : state.targets.at(-1) : state.targets[index % state.targets.length],
+    amount: scenario === "overcap100-clears100" ? 1e6 : 1,
+    origin: { cause: "basic", rootId: `${scenario}:${serial}:basic:${index}` }
+  }));
+  const execute = () => {
+    for (const input of inputs) {
+      counts.requestedBasicHits++;
+      host.damage(input.target, input.amount, input.origin);
+    }
+    counts.budgetUsed = growth.state.budgetUsed;
+    counts.skippedBeforeFlush = growth.state.skippedCommands;
+    host.applyGrowthCommands(growth.afterInput(growthContext(state)));
+    counts.observedThreeHopRoots = [...generatedRootHops.values()].filter((hop) => hop === 3).length;
+    counts.effects = state.effects.length;
+    counts.liveAfter = state.targets.filter((target) => target.hp > 0).length;
+    counts.metricsLimited = state.runMetrics?.summary.limited ?? true;
+    assert(counts.requestedBasicHits === 100 && counts.acceptedBasicHits === 100, "All 100 input events must have actual positive basic HP-loss receipts.");
+    assert(counts.generatedCommands <= GROWTH_BALANCE.commandBudget && counts.budgetUsed <= GROWTH_BALANCE.commandBudget, "Production protocol command budget was exceeded.");
+    assert(counts.maxHop <= GROWTH_BALANCE.chainCap && counts.maxHop <= 3, "A real generated damage command exceeded the configured chain cap.");
+    assert(counts.chainKillReturnedCommands === 0, "A PURIFY_CHAIN kill recursively generated another protocol chain.");
+    assert(damageDepth === 0 && applyDepth === 0 && counts.maxDamageDepth <= 3, "Production callback stack did not unwind within the expected basic\u2192resonance\u2192chain path.");
+    assert(counts.maxMetricEntries <= 256 && !counts.metricsLimited, "Accepted metrics became incomplete or unbounded.");
+    if (scenario === "cap24-resonance-recursion100") assert(counts.chainKillCallbacks > 0 && counts.protocolClears > 0 && counts.observedThreeHopRoots > 0, "The recursive kill path must actually execute.");
+    if (scenario === "overcap100-clears100") assert(counts.acceptedBasicClears === 100 && counts.skippedBeforeFlush > 0 && counts.budgetSkippedEvents > 0, "The over-cap mechanism fixture must really clear 100 targets and exercise production budget rejection.");
+    return { counts, commandKinds, receipts, acceptedMetrics: state.runMetrics?.summary };
+  };
+  return { session, state, execute };
+}
+var nextFrame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+var quantiles = (values) => {
+  const sorted = [...values].sort((a, b) => a - b);
+  return {
+    count: sorted.length,
+    minimum: sorted[0],
+    median: sorted[Math.floor(sorted.length / 2)],
+    p95: sorted[Math.min(sorted.length - 1, Math.ceil(sorted.length * 0.95) - 1)],
+    maximum: sorted.at(-1),
+    mean: values.reduce((total, value) => total + value, 0) / values.length
+  };
+};
+var canvas = document.querySelector("#bench-canvas");
+var status = document.querySelector("#status");
+var renderer = new Renderer(canvas);
+var warm = createFixture("cap24-hits100", 0);
+renderer.render(warm.state, warm.state.player);
+status.textContent = "\u9694\u79BB\u673A\u5236\u5DE5\u5177\u5DF2\u52A0\u8F7D\uFF1B\u5C1A\u672A\u8FD0\u884C 100 \u4E8B\u4EF6\u6D4B\u91CF\u3002";
+async function run(options = {}) {
+  const samples = options.samples ?? 60, warmups = options.warmups ?? 6;
+  assert(Number.isInteger(samples) && samples >= 20 && samples <= 120, "Use 20\u2013120 bounded measured samples per case.");
+  assert(Number.isInteger(warmups) && warmups >= 2 && warmups <= 20, "Use 2\u201320 bounded warmups per case.");
+  const output = [];
+  let serial = 1;
+  for (const quality of ["standard", "low"]) for (const scenario of scenarios) {
+    const rows = [];
+    const baseline = [];
+    status.textContent = `${scenario} / ${quality}\uFF1B100 \u4E2A\u540C tick \u4E8B\u4EF6\uFF1B${scenario.startsWith("overcap") ? "100 \u5BF9\u8C61\u8D85\u4E0A\u9650\u673A\u5236\u5939\u5177\uFF0C\u975E\u6B63\u5E38\u6218\u5F79" : "24 \u5BF9\u8C61\u673A\u5236\u5939\u5177"}\u3002`;
+    for (let index = -warmups; index < samples; index++) {
+      assert(!document.hidden, "A hidden document cannot provide meaningful RAF timing.");
+      const fixture = createFixture(scenario, serial++);
+      const baselineFrameAt = await nextFrame();
+      const baselineAt = performance.now();
+      renderer.render(fixture.state, fixture.state.player, { lowEffects: quality === "low" });
+      const baselineCpuMs = performance.now() - baselineAt;
+      const frameAt = await nextFrame();
+      const begin = performance.now(), detail = fixture.execute(), mechanismEnd = performance.now();
+      renderer.render(fixture.state, fixture.state.player, { lowEffects: quality === "low" });
+      const syncEnd = performance.now(), nextAt = await nextFrame();
+      if (index >= 0) {
+        baseline.push(baselineCpuMs);
+        rows.push({
+          index,
+          mechanismCpuMs: mechanismEnd - begin,
+          renderCpuMs: syncEnd - mechanismEnd,
+          totalSyncCpuMs: syncEnd - begin,
+          nextRafIntervalMs: nextAt - frameAt,
+          baselineRafIntervalMs: frameAt - baselineFrameAt,
+          counts: detail.counts,
+          ...index === 0 ? { firstSampleDetail: detail } : {}
+        });
+      }
+    }
+    const timing = Object.fromEntries(["mechanismCpuMs", "renderCpuMs", "totalSyncCpuMs", "nextRafIntervalMs"].map((key) => [key, quantiles(rows.map((row) => row[key]))]));
+    output.push({
+      scenario,
+      quality,
+      actorFixture: scenario.startsWith("overcap") ? "Explicit100-target over-cap mechanism fixture; never a production spawning claim." : "24-target isolated fixture;100 events share the tick.",
+      sampleCount: samples,
+      warmupCount: warmups,
+      baselineRenderCpuMs: quantiles(baseline),
+      timing,
+      baselineRafIntervalMs: quantiles(rows.map((row) => row.baselineRafIntervalMs)),
+      provisionalTimingAssessment: {
+        definition: "Declared diagnostic targets only; AC-M08-04 itself does not specify millisecond limits.",
+        totalSyncP95Within33ms: timing.totalSyncCpuMs.p95 <= 33,
+        nextRafP95Within50ms: timing.nextRafIntervalMs.p95 <= 50,
+        totalSyncMaximumWithin100ms: timing.totalSyncCpuMs.maximum <= 100,
+        nextRafMaximumWithin100ms: timing.nextRafIntervalMs.maximum <= 100
+      },
+      rows
+    });
+  }
+  status.textContent = "\u9694\u79BB\u673A\u5236\u6D4B\u91CF\u7ED3\u675F\uFF1B\u539F\u59CB\u9010\u5E27\u6837\u672C\u4E0E\u5BBF\u4E3B\u63A5\u53D7\u56DE\u6267\u5DF2\u5C31\u7EEA\u3002";
+  return {
+    schemaVersion: 1,
+    generatedAt: (/* @__PURE__ */ new Date()).toISOString(),
+    scenarioCount: output.length,
+    requestedEventsPerSample: 100,
+    productionActorCap: BATTLE_BALANCE.maxActors,
+    productionCommandBudget: GROWTH_BALANCE.commandBudget,
+    productionChainCap: GROWTH_BALANCE.chainCap,
+    environment: { userAgent: navigator.userAgent, devicePixelRatio, width: innerWidth, height: innerHeight, hidden: document.hidden },
+    method: "Isolated local HTML imports actual GameSession/GrowthController/Renderer without main.ts. Explicit test adapters observe then delegate actual private session.damage/applyGrowthCommands and real emit/reducer/callback methods.100 accepted positive-HP-loss basic damage inputs execute in one JS turn/tick/RAF callback per sample.",
+    setupScope: "Session construction and explicit preset arrangement occur before the measured RAF. Baseline render warms the real renderer. Measured synchronous CPU includes production damage callbacks, assertion instrumentation, accepted telemetry, and subsequent real renderer.render.",
+    limitations: [
+      "This is an explicit isolated mechanism benchmark, not natural input, formal progression, a live-game state injection, an ordinary campaign100-actor load, or human evidence.",
+      "The100-clear case deliberately exceeds the normal24-actor cap and is labelled separately. The two other cases use24 actors with100 incoming events, not100 simultaneous actors.",
+      "RAF intervals observe browser scheduling/compositing opportunities. Canvas call CPU and RAF do not measure GPU completion or prove every target device meets a frame budget.",
+      "Finite repeat samples and bounded maximum callback depth show the measured paths terminate. They do not prove all conceivable configurations or provide a machine-checked no-recursion theorem.",
+      "Instrumentation adds observation and assertion overhead. There is no claim that measured CPU is a bare production frame; no uninstrumented FPS substitution is made.",
+      "No AI, world tick, input cooldown, spawning, full-game progression, persistence, long-session memory or gameplay balance is validated."
+    ],
+    cases: output
+  };
+}
+Object.defineProperty(window, "__isolatedChainBurst", { value: { run, prepared: true }, writable: false });

@@ -1,0 +1,10 @@
+import{spawn}from'node:child_process';import{readFileSync,writeFileSync,existsSync}from'node:fs';import{resolve,dirname}from'node:path';
+const folder='artifacts/completion-v074/clean';if(existsSync(folder+'/dev-execution.json'))throw Error('Preserve earlier dev execution');
+const clean=JSON.parse(readFileSync(folder+'/summary.json'));if(!clean.allChecksPassed)throw Error('Wait for clean completion');
+const env={...process.env},key=Object.keys(env).find(k=>k.toLowerCase()==='path')??'PATH';env[key]=dirname(process.execPath)+';'+env[key];
+const args=[resolve('.tools/node_modules/npm/bin/npm-cli.js'),'run','dev','--','--port','5191','--strictPort'],startedAt=new Date().toISOString();
+const child=spawn(process.execPath,args,{cwd:clean.clone,env,stdio:'inherit',windowsHide:true});
+const exitCode=await new Promise((r,j)=>{child.once('error',j);child.once('close',r);});
+const http=existsSync(folder+'/dev-http.json')?JSON.parse(readFileSync(folder+'/dev-http.json')):null;
+const report={startedAt,finishedAt:new Date().toISOString(),command:[process.execPath,...args],cwd:clean.clone,revision:clean.revision,exitCode,http,normalCliStop:exitCode===0,scope:'Interactive PTY actual npm run dev, independent clean checkout HTTP request, q+Enter normal CLI stop; no forced termination or gameplay claim.'};
+writeFileSync(folder+'/dev-execution.json',JSON.stringify(report,null,2));console.log(JSON.stringify({exitCode,normalCliStop:report.normalCliStop,httpStatus:http?.httpStatus}));process.exitCode=exitCode;

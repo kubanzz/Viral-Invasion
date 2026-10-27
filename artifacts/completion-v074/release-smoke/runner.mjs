@@ -1,0 +1,18 @@
+import{existsSync,mkdirSync,readFileSync,writeFileSync}from'node:fs';
+import{createHash}from'node:crypto';import{spawn}from'node:child_process';
+const output='artifacts/completion-v074/release-smoke';
+if(existsSync(output))throw Error('Preserve prior release smoke.');
+const hash=p=>createHash('sha256').update(readFileSync(p)).digest('hex');
+const manifest=JSON.parse(readFileSync('artifacts/completion-v074/release-files.json'));
+if(manifest.gameHash!==JSON.parse(readFileSync('.tools/v074-frozen.json')).gameSha256)throw Error('Wrong release.');
+for(const [p,h]of Object.entries(manifest.files))if(hash('.tools/release-v074-verify/'+p)!==h)throw Error('Extracted release mismatch: '+p);
+mkdirSync(output,{recursive:true});writeFileSync(output+'/runner.mjs',readFileSync(new URL(import.meta.url)));
+const before=Object.fromEntries(['dist/game.js','dist/index.html','dist/build-meta.json','scripts/verify-release.mjs'].map(p=>[p,hash(p)]));
+const startedAt=new Date().toISOString();let log='';
+const child=spawn(process.execPath,['scripts/verify-release.mjs','.tools/release-v074-verify'],{env:{...process.env,VI_RELEASE_REPORT:output},windowsHide:true,stdio:['ignore','pipe','pipe']});
+for(const stream of[child.stdout,child.stderr])stream.on('data',b=>{log+=b.toString();process.stdout.write(b);});
+const exitCode=await new Promise((r,j)=>{child.once('error',j);child.once('close',r);});
+const mismatches=Object.entries(before).filter(([p,h])=>hash(p)!==h).map(([p])=>p);
+writeFileSync(output+'/command.log',log);
+const result={startedAt,finishedAt:new Date().toISOString(),command:['node','scripts/verify-release.mjs','.tools/release-v074-verify'],exitCode,inputHashes:before,mismatches,inputsUnchanged:mismatches.length===0,scope:'Exact unpacked five-file release, offline real DOM smoke in Chrome and Edge. No full victory, human playtest, native focus or FPS conclusion.'};
+writeFileSync(output+'/execution.json',JSON.stringify(result,null,2));if(exitCode||mismatches.length)process.exitCode=exitCode||1;

@@ -1,0 +1,7 @@
+import{readFileSync,writeFileSync,existsSync}from'node:fs';import{createHash}from'node:crypto';
+const root='artifacts/completion-v074',file=root+'/requirements-current.json',report=JSON.parse(readFileSync(file)),hash=p=>createHash('sha256').update(readFileSync(p)).digest('hex');
+const refs=new Map();let uses=0;
+for(const row of report.items)for(const ref of row.evidence??[]){if(!ref.path||!ref.sha256)throw Error('Missing evidence identity '+row.id);uses++;const old=refs.get(ref.path);if(old&&old.expected!==ref.sha256)throw Error('Conflicting current SHA for '+ref.path);refs.set(ref.path,{path:ref.path,expected:ref.sha256});}
+const checks=[...refs.values()].map(r=>({...r,current:hash(r.path),equal:hash(r.path)===r.expected}));
+const result={at:new Date().toISOString(),audit:file,auditSha256:hash(file),referenceUses:uses,uniquePaths:checks.length,allReferencesMatch:checks.every(r=>r.equal),mismatches:checks.filter(r=>!r.equal),checks,scope:'Final read-only per-row requirement evidence byte recheck after current README/Docs updates, before archival. No requirement decisions or raw evidence are changed.'};
+if(existsSync(root+'/requirements-reference-check.json'))throw Error('Preserve prior graph check');writeFileSync(root+'/requirements-reference-check.json',JSON.stringify(result,null,2));console.log(JSON.stringify({uses,uniquePaths:checks.length,allReferencesMatch:result.allReferencesMatch,mismatches:result.mismatches}));if(!result.allReferencesMatch)process.exitCode=1;

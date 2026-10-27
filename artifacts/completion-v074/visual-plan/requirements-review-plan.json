@@ -1,0 +1,4062 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-27T10:21:52.952Z",
+  "mode": "original-requirement-review-preparation",
+  "method": "Original112 rows extracted verbatim from source documents. Each new reviewed closure needs immutable evidence, exact version/reuse scope, explicit assertions and clause reasoning. No browser/test/build executed.",
+  "originalCount": 112,
+  "categoryCounts": {
+    "AC": 88,
+    "VIS": 12,
+    "RUN": 12
+  },
+  "previous": {
+    "path": "artifacts/completion-v073/requirements-terminal-closure.json",
+    "sha256": "77ff99661a3ba2a35e7563497c4fa362947c6cf59a58524b1f45f1c45604abde",
+    "counts": {
+      "proven": 73,
+      "partial": 36,
+      "missing": 3
+    },
+    "cutoff": {
+      "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+      "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+    }
+  },
+  "consumed": null,
+  "currentCounts": {
+    "proven": 0,
+    "partial": 0,
+    "missing": 0,
+    "contradicted": 0,
+    "unreviewed": 112
+  },
+  "literalScopeFindings": [
+    {
+      "id": "AC-M09-05",
+      "exactOriginal": "至少在第一局出现两次有意义的玩家成长选择；以事件驱动，不靠无限等时间凑够经验。",
+      "finding": "Original requires at least two meaningful event-driven growth choices in the first run; it does not specify first3min or five-player blind testing. Verify actual choices/effects and costs; retain player perception separately without inventing a literal3min gate."
+    },
+    {
+      "id": "AC-M13-01",
+      "exactOriginal": "通过合法目标在约 10–15 分钟内达成胜利；不允许只按倒数等到赢，也不允许只杀普通敌人跳过器官保护直接胜利。",
+      "finding": "Original requires legal goals and about10–15min victory, no countdown-only wait and no skipping organ protection. Fast scripted victories prove legality, not this pacing target; do not fabricate length by waiting."
+    },
+    {
+      "id": "RUN-12",
+      "exactOriginal": "风格与战斗可读性：同场景病毒三分支形态对照→心脏搏动及肺部气流对照→密集混战/低特效→玩家、危险、弱点和当前器官均能辨认。",
+      "finding": "Original permits automatic tests, actual browser scripts or humans if provenance is explicit. A technical visual path can close without five-player data; VIS12 remains independently open."
+    },
+    {
+      "id": "VIS-09",
+      "exactOriginal": "不看器官名称也能通过**心脏：瓣膜/血流/脉冲，肺部：肺泡/气道/气流**区分场景，且其特性影响实际玩法",
+      "finding": "Distinct organ structure plus equal-scale actual images and interactions is technically reviewable. Do not equate agent image review with blinded new-player recognition."
+    }
+  ],
+  "items": [
+    {
+      "id": "AC-M00-01",
+      "original": {
+        "id": "AC-M00-01",
+        "text": "核实仓库名、npm 包名、HTML 标题、游戏 UI 和新存档前缀均采用 Viral Invasion；新目录含 `package.json`、锁文件、`src/`、`tests/`、`Docs/`、`.gitignore` 与 README；能说明源码与 `dist` 的关系，并记录真实 Git 提交/哈希。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 153,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M00-01`：核实仓库名、npm 包名、HTML 标题、游戏 UI 和新存档前缀均采用 Viral Invasion；新目录含 `package.json`、锁文件、`src/`、`tests/`、`Docs/`、`.gitignore` 与 README；能说明源码与 `dist` 的关系，并记录真实 Git 提交/哈希。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M00-02",
+      "original": {
+        "id": "AC-M00-02",
+        "text": "在全新检出/干净环境能执行 `npm ci`、`npm run dev`、`npm run build`、`npm test`（E2E 待基础场景就绪），无对原仓库路径的依赖；命令、退出码、结果如实报告。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 154,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M00-02`：在全新检出/干净环境能执行 `npm ci`、`npm run dev`、`npm run build`、`npm test`（E2E 待基础场景就绪），无对原仓库路径的依赖；命令、退出码、结果如实报告。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "The current0.7.3 independent clone now directly repeats npm ci/build/dev HTTP200+normal q exit/test, with all three output files byte-identical to the qualified browser build.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M00-03",
+      "original": {
+        "id": "AC-M00-03",
+        "text": "静态检索构建脚本、源码和资产引用，不能指向旧“心脏巡游”本地绝对路径、旧项目文件、外网 CDN 或未经允许的资源；旧工程不存在时也能独立构建。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 155,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M00-03`：静态检索构建脚本、源码和资产引用，不能指向旧“心脏巡游”本地绝对路径、旧项目文件、外网 CDN 或未经允许的资源；旧工程不存在时也能独立构建。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M00-04",
+      "original": {
+        "id": "AC-M00-04",
+        "text": "只在新仓库执行初始化/提交；若目标目录非空先保护现有文件，不覆盖未知或未提交内容；提交前清理密钥、个人路径和无关构建缓存。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 156,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M00-04`：只在新仓库执行初始化/提交；若目标目录非空先保护现有文件，不覆盖未知或未提交内容；提交前清理密钥、个人路径和无关构建缓存。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M01-01",
+      "original": {
+        "id": "AC-M01-01",
+        "text": "G0 用训练靶/测试规则验证：相同配置 + 相同 seed + 相同输入序列产生相同模拟状态及事件序列；G1 起把感染体出生、变异选择、伤害与结算纳入相同契约（允许非玩法相关帧渲染差异）。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 162,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M01-01`：G0 用训练靶/测试规则验证：相同配置 + 相同 seed + 相同输入序列产生相同模拟状态及事件序列；G1 起把感染体出生、变异选择、伤害与结算纳入相同契约（允许非玩法相关帧渲染差异）。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M01-02",
+      "original": {
+        "id": "AC-M01-02",
+        "text": "G0 暂停 30 秒时训练场实体、模拟时钟与事件数不推进；后台失焦恢复不一次性追赶积压帧。G1 起同样约束病毒增长/转移和感染负荷。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 163,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M01-02`：G0 暂停 30 秒时训练场实体、模拟时钟与事件数不推进；后台失焦恢复不一次性追赶积压帧。G1 起同样约束病毒增长/转移和感染负荷。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "Current Chrome/Edge real30-wall-clock-second pause cases pass; simulation clocks/entities and held attack stay frozen/reset. Browser focus-provenance cases also pass at their recorded headless/synthetic scope.",
+        "remaining": [
+          "Actual native OS focus/minimize and restore remains unqualified; browser/synthetic blur is not physical device evidence."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Actual native OS focus/minimize and restore remains unqualified; browser/synthetic blur is not physical device evidence."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M01-03",
+      "original": {
+        "id": "AC-M01-03",
+        "text": "连续执行“开局→暂停→继续→重开→新 seed 开局”，上一局敌人、事件、计时器、输入按住状态及协议状态均被正确清除。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 164,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M01-03`：连续执行“开局→暂停→继续→重开→新 seed 开局”，上一局敌人、事件、计时器、输入按住状态及协议状态均被正确清除。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M01-04",
+      "original": {
+        "id": "AC-M01-04",
+        "text": "事件 payload 与字段类型可单测；重复结束调用只产生一个 `RUN_ENDED`；随机逻辑不得直接依赖 `Math.random()`。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 165,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M01-04`：事件 payload 与字段类型可单测；重复结束调用只产生一个 `RUN_ENDED`；随机逻辑不得直接依赖 `Math.random()`。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M02-01",
+      "original": {
+        "id": "AC-M02-01",
+        "text": "启动后无需旧工程即可进入训练场，完成“净化靶标→修复组织→E 复测”并获得一次成功结算；暂停、继续、退出/重开有效；UI、计时与实体不会在重开后残留。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 171,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M02-01`：启动后无需旧工程即可进入训练场，完成“净化靶标→修复组织→E 复测”并获得一次成功结算；暂停、继续、退出/重开有效；UI、计时与实体不会在重开后残留。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "Both current browsers complete the offline training targets, effective repair, active E retest, pause/resume and independent retry/reset sequence.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M02-02",
+      "original": {
+        "id": "AC-M02-02",
+        "text": "移动/冲刺、1/2/3、Q、E 与鼠标瞄准在训练场有可观察、可测试结果（例如靶标受伤、组织修复、扫描信息、装置响应）；错误工具给出明确反馈。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 172,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M02-02`：移动/冲刺、1/2/3、Q、E 与鼠标瞄准在训练场有可观察、可测试结果（例如靶标受伤、组织修复、扫描信息、装置响应）；错误工具给出明确反馈。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "Actual current Chrome/Edge eight-way movement,360-degree aim, Q scan, dash,1/2/3 feedback, E/help/collision cases pass through ordinary DOM input; no jump/gravity/Z rule is introduced.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M02-03",
+      "original": {
+        "id": "AC-M02-03",
+        "text": "正式发行包在 Chrome/Edge 断网和 `file://` 下均可打开并玩完训练场；没有远程请求，也不会因 ES module、资源路径或 CORS 错误白屏。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 173,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M02-03`：正式发行包在 Chrome/Edge 断网和 `file://` 下均可打开并玩完训练场；没有远程请求，也不会因 ES module、资源路径或 CORS 错误白屏。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "Current Chrome/Edge file-release training victories have retained offline request/console records; clean build byte equality links the independent install to the same playable artifact.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M02-04",
+      "original": {
+        "id": "AC-M02-04",
+        "text": "1366×768、1920×1080 和 DPR 1/2 下鼠标命中、Canvas 坐标、碰撞和 HUD 对齐；键位帮助展示实际配置；无需与任何旧版本截图保持一致。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 174,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M02-04`：1366×768、1920×1080 和 DPR 1/2 下鼠标命中、Canvas 坐标、碰撞和 HUD 对齐；键位帮助展示实际配置；无需与任何旧版本截图保持一致。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "Six current browser allocations cover1366x768/DPR1,1920x1080/DPR2 and1100x700/DPR1.5. Each tests real mouse damage, inverse projection, resized hit and actual Canvas backing/CSS size alignment. Key help is covered by the current controls case. This is viewport/DPR qualification, not physical Ctrl zoom.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M02-05",
+      "original": {
+        "id": "AC-M02-05",
+        "text": "心脏训练场呈现 3/4 斜俯视视觉结构：角色能看到头顶/正侧面，场景含至少远景、地形、接地阴影、前景组织；鼠标 360° 瞄准与 WASD 八向平面移动成立，无平台跳跃/重力。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 175,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M02-05`：心脏训练场呈现 3/4 斜俯视视觉结构：角色能看到头顶/正侧面，场景含至少远景、地形、接地阴影、前景组织；鼠标 360° 瞄准与 WASD 八向平面移动成立，无平台跳跃/重力。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "重跑现有G0 controls与overview并审阅C原图；不需商业级素材或新增镜头。"
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "重跑现有G0 controls与overview并审阅C原图；不需商业级素材或新增镜头。"
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M02-06",
+      "original": {
+        "id": "AC-M02-06",
+        "text": "角色、病毒靶标和设施按接地锚点 Y 深度正确遮挡；前景组织遮挡关键对象时可淡化或描轮廓，绝不长期遮死玩家；若屏幕非等比投影，逆变换鼠标命中可测试。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 176,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M02-06`：角色、病毒靶标和设施按接地锚点 Y 深度正确遮挡；前景组织遮挡关键对象时可淡化或描轮廓，绝不长期遮死玩家；若屏幕非等比投影，逆变换鼠标命中可测试。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "Two current browser cases physically walk behind/in front of the terminal and assert actual final-Canvas pixel brightness ordering, then enter/leave the walkable foreground fade boundary. Current raised-fold immune-body cases and collision/projection units supplement these specific positions. The technical geometry/layer contract is qualified at this finite scope, not every frame or subjective clarity.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M03-01",
+      "original": {
+        "id": "AC-M03-01",
+        "text": "感染源每个固定模拟间隔沿开放边扩散，关闭边后不再穿透传播，打开后按冷却恢复；地图能直观看出路径。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 182,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M03-01`：感染源每个固定模拟间隔沿开放边扩散，关闭边后不再穿透传播，打开后按冷却恢复；地图能直观看出路径。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M03-02",
+      "original": {
+        "id": "AC-M03-02",
+        "text": "组织健康受到真实攻击或感染下降，治疗后上升，始终 clamp 至 0–100；无负数或超上限。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 183,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M03-02`：组织健康受到真实攻击或感染下降，治疗后上升，始终 clamp 至 0–100；无负数或超上限。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M03-03",
+      "original": {
+        "id": "AC-M03-03",
+        "text": "感染单位/节点上限和传播频率独立配置；运行 20 分钟压力模拟仍不无限分裂和卡死。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 184,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M03-03`：感染单位/节点上限和传播频率独立配置；运行 20 分钟压力模拟仍不无限分裂和卡死。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M03-04",
+      "original": {
+        "id": "AC-M03-04",
+        "text": "被净化的感染源不再产生新单位，且对应 XP/目标事件只奖励一次。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 185,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M03-04`：被净化的感染源不再产生新单位，且对应 XP/目标事件只奖励一次。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M03-05",
+      "original": {
+        "id": "AC-M03-05",
+        "text": "器官网络路径、屏幕描绘与二维碰撞多边形由一致的世界坐标驱动；视觉中不存在不可理解的假高台、画出可走但逻辑不可走的通道或不显示的阻挡。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 186,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M03-05`：器官网络路径、屏幕描绘与二维碰撞多边形由一致的世界坐标驱动；视觉中不存在不可理解的假高台、画出可走但逻辑不可走的通道或不显示的阻挡。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M04-01",
+      "original": {
+        "id": "AC-M04-01",
+        "text": "普通体可被合理击中、受伤、消灭；来源清除减少压力；敌人对玩家/组织造成伤害有不同反馈。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 192,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M04-01`：普通体可被合理击中、受伤、消灭；来源清除减少压力；敌人对玩家/组织造成伤害有不同反馈。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M04-02",
+      "original": {
+        "id": "AC-M04-02",
+        "text": "精英承载 trait，母巢可组合至多两种本局特性；新增特性不能绕过实体死亡/结算规则。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 193,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M04-02`：精英承载 trait，母巢可组合至多两种本局特性；新增特性不能绕过实体死亡/结算规则。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M04-03",
+      "original": {
+        "id": "AC-M04-03",
+        "text": "敌人离场、迁移或死亡后不会留下继续造成伤害的幽灵碰撞体。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 194,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M04-03`：敌人离场、迁移或死亡后不会留下继续造成伤害的幽灵碰撞体。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M04-04",
+      "original": {
+        "id": "AC-M04-04",
+        "text": "敌人数量达到上限时采用排队/合并/跳过安全策略，不持续创建内存对象。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 195,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M04-04`：敌人数量达到上限时采用排队/合并/跳过安全策略，不持续创建内存对象。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M04-05",
+      "original": {
+        "id": "AC-M04-05",
+        "text": "在实际游戏视野尺度、简化黑白剪影下，玩家、普通病毒、晶壳/裂殖/潜伏体均有可区分的头身或外轮廓；有接地位置和被击反应。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 196,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M04-05`：在实际游戏视野尺度、简化黑白剪影下，玩家、普通病毒、晶壳/裂殖/潜伏体均有可区分的头身或外轮廓；有接地位置和被击反应。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "可用现有capture-silhouettes脚本另目录生成C派生黑白图并目视；同时引用当前战场实际缩放图，真人辨认仍另列VIS12。"
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "可用现有capture-silhouettes脚本另目录生成C派生黑白图并目视；同时引用当前战场实际缩放图，真人辨认仍另列VIS12。"
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M05-01",
+      "original": {
+        "id": "AC-M05-01",
+        "text": "对每种变异，测试未变异行为、≥8 秒预警、变异后行为均可观察；至少一种视觉形态变化和一个明确弱点提示。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 202,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M05-01`：对每种变异，测试未变异行为、≥8 秒预警、变异后行为均可观察；至少一种视觉形态变化和一个明确弱点提示。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "可用现有G1/G2和capture演进路径在C重取三trait状态图；不把后台数值测试当视觉三态。"
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "可用现有G1/G2和capture演进路径在C重取三trait状态图；不把后台数值测试当视觉三态。"
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M05-02",
+      "original": {
+        "id": "AC-M05-02",
+        "text": "晶壳遇到心跳/破甲窗口有效；裂殖小体数量有上限；潜伏体有可通过 Q 发现的规律，不能永久隐形无解。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 203,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M05-02`：晶壳遇到心跳/破甲窗口有效；裂殖小体数量有上限；潜伏体有可通过 Q 发现的规律，不能永久隐形无解。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M05-03",
+      "original": {
+        "id": "AC-M05-03",
+        "text": "不装备任何随机专属抗体的基础工具组合仍然可以击败三类变异敌人（效率可不同）。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 204,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M05-03`：不装备任何随机专属抗体的基础工具组合仍然可以击败三类变异敌人（效率可不同）。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M05-04",
+      "original": {
+        "id": "AC-M05-04",
+        "text": "同一变异被重复应用不无限叠加效果；死亡/迁移能正确清理状态。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 205,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M05-04`：同一变异被重复应用不无限叠加效果；死亡/迁移能正确清理状态。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M05-05",
+      "original": {
+        "id": "AC-M05-05",
+        "text": "变异至少有一种真实代价（减速、脆弱、周期暴露等），战斗效果可测试。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 206,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M05-05`：变异至少有一种真实代价（减速、脆弱、周期暴露等），战斗效果可测试。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M05-06",
+      "original": {
+        "id": "AC-M05-06",
+        "text": "每类变异具备肉眼可辨的形态变化与可回看的弱点标识；对照预警、变异后、破绽状态画面，不以简单更换颜色替代进化美术。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 207,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M05-06`：每类变异具备肉眼可辨的形态变化与可回看的弱点标识；对照预警、变异后、破绽状态画面，不以简单更换颜色替代进化美术。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "现有三trait/browser视觉专项刷新C，同步区分代理技术审阅与5人主观辨识。"
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "现有三trait/browser视觉专项刷新C，同步区分代理技术审阅与5人主观辨识。"
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M06-01",
+      "original": {
+        "id": "AC-M06-01",
+        "text": "近 90 秒同一动作策略能改变部分候选的概率，但不能让某一特性必然出现；有权重和选择决策日志。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 213,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M06-01`：近 90 秒同一动作策略能改变部分候选的概率，但不能让某一特性必然出现；有权重和选择决策日志。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M06-02",
+      "original": {
+        "id": "AC-M06-02",
+        "text": "对 1000 个不同 seed（自动无玩家压力模拟），不存在空候选池崩溃、非法组合、未预警立即进化和缺乏基础反制的特性。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 214,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M06-02`：对 1000 个不同 seed（自动无玩家压力模拟），不存在空候选池崩溃、非法组合、未预警立即进化和缺乏基础反制的特性。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M06-03",
+      "original": {
+        "id": "AC-M06-03",
+        "text": "同种子同输入产生同一进化序列；不同种子提供可观察差异，但不要求每局不同。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 215,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M06-03`：同种子同输入产生同一进化序列；不同种子提供可观察差异，但不要求每局不同。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M06-04",
+      "original": {
+        "id": "AC-M06-04",
+        "text": "每阶段最多按配置出现主特性数（MVP 两种）；连续重复同一 trait 有保护规则。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 216,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M06-04`：每阶段最多按配置出现主特性数（MVP 两种）；连续重复同一 trait 有保护规则。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M06-05",
+      "original": {
+        "id": "AC-M06-05",
+        "text": "进化 UI 显示获得的能力、代价及弱点，不使用“病毒升级”一个模糊词代替。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 217,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M06-05`：进化 UI 显示获得的能力、代价及弱点，不使用“病毒升级”一个模糊词代替。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M07-01",
+      "original": {
+        "id": "AC-M07-01",
+        "text": "挂机导致可理解的恶化；净化感染源/抢修/截断传播能实际使压力下降或增长放缓，HUD 与日志一致。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 223,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M07-01`：挂机导致可理解的恶化；净化感染源/抢修/截断传播能实际使压力下降或增长放缓，HUD 与日志一致。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M07-02",
+      "original": {
+        "id": "AC-M07-02",
+        "text": "感染负荷达到 100 后进入 15 秒倒计时；降回 100 以下可退出致命状态；暂停不消耗倒计时。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 224,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M07-02`：感染负荷达到 100 后进入 15 秒倒计时；降回 100 以下可退出致命状态；暂停不消耗倒计时。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M07-03",
+      "original": {
+        "id": "AC-M07-03",
+        "text": "单个器官健康低下应先触发警报、再影响全身稳定；不能无警告瞬时导致整局结束。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 225,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M07-03`：单个器官健康低下应先触发警报、再影响全身稳定；不能无警告瞬时导致整局结束。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M07-04",
+      "original": {
+        "id": "AC-M07-04",
+        "text": "在预设的“落后但未失败”状态下至少存在一个可观察的恢复行动；长期失败不产生无法操作却迟迟不结束的软锁。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 226,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M07-04`：在预设的“落后但未失败”状态下至少存在一个可观察的恢复行动；长期失败不产生无法操作却迟迟不结束的软锁。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M08-01",
+      "original": {
+        "id": "AC-M08-01",
+        "text": "每个协议在无特殊病毒时有可解释用途，面对对应特性时有更明显优势；禁用该协议不会导致基本攻击/治疗全部失效。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 232,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M08-01`：每个协议在无特殊病毒时有可解释用途，面对对应特性时有更明显优势；禁用该协议不会导致基本攻击/治疗全部失效。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M08-02",
+      "original": {
+        "id": "AC-M08-02",
+        "text": "四个协议的触发条件、实际效果、代价与 UI 文案严格一致；存在事件日志证据。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 233,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M08-02`：四个协议的触发条件、实际效果、代价与 UI 文案严格一致；存在事件日志证据。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Chain selected/planned-hop history versus zero/rejected accepted damage; strict all-visible-text contract remains open."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Chain selected/planned-hop history versus zero/rejected accepted damage; strict all-visible-text contract remains open."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M08-03",
+      "original": {
+        "id": "AC-M08-03",
+        "text": "`PULSE_BREAK+PURIFY_CHAIN` 和 `EXPOSE_TRACE+IMMUNE_BEACON` 在预设测试场景中均可重复触发，提供区别于单技能的效果。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 234,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M08-03`：`PULSE_BREAK+PURIFY_CHAIN` 和 `EXPOSE_TRACE+IMMUNE_BEACON` 在预设测试场景中均可重复触发，提供区别于单技能的效果。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "Both current G2 RUN06 browser allocations legally obtain and trigger both pair effects, then perform research/replacement within the explicitly entered G2 product fixture. This is additional current browser pair evidence; current batch aggregate48/704 and finite individual trigger checks do not establish all required repeated independent preset roots.",
+        "remaining": [
+          "Repeated accepted independent preset triggers for each pair and single-protocol comparison remain open; G2 fixture is not a formal campaign proof."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Repeated accepted independent preset triggers for each pair and single-protocol comparison remain open; G2 fixture is not a formal campaign proof."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M08-04",
+      "original": {
+        "id": "AC-M08-04",
+        "text": "连锁最大 3 跳（可配置），100 个同时命中事件不会无限递归或掉帧失控。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 235,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M08-04`：连锁最大 3 跳（可配置），100 个同时命中事件不会无限递归或掉帧失控。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Retain bounded-command proof; isolate a real100-clear burst frame measurement only if exact burst frame-time acceptance is claimed."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Retain bounded-command proof; isolate a real100-clear burst frame measurement only if exact burst frame-time acceptance is claimed."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M08-05",
+      "original": {
+        "id": "AC-M08-05",
+        "text": "第 4 个协议入手时必须选择替换或放弃，不会绕过槽位上限；替换后旧协议副作用/订阅彻底解绑。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 236,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M08-05`：第 4 个协议入手时必须选择替换或放弃，不会绕过槽位上限；替换后旧协议副作用/订阅彻底解绑。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M09-01",
+      "original": {
+        "id": "AC-M09-01",
+        "text": "普通敌人重复刷取奖励递减，感染源/首次诊断/精英/保护目标等给予明确收益；相同一次事件不能重复结算经验。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 242,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M09-01`：普通敌人重复刷取奖励递减，感染源/首次诊断/精英/保护目标等给予明确收益；相同一次事件不能重复结算经验。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M09-02",
+      "original": {
+        "id": "AC-M09-02",
+        "text": "同 seed 同历史行为，升级草案可复现；禁止出现三个完全相同、无法使用或与装备全部冲突的选项。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 243,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M09-02`：同 seed 同历史行为，升级草案可复现；禁止出现三个完全相同、无法使用或与装备全部冲突的选项。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M09-03",
+      "original": {
+        "id": "AC-M09-03",
+        "text": "选择面板开启时游戏暂停，选定/放弃后恢复；Tab/失焦/返回流程不得产生重复选择。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 244,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M09-03`：选择面板开启时游戏暂停，选定/放弃后恢复；Tab/失焦/返回流程不得产生重复选择。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "Current draft equip/upgrade/details freezes and current Tab→archive/arrows→close→resume paths pass, including held-input isolation and legal retry. The complete current suite supplies the previously pending browser branches.",
+        "remaining": [
+          "Physical OS focus/minimize remains open; do not promote the headless focus case to native behavior."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Physical OS focus/minimize remains open; do not promote the headless focus case to native behavior."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M09-04",
+      "original": {
+        "id": "AC-M09-04",
+        "text": "即使玩家每次选择不针对当前病毒的协议，仍可利用基础反制通关，而不是软锁。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 245,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M09-04`：即使玩家每次选择不针对当前病毒的协议，仍可利用基础反制通关，而不是软锁。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Formal campaign adverse-known-threat choice routes for the three first traits, retaining incidental future-trait matches in the report."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Formal campaign adverse-known-threat choice routes for the three first traits, retaining incidental future-trait matches in the report."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M09-05",
+      "original": {
+        "id": "AC-M09-05",
+        "text": "至少在第一局出现两次有意义的玩家成长选择；以事件驱动，不靠无限等时间凑够经验。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 246,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M09-05`：至少在第一局出现两次有意义的玩家成长选择；以事件驱动，不靠无限等时间凑够经验。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Blind first-run milestone timing and perceived action/strategy changes after the first two growth choices.",
+          "Raw player understanding and voluntary replay observations; no artificial minimum clock or scripted fun score."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Blind first-run milestone timing and perceived action/strategy changes after the first two growth choices.",
+          "Raw player understanding and voluntary replay observations; no artificial minimum clock or scripted fun score."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M10-01",
+      "original": {
+        "id": "AC-M10-01",
+        "text": "玩家可通过 E 在有效节点发动冲流，攻击区/方向与预览一致，冷却/失效原因清楚。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 252,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M10-01`：玩家可通过 E 在有效节点发动冲流，攻击区/方向与预览一致，冷却/失效原因清楚。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M10-02",
+      "original": {
+        "id": "AC-M10-02",
+        "text": "冲流确实推动感染体、暴露晶壳弱点，且不是只播放特效；碰撞后不会把敌人推入永久不可达区域。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 253,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M10-02`：冲流确实推动感染体、暴露晶壳弱点，且不是只播放特效；碰撞后不会把敌人推入永久不可达区域。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Full formal heart edge/obstacle reachable-component sweep remains absent; finite mechanism fixtures do not establish every push position."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Full formal heart edge/obstacle reachable-component sweep remains absent; finite mechanism fixtures do not establish every push position."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M10-03",
+      "original": {
+        "id": "AC-M10-03",
+        "text": "使用冲流的成本可观察；连续乱按 E 不能无限免费发动，不得意外影响本项目其他器官的状态或脱离作用范围的目标。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 254,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M10-03`：使用冲流的成本可观察；连续乱按 E 不能无限免费发动，不得意外影响本项目其他器官的状态或脱离作用范围的目标。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M10-04",
+      "original": {
+        "id": "AC-M10-04",
+        "text": "变异晶壳的高效反制可通过基本操作+心跳完成，无须抽中专属抗体。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 255,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M10-04`：变异晶壳的高效反制可通过基本操作+心跳完成，无须抽中专属抗体。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M10-05",
+      "original": {
+        "id": "AC-M10-05",
+        "text": "心脏 3/4 生物腔体具备可见的瓣膜、暖红血流与心跳节律；冲流方向、扇区警告、组织受压表现均和模拟事件一致，不被环境装饰遮挡。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 256,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M10-05`：心脏 3/4 生物腔体具备可见的瓣膜、暖红血流与心跳节律；冲流方向、扇区警告、组织受压表现均和模拟事件一致，不被环境装饰遮挡。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Safely capture representative actual valve sectors and affected-target boundaries on current map; keep human legibility separate."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Safely capture representative actual valve sectors and affected-target boundaries on current map; keep human legibility separate."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M11-01",
+      "original": {
+        "id": "AC-M11-01",
+        "text": "肺部与心脏至少有一项实际规则差异：呼气聚散会改变敌群位置，玩家可以用它组合范围净化。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 262,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M11-01`：肺部与心脏至少有一项实际规则差异：呼气聚散会改变敌群位置，玩家可以用它组合范围净化。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M11-02",
+      "original": {
+        "id": "AC-M11-02",
+        "text": "气道开关直接影响可迁移路径；错误操作有代价，均有可见提示。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 263,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M11-02`：气道开关直接影响可迁移路径；错误操作有代价，均有可见提示。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M11-03",
+      "original": {
+        "id": "AC-M11-03",
+        "text": "肺部 3 分钟单独压力测试可玩且可撤离，不需要额外一套操作教学。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 264,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M11-03`：肺部 3 分钟单独压力测试可玩且可撤离，不需要额外一套操作教学。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "Actual Chrome and Edge lung runs survive183.45s and183.2s respectively with a live lung source, both breath phases and72 observed births, then legally retreat to heart via the same normal controls. This closes the technical play/exit path; it makes no novice-comprehension or FPS claim.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M11-04",
+      "original": {
+        "id": "AC-M11-04",
+        "text": "切换器官后射线、移动、碰撞、坐标、组织健康反馈正常，原心脏状态得到保存。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 265,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M11-04`：切换器官后射线、移动、碰撞、坐标、组织健康反馈正常，原心脏状态得到保存。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M11-05",
+      "original": {
+        "id": "AC-M11-05",
+        "text": "肺部沿用同一 3/4 摄像机与角色比例，具有独立的肺泡/气道/薄膜视觉与气流方向提示；不只是把心脏改青色，场景差异能和环境技对应。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 266,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M11-05`：肺部沿用同一 3/4 摄像机与角色比例，具有独立的肺泡/气道/薄膜视觉与气流方向提示；不只是把心脏改青色，场景差异能和环境技对应。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Safely capture matched-scale current heart/lung entry/device scenes and technically inspect shape/flow; human recognition separate."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Safely capture matched-scale current heart/lung entry/device scenes and technically inspect shape/flow; human recognition separate."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M12-01",
+      "original": {
+        "id": "AC-M12-01",
+        "text": "进入迁移条件时显示去向、倒计时、影响；未出现出口节点时不触发无效警报。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 272,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M12-01`：进入迁移条件时显示去向、倒计时、影响；未出现出口节点时不触发无效警报。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M12-02",
+      "original": {
+        "id": "AC-M12-02",
+        "text": "固定 seed 分别选择追击、封锁、放任后，下一阶段敌人位置/器官压力确实不同，有日志和画面对照。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 273,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M12-02`：固定 seed 分别选择追击、封锁、放任后，下一阶段敌人位置/器官压力确实不同，有日志和画面对照。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "Six current G3 browser cases now execute seed91 across pursue/block/ignore in both browsers, retaining real route logs, source/interception/pressure consequences and scene captures. This closes the current same-seed executable/log coverage gap; no new matched-checkpoint image comparison has been performed in this terminal addendum.",
+        "remaining": [
+          "Explicit matched-checkpoint picture comparison and technical inspection of the three next-stage outcomes."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Explicit matched-checkpoint picture comparison and technical inspection of the three next-stage outcomes."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M12-03",
+      "original": {
+        "id": "AC-M12-03",
+        "text": "封锁成功后病毒不穿过被封边，但原器官威胁得到补偿性变化；追击成功后肺部可发生提前拦截。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 274,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M12-03`：封锁成功后病毒不穿过被封边，但原器官威胁得到补偿性变化；追击成功后肺部可发生提前拦截。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M12-04",
+      "original": {
+        "id": "AC-M12-04",
+        "text": "来回切换、截止秒交互、两事件同时触发、不响应警报、存档/刷新等边界路径都不会造成双重迁移或永久锁门。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 275,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M12-04`：来回切换、截止秒交互、两事件同时触发、不响应警报、存档/刷新等边界路径都不会造成双重迁移或永久锁门。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M12-05",
+      "original": {
+        "id": "AC-M12-05",
+        "text": "不在屏幕内的器官压力受到低频上限约束，切回时有明确损伤来源；玩家至少有机会救援。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 276,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M12-05`：不在屏幕内的器官压力受到低频上限约束，切回时有明确损伤来源；玩家至少有机会救援。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M13-01",
+      "original": {
+        "id": "AC-M13-01",
+        "text": "通过合法目标在约 10–15 分钟内达成胜利；不允许只按倒数等到赢，也不允许只杀普通敌人跳过器官保护直接胜利。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 282,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M13-01`：通过合法目标在约 10–15 分钟内达成胜利；不允许只按倒数等到赢，也不允许只杀普通敌人跳过器官保护直接胜利。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Blind first-run milestone timing and perceived action/strategy changes after the first two growth choices.",
+          "Raw player understanding and voluntary replay observations; no artificial minimum clock or scripted fun score."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Blind first-run milestone timing and perceived action/strategy changes after the first two growth choices.",
+          "Raw player understanding and voluntary replay observations; no artificial minimum clock or scripted fun score."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M13-02",
+      "original": {
+        "id": "AC-M13-02",
+        "text": "母巢确实体现本局两个已出现变异特性的联动或分阶段使用，并有可见弱点；不只是 HP x3。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 283,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M13-02`：母巢确实体现本局两个已出现变异特性的联动或分阶段使用，并有可见弱点；不只是 HP x3。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M13-03",
+      "original": {
+        "id": "AC-M13-03",
+        "text": "玩家死亡、身体崩溃、感染失控三类失败独立触发正确原因；暂停与重试能正常使用。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 284,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M13-03`：玩家死亡、身体崩溃、感染失控三类失败独立触发正确原因；暂停与重试能正常使用。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "Five current formal G4 seed cases and the G1 recovery case provide actual HP0 failure/correct reason, one saved loss and clean retries. Existing mechanism fixtures still prove the three causes are distinct.",
+        "remaining": [
+          "Naturally earned current browser organ-collapse and infection100+15s terminal lifecycle; five HP deaths are not all-three-cause coverage."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Naturally earned current browser organ-collapse and infection100+15s terminal lifecycle; five HP deaths are not all-three-cause coverage."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M13-04",
+      "original": {
+        "id": "AC-M13-04",
+        "text": "母巢清除、器官健康阈值和感染负荷阈值全部满足才能最终复测并胜利；只能结算一次。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 285,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M13-04`：母巢清除、器官健康阈值和感染负荷阈值全部满足才能最终复测并胜利；只能结算一次。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M13-05",
+      "original": {
+        "id": "AC-M13-05",
+        "text": "输入连续攻击/暂停/跳过结局/退出重进，不得重复给经验、成就或造成脏存档。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 286,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M13-05`：输入连续攻击/暂停/跳过结局/退出重进，不得重复给经验、成就或造成脏存档。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "Current actual death/save/retry, archive/new-seed/replay and held-input pause/modal tests now directly preserve one ending/run ledger and clean reset. Core idempotency units also pass.",
+        "remaining": [
+          "The full rapid-ending/skip-result/held-continuous-attack combined branch inventory is not newly established by these selected sequences."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "The full rapid-ending/skip-result/held-continuous-attack combined branch inventory is not newly established by these selected sequences."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M14-01",
+      "original": {
+        "id": "AC-M14-01",
+        "text": "1366×768、1920×1080 浏览器尺寸下关键 HUD、选择面板不遮挡决定性目标；高缩放下有替代布局。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 292,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M14-01`：1366×768、1920×1080 浏览器尺寸下关键 HUD、选择面板不遮挡决定性目标；高缩放下有替代布局。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Physical browser Ctrl zoom and complete high-zoom decisive-target/HUD checks remain unqualified."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Physical browser Ctrl zoom and complete high-zoom decisive-target/HUD checks remain unqualified."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M14-02",
+      "original": {
+        "id": "AC-M14-02",
+        "text": "新玩家无需看外部文档，首次 3 分钟能识别“当前目标、病毒新能力、可用反制、失败风险”。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 293,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M14-02`：新玩家无需看外部文档，首次 3 分钟能识别“当前目标、病毒新能力、可用反制、失败风险”。"
+        }
+      },
+      "previous": {
+        "verdict": "missing",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Five genuine first-time players with original timestamped recognition/counter/risk/strategy/replay observations."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": {
+        "category": "actual-new-player-observation",
+        "minimumPeopleForThisLiteralRow": 1,
+        "scope": "The original row says new players/first3min. Global five-player requirement remains separately enforced by M16-05 and VIS12."
+      },
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Five genuine first-time players with original timestamped recognition/counter/risk/strategy/replay observations."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M14-03",
+      "original": {
+        "id": "AC-M14-03",
+        "text": "危险与弱点不能只靠红绿颜色表达；至少同时使用图标、轮廓、形态或文字。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 294,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M14-03`：危险与弱点不能只靠红绿颜色表达；至少同时使用图标、轮廓、形态或文字。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M14-04",
+      "original": {
+        "id": "AC-M14-04",
+        "text": "所有高优先级提示可回看；不发生关键原因被低优先级消息覆盖/截断。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 295,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M14-04`：所有高优先级提示可回看；不发生关键原因被低优先级消息覆盖/截断。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Safely enumerate every priority2/3 producer and assert a review path or explicit exception, including first-counter guidance; selected tests do not prove literal all."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Safely enumerate every priority2/3 producer and assert a review path or explicit exception, including first-counter guidance; selected tests do not prove literal all."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M14-05",
+      "original": {
+        "id": "AC-M14-05",
+        "text": "不把玩家仍会受伤的时间错误标注为“安全窗口”；所有游戏提示与新项目真实规则一致。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 296,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M14-05`：不把玩家仍会受伤的时间错误标注为“安全窗口”；所有游戏提示与新项目真实规则一致。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Recent chain history still describes selected/planned hops before accepted host positive-loss evidence; a rejected/zero-accepted-hop case and precise intent/outcome wording remain open.",
+          "A complete hint/rule consistency inventory is not supplied."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Recent chain history still describes selected/planned hops before accepted host positive-loss evidence; a rejected/zero-accepted-hop case and precise intent/outcome wording remain open.",
+          "A complete hint/rule consistency inventory is not supplied."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M14-06",
+      "original": {
+        "id": "AC-M14-06",
+        "text": "常驻 HUD 使用克制的生物科技风格，玩家、病毒、器官危机和抗体效果层级清楚；在不同器官配色下均有足够文字/形状对比，面板不成为主要光污染源。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 297,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M14-06`：常驻 HUD 使用克制的生物科技风格，玩家、病毒、器官危机和抗体效果层级清楚；在不同器官配色下均有足够文字/形状对比，面板不成为主要光污染源。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Safely capture current dense/core heart+lung scenes; document overlap exceptions then gather player readability feedback."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Safely capture current dense/core heart+lung scenes; document overlap exceptions then gather player readability feedback."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M14-07",
+      "original": {
+        "id": "AC-M14-07",
+        "text": "正式战斗时使用高密度病毒、粒子、前景遮挡场景验证目标/危险/弱点可读；同时提供低特效档并保证危险判定提示不消失。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 298,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M14-07`：正式战斗时使用高密度病毒、粒子、前景遮挡场景验证目标/危险/弱点可读；同时提供低特效档并保证危险判定提示不消失。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Actual dense decisive attack/foreground coverage and human readability observations.",
+          "Matched current same-state quality comparison if claiming one; target-device pressure frame budget remains separately version-scoped."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Actual dense decisive attack/foreground coverage and human readability observations.",
+          "Matched current same-state quality comparison if claiming one; target-device pressure frame budget remains separately version-scoped."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M15-01",
+      "original": {
+        "id": "AC-M15-01",
+        "text": "单次成功和失败各写入一次结果；连续刷新、返回、重复确认不会重复奖励。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 304,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M15-01`：单次成功和失败各写入一次结果；连续刷新、返回、重复确认不会重复奖励。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M15-02",
+      "original": {
+        "id": "AC-M15-02",
+        "text": "`localStorage` 数据有 schemaVersion；空存档、错误 JSON、旧版本数据或存储不可用时不阻止启动；损坏/不可用时安全回退并提示。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 305,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M15-02`：`localStorage` 数据有 schemaVersion；空存档、错误 JSON、旧版本数据或存储不可用时不阻止启动；损坏/不可用时安全回退并提示。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M15-03",
+      "original": {
+        "id": "AC-M15-03",
+        "text": "局外保留应保留的发现与统计，但临时 XP/当前器官损伤/抗体等级不跨局；重新开始数据隔离。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 306,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M15-03`：局外保留应保留的发现与统计，但临时 XP/当前器官损伤/抗体等级不跨局；重新开始数据隔离。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M15-04",
+      "original": {
+        "id": "AC-M15-04",
+        "text": "“同种子重试”与“新局”确实执行不同动作；结果页展示本局 seed 与可解释的进化路线。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 307,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M15-04`：“同种子重试”与“新局”确实执行不同动作；结果页展示本局 seed 与可解释的进化路线。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M15-05",
+      "original": {
+        "id": "AC-M15-05",
+        "text": "单局结束后，玩家能看到至少一个与实际本局行为有关的下一局尝试建议；不使用完全随机的固定文案。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 308,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M15-05`：单局结束后，玩家能看到至少一个与实际本局行为有关的下一局尝试建议；不使用完全随机的固定文案。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M16-01",
+      "original": {
+        "id": "AC-M16-01",
+        "text": "本项目核心单元/集成测试与从零建立的 E2E 回归全通过；报告分开列举真实运行、只读静态检查与真人试玩。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 314,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M16-01`：本项目核心单元/集成测试与从零建立的 E2E 回归全通过；报告分开列举真实运行、只读静态检查与真人试玩。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "Current44-file369/369 unit/system tests and the entire configured browser suite terminate successfully:84 actual passes,26 intentional browser/route assignment skips,0 failures/flaky cases. Actual runs, isolated mechanism fixtures, static synthesis and human0/5 are kept distinct. This is complete technical regression, not complete visual or human acceptance.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M16-02",
+      "original": {
+        "id": "AC-M16-02",
+        "text": "对至少 1000 个 seed 运行快速 headless 模拟，验证合法变异、反制可用、状态边界、退出；该测试不代替完整真人可通关测试。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 315,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M16-02`：对至少 1000 个 seed 运行快速 headless 模拟，验证合法变异、反制可用、状态边界、退出；该测试不代替完整真人可通关测试。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M16-03",
+      "original": {
+        "id": "AC-M16-03",
+        "text": "至少 10 条预设可通关种子用完整输入/脚本操作在真实浏览器验证胜利；至少 5 条异常种子验证失败与重试；不能直接写状态伪造通过。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 316,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M16-03`：至少 10 条预设可通关种子用完整输入/脚本操作在真实浏览器验证胜利；至少 5 条异常种子验证失败与重试；不能直接写状态伪造通过。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "The designated current G4 cases prove ten different victory seeds1,7,13,29,41,57,73,91,127,233, saved archive continuity and clean replay; five different failure seeds17,31,59,83,97 genuinely reach HP0 and perform independent clean retry. Wins/losses come from real browser input, not snapshots written to game state.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M16-04",
+      "original": {
+        "id": "AC-M16-04",
+        "text": "在项目实际目标设备上进行 10 分钟压力运行，平均帧率目标 ≥50、帧时间 p95 ≤33ms（可随设备记录与性能预算共同调整），无持续内存增长/无控制台致命错误。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 317,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M16-04`：在项目实际目标设备上进行 10 分钟压力运行，平均帧率目标 ≥50、帧时间 p95 ≤33ms（可随设备记录与性能预算共同调整），无持续内存增长/无控制台致命错误。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Current target-device performance acceptance if claiming0.7.3 measurements.",
+          "Sufficient natural heap/DOM and retained-object evidence to assess sustained memory growth; finite samples/forced GC do not establish absence of leaks.",
+          "Real target-device/browser coverage remains finite."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Current target-device performance acceptance if claiming0.7.3 measurements.",
+          "Sufficient natural heap/DOM and retained-object evidence to assess sustained memory growth; finite samples/forced GC do not establish absence of leaks.",
+          "Real target-device/browser coverage remains finite."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M16-05",
+      "original": {
+        "id": "AC-M16-05",
+        "text": "5 位新玩家盲测并记录：能否认出变异、是否懂反制、是否愿意主动再开局、是否真正改变策略；必须诚实呈现原始观察，不编造通过率。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 318,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M16-05`：5 位新玩家盲测并记录：能否认出变异、是否懂反制、是否愿意主动再开局、是否真正改变策略；必须诚实呈现原始观察，不编造通过率。"
+        }
+      },
+      "previous": {
+        "verdict": "missing",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Five genuine first-time players with original timestamped recognition/counter/risk/strategy/replay observations."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": {
+        "category": "actual-new-player-observation",
+        "minimumPeopleForThisLiteralRow": 5,
+        "scope": "Original row explicitly requires five new players."
+      },
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Five genuine first-time players with original timestamped recognition/counter/risk/strategy/replay observations."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M16-06",
+      "original": {
+        "id": "AC-M16-06",
+        "text": "Chrome/Edge 断网启动、使用 `file://` 打开发行入口、刷新/失焦/暂停、不同 DPR 和窗口缩放均完成冒烟；不依赖 localhost、CDN、远程 API 或未授权资源。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 319,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M16-06`：Chrome/Edge 断网启动、使用 `file://` 打开发行入口、刷新/失焦/暂停、不同 DPR 和窗口缩放均完成冒烟；不依赖 localhost、CDN、远程 API 或未授权资源。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "Current offline file training and formal game cases, refresh/replay, real30-second pause, both-browser three-DPR/resize matrix all pass. Clean local development is separately proven and is not a runtime requirement.",
+        "remaining": [
+          "Native OS focus/minimize and physical Ctrl zoom remain open."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Native OS focus/minimize and physical Ctrl zoom remain open."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "AC-M16-07",
+      "original": {
+        "id": "AC-M16-07",
+        "text": "完成 `VIS-01`–`VIS-12` 视觉验收并记录来源；同一场景正常/低特效有对照图及性能报告，真实玩家盲测与视觉清晰度记录分开。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 320,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M16-07`：完成 `VIS-01`–`VIS-12` 视觉验收并记录来源；同一场景正常/低特效有对照图及性能报告，真实玩家盲测与视觉清晰度记录分开。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "Current VIS02/03/04 technical control/projection/depth gaps are closed. Existing actual core/heart/lung/low-effects pictures are versioned evidence, but this passing suite is not a complete VIS01–12 subjective/visual review.",
+        "remaining": [
+          "Complete current visual matrix and scoped image review, physical zoom and five first-player recognition observations."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Complete current visual matrix and scoped image review, physical zoom and five first-player recognition observations."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "RUN-01",
+      "original": {
+        "id": "RUN-01",
+        "text": "全新安装与操作冒烟：从干净仓库 `npm ci`→构建→断网打开 `dist/index.html`→进入训练场→移动、扫描、三工具、E、暂停及重开正常。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 384,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "1. `RUN-01` 全新安装与操作冒烟：从干净仓库 `npm ci`→构建→断网打开 `dist/index.html`→进入训练场→移动、扫描、三工具、E、暂停及重开正常。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "Current independent clean npm installation/build/dev/test and byte-identical offline Chrome/Edge full training smoke form the required chain. HTTP200 alone is not used as gameplay proof.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "RUN-02",
+      "original": {
+        "id": "RUN-02",
+        "text": "新模式心脏开局：扫描、射击、治疗、组织压力、XP 和日志相匹配。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 385,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "2. `RUN-02` 新模式心脏开局：扫描、射击、治疗、组织压力、XP 和日志相匹配。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "RUN-03",
+      "original": {
+        "id": "RUN-03",
+        "text": "晶壳：预警→减伤→心跳破绽→反制成功。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 386,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "3. `RUN-03` 晶壳：预警→减伤→心跳破绽→反制成功。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "Current same-guardian CARAPACE raw proves warning/pulse exposure followed by seven positive basic-hit events and real clear in both browsers. None of the four inspected G1 evidence attachments has a CARAPACE_RESISTED event before that guardian's pulse, so the exact ordered full path is not inferred by combining a unit fixture and a separate browser scene.",
+        "remaining": [
+          "A retained current same-target browser chain that first observes actual carapace resistance, then pulse/exposure and accepted clear."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "A retained current same-target browser chain that first observes actual carapace resistance, then pulse/exposure and accepted clear."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "RUN-04",
+      "original": {
+        "id": "RUN-04",
+        "text": "裂殖：击败母体→有限分裂→连锁净化/范围处理→无无限复制。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 387,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "4. `RUN-04` 裂殖：击败母体→有限分裂→连锁净化/范围处理→无无限复制。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "Both actual browser G1 product-fixture cases earn the real FISSION mother, clear it with legal basic shots, observe two one-generation children, clear both in one actual area-hit tick and wait past the split delay without grandchildren. This is explicitly the existing G1 slice, not a formal two-organ victory.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "RUN-05",
+      "original": {
+        "id": "RUN-05",
+        "text": "潜伏：可通过 Q/显影发现→击杀/治疗→损伤停止。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 388,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "5. `RUN-05` 潜伏：可通过 Q/显影发现→击杀/治疗→损伤停止。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "Chrome G1 MIMIC raw shows the actual post-spawn Q diagnosis at tick1354/count1, same elite-5 clear at1413 and no later organ-damage event from that actor in the recorded slice. Edge independently clears the same mimic lineage with no later actor damage, but its pre-spawn Q/count0 is not mislabeled as a post-spawn Q reveal. Source/unit cleanup backs the bounded observed cessation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "RUN-06",
+      "original": {
+        "id": "RUN-06",
+        "text": "协议：同局获得两个相容协议→触发联动→展示连锁事件。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 389,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "6. `RUN-06` 协议：同局获得两个相容协议→触发联动→展示连锁事件。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "RUN-07",
+      "original": {
+        "id": "RUN-07",
+        "text": "迁移追击：警报→进入肺部→气流交互→影响新感染源。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 390,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "7. `RUN-07` 迁移追击：警报→进入肺部→气流交互→影响新感染源。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "RUN-08",
+      "original": {
+        "id": "RUN-08",
+        "text": "迁移封锁：警报→留在心脏封锁→肺部压力低、心脏压力高→仍可获胜。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 391,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "8. `RUN-08` 迁移封锁：警报→留在心脏封锁→肺部压力低、心脏压力高→仍可获胜。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "RUN-09",
+      "original": {
+        "id": "RUN-09",
+        "text": "失败及挽回：感染到临界→抢修/净化脱离倒计时；另一次真正死亡/失控正确结算。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 392,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "9. `RUN-09` 失败及挽回：感染到临界→抢修/净化脱离倒计时；另一次真正死亡/失控正确结算。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "Both G1 fixture runs reach real infection100 by legal kiting with live sources, perform effective repair below100 and clear the actual criticalSince, retry at the same seed, then incur real HP0 death. No HP/time/progress injection occurs. This does not qualify all three natural failure causes.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "RUN-10",
+      "original": {
+        "id": "RUN-10",
+        "text": "完整局：母巢具有本局特性→击败核心→器官与感染达标→主动复测→胜利，保存结果，同种子重试可复现。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 393,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "10. `RUN-10` 完整局：母巢具有本局特性→击败核心→器官与感染达标→主动复测→胜利，保存结果，同种子重试可复现。"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "RUN-11",
+      "original": {
+        "id": "RUN-11",
+        "text": "斜俯视空间与命中：二维自由移动→经过前景组织→Y 排序切换→360° 射击/修复→缩放后坐标与命中一致，场景没有横版重力/假遮挡软锁。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 394,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "11. `RUN-11` 斜俯视空间与命中：二维自由移动→经过前景组织→Y 排序切换→360° 射击/修复→缩放后坐标与命中一致，场景没有横版重力/假遮挡软锁。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "Current eight-way/360 controls, final-Canvas foot-Y switch and foreground boundary, three DPR/resize actual-hit matrix all pass.",
+        "remaining": [
+          "Physical browser Ctrl zoom remains open; viewport/DPR is not its replacement."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Physical browser Ctrl zoom remains open; viewport/DPR is not its replacement."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "RUN-12",
+      "original": {
+        "id": "RUN-12",
+        "text": "风格与战斗可读性：同场景病毒三分支形态对照→心脏搏动及肺部气流对照→密集混战/低特效→玩家、危险、弱点和当前器官均能辨认。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 395,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "12. `RUN-12` 风格与战斗可读性：同场景病毒三分支形态对照→心脏搏动及肺部气流对照→密集混战/低特效→玩家、危险、弱点和当前器官均能辨认。"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Keep the original audit gap open; current targeted scope does not close the full requirement."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Keep the original audit gap open; current targeted scope does not close the full requirement."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "VIS-01",
+      "original": {
+        "id": "VIS-01",
+        "text": "画面能辨别为**斜俯视的 2D 自由移动战场**；角色显露头顶/正侧面，至少有近景与远景深度，而非横版平台或纯顶视平面",
+        "expectedEvidence": "实机全屏截图 + 短视频",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+          "line": 136,
+          "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b",
+          "exactLine": "| `VIS-01` | G0 | 画面能辨别为**斜俯视的 2D 自由移动战场**；角色显露头顶/正侧面，至少有近景与远景深度，而非横版平台或纯顶视平面 | 实机全屏截图 + 短视频 |"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "VIS-02",
+      "original": {
+        "id": "VIS-02",
+        "text": "WASD 八向/斜向移动与鼠标 360° 瞄准有效；不依赖跳跃/重力/Z 轴；镜头表现变化不改变物理规则",
+        "expectedEvidence": "同一路线输入与位置/命中日志",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+          "line": 137,
+          "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b",
+          "exactLine": "| `VIS-02` | G0 | WASD 八向/斜向移动与鼠标 360° 瞄准有效；不依赖跳跃/重力/Z 轴；镜头表现变化不改变物理规则 | 同一路线输入与位置/命中日志 |"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "Actual current Chrome/Edge eight-way movement,360-degree aim, Q scan, dash,1/2/3 feedback, E/help/collision cases pass through ordinary DOM input; no jump/gravity/Z rule is introduced.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "VIS-03",
+      "original": {
+        "id": "VIS-03",
+        "text": "三种窗口/DPR 条件下，画面角色枪口、鼠标准星、弹道与实际命中对齐；若有 XY 投影必须覆盖逆变换测试",
+        "expectedEvidence": "自动化鼠标/投影测试+截图",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+          "line": 138,
+          "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b",
+          "exactLine": "| `VIS-03` | G0 | 三种窗口/DPR 条件下，画面角色枪口、鼠标准星、弹道与实际命中对齐；若有 XY 投影必须覆盖逆变换测试 | 自动化鼠标/投影测试+截图 |"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "Six current browser allocations cover1366x768/DPR1,1920x1080/DPR2 and1100x700/DPR1.5. Each tests real mouse damage, inverse projection, resized hit and actual Canvas backing/CSS size alignment. Key help is covered by the current controls case. This is viewport/DPR qualification, not physical Ctrl zoom.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "VIS-04",
+      "original": {
+        "id": "VIS-04",
+        "text": "角色/敌人按接地 Y 排序，头顶可超出脚底排序界；前景遮挡时不会不可见或造成误导碰撞",
+        "expectedEvidence": "重叠与遮挡边界测试图",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+          "line": 139,
+          "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b",
+          "exactLine": "| `VIS-04` | G0 | 角色/敌人按接地 Y 排序，头顶可超出脚底排序界；前景遮挡时不会不可见或造成误导碰撞 | 重叠与遮挡边界测试图 |"
+        }
+      },
+      "previous": {
+        "verdict": "proven",
+        "scope": "Two current browser cases physically walk behind/in front of the terminal and assert actual final-Canvas pixel brightness ordering, then enter/leave the walkable foreground fade boundary. Current raised-fold immune-body cases and collision/projection units supplement these specific positions. The technical geometry/layer contract is qualified at this finite scope, not every frame or subjective clarity.",
+        "remaining": [],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "VIS-05",
+      "original": {
+        "id": "VIS-05",
+        "text": "玩家、普通体、晶壳/裂殖/潜伏的**黑白剪影**在实战缩放下可区分，并与进化规则对应",
+        "expectedEvidence": "等比例剪影对比图",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+          "line": 140,
+          "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b",
+          "exactLine": "| `VIS-05` | G1 | 玩家、普通体、晶壳/裂殖/潜伏的**黑白剪影**在实战缩放下可区分，并与进化规则对应 | 等比例剪影对比图 |"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Keep the original audit gap open; current targeted scope does not close the full requirement."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Keep the original audit gap open; current targeted scope does not close the full requirement."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "VIS-06",
+      "original": {
+        "id": "VIS-06",
+        "text": "心脏搏动、流向、阀门/冲流范围提示在战斗中看得见；示意预览与实际影响范围相符",
+        "expectedEvidence": "录屏与规则断言",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+          "line": 141,
+          "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b",
+          "exactLine": "| `VIS-06` | G1 | 心脏搏动、流向、阀门/冲流范围提示在战斗中看得见；示意预览与实际影响范围相符 | 录屏与规则断言 |"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Keep the original audit gap open; current targeted scope does not close the full requirement."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Keep the original audit gap open; current targeted scope does not close the full requirement."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "VIS-07",
+      "original": {
+        "id": "VIS-07",
+        "text": "危险、弱点、扫描与治疗至少两种非颜色信号；高光和粒子不过度盖住关键角色/预警",
+        "expectedEvidence": "常规与密集战斗截图",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+          "line": 142,
+          "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b",
+          "exactLine": "| `VIS-07` | G1–G2 | 危险、弱点、扫描与治疗至少两种非颜色信号；高光和粒子不过度盖住关键角色/预警 | 常规与密集战斗截图 |"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Actual dense decisive attack/foreground coverage and human readability observations.",
+          "Matched current same-state quality comparison if claiming one; target-device pressure frame budget remains separately version-scoped."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Actual dense decisive attack/foreground coverage and human readability observations.",
+          "Matched current same-state quality comparison if claiming one; target-device pressure frame budget remains separately version-scoped."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "VIS-08",
+      "original": {
+        "id": "VIS-08",
+        "text": "病毒进化前/预警/进化后，玩家能在实机画面辨识能力变化和对应反制，不只显示数值改变",
+        "expectedEvidence": "同场景三状态截图/录屏",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+          "line": 143,
+          "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b",
+          "exactLine": "| `VIS-08` | G2 | 病毒进化前/预警/进化后，玩家能在实机画面辨识能力变化和对应反制，不只显示数值改变 | 同场景三状态截图/录屏 |"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Keep the original audit gap open; current targeted scope does not close the full requirement."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Keep the original audit gap open; current targeted scope does not close the full requirement."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "VIS-09",
+      "original": {
+        "id": "VIS-09",
+        "text": "不看器官名称也能通过**心脏：瓣膜/血流/脉冲，肺部：肺泡/气道/气流**区分场景，且其特性影响实际玩法",
+        "expectedEvidence": "心肺同等缩放截图 + 交互录屏",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+          "line": 144,
+          "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b",
+          "exactLine": "| `VIS-09` | G3 | 不看器官名称也能通过**心脏：瓣膜/血流/脉冲，肺部：肺泡/气道/气流**区分场景，且其特性影响实际玩法 | 心肺同等缩放截图 + 交互录屏 |"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Keep the original audit gap open; current targeted scope does not close the full requirement."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Keep the original audit gap open; current targeted scope does not close the full requirement."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "VIS-10",
+      "original": {
+        "id": "VIS-10",
+        "text": "实时 HUD 在 1366×768 与 1920×1080 下不遮挡关键可射击区域，缩放后布局/提示可读",
+        "expectedEvidence": "多分辨率截图",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+          "line": 145,
+          "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b",
+          "exactLine": "| `VIS-10` | G4 | 实时 HUD 在 1366×768 与 1920×1080 下不遮挡关键可射击区域，缩放后布局/提示可读 | 多分辨率截图 |"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Physical zoom and complete real-time HUD/decisive-target legibility at both prescribed sizes."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Physical zoom and complete real-time HUD/decisive-target legibility at both prescribed sizes."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "VIS-11",
+      "original": {
+        "id": "VIS-11",
+        "text": "普通/低特效模式下的伤害与碰撞判定一致，低特效仍显示所有致命警示；压力战斗满足 M16 帧率预算",
+        "expectedEvidence": "同 seed 对比 + 帧率报告",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+          "line": 146,
+          "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b",
+          "exactLine": "| `VIS-11` | G4 | 普通/低特效模式下的伤害与碰撞判定一致，低特效仍显示所有致命警示；压力战斗满足 M16 帧率预算 | 同 seed 对比 + 帧率报告 |"
+        }
+      },
+      "previous": {
+        "verdict": "partial",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Actual dense decisive attack/foreground coverage and human readability observations.",
+          "Matched current same-state quality comparison if claiming one; target-device pressure frame budget remains separately version-scoped."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": null,
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Actual dense decisive attack/foreground coverage and human readability observations.",
+          "Matched current same-state quality comparison if claiming one; target-device pressure frame budget remains separately version-scoped."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    },
+    {
+      "id": "VIS-12",
+      "original": {
+        "id": "VIS-12",
+        "text": "至少 5 位首玩者观察：能认出玩家、至少两类病毒与正在生效的器官危险；逐条记录未认出的情况，不得编造主观分数",
+        "expectedEvidence": "盲测观察表",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+          "line": 147,
+          "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b",
+          "exactLine": "| `VIS-12` | G4 | 至少 5 位首玩者观察：能认出玩家、至少两类病毒与正在生效的器官危险；逐条记录未认出的情况，不得编造主观分数 | 盲测观察表 |"
+        }
+      },
+      "previous": {
+        "verdict": "missing",
+        "scope": "No new requirement-level closure is inferred. Preserve the prior scoped finding and every remaining limitation.",
+        "remaining": [
+          "Five genuine first-time players with original timestamped recognition/counter/risk/strategy/replay observations."
+        ],
+        "cutoff": {
+          "fullFinishedAt": "2026-10-27T09:28:02.884Z",
+          "cleanFinishedAt": "2026-10-27T09:22:10.774Z"
+        }
+      },
+      "literalHumanGate": {
+        "category": "actual-new-player-observation",
+        "minimumPeopleForThisLiteralRow": 5,
+        "scope": "Original row explicitly requires five new players."
+      },
+      "evidence": [],
+      "review": {
+        "decision": null,
+        "reason": "",
+        "coverageComplete": false,
+        "closedSubclauses": [],
+        "remainingSubclauses": [
+          "Five genuine first-time players with original timestamped recognition/counter/risk/strategy/replay observations."
+        ],
+        "extraPriorGateCorrections": []
+      },
+      "currentVerdict": "unreviewed",
+      "scope": "Preparation only. Prior73 proven is retained as historical cutoff, not automatically promoted to a new build."
+    }
+  ],
+  "scope": "Preparation has112 unreviewed current rows and does not undo historical73proven or create new passes. Human/native observations remain distinct; source-identical reuse requires explicit limited dependencies. No all-plan/fun/commercial-value conclusion."
+}

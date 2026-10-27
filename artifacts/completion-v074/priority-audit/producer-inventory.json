@@ -1,0 +1,86 @@
+{
+  "method": "Static AST inventory of priority2/3 or forwarded message/notice calls. Campaign.notice takes(text,game,seconds,priority); Battle.notice/Session.message take(text,seconds,priority). This identifies call sites, not runtime acceptance or human recognition.",
+  "correction": {
+    "earlier": "initial-producers.json",
+    "reason": "The initial derived inventory incorrectly treated the seconds argument of three-argument Campaign.notice calls as priority. It is retained; this version resolves the declared method signature and excludes those priority1 calls. No production file/report changed."
+  },
+  "calls": [
+    {
+      "path": "src/game/battle.ts",
+      "line": 85,
+      "method": "this.host.message",
+      "priority": "priority",
+      "call": "this.host.message(text, seconds, priority)"
+    },
+    {
+      "path": "src/game/battle.ts",
+      "line": 319,
+      "method": "this.notice",
+      "priority": "2",
+      "call": "this.notice(`变异预警 · ${TRAITS[trait].name}：${TRAITS[trait].ability}。代价：${TRAITS[trait].cost}。反制：${TRAITS[trait].counter}`, B.warningDuration, 2)"
+    },
+    {
+      "path": "src/game/battle.ts",
+      "line": 340,
+      "method": "this.notice",
+      "priority": "2",
+      "call": "this.notice(`${TRAITS[trait].symbol} ${TRAITS[trait].name}已出现。弱点：${TRAITS[trait].counter}`, 7, 2)"
+    },
+    {
+      "path": "src/game/battle.ts",
+      "line": 462,
+      "method": "this.notice",
+      "priority": "3",
+      "call": "this.notice('器官警报：完整度低于 30%。8 秒后开始影响全身稳定，请用 3 抢修！', 8, 3)"
+    },
+    {
+      "path": "src/game/battle.ts",
+      "line": 469,
+      "method": "this.notice",
+      "priority": "3",
+      "call": "this.notice('组织抢修成功：器官警报解除，全身稳定缓慢恢复。', 5, 3)"
+    },
+    {
+      "path": "src/game/battle.ts",
+      "line": 479,
+      "method": "this.notice",
+      "priority": "3",
+      "call": "this.notice('感染负荷 100！15 秒内净化感染源/感染体或抢修，降低感染即可解除危机。', B.crisisDuration, 3)"
+    },
+    {
+      "path": "src/game/battle.ts",
+      "line": 485,
+      "method": "this.notice",
+      "priority": "3",
+      "call": "this.notice('感染负荷下降，致命倒计时解除。继续净化并修复组织。', 5, 3)"
+    },
+    {
+      "path": "src/game/campaign.ts",
+      "line": 237,
+      "method": "this.notice",
+      "priority": "2",
+      "call": "this.notice('已离开隔离闸，封锁取消；迁移倒数继续。',game,3,2)"
+    },
+    {
+      "path": "src/game/session.ts",
+      "line": 146,
+      "method": "this.message",
+      "priority": "feedback.priority",
+      "call": "this.message(feedback.text, feedback.seconds, feedback.priority)"
+    },
+    {
+      "path": "src/game/session.ts",
+      "line": 506,
+      "method": "this.message",
+      "priority": "3",
+      "call": "this.message(`${arena.organId === 'heart' ? '心脏' : '肺部'}低于 30%！8 秒后全身稳定开始下降，前往抢修可解除。`, 8, 3)"
+    },
+    {
+      "path": "src/game/session.ts",
+      "line": 557,
+      "method": "this.message",
+      "priority": "command.priority ?? 1",
+      "call": "this.message(command.text, command.seconds, command.priority ?? 1)"
+    }
+  ]
+}

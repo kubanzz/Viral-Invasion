@@ -1,0 +1,420 @@
+{
+  "scope": "Accepted protocol history / actual hit markers, plus literal AC-M08-03 repeated preset pair acceptance. No browser, full campaign, 1000-session batch or human evidence was created by this audit.",
+  "generatedAt": "2026-10-27T10:12:15.488Z",
+  "baseline": "fefccfc",
+  "originalRequirements": [
+    {
+      "id": "AC-M08-02",
+      "file": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+      "line": 233,
+      "exactText": "- `AC-M08-02`：四个协议的触发条件、实际效果、代价与 UI 文案严格一致；存在事件日志证据。"
+    },
+    {
+      "id": "AC-M08-03",
+      "file": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+      "line": 234,
+      "exactText": "- `AC-M08-03`：`PULSE_BREAK+PURIFY_CHAIN` 和 `EXPOSE_TRACE+IMMUNE_BEACON` 在预设测试场景中均可重复触发，提供区别于单技能的效果。"
+    },
+    {
+      "id": "AC-M14-05",
+      "file": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+      "line": 296,
+      "exactText": "- `AC-M14-05`：不把玩家仍会受伤的时间错误标注为“安全窗口”；所有游戏提示与新项目真实规则一致。"
+    }
+  ],
+  "baselineEvidence": {
+    "file": "src/game/growth.ts",
+    "sha256": "f68c344485ea4fcd20bd7054795b29a40446431c7f13a50af53df34274e6c82b",
+    "preAcceptPlanWasStoredAsActualHistory": true
+  },
+  "frozenFiles": {
+    "src/game/growth.ts": "49b6f0bb5c3e8cffe142d16a5db926795b6f8f35b5b0fbf9428d4f1bc39c5aab",
+    "src/game/growthTypes.ts": "7e1255fc6f52cf532c970d7711cf1c534d100b852474a9bccbc06d87c80ff6c3",
+    "src/render/growthVisuals.ts": "c688ad679fc4b4cded6da327a70073f6a77564f0db8d53f9d51f1d0288464f2f",
+    "tests/unit/protocol-history.test.ts": "9d5166a0d0d4a83d2dab0e7495304ef0b8d8896506ec4af7e6cda5266dbf3525",
+    "tests/unit/protocol-synergy-repeat.test.ts": "62db834fd75e97e35112f80c8d48c7a0c64b486c8fbe562476247f8168d62ef5"
+  },
+  "checks": {
+    "typecheck": {
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "actualExitCode": 0
+    },
+    "reports": [
+      {
+        "file": "artifacts/completion-v074/chain-audit/related-unit.json",
+        "sha256": "3d2b38f079d21a6129bed631c702729edd14bbd7061c4c6f5b20331360e1350b",
+        "success": true,
+        "passedTests": 105,
+        "failedTests": 0
+      },
+      {
+        "file": "artifacts/completion-v074/chain-audit/trace-render-unit.json",
+        "sha256": "52b13170a6c8edfef0f39245b601a7a895f2ef56973a98015e97f797cd0fa281",
+        "success": true,
+        "passedTests": 7,
+        "failedTests": 0
+      }
+    ],
+    "relatedPassedTests": 112
+  },
+  "pairEvidence": {
+    "pulseChain": {
+      "file": "artifacts/completion-v074/chain-audit/pulse-chain-repeats.json",
+      "sha256": "4a8f89cba1f5ebc31d88547481948152140cc3ae93324fcf1018693cb7add32f",
+      "pair": {
+        "ids": [
+          "PULSE_BREAK",
+          "PURIFY_CHAIN"
+        ],
+        "acceptedChainHops": [
+          3,
+          3
+        ],
+        "repetitions": [
+          {
+            "pulseTick": 1,
+            "rootId": "1704:2:hit:2:pulse-root-0",
+            "shotTick": 2,
+            "previousReadyAt": 8.016666666666667,
+            "actualDamage": [
+              38,
+              38,
+              38
+            ],
+            "acceptedSynergies": 1
+          },
+          {
+            "pulseTick": 482,
+            "rootId": "1704:2:hit:483:pulse-root-1",
+            "shotTick": 483,
+            "previousReadyAt": 16.03333333333333,
+            "actualDamage": [
+              38,
+              38,
+              38
+            ],
+            "acceptedSynergies": 1
+          }
+        ],
+        "metrics": {
+          "chainTriggers": 2,
+          "chainHops": 6,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 0,
+          "patrolBites": 0,
+          "synergyPulseChain": 2,
+          "synergyTraceBeacon": 0,
+          "scans": 0,
+          "pulseUses": 2,
+          "crystalExposures": 2,
+          "corePulseHits": 0,
+          "airwayCloses": 0,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [],
+          "migrationChoice": null,
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [],
+          "coreCleared": false
+        }
+      },
+      "chainOnly": {
+        "ids": [
+          "PURIFY_CHAIN"
+        ],
+        "acceptedChainHops": [
+          2,
+          2
+        ],
+        "repetitions": [
+          {
+            "pulseTick": 1,
+            "rootId": "1704:2:hit:2:pulse-root-0",
+            "shotTick": 2,
+            "previousReadyAt": 8.016666666666667,
+            "actualDamage": [
+              38,
+              38
+            ],
+            "acceptedSynergies": 0
+          },
+          {
+            "pulseTick": 482,
+            "rootId": "1704:2:hit:483:pulse-root-1",
+            "shotTick": 483,
+            "previousReadyAt": 16.03333333333333,
+            "actualDamage": [
+              38,
+              38
+            ],
+            "acceptedSynergies": 0
+          }
+        ],
+        "metrics": {
+          "chainTriggers": 2,
+          "chainHops": 4,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 0,
+          "patrolBites": 0,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 0,
+          "pulseUses": 2,
+          "crystalExposures": 2,
+          "corePulseHits": 0,
+          "airwayCloses": 0,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [],
+          "migrationChoice": null,
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [],
+          "coreCleared": false
+        }
+      },
+      "pulseOnly": {
+        "ids": [
+          "PULSE_BREAK"
+        ],
+        "acceptedChainHops": [
+          0,
+          0
+        ],
+        "repetitions": [
+          {
+            "pulseTick": 1,
+            "rootId": null,
+            "shotTick": 2,
+            "previousReadyAt": 8.016666666666667,
+            "actualDamage": [],
+            "acceptedSynergies": 0
+          },
+          {
+            "pulseTick": 482,
+            "rootId": null,
+            "shotTick": 483,
+            "previousReadyAt": 16.03333333333333,
+            "actualDamage": [],
+            "acceptedSynergies": 0
+          }
+        ],
+        "metrics": {
+          "chainTriggers": 0,
+          "chainHops": 0,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 0,
+          "patrolBites": 0,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 0,
+          "pulseUses": 2,
+          "crystalExposures": 2,
+          "corePulseHits": 0,
+          "airwayCloses": 0,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [],
+          "migrationChoice": null,
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [],
+          "coreCleared": false
+        }
+      }
+    },
+    "traceBeacon": {
+      "file": "artifacts/completion-v074/chain-audit/trace-beacon-repeats.json",
+      "sha256": "ed3a7ca0bcca4e5b06b4cb302f150e73bb695e472cc7d9db0499f6a06a323195",
+      "pair": {
+        "ids": [
+          "EXPOSE_TRACE",
+          "IMMUNE_BEACON"
+        ],
+        "repetitions": [
+          {
+            "scanTick": 1,
+            "beaconId": "1704:2:scan:1:beacon",
+            "beaconMode": "protocol",
+            "biteTick": 21,
+            "rootId": "1704:2:scan:1:beacon:cell:1:bite:21",
+            "targetId": "marked-0",
+            "actualDamage": 8,
+            "acceptedSynergies": 1,
+            "nextReadyAt": 12.016666666666667
+          },
+          {
+            "scanTick": 722,
+            "beaconId": "1704:2:scan:722:beacon",
+            "beaconMode": "protocol",
+            "biteTick": 742,
+            "rootId": "1704:2:scan:722:beacon:cell:1:bite:742",
+            "targetId": "marked-1",
+            "actualDamage": 8,
+            "acceptedSynergies": 1,
+            "nextReadyAt": 24.03333333333333
+          }
+        ],
+        "metrics": {
+          "chainTriggers": 0,
+          "chainHops": 0,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 2,
+          "patrolBites": 0,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 2,
+          "scans": 2,
+          "pulseUses": 0,
+          "crystalExposures": 0,
+          "corePulseHits": 0,
+          "airwayCloses": 0,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [],
+          "migrationChoice": null,
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [],
+          "coreCleared": false
+        }
+      },
+      "beaconOnly": {
+        "ids": [
+          "IMMUNE_BEACON"
+        ],
+        "repetitions": [
+          {
+            "scanTick": 1,
+            "beaconId": "1704:2:scan:1:beacon",
+            "beaconMode": "protocol",
+            "biteTick": 16,
+            "rootId": "1704:2:scan:1:beacon:cell:0:bite:16",
+            "targetId": "unmarked-0",
+            "actualDamage": 8,
+            "acceptedSynergies": 0,
+            "nextReadyAt": 12.016666666666667
+          },
+          {
+            "scanTick": 722,
+            "beaconId": "1704:2:scan:722:beacon",
+            "beaconMode": "protocol",
+            "biteTick": 737,
+            "rootId": "1704:2:scan:722:beacon:cell:0:bite:737",
+            "targetId": "unmarked-1",
+            "actualDamage": 8,
+            "acceptedSynergies": 0,
+            "nextReadyAt": 24.03333333333333
+          }
+        ],
+        "metrics": {
+          "chainTriggers": 0,
+          "chainHops": 0,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 2,
+          "patrolBites": 0,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 2,
+          "pulseUses": 0,
+          "crystalExposures": 0,
+          "corePulseHits": 0,
+          "airwayCloses": 0,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [],
+          "migrationChoice": null,
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [],
+          "coreCleared": false
+        }
+      },
+      "traceOnly": {
+        "ids": [
+          "EXPOSE_TRACE"
+        ],
+        "repetitions": [
+          {
+            "scanTick": 1,
+            "beaconId": "1704:2:scan:1:beacon",
+            "beaconMode": "patrol",
+            "biteTick": 16,
+            "rootId": "1704:2:scan:1:beacon:cell:0:bite:16",
+            "targetId": "unmarked-0",
+            "actualDamage": 12,
+            "acceptedSynergies": 0,
+            "nextReadyAt": 3.0166666666666666
+          },
+          {
+            "scanTick": 182,
+            "beaconId": "1704:2:scan:182:beacon",
+            "beaconMode": "patrol",
+            "biteTick": 197,
+            "rootId": "1704:2:scan:182:beacon:cell:0:bite:197",
+            "targetId": "unmarked-1",
+            "actualDamage": 12,
+            "acceptedSynergies": 0,
+            "nextReadyAt": 6.033333333333333
+          }
+        ],
+        "metrics": {
+          "chainTriggers": 0,
+          "chainHops": 0,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 0,
+          "patrolBites": 2,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 2,
+          "pulseUses": 0,
+          "crystalExposures": 0,
+          "corePulseHits": 0,
+          "airwayCloses": 0,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [],
+          "migrationChoice": null,
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [],
+          "coreCleared": false
+        }
+      }
+    }
+  },
+  "invariants": {
+    "configuredDamageUnchanged": true,
+    "targetSelectionUnchanged": true,
+    "commandOrderUnchanged": true,
+    "commandBudgetUnchanged": true,
+    "maxThreeHopsUnchanged": true,
+    "noProtocolRecursionUnchanged": true,
+    "equipmentFlowUnchanged": true,
+    "legacyActivationsRemainAttemptTelemetry": true,
+    "existingRenderAssertionsRetained": true
+  },
+  "conclusions": {
+    "AC-M08-03": "Technically closed by two repeated positive accepted roots per pair, real InputFrame/cooldowns, and both single-protocol controls, exactly within the prescribed preset-scene scope.",
+    "history": "Planned actions remain explicitly labelled. Actual history and protocol hit acknowledgements require same-root/tick/target/protocol/current-organ positive host receipts and accepted metric entries; clipped HP loss is displayed.",
+    "playerValidation": "Real blind playtest and appeal remain outside this technical audit."
+  }
+}

@@ -1,0 +1,17 @@
+import{execFileSync}from'node:child_process';import{readFileSync,writeFileSync,copyFileSync,mkdirSync,existsSync}from'node:fs';import{createHash}from'node:crypto';
+const folder='artifacts/completion-v074/build',old=JSON.parse(readFileSync('.tools/v074-frozen.json'));
+if(existsSync(folder+'/final-freeze.json'))throw Error('Preserve existing final freeze.');
+const hash=p=>createHash('sha256').update(readFileSync(p)).digest('hex');
+if(old.gameSha256!=='f4cedb75423b7be20aecb112cc5d40cdeeb6e428e99532c2a9e9c24b8f0892b1'||hash('dist/game.js')!==old.gameSha256)throw Error('Unexpected candidateA build.');
+mkdirSync(folder+'/candidate-a',{recursive:true});
+for(const p of ['index.html','game.js','build-meta.json'])copyFileSync('dist/'+p,folder+'/candidate-a/'+p);
+const startedAt=new Date().toISOString();const typeLog=execFileSync(process.execPath,['node_modules/typescript/bin/tsc','--noEmit'],{encoding:'utf8',windowsHide:true});
+const buildLog=execFileSync(process.execPath,['scripts/build-offline.mjs'],{encoding:'utf8',windowsHide:true});
+const meta=JSON.parse(readFileSync('dist/build-meta.json'));
+if(meta.version!=='0.7.4'||Object.entries(meta.sourceManifest).some(([p,h])=>hash(p)!==h))throw Error('Invalid current build');
+const changes=Object.keys(meta.sourceManifest).filter(p=>old.sourceManifest[p]!==meta.sourceManifest[p]);
+if(JSON.stringify(changes.sort())!==JSON.stringify(['src/game/battle.ts','src/game/battleConfig.ts']))throw Error('Unexpected production edits: '+changes.join(','));
+const outputs=Object.fromEntries(['dist/index.html','dist/game.js','dist/build-meta.json'].map(p=>[p,hash(p)]));
+const record={version:meta.version,candidate:'B-final',startedAt,finishedAt:new Date().toISOString(),revision:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8',windowsHide:true}).trim(),commands:[[process.execPath,'node_modules/typescript/bin/tsc','--noEmit'],[process.execPath,'scripts/build-offline.mjs']],typecheckExitCode:0,buildExitCode:0,gameSha256:outputs['dist/game.js'],outputs,sourceManifest:meta.sourceManifest,sourceInputCount:Object.keys(meta.sourceManifest).length,typeLog,buildLog,priorCandidate:{freeze:folder+'/freeze.json',gameSha256:old.gameSha256,changedBuildInputs:changes,changeRecord:'artifacts/completion-v074/candidate-b-corrections/changes.json',scope:'Two hint strings corrected, all damage/timing/geometry/evolution logic unchanged. Earlier executions keep their original candidateA identity.'}};
+writeFileSync(folder+'/final-freeze.json',JSON.stringify(record,null,2));copyFileSync('dist/build-meta.json',folder+'/final-build-meta.json');writeFileSync('.tools/v074-frozen.json',JSON.stringify(record,null,2));
+console.log(JSON.stringify({version:record.version,candidate:record.candidate,gameSha256:record.gameSha256,sourceInputCount:record.sourceInputCount,changedBuildInputs:changes}));

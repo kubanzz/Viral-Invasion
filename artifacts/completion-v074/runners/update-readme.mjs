@@ -1,0 +1,64 @@
+import{writeFileSync,readFileSync,existsSync}from'node:fs';
+const summary=JSON.parse(readFileSync('artifacts/completion-v074/verification-summary.json'));
+if(!summary.finalTechnicalCandidate)throw Error('Wait for final qualification.');
+const content=`# Viral Invasion · 病毒入侵
+
+在巨人体内作战的生物幻想动作小游戏。当前 **v0.7.4 / G4 试玩优化候选**，围绕玩家提出的空间拥挤、成长无感和攻击单调完成改造。
+
+## 立即游玩
+
+下载并完整解压 [v0.7.4离线包](releases/Viral-Invasion-G4-v0.7.4.zip)，双击 \`Open-Game.cmd\`。工作区也可双击 \`Start-Game.cmd\`，或用 Chrome / Edge 打开 \`dist/index.html\`。无需网络、账号或服务器。
+
+- **更大的战场**：2400×1500心脏与肺部，实际可行动地面约旧版4.23倍。设施分区、跟随镜头、小地图和器官往返支持路线选择。
+- **可以继续进阶的构筑**：四种协议、三槽、每次三候选；协议升至Ⅰ/Ⅱ/Ⅲ阶，卡片显示前后数值与新用法，后续还有定向研究与下局Ⅰ阶预装。每次选择期间暂停。
+- **可见的免疫协同**：Q空装召一只侦巡；装备免疫灯塔后召三只细胞，移动、绕障、接触咬击。搭配异常显影优先围猎标记体；共振裂解搭配连锁净化增加一跳。Ⅱ/Ⅲ阶连锁还会在持续命中时折射。
+
+本版修正进化记录和连锁命中标记，只呈现实际成功的跳数及真实HP损失。当前配装详情可查看阶数、校准、实际命中、效果、限制和用法。详细设计及证据见 [v0.7.4验收](Docs/ViralInvasion_v0.7.4_Acceptance.md)、[最初三点反馈改造](Docs/ViralInvasion_PlaytestFeedback_v0.6.0.md)。
+
+## 建议这样体验
+
+1. Q诊断后，用1清除感染源，停止增援；用3对医疗十字抢修。
+2. 首次草案选择**免疫灯塔**，鼠标指向活敌再按Q。停火片刻，能更容易看清小队移动和咬击。进一步选择异常显影观察优先围猎。
+3. 已有协议继续升级可达Ⅲ阶。也可尝试共振裂解＋连锁净化，靠近装置利用冲流、破绽和连锁清群。不要把三个槽位理解为整局只有三种提升。
+4. 看清变异预警：晶壳绕后或E冲流破壳，裂殖小体用2清群，潜伏体Q显形。2还能击退可移动敌人、打断前摇。
+5. 第二次变异后选择追击或封锁。肺部气道E可截流；处理组织危机支点、清源及两次精英，再到复测终端唤醒双特性母巢。
+6. 母巢净化、所有激活器官完整度≥50%、感染<35%后，主动E复测获胜。结算可查看治疗质量、系统掌控、双方进化和真实行动；档案保留发现与最近10局，临时经验/阶数重新开始。
+
+| 按键 | 操作 |
+|---|---|
+| WASD | 八向移动 |
+| 鼠标 / 左键 | 瞄准 / 当前工具，可按住 |
+| Space | 冲刺，1.5秒冷却 |
+| 1 / 2 / 3 | 精确净化 / 范围裂解 / 组织修复 |
+| Q | 扫描与免疫召集 |
+| E | 附近装置、研究、器官出口及复测 |
+| Esc | 暂停 / 继续 |
+
+细胞需要实际接近敌人，不穿组织障碍，不能直接攻击核膜保护的母巢。心脏冲流消耗4完整度、冷却8秒；肺部关闭气道消耗3，开启消耗1。感染100后有15秒恢复机会；低完整度会影响全身稳定，恢复至50%才缓慢回升。操作手册和战术记录可在游戏内回看，支持关闭声音和低特效。
+
+## 从源码运行
+
+需要 Node.js 22.12+ 或24+与npm。浏览器发行没有运行时依赖。
+
+\`\`\`sh
+npm ci
+npm run dev
+npm test
+npm run build
+npm run test:e2e
+\`\`\`
+
+\`src/\`为TypeScript/Canvas原创实现，\`tests/\`包含规则和真实浏览器回归，\`scripts/\`为构建/采集工具，\`Docs/\`记录实施与验收。\`DesignDoc_v1.3/\`原文完整保留。\`dist/\`和\`releases/\`不进入Git；干净检出须构建。构建输出经典IIFE脚本与内联CSS，file入口不依赖CDN。
+
+加 \`?seed=12345\`可指定病例，\`&trait=CARAPACE/FISSION/MIMIC\`可显式指定首分支用于回归；仍需正常战斗与完整预警。训练及G1/G2 fixture是小图机制场景。\`window.__viral\`仅提供只读快照/投影，存档键为\`viral-invasion:1:profile\`，不可写时降级会话暂存并提示。
+
+## 验证与待观察
+
+当前最终包独立干净检出\`npm ci/build/test\`通过，50文件396项测试，其中395非批次＋1包含1000正式会话的批次；1000胜、零不变量失败，重放一致。完整浏览器116分配项中90通过、26按浏览器分配跳过；定向6项为独立重资格，不累加唯一覆盖。ZIP五文件校验及Chrome/Edge断网冒烟通过。帧预算、有限内存与逐图范围见 [验证汇总](artifacts/completion-v074/verification-summary.json)，不把功能并发测试当作性能。
+
+代码提交\`40fb88e\`，分支dev-zbj，本机无Git远端，提交尚未推送。当前构建与来源见[最终核对](artifacts/completion-v074/provenance-final.json)。历史[v0.7.3验收](Docs/ViralInvasion_v0.7.3_Acceptance.md)和原始失败报告保留各自版本归属。
+
+标准五位新玩家盲测仍0/5；已有用户反馈单独记录。首玩10–15分钟、首次三分钟理解、成长体感、自发复玩和商业潜力仍待真实观察。原生OS失焦/最小化、真实Ctrl缩放及完整内存稳定还有开放子项。执行包见[真人试玩记录](Docs/ViralInvasion_Playtest.md)。
+`;
+writeFileSync('README.md',content,'utf8');
+console.log('Updated current README with verified terminal counts.');

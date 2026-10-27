@@ -1,6 +1,6 @@
 # Viral Invasion 实施计划
 
-当前版本：v0.7.3-G4 技术候选（本轮技术范围通过，产品门槛未关闭） · 设计基线：v1.3 · 日期：2026-10-27
+当前版本：v0.7.4-G4 技术候选（本轮技术范围通过，产品门槛未关闭） · 设计基线：v1.3 · 日期：2026-10-27
 
 本文将六份设计文档转为分阶段工作清单。实现、自动测试、真实浏览器输入、真人试玩分别登记；计划条目不代表已实现或已通过。测试结果以 `ViralInvasion_TestMatrix.md` 和真实产物为准。
 
@@ -140,3 +140,8 @@ G4 新增 `src/meta/profile.ts`、`src/ui/profileHud.ts` 与 `profile.css`，完
 新包单次独占[压力终态](../artifacts/completion-v073/performance/attempt-1/execution.json)退出0、保持冻结：600.183有效模拟秒，标准300.0435秒／59.9813FPS、低效300.1435秒／60.0013FPS、p95均16.8ms；24活体＋3细胞仅为采样共存，非全程满额。整局实际咬击1037含setup／warmup，905为轮询语义日志，不能改称accepted下界。119自然样本和[终后GC／10重开](../artifacts/completion-v073/performance/attempt-1/memory-review.json)分列，容量扩张保留；菜单3GC后used4,632,492→10重开4,776,624 bytes，节点453／453／424、监听37／37／37，不据此证明无泄漏。[15张原图审阅](../artifacts/completion-v073/visual-review.json)、[最终来源](../artifacts/completion-v073/provenance-final.json)与[汇总](../artifacts/completion-v073/verification-summary.json)独立关联本版。
 
 [原设计范围审计](../artifacts/completion-v073/requirements-terminal-closure.json)在full／clean截止下112要求中73proven、36partial、3missing，39仍开放；之后完成的布局／压力／发行技术证据另记，不自动关闭全部规划。旧C的干净检出、性能和发行只保留历史证据；首玩节奏、三分钟理解、两局策略变化、自发复玩、真人0/5、原生OS失焦／最小化、真实Ctrl缩放及完整内存稳定继续未关闭，不由自动化推断孵化或商业价值。
+
+
+## v0.7.4 实际协议收益与补充闭环
+
+本版修正计划协议日志被当成命中：实际历史、跳数和伤害标记只接受真实正HP损失及同根指标回执；另校准全身稳定恢复门槛与潜伏修复提示。源码40fb88e，最终game.js SHA a253faaf85e61370ec7abd71521a955c14265d67daf04f9db2e55de94b693a39，60输入。两组重复联动、三首trait非针对正式通关、冲流几何/通行、所有高优先提示、三种自然失败与输入重开闭环补齐。50文件396项、1000正式会话、90真实浏览器通过/26分配skip、独立干净构建与离线五文件均通过，100事件/600秒与视觉逐项见[v0.7.4验收](ViralInvasion_v0.7.4_Acceptance.md)。原文112项按最新证据重审，不以旧审计额外主观条件阻塞纯技术要求；真人趣味、节奏、原生OS与真实缩放仍独立开放。

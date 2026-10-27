@@ -1,0 +1,2382 @@
+{
+  "generatedAt": "2026-10-27T09:55:46.183Z",
+  "revisionAtInventory": "fefccfcba5a43fc2d36ba81687f1864da66ced61",
+  "method": "Read-only original-document, source, PNG header/hash and saved report attachment inspection. No browser, build, simulation or gameplay started.",
+  "requirements": [
+    {
+      "id": "AC-M04-05",
+      "source": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 196,
+        "text": "在实际游戏视野尺度、简化黑白剪影下，玩家、普通病毒、晶壳/裂殖/潜伏体均有可区分的头身或外轮廓；有接地位置和被击反应。",
+        "exactSourceLine": "- `AC-M04-05`：在实际游戏视野尺度、简化黑白剪影下，玩家、普通病毒、晶壳/裂殖/潜伏体均有可区分的头身或外轮廓；有接地位置和被击反应。",
+        "sourceSha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74"
+      },
+      "assessmentAtOldCutoff": "不同轮廓和命中反应代码仍存在，历史黑白剪影图有证据；C实战缩放的专门黑白对照未重采。",
+      "actualMissingEvidenceAtOldCutoff": "可用现有capture-silhouettes脚本另目录生成C派生黑白图并目视；同时引用当前战场实际缩放图，真人辨认仍另列VIS12。",
+      "requiresFiveHumansForTechnicalClause": false,
+      "humanBoundary": "VIS-12 and M14-02 require new-player observations; this technical visual row must not remain open solely because humans are 0/5."
+    },
+    {
+      "id": "AC-M05-01",
+      "source": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 202,
+        "text": "对每种变异，测试未变异行为、≥8 秒预警、变异后行为均可观察；至少一种视觉形态变化和一个明确弱点提示。",
+        "exactSourceLine": "- `AC-M05-01`：对每种变异，测试未变异行为、≥8 秒预警、变异后行为均可观察；至少一种视觉形态变化和一个明确弱点提示。",
+        "sourceSha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74"
+      },
+      "assessmentAtOldCutoff": "当前三trait≥8秒前兆/生效行为单位直接通过，C浏览器覆盖晶壳与潜伏；每trait同场景before/warning/after完整视觉组仍历史。",
+      "actualMissingEvidenceAtOldCutoff": "可用现有G1/G2和capture演进路径在C重取三trait状态图；不把后台数值测试当视觉三态。",
+      "requiresFiveHumansForTechnicalClause": false,
+      "humanBoundary": "VIS-12 and M14-02 require new-player observations; this technical visual row must not remain open solely because humans are 0/5."
+    },
+    {
+      "id": "AC-M05-06",
+      "source": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 207,
+        "text": "每类变异具备肉眼可辨的形态变化与可回看的弱点标识；对照预警、变异后、破绽状态画面，不以简单更换颜色替代进化美术。",
+        "exactSourceLine": "- `AC-M05-06`：每类变异具备肉眼可辨的形态变化与可回看的弱点标识；对照预警、变异后、破绽状态画面，不以简单更换颜色替代进化美术。",
+        "sourceSha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74"
+      },
+      "assessmentAtOldCutoff": "当前有非换色轮廓、可回看弱点与文本单元；C每trait预警/变异/破绽画面对照不齐，历史组不自动迁移。",
+      "actualMissingEvidenceAtOldCutoff": "现有三trait/browser视觉专项刷新C，同步区分代理技术审阅与5人主观辨识。",
+      "requiresFiveHumansForTechnicalClause": false,
+      "humanBoundary": "VIS-12 and M14-02 require new-player observations; this technical visual row must not remain open solely because humans are 0/5."
+    },
+    {
+      "id": "VIS-05",
+      "source": {
+        "text": "玩家、普通体、晶壳/裂殖/潜伏的**黑白剪影**在实战缩放下可区分，并与进化规则对应",
+        "expectedEvidence": "等比例剪影对比图",
+        "source": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+        "line": 140,
+        "exactSourceLine": "| `VIS-05` | G1 | 玩家、普通体、晶壳/裂殖/潜伏的**黑白剪影**在实战缩放下可区分，并与进化规则对应 | 等比例剪影对比图 |",
+        "sourceSha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b"
+      },
+      "assessmentAtOldCutoff": "存在G1等比例黑白剪影图；当前battleVisuals持续按晶壳棱冠/裂殖分体/潜伏伪态绘制，机制单元覆盖形态关联。C图可辨玩家和两精英，非完整三分支黑白图。",
+      "actualMissingEvidenceAtOldCutoff": "用当前绘制源和实战尺度保存玩家/普通/三分支黑白对照及实际场景对应，标明派生图与实机来源。",
+      "requiresFiveHumansForTechnicalClause": false,
+      "humanBoundary": "VIS-12 and M14-02 require new-player observations; this technical visual row must not remain open solely because humans are 0/5."
+    },
+    {
+      "id": "VIS-06",
+      "source": {
+        "text": "心脏搏动、流向、阀门/冲流范围提示在战斗中看得见；示意预览与实际影响范围相符",
+        "expectedEvidence": "录屏与规则断言",
+        "source": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+        "line": 141,
+        "exactSourceLine": "| `VIS-06` | G1 | 心脏搏动、流向、阀门/冲流范围提示在战斗中看得见；示意预览与实际影响范围相符 | 录屏与规则断言 |",
+        "sourceSha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b"
+      },
+      "assessmentAtOldCutoff": "C晶壳研究真实冲流中断危机/暴露/共振有accepted事件；current pulsePreview共享几何，历史阀门预览/实际冲流原图/录像存在。",
+      "actualMissingEvidenceAtOldCutoff": "当前g1/G3实机保存阀门流向预览、范围边界和真实位移/暴露，保留事件与几何断言，不把日志意图当实际位移。",
+      "requiresFiveHumansForTechnicalClause": false,
+      "humanBoundary": "VIS-12 and M14-02 require new-player observations; this technical visual row must not remain open solely because humans are 0/5."
+    },
+    {
+      "id": "VIS-08",
+      "source": {
+        "text": "病毒进化前/预警/进化后，玩家能在实机画面辨识能力变化和对应反制，不只显示数值改变",
+        "expectedEvidence": "同场景三状态截图/录屏",
+        "source": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+        "line": 143,
+        "exactSourceLine": "| `VIS-08` | G2 | 病毒进化前/预警/进化后，玩家能在实机画面辨识能力变化和对应反制，不只显示数值改变 | 同场景三状态截图/录屏 |",
+        "sourceSha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b"
+      },
+      "assessmentAtOldCutoff": "C晶壳/潜伏定向研究有实际诊断/首次反制、形态/弱点文字和事件；旧G2同场景before/warning/after三图存在。",
+      "actualMissingEvidenceAtOldCutoff": "当前三分支各保留前/预警/后及反制破绽实机连贯来源；五新玩家原话与误认留真人记录。",
+      "requiresFiveHumansForTechnicalClause": false,
+      "humanBoundary": "VIS-12 and M14-02 require new-player observations; this technical visual row must not remain open solely because humans are 0/5."
+    },
+    {
+      "id": "VIS-09",
+      "source": {
+        "text": "不看器官名称也能通过**心脏：瓣膜/血流/脉冲，肺部：肺泡/气道/气流**区分场景，且其特性影响实际玩法",
+        "expectedEvidence": "心肺同等缩放截图 + 交互录屏",
+        "source": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+        "line": 144,
+        "exactSourceLine": "| `VIS-09` | G3 | 不看器官名称也能通过**心脏：瓣膜/血流/脉冲，肺部：肺泡/气道/气流**区分场景，且其特性影响实际玩法 | 心肺同等缩放截图 + 交互录屏 |",
+        "sourceSha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b"
+      },
+      "assessmentAtOldCutoff": "当前lungVisuals/organLandscape与心脏图层不同，肺泡/气道/气流规则仍在；C1000模拟走三迁移路线并有关闭气道等accepted事实。历史G3同等尺度心肺实机/位移成本可追溯。",
+      "actualMissingEvidenceAtOldCutoff": "当前真实浏览器追击/放任并跨器官、保存相同比例心肺图及吸呼气/气道实际影响；不看标签辨识留真人观察。",
+      "requiresFiveHumansForTechnicalClause": false,
+      "humanBoundary": "VIS-12 and M14-02 require new-player observations; this technical visual row must not remain open solely because humans are 0/5."
+    },
+    {
+      "id": "RUN-12",
+      "source": {
+        "text": "风格与战斗可读性：同场景病毒三分支形态对照→心脏搏动及肺部气流对照→密集混战/低特效→玩家、危险、弱点和当前器官均能辨认。",
+        "source": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 395,
+        "exactSourceLine": "12. `RUN-12` 风格与战斗可读性：同场景病毒三分支形态对照→心脏搏动及肺部气流对照→密集混战/低特效→玩家、危险、弱点和当前器官均能辨认。",
+        "sourceSha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74"
+      },
+      "assessmentAtOldCutoff": "当前密集/低特效真实图与机制在，旧同场景三trait三状态、心跳/肺气流技术图保留；C本轮未重新串联三分支→心肺环境→密集低效全过程。",
+      "actualMissingEvidenceAtOldCutoff": "补C同源三分支、心肺主动环境交互和密集双档的可回溯截图/输入/实际判定；真人视觉认知独立VIS12。",
+      "requiresFiveHumansForTechnicalClause": false,
+      "humanBoundary": "VIS-12 and M14-02 require new-player observations; this technical visual row must not remain open solely because humans are 0/5."
+    }
+  ],
+  "priorBundle": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+  "priorFullReportSha256": "554201c50688e5183cdfe484ad4087c20e450a93273ccd88daffbd730414bf89",
+  "sourceComparison": [
+    {
+      "path": "src/actors/collision.ts",
+      "frozen073": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+      "current": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+      "unchanged": true
+    },
+    {
+      "path": "src/audio.ts",
+      "frozen073": "015ef7700c5e2628741f2be5058858f9d654efd519bde0c516189ed7f0325f98",
+      "current": "015ef7700c5e2628741f2be5058858f9d654efd519bde0c516189ed7f0325f98",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/clock.ts",
+      "frozen073": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+      "current": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/events.ts",
+      "frozen073": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+      "current": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/rng.ts",
+      "frozen073": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+      "current": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/battle.ts",
+      "frozen073": "7f2a312b8c7f155ca3bbf28c34c0303ba0ca52a74630deb70f9db1b72043c9b7",
+      "current": "7f2a312b8c7f155ca3bbf28c34c0303ba0ca52a74630deb70f9db1b72043c9b7",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/battleConfig.ts",
+      "frozen073": "937a2c91827c7184bcabf0eae13db315d52d0517d75b1696e2217f4e2c0de072",
+      "current": "937a2c91827c7184bcabf0eae13db315d52d0517d75b1696e2217f4e2c0de072",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/battleTypes.ts",
+      "frozen073": "6a061520db6c6483c5ec14847cf29a8619bb4ec8ee23d166b8b6de09bfef84c7",
+      "current": "6a061520db6c6483c5ec14847cf29a8619bb4ec8ee23d166b8b6de09bfef84c7",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/campaign.ts",
+      "frozen073": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+      "current": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/campaignEncounters.ts",
+      "frozen073": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+      "current": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/campaignTypes.ts",
+      "frozen073": "ff301247b34797b7731bc5e0e0b792eef99bbf75eefd4955d2876a4e7c2788dd",
+      "current": "ff301247b34797b7731bc5e0e0b792eef99bbf75eefd4955d2876a4e7c2788dd",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/counterLesson.ts",
+      "frozen073": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+      "current": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/encounterConfig.ts",
+      "frozen073": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+      "current": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/encounterTypes.ts",
+      "frozen073": "7d5027852136cd4504fa10439903f342a7f9d78adb6ada65adf6105bb7c54c10",
+      "current": "7d5027852136cd4504fa10439903f342a7f9d78adb6ada65adf6105bb7c54c10",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/evolution.ts",
+      "frozen073": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+      "current": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/evolutionTypes.ts",
+      "frozen073": "dbd661c484a7d442f1e23d939f1c67e7699e14259213d729e292e74b04fd90fa",
+      "current": "dbd661c484a7d442f1e23d939f1c67e7699e14259213d729e292e74b04fd90fa",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/growth.ts",
+      "frozen073": "f68c344485ea4fcd20bd7054795b29a40446431c7f13a50af53df34274e6c82b",
+      "current": "f68c344485ea4fcd20bd7054795b29a40446431c7f13a50af53df34274e6c82b",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/growthTypes.ts",
+      "frozen073": "5975f29d54e39b69538888c60b322cd5f6eb031195ee604d4226e0f7b327b65b",
+      "current": "5975f29d54e39b69538888c60b322cd5f6eb031195ee604d4226e0f7b327b65b",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/immuneCells.ts",
+      "frozen073": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80",
+      "current": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/motherCore.ts",
+      "frozen073": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+      "current": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/motherCoreTypes.ts",
+      "frozen073": "8b3b2442074429be623bae033eaab9b1ba61fc95d138dc33025f905c6db97e00",
+      "current": "8b3b2442074429be623bae033eaab9b1ba61fc95d138dc33025f905c6db97e00",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/organConfig.ts",
+      "frozen073": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+      "current": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/organRules.ts",
+      "frozen073": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+      "current": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/preparation.ts",
+      "frozen073": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+      "current": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/protocols.ts",
+      "frozen073": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+      "current": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/research.ts",
+      "frozen073": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+      "current": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/runMetrics.ts",
+      "frozen073": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+      "current": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/session.ts",
+      "frozen073": "57173793b76938e051b5bb080017d58a35611eb3b283f0a527742b6e9eaece2a",
+      "current": "57173793b76938e051b5bb080017d58a35611eb3b283f0a527742b6e9eaece2a",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/tacticalFeedback.ts",
+      "frozen073": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+      "current": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+      "unchanged": true
+    },
+    {
+      "path": "src/game/types.ts",
+      "frozen073": "c8d67e724f3176da9783dc2e7b9b059ede419f2bfa5e14b7e0063d3390324cbb",
+      "current": "c8d67e724f3176da9783dc2e7b9b059ede419f2bfa5e14b7e0063d3390324cbb",
+      "unchanged": true
+    },
+    {
+      "path": "src/input/controller.ts",
+      "frozen073": "a26bac630063676bc2a168301cc5110da81a82e0d35cc9f6ee5ca3eeec51958c",
+      "current": "a26bac630063676bc2a168301cc5110da81a82e0d35cc9f6ee5ca3eeec51958c",
+      "unchanged": true
+    },
+    {
+      "path": "src/main.ts",
+      "frozen073": "9625c9e69064cff21aea547a650d10d396b58dbcb445cff16777ddec095e4867",
+      "current": "9625c9e69064cff21aea547a650d10d396b58dbcb445cff16777ddec095e4867",
+      "unchanged": true
+    },
+    {
+      "path": "src/meta/profile.ts",
+      "frozen073": "7fd5d16754e633e6f2364b74772c2f9154e68bd7e3abbd33391a617838d94c81",
+      "current": "7fd5d16754e633e6f2364b74772c2f9154e68bd7e3abbd33391a617838d94c81",
+      "unchanged": true
+    },
+    {
+      "path": "src/meta/runOptions.ts",
+      "frozen073": "2afc173d0af2f55b907dae5baceda1d5f222af59ef6c021bb4a16170e0ee9c26",
+      "current": "2afc173d0af2f55b907dae5baceda1d5f222af59ef6c021bb4a16170e0ee9c26",
+      "unchanged": true
+    },
+    {
+      "path": "src/render/battleVisuals.ts",
+      "frozen073": "eb018bf5de39ce3ebd11cc1813b2befa8448e378c8b9f11938b8066fccc508f4",
+      "current": "eb018bf5de39ce3ebd11cc1813b2befa8448e378c8b9f11938b8066fccc508f4",
+      "unchanged": true
+    },
+    {
+      "path": "src/render/camera.ts",
+      "frozen073": "ca117a766229b5770d49491559dbe016aca210876315f4069f5db42081f748e5",
+      "current": "ca117a766229b5770d49491559dbe016aca210876315f4069f5db42081f748e5",
+      "unchanged": true
+    },
+    {
+      "path": "src/render/depthSort.ts",
+      "frozen073": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+      "current": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+      "unchanged": true
+    },
+    {
+      "path": "src/render/encounterVisuals.ts",
+      "frozen073": "e54daa69e6da56935f5b6741bb5bf565a3909389d2bdc5f6935d1a5d9303616c",
+      "current": "e54daa69e6da56935f5b6741bb5bf565a3909389d2bdc5f6935d1a5d9303616c",
+      "unchanged": true
+    },
+    {
+      "path": "src/render/growthVisuals.ts",
+      "frozen073": "aedcf1cc105935a4694d9b752c180894ecbb0a408fca7175394f4d3493086d77",
+      "current": "aedcf1cc105935a4694d9b752c180894ecbb0a408fca7175394f4d3493086d77",
+      "unchanged": true
+    },
+    {
+      "path": "src/render/immuneTraceCues.ts",
+      "frozen073": "80558b755ae1054388a982182b430b41e5ceb98119b7ad0758b694dabdfd66d7",
+      "current": "80558b755ae1054388a982182b430b41e5ceb98119b7ad0758b694dabdfd66d7",
+      "unchanged": true
+    },
+    {
+      "path": "src/render/immuneVisuals.ts",
+      "frozen073": "07a8b19251d4bb706065ce4443fe0816f1d48ced6e5f5419244f30552bc3ac2c",
+      "current": "07a8b19251d4bb706065ce4443fe0816f1d48ced6e5f5419244f30552bc3ac2c",
+      "unchanged": true
+    },
+    {
+      "path": "src/render/index.ts",
+      "frozen073": "2698caf58367ca3ce04087e293e350a0b9fd790087b5948406b2d60d77eb7bf8",
+      "current": "2698caf58367ca3ce04087e293e350a0b9fd790087b5948406b2d60d77eb7bf8",
+      "unchanged": true
+    },
+    {
+      "path": "src/render/layers.ts",
+      "frozen073": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+      "current": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+      "unchanged": true
+    },
+    {
+      "path": "src/render/lungVisuals.ts",
+      "frozen073": "20d5256b03d2c784d9b4027d996484458243b891eba4fa41d58cf98073233d2b",
+      "current": "20d5256b03d2c784d9b4027d996484458243b891eba4fa41d58cf98073233d2b",
+      "unchanged": true
+    },
+    {
+      "path": "src/render/navigation.ts",
+      "frozen073": "ab776f6e94b141663e1bd46ca23da738e7ebf679ef0bf211258fc89f833355a5",
+      "current": "ab776f6e94b141663e1bd46ca23da738e7ebf679ef0bf211258fc89f833355a5",
+      "unchanged": true
+    },
+    {
+      "path": "src/render/occlusion.ts",
+      "frozen073": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+      "current": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+      "unchanged": true
+    },
+    {
+      "path": "src/render/organLandscape.ts",
+      "frozen073": "3ea49be35cc7e1a3a4d7ac0e4356031f7255e3ad6c941e13b666fee5946f63a2",
+      "current": "3ea49be35cc7e1a3a4d7ac0e4356031f7255e3ad6c941e13b666fee5946f63a2",
+      "unchanged": true
+    },
+    {
+      "path": "src/render/pulsePreview.ts",
+      "frozen073": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+      "current": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+      "unchanged": true
+    },
+    {
+      "path": "src/render/raisedObstacleGeometry.ts",
+      "frozen073": "373e3f145fd521367be7adc93c8461b5407cfe384866f2eb59c2a3ee645a3df6",
+      "current": "373e3f145fd521367be7adc93c8461b5407cfe384866f2eb59c2a3ee645a3df6",
+      "unchanged": true
+    },
+    {
+      "path": "src/render/raisedObstacleOcclusion.ts",
+      "frozen073": "0486c6daed7617275f28aab6406f84783a3e3695ae1059e9a2c99634f47308f1",
+      "current": "0486c6daed7617275f28aab6406f84783a3e3695ae1059e9a2c99634f47308f1",
+      "unchanged": true
+    },
+    {
+      "path": "src/render/renderer.ts",
+      "frozen073": "def49278c80f1204267059b934c21f62e3cacc6736a4e572c59f8188b80be268",
+      "current": "def49278c80f1204267059b934c21f62e3cacc6736a4e572c59f8188b80be268",
+      "unchanged": true
+    },
+    {
+      "path": "src/style.css",
+      "frozen073": "a43d13267f171988d5d497bd9024a3013648b1262d1769d5de20b3d2a7e0d986",
+      "current": "a43d13267f171988d5d497bd9024a3013648b1262d1769d5de20b3d2a7e0d986",
+      "unchanged": true
+    },
+    {
+      "path": "src/ui/battleHud.ts",
+      "frozen073": "aaf74c1fea93321652e875b011f7c2865ab4b2bb3a767d79158f8fc1dda90a97",
+      "current": "aaf74c1fea93321652e875b011f7c2865ab4b2bb3a767d79158f8fc1dda90a97",
+      "unchanged": true
+    },
+    {
+      "path": "src/ui/campaignHud.ts",
+      "frozen073": "2bf4317ceee2a5d17deb46278d19e19fc89dc79df16c1bc437a6acbc0c7f0cc3",
+      "current": "2bf4317ceee2a5d17deb46278d19e19fc89dc79df16c1bc437a6acbc0c7f0cc3",
+      "unchanged": true
+    },
+    {
+      "path": "src/ui/encounter.css",
+      "frozen073": "e5a9925b175251afb21833c663c4aa1ca7ff56370836b9de390fe62d5b9e7ffe",
+      "current": "e5a9925b175251afb21833c663c4aa1ca7ff56370836b9de390fe62d5b9e7ffe",
+      "unchanged": true
+    },
+    {
+      "path": "src/ui/encounterHud.ts",
+      "frozen073": "1cb4ef363f9471a78f615c58301f66e04ce689be4f8475120ed045f86502877d",
+      "current": "1cb4ef363f9471a78f615c58301f66e04ce689be4f8475120ed045f86502877d",
+      "unchanged": true
+    },
+    {
+      "path": "src/ui/growthHud.ts",
+      "frozen073": "78b435a66782398d9bc5202032d6fa0fea80ad217be26a621dc26850ef460786",
+      "current": "78b435a66782398d9bc5202032d6fa0fea80ad217be26a621dc26850ef460786",
+      "unchanged": true
+    },
+    {
+      "path": "src/ui/profile.css",
+      "frozen073": "e7a171fa930fc5c43a81550554c7f68abc7c8e11515bb55ef2098ca00fd35cc7",
+      "current": "e7a171fa930fc5c43a81550554c7f68abc7c8e11515bb55ef2098ca00fd35cc7",
+      "unchanged": true
+    },
+    {
+      "path": "src/ui/profileHud.ts",
+      "frozen073": "ce14fcd40a45ae663ffc94df955609f5ab7056d48fb7fe76264f020a6e473363",
+      "current": "ce14fcd40a45ae663ffc94df955609f5ab7056d48fb7fe76264f020a6e473363",
+      "unchanged": true
+    },
+    {
+      "path": "src/ui/research.css",
+      "frozen073": "db48bcb15fbb3cc242530ab682b220a4caaafd73e939adf204a90d401da69bed",
+      "current": "db48bcb15fbb3cc242530ab682b220a4caaafd73e939adf204a90d401da69bed",
+      "unchanged": true
+    },
+    {
+      "path": "src/ui/startingPlan.css",
+      "frozen073": "8de9969303735e56cdab18a1070dc1068f3786e6276c71e76791f684bdc4b2d3",
+      "current": "8de9969303735e56cdab18a1070dc1068f3786e6276c71e76791f684bdc4b2d3",
+      "unchanged": true
+    },
+    {
+      "path": "src/ui/startingPlanHud.ts",
+      "frozen073": "bdf944c887ea8f1cb7860b853542d26e833db154ddd02bc818ef5500761ee2d2",
+      "current": "bdf944c887ea8f1cb7860b853542d26e833db154ddd02bc818ef5500761ee2d2",
+      "unchanged": true
+    },
+    {
+      "path": "src/ui/tacticalHistory.ts",
+      "frozen073": "c159a53e514049043f0a41dfb07b435a8774630993d039d68832fbb1c4db137b",
+      "current": "c159a53e514049043f0a41dfb07b435a8774630993d039d68832fbb1c4db137b",
+      "unchanged": true
+    }
+  ],
+  "images": [
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounter-rear-Formal-firs-cb883-apace-without-a-valve-pulse-chrome/real-rear-counter.png",
+      "sha256": "28a342aa68b28e88552093dc92e140830327bfa7d4a3be798be9d12560e49552",
+      "width": 1366,
+      "height": 768,
+      "bytes": 573758,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-0b0cd-a-new-case-becomes-adaptive-chrome/skip-inside-help.png",
+      "sha256": "b93e3433572eb00c9caa0c697d87f98bc65f32eba3f5590708a2e8bc5c142ca3",
+      "width": 1366,
+      "height": 768,
+      "bytes": 371187,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-0b0cd-a-new-case-becomes-adaptive-chrome/skipped-help.png",
+      "sha256": "9bfed4d4d9afdad81da43f431ba5014ef92b37153a0ad1e36efe70e7ca77a0cb",
+      "width": 1366,
+      "height": 768,
+      "bytes": 370944,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-0b0cd-a-new-case-becomes-adaptive-edge/skip-inside-help.png",
+      "sha256": "b93e3433572eb00c9caa0c697d87f98bc65f32eba3f5590708a2e8bc5c142ca3",
+      "width": 1366,
+      "height": 768,
+      "bytes": 371187,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-0b0cd-a-new-case-becomes-adaptive-edge/skipped-help.png",
+      "sha256": "2e55867e72aba6ac5b41524a88a78cf7b0de808e11312c6fa2aa0d8778794a0b",
+      "width": 1366,
+      "height": 768,
+      "bytes": 370727,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-1049c-eeps-adaptive-help-truthful-edge/adaptive-mimic-help.png",
+      "sha256": "fecce361d8390b3a8ac7c1e59020bc4add65865379035ec9640b17be9f44c9e9",
+      "width": 1366,
+      "height": 768,
+      "bytes": 378175,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-25429-eeps-adaptive-help-truthful-chrome/adaptive-fission-help.png",
+      "sha256": "27820608eae5cb0c7c0d79246fa5f0288a1797131c357a7cef49b2c566f9a41f",
+      "width": 1366,
+      "height": 768,
+      "bytes": 374861,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-2953d-real-stages-and-clean-retry-chrome/core-active.png",
+      "sha256": "ceefa45489086824a2b8e0d385c9f4744d5cd09190ff1e123f8d8a1a442142e4",
+      "width": 1366,
+      "height": 768,
+      "bytes": 539842,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-2953d-real-stages-and-clean-retry-chrome/counter-accepted.png",
+      "sha256": "0137bf0717951ce04980d19f37b54f29ff17a77c82b0bbef9e5285886e93cfa6",
+      "width": 1366,
+      "height": 768,
+      "bytes": 569780,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-2953d-real-stages-and-clean-retry-chrome/crisis-window-1100.png",
+      "sha256": "4c14539bf8c7346543cc93d98fd9a7ee970ee7c4680540609263aa8cb34ba03d",
+      "width": 1100,
+      "height": 560,
+      "bytes": 409996,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-2953d-real-stages-and-clean-retry-chrome/result.png",
+      "sha256": "e83e3eca3c892a4eff2f07d0b6f3b3fe4ec4391208579fc9b6a5202fe05cadc0",
+      "width": 1366,
+      "height": 768,
+      "bytes": 312833,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-2953d-real-stages-and-clean-retry-chrome/stage-I.png",
+      "sha256": "046b8e91b7c04ae3ca5e8bf9532ba1ec00504577b87ecf8bde2b9c919b64b023",
+      "width": 1366,
+      "height": 768,
+      "bytes": 544634,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-2953d-real-stages-and-clean-retry-chrome/stage-II.png",
+      "sha256": "4dd3a2a81f625847266945e90a8a6887666c7201cde3c1596867e9bf653e0b27",
+      "width": 1366,
+      "height": 768,
+      "bytes": 575580,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-2953d-real-stages-and-clean-retry-chrome/stage-III.png",
+      "sha256": "e1f0fc1bda5dd714ad7e0d7b347d1e1a26ad2e7d043f2097ca7e83ff704ea2fb",
+      "width": 1366,
+      "height": 768,
+      "bytes": 547216,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-2953d-real-stages-and-clean-retry-chrome/stage-V.png",
+      "sha256": "e433de76a5289d077f1279e4f7455508db3756925d44e5bac1a09b126f4d6e05",
+      "width": 1366,
+      "height": 768,
+      "bytes": 608135,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-8327f-real-stages-and-clean-retry-chrome/core-active.png",
+      "sha256": "ddef39b263255f730c4d06785d1a1b137258468d3f6d7fc3d9bfe5939fabf64e",
+      "width": 1366,
+      "height": 768,
+      "bytes": 510671,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-8327f-real-stages-and-clean-retry-chrome/counter-accepted.png",
+      "sha256": "f1cddb3a90304eb5740f47597d9362e4c20fb714f8bb2cc8c013a2ba4a6e797a",
+      "width": 1366,
+      "height": 768,
+      "bytes": 570995,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-8327f-real-stages-and-clean-retry-chrome/crisis-impact-guards.png",
+      "sha256": "0f5c47c17a5edf70959aa2b7e35af633fe4fd222a859f0f649f68311c9b0a9e3",
+      "width": 1366,
+      "height": 768,
+      "bytes": 526847,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-8327f-real-stages-and-clean-retry-chrome/crisis-window.png",
+      "sha256": "f5bcb849ee4aa722a60c98535c705571fd5530a7b24d376ae7dda13f9e8e987d",
+      "width": 1366,
+      "height": 768,
+      "bytes": 524071,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-8327f-real-stages-and-clean-retry-chrome/immune-crisis-contact.png",
+      "sha256": "df2f45fc0444ac84fb80b2232f3d66967a87af903bd8f984a0fe6711398e5eba",
+      "width": 1366,
+      "height": 768,
+      "bytes": 563423,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-8327f-real-stages-and-clean-retry-chrome/result.png",
+      "sha256": "752762874f1d8b438bd9dce1d7414051ae7266354506ce7e96a172929cf3e3e1",
+      "width": 1366,
+      "height": 768,
+      "bytes": 321945,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-8327f-real-stages-and-clean-retry-chrome/stage-I.png",
+      "sha256": "853311b54b8839b2f043b29032de1a12728344f92ee559735108a66ed42a2ae8",
+      "width": 1366,
+      "height": 768,
+      "bytes": 544839,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-8327f-real-stages-and-clean-retry-chrome/stage-II.png",
+      "sha256": "dbe81b1c5d819d9e87c730d26b968352ade32790a4545ba892b7ba17c0f4f91a",
+      "width": 1366,
+      "height": 768,
+      "bytes": 587129,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-8327f-real-stages-and-clean-retry-chrome/stage-III.png",
+      "sha256": "3d3665d14fd849777fbf087ef343ef3d8637a08a432fcdd85f0000cccb49308d",
+      "width": 1366,
+      "height": 768,
+      "bytes": 559823,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-8327f-real-stages-and-clean-retry-chrome/stage-V.png",
+      "sha256": "d07a4eef3dc5e9a05282b24a8435f6c910153a4ef1d96e06b834e44c4813636a",
+      "width": 1366,
+      "height": 768,
+      "bytes": 556091,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-b59cf-real-stages-and-clean-retry-edge/core-active.png",
+      "sha256": "e6aaae8a3741d484285db8611830e31fb8cc011a0663004477ece694e5b4761c",
+      "width": 1366,
+      "height": 768,
+      "bytes": 521928,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-b59cf-real-stages-and-clean-retry-edge/counter-accepted.png",
+      "sha256": "f989c64d781b642fa5f2d09749ffc5170769b5721aac911bd61d888bf0d6f283",
+      "width": 1366,
+      "height": 768,
+      "bytes": 567587,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-b59cf-real-stages-and-clean-retry-edge/crisis-window.png",
+      "sha256": "affaefc09d35fb8a857f250ab804d2af9a2ee49e8ef70b667420f7ffeabeeebf",
+      "width": 1366,
+      "height": 768,
+      "bytes": 511017,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-b59cf-real-stages-and-clean-retry-edge/immune-crisis-contact.png",
+      "sha256": "900d4f9d53679353c9c6e0a6349ae4723cf485785315c746779a3b8e8af2d5c1",
+      "width": 1366,
+      "height": 768,
+      "bytes": 541439,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-b59cf-real-stages-and-clean-retry-edge/result.png",
+      "sha256": "d04f8d4c92c110e2aba07ce0713d050ddc1bf053062f9d18de21c151e2ea7d2b",
+      "width": 1366,
+      "height": 768,
+      "bytes": 320963,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-b59cf-real-stages-and-clean-retry-edge/stage-I.png",
+      "sha256": "c7836253bf5a70000a326a4de3580491687d4eb4c5c439d38f1fcd314a54cd11",
+      "width": 1366,
+      "height": 768,
+      "bytes": 545695,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-b59cf-real-stages-and-clean-retry-edge/stage-II.png",
+      "sha256": "95c373ad0c2a9e279f06a924005d01d444bdc1830742cb484f02e2763cd4e5ae",
+      "width": 1366,
+      "height": 768,
+      "bytes": 577401,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-b59cf-real-stages-and-clean-retry-edge/stage-III.png",
+      "sha256": "218e3aaf6ff837e866e90a7b34aeec7771522001279ac72624ef9a3dbc1e7815",
+      "width": 1366,
+      "height": 768,
+      "bytes": 546645,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/encounters-v070-Formal-enc-b59cf-real-stages-and-clean-retry-edge/stage-V.png",
+      "sha256": "af030c7ad6c99c8472be0e8c000b7c5f357042ebc6f8f45122e8a819223679e8",
+      "width": 1366,
+      "height": 768,
+      "bytes": 562538,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-blo-1d9d1-gh-a-visible-advanced-build-chrome/core.png",
+      "sha256": "aec90fcaae96b07652572e0e5e5a95f6c52be88652c96d30163376511f1455de",
+      "width": 1366,
+      "height": 768,
+      "bytes": 565297,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-blo-1d9d1-gh-a-visible-advanced-build-chrome/draft-1.png",
+      "sha256": "6b78805cb765f0b32b0d8b59f72467bdb2219e53705af20272e631cb5c065166",
+      "width": 1366,
+      "height": 768,
+      "bytes": 468960,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-blo-1d9d1-gh-a-visible-advanced-build-chrome/draft-2.png",
+      "sha256": "140c00d98db2dd5e897400e5414fde9566a458f63413b18f0b57cd4fdf45f690",
+      "width": 1366,
+      "height": 768,
+      "bytes": 472339,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-blo-1d9d1-gh-a-visible-advanced-build-chrome/draft-3.png",
+      "sha256": "6869db40553b4b2e29e8585c1eadfb75efce83abb94482c7cc7ebd2ddf75e86c",
+      "width": 1366,
+      "height": 768,
+      "bytes": 463433,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-blo-1d9d1-gh-a-visible-advanced-build-chrome/draft-4.png",
+      "sha256": "b92894ddea70e1f25382dd83b628711612b6eab0418b97a1c2c5df652eef46bf",
+      "width": 1366,
+      "height": 768,
+      "bytes": 473804,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-blo-1d9d1-gh-a-visible-advanced-build-chrome/migration.png",
+      "sha256": "ab561811441b58b3b191a743e24428e9a6bbd061442491c04edf2920bb69b5c6",
+      "width": 1366,
+      "height": 768,
+      "bytes": 529595,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-blo-1d9d1-gh-a-visible-advanced-build-chrome/protocol_beacon_hit-live.png",
+      "sha256": "157f21095a437cf25a5d320bd7089e810f8f11ac0e24bb0b858073c8cb7176c1",
+      "width": 1366,
+      "height": 768,
+      "bytes": 620821,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-blo-1d9d1-gh-a-visible-advanced-build-chrome/result.png",
+      "sha256": "8a6696e82922d98ac640af105e60e552e65d537708649463a21af69f6bb4869a",
+      "width": 1366,
+      "height": 768,
+      "bytes": 307425,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-ign-2c6f5-gh-a-visible-advanced-build-chrome/core.png",
+      "sha256": "ba66551bffc029334f36bf10117179f78ee05983385ab23af4c7077e788ca01f",
+      "width": 1366,
+      "height": 768,
+      "bytes": 573272,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-ign-2c6f5-gh-a-visible-advanced-build-chrome/draft-1.png",
+      "sha256": "5af6344c0901015ca271b362f14c957644fc54b2ca755cce2b6402bbf5ce128b",
+      "width": 1366,
+      "height": 768,
+      "bytes": 470936,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-ign-2c6f5-gh-a-visible-advanced-build-chrome/draft-2.png",
+      "sha256": "6c59427d7978803e3107dbebd367e774dfc35ea660e94e2e862447c538b4fbdf",
+      "width": 1366,
+      "height": 768,
+      "bytes": 475121,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-ign-2c6f5-gh-a-visible-advanced-build-chrome/draft-3.png",
+      "sha256": "3692030d185fa996a45d384bdb6b9dc7f7bfa72baf48f7bcba38a0fefeee7037",
+      "width": 1366,
+      "height": 768,
+      "bytes": 474605,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-ign-2c6f5-gh-a-visible-advanced-build-chrome/draft-4.png",
+      "sha256": "2d9ac7bf2e018dbbd564d1c9f83c426c255b34f7beef28b626554f851b5501ea",
+      "width": 1366,
+      "height": 768,
+      "bytes": 468044,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-ign-2c6f5-gh-a-visible-advanced-build-chrome/lung.png",
+      "sha256": "5d8ab8a6360ef9a19eaa74bf341901e5a3a47f39630afed72b2d78b35c1da124",
+      "width": 1366,
+      "height": 768,
+      "bytes": 547443,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "organ-scene"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-ign-2c6f5-gh-a-visible-advanced-build-chrome/migration.png",
+      "sha256": "19828c33081e80831f830af0a265a840e95193e471a2a4daaf5767ac77976db1",
+      "width": 1366,
+      "height": 768,
+      "bytes": 536950,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-ign-2c6f5-gh-a-visible-advanced-build-chrome/protocol_beacon_hit-live.png",
+      "sha256": "ff9e20b294ee72a1754e7c52b649c3aaf8888e6f84a60d276e0b4c07758279e4",
+      "width": 1366,
+      "height": 768,
+      "bytes": 622606,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-ign-2c6f5-gh-a-visible-advanced-build-chrome/result.png",
+      "sha256": "88b6263793fae7639fd9d678c5d068cb3d3888fa0bbf7a46c216422b67a635df",
+      "width": 1366,
+      "height": 768,
+      "bytes": 321081,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-pur-2902e-gh-a-visible-advanced-build-edge/core.png",
+      "sha256": "f694a7e9167d07a1c0965f9b2bc9374c5afa459af41ed39e305d4567027ed0d7",
+      "width": 1366,
+      "height": 768,
+      "bytes": 546124,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-pur-2902e-gh-a-visible-advanced-build-edge/draft-1.png",
+      "sha256": "e1d4693ce04f61b26447da192bdf924a16de37a319e99c275014ac7b8085b436",
+      "width": 1366,
+      "height": 768,
+      "bytes": 469207,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-pur-2902e-gh-a-visible-advanced-build-edge/draft-2.png",
+      "sha256": "b06aa317a85e6b3af11b61d4ae3df550ef733fb2dc31467fd49895400e0259b9",
+      "width": 1366,
+      "height": 768,
+      "bytes": 481396,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-pur-2902e-gh-a-visible-advanced-build-edge/draft-3.png",
+      "sha256": "accad1ad3cd7deb004500cb92beb04a2aaa9306c4197a8f397aeb12073b74cef",
+      "width": 1366,
+      "height": 768,
+      "bytes": 477739,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-pur-2902e-gh-a-visible-advanced-build-edge/draft-4.png",
+      "sha256": "898bb66a196d1f212227e250eea0e9adc72c07957d979ac83f7c9f34a246b417",
+      "width": 1366,
+      "height": 768,
+      "bytes": 477369,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-pur-2902e-gh-a-visible-advanced-build-edge/lung.png",
+      "sha256": "bed502722fe044e931fcf1f7e8a3f3509e16871402933bfe49466fb8e0ea2f11",
+      "width": 1366,
+      "height": 768,
+      "bytes": 544099,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "organ-scene"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-pur-2902e-gh-a-visible-advanced-build-edge/migration.png",
+      "sha256": "95c17998aea33d0c3d309f114eed1c8f10d22cf84210aff3b983a1c1e9dabf78",
+      "width": 1366,
+      "height": 768,
+      "bytes": 538348,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-pur-2902e-gh-a-visible-advanced-build-edge/protocol_ricochet_hit-live.png",
+      "sha256": "c02287c2e411665616c7d444967fbef1575d973bb915a9c73ce8345b1284ae88",
+      "width": 1366,
+      "height": 768,
+      "bytes": 518262,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-pur-2902e-gh-a-visible-advanced-build-edge/result.png",
+      "sha256": "3aef51059473fd576912062187cde284c21bc181568370b35fdc2d8ab9be6397",
+      "width": 1366,
+      "height": 768,
+      "bytes": 321130,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-spa-af3e3-ll-patrol-and-paused-freeze-chrome/cell-patrol-bite.png",
+      "sha256": "2e2cf98128ede8aab31c63dbac122910eaab348111330d10f65e8d0138f8efff",
+      "width": 1366,
+      "height": 768,
+      "bytes": 622454,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-spa-af3e3-ll-patrol-and-paused-freeze-chrome/entry-district.png",
+      "sha256": "14872a7383eb83eed9666e3df67e5271936b6abbd016c794d1c1a5866940dc47",
+      "width": 1366,
+      "height": 768,
+      "bytes": 545433,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-spa-af3e3-ll-patrol-and-paused-freeze-edge/cell-patrol-bite.png",
+      "sha256": "ea086ae4d17ba8c4fa80c190275de002cdd3bbe7b5de53865ed595b6eb4f4520",
+      "width": 1100,
+      "height": 560,
+      "bytes": 415248,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v060-Feedback-spa-af3e3-ll-patrol-and-paused-freeze-edge/entry-district.png",
+      "sha256": "121f0f5a6534eaac1fcffdc7640ed23fb8eb571984dcc9544dcceb18f101326d",
+      "width": 1100,
+      "height": 560,
+      "bytes": 367552,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v061-growth-detai-7ae38--and-return-to-their-origin-chrome/advanced-build-details.png",
+      "sha256": "90047fb76c99fd062bc98e8c4131729264ba71f73b02ac8da9ff04f18c19fb95",
+      "width": 850,
+      "height": 560,
+      "bytes": 180208,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v061-growth-detai-7ae38--and-return-to-their-origin-edge/advanced-build-details.png",
+      "sha256": "8a561afbbdc3abb63b6e8f71448dc19697c45d5b58507362befc6f3099b7970d",
+      "width": 850,
+      "height": 560,
+      "bytes": 178607,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-chrome/immune-standard-attempt-1.png",
+      "sha256": "80319ae523e3bee9ba2cf751cde149662a4eca8dfefb6bc790f8e254743cbc53",
+      "width": 1366,
+      "height": 768,
+      "bytes": 629656,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-chrome/immune-standard-readable.png",
+      "sha256": "80319ae523e3bee9ba2cf751cde149662a4eca8dfefb6bc790f8e254743cbc53",
+      "width": 1366,
+      "height": 768,
+      "bytes": 629656,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-chrome/result.png",
+      "sha256": "a8b1ee719c92a761a757db035ce5a370898ddc4d4efd41351ef085bae1d5c44c",
+      "width": 1366,
+      "height": 768,
+      "bytes": 321460,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-edge/immune-low-attempt-1.png",
+      "sha256": "c8288cfa868bfcbfced9190e44b916ba5d3e0af86950d8db4c50769273e4d8ca",
+      "width": 1366,
+      "height": 768,
+      "bytes": 629692,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-edge/immune-low-readable.png",
+      "sha256": "c8288cfa868bfcbfced9190e44b916ba5d3e0af86950d8db4c50769273e4d8ca",
+      "width": 1366,
+      "height": 768,
+      "bytes": 629692,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-edge/result.png",
+      "sha256": "2bd4619d9ec384b725f648f4d054881bd091a03bb18e1dfe3260c4578a4f899c",
+      "width": 1366,
+      "height": 768,
+      "bytes": 321473,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v064-obstacle-vis-b01a4--then-win-and-retry-cleanly-chrome/raised-fold-standard-actual.png",
+      "sha256": "d81fdddff900de01ae9c784883a453b8de85e6de98ce1f4ff5607a28b6bf7f14",
+      "width": 1366,
+      "height": 768,
+      "bytes": 577009,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v064-obstacle-vis-b01a4--then-win-and-retry-cleanly-chrome/raised-fold-standard-attempt-1.png",
+      "sha256": "d81fdddff900de01ae9c784883a453b8de85e6de98ce1f4ff5607a28b6bf7f14",
+      "width": 1366,
+      "height": 768,
+      "bytes": 577009,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v064-obstacle-vis-b01a4--then-win-and-retry-cleanly-chrome/result.png",
+      "sha256": "a7d06862adf8ecccd72ebf2020c7c2793e132fd4a49204eacf18c6ebc763c208",
+      "width": 1366,
+      "height": 768,
+      "bytes": 323181,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v064-obstacle-vis-b01a4--then-win-and-retry-cleanly-edge/raised-fold-low-actual.png",
+      "sha256": "9f65ca94c124dc40909b31576ac6bcc61ae3a6b012e436b2948d3b34a4d014b9",
+      "width": 1366,
+      "height": 768,
+      "bytes": 579722,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v064-obstacle-vis-b01a4--then-win-and-retry-cleanly-edge/raised-fold-low-attempt-1.png",
+      "sha256": "9f65ca94c124dc40909b31576ac6bcc61ae3a6b012e436b2948d3b34a4d014b9",
+      "width": 1366,
+      "height": 768,
+      "bytes": 579722,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/feedback-v064-obstacle-vis-b01a4--then-win-and-retry-cleanly-edge/result.png",
+      "sha256": "753fd3231fa3688a2135829a7737d9e4af4f32683b4d51d5b01710043f36819c",
+      "width": 1366,
+      "height": 768,
+      "bytes": 320724,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-CARAPACE-offline-hea-cca62--recovery-and-active-retest-chrome/g1-gate-closed.png",
+      "sha256": "1586daff4f01144634d3a3f7001a1ecc700565cb636a306c0d26d570d38b4549",
+      "width": 1366,
+      "height": 768,
+      "bytes": 672708,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-CARAPACE-offline-hea-cca62--recovery-and-active-retest-chrome/g1-menu.png",
+      "sha256": "3450a937d67926c28aea65e1b42690e6a9b3a6dcea2b4ab8f2677c8e079b05a6",
+      "width": 1366,
+      "height": 768,
+      "bytes": 722617,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-CARAPACE-offline-hea-cca62--recovery-and-active-retest-chrome/g1-pulse-active.png",
+      "sha256": "74475593c3696d880c1e72bd951bb874a5e072562cf2b445ab8d47c1d280ec10",
+      "width": 1366,
+      "height": 768,
+      "bytes": 671805,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "G1-stage-fixture"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-CARAPACE-offline-hea-cca62--recovery-and-active-retest-chrome/g1-success.png",
+      "sha256": "285850fd7af585e1da8a70ac245ff8d540896b490bbed4710a769ad07ec435e3",
+      "width": 1366,
+      "height": 768,
+      "bytes": 256955,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-CARAPACE-offline-hea-cca62--recovery-and-active-retest-chrome/g1-warning.png",
+      "sha256": "b547367aed46fec70f5a56c0a6d909b5821ed47b3ad04969f38b23fd15639c43",
+      "width": 1366,
+      "height": 768,
+      "bytes": 645047,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "G1-stage-fixture"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-CARAPACE-offline-hea-cca62--recovery-and-active-retest-edge/g1-gate-closed.png",
+      "sha256": "9b93020d9def10fbbcd9b87c86fddefa36387e31dc742f6cf771ac696d73ba50",
+      "width": 1366,
+      "height": 768,
+      "bytes": 673403,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-CARAPACE-offline-hea-cca62--recovery-and-active-retest-edge/g1-menu.png",
+      "sha256": "3450a937d67926c28aea65e1b42690e6a9b3a6dcea2b4ab8f2677c8e079b05a6",
+      "width": 1366,
+      "height": 768,
+      "bytes": 722617,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-CARAPACE-offline-hea-cca62--recovery-and-active-retest-edge/g1-pulse-active.png",
+      "sha256": "8784cc6b2c48bd813e6044c5b11ad354ff2553b3363e030473f215d99dba1b63",
+      "width": 1366,
+      "height": 768,
+      "bytes": 672620,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "G1-stage-fixture"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-CARAPACE-offline-hea-cca62--recovery-and-active-retest-edge/g1-success.png",
+      "sha256": "4f8f0f42ac335d4dca2f190f3acebc639c1894b01da922226b31aaa20d7a1c5f",
+      "width": 1366,
+      "height": 768,
+      "bytes": 256881,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-CARAPACE-offline-hea-cca62--recovery-and-active-retest-edge/g1-warning.png",
+      "sha256": "0b321acc8252e61b1af52e2d2f161af265eda62acf3279fb98dce3feeb4cb2b8",
+      "width": 1366,
+      "height": 768,
+      "bytes": 645346,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "G1-stage-fixture"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-MIMIC-offline-heart--95598--recovery-and-active-retest-chrome/g1-gate-closed.png",
+      "sha256": "bf6d7aa1ff57914fc36e6c2cf503883c1a1a05da7c953fbc69f3ca88f6f3b0db",
+      "width": 1366,
+      "height": 768,
+      "bytes": 673286,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-MIMIC-offline-heart--95598--recovery-and-active-retest-chrome/g1-menu.png",
+      "sha256": "3450a937d67926c28aea65e1b42690e6a9b3a6dcea2b4ab8f2677c8e079b05a6",
+      "width": 1366,
+      "height": 768,
+      "bytes": 722617,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-MIMIC-offline-heart--95598--recovery-and-active-retest-chrome/g1-pulse-active.png",
+      "sha256": "7d91dfce601220f1dd21c1471ed39e9c8a2f2feddd47098767341c79157f4452",
+      "width": 1366,
+      "height": 768,
+      "bytes": 668506,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "G1-stage-fixture"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-MIMIC-offline-heart--95598--recovery-and-active-retest-chrome/g1-success.png",
+      "sha256": "7bf1467fb648bd8fcbeab6a5957a0aa930d7aae750277293f09a49685b767e1e",
+      "width": 1366,
+      "height": 768,
+      "bytes": 256889,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-MIMIC-offline-heart--95598--recovery-and-active-retest-chrome/g1-warning.png",
+      "sha256": "07c8f13b8c6457af552132b66c43f7bca24414b7eaff7ff13fd34d788cc3b2ad",
+      "width": 1366,
+      "height": 768,
+      "bytes": 653385,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "G1-stage-fixture"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-MIMIC-offline-heart--95598--recovery-and-active-retest-edge/g1-gate-closed.png",
+      "sha256": "1bd7d3620d7aee91f21e0c1ae8098aa874530e92e31250a6bb71dbcaac4dd8a5",
+      "width": 1366,
+      "height": 768,
+      "bytes": 673544,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-MIMIC-offline-heart--95598--recovery-and-active-retest-edge/g1-menu.png",
+      "sha256": "3450a937d67926c28aea65e1b42690e6a9b3a6dcea2b4ab8f2677c8e079b05a6",
+      "width": 1366,
+      "height": 768,
+      "bytes": 722617,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-MIMIC-offline-heart--95598--recovery-and-active-retest-edge/g1-pulse-active.png",
+      "sha256": "386710ae504babcf3722ca98ab5e80906cf445e3ffab515ad5f0629481c2a9d5",
+      "width": 1366,
+      "height": 768,
+      "bytes": 677559,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "G1-stage-fixture"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-MIMIC-offline-heart--95598--recovery-and-active-retest-edge/g1-success.png",
+      "sha256": "42c1985f0c31f19fde761826d1715c17559e4b46950f0232cf25f724930fe7ba",
+      "width": 1366,
+      "height": 768,
+      "bytes": 256903,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g1-G1-MIMIC-offline-heart--95598--recovery-and-active-retest-edge/g1-warning.png",
+      "sha256": "cec173dc991a64f236811004cb32694babaf51c5acbb0bbdd03a514771e0049b",
+      "width": 1366,
+      "height": 768,
+      "bytes": 653796,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "G1-stage-fixture"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g2-G2-RUN-06-legally-acqui-b6de1-search-a-fourth-and-replace-chrome/g2-evolution-after.png",
+      "sha256": "18ec3e718e2122eaba412448cf4f63a1e3b5a84d42bf826a84c6ec744c938a68",
+      "width": 1366,
+      "height": 768,
+      "bytes": 684972,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "same-run-evolution"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g2-G2-RUN-06-legally-acqui-b6de1-search-a-fourth-and-replace-chrome/g2-evolution-before.png",
+      "sha256": "39ee26bce46d00a14a781134b796f16d44f552d949eae9c313c5936980572885",
+      "width": 1366,
+      "height": 768,
+      "bytes": 658662,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "same-run-evolution"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g2-G2-RUN-06-legally-acqui-b6de1-search-a-fourth-and-replace-chrome/g2-evolution-warning.png",
+      "sha256": "a273b759199fac484a637029b11841c0ff2dc0fc0b2a15795dc2735e2bbad451",
+      "width": 1366,
+      "height": 768,
+      "bytes": 648239,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "same-run-evolution"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g2-G2-RUN-06-legally-acqui-b6de1-search-a-fourth-and-replace-chrome/g2-pulse-chain-build.png",
+      "sha256": "53cd4946062cef70541867e78d4160f787db09248969fce8a70ec4fa9d9266ce",
+      "width": 1366,
+      "height": 768,
+      "bytes": 680228,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g2-G2-RUN-06-legally-acqui-b6de1-search-a-fourth-and-replace-chrome/g2-trace-beacon.png",
+      "sha256": "3e3c6f23d3bf7f88ecfef27c474df40dc1b6cb4984e8e8164877f95b7dcbdcda",
+      "width": 1366,
+      "height": 768,
+      "bytes": 690509,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g2-G2-RUN-06-legally-acqui-b6de1-search-a-fourth-and-replace-edge/g2-evolution-after.png",
+      "sha256": "d6da26fbc4ed2daef3fd18e4694b955f39e696c9c2c96dfc1efdf1230aec05f1",
+      "width": 1366,
+      "height": 768,
+      "bytes": 686934,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "same-run-evolution"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g2-G2-RUN-06-legally-acqui-b6de1-search-a-fourth-and-replace-edge/g2-evolution-before.png",
+      "sha256": "bac325386d51072da2914ab86272fc4b599ab156c03556f95c91e69d4324aa49",
+      "width": 1366,
+      "height": 768,
+      "bytes": 659418,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "same-run-evolution"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g2-G2-RUN-06-legally-acqui-b6de1-search-a-fourth-and-replace-edge/g2-evolution-warning.png",
+      "sha256": "0353cbc1a934d6ce16b671b5eadfeb238fb42c19ad249d1cd321db42d716f3d1",
+      "width": 1366,
+      "height": 768,
+      "bytes": 649440,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "same-run-evolution"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g2-G2-RUN-06-legally-acqui-b6de1-search-a-fourth-and-replace-edge/g2-pulse-chain-build.png",
+      "sha256": "ce8807616bf0a2f57b90e224a3a213126387c629311524da7cde13e51f93dce5",
+      "width": 1366,
+      "height": 768,
+      "bytes": 681217,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g2-G2-RUN-06-legally-acqui-b6de1-search-a-fourth-and-replace-edge/g2-trace-beacon.png",
+      "sha256": "e4f9f30551531c3efbff0a5042562a0051fa3c9e8c18c4b9d196867bffd56ad4",
+      "width": 1366,
+      "height": 768,
+      "bytes": 676676,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g2-G2-seeded-evolution-eve-7a1e3--real-build-and-clean-retry-chrome/g2-draft.png",
+      "sha256": "a573a7a02a1bcbdf0607a5db16c8e8a1a7c010eb133fdf401500c46928613df2",
+      "width": 1366,
+      "height": 768,
+      "bytes": 445807,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g2-G2-seeded-evolution-eve-7a1e3--real-build-and-clean-retry-chrome/g2-pulse.png",
+      "sha256": "8fabb6812791004ce4717c2a4b3b62a5b0cd2adac245fd388493bce017217bb1",
+      "width": 1366,
+      "height": 768,
+      "bytes": 668208,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g2-G2-seeded-evolution-eve-7a1e3--real-build-and-clean-retry-chrome/g2-success.png",
+      "sha256": "ce2f2886e3b3f4c9e0a33b8338fa45e51c512fc9f4f35f2e7cdcbd24845353b4",
+      "width": 1366,
+      "height": 768,
+      "bytes": 263176,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g2-G2-seeded-evolution-eve-7a1e3--real-build-and-clean-retry-chrome/g2-warning.png",
+      "sha256": "bac467125a02eac410da50a7deca17c9a6e0b1103359c244499d523113879649",
+      "width": 1366,
+      "height": 768,
+      "bytes": 658161,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g2-G2-seeded-evolution-eve-7a1e3--real-build-and-clean-retry-edge/g2-draft.png",
+      "sha256": "f10b3882875b1e28db64cdb0282f0c01740d7402702b43b8a1a2f383197a7c8a",
+      "width": 1366,
+      "height": 768,
+      "bytes": 445683,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g2-G2-seeded-evolution-eve-7a1e3--real-build-and-clean-retry-edge/g2-pulse.png",
+      "sha256": "dc96bd77b505fd88d6dc09c1c9a11d8299cc78c71728dcc8c0c9b33399cb24b0",
+      "width": 1366,
+      "height": 768,
+      "bytes": 668615,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g2-G2-seeded-evolution-eve-7a1e3--real-build-and-clean-retry-edge/g2-success.png",
+      "sha256": "dfce8b4ddd7714c08ed8f2f65d7bf60b0d6f5ea7b39d979c0b2adee7517660bc",
+      "width": 1366,
+      "height": 768,
+      "bytes": 263167,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g2-G2-seeded-evolution-eve-7a1e3--real-build-and-clean-retry-edge/g2-warning.png",
+      "sha256": "f6abde6a03e9492f5b31ca151a2a7a30d3d4bf63fd83bb62b4d7ff8afe452b00",
+      "width": 1366,
+      "height": 768,
+      "bytes": 657201,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-180-seconds-under-a--20258-es-repair-and-legal-retreat-chrome/lung-pressure-start.png",
+      "sha256": "5a4593d148623d687bec9272e3434d8fb8765712fa9ca498f8e62b44405d040f",
+      "width": 1366,
+      "height": 768,
+      "bytes": 539945,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "organ-scene"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-180-seconds-under-a--20258-es-repair-and-legal-retreat-chrome/retreated-heart.png",
+      "sha256": "5a321c46d7bc3d6a3860e510a56a90f0c832d94d98d69721fef731b97b4972d3",
+      "width": 1366,
+      "height": 768,
+      "bytes": 489854,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "organ-scene"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-180-seconds-under-a--20258-es-repair-and-legal-retreat-edge/lung-pressure-start.png",
+      "sha256": "24d3d20f6a1353f15610fbb043497fae85dd14b04d0f1f1847d15839f61853c7",
+      "width": 1366,
+      "height": 768,
+      "bytes": 540672,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "organ-scene"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-180-seconds-under-a--20258-es-repair-and-legal-retreat-edge/retreated-heart.png",
+      "sha256": "5ad8a4a19f1ae382b549e6f8583f342d049b0b5bc4ac656b840e12dcdcd5217e",
+      "width": 1366,
+      "height": 768,
+      "bytes": 490064,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "organ-scene"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-block-migrat-00bb5-e-retest-through-real-input-chrome/migration-warning.png",
+      "sha256": "059db7402887ec6d7e23afa2f2c1808e30112c3e53f15e81cfe25c08b41a8030",
+      "width": 1366,
+      "height": 768,
+      "bytes": 537528,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-block-migrat-00bb5-e-retest-through-real-input-chrome/mother-CARAPACE.png",
+      "sha256": "50924c81c0cb2d42f1d692af2f10ced071d109355745d2f6ea6bf15ccd2873de",
+      "width": 1366,
+      "height": 768,
+      "bytes": 535342,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-block-migrat-00bb5-e-retest-through-real-input-chrome/mother-FISSION.png",
+      "sha256": "47fd441588e5ea74e408ec247e4f3d8c8b139d253521f4c67b8eb7b8b1ea097c",
+      "width": 1366,
+      "height": 768,
+      "bytes": 592208,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-block-migrat-00bb5-e-retest-through-real-input-chrome/mother-membranes-open.png",
+      "sha256": "56fea30b4cd76602fd8d45440d550088bd83f69e4ba8daa2c00cb3d39fd8833b",
+      "width": 1366,
+      "height": 768,
+      "bytes": 600412,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-block-migrat-00bb5-e-retest-through-real-input-chrome/result.png",
+      "sha256": "ab7c334593580f5c168e0ce0964d32e3b3b2a850e44975df858d75eac3595a4e",
+      "width": 1366,
+      "height": 768,
+      "bytes": 307236,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-block-migrat-00bb5-e-retest-through-real-input-edge/migration-warning.png",
+      "sha256": "48cf059953952ecd7f0e7ef7436ce7b78f934678252cae4e58a5cf148c41486c",
+      "width": 1366,
+      "height": 768,
+      "bytes": 538894,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-block-migrat-00bb5-e-retest-through-real-input-edge/mother-CARAPACE.png",
+      "sha256": "f2c9a79e3269460c23df1cfadf99baf7f39a0a132630711fb9496f62ff5de67b",
+      "width": 1366,
+      "height": 768,
+      "bytes": 531442,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-block-migrat-00bb5-e-retest-through-real-input-edge/mother-FISSION.png",
+      "sha256": "6067514c345823a2ad9ad18f06621ff68ea1cb6f92a0102eff7c36eddde8a2b8",
+      "width": 1366,
+      "height": 768,
+      "bytes": 596536,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-block-migrat-00bb5-e-retest-through-real-input-edge/mother-membranes-open.png",
+      "sha256": "e87566a5e3b511fe280ef6bd73a5e4e40a7eca45662ec7d395eab357e1f4b9fe",
+      "width": 1366,
+      "height": 768,
+      "bytes": 586066,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-block-migrat-00bb5-e-retest-through-real-input-edge/result.png",
+      "sha256": "bf6079f288439ffde9d2a2fbf5533a03756e2eed71a3d239f20087041e34f765",
+      "width": 1366,
+      "height": 768,
+      "bytes": 307230,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-chrome/lung-first-arrival.png",
+      "sha256": "7d4fde34d416816c66cbe50f9b40b504ab1d5d6ce815a1e125738c9be57526d0",
+      "width": 1366,
+      "height": 768,
+      "bytes": 547530,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "organ-scene"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-chrome/migration-warning.png",
+      "sha256": "350b3d2e8cb34f87b86ffc9312fc89bc84dd583b6c8b230a992362a86f546426",
+      "width": 1366,
+      "height": 768,
+      "bytes": 538165,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-chrome/mother-CARAPACE.png",
+      "sha256": "13ff6b1d3dfb07f58f61858f00f63ae7733007c31df948c45a3fdf290543f4c9",
+      "width": 1366,
+      "height": 768,
+      "bytes": 545133,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-chrome/mother-FISSION.png",
+      "sha256": "72d16fa895cace6d77f5b5638a0e6be7b07763e2e7148ca411a4a8080623be1b",
+      "width": 1366,
+      "height": 768,
+      "bytes": 606589,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-chrome/mother-membranes-open.png",
+      "sha256": "a910f7430a7d63804b36cb5ba15dcd8b0e747b7eb0b80676aa496373d603d3df",
+      "width": 1366,
+      "height": 768,
+      "bytes": 604282,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-chrome/result.png",
+      "sha256": "ff8af1f0e779fbe8ee911a8997629926703a6c0043a42b0c345081f4ccd12f51",
+      "width": 1366,
+      "height": 768,
+      "bytes": 321152,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-edge/lung-first-arrival.png",
+      "sha256": "9b5cd60ba951a60500380b352a972e53091b65a2068da731b87f4d231d52a3e1",
+      "width": 1366,
+      "height": 768,
+      "bytes": 547011,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "organ-scene"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-edge/migration-warning.png",
+      "sha256": "efaa75e91d4efd80a4923dbf4caf5caabbb9f73cf12eea234e237599c426913d",
+      "width": 1366,
+      "height": 768,
+      "bytes": 537684,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-edge/mother-CARAPACE.png",
+      "sha256": "753721c339eba390293c64dc5bbe2a3bc01fb57926873d8d51e2e19f85e8ed78",
+      "width": 1366,
+      "height": 768,
+      "bytes": 555509,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-edge/mother-FISSION.png",
+      "sha256": "324c7d364df0d5a022903e340d85051ceec07724a22ff1a73555fb978b1f9471",
+      "width": 1366,
+      "height": 768,
+      "bytes": 592211,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-edge/mother-membranes-open.png",
+      "sha256": "f8d777edffee1241b1de29f474fdea06d6f5229eff39b614324f88b431808974",
+      "width": 1366,
+      "height": 768,
+      "bytes": 599629,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-edge/result.png",
+      "sha256": "d54c329d5ff3ed2005db2064002e0d926423fba852a87d6ba232b5269f58a286",
+      "width": 1366,
+      "height": 768,
+      "bytes": 322371,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-chrome/lung-first-arrival.png",
+      "sha256": "c917f1fb220dccf0c7a53d488a3bc9f5b5ddd705302d7e0187a32e8053ba96d2",
+      "width": 1366,
+      "height": 768,
+      "bytes": 539819,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "organ-scene"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-chrome/migration-warning.png",
+      "sha256": "944742f32918507c19f80f697702ce5d591b577b2e92072738352066aa74bfa3",
+      "width": 1366,
+      "height": 768,
+      "bytes": 537116,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-chrome/mother-CARAPACE.png",
+      "sha256": "5faaa17f6ecdf544f01cd825c91e2f088dac10d72a78cb925622921f9587a749",
+      "width": 1366,
+      "height": 768,
+      "bytes": 534213,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-chrome/mother-FISSION.png",
+      "sha256": "6a2c5f677e3a4dd7f2c5de1ea8f0fd60ebf0f3e447bca3fb192befb8e556d9eb",
+      "width": 1366,
+      "height": 768,
+      "bytes": 589731,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-chrome/mother-membranes-open.png",
+      "sha256": "e21896cdefb8b81f98adf6a6782186cb6dd92249ad0b77e6ff869142712d285e",
+      "width": 1366,
+      "height": 768,
+      "bytes": 601551,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-chrome/result.png",
+      "sha256": "865241b37f9b916b7a1b8d347137ecc73d594fa744d3b2e65977cedc7fc3a060",
+      "width": 1366,
+      "height": 768,
+      "bytes": 319670,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-edge/lung-first-arrival.png",
+      "sha256": "f90bfb8653eb5df566f603b78278a889c7d86fc8b3c623c0d6783ad9bb976176",
+      "width": 1366,
+      "height": 768,
+      "bytes": 540363,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "organ-scene"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-edge/migration-warning.png",
+      "sha256": "56282baa96d010a72abeac2553d5eaa19104f0e134b7fcd5d2e2a6eff24997f9",
+      "width": 1366,
+      "height": 768,
+      "bytes": 542548,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-edge/mother-CARAPACE.png",
+      "sha256": "cd9c8ea6fb1dfbbb816415a9e759ce8532d330b5cf663e64cbe3e9dd4bfa6440",
+      "width": 1366,
+      "height": 768,
+      "bytes": 533503,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-edge/mother-FISSION.png",
+      "sha256": "b011d9e5b4d878879283a95606475c3acf82c4ee0ef77bb3835fa060a03bd9ba",
+      "width": 1366,
+      "height": 768,
+      "bytes": 598974,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-edge/mother-membranes-open.png",
+      "sha256": "b620229dfa8893e19ece961d50b0ca7fcd4c79320e67145269be9374fcb01393",
+      "width": 1366,
+      "height": 768,
+      "bytes": 614174,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/browser/full-1/output/g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-edge/result.png",
+      "sha256": "e2230d1fa8cd8012ceb13262e5ce011bcbd7a18a632e4a87be9a41e20f22ea5e",
+      "width": 1366,
+      "height": 768,
+      "bytes": 321216,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": []
+    },
+    {
+      "path": "artifacts/completion-v073/performance/attempt-1/dense-low-three-cells.png",
+      "sha256": "53f126071dc2bfdc89ba86c2687ff825871c556cecae86ad228b179ae9920845",
+      "width": 1366,
+      "height": 768,
+      "bytes": 584330,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "density"
+      ]
+    },
+    {
+      "path": "artifacts/completion-v073/performance/attempt-1/dense-standard-three-cells.png",
+      "sha256": "dc56af5010047571da593eb12b4a3095f8349bfe6947d0b52ad52cfa9089c1ae",
+      "width": 1366,
+      "height": 768,
+      "bytes": 581061,
+      "kind": "original-real-browser-PNG",
+      "version": "0.7.3",
+      "gameJsSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+      "tags": [
+        "density"
+      ]
+    }
+  ],
+  "decoded": [
+    {
+      "path": "artifacts/completion-v074/visual-plan/decoded-g2-frames-chrome.json",
+      "kind": "decoded-verbatim-existing-report-attachment",
+      "sourceReportSha256": "554201c50688e5183cdfe484ad4087c20e450a93273ccd88daffbd730414bf89",
+      "status": "passed",
+      "frames": [
+        {
+          "name": "before",
+          "tick": 608,
+          "elapsed": 10.133333333333333,
+          "phase": "playing",
+          "organ": "heart",
+          "traits": [],
+          "warning": null
+        },
+        {
+          "name": "warning",
+          "tick": 846,
+          "elapsed": 14.1,
+          "phase": "playing",
+          "organ": "heart",
+          "traits": [],
+          "warning": {
+            "trait": "CARAPACE",
+            "startedAt": 14,
+            "applyAt": 22
+          }
+        },
+        {
+          "name": "after",
+          "tick": 1328,
+          "elapsed": 22.133333333333333,
+          "phase": "playing",
+          "organ": "heart",
+          "traits": [
+            "CARAPACE"
+          ],
+          "warning": null
+        }
+      ]
+    },
+    {
+      "path": "artifacts/completion-v074/visual-plan/decoded-g2-frames-edge.json",
+      "kind": "decoded-verbatim-existing-report-attachment",
+      "sourceReportSha256": "554201c50688e5183cdfe484ad4087c20e450a93273ccd88daffbd730414bf89",
+      "status": "passed",
+      "frames": [
+        {
+          "name": "before",
+          "tick": 605,
+          "elapsed": 10.083333333333334,
+          "phase": "playing",
+          "organ": "heart",
+          "traits": [],
+          "warning": null
+        },
+        {
+          "name": "warning",
+          "tick": 845,
+          "elapsed": 14.083333333333334,
+          "phase": "playing",
+          "organ": "heart",
+          "traits": [],
+          "warning": {
+            "trait": "CARAPACE",
+            "startedAt": 14,
+            "applyAt": 22
+          }
+        },
+        {
+          "name": "after",
+          "tick": 1323,
+          "elapsed": 22.05,
+          "phase": "playing",
+          "organ": "heart",
+          "traits": [
+            "CARAPACE"
+          ],
+          "warning": null
+        }
+      ]
+    }
+  ],
+  "captureTools": [
+    {
+      "path": "scripts/capture-silhouettes.mjs",
+      "sha256": "cdc4fd085d136b19fab6affbd8f5ec532965fa0c38a6df935f0942b6bc90c3ad"
+    },
+    {
+      "path": "scripts/capture-g1-density.mjs",
+      "sha256": "13496be7ff2d6ed412539a55c84c5f73fc971f10239231e2c1cefc611a2f118d"
+    },
+    {
+      "path": "scripts/capture-g4-density-protocols.mjs",
+      "sha256": "ad83b91bbf227e25e6657e5de360d58693939b028daf31cd23e949c81af0d4ee"
+    },
+    {
+      "path": "scripts/check-render-invariance.mjs",
+      "sha256": "8825d31009c608637860e627e5ca979c00044842c90be65b5d8f235fe0d4620c"
+    },
+    {
+      "path": "scripts/collect-stage-evidence.mjs",
+      "sha256": "ffb429af3ffa76a50d91d8cce40acac9a68da2e4d2c9638623adf7abd6e88ed2"
+    }
+  ],
+  "sourceReuseRule": "073 raw remains 073. Reuse for 074 only at explicitly unchanged dependency scope after final 074 manifest is available; never relabel whole bundle or old images as 074."
+}

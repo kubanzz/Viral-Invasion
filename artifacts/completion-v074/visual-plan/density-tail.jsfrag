@@ -1,0 +1,62 @@
+  report.method = 'Offline real formal FISSION/adaptive entry. Verbatim actual source-clear/guardian/block setup and retained-source warmup; visual density capture only. No FPS observer, heap probe, forced GC, time or gameplay-state writes. Sequential standard/low actual DOM quality UI.';
+  report.captureScope = '24 living actors plus three mature actual cells at screenshot endpoints; PNG exact tick is not claimed. Source and helper manifests retained. This is not a completed victory or performance qualification.';
+  report.status = 'capturing'; report.captureAttempts = []; report.qualityCaptures = {};
+  report.consoleErrors = []; page.on('console', message => { if(message.type()==='error')report.consoleErrors.push(message.text()); });
+  report.cellHitCountScope = 'Use runMetrics.summary.control.beaconBites for actual whole-case accepted bites; semantic logs alone are not accepted-damage evidence.';
+  for (const mode of ['standard','low']) {
+    if(mode==='low') {
+      await release(); await page.keyboard.press('Escape');
+      const button=page.locator('#overlay-host [data-action="effects"]');
+      if(!(await button.innerText()).includes('低'))await button.click();
+      await page.waitForFunction(()=>document.querySelector('#overlay-host [data-action="effects"]')?.textContent?.includes('低'));
+      report.lowEffectsSetting=await button.innerText();
+      await page.locator('[data-action="continue"]').click();
+    }
+    const deadline=Date.now()+90000;let attempt=0;
+    while(Date.now()<deadline&&!report.qualityCaptures[mode]) {
+      const state=await readState(page); assertProduction(state);
+      if(await overlays(state))continue;
+      if(state.phase!=='playing')throw Error('Density capture entered '+state.phase);
+      report.maxActors=Math.max(report.maxActors,live(state).length);
+      report.maxCells=Math.max(report.maxCells,state.growth.cells?.length??0);
+      await page.keyboard.press('Digit3');await aim(page,state.tissue);await page.mouse.down();
+      if(state.elapsed-lastScan>=3.1){await page.keyboard.press('KeyQ');lastScan=state.elapsed;}
+      const ready=await readState(page),cells=ready.growth.cells??[];
+      const stableCells=cells.length===3&&cells.every(cell=>ready.elapsed-cell.born>=.22&&cell.until-ready.elapsed>=.5);
+      if(live(ready).length===24&&stableCells&&ready.runMetrics.summary.control.beaconBites>0) {
+        attempt++;
+        const path=folder+'/dense-'+mode+'-attempt-'+attempt+'.png';
+        const before=await readState(page),diagnosticsBefore=await page.evaluate(()=>window.__viral.diagnostics());
+        await page.screenshot({path});
+        const after=await readState(page),diagnosticsAfter=await page.evaluate(()=>window.__viral.diagnostics());
+        const record={mode,path,before,after,diagnosticsBefore,diagnosticsAfter,
+          bracketValid:live(before).length===24&&live(after).length===24&&before.growth.cells?.length===3&&after.growth.cells?.length===3
+            &&before.growth.beacon?.id===after.growth.beacon?.id
+            &&[before,after].every(s=>s.growth.cells.every(cell=>s.elapsed-cell.born>=.2&&cell.until-s.elapsed>=.35)),
+          acceptedWholeCaseBites:after.runMetrics.summary.control.beaconBites,
+          scope:'Unedited actual full viewport screenshot between endpoints. All24 actors need not be inside camera; local overlaps are subject to image review. This is not exact same-state quality A/B.'};
+        report.captureAttempts.push(record);
+        await writeFile(folder+'/dense-'+mode+'-attempt-'+attempt+'.json',JSON.stringify(record,null,2));
+        if(record.bracketValid) {
+          report.qualityCaptures[mode]=record;
+          await writeFile(folder+'/dense-'+mode+'-state.json',JSON.stringify(before));
+        }
+      }
+      await save();await page.waitForTimeout(200);
+    }
+    if(!report.qualityCaptures[mode])throw Error('No valid real24+3 '+mode+' screenshot bracket within90 seconds.');
+  }
+  await release();report.finalState=await readState(page);report.runMetrics.finalSummary=report.finalState.runMetrics.summary;
+  report.sourceUnchanged=gameHash===hash(await readFile('dist/game.js'));
+  report.pass=!!report.qualityCaptures.standard&&!!report.qualityCaptures.low&&report.runMetrics.finalSummary.control.beaconBites>0
+    &&!report.errors.length&&!report.requests.length&&!report.consoleErrors.length&&report.sourceUnchanged;
+  report.passScope='Real current-build standard/low mature three-cell cooperation at sampled24-actor density, all sources retained and producing. Functional visual evidence only; no FPS or memory conclusion.';
+  report.status=report.pass?'passed':'failed';
+  if(!report.pass)process.exitCode=1;
+} catch(error) {
+  report.status='failed';report.error=error.stack??String(error);process.exitCode=1;
+  if(page&&!page.isClosed()){try{report.failureState=await readState(page);await page.screenshot({path:folder+'/failed.png'});}catch{}}
+} finally {
+  report.finishedAt=new Date().toISOString();await save();await release().catch(()=>{});await browser.close();
+  console.log(JSON.stringify({status:report.status,pass:report.pass,maxActors:report.maxActors,maxCells:report.maxCells,output:folder}));
+}

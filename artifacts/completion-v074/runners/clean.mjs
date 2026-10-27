@@ -1,0 +1,32 @@
+import{existsSync,mkdirSync,readFileSync,writeFileSync}from'node:fs';
+import{resolve,dirname,join}from'node:path';import{createHash}from'node:crypto';import{spawn,execFileSync}from'node:child_process';
+const workspace=process.cwd(),revision=process.argv[2],folder=resolve('artifacts/completion-v074/clean'),clone=resolve('.tools/completion-clean-v074');
+if(!/^[a-f0-9]{40}$/.test(revision??''))throw Error('Provide source commit.');
+if(existsSync(folder)||existsSync(clone))throw Error('Preserve prior clean attempt.');
+const frozen=JSON.parse(readFileSync('.tools/v074-frozen.json'));
+const hash=p=>createHash('sha256').update(readFileSync(p)).digest('hex');
+if(hash('dist/game.js')!==frozen.gameSha256)throw Error('Wrong frozen build.');
+mkdirSync(folder,{recursive:true});writeFileSync(join(folder,'runner.mjs'),readFileSync(new URL(import.meta.url)));
+const expected=Object.fromEntries(['game.js','index.html','build-meta.json'].map(p=>[p,hash('dist/'+p)]));
+const env={...process.env},pathKey=Object.keys(env).find(k=>k.toLowerCase()==='path')??'PATH';
+env[pathKey]=[dirname(process.execPath),resolve('.tools/node_modules/npm/bin'),env[pathKey]].join(';');
+const npmCli=resolve('.tools/node_modules/npm/bin/npm-cli.js'),commands=[];
+async function run(label,exe,args,cwd){const startedAt=new Date().toISOString();let log='';const child=spawn(exe,args,{cwd,env,windowsHide:true,stdio:['ignore','pipe','pipe']});for(const s of[child.stdout,child.stderr])s.on('data',b=>{log+=b.toString();process.stdout.write(b);});const exitCode=await new Promise((r,j)=>{child.once('error',j);child.once('close',r);});writeFileSync(join(folder,label+'.log'),log);commands.push({command:[exe,...args],startedAt,endedAt:new Date().toISOString(),exitCode,log:label+'.log'});writeFileSync(join(folder,'commands.json'),JSON.stringify(commands,null,2));if(exitCode!==0)throw Error(label+' failed: '+exitCode);}
+await run('01-clone','git',['clone','--no-hardlinks','--no-checkout',workspace,clone],workspace);
+await run('02-longpaths','git',['config','core.longpaths','true'],clone);
+await run('03-checkout','git',['checkout','--detach',revision],clone);
+const git=(...args)=>execFileSync('git',args,{cwd:clone,encoding:'utf8',windowsHide:true}).trim();
+if(git('rev-parse','HEAD')!==revision||git('status','--porcelain'))throw Error('Initial independent checkout not clean.');
+writeFileSync(join(folder,'pre-run.json'),JSON.stringify({startedAt:new Date().toISOString(),revision,clone,expected,gameSha256:frozen.gameSha256},null,2));
+await run('04-npm-ci',process.execPath,[npmCli,'ci'],clone);
+await run('05-npm-build',process.execPath,[npmCli,'run','build'],clone);
+const meta=JSON.parse(readFileSync(join(clone,'dist/build-meta.json'))),build=Object.fromEntries(Object.entries(expected).map(([p,h])=>[p,{expected:h,actual:hash(join(clone,'dist',p)),equal:h===hash(join(clone,'dist',p))}]));
+if(meta.version!=='0.7.4'||Object.values(build).some(v=>!v.equal))throw Error('Independent build differs.');
+Object.assign(env,{VI_SYSTEM_REPORT:join(folder,'full-system-seeds.json'),VI_G2_REPORT:join(folder,'g2-noncounter-routes.json'),VI_TRACE_CUE_EVIDENCE:join(folder,'trace-cue-derived.json'),VI_FORMAL_NONCOUNTER_REPORT:join(folder,'formal-noncounter.json'),VI_PRIORITY_PRODUCERS_REPORT:join(folder,'priority-producers.json'),VI_SYNERGY_REPORT_DIR:join(folder,'synergy-repeats')});
+await run('06-npm-test',process.execPath,[npmCli,'test','--','--maxWorkers=2','--reporter=default','--reporter=json','--outputFile='+join(folder,'unit.json')],clone);
+const unit=JSON.parse(readFileSync(join(folder,'unit.json'))),sessions=JSON.parse(readFileSync(join(folder,'full-system-seeds.json')));
+const report={completedAt:new Date().toISOString(),revision,clone,commands,node:process.version,method:'Independent local clone, clone-local longpaths before checkout, fresh npm ci/build/full npm test. Main dependencies and dist are not reused. Repeated batch is reproducibility evidence, not extra unique coverage.',build,buildInputCount:Object.keys(meta.sourceManifest).length,
+inputs:Object.fromEntries(Object.entries(meta.sourceManifest).map(([p,h])=>[p,{expected:h,clone:hash(join(clone,p)),workspace:hash(join(workspace,p)),equal:hash(join(clone,p))===h&&hash(join(workspace,p))===h}])),tests:{success:unit.success,files:unit.testResults.length,passed:unit.numPassedTests,failed:unit.numFailedTests,nonBatch:unit.numPassedTests-1},sessions:{complete:sessions.complete,completed:sessions.completedSeeds,outcomes:sessions.outcomes},trackedStatus:git('status','--porcelain'),originalDesignChanges:git('diff','--name-only','HEAD','--','DesignDoc_v1.3'),scope:'Dev HTTP/normal stop recorded separately when actually run; no human/FPS or native OS claim.'};
+report.allChecksPassed=report.tests.success&&report.tests.files===50&&report.tests.passed===396&&report.tests.failed===0&&report.trackedStatus===''&&Object.values(report.inputs).every(v=>v.equal)&&Object.values(build).every(v=>v.equal)&&sessions.complete&&sessions.completedSeeds===1000;
+writeFileSync(join(folder,'summary.json'),JSON.stringify(report,null,2));writeFileSync(join(folder,'execution.json'),JSON.stringify({startedAt:commands[0].startedAt,finishedAt:new Date().toISOString(),exitCode:report.allChecksPassed?0:1,status:report.allChecksPassed?'passed':'failed',revision,sourceUnchanged:Object.values(report.inputs).every(v=>v.equal),bundleUnchanged:Object.values(build).every(v=>v.equal)},null,2));
+console.log(JSON.stringify({clean:report.allChecksPassed,tests:report.tests,sessions:report.sessions}));if(!report.allChecksPassed)process.exitCode=1;

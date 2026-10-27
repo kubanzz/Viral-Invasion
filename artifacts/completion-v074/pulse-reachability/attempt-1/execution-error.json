@@ -1,0 +1,7 @@
+{
+  "status": "failed",
+  "stage": "standalone bundle import after successful 11-test unit run",
+  "reason": "Artifact runner serialized esbuild Uint8Array as JSON instead of JavaScript bytes, producing SyntaxError: Unexpected token ':' on import. This was a report-tool serialization defect, not a production or geometry assertion failure.",
+  "correction": "run-report.mjs now writes ArrayBuffer views directly. Attempt 1 is preserved; a new isolated attempt is required.",
+  "reportedStandaloneSweepResult": null
+}
