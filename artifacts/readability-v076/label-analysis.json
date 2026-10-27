@@ -1,0 +1,1335 @@
+{
+  "schemaVersion": 1,
+  "analyzedAt": "2026-10-27T13:30:18.984Z",
+  "baselineRevision": "0b8610c3e2668b5a204f71d46cece59d5dc5ae0e",
+  "method": "Read-only baseline Git blobs, original design, actual CF3/MC2 sidecar diagnostics and three actual native PNGs. Static rectangle arithmetic only; no browser, renderer, simulator or test executed by this review.",
+  "rootCause": [
+    "The legacy core caption changes its semantic anchor by worldY−32, placing fission text across player head/body and brood text inside core/aim/weakpoint reserves.",
+    "SceneLabels initial offsets are only horizontal half measured text width+24 and at most2 rows vertically. Every ordinary local candidate in these samples still overlaps a protected area, so essential labels jump directly to viewport rails. This is a candidate-generation gap, not proof no nearby readable position exists.",
+    "Obstruction cost has no distance term; first zero-cost rail wins. fallback=true/conflicted=false can therefore place required text hundreds of pixels from its hazard while all count-based checks appear healthy.",
+    "Leader length is capped at56px and clipped by blockers, so screen-top labels cannot form a complete visual link back to a distant ring. Previous fallback offsets may keep nearby rail positioning while the camera moves; the local stage is still tried first each frame."
+  ],
+  "designBasis": [
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+      "line": 110,
+      "text": "最高视觉优先级：玩家位置 → 致命危险 → 病毒弱点/当前目标 → 关键效果 → 场景氛围。"
+    },
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+      "line": 118,
+      "text": "高危险同时使用轮廓、计时与方向。"
+    },
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+      "line": 119,
+      "text": "战斗内信息必须能用短句理解，避免信息被浮动伤害数字淹没。"
+    },
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+      "line": 142,
+      "id": "VIS-07",
+      "text": "危险、弱点、扫描与治疗至少两种非颜色信号；高光和粒子不过度盖住关键角色/预警。"
+    },
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+      "line": 145,
+      "id": "VIS-10",
+      "text": "实时HUD在1366×768与1920×1080下不遮挡关键可射击区域，缩放后布局/提示可读。"
+    }
+  ],
+  "cases": [
+    {
+      "kind": "fission",
+      "source": "artifacts/completion-v075/visual-capture/core-cf-attempt-3/02-fission-burst.json",
+      "pointer": "/before",
+      "nativePng": "artifacts/completion-v075/visual-capture/core-cf-attempt-3/02-fission-burst.png",
+      "actualNativePngViewed": true,
+      "sourceTick": 2478,
+      "elapsed": 41.3,
+      "attack": {
+        "id": "mother-core:attack:2",
+        "kind": "fission-burst",
+        "trait": "FISSION",
+        "startedAt": 41.266666666666666,
+        "resolveAt": 42.36666666666667,
+        "origin": {
+          "x": 1900,
+          "y": 650
+        },
+        "aim": {
+          "x": 1383.3883355786786,
+          "y": 666.9690495529546
+        },
+        "angle": 3.1087576404520703,
+        "range": 0,
+        "radius": 88,
+        "halfAngle": 0,
+        "landings": []
+      },
+      "originalNativePlacement": {
+        "id": "core-danger:mother-core:mother-core:attack:2",
+        "priority": 100,
+        "essential": true,
+        "rect": {
+          "left": 630.2898577526678,
+          "right": 723.8936022595037,
+          "top": 10.253954395618223,
+          "bottom": 29.253954395618223
+        },
+        "anchor": {
+          "x": 677.0917300060858,
+          "y": 363.67795439561826
+        },
+        "baseline": {
+          "x": 677.0917300060858,
+          "y": 24.253954395618223
+        },
+        "compact": false,
+        "fallback": true,
+        "conflicted": false,
+        "leader": {
+          "from": {
+            "x": 677.0917300060858,
+            "y": 60
+          },
+          "to": {
+            "x": 677.0917300060858,
+            "y": 29.253954395618223
+          }
+        }
+      },
+      "playerBodyReserve": {
+        "left": 650.9999999999984,
+        "right": 715.0000000000016,
+        "top": 300.79999999999586,
+        "bottom": 396.80000000000064
+      },
+      "computedFeatureBlocks": [
+        {
+          "id": "player-body-reserve",
+          "rect": {
+            "left": 650.9999999999984,
+            "right": 715.0000000000016,
+            "top": 300.79999999999586,
+            "bottom": 396.80000000000064
+          }
+        },
+        {
+          "id": "render-aim-proxy-lastAim",
+          "rect": {
+            "left": 1231.913386161998,
+            "right": 1268.1800528286662,
+            "top": 344.3265296066808,
+            "bottom": 380.5931962733493
+          }
+        },
+        {
+          "id": "core-ground-feature",
+          "rect": {
+            "left": 1211.0775053888276,
+            "right": 1245.2108387221626,
+            "top": 369.8883910056155,
+            "bottom": 384.8217243389496
+          }
+        },
+        {
+          "id": "core-lantern-weakpoint",
+          "rect": {
+            "left": 1204.9335053888274,
+            "right": 1251.3548387221629,
+            "top": 278.368391005611,
+            "bottom": 343.6483910056142
+          }
+        },
+        {
+          "id": "core-crown-feature",
+          "rect": {
+            "left": 1217.477505388828,
+            "right": 1238.8108387221623,
+            "top": 243.12572433894255,
+            "bottom": 260.19239100561003
+          }
+        }
+      ],
+      "hudRects": [
+        {
+          "left": 18,
+          "right": 181.9375,
+          "top": 14,
+          "bottom": 45
+        },
+        {
+          "left": 1069.609375,
+          "right": 1348,
+          "top": 15,
+          "bottom": 44
+        },
+        {
+          "left": 16,
+          "right": 220,
+          "top": 72,
+          "bottom": 232.09375
+        },
+        {
+          "left": 28,
+          "right": 210,
+          "top": 205.09375,
+          "bottom": 224.09375
+        },
+        {
+          "left": 1176,
+          "right": 1350,
+          "top": 72,
+          "bottom": 311.5
+        },
+        {
+          "left": 1176,
+          "right": 1350,
+          "top": 460.015625,
+          "bottom": 690
+        },
+        {
+          "left": 468,
+          "right": 898,
+          "top": 64,
+          "bottom": 181.5
+        },
+        {
+          "left": 599.5625,
+          "right": 766.4375,
+          "top": 657,
+          "bottom": 685
+        },
+        {
+          "left": 397,
+          "right": 969,
+          "top": 689,
+          "bottom": 756
+        },
+        {
+          "left": 1272.296875,
+          "right": 1350,
+          "top": 753,
+          "bottom": 765
+        },
+        {
+          "left": 16,
+          "right": 220,
+          "top": 564.40625,
+          "bottom": 690
+        }
+      ],
+      "metricInference": {
+        "labelWidth": 93.60374450683594,
+        "labelHeight": 19,
+        "row": 23,
+        "horizontal": 66.80187225341797,
+        "rectTopFromBaseline": -14,
+        "rectBottomFromBaseline": 5
+      },
+      "oldInitialLocalCandidates": [
+        {
+          "dx": 0,
+          "dy": 0,
+          "rect": {
+            "left": 630.2898577526678,
+            "right": 723.8936022595037,
+            "top": 349.67795439561826,
+            "bottom": 368.67795439561826
+          },
+          "overlapBlocks": [
+            {
+              "id": "player-body-reserve",
+              "area": 1368.0000000000605
+            }
+          ]
+        },
+        {
+          "dx": 0,
+          "dy": -23,
+          "rect": {
+            "left": 630.2898577526678,
+            "right": 723.8936022595037,
+            "top": 326.67795439561826,
+            "bottom": 345.67795439561826
+          },
+          "overlapBlocks": [
+            {
+              "id": "player-body-reserve",
+              "area": 1368.0000000000605
+            }
+          ]
+        },
+        {
+          "dx": -66.80187225341797,
+          "dy": 0,
+          "rect": {
+            "left": 563.4879854992498,
+            "right": 657.0917300060858,
+            "top": 349.67795439561826,
+            "bottom": 368.67795439561826
+          },
+          "overlapBlocks": [
+            {
+              "id": "player-body-reserve",
+              "area": 191.74287011565957
+            }
+          ]
+        },
+        {
+          "dx": 66.80187225341797,
+          "dy": 0,
+          "rect": {
+            "left": 697.0917300060858,
+            "right": 790.6954745129217,
+            "top": 349.67795439561826,
+            "bottom": 368.67795439561826
+          },
+          "overlapBlocks": [
+            {
+              "id": "player-body-reserve",
+              "area": 416.2571298844009
+            }
+          ]
+        },
+        {
+          "dx": 0,
+          "dy": 23,
+          "rect": {
+            "left": 630.2898577526678,
+            "right": 723.8936022595037,
+            "top": 372.67795439561826,
+            "bottom": 391.67795439561826
+          },
+          "overlapBlocks": [
+            {
+              "id": "player-body-reserve",
+              "area": 1368.0000000000605
+            }
+          ]
+        },
+        {
+          "dx": -66.80187225341797,
+          "dy": -23,
+          "rect": {
+            "left": 563.4879854992498,
+            "right": 657.0917300060858,
+            "top": 326.67795439561826,
+            "bottom": 345.67795439561826
+          },
+          "overlapBlocks": [
+            {
+              "id": "player-body-reserve",
+              "area": 191.74287011565957
+            }
+          ]
+        },
+        {
+          "dx": 66.80187225341797,
+          "dy": -23,
+          "rect": {
+            "left": 697.0917300060858,
+            "right": 790.6954745129217,
+            "top": 326.67795439561826,
+            "bottom": 345.67795439561826
+          },
+          "overlapBlocks": [
+            {
+              "id": "player-body-reserve",
+              "area": 416.2571298844009
+            }
+          ]
+        },
+        {
+          "dx": -66.80187225341797,
+          "dy": 23,
+          "rect": {
+            "left": 563.4879854992498,
+            "right": 657.0917300060858,
+            "top": 372.67795439561826,
+            "bottom": 391.67795439561826
+          },
+          "overlapBlocks": [
+            {
+              "id": "player-body-reserve",
+              "area": 191.74287011565957
+            }
+          ]
+        },
+        {
+          "dx": 66.80187225341797,
+          "dy": 23,
+          "rect": {
+            "left": 697.0917300060858,
+            "right": 790.6954745129217,
+            "top": 372.67795439561826,
+            "bottom": 391.67795439561826
+          },
+          "overlapBlocks": [
+            {
+              "id": "player-body-reserve",
+              "area": 416.2571298844009
+            }
+          ]
+        },
+        {
+          "dx": 0,
+          "dy": -46,
+          "rect": {
+            "left": 630.2898577526678,
+            "right": 723.8936022595037,
+            "top": 303.67795439561826,
+            "bottom": 322.67795439561826
+          },
+          "overlapBlocks": [
+            {
+              "id": "player-body-reserve",
+              "area": 1368.0000000000605
+            }
+          ]
+        },
+        {
+          "dx": 0,
+          "dy": 46,
+          "rect": {
+            "left": 630.2898577526678,
+            "right": 723.8936022595037,
+            "top": 395.67795439561826,
+            "bottom": 414.67795439561826
+          },
+          "overlapBlocks": [
+            {
+              "id": "player-body-reserve",
+              "area": 368.7872835155476
+            }
+          ]
+        }
+      ],
+      "all11HitAtLeastOneModelledBlock": true,
+      "preferredFix": {
+        "semanticAnchor": {
+          "x": 1383.3883355786786,
+          "y": 666.9690495529546
+        },
+        "displayOffset": {
+          "x": 0,
+          "y": 80.64
+        },
+        "baseline": {
+          "x": 677.0917300061591,
+          "y": 474.26995439564195
+        },
+        "rect": {
+          "left": 630.2898577527411,
+          "right": 723.893602259577,
+          "top": 460.26995439564195,
+          "bottom": 479.26995439564195
+        },
+        "explanation": "Anchor remains actual aim. Text below true circle, retaining player/body/aim protections.",
+        "modelledOverlapBlocks": []
+      },
+      "calculationScope": "Static arithmetic from recorded projection/diagnostics and baseline reserve formulas, not execution of Renderer/SceneLabels, simulation or tests. aim protection uses recorded battle.lastAim as proxy for renderer pointer; body/HUD primary blockers are exact enough to explain failure. Existing previous-placement offsets may add one candidate; original diagnostics demonstrate actual fallback. Candidate rectangles include original6px viewport clamp."
+    },
+    {
+      "kind": "brood",
+      "source": "artifacts/completion-v075/visual-capture/core-cf-attempt-3/04-brood.json",
+      "pointer": "/before",
+      "nativePng": "artifacts/completion-v075/visual-capture/core-cf-attempt-3/04-brood.png",
+      "actualNativePngViewed": true,
+      "sourceTick": 2906,
+      "elapsed": 48.43333333333333,
+      "attack": {
+        "id": "mother-core:attack:4",
+        "kind": "brood",
+        "trait": "FISSION",
+        "startedAt": 48.36666666666667,
+        "resolveAt": 49.266666666666666,
+        "origin": {
+          "x": 1900,
+          "y": 650
+        },
+        "aim": {
+          "x": 1900,
+          "y": 650
+        },
+        "angle": 3.9573344622452424,
+        "range": 0,
+        "radius": 19,
+        "halfAngle": 0,
+        "landings": [
+          {
+            "x": 1821.9999999999986,
+            "y": 698.0000000000002
+          },
+          {
+            "x": 1978.0000000000014,
+            "y": 698.0000000000002
+          }
+        ],
+        "threshold": 0.66
+      },
+      "originalNativePlacement": {
+        "id": "core-danger:mother-core:mother-core:attack:4",
+        "priority": 100,
+        "essential": true,
+        "rect": {
+          "left": 636.198127746582,
+          "right": 729.801872253418,
+          "top": 6,
+          "bottom": 25
+        },
+        "anchor": {
+          "x": 977.84645227458,
+          "y": 536.064
+        },
+        "baseline": {
+          "x": 683,
+          "y": 20
+        },
+        "compact": false,
+        "fallback": true,
+        "conflicted": false,
+        "leader": {
+          "from": {
+            "x": 746.8865215836223,
+            "y": 60.20072571046158
+          },
+          "to": {
+            "x": 729.801872253418,
+            "y": 25
+          }
+        }
+      },
+      "playerBodyReserve": {
+        "left": 651.0000000000018,
+        "right": 714.9999999999982,
+        "top": 251.85991741879673,
+        "bottom": 347.85991741879127
+      },
+      "computedFeatureBlocks": [
+        {
+          "id": "player-body-reserve",
+          "rect": {
+            "left": 651.0000000000018,
+            "right": 714.9999999999982,
+            "top": 251.85991741879673,
+            "bottom": 347.85991741879127
+          }
+        },
+        {
+          "id": "render-aim-proxy-lastAim",
+          "rect": {
+            "left": 959.7131022134274,
+            "right": 995.979768880092,
+            "top": 542.5066813151057,
+            "bottom": 578.7733479817703
+          }
+        },
+        {
+          "id": "core-ground-feature",
+          "rect": {
+            "left": 960.7797856079143,
+            "right": 994.9131189412457,
+            "top": 555.3066666666668,
+            "bottom": 570.2399999999993
+          }
+        },
+        {
+          "id": "core-lantern-weakpoint",
+          "rect": {
+            "left": 954.6357856079146,
+            "right": 1001.0571189412453,
+            "top": 463.78666666667203,
+            "bottom": 529.0666666666683
+          }
+        },
+        {
+          "id": "core-crown-feature",
+          "rect": {
+            "left": 967.1797856079139,
+            "right": 988.513118941246,
+            "top": 428.5440000000074,
+            "bottom": 445.61066666667307
+          }
+        }
+      ],
+      "hudRects": [
+        {
+          "left": 18,
+          "right": 181.9375,
+          "top": 14,
+          "bottom": 45
+        },
+        {
+          "left": 1069.609375,
+          "right": 1348,
+          "top": 15,
+          "bottom": 44
+        },
+        {
+          "left": 16,
+          "right": 220,
+          "top": 72,
+          "bottom": 232.09375
+        },
+        {
+          "left": 28,
+          "right": 210,
+          "top": 205.09375,
+          "bottom": 224.09375
+        },
+        {
+          "left": 1176,
+          "right": 1350,
+          "top": 72,
+          "bottom": 311.5
+        },
+        {
+          "left": 1176,
+          "right": 1350,
+          "top": 460.015625,
+          "bottom": 690
+        },
+        {
+          "left": 468,
+          "right": 898,
+          "top": 64,
+          "bottom": 181.5
+        },
+        {
+          "left": 500,
+          "right": 866,
+          "top": 657,
+          "bottom": 685
+        },
+        {
+          "left": 397,
+          "right": 969,
+          "top": 689,
+          "bottom": 756
+        },
+        {
+          "left": 1272.296875,
+          "right": 1350,
+          "top": 753,
+          "bottom": 765
+        },
+        {
+          "left": 16,
+          "right": 220,
+          "top": 564.40625,
+          "bottom": 690
+        }
+      ],
+      "metricInference": {
+        "labelWidth": 93.60374450683594,
+        "labelHeight": 19,
+        "row": 23,
+        "horizontal": 66.80187225341797,
+        "rectTopFromBaseline": -14,
+        "rectBottomFromBaseline": 5
+      },
+      "oldInitialLocalCandidates": [
+        {
+          "dx": 0,
+          "dy": 0,
+          "rect": {
+            "left": 931.044580021162,
+            "right": 1024.6483245279978,
+            "top": 522.064,
+            "bottom": 541.064
+          },
+          "overlapBlocks": [
+            {
+              "id": "render-aim-proxy-lastAim",
+              "area": 113.20397378464962
+            },
+            {
+              "id": "core-lantern-weakpoint",
+              "area": 598.7797902222849
+            }
+          ]
+        },
+        {
+          "dx": 0,
+          "dy": -23,
+          "rect": {
+            "left": 931.044580021162,
+            "right": 1024.6483245279978,
+            "top": 499.06399999999996,
+            "bottom": 518.064
+          },
+          "overlapBlocks": [
+            {
+              "id": "core-lantern-weakpoint",
+              "area": 1034.0053333332837
+            }
+          ]
+        },
+        {
+          "dx": -66.80187225341797,
+          "dy": 0,
+          "rect": {
+            "left": 864.242707767744,
+            "right": 957.84645227458,
+            "top": 522.064,
+            "bottom": 541.064
+          },
+          "overlapBlocks": [
+            {
+              "id": "render-aim-proxy-lastAim",
+              "area": 5.455655972805853
+            },
+            {
+              "id": "core-lantern-weakpoint",
+              "area": 79.33656177777553
+            }
+          ]
+        },
+        {
+          "dx": 66.80187225341797,
+          "dy": 0,
+          "rect": {
+            "left": 997.8464522745799,
+            "right": 1091.4501967814158,
+            "top": 522.064,
+            "bottom": 541.064
+          },
+          "overlapBlocks": [
+            {
+              "id": "render-aim-proxy-lastAim",
+              "area": 5.4555704160715655
+            },
+            {
+              "id": "core-lantern-weakpoint",
+              "area": 79.33656177777678
+            }
+          ]
+        },
+        {
+          "dx": 0,
+          "dy": 23,
+          "rect": {
+            "left": 931.044580021162,
+            "right": 1024.6483245279978,
+            "top": 545.064,
+            "bottom": 564.064
+          },
+          "overlapBlocks": [
+            {
+              "id": "render-aim-proxy-lastAim",
+              "area": 841.0666666666275
+            },
+            {
+              "id": "core-ground-feature",
+              "area": 537.5089777777441
+            }
+          ]
+        },
+        {
+          "dx": -66.80187225341797,
+          "dy": -23,
+          "rect": {
+            "left": 864.242707767744,
+            "right": 957.84645227458,
+            "top": 499.06399999999996,
+            "bottom": 518.064
+          },
+          "overlapBlocks": [
+            {
+              "id": "core-lantern-weakpoint",
+              "area": 137.00266666664186
+            }
+          ]
+        },
+        {
+          "dx": 66.80187225341797,
+          "dy": -23,
+          "rect": {
+            "left": 997.8464522745799,
+            "right": 1091.4501967814158,
+            "top": 499.06399999999996,
+            "bottom": 518.064
+          },
+          "overlapBlocks": [
+            {
+              "id": "core-lantern-weakpoint",
+              "area": 137.00266666664402
+            }
+          ]
+        },
+        {
+          "dx": -66.80187225341797,
+          "dy": 23,
+          "rect": {
+            "left": 864.242707767744,
+            "right": 957.84645227458,
+            "top": 545.064,
+            "bottom": 564.064
+          },
+          "overlapBlocks": [
+            {
+              "id": "render-aim-proxy-lastAim",
+              "area": 40.53365116189855
+            },
+            {
+              "id": "core-ground-feature",
+              "area": 13.60782222220962
+            }
+          ]
+        },
+        {
+          "dx": 66.80187225341797,
+          "dy": 23,
+          "rect": {
+            "left": 997.8464522745799,
+            "right": 1091.4501967814158,
+            "top": 545.064,
+            "bottom": 564.064
+          },
+          "overlapBlocks": [
+            {
+              "id": "render-aim-proxy-lastAim",
+              "area": 40.53301550473111
+            },
+            {
+              "id": "core-ground-feature",
+              "area": 13.607822222211071
+            }
+          ]
+        },
+        {
+          "dx": 0,
+          "dy": -46,
+          "rect": {
+            "left": 931.044580021162,
+            "right": 1024.6483245279978,
+            "top": 476.06399999999996,
+            "bottom": 495.06399999999996
+          },
+          "overlapBlocks": [
+            {
+              "id": "core-lantern-weakpoint",
+              "area": 1034.0053333332837
+            }
+          ]
+        },
+        {
+          "dx": 0,
+          "dy": 46,
+          "rect": {
+            "left": 931.044580021162,
+            "right": 1024.6483245279978,
+            "top": 568.064,
+            "bottom": 587.064
+          },
+          "overlapBlocks": [
+            {
+              "id": "render-aim-proxy-lastAim",
+              "area": 651.1338039930013
+            },
+            {
+              "id": "core-ground-feature",
+              "area": 260.21546666662783
+            }
+          ]
+        }
+      ],
+      "all11HitAtLeastOneModelledBlock": true,
+      "preferredFix": {
+        "semanticAnchor": {
+          "x": 1900,
+          "y": 698.0000000000002
+        },
+        "displayOffset": {
+          "x": 0,
+          "y": 30.959999999999997
+        },
+        "baseline": {
+          "x": 977.8464522744648,
+          "y": 630.5279999999987
+        },
+        "rect": {
+          "left": 931.0445800210468,
+          "right": 1024.6483245278828,
+          "top": 616.5279999999987,
+          "bottom": 635.5279999999987
+        },
+        "explanation": "Anchor is midpoint of real finite landings, rather than core origin/weakpoint. Text lies below landing circles.",
+        "modelledOverlapBlocks": []
+      },
+      "calculationScope": "Static arithmetic from recorded projection/diagnostics and baseline reserve formulas, not execution of Renderer/SceneLabels, simulation or tests. aim protection uses recorded battle.lastAim as proxy for renderer pointer; body/HUD primary blockers are exact enough to explain failure. Existing previous-placement offsets may add one candidate; original diagnostics demonstrate actual fallback. Candidate rectangles include original6px viewport clamp."
+    },
+    {
+      "kind": "corrosion",
+      "source": "artifacts/completion-v075/visual-capture/core-mc-attempt-2/03-corrosion.json",
+      "pointer": "/before",
+      "nativePng": "artifacts/completion-v075/visual-capture/core-mc-attempt-2/03-corrosion.png",
+      "actualNativePngViewed": true,
+      "sourceTick": 2696,
+      "elapsed": 44.93333333333333,
+      "attack": {
+        "id": "mother-core:attack:3",
+        "kind": "corrosion",
+        "trait": "MIMIC",
+        "startedAt": 44.81666666666666,
+        "resolveAt": 46.61666666666666,
+        "origin": {
+          "x": 1900,
+          "y": 650
+        },
+        "aim": {
+          "x": 850,
+          "y": 1190
+        },
+        "angle": 3.6932242566335702,
+        "range": 0,
+        "radius": 55,
+        "halfAngle": 0,
+        "landings": []
+      },
+      "originalNativePlacement": {
+        "id": "core-danger:mother-core:mother-core:attack:3",
+        "priority": 100,
+        "essential": true,
+        "rect": {
+          "left": 616.153205871582,
+          "right": 749.846794128418,
+          "top": 6,
+          "bottom": 27
+        },
+        "anchor": {
+          "x": 479.78446590615516,
+          "y": 734.0746832409263
+        },
+        "baseline": {
+          "x": 683,
+          "y": 21
+        },
+        "compact": false,
+        "fallback": true,
+        "conflicted": false,
+        "leader": {
+          "from": {
+            "x": 609.7817380863954,
+            "y": 60.03618972451249
+          },
+          "to": {
+            "x": 616.153205871582,
+            "y": 27
+          }
+        }
+      },
+      "playerBodyReserve": {
+        "left": 651.0000000000018,
+        "right": 714.9999999999982,
+        "top": 300.80000000000473,
+        "bottom": 396.7999999999993
+      },
+      "computedFeatureBlocks": [
+        {
+          "id": "player-body-reserve",
+          "rect": {
+            "left": 651.0000000000018,
+            "right": 714.9999999999982,
+            "top": 300.80000000000473,
+            "bottom": 396.7999999999993
+          }
+        },
+        {
+          "id": "render-aim-proxy-lastAim",
+          "rect": {
+            "left": 1021.6510904946776,
+            "right": 1057.9177571613423,
+            "top": 523.9413736979182,
+            "bottom": 560.2080403645828
+          }
+        }
+      ],
+      "hudRects": [
+        {
+          "left": 18,
+          "right": 181.9375,
+          "top": 14,
+          "bottom": 45
+        },
+        {
+          "left": 1069.609375,
+          "right": 1348,
+          "top": 15,
+          "bottom": 44
+        },
+        {
+          "left": 16,
+          "right": 220,
+          "top": 72,
+          "bottom": 231.09375
+        },
+        {
+          "left": 28,
+          "right": 210,
+          "top": 205.09375,
+          "bottom": 223.09375
+        },
+        {
+          "left": 1176,
+          "right": 1350,
+          "top": 72,
+          "bottom": 311.5
+        },
+        {
+          "left": 1176,
+          "right": 1350,
+          "top": 460.015625,
+          "bottom": 690
+        },
+        {
+          "left": 468,
+          "right": 898,
+          "top": 64,
+          "bottom": 181.5
+        },
+        {
+          "left": 565,
+          "right": 801,
+          "top": 657,
+          "bottom": 685
+        },
+        {
+          "left": 397,
+          "right": 969,
+          "top": 689,
+          "bottom": 756
+        },
+        {
+          "left": 1272.296875,
+          "right": 1350,
+          "top": 753,
+          "bottom": 765
+        },
+        {
+          "left": 16,
+          "right": 220,
+          "top": 564.40625,
+          "bottom": 690
+        }
+      ],
+      "metricInference": {
+        "labelWidth": 133.69358825683594,
+        "labelHeight": 21,
+        "row": 25,
+        "horizontal": 86.84679412841797,
+        "rectTopFromBaseline": -15,
+        "rectBottomFromBaseline": 6
+      },
+      "oldInitialLocalCandidates": [
+        {
+          "dx": 0,
+          "dy": 0,
+          "rect": {
+            "left": 412.9376717777372,
+            "right": 546.6312600345732,
+            "top": 719.0746832409263,
+            "bottom": 740.0746832409263
+          },
+          "overlapBlocks": [
+            {
+              "id": "native-HUD-8",
+              "area": 2807.565353393556
+            }
+          ]
+        },
+        {
+          "dx": 0,
+          "dy": -25,
+          "rect": {
+            "left": 412.9376717777372,
+            "right": 546.6312600345732,
+            "top": 694.0746832409263,
+            "bottom": 715.0746832409263
+          },
+          "overlapBlocks": [
+            {
+              "id": "native-HUD-8",
+              "area": 2807.565353393556
+            }
+          ]
+        },
+        {
+          "dx": -86.84679412841797,
+          "dy": 0,
+          "rect": {
+            "left": 326.0908776493192,
+            "right": 459.78446590615516,
+            "top": 719.0746832409263,
+            "bottom": 740.0746832409263
+          },
+          "overlapBlocks": [
+            {
+              "id": "native-HUD-8",
+              "area": 1402.4737840292585
+            }
+          ]
+        },
+        {
+          "dx": 86.84679412841797,
+          "dy": 0,
+          "rect": {
+            "left": 499.7844659061552,
+            "right": 633.4780541629912,
+            "top": 719.0746832409263,
+            "bottom": 740.0746832409263
+          },
+          "overlapBlocks": [
+            {
+              "id": "native-HUD-8",
+              "area": 2807.5653533935547
+            }
+          ]
+        },
+        {
+          "dx": 0,
+          "dy": 25,
+          "rect": {
+            "left": 412.9376717777372,
+            "right": 546.6312600345732,
+            "top": 741,
+            "bottom": 762
+          },
+          "overlapBlocks": [
+            {
+              "id": "native-HUD-8",
+              "area": 2540.1781768798837
+            }
+          ]
+        },
+        {
+          "dx": -86.84679412841797,
+          "dy": -25,
+          "rect": {
+            "left": 326.0908776493192,
+            "right": 459.78446590615516,
+            "top": 694.0746832409263,
+            "bottom": 715.0746832409263
+          },
+          "overlapBlocks": [
+            {
+              "id": "native-HUD-8",
+              "area": 1402.4737840292585
+            }
+          ]
+        },
+        {
+          "dx": 86.84679412841797,
+          "dy": -25,
+          "rect": {
+            "left": 499.7844659061552,
+            "right": 633.4780541629912,
+            "top": 694.0746832409263,
+            "bottom": 715.0746832409263
+          },
+          "overlapBlocks": [
+            {
+              "id": "native-HUD-8",
+              "area": 2807.5653533935547
+            }
+          ]
+        },
+        {
+          "dx": -86.84679412841797,
+          "dy": 25,
+          "rect": {
+            "left": 326.0908776493192,
+            "right": 459.78446590615516,
+            "top": 741,
+            "bottom": 762
+          },
+          "overlapBlocks": [
+            {
+              "id": "native-HUD-8",
+              "area": 1268.904852216948
+            }
+          ]
+        },
+        {
+          "dx": 86.84679412841797,
+          "dy": 25,
+          "rect": {
+            "left": 499.7844659061552,
+            "right": 633.4780541629912,
+            "top": 741,
+            "bottom": 762
+          },
+          "overlapBlocks": [
+            {
+              "id": "native-HUD-8",
+              "area": 2540.178176879883
+            }
+          ]
+        },
+        {
+          "dx": 0,
+          "dy": -50,
+          "rect": {
+            "left": 412.9376717777372,
+            "right": 546.6312600345732,
+            "top": 669.0746832409263,
+            "bottom": 690.0746832409263
+          },
+          "overlapBlocks": [
+            {
+              "id": "native-HUD-8",
+              "area": 678.4526117462713
+            }
+          ]
+        },
+        {
+          "dx": 0,
+          "dy": 50,
+          "rect": {
+            "left": 412.9376717777372,
+            "right": 546.6312600345732,
+            "top": 741,
+            "bottom": 762
+          },
+          "overlapBlocks": [
+            {
+              "id": "native-HUD-8",
+              "area": 2540.1781768798837
+            }
+          ]
+        }
+      ],
+      "all11HitAtLeastOneModelledBlock": true,
+      "calculationScope": "Static arithmetic from recorded projection/diagnostics and baseline reserve formulas, not execution of Renderer/SceneLabels, simulation or tests. aim protection uses recorded battle.lastAim as proxy for renderer pointer; body/HUD primary blockers are exact enough to explain failure. Existing previous-placement offsets may add one candidate; original diagnostics demonstrate actual fallback. Candidate rectangles include original6px viewport clamp."
+    }
+  ],
+  "preciseFindings": {
+    "fission": "Legacy preferred(677.09,363.68), box93.60×19. Player reserve[651,715]×[300.8,396.8], then padded4. Horizontal±66.80 cannot escape its sides; vertical+46 misses clearing bottom by5.12px and−46 remains in body. Edge-aligned local solutions exist (e.g. baseline~291.7 above player), but the semantically cleaner circle-exterior proposal is baseline474.27, rect y460.27–479.27, actual circle bottom455.84.",
+    "brood": "Legacy preferred(977.85,536.06) intersects lantern feature whose unpadded bounds are approximately[954.64,1001.06]×[463.79,529.07], and aim reserve near ground560.64. Horizontal candidates miss lantern clearance by7.21px each; two rows up/down stay in lantern/aim/ground. Small sideways boxes can clear protected features but may still cross painted side body. Safer semantic proposal uses landing midpoint(1900,698) and circle-exterior offset: baseline630.53, rect y616.53–635.53; actual landing bottom612.10.",
+    "corrosion": "The original native counter anchor(479.78,734.07) falls in bottom tool dock. Native selects top rail, whereas the old no-HUD derived fixture retained bottom text. Counterpart shows why numeric HUD reservations must be carried into derived placement analysis. Real tissue aim(850,1190) remains offscreen; repositioning text cannot restore a missing victim/range."
+  },
+  "samePointOrdinaryAndHeal": {
+    "source": "artifacts/readability-v075/perf/final-d/report.json",
+    "pointer": "/warmState",
+    "tick": 9353,
+    "elapsed": 155.88333333333333,
+    "attacks": [
+      {
+        "id": "virus-18",
+        "attackAt": 156.12,
+        "attackAim": {
+          "x": 850,
+          "y": 1190
+        }
+      },
+      {
+        "id": "virus-29",
+        "attackAt": 156.55333333333334,
+        "attackAim": {
+          "x": 850,
+          "y": 1190
+        }
+      },
+      {
+        "id": "virus-32",
+        "attackAt": 156.33666666666667,
+        "attackAim": {
+          "x": 850,
+          "y": 1190
+        }
+      }
+    ],
+    "heal": {
+      "id": 1295,
+      "kind": "heal",
+      "from": {
+        "x": 418.3915560403681,
+        "y": 1339.7619771268585
+      },
+      "to": {
+        "x": 849.9999809265137,
+        "y": 1190.0000158945718
+      },
+      "radius": 35,
+      "born": 155.75,
+      "duration": 0.55
+    },
+    "finding": "Three actual ordinary attacks share aim(850,1190), as does the heal. drawBattleDangers draws these primitive rings/arcs directly, not through label placement. Each reserves the same small9-screen-unit center; duplicates change overlap cost weighting but not existence of zero-overlap candidates. The heal ring/floating plus has no separate SceneLabels request/reservation. A caption change cannot by itself separate these effects or make all actor silhouettes readable.",
+    "recommendation": "Keep actual hazard radius/aim and timers unchanged. Assess transient heal glyph vs hostile ring using a separate finite actual-state close review if modifying it; do not equate permanent tissue plus/percentage, world24 count or conflicted=0 with readable active healing."
+  },
+  "minimalImplementationAdvice": [
+    "Prefer correcting the semantic anchor and display offset for fission/brood over weakening player/aim/weakpoint reservations or moving actual attack geometry.",
+    "For generic SceneLabels robustness, bounded edge-aware candidates/extra nearby rows can be considered before global rails; retain real occlusion checks and distinguish fallback distance from conflict count. This is optional beyond the targeted semantic fix.",
+    "Independent derived fixture should optionally accept numeric native HUD rects, with strict before.state equality to input, finite positive rectangle validation, and source/input/hash unchanged checks. This preserves local layout constraints without pretending production DOM is drawn."
+  ],
+  "minimalValidationAdvice": [
+    "Collector unit checks: real aim/landing midpoint is label anchor; display-only offset below original radius; serialization of state/attack and hazard primitive geometry unchanged.",
+    "One fixed-state fission pair and one brood pair, normal/low, with same native HUD rects; verify actual PNG text remains near source circle(s), outside player/weakpoint and registered HUD, not only fallback/conflict counts.",
+    "Existing scene-label player/aim/crown, finite viewport/essential fallback, camera scale and bounded-cache checks remain relevant; do not add an exhaustive trait×browser×organ×size matrix.",
+    "Do not call real damage execution passed from render-invariance; native UI, dense foreground, corruption target visibility and human comprehension remain distinct clauses."
+  ],
+  "baselineSourceBlobs": [
+    {
+      "path": "src/render/sceneLabels.ts",
+      "revision": "0b8610c3e2668b5a204f71d46cece59d5dc5ae0e",
+      "sha256": "0aff51690f470d01afdb9eb58292ea106d827d3acaf5678e25c872cb61fff8fc"
+    },
+    {
+      "path": "src/render/renderer.ts",
+      "revision": "0b8610c3e2668b5a204f71d46cece59d5dc5ae0e",
+      "sha256": "d48ec35df338e59e523f30cd6f89630a59992415059b3f6a2e1260baeb9ebd87"
+    },
+    {
+      "path": "src/render/battleVisuals.ts",
+      "revision": "0b8610c3e2668b5a204f71d46cece59d5dc5ae0e",
+      "sha256": "09f97b6f095e37592628d7236f4cce781ce9af2f4fd41631b5caa80493ded253"
+    },
+    {
+      "path": "tests/unit/scene-labels.test.ts",
+      "revision": "0b8610c3e2668b5a204f71d46cece59d5dc5ae0e",
+      "sha256": "6b610c85aa3977b536892fb0d5d02242a24c6ba5db1c3ef276083f0f862d2e2a"
+    }
+  ],
+  "evidenceRefs": [
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+      "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b"
+    },
+    {
+      "path": "artifacts/completion-v075/visual-capture/core-cf-attempt-3/02-fission-burst.json",
+      "sha256": "c5c61be439375228889a1ffaba067ae6fdce5ceb88bf3e2d4cb6a5a53c77fd41"
+    },
+    {
+      "path": "artifacts/completion-v075/visual-capture/core-cf-attempt-3/02-fission-burst.png",
+      "sha256": "47f17db35c350871e680fb6845020ac3e4b758e282ba011e4f993e32dde520e7"
+    },
+    {
+      "path": "artifacts/completion-v075/visual-capture/core-cf-attempt-3/04-brood.json",
+      "sha256": "3854ad49083eedca7d651d39e0b3d0c88b6384a39ddacfa47ad042de37b1129e"
+    },
+    {
+      "path": "artifacts/completion-v075/visual-capture/core-cf-attempt-3/04-brood.png",
+      "sha256": "50e5d96118a3962355338b24403738bd53846f096626cca848d010feed5c3351"
+    },
+    {
+      "path": "artifacts/completion-v075/visual-capture/core-mc-attempt-2/03-corrosion.json",
+      "sha256": "1bb971c4d07402f048c268d3666d00c96830192be19c82f5a35af2845b842c1a"
+    },
+    {
+      "path": "artifacts/completion-v075/visual-capture/core-mc-attempt-2/03-corrosion.png",
+      "sha256": "5508b7f1dc98d14e42fb7e981bc32ac225a152cc1b17ea9a98b300f800e93192"
+    },
+    {
+      "path": "artifacts/readability-v075/perf/final-d/report.json",
+      "sha256": "c77978b46468d6cde0cc4c9db7ff2ec0937778044a2a0e5a684beb9d9266af9f"
+    }
+  ],
+  "limits": [
+    "No broad readability or whole-row VIS acceptance promotion.",
+    "Native source PNG tick lies between its before/after snapshots; this analysis uses before diagnostics and does not assert exact screenshot tick.",
+    "Root implemented a repair concurrently; this analysis records baseline0b8610c and recommendations. New renderer effects are reviewed separately.",
+    "No original DesignDoc, old artifacts, source, tests, tools or hosts were modified by this reviewer."
+  ]
+}

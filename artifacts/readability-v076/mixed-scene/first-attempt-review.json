@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-27T13:46:34.433Z",
+  "reportSha256": "f78e2e8f3758ec8e60075cc77a5b51f2e3e11be2a5dc0d2df46204e87b6f354e",
+  "nativeFailurePngSha256": "9a7b0b1594a9f478bbef96259ae5d1fafce8103c924061ec1cecf540d1c35b10",
+  "nativeImageActuallyViewedByRoot": true,
+  "result": "Failed real capture retained; no accepted representative mixed image.",
+  "browserClosed": true,
+  "sourceAndBuildUnchanged": true,
+  "final": {
+    "tick": 4647,
+    "elapsed": 77.45,
+    "phase": "playing",
+    "hp": 16,
+    "tissue": 100,
+    "firstCounter": {
+      "status": "resolved",
+      "guideStatus": "completed",
+      "targetId": "elite-3",
+      "warnedAt": 1.9,
+      "appliedAt": 9.9,
+      "resolvedAt": 13.683333333333334,
+      "skippedAt": null,
+      "completedAt": 12.583333333333334,
+      "counterHit": {
+        "tick": 755,
+        "at": 12.583333333333334,
+        "targetId": "elite-3",
+        "method": "pulse",
+        "damage": 34
+      }
+    },
+    "actualSourceClears": 2,
+    "liveTargets": [
+      {
+        "id": "elite-4",
+        "role": "elite",
+        "hp": 238,
+        "traits": [
+          "FISSION"
+        ]
+      }
+    ]
+  },
+  "sourceClears": [
+    {
+      "type": "INFECTION_SOURCE_CLEARED",
+      "tick": 114,
+      "data": {
+        "organId": "heart",
+        "nodeId": "source-a",
+        "actor": "player"
+      }
+    },
+    {
+      "type": "INFECTION_SOURCE_CLEARED",
+      "tick": 389,
+      "data": {
+        "organId": "heart",
+        "nodeId": "source-b",
+        "actor": "player"
+      }
+    }
+  ],
+  "errors": [
+    "Error: Actual safety margin exhausted; preserve failed/missing predicates.\n    at file:///D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/readability-v076/mixed-scene/capture.mjs:253:53"
+  ],
+  "findings": [
+    "The host reused the normal clear-objective strategy during the first warning. Both original sources were actually cleared, violating its intended retained-producer plan.",
+    "The care branch tried to recover player HP while the tissue was already full. Existing repaired(amount) returns before the proximity HP recovery when amount<=0; holding repair there does not restore the fighter.",
+    "The unedited failure image shows only the surviving second elite near the player, with full tissue and low player HP. It is not representative density evidence."
+  ],
+  "next": "Use a separate v2 host and identity; preserve this host, identity and raw output. Keep the second producer alive through actual public input and kite committed attacks instead of relying on zero-delta repairs.",
+  "scope": "Capture-host diagnosis. No production source change or gameplay-state correction is made, and the earlier passed current-source tests are not relabelled."
+}

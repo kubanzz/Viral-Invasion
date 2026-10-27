@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "status": "implemented-targeted-unit-verified-awaiting-root-current-version-browser-and-performance",
+  "scope": "Actual gameplay movement/spacing fix. No renderer, labels, HUD, main, version, damage amount, attack range/timing, actor cap, static facility position or old evidence edit by this agent. No browser, performance run or full 1000-session batch was started by this agent.",
+  "designBasis": [
+    { "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md:186", "id": "AC-M03-05", "requirement": "World paths and XY collision shapes share geometry; no invisible blockers or false passages." },
+    { "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md:194", "id": "AC-M04-03", "requirement": "Dead/departed/migrated entities must not leave damaging ghost collision bodies." },
+    { "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md:195", "id": "AC-M04-04", "requirement": "Keep a bounded population rather than creating unlimited objects at cap." },
+    { "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md:196", "id": "AC-M04-05", "requirement": "Real-scale silhouettes must distinguish ordinary/elite trait bodies." },
+    { "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md:298", "id": "AC-M14-07", "requirement": "Real dense enemies/effects/foreground must leave targets/danger/weakness readable, including low effects." },
+    { "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md:25-29", "requirement": "AI, movement, attacks and collision stay in the same XY plane and use grounded entity positions." },
+    { "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md:112", "requirement": "Do not quietly remove enemies or change virus rules to meet a visual/performance target." }
+  ],
+  "rootCause": {
+    "source": "src/game/battle.ts previous enemies pursuit used one exact player/tissue center and stopped at reach; moveWithCollision only knew fixed world footprints. No other enemy body occupancy was considered. Common source routes and parity-based fold tangents repeatedly delivered bodies to identical resting coordinates.",
+    "archivedRealState": "artifacts/completion-v075/performance/attempt-1/dense-standard-state.json",
+    "archivedRealImageActuallyViewed": "artifacts/completion-v075/performance/attempt-1/dense-standard-three-cells.png",
+    "originalTick": 8872,
+    "originalLivingActors": 24,
+    "originalMobileActors": 21,
+    "nearCoincidentOrdinaryGroups": [
+      { "approximately": [941.61, 1203.29], "bodies": 8 },
+      { "approximately": [941.35, 1176.32], "bodies": 5, "note": "Includes one ordinary at approximately941.95,1176.66 within2 world units of the group." }
+    ],
+    "coincidentPairsUnder2WorldUnits": 38,
+    "intersectingMobileBodyPairs": 78,
+    "minimumBodySurfaceGap": -44,
+    "interpretation": "Thirteen live ordinary bodies occupy two tiny groups less than one body diameter apart. The actual PNG shows only a few crystal silhouettes in that patch. A world actor count or label displacement cannot repair this physical overlap."
+  },
+  "implementation": {
+    "ownedFiles": ["src/actors/enemyCrowd.ts", "src/game/battle.ts enemy movement block", "tests/unit/enemy-crowd.test.ts"],
+    "sourceHashesAtHandoff": {
+      "src/actors/enemyCrowd.ts": "d62b72b6af9b5b6ddedc581debc68074b598c36349820ca3333b32aeb51f9d21",
+      "src/game/battle.ts": "c995ac47634fe9177455293446f2033a502c194a187bb001a7e58a614b3a84b0",
+      "tests/unit/enemy-crowd.test.ts": "688699f6fca91f1a8894e695cabb6a4f4ff8d01cbda28d7b0979f3821991bafa"
+    },
+    "softSeparation": "Read one live-body snapshot, sort by stable ID, compute pair repulsion and antisymmetric ID-derived directions for exact coincident centers. Does not consume RNG. Return proposed positions; apply simultaneously before the existing enemy loop.",
+    "boundedMovement": "Maximum spacing displacement is actual trait/slow-adjusted ordinary step multiplied by1.25. Every proposal uses existing moveWithCollision, explicit XY obstacle/bounds validation and a displacement cap. Alternate short tangents only replace a blocked separation direction when overlap energy decreases.",
+    "pursuit": "If separation already used a body's movement budget, do not immediately walk it back into the same overlap. Otherwise preserve normal pursuit; a pursuit step that would deepen a live-body overlap tries stable shallow tangents or queues. No neighbor yields exactly the old static-collision trajectory.",
+    "fixedBodies": "All defined attackAt poses, including due attacks before resolution, are fixed during the separation plan. Living source/core and migration actors constrain neighbors without moving themselves. Dead targets do not participate.",
+    "newWindups": "A newly spaced idle enemy that remains in the existing reach can still start its ordinary windup immediately. Once accepted, that body's position, attackAt/aim/target remain locked until the existing resolution path. The fix does not retroactively drag an accepted warning to a new point. Remaining overlaps from pre-existing committed attacks can last until their short windup resolves; subsequent cooldown allows relaxation.",
+    "rulesPreserved": ["B.maxActors=24", "playerDamage=7 and tissueDamage=4", "attackRadius/reach and attackWindup/attackInterval", "same-tick player vs tissue attack identities", "source/core/facility geometry", "dead actor exclusion", "trait speed multipliers and slowFactor", "gameplay XY/camera independence"],
+    "realGameplayEffect": "Crowded arrival order, reach eligibility, queued attackers, shot/range accessibility and total pressure can change because the physical positions now differ. This is an intended gameplay fix, not pure rendering; v075 win-rate, 1000-session and memory/performance conclusions cannot be inherited."
+  },
+  "targetedVerification": {
+    "attempt1": { "report": "artifacts/readability-v076/enemy-crowd/unit-attempt-1.json", "files": 3, "tests": 20, "passed": 20 },
+    "attempt2": { "report": "artifacts/readability-v076/enemy-crowd/unit-attempt-2.json", "files": 4, "tests": 30, "passed": 30, "suites": ["enemy-crowd7", "battle12", "area-control1", "campaign10"] },
+    "covered": [
+      "18 exact-coincident ordinary/elite bodies spread without deletion/HP/combat-field change and settle without ongoing isolated relaxation drift.",
+      "The pure simultaneous module gives the same plan for reversed input order, without adding an array-order contract to the whole existing AI.",
+      "Every corner/fold relaxation proposal stays inside world/obstacle bounds and its per-tick cap.",
+      "Committed windups/source/core/migration bodies do not move; dead neighbors do not constrain movement.",
+      "No-neighbor movement is byte-equivalent as numeric positions to existing static-collision movement; pursuit does not walk into a peer.",
+      "Actual GameSession pending windups stay unchanged and one same-tick player/tissue resolution still subtracts exactly7/4 with separate actor receipts.",
+      "Existing source/elite, three-trait G1 completion, population-bound, pulse area-control and campaign/travel mechanisms pass in the focused four-suite run."
+    ],
+    "archivedStateReplay": {
+      "report": "artifacts/readability-v076/enemy-crowd/replay-attempt-2.json",
+      "method": "240-tick unit-level BattleDirector phase replay from a clone of the real archived v075 state. No full GameSession input/immune/campaign-controller advancement, browser/render/throughput/acceptance claim.",
+      "originalTick": 8872,
+      "finalTick": 9112,
+      "originalLivingActors": 24,
+      "finalLivingActors": 24,
+      "coincidentPairsUnder2WorldUnits": [38, 0],
+      "intersectingMobileBodyPairs": [78, 0],
+      "minimumSurfaceGap": [-44, 3.9999999999999574],
+      "committedPoseChecks": 425,
+      "originalTargetHpAndStaticSourcePositionsPreserved": true,
+      "phaseEvents": { "ATTACK_TELEGRAPHED": 9, "ORGAN_INTEGRITY_CHANGED": 14 }
+    },
+    "evidenceOutput": "VI_ENEMY_CROWD_REPORT is supported; default is artifacts/unit-generated/enemy-crowd.json. All actual outputs of these agent-owned attempts were explicitly directed to artifacts/readability-v076/enemy-crowd/."
+  },
+  "limitationsAndRootNextChecks": [
+    "Root owns new complete unit/1000 formal-session checks and legal browser/pressure runs for the changed movement version; this review does not report their results in advance.",
+    "A4-world-unit gap between actual XY collision circles is not proof that tall projected silhouettes, foreground, HUD and labels are visually distinguishable. New actual images must be reviewed.",
+    "Soft relaxation is gradual, with fixed committed poses and physical constraints. Impossible narrow packing is allowed to queue; no guarantee that every body can instantaneously have full clearance in every cramped scene.",
+    "Check ordinary/elite crowds at the tissue and player, source-spawn departure, folds/corners, heart pulse and lung flow, migration contact, and a real new-pressure24+3 scene. Confirm accepted hazards stay grounded while bodies redistribute.",
+    "No browser/performance/real-player fun claim is made here."
+  ]
+}

@@ -1,0 +1,1256 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-27T13:24:11.119Z",
+  "complete": true,
+  "pass": true,
+  "method": "Independent fixture imports the actual Renderer. One captured snapshot and two independent structuredClone states are checked after repeated real Canvas2D renders at a fixed source tick.",
+  "scope": [
+    "Technical rendering comparison derived from a read-only snapshot; no main.ts, GameSession.step(), live release state writes, or game-time advancement.",
+    "Complete JSON equality plus SHA-256 of full state, HP, damage records, and collision geometry are checked at render-call boundaries.",
+    "Not a same-input gameplay replay, browser victory, ten-minute performance measurement, visual readability acceptance, or human playtest.",
+    "This verifies rendering does not change gameplay state. Shared danger/collision geometry remains covered separately by existing coreVisuals and geometry unit tests.",
+    "Images are Canvas2D backing stores only, with no HUD. Visual differences between normal/low effects are permitted."
+  ],
+  "options": {
+    "input": "artifacts/completion-v075/visual-capture/core-cf-attempt-3/04-brood-before-state.json",
+    "output": "artifacts/readability-v076/render-comparisons/brood-attempt-1",
+    "frames": 12,
+    "width": 1366,
+    "height": 768,
+    "dpr": 1,
+    "channel": "chrome",
+    "revision": "",
+    "hud": "artifacts/completion-v075/visual-capture/core-cf-attempt-3/04-brood.json"
+  },
+  "sourceRevision": null,
+  "sourceScope": "Current working-tree src/ and independent fixture harness.",
+  "input": {
+    "path": "artifacts/completion-v075/visual-capture/core-cf-attempt-3/04-brood-before-state.json",
+    "fileSha256": "4ad8e1b7d334c87dea66dfd6f0676a1fc3de7b8e62a829e3923deb718d433a98",
+    "shape": "GameState",
+    "unchanged": true
+  },
+  "errors": [],
+  "remoteRequests": [],
+  "hudInput": {
+    "path": "artifacts/completion-v075/visual-capture/core-cf-attempt-3/04-brood.json",
+    "sha256": "3854ad49083eedca7d651d39e0b3d0c88b6384a39ddacfa47ad042de37b1129e",
+    "rects": [
+      {
+        "left": 18,
+        "right": 181.9375,
+        "top": 14,
+        "bottom": 45
+      },
+      {
+        "left": 1069.609375,
+        "right": 1348,
+        "top": 15,
+        "bottom": 44
+      },
+      {
+        "left": 16,
+        "right": 220,
+        "top": 72,
+        "bottom": 232.09375
+      },
+      {
+        "left": 28,
+        "right": 210,
+        "top": 205.09375,
+        "bottom": 224.09375
+      },
+      {
+        "left": 1176,
+        "right": 1350,
+        "top": 72,
+        "bottom": 311.5
+      },
+      {
+        "left": 1176,
+        "right": 1350,
+        "top": 460.015625,
+        "bottom": 690
+      },
+      {
+        "left": 468,
+        "right": 898,
+        "top": 64,
+        "bottom": 181.5
+      },
+      {
+        "left": 500,
+        "right": 866,
+        "top": 657,
+        "bottom": 685
+      },
+      {
+        "left": 397,
+        "right": 969,
+        "top": 689,
+        "bottom": 756
+      },
+      {
+        "left": 1272.296875,
+        "right": 1350,
+        "top": 753,
+        "bottom": 765
+      },
+      {
+        "left": 16,
+        "right": 220,
+        "top": 564.40625,
+        "bottom": 690
+      }
+    ],
+    "scope": "Numeric protection rectangles from the recorded native viewport. No production HUD DOM is present in this derived fixture.",
+    "unchanged": true
+  },
+  "sourceManifest": {
+    "src/actors/collision.ts": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+    "src/core/rng.ts": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+    "src/game/battleConfig.ts": "668eb109c820d6e548997aec3ea9e00deca6f4d6120680870538037aa8a70f27",
+    "src/game/growth.ts": "49b6f0bb5c3e8cffe142d16a5db926795b6f8f35b5b0fbf9428d4f1bc39c5aab",
+    "src/game/immuneCells.ts": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80",
+    "src/game/motherCore.ts": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+    "src/game/organConfig.ts": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+    "src/game/organRules.ts": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+    "src/game/preparation.ts": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+    "src/game/protocols.ts": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+    "src/game/research.ts": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+    "src/game/types.ts": "c8d67e724f3176da9783dc2e7b9b059ede419f2bfa5e14b7e0063d3390324cbb",
+    "src/render/battleVisuals.ts": "3ae5d345bf11070ece98c22cae0da2a9f2e58642e5a08eacf534af0b8f313842",
+    "src/render/camera.ts": "ca117a766229b5770d49491559dbe016aca210876315f4069f5db42081f748e5",
+    "src/render/depthSort.ts": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+    "src/render/encounterVisuals.ts": "62e43895e405cd1300d735f59f150781cdf07b74036d5dbcc0b6f93011e01629",
+    "src/render/growthVisuals.ts": "cb445d39d3989e76f093aa5f6191897c2a4f966f28f209ee0c8d5f1a4aa29800",
+    "src/render/immuneTraceCues.ts": "80558b755ae1054388a982182b430b41e5ceb98119b7ad0758b694dabdfd66d7",
+    "src/render/immuneVisuals.ts": "07a8b19251d4bb706065ce4443fe0816f1d48ced6e5f5419244f30552bc3ac2c",
+    "src/render/layers.ts": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+    "src/render/lungVisuals.ts": "7bc495edd2c18da89ce1b8e6934e98ade262e982b953bf732593827e18ac7b77",
+    "src/render/navigation.ts": "ab776f6e94b141663e1bd46ca23da738e7ebf679ef0bf211258fc89f833355a5",
+    "src/render/occlusion.ts": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+    "src/render/organLandscape.ts": "3ea49be35cc7e1a3a4d7ac0e4356031f7255e3ad6c941e13b666fee5946f63a2",
+    "src/render/pulsePreview.ts": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+    "src/render/raisedObstacleGeometry.ts": "373e3f145fd521367be7adc93c8461b5407cfe384866f2eb59c2a3ee645a3df6",
+    "src/render/raisedObstacleOcclusion.ts": "0486c6daed7617275f28aab6406f84783a3e3695ae1059e9a2c99634f47308f1",
+    "src/render/renderer.ts": "d48ec35df338e59e523f30cd6f89630a59992415059b3f6a2e1260baeb9ebd87",
+    "src/render/sceneLabels.ts": "16dd719119212de9d6a2067e6710f472144478b2804ed6a4248a57a2594faba5",
+    "tests/fixtures/renderProbe.ts": "3c3f39e41a7a04799051b98e23874075215391639081584f65ab129cc717baac"
+  },
+  "sourceManifestSha256": "6b586a90833542936cc7612da659282b706c763ca4ae0a29d759b5c38324269f",
+  "fixtureBundleSha256": "e4d61aac61f6ca8e24346204961f9739a969dcae274730b9f0fc21fae06f3363",
+  "checks": {
+    "pass": true,
+    "seed": 91,
+    "tick": 2906,
+    "elapsed": 48.43333333333333,
+    "phase": "playing",
+    "organ": "heart",
+    "aliveActors": 1,
+    "framesPerMode": 12,
+    "aim": {
+      "x": 1899.9999843177766,
+      "y": 650.0000190734864
+    },
+    "baseline": {
+      "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+      "fullJsonBytes": 73401,
+      "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+      "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+      "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+    },
+    "observations": [
+      {
+        "frame": 0,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 0,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 0,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 1,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 1,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 1,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 2,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 2,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 2,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 3,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 3,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 3,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 4,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 4,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 4,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 5,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 5,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 5,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 6,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 6,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 6,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 7,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 7,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 7,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 8,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 8,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 8,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 9,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 9,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 9,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 10,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 10,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 10,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 11,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 11,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 11,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 12,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 12,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 12,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 13,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 13,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 13,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "4fcb495d88cef57c5ef683b71b1476102e5579387cf61b8115c6fc1a3f82f687",
+          "fullJsonBytes": 73401,
+          "hpSha256": "71853dafed028a4b9a2f0649bc9a0041067eab72ab5a6ce611fd7f19bb15cf48",
+          "damageSha256": "f735be6451fd6ccd1c07a5639443fb92920f4d0651426f2c90c2b0c19126c86f",
+          "collisionGeometrySha256": "84f4a95933ec820b6e3da00bfc19f9a1f66ec8a9b04c8e70c423a54c0ddb484e"
+        },
+        "unchanged": true
+      }
+    ],
+    "hudProtectionRects": [
+      {
+        "left": 18,
+        "right": 181.9375,
+        "top": 14,
+        "bottom": 45
+      },
+      {
+        "left": 1069.609375,
+        "right": 1348,
+        "top": 15,
+        "bottom": 44
+      },
+      {
+        "left": 16,
+        "right": 220,
+        "top": 72,
+        "bottom": 232.09375
+      },
+      {
+        "left": 28,
+        "right": 210,
+        "top": 205.09375,
+        "bottom": 224.09375
+      },
+      {
+        "left": 1176,
+        "right": 1350,
+        "top": 72,
+        "bottom": 311.5
+      },
+      {
+        "left": 1176,
+        "right": 1350,
+        "top": 460.015625,
+        "bottom": 690
+      },
+      {
+        "left": 468,
+        "right": 898,
+        "top": 64,
+        "bottom": 181.5
+      },
+      {
+        "left": 500,
+        "right": 866,
+        "top": 657,
+        "bottom": 685
+      },
+      {
+        "left": 397,
+        "right": 969,
+        "top": 689,
+        "bottom": 756
+      },
+      {
+        "left": 1272.296875,
+        "right": 1350,
+        "top": 753,
+        "bottom": 765
+      },
+      {
+        "left": 16,
+        "right": 220,
+        "top": 564.40625,
+        "bottom": 690
+      }
+    ],
+    "canvas": {
+      "context": "real CanvasRenderingContext2D",
+      "normal": {
+        "width": 1366,
+        "height": 768
+      },
+      "low": {
+        "width": 1366,
+        "height": 768
+      },
+      "dpr": 1
+    },
+    "rendererDiagnostics": {
+      "normal": {
+        "depthOrder": [
+          "gate",
+          "exit",
+          "player",
+          "fold-c",
+          "source-a",
+          "mother-core",
+          "fold-a",
+          "research",
+          "fold-d",
+          "heart-crisis-source",
+          "valve",
+          "fold-e",
+          "heart-retained-source",
+          "source-b",
+          "terminal",
+          "tissue",
+          "fold-b"
+        ],
+        "occluded": false,
+        "foregroundOpacity": 0.94,
+        "layerOrder": [
+          "distant",
+          "terrain",
+          "contact-shadows",
+          "world-y-sorted",
+          "foreground",
+          "effects",
+          "hud"
+        ],
+        "labels": {
+          "requested": 8,
+          "placed": 4,
+          "omitted": 4,
+          "offscreen": 3,
+          "conflicted": 0,
+          "measureCacheSize": 7,
+          "placementCacheSize": 4,
+          "placements": [
+            {
+              "id": "core-danger:mother-core:mother-core:attack:4",
+              "priority": 100,
+              "essential": true,
+              "rect": {
+                "left": 931.044580021162,
+                "right": 1024.6483245279978,
+                "top": 616.5280000000001,
+                "bottom": 635.5280000000001
+              },
+              "anchor": {
+                "x": 977.84645227458,
+                "y": 597.5040000000001
+              },
+              "baseline": {
+                "x": 977.84645227458,
+                "y": 630.5280000000001
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false
+            },
+            {
+              "id": "target:mother-core",
+              "priority": 90,
+              "essential": true,
+              "rect": {
+                "left": 918.3797856079133,
+                "right": 1037.3131189412466,
+                "top": 383.05866666666657,
+                "bottom": 409.3253333333332
+              },
+              "anchor": {
+                "x": 977.84645227458,
+                "y": 560.6399999999999
+              },
+              "baseline": {
+                "x": 977.84645227458,
+                "y": 396.05866666666657
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false,
+              "leader": {
+                "from": {
+                  "x": 977.84645227458,
+                  "y": 424.544
+                },
+                "to": {
+                  "x": 977.84645227458,
+                  "y": 409.3253333333332
+                }
+              }
+            },
+            {
+              "id": "device:exit",
+              "priority": 30,
+              "essential": false,
+              "rect": {
+                "left": 1233.1587005045603,
+                "right": 1298.5342040445994,
+                "top": 330.08,
+                "bottom": 363.81333333333333
+              },
+              "anchor": {
+                "x": 1265.8464522745799,
+                "y": 276.47999999999996
+              },
+              "baseline": {
+                "x": 1265.8464522745799,
+                "y": 344.08
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false,
+              "leader": {
+                "from": {
+                  "x": 1265.8464522745799,
+                  "y": 315.5
+                },
+                "to": {
+                  "x": 1265.8464522745799,
+                  "y": 330.08
+                }
+              }
+            },
+            {
+              "id": "device:gate",
+              "priority": 30,
+              "essential": false,
+              "rect": {
+                "left": 48.44041081136383,
+                "right": 136.58582707112947,
+                "top": 292.34666666666664,
+                "bottom": 311.34666666666664
+              },
+              "anchor": {
+                "x": 92.51311894124665,
+                "y": 276.47999999999996
+              },
+              "baseline": {
+                "x": 92.51311894124665,
+                "y": 306.34666666666664
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false
+            }
+          ]
+        },
+        "hudRects": [
+          {
+            "left": 18,
+            "right": 181.9375,
+            "top": 14,
+            "bottom": 45
+          },
+          {
+            "left": 1069.609375,
+            "right": 1348,
+            "top": 15,
+            "bottom": 44
+          },
+          {
+            "left": 16,
+            "right": 220,
+            "top": 72,
+            "bottom": 232.09375
+          },
+          {
+            "left": 28,
+            "right": 210,
+            "top": 205.09375,
+            "bottom": 224.09375
+          },
+          {
+            "left": 1176,
+            "right": 1350,
+            "top": 72,
+            "bottom": 311.5
+          },
+          {
+            "left": 1176,
+            "right": 1350,
+            "top": 460.015625,
+            "bottom": 690
+          },
+          {
+            "left": 468,
+            "right": 898,
+            "top": 64,
+            "bottom": 181.5
+          },
+          {
+            "left": 500,
+            "right": 866,
+            "top": 657,
+            "bottom": 685
+          },
+          {
+            "left": 397,
+            "right": 969,
+            "top": 689,
+            "bottom": 756
+          },
+          {
+            "left": 1272.296875,
+            "right": 1350,
+            "top": 753,
+            "bottom": 765
+          },
+          {
+            "left": 16,
+            "right": 220,
+            "top": 564.40625,
+            "bottom": 690
+          }
+        ]
+      },
+      "low": {
+        "depthOrder": [
+          "gate",
+          "exit",
+          "player",
+          "fold-c",
+          "source-a",
+          "mother-core",
+          "fold-a",
+          "research",
+          "fold-d",
+          "heart-crisis-source",
+          "valve",
+          "fold-e",
+          "heart-retained-source",
+          "source-b",
+          "terminal",
+          "tissue",
+          "fold-b"
+        ],
+        "occluded": false,
+        "foregroundOpacity": 0.94,
+        "layerOrder": [
+          "distant",
+          "terrain",
+          "contact-shadows",
+          "world-y-sorted",
+          "foreground",
+          "effects",
+          "hud"
+        ],
+        "labels": {
+          "requested": 8,
+          "placed": 4,
+          "omitted": 4,
+          "offscreen": 3,
+          "conflicted": 0,
+          "measureCacheSize": 7,
+          "placementCacheSize": 4,
+          "placements": [
+            {
+              "id": "core-danger:mother-core:mother-core:attack:4",
+              "priority": 100,
+              "essential": true,
+              "rect": {
+                "left": 931.044580021162,
+                "right": 1024.6483245279978,
+                "top": 616.5280000000001,
+                "bottom": 635.5280000000001
+              },
+              "anchor": {
+                "x": 977.84645227458,
+                "y": 597.5040000000001
+              },
+              "baseline": {
+                "x": 977.84645227458,
+                "y": 630.5280000000001
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false
+            },
+            {
+              "id": "target:mother-core",
+              "priority": 90,
+              "essential": true,
+              "rect": {
+                "left": 918.3797856079133,
+                "right": 1037.3131189412466,
+                "top": 383.05866666666657,
+                "bottom": 409.3253333333332
+              },
+              "anchor": {
+                "x": 977.84645227458,
+                "y": 560.6399999999999
+              },
+              "baseline": {
+                "x": 977.84645227458,
+                "y": 396.05866666666657
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false,
+              "leader": {
+                "from": {
+                  "x": 977.84645227458,
+                  "y": 424.544
+                },
+                "to": {
+                  "x": 977.84645227458,
+                  "y": 409.3253333333332
+                }
+              }
+            },
+            {
+              "id": "device:exit",
+              "priority": 30,
+              "essential": false,
+              "rect": {
+                "left": 1233.1587005045603,
+                "right": 1298.5342040445994,
+                "top": 330.08,
+                "bottom": 363.81333333333333
+              },
+              "anchor": {
+                "x": 1265.8464522745799,
+                "y": 276.47999999999996
+              },
+              "baseline": {
+                "x": 1265.8464522745799,
+                "y": 344.08
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false,
+              "leader": {
+                "from": {
+                  "x": 1265.8464522745799,
+                  "y": 315.5
+                },
+                "to": {
+                  "x": 1265.8464522745799,
+                  "y": 330.08
+                }
+              }
+            },
+            {
+              "id": "device:gate",
+              "priority": 30,
+              "essential": false,
+              "rect": {
+                "left": 48.44041081136383,
+                "right": 136.58582707112947,
+                "top": 292.34666666666664,
+                "bottom": 311.34666666666664
+              },
+              "anchor": {
+                "x": 92.51311894124665,
+                "y": 276.47999999999996
+              },
+              "baseline": {
+                "x": 92.51311894124665,
+                "y": 306.34666666666664
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false
+            }
+          ]
+        },
+        "hudRects": [
+          {
+            "left": 18,
+            "right": 181.9375,
+            "top": 14,
+            "bottom": 45
+          },
+          {
+            "left": 1069.609375,
+            "right": 1348,
+            "top": 15,
+            "bottom": 44
+          },
+          {
+            "left": 16,
+            "right": 220,
+            "top": 72,
+            "bottom": 232.09375
+          },
+          {
+            "left": 28,
+            "right": 210,
+            "top": 205.09375,
+            "bottom": 224.09375
+          },
+          {
+            "left": 1176,
+            "right": 1350,
+            "top": 72,
+            "bottom": 311.5
+          },
+          {
+            "left": 1176,
+            "right": 1350,
+            "top": 460.015625,
+            "bottom": 690
+          },
+          {
+            "left": 468,
+            "right": 898,
+            "top": 64,
+            "bottom": 181.5
+          },
+          {
+            "left": 500,
+            "right": 866,
+            "top": 657,
+            "bottom": 685
+          },
+          {
+            "left": 397,
+            "right": 969,
+            "top": 689,
+            "bottom": 756
+          },
+          {
+            "left": 1272.296875,
+            "right": 1350,
+            "top": 753,
+            "bottom": 765
+          },
+          {
+            "left": 16,
+            "right": 220,
+            "top": 564.40625,
+            "bottom": 690
+          }
+        ]
+      }
+    }
+  },
+  "images": {
+    "normal": {
+      "path": "artifacts/readability-v076/render-comparisons/brood-attempt-1/same-tick-normal.png",
+      "sha256": "7d53b75b882e3243ac48f6ddc309db485f5badf9f8aeca974306081a2a8df152",
+      "bytes": 973247,
+      "tick": 2906,
+      "elapsed": 48.43333333333333
+    },
+    "low": {
+      "path": "artifacts/readability-v076/render-comparisons/brood-attempt-1/same-tick-low.png",
+      "sha256": "ef10fdc4b7d3ddcff9e377a02bc145db69ea12c4e31393651840ca5647158f2f",
+      "bytes": 972936,
+      "tick": 2906,
+      "elapsed": 48.43333333333333
+    }
+  },
+  "browser": {
+    "channel": "chrome",
+    "version": "155.0.8059.85",
+    "headless": true,
+    "offline": true
+  },
+  "sourceUnchanged": true,
+  "finishedAt": "2026-10-27T13:24:12.960Z"
+}

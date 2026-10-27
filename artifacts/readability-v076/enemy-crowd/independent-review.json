@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 1,
+  "status": "independent-static-review-complete-no-actionable-findings",
+  "reviewedAtUtc": "2026-10-27T13:39:34.221Z",
+  "reviewer": {
+    "role": "growth_rework independent non-author review",
+    "codeAuthor": false
+  },
+  "method": "Read-only source/test/result inspection. This review did not run a browser, performance capture, simulation or test, and modified only independent-review.json/.md.",
+  "reviewedFiles": [
+    {
+      "path": "src/actors/enemyCrowd.ts",
+      "scope": "Full file; spacing and pursuit helpers.",
+      "sha256": "d62b72b6af9b5b6ddedc581debc68074b598c36349820ca3333b32aeb51f9d21"
+    },
+    {
+      "path": "src/game/battle.ts",
+      "scope": "Integration and enemy phase, especially lines373–445; source cap and existing attack paths.",
+      "sha256": "c995ac47634fe9177455293446f2033a502c194a187bb001a7e58a614b3a84b0"
+    },
+    {
+      "path": "src/actors/collision.ts",
+      "scope": "Full file; shared wall/footprint movement projection.",
+      "sha256": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6"
+    },
+    {
+      "path": "src/game/battleConfig.ts",
+      "scope": "Full file; trait speed, attack values and24 actor cap.",
+      "sha256": "668eb109c820d6e548997aec3ea9e00deca6f4d6120680870538037aa8a70f27"
+    },
+    {
+      "path": "src/game/session.ts",
+      "scope": "Relevant ordering, isMigratingActor and actor/core insertion-cap excerpts only.",
+      "sha256": "57173793b76938e051b5bb080017d58a35611eb3b283f0a527742b6e9eaece2a"
+    },
+    {
+      "path": "src/game/campaign.ts",
+      "scope": "Relevant pursuing carrier predicate and migration actor creation excerpts only.",
+      "sha256": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3"
+    },
+    {
+      "path": "tests/unit/enemy-crowd.test.ts",
+      "scope": "Full existing test source, read only; not executed by this review.",
+      "sha256": "688699f6fca91f1a8894e695cabb6a4f4ff8d01cbda28d7b0979f3821991bafa"
+    },
+    {
+      "path": "artifacts/readability-v076/unit/attempt-1/vitest.json",
+      "scope": "Existing result metadata and relevant assertions/timings, not a new test run.",
+      "sha256": "c45e4edeeea2b9396f95944c86de3d83fd72e20a5989bd90da660a60350dc764"
+    },
+    {
+      "path": "artifacts/readability-v076/unit/attempt-1/execution.json",
+      "scope": "Existing terminal execution record.",
+      "sha256": "d3bccd758412f76ce1547c42013855d90c17f6d479c0d5fb183d6c2ab6578f43"
+    },
+    {
+      "path": "artifacts/readability-v076/seeds/attempt-1/full-system-seeds.json",
+      "scope": "Existing summary, source manifest and two replay summaries; per-seed runs not independently replayed here.",
+      "sha256": "192f3a794d67883c76bcc8245a6be0fda20047d3acef16e06e1ddc0cd992a2be"
+    },
+    {
+      "path": "artifacts/readability-v076/seeds/attempt-1/vitest.json",
+      "scope": "Existing assertion status/duration.",
+      "sha256": "9380b689464bd7aa8ddd70da680d2d460c18ea61136e0674928419afa5295008"
+    },
+    {
+      "path": "artifacts/readability-v076/seeds/attempt-1/execution.json",
+      "scope": "Existing terminal execution record.",
+      "sha256": "b40400b28f49b4bc2f54f03a56f17fa339557e0775ddbd185e58199a3840b80e"
+    }
+  ],
+  "actionableFindings": [],
+  "conclusion": "No confirmed actionable correctness defect found in the inspected crowd-spacing implementation and battle integration. This is a finite static review, not proof that every runtime behavior is correct.",
+  "verifiedStaticFacts": [
+    {
+      "id": "determinism",
+      "evidence": [
+        "src/actors/enemyCrowd.ts:7",
+        "src/actors/enemyCrowd.ts:9",
+        "src/actors/enemyCrowd.ts:16",
+        "src/actors/enemyCrowd.ts:46"
+      ],
+      "fact": "Spacing sorts living bodies by ID, uses antisymmetric ID-hashed directions for coincident centers and does not consume gameplay RNG. Planning returns a map before host application."
+    },
+    {
+      "id": "fixed-poses-and-migration",
+      "evidence": [
+        "src/actors/enemyCrowd.ts:47",
+        "src/game/battle.ts:379",
+        "src/game/battle.ts:395",
+        "src/game/campaign.ts:86"
+      ],
+      "fact": "Source/core bodies, any body with committed attackAt and current pursuing migration carriers are excluded from spacing movement. Dead bodies are ignored as spacing neighbors. Other bodies yield to fixed bodies."
+    },
+    {
+      "id": "budgets-and-wall-candidates",
+      "evidence": [
+        "src/actors/enemyCrowd.ts:52",
+        "src/actors/enemyCrowd.ts:68",
+        "src/actors/enemyCrowd.ts:81",
+        "src/actors/enemyCrowd.ts:103",
+        "src/game/battle.ts:375",
+        "src/game/battle.ts:426"
+      ],
+      "fact": "The relaxation budget incorporates trait speed, slow factor, fixed step and explicit1.25 separation factor. Candidate relaxation moves are checked against static footprint/bounds and displacement budget. A successful spacing move skips the subsequent pursuit step. Pursuit still uses the shared static collision projector, with legal/budget checks for alternate tangents."
+    },
+    {
+      "id": "attack-and-trait-paths",
+      "evidence": [
+        "src/game/battle.ts:381",
+        "src/game/battle.ts:397",
+        "src/game/battle.ts:399",
+        "src/game/battle.ts:419",
+        "src/game/battle.ts:440"
+      ],
+      "fact": "Host applies planned positions before the enemy phase. Committed attacks are not moved by spacing on their resolve tick; the existing impact path reads attackAim/attackTarget before clearing them. The new spacing module does not write HP, attack timing, aim, trait or actor role. MIMIC keeps its tissue goal and trait slowdown; elites remain eligible for spacing when not committed."
+    },
+    {
+      "id": "bounded-living-population",
+      "evidence": [
+        "src/game/battleConfig.ts:11",
+        "src/game/battle.ts:287",
+        "src/game/session.ts:536",
+        "src/game/session.ts:590"
+      ],
+      "fact": "Living actor insertion paths retain the24-actor cap. Crowd helpers neither spawn nor delete actors; their neighbor arrays filter current living bodies."
+    }
+  ],
+  "complexity": {
+    "spacing": "For L living bodies and M static obstacles, bounded candidate count gives O(L² + L·M + L log L), plus filtering the stored target array. Each movable body can score up to5 collision-projected candidates against living neighbors.",
+    "pursuit": "Each pursuit call filters/sorts neighbors and may check forward plus6 tangent candidates. Across the enemy tick, repeated per-body sorting/checking is above O(L), at most O(L² log L + L·M) for fixed candidate counts, plus target-array filtering.",
+    "bounds": "L is bounded by24 in actual insertion paths. This bounds work; it does not itself prove a real-browser frame budget.",
+    "sourceHotspots": [
+      "src/actors/enemyCrowd.ts:69–85",
+      "src/actors/enemyCrowd.ts:98–108"
+    ],
+    "finding": "Concrete static cost description only. No measured FPS regression or mandatory optimization is asserted without current real-browser evidence."
+  },
+  "existingTechnicalEvidence": {
+    "unit": {
+      "path": "artifacts/readability-v076/unit/attempt-1/vitest.json",
+      "passed": 445,
+      "total": 445,
+      "twentyMinuteBoundAssertion": [
+        {
+          "name": "G1 battle rules runs 20 minutes of the combat system at hard population and memory bounds",
+          "status": "passed",
+          "durationMs": 17666.7805
+        }
+      ],
+      "scope": "Read existing terminal results, not independently executed by this reviewer; simulated20 minutes in17.67 wall seconds is not real-time rendering/FPS."
+    },
+    "formal": {
+      "path": "artifacts/readability-v076/seeds/attempt-1/full-system-seeds.json",
+      "complete": true,
+      "completedSeeds": 1000,
+      "outcomes": {
+        "wins": 1000,
+        "losses": 0,
+        "publicMenuExits": 0,
+        "invariantFailures": 0
+      },
+      "replay": {
+        "seed": 91,
+        "equal": true
+      },
+      "preparedReplay": {
+        "seed": 4,
+        "equal": true
+      },
+      "assertion": [
+        {
+          "name": "G4 complete-session seed coverage runs 1000 complete seeded sessions with bounded states, legal build/base inputs and reproducible endings",
+          "status": "passed",
+          "durationMs": 290591.62690000003
+        }
+      ],
+      "reviewedSourceHashesMatchRun": {
+        "src/actors/enemyCrowd.ts": true,
+        "src/game/battle.ts": true,
+        "src/actors/collision.ts": true,
+        "src/game/session.ts": true,
+        "src/game/campaign.ts": true
+      },
+      "scope": "Existing1000 formal-session technical result and two replay checks. Their1000 wins do not measure player difficulty, comprehension, fun, retention or typical human duration."
+    }
+  },
+  "remainingScope": [
+    "Current v076 real-browser FPS/p95 and current mixed native-scene readability need their own evidence; this static report does not mark them passed.",
+    "No OS focus/minimize/zoom or human-playtest result is supplied here.",
+    "Do not alter active-test source to optimize speculative cost; source/bundle identity must stay attributable to each actual result."
+  ]
+}

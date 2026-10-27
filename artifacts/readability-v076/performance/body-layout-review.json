@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 1,
+  "reviewedAtUtc": "2026-10-27T14:00:03Z",
+  "reviewer": "/root/immune_combat",
+  "status": "actual-two-image-body-layout-review-complete-residual-occlusion-remains",
+  "method": "Actually open both original 1366x768 PNGs with view_image; read their frozen adjacent pre-screenshot states; project ground centers with the current Camera; separate world counts, viewport-center counts and visually recognizable lower bounds. Only this JSON and its companion Markdown are added. No browser, test, simulation or performance run was started; no live performance report was read or hashed.",
+  "plan": "artifacts/readability-v076/enemy-crowd/body-layout-review-plan.md",
+  "scope": {
+    "version": "0.7.6",
+    "seed": 13,
+    "organ": "heart",
+    "stage": "IV / exhausted crisis source retained",
+    "viewport": { "width": 1366, "height": 768 },
+    "dpr": "not independently established from these four inputs",
+    "qualityAttribution": "Standard and low are the root-run capture labels and filenames. These state JSONs do not include settings, and the PNGs do not show the quality menu. This review does not independently certify the menu transition.",
+    "bundleSha256": null,
+    "bundleNote": "No pressure-bundle identity is inferred from another run. Root owns terminal performance/build attribution; the live report was deliberately not used here.",
+    "cameraSourceSha256": "ca117a766229b5770d49491559dbe016aca210876315f4069f5db42081f748e5",
+    "projection": {
+      "scale": 1.0666666666666667,
+      "yScale": 0.72,
+      "panX": -80,
+      "panY": -748.3333333333333,
+      "offsetX": 0,
+      "offsetY": 0,
+      "formula": "screenX=(worldX+40)*1.0666666666666667; screenY=worldY*0.768-414.72",
+      "viewportTest": "0<=projectedGroundX<=1366 and 0<=projectedGroundY<=768; this tests the ground anchor only, not full sprite visibility or HUD occlusion"
+    },
+    "captureTiming": {
+      "stateRelationship": "adjacent earlier state, not an exact PNG tick",
+      "sequence": "The capture loop reads state, performs tool/aim/mouse input and optional Q, then requests the screenshot and writes the previously read state. Input and simulation may advance between read and PNG.",
+      "afterStateAvailable": false,
+      "hudDomGeometryAvailable": false,
+      "fullSameAttackOrDangerBracket": false,
+      "exactScreenshotTickClaimed": false
+    }
+  },
+  "decision": {
+    "supported": [
+      "Both real PNGs show a multi-row, multi-column ordinary/elite crowd with numerous distinct faces and crystal shells, instead of a visually almost-single stacked body.",
+      "Each nearby state retains 24 living targets: three static sources, one elite and 20 ordinary enemies. The visible improvement is not supported by a reduction of the living cap sample.",
+      "In both nearby states, 17 enemy ground centers are in the viewport, including one elite and 16 ordinary enemies; a conservative actual-image lower bound is 12 recognizable enemy faces/main silhouettes in standard and 14 in low.",
+      "The cyan player and crowned crystal elite/elite HP plate are individually recognizable in both samples."
+    ],
+    "remaining": [
+      "The right mini-map/navigation panel still covers an enemy whose nearby projected ground center lies inside the viewport: standard virus-28 around (1239,529), low virus-81 around (1263,532).",
+      "The standard image's tissue100% plate covers part of the lower crowd. The low image has a differently placed tissue96% plate and different live state; its reduced lower-row coverage is not attributed to quality alone.",
+      "Beacon, tissue, cells and scan/heal/danger outlines still cross around the center-left front of the enemy cluster. Several visible arcs cannot be assigned to a unique owner from the single image.",
+      "Three live cells in the nearby JSON do not establish three separately complete silhouettes in the PNG. The central tall cross belongs to the static beacon, not an extra mobile cell."
+    ],
+    "notSupported": [
+      "All 24 targets or all 17 viewport ground-center targets have complete, unoccluded bodies in either PNG.",
+      "A 4-world-unit body gap eliminates projected tall-sprite overlap, or state metrics alone establish a visual pass.",
+      "The single earlier state proves a committed telegraph body is frozen across the screenshot, the danger aim stayed aligned across its lifetime, or accepted damage occurred inside a screenshot bracket.",
+      "The low sample's visible scan/beacon/heal circles prove an active enemy danger: its nearby state has no pending ordinary telegraph.",
+      "Weakness readability under this24-target crowd: neither nearby state has a living target with future exposedUntil.",
+      "Complete AC-M14-07/VIS, all HUD/danger/foreground combinations, performance or memory acceptance, absence of long-term jitter/deadlock, human comprehension, fun or commercial validation."
+    ],
+    "classification": "Current sampled crowd-body layout improvement is visually supported, with specific residual HUD/body and central-line occlusion. This is a scoped body-layout review, not a complete visual or performance acceptance."
+  },
+  "images": [
+    {
+      "qualityLabel": "standard",
+      "png": "artifacts/readability-v076/performance/attempt-1/dense-standard-three-cells.png",
+      "pngSha256": "14bcdd8134efe79373aaa90c0a2bd8df1ee26c465c5534e092abf0b61b329143",
+      "state": "artifacts/readability-v076/performance/attempt-1/dense-standard-state.json",
+      "stateSha256": "c39d59eefa5c83beedcd2e313ead3e586c18ccae6a840419ce140b8e062ef8ef",
+      "actuallyOpenedAndViewed": true,
+      "nearbyState": {
+        "tick": 7925,
+        "elapsed": 132.08333333333334,
+        "phase": "playing",
+        "worldLivingTargets": 24,
+        "staticSources": 3,
+        "movingEnemies": 21,
+        "eliteEnemies": 1,
+        "ordinaryEnemies": 20,
+        "viewportGroundCenters": 17,
+        "viewportEliteGroundCenters": 1,
+        "viewportOrdinaryGroundCenters": 16,
+        "viewportSourceGroundCenters": 0,
+        "outsideViewportIds": ["source-b", "heart-retained-source", "heart-crisis-source", "virus-30", "virus-32", "virus-33", "virus-34"],
+        "centerPairsUnder2WorldUnits": 0,
+        "movingBodyCircleIntersectionPairs": 0,
+        "circleIntersectionTolerance": 1e-7,
+        "minimumMovingBodySurfaceGapWorld": 4.001841170349664,
+        "nearestNeighborDistanceWorld": { "min": 48.001841170349664, "median": 48.05330461446948 },
+        "liveCells": 3,
+        "effects": 4,
+        "pendingOrdinaryTelegraphs": [
+          { "id": "virus-12", "attackAt": 132.27, "attackAim": { "x": 850, "y": 1190 }, "attackTarget": "tissue" }
+        ],
+        "futureExposedLivingTargets": 0,
+        "player": { "x": 437.6994310875875, "y": 1350.1721547420136, "hp": 100 },
+        "tissue": { "x": 850, "y": 1190, "hp": 99.88, "displayCeilingPercent": 100 },
+        "beacon": { "id": "13:2:scan:7910:beacon", "x": 829.1949235457249, "y": 1198.082446395402, "until": 137.83333333333334, "mode": "protocol" },
+        "cumulativeAcceptedBeaconBites": 126,
+        "counterScope": "Earlier cumulative run counter also visible in the PNG, not new PNG damage or a terminal pressure total."
+      },
+      "visual": {
+        "recognizableEnemyLowerBound": 12,
+        "countMeaning": "Conservative actual-image lower bound of distinguishable faces or main shell silhouettes, including one elite; not a complete count and not a count of fully unoccluded whole bodies.",
+        "groundAnchorCandidatesForOrientationOnly": ["elite-8", "virus-16", "virus-17", "virus-18", "virus-19", "virus-20", "virus-21", "virus-22", "virus-26", "virus-27", "virus-29", "virus-31"],
+        "identityCaution": "IDs come from the earlier adjacent state and help orient the image; they do not certify the precise PNG position or tick of every body.",
+        "playerAndElite": "Player at lower-left has distinct cyan helmet/body/feet and is outside the HUD. The crowned pink crystal elite sits above the crowd with an independent elite HP plate.",
+        "crowd": "Ordinary enemies occupy multiple visible rows/columns to the right and below the elite. Several faces, crystal rims and feet can be individually located. Tall projected shells still partly overlap despite non-intersecting ground circles.",
+        "hudOcclusion": "The tissue100% plate near x970..1065/y560..590 covers parts of lower enemies. The right navigation panel occludes virus-28's nearby ground anchor around (1239.04,529.46); viewport-center count must not classify it as a visible complete body.",
+        "cellsAndLines": "Three cells exist in the earlier state, but beacon/tissue/cell/effect geometry overlaps near x900..1035/y455..555. Yellow/aqua rings, progress arcs, crosses and short bars intersect; every outline cannot be assigned from the still. The static beacon cross is not another mobile immune cell.",
+        "dangerAndWeakness": "Earlier state has one pending tissue telegraph, but no screenshot-after state establishes its pose or aim bracket. No future exposed target is present, so this image does not close dense-crowd weakness coverage.",
+        "foreground": "The crowd lies mostly in front of/below the large upper fold. This is not all foreground/obstacle/corner combinations or a sequence proving absence of jitter."
+      }
+    },
+    {
+      "qualityLabel": "low",
+      "png": "artifacts/readability-v076/performance/attempt-1/dense-low-three-cells.png",
+      "pngSha256": "568022fdf5ad1a75f5824daf653009b9f302e2af12af808ef872d39eb0a8efa8",
+      "state": "artifacts/readability-v076/performance/attempt-1/dense-low-state.json",
+      "stateSha256": "7f9e4991234fcc00f2152452d515a6beb912af76e224e246e49fd619122d97f1",
+      "actuallyOpenedAndViewed": true,
+      "nearbyState": {
+        "tick": 26130,
+        "elapsed": 435.5,
+        "phase": "playing",
+        "worldLivingTargets": 24,
+        "staticSources": 3,
+        "movingEnemies": 21,
+        "eliteEnemies": 1,
+        "ordinaryEnemies": 20,
+        "viewportGroundCenters": 17,
+        "viewportEliteGroundCenters": 1,
+        "viewportOrdinaryGroundCenters": 16,
+        "viewportSourceGroundCenters": 0,
+        "outsideViewportIds": ["source-b", "heart-retained-source", "heart-crisis-source", "virus-82", "virus-83", "virus-84", "virus-85"],
+        "centerPairsUnder2WorldUnits": 0,
+        "movingBodyCircleIntersectionPairs": 0,
+        "circleIntersectionTolerance": 1e-7,
+        "minimumMovingBodySurfaceGapWorld": 4.007207791157057,
+        "nearestNeighborDistanceWorld": { "min": 48.00720779115706, "median": 48.153931827945286 },
+        "liveCells": 3,
+        "effects": 7,
+        "pendingOrdinaryTelegraphs": [],
+        "futureExposedLivingTargets": 0,
+        "player": { "x": 437.6994310875875, "y": 1350.1721547420136, "hp": 100 },
+        "tissue": { "x": 850, "y": 1190, "hp": 95.88, "displayCeilingPercent": 96 },
+        "beacon": { "id": "13:2:scan:26094:beacon", "x": 829.1949235457249, "y": 1198.082446395402, "born": 434.9, "until": 440.9, "mode": "protocol" },
+        "cumulativeAcceptedBeaconBites": 588,
+        "counterScope": "Earlier cumulative run counter also visible in the PNG, not new PNG damage or a terminal pressure total."
+      },
+      "visual": {
+        "recognizableEnemyLowerBound": 14,
+        "countMeaning": "Conservative actual-image lower bound of distinguishable faces or main shell silhouettes, including one elite; not a complete count and not a count of fully unoccluded whole bodies.",
+        "groundAnchorCandidatesForOrientationOnly": ["elite-8", "virus-55", "virus-61", "virus-65", "virus-67", "virus-68", "virus-71", "virus-72", "virus-73", "virus-74", "virus-75", "virus-77", "virus-78", "virus-79"],
+        "identityCaution": "IDs come from the earlier adjacent state and help orient the image; they do not certify the precise PNG position or tick of every body.",
+        "playerAndElite": "Player remains separate at lower-left. Crown/face and the elite HP plate above the multi-row crowd remain readable.",
+        "crowd": "Multiple ordinary faces/crystal rims/feet form separate columns and lower rows. The lower-left immune cell near (934,580) has a particularly clear silhouette, while other cells still share the beacon/tissue/front-of-crowd patch.",
+        "hudOcclusion": "The tissue96% plate is upper-left of the crowd near (950,445), leaving more lower bodies uncovered in this different live state. It is not a controlled quality-only comparison. The right navigation panel still covers virus-81's nearby ground anchor around (1263.47,532.02).",
+        "cellsAndLines": "Green/aqua scan, heal and beacon lines remain visible; the central beacon cross and some cell bodies/effect arcs partly overlap. Nearby liveCells=3 does not certify all three complete silhouettes in the PNG.",
+        "dangerAndWeakness": "Nearby state has no pending ordinary telegraph and no future exposed enemy. Its visible circles cannot be used as an active attack/lethal-danger or dense weakness proof.",
+        "foreground": "Upper folds and the right boundary remain in view, but the sample does not close every adverse foreground/corner combination or prove continuous movement stability."
+      }
+    }
+  ],
+  "comparisonLimits": [
+    "Standard and low are different live moments, ticks and enemy IDs. No exact-state A/B or causal quality-only inference is made.",
+    "The 24 world targets include three static sources outside the viewport. The 17 projected ground anchors exclude seven offscreen targets but do not subtract HUD coverage or projected body overlap.",
+    "The visual lower bounds deliberately count recognizable partial main forms, not an invented requirement that a fixed number of whole bodies be simultaneously onscreen.",
+    "These four immutable captures support local sampled body-layout improvement. Formal current-version performance, quality selection provenance and terminal run totals remain with root's completed run evidence."
+  ],
+  "finalScope": "Two actual current-version pressure PNGs reviewed against their earlier adjacent states, with input hashes verified. No live report was read or hashed; no source, raw capture, prior evidence, tests, browser or goal state was changed."
+}
