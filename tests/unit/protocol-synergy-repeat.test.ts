@@ -4,7 +4,7 @@ import { GameSession } from '../../src/game/session';
 import type { InputFrame, Target } from '../../src/game/types';
 import type { ProtocolId } from '../../src/game/growthTypes';
 
-const evidenceDirectory = process.env.VI_SYNERGY_REPORT_DIR ?? 'artifacts/completion-v074/chain-audit';
+const evidenceDirectory = process.env.VI_SYNERGY_REPORT_DIR ?? 'artifacts/unit-generated/chain-audit';
 
 // Explicit isolated preset arena: waves are loaded by the fixture, not earned
 // in a formal campaign. Every trigger, cooldown, damage and synergy receipt is

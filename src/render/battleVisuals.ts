@@ -263,9 +263,10 @@ export function drawMotherCoreDangers(ctx: CanvasRenderingContext2D, state: Game
   if (!attack || combat.organId !== state.battle?.organId || attack.resolveAt <= state.elapsed) return;
   const remaining = attack.resolveAt - state.elapsed, duration = attack.resolveAt - attack.startedAt;
   const progress = Math.max(0, Math.min(1, (state.elapsed - attack.startedAt) / duration));
-  const caption = (value: string, x: number, y: number, color: string, size = 11) => {
-    if (labels) labels.add({ id: `core-danger:${combat.coreId}:${attack.id}`, anchor: { x, y }, priority: 100, essential: true, lines: [{ text: value, color, size }] });
-    else groundLabel(ctx, value, x, y, color, size);
+  const caption = (value: string, anchor: Vec, offset: Vec, color: string, size = 11) => {
+    if (labels) labels.add({ id: `core-danger:${combat.coreId}:${attack.id}`, anchor, offset: { x: offset.x, y: offset.y * .72 },
+      priority: 100, essential: true, lines: [{ text: value, color, size }] });
+    else groundLabel(ctx, value, anchor.x + offset.x, anchor.y + offset.y, color, size);
   };
   const protectPoint = (point: Vec, radius = 10) => labels?.reserveWorld?.({ left: point.x - radius, right: point.x + radius, top: point.y - radius, bottom: point.y + radius });
   ctx.save(); ctx.lineWidth = 2;
@@ -302,12 +303,17 @@ export function drawMotherCoreDangers(ctx: CanvasRenderingContext2D, state: Game
       ctx.setLineDash([5, 7]); line(ctx, [attack.origin.x, attack.origin.y, attack.aim.x, attack.aim.y], '#f4d9b4', 1.5); ctx.setLineDash([]);
       const near = Math.hypot(state.player.x - attack.origin.x, state.player.y - attack.origin.y) <= MOTHER_CORE_BALANCE.scanRange;
       const counter = !near ? '靠近母巢后 Q 中断' : state.scanReady > state.elapsed ? `Q 冷却 ${(state.scanReady - state.elapsed).toFixed(1)}s · 抢修组织` : 'Q 扫描中断侵蚀';
-      caption(`${counter} · ${remaining.toFixed(1)}s`, (attack.origin.x + attack.aim.x) / 2, (attack.origin.y + attack.aim.y) / 2 - 20, '#ffe5b7', 12);
+      caption(`${counter} · ${remaining.toFixed(1)}s`, { x: (attack.origin.x + attack.aim.x) / 2, y: (attack.origin.y + attack.aim.y) / 2 }, { x: 0, y: -20 }, '#ffe5b7', 12);
     }
   }
   if (attack.kind !== 'corrosion') {
-    const anchor = attack.kind === 'crystal-sweep' ? { x: attack.origin.x + Math.cos(attack.angle) * attack.range * .6, y: attack.origin.y + Math.sin(attack.angle) * attack.range * .6 } : attack.aim;
-    caption(`${attack.kind === 'brood' ? '⋈ 有限分裂' : attack.kind === 'crystal-sweep' ? '◇ 晶壳横扫' : '⋈ 裂殖爆发'} ${remaining.toFixed(1)}s`, anchor.x, anchor.y - 32, '#ffe6b4', 11);
+    const anchor = attack.kind === 'crystal-sweep' ? { x: attack.origin.x + Math.cos(attack.angle) * attack.range * .6, y: attack.origin.y + Math.sin(attack.angle) * attack.range * .6 }
+      : attack.kind === 'brood' && attack.landings.length ? { x: attack.landings.reduce((sum, point) => sum + point.x, 0) / attack.landings.length,
+        y: attack.landings.reduce((sum, point) => sum + point.y, 0) / attack.landings.length } : attack.aim;
+    // Round warnings put their text just outside the actual impact/landing
+    // radius, rather than inside the protected player or mother-core body.
+    const offset = { x: 0, y: attack.kind === 'crystal-sweep' ? -32 : attack.radius + 24 };
+    caption(`${attack.kind === 'brood' ? '⋈ 有限分裂' : attack.kind === 'crystal-sweep' ? '◇ 晶壳横扫' : '⋈ 裂殖爆发'} ${remaining.toFixed(1)}s`, anchor, offset, '#ffe6b4', 11);
   }
   ctx.restore();
 }

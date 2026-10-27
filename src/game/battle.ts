@@ -7,6 +7,7 @@ import { recordBehavior, chooseEvolution } from './evolution';
 import { getOrganDefinition } from './organConfig';
 import { ENCOUNTER_CONFIGS } from './encounterConfig';
 import { acceptedFirstCounter } from './counterLesson';
+import { ENEMY_CROWD, moveEnemyThroughCrowd, planEnemySpacing } from '../actors/enemyCrowd';
 
 export interface BattleHost {
   state: GameState;
@@ -371,6 +372,16 @@ export class BattleDirector {
 
   private enemies(): void {
     const { s, b } = this;
+    const speed = (target: Target) => B.enemySpeed * (target.traits?.includes('CARAPACE') ? B.carapaceSpeed : 1)
+      * (target.traits?.includes('MIMIC') ? B.mimicSpeed : 1) * (this.host.slowFactor?.(target.id) ?? 1);
+    const spacing = planEnemySpacing(s.targets, activeWorld(s), {
+      maxStep: target => speed(target) * BALANCE.step * ENEMY_CROWD.separationSpeedFactor,
+      isMigrating: target => !!this.host.isMigratingActor?.(target.id),
+    });
+    for (const target of s.targets) {
+      const point = spacing.get(target.id);
+      if (point) { target.x = point.x; target.y = point.y; }
+    }
     for (const target of s.targets) {
       if (target.hp <= 0) {
         if (target.splitAt !== undefined && s.elapsed + 1e-9 >= target.splitAt) {
@@ -410,16 +421,16 @@ export class BattleDirector {
       target.facing = Math.atan2(dir.y, dir.x);
       const reach = B.attackRadius + (goal === s.tissue ? s.tissue.radius : s.player.radius) - 8;
       if (distance(target, goal) > reach) {
-        let speed: number = B.enemySpeed;
-        if (target.traits?.includes('CARAPACE')) speed *= B.carapaceSpeed;
-        if (mimic) speed *= B.mimicSpeed;
-        speed *= this.host.slowFactor?.(target.id) ?? 1;
-        const step = { x: dir.x * speed * BALANCE.step, y: dir.y * speed * BALANCE.step };
-        let pos = moveWithCollision(target, step, target.radius, activeWorld(s));
+        // Relaxation already used this body's movement budget. Do not cancel
+        // it with an immediate pursuit step back into the same exact stack.
+        if (spacing.has(target.id)) continue;
+        const movementSpeed = speed(target);
+        const step = { x: dir.x * movementSpeed * BALANCE.step, y: dir.y * movementSpeed * BALANCE.step };
+        let pos = moveEnemyThroughCrowd(target, step, s.targets, activeWorld(s));
         // If a fold blocks the direct route, follow its tangent until the goal is clear.
-        if (distance(target, pos) < speed * BALANCE.step * .4) {
+        if (distance(target, pos) < movementSpeed * BALANCE.step * .4) {
           const side = target.id.length % 2 ? 1 : -1;
-          pos = moveWithCollision(target, { x: -dir.y * speed * BALANCE.step * side, y: dir.x * speed * BALANCE.step * side }, target.radius, activeWorld(s));
+          pos = moveEnemyThroughCrowd(target, { x: -dir.y * movementSpeed * BALANCE.step * side, y: dir.x * movementSpeed * BALANCE.step * side }, s.targets, activeWorld(s));
         }
         target.x = pos.x; target.y = pos.y;
       } else if (s.elapsed >= (target.attackReady ?? 0)) {

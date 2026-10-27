@@ -1,5 +1,6 @@
 import { Renderer } from '../../src/render/renderer';
 import { activeWorld, BALANCE, type GameState, type Target, type Vec } from '../../src/game/types';
+import type { LabelRect } from '../../src/render/sceneLabels';
 
 interface Fingerprints {
   fullJsonSha256: string;
@@ -10,7 +11,7 @@ interface Fingerprints {
 }
 type Source = 'original' | 'normal' | 'low';
 interface Observation { frame: number; source: Source; unchanged: boolean; completeJsonEqual: boolean; fingerprints: Fingerprints }
-interface ProbeOptions { frames: number }
+interface ProbeOptions { frames: number; hudRects?: readonly LabelRect[] }
 
 const encode = (value: unknown): string => JSON.stringify(value);
 const bytes = (value: string): Uint8Array<ArrayBuffer> => new TextEncoder().encode(value);
@@ -83,11 +84,15 @@ async function run(snapshot: GameState, options: ProbeOptions) {
     throw new Error('Expected a serialized Viral Invasion GameState snapshot.');
   }
   if (!Number.isSafeInteger(options.frames) || options.frames < 2 || options.frames > 120) throw new Error('frames must be 2–120.');
+  if (options.hudRects && (!Array.isArray(options.hudRects) || options.hudRects.some(rect => !rect
+    || ![rect.left, rect.right, rect.top, rect.bottom].every(Number.isFinite)
+    || rect.right <= rect.left || rect.bottom <= rect.top))) throw new Error('hudRects must contain finite, positive CSS-pixel rectangles.');
   if (!crypto.subtle) throw new Error('SHA-256 requires WebCrypto in this browser file context.');
   await document.fonts.ready;
   const normalCanvas = document.querySelector<HTMLCanvasElement>('#normal')!;
   const lowCanvas = document.querySelector<HTMLCanvasElement>('#low')!;
   const normalRenderer = new Renderer(normalCanvas), lowRenderer = new Renderer(lowCanvas);
+  normalRenderer.setHudRects(options.hudRects ?? []); lowRenderer.setHudRects(options.hudRects ?? []);
   const normalContext = normalCanvas.getContext('2d'), lowContext = lowCanvas.getContext('2d');
   if (!(normalContext instanceof CanvasRenderingContext2D) || !(lowContext instanceof CanvasRenderingContext2D)) {
     throw new Error('Actual browser CanvasRenderingContext2D is required.');
@@ -119,7 +124,7 @@ async function run(snapshot: GameState, options: ProbeOptions) {
     pass: observations.every(observation => observation.unchanged),
     seed: snapshot.seed, tick: snapshot.tick, elapsed: snapshot.elapsed, phase: snapshot.phase,
     organ: snapshot.battle?.organId ?? 'training', aliveActors: snapshot.targets.filter(target => target.hp > 0).length,
-    framesPerMode: options.frames, aim, baseline, observations,
+    framesPerMode: options.frames, aim, baseline, observations, hudProtectionRects: options.hudRects ?? [],
     canvas: { context: 'real CanvasRenderingContext2D', normal: { width: normalCanvas.width, height: normalCanvas.height },
       low: { width: lowCanvas.width, height: lowCanvas.height }, dpr: devicePixelRatio },
     rendererDiagnostics: { normal: normalRenderer.diagnostics(states.normal), low: lowRenderer.diagnostics(states.low) },

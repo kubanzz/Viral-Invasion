@@ -14,7 +14,7 @@ import { preparationForPlan, startingPlanId, type StartingPlanId } from '../../s
 import { PROTOCOL_IDS } from '../../src/game/protocols';
 import { parseRunMetricsSummary, RUN_METRICS_FRAME_LIMIT, summarizeRunMetrics, type RunMetricsSummary } from '../../src/game/runMetrics';
 
-const REPORT = resolve(process.env.VI_SYSTEM_REPORT ?? 'artifacts/preparation-v072/full-system-seeds.json');
+const REPORT = resolve(process.env.VI_SYSTEM_REPORT ?? 'artifacts/unit-generated/full-system-seeds.json');
 const SEED_COUNT = 1000;
 const MAX_STEPS = 300 * 60;
 const choices: MigrationChoice[] = ['pursue', 'block', 'ignore'];

@@ -35,7 +35,7 @@ describe('formal campaign with deliberately unhelpful current-threat drafts',()=
     expect(final.battle!.pressure.infection).toBeLessThan(35);expect(Object.values(final.campaign!.arenas).filter(arena=>arena.activated).every(arena=>arena.tissue.hp>=50)).toBe(true);
     expect(choices.length).toBeGreaterThanOrEqual(2);expect(choices.some(choice=>(choice as{selected:unknown}).selected!==null)).toBe(true);
     runs.push({seed:91,firstTrait,result:final.result,elapsed:final.elapsed,actualTraits:final.battle!.traits,core:final.campaign!.core.status,progress:final.campaign!.progress,choices});
-    const path=resolve(process.env.VI_FORMAL_NONCOUNTER_REPORT??'artifacts/completion-v074/formal-noncounter-unit-first.json');mkdirSync(dirname(path),{recursive:true});
+    const path=resolve(process.env.VI_FORMAL_NONCOUNTER_REPORT??'artifacts/unit-generated/formal-noncounter-unit-first.json');mkdirSync(dirname(path),{recursive:true});
     writeFileSync(path,JSON.stringify({complete:runs.length===3,method:'Full formal TypeScript campaign through public InputFrame/DraftIntent only. Every choice avoids first/current/warned threat counters; no future outcomes are read. Discard is used only when no valid noncounter candidate exists.',scope:'Three explicit first-trait cases, not1000 adversarial cases or real browsers. Earlier equipment can incidentally counter a later unknown trait; this fact is retained, never called a future-proof noncounter build.',runs},null,2));
   });
 });

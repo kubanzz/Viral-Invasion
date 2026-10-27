@@ -19,13 +19,14 @@ const args = process.argv.slice(2);
 if (args.includes('--help')) {
   console.log('Read-only Canvas2D snapshot comparison, after exclusive performance measurement.\n'
     + 'node scripts/check-render-invariance.mjs [--input artifacts/G4/performance/dense-state.json]\n'
-    + '  [--output artifacts/G4/render-invariance] [--frames 12] [--width 1366] [--height 768] [--dpr 1] [--channel chrome|msedge] [--revision <commit>]\n'
+    + '  [--output artifacts/G4/render-invariance] [--frames 12] [--width 1366] [--height 768] [--dpr 1] [--channel chrome|msedge] [--revision <commit>] [--hud <sidecar>]\n'
     + '--revision loads src/ verbatim from that Git commit into the isolated fixture, for an explicitly derived visual comparison.\n'
+    + '--hud reads before.diagnostics.hudRects from a recorded native screenshot sidecar; it reserves those numbers without rendering any HUD DOM.\n'
     + 'Not a gameplay-input replay, browser win, performance test, or human playtest.');
   process.exit(0);
 }
 const options = { input: 'artifacts/G4/performance/dense-state.json', output: 'artifacts/G4/render-invariance',
-  frames: 12, width: 1366, height: 768, dpr: 1, channel: 'chrome', revision: '' };
+  frames: 12, width: 1366, height: 768, dpr: 1, channel: 'chrome', revision: '', hud: '' };
 for (let index = 0; index < args.length; index += 2) {
   const name = args[index]?.replace(/^--/, '');
   if (!args[index]?.startsWith('--') || !Object.hasOwn(options, name) || args[index + 1] === undefined) throw new Error(`Invalid option ${args[index]}. Use --help.`);
@@ -75,6 +76,16 @@ try {
   const snapshot = parsed?.game === 'viral-invasion' ? parsed : parsed?.state;
   if (snapshot?.game !== 'viral-invasion') throw new Error('Input must be a GameState snapshot, or {state: GameState}. No synthetic state is generated.');
   report.input.shape = parsed === snapshot ? 'GameState' : '{state: GameState}';
+  let hudRects = [];
+  if (options.hud) {
+    const hudPath = resolve(root, options.hud), hudRaw = await readFile(hudPath);
+    const sidecar = JSON.parse(hudRaw.toString('utf8').replace(/^\uFEFF/, ''));
+    if (JSON.stringify(sidecar.before?.state) !== JSON.stringify(snapshot)) throw new Error('--hud before.state must exactly match the input snapshot.');
+    hudRects = sidecar.before?.diagnostics?.hudRects;
+    if (!Array.isArray(hudRects)) throw new Error('--hud must contain before.diagnostics.hudRects.');
+    report.hudInput = { path: pathLabel(hudPath), sha256: sha256(hudRaw), rects: hudRects,
+      scope: 'Numeric protection rectangles from the recorded native viewport. No production HUD DOM is present in this derived fixture.' };
+  }
   const bundle = await build({ absWorkingDir: root, entryPoints: ['tests/fixtures/renderProbe.ts'], bundle: true,
     format: 'iife', target: ['chrome110', 'edge110'], outfile: join(output, 'fixture.js'), metafile: true,
     legalComments: 'none', minify: false,
@@ -97,7 +108,7 @@ try {
   await context.route(/^https?:/i, route => route.abort('internetdisconnected'));
   await page.goto(pathToFileURL(join(output, 'fixture.html')).href);
   await page.waitForFunction(() => typeof window.__renderProbe?.run === 'function');
-  const result = await page.evaluate(({ snapshot, frames }) => window.__renderProbe.run(snapshot, { frames }), { snapshot, frames: options.frames });
+  const result = await page.evaluate(({ snapshot, frames, hudRects }) => window.__renderProbe.run(snapshot, { frames, hudRects }), { snapshot, frames: options.frames, hudRects });
   const { png, ...checks } = result;
   report.checks = checks;
   report.images = {};
@@ -110,10 +121,11 @@ try {
   }
   report.browser = { channel: options.channel, version: await browser.version(), headless: true, offline: true };
   report.input.unchanged = await fileHash(input) === report.input.fileSha256;
+  if (report.hudInput) report.hudInput.unchanged = await fileHash(resolve(root, options.hud)) === report.hudInput.sha256;
   const finalManifest = Object.fromEntries(await Promise.all(sourcePaths.map(async path => [path.replaceAll('\\', '/'), sha256(await sourceBytes(resolve(root, path)))])));
   report.sourceUnchanged = JSON.stringify(finalManifest) === JSON.stringify(report.sourceManifest);
   report.complete = true;
-  report.pass = result.pass && report.input.unchanged && report.sourceUnchanged && !errors.length && !remoteRequests.length;
+  report.pass = result.pass && report.input.unchanged && report.hudInput?.unchanged !== false && report.sourceUnchanged && !errors.length && !remoteRequests.length;
 } catch (error) {
   report.error = error instanceof Error ? error.stack ?? error.message : String(error);
 } finally {

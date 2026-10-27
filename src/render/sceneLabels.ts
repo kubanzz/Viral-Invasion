@@ -105,6 +105,25 @@ export class SceneLabels implements SceneLabelSink {
     return { baseline, rect, dx: baseline.x - preferred.x, dy: baseline.y - preferred.y, compact, fallback,
       cost: obstruction * 16 + peers * 4 };
   }
+  /** Try nearby protected-region edges before moving an essential cue to a screen rail. */
+  private localOffsets(preferred: Vec, measured: Measured, occupied: readonly LabelRect[]): number[][] {
+    const radius = clamp(180 * this.frame!.scale, 120, 240), half = measured.width / 2 + GAP;
+    const distance = (rect: LabelRect) => Math.hypot(Math.max(rect.left - preferred.x, 0, preferred.x - rect.right), Math.max(rect.top - preferred.y, 0, preferred.y - rect.bottom));
+    // The search has a fixed ceiling, even when many danger contours reserve
+    // small segments. Most captions already fit the usual offsets above.
+    const nearby = [...this.blocked, ...occupied].map(rect => ({ rect, distance: distance(rect) }))
+      .filter(item => item.distance <= radius).sort((a, b) => a.distance - b.distance).slice(0, 10);
+    const xs = new Set([preferred.x]), ys = new Set([preferred.y]);
+    for (const { rect } of nearby) {
+      xs.add(rect.left - GAP - 1 - half); xs.add(rect.right + GAP + 1 + half);
+      ys.add(rect.top - GAP * 2 - 1 - measured.bottom); ys.add(rect.bottom + GAP * 2 + 1 - measured.top);
+    }
+    const nearest = (values: Set<number>, origin: number) => [...values].filter(value => Math.abs(value - origin) <= radius)
+      .sort((a, b) => Math.abs(a - origin) - Math.abs(b - origin) || a - b).slice(0, 9);
+    return nearest(xs, preferred.x).flatMap(x => nearest(ys, preferred.y).map(y => [x - preferred.x, y - preferred.y]))
+      .filter(([dx, dy]) => dx * dx + dy * dy > 1 && dx * dx + dy * dy <= radius * radius)
+      .sort(([ax, ay], [bx, by]) => ax * ax + ay * ay - bx * bx - by * by || ay - by || ax - bx);
+  }
   draw(ctx: CanvasRenderingContext2D): void {
     if (!this.frame) return;
     this.result = this.emptyDiagnostics(); this.result.requested = this.labels.size;
@@ -131,6 +150,14 @@ export class SceneLabels implements SceneLabelSink {
           if (!candidate.cost) { chosen = candidate; measured = size; break; }
         }
         if (chosen) break;
+      }
+      if (!chosen && label.essential) {
+        const size = this.measure(ctx, label, false);
+        for (const [dx, dy] of this.localOffsets(preferred, size, occupied)) {
+          const candidate = this.choice(preferred, size, dx, dy, false, false, occupied);
+          if (!best || candidate.cost < best.choice.cost) best = { choice: candidate, measured: size };
+          if (!candidate.cost) { chosen = candidate; measured = size; break; }
+        }
       }
       if (!chosen && label.essential) {
         const size = this.measure(ctx, label, false), previous = this.previous.get(label.id);

@@ -119,6 +119,18 @@ describe('shared screen label layout', () => {
     expect(placed.conflicted).toBe(false);
   });
 
+  it('finds the nearby edge of a protected actor before falling back to a remote screen rail', () => {
+    const labels = new SceneLabels(), fake = canvas();
+    const body = { left: 510, right: 690, top: 300, bottom: 470 };
+    begin(labels, { width: 1200, height: 700, blocked: [body] });
+    labels.add(label('danger', { anchor: { x: 600, y: 390 }, priority: 100, essential: true, lines: [{ text: '裂殖爆发 1.0s' }] })); labels.draw(fake.ctx);
+    const placed = labels.diagnostics().placements[0];
+    expect(placed.conflicted).toBe(false); expect(placed.fallback).toBe(false);
+    expect(overlaps(placed.rect, body)).toBe(false);
+    expect(Math.hypot(placed.baseline.x - 600, placed.baseline.y - 390)).toBeLessThan(180);
+    expect(placed.rect.top).toBeGreaterThan(200);
+  });
+
   it('draws a displaced label leader toward the true anchor when a safe short segment exists', () => {
     const labels = new SceneLabels(), fake = canvas(); begin(labels);
     labels.add(label('primary', { priority: 90, essential: true }));
@@ -202,7 +214,21 @@ describe('battle label production collectors', () => {
     const primitives = (calls: typeof legacy.calls) => calls.filter(call => ['ellipse', 'arc', 'moveTo', 'lineTo', 'closePath'].includes(call.method));
     expect(primitives(shared.calls)).toEqual(primitives(legacy.calls));
     expect(labels).toMatchObject([{ id: 'core-danger:core:attack-1', priority: 100, essential: true, lines: [{ text: '⋈ 裂殖爆发 1.0s' }] }]);
+    expect(labels[0].anchor).toEqual(attack.aim);
+    expect(labels[0].offset).toEqual({ x: 0, y: (attack.radius + 24) * .72 });
     expect(protectedRects).toHaveLength(2); expect(protectedRects.every(rect => rect.right - rect.left <= 20 && rect.bottom - rect.top <= 20)).toBe(true);
+    expect(JSON.stringify({ state, combat })).toBe(before);
+  });
+
+  it('keeps the finite brood caption beside its actual two landings instead of anchoring it inside the mother', () => {
+    const state = battleState(), attack = { id: 'brood-1', kind: 'brood' as const, trait: 'FISSION' as const, startedAt: 4, resolveAt: 6,
+      origin: { x: 500, y: 350 }, aim: { x: 500, y: 350 }, angle: 0, range: 0, radius: 19, halfAngle: 0,
+      landings: [{ x: 422, y: 398 }, { x: 578, y: 398 }] };
+    const combat = { coreId: 'core', organId: 'heart', attack } as unknown as MotherCoreState, requests: SceneLabel[] = [];
+    const before = JSON.stringify({ state, combat });
+    drawMotherCoreDangers(canvas().ctx, state, combat, { add: request => requests.push(request) });
+    expect(requests).toHaveLength(1); expect(requests[0].anchor).toEqual({ x: 500, y: 398 });
+    expect(requests[0].offset).toEqual({ x: 0, y: 43 * .72 });
     expect(JSON.stringify({ state, combat })).toBe(before);
   });
 });
