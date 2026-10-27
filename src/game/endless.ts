@@ -161,8 +161,9 @@ export class EndlessDirector {
     this.population();
     // A strong clear advances the finite queue instead of waiting out its full
     // schedule. Min preserves an earlier deadline and never resets this short
-    // countdown on later ticks. Pending fission keeps its real warning window.
-    if (e.remainingToSpawn > 0 && e.pendingChildren === 0 && !this.state.targets.some(target => target.hp > 0)
+    // countdown on later ticks. Pending fission keeps its real warning window;
+    // the finite queue may overlap it, with spawnBatch reserving every child.
+    if (e.remainingToSpawn > 0 && !this.state.targets.some(target => target.hp > 0)
       && e.nextSpawnAt > now + .5 + 1e-9) {
       const previousSpawnAt = e.nextSpawnAt;
       e.nextSpawnAt = now + .5;

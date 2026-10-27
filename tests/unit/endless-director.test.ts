@@ -96,7 +96,7 @@ describe('continuous endless wave director', () => {
     }
   });
 
-  it('keeps closer scheduled arrivals and does not accelerate while any living body or fission promise remains', () => {
+  it('keeps closer arrivals and live-body pacing while overlapping a reserved fission promise', () => {
     const f = fixture(); f.advance(E.warningSeconds); f.advance(.45);
     const original = f.state.endless!.nextSpawnAt;
     f.director.afterInput(); expect(f.state.endless!.nextSpawnAt).toBe(original);
@@ -104,13 +104,13 @@ describe('continuous endless wave director', () => {
     const parent = f.state.targets[0]; parent.splitAt = f.state.elapsed + .8;
     parent.splitPositions = [{ x: parent.x - 27, y: parent.y }, { x: parent.x + 27, y: parent.y }];
     f.director.afterInput(); expect(f.state.endless!.pendingChildren).toBe(2);
-    expect(f.state.endless!.nextSpawnAt).toBe(original);
-    expect(f.events.some(event => event.type === 'ENDLESS_PURSUIT_ACCELERATED')).toBe(false);
+    expect(f.state.endless!.nextSpawnAt).toBeCloseTo(f.state.elapsed + .5);
+    expect(f.events.filter(event => event.type === 'ENDLESS_PURSUIT_ACCELERATED')).toHaveLength(1);
     parent.splitAt = undefined;
     f.state.endless!.nextSpawnAt = f.state.elapsed + .2;
     const closer = f.state.endless!.nextSpawnAt; f.director.afterInput();
     expect(f.state.endless!.nextSpawnAt).toBe(closer);
-    expect(f.events.some(event => event.type === 'ENDLESS_PURSUIT_ACCELERATED')).toBe(false);
+    expect(f.events.filter(event => event.type === 'ENDLESS_PURSUIT_ACCELERATED')).toHaveLength(1);
     f.advance(.2); expect(f.state.targets.filter(target => target.hp > 0)).toHaveLength(2);
   });
 

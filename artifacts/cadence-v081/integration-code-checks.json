@@ -1,0 +1,47 @@
+{
+  "recordedAt": "2026-10-27T17:55:05.092Z",
+  "baseCommit": "f93b905ccd053c4ee5b9db1f146dc7d5687164bb",
+  "scope": "Only finite pursuit/fission overlap and endless same-tick terminal guard; no new spatial/ranged mechanic.",
+  "files": [
+    {
+      "path": "src/game/endless.ts",
+      "sha256": "28cdbf08040ddb6e7c8dc15d08f93d4736eaf7fa0faee1e159c10a5fc9d346d7"
+    },
+    {
+      "path": "src/game/battle.ts",
+      "sha256": "6c7795c63a0f0e6044a2863b92f5edeafda36678cfd7eb4a2527c2c1e2fcd362"
+    },
+    {
+      "path": "tests/unit/endless-director.test.ts",
+      "sha256": "3e10c19dc3526d5b62e0bb5fd7768923d0a852af1c710491166e82dd1001169a"
+    },
+    {
+      "path": "tests/unit/fission-pursuit-overlap.test.ts",
+      "sha256": "c3719e89290710ba8c9b92effe1f95aa2840a1b096a63874ec9d606ff6555ae8"
+    },
+    {
+      "path": "tests/unit/terminal-fission-boundary.test.ts",
+      "sha256": "c9031285ed340f48e6bc069aa022fe593232ada815904c89a890d30fda552948"
+    }
+  ],
+  "checks": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "exitCode": 0,
+      "scope": "whole project including current presentation changes",
+      "stdout": ""
+    },
+    {
+      "command": "node node_modules/vitest/vitest.mjs run tests/unit/fission-pursuit-overlap.test.ts tests/unit/terminal-fission-boundary.test.ts tests/unit/endless-director.test.ts tests/unit/endless-loop.test.ts tests/unit/endless-formations.test.ts tests/unit/support-spawn-reachability.test.ts tests/unit/endless-combat.test.ts --maxWorkers=1 --reporter=default --reporter=json --outputFile.json=artifacts/cadence-v081/integrated-focused.json",
+      "exitCode": 0,
+      "filesPassed": 7,
+      "testsPassed": 67,
+      "report": "integrated-focused.json"
+    }
+  ],
+  "limitations": [
+    "This record covers code integration, not final built presentation/offline package.",
+    "Six natural 30-wave comparisons are simulation runs, not human playtests or difficulty proof.",
+    "Stationary play remains a measured design gap."
+  ]
+}

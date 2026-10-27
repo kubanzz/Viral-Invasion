@@ -481,6 +481,7 @@ export class BattleDirector {
       if (point) { target.x = point.x; target.y = point.y; }
     }
     for (const target of s.targets) {
+      if (s.endless && (s.player.hp <= 0 || s.tissue.hp <= 0)) break;
       if (target.hp <= 0) {
         if (target.splitAt !== undefined && s.elapsed + 1e-9 >= target.splitAt) {
           let children = 0;

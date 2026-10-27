@@ -1,0 +1,1146 @@
+{
+  "version": "v080",
+  "terminal": "tissue",
+  "name": "lethal-fission-first",
+  "lethal": true,
+  "fissionFirst": true,
+  "before": {
+    "game": "viral-invasion",
+    "schemaVersion": 1,
+    "seed": 71,
+    "phase": "playing",
+    "tick": 0,
+    "elapsed": 0,
+    "player": {
+      "x": 600,
+      "y": 700,
+      "hp": 100,
+      "radius": 19,
+      "facing": 0,
+      "moving": false,
+      "dashUntil": 0,
+      "dashReady": 0,
+      "hurtUntil": 0,
+      "actionUntil": 0
+    },
+    "targets": [
+      {
+        "id": "pending-fission",
+        "x": 820,
+        "y": 700,
+        "kind": "cluster",
+        "role": "virus",
+        "radius": 22,
+        "hp": 0,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [
+          "FISSION"
+        ],
+        "facing": 0,
+        "born": 0,
+        "attackReady": 0,
+        "generation": 0,
+        "sourceId": "endless:wave:1",
+        "deadAt": 0,
+        "splitAt": 0.016666666666666666,
+        "splitPositions": [
+          {
+            "x": 793,
+            "y": 710
+          },
+          {
+            "x": 847,
+            "y": 710
+          }
+        ]
+      },
+      {
+        "id": "killer",
+        "x": 1355,
+        "y": 700,
+        "kind": "single",
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 0,
+        "born": 0,
+        "attackReady": 0,
+        "generation": 0,
+        "sourceId": "endless:wave:1",
+        "attackAt": 0.016666666666666666,
+        "attackAim": {
+          "x": 1400,
+          "y": 700
+        },
+        "attackTarget": "tissue",
+        "attackRadius": 58
+      },
+      {
+        "id": "later-threat",
+        "x": 645,
+        "y": 700,
+        "kind": "single",
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 0,
+        "born": 0,
+        "attackReady": 0,
+        "generation": 0,
+        "sourceId": "endless:wave:1"
+      }
+    ],
+    "tissue": {
+      "x": 1400,
+      "y": 700,
+      "hp": 1,
+      "maxHp": 100,
+      "radius": 43
+    },
+    "terminal": {
+      "x": 350,
+      "y": 1180
+    },
+    "tool": 1,
+    "cooldowns": {
+      "1": 0,
+      "2": 0,
+      "3": 0
+    },
+    "scanReady": 0,
+    "scanUntil": 0,
+    "effects": [],
+    "events": [
+      {
+        "type": "RUN_STARTED",
+        "tick": 0,
+        "data": {
+          "seed": 71,
+          "mode": "endless",
+          "startAtTick": 0,
+          "encounterConfig": "endless-1",
+          "counterGuide": "adaptive",
+          "firstTraitOverride": ""
+        }
+      },
+      {
+        "type": "PROTOCOL_EQUIPPED",
+        "tick": 0,
+        "data": {
+          "source": "preparation",
+          "protocolId": "IMMUNE_BEACON",
+          "tuning": "balanced",
+          "rank": 1,
+          "slots": 1,
+          "actionHint": "现在按 Q 标记鼠标区域，召集三只免疫细胞追击、吞噬。"
+        }
+      },
+      {
+        "type": "PREPARATION_APPLIED",
+        "tick": 0,
+        "data": {
+          "version": 1,
+          "starterProtocolId": "IMMUNE_BEACON",
+          "prepaidChoices": 1,
+          "repaymentXp": 20,
+          "nextDraftXp": 55
+        }
+      }
+    ],
+    "message": "WASD 移动 · 按住左键连射 · Q 朝敌群部署免疫小队；清波后选择进化，3 可抢修十字组织。",
+    "messageUntil": 8,
+    "shots": 0,
+    "hits": 0,
+    "scans": 0,
+    "dashes": 0,
+    "result": null,
+    "runMetrics": {
+      "runId": "71:metrics:2",
+      "lastSequence": 3,
+      "lastTick": 0,
+      "ended": false,
+      "frame": {
+        "tick": 0,
+        "entries": []
+      },
+      "summary": {
+        "schemaVersion": 1,
+        "limited": false,
+        "care": {
+          "repairActions": 0,
+          "repaired": 0,
+          "organLoss": 0,
+          "organCost": 0,
+          "playerDamage": 0,
+          "organs": {
+            "heart": {
+              "repairActions": 0,
+              "repaired": 0,
+              "loss": 0,
+              "cost": 0
+            },
+            "lung": {
+              "repairActions": 0,
+              "repaired": 0,
+              "loss": 0,
+              "cost": 0
+            }
+          }
+        },
+        "control": {
+          "chainTriggers": 0,
+          "chainHops": 0,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 0,
+          "patrolBites": 0,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 0,
+          "pulseUses": 0,
+          "crystalExposures": 0,
+          "corePulseHits": 0,
+          "airwayCloses": 0,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [],
+          "migrationChoice": null,
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [],
+          "coreCleared": false
+        }
+      }
+    },
+    "world": {
+      "width": 2400,
+      "height": 1500,
+      "bounds": {
+        "left": 20,
+        "right": 2380,
+        "top": 20,
+        "bottom": 1480
+      },
+      "obstacles": [],
+      "foreground": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    "battle": {
+      "milestone": "G3",
+      "organId": "heart",
+      "graph": {
+        "nodes": [
+          {
+            "id": "valve",
+            "kind": "valve",
+            "x": 1200,
+            "y": 600,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "tissue",
+            "kind": "tissue",
+            "x": 1200,
+            "y": 900,
+            "active": true,
+            "infected": false
+          }
+        ],
+        "edges": []
+      },
+      "pressure": {
+        "infection": 0,
+        "vitality": 100,
+        "criticalSince": null,
+        "organAlarm": false,
+        "crisisReason": ""
+      },
+      "pulse": {
+        "phase": "charge",
+        "phaseRemaining": 2,
+        "readyAt": 0,
+        "activeUntil": 0,
+        "origin": {
+          "x": 1200,
+          "y": 600
+        },
+        "direction": 1.5707963267948966,
+        "uses": 0
+      },
+      "warning": null,
+      "traits": [],
+      "defeatedTraits": [],
+      "nextEvolutionAt": 0,
+      "stage": 0,
+      "stageLabel": "第 1 波 · 正面双潮",
+      "objective": "连续清场成长；普通感染体追击你，潜伏体侵蚀中央组织。每 5 波迎战精英。",
+      "readyToRetest": false,
+      "lastAim": {
+        "x": 1020,
+        "y": 650
+      },
+      "stats": {
+        "kills": 0,
+        "sourceClears": 0,
+        "eliteClears": 0,
+        "repairs": 0,
+        "pulses": 0,
+        "playerDamage": 0,
+        "tissueDamage": 0,
+        "scans": 0
+      },
+      "nextSpawnAt": {},
+      "nextActorId": 2,
+      "firstTrait": "CARAPACE",
+      "recentNotice": "",
+      "gateChangedAt": -10,
+      "organLowSince": null,
+      "eliteSpawned": 0,
+      "history": [],
+      "behaviorHistory": [],
+      "evolutionDecisions": []
+    },
+    "endless": {
+      "schemaVersion": 1,
+      "wave": 1,
+      "clearedWaves": 0,
+      "phase": "combat",
+      "phaseUntil": 2,
+      "phaseStartedAt": 0,
+      "traits": [],
+      "title": "正面双潮",
+      "eliteWave": false,
+      "eliteRemaining": 0,
+      "formation": "front",
+      "formationLabel": "正面双潮",
+      "batchSchedule": [
+        {
+          "at": 0,
+          "sector": 4,
+          "spread": 0.18,
+          "roles": [
+            "ordinary",
+            "ordinary",
+            "ordinary"
+          ]
+        },
+        {
+          "at": 0.45,
+          "sector": 4,
+          "spread": 0.18,
+          "roles": [
+            "ordinary",
+            "ordinary",
+            "ordinary"
+          ]
+        },
+        {
+          "at": 4.2,
+          "sector": 4,
+          "spread": 0.18,
+          "roles": [
+            "ordinary",
+            "ordinary"
+          ]
+        }
+      ],
+      "supportRemaining": 0,
+      "warningSeconds": 2,
+      "totalToSpawn": 8,
+      "remainingToSpawn": 2,
+      "spawnedIds": [],
+      "creditedKillIds": [],
+      "kills": 0,
+      "score": 0,
+      "combo": 0,
+      "bestCombo": 0,
+      "lastKillAt": -1000,
+      "nextSpawnAt": 100,
+      "batchSerial": 0,
+      "spawnSerial": 0,
+      "pendingChildren": 0,
+      "directions": [],
+      "batchIndex": 0,
+      "batchMemberIndex": 0
+    },
+    "messagePriority": 1,
+    "endlessGrowth": {
+      "seed": 71,
+      "ranks": {},
+      "level": 0,
+      "draft": null,
+      "offeredThroughWave": 0,
+      "history": []
+    },
+    "growth": {
+      "runId": "71:2",
+      "seed": 71,
+      "lastElapsed": 0,
+      "xp": 0,
+      "level": 0,
+      "nextXp": 20,
+      "research": 0,
+      "preparation": {
+        "version": 1,
+        "starterProtocolId": "IMMUNE_BEACON"
+      },
+      "starterDebt": 1,
+      "carriedProtocols": [
+        "IMMUNE_BEACON"
+      ],
+      "equipped": [
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced"
+        }
+      ],
+      "draft": null,
+      "pendingLevels": [],
+      "consumedDraftIds": [],
+      "rewardedKeys": [],
+      "sourceKillCounts": {},
+      "lastMilestoneWave": 0,
+      "nextMilestoneWave": null,
+      "damageTakenByOrgan": {
+        "heart": 0,
+        "lung": 0
+      },
+      "protectionNeeded": {
+        "heart": false,
+        "lung": false
+      },
+      "draftSerial": 0,
+      "historyHash": 2166136261,
+      "ended": false,
+      "pendingResearch": null,
+      "researchSerial": 0,
+      "beacon": null,
+      "beaconReadyAt": 0,
+      "cells": [],
+      "activations": {},
+      "marks": [],
+      "resonance": [],
+      "chainRoots": [],
+      "protocolHistory": [
+        {
+          "at": 0,
+          "type": "PROTOCOL_EQUIPPED",
+          "text": "免疫灯塔：初始预装 Ⅰ · 均衡。"
+        },
+        {
+          "at": 0,
+          "type": "PREPARATION_APPLIED",
+          "text": "现在按 Q 标记鼠标区域，召集三只免疫细胞追击、吞噬。已预支首份成长，20 XP 仅结清；下一份草案 55 XP。"
+        }
+      ],
+      "pendingLogs": [],
+      "budgetTick": -1,
+      "budgetUsed": 0,
+      "skippedCommands": 0,
+      "lastEvolution": {
+        "protocolId": "IMMUNE_BEACON",
+        "rank": 1,
+        "until": 8,
+        "title": "免疫灯塔 Ⅰ · 初始预装",
+        "hint": "现在按 Q 标记鼠标区域，召集三只免疫细胞追击、吞噬。已预支首份成长，20 XP 仅结清；下一份草案 55 XP。"
+      }
+    }
+  },
+  "after": {
+    "game": "viral-invasion",
+    "schemaVersion": 1,
+    "seed": 71,
+    "phase": "result",
+    "tick": 1,
+    "elapsed": 0.016666666666666666,
+    "player": {
+      "x": 600,
+      "y": 700,
+      "hp": 100,
+      "radius": 19,
+      "facing": 0,
+      "moving": false,
+      "dashUntil": 0,
+      "dashReady": 0,
+      "hurtUntil": 0,
+      "actionUntil": 0
+    },
+    "targets": [
+      {
+        "id": "pending-fission",
+        "x": 820,
+        "y": 700,
+        "kind": "cluster",
+        "role": "virus",
+        "radius": 22,
+        "hp": 0,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [
+          "FISSION"
+        ],
+        "facing": 0,
+        "born": 0,
+        "attackReady": 0,
+        "generation": 0,
+        "sourceId": "endless:wave:1",
+        "deadAt": 0
+      },
+      {
+        "id": "killer",
+        "x": 1353.9333333333334,
+        "y": 700,
+        "kind": "single",
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 3.141592653589793,
+        "born": 0,
+        "attackReady": 2.216666666666667,
+        "generation": 0,
+        "sourceId": "endless:wave:1",
+        "attackRadius": 58
+      },
+      {
+        "id": "later-threat",
+        "x": 645,
+        "y": 700,
+        "kind": "single",
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 3.141592653589793,
+        "born": 0,
+        "attackReady": 0,
+        "generation": 0,
+        "sourceId": "endless:wave:1",
+        "attackAt": 0.7366666666666667,
+        "attackWindup": 0.72,
+        "attackRadius": 58,
+        "attackAim": {
+          "x": 600,
+          "y": 700
+        },
+        "attackTarget": "player"
+      },
+      {
+        "x": 791.9347622626356,
+        "y": 709.9448063348516,
+        "id": "virus-3",
+        "role": "virus",
+        "kind": "cluster",
+        "radius": 14,
+        "hp": 22,
+        "maxHp": 22,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [
+          "FISSION"
+        ],
+        "facing": -3.089825474310735,
+        "born": 0.016666666666666666,
+        "attackReady": 1.5166666666666666,
+        "generation": 1,
+        "sourceId": "endless:wave:1"
+      },
+      {
+        "x": 845.9342064480977,
+        "y": 709.9568504634857,
+        "id": "virus-4",
+        "role": "virus",
+        "kind": "cluster",
+        "radius": 14,
+        "hp": 22,
+        "maxHp": 22,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [
+          "FISSION"
+        ],
+        "facing": -3.1011289220421325,
+        "born": 0.016666666666666666,
+        "attackReady": 1.5166666666666666,
+        "generation": 1,
+        "sourceId": "endless:wave:1"
+      }
+    ],
+    "tissue": {
+      "x": 1400,
+      "y": 700,
+      "hp": 0,
+      "maxHp": 100,
+      "radius": 43
+    },
+    "terminal": {
+      "x": 350,
+      "y": 1180
+    },
+    "tool": 1,
+    "cooldowns": {
+      "1": 0,
+      "2": 0,
+      "3": 0
+    },
+    "scanReady": 0,
+    "scanUntil": 0,
+    "effects": [
+      {
+        "id": 1,
+        "kind": "hit",
+        "from": {
+          "x": 1400,
+          "y": 700
+        },
+        "to": {
+          "x": 1400,
+          "y": 700
+        },
+        "radius": 45,
+        "born": 0.016666666666666666,
+        "duration": 0.3
+      },
+      {
+        "id": 2,
+        "kind": "danger",
+        "from": {
+          "x": 645,
+          "y": 700
+        },
+        "to": {
+          "x": 600,
+          "y": 700
+        },
+        "radius": 58,
+        "born": 0.016666666666666666,
+        "duration": 0.72
+      }
+    ],
+    "events": [
+      {
+        "type": "RUN_STARTED",
+        "tick": 0,
+        "data": {
+          "seed": 71,
+          "mode": "endless",
+          "startAtTick": 0,
+          "encounterConfig": "endless-1",
+          "counterGuide": "adaptive",
+          "firstTraitOverride": ""
+        }
+      },
+      {
+        "type": "PROTOCOL_EQUIPPED",
+        "tick": 0,
+        "data": {
+          "source": "preparation",
+          "protocolId": "IMMUNE_BEACON",
+          "tuning": "balanced",
+          "rank": 1,
+          "slots": 1,
+          "actionHint": "现在按 Q 标记鼠标区域，召集三只免疫细胞追击、吞噬。"
+        }
+      },
+      {
+        "type": "PREPARATION_APPLIED",
+        "tick": 0,
+        "data": {
+          "version": 1,
+          "starterProtocolId": "IMMUNE_BEACON",
+          "prepaidChoices": 1,
+          "repaymentXp": 20,
+          "nextDraftXp": 55
+        }
+      },
+      {
+        "type": "ACTOR_SPAWNED",
+        "tick": 1,
+        "data": {
+          "id": "virus-3",
+          "role": "virus",
+          "generation": 1,
+          "sourceId": "endless:wave:1",
+          "traits": "FISSION"
+        }
+      },
+      {
+        "type": "ACTOR_SPAWNED",
+        "tick": 1,
+        "data": {
+          "id": "virus-4",
+          "role": "virus",
+          "generation": 1,
+          "sourceId": "endless:wave:1",
+          "traits": "FISSION"
+        }
+      },
+      {
+        "type": "FISSION_SPAWNED",
+        "tick": 1,
+        "data": {
+          "parentId": "pending-fission",
+          "children": 2,
+          "generation": 1
+        }
+      },
+      {
+        "type": "ORGAN_INTEGRITY_CHANGED",
+        "tick": 1,
+        "data": {
+          "organId": "heart",
+          "before": 1,
+          "after": 0,
+          "reason": "enemy-attack",
+          "actorId": "killer"
+        }
+      },
+      {
+        "type": "ATTACK_TELEGRAPHED",
+        "tick": 1,
+        "data": {
+          "actorId": "later-threat",
+          "target": "player",
+          "resolveAt": 0.7366666666666667
+        }
+      },
+      {
+        "type": "RUN_ENDED",
+        "tick": 1,
+        "data": {
+          "success": false,
+          "reason": "核心组织失守：潜伏体优先侵蚀组织，用 Q 定位、2 清群、3 抢修。",
+          "seed": 71,
+          "durationSimMs": 17
+        }
+      }
+    ],
+    "message": "核心组织失守：潜伏体优先侵蚀组织，用 Q 定位、2 清群、3 抢修。",
+    "messageUntil": 8.016666666666667,
+    "shots": 0,
+    "hits": 0,
+    "scans": 0,
+    "dashes": 0,
+    "result": {
+      "success": false,
+      "reason": "核心组织失守：潜伏体优先侵蚀组织，用 Q 定位、2 清群、3 抢修。"
+    },
+    "runMetrics": {
+      "runId": "71:metrics:2",
+      "lastSequence": 9,
+      "lastTick": 1,
+      "ended": true,
+      "frame": {
+        "tick": 1,
+        "entries": []
+      },
+      "summary": {
+        "schemaVersion": 1,
+        "limited": false,
+        "care": {
+          "repairActions": 0,
+          "repaired": 0,
+          "organLoss": 1,
+          "organCost": 0,
+          "playerDamage": 0,
+          "organs": {
+            "heart": {
+              "repairActions": 0,
+              "repaired": 0,
+              "loss": 1,
+              "cost": 0
+            },
+            "lung": {
+              "repairActions": 0,
+              "repaired": 0,
+              "loss": 0,
+              "cost": 0
+            }
+          }
+        },
+        "control": {
+          "chainTriggers": 0,
+          "chainHops": 0,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 0,
+          "patrolBites": 0,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 0,
+          "pulseUses": 0,
+          "crystalExposures": 0,
+          "corePulseHits": 0,
+          "airwayCloses": 0,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [],
+          "migrationChoice": null,
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [],
+          "coreCleared": false
+        }
+      }
+    },
+    "world": {
+      "width": 2400,
+      "height": 1500,
+      "bounds": {
+        "left": 20,
+        "right": 2380,
+        "top": 20,
+        "bottom": 1480
+      },
+      "obstacles": [],
+      "foreground": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      }
+    },
+    "battle": {
+      "milestone": "G3",
+      "organId": "heart",
+      "graph": {
+        "nodes": [
+          {
+            "id": "valve",
+            "kind": "valve",
+            "x": 1200,
+            "y": 600,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "tissue",
+            "kind": "tissue",
+            "x": 1200,
+            "y": 900,
+            "active": true,
+            "infected": false
+          }
+        ],
+        "edges": []
+      },
+      "pressure": {
+        "infection": 0,
+        "vitality": 100,
+        "criticalSince": null,
+        "organAlarm": false,
+        "crisisReason": ""
+      },
+      "pulse": {
+        "phase": "charge",
+        "phaseRemaining": 1.9833333333333334,
+        "readyAt": 0,
+        "activeUntil": 0,
+        "origin": {
+          "x": 1200,
+          "y": 600
+        },
+        "direction": 2.9761732669235226,
+        "uses": 0,
+        "cycleIndex": 0
+      },
+      "warning": null,
+      "traits": [],
+      "defeatedTraits": [],
+      "nextEvolutionAt": 0,
+      "stage": 0,
+      "stageLabel": "第 1 波 · 正面双潮",
+      "objective": "连续清场成长；普通感染体追击你，潜伏体侵蚀中央组织。每 5 波迎战精英。",
+      "readyToRetest": false,
+      "lastAim": {
+        "x": 601,
+        "y": 700
+      },
+      "stats": {
+        "kills": 0,
+        "sourceClears": 0,
+        "eliteClears": 0,
+        "repairs": 0,
+        "pulses": 0,
+        "playerDamage": 0,
+        "tissueDamage": 1,
+        "scans": 0
+      },
+      "nextSpawnAt": {},
+      "nextActorId": 4,
+      "firstTrait": "CARAPACE",
+      "recentNotice": "",
+      "gateChangedAt": -10,
+      "organLowSince": null,
+      "eliteSpawned": 0,
+      "history": [],
+      "behaviorHistory": [],
+      "evolutionDecisions": []
+    },
+    "endless": {
+      "schemaVersion": 1,
+      "wave": 1,
+      "clearedWaves": 0,
+      "phase": "combat",
+      "phaseUntil": 2,
+      "phaseStartedAt": 0,
+      "traits": [],
+      "title": "正面双潮",
+      "eliteWave": false,
+      "eliteRemaining": 0,
+      "formation": "front",
+      "formationLabel": "正面双潮",
+      "batchSchedule": [
+        {
+          "at": 0,
+          "sector": 4,
+          "spread": 0.18,
+          "roles": [
+            "ordinary",
+            "ordinary",
+            "ordinary"
+          ]
+        },
+        {
+          "at": 0.45,
+          "sector": 4,
+          "spread": 0.18,
+          "roles": [
+            "ordinary",
+            "ordinary",
+            "ordinary"
+          ]
+        },
+        {
+          "at": 4.2,
+          "sector": 4,
+          "spread": 0.18,
+          "roles": [
+            "ordinary",
+            "ordinary"
+          ]
+        }
+      ],
+      "supportRemaining": 0,
+      "warningSeconds": 2,
+      "totalToSpawn": 8,
+      "remainingToSpawn": 2,
+      "spawnedIds": [
+        "virus-3",
+        "virus-4"
+      ],
+      "creditedKillIds": [],
+      "kills": 0,
+      "score": 0,
+      "combo": 0,
+      "bestCombo": 0,
+      "lastKillAt": -1000,
+      "nextSpawnAt": 100,
+      "batchSerial": 0,
+      "spawnSerial": 0,
+      "pendingChildren": 2,
+      "directions": [],
+      "batchIndex": 0,
+      "batchMemberIndex": 0
+    },
+    "messagePriority": 3,
+    "endlessGrowth": {
+      "seed": 71,
+      "ranks": {},
+      "level": 0,
+      "draft": null,
+      "offeredThroughWave": 0,
+      "history": []
+    },
+    "growth": {
+      "runId": "71:2",
+      "seed": 71,
+      "lastElapsed": 0.016666666666666666,
+      "xp": 0,
+      "level": 0,
+      "nextXp": 20,
+      "research": 0,
+      "preparation": {
+        "version": 1,
+        "starterProtocolId": "IMMUNE_BEACON"
+      },
+      "starterDebt": 1,
+      "carriedProtocols": [
+        "IMMUNE_BEACON"
+      ],
+      "equipped": [
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced"
+        }
+      ],
+      "draft": null,
+      "pendingLevels": [],
+      "consumedDraftIds": [],
+      "rewardedKeys": [],
+      "sourceKillCounts": {},
+      "lastMilestoneWave": 0,
+      "nextMilestoneWave": null,
+      "damageTakenByOrgan": {
+        "heart": 0,
+        "lung": 0
+      },
+      "protectionNeeded": {
+        "heart": false,
+        "lung": false
+      },
+      "draftSerial": 0,
+      "historyHash": 2166136261,
+      "ended": true,
+      "pendingResearch": null,
+      "researchSerial": 0,
+      "beacon": null,
+      "beaconReadyAt": 0,
+      "cells": [],
+      "activations": {},
+      "marks": [],
+      "resonance": [],
+      "chainRoots": [],
+      "protocolHistory": [
+        {
+          "at": 0,
+          "type": "PROTOCOL_EQUIPPED",
+          "text": "免疫灯塔：初始预装 Ⅰ · 均衡。"
+        },
+        {
+          "at": 0,
+          "type": "PREPARATION_APPLIED",
+          "text": "现在按 Q 标记鼠标区域，召集三只免疫细胞追击、吞噬。已预支首份成长，20 XP 仅结清；下一份草案 55 XP。"
+        }
+      ],
+      "pendingLogs": [],
+      "budgetTick": -1,
+      "budgetUsed": 0,
+      "skippedCommands": 0,
+      "lastEvolution": {
+        "protocolId": "IMMUNE_BEACON",
+        "rank": 1,
+        "until": 8,
+        "title": "免疫灯塔 Ⅰ · 初始预装",
+        "hint": "现在按 Q 标记鼠标区域，召集三只免疫细胞追击、吞噬。已预支首份成长，20 XP 仅结清；下一份草案 55 XP。"
+      }
+    },
+    "tacticalRecords": [
+      {
+        "key": "RUN_ENDED",
+        "eventType": "RUN_ENDED",
+        "firstAt": 0.016666666666666666,
+        "at": 0.016666666666666666,
+        "text": "核心组织失守：潜伏体优先侵蚀组织，用 Q 定位、2 清群、3 抢修。",
+        "count": 1
+      }
+    ]
+  },
+  "events": [
+    {
+      "type": "ACTOR_SPAWNED",
+      "tick": 1,
+      "data": {
+        "id": "virus-3",
+        "role": "virus",
+        "generation": 1,
+        "sourceId": "endless:wave:1",
+        "traits": "FISSION"
+      },
+      "observedPlayerHp": 100,
+      "observedTissueHp": 1,
+      "observedPhase": "playing"
+    },
+    {
+      "type": "ACTOR_SPAWNED",
+      "tick": 1,
+      "data": {
+        "id": "virus-4",
+        "role": "virus",
+        "generation": 1,
+        "sourceId": "endless:wave:1",
+        "traits": "FISSION"
+      },
+      "observedPlayerHp": 100,
+      "observedTissueHp": 1,
+      "observedPhase": "playing"
+    },
+    {
+      "type": "FISSION_SPAWNED",
+      "tick": 1,
+      "data": {
+        "parentId": "pending-fission",
+        "children": 2,
+        "generation": 1
+      },
+      "observedPlayerHp": 100,
+      "observedTissueHp": 1,
+      "observedPhase": "playing"
+    },
+    {
+      "type": "ORGAN_INTEGRITY_CHANGED",
+      "tick": 1,
+      "data": {
+        "organId": "heart",
+        "before": 1,
+        "after": 0,
+        "reason": "enemy-attack",
+        "actorId": "killer"
+      },
+      "observedPlayerHp": 100,
+      "observedTissueHp": 0,
+      "observedPhase": "playing"
+    },
+    {
+      "type": "ATTACK_TELEGRAPHED",
+      "tick": 1,
+      "data": {
+        "actorId": "later-threat",
+        "target": "player",
+        "resolveAt": 0.7366666666666667
+      },
+      "observedPlayerHp": 100,
+      "observedTissueHp": 0,
+      "observedPhase": "playing"
+    },
+    {
+      "type": "RUN_ENDED",
+      "tick": 1,
+      "data": {
+        "success": false,
+        "reason": "核心组织失守：潜伏体优先侵蚀组织，用 Q 定位、2 清群、3 抢修。",
+        "seed": 71,
+        "durationSimMs": 17
+      },
+      "observedPlayerHp": 100,
+      "observedTissueHp": 0,
+      "observedPhase": "result"
+    }
+  ]
+}
