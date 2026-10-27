@@ -24,6 +24,8 @@ export interface Target extends Vec {
   attackTarget?: 'player' | 'tissue';
   attackRadius?: number;
   tactic?: EnemyTactic;
+  /** A finite ranged support keeps distance; its warning still freezes before firing. */
+  tacticPosture?: 'standoff';
   attackPlan?: EnemyAttackPlan;
   attackWindup?: number;
   charge?: EnemyCharge;

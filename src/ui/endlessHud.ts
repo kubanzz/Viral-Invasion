@@ -41,7 +41,7 @@ function mixedSupportCopy(state: GameState): string {
 }
 function threatCopy(state: GameState, upcoming = false): string {
   if (upcoming && state.endless && state.endless.wave >= 16) {
-    return `${mixedSupportCopy(state)}。锁线侧闪，双圈离圈，侵蚀 Q 打断；轻型支援可直接净化。`;
+    return `${mixedSupportCopy(state)}。锁线侧闪，双圈离圈，侵蚀 Q 打断；远距支援可接近或 Q 部署细胞。`;
   }
   const threats = state.targets.filter(target => target.hp > 0 && target.tactic && target.tactic !== 'melee');
   const active = threats.find(target => target.attackPlan || target.charge) ?? threats[0];

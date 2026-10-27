@@ -1,0 +1,33 @@
+{
+  "scope": "Offline real DOM input and mode/5-wave smoke; no performance or human-readability claim.",
+  "checks": [
+    {
+      "project": "chrome",
+      "exitCode": 0,
+      "signal": null,
+      "command": [
+        "node_modules/playwright/cli.js",
+        "test",
+        "tests/e2e/gameplay-v078.spec.ts",
+        "tests/e2e/endless-v077.spec.ts",
+        "--project=chrome",
+        "--grep",
+        "five natural waves|mode isolation"
+      ]
+    },
+    {
+      "project": "edge",
+      "exitCode": 0,
+      "signal": null,
+      "command": [
+        "node_modules/playwright/cli.js",
+        "test",
+        "tests/e2e/gameplay-v078.spec.ts",
+        "tests/e2e/endless-v077.spec.ts",
+        "--project=edge",
+        "--grep",
+        "five natural waves|mode isolation"
+      ]
+    }
+  ]
+}

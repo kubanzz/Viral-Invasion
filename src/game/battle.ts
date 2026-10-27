@@ -11,6 +11,8 @@ import { ENEMY_CROWD, moveEnemyThroughCrowd, planEnemySpacing } from '../actors/
 import { endlessCombatStats } from './endlessGrowth';
 import { EnemyNavigator } from '../actors/enemyNavigation';
 import { enemyAttackPlan, enemyAttackHits, enemyRayEnd, segmentDistance } from './enemyTactics';
+import { standoffMotion } from './enemyPositioning';
+import { updateEnemyFacing } from './enemyFacing';
 
 export interface BattleHost {
   state: GameState;
@@ -501,10 +503,19 @@ export class BattleDirector {
         if (s.elapsed + 1e-9 >= target.attackAt) this.resolveTactic(target);
         continue;
       }
+      // A posture spends the same one-tick movement budget as pursuit. Compute
+      // the warning after movement, then leave its real origin frozen.
+      const postureMotion = standoffMotion(target, s.player, activeWorld(s));
+      let postureMoved = false;
+      if (postureMotion && !spacing.has(target.id) && (postureMotion.x || postureMotion.y)) {
+        const slow = this.host.slowFactor?.(target.id) ?? 1;
+        const next = moveEnemyThroughCrowd(target, { x: postureMotion.x * slow, y: postureMotion.y * slow }, s.targets, activeWorld(s));
+        target.x = next.x; target.y = next.y; postureMoved = true;
+      }
+      updateEnemyFacing(target, Math.atan2(goal.y - target.y, goal.x - target.x), BALANCE.step);
       const special = !!s.endless && !!target.tactic && target.tactic !== 'melee';
       const plan = special ? enemyAttackPlan(target, s) : undefined;
       if (special && plan) {
-        target.facing = Math.atan2(plan.aim.y - target.y, plan.aim.x - target.x);
         const sameHeavyTactic = plan.kind !== 'thin-ray' && s.targets.some(actor => actor.hp > 0 && actor.id !== target.id
           && (actor.attackPlan?.kind === plan.kind && actor.attackAt !== undefined || plan.kind === 'crystal-charge' && !!actor.charge));
         // A mixed cohort may combine known threats, but it must not stack two
@@ -536,7 +547,6 @@ export class BattleDirector {
         target.attackAt = undefined; target.attackAim = undefined; target.attackTarget = undefined;
         target.attackReady = s.elapsed + (s.endless ? Math.max(1.1, B.attackInterval - (wave - 1) * .025) : B.attackInterval);
       }
-      target.facing = Math.atan2(dir.y, dir.x);
       const eliteBlast = !!s.endless && target.role === 'elite' && goal === s.player;
       const reach = eliteBlast ? 250 : B.attackRadius + (goal === s.tissue ? s.tissue.radius : s.player.radius) - 8;
       const block = wallHit(target, dir, distance(target, goal), activeWorld(s));
@@ -544,7 +554,7 @@ export class BattleDirector {
       if (special || distance(target, goal) > reach || !lineClear) {
         // Relaxation already used this body's movement budget. Do not cancel
         // it with an immediate pursuit step back into the same exact stack.
-        if (spacing.has(target.id)) continue;
+        if (spacing.has(target.id) || postureMoved) continue;
         const movementSpeed = speed(target);
         const next = this.navigator.waypoint(target, goal, activeWorld(s), s.elapsed);
         const motion = normalized(next.x - target.x, next.y - target.y);

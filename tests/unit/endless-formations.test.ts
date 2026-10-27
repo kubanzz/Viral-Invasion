@@ -80,17 +80,19 @@ describe('real finite challenge formations', () => {
     const a = average(first), b = average(second); expect(a.x * b.x + a.y * b.y).toBeLessThan(0);
   });
 
-  it('gives first support8 seconds of warning, mixes it with ordinary bodies and keeps it inside clear counterattack range', () => {
+  it('warns eight seconds before one remote support, preserving base movement and Q counters', () => {
     const f = fixture(); f.enter(2); f.nextWave();
     expect(f.state.endless!.wave).toBe(3); expect(f.state.endless!.warningSeconds).toBe(8);
     f.advance(7.99); expect(f.state.targets).toHaveLength(0); f.advance(.01);
     const s = f.state, support = s.targets.find(target => target.tactic === 'thin-ray')!;
     expect(s.targets).toHaveLength(3); expect(support).toBeDefined(); expect(support.traits).toEqual([]);
-    expect(distance(s.player, support)).toBeGreaterThanOrEqual(380); expect(distance(s.player, support)).toBeLessThanOrEqual(500);
-    expect(support.attackReady! - s.elapsed).toBeCloseTo(.2);
+    expect(distance(s.player, support)).toBeGreaterThanOrEqual(560); expect(distance(s.player, support)).toBeLessThanOrEqual(600);
+    expect(support.tacticPosture).toBe('standoff'); expect(support.maxHp).toBe(68);
+    expect(support.attackReady! - s.elapsed).toBeCloseTo(ENDLESS_BALANCE.spawnGrace);
     expect(s.endless!.batchSchedule.flatMap(batch => batch.roles).filter(role => role === 'support')).toHaveLength(1);
     expect(s.endless!.batchSchedule.every(batch => batch.roles.some(role => role !== 'support'))).toBe(true);
     expect(enemyAttackPlan(support, s)?.kind).toBe('thin-ray');
+    expect(f.messages.some(message => message.includes('接近射杀') && message.includes('Q'))).toBe(true);
   });
 
   it('clusters ordinary pack members for a single range attack while keeping their bodies separate', () => {
@@ -166,11 +168,14 @@ describe('real finite challenge formations', () => {
       expect(supports[0].tactic).toBe('thin-ray'); if (wave >= 30) expect(supports[3].tactic).toBe('thin-ray');
       const mixed = supports.filter(target => target.tactic !== 'thin-ray').map(target => target.tactic!);
       expect(mixed).toHaveLength(2); expect(new Set(mixed).size).toBe(2);
+      expect(supports.filter(target => target.tacticPosture === 'standoff')).toHaveLength(1);
       for (const support of supports) {
         expect(['thin-ray', 'crystal-charge', 'fission-burst', 'mimic-corrosion']).toContain(support.tactic);
         expect(support.maxHp).toBe(68); expect(support.traits).toEqual([]); expect(support.generation).toBe(0);
-        expect(support.attackReady! - support.born!).toBeCloseTo(.2);
-        expect(distance(s.player, support)).toBeGreaterThanOrEqual(380); expect(distance(s.player, support)).toBeLessThanOrEqual(500);
+        const remote = support.tacticPosture === 'standoff';
+        expect(support.attackReady! - support.born!).toBeCloseTo(remote ? ENDLESS_BALANCE.spawnGrace : .2);
+        expect(distance(s.player, support)).toBeGreaterThanOrEqual(remote ? 560 : 380);
+        expect(distance(s.player, support)).toBeLessThanOrEqual(remote ? 600 : 500);
       }
       for (const elite of arrivals.filter(target => target.role === 'elite')) expect(elite.maxHp).toBeLessThanOrEqual(204);
       expect(supports[1].born! - supports[0].born!).toBeGreaterThanOrEqual(2.6 - 1e-7);

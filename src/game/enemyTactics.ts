@@ -1,6 +1,7 @@
 import { clamp, distance, moveWithCollision, normalized, rayCircle, wallHit } from '../actors/collision';
 import { activeWorld, type GameState, type Target, type Vec, type WorldGeometry } from './types';
 import type { EnemyAttackPlan, EnemyTactic } from './enemyTacticsTypes';
+import { STANDOFF_BALANCE } from './enemyPositioning';
 export type { EnemyAttackPlan, EnemyCharge, EnemyTactic } from './enemyTacticsTypes';
 
 const point = (position: Vec): Vec => ({ x: position.x, y: position.y });
@@ -44,7 +45,7 @@ export function enemyAttackPlan(target: Target, state: GameState): EnemyAttackPl
   if (!tactic || tactic === 'melee' || target.hp <= 0) return;
   const world = activeWorld(state), wave = state.endless?.wave ?? 1;
   const goal = tactic === 'mimic-corrosion' ? state.tissue : state.player;
-  const range = tactic === 'thin-ray' ? 530 : tactic === 'mimic-corrosion' ? 650 : 500;
+  const range = tactic === 'thin-ray' ? target.tacticPosture === 'standoff' ? STANDOFF_BALANCE.attackRange : 530 : tactic === 'mimic-corrosion' ? 650 : 500;
   if (distance(target, goal) > range + 1e-7 || !clearLine(target, goal, goal.radius, world)) return;
   const plan: EnemyAttackPlan = {
     kind: tactic, origin: point(target), aim: point(goal), range,

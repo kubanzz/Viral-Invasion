@@ -1,0 +1,2125 @@
+{
+  "schemaVersion": 1,
+  "measuredAtUtc": "2026-10-27T19:16:18.740Z",
+  "command": "node .tools/compare-tactics-v082.mjs --run",
+  "scope": "Eight finite public-input GameSession runs. No browser, GPU, performance, human-fun or retention claim.",
+  "measurementScriptSha256": "8f47f04dbab117dfce91f8c9e7dcfbea028a271dd7fc8709db2e739bfeb52e8e",
+  "originalDriverSha256": "dc3311ce88a50c9f6ac450c3d4dbc7709d74f59d38aaaeffa4b82cae2de7a183",
+  "activePolicySha256": "95b2e07e50c0ae6b559a58c6a075bf45be300b5d28e4a0b0e403628d87a50f73",
+  "seeds": [
+    7,
+    71
+  ],
+  "goalWaves": 30,
+  "totalSimulationBudgetSeconds": 900,
+  "perWaveSimulationBudgetSeconds": 120,
+  "policy": {
+    "stationary": "Saved only1 action, modal and growth bytes unchanged.",
+    "active": "Same old growth/modal bytes; prioritize visible standoff identity, navigate to 450, sidestep frozen thin rays, Q toward selected target whenever ready; tool1 only, no dash/2/3/E.",
+    "mutationScope": "Only original public start/step/discardDraft/chooseCombatUpgrade/resume. No state/HP/position/clock/target/equipment injection.",
+    "assertionPolicy": "No forced victory, damage, cell hit or failure; all deaths, stalls, timeouts and measurement errors retained without retries."
+  },
+  "bundles": [
+    {
+      "version": "baseline",
+      "sourceDirectory": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\cadence-v081-source",
+      "bundleSha256": "a0e2546efeb20f919923c68b3054668e53b19fe2977df3ca86de06f7cdfe7386",
+      "sourceFingerprints": [
+        {
+          "path": "src/actors/collision.ts",
+          "sha256": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0",
+          "bytes": 5520
+        },
+        {
+          "path": "src/actors/enemyCrowd.ts",
+          "sha256": "0058ef0430088c57ad39a2bb1e48708bf1feb18c9910e018f60277c60ce4ca97",
+          "bytes": 5866
+        },
+        {
+          "path": "src/actors/enemyNavigation.ts",
+          "sha256": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd",
+          "bytes": 6781
+        },
+        {
+          "path": "src/core/clock.ts",
+          "sha256": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+          "bytes": 1156
+        },
+        {
+          "path": "src/core/events.ts",
+          "sha256": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+          "bytes": 887
+        },
+        {
+          "path": "src/core/rng.ts",
+          "sha256": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+          "bytes": 680
+        },
+        {
+          "path": "src/game/battle.ts",
+          "sha256": "6c7795c63a0f0e6044a2863b92f5edeafda36678cfd7eb4a2527c2c1e2fcd362",
+          "bytes": 43847
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "sha256": "668eb109c820d6e548997aec3ea9e00deca6f4d6120680870538037aa8a70f27",
+          "bytes": 1676
+        },
+        {
+          "path": "src/game/campaign.ts",
+          "sha256": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+          "bytes": 29358
+        },
+        {
+          "path": "src/game/campaignEncounters.ts",
+          "sha256": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+          "bytes": 15407
+        },
+        {
+          "path": "src/game/counterLesson.ts",
+          "sha256": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+          "bytes": 1173
+        },
+        {
+          "path": "src/game/encounterConfig.ts",
+          "sha256": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+          "bytes": 384
+        },
+        {
+          "path": "src/game/endless.ts",
+          "sha256": "28cdbf08040ddb6e7c8dc15d08f93d4736eaf7fa0faee1e159c10a5fc9d346d7",
+          "bytes": 20339
+        },
+        {
+          "path": "src/game/endlessGrowth.ts",
+          "sha256": "90697bf89912a94c3abae2b39baadf584f0e58677857cd625e13c208fd67fa56",
+          "bytes": 9238
+        },
+        {
+          "path": "src/game/enemyTacticInfo.ts",
+          "sha256": "5d9c88df38d542f9f23520fbe7912e100d0abe19310ba0d527d1980ad19f2596",
+          "bytes": 740
+        },
+        {
+          "path": "src/game/enemyTactics.ts",
+          "sha256": "5756bc8247bf72fb3db833ac191eeb3c58afe3b8f0505e1d1e65f8d1f28a64e4",
+          "bytes": 7039
+        },
+        {
+          "path": "src/game/evolution.ts",
+          "sha256": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+          "bytes": 8002
+        },
+        {
+          "path": "src/game/growth.ts",
+          "sha256": "85b7eacab58b0b640f3a8d6fd75fc6fd8338f0b9ae4a712772f739ae74c3eadc",
+          "bytes": 43376
+        },
+        {
+          "path": "src/game/immuneCells.ts",
+          "sha256": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80",
+          "bytes": 14829
+        },
+        {
+          "path": "src/game/motherCore.ts",
+          "sha256": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+          "bytes": 17472
+        },
+        {
+          "path": "src/game/organConfig.ts",
+          "sha256": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+          "bytes": 6689
+        },
+        {
+          "path": "src/game/organRules.ts",
+          "sha256": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+          "bytes": 2894
+        },
+        {
+          "path": "src/game/preparation.ts",
+          "sha256": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+          "bytes": 1484
+        },
+        {
+          "path": "src/game/protocols.ts",
+          "sha256": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+          "bytes": 8434
+        },
+        {
+          "path": "src/game/research.ts",
+          "sha256": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+          "bytes": 1415
+        },
+        {
+          "path": "src/game/runMetrics.ts",
+          "sha256": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+          "bytes": 19735
+        },
+        {
+          "path": "src/game/session.ts",
+          "sha256": "1c77a5a623cb1f0dad24dc39f41d5ae1ceb3a0586e5f6591fd0c35a0e78f5c5e",
+          "bytes": 50647
+        },
+        {
+          "path": "src/game/tacticalFeedback.ts",
+          "sha256": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+          "bytes": 8923
+        },
+        {
+          "path": "src/game/types.ts",
+          "sha256": "e10904f4303d5d7a605494f3226c37b7ca0bb583b7edae1316f1a4c9f74f1357",
+          "bytes": 4082
+        },
+        {
+          "path": "tests/helpers/g3Driver.ts",
+          "sha256": "2dcaa812ae1aa99d5ada5c6e3f4d6e431047483f0e0dd399ed36328b446e6f3b",
+          "bytes": 6883
+        }
+      ],
+      "runtimeOutputInputs": [
+        "src/actors/collision.ts",
+        "src/actors/enemyCrowd.ts",
+        "src/actors/enemyNavigation.ts",
+        "src/core/events.ts",
+        "src/core/rng.ts",
+        "src/game/battle.ts",
+        "src/game/battleConfig.ts",
+        "src/game/campaign.ts",
+        "src/game/campaignEncounters.ts",
+        "src/game/counterLesson.ts",
+        "src/game/encounterConfig.ts",
+        "src/game/endless.ts",
+        "src/game/endlessGrowth.ts",
+        "src/game/enemyTacticInfo.ts",
+        "src/game/enemyTactics.ts",
+        "src/game/evolution.ts",
+        "src/game/growth.ts",
+        "src/game/immuneCells.ts",
+        "src/game/motherCore.ts",
+        "src/game/organConfig.ts",
+        "src/game/organRules.ts",
+        "src/game/preparation.ts",
+        "src/game/protocols.ts",
+        "src/game/research.ts",
+        "src/game/runMetrics.ts",
+        "src/game/session.ts",
+        "src/game/tacticalFeedback.ts",
+        "src/game/types.ts",
+        "tests/helpers/g3Driver.ts"
+      ]
+    },
+    {
+      "version": "candidate",
+      "sourceDirectory": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\tactics-v082-source",
+      "bundleSha256": "ec2c24bfa905f20a3f69f131375ca631c61de5cf496fd07f833a374ed355d3fc",
+      "sourceFingerprints": [
+        {
+          "path": "src/actors/collision.ts",
+          "sha256": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0",
+          "bytes": 5520
+        },
+        {
+          "path": "src/actors/enemyCrowd.ts",
+          "sha256": "0058ef0430088c57ad39a2bb1e48708bf1feb18c9910e018f60277c60ce4ca97",
+          "bytes": 5866
+        },
+        {
+          "path": "src/actors/enemyNavigation.ts",
+          "sha256": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd",
+          "bytes": 6781
+        },
+        {
+          "path": "src/core/clock.ts",
+          "sha256": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+          "bytes": 1156
+        },
+        {
+          "path": "src/core/events.ts",
+          "sha256": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+          "bytes": 887
+        },
+        {
+          "path": "src/core/rng.ts",
+          "sha256": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+          "bytes": 680
+        },
+        {
+          "path": "src/game/battle.ts",
+          "sha256": "b6d265cc2334e5fadbccb4771afec0741dcf0c5bd0940b6318ef23c878a93c21",
+          "bytes": 44459
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "sha256": "f39249306407ab27ef6bd2b66eebed67dbcad8d2b03a6b251f3e202a0715a84f",
+          "bytes": 1703
+        },
+        {
+          "path": "src/game/campaign.ts",
+          "sha256": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+          "bytes": 29358
+        },
+        {
+          "path": "src/game/campaignEncounters.ts",
+          "sha256": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+          "bytes": 15407
+        },
+        {
+          "path": "src/game/counterLesson.ts",
+          "sha256": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+          "bytes": 1173
+        },
+        {
+          "path": "src/game/encounterConfig.ts",
+          "sha256": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+          "bytes": 384
+        },
+        {
+          "path": "src/game/endless.ts",
+          "sha256": "b19ef8606d60585772886dde910c44ef3a7582dbfb0c2b11bd2dc33252521eab",
+          "bytes": 20953
+        },
+        {
+          "path": "src/game/endlessGrowth.ts",
+          "sha256": "90697bf89912a94c3abae2b39baadf584f0e58677857cd625e13c208fd67fa56",
+          "bytes": 9238
+        },
+        {
+          "path": "src/game/enemyFacing.ts",
+          "sha256": "f2f97826b5fbae1d19bfcd718eac2c216800187c86003d11bcfc9c8c63cec24d",
+          "bytes": 1216
+        },
+        {
+          "path": "src/game/enemyPositioning.ts",
+          "sha256": "d01aff7f39ea4d4a3c34f306947452e93de57b93106a56c103bb64c9c097a878",
+          "bytes": 3649
+        },
+        {
+          "path": "src/game/enemyTacticInfo.ts",
+          "sha256": "befeaea914373092dd6ac306b8f5fd709218576504a7c4e123fbb961d7500ff6",
+          "bytes": 785
+        },
+        {
+          "path": "src/game/enemyTactics.ts",
+          "sha256": "c3c52f6f9ec170bce7cf262fe87418930028ab0de1fbb276163e689b97ca805b",
+          "bytes": 7163
+        },
+        {
+          "path": "src/game/evolution.ts",
+          "sha256": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+          "bytes": 8002
+        },
+        {
+          "path": "src/game/growth.ts",
+          "sha256": "85b7eacab58b0b640f3a8d6fd75fc6fd8338f0b9ae4a712772f739ae74c3eadc",
+          "bytes": 43376
+        },
+        {
+          "path": "src/game/immuneCells.ts",
+          "sha256": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80",
+          "bytes": 14829
+        },
+        {
+          "path": "src/game/motherCore.ts",
+          "sha256": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+          "bytes": 17472
+        },
+        {
+          "path": "src/game/organConfig.ts",
+          "sha256": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+          "bytes": 6689
+        },
+        {
+          "path": "src/game/organRules.ts",
+          "sha256": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+          "bytes": 2894
+        },
+        {
+          "path": "src/game/preparation.ts",
+          "sha256": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+          "bytes": 1484
+        },
+        {
+          "path": "src/game/protocols.ts",
+          "sha256": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+          "bytes": 8434
+        },
+        {
+          "path": "src/game/research.ts",
+          "sha256": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+          "bytes": 1415
+        },
+        {
+          "path": "src/game/runMetrics.ts",
+          "sha256": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+          "bytes": 19735
+        },
+        {
+          "path": "src/game/session.ts",
+          "sha256": "1c77a5a623cb1f0dad24dc39f41d5ae1ceb3a0586e5f6591fd0c35a0e78f5c5e",
+          "bytes": 50647
+        },
+        {
+          "path": "src/game/tacticalFeedback.ts",
+          "sha256": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+          "bytes": 8923
+        },
+        {
+          "path": "src/game/types.ts",
+          "sha256": "e9044af954fcfff9586ecfa2c308ff0bcc25bd1b324089d5b5fca68ffa39f1f1",
+          "bytes": 4202
+        },
+        {
+          "path": "tests/helpers/g3Driver.ts",
+          "sha256": "2dcaa812ae1aa99d5ada5c6e3f4d6e431047483f0e0dd399ed36328b446e6f3b",
+          "bytes": 6883
+        }
+      ],
+      "runtimeOutputInputs": [
+        "src/actors/collision.ts",
+        "src/actors/enemyCrowd.ts",
+        "src/actors/enemyNavigation.ts",
+        "src/core/events.ts",
+        "src/core/rng.ts",
+        "src/game/battle.ts",
+        "src/game/battleConfig.ts",
+        "src/game/campaign.ts",
+        "src/game/campaignEncounters.ts",
+        "src/game/counterLesson.ts",
+        "src/game/encounterConfig.ts",
+        "src/game/endless.ts",
+        "src/game/endlessGrowth.ts",
+        "src/game/enemyFacing.ts",
+        "src/game/enemyPositioning.ts",
+        "src/game/enemyTacticInfo.ts",
+        "src/game/enemyTactics.ts",
+        "src/game/evolution.ts",
+        "src/game/growth.ts",
+        "src/game/immuneCells.ts",
+        "src/game/motherCore.ts",
+        "src/game/organConfig.ts",
+        "src/game/organRules.ts",
+        "src/game/preparation.ts",
+        "src/game/protocols.ts",
+        "src/game/research.ts",
+        "src/game/runMetrics.ts",
+        "src/game/session.ts",
+        "src/game/tacticalFeedback.ts",
+        "src/game/types.ts",
+        "tests/helpers/g3Driver.ts"
+      ]
+    }
+  ],
+  "sourceChecks": [
+    {
+      "version": "baseline",
+      "unchanged": true
+    },
+    {
+      "version": "candidate",
+      "unchanged": true
+    }
+  ],
+  "compatibility": {
+    "baseline/stationary": {
+      "choosePending": {
+        "originalSha256": "ca8101e584bb8adb9badace177132195359f565d89876ae601caf0cfcc1a05f2",
+        "stationarySha256": "ca8101e584bb8adb9badace177132195359f565d89876ae601caf0cfcc1a05f2",
+        "stationaryByteIdentical": true,
+        "activeByteIdentical": true
+      },
+      "inputSelectionAndStep": {
+        "originalSha256": "90fa2fa87d1c2de9b97509b2fbcbd9acba9e560c87d7df47dc440f366b631815",
+        "stationarySha256": "90fa2fa87d1c2de9b97509b2fbcbd9acba9e560c87d7df47dc440f366b631815",
+        "stationaryByteIdentical": true,
+        "activeIntentionallyDifferent": false
+      },
+      "priorities": {
+        "originalSha256": "5986880d572379212a5b725f41f4ff76bffc86963bca371fd8436de3d58905c9",
+        "stationarySha256": "5986880d572379212a5b725f41f4ff76bffc86963bca371fd8436de3d58905c9",
+        "stationaryByteIdentical": true,
+        "activeByteIdentical": true
+      }
+    },
+    "baseline/active": {
+      "choosePending": {
+        "originalSha256": "ca8101e584bb8adb9badace177132195359f565d89876ae601caf0cfcc1a05f2",
+        "stationarySha256": "ca8101e584bb8adb9badace177132195359f565d89876ae601caf0cfcc1a05f2",
+        "stationaryByteIdentical": true,
+        "activeByteIdentical": true
+      },
+      "inputSelectionAndStep": {
+        "originalSha256": "90fa2fa87d1c2de9b97509b2fbcbd9acba9e560c87d7df47dc440f366b631815",
+        "stationarySha256": "90fa2fa87d1c2de9b97509b2fbcbd9acba9e560c87d7df47dc440f366b631815",
+        "stationaryByteIdentical": true,
+        "activeIntentionallyDifferent": true
+      },
+      "priorities": {
+        "originalSha256": "5986880d572379212a5b725f41f4ff76bffc86963bca371fd8436de3d58905c9",
+        "stationarySha256": "5986880d572379212a5b725f41f4ff76bffc86963bca371fd8436de3d58905c9",
+        "stationaryByteIdentical": true,
+        "activeByteIdentical": true
+      }
+    },
+    "candidate/stationary": {
+      "choosePending": {
+        "originalSha256": "ca8101e584bb8adb9badace177132195359f565d89876ae601caf0cfcc1a05f2",
+        "stationarySha256": "ca8101e584bb8adb9badace177132195359f565d89876ae601caf0cfcc1a05f2",
+        "stationaryByteIdentical": true,
+        "activeByteIdentical": true
+      },
+      "inputSelectionAndStep": {
+        "originalSha256": "90fa2fa87d1c2de9b97509b2fbcbd9acba9e560c87d7df47dc440f366b631815",
+        "stationarySha256": "90fa2fa87d1c2de9b97509b2fbcbd9acba9e560c87d7df47dc440f366b631815",
+        "stationaryByteIdentical": true,
+        "activeIntentionallyDifferent": false
+      },
+      "priorities": {
+        "originalSha256": "5986880d572379212a5b725f41f4ff76bffc86963bca371fd8436de3d58905c9",
+        "stationarySha256": "5986880d572379212a5b725f41f4ff76bffc86963bca371fd8436de3d58905c9",
+        "stationaryByteIdentical": true,
+        "activeByteIdentical": true
+      }
+    },
+    "candidate/active": {
+      "choosePending": {
+        "originalSha256": "ca8101e584bb8adb9badace177132195359f565d89876ae601caf0cfcc1a05f2",
+        "stationarySha256": "ca8101e584bb8adb9badace177132195359f565d89876ae601caf0cfcc1a05f2",
+        "stationaryByteIdentical": true,
+        "activeByteIdentical": true
+      },
+      "inputSelectionAndStep": {
+        "originalSha256": "90fa2fa87d1c2de9b97509b2fbcbd9acba9e560c87d7df47dc440f366b631815",
+        "stationarySha256": "90fa2fa87d1c2de9b97509b2fbcbd9acba9e560c87d7df47dc440f366b631815",
+        "stationaryByteIdentical": true,
+        "activeIntentionallyDifferent": true
+      },
+      "priorities": {
+        "originalSha256": "5986880d572379212a5b725f41f4ff76bffc86963bca371fd8436de3d58905c9",
+        "stationarySha256": "5986880d572379212a5b725f41f4ff76bffc86963bca371fd8436de3d58905c9",
+        "stationaryByteIdentical": true,
+        "activeByteIdentical": true
+      }
+    }
+  },
+  "choiceComparisons": [
+    {
+      "seed": 7,
+      "version": "baseline",
+      "strategy": "stationary",
+      "sharedClearedWaves": 30,
+      "upgradeChoicesEqualThroughSharedWaves": true
+    },
+    {
+      "seed": 7,
+      "version": "baseline",
+      "strategy": "active",
+      "sharedClearedWaves": 30,
+      "upgradeChoicesEqualThroughSharedWaves": true
+    },
+    {
+      "seed": 7,
+      "version": "candidate",
+      "strategy": "stationary",
+      "sharedClearedWaves": 2,
+      "upgradeChoicesEqualThroughSharedWaves": true
+    },
+    {
+      "seed": 7,
+      "version": "candidate",
+      "strategy": "active",
+      "sharedClearedWaves": 30,
+      "upgradeChoicesEqualThroughSharedWaves": true
+    },
+    {
+      "seed": 71,
+      "version": "baseline",
+      "strategy": "stationary",
+      "sharedClearedWaves": 30,
+      "upgradeChoicesEqualThroughSharedWaves": true
+    },
+    {
+      "seed": 71,
+      "version": "baseline",
+      "strategy": "active",
+      "sharedClearedWaves": 30,
+      "upgradeChoicesEqualThroughSharedWaves": true
+    },
+    {
+      "seed": 71,
+      "version": "candidate",
+      "strategy": "stationary",
+      "sharedClearedWaves": 2,
+      "upgradeChoicesEqualThroughSharedWaves": true
+    },
+    {
+      "seed": 71,
+      "version": "candidate",
+      "strategy": "active",
+      "sharedClearedWaves": 30,
+      "upgradeChoicesEqualThroughSharedWaves": true
+    }
+  ],
+  "results": [
+    {
+      "version": "baseline",
+      "strategy": "stationary",
+      "seed": 7,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "simulatedSeconds": 396.8666666666667,
+      "playerDamage": 0,
+      "tissueDamage": 0,
+      "playerHealing": 60,
+      "minPlayerHp": 100,
+      "finalPlayerHp": 160,
+      "finalTissueHp": 100,
+      "actualCellHits": 0,
+      "actualCellDamage": 0,
+      "actualCellHitsToStandoff": 0,
+      "actualCellDamageToStandoff": 0,
+      "requestedMotionFrames": 0,
+      "actualMovedFrames": 0,
+      "actualDistance": 0,
+      "scans": 0,
+      "selectedStandoffFrames": 0,
+      "standoffBorn": 0,
+      "standoffCommittingActors": 0,
+      "standoffCommits": 0,
+      "standoffResolves": 0,
+      "commits": 23,
+      "resolves": 0,
+      "choices": [
+        {
+          "wave": 1,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 2,
+          "type": "protocol-discard",
+          "id": "7:2:draft:1"
+        },
+        {
+          "wave": 2,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 3,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 4,
+          "type": "protocol-discard",
+          "id": "7:2:draft:2"
+        },
+        {
+          "wave": 4,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 5,
+          "type": "protocol-discard",
+          "id": "7:2:draft:3"
+        },
+        {
+          "wave": 5,
+          "type": "protocol-discard",
+          "id": "7:2:draft:4"
+        },
+        {
+          "wave": 5,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        },
+        {
+          "wave": 6,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 7,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 8,
+          "type": "protocol-discard",
+          "id": "7:2:draft:5"
+        },
+        {
+          "wave": 8,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 9,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 10,
+          "type": "protocol-discard",
+          "id": "7:2:draft:6"
+        },
+        {
+          "wave": 10,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 11,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 12,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 13,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 14,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 15,
+          "type": "protocol-discard",
+          "id": "7:2:draft:7"
+        },
+        {
+          "wave": 15,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 16,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 17,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 18,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 19,
+          "type": "combat-upgrade",
+          "id": "nova"
+        },
+        {
+          "wave": 20,
+          "type": "protocol-discard",
+          "id": "7:2:draft:8"
+        },
+        {
+          "wave": 20,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 21,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 22,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 23,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 24,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 25,
+          "type": "protocol-discard",
+          "id": "7:2:draft:9"
+        },
+        {
+          "wave": 25,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 26,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        },
+        {
+          "wave": 27,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 28,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 29,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 30,
+          "type": "protocol-discard",
+          "id": "7:2:draft:10"
+        },
+        {
+          "wave": 30,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        }
+      ],
+      "ranks": {
+        "multishot": 2,
+        "pierce": 3,
+        "power": 14,
+        "vitality": 3,
+        "haste": 5,
+        "nova": 1,
+        "immune": 2
+      },
+      "inputSha256": "f641d100e8b8c4b13912b413a9de4c801aa9c2ef4592f96c84d47dac944ab0d2",
+      "driverSha256": "5e88959b8ba90cc58efc129d757d5b4edcb818548ce671256db41638f16fe628"
+    },
+    {
+      "version": "baseline",
+      "strategy": "stationary",
+      "seed": 71,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "simulatedSeconds": 402.48333333333335,
+      "playerDamage": 38,
+      "tissueDamage": 0,
+      "playerHealing": 118,
+      "minPlayerHp": 92,
+      "finalPlayerHp": 180,
+      "finalTissueHp": 100,
+      "actualCellHits": 0,
+      "actualCellDamage": 0,
+      "actualCellHitsToStandoff": 0,
+      "actualCellDamageToStandoff": 0,
+      "requestedMotionFrames": 0,
+      "actualMovedFrames": 0,
+      "actualDistance": 0,
+      "scans": 0,
+      "selectedStandoffFrames": 0,
+      "standoffBorn": 0,
+      "standoffCommittingActors": 0,
+      "standoffCommits": 0,
+      "standoffResolves": 0,
+      "commits": 21,
+      "resolves": 4,
+      "choices": [
+        {
+          "wave": 1,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 2,
+          "type": "protocol-discard",
+          "id": "71:2:draft:1"
+        },
+        {
+          "wave": 2,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 3,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 4,
+          "type": "protocol-discard",
+          "id": "71:2:draft:2"
+        },
+        {
+          "wave": 4,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 5,
+          "type": "protocol-discard",
+          "id": "71:2:draft:3"
+        },
+        {
+          "wave": 5,
+          "type": "protocol-discard",
+          "id": "71:2:draft:4"
+        },
+        {
+          "wave": 5,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        },
+        {
+          "wave": 6,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 7,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 8,
+          "type": "protocol-discard",
+          "id": "71:2:draft:5"
+        },
+        {
+          "wave": 8,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 9,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 10,
+          "type": "protocol-discard",
+          "id": "71:2:draft:6"
+        },
+        {
+          "wave": 10,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 11,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 12,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 13,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 14,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 15,
+          "type": "protocol-discard",
+          "id": "71:2:draft:7"
+        },
+        {
+          "wave": 15,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        },
+        {
+          "wave": 16,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 17,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 18,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 19,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 20,
+          "type": "protocol-discard",
+          "id": "71:2:draft:8"
+        },
+        {
+          "wave": 20,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 21,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 22,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 23,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 24,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 25,
+          "type": "protocol-discard",
+          "id": "71:2:draft:9"
+        },
+        {
+          "wave": 25,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 26,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 27,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 28,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        },
+        {
+          "wave": 29,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 30,
+          "type": "protocol-discard",
+          "id": "71:2:draft:10"
+        },
+        {
+          "wave": 30,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        }
+      ],
+      "ranks": {
+        "multishot": 2,
+        "power": 11,
+        "pierce": 3,
+        "vitality": 4,
+        "haste": 5,
+        "immune": 5
+      },
+      "inputSha256": "8e0c31450ec9db6d30b4897430412bd67897eab5dc06601fe82f35f8f492f09e",
+      "driverSha256": "5e88959b8ba90cc58efc129d757d5b4edcb818548ce671256db41638f16fe628"
+    },
+    {
+      "version": "baseline",
+      "strategy": "active",
+      "seed": 7,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "simulatedSeconds": 358.1,
+      "playerDamage": 0,
+      "tissueDamage": 90,
+      "playerHealing": 60,
+      "minPlayerHp": 100,
+      "finalPlayerHp": 160,
+      "finalTissueHp": 100,
+      "actualCellHits": 54,
+      "actualCellDamage": 816.9599999999998,
+      "actualCellHitsToStandoff": 0,
+      "actualCellDamageToStandoff": 0,
+      "requestedMotionFrames": 4309,
+      "actualMovedFrames": 4309,
+      "actualDistance": 16451.88545370149,
+      "scans": 90,
+      "selectedStandoffFrames": 0,
+      "standoffBorn": 0,
+      "standoffCommittingActors": 0,
+      "standoffCommits": 0,
+      "standoffResolves": 0,
+      "commits": 15,
+      "resolves": 0,
+      "choices": [
+        {
+          "wave": 1,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 2,
+          "type": "protocol-discard",
+          "id": "7:2:draft:1"
+        },
+        {
+          "wave": 2,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 3,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 4,
+          "type": "protocol-discard",
+          "id": "7:2:draft:2"
+        },
+        {
+          "wave": 4,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 5,
+          "type": "protocol-discard",
+          "id": "7:2:draft:3"
+        },
+        {
+          "wave": 5,
+          "type": "protocol-discard",
+          "id": "7:2:draft:4"
+        },
+        {
+          "wave": 5,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        },
+        {
+          "wave": 6,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 7,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 8,
+          "type": "protocol-discard",
+          "id": "7:2:draft:5"
+        },
+        {
+          "wave": 8,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 9,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 10,
+          "type": "protocol-discard",
+          "id": "7:2:draft:6"
+        },
+        {
+          "wave": 10,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 11,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 12,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 13,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 14,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 15,
+          "type": "protocol-discard",
+          "id": "7:2:draft:7"
+        },
+        {
+          "wave": 15,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 16,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 17,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 18,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 19,
+          "type": "combat-upgrade",
+          "id": "nova"
+        },
+        {
+          "wave": 20,
+          "type": "protocol-discard",
+          "id": "7:2:draft:8"
+        },
+        {
+          "wave": 20,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 21,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 22,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 23,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 24,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 25,
+          "type": "protocol-discard",
+          "id": "7:2:draft:9"
+        },
+        {
+          "wave": 25,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 26,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        },
+        {
+          "wave": 27,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 28,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 29,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 30,
+          "type": "protocol-discard",
+          "id": "7:2:draft:10"
+        },
+        {
+          "wave": 30,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        }
+      ],
+      "ranks": {
+        "multishot": 2,
+        "pierce": 3,
+        "power": 14,
+        "vitality": 3,
+        "haste": 5,
+        "nova": 1,
+        "immune": 2
+      },
+      "inputSha256": "8a64a1e1fab5cd3788eb0dabf1ce177eaf4fd3ff21ef20388153b27d385746e7",
+      "driverSha256": "87dbedab20d6a149f6d3dd3fa25012d958dda95c7a2d5d93eccebb759d2da940"
+    },
+    {
+      "version": "baseline",
+      "strategy": "active",
+      "seed": 71,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "simulatedSeconds": 390.68333333333334,
+      "playerDamage": 14,
+      "tissueDamage": 114,
+      "playerHealing": 94,
+      "minPlayerHp": 100,
+      "finalPlayerHp": 180,
+      "finalTissueHp": 100,
+      "actualCellHits": 126,
+      "actualCellDamage": 1851.7920000000008,
+      "actualCellHitsToStandoff": 0,
+      "actualCellDamageToStandoff": 0,
+      "requestedMotionFrames": 4203,
+      "actualMovedFrames": 4203,
+      "actualDistance": 16053.186555004233,
+      "scans": 113,
+      "selectedStandoffFrames": 0,
+      "standoffBorn": 0,
+      "standoffCommittingActors": 0,
+      "standoffCommits": 0,
+      "standoffResolves": 0,
+      "commits": 18,
+      "resolves": 4,
+      "choices": [
+        {
+          "wave": 1,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 2,
+          "type": "protocol-discard",
+          "id": "71:2:draft:1"
+        },
+        {
+          "wave": 2,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 3,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 4,
+          "type": "protocol-discard",
+          "id": "71:2:draft:2"
+        },
+        {
+          "wave": 4,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 5,
+          "type": "protocol-discard",
+          "id": "71:2:draft:3"
+        },
+        {
+          "wave": 5,
+          "type": "protocol-discard",
+          "id": "71:2:draft:4"
+        },
+        {
+          "wave": 5,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        },
+        {
+          "wave": 6,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 7,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 8,
+          "type": "protocol-discard",
+          "id": "71:2:draft:5"
+        },
+        {
+          "wave": 8,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 9,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 10,
+          "type": "protocol-discard",
+          "id": "71:2:draft:6"
+        },
+        {
+          "wave": 10,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 11,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 12,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 13,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 14,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 15,
+          "type": "protocol-discard",
+          "id": "71:2:draft:7"
+        },
+        {
+          "wave": 15,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        },
+        {
+          "wave": 16,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 17,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 18,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 19,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 20,
+          "type": "protocol-discard",
+          "id": "71:2:draft:8"
+        },
+        {
+          "wave": 20,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 21,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 22,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 23,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 24,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 25,
+          "type": "protocol-discard",
+          "id": "71:2:draft:9"
+        },
+        {
+          "wave": 25,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 26,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 27,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 28,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        },
+        {
+          "wave": 29,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 30,
+          "type": "protocol-discard",
+          "id": "71:2:draft:10"
+        },
+        {
+          "wave": 30,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        }
+      ],
+      "ranks": {
+        "multishot": 2,
+        "power": 11,
+        "pierce": 3,
+        "vitality": 4,
+        "haste": 5,
+        "immune": 5
+      },
+      "inputSha256": "130fe6bd9810dc5298bc833917a9ab3ad8a2c66a23c674c74fac36f0e8198106",
+      "driverSha256": "87dbedab20d6a149f6d3dd3fa25012d958dda95c7a2d5d93eccebb759d2da940"
+    },
+    {
+      "version": "candidate",
+      "strategy": "stationary",
+      "seed": 7,
+      "stop": "real-failure",
+      "measurementError": null,
+      "clearedWaves": 2,
+      "simulatedSeconds": 85.01666666666667,
+      "playerDamage": 100,
+      "tissueDamage": 0,
+      "playerHealing": 0,
+      "minPlayerHp": 0,
+      "finalPlayerHp": 0,
+      "finalTissueHp": 100,
+      "actualCellHits": 0,
+      "actualCellDamage": 0,
+      "actualCellHitsToStandoff": 0,
+      "actualCellDamageToStandoff": 0,
+      "requestedMotionFrames": 0,
+      "actualMovedFrames": 0,
+      "actualDistance": 0,
+      "scans": 0,
+      "selectedStandoffFrames": 3623,
+      "standoffBorn": 1,
+      "standoffCommittingActors": 1,
+      "standoffCommits": 15,
+      "standoffResolves": 15,
+      "commits": 15,
+      "resolves": 15,
+      "choices": [
+        {
+          "wave": 1,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 2,
+          "type": "protocol-discard",
+          "id": "7:2:draft:1"
+        },
+        {
+          "wave": 2,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        }
+      ],
+      "ranks": {
+        "multishot": 1,
+        "pierce": 1
+      },
+      "inputSha256": "4c49be23c2d970a4b107f6ebd3e0138bf714b21f8362667976efa2f90afa5752",
+      "driverSha256": "5e88959b8ba90cc58efc129d757d5b4edcb818548ce671256db41638f16fe628"
+    },
+    {
+      "version": "candidate",
+      "strategy": "stationary",
+      "seed": 71,
+      "stop": "real-failure",
+      "measurementError": null,
+      "clearedWaves": 2,
+      "simulatedSeconds": 84.28333333333333,
+      "playerDamage": 100,
+      "tissueDamage": 0,
+      "playerHealing": 0,
+      "minPlayerHp": 0,
+      "finalPlayerHp": 0,
+      "finalTissueHp": 100,
+      "actualCellHits": 0,
+      "actualCellDamage": 0,
+      "actualCellHitsToStandoff": 0,
+      "actualCellDamageToStandoff": 0,
+      "requestedMotionFrames": 0,
+      "actualMovedFrames": 0,
+      "actualDistance": 0,
+      "scans": 0,
+      "selectedStandoffFrames": 3573,
+      "standoffBorn": 1,
+      "standoffCommittingActors": 1,
+      "standoffCommits": 15,
+      "standoffResolves": 15,
+      "commits": 15,
+      "resolves": 15,
+      "choices": [
+        {
+          "wave": 1,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 2,
+          "type": "protocol-discard",
+          "id": "71:2:draft:1"
+        },
+        {
+          "wave": 2,
+          "type": "combat-upgrade",
+          "id": "power"
+        }
+      ],
+      "ranks": {
+        "multishot": 1,
+        "power": 1
+      },
+      "inputSha256": "421522fca361260a883df543522f124e106683c72cde340e6fee26d3725b6733",
+      "driverSha256": "5e88959b8ba90cc58efc129d757d5b4edcb818548ce671256db41638f16fe628"
+    },
+    {
+      "version": "candidate",
+      "strategy": "active",
+      "seed": 7,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "simulatedSeconds": 376.4,
+      "playerDamage": 0,
+      "tissueDamage": 90,
+      "playerHealing": 60,
+      "minPlayerHp": 100,
+      "finalPlayerHp": 160,
+      "finalTissueHp": 100,
+      "actualCellHits": 30,
+      "actualCellDamage": 410.3799999999999,
+      "actualCellHitsToStandoff": 0,
+      "actualCellDamageToStandoff": 0,
+      "requestedMotionFrames": 5062,
+      "actualMovedFrames": 5062,
+      "actualDistance": 19095.14574600359,
+      "scans": 97,
+      "selectedStandoffFrames": 450,
+      "standoffBorn": 28,
+      "standoffCommittingActors": 0,
+      "standoffCommits": 0,
+      "standoffResolves": 0,
+      "commits": 12,
+      "resolves": 0,
+      "choices": [
+        {
+          "wave": 1,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 2,
+          "type": "protocol-discard",
+          "id": "7:2:draft:1"
+        },
+        {
+          "wave": 2,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 3,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 4,
+          "type": "protocol-discard",
+          "id": "7:2:draft:2"
+        },
+        {
+          "wave": 4,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 5,
+          "type": "protocol-discard",
+          "id": "7:2:draft:3"
+        },
+        {
+          "wave": 5,
+          "type": "protocol-discard",
+          "id": "7:2:draft:4"
+        },
+        {
+          "wave": 5,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        },
+        {
+          "wave": 6,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 7,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 8,
+          "type": "protocol-discard",
+          "id": "7:2:draft:5"
+        },
+        {
+          "wave": 8,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 9,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 10,
+          "type": "protocol-discard",
+          "id": "7:2:draft:6"
+        },
+        {
+          "wave": 10,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 11,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 12,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 13,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 14,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 15,
+          "type": "protocol-discard",
+          "id": "7:2:draft:7"
+        },
+        {
+          "wave": 15,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 16,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 17,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 18,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 19,
+          "type": "combat-upgrade",
+          "id": "nova"
+        },
+        {
+          "wave": 20,
+          "type": "protocol-discard",
+          "id": "7:2:draft:8"
+        },
+        {
+          "wave": 20,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 21,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 22,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 23,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 24,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 25,
+          "type": "protocol-discard",
+          "id": "7:2:draft:9"
+        },
+        {
+          "wave": 25,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 26,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        },
+        {
+          "wave": 27,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 28,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 29,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 30,
+          "type": "protocol-discard",
+          "id": "7:2:draft:10"
+        },
+        {
+          "wave": 30,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        }
+      ],
+      "ranks": {
+        "multishot": 2,
+        "pierce": 3,
+        "power": 14,
+        "vitality": 3,
+        "haste": 5,
+        "nova": 1,
+        "immune": 2
+      },
+      "inputSha256": "2d152ec6410bb3c7690f5db37fce8b4ff221c7badf53befa3c6641125467f3f2",
+      "driverSha256": "87dbedab20d6a149f6d3dd3fa25012d958dda95c7a2d5d93eccebb759d2da940"
+    },
+    {
+      "version": "candidate",
+      "strategy": "active",
+      "seed": 71,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "simulatedSeconds": 408.31666666666666,
+      "playerDamage": 14,
+      "tissueDamage": 126,
+      "playerHealing": 94,
+      "minPlayerHp": 100,
+      "finalPlayerHp": 180,
+      "finalTissueHp": 100,
+      "actualCellHits": 57,
+      "actualCellDamage": 1075.4039999999998,
+      "actualCellHitsToStandoff": 0,
+      "actualCellDamageToStandoff": 0,
+      "requestedMotionFrames": 4792,
+      "actualMovedFrames": 4792,
+      "actualDistance": 17923.44251413472,
+      "scans": 123,
+      "selectedStandoffFrames": 485,
+      "standoffBorn": 28,
+      "standoffCommittingActors": 0,
+      "standoffCommits": 0,
+      "standoffResolves": 0,
+      "commits": 17,
+      "resolves": 2,
+      "choices": [
+        {
+          "wave": 1,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 2,
+          "type": "protocol-discard",
+          "id": "71:2:draft:1"
+        },
+        {
+          "wave": 2,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 3,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 4,
+          "type": "protocol-discard",
+          "id": "71:2:draft:2"
+        },
+        {
+          "wave": 4,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 5,
+          "type": "protocol-discard",
+          "id": "71:2:draft:3"
+        },
+        {
+          "wave": 5,
+          "type": "protocol-discard",
+          "id": "71:2:draft:4"
+        },
+        {
+          "wave": 5,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        },
+        {
+          "wave": 6,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 7,
+          "type": "combat-upgrade",
+          "id": "multishot"
+        },
+        {
+          "wave": 8,
+          "type": "protocol-discard",
+          "id": "71:2:draft:5"
+        },
+        {
+          "wave": 8,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 9,
+          "type": "combat-upgrade",
+          "id": "pierce"
+        },
+        {
+          "wave": 10,
+          "type": "protocol-discard",
+          "id": "71:2:draft:6"
+        },
+        {
+          "wave": 10,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 11,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 12,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 13,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 14,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 15,
+          "type": "protocol-discard",
+          "id": "71:2:draft:7"
+        },
+        {
+          "wave": 15,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        },
+        {
+          "wave": 16,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 17,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 18,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 19,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 20,
+          "type": "protocol-discard",
+          "id": "71:2:draft:8"
+        },
+        {
+          "wave": 20,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 21,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 22,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 23,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 24,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 25,
+          "type": "protocol-discard",
+          "id": "71:2:draft:9"
+        },
+        {
+          "wave": 25,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 26,
+          "type": "combat-upgrade",
+          "id": "immune"
+        },
+        {
+          "wave": 27,
+          "type": "combat-upgrade",
+          "id": "power"
+        },
+        {
+          "wave": 28,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        },
+        {
+          "wave": 29,
+          "type": "combat-upgrade",
+          "id": "haste"
+        },
+        {
+          "wave": 30,
+          "type": "protocol-discard",
+          "id": "71:2:draft:10"
+        },
+        {
+          "wave": 30,
+          "type": "combat-upgrade",
+          "id": "vitality"
+        }
+      ],
+      "ranks": {
+        "multishot": 2,
+        "power": 11,
+        "pierce": 3,
+        "vitality": 4,
+        "haste": 5,
+        "immune": 5
+      },
+      "inputSha256": "ed41ebb0d16f37a1bc9dc07a8ef8d708b80279f1d7ef151f97c871859194225a",
+      "driverSha256": "87dbedab20d6a149f6d3dd3fa25012d958dda95c7a2d5d93eccebb759d2da940"
+    }
+  ]
+}

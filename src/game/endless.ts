@@ -1,10 +1,12 @@
-import { distance, moveWithCollision, normalized, wallHit } from '../actors/collision';
+import { distance, isLegalPosition, moveWithCollision, normalized, wallHit } from '../actors/collision';
 import { SeedRng } from '../core/rng';
 import { BATTLE_BALANCE, TRAITS } from './battleConfig';
 import type { TraitId } from './battleTypes';
 import type { EndlessBatch, EndlessFormation, EndlessGameState, EndlessHost, EndlessSpawnRole, EndlessState } from './endlessTypes';
 import type { EnemyTactic } from './enemyTacticsTypes';
 import { ENEMY_TACTIC_INFO } from './enemyTacticInfo';
+import { STANDOFF_BALANCE } from './enemyPositioning';
+import { clipChargeEnd } from './enemyTactics';
 import { activeWorld, type GameEvent, type GameState, type Target, type Vec } from './types';
 export type { EndlessHost, EndlessState } from './endlessTypes';
 
@@ -146,8 +148,8 @@ export class EndlessDirector {
       this.state.battle!.stageLabel = `第 ${wave} 波 · ${e.title}`;
       this.host.emit('ENDLESS_WAVE_WARNING', { wave, title: e.title, duration: e.warningSeconds, traits: e.traits.join('+'), elite: e.eliteWave, formation: e.formation, supports: e.supportRemaining });
       const counter = e.traits.map(trait => `${TRAITS[trait].name}：${TRAITS[trait].counter}`).join('；');
-      const supportHint = wave >= 16 ? `混编支援：${endlessSupportTactics(this.state.seed, wave).map(tactic => ENEMY_TACTIC_INFO[tactic].name).join(' / ')}。线与冲锋锁定后侧闪，双圈向空侧离圈，侵蚀用 Q 打断；轻型支援可直接净化。` : '';
-      this.host.message(`第 ${wave} 波 · ${e.title}，${e.warningSeconds} 秒后到达。${supportHint || (wave === 3 ? '新敌：点射体锁定细线后攻击，侧移避开；可直接净化。' : counter || '移动拉线，2 范围裂解，Q 召集免疫援助。')}`, e.warningSeconds, 2);
+      const supportHint = wave >= 16 ? `混编支援：${endlessSupportTactics(this.state.seed, wave).map(tactic => ENEMY_TACTIC_INFO[tactic].name).join(' / ')}。远距点射可接近射杀或 Q 部署细胞；射线侧移、冲锋侧闪，双圈离圈，侵蚀用 Q 打断。` : '';
+      this.host.message(`第 ${wave} 波 · ${e.title}，${e.warningSeconds} 秒后到达。${supportHint || (wave === 3 ? '新敌：远距点射停在射程外。接近射杀或朝它 Q 部署细胞；窄线锁定后侧移可躲开。' : counter || '移动拉线，2 范围裂解，Q 召集免疫援助。')}`, e.warningSeconds, 2);
       return;
     }
     e.phase = 'combat'; e.phaseStartedAt = now; e.phaseUntil = 0; e.nextSpawnAt = now;
@@ -222,21 +224,30 @@ export class EndlessDirector {
       if (population.reserved + cost > ENDLESS_BALANCE.maximumActors) break;
       const tactic: EnemyTactic = support ? supportList[supportList.length - e.supportRemaining] : !elite ? 'melee'
         : traits[0] === 'CARAPACE' ? 'crystal-charge' : traits[0] === 'FISSION' ? 'fission-burst' : 'mimic-corrosion';
-      const radius = elite ? 30 : 22, position = this.spawnPosition(e.spawnSerial, radius, role, tactic, batch, e.batchMemberIndex);
+      // Only the first scheduled thin ray uses this posture. It replaces an
+      // existing support slot, never adds HP, births or population reservations.
+      const wantsStandoff = support && tactic === 'thin-ray' && e.supportRemaining === supportList.length;
+      const radius = elite ? 30 : 22, position = this.spawnPosition(e.spawnSerial, radius, role, tactic, batch, e.batchMemberIndex, wantsStandoff);
       if (!position) break;
+      // A genuinely unavailable outer ring falls back to the same finite
+      // support slot at a safe nearer point, with its full original grace.
+      const playerDistance = distance(position, this.state.player);
+      const standoff = wantsStandoff && playerDistance >= STANDOFF_BALANCE.inner - 1e-7
+        && playerDistance <= STANDOFF_BALANCE.outer + 1e-7;
       const hp = elite ? Math.min(204, 136 + Math.floor(e.wave / 10) * 34) : 68;
       const id = `${elite ? 'elite' : 'virus'}-${++this.state.battle!.nextActorId}`;
       const target: Target & { tactic: EnemyTactic } = { ...position, id, kind: traits.includes('FISSION') ? 'cluster' : 'single', role: elite ? 'elite' : 'virus', radius,
         hp, maxHp: hp, hitUntil: 0, scanned: false, traits, generation: 0, sourceId: sourceId(e.wave), born: now,
         facing: Math.atan2(this.state.player.y - position.y, this.state.player.x - position.x), tactic,
-        attackReady: now + (support ? .2 : elite ? .35 : ENDLESS_BALANCE.spawnGrace) };
+        ...(standoff ? { tacticPosture: 'standoff' as const } : {}),
+        attackReady: now + (wantsStandoff ? ENDLESS_BALANCE.spawnGrace : support ? .2 : elite ? .35 : ENDLESS_BALANCE.spawnGrace) };
       this.state.targets.push(target);
       e.spawnedIds.push(id); e.spawnSerial++; e.remainingToSpawn--; e.batchMemberIndex++;
       if (elite) e.eliteRemaining--; if (support) e.supportRemaining--;
       const angle = Math.atan2(position.y - this.state.player.y, position.x - this.state.player.x);
       directions.add(DIRECTIONS[(Math.round(angle / (Math.PI / 4)) + 8) % 8]);
       this.host.effect('evolution', position, position, radius + 16, .7);
-      this.host.emit('ACTOR_SPAWNED', { id, role: target.role!, generation: 0, sourceId: target.sourceId!, traits: traits.join('+'), wave: e.wave, tactic, formation: e.formation });
+      this.host.emit('ACTOR_SPAWNED', { id, role: target.role!, generation: 0, sourceId: target.sourceId!, traits: traits.join('+'), wave: e.wave, tactic, posture: standoff ? 'standoff' : 'pursuit', formation: e.formation });
       spawned++;
     }
     if (e.batchMemberIndex >= batch.roles.length) {
@@ -251,13 +262,33 @@ export class EndlessDirector {
     }
   }
 
-  private spawnPosition(serial: number, radius: number, role: EndlessSpawnRole, tactic: EnemyTactic, batch: EndlessBatch, member: number): Vec | undefined {
+  private spawnPosition(serial: number, radius: number, role: EndlessSpawnRole, tactic: EnemyTactic, batch: EndlessBatch, member: number, standoff = false): Vec | undefined {
     const e = this.e, state = this.state, geometry = activeWorld(state);
     const rng = new SeedRng((state.seed ^ Math.imul(e.wave, 0x9e3779b1) ^ Math.imul(serial + 1, 0x85ebca6b)) >>> 0);
     const sector = batch.sector + (role === 'support' ? 2 : 0);
-    const inner = role === 'elite' || role === 'support' ? 380 : ENDLESS_BALANCE.spawnRingInner;
-    const outer = role === 'elite' ? 480 : role === 'support' ? 500 : ENDLESS_BALANCE.spawnRingOuter;
+    const inner = standoff ? STANDOFF_BALANCE.inner : role === 'elite' || role === 'support' ? 380 : ENDLESS_BALANCE.spawnRingInner;
+    const outer = standoff ? STANDOFF_BALANCE.outer : role === 'elite' ? 480 : role === 'support' ? 500 : ENDLESS_BALANCE.spawnRingOuter;
     let corrosionFallback: Vec | undefined;
+    const usable = (candidate: Vec, minimum: number, maximum: number): boolean => {
+      const playerDistance = distance(candidate, state.player);
+      if (playerDistance < minimum - 1e-7 || playerDistance > maximum + 1e-7 || !isLegalPosition(candidate, radius, geometry)) return false;
+      if (geometry.obstacles.some(obstacle => distance(candidate, obstacle) < radius + obstacle.radius + 2)) return false;
+      if (distance(candidate, state.tissue) < radius + state.tissue.radius + 40) return false;
+      if (state.targets.some(target => target.hp > 0 && distance(candidate, target) < target.radius + radius + 12)) return false;
+      if (role === 'ordinary') return true;
+      // A shared thick lane must actually reach the player body; center LOS
+      // alone may skim a fold which clips an 18-unit half-width ray short.
+      const playerBlock = wallHit(state.player, normalized(candidate.x - state.player.x, candidate.y - state.player.y), playerDistance, geometry);
+      if (playerBlock !== null && playerBlock < playerDistance - radius) return false;
+      if (tactic === 'thin-ray' && distance(clipChargeEnd(candidate, state.player, playerDistance, 18, geometry), state.player) > 18 + state.player.radius) return false;
+      const aim = tactic === 'mimic-corrosion' ? state.tissue : state.player;
+      const aimLength = distance(candidate, aim), block = wallHit(candidate, normalized(aim.x - candidate.x, aim.y - candidate.y), aimLength, geometry);
+      if (block !== null && block < aimLength - aim.radius) {
+        if (tactic === 'mimic-corrosion') corrosionFallback ??= candidate;
+        return false;
+      }
+      return true;
+    };
     for (let attempt = 0; attempt < 48; attempt++) {
       // Start inside the planned cohort; only fan farther when geometry or existing bodies reject it.
       const offset = (member - 1) * batch.spread + (attempt < 12 ? 0 : Math.floor((attempt - 12) / 6 + 1) * Math.PI / 4);
@@ -265,26 +296,28 @@ export class EndlessDirector {
       const range = e.formation === 'fission-pack' && role === 'ordinary' && attempt < 12
         ? 470 + (e.batchIndex % 2) * 65 + (rng.next() - .5) * 35 : inner + rng.next() * (outer - inner);
       const candidate = moveWithCollision({ x: state.player.x + Math.cos(angle) * range, y: state.player.y + Math.sin(angle) * range }, { x: 0, y: 0 }, radius, geometry);
-      const playerDistance = distance(candidate, state.player);
       const minimum = role === 'ordinary' ? ENDLESS_BALANCE.minimumSpawnDistance : inner;
-      if (playerDistance < minimum || playerDistance > outer + 1e-7) continue;
-      if (geometry.obstacles.some(obstacle => distance(candidate, obstacle) < radius + obstacle.radius + 2)) continue;
-      if (distance(candidate, state.tissue) < radius + state.tissue.radius + 40) continue;
-      if (state.targets.some(target => target.hp > 0 && distance(candidate, target) < target.radius + radius + 12)) continue;
-      if (role !== 'ordinary') {
-        // Supports and elites must not begin their ranged attack from behind an unshootable fold.
-        const aim = tactic === 'mimic-corrosion' ? state.tissue : state.player;
-        const aimLength = distance(candidate, aim), block = wallHit(candidate, normalized(aim.x - candidate.x, aim.y - candidate.y), aimLength, geometry);
-        const playerBlock = wallHit(state.player, normalized(candidate.x - state.player.x, candidate.y - state.player.y), playerDistance, geometry);
-        if (playerBlock !== null && playerBlock < playerDistance - radius) continue;
-        if (block !== null && block < aimLength - aim.radius) {
-          // A corrosion body may enter a player-counterable pocket and navigate
-          // to tissue LOS. Its real attack still requires the existing LOS test.
-          if (tactic === 'mimic-corrosion') corrosionFallback ??= candidate;
-          continue;
+      if (usable(candidate, minimum, outer)) return candidate;
+    }
+    if (role === 'support' && tactic === 'thin-ray') {
+      // Only after the original 48 candidates fail, cover every bearing on
+      // bounded ten-unit rings. At most 5*96 outer + 17*96 fallback probes;
+      // no elapsed-time retry counter or unbounded per-tick search is needed.
+      const searchRing = (minimum: number, maximum: number): Vec | undefined => {
+        const middle = (minimum + maximum) / 2, halfSteps = Math.ceil((maximum - minimum) / 20);
+        for (let ring = 0; ring <= halfSteps * 2; ring++) {
+          const offset = ring === 0 ? 0 : Math.ceil(ring / 2) * 10 * (ring % 2 ? -1 : 1);
+          const range = middle + offset;
+          for (let bearing = 0; bearing < 96; bearing++) {
+            const angle = sector * Math.PI / 4 + (member - 1) * batch.spread + bearing * Math.PI / 48;
+            const candidate = { x: state.player.x + Math.cos(angle) * range, y: state.player.y + Math.sin(angle) * range };
+            if (usable(candidate, minimum, maximum)) return candidate;
+          }
         }
-      }
-      return candidate;
+      };
+      const completeRing = searchRing(inner, outer);
+      if (completeRing) return completeRing;
+      if (standoff) return searchRing(ENDLESS_BALANCE.minimumSpawnDistance, 500);
     }
     return corrosionFallback;
   }
