@@ -8,6 +8,8 @@
 
 本轮收到的一份真实试玩反馈与处理记录见 [v0.6.0反馈](ViralInvasion_PlaytestFeedback_v0.6.0.md)。该意见未按下列五位新玩家流程采集，不计入P01–P05，也不补造原始观察。
 
+当前技术候选为 **v0.7.1**，入口为 `releases/Viral-Invasion-G4-v0.7.1.zip`；[本包验收](ViralInvasion_v0.7.1_Acceptance.md)与[验证汇总](../artifacts/research-v071/verification-summary.json)登记最终源码、指纹及范围。新研究台先选方向再付样本，原有大图、Ⅰ–Ⅲ阶进化、三细胞及阶段危机仍在；本次更新没有新增真人记录。
+
 ## 执行准备
 
 - 招募5位从未看过本项目设计文档、操作演示或试玩的新玩家，逐位独立进行。仅使用匿名P01–P05，不收集姓名、联系方式等身份信息。
