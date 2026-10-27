@@ -1,0 +1,340 @@
+{
+  "complete": true,
+  "passed": 7,
+  "cases": [
+    {
+      "title": "Formal encounters: block, chain build, five real stages and clean retry",
+      "project": "chrome",
+      "status": "passed",
+      "errors": [],
+      "report": "browser-first.json"
+    },
+    {
+      "title": "Formal encounters: ignore, immune build, five real stages and clean retry",
+      "project": "chrome",
+      "status": "passed",
+      "errors": [],
+      "report": "browser-immune-rerun1.json"
+    },
+    {
+      "title": "Formal encounters: skip is cosmetic, help preserves explanation, retry keeps guided and a new case becomes adaptive",
+      "project": "chrome",
+      "status": "passed",
+      "errors": [],
+      "report": "browser-first.json"
+    },
+    {
+      "title": "Formal encounters: explicit FISSION case keeps adaptive help truthful",
+      "project": "chrome",
+      "status": "passed",
+      "errors": [],
+      "report": "browser-first.json"
+    },
+    {
+      "title": "Formal encounters: pursue, immune build, five real stages and clean retry",
+      "project": "edge",
+      "status": "passed",
+      "errors": [],
+      "report": "browser-immune-rerun2.json"
+    },
+    {
+      "title": "Formal encounters: skip is cosmetic, help preserves explanation, retry keeps guided and a new case becomes adaptive",
+      "project": "edge",
+      "status": "passed",
+      "errors": [],
+      "report": "browser-first.json"
+    },
+    {
+      "title": "Formal encounters: explicit MIMIC case keeps adaptive help truthful",
+      "project": "edge",
+      "status": "passed",
+      "errors": [],
+      "report": "browser-first.json"
+    }
+  ],
+  "retainedFailures": [
+    {
+      "title": "Formal encounters: ignore, immune build, five real stages and clean retry",
+      "project": "chrome",
+      "status": "failed",
+      "report": "browser-first.json",
+      "reason": "Error: expect(received).toBeGreaterThan(expected)\n\nExpected: > 0\nReceived:   0\n\n  117 |     expect([...eventMap.values()].some(event => event.type === 'ORGAN_CRISIS_INTERRUPTED')).toBe(true);\n  118 |     expect(final.growth!.equipped.some(slot => slot.id === (route.build === 'chain' ? 'PURIFY_CHAIN' : 'IMMUNE_BEACON'))).toBe(true);\n> 119 |     expect(final.growth!.activations?.[route.build === 'chain' ? 'PURIFY_CHAIN' : 'IMMUNE_BEACON'] ?? 0).toBeGreaterThan(0);\n      |                                                                                                          ^\n  120 |     profile = await readProfile(page); expect(profile.stats.wins).toBe(1); expect(profile.recentRuns[0].encounter).toMatchObject({ configId: 'campaign-1', guideVariant: 'guided', guideCompleted: true, counterMethod: counter.counterHit!.method });\n  121 |     await page.screenshot({ path: info.outputPath('result.png') });\n  122 |     await page.locator('[data-action=\"retry\"]').click(); const retry = await readState(page);\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\encounters-v070.spec.ts:119:106"
+    },
+    {
+      "title": "Formal encounters: pursue, immune build, five real stages and clean retry",
+      "project": "edge",
+      "status": "failed",
+      "report": "browser-first.json",
+      "reason": "Error: expect(received).toBeGreaterThan(expected)\n\nExpected: > 0\nReceived:   0\n\n  117 |     expect([...eventMap.values()].some(event => event.type === 'ORGAN_CRISIS_INTERRUPTED')).toBe(true);\n  118 |     expect(final.growth!.equipped.some(slot => slot.id === (route.build === 'chain' ? 'PURIFY_CHAIN' : 'IMMUNE_BEACON'))).toBe(true);\n> 119 |     expect(final.growth!.activations?.[route.build === 'chain' ? 'PURIFY_CHAIN' : 'IMMUNE_BEACON'] ?? 0).toBeGreaterThan(0);\n      |                                                                                                          ^\n  120 |     profile = await readProfile(page); expect(profile.stats.wins).toBe(1); expect(profile.recentRuns[0].encounter).toMatchObject({ configId: 'campaign-1', guideVariant: 'guided', guideCompleted: true, counterMethod: counter.counterHit!.method });\n  121 |     await page.screenshot({ path: info.outputPath('result.png') });\n  122 |     await page.locator('[data-action=\"retry\"]').click(); const retry = await readState(page);\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\encounters-v070.spec.ts:119:106"
+    },
+    {
+      "title": "Formal encounters: pursue, immune build, five real stages and clean retry",
+      "project": "edge",
+      "status": "failed",
+      "report": "browser-immune-rerun1.json",
+      "reason": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: true\nReceived: false\n\n  136 |       expect([...eventMap.values()].some(event => event.type === 'PROTOCOL_BEACON_HIT' && event.data.targetId === encounter.crisis.sourceId)).toBe(true);\n  137 |       expect(milestones.immune.growth!.cells).toHaveLength(3);\n> 138 |       if (final.growth!.equipped.some(slot => slot.id === 'EXPOSE_TRACE')) expect([...eventMap.values()].some(event => event.type === 'PROTOCOL_SYNERGY' && event.data.targetId === encounter.crisis.sourceId)).toBe(true);\n      |                                                                                                                                                                                                                 ^\n  139 |       if (route.choice === 'ignore') {\n  140 |         expect(encounter.crisis.impacts).toBeGreaterThan(0);\n  141 |         expect(milestones.impact.targets.filter(target => target.id.startsWith(`${encounter.crisis.sourceId}:guard:`))).toHaveLength(2);\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\encounters-v070.spec.ts:138:209"
+    }
+  ],
+  "routes": [
+    {
+      "evidence": "artifacts/encounters-v070/browser/initial/encounters-v070-Formal-enc-2953d-real-stages-and-clean-retry-chrome/formal-evidence.json",
+      "route": {
+        "choice": "block",
+        "seed": 13,
+        "project": "chrome",
+        "build": "chain"
+      },
+      "success": true,
+      "elapsed": 51.266666666666666,
+      "counter": {
+        "tick": 776,
+        "at": 12.933333333333334,
+        "targetId": "elite-3",
+        "method": "pulse",
+        "damage": 34
+      },
+      "stages": {
+        "I": {
+          "enteredAt": 0,
+          "completedAt": 2.3666666666666667,
+          "targetId": "source-a"
+        },
+        "II": {
+          "enteredAt": 2.3666666666666667,
+          "completedAt": 14.066666666666666,
+          "targetId": "elite-3"
+        },
+        "III": {
+          "enteredAt": 14.066666666666666,
+          "completedAt": 27.95,
+          "targetId": "migration:13:1"
+        },
+        "IV": {
+          "enteredAt": 27.95,
+          "completedAt": 31.7,
+          "targetId": "heart-crisis-source"
+        },
+        "V": {
+          "enteredAt": 31.7,
+          "completedAt": 51.266666666666666,
+          "targetId": "mother-core"
+        }
+      },
+      "crisis": {
+        "status": "cleared",
+        "organId": "heart",
+        "sourceId": "heart-crisis-source",
+        "position": {
+          "x": 1570,
+          "y": 790
+        },
+        "armedAt": 27.95,
+        "startedAt": 27.95,
+        "clearedAt": 31.7,
+        "chargeRemaining": 7.649999999999999,
+        "nextImpactAt": null,
+        "lastActiveAt": null,
+        "impacts": 0,
+        "guardsRequested": false,
+        "blockedByAirway": false,
+        "interruptions": 1,
+        "lastInterruptedAt": 31.333333333333332,
+        "lastInterruptReason": "pulse",
+        "acceptedEventKeys": [
+          "PULSE_TRIGGERED:1880"
+        ]
+      },
+      "traceDuringCrisis": false,
+      "immuneContactCells": null,
+      "crisisImmuneHits": 0,
+      "crisisSynergies": 0,
+      "performance": {
+        "standard": {
+          "frames": 843,
+          "measuredSeconds": 14.049700000000106,
+          "averageFps": 60.001281166145446,
+          "p95FrameMs": 16.799999999999272
+        },
+        "low": {
+          "frames": 2229,
+          "measuredSeconds": 37.149200000000214,
+          "averageFps": 60.001292087043254,
+          "p95FrameMs": 16.799999999999272
+        }
+      },
+      "errors": [],
+      "remote": []
+    },
+    {
+      "evidence": "artifacts/encounters-v070/browser/immune-rerun1/encounters-v070-Formal-enc-8327f-real-stages-and-clean-retry-chrome/formal-evidence.json",
+      "route": {
+        "choice": "ignore",
+        "seed": 41,
+        "project": "chrome",
+        "build": "immune"
+      },
+      "success": true,
+      "elapsed": 88.91666666666667,
+      "counter": {
+        "tick": 749,
+        "at": 12.483333333333333,
+        "targetId": "elite-3",
+        "method": "pulse",
+        "damage": 34
+      },
+      "stages": {
+        "I": {
+          "enteredAt": 0,
+          "completedAt": 2.0166666666666666,
+          "targetId": "source-a"
+        },
+        "II": {
+          "enteredAt": 2.0166666666666666,
+          "completedAt": 13.433333333333334,
+          "targetId": "elite-3"
+        },
+        "III": {
+          "enteredAt": 13.433333333333334,
+          "completedAt": 33.43333333333333,
+          "targetId": "migration:41:1"
+        },
+        "IV": {
+          "enteredAt": 33.43333333333333,
+          "completedAt": 63.5,
+          "targetId": "lung-crisis-source"
+        },
+        "V": {
+          "enteredAt": 63.5,
+          "completedAt": 88.91666666666667,
+          "targetId": "mother-core"
+        }
+      },
+      "crisis": {
+        "status": "cleared",
+        "organId": "lung",
+        "sourceId": "lung-crisis-source",
+        "position": {
+          "x": 1210,
+          "y": 610
+        },
+        "armedAt": 33.43333333333333,
+        "startedAt": 41.35,
+        "clearedAt": 63.5,
+        "chargeRemaining": 8,
+        "nextImpactAt": null,
+        "lastActiveAt": null,
+        "impacts": 1,
+        "guardsRequested": true,
+        "blockedByAirway": true,
+        "interruptions": 1,
+        "lastInterruptedAt": 49.65,
+        "lastInterruptReason": "airway",
+        "acceptedEventKeys": [
+          "AIRWAY_CHANGED:2979"
+        ]
+      },
+      "traceDuringCrisis": true,
+      "immuneContactCells": 3,
+      "crisisImmuneHits": 9,
+      "crisisSynergies": 9,
+      "performance": {
+        "standard": {
+          "frames": 5329,
+          "measuredSeconds": 88.83179999999952,
+          "averageFps": 59.989778435200336,
+          "p95FrameMs": 16.80000000000291
+        }
+      },
+      "errors": [],
+      "remote": []
+    },
+    {
+      "evidence": "artifacts/encounters-v070/browser/immune-rerun2/encounters-v070-Formal-enc-b59cf-real-stages-and-clean-retry-edge/formal-evidence.json",
+      "route": {
+        "choice": "pursue",
+        "seed": 29,
+        "project": "edge",
+        "build": "immune"
+      },
+      "success": true,
+      "elapsed": 55.333333333333336,
+      "counter": {
+        "tick": 763,
+        "at": 12.716666666666667,
+        "targetId": "elite-3",
+        "method": "pulse",
+        "damage": 34
+      },
+      "stages": {
+        "I": {
+          "enteredAt": 0,
+          "completedAt": 2.216666666666667,
+          "targetId": "source-a"
+        },
+        "II": {
+          "enteredAt": 2.216666666666667,
+          "completedAt": 13.866666666666667,
+          "targetId": "elite-3"
+        },
+        "III": {
+          "enteredAt": 13.866666666666667,
+          "completedAt": 29.733333333333334,
+          "targetId": "migration:29:1"
+        },
+        "IV": {
+          "enteredAt": 29.733333333333334,
+          "completedAt": 36.75,
+          "targetId": "lung-crisis-source"
+        },
+        "V": {
+          "enteredAt": 36.75,
+          "completedAt": 55.333333333333336,
+          "targetId": "mother-core"
+        }
+      },
+      "crisis": {
+        "status": "cleared",
+        "organId": "lung",
+        "sourceId": "lung-crisis-source",
+        "position": {
+          "x": 1210,
+          "y": 610
+        },
+        "armedAt": 29.733333333333334,
+        "startedAt": 29.733333333333334,
+        "clearedAt": 36.75,
+        "chargeRemaining": 8,
+        "nextImpactAt": null,
+        "lastActiveAt": null,
+        "impacts": 0,
+        "guardsRequested": false,
+        "blockedByAirway": true,
+        "interruptions": 1,
+        "lastInterruptedAt": 34.43333333333333,
+        "lastInterruptReason": "airway",
+        "acceptedEventKeys": [
+          "AIRWAY_CHANGED:2066"
+        ]
+      },
+      "traceDuringCrisis": false,
+      "immuneContactCells": 3,
+      "crisisImmuneHits": 9,
+      "crisisSynergies": 0,
+      "performance": {
+        "standard": {
+          "frames": 3310,
+          "measuredSeconds": 55.18229999999773,
+          "averageFps": 59.98300179586817,
+          "p95FrameMs": 16.800000000000182
+        }
+      },
+      "errors": [],
+      "remote": []
+    }
+  ],
+  "limitations": [
+    "FPS is an observational sample of this formal victory with no modal, not a 600-second/24-density or memory acceptance claim.",
+    "First failures are retained; two immune runs required test input corrections so real allies had contact time, and synergy is asserted only when trace was equipped during IV."
+  ],
+  "scope": "Seven browser-specific encounters-v070.spec.ts cases only; the separate real-rear browser case is aggregated in verification-summary.json (eight total unique cases)."
+}

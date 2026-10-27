@@ -1,0 +1,621 @@
+{
+  "version": "0.7.0",
+  "sourceRevision": "00dc0a4cf648ebb44c1cac82301478faf3d6a8ca",
+  "generatedAt": "2026-10-27T06:08:45.574Z",
+  "game": {
+    "path": "dist/game.js",
+    "bytes": 332335,
+    "sha256": "1209f19756a227a8c7f8d98ce60be4cc284d97bc6d2272235ff83ee587868425",
+    "inputCount": 54,
+    "sourceManifest": {
+      "index.html": "240abc27cb391518456a6d81b8360a88946d837888c769c2756415ef9cdc84af",
+      "package-lock.json": "adcf1287d93c66595713514db5a4023288de264cc5bb5893aeea017feb035ef2",
+      "package.json": "51a2a849d1f8bb441206672304b20db2179b9ebb258005ead683f6ffc6c0a81e",
+      "scripts/build-offline.mjs": "0e899f1174fb20ca34edba6cad8a800b0be44d2c2b097c62eaa5033fe37de3a8",
+      "src/actors/collision.ts": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+      "src/audio.ts": "015ef7700c5e2628741f2be5058858f9d654efd519bde0c516189ed7f0325f98",
+      "src/core/clock.ts": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+      "src/core/events.ts": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+      "src/core/rng.ts": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+      "src/game/battle.ts": "95d949a7b69d91ee522b717433bcd6060cf9347bfcc86c7fae9d4b54a65fc8e9",
+      "src/game/battleConfig.ts": "937a2c91827c7184bcabf0eae13db315d52d0517d75b1696e2217f4e2c0de072",
+      "src/game/campaign.ts": "dffad6b1218111f3d1ea1bc60835bd675b63f19f04028aa45609659f49b8b3d5",
+      "src/game/campaignEncounters.ts": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+      "src/game/counterLesson.ts": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+      "src/game/encounterConfig.ts": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+      "src/game/evolution.ts": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+      "src/game/growth.ts": "2956095ebfd2b063733acaf76e38c7e06d9b9ade01cb37d7bdea1832b52f6152",
+      "src/game/immuneCells.ts": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80",
+      "src/game/motherCore.ts": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+      "src/game/organConfig.ts": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+      "src/game/organRules.ts": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+      "src/game/protocols.ts": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+      "src/game/session.ts": "84a00520bbf293186a230e93a47713cc3b474a43efef4c002bcb500a0e81c62f",
+      "src/game/tacticalFeedback.ts": "d3e312dc585fde5149c0e21bd8514fc86ed716868825b43b17b53cdfb5f52143",
+      "src/game/types.ts": "bd416eebd70e5061e6825c9f871f4414fc4523170ee76d84cbe7a34791d131af",
+      "src/input/controller.ts": "a26bac630063676bc2a168301cc5110da81a82e0d35cc9f6ee5ca3eeec51958c",
+      "src/main.ts": "ff5229081ef60e1ce826e7185bb09e378744be5318789130e4ecebfd15804512",
+      "src/meta/profile.ts": "38553b49b3051390b44ce80d9088c4951d8f11ecb7878abb51c276987a3850b0",
+      "src/meta/runOptions.ts": "0377145c9c0d8761453b2036d3b0216c1548a381c186d00d8925181321c55b10",
+      "src/render/battleVisuals.ts": "eb018bf5de39ce3ebd11cc1813b2befa8448e378c8b9f11938b8066fccc508f4",
+      "src/render/camera.ts": "ca117a766229b5770d49491559dbe016aca210876315f4069f5db42081f748e5",
+      "src/render/depthSort.ts": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+      "src/render/encounterVisuals.ts": "e54daa69e6da56935f5b6741bb5bf565a3909389d2bdc5f6935d1a5d9303616c",
+      "src/render/growthVisuals.ts": "aedcf1cc105935a4694d9b752c180894ecbb0a408fca7175394f4d3493086d77",
+      "src/render/immuneTraceCues.ts": "80558b755ae1054388a982182b430b41e5ceb98119b7ad0758b694dabdfd66d7",
+      "src/render/immuneVisuals.ts": "07a8b19251d4bb706065ce4443fe0816f1d48ced6e5f5419244f30552bc3ac2c",
+      "src/render/layers.ts": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+      "src/render/lungVisuals.ts": "20d5256b03d2c784d9b4027d996484458243b891eba4fa41d58cf98073233d2b",
+      "src/render/navigation.ts": "ab776f6e94b141663e1bd46ca23da738e7ebf679ef0bf211258fc89f833355a5",
+      "src/render/occlusion.ts": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+      "src/render/organLandscape.ts": "3ea49be35cc7e1a3a4d7ac0e4356031f7255e3ad6c941e13b666fee5946f63a2",
+      "src/render/pulsePreview.ts": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+      "src/render/raisedObstacleGeometry.ts": "373e3f145fd521367be7adc93c8461b5407cfe384866f2eb59c2a3ee645a3df6",
+      "src/render/raisedObstacleOcclusion.ts": "0486c6daed7617275f28aab6406f84783a3e3695ae1059e9a2c99634f47308f1",
+      "src/render/renderer.ts": "def49278c80f1204267059b934c21f62e3cacc6736a4e572c59f8188b80be268",
+      "src/style.css": "a43d13267f171988d5d497bd9024a3013648b1262d1769d5de20b3d2a7e0d986",
+      "src/ui/battleHud.ts": "aaf74c1fea93321652e875b011f7c2865ab4b2bb3a767d79158f8fc1dda90a97",
+      "src/ui/campaignHud.ts": "355cb008112d87972c44a4764fd2aee2312b32e567571aad05c948f94d54d8ae",
+      "src/ui/encounter.css": "e5a9925b175251afb21833c663c4aa1ca7ff56370836b9de390fe62d5b9e7ffe",
+      "src/ui/encounterHud.ts": "1cb4ef363f9471a78f615c58301f66e04ce689be4f8475120ed045f86502877d",
+      "src/ui/growthHud.ts": "f89dd5dda1d9b04ea609e45a3edfa269176e008fd6b36cc04680f0ebf27f3c36",
+      "src/ui/profile.css": "768e6f59157b6706a98355e682018f655b4de5ef6a489e0217f52c37784e86c8",
+      "src/ui/profileHud.ts": "d260b194b98bc55cb6049378a06b0e3ed05eaf93c273d7165ddfcc0c1a6aeaf3",
+      "src/ui/tacticalHistory.ts": "c159a53e514049043f0a41dfb07b435a8774630993d039d68832fbb1c4db137b"
+    }
+  },
+  "originalDesignUnchangedFrom": "b596b9c",
+  "units": {
+    "path": "artifacts/encounters-v070/unit-final.json",
+    "passed": 283,
+    "failed": 0,
+    "fullSessionTestSeparate": true
+  },
+  "fullSessions": {
+    "path": "artifacts/encounters-v070/full-system-seeds.json",
+    "sha256": "d03768baf4972c910659a755b461e81a6e0b9f1cabe396f837255638b792755b",
+    "seeds": 1000,
+    "outcomes": {
+      "wins": 1000,
+      "losses": 0,
+      "publicMenuExits": 0,
+      "invariantFailures": 0
+    },
+    "variantCoverage": {
+      "guided": {
+        "total": 500,
+        "wins": 500,
+        "actualCounterHits": 500
+      },
+      "adaptive": {
+        "total": 500,
+        "wins": 500,
+        "actualCounterHits": 0
+      }
+    },
+    "modeCoverage": {
+      "base": {
+        "total": 500,
+        "wins": 500
+      },
+      "protocols": {
+        "total": 500,
+        "wins": 500
+      }
+    },
+    "replay": {
+      "seed": 91,
+      "equal": true,
+      "first": "ef2ef9f11bcaad505004c1be621dd6ee8e89e9c13e2b7883c76f1562909e231d",
+      "second": "ef2ef9f11bcaad505004c1be621dd6ee8e89e9c13e2b7883c76f1562909e231d"
+    },
+    "sourceManifestUnchanged": true,
+    "stageAudit": "artifacts/encounters-v070/full-system-stage-audit.json"
+  },
+  "browser": {
+    "uniqueCases": 8,
+    "executions": 11,
+    "failedExecutions": 3,
+    "final": [
+      {
+        "title": "Formal encounters: block, chain build, five real stages and clean retry",
+        "project": "chrome",
+        "status": "passed",
+        "report": "browser-first.json"
+      },
+      {
+        "title": "Formal encounters: ignore, immune build, five real stages and clean retry",
+        "project": "chrome",
+        "status": "passed",
+        "report": "browser-immune-rerun1.json"
+      },
+      {
+        "title": "Formal encounters: skip is cosmetic, help preserves explanation, retry keeps guided and a new case becomes adaptive",
+        "project": "chrome",
+        "status": "passed",
+        "report": "browser-first.json"
+      },
+      {
+        "title": "Formal encounters: explicit FISSION case keeps adaptive help truthful",
+        "project": "chrome",
+        "status": "passed",
+        "report": "browser-first.json"
+      },
+      {
+        "title": "Formal encounters: pursue, immune build, five real stages and clean retry",
+        "project": "edge",
+        "status": "passed",
+        "report": "browser-immune-rerun2.json"
+      },
+      {
+        "title": "Formal encounters: skip is cosmetic, help preserves explanation, retry keeps guided and a new case becomes adaptive",
+        "project": "edge",
+        "status": "passed",
+        "report": "browser-first.json"
+      },
+      {
+        "title": "Formal encounters: explicit MIMIC case keeps adaptive help truthful",
+        "project": "edge",
+        "status": "passed",
+        "report": "browser-first.json"
+      },
+      {
+        "title": "Formal first counter: real rear precision hit completes guided carapace without a valve pulse",
+        "project": "chrome",
+        "status": "passed",
+        "report": "browser-rear-rerun.json"
+      }
+    ],
+    "reports": [
+      {
+        "path": "artifacts/encounters-v070/browser-first.json",
+        "sha256": "b3682edfc4bbb53cb407eb9f3f22271dbe63b09e693a18abca99815e8078d83f",
+        "stats": {
+          "startTime": "2026-10-27T05:55:44.241Z",
+          "duration": 224521.447,
+          "expected": 5,
+          "skipped": 5,
+          "unexpected": 2,
+          "flaky": 0
+        }
+      },
+      {
+        "path": "artifacts/encounters-v070/browser-immune-rerun1.json",
+        "sha256": "552c3dcbd35a0a5a86b03bbcd2a6713dbe9a15477ac1a38c543aff239cb11646",
+        "stats": {
+          "startTime": "2026-10-27T06:01:13.698Z",
+          "duration": 154915.544,
+          "expected": 1,
+          "skipped": 2,
+          "unexpected": 1,
+          "flaky": 0
+        }
+      },
+      {
+        "path": "artifacts/encounters-v070/browser-immune-rerun2.json",
+        "sha256": "a004a87bb25d88362f33f09a5b9e01bec8e411bd02c07c176341adc5f36e3b85",
+        "stats": {
+          "startTime": "2026-10-27T06:06:18.529Z",
+          "duration": 60051.043999999994,
+          "expected": 1,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        }
+      },
+      {
+        "path": "artifacts/encounters-v070/browser-rear-rerun.json",
+        "sha256": "debd02255dfb421247684b491d41f473abf19e45cd1a4d5f98175b80abcbce2b",
+        "stats": {
+          "startTime": "2026-10-27T06:05:13.662Z",
+          "duration": 15876.15,
+          "expected": 1,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        }
+      }
+    ],
+    "scope": "Eight browser-specific focused cases. Project-assignment skips are not passes. Failed executions and actual pre-assertion victories remain preserved; not all historical E2E rerun."
+  },
+  "formalBrowserRuns": [
+    {
+      "path": "artifacts/encounters-v070/browser/immune-rerun1/encounters-v070-Formal-enc-8327f-real-stages-and-clean-retry-chrome/formal-evidence.json",
+      "route": {
+        "choice": "ignore",
+        "seed": 41,
+        "project": "chrome",
+        "build": "immune"
+      },
+      "win": true,
+      "simulationSeconds": 88.91666666666667,
+      "performance": {
+        "standard": {
+          "frames": 5329,
+          "measuredSeconds": 88.83179999999952,
+          "averageFps": 59.989778435200336,
+          "p95FrameMs": 16.80000000000291
+        }
+      },
+      "errors": [],
+      "remote": [],
+      "crisis": {
+        "status": "cleared",
+        "organId": "lung",
+        "sourceId": "lung-crisis-source",
+        "position": {
+          "x": 1210,
+          "y": 610
+        },
+        "armedAt": 33.43333333333333,
+        "startedAt": 41.35,
+        "clearedAt": 63.5,
+        "chargeRemaining": 8,
+        "nextImpactAt": null,
+        "lastActiveAt": null,
+        "impacts": 1,
+        "guardsRequested": true,
+        "blockedByAirway": true,
+        "interruptions": 1,
+        "lastInterruptedAt": 49.65,
+        "lastInterruptReason": "airway",
+        "acceptedEventKeys": [
+          "AIRWAY_CHANGED:2979"
+        ]
+      },
+      "counter": {
+        "status": "resolved",
+        "guideStatus": "completed",
+        "targetId": "elite-3",
+        "warnedAt": 2.0166666666666666,
+        "appliedAt": 10.016666666666666,
+        "resolvedAt": 13.433333333333334,
+        "skippedAt": null,
+        "completedAt": 12.483333333333333,
+        "counterHit": {
+          "tick": 749,
+          "at": 12.483333333333333,
+          "targetId": "elite-3",
+          "method": "pulse",
+          "damage": 34
+        }
+      }
+    },
+    {
+      "path": "artifacts/encounters-v070/browser/immune-rerun1/encounters-v070-Formal-enc-b59cf-real-stages-and-clean-retry-edge/formal-evidence.json",
+      "route": {
+        "choice": "pursue",
+        "seed": 29,
+        "project": "edge",
+        "build": "immune"
+      },
+      "win": true,
+      "simulationSeconds": 55.733333333333334,
+      "performance": {
+        "standard": {
+          "frames": 3336,
+          "measuredSeconds": 55.61559999999766,
+          "averageFps": 59.98317018966154,
+          "p95FrameMs": 16.799999999999955
+        }
+      },
+      "errors": [],
+      "remote": [],
+      "crisis": {
+        "status": "cleared",
+        "organId": "lung",
+        "sourceId": "lung-crisis-source",
+        "position": {
+          "x": 1210,
+          "y": 610
+        },
+        "armedAt": 29.066666666666666,
+        "startedAt": 29.066666666666666,
+        "clearedAt": 36.083333333333336,
+        "chargeRemaining": 8,
+        "nextImpactAt": null,
+        "lastActiveAt": null,
+        "impacts": 0,
+        "guardsRequested": false,
+        "blockedByAirway": true,
+        "interruptions": 1,
+        "lastInterruptedAt": 33.766666666666666,
+        "lastInterruptReason": "airway",
+        "acceptedEventKeys": [
+          "AIRWAY_CHANGED:2026"
+        ]
+      },
+      "counter": {
+        "status": "resolved",
+        "guideStatus": "completed",
+        "targetId": "elite-3",
+        "warnedAt": 2.1166666666666667,
+        "appliedAt": 10.116666666666667,
+        "resolvedAt": 13.266666666666666,
+        "skippedAt": null,
+        "completedAt": 12.3,
+        "counterHit": {
+          "tick": 738,
+          "at": 12.3,
+          "targetId": "elite-3",
+          "method": "pulse",
+          "damage": 34
+        }
+      }
+    },
+    {
+      "path": "artifacts/encounters-v070/browser/immune-rerun2/encounters-v070-Formal-enc-b59cf-real-stages-and-clean-retry-edge/formal-evidence.json",
+      "route": {
+        "choice": "pursue",
+        "seed": 29,
+        "project": "edge",
+        "build": "immune"
+      },
+      "win": true,
+      "simulationSeconds": 55.333333333333336,
+      "performance": {
+        "standard": {
+          "frames": 3310,
+          "measuredSeconds": 55.18229999999773,
+          "averageFps": 59.98300179586817,
+          "p95FrameMs": 16.800000000000182
+        }
+      },
+      "errors": [],
+      "remote": [],
+      "crisis": {
+        "status": "cleared",
+        "organId": "lung",
+        "sourceId": "lung-crisis-source",
+        "position": {
+          "x": 1210,
+          "y": 610
+        },
+        "armedAt": 29.733333333333334,
+        "startedAt": 29.733333333333334,
+        "clearedAt": 36.75,
+        "chargeRemaining": 8,
+        "nextImpactAt": null,
+        "lastActiveAt": null,
+        "impacts": 0,
+        "guardsRequested": false,
+        "blockedByAirway": true,
+        "interruptions": 1,
+        "lastInterruptedAt": 34.43333333333333,
+        "lastInterruptReason": "airway",
+        "acceptedEventKeys": [
+          "AIRWAY_CHANGED:2066"
+        ]
+      },
+      "counter": {
+        "status": "resolved",
+        "guideStatus": "completed",
+        "targetId": "elite-3",
+        "warnedAt": 2.216666666666667,
+        "appliedAt": 10.216666666666667,
+        "resolvedAt": 13.866666666666667,
+        "skippedAt": null,
+        "completedAt": 12.716666666666667,
+        "counterHit": {
+          "tick": 763,
+          "at": 12.716666666666667,
+          "targetId": "elite-3",
+          "method": "pulse",
+          "damage": 34
+        }
+      }
+    },
+    {
+      "path": "artifacts/encounters-v070/browser/initial/encounters-v070-Formal-enc-2953d-real-stages-and-clean-retry-chrome/formal-evidence.json",
+      "route": {
+        "choice": "block",
+        "seed": 13,
+        "project": "chrome",
+        "build": "chain"
+      },
+      "win": true,
+      "simulationSeconds": 51.266666666666666,
+      "performance": {
+        "standard": {
+          "frames": 843,
+          "measuredSeconds": 14.049700000000106,
+          "averageFps": 60.001281166145446,
+          "p95FrameMs": 16.799999999999272
+        },
+        "low": {
+          "frames": 2229,
+          "measuredSeconds": 37.149200000000214,
+          "averageFps": 60.001292087043254,
+          "p95FrameMs": 16.799999999999272
+        }
+      },
+      "errors": [],
+      "remote": [],
+      "crisis": {
+        "status": "cleared",
+        "organId": "heart",
+        "sourceId": "heart-crisis-source",
+        "position": {
+          "x": 1570,
+          "y": 790
+        },
+        "armedAt": 27.95,
+        "startedAt": 27.95,
+        "clearedAt": 31.7,
+        "chargeRemaining": 7.649999999999999,
+        "nextImpactAt": null,
+        "lastActiveAt": null,
+        "impacts": 0,
+        "guardsRequested": false,
+        "blockedByAirway": false,
+        "interruptions": 1,
+        "lastInterruptedAt": 31.333333333333332,
+        "lastInterruptReason": "pulse",
+        "acceptedEventKeys": [
+          "PULSE_TRIGGERED:1880"
+        ]
+      },
+      "counter": {
+        "status": "resolved",
+        "guideStatus": "completed",
+        "targetId": "elite-3",
+        "warnedAt": 2.3666666666666667,
+        "appliedAt": 10.366666666666667,
+        "resolvedAt": 14.066666666666666,
+        "skippedAt": null,
+        "completedAt": 12.933333333333334,
+        "counterHit": {
+          "tick": 776,
+          "at": 12.933333333333334,
+          "targetId": "elite-3",
+          "method": "pulse",
+          "damage": 34
+        }
+      }
+    },
+    {
+      "path": "artifacts/encounters-v070/browser/initial/encounters-v070-Formal-enc-8327f-real-stages-and-clean-retry-chrome/formal-evidence.json",
+      "route": {
+        "choice": "ignore",
+        "seed": 41,
+        "project": "chrome",
+        "build": "immune"
+      },
+      "win": true,
+      "simulationSeconds": 70.71666666666667,
+      "performance": {
+        "standard": {
+          "frames": 4241,
+          "measuredSeconds": 70.68199999999669,
+          "averageFps": 60.00113182988877,
+          "p95FrameMs": 16.799999999999272
+        }
+      },
+      "errors": [],
+      "remote": [],
+      "crisis": {
+        "status": "cleared",
+        "organId": "lung",
+        "sourceId": "lung-crisis-source",
+        "position": {
+          "x": 1210,
+          "y": 610
+        },
+        "armedAt": 33.5,
+        "startedAt": 41.31666666666666,
+        "clearedAt": 46.53333333333333,
+        "chargeRemaining": 8,
+        "nextImpactAt": null,
+        "lastActiveAt": null,
+        "impacts": 0,
+        "guardsRequested": false,
+        "blockedByAirway": true,
+        "interruptions": 1,
+        "lastInterruptedAt": 46.11666666666667,
+        "lastInterruptReason": "airway",
+        "acceptedEventKeys": [
+          "AIRWAY_CHANGED:2767"
+        ]
+      },
+      "counter": {
+        "status": "resolved",
+        "guideStatus": "completed",
+        "targetId": "elite-3",
+        "warnedAt": 2.033333333333333,
+        "appliedAt": 10.033333333333333,
+        "resolvedAt": 13.5,
+        "skippedAt": null,
+        "completedAt": 12.566666666666666,
+        "counterHit": {
+          "tick": 754,
+          "at": 12.566666666666666,
+          "targetId": "elite-3",
+          "method": "pulse",
+          "damage": 34
+        }
+      }
+    },
+    {
+      "path": "artifacts/encounters-v070/browser/initial/encounters-v070-Formal-enc-b59cf-real-stages-and-clean-retry-edge/formal-evidence.json",
+      "route": {
+        "choice": "pursue",
+        "seed": 29,
+        "project": "edge",
+        "build": "immune"
+      },
+      "win": true,
+      "simulationSeconds": 53.5,
+      "performance": {
+        "standard": {
+          "frames": 3204,
+          "measuredSeconds": 53.398899999997724,
+          "averageFps": 60.00123598051901,
+          "p95FrameMs": 16.799999999999272
+        }
+      },
+      "errors": [],
+      "remote": [],
+      "crisis": {
+        "status": "cleared",
+        "organId": "lung",
+        "sourceId": "lung-crisis-source",
+        "position": {
+          "x": 1210,
+          "y": 610
+        },
+        "armedAt": 29.3,
+        "startedAt": 29.3,
+        "clearedAt": 34.25,
+        "chargeRemaining": 8,
+        "nextImpactAt": null,
+        "lastActiveAt": null,
+        "impacts": 0,
+        "guardsRequested": false,
+        "blockedByAirway": true,
+        "interruptions": 1,
+        "lastInterruptedAt": 33.95,
+        "lastInterruptReason": "airway",
+        "acceptedEventKeys": [
+          "AIRWAY_CHANGED:2037"
+        ]
+      },
+      "counter": {
+        "status": "resolved",
+        "guideStatus": "completed",
+        "targetId": "elite-3",
+        "warnedAt": 2.183333333333333,
+        "appliedAt": 10.183333333333334,
+        "resolvedAt": 13.45,
+        "skippedAt": null,
+        "completedAt": 12.5,
+        "counterHit": {
+          "tick": 750,
+          "at": 12.5,
+          "targetId": "elite-3",
+          "method": "pulse",
+          "damage": 34
+        }
+      }
+    }
+  ],
+  "release": {
+    "zip": "releases/Viral-Invasion-G4-v0.7.0.zip",
+    "bytes": 120068,
+    "sha256": "30233794e8aa568c39c9d2466351b44ffae4eba66e956e4ef4b3b6bc5bee1c1b",
+    "files": {
+      "index.html": "9c15144aed6f44b1b0dcb3e2daee0dc7347b1748a2d28618e9986516b2e2f783",
+      "game.js": "1209f19756a227a8c7f8d98ce60be4cc284d97bc6d2272235ff83ee587868425",
+      "build-meta.json": "4cd5bee78d3d73ca3a1e656869a1f9d1238a29ad1692e3dc9933f25df8bc0895",
+      "README.txt": "1bf26bbc55c5119d5dc690b4090344b5492eda5faffb51e96c418adcedb7adae",
+      "Open-Game.cmd": "0edbd8f5b22789c3f11971244871f1b36e23f9e710fdc8b25ca6429165ec81be"
+    },
+    "smoke": "artifacts/encounters-v070/release-smoke/report.json"
+  },
+  "limitations": [
+    "Standard five-player blind test remains 0/5; one real user feedback is separate.",
+    "Fast legal inputs do not validate novice 10–15-minute pacing, understanding, fun, retention, or commercial value.",
+    "The new frame observation covers short formal wins; it is not a new ten-minute density or memory-stability qualification.",
+    "Native OS focus/minimize and physical Ctrl zoom remain unverified.",
+    "Local dev-zbj commits; no configured Git remote, not pushed."
+  ]
+}
