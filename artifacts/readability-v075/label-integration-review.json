@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "reviewedAtUtc": "2026-10-27T11:40:01Z",
+  "status": "read-only-integration-review-no-blocking-defect-found-in-reviewed-scope",
+  "method": "Read current Renderer, GrowthVisuals, SceneLabels, HUD rectangle reader, RAF/HUD update order, independent-DOM readability E2E and existing immune cue tests. No source/test edits, browser launch, simulation, build or test run. Only this JSON and its companion Markdown are written by this review.",
+  "gitHead": "7b86eb482115f8e2118ed5597225448ef6e95c4b",
+  "fingerprints": {
+    "note": "Read-time fingerprints of working-tree files, not a frozen release manifest. Root owns final freeze and runtime verification.",
+    "src/render/renderer.ts": "d48ec35df338e59e523f30cd6f89630a59992415059b3f6a2e1260baeb9ebd87",
+    "src/render/growthVisuals.ts": "cb445d39d3989e76f093aa5f6191897c2a4f966f28f209ee0c8d5f1a4aa29800",
+    "src/render/sceneLabels.ts": "0aff51690f470d01afdb9eb58292ea106d827d3acaf5678e25c872cb61fff8fc",
+    "src/ui/hudLayout.ts": "75255494aa04307dc603560cdeb9dd1c9ff84b54a91996671225fe4347cb701d",
+    "src/main.ts": "aa8904b724d47151ffd4bb65527d9fd5a32b71ec1a9980f6ccb056b5f39199a1",
+    "tests/e2e/readability-v075.spec.ts": "7222586f9717c59a09b9b26d607b819de7ebd8852ed41179fdcb1892a3280779"
+  },
+  "resolvedDuringIntegration": [
+    {
+      "id": "LI01",
+      "formerRisk": "Testing label overlap only against the same cached HUD rectangles used by the production layout would permit a shared missing/misplaced-HUD error to pass.",
+      "currentEvidence": ["tests/e2e/readability-v075.spec.ts:31-47", "tests/e2e/readability-v075.spec.ts:56-60"],
+      "currentResult": "The E2E now independently measures ten selected actual DOM elements, requires all ten, checks each actual rectangle is covered by a production HUD rectangle, and tests placement overlap against both independent DOM rectangles and cache. This closes the original same-source blind spot for the selected normal-play HUD scope.",
+      "remainingScope": "The ten elements do not include every possible temporary evolution/migration/core overlay; their dynamic combinations are outside this browser scenario. This review has not run the E2E."
+    },
+    {
+      "id": "LI02",
+      "formerRisk": "Final opaque scene-label plates could cover actual immune-cell bodies and recent accepted-bite shape endpoints drawn earlier in the world pass.",
+      "currentEvidence": ["src/render/renderer.ts:158-163", "src/render/renderer.ts:169-179", "src/render/growthVisuals.ts:144-159", "src/render/immuneVisuals.ts:6-18", "src/render/immuneVisuals.ts:28-51"],
+      "currentResult": "Renderer now reserves the visible same-organ cell silhouette using the same immuneCellBody radius and IMMUNE_BODY_LIFT. extent=radius*1.12+8 accounts for the maximum outline pulse, crawl strokes and bite arc. above=extent-IMMUNE_BODY_LIFT and below=max(12,extent+IMMUNE_BODY_LIFT) correctly describe the raised body in unsquashed CSS-like local dimensions. GrowthVisuals reserves the real selected cue.from and the two actual target-corner acknowledgements before final label layout.",
+      "coordinateCheck": "Cell protection uses reserveLabelPoint and one camera scale because drawImmuneCell cancels the world .72 vertical squash before drawing its body. Bite acknowledgement uses reserveWorld because its line/corners are drawn in the original world pass and should receive .72 exactly once. No cell/event state, accepted-hit predicate, target selection or damage value is changed by these reservations.",
+      "remainingScope": "Narrow endpoint protection deliberately does not reserve the entire cell-to-target segment or guarantee all details remain unobscured by unrelated DOM panels. An essential label can still report an unavoidable conflict in a dense scene. The current new E2E summons a baseline patrol and does not claim an actual protocol bite or positive bite damage."
+    }
+  ],
+  "remainingLimitations": [
+    {
+      "id": "LI03",
+      "kind": "diagnostic-frame-coherence-risk",
+      "blockingForCurrentScope": false,
+      "evidence": ["src/main.ts:310-313", "src/render/renderer.ts:72", "src/render/renderer.ts:96", "src/render/sceneLabels.ts:61-64"],
+      "finding": "RAF renders first and then performs an approximately 20 Hz HUD update. diagnostics.labels is the last completed render result, whereas diagnostics.hudRects is the latest HUD-read snapshot and can have been refreshed after that render. If a HUD panel changes size due to dynamic text or a card, the two arrays can represent different frame generations. Current DOM overlap checks can catch a real overlap, but diagnostics alone cannot prove that both arrays were used by the exact same layout frame.",
+      "recommendation": "A future diagnostic revision can retain last-render-used HUD rectangles plus a render tick/revision; browser sampling should wait for a stable subsequent render after a measured DOM change. The current short normal-HUD scenario may still be accepted as sampled evidence if its scope is kept explicit."
+    },
+    {
+      "id": "LI04",
+      "kind": "screenshot-bracket-coverage-limit",
+      "blockingForCurrentScope": false,
+      "evidence": ["tests/e2e/readability-v075.spec.ts:43-68", "tests/e2e/readability-v075.spec.ts:70"],
+      "finding": "Placement/HUD assertions apply to the before sample. The screenshot and after sample are taken later in an active run, and the after sample is recorded without repeating the tissue/squad/no-overlap assertions. The output scope correctly describes a bracketed sample; it does not establish an exact-tick image or unchanged placement throughout the bracket.",
+      "recommendation": "Do not describe the image as exact-state proof. A later extension can check both bracket endpoints and stable render revisions when that precision is required."
+    },
+    {
+      "id": "LI05",
+      "kind": "quality-setting-confirmation-limit",
+      "blockingForCurrentScope": false,
+      "evidence": ["tests/e2e/readability-v075.spec.ts:20-21"],
+      "finding": "The reported low flag is inferred from the Edge project and one menu click. The test does not assert the actual resulting setting/button text. A fresh default context normally makes the assumption valid, but the flag alone is not independent proof that low effects was active.",
+      "recommendation": "Keep the report clear that low is the requested project setup unless root separately verifies the actual setting. A future test can assert the public menu setting text."
+    },
+    {
+      "id": "LI06",
+      "kind": "scenario-and-display-coverage-limit",
+      "blockingForCurrentScope": false,
+      "evidence": ["tests/e2e/readability-v075.spec.ts:13", "tests/e2e/readability-v075.spec.ts:62-64", "tests/e2e/readability-v075.spec.ts:70", "playwright.config.ts:24"],
+      "finding": "The new browser case checks normal-play critical HUD visibility at three viewport sizes and a real baseline patrol. It does not enter a fatal countdown, demonstrate actual protocol bite damage, stress a dense core, exercise browser zoom or DPR greater than one, measure performance, or replace human readability/fun acceptance. The E2E's written scope already excludes zoom, dense core, human readability and performance.",
+      "recommendation": "Combine with separately identified unit/archived geometry evidence where relevant, without relabelling that evidence as a new live-browser or human scenario. The former small-height crisis CSS hiding rule has already been repaired and is not an open defect in this review."
+    }
+  ],
+  "verifiedBySourceInspection": [
+    "SceneLabels draws after the camera world transform is restored while the CSS-pixel DPR transform remains; the reviewed path does not introduce a second .72 squash.",
+    "HUD measurements are relative to the real canvas rectangle and clipped to its CSS-pixel extent, matching the screen-label coordinate system.",
+    "HUD rectangle collection batches reads before opacity-class writes and preserves entire optional-panel rectangles while softened.",
+    "Actual interface priority is numeric descending: larger priority is more important. The earlier label-review.json rank-0 proposal is historical, not the implemented numeric contract.",
+    "Unrevealed MIMIC visibility remains guarded in battle-label collection and narrow target-feature reservations, avoiding new indirect reveal through label geometry.",
+    "The new immune reservations are presentation-only and reuse the existing accepted current-squad cue selector; no new attack is inferred from the beacon body."
+  ],
+  "excludedClaims": [
+    "No browser result, final source-freeze acceptance or new test pass is asserted by this source review.",
+    "No claim that every essential label can avoid every obstacle in every dense scene; unresolved conflict is explicitly observable.",
+    "No old v074 report, raw output, runtime summary or archived artifact was modified.",
+    "No human playtest, subjective readability, gameplay fun, native acceptance, performance or absence-of-leaks claim is made."
+  ]
+}

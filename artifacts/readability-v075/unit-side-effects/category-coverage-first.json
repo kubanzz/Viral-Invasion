@@ -1,0 +1,534 @@
+{
+  "method": "Explicit feedback fixtures across every shipped tacticalFeedback switch category and valid trait/organ/choice variants. Accepted through GameSession.emit, then1000 ordinary messages/events. Actual history markup checked; no live browser state injection or natural ending claim.",
+  "examples": [
+    {
+      "type": "EVOLUTION_WARNING",
+      "data": {
+        "trait": "CARAPACE",
+        "duration": 8
+      },
+      "key": "EVOLUTION_WARNING:CARAPACE",
+      "text": "变异预警 · 晶壳：正面射击伤害降低 70%。代价：移动速度降低 38%。反制：绕后射击；阀门 E 冲流使晶壳暴露 4 秒。",
+      "priority": 2,
+      "seconds": 8,
+      "toast": true
+    },
+    {
+      "type": "EVOLUTION_APPLIED",
+      "data": {
+        "trait": "CARAPACE"
+      },
+      "key": "EVOLUTION_APPLIED:CARAPACE",
+      "text": "◇ 晶壳已出现。弱点：绕后射击；阀门 E 冲流使晶壳暴露 4 秒。",
+      "priority": 2,
+      "seconds": 7,
+      "toast": true
+    },
+    {
+      "type": "CORE_MEMBRANE_BROKEN",
+      "data": {
+        "trait": "CARAPACE",
+        "remaining": 1
+      },
+      "key": "CORE_MEMBRANE_BROKEN:CARAPACE",
+      "text": "母巢晶壳核膜已破，剩余 1 层。",
+      "priority": 2,
+      "seconds": 5,
+      "toast": true
+    },
+    {
+      "type": "ELITE_CLEARED",
+      "data": {
+        "trait": "CARAPACE",
+        "organId": "heart"
+      },
+      "key": "ELITE_CLEARED:CARAPACE",
+      "text": "心脏晶壳精英已清除。保持组织，继续处理当前目标。",
+      "priority": 1,
+      "seconds": 5,
+      "toast": true
+    },
+    {
+      "type": "EVOLUTION_WARNING",
+      "data": {
+        "trait": "FISSION",
+        "duration": 8
+      },
+      "key": "EVOLUTION_WARNING:FISSION",
+      "text": "变异预警 · 裂殖：母体死亡后分出 2 个小体。代价：小体仅 22 耐久且不能继续分裂。反制：2 范围裂解；群体保持聚集时一并清除。",
+      "priority": 2,
+      "seconds": 8,
+      "toast": true
+    },
+    {
+      "type": "EVOLUTION_APPLIED",
+      "data": {
+        "trait": "FISSION"
+      },
+      "key": "EVOLUTION_APPLIED:FISSION",
+      "text": "⋈ 裂殖已出现。弱点：2 范围裂解；群体保持聚集时一并清除。",
+      "priority": 2,
+      "seconds": 7,
+      "toast": true
+    },
+    {
+      "type": "CORE_MEMBRANE_BROKEN",
+      "data": {
+        "trait": "FISSION",
+        "remaining": 1
+      },
+      "key": "CORE_MEMBRANE_BROKEN:FISSION",
+      "text": "母巢裂殖核膜已破，剩余 1 层。",
+      "priority": 2,
+      "seconds": 5,
+      "toast": true
+    },
+    {
+      "type": "ELITE_CLEARED",
+      "data": {
+        "trait": "FISSION",
+        "organId": "heart"
+      },
+      "key": "ELITE_CLEARED:FISSION",
+      "text": "心脏裂殖精英已清除。保持组织，继续处理当前目标。",
+      "priority": 1,
+      "seconds": 5,
+      "toast": true
+    },
+    {
+      "type": "EVOLUTION_WARNING",
+      "data": {
+        "trait": "MIMIC",
+        "duration": 8
+      },
+      "key": "EVOLUTION_WARNING:MIMIC",
+      "text": "变异预警 · 潜伏：拟态组织，优先侵蚀组织。代价：移动速度降低 50%；每 6 秒扰动 1.2 秒。反制：Q 扫描显形 5 秒；基础射击仍有效；3 修复组织，同时伤害并显露附近潜伏体。",
+      "priority": 2,
+      "seconds": 8,
+      "toast": true
+    },
+    {
+      "type": "EVOLUTION_APPLIED",
+      "data": {
+        "trait": "MIMIC"
+      },
+      "key": "EVOLUTION_APPLIED:MIMIC",
+      "text": "◌ 潜伏已出现。弱点：Q 扫描显形 5 秒；基础射击仍有效；3 修复组织，同时伤害并显露附近潜伏体。",
+      "priority": 2,
+      "seconds": 7,
+      "toast": true
+    },
+    {
+      "type": "CORE_MEMBRANE_BROKEN",
+      "data": {
+        "trait": "MIMIC",
+        "remaining": 1
+      },
+      "key": "CORE_MEMBRANE_BROKEN:MIMIC",
+      "text": "母巢潜伏核膜已破，剩余 1 层。",
+      "priority": 2,
+      "seconds": 5,
+      "toast": true
+    },
+    {
+      "type": "ELITE_CLEARED",
+      "data": {
+        "trait": "MIMIC",
+        "organId": "heart"
+      },
+      "key": "ELITE_CLEARED:MIMIC",
+      "text": "心脏潜伏精英已清除。保持组织，继续处理当前目标。",
+      "priority": 1,
+      "seconds": 5,
+      "toast": true
+    },
+    {
+      "type": "ORGAN_ALARM",
+      "data": {
+        "organId": "heart"
+      },
+      "key": "ORGAN_ALARM:heart",
+      "text": "心脏低于 30%！8 秒后全身稳定开始下降，请及时抢修。",
+      "priority": 3,
+      "seconds": 8,
+      "toast": true
+    },
+    {
+      "type": "ORGAN_ALARM_CLEARED",
+      "data": {
+        "organId": "heart"
+      },
+      "key": "ORGAN_ALARM_CLEARED:heart",
+      "text": "心脏抢修成功，器官警报解除。",
+      "priority": 3,
+      "seconds": 5,
+      "toast": true
+    },
+    {
+      "type": "CORE_LOCATED",
+      "data": {
+        "organId": "heart"
+      },
+      "key": "CORE_LOCATED",
+      "text": "主要感染源已净化。前往心脏复测台按 E，唤醒双特性母巢。",
+      "priority": 2,
+      "seconds": 8,
+      "toast": true
+    },
+    {
+      "type": "INFECTION_SOURCE_CLEARED",
+      "data": {
+        "organId": "heart"
+      },
+      "key": "INFECTION_SOURCE_CLEARED:heart",
+      "text": "心脏感染源已净化，停止增援并降低感染负荷。",
+      "priority": 1,
+      "seconds": 5,
+      "toast": true
+    },
+    {
+      "type": "BACKGROUND_PRESSURE",
+      "data": {
+        "organId": "heart",
+        "openSources": 2,
+        "integrityLoss": 0.75
+      },
+      "key": "BACKGROUND_PRESSURE:heart",
+      "text": "心脏离场仍有 2 个开放感染源，本次损伤 0.8。",
+      "priority": 1,
+      "seconds": 3,
+      "toast": false
+    },
+    {
+      "type": "ORGAN_TRAVELLED",
+      "data": {
+        "to": "heart",
+        "backgroundLoss": 0.75
+      },
+      "key": "ORGAN_TRAVELLED:heart",
+      "text": "进入心脏；该器官离场期间损伤 0.8。",
+      "priority": 1,
+      "seconds": 5,
+      "toast": false
+    },
+    {
+      "type": "ORGAN_CRISIS_STARTED",
+      "data": {
+        "organId": "heart",
+        "sourceId": "explicit-feedback-fixture",
+        "chargeSeconds": 8,
+        "maximumImpacts": 3,
+        "blockedByAirway": false
+      },
+      "key": "ORGAN_CRISIS_STARTED:heart",
+      "text": "心脏传播支点已出现，开始 8 秒充能，最多 3 次组织冲击。可净化支点，或借器官装置中断并抢修。",
+      "priority": 2,
+      "seconds": 9
+    },
+    {
+      "type": "ORGAN_CRISIS_INTERRUPTED",
+      "data": {
+        "organId": "heart",
+        "sourceId": "explicit-feedback-fixture",
+        "chargeSeconds": 8,
+        "interruptions": 1,
+        "reason": "pulse"
+      },
+      "key": "ORGAN_CRISIS_INTERRUPTED:heart:pulse",
+      "text": "心脏冲流已打断支点充能，重置为 8 秒；支点仍需净化。",
+      "priority": 2,
+      "seconds": 6
+    },
+    {
+      "type": "ORGAN_CRISIS_CLEARED",
+      "data": {
+        "organId": "heart",
+        "sourceId": "explicit-feedback-fixture",
+        "impacts": 1,
+        "interruptions": 1
+      },
+      "key": "ORGAN_CRISIS_CLEARED:heart",
+      "text": "心脏危机源已净化，组织冲击已停止。实际冲击 1 次、中断 1 次；受损组织仍需按实际完整度修复。",
+      "priority": 2,
+      "seconds": 5
+    },
+    {
+      "type": "ORGAN_ALARM",
+      "data": {
+        "organId": "lung"
+      },
+      "key": "ORGAN_ALARM:lung",
+      "text": "肺部低于 30%！8 秒后全身稳定开始下降，请及时抢修。",
+      "priority": 3,
+      "seconds": 8,
+      "toast": true
+    },
+    {
+      "type": "ORGAN_ALARM_CLEARED",
+      "data": {
+        "organId": "lung"
+      },
+      "key": "ORGAN_ALARM_CLEARED:lung",
+      "text": "肺部抢修成功，器官警报解除。",
+      "priority": 3,
+      "seconds": 5,
+      "toast": true
+    },
+    {
+      "type": "CORE_LOCATED",
+      "data": {
+        "organId": "lung"
+      },
+      "key": "CORE_LOCATED",
+      "text": "主要感染源已净化。前往肺部复测台按 E，唤醒双特性母巢。",
+      "priority": 2,
+      "seconds": 8,
+      "toast": true
+    },
+    {
+      "type": "INFECTION_SOURCE_CLEARED",
+      "data": {
+        "organId": "lung"
+      },
+      "key": "INFECTION_SOURCE_CLEARED:lung",
+      "text": "肺部感染源已净化，停止增援并降低感染负荷。",
+      "priority": 1,
+      "seconds": 5,
+      "toast": true
+    },
+    {
+      "type": "BACKGROUND_PRESSURE",
+      "data": {
+        "organId": "lung",
+        "openSources": 2,
+        "integrityLoss": 0.75
+      },
+      "key": "BACKGROUND_PRESSURE:lung",
+      "text": "肺部离场仍有 2 个开放感染源，本次损伤 0.8。",
+      "priority": 1,
+      "seconds": 3,
+      "toast": false
+    },
+    {
+      "type": "ORGAN_TRAVELLED",
+      "data": {
+        "to": "lung",
+        "backgroundLoss": 0.75
+      },
+      "key": "ORGAN_TRAVELLED:lung",
+      "text": "进入肺部；该器官离场期间损伤 0.8。",
+      "priority": 1,
+      "seconds": 5,
+      "toast": false
+    },
+    {
+      "type": "ORGAN_CRISIS_STARTED",
+      "data": {
+        "organId": "lung",
+        "sourceId": "explicit-feedback-fixture",
+        "chargeSeconds": 8,
+        "maximumImpacts": 3,
+        "blockedByAirway": false
+      },
+      "key": "ORGAN_CRISIS_STARTED:lung",
+      "text": "肺部传播支点已出现，开始 8 秒充能，最多 3 次组织冲击。可净化支点，或借器官装置中断并抢修。",
+      "priority": 2,
+      "seconds": 9
+    },
+    {
+      "type": "ORGAN_CRISIS_INTERRUPTED",
+      "data": {
+        "organId": "lung",
+        "sourceId": "explicit-feedback-fixture",
+        "chargeSeconds": 8,
+        "interruptions": 1,
+        "reason": "airway"
+      },
+      "key": "ORGAN_CRISIS_INTERRUPTED:lung:airway",
+      "text": "肺部气道已截断支点充能，充能暂停；可先抢修，支点仍需净化。",
+      "priority": 2,
+      "seconds": 6
+    },
+    {
+      "type": "ORGAN_CRISIS_CLEARED",
+      "data": {
+        "organId": "lung",
+        "sourceId": "explicit-feedback-fixture",
+        "impacts": 1,
+        "interruptions": 1
+      },
+      "key": "ORGAN_CRISIS_CLEARED:lung",
+      "text": "肺部危机源已净化，组织冲击已停止。实际冲击 1 次、中断 1 次；受损组织仍需按实际完整度修复。",
+      "priority": 2,
+      "seconds": 5
+    },
+    {
+      "type": "MIGRATION_DECIDED",
+      "data": {
+        "choice": "pursue"
+      },
+      "key": "MIGRATION_DECIDED:pursue",
+      "text": "追击进入肺部：12 秒内清除迁移小体或关闭气道，阻止额外感染源。",
+      "priority": 2,
+      "seconds": 8,
+      "toast": true
+    },
+    {
+      "type": "MIGRATION_DECIDED",
+      "data": {
+        "choice": "block"
+      },
+      "key": "MIGRATION_DECIDED:block",
+      "text": "迁移已封锁：肺部未被激活，心脏承压 −4，并面临滞留感染源风险。",
+      "priority": 2,
+      "seconds": 8,
+      "toast": true
+    },
+    {
+      "type": "MIGRATION_DECIDED",
+      "data": {
+        "choice": "ignore"
+      },
+      "key": "MIGRATION_DECIDED:ignore",
+      "text": "放任迁移：肺部受损并面临新增感染源风险；出口开放，仍可救援。",
+      "priority": 2,
+      "seconds": 8,
+      "toast": true
+    },
+    {
+      "type": "INFECTION_CRISIS_STARTED",
+      "data": {},
+      "key": "INFECTION_CRISIS_STARTED",
+      "text": "感染负荷 100！15 秒内净化感染源/感染体或抢修，降低感染即可解除危机。",
+      "priority": 3,
+      "seconds": 15,
+      "toast": true
+    },
+    {
+      "type": "INFECTION_CRISIS_RECOVERED",
+      "data": {},
+      "key": "INFECTION_CRISIS_RECOVERED",
+      "text": "感染负荷下降，致命倒计时解除。继续净化并修复组织。",
+      "priority": 3,
+      "seconds": 5,
+      "toast": true
+    },
+    {
+      "type": "MIGRATION_WARNING",
+      "data": {},
+      "key": "MIGRATION_WARNING",
+      "text": "病毒向肺部迁移：12 秒。出口 E 追击；心脏隔离闸 E 保持 2 秒封锁；不响应则肺部建立新源。",
+      "priority": 2,
+      "seconds": 12,
+      "toast": true
+    },
+    {
+      "type": "MIGRATION_BLOCK_STARTED",
+      "data": {},
+      "key": "MIGRATION_BLOCK_STARTED",
+      "text": "保持在隔离闸附近 2 秒完成封锁。离开会取消；战斗仍在进行。",
+      "priority": 2,
+      "seconds": 3,
+      "toast": true
+    },
+    {
+      "type": "MIGRATION_BLOCK_CANCELLED",
+      "data": {},
+      "key": "MIGRATION_BLOCK_CANCELLED",
+      "text": "已离开隔离闸，封锁取消；迁移倒数继续。",
+      "priority": 2,
+      "seconds": 3,
+      "toast": true
+    },
+    {
+      "type": "MIGRATION_PREEMPTIVELY_BLOCKED",
+      "data": {},
+      "key": "MIGRATION_PREEMPTIVELY_BLOCKED",
+      "text": "隔离闸提前关闭，迁移自动封锁；病毒会滞留为心脏新感染源。",
+      "priority": 2,
+      "seconds": 7,
+      "toast": true
+    },
+    {
+      "type": "MIGRATION_INTERCEPTED",
+      "data": {},
+      "key": "MIGRATION_INTERCEPTED",
+      "text": "迁移被拦截，肺部未建立额外感染源。继续净化并保护器官。",
+      "priority": 2,
+      "seconds": 7,
+      "toast": true
+    },
+    {
+      "type": "MIGRATION_ESTABLISHED",
+      "data": {},
+      "key": "MIGRATION_ESTABLISHED",
+      "text": "未能及时拦截，肺部面临新增感染源风险。发现新源后及时净化，仍可挽回。",
+      "priority": 2,
+      "seconds": 7,
+      "toast": true
+    },
+    {
+      "type": "CORE_COMBAT_STARTED",
+      "data": {},
+      "key": "CORE_COMBAT_STARTED",
+      "text": "母巢已苏醒：交替使用本局两种特性。躲开前摇或 Q 打断侵蚀，逐层打开核膜。",
+      "priority": 2,
+      "seconds": 7,
+      "toast": true
+    },
+    {
+      "type": "CORE_MEMBRANES_OPENED",
+      "data": {},
+      "key": "CORE_MEMBRANES_OPENED",
+      "text": "母巢核膜全部打开！继续净化核心，保护器官。",
+      "priority": 2,
+      "seconds": 5,
+      "toast": true
+    },
+    {
+      "type": "CORE_CORROSION_INTERRUPTED",
+      "data": {},
+      "key": "CORE_CORROSION_INTERRUPTED",
+      "text": "Q 扫描已打断母巢侵蚀，形成破绽。",
+      "priority": 1,
+      "seconds": 3,
+      "toast": true
+    },
+    {
+      "type": "CORE_CLEARED",
+      "data": {},
+      "key": "CORE_CLEARED",
+      "text": "母巢已净化。所有激活器官 ≥50%、感染 <35 后，到复测终端按 E。",
+      "priority": 2,
+      "seconds": 7,
+      "toast": true
+    },
+    {
+      "type": "RETEST_COMPLETED",
+      "data": {},
+      "key": "RETEST_COMPLETED",
+      "text": "主动复测已通过，器官与感染门槛全部满足。",
+      "priority": 2,
+      "seconds": 5,
+      "toast": true
+    },
+    {
+      "type": "RUN_ENDED",
+      "data": {
+        "reason": "隔离提示夹具的终局原因"
+      },
+      "key": "RUN_ENDED",
+      "text": "隔离提示夹具的终局原因",
+      "priority": 3,
+      "seconds": 8,
+      "toast": true
+    }
+  ],
+  "highPriorityUniqueKeys": 36,
+  "totalRecordKeys": 46,
+  "recordLimit": 64,
+  "rawEventsAfter": 512,
+  "allHighCategoriesRetained": true,
+  "allHighCategoriesRendered": true,
+  "ordinaryMessagesDidNotReplaceUrgent": true
+}

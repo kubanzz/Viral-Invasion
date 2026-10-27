@@ -1,0 +1,686 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-27T12:05:08.775Z",
+  "version": "0.7.5",
+  "gameSha256": "971313934fc806144ceb3c2dc89eda76ce142ea1aac2bdee54ff0a52003ce342",
+  "title": "v0.7.5常态组织/免疫小队/HUD原始图局部审阅",
+  "method": "代理确实通过view_image查看8张指定未编辑原始PNG；只读读取既有报告并重算矩形包含/相交。未启动浏览器、未运行测试/构建/性能、未修改src/tests/Docs或原始证据；只写本JSON和伴随Markdown。根的独占性能运行不由本审图作任何结论。",
+  "inputs": {
+    "browserReport": {
+      "path": "artifacts/readability-v075/browser/final-a/report.json",
+      "sha256": "7b72e3f995c2065fba88c723b33af70c7ffbf65dd84af95b568057994c7ec03d"
+    },
+    "qualification": {
+      "path": "artifacts/readability-v075/browser/final-a/qualification.json",
+      "sha256": "06e14c4af487ec7f15acb3c66027cc666d73dcf4b96c349fd084c075b499dd41"
+    },
+    "buildMeta": {
+      "path": "dist/build-meta.json",
+      "sha256": "973eca17608d720ec6f47fc8aa64568972af3e5df9fd6d2879e38eeb3698553e"
+    },
+    "sourceSnapshotCount": 166,
+    "terminal": {
+      "exitCode": 0,
+      "sourceUnchanged": true,
+      "finishedAt": "2026-10-27T11:46:54.478Z",
+      "stats": {
+        "startTime": "2026-10-27T11:41:33.065Z",
+        "duration": 321122.37,
+        "expected": 26,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    }
+  },
+  "inventory": {
+    "actuallyViewed": 8,
+    "tissueSamples": 6,
+    "immuneSquadSamples": 2,
+    "humanParticipants": 0
+  },
+  "images": [
+    {
+      "id": "tissue-1000x560-chrome",
+      "image": {
+        "path": "artifacts/readability-v075/browser/final-a/output/readability-v075-Readabili-cbd39--world-captions-at-1000x560-chrome/tissue-patrol-hud.png",
+        "sha256": "306d26904170aedb224fb84dec3cd474be21063d2ba66032c405dd1750915009"
+      },
+      "actuallyViewedWith": "view_image",
+      "provenance": "Unedited actual offline browser screenshot between separately acquired read-only snapshots; no exact-tick identity asserted.",
+      "browser": "chrome",
+      "quality": "standard",
+      "viewport": {
+        "width": 1000,
+        "height": 560
+      },
+      "raw": {
+        "path": "artifacts/readability-v075/browser/final-a/output/readability-v075-Readabili-cbd39--world-captions-at-1000x560-chrome/readability.json",
+        "sha256": "9bba6c4d3c1a6b968a8f5b91db8b16e01eae22f38d7af23f62de03f6eaa12eb3"
+      },
+      "buildVersion": "0.7.5",
+      "bracket": {
+        "ticks": [
+          109,
+          121
+        ],
+        "elapsed": [
+          1.8166666666666667,
+          2.0166666666666666
+        ],
+        "phases": [
+          "playing",
+          "playing"
+        ],
+        "sameBeacon": true,
+        "cellCount": [
+          1,
+          1
+        ],
+        "beaconMode": "patrol",
+        "criticalSince": null,
+        "organAlarm": false,
+        "coreStatus": "locked"
+      },
+      "geometry": {
+        "hudReservations": 9,
+        "independentDomReadoutsAndPanels": 10,
+        "labelCountersBefore": {
+          "requested": 9,
+          "placed": 5,
+          "omitted": 4,
+          "offscreen": 3,
+          "conflicted": 0
+        },
+        "labelCountersAfter": {
+          "conflicted": 0
+        },
+        "recomputedLabelDomOverlaps": [],
+        "recomputedMissingReservations": [],
+        "normalCrisisLabel": {
+          "selector": "#crisis-label",
+          "text": "净化感染源 / 抢修降低压力",
+          "rect": {
+            "left": 829,
+            "right": 975,
+            "top": 177,
+            "bottom": 191
+          }
+        }
+      },
+      "observedPixels": [
+        "玩家头盔、身体与接地位置清楚；组织本体与十字/62%状态可找到。",
+        "组织标题在本体下方，免疫侦巡×1标题在上方，两块黑底字牌可分读；没有再叠成同一行。",
+        "HP100/100、组织62%、感染27%和全身稳定100%位于右侧独立短读数中；左下3个空槽并排、详情入口和底部三工具可见。",
+        "1000×560中间玩家/组织仍有可用空间，底部工具压缩为键号与工具名。常态危机说明位于177–191 CSSpx，字行未裁掉。",
+        "研究设施本体部分进入左目标面板边缘，上方感染源本体与状态栏邻近/局部重叠；字牌避开HUD不等于所有实体本体都避开HUD。"
+      ],
+      "pixelLimits": [
+        "六张组织图只在常态开局约2秒取样，只有一只基础侦巡、非密集混战。",
+        "基础细胞本体靠近/部分叠在组织的十字与组织外形附近，不能只凭×1标题或后台计数认定细胞轮廓已独立清楚。",
+        "蓝绿范围圆和虚线仍相交于组织/玩家附近；这组图片证明文字局部分开，不能证明所有效果无光污染。",
+        "此时criticalSince=null且无organAlarm；#crisis-label显示常态说明，不能把14px说明行可见当成实际致命倒计时/器官报警长文已经审图。",
+        "本组玩家不在可选growth/地图面板下，不能用这组图证明350ms自动淡化已在实际遮挡时触发。"
+      ]
+    },
+    {
+      "id": "tissue-1000x560-edge",
+      "image": {
+        "path": "artifacts/readability-v075/browser/final-a/output/readability-v075-Readabili-cbd39--world-captions-at-1000x560-edge/tissue-patrol-hud.png",
+        "sha256": "8f0b9b28d4b6f2d764fd1ffc5256674a6449ec12da8fef423a429d3a2d95a0b4"
+      },
+      "actuallyViewedWith": "view_image",
+      "provenance": "Unedited actual offline browser screenshot between separately acquired read-only snapshots; no exact-tick identity asserted.",
+      "browser": "edge",
+      "quality": "low",
+      "viewport": {
+        "width": 1000,
+        "height": 560
+      },
+      "raw": {
+        "path": "artifacts/readability-v075/browser/final-a/output/readability-v075-Readabili-cbd39--world-captions-at-1000x560-edge/readability.json",
+        "sha256": "6634932d64b8cdb8393f2eb2108543f647e0e25635624965daebe942430941b5"
+      },
+      "buildVersion": "0.7.5",
+      "bracket": {
+        "ticks": [
+          111,
+          122
+        ],
+        "elapsed": [
+          1.8499999999999999,
+          2.033333333333333
+        ],
+        "phases": [
+          "playing",
+          "playing"
+        ],
+        "sameBeacon": true,
+        "cellCount": [
+          1,
+          1
+        ],
+        "beaconMode": "patrol",
+        "criticalSince": null,
+        "organAlarm": false,
+        "coreStatus": "locked"
+      },
+      "geometry": {
+        "hudReservations": 9,
+        "independentDomReadoutsAndPanels": 10,
+        "labelCountersBefore": {
+          "requested": 9,
+          "placed": 5,
+          "omitted": 4,
+          "offscreen": 3,
+          "conflicted": 0
+        },
+        "labelCountersAfter": {
+          "conflicted": 0
+        },
+        "recomputedLabelDomOverlaps": [],
+        "recomputedMissingReservations": [],
+        "normalCrisisLabel": {
+          "selector": "#crisis-label",
+          "text": "净化感染源 / 抢修降低压力",
+          "rect": {
+            "left": 829,
+            "right": 975,
+            "top": 177,
+            "bottom": 191
+          }
+        }
+      },
+      "observedPixels": [
+        "玩家头盔、身体与接地位置清楚；组织本体与十字/62%状态可找到。",
+        "组织标题在本体下方，免疫侦巡×1标题在上方，两块黑底字牌可分读；没有再叠成同一行。",
+        "HP100/100、组织62%、感染27%和全身稳定100%位于右侧独立短读数中；左下3个空槽并排、详情入口和底部三工具可见。",
+        "1000×560中间玩家/组织仍有可用空间，底部工具压缩为键号与工具名。常态危机说明位于177–191 CSSpx，字行未裁掉。",
+        "研究设施本体部分进入左目标面板边缘，上方感染源本体与状态栏邻近/局部重叠；字牌避开HUD不等于所有实体本体都避开HUD。"
+      ],
+      "pixelLimits": [
+        "六张组织图只在常态开局约2秒取样，只有一只基础侦巡、非密集混战。",
+        "基础细胞本体靠近/部分叠在组织的十字与组织外形附近，不能只凭×1标题或后台计数认定细胞轮廓已独立清楚。",
+        "蓝绿范围圆和虚线仍相交于组织/玩家附近；这组图片证明文字局部分开，不能证明所有效果无光污染。",
+        "此时criticalSince=null且无organAlarm；#crisis-label显示常态说明，不能把14px说明行可见当成实际致命倒计时/器官报警长文已经审图。",
+        "本组玩家不在可选growth/地图面板下，不能用这组图证明350ms自动淡化已在实际遮挡时触发。"
+      ]
+    },
+    {
+      "id": "tissue-1920x1080-chrome",
+      "image": {
+        "path": "artifacts/readability-v075/browser/final-a/output/readability-v075-Readabili-e7b16-world-captions-at-1920x1080-chrome/tissue-patrol-hud.png",
+        "sha256": "4829059f0f5c845b32883d97be1a5e00a3da9fe7a74d428039a8c45840cc911c"
+      },
+      "actuallyViewedWith": "view_image",
+      "provenance": "Unedited actual offline browser screenshot between separately acquired read-only snapshots; no exact-tick identity asserted.",
+      "browser": "chrome",
+      "quality": "standard",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "raw": {
+        "path": "artifacts/readability-v075/browser/final-a/output/readability-v075-Readabili-e7b16-world-captions-at-1920x1080-chrome/readability.json",
+        "sha256": "4d56a8fa8545cc82f79e37bd3bfc13911790e09147820057d71e196e455de1ac"
+      },
+      "buildVersion": "0.7.5",
+      "bracket": {
+        "ticks": [
+          108,
+          125
+        ],
+        "elapsed": [
+          1.8,
+          2.0833333333333335
+        ],
+        "phases": [
+          "playing",
+          "playing"
+        ],
+        "sameBeacon": true,
+        "cellCount": [
+          1,
+          1
+        ],
+        "beaconMode": "patrol",
+        "criticalSince": null,
+        "organAlarm": false,
+        "coreStatus": "locked"
+      },
+      "geometry": {
+        "hudReservations": 9,
+        "independentDomReadoutsAndPanels": 10,
+        "labelCountersBefore": {
+          "requested": 9,
+          "placed": 6,
+          "omitted": 3,
+          "offscreen": 3,
+          "conflicted": 0
+        },
+        "labelCountersAfter": {
+          "conflicted": 0
+        },
+        "recomputedLabelDomOverlaps": [],
+        "recomputedMissingReservations": [],
+        "normalCrisisLabel": {
+          "selector": "#crisis-label",
+          "text": "净化感染源 / 抢修降低压力",
+          "rect": {
+            "left": 1740,
+            "right": 1894,
+            "top": 215.5,
+            "bottom": 229.5
+          }
+        }
+      },
+      "observedPixels": [
+        "玩家头盔、身体与接地位置清楚；组织本体与十字/62%状态可找到。",
+        "组织标题在本体下方，免疫侦巡×1标题在上方，两块黑底字牌可分读；没有再叠成同一行。",
+        "HP100/100、组织62%、感染27%和全身稳定100%位于右侧独立短读数中；左下3个空槽并排、详情入口和底部三工具可见。",
+        "1920×1080中央空间更宽，设施/组织字牌与HUD留有间隔；固定CSS字号相对大场景较小，本组不构成首玩阅读速度测试。"
+      ],
+      "pixelLimits": [
+        "六张组织图只在常态开局约2秒取样，只有一只基础侦巡、非密集混战。",
+        "基础细胞本体靠近/部分叠在组织的十字与组织外形附近，不能只凭×1标题或后台计数认定细胞轮廓已独立清楚。",
+        "蓝绿范围圆和虚线仍相交于组织/玩家附近；这组图片证明文字局部分开，不能证明所有效果无光污染。",
+        "此时criticalSince=null且无organAlarm；#crisis-label显示常态说明，不能把14px说明行可见当成实际致命倒计时/器官报警长文已经审图。",
+        "本组玩家不在可选growth/地图面板下，不能用这组图证明350ms自动淡化已在实际遮挡时触发。"
+      ]
+    },
+    {
+      "id": "tissue-1920x1080-edge",
+      "image": {
+        "path": "artifacts/readability-v075/browser/final-a/output/readability-v075-Readabili-e7b16-world-captions-at-1920x1080-edge/tissue-patrol-hud.png",
+        "sha256": "e2a040618d5b6dd0a026dda58ef73d85cc0a6891d504099fff8372812162c8cb"
+      },
+      "actuallyViewedWith": "view_image",
+      "provenance": "Unedited actual offline browser screenshot between separately acquired read-only snapshots; no exact-tick identity asserted.",
+      "browser": "edge",
+      "quality": "low",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "raw": {
+        "path": "artifacts/readability-v075/browser/final-a/output/readability-v075-Readabili-e7b16-world-captions-at-1920x1080-edge/readability.json",
+        "sha256": "6647c8067f3048f0a92d975f40a1f624424ffbeb528934f569a4e25a8aacfddb"
+      },
+      "buildVersion": "0.7.5",
+      "bracket": {
+        "ticks": [
+          114,
+          135
+        ],
+        "elapsed": [
+          1.9,
+          2.25
+        ],
+        "phases": [
+          "playing",
+          "playing"
+        ],
+        "sameBeacon": true,
+        "cellCount": [
+          1,
+          1
+        ],
+        "beaconMode": "patrol",
+        "criticalSince": null,
+        "organAlarm": false,
+        "coreStatus": "locked"
+      },
+      "geometry": {
+        "hudReservations": 9,
+        "independentDomReadoutsAndPanels": 10,
+        "labelCountersBefore": {
+          "requested": 9,
+          "placed": 5,
+          "omitted": 4,
+          "offscreen": 4,
+          "conflicted": 0
+        },
+        "labelCountersAfter": {
+          "conflicted": 0
+        },
+        "recomputedLabelDomOverlaps": [],
+        "recomputedMissingReservations": [],
+        "normalCrisisLabel": {
+          "selector": "#crisis-label",
+          "text": "净化感染源 / 抢修降低压力",
+          "rect": {
+            "left": 1740,
+            "right": 1894,
+            "top": 215.5,
+            "bottom": 229.5
+          }
+        }
+      },
+      "observedPixels": [
+        "玩家头盔、身体与接地位置清楚；组织本体与十字/62%状态可找到。",
+        "组织标题在本体下方，免疫侦巡×1标题在上方，两块黑底字牌可分读；没有再叠成同一行。",
+        "HP100/100、组织62%、感染27%和全身稳定100%位于右侧独立短读数中；左下3个空槽并排、详情入口和底部三工具可见。",
+        "1920×1080中央空间更宽，设施/组织字牌与HUD留有间隔；固定CSS字号相对大场景较小，本组不构成首玩阅读速度测试。"
+      ],
+      "pixelLimits": [
+        "六张组织图只在常态开局约2秒取样，只有一只基础侦巡、非密集混战。",
+        "基础细胞本体靠近/部分叠在组织的十字与组织外形附近，不能只凭×1标题或后台计数认定细胞轮廓已独立清楚。",
+        "蓝绿范围圆和虚线仍相交于组织/玩家附近；这组图片证明文字局部分开，不能证明所有效果无光污染。",
+        "此时criticalSince=null且无organAlarm；#crisis-label显示常态说明，不能把14px说明行可见当成实际致命倒计时/器官报警长文已经审图。",
+        "本组玩家不在可选growth/地图面板下，不能用这组图证明350ms自动淡化已在实际遮挡时触发。"
+      ]
+    },
+    {
+      "id": "tissue-1366x768-chrome",
+      "image": {
+        "path": "artifacts/readability-v075/browser/final-a/output/readability-v075-Readabili-eae57--world-captions-at-1366x768-chrome/tissue-patrol-hud.png",
+        "sha256": "77899541284a9319407edbb55ece731c1d02027fa3555c7180c1252fdf837fd0"
+      },
+      "actuallyViewedWith": "view_image",
+      "provenance": "Unedited actual offline browser screenshot between separately acquired read-only snapshots; no exact-tick identity asserted.",
+      "browser": "chrome",
+      "quality": "standard",
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "raw": {
+        "path": "artifacts/readability-v075/browser/final-a/output/readability-v075-Readabili-eae57--world-captions-at-1366x768-chrome/readability.json",
+        "sha256": "c14087794b346b8c3de212f71e1d8fe6b5ed8f700414070ad289c70da840189d"
+      },
+      "buildVersion": "0.7.5",
+      "bracket": {
+        "ticks": [
+          108,
+          124
+        ],
+        "elapsed": [
+          1.8,
+          2.0666666666666664
+        ],
+        "phases": [
+          "playing",
+          "playing"
+        ],
+        "sameBeacon": true,
+        "cellCount": [
+          1,
+          1
+        ],
+        "beaconMode": "patrol",
+        "criticalSince": null,
+        "organAlarm": false,
+        "coreStatus": "locked"
+      },
+      "geometry": {
+        "hudReservations": 9,
+        "independentDomReadoutsAndPanels": 10,
+        "labelCountersBefore": {
+          "requested": 9,
+          "placed": 6,
+          "omitted": 3,
+          "offscreen": 3,
+          "conflicted": 0
+        },
+        "labelCountersAfter": {
+          "conflicted": 0
+        },
+        "recomputedLabelDomOverlaps": [],
+        "recomputedMissingReservations": [],
+        "normalCrisisLabel": {
+          "selector": "#crisis-label",
+          "text": "净化感染源 / 抢修降低压力",
+          "rect": {
+            "left": 1186,
+            "right": 1340,
+            "top": 215.5,
+            "bottom": 229.5
+          }
+        }
+      },
+      "observedPixels": [
+        "玩家头盔、身体与接地位置清楚；组织本体与十字/62%状态可找到。",
+        "组织标题在本体下方，免疫侦巡×1标题在上方，两块黑底字牌可分读；没有再叠成同一行。",
+        "HP100/100、组织62%、感染27%和全身稳定100%位于右侧独立短读数中；左下3个空槽并排、详情入口和底部三工具可见。",
+        "1366×768中央玩家与组织未被两侧HUD/底部工具挡住，组织牌与侦巡牌分别可读。"
+      ],
+      "pixelLimits": [
+        "六张组织图只在常态开局约2秒取样，只有一只基础侦巡、非密集混战。",
+        "基础细胞本体靠近/部分叠在组织的十字与组织外形附近，不能只凭×1标题或后台计数认定细胞轮廓已独立清楚。",
+        "蓝绿范围圆和虚线仍相交于组织/玩家附近；这组图片证明文字局部分开，不能证明所有效果无光污染。",
+        "此时criticalSince=null且无organAlarm；#crisis-label显示常态说明，不能把14px说明行可见当成实际致命倒计时/器官报警长文已经审图。",
+        "本组玩家不在可选growth/地图面板下，不能用这组图证明350ms自动淡化已在实际遮挡时触发。"
+      ]
+    },
+    {
+      "id": "tissue-1366x768-edge",
+      "image": {
+        "path": "artifacts/readability-v075/browser/final-a/output/readability-v075-Readabili-eae57--world-captions-at-1366x768-edge/tissue-patrol-hud.png",
+        "sha256": "c0a491fc642dc1e41c9eebfbb23441d064580098ee3064cef743055c09fcfa65"
+      },
+      "actuallyViewedWith": "view_image",
+      "provenance": "Unedited actual offline browser screenshot between separately acquired read-only snapshots; no exact-tick identity asserted.",
+      "browser": "edge",
+      "quality": "low",
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "raw": {
+        "path": "artifacts/readability-v075/browser/final-a/output/readability-v075-Readabili-eae57--world-captions-at-1366x768-edge/readability.json",
+        "sha256": "ace7a634aac7ff94d1e032c1c45d3a40289457a0c75b038d59f49c90ef10c932"
+      },
+      "buildVersion": "0.7.5",
+      "bracket": {
+        "ticks": [
+          103,
+          121
+        ],
+        "elapsed": [
+          1.7166666666666666,
+          2.0166666666666666
+        ],
+        "phases": [
+          "playing",
+          "playing"
+        ],
+        "sameBeacon": true,
+        "cellCount": [
+          1,
+          1
+        ],
+        "beaconMode": "patrol",
+        "criticalSince": null,
+        "organAlarm": false,
+        "coreStatus": "locked"
+      },
+      "geometry": {
+        "hudReservations": 9,
+        "independentDomReadoutsAndPanels": 10,
+        "labelCountersBefore": {
+          "requested": 9,
+          "placed": 6,
+          "omitted": 3,
+          "offscreen": 3,
+          "conflicted": 0
+        },
+        "labelCountersAfter": {
+          "conflicted": 0
+        },
+        "recomputedLabelDomOverlaps": [],
+        "recomputedMissingReservations": [],
+        "normalCrisisLabel": {
+          "selector": "#crisis-label",
+          "text": "净化感染源 / 抢修降低压力",
+          "rect": {
+            "left": 1186,
+            "right": 1340,
+            "top": 215.5,
+            "bottom": 229.5
+          }
+        }
+      },
+      "observedPixels": [
+        "玩家头盔、身体与接地位置清楚；组织本体与十字/62%状态可找到。",
+        "组织标题在本体下方，免疫侦巡×1标题在上方，两块黑底字牌可分读；没有再叠成同一行。",
+        "HP100/100、组织62%、感染27%和全身稳定100%位于右侧独立短读数中；左下3个空槽并排、详情入口和底部三工具可见。",
+        "1366×768中央玩家与组织未被两侧HUD/底部工具挡住，组织牌与侦巡牌分别可读。"
+      ],
+      "pixelLimits": [
+        "六张组织图只在常态开局约2秒取样，只有一只基础侦巡、非密集混战。",
+        "基础细胞本体靠近/部分叠在组织的十字与组织外形附近，不能只凭×1标题或后台计数认定细胞轮廓已独立清楚。",
+        "蓝绿范围圆和虚线仍相交于组织/玩家附近；这组图片证明文字局部分开，不能证明所有效果无光污染。",
+        "此时criticalSince=null且无organAlarm；#crisis-label显示常态说明，不能把14px说明行可见当成实际致命倒计时/器官报警长文已经审图。",
+        "本组玩家不在可选growth/地图面板下，不能用这组图证明350ms自动淡化已在实际遮挡时触发。"
+      ]
+    },
+    {
+      "id": "immune-chrome-standard",
+      "image": {
+        "path": "artifacts/readability-v075/browser/final-a/output/feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-chrome/immune-standard-readable.png",
+        "sha256": "a5a0336bc9be80c895097a3ba960f37d5fb3ac38c083ae8ca7785e5578bedad4"
+      },
+      "actuallyViewedWith": "view_image",
+      "provenance": "Unedited actual browser selected capture; readable.png has identicalSHA to raw selected attempt PNG, not a redrawn diagram.",
+      "browser": "chrome",
+      "quality": "standard",
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "raw": {
+        "path": "artifacts/readability-v075/browser/final-a/output/feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-chrome/immune-readability-evidence.json",
+        "sha256": "f416ba99c2b05b4219e030cea39a9f5acf5b5d78ded5bc165f8e37e6ac8825ff"
+      },
+      "bundleSha256": "971313934fc806144ceb3c2dc89eda76ce142ea1aac2bdee54ff0a52003ce342",
+      "bracket": {
+        "ticks": [
+          798,
+          810
+        ],
+        "phases": [
+          "playing",
+          "playing"
+        ],
+        "cellCount": [
+          3,
+          3
+        ],
+        "sameSquad": true,
+        "commonAcceptedHitRoots": [
+          "13:2:scan:781:beacon:cell:0:bite:796"
+        ],
+        "minimumPairScreenSpacingBefore": 52.95080255650505,
+        "minimumPairScreenSpacingAfter": 65.98813274348062,
+        "criticalSince": null,
+        "organAlarm": false,
+        "coreStatus": "locked"
+      },
+      "observedPixels": [
+        "玩家与晶壳精英可按轮廓分辨；精英标题、灯塔小队×3标题与下方破绽倒数是三块分开的字牌，未互相盖字。",
+        "小队两只外侧细胞轮廓较清楚，中心第三只与精英/标记圈仍有局部叠合；有实际小队围绕精英的画面，但不称三只所有身体始终完全分离。",
+        "标准档图可读到“精英·晶壳”“灯塔小队×3·5.7s”和“破绽3s”，玩家在左侧，附近瓣膜与队伍标题没有挤成同一文字块。",
+        "左下已装备协议及实际咬击/显影计数、中央短时进化反馈与底部工具均可见。"
+      ],
+      "pixelLimits": [
+        "这两张是两个不同浏览器/不同实时位置与tick的实际运行，不能称精确同快照普通/低特效A/B。",
+        "当前核心状态locked、无criticalSince/器官警报；不是母巢密集攻击、致命状态、跨器官风险同屏或真正浏览器zoom取样。",
+        "范围圈、显影框、细胞咬击/接地圈仍在局部交叠，代理能分读标题不等于新玩家已经懂反制/协同。",
+        "邻近前景组织并未覆盖全部关键身体；不把它当作最坏前景遮挡证明。"
+      ]
+    },
+    {
+      "id": "immune-edge-low",
+      "image": {
+        "path": "artifacts/readability-v075/browser/final-a/output/feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-edge/immune-low-readable.png",
+        "sha256": "ac18688204d2f0d2f2c2fcabea25ca399aac698e24c76a163abad32e9abfb835"
+      },
+      "actuallyViewedWith": "view_image",
+      "provenance": "Unedited actual browser selected capture; readable.png has identicalSHA to raw selected attempt PNG, not a redrawn diagram.",
+      "browser": "edge",
+      "quality": "low",
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "raw": {
+        "path": "artifacts/readability-v075/browser/final-a/output/feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-edge/immune-readability-evidence.json",
+        "sha256": "b33fee44da0c176e6d61a9173fd1f9e948a028a4d3ce5cea9363647a95a42124"
+      },
+      "bundleSha256": "971313934fc806144ceb3c2dc89eda76ce142ea1aac2bdee54ff0a52003ce342",
+      "bracket": {
+        "ticks": [
+          796,
+          808
+        ],
+        "phases": [
+          "playing",
+          "playing"
+        ],
+        "cellCount": [
+          3,
+          3
+        ],
+        "sameSquad": true,
+        "commonAcceptedHitRoots": [
+          "13:2:scan:779:beacon:cell:0:bite:794"
+        ],
+        "minimumPairScreenSpacingBefore": 57.06997885167027,
+        "minimumPairScreenSpacingAfter": 64.07614169302258,
+        "criticalSince": null,
+        "organAlarm": false,
+        "coreStatus": "locked"
+      },
+      "observedPixels": [
+        "玩家与晶壳精英可按轮廓分辨；精英标题、灯塔小队×3标题与下方破绽倒数是三块分开的字牌，未互相盖字。",
+        "小队两只外侧细胞轮廓较清楚，中心第三只与精英/标记圈仍有局部叠合；有实际小队围绕精英的画面，但不称三只所有身体始终完全分离。",
+        "低特效图可读到“精英·晶壳”“灯塔小队×3·5.6s”和“破绽4s”，玩家/小队/精英区域仍在中央，局部身体与圈线交叠仍保留。",
+        "左下已装备协议及实际咬击/显影计数、中央短时进化反馈与底部工具均可见。"
+      ],
+      "pixelLimits": [
+        "这两张是两个不同浏览器/不同实时位置与tick的实际运行，不能称精确同快照普通/低特效A/B。",
+        "当前核心状态locked、无criticalSince/器官警报；不是母巢密集攻击、致命状态、跨器官风险同屏或真正浏览器zoom取样。",
+        "范围圈、显影框、细胞咬击/接地圈仍在局部交叠，代理能分读标题不等于新玩家已经懂反制/协同。",
+        "邻近前景组织并未覆盖全部关键身体；不把它当作最坏前景遮挡证明。"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "local-text-hierarchy",
+      "assessment": "technically-observed-in-finite-normal-samples",
+      "claim": "三尺寸两浏览器的组织/侦巡标题分离；两免疫图精英/小队/破绽标题分离。",
+      "limits": "没有全实体本体、全时刻、所有危险零遮挡结论。"
+    },
+    {
+      "id": "compact-hud",
+      "assessment": "technically-observed-with-local-body-overlap-limits",
+      "claim": "关键常态读数、3空槽、详情与工具在指定图可见；小窗说明行未裁掉。",
+      "limits": "1000×560设施/源的本体仍局部进入HUD区域；#crisis-label是常态文本，实际fatal/organ长文不在这组图片。"
+    },
+    {
+      "id": "immune-support",
+      "assessment": "actual-squad-partly-separated-bodies-and-readable-caption",
+      "claim": "两免疫原图中外侧细胞与精英、玩家和破绽字牌可区分；同队正伤害root跨截图前后保留在原始记录。",
+      "limits": "中心第三只局部叠合；六组织图的基础侦巡本体未充分独立，不用计数替代像素。"
+    }
+  ],
+  "requirementScope": {
+    "onlySupplementaryTechnicalSubclauses": [
+      "AC-M14-06",
+      "AC-M14-07",
+      "VIS-07",
+      "VIS-10",
+      "VIS-11",
+      "RUN-12"
+    ],
+    "noAutomaticWholeRowPromotion": true,
+    "remaining": [
+      "密集母巢决定性危险/弱点/前景组合尚未由这组图覆盖。",
+      "同快照两档所有致命警示/判定不变仍需单独来源，独占性能也另行报告。",
+      "真正浏览器zoom、原生OS焦点、目标局10–15分钟和真实新玩家0/5均无新增证据。",
+      "实际感染15秒致死倒计时/器官报警小窗全长可见需要对应真实状态的图或浏览器观测；本次常态行可见不能替代。"
+    ]
+  },
+  "scope": "有限常态局部审图，保留实际身体叠合与小窗本体/HUD接近。没有趣味、留存、真人辨认、全场景视觉验收或FPS结论。"
+}

@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "status": "read-only-proposal",
+  "reviewBaseRevision": "7b86eb482115f8e2118ed5597225448ef6e95c4b",
+  "productionSourceCommitReportedByParent": "40fb88e",
+  "frozenV074GameSha256": "a253faaf85e61370ec7abd71521a955c14265d67daf04f9db2e55de94b693a39",
+  "method": "Read current source and view two existing archived v074 pressure PNGs. No browser, simulation, test, build, source change or old evidence write.",
+  "evidence": [
+    { "path": "src/render/renderer.ts", "lines": [106, 128, 132, 143, 146, 149, 151, 153, 154, 342, 371, 406, 531, 553, 558], "scope": "Actual render call order, device/tissue text, danger geometry and repeated medical marker." },
+    { "path": "src/render/growthVisuals.ts", "lines": [73, 76, 85, 103, 139], "scope": "Squad label plus separate beacon lifetime line; accepted protocol and traced-bite presentation." },
+    { "path": "src/render/immuneVisuals.ts", "lines": [9, 23, 47, 52, 58], "scope": "Real cell silhouette/biting/lifetime bar and separate squad text anchor." },
+    { "path": "src/render/battleVisuals.ts", "lines": [260, 292, 297, 307, 310, 312, 324, 328, 333, 351, 359], "scope": "Danger labels plus a battle-target-only occupied pool; exposed groups are outside that pool." },
+    { "path": "src/render/immuneTraceCues.ts", "lines": [5, 16], "scope": "Bounded24-tick current-squad trace cue selector, real recorded cell position and target endpoint." },
+    { "path": "src/render/camera.ts", "lines": [26, 37, 40, 43], "scope": "Camera follow/projection and inverse mapping; local labels cancel the .72 squash." },
+    { "path": "src/main.ts", "lines": [255, 258, 260, 299, 300, 303], "scope": "World renderer each RAF, HUD text about20Hz; no HUD exclusion geometry passed into Renderer." },
+    { "path": "src/ui/battleHud.ts", "lines": [11, 35, 39, 49], "scope": "Pinned health/infection/vitality, pulse readout, interaction and evolution warning card." },
+    { "path": "src/ui/growthHud.ts", "lines": [11, 49, 78, 82], "scope": "Growth panel repeats current squad lifetime/count; temporary evolution feedback panel." },
+    { "path": "src/ui/campaignHud.ts", "lines": [16, 53, 77, 85, 115, 130], "scope": "Map/organ panels and migration/core cards; nearest interaction and critical phase information." },
+    { "path": "src/ui/encounterHud.ts", "lines": [27, 29, 33, 62], "scope": "Current hint priority already yields to critical organ/overload and migration." },
+    { "path": "src/style.css", "lines": [2, 6, 7, 9, 12, 15, 23, 39, 57, 77], "scope": "Fixed HUD areas, higher-specificity210px dual-organ map and viewport-specific compaction. Exact occupied sizes remain runtime-dependent." },
+    { "path": "artifacts/completion-v074/performance/attempt-1/dense-standard-three-cells.png", "viewport": [1366, 768], "observation": "Archived real-input screenshot: tissue health/repair caption and beacon lifetime occupy overlapping local rows; right telemetry/map cover the right-side world. No pixel mutation or new capture." },
+    { "path": "artifacts/completion-v074/performance/attempt-1/dense-low-three-cells.png", "viewport": [1366, 768], "observation": "The same type of local caption crowding persists in low effects; map/telemetry footprint persists. This is a different live state, not exact-state A/B." }
+  ],
+  "findings": [
+    {
+      "id": "L01", "severity": "high", "kind": "observed-and-source-confirmed",
+      "problem": "Local tissue, beacon and squad information is emitted by independent drawing functions with no shared occupied pool.",
+      "details": "Tissue prints hp at local+35 and repair name at+52; beacon prints lifetime at+24 and squad text at-59. A beacon placed on/near tissue produces only11 unscaled pixels between two text baselines. PNGs show those bottom rows crowding. Valve/airway/retest/research use their own independent two-row labels.",
+      "entryPoints": ["Renderer.drawTissue", "Renderer.drawBattleDevice", "Renderer.drawTerminal", "GrowthVisuals.drawBeacon", "drawImmuneSquadLabel", "drawLungAirway"],
+      "recommendation": "Remove text emission from entity-body drawing and collect these labels into one final screen-space layout pass. Retain body geometry, medical cross, cell lifetime bars and danger footprints at their true world positions."
+    },
+    {
+      "id": "L02", "severity": "high", "kind": "source-confirmed-risk",
+      "problem": "Battle target label avoidance is local to target names/HP; it cannot see facility text, squad text, weakness groups, hazard captions or DOM HUD.",
+      "details": "drawBattleLabels uses an empty local occupied array, estimated name.length*10 width and upward offsets only. Full/focused labels fall back to-64 even if all candidates collide. Weakness groups are drawn after that loop without occupied registration. No viewport clamp or DOM exclusion is present.",
+      "recommendation": "Share measured CSS-pixel bounds among all scene information. Use actual measureText, above/left/right/below candidates and short leaders; reserve focused weak-point and HP information before routine names. An essential unresolved conflict needs an explicit nearby safe rail, never silent hiding."
+    },
+    {
+      "id": "L03", "severity": "high", "kind": "observed-and-source-confirmed",
+      "problem": "The renderer cannot know which world areas DOM HUD is covering.",
+      "details": "Fixed top-left objective, bottom-left growth panel, top-right185px telemetry, bottom-right210px dual-organ map (base map rule185px), bottom-center dock/message, and temporary central cards sit over the entire canvas. Narrow/short media rules reduce selected details but do not supply occlusion rectangles or a shared safe play area. Camera clamping means the player is not guaranteed to remain in the empty center.",
+      "recommendation": "Pass a cached HUD exclusion snapshot into Renderer. Preserve player HP, active organ HP, infection lethal countdown and vitality in a compact always-visible vital rail. Collapse explanatory rows, empty protocol slots and redundant map prose before reducing combat visibility. Never fade/hide the critical countdown or active core attack/counter information."
+    },
+    {
+      "id": "L06", "severity": "critical", "kind": "source-confirmed",
+      "problem": "At viewport height560px or lower, the generic paragraph compaction rule also hides the lethal infection countdown.",
+      "details": "style.css:77 hides .dual-organ .battle-telemetry .readout p. #crisis-label is a p inside that subtree and battleHud.ts writes the15-second overload countdown or organ alarm there. encounterHudContent also intentionally returns null while overload/organAlarm is active, so it is not a backup countdown.",
+      "recommendation": "Replace the broad p hiding rule with targeted routine-description selectors or explicitly retain #crisis-label. Keep the countdown, current health and vitality visible at small height, then compress noncritical prose. Parent notified before implementation; no CSS change made by this review."
+    },
+    {
+      "id": "L04", "severity": "high", "kind": "source-confirmed-risk",
+      "problem": "Critical information has no common priority policy across world labels and DOM cards.",
+      "details": "World danger geometry is correctly late-rendered from actual attacks, but later target labels/weakness text/medical marker can overpaint small danger details. DOM evolution/migration/core/growth feedback cards use separate fixed positions. encounterHudContent already has useful migration/crisis suppression and should remain the semantic authority for its hint.",
+      "recommendation": "Reserve active attack countdowns, landing crosses and stroke envelopes before routine labels. Keep danger shapes at exact original coordinates and do not merge distinct attacks. Place essential label text around protected contours, rather than masking a whole danger disk and exhausting all label space."
+    },
+    {
+      "id": "L05", "severity": "medium", "kind": "source-confirmed",
+      "problem": "Squad count/lifetime is repeated in world text and growth HUD, while three cells already carry clear silhouettes and lifetime bars.",
+      "details": "drawImmuneSquadLabel shows squad×count, GrowthVisuals.drawBeacon separately shows beacon remaining seconds, growth research-hint also shows count/time. Per-cell body/lifetime bar is useful and has no verbose text wall.",
+      "recommendation": "One world badge per active beacon: '✚小队×3 ·4.9s' (or '✚侦巡 ·2.8s'). Remove the extra beacon time caption; preserve the static beacon body for protocol mode and every real cell body. Keep detailed cooldown/cost in the existing growth details or one compact HUD row."
+    }
+  ],
+  "proposedPriorityPolicy": [
+    { "rank": 0, "category": "critical safety", "items": ["active lethal/overload countdown", "core attack/counter countdown", "attack/landing crosses and border strokes", "organ crisis imminent-impact caption"], "fallback": "Never discard, merge different attacks, move hazard geometry, or lower opacity based on scene density. Critical text may use a stable safe rail with a leader when world anchoring conflicts." },
+    { "rank": 1, "category": "immediate decision", "items": ["focused target HP and active weakness", "boss/elite HP", "player and current organ vital readings", "threatened tissue HP", "nearest accepted E interaction including cost/cooldown"], "fallback": "Reserve first; compact combined owner badge; stable nearby rail if all candidates fail. Keep action state faithful to production range/cooldown." },
+    { "rank": 2, "category": "support context", "items": ["current squad merged badge", "ordinary damaged tissue HP", "source identity/HP", "nonfocused exposed group badge"], "fallback": "Try alternate anchors then compact owner text; keep focused weakness separate from a cluster so its own window remains clear." },
+    { "rank": 3, "category": "routine explanation", "items": ["ordinary trait name", "long facility subtitle", "already-known repair tool name", "empty protocol slot rows", "map prose", "routine success toast"], "fallback": "Yield to higher priority; show shorter icon+name or place details in the existing paused manual/details view. Do not remove the underlying health, danger or interaction state." }
+  ],
+  "implementationProposal": {
+    "status": "suggested interfaces, not current code",
+    "hudSnapshot": "HudOcclusionSnapshot{revision,viewport,rects:[{id,rect,kind:critical|interactive|optional}]}. Build from visible element getBoundingClientRect in one batched read after HUD updates/resize, cached across RAFs. Account for hidden elements, current cards and small-height CSS. Do not call layout queries from each label or each target.",
+    "rendererEntry": "Renderer.render(state,aim,{lowEffects,hudOcclusion?}) receives presentation-only snapshot. main frame keeps original simulation/input order. Use Camera.worldToScreen for anchors, draw the final labels after restoring the world transform under CSS-pixel coordinates with DPR set once.",
+    "collector": "collectSceneLabels(state,aim,camera) emits stable owner IDs, priority, measured text runs, HP bar, anchor candidates and essential flags. It reads existing revealed/exposed/cooldown state; no mutation or new gameplay eligibility rules. Sources include target labels, weakness badges, tissue, facilities and active squad.",
+    "projection": "Current world transform uses .72 y compression and local text cancels it. Convert an existing local text offset as screenAnchor=camera.worldToScreen(owner)+localOffset*camera.scale; do not squash the text a second time or change toScreen/toWorld, collision or pointer mapping.",
+    "layout": "layoutSceneLabels(candidates,reservedRects,previousPlacements) sorts priority then stable ID. Use measured dimensions plus4px safety gap, bounded above/left/right/below offsets and short leaders. Reuse a valid previous anchor to prevent flicker; invalidate on resize, organ/run change or newly-critical state. Keep displacement bounded so attribution remains clear.",
+    "merge": "Only semantically related same-owner content is merged: one squad/time badge; target name+HP+weakness where valid; one tissue hp+repair hint. Nearby tissue and beacon retain different owner IDs and leaders even if their captions form a small shared stack. Distinct hazard countdowns never collapse into a count.",
+    "interaction": "Show a full E action/cost/cooldown only for the nearest interactable selected with the same existing range/order as host/UI; keep a compact facility icon/name on other visible devices. Do not invent a new interaction radius or advertise an action on a different node.",
+    "hudCompaction": "First shorten objective prose, combine protocol slots to symbol/rank/accepted count and existing details button, remove empty slot explanations, and shorten navigation prose while keeping other-organ health/risk and exits. Keep vital rail opaque and readable. Optional panel overlap with the local player/focus/active-telegraph zone can request a compact variant with hysteresis, never change critical data visibility.",
+    "cueProtection": "drawImmuneCell and selectImmuneTraceCues remain tied to real cells/events. Preserve biting pose, lifetime bar, recorded bite origin, live target endpoint and current24-tick limit in both effects modes. Do not move the cue endpoints to match a displaced label, draw from the static beacon, or infer a real hit from label presence.",
+    "layering": "Bodies stay world-y-sorted, foreground fades stay unchanged, real accepted effects and marks stay world anchored. Register hazard captions/contours as protected regions; lay out routine labels around them. Keep critical danger strokes and crosshair visible without using opaque label plaques across them.",
+    "costBound": "Collect once per frame; bound candidate count to existing actors/facilities/current squad and cache font measurements. Reuse accepted-hit/cue projections for the frame rather than repeating event joins inside each placement candidate. Layout can be a small bounded O(N²) rectangle pass; existing performance results are not a free pass for new per-RAF DOM layout reads."
+  },
+  "recommendedSmallFirstPatch": [
+    "Merge squad count/lifetime into one badge and remove the duplicate beacon bottom caption.",
+    "Route tissue/facility/squad/target weakness text through a shared collector; retain all body/danger geometry.",
+    "Pass cached real HUD rectangles and viewport bounds to the screen layout; make routine captions yield to critical HP/weakness/danger text.",
+    "Compact redundant HUD explanatory rows while playing; keep player/organ/infection/vitality and current lethal countdown always visible.",
+    "Add stable-placement diagnostics so screenshot verification can assert chosen bounds and protection conflicts without guessing pixels."
+  ],
+  "futureVerification": [
+    "Pure layout checks for tissue+beacon coincidence, two neighboring devices, focused elite next to tissue, several exposed enemies, viewport edges and HUD rectangles; verify essential fallback and stable repeat placement.",
+    "Source/driver verification that no hp/attack/cooldown/range/target selection/collision changes were introduced; current aim transforms and low-effects essential cues must remain.",
+    "Real input screenshots at1366×768 and small-height viewport, both effects modes, with the same archived comparison clearly marked as different live states; explicit crowd near tissue/beacon/valve and near all four HUD edges.",
+    "Actual attack/weakness/bite evidence: target HP loss and accepted event, visible bite pose/trace where applicable, intact attack circle/cross/countdown, actual E preview/cost. Screenshots alone do not prove damage or eligibility.",
+    "A focused frame-budget check after adding screen layout and HUD caching; do not reuse v074 FPS as v075 runtime proof. No extra1000-session batch is needed merely for label placement if battle code is unchanged."
+  ],
+  "limitations": [
+    "This is a proposal and source review, not implemented or tested v075 behavior.",
+    "The two viewed PNGs are existing v074 pressure captures from sequential live states; no exact-state A/B, new browser, screenshot, human readability or fun claim is made.",
+    "Fixed CSS describes likely occupied areas, but exact HUD rectangles must be measured in the actual DOM after dynamic text and responsive CSS.",
+    "No previous v074 report, raw output, runtime-summary, archived file, source or test was edited."
+  ]
+}

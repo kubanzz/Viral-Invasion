@@ -1,0 +1,466 @@
+{
+  "schemaVersion": 1,
+  "status": "read-only-proposal-before-v075-implementation",
+  "reviewBaseRevision": "7b86eb482115f8e2118ed5597225448ef6e95c4b",
+  "readAtUtc": "2026-10-27T11:24:01.872Z",
+  "method": "Source and archived JSON review only. No browser, game, test or build was run for this report. Manifests describe read-time bytes; parallel v075 implementation may subsequently change source.",
+  "requirements": [
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+      "line": 297,
+      "exactText": "- `AC-M14-06`：常驻 HUD 使用克制的生物科技风格，玩家、病毒、器官危机和抗体效果层级清楚；在不同器官配色下均有足够文字/形状对比，面板不成为主要光污染源。"
+    },
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+      "line": 298,
+      "exactText": "- `AC-M14-07`：正式战斗时使用高密度病毒、粒子、前景遮挡场景验证目标/危险/弱点可读；同时提供低特效档并保证危险判定提示不消失。"
+    },
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+      "line": 395,
+      "exactText": "12. `RUN-12` 风格与战斗可读性：同场景病毒三分支形态对照→心脏搏动及肺部气流对照→密集混战/低特效→玩家、危险、弱点和当前器官均能辨认。"
+    },
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+      "line": 142,
+      "exactText": "| `VIS-07` | G1–G2 | 危险、弱点、扫描与治疗至少两种非颜色信号；高光和粒子不过度盖住关键角色/预警 | 常规与密集战斗截图 |"
+    },
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+      "line": 145,
+      "exactText": "| `VIS-10` | G4 | 实时 HUD 在 1366×768 与 1920×1080 下不遮挡关键可射击区域，缩放后布局/提示可读 | 多分辨率截图 |"
+    },
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+      "line": 146,
+      "exactText": "| `VIS-11` | G4 | 普通/低特效模式下的伤害与碰撞判定一致，低特效仍显示所有致命警示；压力战斗满足 M16 帧率预算 | 同 seed 对比 + 帧率报告 |"
+    }
+  ],
+  "sourceManifest": [
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+      "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+      "bytes": 38469
+    },
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+      "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b",
+      "bytes": 14882
+    },
+    {
+      "path": "src/render/renderer.ts",
+      "sha256": "def49278c80f1204267059b934c21f62e3cacc6736a4e572c59f8188b80be268",
+      "bytes": 47530
+    },
+    {
+      "path": "src/render/battleVisuals.ts",
+      "sha256": "eb018bf5de39ce3ebd11cc1813b2befa8448e378c8b9f11938b8066fccc508f4",
+      "bytes": 22972
+    },
+    {
+      "path": "src/render/encounterVisuals.ts",
+      "sha256": "e54daa69e6da56935f5b6741bb5bf565a3909389d2bdc5f6935d1a5d9303616c",
+      "bytes": 5338
+    },
+    {
+      "path": "src/render/growthVisuals.ts",
+      "sha256": "c688ad679fc4b4cded6da327a70073f6a77564f0db8d53f9d51f1d0288464f2f",
+      "bytes": 9458
+    },
+    {
+      "path": "src/render/raisedObstacleOcclusion.ts",
+      "sha256": "0486c6daed7617275f28aab6406f84783a3e3695ae1059e9a2c99634f47308f1",
+      "bytes": 9085
+    },
+    {
+      "path": "tests/fixtures/renderProbe.ts",
+      "sha256": "01ec59fb39df34ddbac9dc2c45d4fe5178c42706671b5915a2b1aacfca166ccc",
+      "bytes": 7681
+    },
+    {
+      "path": "tests/unit/coreVisuals.test.ts",
+      "sha256": "30dea1db4a3f0a2a3714bb43540426f90cbafdfcc51babde70153972db9e989d",
+      "bytes": 3472
+    },
+    {
+      "path": "tests/unit/encounter-presentation.test.ts",
+      "sha256": "54598f92a99d68339ae28aaa761c3e7df2e28a4ac18f8eb4bad0060159ef281c",
+      "bytes": 6672
+    },
+    {
+      "path": "tests/unit/raised-obstacle-occlusion.test.ts",
+      "sha256": "ebd79dc77396e5701638b42ee8e593cc3c5325d58463eae8dbb072d366c159f8",
+      "bytes": 10132
+    },
+    {
+      "path": "artifacts/completion-v074/visual-acceptance.json",
+      "sha256": "dbeed80452e50a7d5f34e5883a1d745d8194de2fd1d59ed9876c141ffb2e4270",
+      "bytes": 58390
+    }
+  ],
+  "findings": [
+    {
+      "id": "D01",
+      "severity": "high",
+      "scope": "src/render/renderer.ts / drawEncounterSignals",
+      "finding": "Active source-to-tissue ring, dashed path, arrows and countdown are drawn before y-sorted bodies, raised obstacles, foreground and post-effects. The later passes can obscure essential crisis cues. Actor-only obstacle fading does not protect danger geometry.",
+      "recommendation": "Separate introductory ground hints from essential crisis cues and draw essential cues after foreground/effects. Preserve true source/tissue coordinates, IDs, chargeRemaining and blocked/paused/exhausted semantics."
+    },
+    {
+      "id": "D02",
+      "severity": "high",
+      "scope": "drawBattleDangers / drawMotherCoreDangers / drawBattleLabels",
+      "finding": "Ordinary and mother-core dangers are late-rendered, but later labels and grouped weakness captions have no common protected-region pool. Existing target-only occupied bounds do not include danger captions, facilities, tissue, protocol or HUD rectangles.",
+      "recommendation": "Use shared scene label placement for danger captions and weakness; protect exact hazard boundaries/crosses without moving or merging attack geometry. Pure no-overlap assertions are necessary checks, not proof of human readability."
+    },
+    {
+      "id": "D03",
+      "severity": "medium",
+      "scope": "tests/fixtures/renderProbe.ts",
+      "finding": "Full-state immutability harness is reusable, but has no bound runner, semantic primitive record, transform/clip/alpha inspection, pass-order proof, HUD measurement or viewport density qualification.",
+      "recommendation": "Attach an isolated runner and semantic recording adapter; retain actual native Canvas screenshots and human visual review."
+    }
+  ],
+  "signalInventory": [
+    {
+      "id": "ordinary-windup",
+      "source": "live target.attackAim/attackAt and attackRadius ?? B.attackRadius",
+      "nonColor": [
+        "outer boundary + inner dashed circle",
+        "progress arc + center X"
+      ],
+      "low": "same mandatory geometry; no low parameter",
+      "negative": "dead/expired/no aim excluded; core with accepted combat uses core branch; do not infer from Effect(kind=danger)"
+    },
+    {
+      "id": "pending-split",
+      "source": "target.splitAt and every splitPositions; may belong to hp=0 parent",
+      "nonColor": [
+        "dashed 18-radius landing circle + crossbar",
+        "⋈ remaining-time caption"
+      ],
+      "low": "all pending positions and time required",
+      "negative": "elapsed or absent pending split excluded; dead parent is not a valid absence reason"
+    },
+    {
+      "id": "core-crystal-sweep",
+      "source": "serialized origin/angle/halfAngle/range; actual wallHit clipping",
+      "nonColor": [
+        "clipped sector outline",
+        "direction chevrons + named numeric countdown"
+      ],
+      "low": "same geometry and time",
+      "negative": "expired/wrong organ/no attack excluded; blocked rays do not gain chevrons"
+    },
+    {
+      "id": "core-fission-burst",
+      "source": "serialized attack.aim/radius and resolveAt",
+      "nonColor": [
+        "range circle + center X",
+        "progress arc + named numeric countdown"
+      ],
+      "low": "same geometry and time",
+      "negative": "circle is an envelope; actual damage also depends on LOS"
+    },
+    {
+      "id": "core-corrosion",
+      "source": "serialized attack.aim/radius, real player-to-source scanRange/scanReady",
+      "nonColor": [
+        "circle + center X + source-to-aim dashed line",
+        "countdown + actual Q interrupt/approach/cooldown instruction"
+      ],
+      "low": "same geometry and instruction",
+      "negative": "never advertise ready Q if range/cooldown denies it"
+    },
+    {
+      "id": "core-brood",
+      "source": "every serialized attack.landings coordinate and attack.radius",
+      "nonColor": [
+        "dashed landing circle + center X",
+        "progress arc + finite-split caption/time"
+      ],
+      "low": "all landings retained",
+      "negative": "indirect spawning hazard; do not label as immediate damage disk"
+    },
+    {
+      "id": "source-crisis",
+      "source": "same-organ arming/charging/exhausted crisis with live accepted source",
+      "nonColor": [
+        "source ring + four corners",
+        "source-to-tissue dashed line + direction arrows + tissue ring",
+        "numeric real chargeRemaining or pause/block/exhausted text"
+      ],
+      "low": "all essential geometry/text remains; only stroke width currently differs",
+      "negative": "no live source/wrong organ/inactive phase excluded; very short path omits line/timer by guard; exhausted omits path/timer"
+    },
+    {
+      "id": "weakness",
+      "source": "actual exposedUntil/scanned/revealed/active accepted marks",
+      "nonColor": [
+        "crystal cracks/open plates and exposed center",
+        "◇ timed weakness caption; scan/mimic dashed or zigzag outlines"
+      ],
+      "low": "body morphology and essential caption retained",
+      "negative": "MIMIC unrevealed phase does not gain target label; fission child must not gain mother Ⅱ"
+    },
+    {
+      "id": "scan-heal",
+      "source": "live Effect scan/heal and current progress",
+      "nonColor": [
+        "scan expanding ring + inner dashed circle",
+        "healing ring + rising cross"
+      ],
+      "low": "basic shape preserved; decorative sparks may reduce",
+      "negative": "expired or future effects excluded; do not equate particles with damage"
+    }
+  ],
+  "archiveScan": {
+    "roots": [
+      "artifacts/completion-v074/performance",
+      "artifacts/completion-v074/browser/full-1/output"
+    ],
+    "jsonFilesRead": 89,
+    "parseFailures": [],
+    "fullStateReferences": 375,
+    "referenceCounts": {
+      "fullSnapshots": 375,
+      "ordinary": 53,
+      "split": 10,
+      "core": 0,
+      "crisis": 13,
+      "weakness": 35
+    },
+    "note": "References include repeated/nested snapshots and are not unique runs. Archive scan did not execute gameplay. Capture provenance/version remains v074.",
+    "selectedSources": [
+      {
+        "path": "artifacts/completion-v074/performance/attempt-1/dense-low-state.json",
+        "sha256": "4805121fb22d378a04f8001a44414094d16a398d2898891958dfc5dd42b84ae8",
+        "pointer": "",
+        "tick": 27061,
+        "elapsed": 451.01666666666665,
+        "phase": "playing",
+        "organ": "heart",
+        "targets": 25,
+        "ordinaryWindup": [
+          "elite-8",
+          "virus-57",
+          "virus-70",
+          "virus-75",
+          "virus-83"
+        ],
+        "splitPending": [],
+        "coreAttack": null,
+        "crisis": {
+          "status": "exhausted",
+          "remaining": 0,
+          "blocked": false
+        },
+        "exposed": [],
+        "scanned": [
+          "elite-8",
+          "virus-57",
+          "virus-58",
+          "virus-60",
+          "virus-62",
+          "virus-65",
+          "virus-68",
+          "virus-70",
+          "virus-73",
+          "virus-75",
+          "virus-77",
+          "virus-78",
+          "virus-79",
+          "virus-81",
+          "virus-82",
+          "virus-83",
+          "virus-85"
+        ],
+        "effects": [
+          "danger",
+          "hit",
+          "scan"
+        ]
+      },
+      {
+        "path": "artifacts/completion-v074/performance/attempt-1/dense-standard-state.json",
+        "sha256": "1905713651bf0a20edd2c0421b78026c0a3911e34d48f7ba516bd2bb6b27bc5f",
+        "pointer": "",
+        "tick": 8864,
+        "elapsed": 147.73333333333332,
+        "phase": "playing",
+        "organ": "heart",
+        "targets": 25,
+        "ordinaryWindup": [
+          "virus-16",
+          "virus-24",
+          "virus-29",
+          "virus-30"
+        ],
+        "splitPending": [],
+        "coreAttack": null,
+        "crisis": {
+          "status": "exhausted",
+          "remaining": 0,
+          "blocked": false
+        },
+        "exposed": [],
+        "scanned": [
+          "elite-8",
+          "virus-9",
+          "virus-16",
+          "virus-18",
+          "virus-20",
+          "virus-22",
+          "virus-24",
+          "virus-26",
+          "virus-27",
+          "virus-28",
+          "virus-29",
+          "virus-30",
+          "virus-31",
+          "virus-33"
+        ],
+        "effects": [
+          "scan",
+          "danger",
+          "heal"
+        ]
+      },
+      {
+        "path": "artifacts/completion-v074/browser/full-1/output/g4-acceptance-gaps-RUN04-g-d3ac8-area-clear-no-grandchildren-chrome/run04-lineage.json",
+        "sha256": "43ba78b034f6a3f885a2cf49d0bc71bf1c5545c14a01bf14f5322268f6f8db77",
+        "pointer": "/checkpoints/motherKilled",
+        "tick": 1454,
+        "elapsed": 24.233333333333334,
+        "phase": "playing",
+        "organ": "heart",
+        "targets": 3,
+        "ordinaryWindup": [],
+        "splitPending": [
+          {
+            "id": "elite-5",
+            "hp": 0,
+            "positions": 2
+          }
+        ],
+        "coreAttack": null,
+        "crisis": null,
+        "exposed": [],
+        "scanned": [],
+        "effects": [
+          "danger",
+          "hit",
+          "beam"
+        ]
+      },
+      {
+        "path": "artifacts/completion-v074/browser/full-1/output/encounter-front-pulse-Form-06ccb-lve-exposure-and-is-cleared-chrome/front-pulse-counter.json",
+        "sha256": "b7d03a5ca60ef045d0b22c9c9a853908a875326572a1e05b62a7b177edda8003",
+        "pointer": "/checkpoints/exposed",
+        "tick": 834,
+        "elapsed": 13.9,
+        "phase": "playing",
+        "organ": "heart",
+        "targets": 5,
+        "ordinaryWindup": [],
+        "splitPending": [],
+        "coreAttack": null,
+        "crisis": null,
+        "exposed": [
+          "elite-4"
+        ],
+        "scanned": [],
+        "effects": [
+          "pulse"
+        ]
+      },
+      {
+        "path": "artifacts/completion-v074/browser/full-1/output/encounters-v070-Formal-enc-8327f-real-stages-and-clean-retry-chrome/formal-evidence.json",
+        "sha256": "8ef03b8ce44fcfbe283fbbfb403389c0fdf92e005e06ad44cd46f0761204c17c",
+        "pointer": "/milestones/impact",
+        "tick": 2995,
+        "elapsed": 49.916666666666664,
+        "phase": "playing",
+        "organ": "lung",
+        "targets": 9,
+        "ordinaryWindup": [],
+        "splitPending": [],
+        "coreAttack": null,
+        "crisis": {
+          "status": "charging",
+          "remaining": 7.866666666666667,
+          "blocked": false
+        },
+        "exposed": [],
+        "scanned": [],
+        "effects": [
+          "flow"
+        ]
+      }
+    ],
+    "missing": [
+      "No active mother-core attack GameState found among these 375 references, despite route PNGs/events; cannot reconstruct a full snapshot from screenshots/events. Capture future crystal/fission/corrosion/brood snapshots through ordinary legal input.",
+      "Selected high-target states have 25 world targets; in-view density, simultaneous foreground overlap and HUD-to-threat overlap were not qualified by this scan.",
+      "Existing normal/low archived PNGs are different ticks and cannot be an exact-state A/B result."
+    ]
+  },
+  "pureDrawProtocol": {
+    "input": "One complete immutable archived real GameState + immutable aim + explicit output viewport. Do not modify its player, targets, clock, traits, attacks or effects to complete real-scene coverage.",
+    "isolation": "Independent pure drawing page imports Renderer but not main.ts/GameSession/step; no route that injects a snapshot into a released live game.",
+    "equivalence": "Clone original state into normal/low independently, create separate Renderer instances, use symmetric warmup for GrowthVisuals caches, await fonts.ready, and render 2–120 frames at identical tick/elapsed. Each frame compares complete JSON and SHA-256 plus existing HP/damage/collision subfingerprints for original/normal/low.",
+    "oracle": "Derive expected sources, guard eligibility, coordinates/radii, wall-clipped vertices and countdown text from serialized state independently of draw callbacks. Record actual Canvas primitive method/arguments, transform, save/restore, clip, globalAlpha, line style and draw-pass order. Never stub a recorder to return expected signals.",
+    "assertions": [
+      "Every eligible ordinary attack retains its aim/radius, dashed inner boundary, nonzero effective stroke alpha, progress arc and X in both modes.",
+      "Every pending split position remains even after mother death. No unrelated target supplies its landing cue.",
+      "Each core variant retains every serialized landing/aim and true range; sweep vertices follow actual world wall clipping; interrupt instruction follows true range/cooldown.",
+      "Crisis source/organization IDs and real chargeRemaining match source snapshot. Both modes retain source/tissue/path/arrow semantics and post-foreground/effects pass order. Paused/blocked/exhausted/wrong-organ/dead/short-path cases use their legitimate guards.",
+      "Shared measured scene-label bounds must be finite, viewport-clamped, respect known HUD rectangles and protected danger strokes/crosses, with explicit essential fallback diagnostics. No label is counted as a preserved primitive if effective alpha is zero or wholly clipped.",
+      "Match required semantic signals between modes; allow reduced decorative particles and minor stroke width differences. Do not demand entire PNG identity.",
+      "Real native Canvas output must still be inspected at final display size: player silhouette, each hazard extent/origin/direction/time, focused weakness and current organ remain visually distinguishable under foreground/effects and HUD. Record actual screenshot paths and reviewed findings."
+    ],
+    "syntheticBoundary": "Explicitly named synthetic pure-draw composition fixtures may combine overlapping threats/foreground/HUD to exercise layout. Keep them separate from unmodified real-snapshot evidence; they do not prove reachability, official campaign success, human understanding or fun.",
+    "forbiddenShortcuts": [
+      "Pixel count differences do not imply readable or unreadable.",
+      "No mutation/injection into live game to fabricate a missing dense scene.",
+      "No viewport/DPR trick or synthetic blur substitutes for native OS focus/minimize or real browser zoom."
+    ]
+  },
+  "harnessReuse": [
+    {
+      "path": "tests/fixtures/renderProbe.ts",
+      "reuse": "Independent real Canvas pair, full JSON/SHA equality, state subfingerprints and symmetric frame loop.",
+      "adapter": "Runner, provenance manifest, semantic primitive/layer recorder, HUD integration, selected real-source matrix, final screenshots review."
+    },
+    {
+      "path": "tests/unit/coreVisuals.test.ts",
+      "reuse": "True serialized angle/range/radius/landing and wall-clipped sweep tests.",
+      "adapter": "Track alpha/transforms/clip/pass order/styles/text and low parity; classify these current fixtures as synthetic mechanism tests."
+    },
+    {
+      "path": "tests/unit/encounter-presentation.test.ts",
+      "reuse": "Low-mode crisis rings/timer, immutable state and absent/dead/off-organ guards.",
+      "adapter": "Post-effects separation and actual geometry/time/alpha assertions, blocked/paused/exhausted/short-path negatives, full compositor contract."
+    },
+    {
+      "path": "tests/unit/raised-obstacle-occlusion.test.ts",
+      "reuse": "Save/restore/clip recorder and genuine raised obstacle contours.",
+      "adapter": "Broaden recorder for transformed danger primitives and label bounds; actor occlusion alone cannot prove warning retention."
+    },
+    {
+      "path": "artifacts/completion-v074/visual-plan/render-fixture.ts",
+      "reuse": "Explicit synthetic pure-render illustration and cautious mask geometry description.",
+      "adapter": "Do not use modified clones as real snapshot A/B or human acceptance."
+    },
+    {
+      "path": "artifacts/completion-v074/visual-plan/run-density.mjs",
+      "reuse": "Real-input capture route and capture guard patterns.",
+      "adapter": "Current sequential modes do not share a tick; snapshot replay must remain in the independent pure-draw page."
+    }
+  ],
+  "openAcceptance": [
+    "VIS10 still requires actual DOM HUD rectangles, both 1366×768 and 1920×1080, and real zoom evidence. Canvas-only captures do not close it.",
+    "VIS11 damage/collision invariance needs actual existing mechanism tests plus final source/build regression; pure draw immutability does not execute damage.",
+    "New per-frame layout requires its own performance check; archived v074 600s FPS does not certify v075.",
+    "No 5-player blind-playtest, native OS focus/minimize or real zoom claim is made."
+  ]
+}

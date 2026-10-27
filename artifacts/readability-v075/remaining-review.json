@@ -1,0 +1,1247 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-27T11:24:24.356Z",
+  "title": "v075推进准备：074剩余18项原文只读复核",
+  "method": "只读原文/已有源码/测试/当前原始日志和3张实际view_image看图。没有启动浏览器、运行测试/构建、修改src/tests/Docs或旧证据；只写本JSON及伴随MD。文件夹v075是工作计划，不表示package或发行版本已变。",
+  "baseline": {
+    "version": "0.7.4",
+    "gameSha256": "a253faaf85e61370ec7abd71521a955c14265d67daf04f9db2e55de94b693a39",
+    "audit": {
+      "path": "artifacts/completion-v074/requirements-current.json",
+      "sha256": "ba9535370911cff1f09d3d86e4e7b266e11f4bf192ff5225bc9a2657ec45143c"
+    },
+    "retainedCounts": {
+      "proven": 94,
+      "partial": 15,
+      "missing": 3,
+      "contradicted": 0,
+      "unreviewed": 0
+    },
+    "remaining": 18,
+    "humanParticipants": 0,
+    "rootAuthorizedTechnicalCandidateFirst": true
+  },
+  "sourceReadManifest": [
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+      "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74"
+    },
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+      "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b"
+    },
+    {
+      "path": "tests/e2e/g3.spec.ts",
+      "sha256": "e58f5c5214d2aa1696bfe0d2aba6523d53a9183e62d7008d191f8c0c2d9f7249"
+    },
+    {
+      "path": "tests/helpers/g3Driver.ts",
+      "sha256": "2dcaa812ae1aa99d5ada5c6e3f4d6e431047483f0e0dd399ed36328b446e6f3b"
+    },
+    {
+      "path": "tests/e2e/encounters-v070.spec.ts",
+      "sha256": "108bf4fa8f3ef55bdccf687088d8f894c7fb294c3c066f4211faa268d27e8087"
+    },
+    {
+      "path": "src/game/campaign.ts",
+      "sha256": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3"
+    },
+    {
+      "path": "src/game/campaignEncounters.ts",
+      "sha256": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93"
+    },
+    {
+      "path": "src/game/organConfig.ts",
+      "sha256": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19"
+    },
+    {
+      "path": "src/game/campaignTypes.ts",
+      "sha256": "ff301247b34797b7731bc5e0e0b792eef99bbf75eefd4955d2876a4e7c2788dd"
+    },
+    {
+      "path": "artifacts/completion-v074/browser/full-1/report.json",
+      "sha256": "a6f54966d21e737e491feedd43b0be4ed8c8dc669664575bd664cc85d4d03e50"
+    },
+    {
+      "path": "artifacts/completion-v074/browser/full-1/execution.json",
+      "sha256": "8fa18246eb691f9359689a59e9ca58934d131aca6df61c29481fa1c29eb7a43c"
+    },
+    {
+      "path": "artifacts/completion-v074/performance/attempt-1/memory-review.json",
+      "sha256": "da7a5e24e35c3d666794513ffbbb949a73c69a83b73d2612e7950780cb4d3b26"
+    },
+    {
+      "path": "artifacts/completion-v074/visual-acceptance.json",
+      "sha256": "dbeed80452e50a7d5f34e5883a1d745d8194de2fd1d59ed9876c141ffb2e4270"
+    }
+  ],
+  "prioritizedWorkstreams": [
+    {
+      "priority": 1,
+      "key": "local-readability",
+      "ids": [
+        "AC-M14-06",
+        "AC-M14-07",
+        "VIS-07",
+        "VIS-11",
+        "RUN-12"
+      ],
+      "independentlyActionable": true,
+      "action": "先修已观察的局部文字/设施/免疫队伍叠加及HUD遮挡；按生产危险枚举补同快照普通/低特效不改状态的绘制比较，再用正式真实输入场景审图。",
+      "acceptance": "玩家/活动危险边界/弱点和当前器官在代表性密集与前景画面可辨；不能用24世界计数代替视野内密度，也不能用像素差直接推可读。",
+      "dependency": "root正处理Renderer设施/免疫文字；UI紧凑化应保留感染致命倒计时、HP、组织/全身稳定、母巢反制与器官出口风险。"
+    },
+    {
+      "priority": 2,
+      "key": "migration-three-way",
+      "ids": [
+        "AC-M12-02"
+      ],
+      "independentlyActionable": true,
+      "action": "只补相同seed/配置三路受理后下一阶段实际图与对应快照/事件账；已有玩法、三路真实胜利和成本日志无须重写。",
+      "acceptance": "三路源/敌人位置与器官压力差异有原始日志和实际图逐一对应；达到原文下一阶段即够，不额外要求整局再胜利或完全同tick/同玩家位置。",
+      "dependency": "新版本如改HUD/Renderer，等构建冻结后合并采集，避免重复跑。"
+    },
+    {
+      "priority": 3,
+      "key": "memory-qualification",
+      "ids": [
+        "AC-M16-04"
+      ],
+      "independentlyActionable": true,
+      "action": "先只读检查118自然样本分钟趋势和实际保留对象/缓存生命周期，再决定针对性修复与必要的同设备新版本10分钟观测。",
+      "acceptance": "本地074帧率/无致命错误子句已过；自然used+15.19%/capacity+69.23%、终后GC重开used+3.61%尚不支持无持续增长。不要以容量扩张直接诊断泄漏，或把强制GC样本当自然过程。",
+      "dependency": "独占性能运行应待生产改动冻结；原文只要求实际目标设备有限10分钟，不增设所有硬件或无限期零增长门槛。"
+    },
+    {
+      "priority": 4,
+      "key": "actual-browser-zoom",
+      "ids": [
+        "AC-M14-01",
+        "VIS-10",
+        "RUN-11",
+        "AC-M16-06"
+      ],
+      "independentlyActionable": "conditional-real-browser-zoom-access",
+      "action": "在Chrome/Edge真实浏览器自身zoom改变后检查两指定尺寸下HUD替代布局、决定性目标/警示与实际射击/修复命中，并保留真实zoom设置来源和观测。",
+      "acceptance": "resize/DPR/Canvas变换、CSS zoom和CDP页面缩放都不能直接冒充浏览器自身zoom；物理Ctrl按键本身不是原文字面要求，真实zoom结果才是。",
+      "dependency": "先修常态HUD可见区，且需要可操作真实浏览器zoom的已授权环境。"
+    },
+    {
+      "priority": 5,
+      "key": "native-focus",
+      "ids": [
+        "AC-M01-02",
+        "AC-M09-03",
+        "AC-M16-06"
+      ],
+      "independentlyActionable": false,
+      "action": "真实桌面窗口切出/切回（必要时最小化）期间记录模拟时钟/事件不追帧、按住输入清理、草案唯一提交和暂停所有权。",
+      "acceptance": "保留合成blur处理测试为代码证据，不能替代真实OS焦点结果；暂停30秒和普通Tab/返回已经有当前实际浏览器证据。",
+      "dependency": "真实OS交互能力或用户原始桌面观察；当前报告不启动任何OS或浏览器操作。"
+    },
+    {
+      "priority": 6,
+      "key": "actual-player-observation",
+      "ids": [
+        "AC-M13-01",
+        "AC-M14-02",
+        "AC-M16-05",
+        "VIS-12"
+      ],
+      "independentlyActionable": false,
+      "action": "用真实正常游玩时间线验证约10–15分钟合法目标节奏；另收集5位首玩者前三分钟目标/变异/反制/失败风险、至少两类病毒/器官危险、策略变化和自愿复玩原始观察。",
+      "acceptance": "目前首玩者0/5。13-01原文未直接限定5人/首玩，不能把这些加作其字面门槛；但约一分钟优化脚本也不证明目标节奏。真实正常活动游玩可包含开发者实玩，不能故意空等凑时长。14-02必须是真新玩家，16-05/VIS12明确至少5人。",
+      "dependency": "用户已授权技术候选先交付、真人随后补，这属于延期而非通过；不编造理解率、趣味或商业潜力。"
+    },
+    {
+      "priority": 7,
+      "key": "visual-aggregate",
+      "ids": [
+        "AC-M16-07"
+      ],
+      "independentlyActionable": false,
+      "action": "随各VIS技术项与真人项原始证据逐项合并来源、同场景两档图和性能记录。",
+      "acceptance": "所有VIS01–12（含真实5人VIS12）未全部完成前，不把聚合行标通过。",
+      "dependency": "上面视觉、zoom、压力与真人各项结果，不另造一个自动汇总分数。"
+    }
+  ],
+  "items": [
+    {
+      "id": "AC-M01-02",
+      "original": {
+        "id": "AC-M01-02",
+        "text": "G0 暂停 30 秒时训练场实体、模拟时钟与事件数不推进；后台失焦恢复不一次性追赶积压帧。G1 起同样约束病毒增长/转移和感染负荷。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 163,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M01-02`：G0 暂停 30 秒时训练场实体、模拟时钟与事件数不推进；后台失焦恢复不一次性追赶积压帧。G1 起同样约束病毒增长/转移和感染负荷。"
+        }
+      },
+      "retainedVerdict": "partial",
+      "currentRemaining": [
+        "实际原生桌面切换焦点/最小化恢复的积压与按住输入结果未验证；synthetic blur只证明处理代码。"
+      ],
+      "workstreams": [
+        "native-focus"
+      ],
+      "literalGate": "原文技术/展示/环境子句按实际证据处理，不增加无限全场景/所有硬件或物理Ctrl专门门槛。",
+      "nextAction": [
+        "真实桌面窗口切出/切回（必要时最小化）期间记录模拟时钟/事件不追帧、按住输入清理、草案唯一提交和暂停所有权。"
+      ]
+    },
+    {
+      "id": "AC-M09-03",
+      "original": {
+        "id": "AC-M09-03",
+        "text": "选择面板开启时游戏暂停，选定/放弃后恢复；Tab/失焦/返回流程不得产生重复选择。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 244,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M09-03`：选择面板开启时游戏暂停，选定/放弃后恢复；Tab/失焦/返回流程不得产生重复选择。"
+        }
+      },
+      "retainedVerdict": "partial",
+      "currentRemaining": [
+        "实际原生失焦/恢复期间草案唯一提交与按住输入清理尚未验证。"
+      ],
+      "workstreams": [
+        "native-focus"
+      ],
+      "literalGate": "原文技术/展示/环境子句按实际证据处理，不增加无限全场景/所有硬件或物理Ctrl专门门槛。",
+      "nextAction": [
+        "真实桌面窗口切出/切回（必要时最小化）期间记录模拟时钟/事件不追帧、按住输入清理、草案唯一提交和暂停所有权。"
+      ]
+    },
+    {
+      "id": "AC-M12-02",
+      "original": {
+        "id": "AC-M12-02",
+        "text": "固定 seed 分别选择追击、封锁、放任后，下一阶段敌人位置/器官压力确实不同，有日志和画面对照。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 273,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M12-02`：固定 seed 分别选择追击、封锁、放任后，下一阶段敌人位置/器官压力确实不同，有日志和画面对照。"
+        }
+      },
+      "retainedVerdict": "partial",
+      "currentRemaining": [
+        "三路下一阶段位置/压力已有当前日志与输入结果，但未提供同一seed匹配阶段的三张画面对照及逐张审阅。"
+      ],
+      "workstreams": [
+        "migration-three-way"
+      ],
+      "literalGate": "原文技术/展示/环境子句按实际证据处理，不增加无限全场景/所有硬件或物理Ctrl专门门槛。",
+      "nextAction": [
+        "只补相同seed/配置三路受理后下一阶段实际图与对应快照/事件账；已有玩法、三路真实胜利和成本日志无须重写。"
+      ]
+    },
+    {
+      "id": "AC-M13-01",
+      "original": {
+        "id": "AC-M13-01",
+        "text": "通过合法目标在约 10–15 分钟内达成胜利；不允许只按倒数等到赢，也不允许只杀普通敌人跳过器官保护直接胜利。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 282,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M13-01`：通过合法目标在约 10–15 分钟内达成胜利；不允许只按倒数等到赢，也不允许只杀普通敌人跳过器官保护直接胜利。"
+        }
+      },
+      "retainedVerdict": "partial",
+      "currentRemaining": [
+        "约10–15分钟的目标玩家完整局节奏尚未取得真实观察；约一分钟优化脚本胜利只证明合法通关，不能通过此时长子句。"
+      ],
+      "workstreams": [
+        "actual-player-observation"
+      ],
+      "literalGate": "合法目标约10–15分钟；原文未直接要求5位首玩者，体验节奏须真实正常游玩而非故意空等。",
+      "nextAction": [
+        "用真实正常游玩时间线验证约10–15分钟合法目标节奏；另收集5位首玩者前三分钟目标/变异/反制/失败风险、至少两类病毒/器官危险、策略变化和自愿复玩原始观察。"
+      ]
+    },
+    {
+      "id": "AC-M14-01",
+      "original": {
+        "id": "AC-M14-01",
+        "text": "1366×768、1920×1080 浏览器尺寸下关键 HUD、选择面板不遮挡决定性目标；高缩放下有替代布局。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 292,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M14-01`：1366×768、1920×1080 浏览器尺寸下关键 HUD、选择面板不遮挡决定性目标；高缩放下有替代布局。"
+        }
+      },
+      "retainedVerdict": "partial",
+      "currentRemaining": [
+        "真正浏览器zoom后的替代布局/提示可读和决定性目标遮挡尚未验证；窗口/DPR不等于zoom。"
+      ],
+      "workstreams": [
+        "actual-browser-zoom"
+      ],
+      "literalGate": "原文技术/展示/环境子句按实际证据处理，不增加无限全场景/所有硬件或物理Ctrl专门门槛。",
+      "nextAction": [
+        "在Chrome/Edge真实浏览器自身zoom改变后检查两指定尺寸下HUD替代布局、决定性目标/警示与实际射击/修复命中，并保留真实zoom设置来源和观测。"
+      ]
+    },
+    {
+      "id": "AC-M14-02",
+      "original": {
+        "id": "AC-M14-02",
+        "text": "新玩家无需看外部文档，首次 3 分钟能识别“当前目标、病毒新能力、可用反制、失败风险”。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 293,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M14-02`：新玩家无需看外部文档，首次 3 分钟能识别“当前目标、病毒新能力、可用反制、失败风险”。"
+        }
+      },
+      "retainedVerdict": "missing",
+      "currentRemaining": [
+        "缺少未经外部文档引导的真实新玩家首次3分钟原始识别记录；自动输入不替代首玩观察。"
+      ],
+      "workstreams": [
+        "actual-player-observation"
+      ],
+      "literalGate": "必须真实新玩家前三分钟识别，不能用脚本或代理看图。",
+      "nextAction": [
+        "用真实正常游玩时间线验证约10–15分钟合法目标节奏；另收集5位首玩者前三分钟目标/变异/反制/失败风险、至少两类病毒/器官危险、策略变化和自愿复玩原始观察。"
+      ]
+    },
+    {
+      "id": "AC-M14-06",
+      "original": {
+        "id": "AC-M14-06",
+        "text": "常驻 HUD 使用克制的生物科技风格，玩家、病毒、器官危机和抗体效果层级清楚；在不同器官配色下均有足够文字/形状对比，面板不成为主要光污染源。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 297,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M14-06`：常驻 HUD 使用克制的生物科技风格，玩家、病毒、器官危机和抗体效果层级清楚；在不同器官配色下均有足够文字/形状对比，面板不成为主要光污染源。"
+        }
+      },
+      "retainedVerdict": "partial",
+      "currentRemaining": [
+        "Local labels/rings overlap near valve and tissue; lung bottom body is partly under tool dock. Complete integrated HUD hierarchy across decisive mixed scenes is not established.",
+        "实际局部文字/环形效果叠加，右HUD与肺部工具栏有采样遮挡；完整混战HUD层级尚未证明。"
+      ],
+      "workstreams": [
+        "local-readability"
+      ],
+      "literalGate": "原文技术/展示/环境子句按实际证据处理，不增加无限全场景/所有硬件或物理Ctrl专门门槛。",
+      "nextAction": [
+        "先修已观察的局部文字/设施/免疫队伍叠加及HUD遮挡；按生产危险枚举补同快照普通/低特效不改状态的绘制比较，再用正式真实输入场景审图。"
+      ]
+    },
+    {
+      "id": "AC-M14-07",
+      "original": {
+        "id": "AC-M14-07",
+        "text": "正式战斗时使用高密度病毒、粒子、前景遮挡场景验证目标/危险/弱点可读；同时提供低特效档并保证危险判定提示不消失。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 298,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M14-07`：正式战斗时使用高密度病毒、粒子、前景遮挡场景验证目标/危险/弱点可读；同时提供低特效档并保证危险判定提示不消失。"
+        }
+      },
+      "retainedVerdict": "partial",
+      "currentRemaining": [
+        "World density is not on-screen density; no complete dense decisive hazard/weakpoint/foreground proof from these images.",
+        "24是世界敌人数，截图仅约4–5只在视野内；未覆盖完整密集决定性母巢攻击/弱点/前景组合，不能称全部可读。"
+      ],
+      "workstreams": [
+        "local-readability"
+      ],
+      "literalGate": "原文技术/展示/环境子句按实际证据处理，不增加无限全场景/所有硬件或物理Ctrl专门门槛。",
+      "nextAction": [
+        "先修已观察的局部文字/设施/免疫队伍叠加及HUD遮挡；按生产危险枚举补同快照普通/低特效不改状态的绘制比较，再用正式真实输入场景审图。"
+      ]
+    },
+    {
+      "id": "AC-M16-04",
+      "original": {
+        "id": "AC-M16-04",
+        "text": "在项目实际目标设备上进行 10 分钟压力运行，平均帧率目标 ≥50、帧时间 p95 ≤33ms（可随设备记录与性能预算共同调整），无持续内存增长/无控制台致命错误。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 317,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M16-04`：在项目实际目标设备上进行 10 分钟压力运行，平均帧率目标 ≥50、帧时间 p95 ≤33ms（可随设备记录与性能预算共同调整），无持续内存增长/无控制台致命错误。"
+        }
+      },
+      "retainedVerdict": "partial",
+      "currentRemaining": [
+        "自然118样本首末60秒中位used堆+15.19%、分配容量+69.23%；不能据此确认不存在持续增长。终后强制GC菜单10重开used仍+3.61%，作为有限留存观察单列；尚不能关闭完整内存子句，不据此诊断必然泄漏或无限期稳定。"
+      ],
+      "workstreams": [
+        "memory-qualification"
+      ],
+      "literalGate": "原文技术/展示/环境子句按实际证据处理，不增加无限全场景/所有硬件或物理Ctrl专门门槛。",
+      "nextAction": [
+        "先只读检查118自然样本分钟趋势和实际保留对象/缓存生命周期，再决定针对性修复与必要的同设备新版本10分钟观测。"
+      ]
+    },
+    {
+      "id": "AC-M16-05",
+      "original": {
+        "id": "AC-M16-05",
+        "text": "5 位新玩家盲测并记录：能否认出变异、是否懂反制、是否愿意主动再开局、是否真正改变策略；必须诚实呈现原始观察，不编造通过率。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 318,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M16-05`：5 位新玩家盲测并记录：能否认出变异、是否懂反制、是否愿意主动再开局、是否真正改变策略；必须诚实呈现原始观察，不编造通过率。"
+        }
+      },
+      "retainedVerdict": "missing",
+      "currentRemaining": [
+        "真实新玩家盲测0/5；没有原始观察，不编造辨认/反制/策略/复玩结果。"
+      ],
+      "workstreams": [
+        "actual-player-observation"
+      ],
+      "literalGate": "明确至少5位真实首玩者；当前0/5。",
+      "nextAction": [
+        "用真实正常游玩时间线验证约10–15分钟合法目标节奏；另收集5位首玩者前三分钟目标/变异/反制/失败风险、至少两类病毒/器官危险、策略变化和自愿复玩原始观察。"
+      ]
+    },
+    {
+      "id": "AC-M16-06",
+      "original": {
+        "id": "AC-M16-06",
+        "text": "Chrome/Edge 断网启动、使用 `file://` 打开发行入口、刷新/失焦/暂停、不同 DPR 和窗口缩放均完成冒烟；不依赖 localhost、CDN、远程 API 或未授权资源。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 319,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M16-06`：Chrome/Edge 断网启动、使用 `file://` 打开发行入口、刷新/失焦/暂停、不同 DPR 和窗口缩放均完成冒烟；不依赖 localhost、CDN、远程 API 或未授权资源。"
+        }
+      },
+      "retainedVerdict": "partial",
+      "currentRemaining": [
+        "Chrome/Edge真正浏览器zoom与原生OS焦点恢复未验证；synthetic blur/resize/DPR不替代这两项。"
+      ],
+      "workstreams": [
+        "actual-browser-zoom",
+        "native-focus"
+      ],
+      "literalGate": "原文技术/展示/环境子句按实际证据处理，不增加无限全场景/所有硬件或物理Ctrl专门门槛。",
+      "nextAction": [
+        "在Chrome/Edge真实浏览器自身zoom改变后检查两指定尺寸下HUD替代布局、决定性目标/警示与实际射击/修复命中，并保留真实zoom设置来源和观测。",
+        "真实桌面窗口切出/切回（必要时最小化）期间记录模拟时钟/事件不追帧、按住输入清理、草案唯一提交和暂停所有权。"
+      ]
+    },
+    {
+      "id": "AC-M16-07",
+      "original": {
+        "id": "AC-M16-07",
+        "text": "完成 `VIS-01`–`VIS-12` 视觉验收并记录来源；同一场景正常/低特效有对照图及性能报告，真实玩家盲测与视觉清晰度记录分开。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 320,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "- `AC-M16-07`：完成 `VIS-01`–`VIS-12` 视觉验收并记录来源；同一场景正常/低特效有对照图及性能报告，真实玩家盲测与视觉清晰度记录分开。"
+        }
+      },
+      "retainedVerdict": "partial",
+      "currentRemaining": [
+        "VIS12 five-player observations remain0/5, actual browser zoom/native gaps and remaining mixed visual clauses are separate.",
+        "VIS-07/10/11密集危险/HUD/zoom与VIS-12真实5人仍未全部闭合；不能以技术图片及性能总数宣称VIS01–12全部通过。"
+      ],
+      "workstreams": [
+        "visual-aggregate"
+      ],
+      "literalGate": "原文技术/展示/环境子句按实际证据处理，不增加无限全场景/所有硬件或物理Ctrl专门门槛。",
+      "nextAction": [
+        "随各VIS技术项与真人项原始证据逐项合并来源、同场景两档图和性能记录。"
+      ]
+    },
+    {
+      "id": "RUN-11",
+      "original": {
+        "id": "RUN-11",
+        "text": "斜俯视空间与命中：二维自由移动→经过前景组织→Y 排序切换→360° 射击/修复→缩放后坐标与命中一致，场景没有横版重力/假遮挡软锁。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 394,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "11. `RUN-11` 斜俯视空间与命中：二维自由移动→经过前景组织→Y 排序切换→360° 射击/修复→缩放后坐标与命中一致，场景没有横版重力/假遮挡软锁。"
+        }
+      },
+      "retainedVerdict": "partial",
+      "currentRemaining": [
+        "真正浏览器zoom后的命中/修复/提示结果未验证，当前只有resize与DPR条件。"
+      ],
+      "workstreams": [
+        "actual-browser-zoom"
+      ],
+      "literalGate": "原文技术/展示/环境子句按实际证据处理，不增加无限全场景/所有硬件或物理Ctrl专门门槛。",
+      "nextAction": [
+        "在Chrome/Edge真实浏览器自身zoom改变后检查两指定尺寸下HUD替代布局、决定性目标/警示与实际射击/修复命中，并保留真实zoom设置来源和观测。"
+      ]
+    },
+    {
+      "id": "RUN-12",
+      "original": {
+        "id": "RUN-12",
+        "text": "风格与战斗可读性：同场景病毒三分支形态对照→心脏搏动及肺部气流对照→密集混战/低特效→玩家、危险、弱点和当前器官均能辨认。",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+          "line": 395,
+          "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+          "exactLine": "12. `RUN-12` 风格与战斗可读性：同场景病毒三分支形态对照→心脏搏动及肺部气流对照→密集混战/低特效→玩家、危险、弱点和当前器官均能辨认。"
+        }
+      },
+      "retainedVerdict": "partial",
+      "currentRemaining": [
+        "Cannot certify broadly dense on-screen decisive danger/weakpoint readability from world24count; sampled4–5 visible enemies include right-HUD occlusion and local ring/text accumulation.",
+        "Matched exact-state low-effects rendering/danger completeness and actual dense core attack remain distinct unfinished clauses where required.",
+        "三trait与心肺真实差异已审阅；密集决定性危险/弱点和精确同状态低特效全警示对照仍未取得。"
+      ],
+      "workstreams": [
+        "local-readability"
+      ],
+      "literalGate": "原文技术/展示/环境子句按实际证据处理，不增加无限全场景/所有硬件或物理Ctrl专门门槛。",
+      "nextAction": [
+        "先修已观察的局部文字/设施/免疫队伍叠加及HUD遮挡；按生产危险枚举补同快照普通/低特效不改状态的绘制比较，再用正式真实输入场景审图。"
+      ]
+    },
+    {
+      "id": "VIS-07",
+      "original": {
+        "id": "VIS-07",
+        "text": "危险、弱点、扫描与治疗至少两种非颜色信号；高光和粒子不过度盖住关键角色/预警",
+        "expectedEvidence": "常规与密集战斗截图",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+          "line": 142,
+          "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b",
+          "exactLine": "| `VIS-07` | G1–G2 | 危险、弱点、扫描与治疗至少两种非颜色信号；高光和粒子不过度盖住关键角色/预警 | 常规与密集战斗截图 |"
+        }
+      },
+      "retainedVerdict": "partial",
+      "currentRemaining": [
+        "已有危险/弱点/扫描/治疗非颜色冗余信号，但实际局部环形/标签/右HUD叠加；完整密集危险与粒子遮挡范围未闭合。"
+      ],
+      "workstreams": [
+        "local-readability"
+      ],
+      "literalGate": "原文技术/展示/环境子句按实际证据处理，不增加无限全场景/所有硬件或物理Ctrl专门门槛。",
+      "nextAction": [
+        "先修已观察的局部文字/设施/免疫队伍叠加及HUD遮挡；按生产危险枚举补同快照普通/低特效不改状态的绘制比较，再用正式真实输入场景审图。"
+      ]
+    },
+    {
+      "id": "VIS-10",
+      "original": {
+        "id": "VIS-10",
+        "text": "实时 HUD 在 1366×768 与 1920×1080 下不遮挡关键可射击区域，缩放后布局/提示可读",
+        "expectedEvidence": "多分辨率截图",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+          "line": 145,
+          "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b",
+          "exactLine": "| `VIS-10` | G4 | 实时 HUD 在 1366×768 与 1920×1080 下不遮挡关键可射击区域，缩放后布局/提示可读 | 多分辨率截图 |"
+        }
+      },
+      "retainedVerdict": "partial",
+      "currentRemaining": [
+        "指定窗口已刷新技术命中/布局，但真正zoom与完整实时决定性目标/HUD遮挡仍未验证。"
+      ],
+      "workstreams": [
+        "actual-browser-zoom"
+      ],
+      "literalGate": "原文技术/展示/环境子句按实际证据处理，不增加无限全场景/所有硬件或物理Ctrl专门门槛。",
+      "nextAction": [
+        "在Chrome/Edge真实浏览器自身zoom改变后检查两指定尺寸下HUD替代布局、决定性目标/警示与实际射击/修复命中，并保留真实zoom设置来源和观测。"
+      ]
+    },
+    {
+      "id": "VIS-11",
+      "original": {
+        "id": "VIS-11",
+        "text": "普通/低特效模式下的伤害与碰撞判定一致，低特效仍显示所有致命警示；压力战斗满足 M16 帧率预算",
+        "expectedEvidence": "同 seed 对比 + 帧率报告",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+          "line": 146,
+          "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b",
+          "exactLine": "| `VIS-11` | G4 | 普通/低特效模式下的伤害与碰撞判定一致，低特效仍显示所有致命警示；压力战斗满足 M16 帧率预算 | 同 seed 对比 + 帧率报告 |"
+        }
+      },
+      "retainedVerdict": "partial",
+      "currentRemaining": [
+        "Dense all-decisive-warning coverage and same-state invariant checks need their own evidence; visual capture has noFPS conclusion, pressure qualification separately consumed.",
+        "当前同规则与采样低特效提示仍在，压力预算另有真实测量；所有致命警示在密集核心/前景组合完整保留及精确同状态对照尚未闭合。"
+      ],
+      "workstreams": [
+        "local-readability"
+      ],
+      "literalGate": "原文技术/展示/环境子句按实际证据处理，不增加无限全场景/所有硬件或物理Ctrl专门门槛。",
+      "nextAction": [
+        "先修已观察的局部文字/设施/免疫队伍叠加及HUD遮挡；按生产危险枚举补同快照普通/低特效不改状态的绘制比较，再用正式真实输入场景审图。"
+      ]
+    },
+    {
+      "id": "VIS-12",
+      "original": {
+        "id": "VIS-12",
+        "text": "至少 5 位首玩者观察：能认出玩家、至少两类病毒与正在生效的器官危险；逐条记录未认出的情况，不得编造主观分数",
+        "expectedEvidence": "盲测观察表",
+        "source": {
+          "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+          "line": 147,
+          "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b",
+          "exactLine": "| `VIS-12` | G4 | 至少 5 位首玩者观察：能认出玩家、至少两类病毒与正在生效的器官危险；逐条记录未认出的情况，不得编造主观分数 | 盲测观察表 |"
+        }
+      },
+      "retainedVerdict": "missing",
+      "currentRemaining": [
+        "真实新玩家盲测0/5；没有原始观察，不编造辨认/反制/策略/复玩结果。"
+      ],
+      "workstreams": [
+        "actual-player-observation"
+      ],
+      "literalGate": "明确至少5位真实首玩者；当前0/5。",
+      "nextAction": [
+        "用真实正常游玩时间线验证约10–15分钟合法目标节奏；另收集5位首玩者前三分钟目标/变异/反制/失败风险、至少两类病毒/器官危险、策略变化和自愿复玩原始观察。"
+      ]
+    }
+  ],
+  "migrationPlan": {
+    "original": {
+      "id": "AC-M12-02",
+      "text": "固定 seed 分别选择追击、封锁、放任后，下一阶段敌人位置/器官压力确实不同，有日志和画面对照。",
+      "source": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 273,
+        "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+        "exactLine": "- `AC-M12-02`：固定 seed 分别选择追击、封锁、放任后，下一阶段敌人位置/器官压力确实不同，有日志和画面对照。"
+      }
+    },
+    "existingRawCases": [
+      {
+        "folder": "g3-G3-offline-block-migrat-00bb5-e-retest-through-real-input-chrome",
+        "browser": "chrome",
+        "route": {
+          "path": "artifacts/completion-v074/browser/full-1/output/g3-G3-offline-block-migrat-00bb5-e-retest-through-real-input-chrome/route.json",
+          "sha256": "e80793fd98814ec4a28a95e70eef2a0307981cb19370455fdaf928d65cfd4e24"
+        },
+        "choice": "block",
+        "seed": 91,
+        "config": "campaign-1",
+        "guide": "guided",
+        "traits": [
+          "CARAPACE",
+          "FISSION"
+        ],
+        "finalSuccess": true,
+        "branchEvents": [
+          {
+            "type": "MIGRATION_WARNING",
+            "tick": 1282,
+            "data": {
+              "eventId": "migration:91:1",
+              "from": "heart",
+              "to": "lung",
+              "deadline": 33.36666666666667
+            }
+          },
+          {
+            "type": "MIGRATION_BLOCK_STARTED",
+            "tick": 1522,
+            "data": {
+              "eventId": "migration:91:1",
+              "completeAt": 27.366666666666667
+            }
+          },
+          {
+            "type": "MIGRATION_DECIDED",
+            "tick": 1642,
+            "data": {
+              "eventId": "migration:91:1",
+              "choice": "block",
+              "from": "heart",
+              "to": "lung",
+              "at": 27.366666666666667
+            }
+          },
+          {
+            "type": "ORGAN_INTEGRITY_CHANGED",
+            "tick": 1642,
+            "data": {
+              "organId": "heart",
+              "before": 83,
+              "after": 79,
+              "reason": "migration-block-pressure"
+            }
+          },
+          {
+            "type": "INFECTION_CHANGED",
+            "tick": 1642,
+            "data": {
+              "before": 0,
+              "after": 3,
+              "reason": "migration-retained"
+            }
+          },
+          {
+            "type": "ORGAN_CRISIS_ARMED",
+            "tick": 1642,
+            "data": {
+              "sourceId": "heart-crisis-source",
+              "organId": "heart",
+              "branch": "block",
+              "x": 1570,
+              "y": 790
+            }
+          },
+          {
+            "type": "ORGAN_CRISIS_STARTED",
+            "tick": 1643,
+            "data": {
+              "organId": "heart",
+              "sourceId": "heart-crisis-source",
+              "x": 1570,
+              "y": 790,
+              "targetX": 850,
+              "targetY": 1190,
+              "chargeSeconds": 8,
+              "maximumImpacts": 3,
+              "blockedByAirway": false
+            }
+          }
+        ],
+        "existingImages": [
+          {
+            "path": "artifacts/completion-v074/browser/full-1/output/g3-G3-offline-block-migrat-00bb5-e-retest-through-real-input-chrome/migration-warning.png",
+            "sha256": "551681373c15ffa4b9b9136b1eb4506656d7f11be9cacb4bf6d233ca0f5e48ca"
+          }
+        ]
+      },
+      {
+        "folder": "g3-G3-offline-block-migrat-00bb5-e-retest-through-real-input-edge",
+        "browser": "edge",
+        "route": {
+          "path": "artifacts/completion-v074/browser/full-1/output/g3-G3-offline-block-migrat-00bb5-e-retest-through-real-input-edge/route.json",
+          "sha256": "b27a28d2f2ed404fb9aadd4648529a728e6384fef181b8b2873255e805925f04"
+        },
+        "choice": "block",
+        "seed": 91,
+        "config": "campaign-1",
+        "guide": "guided",
+        "traits": [
+          "CARAPACE",
+          "FISSION"
+        ],
+        "finalSuccess": true,
+        "branchEvents": [
+          {
+            "type": "MIGRATION_WARNING",
+            "tick": 1267,
+            "data": {
+              "eventId": "migration:91:1",
+              "from": "heart",
+              "to": "lung",
+              "deadline": 33.11666666666667
+            }
+          },
+          {
+            "type": "MIGRATION_BLOCK_STARTED",
+            "tick": 1503,
+            "data": {
+              "eventId": "migration:91:1",
+              "completeAt": 27.05
+            }
+          },
+          {
+            "type": "MIGRATION_DECIDED",
+            "tick": 1623,
+            "data": {
+              "eventId": "migration:91:1",
+              "choice": "block",
+              "from": "heart",
+              "to": "lung",
+              "at": 27.05
+            }
+          },
+          {
+            "type": "ORGAN_INTEGRITY_CHANGED",
+            "tick": 1623,
+            "data": {
+              "organId": "heart",
+              "before": 83,
+              "after": 79,
+              "reason": "migration-block-pressure"
+            }
+          },
+          {
+            "type": "INFECTION_CHANGED",
+            "tick": 1623,
+            "data": {
+              "before": 0,
+              "after": 3,
+              "reason": "migration-retained"
+            }
+          },
+          {
+            "type": "ORGAN_CRISIS_ARMED",
+            "tick": 1623,
+            "data": {
+              "sourceId": "heart-crisis-source",
+              "organId": "heart",
+              "branch": "block",
+              "x": 1570,
+              "y": 790
+            }
+          },
+          {
+            "type": "ORGAN_CRISIS_STARTED",
+            "tick": 1624,
+            "data": {
+              "organId": "heart",
+              "sourceId": "heart-crisis-source",
+              "x": 1570,
+              "y": 790,
+              "targetX": 850,
+              "targetY": 1190,
+              "chargeSeconds": 8,
+              "maximumImpacts": 3,
+              "blockedByAirway": false
+            }
+          }
+        ],
+        "existingImages": [
+          {
+            "path": "artifacts/completion-v074/browser/full-1/output/g3-G3-offline-block-migrat-00bb5-e-retest-through-real-input-edge/migration-warning.png",
+            "sha256": "7c7cf0422ee8e723f61e29c8dd7197b84316a85869f038661dfa0f7c757d10d1"
+          }
+        ]
+      },
+      {
+        "folder": "g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-chrome",
+        "browser": "chrome",
+        "route": {
+          "path": "artifacts/completion-v074/browser/full-1/output/g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-chrome/route.json",
+          "sha256": "4b4e0b27075afa5ca970614637138fbd5bd315ed5fcdd0dd6fbd6cde6de262ab"
+        },
+        "choice": "ignore",
+        "seed": 91,
+        "config": "campaign-1",
+        "guide": "guided",
+        "traits": [
+          "CARAPACE",
+          "FISSION"
+        ],
+        "finalSuccess": true,
+        "branchEvents": [
+          {
+            "type": "MIGRATION_WARNING",
+            "tick": 1283,
+            "data": {
+              "eventId": "migration:91:1",
+              "from": "heart",
+              "to": "lung",
+              "deadline": 33.38333333333333
+            }
+          },
+          {
+            "type": "MIGRATION_DECIDED",
+            "tick": 2003,
+            "data": {
+              "eventId": "migration:91:1",
+              "choice": "ignore",
+              "from": "heart",
+              "to": "lung",
+              "at": 33.38333333333333
+            }
+          },
+          {
+            "type": "ORGAN_INTEGRITY_CHANGED",
+            "tick": 2003,
+            "data": {
+              "organId": "lung",
+              "before": 76,
+              "after": 66,
+              "reason": "migration-established"
+            }
+          },
+          {
+            "type": "INFECTION_CHANGED",
+            "tick": 2003,
+            "data": {
+              "before": 0,
+              "after": 8,
+              "reason": "migration-established"
+            }
+          },
+          {
+            "type": "ORGAN_CRISIS_ARMED",
+            "tick": 2003,
+            "data": {
+              "sourceId": "lung-crisis-source",
+              "organId": "lung",
+              "branch": "ignore",
+              "x": 1210,
+              "y": 610
+            }
+          },
+          {
+            "type": "ORGAN_CRISIS_STARTED",
+            "tick": 2474,
+            "data": {
+              "organId": "lung",
+              "sourceId": "lung-crisis-source",
+              "x": 1210,
+              "y": 610,
+              "targetX": 1260,
+              "targetY": 1120,
+              "chargeSeconds": 8,
+              "maximumImpacts": 3,
+              "blockedByAirway": false
+            }
+          }
+        ],
+        "existingImages": [
+          {
+            "path": "artifacts/completion-v074/browser/full-1/output/g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-chrome/lung-first-arrival.png",
+            "sha256": "0714bb6096b9b2463453bb378a9b2564987292e9e7cb728e7788ddab718c94a8"
+          },
+          {
+            "path": "artifacts/completion-v074/browser/full-1/output/g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-chrome/migration-warning.png",
+            "sha256": "f7057b57064d6a7b478b9f60dac3f1b188157211537b82cb903df02db37915fd"
+          }
+        ]
+      },
+      {
+        "folder": "g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-edge",
+        "browser": "edge",
+        "route": {
+          "path": "artifacts/completion-v074/browser/full-1/output/g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-edge/route.json",
+          "sha256": "c86f4073140318289deec871eb8bc171578fe639e7df7f909df982cd1a88e526"
+        },
+        "choice": "ignore",
+        "seed": 91,
+        "config": "campaign-1",
+        "guide": "guided",
+        "traits": [
+          "CARAPACE",
+          "FISSION"
+        ],
+        "finalSuccess": true,
+        "branchEvents": [
+          {
+            "type": "MIGRATION_WARNING",
+            "tick": 1284,
+            "data": {
+              "eventId": "migration:91:1",
+              "from": "heart",
+              "to": "lung",
+              "deadline": 33.4
+            }
+          },
+          {
+            "type": "MIGRATION_DECIDED",
+            "tick": 2004,
+            "data": {
+              "eventId": "migration:91:1",
+              "choice": "ignore",
+              "from": "heart",
+              "to": "lung",
+              "at": 33.4
+            }
+          },
+          {
+            "type": "ORGAN_INTEGRITY_CHANGED",
+            "tick": 2004,
+            "data": {
+              "organId": "lung",
+              "before": 76,
+              "after": 66,
+              "reason": "migration-established"
+            }
+          },
+          {
+            "type": "INFECTION_CHANGED",
+            "tick": 2004,
+            "data": {
+              "before": 0,
+              "after": 8,
+              "reason": "migration-established"
+            }
+          },
+          {
+            "type": "ORGAN_CRISIS_ARMED",
+            "tick": 2004,
+            "data": {
+              "sourceId": "lung-crisis-source",
+              "organId": "lung",
+              "branch": "ignore",
+              "x": 1210,
+              "y": 610
+            }
+          },
+          {
+            "type": "ORGAN_CRISIS_STARTED",
+            "tick": 2476,
+            "data": {
+              "organId": "lung",
+              "sourceId": "lung-crisis-source",
+              "x": 1210,
+              "y": 610,
+              "targetX": 1260,
+              "targetY": 1120,
+              "chargeSeconds": 8,
+              "maximumImpacts": 3,
+              "blockedByAirway": false
+            }
+          }
+        ],
+        "existingImages": [
+          {
+            "path": "artifacts/completion-v074/browser/full-1/output/g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-edge/lung-first-arrival.png",
+            "sha256": "399259ecc88c090774959bf1f21092679a8c850383203ca9437c410036f9ada0"
+          },
+          {
+            "path": "artifacts/completion-v074/browser/full-1/output/g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-edge/migration-warning.png",
+            "sha256": "64eafe7e973e1f7528e2fc6de7897895e9b3d9b6d9d1a37b0220de2e50e6d664"
+          }
+        ]
+      },
+      {
+        "folder": "g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-chrome",
+        "browser": "chrome",
+        "route": {
+          "path": "artifacts/completion-v074/browser/full-1/output/g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-chrome/route.json",
+          "sha256": "abba9afcefca1fb840061c0fa6da8b6fb699a84095be8ce932c22d548890432b"
+        },
+        "choice": "pursue",
+        "seed": 91,
+        "config": "campaign-1",
+        "guide": "guided",
+        "traits": [
+          "CARAPACE",
+          "FISSION"
+        ],
+        "finalSuccess": true,
+        "branchEvents": [
+          {
+            "type": "MIGRATION_WARNING",
+            "tick": 1285,
+            "data": {
+              "eventId": "migration:91:1",
+              "from": "heart",
+              "to": "lung",
+              "deadline": 33.41666666666667
+            }
+          },
+          {
+            "type": "MIGRATION_DECIDED",
+            "tick": 1766,
+            "data": {
+              "eventId": "migration:91:1",
+              "choice": "pursue",
+              "from": "heart",
+              "to": "lung",
+              "at": 29.433333333333334
+            }
+          },
+          {
+            "type": "MIGRATION_INTERCEPTED",
+            "tick": 1783,
+            "data": {
+              "eventId": "migration:91:1",
+              "by": "clear"
+            }
+          },
+          {
+            "type": "ORGAN_CRISIS_ARMED",
+            "tick": 1783,
+            "data": {
+              "sourceId": "lung-crisis-source",
+              "organId": "lung",
+              "branch": "pursue",
+              "x": 1210,
+              "y": 610
+            }
+          },
+          {
+            "type": "ORGAN_CRISIS_STARTED",
+            "tick": 1784,
+            "data": {
+              "organId": "lung",
+              "sourceId": "lung-crisis-source",
+              "x": 1210,
+              "y": 610,
+              "targetX": 1260,
+              "targetY": 1120,
+              "chargeSeconds": 8,
+              "maximumImpacts": 3,
+              "blockedByAirway": false
+            }
+          }
+        ],
+        "existingImages": [
+          {
+            "path": "artifacts/completion-v074/browser/full-1/output/g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-chrome/lung-first-arrival.png",
+            "sha256": "79d745b7d0e3fb6ce503f5868691a21de706b65429ed65fac4fcebfe663f5871"
+          },
+          {
+            "path": "artifacts/completion-v074/browser/full-1/output/g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-chrome/migration-warning.png",
+            "sha256": "e30293affeb012765ceffa72ca0d4d859a3d58bd43cc0602bf647e417e6b502d"
+          }
+        ]
+      },
+      {
+        "folder": "g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-edge",
+        "browser": "edge",
+        "route": {
+          "path": "artifacts/completion-v074/browser/full-1/output/g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-edge/route.json",
+          "sha256": "97093be1b3b7cc12220ac8581258c183aa7b945a552148ec34e4f65465b5f918"
+        },
+        "choice": "pursue",
+        "seed": 91,
+        "config": "campaign-1",
+        "guide": "guided",
+        "traits": [
+          "CARAPACE",
+          "FISSION"
+        ],
+        "finalSuccess": true,
+        "branchEvents": [
+          {
+            "type": "MIGRATION_WARNING",
+            "tick": 1261,
+            "data": {
+              "eventId": "migration:91:1",
+              "from": "heart",
+              "to": "lung",
+              "deadline": 33.016666666666666
+            }
+          },
+          {
+            "type": "MIGRATION_DECIDED",
+            "tick": 1732,
+            "data": {
+              "eventId": "migration:91:1",
+              "choice": "pursue",
+              "from": "heart",
+              "to": "lung",
+              "at": 28.866666666666667
+            }
+          },
+          {
+            "type": "MIGRATION_INTERCEPTED",
+            "tick": 1749,
+            "data": {
+              "eventId": "migration:91:1",
+              "by": "clear"
+            }
+          },
+          {
+            "type": "ORGAN_CRISIS_ARMED",
+            "tick": 1749,
+            "data": {
+              "sourceId": "lung-crisis-source",
+              "organId": "lung",
+              "branch": "pursue",
+              "x": 1210,
+              "y": 610
+            }
+          },
+          {
+            "type": "ORGAN_CRISIS_STARTED",
+            "tick": 1750,
+            "data": {
+              "organId": "lung",
+              "sourceId": "lung-crisis-source",
+              "x": 1210,
+              "y": 610,
+              "targetX": 1260,
+              "targetY": 1120,
+              "chargeSeconds": 8,
+              "maximumImpacts": 3,
+              "blockedByAirway": false
+            }
+          }
+        ],
+        "existingImages": [
+          {
+            "path": "artifacts/completion-v074/browser/full-1/output/g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-edge/lung-first-arrival.png",
+            "sha256": "6f268ff0de7ae7b6659ae62b2eef28de5eed0d1cd5c2c8641dfdf0be1d13a75d"
+          },
+          {
+            "path": "artifacts/completion-v074/browser/full-1/output/g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-edge/migration-warning.png",
+            "sha256": "21bfd67d8d4cbc18bec47046da9547411fb826f6a65945c2aeedcdd68937be19"
+          }
+        ]
+      }
+    ],
+    "actuallyViewedCurrentImages": [
+      {
+        "path": "artifacts/completion-v074/browser/full-1/output/g3-G3-offline-pursue-migra-d40a4-e-retest-through-real-input-chrome/lung-first-arrival.png",
+        "sha256": "79d745b7d0e3fb6ce503f5868691a21de706b65429ed65fac4fcebfe663f5871",
+        "actuallyViewedWith": "view_image",
+        "observation": "III仍在拦截，3个迁移体可见，肺76%；这是选择后的迁移过程，尚非共同IV阶段。"
+      },
+      {
+        "path": "artifacts/completion-v074/browser/full-1/output/g3-G3-offline-ignore-migra-d71aa-e-retest-through-real-input-chrome/lung-first-arrival.png",
+        "sha256": "0714bb6096b9b2463453bb378a9b2564987292e9e7cb728e7788ddab718c94a8",
+        "actuallyViewedWith": "view_image",
+        "observation": "已IV，肺66%，提示8秒冲击；危机源身体只在右上角露出/裁切，额外迁移源在镜头外。"
+      },
+      {
+        "path": "artifacts/completion-v074/browser/full-1/output/g3-G3-offline-block-migrat-00bb5-e-retest-through-real-input-chrome/migration-warning.png",
+        "sha256": "551681373c15ffa4b9b9136b1eb4506656d7f11be9cacb4bf6d233ca0f5e48ca",
+        "actuallyViewedWith": "view_image",
+        "observation": "III选择前12秒warning，心脏83%，不能用作封锁后的下一阶段画面。"
+      }
+    ],
+    "confirmedCurrentDifferences": {
+      "common": "六条真实浏览器路径都是seed91/campaign-1/guided、CARAPACE+FISSION；Chrome三路实际事件可直接比较。",
+      "block": "心脏新增heart-retained-source(1730,1020)与heart-crisis-source(1570,790)，heart组织83→79、感染0→3，肺未激活。",
+      "pursue": "肺入口实际生成3个迁移小体，Chrome tick1783以clear成功拦截，未额外立lung-migrated-source；下一阶段lung-crisis-source(1210,610)。",
+      "ignore": "肺立lung-migrated-source(2050,1110)，lung组织76→66、感染0→8；下一阶段lung-crisis-source(1210,610)。",
+      "important": "pursue和ignore的危机源坐标本来相同，差别包括额外迁移源/器官完整度/感染与截流结果；不能要求每个对象坐标都不同。"
+    },
+    "accurateGap": [
+      "已有相同seed的真实日志与全局终态，无须重新实现迁移差异。",
+      "当前选择前warning、追击III到达、放任IV到达不是三路共同下一阶段对照；block缺实际后果主图，ignore关键身体裁切。",
+      "现有截图没有严格前后只读快照/活体位置/源是否受理/压力与截图对应账；输入85ms轮询也不是精确同tick图。"
+    ],
+    "minimumNewEvidence": {
+      "freeze": "使用届时冻结的真实发行构建，记录source/game SHA；不把074旧图改名为075。",
+      "commonControls": [
+        "相同seed91、campaign-1/guided/field初装、相同窗口1366×768与DPR1、固定效果档。",
+        "沿同一真实输入策略处理选择前流程并记录检查点；原文不要求字节相同的浏览器输入时刻，保留实际tick/elapsed/traits/构筑差异。"
+      ],
+      "actions": [
+        "block：实际走到心脏隔离闸E停留2秒，记录唯一受理成本与封锁源。",
+        "pursue：实际出口E进入肺，实际清掉3迁移小体（若用关气道则明确记录by/额外成本，不能伪称同一清除路径）。",
+        "ignore：真实不响应至12秒截止，记录肺立源受理后再实际旅行到肺；不调用内部chooseMigration或写choice字段。"
+      ],
+      "checkpoint": "每路stage IV且对应ORGAN_CRISIS_STARTED已真实受理，危机源hp>0；暂不继续开火清掉展示源，实际步行到代表性源/危险及生产小地图可辨位置。记录步行期间发生的损伤/修复/气道成本，不伪装成纯迁移成本。",
+      "screenshots": "最低3张未编辑主图（每路各1张），包含active organ、可见关键实体/生产小地图和HUD压力；若ignore额外新源/坐标差异在小地图仍不可辨，补1张真实步行到migrated-source的近景。实际看图后仍不清楚则保partial，不能凭计划判通过。",
+      "snapshotBracket": [
+        "截图前后均只读完整snapshot；保存phase/tick/elapsed、organ/world/camera/viewport/DPR、migration/encounter、每器官activated/tissue/targets(id,role,hp,x,y)、infection/vitality、关键事件与输入日志。",
+        "暂停/草案/迁移手册应通过真实DOM关闭；抓拍前后phase playing且无遮挡模态。",
+        "记录图像SHA、前后tick范围、源被真正spawn接受与活体证据；不得写HP/时间/位置/profile/DOM假HUD来凑画面。"
+      ],
+      "review": "逐张原图审阅与一张三列表格连接位置集、活跃器官/额外源、受理的组织/感染delta；原文只需下一阶段对照，不需要再跑整局胜利，也不需要两个不同器官强制同一玩家世界坐标或同tick。",
+      "canClose": "只有真实执行且原图对照能辨出分支后果时才关闭；本计划本身不新增通过。"
+    }
+  },
+  "auditPresentationErrata": [
+    {
+      "id": "AC-M16-04",
+      "issue": "074 final审计closedSubclauses误吸收非视觉review的开放内存标题No sustained memory growth and broader native/device retention qualification。",
+      "truth": "其判定仍partial、remaining准确；该标题绝不表示内存已经通过。下轮生成器应按显式closed字段/子句结论选择，不能仅过滤pending单词。",
+      "action": "保留074冻结原件；新报告已明确分开帧率/错误通过与内存未通过，不提升统计。"
+    }
+  ],
+  "scope": "本轮不改变94/15/3、不形成新通过；列的是可推进顺序与最小真实证据。真人、原生OS、真正zoom和目标节奏不转换为合成证明。"
+}

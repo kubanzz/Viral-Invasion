@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "reviewedAtUtc": "2026-10-27T11:42:28Z",
+  "status": "source-coverage-addendum-runtime-results-pending-root-verification",
+  "amends": ["artifacts/readability-v075/label-integration-review.json", "artifacts/readability-v075/label-integration-review.md"],
+  "method": "Read the updated E2E source and fingerprint it after root's final pre-freeze assertion additions. Only this addendum and its companion Markdown are written. Original reports are retained; no source/test edit, browser, build or test execution was performed by this review.",
+  "source": {
+    "path": "tests/e2e/readability-v075.spec.ts",
+    "previousReviewedSha256": "7222586f9717c59a09b9b26d607b819de7ebd8852ed41179fdcb1892a3280779",
+    "currentReviewedSha256": "3ca9ddf6479835c2db55ca5ed5b8d5daa1fc6a803b5971001d8d491b409e2445"
+  },
+  "updates": [
+    {
+      "originalFinding": "LI05",
+      "status": "code-coverage-added-runtime-not-claimed",
+      "evidence": "tests/e2e/readability-v075.spec.ts:21-24",
+      "change": "The E2E now asserts the public effects menu initially contains 标准, clicks it for the Edge low project, and asserts the resulting menu contains 低 for that project or 标准 for Chrome. The earlier limitation that only the inferred low boolean was checked is superseded at source-coverage level.",
+      "limit": "This source review does not assert that the new assertions or resulting setting have actually passed in a browser. Root owns the unified browser runtime results."
+    },
+    {
+      "originalFinding": "LI04",
+      "status": "code-coverage-strengthened-not-exact-frame-proof",
+      "evidence": "tests/e2e/readability-v075.spec.ts:71-74",
+      "change": "The after screenshot sample now asserts labels.conflicted is zero, beacon identity equals before, and a squad placement remains present. The earlier statement that after had no assertions is superseded by these three specific assertions.",
+      "limit": "The after sample still does not independently remeasure DOM rectangles or repeat every before viewport/tissue/DOM-overlap assertion. The screenshot remains a sampled active-run image between two snapshots, not exact-tick proof or a guarantee over every intermediate frame."
+    }
+  ],
+  "unchangedLimitations": [
+    "LI03 remains: last-render label diagnostics and latest HUD rectangles may come from different RAF/HUD generations during dynamic geometry changes.",
+    "LI06 remains: normal baseline-patrol browser coverage is not a protocol bite/damage, fatal-countdown live scenario, dense-core, zoom, high-DPR, performance, native or human acceptance result.",
+    "Narrow real-cell and accepted-bite endpoint reservations do not claim all-scene zero overlap or protection of the entire trace segment."
+  ],
+  "runtimeAuthority": "Root is running the unified browser checks. Cite its final immutable attempt outputs for actual runtime results; this addendum records only code inspection."
+}

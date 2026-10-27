@@ -1,0 +1,116 @@
+
+ RUN  v5.0.5 D:/Workspace/Projects/xsj/Viral-Invasion
+
+ ✓ tests/unit/growth-evolution.test.ts (7 tests) 292ms
+stdout | tests/unit/evolution.test.ts > G2 deterministic evolution director > actually audits 1000 seeds, both stages, alternate strategies, legal counters and reproducible warnings
+EVOLUTION_SEED_AUDIT {"seeds":1000,"stagesPerSeed":2,"firstTraitCounts":{"CARAPACE":421,"FISSION":280,"MIMIC":299},"distinctSequences":6,"strategyChangedFirstChoice":146,"maximumObservedProbability":0.55,"warningSeconds":8}
+
+ ✓ tests/unit/entity-labels.test.ts (3 tests) 19ms
+ ✓ tests/unit/g3-boundaries.test.ts (9 tests) 472ms
+   ✓ G3 independent session boundaries (9)
+     ✓ accrues offscreen pressure through repeated cooldown-respecting round trips 306ms
+ ✓ tests/unit/evolution.test.ts (8 tests) 597ms
+   ✓ G2 deterministic evolution director (8)
+     ✓ actually audits 1000 seeds, both stages, alternate strategies, legal counters and reproducible warnings 544ms
+stdout | tests/unit/g2-integration.test.ts > G2 shared-session integration > completes the CARAPACE opening through legal inputs while deliberately avoiding the known trait counters in every draft
+G2_NONCOUNTER_INPUT_ROUTE {"seed":91,"firstTrait":"CARAPACE","elapsed":41.86666666666667,"choices":6,"selected":5,"discarded":1}
+
+ ✓ tests/unit/preparation-session.test.ts (3 tests) 406ms
+   ✓ starting plan, accepted session actions and archive continuity (3)
+     ✓ preloads a real I-rank squad, repays the first real XP threshold, then offers the next upgrade normally 313ms
+stdout | tests/unit/g2-integration.test.ts > G2 shared-session integration > completes the FISSION opening through legal inputs while deliberately avoiding the known trait counters in every draft
+G2_NONCOUNTER_INPUT_ROUTE {"seed":91,"firstTrait":"FISSION","elapsed":42.78333333333333,"choices":6,"selected":5,"discarded":1}
+
+ ✓ tests/unit/encounter-counter.test.ts (12 tests) 1100ms
+   ✓ versioned first-counter encounter (12)
+     ✓ freezes lesson/warning on pause and reproduces/reset the same formal configuration 682ms
+ ✓ tests/unit/formal-failures.test.ts (2 tests) 1102ms
+   ✓ formal campaign natural independent failure routes (2)
+     ✓ reaches infection by public actions, pauses its warning and retries cleanly 806ms
+ ✓ tests/unit/research-session.test.ts (4 tests) 809ms
+   ✓ formal research pause and transaction ownership (4)
+     ✓ offers an actual scanned trait and permits choosing an alternative to its guaranteed counter 338ms
+stdout | tests/unit/g2-integration.test.ts > G2 shared-session integration > completes the MIMIC opening through legal inputs while deliberately avoiding the known trait counters in every draft
+G2_NONCOUNTER_INPUT_ROUTE {"seed":91,"firstTrait":"MIMIC","elapsed":42.78333333333333,"choices":6,"selected":4,"discarded":2}
+
+ ✓ tests/unit/immune-cells.test.ts (14 tests) 1018ms
+stdout | tests/unit/g3-integration.test.ts > G3 shared-session campaign > wins through public input after pursue migration, real core phases and retest
+G3_INPUT_ROUTE {"choice":"pursue","phase":"result","result":{"success":true,"reason":"母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。"},"elapsed":48.25,"migration":{"id":"migration:91:1","status":"resolved","from":"heart","to":"lung","warnedAt":20.966666666666665,"deadline":32.96666666666667,"choice":"pursue","resolvedAt":27.983333333333334,"blockStartedAt":null,"carrierIds":["migration-carrier-0","migration-carrier-1","migration-carrier-2"],"clearedCarrierIds":["migration-carrier-0","migration-carrier-1","migration-carrier-2"],"interceptUntil":39.983333333333334,"interceptSucceeded":true,"interceptResolvedAt":28},"core":"cleared","progress":{"sourceClears":4,"sourceTotal":4,"eliteClears":2,"coreCleared":true,"organConditions":true,"infectionCondition":true},"player":100,"organs":[{"id":"heart","hp":83,"activated":true,"alive":[]},{"id":"lung","hp":74,"activated":true,"alive":[]}]}
+
+ ✓ tests/unit/g2-integration.test.ts (9 tests) 894ms
+   ✓ G2 shared-session integration (9)
+     ✓ replays the same real inputs and choices to the same weighted evolution decisions 341ms
+ ✓ tests/unit/formal-noncounter.test.ts (3 tests) 2023ms
+   ✓ formal campaign with deliberately unhelpful current-threat drafts (3)
+     ✓ can win the full CARAPACE case through base counters and legal noncounter picks 1292ms
+     ✓ can win the full FISSION case through base counters and legal noncounter picks 438ms
+stdout | tests/unit/g3-integration.test.ts > G3 shared-session campaign > wins through public input after block migration, real core phases and retest
+G3_INPUT_ROUTE {"choice":"block","phase":"result","result":{"success":true,"reason":"母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。"},"elapsed":47.18333333333333,"migration":{"id":"migration:91:1","status":"resolved","from":"heart","to":"lung","warnedAt":20.966666666666665,"deadline":32.96666666666667,"choice":"block","resolvedAt":26.4,"blockStartedAt":null,"carrierIds":[],"clearedCarrierIds":[],"interceptUntil":null,"interceptSucceeded":true,"interceptResolvedAt":26.4},"core":"cleared","progress":{"sourceClears":4,"sourceTotal":4,"eliteClears":2,"coreCleared":true,"organConditions":true,"infectionCondition":true},"player":100,"organs":[{"id":"heart","hp":79,"activated":true,"alive":[]},{"id":"lung","hp":76,"activated":false,"alive":[["lung-source-a",238],["lung-initial-0",68],["lung-initial-1",68]]}]}
+
+ ✓ tests/unit/battle.test.ts (12 tests) 2400ms
+   ✓ G1 battle rules (12)
+     ✓ runs 20 minutes of the combat system at hard population and memory bounds 1739ms
+ ✓ tests/unit/g1-audit.test.ts (5 tests) 132ms
+stdout | tests/unit/g3-integration.test.ts > G3 shared-session campaign > wins through public input after ignore migration, real core phases and retest
+G3_INPUT_ROUTE {"choice":"ignore","phase":"result","result":{"success":true,"reason":"母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。"},"elapsed":65.91666666666667,"migration":{"id":"migration:91:1","status":"resolved","from":"heart","to":"lung","warnedAt":20.966666666666665,"deadline":32.96666666666667,"choice":"ignore","resolvedAt":32.96666666666667,"blockStartedAt":null,"carrierIds":[],"clearedCarrierIds":[],"interceptUntil":null,"interceptSucceeded":false,"interceptResolvedAt":32.96666666666667},"core":"cleared","progress":{"sourceClears":5,"sourceTotal":5,"eliteClears":2,"coreCleared":true,"organConditions":true,"infectionCondition":true},"player":100,"organs":[{"id":"heart","hp":83,"activated":true,"alive":[]},{"id":"lung","hp":88,"activated":true,"alive":[]}]}
+
+ ✓ tests/unit/motherCore.test.ts (18 tests) 158ms
+ ✓ tests/unit/profile.test.ts (41 tests) 146ms
+ ✓ tests/unit/encounter-history.test.ts (6 tests) 97ms
+ ✓ tests/unit/protocols.test.ts (11 tests) 206ms
+ ✓ tests/unit/growth.test.ts (10 tests) 240ms
+ ✓ tests/unit/organRules.test.ts (3 tests) 136ms
+ ✓ tests/unit/tactical-feedback.test.ts (9 tests) 110ms
+ ✓ tests/unit/carried-protocols.test.ts (6 tests) 217ms
+ ✓ tests/unit/campaign-encounters.test.ts (18 tests) 283ms
+ ✓ tests/unit/protocol-synergy-repeat.test.ts (2 tests) 308ms
+ ✓ tests/unit/g3-integration.test.ts (4 tests) 2922ms
+   ✓ G3 shared-session campaign (4)
+     ✓ survives 180s of actual lung-source pressure and can legally retreat with the same controls 1470ms
+     ✓ wins through public input after pursue migration, real core phases and retest 423ms
+     ✓ wins through public input after block migration, real core phases and retest 411ms
+     ✓ wins through public input after ignore migration, real core phases and retest 615ms
+ ✓ tests/unit/pulse-world-reachability.test.ts (11 tests) 3918ms
+   ✓ AC-M10-02 formal heart pulse reachability (11)
+     ✓ keeps all sampled 145 pushes legal across the entire heart, all folds, corners and 64 bearings 3573ms
+ ✓ tests/unit/research.test.ts (12 tests) 80ms
+ ✓ tests/unit/campaign.test.ts (10 tests) 48ms
+ ✓ tests/unit/session.test.ts (15 tests) 53ms
+stdout | tests/unit/campaign-space.test.ts > Campaign spatial revision > keeps both migration choices reachable within the real 12-second warning across a walkable grid, without dash or teleport
+CAMPAIGN_MIGRATION_SPACE {"samples":135,"longestBlock":8.045419443439277,"longestPursue":9.329796904109026,"method":"Visibility paths around actual footprints; walking speed only, including 2-second block channel. Grid coverage is not human reaction-time evidence."}
+
+ ✓ tests/unit/starting-plan-presentation.test.ts (11 tests) 30ms
+ ✓ tests/unit/preparation.test.ts (12 tests) 65ms
+ ✓ tests/unit/protocol-history.test.ts (8 tests) 59ms
+ ✓ tests/unit/immune-trace-cues.test.ts (7 tests) 56ms
+ ✓ tests/unit/priority-producer-coverage.test.ts (1 test) 70ms
+ ✓ tests/unit/research-presentation.test.ts (15 tests) 59ms
+ ✓ tests/unit/raised-obstacle-occlusion.test.ts (13 tests) 46ms
+ ✓ tests/unit/scene-labels.test.ts (17 tests) 75ms
+ ✓ tests/unit/growth.integration.test.ts (3 tests) 93ms
+ ✓ tests/unit/danger-readability.test.ts (17 tests) 408ms
+ ✓ tests/unit/campaign-space.test.ts (3 tests) 83ms
+ ✓ tests/unit/pulsePreview.test.ts (2 tests) 14ms
+ ✓ tests/unit/run-metrics.test.ts (14 tests) 34ms
+ ✓ tests/unit/collision.test.ts (4 tests) 9ms
+ ✓ tests/unit/audio.test.ts (6 tests) 20ms
+ ✓ tests/unit/camera-follow.test.ts (2 tests) 15ms
+ ✓ tests/unit/core.test.ts (4 tests) 20ms
+ ✓ tests/unit/render.test.ts (7 tests) 15ms
+ ✓ tests/unit/area-control.test.ts (1 test) 21ms
+ ✓ tests/unit/pulse-displacement.test.ts (2 tests) 13ms
+ ✓ tests/unit/encounter-presentation.test.ts (6 tests) 25ms
+ ✓ tests/unit/navigation.test.ts (4 tests) 16ms
+ ✓ tests/unit/hud-layout.test.ts (4 tests) 24ms
+ ✓ tests/unit/coreVisuals.test.ts (4 tests) 19ms
+ ✓ tests/unit/geometry.test.ts (2 tests) 5ms
+
+ Test Files  53 passed (53)
+      Tests  436 passed (436)
+   Start at  19:39:31
+   Duration  9.48s (tests 47%, import 31%, transform 20%, worker 1%)
+
+    Isolate  53 workers spawned · ~919ms startup each (spawn + environment, per file)
+             at least ~2.33s faster with isolate: false — reuses workers across files instead of one per file
+
+JSON report written to D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/readability-v075/unit/final-a/results.json

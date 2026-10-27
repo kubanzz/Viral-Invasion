@@ -1,0 +1,405 @@
+{
+  "schemaVersion": 1,
+  "status": "source-review-complete-no-open-defect-in-reviewed-scope",
+  "readAtUtc": "2026-10-27T11:35:51.722Z",
+  "method": "Read-only audit of current shared-label integration and targeted diff against HEAD. No browser/game/build was launched for this audit. Separately authorized coordinate fixes and their scoped unit run finished before this audit; they are listed below. Read-time fingerprints are not a frozen release manifest.",
+  "sourceManifest": [
+    {
+      "path": "src/render/renderer.ts",
+      "sha256": "2a502154932bea7e149c6dc51d8c9b966e2ac04966a928b8bbe81c21b70884e6",
+      "bytes": 50956
+    },
+    {
+      "path": "src/render/growthVisuals.ts",
+      "sha256": "6728a758ccdd4b4331807057d92069fa42a3b38509bdcdce63c390bbc00a42d6",
+      "bytes": 10009
+    },
+    {
+      "path": "src/render/lungVisuals.ts",
+      "sha256": "7bc495edd2c18da89ce1b8e6934e98ade262e982b953bf732593827e18ac7b77",
+      "bytes": 12129
+    },
+    {
+      "path": "src/render/encounterVisuals.ts",
+      "sha256": "62e43895e405cd1300d735f59f150781cdf07b74036d5dbcc0b6f93011e01629",
+      "bytes": 8679
+    },
+    {
+      "path": "src/render/battleVisuals.ts",
+      "sha256": "09f97b6f095e37592628d7236f4cce781ce9af2f4fd41631b5caa80493ded253",
+      "bytes": 28075
+    },
+    {
+      "path": "src/render/immuneVisuals.ts",
+      "sha256": "07a8b19251d4bb706065ce4443fe0816f1d48ced6e5f5419244f30552bc3ac2c",
+      "bytes": 3951
+    },
+    {
+      "path": "src/render/immuneTraceCues.ts",
+      "sha256": "80558b755ae1054388a982182b430b41e5ceb98119b7ad0758b694dabdfd66d7",
+      "bytes": 2279
+    },
+    {
+      "path": "src/render/sceneLabels.ts",
+      "sha256": "0aff51690f470d01afdb9eb58292ea106d827d3acaf5678e25c872cb61fff8fc",
+      "bytes": 14858
+    },
+    {
+      "path": "src/render/camera.ts",
+      "sha256": "ca117a766229b5770d49491559dbe016aca210876315f4069f5db42081f748e5",
+      "bytes": 2163
+    },
+    {
+      "path": "src/ui/hudLayout.ts",
+      "sha256": "75255494aa04307dc603560cdeb9dd1c9ff84b54a91996671225fe4347cb701d",
+      "bytes": 2800
+    },
+    {
+      "path": "src/ui/encounterHud.ts",
+      "sha256": "1cb4ef363f9471a78f615c58301f66e04ce689be4f8475120ed045f86502877d",
+      "bytes": 10459
+    },
+    {
+      "path": "tests/unit/danger-readability.test.ts",
+      "sha256": "ce3b53733c4839470298f8ddb6f8d8c45beafc32f5766b555ba39c451223132f",
+      "bytes": 19956
+    },
+    {
+      "path": "tests/unit/entity-labels.test.ts",
+      "sha256": "7692525d9fb570ea92a385fdea77c85d24811aedb2fb972cd915157100f3a11d",
+      "bytes": 4047
+    },
+    {
+      "path": "tests/unit/scene-labels.test.ts",
+      "sha256": "6b610c85aa3977b536892fb0d5d02242a24c6ba5db1c3ef276083f0f862d2e2a",
+      "bytes": 17327
+    },
+    {
+      "path": "artifacts/readability-v075/danger-unit-results.json",
+      "sha256": "a424f8547e33d5bfe6272ea792aa5ec0e608fa6406869983c63d9038f2ad9ffd",
+      "bytes": 13158
+    }
+  ],
+  "evidenceLines": {
+    "src/render/renderer.ts": [
+      {
+        "line": 12,
+        "text": "import { drawEncounterGround, drawEncounterDangers } from './encounterVisuals';"
+      },
+      {
+        "line": 141,
+        "text": "drawEncounterGround(ctx, state, Boolean(opts.lowEffects), this.labels);"
+      },
+      {
+        "line": 156,
+        "text": "if (entity.kind === 'beacon') this.growthVisuals.drawBeacon(ctx, state, state.growth, this.labels);"
+      },
+      {
+        "line": 161,
+        "text": "this.growthVisuals.drawMarks(ctx, state, state.growth);"
+      },
+      {
+        "line": 162,
+        "text": "this.growthVisuals.drawProtocolHits(ctx, state, state.growth);"
+      },
+      {
+        "line": 164,
+        "text": "drawEncounterDangers(ctx, state, Boolean(opts.lowEffects), this.labels);"
+      },
+      {
+        "line": 167,
+        "text": "drawBattleLabels(ctx, state, this.labels);"
+      },
+      {
+        "line": 172,
+        "text": "this.labels.draw(ctx);"
+      },
+      {
+        "line": 250,
+        "text": "if (flow) { drawLungAirflow(ctx, state, flow, low, this.labels); return; }"
+      },
+      {
+        "line": 371,
+        "text": "drawLungAirway(ctx, state, flow, near, this.labels, node);"
+      },
+      {
+        "line": 438,
+        "text": "this.labels.add({ id: `split:${target.id}:${index}`, anchor: landing, offset: { x: 0, y: -25 * this.camera.yScale }, priority: 100, essential: true,"
+      },
+      {
+        "line": 615,
+        "text": "} else if (near && state.phase === 'playing') {"
+      },
+      {
+        "line": 619,
+        "text": "if (!state.battle) { text(ctx, '复测终端', 0, 28, '#d6e5cc', 12); text(ctx, 'RETURN  /  E', 0, 44, '#9ab8af', 9); }"
+      }
+    ],
+    "src/render/growthVisuals.ts": [
+      {
+        "line": 3,
+        "text": "import { acceptedProtocolHit } from '../game/growth';"
+      },
+      {
+        "line": 5,
+        "text": "import { selectImmuneTraceCues } from './immuneTraceCues';"
+      },
+      {
+        "line": 74,
+        "text": "drawBeacon(ctx: CanvasRenderingContext2D, state: GameState, growth: GrowthState | undefined, labels?: SceneLabelSink): void {"
+      },
+      {
+        "line": 81,
+        "text": "} else drawImmuneSquadLabel(ctx, beacon, count, beacon.mode === 'patrol');"
+      },
+      {
+        "line": 94,
+        "text": "drawMarks(ctx: CanvasRenderingContext2D, state: GameState, growth: GrowthState | undefined): void {"
+      },
+      {
+        "line": 108,
+        "text": "drawProtocolHits(ctx: CanvasRenderingContext2D, state: GameState, growth: GrowthState | undefined): void {"
+      },
+      {
+        "line": 113,
+        "text": "if (!acceptedProtocolHit(event, state.events, state.battle.organId)) continue;"
+      },
+      {
+        "line": 130,
+        "text": "&& acceptedProtocolHit(prior, state.events, state.battle.organId)) acceptedTargets.add(String(prior.data.targetId));"
+      },
+      {
+        "line": 144,
+        "text": "for (const cue of selectImmuneTraceCues(state, growth)) {"
+      }
+    ],
+    "src/render/lungVisuals.ts": [
+      {
+        "line": 107,
+        "text": "export function drawLungAirflow(ctx: CanvasRenderingContext2D, state: GameState, flow: LungFlowState, low: boolean, labels?: SceneLabelSink): void {"
+      },
+      {
+        "line": 139,
+        "text": "export function drawLungAirway(ctx: CanvasRenderingContext2D, state: GameState, flow: LungFlowState, near: boolean, labels?: SceneLabelSink, anchor?: Vec): void {"
+      }
+    ],
+    "src/render/encounterVisuals.ts": [
+      {
+        "line": 17,
+        "text": "function caption(ctx: CanvasRenderingContext2D, labels: SceneLabelSink | undefined, id: string, anchor: Vec, offset: Vec, value: string, color: string, priority: number): void {"
+      },
+      {
+        "line": 20,
+        "text": "if (labels) labels.add({ id, anchor, offset: { x: offset.x, y: offset.y * .72 }, priority, essential: priority >= 100, lines: [{ text: value, color, size: 10 }] });"
+      },
+      {
+        "line": 42,
+        "text": "export function drawEncounterDangers(ctx: CanvasRenderingContext2D, state: GameState, lowEffects: boolean, labels?: SceneLabelSink): void {"
+      },
+      {
+        "line": 63,
+        "text": "ctx.globalAlpha = originalAlpha * (charging ? .58 : .32); ctx.setLineDash([6, 15]);"
+      },
+      {
+        "line": 73,
+        "text": "ctx.globalAlpha = originalAlpha; ctx.setLineDash(charging ? [5, 6] : [2, 9]); ring(ctx, tissue, tissue.radius + 22); ctx.setLineDash([]);"
+      },
+      {
+        "line": 75,
+        "text": "const text = crisis.blockedByAirway ? '截流暂停' : !charging || state.phase === 'paused' ? '冲击暂停' : `冲击 ${Math.max(0, crisis.chargeRemaining).toFixed(1)}s`;"
+      },
+      {
+        "line": 76,
+        "text": "caption(ctx, labels, `crisis:${crisis.sourceId}:countdown`, tissue, { x: 0, y: tissue.radius + 40 }, text, color, 100);"
+      },
+      {
+        "line": 78,
+        "text": "caption(ctx, labels, `crisis:${crisis.sourceId}:source`, source, { x: 0, y: source.radius + 30 }, crisis.status === 'exhausted' ? '冲击停止 · 净化危机源' : '危机源 · 净化可根治', color, 100);"
+      },
+      {
+        "line": 86,
+        "text": "export function drawEncounterGround(ctx: CanvasRenderingContext2D, state: GameState, _lowEffects: boolean, labels?: SceneLabelSink): void {"
+      },
+      {
+        "line": 104,
+        "text": "caption(ctx, labels, 'first-counter:valve', { x, y }, { x: ux * 24, y: uy * 24 + 20 }, `阀门 · ${Math.round(distance)}`, '#c7ead4', 50);"
+      },
+      {
+        "line": 105,
+        "text": "} else caption(ctx, labels, 'first-counter:valve', valve, { x: 0, y: 65 }, 'E · 朝威胁方向冲流', '#c7ead4', 50);"
+      },
+      {
+        "line": 112,
+        "text": "drawEncounterGround(ctx, state, lowEffects, labels);"
+      },
+      {
+        "line": 113,
+        "text": "drawEncounterDangers(ctx, state, lowEffects, labels);"
+      }
+    ],
+    "src/render/battleVisuals.ts": [
+      {
+        "line": 345,
+        "text": "export function drawBattleLabels(ctx: CanvasRenderingContext2D, state: GameState, labels?: SceneLabelSink): void {"
+      }
+    ],
+    "src/render/immuneVisuals.ts": [
+      {
+        "line": 58,
+        "text": "export function drawImmuneSquadLabel(ctx: CanvasRenderingContext2D, origin: Vec, count: number, patrol = false): void {"
+      }
+    ],
+    "src/render/immuneTraceCues.ts": [
+      {
+        "line": 16,
+        "text": "export function selectImmuneTraceCues(state: GameState, growth: GrowthState | undefined = state.growth): ImmuneTraceCue[] {"
+      }
+    ],
+    "src/render/sceneLabels.ts": [
+      {
+        "line": 119,
+        "text": "|| anchor.x < -96 || anchor.x > frame.width + 96 || anchor.y < -96 || anchor.y > frame.height + 96) {"
+      }
+    ],
+    "src/render/camera.ts": [],
+    "src/ui/hudLayout.ts": [],
+    "src/ui/encounterHud.ts": []
+  },
+  "scopeOwnership": {
+    "production": [
+      {
+        "owner": "root (per parent coordination)",
+        "paths": [
+          "src/render/renderer.ts",
+          "src/render/growthVisuals.ts",
+          "src/render/lungVisuals.ts",
+          "src/main.ts",
+          "src/ui/hudLayout.ts"
+        ],
+        "role": "Renderer orchestration, entity/organ label integration and cached real HUD exclusion rectangles."
+      },
+      {
+        "owner": "immune_combat (per parent coordination)",
+        "paths": [
+          "src/render/sceneLabels.ts",
+          "src/render/battleVisuals.ts"
+        ],
+        "role": "Shared layout, battle-target/mother-core collectors and protected geometry."
+      },
+      {
+        "owner": "growth_rework (this subagent)",
+        "paths": [
+          "src/render/encounterVisuals.ts"
+        ],
+        "role": "Introductory ground / essential crisis separation, required crisis semantics and world-offset conversion."
+      }
+    ],
+    "tests": [
+      {
+        "owner": "growth_rework",
+        "path": "tests/unit/danger-readability.test.ts",
+        "role": "17 recorder tests: archived real snapshots, actual Renderer call order, both quality modes, true pending-split/ordinary attacks, explicit synthetic guard/core variants; not native Canvas or player readability."
+      },
+      {
+        "owner": "immune_combat",
+        "path": "tests/unit/scene-labels.test.ts",
+        "role": "Pure layout and battle collector tests; this audit read their source and does not claim a new execution."
+      },
+      {
+        "owner": "root",
+        "path": "tests/unit/entity-labels.test.ts",
+        "role": "Pure squad/airway collector contracts; this audit read their source and does not claim a new execution."
+      }
+    ],
+    "reportOnly": [
+      "artifacts/readability-v075/danger-review.json",
+      "artifacts/readability-v075/danger-review.md",
+      "artifacts/readability-v075/integration-review.json",
+      "artifacts/readability-v075/integration-review.md"
+    ]
+  },
+  "resolvedFindings": [
+    {
+      "id": "I01",
+      "severity": "medium",
+      "path": "src/render/encounterVisuals.ts",
+      "line": 20,
+      "problem": "Old encounter label anchor+offset was a world-space translation before local glyph uncompression. Passing its y offset unchanged to the screen-space sink shifted its preferred baseline by .28*offset*scale.",
+      "resolution": "Authorized helper now sends offset.y*.72 to SceneLabelSink. Real archived lung source/tissue caption tests compare Camera.worldToScreen(anchor)+offset*scale against the actual legacy Canvas baseline in both quality modes, before layout displacement.",
+      "owner": "growth_rework"
+    },
+    {
+      "id": "I02",
+      "severity": "low",
+      "path": "src/render/renderer.ts",
+      "line": 438,
+      "problem": "Pending split text formerly used landing.y-25 directly in the world transform. New uncompressed offset -25 moved it 7*scale CSS pixels upward.",
+      "resolution": "Root changed it to -25*this.camera.yScale. This subagent added production sink collection and real landing projection tests; any final displaced label still retains the true landing anchor.",
+      "owner": "root implementation / growth_rework test"
+    }
+  ],
+  "openFindings": [],
+  "checks": [
+    {
+      "id": "coordinate-spaces",
+      "result": "no further discrepancy identified",
+      "evidence": "Tissue/device/terminal/squad offsets originate inside local scale(1,1/.72), so raw local offset times camera.scale is correct. Core captions pass a fully specified world anchor, including their old world y offset, so projection is applied once. Lung phase passes its original world point. Encounter and split were the two world-offset cases needing the conversion above."
+    },
+    {
+      "id": "state-mutation",
+      "result": "no simulation write identified in reviewed diff",
+      "evidence": "Renderer labels/HUD copies, SceneLabels measurements/previous placements and GrowthVisuals trail histories are presentation-owned. Target sorting uses filtered arrays. Beacon/cell counts, flow timing and crisis read serialized fields. Latest scoped tests freeze complete original states and compare complete JSON after actual Renderer renders in normal/low modes; these tests do not execute gameplay."
+    },
+    {
+      "id": "fact-leakage",
+      "result": "no newly invented hit/reveal fact identified",
+      "evidence": "GrowthVisuals.drawProtocolHits remains gated by acceptedProtocolHit and selectImmuneTraceCues; current hit/mark rendering logic is unchanged by its drawBeacon diff. Squad count is now restricted to the actual beacon, current organ and unexpired cells. Battle label hidden-MIMIC/reveal guards and focused weakness are covered by the separate collector tests; this review read those tests without treating fixture success as real play."
+    },
+    {
+      "id": "danger-preservation",
+      "result": "source-confirmed and scoped-recorder-confirmed",
+      "evidence": "Renderer invokes ground guide before entities, then foreground/effects/marks/accepted hits, then crisis/ordinary/core danger, final labels in screen space. Ordinary targets retain serialized aim/radius/progress/X; a real hp=0 split mother retains both landing circles. Mother-core aim/radius/landings and sweep wall-clipped vertex logic remain in the actual production functions. Low effects does not remove the essential danger branch. Final native rendering and visual scrutiny remain separate."
+    },
+    {
+      "id": "encounter-pause",
+      "result": "correct in current branch",
+      "evidence": "Only playing/paused phases draw encounter cues. Paused current-organ charging renders the static geometry and 冲击暂停; blocked airway renders 截流暂停; arming/nextImpactAt=null renders 冲击暂停; exhausted keeps source/stop/root-cause text and omits the charging path/countdown. Elapsed state does not advance in these drawing functions. Missing/dead source, other organ and result phase produce no accepted crisis cues."
+    },
+    {
+      "id": "encounter-offscreen",
+      "result": "intentional local caption culling; scope understood",
+      "evidence": "SceneLabels culls world anchors outside a96 CSSpx viewport margin, even for essential captions; it does not pull all distant organ information onto the current canvas. An archived lung impact snapshot has its tissue anchor offscreen, so the production layer-order test correctly uses an existing heart window snapshot with both anchors in view. The lung snapshot remains useful for isolated geometry/time semantics. Playing-state global crisis time/instructions remain encounterHudContent responsibility; paused overlay reports all timers paused. This is not proof that a distant lethal attack footprint intersects the viewport safely; final native screenshot matrix must still cover near-edge threats."
+    },
+    {
+      "id": "lung-airway",
+      "result": "no wrong cost/cooldown introduced",
+      "evidence": "Shared collector reads actual flow.airwayOpen, changedAt, pressureUntil and CAMPAIGN_BALANCE costs/cooldown. Actual airway body, open/closed shapes and low-mode flow geometry remain. The pressure interval records the existing switch indication; toggleAirway applies its tissue cost immediately rather than scheduling hidden future damage."
+    },
+    {
+      "id": "training-fallback",
+      "result": "source-confirmed preservation; no new training run claimed",
+      "evidence": "Non-battle drawTarget still renders its original health/scanned training captions. drawTissue retains direct health bar and 03 repair captions when no battle. drawTerminal retains direct terminal name and near/playing E prompt; encounter/growth helpers return when no battle. Shared layout frame/reservations alone do not replace these legacy drawings."
+    }
+  ],
+  "validation": {
+    "latestScopedRun": {
+      "resultFile": "artifacts/readability-v075/danger-unit-results.json",
+      "files": 3,
+      "passed": 27,
+      "failed": 0,
+      "success": true,
+      "command": "node node_modules/vitest/vitest.mjs run tests/unit/danger-readability.test.ts tests/unit/encounter-presentation.test.ts tests/unit/coreVisuals.test.ts --reporter=default --reporter=json --outputFile=artifacts/readability-v075/danger-unit-results.json",
+      "reportedSuiteCount": 6
+    },
+    "typecheck": "A prior tsc --noEmit passed during implementation; final shared source is still changing and parent owns final typecheck/full regression.",
+    "notClaimed": [
+      "native Canvas screenshot review",
+      "HUD DOM geometry integration at all resolutions",
+      "real browser zoom / native OS focus or minimization",
+      "new performance qualification",
+      "official dense core snapshot coverage",
+      "5-player blind playtest, readability comprehension, fun or retention"
+    ]
+  },
+  "conclusion": "No open source defect remains in the reviewed integration after the two preferred-baseline corrections. Approval here is limited to source/recorder technical contracts; parent still owns final frozen-source regression and actual Canvas/HUD screenshots."
+}

@@ -1,0 +1,37 @@
+import { readFile, writeFile } from 'node:fs/promises';
+const baseline = 'artifacts/completion-v074/performance/attempt-1/measurement-script.mjs';
+let source = await readFile(baseline, 'utf8');
+function replace(before, after) { if (!source.includes(before)) throw Error(`Missing baseline anchor: ${before.slice(0,80)}`); source = source.replace(before, after); }
+replace("import { verifyFrozen074, inspectWork074, acquireExclusive074 } from '../runtime-guards.mjs';", '');
+const start = source.indexOf('const runRequested =');
+const end = source.indexOf('const seed =', start);
+source = source.slice(0, start) + `const folder = process.env.VI_PERF_OUTPUT ?? 'artifacts/readability-v075/perf/formal';
+const activeTargetSeconds = Number(process.env.VI_PERF_ACTIVE_SECONDS ?? 120);
+if (!Number.isFinite(activeTargetSeconds) || activeTargetSeconds < 60) throw Error('At least 60 measured active seconds required.');
+const postMemory = process.env.VI_PERF_POST_MEMORY === '1';
+` + source.slice(end);
+replace("const gameHash = hash(await readFile('dist/game.js'));", `const gameHash = hash(await readFile('dist/game.js'));
+const frozen = { version: buildMetadata.version, gameSha256: gameHash, buildInputCount: Object.keys(buildMetadata.sourceManifest).length };
+async function verifyFrozen075() {
+  if (buildMetadata.version !== '0.7.5' || hash(await readFile('dist/game.js')) !== gameHash) throw Error('Release bundle changed.');
+  for (const [path, expected] of Object.entries(buildMetadata.sourceManifest)) if (hash(await readFile(path)) !== expected) throw Error('Build input changed: ' + path);
+  return frozen;
+}`);
+const optional = source.indexOf('if (!runRequested)');
+const validation = source.indexOf('if (!Number.isInteger(seed)', optional);
+source = source.slice(0, optional) + source.slice(validation);
+replace("const exclusive = await acquireExclusive074(folder, 'formal600-second-pressure');\ntry {\nawait mkdir(folder);", 'await mkdir(folder, { recursive: true });');
+replace(' frozen, exclusiveGuard: exclusive.record, runtimeGuardSha256: hash(await readFile(\'artifacts/completion-v074/runtime-guards.mjs\')), version:', ' frozen, exclusiveScope: \'Root sequenced this run after all its other controlled browser sessions closed; no claim of OS-global exclusion.\', version:');
+replace('frozen, exclusiveGuard: exclusive.record, seed,', 'frozen, seed,');
+source = source.replaceAll('  await exclusive.assertExclusive();\n', '').replaceAll('      await exclusive.assertExclusive();\n', '');
+source = source.replaceAll('verifyFrozen074()', 'verifyFrozen075()');
+replace('} finally { await exclusive.release(); }', '');
+replace("if (Date.now() - report.measurementWallStartedAt > 900000) throw Error('Ten active minutes exceeded 15 wall minutes');", "if (Date.now() - report.measurementWallStartedAt > Math.max(180000, activeTargetSeconds * 1500)) throw Error('Measured active time exceeded wall budget');");
+replace('if (active >= 600)', 'if (active >= activeTargetSeconds)');
+replace("if (mode === 'standard' && active >= 300)", "if (mode === 'standard' && active >= activeTargetSeconds / 2)");
+replace('report.activeSimulationSeconds >= 600', 'report.activeSimulationSeconds >= activeTargetSeconds');
+replace('metric.activeDurationMs >= 295000', 'metric.activeDurationMs >= activeTargetSeconds * 500 - 5000');
+replace("report.passScope = 'Ten active minutes, about five per real quality UI setting; source-b plus retained source retain real open production, 24 living actors with three real immune cells captured in both modes, accepted cell hits, frame budget and natural heap/DOM samples. Natural memory still requires trend review; this does not close M16 memory/native-device or playtest acceptance by itself.';", "report.activeTargetSeconds = activeTargetSeconds; report.acceptanceTenMinuteRun = activeTargetSeconds >= 600;\n  report.passScope = `${activeTargetSeconds} active seconds, about half per real quality UI setting; source-b and retained source keep real open production, 24 actors with three real cells captured in both modes, accepted cell hits, frame budget and natural heap/DOM samples. ${activeTargetSeconds < 600 ? 'Targeted regression; not a ten-minute acceptance run.' : 'Ten-minute duration met.'} Memory, native-focus/zoom and human acceptance remain separate.`;");
+if (/exclusive\.|verifyFrozen074|inspectWork074|runRequested/.test(source)) throw Error('Stale version-specific guard remains.');
+await writeFile('artifacts/readability-v075/measure-pressure.mjs', source);
+console.log('Derived new-version public-input workload; immutable v074 baseline was only read.');
