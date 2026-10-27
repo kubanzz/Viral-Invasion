@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-27",
+  "version": "0.6.2",
+  "gameSourceRevision": "f83514dcd39b0cfd14c21ca643c4f95db5ddb80f",
+  "game": {
+    "bytes": 292302,
+    "sha256": "8015bf6faba161f05aade7813fe3d48c390b4d8d7faac8fe138d59670f702e3d"
+  },
+  "build": {
+    "inputCount": 45,
+    "metadata": "artifacts/feedback-v062/build-meta.json",
+    "proof": "artifacts/feedback-v062/release-manifest.json"
+  },
+  "unit": {
+    "report": "artifacts/feedback-v062/unit-final.json",
+    "passed": 222,
+    "failed": 0,
+    "typecheck": "artifacts/feedback-v062/typecheck.json"
+  },
+  "simulation": {
+    "report": "artifacts/feedback-v062/full-system-seeds.json",
+    "unitReport": "artifacts/feedback-v062/full-system-unit.json",
+    "audit": "artifacts/feedback-v062/system-verification.json",
+    "passed": true,
+    "scope": "A separate 1-test batch simulates 1000 complete sessions; not 1000 browser or human games."
+  },
+  "browser": {
+    "initial": {
+      "report": "artifacts/feedback-v062/browser-report.json",
+      "stats": {
+        "startTime": "2026-10-27T03:24:25.065Z",
+        "duration": 1107109.513,
+        "expected": 66,
+        "skipped": 18,
+        "unexpected": 2,
+        "flaky": 0
+      }
+    },
+    "targetedRerun": {
+      "report": "artifacts/feedback-v062/readability-rerun1-report.json",
+      "stats": {
+        "startTime": "2026-10-27T03:36:44.931Z",
+        "duration": 191837.867,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    "finalUnique": {
+      "allocated": 86,
+      "passed": 68,
+      "skipped": 18,
+      "unresolved": 0
+    },
+    "audit": "artifacts/feedback-v062/browser-verification.json",
+    "initialLegacyBaseline": {
+      "report": "artifacts/feedback-v061/legacy-report.json",
+      "stats": {
+        "startTime": "2026-10-27T02:58:12.651Z",
+        "duration": 1245913.615,
+        "expected": 43,
+        "skipped": 3,
+        "unexpected": 2,
+        "flaky": 0
+      },
+      "scope": "Frozen 0.6.1 baseline. Two pursue tests won via ignore instead of the requested pursue route; preserved failures, not 0.6.2 passes."
+    },
+    "independentAudit": "artifacts/feedback-v062/browser-independent-audit.json",
+    "readabilityAudit": "artifacts/feedback-v062/readability-verification.json",
+    "visualReview": "artifacts/feedback-v062/visual-review.json"
+  },
+  "performance": {
+    "report": "artifacts/feedback-v062/performance/report.json",
+    "pass": true,
+    "activeSimulationSeconds": 600.1166666666667,
+    "wallDurationMs": 600355,
+    "metrics": {
+      "standard": {
+        "frames": 18014,
+        "activeDurationMs": 300243.39999999997,
+        "averageFps": 59.99798829882689,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 33.30000000000291
+      },
+      "low": {
+        "frames": 17994,
+        "activeDurationMs": 299893.6,
+        "averageFps": 60.0012804541344,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 17.300000000046566
+      }
+    },
+    "device": {
+      "os": "win32",
+      "release": "10.0.26200",
+      "cpu": "Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz",
+      "logicalCpus": 16,
+      "memoryBytes": 68637700096,
+      "browser": "155.0.8059.85",
+      "mode": "headless"
+    },
+    "memory": "artifacts/feedback-v062/performance/memory-review.json"
+  },
+  "renderInvariance": {
+    "report": "artifacts/feedback-v062/render-invariance/report.json",
+    "pass": true,
+    "scope": "Independent snapshot-derived Canvas fixture; not an additional live win or performance run."
+  },
+  "release": {
+    "manifest": "artifacts/feedback-v062/release-manifest.json",
+    "zip": {
+      "path": "releases/Viral-Invasion-G4-v0.6.2.zip",
+      "bytes": 107244,
+      "sha256": "a852912e0ff4ba31e8f783808589e608710a54768a307eac1f2a20062109b219"
+    },
+    "smoke": "artifacts/feedback-v062/release-smoke/report.json"
+  },
+  "limitations": {
+    "standardizedHumanTesters": "0/5; actual user feedback is separately recorded",
+    "humanPacingReplayAndIncubation": "Unproven; skilled automation is not first-play evidence",
+    "nativeFocusMinimizeAndZoom": "Not verified; synthetic blur and viewport checks have narrower scope",
+    "formation": "Soft spacing; narrow terrain and pursuit can still partially overlap",
+    "memory": "118 CDP observations: usedSize warm/late medians 10.063/9.799MB, but totalSize first/last-minute medians 14.094/39.391MB. Reserved heap increased; memory-stability and leak-free acceptance remain open. No RSS/GPU or forced GC."
+  }
+}
