@@ -4,9 +4,16 @@ import type { MigrationChoice } from '../game/campaignTypes';
 import type { ProtocolId } from '../game/growthTypes';
 import { PROTOCOL_IDS, PROTOCOLS } from '../game/protocols';
 import type { GameState } from '../game/types';
+import type { CounterGuideVariant } from '../game/encounterTypes';
 
 export const PROFILE_SCHEMA_VERSION = 1 as const;
 export const PROFILE_STORAGE_KEY = 'viral-invasion:1:profile';
+export const COUNTER_GUIDE_VERSION = 1;
+export interface RunEncounterRecord {
+  configId: 'campaign-1' | 'fixture-1'; guideVariant: CounterGuideVariant;
+  firstTraitOverride?: TraitId; guideCompleted: boolean; guideSkipped: boolean;
+  counterMethod?: 'rear' | 'pulse';
+}
 export interface ProfileStorage {
   getItem(key: string): string | null;
   setItem(key: string, value: string): void;
@@ -33,15 +40,16 @@ export interface RunSummary {
   traits: TraitId[]; protocols: ProtocolId[]; migrationChoice: MigrationChoice | null;
   coreCleared: boolean; stats: RunStats; timeline: RunTimelineEntry[];
   suggestion: string; suggestionEvidence: string;
+  encounter?: RunEncounterRecord;
 }
 export interface RunRecord extends RunSummary { runId: string }
 export interface ProfileData {
   game: 'viral-invasion'; schemaVersion: typeof PROFILE_SCHEMA_VERSION;
   discoveredTraits: TraitId[]; discoveredWeaknesses: TraitId[]; unlockedProtocols: ProtocolId[];
   achievements: AchievementId[]; settings: ProfileSettings;
-  onboarding: { migrationGuideAcknowledged: boolean };
+  onboarding: { migrationGuideAcknowledged: boolean; counterGuideVersion: number; counterGuideCompleted: boolean; counterGuideSkipped: boolean };
   stats: { runs: number; wins: number; losses: number; kills: number; sourceClears: number; coreClears: number };
-  best: { fastestVictory: { runId: string; seed: number; durationSeconds: number } | null; mostKills: number; mostSources: number; longestRunSeconds: number };
+  best: { fastestVictory: { runId: string; seed: number; durationSeconds: number; encounter?: RunEncounterRecord } | null; mostKills: number; mostSources: number; longestRunSeconds: number };
   recentRuns: RunRecord[];
   /** Kept separately from the ten visible records so an old result cannot be rewarded again. */
   recordedRunIds: string[];
@@ -83,13 +91,24 @@ export function emptyProfile(): ProfileData {
     game: 'viral-invasion', schemaVersion: PROFILE_SCHEMA_VERSION,
     discoveredTraits: [], discoveredWeaknesses: [], unlockedProtocols: [], achievements: [],
     settings: { sound: true, lowEffects: false },
-    onboarding: { migrationGuideAcknowledged: false },
+    onboarding: { migrationGuideAcknowledged: false, counterGuideVersion: COUNTER_GUIDE_VERSION, counterGuideCompleted: false, counterGuideSkipped: false },
     stats: { runs: 0, wins: 0, losses: 0, kills: 0, sourceClears: 0, coreClears: 0 },
     best: { fastestVictory: null, mostKills: 0, mostSources: 0, longestRunSeconds: 0 },
     recentRuns: [], recordedRunIds: [],
   };
 }
 
+function parseEncounter(value: unknown): RunEncounterRecord | null {
+  if (!ownObject(value) || !['campaign-1', 'fixture-1'].includes(String(value.configId))
+    || !['guided', 'adaptive'].includes(String(value.guideVariant))
+    || typeof value.guideCompleted !== 'boolean' || typeof value.guideSkipped !== 'boolean'
+    || value.firstTraitOverride !== undefined && !TRAIT_IDS.includes(value.firstTraitOverride as TraitId)
+    || value.counterMethod !== undefined && !['rear', 'pulse'].includes(String(value.counterMethod))) return null;
+  return { configId: value.configId as RunEncounterRecord['configId'], guideVariant: value.guideVariant as CounterGuideVariant,
+    guideCompleted: value.guideCompleted, guideSkipped: value.guideSkipped,
+    ...(value.firstTraitOverride !== undefined ? { firstTraitOverride: value.firstTraitOverride as TraitId } : {}),
+    ...(value.counterMethod !== undefined ? { counterMethod: value.counterMethod as 'rear' | 'pulse' } : {}) };
+}
 function parseRecord(value: unknown): RunRecord | null {
   if (!ownObject(value) || !runIdValid(value.runId) || !uint32(value.seed) || typeof value.success !== 'boolean'
     || !textValid(value.reason) || !duration(value.durationSeconds) || !enumArray(value.traits, TRAIT_IDS)
@@ -97,6 +116,8 @@ function parseRecord(value: unknown): RunRecord | null {
     || typeof value.coreCleared !== 'boolean' || !ownObject(value.stats)
     || !RUN_STAT_KEYS.every(key => count((value.stats as Record<string, unknown>)[key]))
     || !Array.isArray(value.timeline) || value.timeline.length > 30 || !textValid(value.suggestion) || !textValid(value.suggestionEvidence)) return null;
+  const encounter = value.encounter === undefined ? undefined : parseEncounter(value.encounter);
+  if (encounter === null) return null;
   const timeline: RunTimelineEntry[] = [];
   for (const entry of value.timeline) {
     if (!ownObject(entry) || !duration(entry.at) || !['virus', 'antibody', 'campaign'].includes(String(entry.side)) || !textValid(entry.text)) return null;
@@ -107,6 +128,7 @@ function parseRecord(value: unknown): RunRecord | null {
     traits: [...value.traits], protocols: [...value.protocols], migrationChoice: value.migrationChoice as MigrationChoice | null,
     coreCleared: value.coreCleared, stats: Object.fromEntries(RUN_STAT_KEYS.map(key => [key, (value.stats as Record<string, number>)[key]])) as unknown as RunStats,
     timeline, suggestion: value.suggestion, suggestionEvidence: value.suggestionEvidence,
+    ...(encounter ? { encounter } : {}),
   };
 }
 function parseProfile(value: unknown): ProfileData | null {
@@ -116,7 +138,10 @@ function parseProfile(value: unknown): ProfileData | null {
     || !enumArray(value.unlockedProtocols, PROTOCOL_IDS) || !enumArray(value.achievements, ACHIEVEMENT_IDS)
     || !ownObject(value.settings) || typeof value.settings.sound !== 'boolean' || typeof value.settings.lowEffects !== 'boolean'
     || value.onboarding !== undefined && (!ownObject(value.onboarding)
-      || value.onboarding.migrationGuideAcknowledged !== undefined && typeof value.onboarding.migrationGuideAcknowledged !== 'boolean')
+      || value.onboarding.migrationGuideAcknowledged !== undefined && typeof value.onboarding.migrationGuideAcknowledged !== 'boolean'
+      || value.onboarding.counterGuideVersion !== undefined && !count(value.onboarding.counterGuideVersion)
+      || value.onboarding.counterGuideCompleted !== undefined && typeof value.onboarding.counterGuideCompleted !== 'boolean'
+      || value.onboarding.counterGuideSkipped !== undefined && typeof value.onboarding.counterGuideSkipped !== 'boolean')
     || !ownObject(value.stats) || !PROFILE_STAT_KEYS.every(key => count((value.stats as Record<string, unknown>)[key]))
     || !ownObject(value.best) || !count(value.best.mostKills) || !count(value.best.mostSources) || !duration(value.best.longestRunSeconds)
     || !strings(value.recordedRunIds) || !Array.isArray(value.recentRuns) || value.recentRuns.length > 10) return null;
@@ -132,7 +157,9 @@ function parseProfile(value: unknown): ProfileData | null {
   if (value.best.fastestVictory !== null) {
     const best = value.best.fastestVictory;
     if (!ownObject(best) || !runIdValid(best.runId) || !value.recordedRunIds.includes(best.runId) || !uint32(best.seed) || !duration(best.durationSeconds) || stats.wins === 0) return null;
-    fastestVictory = { runId: best.runId, seed: best.seed, durationSeconds: best.durationSeconds };
+    const encounter = best.encounter === undefined ? undefined : parseEncounter(best.encounter);
+    if (encounter === null) return null;
+    fastestVictory = { runId: best.runId, seed: best.seed, durationSeconds: best.durationSeconds, ...(encounter ? { encounter } : {}) };
   }
   // Reconstruct only the profile schema. Unknown JSON keys never become run state or settings.
   return {
@@ -140,7 +167,10 @@ function parseProfile(value: unknown): ProfileData | null {
     discoveredTraits: [...value.discoveredTraits], discoveredWeaknesses: [...value.discoveredWeaknesses], unlockedProtocols: [...value.unlockedProtocols], achievements: [...value.achievements],
     settings: { sound: value.settings.sound, lowEffects: value.settings.lowEffects },
     // Additive schema-1 field: old discoveries never imply that a guide was acknowledged.
-    onboarding: { migrationGuideAcknowledged: ownObject(value.onboarding) && value.onboarding.migrationGuideAcknowledged === true },
+    onboarding: { migrationGuideAcknowledged: ownObject(value.onboarding) && value.onboarding.migrationGuideAcknowledged === true,
+      counterGuideVersion: ownObject(value.onboarding) && count(value.onboarding.counterGuideVersion) ? value.onboarding.counterGuideVersion : 0,
+      counterGuideCompleted: ownObject(value.onboarding) && value.onboarding.counterGuideCompleted === true,
+      counterGuideSkipped: ownObject(value.onboarding) && value.onboarding.counterGuideSkipped === true },
     stats: Object.fromEntries(PROFILE_STAT_KEYS.map(key => [key, stats[key]])) as unknown as ProfileData['stats'],
     best: { fastestVictory, mostKills: value.best.mostKills, mostSources: value.best.mostSources, longestRunSeconds: value.best.longestRunSeconds },
     recentRuns, recordedRunIds: [...value.recordedRunIds],
@@ -190,6 +220,10 @@ export function buildRunSummary(state: GameState): RunSummary {
     coreCleared: campaign?.core.status === 'cleared',
     stats: { kills: safeCount(battle?.stats.kills), sourceClears: safeCount(battle?.stats.sourceClears), eliteClears: safeCount(battle?.stats.eliteClears), repairs: safeCount(battle?.stats.repairs), pulses: safeCount(battle?.stats.pulses), scans: safeCount(state.scans), dashes: safeCount(state.dashes), travels: safeCount(campaign?.stats.travels) },
     timeline: timeline.filter((entry, index) => timeline.findIndex(other => other.at === entry.at && other.side === entry.side && other.text === entry.text) === index).slice(-30),
+    ...(battle?.encounter ? { encounter: { configId: battle.encounter.configId, guideVariant: battle.encounter.guideVariant,
+      guideCompleted: battle.encounter.firstCounter.completedAt !== null, guideSkipped: battle.encounter.firstCounter.skippedAt !== null,
+      ...(battle.forcedFirstTrait ? { firstTraitOverride: battle.forcedFirstTrait } : {}),
+      ...(battle.encounter.firstCounter.counterHit ? { counterMethod: battle.encounter.firstCounter.counterHit.method } : {}) } } : {}),
     ...advice(state),
   };
 }
@@ -271,6 +305,17 @@ export class ProfileStore {
     }
     return this.load();
   }
+  /** Only an accepted gameplay counter or an explicit skip acknowledges this version. */
+  acknowledgeCounterGuide(outcome: 'completed' | 'skipped'): ProfileSnapshot {
+    const guide = this.value.onboarding;
+    const key = outcome === 'completed' ? 'counterGuideCompleted' : 'counterGuideSkipped';
+    if (guide.counterGuideVersion !== COUNTER_GUIDE_VERSION) {
+      guide.counterGuideVersion = COUNTER_GUIDE_VERSION;
+      guide.counterGuideCompleted = false; guide.counterGuideSkipped = false;
+    }
+    if (!guide[key]) { guide[key] = true; this.persist(); }
+    return this.load();
+  }
   /** The host supplies a globally unique run ID; seed and local run serial alone are not unique across reloads. */
   recordRun(state: GameState, runId: string): RecordRunResult {
     if (!runIdValid(runId)) return { kind: 'rejected', reason: 'invalid-run-id' };
@@ -291,7 +336,7 @@ export class ProfileStore {
     data.best.mostKills = Math.max(data.best.mostKills, record.stats.kills);
     data.best.mostSources = Math.max(data.best.mostSources, record.stats.sourceClears);
     data.best.longestRunSeconds = Math.max(data.best.longestRunSeconds, record.durationSeconds);
-    if (record.success && (!data.best.fastestVictory || record.durationSeconds < data.best.fastestVictory.durationSeconds)) data.best.fastestVictory = { runId, seed: record.seed, durationSeconds: record.durationSeconds };
+    if (record.success && (!data.best.fastestVictory || record.durationSeconds < data.best.fastestVictory.durationSeconds)) data.best.fastestVictory = { runId, seed: record.seed, durationSeconds: record.durationSeconds, ...(record.encounter ? { encounter: structuredClone(record.encounter) } : {}) };
     const earned: AchievementId[] = [];
     if (record.stats.sourceClears > 0) earned.push('FIRST_SOURCE');
     if (record.success) earned.push('FIRST_VICTORY');

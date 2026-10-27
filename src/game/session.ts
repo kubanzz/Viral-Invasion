@@ -36,7 +36,8 @@ export class GameSession {
   private campaignTransactions = new Set<string>();
   private deferredCampaign: CampaignCommand[] = [];
 
-  constructor(seed = 130026, private readonly options: CampaignOptions = {}) {
+  constructor(seed = 130026, private options: CampaignOptions = {}) {
+    this.options = { ...options };
     this.state = this.initial(seed);
     if (options.campaign) this.battleDirector = new BattleDirector(this);
     this.resetGrowth();
@@ -77,14 +78,18 @@ export class GameSession {
     return state;
   }
 
-  start(seed = this.state.seed): void {
+  start(seed = this.state.seed, runOptions?: Pick<CampaignOptions, 'counterGuide' | 'encounterMode' | 'firstTrait'>): void {
+    if (runOptions) this.options = { ...this.options, ...runOptions };
     this.effectId = 0;
     this.dashDirection = { x: 1, y: 0 };
     this.state = this.initial(seed);
     this.resetGrowth();
     this.resetCampaign();
     this.state.phase = 'playing';
-    this.emit('RUN_STARTED', { seed: this.state.seed, mode: this.state.battle ? 'campaign' : 'training', startAtTick: 0 });
+    this.emit('RUN_STARTED', { seed: this.state.seed, mode: this.state.battle ? 'campaign' : 'training', startAtTick: 0,
+      encounterConfig: this.state.battle?.encounter?.configId ?? (this.state.battle ? 'fixture-1' : 'training-1'),
+      counterGuide: this.state.battle?.encounter?.guideVariant ?? 'adaptive',
+      firstTraitOverride: this.options.firstTrait ?? '' });
   }
 
   restart(seed = this.state.seed): void { this.start(seed); }
@@ -405,6 +410,13 @@ export class GameSession {
     if (this.campaignController) this.applyCampaignCommands(this.campaignController.chooseMigration(choice, eventId, this.state));
   }
 
+  skipCounterGuide(): boolean {
+    if (!['playing', 'paused'].includes(this.state.phase)) return false;
+    const accepted = this.battleDirector?.skipCounterGuide() ?? false;
+    if (accepted) this.emit('INPUT_RESET_REQUESTED', { reason: 'counter-guide-skipped' });
+    return accepted;
+  }
+
   private coreContext(): MotherCoreContext | undefined {
     const state = this.state, campaign = state.campaign, controller = this.motherController;
     if (!campaign || !controller) return;
@@ -498,6 +510,9 @@ export class GameSession {
       } else if (command.kind === 'retest') {
         if (!director.canRetest(state)) { this.message(`复测未通过：${director.retestReasons(state).join('；')}`, 5); continue; }
         this.emit('RETEST_COMPLETED', { organs: Object.values(campaign.arenas).filter(arena => arena.activated).map(arena => `${arena.organId}:${arena.tissue.hp.toFixed(1)}`).join(','), infection: state.battle!.pressure.infection });
+        // Preserve accepted final-stage telemetry before RUN_ENDED discards
+        // remaining gameplay intents. Terminal telemetry cannot spawn or move.
+        for (const pending of campaign.pendingCommands.splice(0)) if (pending.kind === 'log') this.emit(pending.type, pending.data);
         this.effect('success', state.terminal, state.terminal, 180, 1.5); this.finish(command.success, command.reason);
       } else if (command.kind === 'infectionDelta') {
         const pressure = state.battle!.pressure; const before = pressure.infection;
@@ -527,16 +542,17 @@ export class GameSession {
             const pos = moveWithCollision(command.position, { x: 0, y: 0 }, 34, arena.geometry);
             arena.targets.push(sourceTarget(command.id, pos, command.hp));
             arena.graph.nodes.push({ ...pos, id: command.id, kind: 'source', active: true, infected: true });
-            const to = arena.graph.nodes.find(node => node.id === command.connectTo)!;
-            arena.graph.edges.push({ id: `${id}:${to.id}`, from: id, to: to.id, open: to.active, nextSpread: state.elapsed + B.spreadInterval, flowDirection: normalized(to.x - pos.x, to.y - pos.y) });
-            arena.nextSpawnAt[id] = state.elapsed + B.spawnInterval;
+            const to = arena.graph.nodes.find(node => node.id === command.connectTo);
+            if (command.spreadEnabled !== false && to) arena.graph.edges.push({ id: `${id}:${to.id}`, from: id, to: to.id, open: to.active, nextSpread: state.elapsed + B.spreadInterval, flowDirection: normalized(to.x - pos.x, to.y - pos.y) });
+            if (!command.disableSpawn) arena.nextSpawnAt[id] = state.elapsed + B.spawnInterval;
           } else {
             const pos = moveWithCollision(command.position, { x: 0, y: 0 }, MOTHER_CORE_BALANCE.radius, arena.geometry);
             arena.targets.push({ ...pos, id, role: 'core', kind: 'single', hp: MOTHER_CORE_BALANCE.hp, maxHp: MOTHER_CORE_BALANCE.hp, radius: MOTHER_CORE_BALANCE.radius, traits: [command.traits[0]], facing: 0, born: state.elapsed, hitUntil: 0, scanned: false });
             this.motherController = new MotherCoreController({ coreId: id, organId: command.organId, traits: command.traits, tick: state.tick, elapsed: state.elapsed });
             campaign.core.combat = this.motherController.state; director.acknowledgeCoreSpawn(id, true);
           }
-          this.emit('ACTOR_SPAWNED', { organId: command.organId, id, role: command.kind === 'spawnCore' ? 'core' : command.kind === 'spawnSource' ? 'source' : command.target.role ?? 'virus' });
+          const accepted = arena.targets.find(target => target.id === id)!;
+          this.emit('ACTOR_SPAWNED', { organId: command.organId, id, role: command.kind === 'spawnCore' ? 'core' : command.kind === 'spawnSource' ? 'source' : command.target.role ?? 'virus', x: accepted.x, y: accepted.y });
         }
       }
       if (eventId) this.campaignTransactions.add(eventId);

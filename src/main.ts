@@ -10,8 +10,12 @@ import type { TraitId } from './game/battleTypes';
 import type { ProtocolId } from './game/growthTypes';
 import { draftOverlay, growthHudMarkup, updateGrowthHud, growthHelpMarkup, growthHistoryMarkup, growthDetailsEntryMarkup, growthDetailsOverlay } from './ui/growthHud';
 import { ProfileStore } from './meta/profile';
+import type { RunEncounterRecord } from './meta/profile';
+import { newRunOptions, replayRunOptions } from './meta/runOptions';
 import { profileOverlay, profileMenuMarkup, profileResultMarkup } from './ui/profileHud';
 import './ui/profile.css';
+import { encounterHudMarkup, updateEncounterHud, encounterHelpMarkup } from './ui/encounterHud';
+import './ui/encounter.css';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
 const app = document.querySelector<HTMLDivElement>('#app')!;
@@ -23,11 +27,11 @@ const initialSeed = Number.isInteger(seedParam) && seedParam >= 0 && seedParam <
 const trainingFixture = params.get('scenario') === 'training';
 const firstTrait = ['CARAPACE', 'FISSION', 'MIMIC'].includes(params.get('trait') ?? '') ? params.get('trait') as TraitId : undefined;
 const milestone = params.get('fixture') === 'G1' ? 'G1' : params.get('fixture') === 'G2' ? 'G2' : 'G3';
-const session = new GameSession(initialSeed, { campaign: !trainingFixture, firstTrait, milestone });
+const profile = new ProfileStore();
+const session = new GameSession(initialSeed, { campaign: !trainingFixture, ...newRunOptions(profile.data, firstTrait), milestone });
 const clock = new FixedClock();
 const renderer = new Renderer(canvas);
 const sound = new Soundscape();
-const profile = new ProfileStore();
 sound.enabled = profile.data.settings.sound;
 let lowEffects = profile.data.settings.lowEffects;
 let help = false;
@@ -62,6 +66,7 @@ if (!trainingFixture) {
   document.querySelector('.objective')!.remove();
   document.querySelector('.telemetry')!.remove();
   document.querySelector('#hud')!.insertAdjacentHTML('afterbegin', battleHudMarkup);
+  document.querySelector('.battle-objective')!.insertAdjacentHTML('beforeend', encounterHudMarkup);
   if (session.state.growth) document.querySelector('#hud')!.insertAdjacentHTML('beforeend', growthHudMarkup);
   if (session.state.campaign) document.querySelector('.tool[data-action="tool-2"] small')!.textContent = '群体 · 击退打断';
   document.querySelector('.micro-footer')!.textContent = `${milestone === 'G3' ? 'G4' : milestone} · ${milestone === 'G3' ? '器官联防' : '心脏防线'} / 架空生物幻想`;
@@ -74,6 +79,8 @@ session.bus.on('event', event => {
   if (event.type === 'INPUT_RESET_REQUESTED') { input.clear(); resetClockAfterStep = true; }
   if (event.type === 'RUN_ENDED' && session.state.campaign && runId) profile.recordRun(session.state, runId);
   if (event.type === 'MIGRATION_WARNING' && !migrationGuideSeen) migrationGuidePending = true;
+  if (event.type === 'COUNTER_GUIDE_COMPLETED') profile.acknowledgeCounterGuide('completed');
+  if (event.type === 'COUNTER_GUIDE_SKIPPED') profile.acknowledgeCounterGuide('skipped');
 });
 const el = (id: string) => document.getElementById(id)!;
 const formatTime = (seconds: number) => `${Math.floor(seconds/60).toString().padStart(2,'0')}:${Math.floor(seconds%60).toString().padStart(2,'0')}`;
@@ -87,13 +94,13 @@ function togglePause() {
   if (session.state.phase === 'playing') session.pause();
   else if (session.state.phase === 'paused') session.resume();
 }
-function start(newSeed?: number) {
+function start(newSeed?: number, replay?: RunEncounterRecord, preserveCurrent = false) {
   input.clear(); clock.reset(); help = false; history = false; resumeAfterHelp = false; resumeAfterHistory = false;
   growthDetails = false; resumeAfterGrowthDetails = false;
   profileOpen = false; migrationGuide = false; migrationGuidePending = false;
   runId = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}:${performance.now()}:${Math.random().toString(36).slice(2)}`;
   document.body.classList.remove('crisis');
-  sound.unlock(); session.start(newSeed ?? session.state.seed);
+  sound.unlock(); session.start(newSeed ?? session.state.seed, preserveCurrent ? undefined : replay ? replayRunOptions(replay, firstTrait) : newRunOptions(profile.data, firstTrait));
 }
 function showHelp() {
   if (profileOpen || migrationGuide || history || help || growthDetails) return;
@@ -132,7 +139,13 @@ app.addEventListener('click', event => {
   if (action === 'close-growth-details') { closeGrowthDetails(); return; }
   if (action === 'profile') { resumeAfterProfile = session.state.phase === 'playing'; session.pause(); profileOpen = true; input.clear(); clock.reset(); button.blur(); return; }
   if (action === 'close-profile') { profileOpen = false; if (resumeAfterProfile) session.resume(); resumeAfterProfile = false; input.clear(); clock.reset(); button.blur(); return; }
-  if (action === 'replay-record') { const seed = Number(button.dataset.seed); if (Number.isInteger(seed) && seed >= 0 && seed <= 0xffffffff) start(seed); return; }
+  if (action === 'replay-record') {
+    const seed = Number(button.dataset.seed), data = profile.data, record = data.recentRuns.find(run => run.runId === button.dataset.runId && run.seed === seed);
+    const best = data.best.fastestVictory, encounter = record?.encounter ?? (best && best.runId === button.dataset.runId && best.seed === seed ? best.encounter : undefined);
+    if (Number.isInteger(seed) && seed >= 0 && seed <= 0xffffffff) start(seed, encounter);
+    return;
+  }
+  if (action === 'skip-counter-guide') { session.skipCounterGuide(); input.clear(); clock.reset(); button.blur(); return; }
   if (action === 'close-migration-guide') { closeMigrationGuide(); return; }
   if (action.startsWith('migration-')) {
     session.chooseMigration(action.slice(10) as 'pursue' | 'block' | 'ignore', button.dataset.migration!);
@@ -148,7 +161,8 @@ app.addEventListener('click', event => {
     overlayKey = ''; button.blur(); return;
   }
   if (action.startsWith('tool-')) { input.select(Number(action.at(-1)) as Tool); return; }
-  if (action === 'start' || action === 'retry') start();
+  if (action === 'start') start();
+  if (action === 'retry') start(undefined, undefined, true);
   if (action === 'new') start((session.state.seed + 2654435761) >>> 0);
   if (action === 'pause' || action === 'continue') togglePause();
   if (action === 'menu') { input.clear(); clock.reset(); help = false; history = false; growthDetails = false; resumeAfterGrowthDetails = false; profileOpen = false; migrationGuide = false; migrationGuidePending = false; session.menu(); document.body.classList.remove('crisis'); }
@@ -164,7 +178,7 @@ app.addEventListener('click', event => {
 function updateOverlay() {
   const state = session.state;
   const draft = state.growth?.draft;
-  const key = `${state.phase}:${help}:${lowEffects}:${history}:${growthDetails}:${profileOpen}:${migrationGuide}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}`;
+  const key = `${state.phase}:${help}:${lowEffects}:${history}:${growthDetails}:${profileOpen}:${migrationGuide}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}:${state.battle?.encounter?.firstCounter.guideStatus}`;
   if (key === overlayKey) return;
   overlayKey = key;
   el('hud').hidden = state.phase === 'menu' || state.phase === 'result';
@@ -183,6 +197,7 @@ function updateOverlay() {
   if (state.battle) {
     host.innerHTML = (!help && !history && state.phase === 'paused' ? draftOverlay(state) : null) ?? battleOverlay(state, help, resumeAfterHelp, lowEffects, history) ?? '';
     if (state.growth && help) host.querySelector('.help-grid')?.insertAdjacentHTML('afterend', growthHelpMarkup);
+    if (help) host.querySelector('.help-grid')?.insertAdjacentHTML('afterend', encounterHelpMarkup(state));
     if (state.growth && history) host.querySelector('h2')?.insertAdjacentHTML('afterend', growthHistoryMarkup(state));
     if (state.growth && (help || history || state.phase === 'paused' || state.phase === 'result')) host.querySelector('.actions')?.insertAdjacentHTML('beforeend', growthDetailsEntryMarkup);
     if (state.campaign) host.querySelector('.switches')?.insertAdjacentHTML('beforeend', `<button data-action="sound">声音 ${sound.enabled?'开':'关'}</button>`);
@@ -209,6 +224,7 @@ function updateHud() {
   if (s.battle) {
     updateBattleHud(s);
     updateGrowthHud(s);
+    updateEncounterHud(s);
     el('message').textContent = s.messageUntil > s.elapsed ? s.message : s.battle.objective;
     updateCommonHud();
     return;
@@ -259,7 +275,7 @@ renderer.resize(); updateOverlay(); updateHud(); requestAnimationFrame(frame);
 
 // Read-only diagnostics for browser regression. Inputs always use the real DOM.
 Object.defineProperty(window, '__viral', { value: Object.freeze({
-  version: '0.6.4-G4', snapshot: () => session.snapshot(),
+  version: '0.7.0-G4', snapshot: () => session.snapshot(),
   toScreen: (point: { x: number; y: number }) => renderer.camera.worldToScreen(point),
   toWorld: (point: { x: number; y: number }) => renderer.camera.screenToWorld(point),
   diagnostics: () => renderer.diagnostics(session.state),

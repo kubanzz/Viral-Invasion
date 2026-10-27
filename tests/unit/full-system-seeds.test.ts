@@ -9,8 +9,9 @@ import type { MigrationChoice } from '../../src/game/campaignTypes';
 import { distance, normalized } from '../../src/actors/collision';
 import { g3Input, waypoint } from '../helpers/g3Driver';
 import { IMMUNE_CELL_BALANCE } from '../../src/game/immuneCells';
+import type { CounterGuideVariant } from '../../src/game/encounterTypes';
 
-const REPORT = resolve(process.env.VI_SYSTEM_REPORT ?? 'artifacts/g4-full-system-seeds.json');
+const REPORT = resolve(process.env.VI_SYSTEM_REPORT ?? 'artifacts/encounters-v070/full-system-seeds.json');
 const SEED_COUNT = 1000;
 const MAX_STEPS = 300 * 60;
 const choices: MigrationChoice[] = ['pursue', 'block', 'ignore'];
@@ -23,6 +24,9 @@ type Summary = {
   infection: number; vitality: number; playerHp: number; travels: number;
   core: string; demonstratedCoreTraits: string[]; sourceClears: number; sourceTotal: number;
   baseCountersAvailable: boolean; events: Record<string, number>; finalStateSha256: string;
+  configId: string; guideVariant: CounterGuideVariant;
+  stages: NonNullable<GameState['campaign']>['encounters'];
+  firstCounter: NonNullable<NonNullable<GameState['battle']>['encounter']>['firstCounter'];
 };
 const fingerprint = (value: unknown): string => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 
@@ -109,7 +113,9 @@ function resolveDraft(game: GameSession, mode: Mode, seed: number, route: string
 }
 
 function execute(seed: number, choice: MigrationChoice, mode: Mode): { summary: Summary; failureState?: GameState } {
-  const game = new GameSession(seed, { campaign: true, milestone: 'G3' }); game.start();
+  // Two-seed variant blocks cross both odd/even build modes and the route cycle.
+  const guideVariant: CounterGuideVariant = Math.floor((seed - 1) / 2) % 2 === 0 ? 'guided' : 'adaptive';
+  const game = new GameSession(seed, { campaign: true, milestone: 'G3', encounterMode: 'formal', counterGuide: guideVariant }); game.start();
   const events: Record<string, number> = {}, route: string[] = [];
   game.bus.on('event', event => { events[event.type] = (events[event.type] ?? 0) + 1; });
   let peakActive = 0, peakStored = 0, invariant: string | undefined, failureState: GameState | undefined;
@@ -128,6 +134,11 @@ function execute(seed: number, choice: MigrationChoice, mode: Mode): { summary: 
       guard(Object.values(c.arenas).every(arena => !arena.activated || arena.tissue.hp >= 50), 'win skipped organ integrity');
       guard(b.pressure.infection < 35 && state.player.hp > 0 && b.pressure.vitality > 0, 'win with fatal pressure');
       guard(events.RUN_ENDED === 1 && events.RETEST_COMPLETED === 1, 'duplicate/missing end or active retest');
+      guard(b.encounter?.configId === 'campaign-1' && c.encounters?.configId === 'campaign-1', 'formal run lost versioned encounter metadata');
+      guard(c.encounters.stage === 'V' && Object.values(c.encounters.stages).every(stage => stage.enteredAt !== null && stage.completedAt !== null), 'win skipped an actual campaign stage');
+      guard(c.encounters.crisis.status === 'cleared' && events.ORGAN_CRISIS_CLEARED === 1, 'win skipped the real stage IV source');
+      guard(b.encounter.firstCounter.status === 'resolved', 'win skipped first guardian');
+      if (guideVariant === 'guided') guard(b.encounter.firstCounter.counterHit !== null && events.COUNTER_GUIDE_COMPLETED === 1, 'guided driver failed to execute a real first counter');
     } catch (error) { invariant = String(error); failureState = game.snapshot(); }
   }
   const summary: Summary = { seed, choice, mode, outcome: invariant ? 'invariant-failure' : state.result ? state.result.success ? 'win' : 'loss' : 'exit',
@@ -138,7 +149,8 @@ function execute(seed: number, choice: MigrationChoice, mode: Mode): { summary: 
     infection: b.pressure.infection, vitality: b.pressure.vitality, playerHp: state.player.hp, travels: c.stats.travels,
     core: c.core.status, demonstratedCoreTraits: [...(c.core.combat?.seenTraits ?? [])], sourceClears: c.progress.sourceClears, sourceTotal: c.progress.sourceTotal,
     baseCountersAvailable: BALANCE.damage[1] > 0 && BATTLE_BALANCE.carapaceResistance > 0 && BALANCE.damage[2] >= BATTLE_BALANCE.childHp && BALANCE.repair > 0 && Number.isFinite(state.scanReady),
-    events, finalStateSha256: fingerprint(state) };
+    configId: b.encounter!.configId, guideVariant: b.encounter!.guideVariant, stages: c.encounters,
+    firstCounter: b.encounter!.firstCounter, events, finalStateSha256: fingerprint(state) };
   if (!state.result) { game.menu(); guard(game.state.phase === 'menu', 'public exit failed'); }
   return { summary, failureState };
 }
@@ -152,12 +164,13 @@ describe('G4 complete-session seed coverage', () => {
       const count = (outcome: Summary['outcome']) => runs.filter(run => run.outcome === outcome).length;
       writeFileSync(REPORT, JSON.stringify({ schemaVersion: 1, complete, expectedSeeds: SEED_COUNT, completedSeeds: runs.length, startedAt, updatedAt: new Date().toISOString(),
         method: 'GameSession.start -> fixed-step public InputFrame and DraftIntent -> win/loss/public menu exit; no state or clock injection.',
-        strategy: 'Migration choice rotates pursue/block/ignore. Odd seeds discard protocols; even seeds choose legal deterministic drafts. Public-input post-core rescue revisits unhealthy activated organs.',
+        strategy: 'Formal campaign-1 only. Migration rotates pursue/block/ignore; odd seeds discard protocols and even seeds choose legal deterministic drafts. Guided/adaptive alternate in independent two-seed blocks (500 each), crossing both build policies and all migration routes. Guided first counters use actual valve pulse then basic precision hit. The actual stage IV source is prioritized; post-core rescue revisits unhealthy activated organs.',
         limits: { maximumActionsPerSeed: MAX_STEPS, maxActivePerOrgan: BATTLE_BALANCE.maxActors, maxMainTraits: 2 },
         simulationSourceSha256: fingerprint(manifest), simulationSourceManifest: manifest, simulationSourceUnchanged: fingerprint(simulationManifest()) === fingerprint(manifest),
         outcomes: { wins: count('win'), losses: count('loss'), publicMenuExits: count('exit'), invariantFailures: count('invariant-failure') },
         traitSequences: Object.fromEntries([...new Set(runs.map(run => run.traits.join('>')))].sort().map(key => [key, runs.filter(run => run.traits.join('>') === key).length])),
         modeCoverage: Object.fromEntries((['base', 'protocols'] as const).map(mode => [mode, { total: runs.filter(run => run.mode === mode).length, wins: runs.filter(run => run.mode === mode && run.outcome === 'win').length }])),
+        variantCoverage: Object.fromEntries((['guided', 'adaptive'] as const).map(variant => [variant, { total: runs.filter(run => run.guideVariant === variant).length, wins: runs.filter(run => run.guideVariant === variant && run.outcome === 'win').length, actualCounterHits: runs.filter(run => run.guideVariant === variant && run.firstCounter.counterHit !== null).length }])),
         limitations: ['Headless deterministic simulation is not a real browser or human playtest.', 'A driver loss/exit is not proof that a seed is impossible.', 'Configured base counters and real input availability are checked; these runs do not separately execute every counter on every trait.', 'No frame-rate or 10-minute device-performance claim is made.'],
         replay, firstFailure, runs }, null, 2));
     };
@@ -175,6 +188,10 @@ describe('G4 complete-session seed coverage', () => {
     expect(runs.every(run => run.baseCountersAvailable)).toBe(true);
     expect(fingerprint(simulationManifest())).toBe(fingerprint(manifest));
     for (const choice of choices) for (const mode of ['base', 'protocols'] as const) expect(runs.some(run => run.choice === choice && run.mode === mode && run.outcome === 'win')).toBe(true);
+    for (const variant of ['guided', 'adaptive'] as const) {
+      expect(runs.filter(run => run.guideVariant === variant)).toHaveLength(500);
+      for (const choice of choices) for (const mode of ['base', 'protocols'] as const) expect(runs.some(run => run.guideVariant === variant && run.choice === choice && run.mode === mode && run.outcome === 'win')).toBe(true);
+    }
     expect(new Set(runs.filter(run => run.traits.length === 2).map(run => run.traits.join('>'))).size).toBe(6);
     console.info('FULL_SESSION_SEEDS_COMPLETE', JSON.stringify({ seeds: runs.length, wins: runs.filter(run => run.outcome === 'win').length, losses: runs.filter(run => run.outcome === 'loss').length, exits: runs.filter(run => run.outcome === 'exit').length, replayEqual: replay.equal }));
   // The expanded campaign and real cell navigation require a larger batch

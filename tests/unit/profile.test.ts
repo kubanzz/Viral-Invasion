@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { GameSession } from '../../src/game/session';
 import type { GameState } from '../../src/game/types';
 import { buildRunSummary, emptyProfile, ProfileStore, PROFILE_STORAGE_KEY, type ProfileStorage } from '../../src/meta/profile';
+import { newRunOptions, replayRunOptions } from '../../src/meta/runOptions';
 
 class MemoryStorage implements ProfileStorage {
   readonly items = new Map<string, string>();
@@ -55,7 +56,7 @@ describe('G4 local profile repository', () => {
     store.acknowledgeMigrationGuide();
     expect(storage.writes).toBe(writes + 1);
     const loaded = new ProfileStore(storage);
-    expect(loaded.data).toEqual({ ...before, onboarding: { migrationGuideAcknowledged: true } });
+    expect(loaded.data).toEqual({ ...before, onboarding: { ...before.onboarding, migrationGuideAcknowledged: true } });
     const afterProbe = storage.writes;
     loaded.acknowledgeMigrationGuide();
     expect(storage.writes).toBe(afterProbe);
@@ -67,7 +68,7 @@ describe('G4 local profile repository', () => {
     storage.items.set(PROFILE_STORAGE_KEY, JSON.stringify({ ...emptyProfile(), onboarding: { unrelatedHint: true } }));
     const store = new ProfileStore(storage);
     expect(store.status.code).toBe('loaded');
-    expect(store.data.onboarding).toEqual({ migrationGuideAcknowledged: false });
+    expect(store.data.onboarding).toEqual({ migrationGuideAcknowledged: false, counterGuideVersion: 0, counterGuideCompleted: false, counterGuideSkipped: false });
   });
 
   it.each([null, [], true, { migrationGuideAcknowledged: 'true' }])('does not infer acknowledgement from malformed onboarding data: %s', onboarding => {
@@ -237,9 +238,97 @@ describe('G4 local profile repository', () => {
     state.battle!.stats.kills = 20; const changed = structuredClone(state);
     store.recordRun(state, 'first'); expect(state).toEqual(changed);
     store.recordRun(result(false, 222, 2000), 'long-failure'); store.recordRun(result(true, 333, 120), 'fast-win');
-    expect(store.data.best).toEqual({ fastestVictory: { runId: 'fast-win', seed: 333, durationSeconds: 120 }, mostKills: 20, mostSources: 0, longestRunSeconds: 2000 });
+    expect(store.data.best).toEqual({ fastestVictory: { runId: 'fast-win', seed: 333, durationSeconds: 120, encounter: buildRunSummary(result(true, 333, 120)).encounter }, mostKills: 20, mostSources: 0, longestRunSeconds: 2000 });
     const newRun = new GameSession(444, { campaign: true, milestone: 'G3' }); newRun.start();
     expect(newRun.state.player.hp).toBe(before.player.hp); expect(newRun.state.growth!.xp).toBe(0); expect(newRun.state.growth!.equipped).toEqual([]);
+  });
+});
+
+describe('versioned counter onboarding and run replay', () => {
+  it('does not infer first-counter mastery from old discoveries or the migration acknowledgement', () => {
+    const storage = new MemoryStorage();
+    storage.items.set(PROFILE_STORAGE_KEY, JSON.stringify({ ...emptyProfile(), discoveredTraits: ['CARAPACE'], onboarding: { migrationGuideAcknowledged: true } }));
+    const store = new ProfileStore(storage);
+    expect(store.data.onboarding).toEqual({ migrationGuideAcknowledged: true, counterGuideVersion: 0, counterGuideCompleted: false, counterGuideSkipped: false });
+    expect(newRunOptions(store.data)).toEqual({ counterGuide: 'guided', encounterMode: 'formal', firstTrait: undefined });
+  });
+
+  it('persists skipped and subsequently completed independently and idempotently', () => {
+    const storage = new MemoryStorage(), store = new ProfileStore(storage);
+    const before = storage.writes;
+    store.acknowledgeCounterGuide('skipped'); store.acknowledgeCounterGuide('skipped');
+    expect(storage.writes).toBe(before + 1);
+    expect(store.data.onboarding).toMatchObject({ counterGuideVersion: 1, counterGuideCompleted: false, counterGuideSkipped: true, migrationGuideAcknowledged: false });
+    store.acknowledgeCounterGuide('completed'); store.acknowledgeCounterGuide('completed');
+    expect(storage.writes).toBe(before + 2);
+    const loaded = new ProfileStore(storage);
+    expect(loaded.data.onboarding).toMatchObject({ counterGuideCompleted: true, counterGuideSkipped: true });
+    expect(newRunOptions(loaded.data).counterGuide).toBe('adaptive');
+    expect(loaded.data.stats.runs).toBe(0); expect(loaded.data.achievements).toEqual([]);
+  });
+
+  it('requires a new acknowledgement for a different counter-guide version without resetting migration', () => {
+    const storage = new MemoryStorage();
+    storage.items.set(PROFILE_STORAGE_KEY, JSON.stringify({ ...emptyProfile(), onboarding: { migrationGuideAcknowledged: true, counterGuideVersion: 0, counterGuideCompleted: true, counterGuideSkipped: true } }));
+    const store = new ProfileStore(storage);
+    expect(newRunOptions(store.data).counterGuide).toBe('guided');
+    store.acknowledgeCounterGuide('skipped');
+    expect(store.data.onboarding).toEqual({ migrationGuideAcknowledged: true, counterGuideVersion: 1, counterGuideCompleted: false, counterGuideSkipped: true });
+  });
+
+  it('keeps the acknowledgement in session memory when saving fails', () => {
+    const storage = new MemoryStorage(), store = new ProfileStore(storage);
+    storage.rejectWrite = true; store.acknowledgeCounterGuide('completed');
+    expect(store.status.code).toBe('write-failed'); expect(newRunOptions(store.data).counterGuide).toBe('adaptive');
+    storage.rejectWrite = false;
+    expect(newRunOptions(new ProfileStore(storage).data).counterGuide).toBe('guided');
+  });
+
+  it('skips only hints, preserves a paused run, and retries the same variant after a profile acknowledgement', () => {
+    const store = new ProfileStore(null), session = new GameSession(27, { campaign: true, milestone: 'G3', ...newRunOptions(store.data) });
+    session.start(); session.pause();
+    const before = session.snapshot();
+    session.bus.on('event', event => { if (event.type === 'COUNTER_GUIDE_SKIPPED') store.acknowledgeCounterGuide('skipped'); });
+    expect(session.skipCounterGuide()).toBe(true); expect(session.skipCounterGuide()).toBe(false);
+    const after = session.snapshot();
+    expect(after.phase).toBe('paused'); expect(after.tick).toBe(before.tick); expect(after.elapsed).toBe(before.elapsed);
+    for (const key of ['player', 'targets', 'tissue', 'growth', 'campaign'] as const) expect(after[key]).toEqual(before[key]);
+    session.restart(); expect(session.state.battle!.encounter!.guideVariant).toBe('guided');
+    expect(session.state.battle!.encounter!.firstCounter.guideStatus).toBe('active');
+    session.start(28, newRunOptions(store.data)); expect(session.state.battle!.encounter!.guideVariant).toBe('adaptive');
+    expect(session.state.events[0].data).toMatchObject({ encounterConfig: 'campaign-1', counterGuide: 'adaptive', firstTraitOverride: '' });
+  });
+
+  it('round-trips real configuration separately from HP, build and onboarding outcomes', () => {
+    const storage = new MemoryStorage(), store = new ProfileStore(storage);
+    const session = new GameSession(27, { campaign: true, milestone: 'G3', firstTrait: 'MIMIC' }); session.start();
+    session.finish(false, 'serialization fixture'); store.recordRun(session.state, 'override-run');
+    const record = new ProfileStore(storage).data.recentRuns[0];
+    expect(record.encounter).toEqual({ configId: 'campaign-1', guideVariant: 'adaptive', firstTraitOverride: 'MIMIC', guideCompleted: false, guideSkipped: false });
+    const replay = new GameSession(record.seed, { campaign: true, milestone: 'G3', ...replayRunOptions(record.encounter!) }); replay.start();
+    expect(replay.state.battle!.forcedFirstTrait).toBe('MIMIC'); expect(replay.state.battle!.encounter!.guideVariant).toBe('adaptive');
+    expect(replay.state.growth!.equipped).toEqual([]); expect(replay.state.player.hp).toBe(100);
+    // Starting a normal case explicitly clears the preceding archive override.
+    replay.start(28, newRunOptions(emptyProfile())); expect(replay.state.battle!.forcedFirstTrait).toBeUndefined();
+    expect(replay.state.battle!.firstTrait).toBe('CARAPACE');
+    expect(replayRunOptions(record.encounter!, 'FISSION').firstTrait).toBe('FISSION');
+  });
+
+  it('preserves the best case configuration after it leaves the ten recent cases', () => {
+    const storage = new MemoryStorage(), store = new ProfileStore(storage), best = result(true, 77, 40);
+    best.battle!.forcedFirstTrait = 'CARAPACE';
+    store.recordRun(best, 'best-guided');
+    for (let index = 0; index < 12; index++) store.recordRun(result(false, index, 80), `later-${index}`);
+    const loaded = new ProfileStore(storage), record = loaded.data.best.fastestVictory!;
+    expect(loaded.data.recentRuns.some(run => run.runId === 'best-guided')).toBe(false);
+    expect(record.encounter).toEqual(buildRunSummary(best).encounter);
+    expect(replayRunOptions(record.encounter!)).toEqual({ counterGuide: 'guided', encounterMode: 'formal', firstTrait: 'CARAPACE' });
+  });
+
+  it.each([{ counterGuideVersion: -1 }, { counterGuideCompleted: 'true' }, { counterGuideSkipped: 1 }])('rejects malformed counter onboarding: %s', patch => {
+    const storage = new MemoryStorage();
+    storage.items.set(PROFILE_STORAGE_KEY, JSON.stringify({ ...emptyProfile(), onboarding: { ...emptyProfile().onboarding, ...patch } }));
+    expect(new ProfileStore(storage).status.code).toBe('corrupt');
   });
 });
 

@@ -5,6 +5,8 @@ import type { BattleState, CampaignOptions, TraitId } from './battleTypes';
 import { BATTLE_BALANCE as B, TRAITS } from './battleConfig';
 import { recordBehavior, chooseEvolution } from './evolution';
 import { getOrganDefinition } from './organConfig';
+import { ENCOUNTER_CONFIGS } from './encounterConfig';
+import { acceptedFirstCounter } from './counterLesson';
 
 export interface BattleHost {
   state: GameState;
@@ -19,7 +21,10 @@ export interface BattleHost {
 const BRANCHES: TraitId[] = ['CARAPACE', 'FISSION', 'MIMIC'];
 export function initializeBattle(state: GameState, options: CampaignOptions): void {
   const rng = new SeedRng(state.seed);
-  const firstTrait = options.firstTrait ?? BRANCHES[rng.int(0, 2)];
+  const formal = options.milestone === 'G3' && options.encounterMode !== 'fixture';
+  const guideVariant = formal && options.counterGuide !== 'adaptive' && (!options.firstTrait || options.firstTrait === 'CARAPACE') ? 'guided' : 'adaptive';
+  const sampledTrait = options.firstTrait ?? BRANCHES[rng.int(0, 2)];
+  const firstTrait = guideVariant === 'guided' ? 'CARAPACE' : sampledTrait;
   const layout = options.milestone === 'G3' ? getOrganDefinition('heart') : undefined;
   if (layout) {
     state.world = layout.geometry;
@@ -53,12 +58,14 @@ export function initializeBattle(state: GameState, options: CampaignOptions): vo
     nextSpawnAt: { 'source-a': B.spawnInterval, 'source-b': B.spawnInterval + 2 }, nextActorId: 0,
     firstTrait, recentNotice: '', gateChangedAt: -10, organLowSince: null, eliteSpawned: 0, history: [],
     ...(options.milestone && options.milestone !== 'G1' ? { forcedFirstTrait: options.firstTrait, behaviorHistory: [], evolutionDecisions: [] } : {}),
+    encounter: { configId: formal ? 'campaign-1' : 'fixture-1', guideVariant, openingSpawned: 0, firstCounter: { status: 'opening', guideStatus: guideVariant === 'guided' ? 'active' : 'inactive', targetId: null, warnedAt: null, appliedAt: null, resolvedAt: null, skippedAt: null, completedAt: null, counterHit: null } },
   };
   for (const node of nodes.filter(n => n.kind === 'source')) {
     state.targets.push({ ...node, id: node.id, kind: 'single', role: 'source', hp: B.sourceHp, maxHp: B.sourceHp, radius: 34, hitUntil: 0, scanned: false, traits: [], facing: 0, born: 0 });
   }
-  for (let i = 0; i < 4; i++) {
-    const source = i < 2 ? nodes[0] : nodes[1];
+  const initialOrdinary = formal ? ENCOUNTER_CONFIGS['campaign-1'].initialOrdinary : ENCOUNTER_CONFIGS['fixture-1'].initialOrdinary;
+  for (let i = 0; i < initialOrdinary; i++) {
+    const source = formal ? nodes[i % 2] : i < 2 ? nodes[0] : nodes[1];
     const position = moveWithCollision(source, { x: rng.int(-80, 80), y: rng.int(-65, 65) }, 22, activeWorld(state));
     state.targets.push({ ...position, id: `virus-${++state.battle.nextActorId}`, kind: 'single', role: 'virus', radius: 22, hp: B.ordinaryHp, maxHp: B.ordinaryHp, hitUntil: 0, scanned: false, traits: [], facing: 0, born: 0, attackReady: 1 + i * .3, generation: 0, sourceId: source.id });
   }
@@ -79,6 +86,18 @@ export class BattleDirector {
   }
 
   recordEvent(event: GameEvent): void {
+    const encounter = this.b.encounter, lesson = encounter?.firstCounter;
+    if (encounter?.configId === 'campaign-1' && lesson?.targetId && !lesson.counterHit) {
+      const target = this.s.targets.find(item => item.id === lesson.targetId);
+      const method = target && acceptedFirstCounter(this.s, event, target);
+      if (method) {
+        lesson.counterHit = { tick: event.tick, at: this.s.elapsed, targetId: target!.id, method, damage: Number(event.data.damage) };
+        if (encounter.guideVariant === 'guided' && lesson.guideStatus !== 'completed') {
+          lesson.guideStatus = 'completed'; lesson.completedAt = this.s.elapsed;
+          this.host.emit('COUNTER_GUIDE_COMPLETED', { id: target!.id, method, damage: Number(event.data.damage), tick: event.tick });
+        }
+      }
+    }
     if (this.b.milestone === 'G1') return;
     const data = event.data;
     const kind = event.type === 'TARGET_HIT' && data.cause !== 'protocol' ? data.tool === 1 ? 'precisionDamage' : data.tool === 2 ? 'areaDamage' : undefined
@@ -88,6 +107,14 @@ export class BattleDirector {
     if (!kind) return;
     const amount = kind === 'precisionDamage' || kind === 'areaDamage' ? Number(data.damage) : kind === 'repair' ? Number(data.after) - Number(data.before) : 1;
     this.b.behaviorHistory = recordBehavior(this.b.behaviorHistory ?? [], { tick: event.tick, kind, amount });
+  }
+
+  skipCounterGuide(): boolean {
+    const encounter = this.b.encounter, lesson = encounter?.firstCounter;
+    if (encounter?.guideVariant !== 'guided' || lesson?.guideStatus !== 'active') return false;
+    lesson.guideStatus = 'skipped'; lesson.skippedAt = this.s.elapsed;
+    this.host.emit('COUNTER_GUIDE_SKIPPED', { id: lesson.targetId ?? '', at: this.s.elapsed });
+    return true;
   }
 
   beforeInput(input: InputFrame): void {
@@ -143,6 +170,11 @@ export class BattleDirector {
       b.pressure.infection = Math.max(0, b.pressure.infection - B.killRelief);
       if (target.role === 'elite') {
         b.stats.eliteClears++;
+        const first = b.encounter?.firstCounter;
+        if (first?.targetId === target.id && first.status !== 'resolved') {
+          first.status = 'resolved'; first.resolvedAt = s.elapsed;
+          this.host.emit('FIRST_COUNTER_RESOLVED', { id: target.id, organId: b.organId, countered: first.counterHit !== null });
+        }
         for (const trait of target.traits ?? []) if (!b.defeatedTraits.includes(trait)) b.defeatedTraits.push(trait);
         this.host.emit('ELITE_CLEARED', { id: target.id, organId: b.organId, trait: target.traits?.join('+') ?? '' });
         this.notice(`变异精英已清除（${b.stats.eliteClears}/2）。保持组织，继续诊断。`);
@@ -217,6 +249,7 @@ export class BattleDirector {
     const end = { x: p.origin.x + Math.cos(p.direction) * B.pulseRange, y: p.origin.y + Math.sin(p.direction) * B.pulseRange };
     this.host.effect('pulse', p.origin, end, B.pulseRange, .65);
     let pushed = 0; let exposed = 0; let coreHit = false;
+    const exposedTargetIds: string[] = [];
     for (const target of s.targets) if (target.hp > 0 && target.role !== 'source') {
       const length = distance(p.origin, target);
       const direction = normalized(target.x - p.origin.x, target.y - p.origin.y);
@@ -230,11 +263,11 @@ export class BattleDirector {
       target.attackAt = undefined; target.attackAim = undefined;
       target.attackTarget = undefined;
       target.attackReady = s.elapsed + 1.3;
-      if (target.traits?.includes('CARAPACE')) { target.exposedUntil = s.elapsed + B.pulseExpose; exposed++; }
+      if (target.traits?.includes('CARAPACE')) { target.exposedUntil = s.elapsed + B.pulseExpose; exposed++; exposedTargetIds.push(target.id); }
       target.revealedUntil = s.elapsed + B.scanReveal;
       if (target.role !== 'core') pushed++;
     }
-    this.host.emit('PULSE_TRIGGERED', { organId: b.organId, direction: p.direction, range: B.pulseRange, halfAngle: B.pulseHalfAngle, pushed, exposed, coreHit, tissueCost: B.pulseCost });
+    this.host.emit('PULSE_TRIGGERED', { organId: b.organId, direction: p.direction, range: B.pulseRange, halfAngle: B.pulseHalfAngle, pushed, exposed, exposedTargetIds: exposedTargetIds.join(','), coreHit, tissueCost: B.pulseCost });
     this.notice(`定向冲流：推开 ${pushed} 体，破壳 ${exposed} 体；组织承压 -${B.pulseCost}，冷却 ${B.pulseCooldown} 秒。`, 4);
   }
 
@@ -251,28 +284,37 @@ export class BattleDirector {
   private aliveCount(): number { return this.s.targets.filter(t => t.hp > 0).length; }
   private spawn(position: Vec, role: 'virus' | 'elite', traits = this.b.traits, generation = 0, sourceId?: string): Target | undefined {
     if (this.aliveCount() >= B.maxActors) return;
+    const encounter = this.b.encounter, opening = role === 'virus' && encounter?.configId === 'campaign-1' && encounter.firstCounter.status !== 'resolved';
+    if (opening && (this.s.targets.filter(target => target.hp > 0 && target.role === 'virus').length >= ENCOUNTER_CONFIGS['campaign-1'].openingOrdinaryCap
+      || encounter.guideVariant === 'guided' && encounter.openingSpawned >= ENCOUNTER_CONFIGS['campaign-1'].openingSpawnBudget)) return;
     const child = generation > 0;
     const hp = child ? B.childHp : role === 'elite' ? B.eliteHp : B.ordinaryHp;
     const radius = child ? 14 : role === 'elite' ? 30 : 22;
     const pos = moveWithCollision({ x: position.x, y: position.y }, { x: 0, y: 0 }, radius, activeWorld(this.s));
     const target: Target = { ...pos, id: `${role}-${++this.b.nextActorId}`, role, kind: traits.includes('FISSION') ? 'cluster' : 'single', radius, hp, maxHp: hp, hitUntil: 0, scanned: false, traits: [...traits], facing: 0, born: this.s.elapsed, attackReady: this.s.elapsed + 1.5, generation, sourceId };
     this.s.targets.push(target);
+    if (opening) encounter.openingSpawned++;
     this.host.emit('ACTOR_SPAWNED', { id: target.id, role, generation, sourceId: sourceId ?? '', traits: traits.join('+') });
     return target;
   }
 
   private evolution(): void {
     const { s, b } = this;
-    if (!b.warning && b.traits.length < 2 && s.elapsed >= b.nextEvolutionAt && (b.traits.length === 0 || b.stats.eliteClears >= 1)) {
+    const formal = b.encounter?.configId === 'campaign-1', first = b.encounter?.firstCounter;
+    const firstReady = formal ? s.elapsed >= ENCOUNTER_CONFIGS['campaign-1'].firstWarningFallback || b.stats.sourceClears > 0 && b.stats.scans > 0 : s.elapsed >= b.nextEvolutionAt;
+    const secondReady = formal ? first?.status === 'resolved' : s.elapsed >= b.nextEvolutionAt && b.stats.eliteClears >= 1;
+    if (!b.warning && b.traits.length < 2 && (b.traits.length === 0 ? firstReady : secondReady)) {
       let trait = b.traits.length === 0 ? b.firstTrait : BRANCHES[(BRANCHES.indexOf(b.firstTrait) + 1 + (s.seed % 2)) % 3];
-      if (b.milestone !== 'G1' && !(b.traits.length === 0 && b.forcedFirstTrait)) {
+      if (b.milestone !== 'G1' && !(b.traits.length === 0 && (b.forcedFirstTrait || b.encounter?.guideVariant === 'guided'))) {
         const decision = chooseEvolution({ seed: s.seed, evolutionIndex: b.traits.length, tick: s.tick, organId: b.organId, integrity: s.tissue.hp, seen: b.traits, history: b.behaviorHistory ?? [], counterAvailable: { CARAPACE: true, FISSION: true, MIMIC: true } });
         if (decision.kind !== 'warn') return;
         trait = decision.trait;
         b.evolutionDecisions?.push(decision);
         this.host.emit('EVOLUTION_ROLLED', { trait, roll: decision.roll, candidates: JSON.stringify(decision.candidates), summary: JSON.stringify(decision.summary) });
       } else if (b.forcedFirstTrait && b.traits.length === 0) trait = b.forcedFirstTrait;
-      b.warning = { trait, startedAt: s.elapsed, applyAt: s.elapsed + B.warningDuration };
+      const warningDuration = formal ? ENCOUNTER_CONFIGS['campaign-1'].warningDuration : B.warningDuration;
+      b.warning = { trait, startedAt: s.elapsed, applyAt: s.elapsed + warningDuration };
+      if (b.traits.length === 0 && first) { first.status = 'warning'; first.warnedAt = s.elapsed; }
       this.host.emit('EVOLUTION_WARNING', { trait, duration: B.warningDuration, applyAt: b.warning.applyAt });
       this.notice(`变异预警 · ${TRAITS[trait].name}：${TRAITS[trait].ability}。代价：${TRAITS[trait].cost}。反制：${TRAITS[trait].counter}`, B.warningDuration, 2);
     }
@@ -285,12 +327,13 @@ export class BattleDirector {
         target.kind = trait === 'FISSION' ? 'cluster' : 'single';
       }
       // Reserve an elite slot by retiring one ordinary body if the population is full.
-      if (this.aliveCount() >= B.maxActors) {
+      if (!formal && this.aliveCount() >= B.maxActors) {
         const ordinary = s.targets.find(t => t.hp > 0 && t.role === 'virus');
         if (ordinary) { ordinary.hp = 0; ordinary.deadAt = s.elapsed; ordinary.attackAt = undefined; }
       }
-      const elitePosition = s.campaign ? getOrganDefinition(b.organId).elitePosition : { x: 785, y: 390 };
-      this.spawn(elitePosition, 'elite', [trait]);
+      const elitePosition = formal && b.traits.length === 1 && b.encounter?.guideVariant === 'guided' ? ENCOUNTER_CONFIGS['campaign-1'].introGuardian : s.campaign ? getOrganDefinition(b.organId).elitePosition : { x: 785, y: 390 };
+      const elite = this.spawn(elitePosition, 'elite', [trait]);
+      if (b.traits.length === 1 && first && elite) { first.status = 'active'; first.appliedAt = s.elapsed; first.targetId = elite.id; }
       b.eliteSpawned++;
       this.host.effect('evolution', elitePosition, elitePosition, 110, 1.4);
       this.host.emit('EVOLUTION_APPLIED', { trait, warningDuration: s.elapsed - b.warning.startedAt, traits: b.traits.join('+') });

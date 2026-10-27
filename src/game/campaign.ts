@@ -4,6 +4,7 @@ import type { OrganId, OrganNode } from './battleTypes';
 import { CAMPAIGN_BALANCE as B, createOrganArena, getOrganDefinition } from './organConfig';
 import { advanceLungFlow, toggleAirway } from './organRules';
 import type { CampaignCommand, CampaignInteraction, CampaignNode, CampaignState, MigrationChoice, OrganArena } from './campaignTypes';
+import { advanceCampaignEncounters, campaignEncounterObjective, createCampaignEncounters, recordCampaignEncounterEvent } from './campaignEncounters';
 
 export type { CampaignCommand, CampaignState, OrganArena } from './campaignTypes';
 
@@ -30,6 +31,11 @@ export class CampaignDirector {
       clearedSourceIds:[],clearedEliteIds:[],transactionIds:[],pendingCommands:[],history:[],
       progress:{sourceClears:0,sourceTotal:2,eliteClears:0,coreCleared:false,organConditions:true,infectionCondition:game.battle.pressure.infection<35},
       stats:{travels:0,airwayUses:0,backgroundDamage:0,migrationChoice:null}};
+    if(game.battle.encounter?.configId==='campaign-1'){
+      this.state.encounters=createCampaignEncounters(game.elapsed);
+      this.state.encounters.currentObjective=campaignEncounterObjective(this.state,game);
+      this.state.pendingCommands.push(this.log('CAMPAIGN_STAGE_ENTERED',{stage:'I',at:game.elapsed,targetId:''}));
+    }
     game.world=heart.geometry;game.battle.organId='heart';
   }
 
@@ -50,6 +56,7 @@ export class CampaignDirector {
 
   recordEvent(event:GameEvent,game:GameState):void {
     if(!game.battle)return;
+    if(event.type==='RUN_ENDED'){this.state.pendingCommands=[];return;}
     const data=event.data,organ:OrganId=data.organId==='lung'?'lung':data.organId==='heart'?'heart':game.battle.organId;
     if(event.type==='TARGET_CLEARED'&&this.state.migration.carrierIds.includes(String(data.id))&&!this.state.migration.clearedCarrierIds.includes(String(data.id)))this.state.migration.clearedCarrierIds.push(String(data.id));
     if(event.type==='INFECTION_SOURCE_CLEARED'){
@@ -62,7 +69,8 @@ export class CampaignDirector {
       if(this.state.core.status==='cleared')return;
       this.state.core.status='cleared';this.state.core.clearedAt=game.elapsed;this.state.phase='retest';
       this.state.pendingCommands.push(this.log('CAMPAIGN_CORE_CLEARED',{coreId:this.state.core.actorId,organId:organ}),this.notice('母巢已净化。检查所有激活器官 ≥50%、感染 <35，再到复测终端按 E。',game,7));
-    }else if(event.type==='RUN_ENDED')this.state.pendingCommands=[];
+    }
+    this.state.pendingCommands.push(...recordCampaignEncounterEvent(this.state,event,game));
   }
 
   beforeInput(game:GameState):CampaignCommand[] {
@@ -203,6 +211,8 @@ export class CampaignDirector {
     // accepted travel transaction while preserving the global summon cooldown.
     if(game.growth){game.growth.beacon=null;game.growth.cells=[];}
     this.state.activeOrganId=command.to;this.state.stats.travels++;this.state.transactionIds.push(key);
+    const crisis=this.state.encounters?.crisis;
+    if(crisis?.status==='charging'){crisis.lastActiveAt=null;crisis.nextImpactAt=null;}
     this.state.pendingCommands.push(this.log('ORGAN_TRAVELLED',{from:command.from,to:command.to,eventId:command.eventId,backgroundLoss:arena.backgroundLoss}),this.notice(`进入${command.to==='lung'?'肺部：吸气聚拢、呼气分散；E 气道会实际截流':'心脏：定向冲流可破开晶壳'}。${arena.backgroundLoss>0?`离场损伤 ${arena.backgroundLoss.toFixed(1)}，原因：${arena.backgroundReason}。`:''}`,game,6));
     return true;
   }
@@ -213,7 +223,9 @@ export class CampaignDirector {
 
   private updateMigration(game:GameState):CampaignCommand[] {
     const migration=this.state.migration,commands:CampaignCommand[]=[];
-    if(migration.status==='locked'&&game.battle!.traits.length>=2&&game.battle!.stats.eliteClears>=1){
+    const firstCounter=game.battle!.encounter?.firstCounter;
+    const counterAccepted=this.state.encounters?firstCounter?.status==='resolved'&&!!firstCounter.targetId&&this.state.clearedEliteIds.includes(`heart:${firstCounter.targetId}`):game.battle!.stats.eliteClears>=1;
+    if(migration.status==='locked'&&game.battle!.traits.length>=2&&counterAccepted){
       const exit=findExit(this.state.arenas.heart);if(!exit)return[];
       exit.active=true;migration.warnedAt=game.elapsed;migration.deadline=game.elapsed+B.migrationWarning;
       const gate=this.state.arenas.heart.graph.nodes.find(node=>node.id==='gate');
@@ -291,22 +303,31 @@ export class CampaignDirector {
     const sourceTotal=active.reduce((sum,arena)=>sum+s.requiredSourceIds[arena.organId].length,0);
     const sourceClears=active.reduce((sum,arena)=>sum+s.requiredSourceIds[arena.organId].filter(id=>s.clearedSourceIds.includes(sourceKey(arena.organId,id))).length,0);
     s.progress={sourceClears,sourceTotal,eliteClears:s.clearedEliteIds.length,coreCleared:s.core.status==='cleared',organConditions:active.every(arena=>arena.tissue.hp>=50),infectionCondition:battle.pressure.infection<35};
-    if(s.core.status==='locked'&&s.migration.status==='resolved'&&battle.traits.length===2&&s.clearedEliteIds.length>=2&&this.sourcesComplete()){
+    if(s.core.status==='locked'&&s.migration.status==='resolved'&&battle.traits.length===2&&s.clearedEliteIds.length>=2&&this.sourcesComplete()&&(!s.encounters||s.encounters.stages.IV.completedAt!==null)){
       s.core.status='ready';s.core.traits=[...battle.traits];s.phase='core-ready';
       commands.push(this.log('CORE_LOCATED',{coreId:s.core.actorId,organId:s.core.organId,traits:s.core.traits.join('+')}),this.notice(`主要感染源已净化。前往${s.core.organId==='lung'?'肺部':'心脏'}复测台按 E，唤醒本局双特性母巢。`,game,8));
     }
     battle.readyToRetest=this.canRetest(game);
+    if(s.encounters){
+      const stage=s.encounters.stage;
+      s.phase=stage==='I'?'contain':stage==='II'?'first-counter':stage==='III'?'migration':stage==='IV'?'organ-crisis':s.core.status==='cleared'?'retest':s.core.status==='active'?'core':s.core.status==='ready'?'core-ready':'counterattack';
+      battle.stage=({I:0,II:1,III:2,IV:3,V:4} as const)[stage];
+      battle.stageLabel=({I:'Ⅰ · 建立防线',II:'Ⅱ · 首次反制',III:'Ⅲ · 跨器官危机',IV:'Ⅳ · 支点反击',V:s.core.status==='cleared'?'Ⅴ · 稳定复测':'Ⅴ · 母巢决战'} as const)[stage];
+      s.encounters.currentObjective=campaignEncounterObjective(s,game);
+      battle.objective=s.encounters.currentObjective;
+      return commands;
+    }
     battle.stage=s.phase==='contain'?0:s.phase==='migration'?2:s.phase==='counterattack'?3:s.phase==='core-ready'||s.phase==='core'?4:5;
-    battle.stageLabel=({contain:'Ⅰ · 建立防线',migration:'Ⅲ · 跨器官危机',counterattack:'Ⅳ · 联动反击','core-ready':'Ⅴ · 母巢定位',core:'Ⅴ · 核心决战',retest:'Ⅵ · 稳定复测'} as const)[s.phase];
+    battle.stageLabel=({contain:'Ⅰ · 建立防线','first-counter':'Ⅱ · 首次反制',migration:'Ⅲ · 跨器官危机','organ-crisis':'Ⅳ · 支点反击',counterattack:'Ⅳ · 联动反击','core-ready':'Ⅴ · 母巢定位',core:'Ⅴ · 核心决战',retest:'Ⅵ · 稳定复测'} as const)[s.phase];
     battle.objective=battle.readyToRetest?'母巢与器官指标达标。靠近当前器官复测终端按 E，完成本局。':s.core.status==='cleared'?`稳定器官后复测：${this.retestReasons(game).join('；')}`:s.core.status==='ready'?`前往${s.core.organId==='lung'?'肺部':'心脏'}复测台按 E，启动母巢诊断。`:s.core.status==='active'?`清除${s.core.organId==='lung'?'肺部':'心脏'}母巢；留意本局 ${battle.traits.join(' + ')} 的组合与破绽。`:s.migration.status==='warning'||s.migration.status==='blocking'?'12 秒迁移抉择：出口 E 追击；隔离闸 E 停留 2 秒封锁；放任会感染肺部。':s.migration.status==='pursuing'?'在肺部拦截迁移小体，或关闭气道阻止立源；随后清除主要感染源。':`净化主要感染源 ${sourceClears}/${sourceTotal}，变异精英 ${s.clearedEliteIds.length}/2；保护所有激活器官。`;
     return commands;
   }
 
   afterInput(game:GameState):CampaignCommand[] {
-    if(game.phase!=='playing'||!game.battle)return[];
+    if(game.phase!=='playing'||!game.battle||game.player.hp<=0||game.battle.pressure.vitality<=0)return[];
     this.captureCurrent(game);
     const commands=this.state.pendingCommands.splice(0);
-    commands.push(...this.updateMigration(game),...this.background(game),...this.objectives(game));
+    commands.push(...this.updateMigration(game),...this.background(game),...advanceCampaignEncounters(this.state,game),...this.objectives(game));
     return commands;
   }
 }

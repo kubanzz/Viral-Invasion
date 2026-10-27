@@ -27,9 +27,27 @@ export interface CoreProgress {
   status: 'locked' | 'ready' | 'active' | 'cleared'; organId: OrganId; actorId: string;
   traits: TraitId[]; clearedAt: number | null; combat?: MotherCoreState;
 }
+export type CampaignStageId = 'I' | 'II' | 'III' | 'IV' | 'V';
+export interface CampaignStageRecord {
+  enteredAt: number | null; completedAt: number | null; targetId: string | null;
+}
+export interface OrganCrisisState {
+  status: 'locked' | 'arming' | 'charging' | 'exhausted' | 'cleared';
+  organId: OrganId; sourceId: string; position: Vec;
+  armedAt: number | null; startedAt: number | null; clearedAt: number | null;
+  chargeRemaining: number; nextImpactAt: number | null; lastActiveAt: number | null;
+  impacts: number; guardsRequested: boolean; blockedByAirway: boolean;
+  interruptions: number; lastInterruptedAt: number | null; lastInterruptReason: 'pulse' | 'airway' | null;
+  acceptedEventKeys: string[];
+}
+export interface CampaignEncounters {
+  configId: 'campaign-1'; stage: CampaignStageId; branch: MigrationChoice | null;
+  currentObjective: string; stages: Record<CampaignStageId, CampaignStageRecord>;
+  crisis: OrganCrisisState;
+}
 export interface CampaignState {
   seed: number; activeOrganId: OrganId; arenas: Record<OrganId, OrganArena>;
-  phase: 'contain' | 'migration' | 'counterattack' | 'core-ready' | 'core' | 'retest';
+  phase: 'contain' | 'first-counter' | 'migration' | 'organ-crisis' | 'counterattack' | 'core-ready' | 'core' | 'retest';
   migration: MigrationState; travelReadyAt: number; core: CoreProgress;
   clearedSourceIds: string[]; clearedEliteIds: string[]; transactionIds: string[];
   requiredSourceIds: Record<OrganId, string[]>;
@@ -37,11 +55,12 @@ export interface CampaignState {
   progress: { sourceClears: number; sourceTotal: number; eliteClears: number; coreCleared: boolean; organConditions: boolean; infectionCondition: boolean };
   history: Array<{ at: number; text: string }>;
   stats: { travels: number; airwayUses: number; backgroundDamage: number; migrationChoice: MigrationChoice | null };
+  encounters?: CampaignEncounters;
 }
 export type CampaignCommand =
   | { kind: 'moveActor'; organId: OrganId; targetId: string; delta: Vec }
   | { kind: 'spawnActor'; organId: OrganId; target: Target; eventId: string }
-  | { kind: 'spawnSource'; organId: OrganId; id: string; position: Vec; hp: number; connectTo: string; eventId: string }
+  | { kind: 'spawnSource'; organId: OrganId; id: string; position: Vec; hp: number; connectTo: string; disableSpawn?: boolean; spreadEnabled?: boolean; eventId: string }
   | { kind: 'spawnCore'; organId: OrganId; coreId: string; position: Vec; traits: TraitId[]; eventId: string }
   | { kind: 'organDamage'; organId: OrganId; amount: number; reason: string; eventId: string }
   | { kind: 'infectionDelta'; amount: number; reason: string; eventId: string }

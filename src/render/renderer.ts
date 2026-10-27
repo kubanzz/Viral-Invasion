@@ -9,6 +9,7 @@ import { BATTLE_BALANCE } from '../game/battleConfig';
 import { wallHit } from '../actors/collision';
 import { pulsePreviewPolygon } from './pulsePreview';
 import { GrowthVisuals } from './growthVisuals';
+import { drawEncounterSignals } from './encounterVisuals';
 import { GROWTH_BALANCE, PROTOCOLS, protocolRank } from '../game/protocols';
 import { drawLungAirflow, drawLungAirway, drawLungEnvironment, drawLungForeground, drawLungObstacle } from './lungVisuals';
 import { drawOrganLandscape } from './organLandscape';
@@ -124,6 +125,7 @@ export class Renderer {
     }
     this.drawAtmosphere(ctx, state, Boolean(opts.lowEffects));
     this.drawGroundSignals(ctx, state, aim);
+    drawEncounterSignals(ctx, state, Boolean(opts.lowEffects));
     this.growthVisuals.drawGround(ctx, state, state.growth, Boolean(opts.lowEffects));
     this.drawShadows(ctx, state);
     const raisedActorBodies = getRaisedActorBodies(state);

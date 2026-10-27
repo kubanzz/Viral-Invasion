@@ -40,10 +40,22 @@ export function waypoint(s: GameState, target: Vec): Vec {
 
 export function g3Input(s: GameState, choice: MigrationChoice): InputFrame {
   const b=s.battle!,c=s.campaign!,m=c.migration,live=s.targets.filter(t=>t.hp>0);
-  const rank=(t:Target)=>m.carrierIds.includes(t.id)?-4:t.role==='source'?-3:t.role==='elite'?-2:t.role==='core'?-1:0;
+  const encounter=c.encounters,lesson=b.encounter?.firstCounter;
+  const rank=(t:Target)=>encounter?.stage==='IV'&&t.id===encounter.crisis.sourceId?-5:m.carrierIds.includes(t.id)?-4:t.role==='source'?-3:t.role==='elite'?-2:t.role==='core'?-1:0;
   const targets=live.slice().sort((a,d)=>rank(a)-rank(d)||distance(a,s.player)-distance(d,s.player));
   const target=targets[0];
   const healing=s.tissue.hp<65 || (s.player.hp<70&&s.tissue.hp<99);
+  // The formal guided encounter is an actual combat task. Reach the visible
+  // valve, aim its real pulse at the guardian, then land a basic precision hit
+  // during that accepted exposure. No pose, HP or lesson field is written.
+  const guardian=lesson?.status==='active'&&!lesson.counterHit&&b.encounter?.guideVariant==='guided'?live.find(t=>t.id===lesson.targetId):undefined;
+  if(guardian&&!healing){
+    const valve=b.graph.nodes.find(node=>node.kind==='valve')!,next=waypoint(s,valve);
+    const move=distance(s.player,valve)>18?normalized(next.x-s.player.x,next.y-s.player.y):{x:0,y:0};
+    const exposed=(guardian.exposedUntil??0)>s.elapsed;
+    return{moveX:move.x,moveY:move.y,aim:guardian,tool:1,fire:exposed,scan:s.tick%190===0,
+      interact:!exposed&&distance(s.player,valve)<85&&b.pulse.readyAt<=s.elapsed};
+  }
   let destination:Vec=carePosition(s, !healing);
   let interaction:Vec|undefined;
   if(b.organId==='lung'&&c.stats.airwayUses===0)interaction=b.graph.nodes.find(n=>n.id==='airway');
