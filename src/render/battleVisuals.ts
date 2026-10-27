@@ -9,6 +9,7 @@ import type { MotherCoreState } from '../game/motherCoreTypes';
 import type { SceneLabelSink } from './sceneLabels';
 import { drawImmuneFocus } from './immuneFocusVisuals';
 import { drawCatalysis } from './catalysisVisuals';
+import { drawEliteTacticCycles } from './eliteTacticCycleVisuals';
 
 const TAU = Math.PI * 2;
 
@@ -354,6 +355,7 @@ function reserveTargetFeatures(labels: SceneLabelSink, target: Target, state: Ga
 export function drawBattleLabels(ctx: CanvasRenderingContext2D, state: GameState, labels?: SceneLabelSink): void {
   drawImmuneFocus(ctx, state, labels);
   drawCatalysis(ctx, state, labels);
+  drawEliteTacticCycles(state, labels);
   const time = state.elapsed, aim = state.battle?.lastAim;
   const aimed = (target: Target): boolean => !!aim && Math.hypot(target.x - aim.x, target.y - aim.y) <= target.radius + 12;
   const priority = (target: Target): number => target.role === 'core' ? 0 : target.role === 'elite' ? 1 : target.role === 'source' ? 2 : aimed(target) ? 3 : 4;

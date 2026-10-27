@@ -20,6 +20,7 @@ import { createEndlessGrowth, offerEndlessUpgrade, chooseEndlessUpgrade, endless
 import type { EndlessUpgradeId, PendingCatalysisBatch } from './endlessGrowthTypes';
 import { IMMUNE_CELL_BALANCE, summonImmuneCells } from './immuneCells';
 import { activeCatalysisBatch, activeCatalysisTargets, CATALYSIS_BALANCE, catalysisBurstTargets, makeCatalysisBatch } from './catalysis';
+import { activeEliteTacticCycle, finishEliteTactic } from './eliteTacticCycle';
 
 // Exporting the clock here is convenient for hosts, while it remains independently testable.
 export { FixedClock };
@@ -208,11 +209,13 @@ export class GameSession {
     state.tick++;
     state.elapsed = state.tick * BALANCE.step;
     this.pruneCatalysis();
-    if (this.state !== state) return;
+    if (this.state !== state || state.phase !== 'playing') return;
     state.effects = state.effects.filter(effect => state.elapsed - effect.born < effect.duration);
     this.battleDirector?.beforeInput(input);
     this.endlessDirector?.beforeInput();
+    if (this.state !== state || state.phase !== 'playing') return;
     if (this.campaignController) this.applyCampaignCommands(this.campaignController.beforeInput(state));
+    if (this.state !== state || state.phase !== 'playing') return;
     if (this.checkFailure()) return;
     if (input.tool && input.tool !== state.tool) {
       state.tool = input.tool;
@@ -272,6 +275,7 @@ export class GameSession {
       if (this.state !== state || state.phase !== 'playing') return;
     }
     if (state.phase === 'playing') this.battleDirector?.afterInput();
+    if (this.state !== state || state.phase !== 'playing') return;
     if (state.phase === 'playing' && state.endless && this.checkFailure()) return;
     if (state.phase === 'playing') this.campaignController?.captureCurrent(state);
     if (state.phase === 'playing') {
@@ -316,6 +320,7 @@ export class GameSession {
     this.emit('SCAN_COMPLETED', { found, radius: BALANCE.scanRadius });
     this.message(found ? `诊断：发现 ${found} 个训练靶。单核用 1，簇群可用 2；受损组织用 3。` : '诊断：附近靶标已净化，检查受损组织并返回复测台。', 4);
     this.battleDirector?.scan();
+    if (this.state !== state || state.phase !== 'playing') return;
     const coreContext = this.coreContext();
     if (coreContext && this.motherController) this.applyCoreCommands(this.motherController.onScan(coreContext));
     if (this.growthController) {
@@ -419,11 +424,26 @@ export class GameSession {
             const moved = moveWithCollision(target, { x: (direction.x || direction.y ? direction.x : fallback.x) * 85, y: (direction.x || direction.y ? direction.y : fallback.y) * 85 }, target.radius, activeWorld(state));
             const pushed = distance(target, moved); target.x = moved.x; target.y = moved.y;
             if (pushed > 1) {
+              const cycle = activeEliteTacticCycle(state, target);
+              const interruptedTactic = target.attackPlan?.kind ?? (target.charge ? 'crystal-charge' : undefined);
+              const exposure = target.attackPlan?.recoveryExposure ?? target.charge?.recoveryExposure ?? 0;
+              const retainedRecovery = cycle ? target.recoverUntil : undefined;
               target.attackAt = undefined; target.attackAim = undefined; target.attackTarget = undefined;
               target.attackPlan = undefined; target.attackWindup = undefined;
               target.charge = undefined; target.recoverUntil = undefined;
               target.attackReady = Math.max(target.attackReady ?? 0, state.elapsed + .45);
+              if (cycle) {
+                target.recoverUntil = Math.max(retainedRecovery ?? 0, interruptedTactic ? state.elapsed + Math.max(.45, exposure) : 0) || undefined;
+                if (target.recoverUntil) target.exposedUntil = Math.max(target.exposedUntil ?? 0, target.recoverUntil);
+                target.attackReady = Math.max(target.attackReady, target.recoverUntil ?? 0);
+              }
+              const completed = cycle && interruptedTactic ? finishEliteTactic(state, target, interruptedTactic, 'area-interrupted') : undefined;
               this.emit('AREA_DISPLACED', { targetId: target.id, distance: pushed });
+              if (this.state !== state || state.phase !== 'playing') return;
+              if (completed) {
+                this.emit('ELITE_TACTIC_ADVANCED', completed);
+                if (this.state !== state || state.phase !== 'playing') return;
+              }
             }
           }
           if (!catalyst || actual > 0) count++;

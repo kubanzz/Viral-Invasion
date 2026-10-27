@@ -1,0 +1,63 @@
+{
+  "mode": "delivery",
+  "pass": true,
+  "checks": [
+    {
+      "name": "v3-preserve-preview",
+      "args": [
+        ".tools/preserve-duet-v087-ui-v2.mjs"
+      ],
+      "startedAt": "2026-10-27T22:15:48.903Z",
+      "finishedAt": "2026-10-27T22:15:49.177Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "name": "v3-prepare-delivery",
+      "args": [
+        ".tools/prepare-delivery-v087-v3.mjs"
+      ],
+      "startedAt": "2026-10-27T22:15:49.178Z",
+      "finishedAt": "2026-10-27T22:15:49.499Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "name": "v3-package",
+      "args": [
+        "scripts/package-release.mjs"
+      ],
+      "startedAt": "2026-10-27T22:15:49.499Z",
+      "finishedAt": "2026-10-27T22:15:50.679Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "name": "v3-inspection2",
+      "args": [
+        ".tools/inspect-v087-release-v3.mjs",
+        "--run",
+        "--attempt=2"
+      ],
+      "startedAt": "2026-10-27T22:15:50.679Z",
+      "finishedAt": "2026-10-27T22:15:51.388Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "name": "v3-offline2",
+      "args": [
+        ".tools/verify-offline-v087-v3.mjs"
+      ],
+      "startedAt": "2026-10-27T22:15:51.388Z",
+      "finishedAt": "2026-10-27T22:15:56.451Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    }
+  ]
+}

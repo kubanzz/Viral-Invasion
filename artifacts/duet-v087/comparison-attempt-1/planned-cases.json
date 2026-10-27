@@ -1,0 +1,82 @@
+{
+  "versions": [
+    {
+      "name": "baseline",
+      "directory": ".tools/duet-v086-baseline"
+    },
+    {
+      "name": "candidate",
+      "directory": ".tools/duet-v087-source"
+    }
+  ],
+  "seeds": [
+    7,
+    71,
+    19
+  ],
+  "goalWaves": 35,
+  "independentCases": 6,
+  "predeterminedReplay": {
+    "version": "candidate",
+    "seed": 71
+  },
+  "totalCases": 7,
+  "simulationSeconds": 900,
+  "simulationSecondsPerWave": 120,
+  "retries": 0,
+  "priorities": [
+    "multishot",
+    "power",
+    "haste",
+    "pierce",
+    "vitality",
+    "immune",
+    "nova",
+    "dash",
+    "scan"
+  ],
+  "sharedExclusions": [
+    "catalysis",
+    "any unknown growth ID"
+  ],
+  "policy": "Locked v082 active movement/aim/Q/tool1 and protocol-discard/modal handling. Both versions filter catalysis and unknown growth IDs before applying the unchanged original priority order. The sole run-goal edit is30 to35 cleared waves;900/120 budgets are unchanged.",
+  "outcome": "All deaths, stalls, missing companion attacks, timeouts, errors and invariant violations remain visible. No retries, replacement seeds, state injection, forced HP, forced plans or extra runs.",
+  "evidenceBoundary": "Read-only public-step/event samples and actual positive host receipts. Unobservable rejection reasons, paused-step behavior and unsampled intermediate states are not proved. Planned attack damage is never summed as real damage.",
+  "cases": [
+    {
+      "version": "baseline",
+      "seed": 7,
+      "replay": false
+    },
+    {
+      "version": "baseline",
+      "seed": 71,
+      "replay": false
+    },
+    {
+      "version": "baseline",
+      "seed": 19,
+      "replay": false
+    },
+    {
+      "version": "candidate",
+      "seed": 7,
+      "replay": false
+    },
+    {
+      "version": "candidate",
+      "seed": 71,
+      "replay": false
+    },
+    {
+      "version": "candidate",
+      "seed": 19,
+      "replay": false
+    },
+    {
+      "version": "candidate",
+      "seed": 71,
+      "replay": true
+    }
+  ]
+}

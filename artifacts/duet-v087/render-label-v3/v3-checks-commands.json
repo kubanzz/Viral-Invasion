@@ -1,0 +1,68 @@
+{
+  "mode": "checks",
+  "pass": true,
+  "checks": [
+    {
+      "name": "v3-integrate",
+      "args": [
+        ".tools/integrate-duet-v087-label-v3.mjs"
+      ],
+      "startedAt": "2026-10-27T22:14:41.673Z",
+      "finishedAt": "2026-10-27T22:14:42.095Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "name": "v3-strict",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit"
+      ],
+      "startedAt": "2026-10-27T22:14:42.095Z",
+      "finishedAt": "2026-10-27T22:14:47.191Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "name": "v3-presentation14",
+      "args": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "tests/unit/elite-cycle-presentation.test.ts",
+        "tests/unit/endless-evolution-warning.test.ts",
+        "--maxWorkers=1",
+        "--reporter=json",
+        "--outputFile=artifacts/duet-v087/render-label-v3/presentation14.json"
+      ],
+      "startedAt": "2026-10-27T22:14:47.191Z",
+      "finishedAt": "2026-10-27T22:14:48.522Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "name": "v3-build",
+      "args": [
+        "scripts/build-offline.mjs"
+      ],
+      "startedAt": "2026-10-27T22:14:48.522Z",
+      "finishedAt": "2026-10-27T22:14:49.580Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "name": "v3-lineage",
+      "args": [
+        ".tools/verify-duet-v087-label-v3-lineage.mjs"
+      ],
+      "startedAt": "2026-10-27T22:14:49.580Z",
+      "finishedAt": "2026-10-27T22:14:49.922Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    }
+  ]
+}

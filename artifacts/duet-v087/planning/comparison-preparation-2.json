@@ -1,0 +1,380 @@
+{
+  "scope": "Text-only static preparation audit. No execution of the new measurement script, generated driver, compiler, simulation or preview command.",
+  "script": {
+    "path": ".tools/compare-duet-v087.mjs",
+    "sha256": "ddca712110d93f0539f0c36bc10dc4e8c294b72507a9a83fd298d81c956d390d",
+    "bytes": 42267
+  },
+  "originalDriver": {
+    "path": "artifacts/tactics-v082/final-attempt-1/candidate/active-driver.mjs",
+    "sha256": "ae21a4d1e033f37420724b79ccbc0a1cf1cb882b11b88e5fab029fa6f2aecac3",
+    "expectedSha256": "ae21a4d1e033f37420724b79ccbc0a1cf1cb882b11b88e5fab029fa6f2aecac3"
+  },
+  "protectedRegions": [
+    {
+      "region": "activeInput",
+      "originalByteIdentical": true,
+      "restoredAfterDisclosedChangesByteIdentical": true,
+      "originalUtf8Sha256": "95b2e07e50c0ae6b559a58c6a075bf45be300b5d28e4a0b0e403628d87a50f73"
+    },
+    {
+      "region": "run",
+      "originalByteIdentical": false,
+      "restoredAfterDisclosedChangesByteIdentical": true,
+      "originalUtf8Sha256": "8dbcbf4d435f7a14df8076b6ec3756d06d4faffc175582a24602f92ce15b973f"
+    },
+    {
+      "region": "modal",
+      "originalByteIdentical": false,
+      "restoredAfterDisclosedChangesByteIdentical": true,
+      "originalUtf8Sha256": "e36a556ca7adac34e79ddb5ea1be0114f59a245d04d1239962f3f28df986e46f"
+    },
+    {
+      "region": "protocol",
+      "originalByteIdentical": true,
+      "restoredAfterDisclosedChangesByteIdentical": true,
+      "originalUtf8Sha256": "4d907854b84bba5ff853be075be7e3e829c76bad10cdd81ef89e80014e189893"
+    }
+  ],
+  "prioritiesByteIdentical": true,
+  "priorities": "const priorities = ['multishot', 'power', 'haste', 'pierce', 'vitality', 'immune', 'nova', 'dash', 'scan'];",
+  "disclosedSelection": "const option = draft.options.filter(option => option.id !== 'catalysis' && priorities.includes(option.id)).slice().sort((a, b) => priorities.indexOf(a.id) - priorities.indexOf(b.id))[0]; if (!option) throw new Error('No permitted known non-catalysis growth option');",
+  "disclosedGoal": "if (s.endless.clearedWaves >= 35) { stop = 'thirty-five-waves-cleared'; break; }",
+  "unchanged900And120Budgets": true,
+  "cases": [
+    {
+      "version": "baseline",
+      "seed": 7,
+      "replay": false
+    },
+    {
+      "version": "baseline",
+      "seed": 71,
+      "replay": false
+    },
+    {
+      "version": "baseline",
+      "seed": 19,
+      "replay": false
+    },
+    {
+      "version": "candidate",
+      "seed": 7,
+      "replay": false
+    },
+    {
+      "version": "candidate",
+      "seed": 71,
+      "replay": false
+    },
+    {
+      "version": "candidate",
+      "seed": 19,
+      "replay": false
+    },
+    {
+      "version": "candidate",
+      "seed": 71,
+      "replay": true
+    }
+  ],
+  "manifests": [
+    {
+      "path": ".tools/duet-v086-baseline/isolation-manifest.json",
+      "inputCount": 226,
+      "sha256": "d0868d85aada7bfa6e9afc6a180a59af559f42091a30dae7b70ee413c02d5f64"
+    },
+    {
+      "path": ".tools/duet-v087-source/isolation-manifest.json",
+      "inputCount": 226,
+      "sha256": "0c5f02ca474ae05f52843968b6f21ee15933b02aabcc1651306c55ed0bdc13b3"
+    }
+  ],
+  "comparisonOutputExists": false,
+  "limitation": "Text transforms verify the declared source edits preserve protected regions. The generated observer wrapper and all invariants will additionally be checked by makeDriver before any case only after separate run authorization.",
+  "sourceFreezeAuthorization": "Root explicitly authorized exactly the predefined seven cases after independent static review clears material blockers.",
+  "onlyPostPreparation1ScriptChange": "Added immediate compile preflight rejection for any parsed src/ui input; no driver, observer, case or budget changes.",
+  "wholeRuntimeDirectories": {
+    "scope": "All files under src/game,src/actors,src/core, not a parsed-input claim",
+    "count": 46,
+    "differences": [],
+    "files": [
+      {
+        "path": "src/actors/enemyNavigation.ts",
+        "candidateSha256": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd",
+        "mainSha256": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd",
+        "equal": true
+      },
+      {
+        "path": "src/actors/enemyCrowd.ts",
+        "candidateSha256": "0058ef0430088c57ad39a2bb1e48708bf1feb18c9910e018f60277c60ce4ca97",
+        "mainSha256": "0058ef0430088c57ad39a2bb1e48708bf1feb18c9910e018f60277c60ce4ca97",
+        "equal": true
+      },
+      {
+        "path": "src/actors/collision.ts",
+        "candidateSha256": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0",
+        "mainSha256": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0",
+        "equal": true
+      },
+      {
+        "path": "src/core/rng.ts",
+        "candidateSha256": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+        "mainSha256": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+        "equal": true
+      },
+      {
+        "path": "src/core/events.ts",
+        "candidateSha256": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+        "mainSha256": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+        "equal": true
+      },
+      {
+        "path": "src/core/clock.ts",
+        "candidateSha256": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+        "mainSha256": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+        "equal": true
+      },
+      {
+        "path": "src/game/types.ts",
+        "candidateSha256": "37647ca373d35c141453b25aeb22e9ed13ffa03b7c2209d119ae7ea997d99264",
+        "mainSha256": "37647ca373d35c141453b25aeb22e9ed13ffa03b7c2209d119ae7ea997d99264",
+        "equal": true
+      },
+      {
+        "path": "src/game/tacticalFeedback.ts",
+        "candidateSha256": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+        "mainSha256": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+        "equal": true
+      },
+      {
+        "path": "src/game/session.ts",
+        "candidateSha256": "50472e13a74219eb0d908560d850d4304e818552a1d647a50760c82c5b038af1",
+        "mainSha256": "50472e13a74219eb0d908560d850d4304e818552a1d647a50760c82c5b038af1",
+        "equal": true
+      },
+      {
+        "path": "src/game/runMetrics.ts",
+        "candidateSha256": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+        "mainSha256": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+        "equal": true
+      },
+      {
+        "path": "src/game/research.ts",
+        "candidateSha256": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+        "mainSha256": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+        "equal": true
+      },
+      {
+        "path": "src/game/protocols.ts",
+        "candidateSha256": "cb0f2903947c955e328fbc7c77ea79fd3374ea89b72dd663b2c0e2fda22b7363",
+        "mainSha256": "cb0f2903947c955e328fbc7c77ea79fd3374ea89b72dd663b2c0e2fda22b7363",
+        "equal": true
+      },
+      {
+        "path": "src/game/preparation.ts",
+        "candidateSha256": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+        "mainSha256": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+        "equal": true
+      },
+      {
+        "path": "src/game/organRules.ts",
+        "candidateSha256": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+        "mainSha256": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+        "equal": true
+      },
+      {
+        "path": "src/game/organConfig.ts",
+        "candidateSha256": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+        "mainSha256": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+        "equal": true
+      },
+      {
+        "path": "src/game/motherCoreTypes.ts",
+        "candidateSha256": "8b3b2442074429be623bae033eaab9b1ba61fc95d138dc33025f905c6db97e00",
+        "mainSha256": "8b3b2442074429be623bae033eaab9b1ba61fc95d138dc33025f905c6db97e00",
+        "equal": true
+      },
+      {
+        "path": "src/game/motherCore.ts",
+        "candidateSha256": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+        "mainSha256": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+        "equal": true
+      },
+      {
+        "path": "src/game/immuneFocus.ts",
+        "candidateSha256": "db255f1be5af9ae603a281742bc7290ac39fe0d4fa4eb4e5bd13cd6bb88c3dba",
+        "mainSha256": "db255f1be5af9ae603a281742bc7290ac39fe0d4fa4eb4e5bd13cd6bb88c3dba",
+        "equal": true
+      },
+      {
+        "path": "src/game/immuneCells.ts",
+        "candidateSha256": "c8564a9addbbcc1c5f2d7456efde070e325e9c1f73fbe0275532ce2a33ccb0c9",
+        "mainSha256": "c8564a9addbbcc1c5f2d7456efde070e325e9c1f73fbe0275532ce2a33ccb0c9",
+        "equal": true
+      },
+      {
+        "path": "src/game/growthTypes.ts",
+        "candidateSha256": "d6551d256364cfb28e379417f3dd1e7d4b7fcfc89bea180b58ce87ee4affce8e",
+        "mainSha256": "d6551d256364cfb28e379417f3dd1e7d4b7fcfc89bea180b58ce87ee4affce8e",
+        "equal": true
+      },
+      {
+        "path": "src/game/growth.ts",
+        "candidateSha256": "a301bbf29a8970580583e08a33d5db9bc453812c9903621a627afbc96f9f17bf",
+        "mainSha256": "a301bbf29a8970580583e08a33d5db9bc453812c9903621a627afbc96f9f17bf",
+        "equal": true
+      },
+      {
+        "path": "src/game/evolutionTypes.ts",
+        "candidateSha256": "dbd661c484a7d442f1e23d939f1c67e7699e14259213d729e292e74b04fd90fa",
+        "mainSha256": "dbd661c484a7d442f1e23d939f1c67e7699e14259213d729e292e74b04fd90fa",
+        "equal": true
+      },
+      {
+        "path": "src/game/evolution.ts",
+        "candidateSha256": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+        "mainSha256": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+        "equal": true
+      },
+      {
+        "path": "src/game/enemyTacticsTypes.ts",
+        "candidateSha256": "7ea109e6d6861aa638eacc6f6cf9716d269efed945248a6f9661171f912dd8ae",
+        "mainSha256": "7ea109e6d6861aa638eacc6f6cf9716d269efed945248a6f9661171f912dd8ae",
+        "equal": true
+      },
+      {
+        "path": "src/game/enemyTactics.ts",
+        "candidateSha256": "c3c52f6f9ec170bce7cf262fe87418930028ab0de1fbb276163e689b97ca805b",
+        "mainSha256": "c3c52f6f9ec170bce7cf262fe87418930028ab0de1fbb276163e689b97ca805b",
+        "equal": true
+      },
+      {
+        "path": "src/game/enemyTacticInfo.ts",
+        "candidateSha256": "befeaea914373092dd6ac306b8f5fd709218576504a7c4e123fbb961d7500ff6",
+        "mainSha256": "befeaea914373092dd6ac306b8f5fd709218576504a7c4e123fbb961d7500ff6",
+        "equal": true
+      },
+      {
+        "path": "src/game/enemyPositioning.ts",
+        "candidateSha256": "d01aff7f39ea4d4a3c34f306947452e93de57b93106a56c103bb64c9c097a878",
+        "mainSha256": "d01aff7f39ea4d4a3c34f306947452e93de57b93106a56c103bb64c9c097a878",
+        "equal": true
+      },
+      {
+        "path": "src/game/enemyFacing.ts",
+        "candidateSha256": "f2f97826b5fbae1d19bfcd718eac2c216800187c86003d11bcfc9c8c63cec24d",
+        "mainSha256": "f2f97826b5fbae1d19bfcd718eac2c216800187c86003d11bcfc9c8c63cec24d",
+        "equal": true
+      },
+      {
+        "path": "src/game/endlessTypes.ts",
+        "candidateSha256": "b7c9ba9d8b125722bc0488c73f95b62ad41cfb97c69054777ef9101ecbb59c51",
+        "mainSha256": "b7c9ba9d8b125722bc0488c73f95b62ad41cfb97c69054777ef9101ecbb59c51",
+        "equal": true
+      },
+      {
+        "path": "src/game/endlessGrowthTypes.ts",
+        "candidateSha256": "5014bbd55541f18c05189e49c1521bbf36289ffda8e25423adab4db9006ed213",
+        "mainSha256": "5014bbd55541f18c05189e49c1521bbf36289ffda8e25423adab4db9006ed213",
+        "equal": true
+      },
+      {
+        "path": "src/game/endlessGrowth.ts",
+        "candidateSha256": "c52c09b3df607116d5b44411f9163af2739103a1f6dba80ee2c93ab6418214f4",
+        "mainSha256": "c52c09b3df607116d5b44411f9163af2739103a1f6dba80ee2c93ab6418214f4",
+        "equal": true
+      },
+      {
+        "path": "src/game/endlessEvolutionTypes.ts",
+        "candidateSha256": "ecf865880c14578cc375adb064e99b0d796cd86ebafe5e1c7342d6d7291707ea",
+        "mainSha256": "ecf865880c14578cc375adb064e99b0d796cd86ebafe5e1c7342d6d7291707ea",
+        "equal": true
+      },
+      {
+        "path": "src/game/endlessEvolution.ts",
+        "candidateSha256": "b3ad9b394634da947bf9aa7ff32d9b9ccb7774909771c524a078d490bba1db4f",
+        "mainSha256": "b3ad9b394634da947bf9aa7ff32d9b9ccb7774909771c524a078d490bba1db4f",
+        "equal": true
+      },
+      {
+        "path": "src/game/endlessBehavior.ts",
+        "candidateSha256": "d62d6a04490b82a537df74c348b41696faedae515184838907df29d510f4b697",
+        "mainSha256": "d62d6a04490b82a537df74c348b41696faedae515184838907df29d510f4b697",
+        "equal": true
+      },
+      {
+        "path": "src/game/endless.ts",
+        "candidateSha256": "ede74c69c5921fdbe60179d1e6fd215d8483024bac79adde12a9291ac681f0e4",
+        "mainSha256": "ede74c69c5921fdbe60179d1e6fd215d8483024bac79adde12a9291ac681f0e4",
+        "equal": true
+      },
+      {
+        "path": "src/game/encounterTypes.ts",
+        "candidateSha256": "7d5027852136cd4504fa10439903f342a7f9d78adb6ada65adf6105bb7c54c10",
+        "mainSha256": "7d5027852136cd4504fa10439903f342a7f9d78adb6ada65adf6105bb7c54c10",
+        "equal": true
+      },
+      {
+        "path": "src/game/encounterConfig.ts",
+        "candidateSha256": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+        "mainSha256": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+        "equal": true
+      },
+      {
+        "path": "src/game/eliteTacticCycle.ts",
+        "candidateSha256": "862b23512773a196d997dbd9062b18a9f17188f22449ba93dee98ead13c3e8dd",
+        "mainSha256": "862b23512773a196d997dbd9062b18a9f17188f22449ba93dee98ead13c3e8dd",
+        "equal": true
+      },
+      {
+        "path": "src/game/counterLesson.ts",
+        "candidateSha256": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+        "mainSha256": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+        "equal": true
+      },
+      {
+        "path": "src/game/catalysis.ts",
+        "candidateSha256": "f0e0fa75ba67be43545e3cd1f5b74c8951581fc91c4261b7ad012e186799d595",
+        "mainSha256": "f0e0fa75ba67be43545e3cd1f5b74c8951581fc91c4261b7ad012e186799d595",
+        "equal": true
+      },
+      {
+        "path": "src/game/campaignTypes.ts",
+        "candidateSha256": "ff301247b34797b7731bc5e0e0b792eef99bbf75eefd4955d2876a4e7c2788dd",
+        "mainSha256": "ff301247b34797b7731bc5e0e0b792eef99bbf75eefd4955d2876a4e7c2788dd",
+        "equal": true
+      },
+      {
+        "path": "src/game/campaignEncounters.ts",
+        "candidateSha256": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+        "mainSha256": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+        "equal": true
+      },
+      {
+        "path": "src/game/campaign.ts",
+        "candidateSha256": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+        "mainSha256": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+        "equal": true
+      },
+      {
+        "path": "src/game/battleTypes.ts",
+        "candidateSha256": "61e53c07f518248f3d42a8d7662ac115284707bac38a0b6d343bfed466299779",
+        "mainSha256": "61e53c07f518248f3d42a8d7662ac115284707bac38a0b6d343bfed466299779",
+        "equal": true
+      },
+      {
+        "path": "src/game/battleConfig.ts",
+        "candidateSha256": "f39249306407ab27ef6bd2b66eebed67dbcad8d2b03a6b251f3e202a0715a84f",
+        "mainSha256": "f39249306407ab27ef6bd2b66eebed67dbcad8d2b03a6b251f3e202a0715a84f",
+        "equal": true
+      },
+      {
+        "path": "src/game/battle.ts",
+        "candidateSha256": "6c6098129a874bd285be0408c5b229d327921f0afafeb3858456a4f4f61194bc",
+        "mainSha256": "6c6098129a874bd285be0408c5b229d327921f0afafeb3858456a4f4f61194bc",
+        "equal": true
+      }
+    ]
+  }
+}

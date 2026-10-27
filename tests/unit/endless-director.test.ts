@@ -224,7 +224,10 @@ describe('continuous endless wave director', () => {
         if (wave >= 30) f.advance(f.state.endless!.batchSchedule[1].at);
         const elites = f.state.targets.filter(target => target.hp > 0 && target.role === 'elite');
         expect(elites.length).toBe(wave >= 30 ? 2 : 1); eliteTraits.push(elites[0].traits![0]);
-        for (const elite of elites) { expect(elite.hp).toBeLessThanOrEqual(204); expect(elite.traits!.length).toBeLessThanOrEqual(1); }
+        for (const [index, elite] of elites.entries()) {
+          expect(elite.hp).toBeLessThanOrEqual(204);
+          expect(elite.traits!.length).toBe(wave >= 20 && index === 0 ? 2 : 1);
+        }
       }
       for (const target of f.state.targets.filter(target => target.hp > 0 && target.role === 'virus')) expect(target.maxHp).toBe(68);
       f.finishWave();

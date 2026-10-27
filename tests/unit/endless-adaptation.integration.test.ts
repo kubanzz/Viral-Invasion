@@ -35,11 +35,12 @@ describe('announced endless generations in the actual session', () => {
     const applied = f.events.filter(event => event.type === 'ENDLESS_EVOLUTION_APPLIED'); expect(applied).toHaveLength(1);
     expect(applied[0].tick - warning.tick).toBe(480);
     const elite = f.s.targets.find(target => target.role === 'elite')!;
-    expect(elite).toBeDefined(); expect(elite.traits).toEqual([pending.decision.main]);
+    expect(elite).toBeDefined(); expect(elite.traits).toEqual(pending.decision.traits);
+    expect(elite.eliteCycle?.tactics).toEqual(pending.decision.traits.map(trait => ENDLESS_EVOLUTION_TACTICS[trait]));
     expect(elite.tactic).toBe(ENDLESS_EVOLUTION_TACTICS[pending.decision.main]); expect(elite.maxHp).toBe(204);
     for (const target of f.s.targets) {
       expect(target.traits!.every(trait => f.e.traits.includes(trait))).toBe(true);
-      expect(target.traits!.length).toBeLessThanOrEqual(1);
+      expect(target.traits!.length).toBeLessThanOrEqual(target === elite ? 2 : 1);
       if (target.tactic === 'thin-ray') { expect(target.traits).toEqual([]); expect(target.maxHp).toBe(68); }
     }
   });

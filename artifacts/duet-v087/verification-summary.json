@@ -1,0 +1,367 @@
+{
+  "schemaVersion": 1,
+  "version": "0.8.7",
+  "at": "2026-10-27T22:18:13.165Z",
+  "technicalCandidate": true,
+  "change": "From20, first elite of each elite wave alternates the two announced tactics, preserving recovery, counterplay, finite queue and fission reservations.",
+  "regression": {
+    "files": 97,
+    "passed": 920,
+    "strictTypecheckExitCode": 0,
+    "completeCampaignSessions": 1000,
+    "campaignWins": 1000,
+    "replayPairsEqual": 2,
+    "finalColorOnlyRevision": {
+      "strictTypecheckExitCode": 0,
+      "targetedPresentationPassed": 14,
+      "unchangedBuildInputs": 141
+    }
+  },
+  "source": {
+    "pass": true,
+    "deliveryInputs": 142,
+    "ownedV2Inputs": 22,
+    "measuredRuntimeFiles": 36
+  },
+  "comparison": {
+    "independentCases": 6,
+    "predeterminedReplay": 1,
+    "allCleared35": true,
+    "replayEqual": true,
+    "dualEliteBirths": 12,
+    "companionCommitted": 0,
+    "limitation": "All12 normal sustained-fire elites died before a companion commitment; no artificial survival, tuning, replacement seeds or retries."
+  },
+  "browser": {
+    "testsPassed": 1,
+    "testsFailed": 1,
+    "reviewedNaturalRuns": 2,
+    "naturalBuild": "23b87587c4432150ed28cf5ef645151640949681b5530d3a4593d4b6fcda2222",
+    "finalBuild": "27a37e8a83be3b077037991e05826970629cfca01d83ce07dee5cd30e6e8b4ae",
+    "results": [
+      {
+        "project": "chrome",
+        "raw": "artifacts/duet-v087/browser-attempt-2/chrome/output/duet-v087-naturally-reach--fe255--its-real-committed-tactics-chrome/natural-duet.json",
+        "viewport": {
+          "width": 1366,
+          "height": 768
+        },
+        "eliteId": "elite-713",
+        "warningTicks": 480,
+        "tactics": [
+          "crystal-charge",
+          "mimic-corrosion"
+        ],
+        "advances": [
+          {
+            "tick": 17450,
+            "reason": "charge-ended",
+            "recoverUntil": 292.8333333333333
+          },
+          {
+            "tick": 17786,
+            "reason": "resolved",
+            "recoverUntil": 297.93333333333334
+          }
+        ],
+        "warningLayout": {
+          "clientHeight": 228,
+          "scrollHeight": 251,
+          "overflowY": "auto",
+          "scrollTop": 0
+        },
+        "scrolled": {
+          "scrollTop": 23,
+          "clientHeight": 228,
+          "scrollHeight": 251
+        },
+        "observationPolicy": "Hold fire from20 and orbit actual tissue; no HP/position/time/birth/rank injection. This is not the normal sustained-fire balance strategy.",
+        "twoActualActionsVerified": true,
+        "testPassed": true,
+        "finalPhase": "paused",
+        "tissueHp": 68,
+        "preservedFailure": null
+      },
+      {
+        "project": "edge",
+        "raw": "artifacts/duet-v087/browser-attempt-2/edge/output/duet-v087-naturally-reach--fe255--its-real-committed-tactics-edge/natural-duet.json",
+        "viewport": {
+          "width": 1100,
+          "height": 560
+        },
+        "eliteId": "elite-713",
+        "warningTicks": 480,
+        "tactics": [
+          "crystal-charge",
+          "mimic-corrosion"
+        ],
+        "advances": [
+          {
+            "tick": 17525,
+            "reason": "charge-ended",
+            "recoverUntil": 294.0833333333333
+          },
+          {
+            "tick": 17955,
+            "reason": "resolved",
+            "recoverUntil": 300.75
+          }
+        ],
+        "warningLayout": {
+          "clientHeight": 193,
+          "scrollHeight": 209,
+          "overflowY": "auto",
+          "scrollTop": 0
+        },
+        "scrolled": {
+          "scrollTop": 16,
+          "clientHeight": 193,
+          "scrollHeight": 209
+        },
+        "observationPolicy": "Hold fire from20 and orbit actual tissue; no HP/position/time/birth/rank injection. This is not the normal sustained-fire balance strategy.",
+        "twoActualActionsVerified": true,
+        "testPassed": false,
+        "finalPhase": "result",
+        "tissueHp": 0,
+        "preservedFailure": "The second action actually resolved on the terminal tissue-loss tick; the test fails before accepting completion. No replacement run."
+      }
+    ],
+    "offlineModeGroups": 4,
+    "finalOfflinePass": true,
+    "finalPresentationReplayGroups": 4,
+    "visualReview": {
+      "pass": true,
+      "scope": "Agent visual inspection of captured pixels only; not human playtesting or comprehension validation.",
+      "productionHud": {
+        "buildRevision": "V2; final V3 changes only the separate scene-label renderer colors",
+        "reviewed": [
+          "chrome natural-duet-warning.png and natural-duet-warning-scrolled.png",
+          "edge natural-duet-warning.png and natural-duet-warning-scrolled.png",
+          "chrome natural-duet-mimic-corrosion.png and natural-duet-active-recovery.png",
+          "edge test-failed-1.png"
+        ],
+        "findings": [
+          "Both explicit tactic counters appear near the top of the warning at1366x768 and1100x560.",
+          "Warnings remain inside the viewport. Lower base-counter text requires actual scrolling: Chrome23px, Edge16px. Screenshots show the bottom content after scrolling.",
+          "V2 scene labels used dark text on a dark backplate, so a two-color correction was required.",
+          "Edge's failure screenshot shows the actual organ-loss result; it is not a successful natural observation."
+        ]
+      },
+      "finalSceneLabels": {
+        "revision": "V3",
+        "agentReview": "artifacts/duet-v087/render-label-v3/replay-attempt-1/visual-review.json",
+        "rootReviewedImages": [
+          "artifacts/duet-v087/render-label-v3/replay-attempt-1/chrome-windup/same-tick-normal.png",
+          "artifacts/duet-v087/render-label-v3/replay-attempt-1/edge-recovery/same-tick-low.png"
+        ],
+        "findings": [
+          "Pale text clearly distinguishes actual mimic windup and recovery plus next crystal charge against the existing dark plate.",
+          "The implementation agent inspected all8 final replay PNGs; root separately inspected the1366x768 normal windup and1100x560 low-effect recovery.",
+          "These are identical Chrome natural-source snapshots rendered without stepping in each browser. They contain no production HUD and are not new natural gameplay runs."
+        ]
+      }
+    }
+  },
+  "release": {
+    "zip": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-G4-v0.8.7.zip",
+    "bytes": 5266711,
+    "sha256": "720d7947f8966b21fbca8adb2ef27f25714e324377fa5c7b484b962fc3a448f9",
+    "gameSha256": "27a37e8a83be3b077037991e05826970629cfca01d83ce07dee5cd30e6e8b4ae",
+    "independentCrc32Pass": true,
+    "files": 5
+  },
+  "humanBlindPlaytests": {
+    "completed": 0,
+    "required": 5
+  },
+  "preservedFailures": [
+    "Initial main rules919 pass/1 fail: obsolete single-elite copy assertion; inspection also found missing full two-action counters. V2 repairs both and final920 passes.",
+    "Early birth-test assertion/type-narrowing failures remain in original isolated reports; no retroactive relabeling.",
+    "Normal sustained-fire comparison does not reach companion attacks (0/12). Browser deliberately holds fire to observe behavior and is disclosed separately.",
+    "V2 Edge natural observation failed on real terminal tissue loss even though raw receipts record its second action resolved at that tick; not counted as a passed test.",
+    "V2 screenshots exposed dark scene-label text; final V3 changes exactly two color literals and is checked by read-only snapshot presentation replay."
+  ],
+  "limitations": [
+    "No new human fun, comprehension, replay intent, first-session duration, retention or incubation-value evidence.",
+    "No new600s performance, physical OS focus or real browser zoom validation.",
+    "Continuous challenge keeps central tissue/valve objectives; the two-organ district exploration belongs to campaign.",
+    "No promise that every elite lives to its companion or every Q cell reaches contact.",
+    "Final build includes preserved unrelated art/build inputs; local focused commit alone does not reconstruct those unstaged inputs."
+  ],
+  "scripts": [
+    {
+      "path": "artifacts/duet-v087/tools/init-duet-v087.mjs",
+      "sha256": "7eda1e19b49a7f6e99bcc920913e94a1c8591e41d966005d559f4e9afd689ee3"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/init-duet-v086-baseline.mjs",
+      "sha256": "485da375c95388a9c2d865570a3a48674525b83e3a49626325e470e57aa0a833"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/integrate-duet-v087.mjs",
+      "sha256": "c39b134eb5abf9fa1411c4f86b51b1bb033699e11bd1f2e055fdf1e7a0fa0748"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/finalize-duet-v087.mjs",
+      "sha256": "6f0cba70c602c200a0ab586c4a9696e7d534cf0b597857a3b02387fe82e7f60d"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/run-duet-v087-checks.mjs",
+      "sha256": "5483f50ffc35fcae1f98ed8128b0226e5af12e7b9a71538f899a7410d546af73"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/run-duet-v087-browser.mjs",
+      "sha256": "207325cafb5a8fb112639e5d5eae8a53760b9595d44c564d8da0092b71e1dea3"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/run-duet-v087-browser-final.mjs",
+      "sha256": "ab6c41c89ffaa0c74d1de661118fd4ecc0c92c06dace8db872439c0e82cd6213"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/compare-duet-v087.mjs",
+      "sha256": "ddca712110d93f0539f0c36bc10dc4e8c294b72507a9a83fd298d81c956d390d"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/prepare-delivery-v087.mjs",
+      "sha256": "744574a2bf2b31b898a9003dc50be993bdedcde481c4f1501e0ce530df04c539"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/inspect-v087-release.mjs",
+      "sha256": "04f40524748d4b5397c2e145d520656ed8c809edd55826fa2711a4718b028c67"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/verify-offline-v087.mjs",
+      "sha256": "64d67c06315f994d6de4b71546b3826780cfc820169be1514c32ca8c847ae158"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/finalize-evidence-v087.mjs",
+      "sha256": "6b8e558a6184f72ffd2bb784d4fb60cb7d3040a0747b5c2eab59650355f2d5cd"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/review-duet-v087-browser2.mjs",
+      "sha256": "353af781bda3d7aa5508592f434e8a1489a707c21f7e7fdc5719e7ae0c8b0e29"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/integrate-duet-v087-label-v3.mjs",
+      "sha256": "39c102d677244c5cd3425c610705380d08657a972cca36c2c8d89795c0cda5a7"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/verify-duet-v087-label-v3-lineage.mjs",
+      "sha256": "fcfc5e15c4040be1e55dd0206ce9ae86c1b8aa613de4d3657509933a98c48ff4"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/replay-duet-v087-label-v3.mjs",
+      "sha256": "3011ab505dc1f1c2e27cf5c17fcade20d4e31a548bee72abe3f591f7e2925ae0"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/preserve-duet-v087-ui-v2.mjs",
+      "sha256": "40110d00d73921947895c91f3492b0199e5b5bd35d3fb9b3723bf5e49bc67786"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/prepare-delivery-v087-v3.mjs",
+      "sha256": "c9bf26d384c9d86f48815b162c90a4f6b376cdf842ee9c430919e6669c60c165"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/inspect-v087-release-v3.mjs",
+      "sha256": "2997b06064e6025fdb97ea1792ce94ab1dafb6a8b36df4902f37073f50474199"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/verify-offline-v087-v3.mjs",
+      "sha256": "0ae634d242b1b5b190ae30573e52a6bee04b8b805b498fc4c1223ecf47f31c77"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/prepare-duet-v087-label-v3.mjs",
+      "sha256": "ee5fb2902eaa6a31e9b45dc3de4176aa67aa45fd119e5601e7f4634ff9589236"
+    },
+    {
+      "path": "artifacts/duet-v087/tools/run-duet-v087-v3.mjs",
+      "sha256": "2b9e2ef8b060b45439270dcbe0be87ccb030ae4b728ff6c45b5e15396447041f"
+    }
+  ],
+  "references": [
+    {
+      "path": "Docs/ViralInvasion_DualElite_v0.8.7.md",
+      "sha256": "02291425119925382ff73ba3b8cf9bc98f1ae62a63baef5aa6a69922ba7a3741"
+    },
+    {
+      "path": "Docs/ViralInvasion_Playtest.md",
+      "sha256": "916f621d28196c204229e136e9a2abf9fb93cb4c04fe374cf9291e992e5e1fb2"
+    },
+    {
+      "path": "artifacts/duet-v087/regression/nonseed-results-final.json",
+      "sha256": "dd7b948ed972b2c0a73dec7bd643f6c2c5a59e720926d978d34cfd59f19c370d"
+    },
+    {
+      "path": "artifacts/duet-v087/regression/nonseed-results.json",
+      "sha256": "04da49c19def90dbe36719cb3b21378b7257c1238f48d42b463dda06a6668428"
+    },
+    {
+      "path": "artifacts/duet-v087/regression/full-system-seeds.json",
+      "sha256": "02bcb8387cd1b7d6b8ca34c61d908a5009284dfbd5c6fc0271d28924f85f2364"
+    },
+    {
+      "path": "artifacts/duet-v087/regression/core-implementation-report.json",
+      "sha256": "0399311f9a0634970240bbfc904f0bcdd9159e4e3cba3a473ee1919a42932945"
+    },
+    {
+      "path": "artifacts/duet-v087/regression/birth-implementation-report.json",
+      "sha256": "6b8202c41947d62629b83ed651ec1ded4049c3fe6c493df67dffcc2f2c6ad618"
+    },
+    {
+      "path": "artifacts/duet-v087/comparison-attempt-1/report.json",
+      "sha256": "645cee5c2fd76bf6cd96022992b534ecec8bd4676c44c3b7af6a3aac7c420448"
+    },
+    {
+      "path": "artifacts/duet-v087/comparison-attempt-1/derived-review.json",
+      "sha256": "64d594a3a11fcf4d8540b5880850367be804d406c4178f584aea8df39fb70a20"
+    },
+    {
+      "path": "artifacts/duet-v087/comparison-attempt-1/raw-evidence-archives.json",
+      "sha256": "e265d63026bb18ffa41e6e499d328b7e0b92b5a9f4fe51b248de804dfa16e73e"
+    },
+    {
+      "path": "artifacts/duet-v087/browser-attempt-2/summary.json",
+      "sha256": "acd0f493096471d96cbfba893b35d3db88781ef843ea08a80d003a6209f6e850"
+    },
+    {
+      "path": "artifacts/duet-v087/browser-attempt-2/actual-actions-review.json",
+      "sha256": "ae83fdc44a262431d636a284d7ad20aa0a84a9141c6ebdc3ec3e83eeac8fea57"
+    },
+    {
+      "path": "artifacts/duet-v087/browser-attempt-2/visual-review.json",
+      "sha256": "2bf3021bb8dfe28d5aff72b976806cd8355e3b582ea75296704c019ec495abbe"
+    },
+    {
+      "path": "artifacts/duet-v087/integration/final-source-lineage.json",
+      "sha256": "0dd63cb57fe3f1a66df1256490441bba0eef71233dacb7980b5d69866b62d17b"
+    },
+    {
+      "path": "artifacts/duet-v087/render-label-v3/source-lineage.json",
+      "sha256": "cd7b7a46084a07bb8e81152fc98daf1cebd5593fabfa9b078451d6ca081bf7c0"
+    },
+    {
+      "path": "artifacts/duet-v087/render-label-v3/replay-attempt-1/summary.json",
+      "sha256": "8ab3778086ecb36754cd9ed46725c79c7f7ed440943f349a52c095164e20daa0"
+    },
+    {
+      "path": "artifacts/duet-v087/release/inspection-2/inspection.json",
+      "sha256": "ac4f037eadfea463038dde44b0316a5b8365555cf45287684ecf64db4fcc0d11"
+    },
+    {
+      "path": "artifacts/duet-v087/release/offline-smoke-2/report.json",
+      "sha256": "21d15a4850b5a4b3656309bdc79e06fba3c67c33085844a1a440852ee3f2fa0d"
+    },
+    {
+      "path": "artifacts/releases/v0.8.7/release-package.json",
+      "sha256": "78f26ee0f7ce054f3e4b7d8010245d79afe0d615da00f581b3619f16352060d5"
+    },
+    {
+      "path": "dist/game.js",
+      "sha256": "27a37e8a83be3b077037991e05826970629cfca01d83ce07dee5cd30e6e8b4ae"
+    },
+    {
+      "path": "dist/build-meta.json",
+      "sha256": "b2a718f3044c0788ed07de3028fa813c826a5c11e5c8485b74b81f1e420b2bc7"
+    }
+  ]
+}

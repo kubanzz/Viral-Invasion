@@ -4,7 +4,7 @@ import type { CampaignState } from './campaignTypes';
 import type { RunMetrics } from './runMetrics';
 import type { EndlessState } from './endlessTypes';
 import type { EndlessGrowthState } from './endlessGrowthTypes';
-import type { EnemyAttackPlan, EnemyCharge, EnemyTactic } from './enemyTacticsTypes';
+import type { EnemyAttackPlan, EnemyCharge, EnemyTactic, EliteTacticCycle } from './enemyTacticsTypes';
 export interface Vec { x: number; y: number }
 export interface WorldGeometry {
   width: number; height: number;
@@ -24,6 +24,7 @@ export interface Target extends Vec {
   attackTarget?: 'player' | 'tissue';
   attackRadius?: number;
   tactic?: EnemyTactic;
+  eliteCycle?: EliteTacticCycle;
   /** A finite ranged support keeps distance; its warning still freezes before firing. */
   tacticPosture?: 'standoff';
   attackPlan?: EnemyAttackPlan;

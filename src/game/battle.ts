@@ -13,6 +13,7 @@ import { EnemyNavigator } from '../actors/enemyNavigation';
 import { enemyAttackPlan, enemyAttackHits, enemyRayEnd, segmentDistance } from './enemyTactics';
 import { standoffMotion } from './enemyPositioning';
 import { updateEnemyFacing } from './enemyFacing';
+import { activeEliteTacticCycle, commitEliteTactic, finishEliteTactic, prepareEliteTactic } from './eliteTacticCycle';
 
 export interface BattleHost {
   state: GameState;
@@ -82,6 +83,7 @@ export function initializeBattle(state: GameState, options: CampaignOptions): vo
 /** G1 rules attach to the shared session; tools/movement/time stay in GameSession. */
 export class BattleDirector {
   private readonly navigator = new EnemyNavigator();
+  private readonly fissionBirths = new WeakMap<Target, number>();
   constructor(private host: BattleHost) {}
   private get s() { return this.host.state; }
   private get b() { return this.s.battle!; }
@@ -135,13 +137,20 @@ export class BattleDirector {
   }
 
   scan(): void {
+    const state = this.s;
     let count = 0;
-    for (const target of this.s.targets) if (target.hp > 0 && distance(this.s.player, target) <= BALANCE.scanRadius) {
-      target.revealedUntil = this.s.elapsed + B.scanReveal;
+    for (const target of state.targets) if (target.hp > 0 && distance(state.player, target) <= BALANCE.scanRadius) {
+      target.revealedUntil = state.elapsed + B.scanReveal;
       if (target.attackPlan?.kind === 'mimic-corrosion' && target.attackAt !== undefined) {
         this.recoverEnemy(target, 2);
-        target.attackReady = this.s.elapsed + 2;
+        target.attackReady = state.elapsed + 2;
+        const completed = finishEliteTactic(state, target, 'mimic-corrosion', 'scan-interrupted');
         this.host.emit('ENDLESS_CORROSION_INTERRUPTED', { actorId: target.id, method: 'scan', exposedSeconds: 2 });
+        if (this.s !== state || state.phase !== 'playing') return;
+        if (completed) {
+          this.host.emit('ELITE_TACTIC_ADVANCED', completed);
+          if (this.s !== state || state.phase !== 'playing') return;
+        }
         this.host.effect('burst', target, target, 65, .4);
       }
       count++;
@@ -171,14 +180,22 @@ export class BattleDirector {
     target.attackTarget = undefined;
     target.attackPlan = undefined; target.attackWindup = undefined;
     target.charge = undefined; target.recoverUntil = undefined;
+    if (target.eliteCycle) delete target.eliteCycle.committedTick;
     target.revealedUntil = 0;
     target.exposedUntil = 0;
+    const fission = target.role !== 'source' && target.role !== 'core' && target.traits?.includes('FISSION') && (target.generation ?? 0) === 0;
+    // Reserve the promised children before any synchronous death callback.
+    if (fission) {
+      target.splitAt = s.elapsed + B.fissionDelay;
+      target.splitPositions = [-1, 1].map(offset => moveWithCollision({ x: target.x, y: target.y }, { x: offset * 27, y: 10 }, 14, activeWorld(s)));
+    }
     if (target.role === 'source') {
       const node = b.graph.nodes.find(n => n.id === target.id)!;
       node.active = false; node.infected = false;
       b.stats.sourceClears++;
       b.pressure.infection = Math.max(0, b.pressure.infection - B.sourceRelief);
       this.host.emit('INFECTION_SOURCE_CLEARED', { organId: b.organId, nodeId: target.id, actor: 'player' });
+      if (this.s !== s || s.phase !== 'playing') return;
       this.notice(`感染源已净化${s.campaign ? `（本局累计 ${b.stats.sourceClears}）` : `（${b.stats.sourceClears}/2）`}，停止增殖，感染负荷 -${B.sourceRelief}。`);
     } else {
       b.stats.kills++;
@@ -189,15 +206,15 @@ export class BattleDirector {
         if (first?.targetId === target.id && first.status !== 'resolved') {
           first.status = 'resolved'; first.resolvedAt = s.elapsed;
           this.host.emit('FIRST_COUNTER_RESOLVED', { id: target.id, organId: b.organId, countered: first.counterHit !== null });
+          if (this.s !== s || s.phase !== 'playing') return;
         }
         for (const trait of target.traits ?? []) if (!b.defeatedTraits.includes(trait)) b.defeatedTraits.push(trait);
         this.host.emit('ELITE_CLEARED', { id: target.id, organId: b.organId, trait: target.traits?.join('+') ?? '' });
+        if (this.s !== s || s.phase !== 'playing') return;
         this.notice(s.endless ? '变异精英已清除！继续清场领取本波进化。' : `变异精英已清除（${b.stats.eliteClears}/2）。保持组织，继续诊断。`);
       }
-      if (target.role !== 'core' && target.traits?.includes('FISSION') && (target.generation ?? 0) === 0) {
-        target.splitAt = s.elapsed + B.fissionDelay;
-        target.splitPositions = [-1, 1].map(offset => moveWithCollision({ x: target.x, y: target.y }, { x: offset * 27, y: 10 }, 14, activeWorld(s)));
-        this.host.emit('FISSION_WARNING', { parentId: target.id, children: 2, applyAt: target.splitAt });
+      if (fission) {
+        this.host.emit('FISSION_WARNING', { parentId: target.id, children: 2, applyAt: target.splitAt! });
       }
     }
   }
@@ -265,6 +282,7 @@ export class BattleDirector {
     const end = { x: p.origin.x + Math.cos(p.direction) * B.pulseRange, y: p.origin.y + Math.sin(p.direction) * B.pulseRange };
     this.host.effect('pulse', p.origin, end, B.pulseRange, .65);
     let pushed = 0; let exposed = 0; let coreHit = false;
+    const advanced: GameEvent['data'][] = [];
     const exposedTargetIds: string[] = [];
     for (const target of s.targets) if (target.hp > 0 && target.role !== 'source') {
       const length = distance(p.origin, target);
@@ -277,27 +295,45 @@ export class BattleDirector {
       if (target.role === 'core') coreHit = true;
       if (target.role !== 'core' && distance(target, pos) > 1e-6) pushed++;
       target.x = pos.x; target.y = pos.y;
+      const cycle = activeEliteTacticCycle(s, target);
+      const interruptedTactic = target.attackPlan?.kind ?? (target.charge ? 'crystal-charge' : undefined);
+      const recovery = target.attackPlan?.recoveryExposure ?? target.charge?.recoveryExposure ?? 0;
+      const retainedRecovery = cycle ? target.recoverUntil : undefined;
       target.attackAt = undefined; target.attackAim = undefined;
       target.attackTarget = undefined;
       target.attackPlan = undefined; target.attackWindup = undefined; target.charge = undefined; target.recoverUntil = undefined;
       target.attackReady = s.elapsed + 1.3;
+      if (cycle) {
+        target.recoverUntil = Math.max(retainedRecovery ?? 0, interruptedTactic ? s.elapsed + Math.max(1.3, recovery) : 0) || undefined;
+        if (target.recoverUntil) target.exposedUntil = Math.max(target.exposedUntil ?? 0, target.recoverUntil);
+        target.attackReady = Math.max(target.attackReady, target.recoverUntil ?? 0);
+        const completed = interruptedTactic && finishEliteTactic(s, target, interruptedTactic, 'pulse-interrupted');
+        if (completed) advanced.push(completed);
+      }
       if (target.traits?.includes('CARAPACE')) { target.exposedUntil = s.elapsed + B.pulseExpose; exposed++; exposedTargetIds.push(target.id); }
       target.revealedUntil = s.elapsed + B.scanReveal;
     }
     this.host.emit('PULSE_TRIGGERED', { organId: b.organId, direction: p.direction, range: B.pulseRange, halfAngle: B.pulseHalfAngle, pushed, exposed, exposedTargetIds: exposedTargetIds.join(','), coreHit, tissueCost: B.pulseCost });
+    if (this.s !== s || s.phase !== 'playing') return;
     this.notice(`定向冲流：推开 ${pushed} 体，破壳 ${exposed} 体；组织承压 -${B.pulseCost}，冷却 ${B.pulseCooldown} 秒。`, 4);
+    for (const completed of advanced) {
+      this.host.emit('ELITE_TACTIC_ADVANCED', completed);
+      if (this.s !== s || s.phase !== 'playing') return;
+    }
   }
 
   afterInput(): void {
+    const state = this.s;
     if (!this.s.endless) { this.evolution(); this.spread(); }
     this.enemies();
+    if (this.s !== state || state.phase !== 'playing') return;
     if (!this.s.endless) { this.pressure(); this.objectives(); }
     // Dead sources remain as inert landmarks. Other corpses have a short bounded lifetime.
-    this.s.targets = this.s.targets.filter(t => t.hp > 0 || t.role === 'source' || this.s.elapsed - (t.deadAt ?? this.s.elapsed) < 1.5);
+    this.s.targets = this.s.targets.filter(t => t.hp > 0 || t.role === 'source' || !!state.endless && t.splitAt !== undefined || this.s.elapsed - (t.deadAt ?? this.s.elapsed) < 1.5);
   }
 
   private aliveCount(): number { return this.s.targets.filter(t => t.hp > 0).length; }
-  private spawn(position: Vec, role: 'virus' | 'elite', traits = this.b.traits, generation = 0, sourceId?: string): Target | undefined {
+  private spawn(position: Vec, role: 'virus' | 'elite', traits = this.b.traits, generation = 0, sourceId?: string, accepted?: () => void): Target | undefined {
     if (this.aliveCount() >= B.maxActors) return;
     const encounter = this.b.encounter, opening = role === 'virus' && encounter?.configId === 'campaign-1' && encounter.firstCounter.status !== 'resolved';
     if (opening && (this.s.targets.filter(target => target.hp > 0 && target.role === 'virus').length >= ENCOUNTER_CONFIGS['campaign-1'].openingOrdinaryCap
@@ -309,6 +345,7 @@ export class BattleDirector {
     const target: Target = { ...pos, id: `${role}-${++this.b.nextActorId}`, role, kind: traits.includes('FISSION') ? 'cluster' : 'single', radius, hp, maxHp: hp, hitUntil: 0, scanned: false, traits: [...traits], facing: 0, born: this.s.elapsed, attackReady: this.s.elapsed + 1.5, generation, sourceId };
     this.s.targets.push(target);
     if (opening) encounter.openingSpawned++;
+    accepted?.();
     this.host.emit('ACTOR_SPAWNED', { id: target.id, role, generation, sourceId: sourceId ?? '', traits: traits.join('+') });
     return target;
   }
@@ -390,24 +427,26 @@ export class BattleDirector {
     return block === null || block >= length - body.radius;
   }
 
-  private damagePlayer(target: Target, amount: number, reason: string): boolean {
+  private damagePlayer(target: Target, amount: number, reason: string, accepted?: () => void): boolean {
     const { s, b } = this;
     if (s.player.hp <= 0 || s.elapsed < s.player.dashUntil || amount <= 0) return false;
     const before = s.player.hp;
     s.player.hp = Math.max(0, before - amount); b.stats.playerDamage += before - s.player.hp;
     s.player.hurtUntil = s.elapsed + .5;
-    this.host.emit('PLAYER_HURT', { damage: before - s.player.hp, remainingHp: s.player.hp, reason, actorId: target.id });
+    accepted?.();
     this.host.effect('hit', s.player, s.player, 22, .3);
+    this.host.emit('PLAYER_HURT', { damage: before - s.player.hp, remainingHp: s.player.hp, reason, actorId: target.id });
     return true;
   }
 
-  private damageTissue(target: Target, amount: number): boolean {
+  private damageTissue(target: Target, amount: number, accepted?: () => void): boolean {
     const { s, b } = this;
     if (s.tissue.hp <= 0 || amount <= 0) return false;
     const before = s.tissue.hp;
     s.tissue.hp = Math.max(0, before - amount); b.stats.tissueDamage += before - s.tissue.hp;
-    this.host.emit('ORGAN_INTEGRITY_CHANGED', { organId: b.organId, before, after: s.tissue.hp, reason: 'enemy-attack', actorId: target.id });
+    accepted?.();
     this.host.effect('hit', s.tissue, s.tissue, 45, .3);
+    this.host.emit('ORGAN_INTEGRITY_CHANGED', { organId: b.organId, before, after: s.tissue.hp, reason: 'enemy-attack', actorId: target.id });
     return true;
   }
 
@@ -426,21 +465,26 @@ export class BattleDirector {
     const direction = normalized(charge.to.x - from.x, charge.to.y - from.y);
     const travel = Math.min(remaining, charge.speed * BALANCE.step);
     const to = moveWithCollision(from, { x: direction.x * travel, y: direction.y * travel }, target.radius, activeWorld(s));
+    target.x = to.x; target.y = to.y;
     // Only the real travelled segment can hurt. The drawn promised lane never
     // deals damage ahead of the moving body, through a fold, or twice per rush.
     if (!charge.hitPlayer && segmentDistance(s.player, from, to) <= charge.radius + s.player.radius) {
       const gap = distance(to, s.player), block = wallHit(to, normalized(s.player.x - to.x, s.player.y - to.y), gap, activeWorld(s));
-      if ((block === null || block >= gap - s.player.radius) && this.damagePlayer(target, charge.playerDamage, 'crystal-charge')) charge.hitPlayer = true;
+      if (block === null || block >= gap - s.player.radius) this.damagePlayer(target, charge.playerDamage, 'crystal-charge', () => { charge.hitPlayer = true; });
+      if (this.s !== s || s.phase !== 'playing') return;
     }
     if (!charge.hitTissue && charge.tissueDamage > 0 && segmentDistance(s.tissue, from, to) <= charge.radius + s.tissue.radius) {
       const gap = distance(to, s.tissue), block = wallHit(to, normalized(s.tissue.x - to.x, s.tissue.y - to.y), gap, activeWorld(s));
-      if ((block === null || block >= gap - s.tissue.radius) && this.damageTissue(target, charge.tissueDamage)) charge.hitTissue = true;
+      if (block === null || block >= gap - s.tissue.radius) this.damageTissue(target, charge.tissueDamage, () => { charge.hitTissue = true; });
+      if (this.s !== s || s.phase !== 'playing') return;
     }
-    target.x = to.x; target.y = to.y;
     if (remaining <= travel + .1 || s.elapsed + 1e-9 >= charge.endsAt || distance(from, to) < travel * .5) {
       const hitPlayer = charge.hitPlayer;
       this.recoverEnemy(target, charge.recoveryExposure); target.attackReady = s.elapsed + Math.max(charge.interval, charge.recoveryExposure);
+      const completed = finishEliteTactic(s, target, 'crystal-charge', 'charge-ended');
       this.host.emit('ENEMY_CHARGE_ENDED', { actorId: target.id, hitPlayer, x: to.x, y: to.y, exposedSeconds: charge.recoveryExposure });
+      if (this.s !== s || s.phase !== 'playing') return;
+      if (completed) this.host.emit('ELITE_TACTIC_ADVANCED', completed);
     }
   }
 
@@ -456,15 +500,25 @@ export class BattleDirector {
       this.host.emit('ENEMY_CHARGE_STARTED', { actorId: target.id, x: target.x, y: target.y, endX: plan.chargeEnd.x, endY: plan.chargeEnd.y, duration: length / plan.chargeSpeed });
       return;
     }
+    const cycling = !!activeEliteTacticCycle(s, target);
+    // Complete the accepted commitment before an HP receipt can synchronously pause/restart.
+    this.recoverEnemy(target, plan.recoveryExposure);
+    target.attackReady = s.elapsed + Math.max(plan.interval, plan.recoveryExposure);
+    const completed = cycling ? finishEliteTactic(s, target, plan.kind, 'resolved') : undefined;
     const hitPlayer = plan.playerDamage > 0 && enemyAttackHits(plan, s.player, s.player.radius, activeWorld(s))
       && this.damagePlayer(target, plan.playerDamage, plan.kind);
+    if (this.s !== s || s.phase !== 'playing') return;
     const hitTissue = plan.tissueDamage > 0 && enemyAttackHits(plan, s.tissue, s.tissue.radius, activeWorld(s))
       && this.damageTissue(target, plan.tissueDamage);
+    if (this.s !== s || s.phase !== 'playing') return;
     for (const center of plan.landings) this.host.effect('burst', center, center, plan.radius, .32);
     if (plan.kind === 'thin-ray') this.host.effect('beam', plan.origin, enemyRayEnd(plan, activeWorld(s)), 0, .2);
     this.host.emit('ENEMY_TACTIC_RESOLVED', { actorId: target.id, tactic: plan.kind, hitPlayer, hitTissue });
-    this.recoverEnemy(target, plan.recoveryExposure);
-    target.attackReady = s.elapsed + Math.max(plan.interval, plan.recoveryExposure);
+    if (this.s !== s || s.phase !== 'playing') return;
+    if (completed) {
+      this.host.emit('ELITE_TACTIC_ADVANCED', completed);
+      return;
+    }
   }
 
   private enemies(): void {
@@ -483,19 +537,31 @@ export class BattleDirector {
       if (point) { target.x = point.x; target.y = point.y; }
     }
     for (const target of s.targets) {
+      if (this.s !== s || s.phase !== 'playing') return;
       if (s.endless && (s.player.hp <= 0 || s.tissue.hp <= 0)) break;
       if (target.hp <= 0) {
         if (target.splitAt !== undefined && s.elapsed + 1e-9 >= target.splitAt) {
-          let children = 0;
-          for (const pos of target.splitPositions ?? []) if (this.spawn(pos, 'virus', target.traits, 1, target.sourceId)) children++;
-          this.host.emit('FISSION_SPAWNED', { parentId: target.id, children, generation: 1 });
+          while (target.splitPositions?.length) {
+            const pos = target.splitPositions[0];
+            const child = this.spawn(pos, 'virus', target.traits, 1, target.sourceId, () => {
+              target.splitPositions!.shift();
+              this.fissionBirths.set(target, (this.fissionBirths.get(target) ?? 0) + 1);
+            });
+            if (!child) break;
+            if (this.s !== s || s.phase !== 'playing') return;
+          }
+          if (target.splitPositions?.length) continue;
+          const children = this.fissionBirths.get(target) ?? 0;
+          this.fissionBirths.delete(target);
           target.splitAt = undefined; target.splitPositions = undefined;
+          this.host.emit('FISSION_SPAWNED', { parentId: target.id, children, generation: 1 });
         }
         continue;
       }
       if (target.role === 'source' || target.role === 'core' || this.host.isMigratingActor?.(target.id)) continue;
       if (target.charge) { this.advanceCharge(target); continue; }
       if (target.recoverUntil !== undefined) continue;
+      prepareEliteTactic(s, target);
       const mimic = target.tactic === 'mimic-corrosion' || (!target.tactic || target.tactic === 'melee') && target.traits?.includes('MIMIC');
       const goal = mimic || !s.endless && distance(target, s.player) > 270 ? s.tissue : s.player;
       const dir = normalized(goal.x - target.x, goal.y - target.y);
@@ -525,8 +591,15 @@ export class BattleDirector {
           target.attackPlan = plan; target.attackAt = s.elapsed + plan.windup;
           target.attackWindup = plan.windup; target.attackAim = { ...plan.aim }; target.attackRadius = plan.radius;
           target.attackTarget = plan.kind === 'mimic-corrosion' ? 'tissue' : 'player';
+          const committed = commitEliteTactic(s, target);
           this.host.emit('ATTACK_TELEGRAPHED', { actorId: target.id, target: target.attackTarget, tactic: plan.kind, resolveAt: target.attackAt });
+          if (this.s !== s || s.phase !== 'playing') return;
           this.host.emit('ENEMY_TACTIC_COMMITTED', { actorId: target.id, tactic: plan.kind, windup: plan.windup, x: plan.origin.x, y: plan.origin.y, aimX: plan.aim.x, aimY: plan.aim.y });
+          if (this.s !== s || s.phase !== 'playing') return;
+          if (committed) {
+            this.host.emit('ELITE_TACTIC_COMMITTED', committed);
+            if (this.s !== s || s.phase !== 'playing') return;
+          }
         }
         continue;
       }

@@ -1,6 +1,14 @@
 import type { Vec } from './types';
 
 export type EnemyTactic = 'melee' | 'thin-ray' | 'crystal-charge' | 'fission-burst' | 'mimic-corrosion';
+export type HeavyEnemyTactic = Exclude<EnemyTactic, 'melee' | 'thin-ray'>;
+
+/** Two taught actions, one active commitment; index advances only after real completion/interruption. */
+export interface EliteTacticCycle {
+  tactics: [HeavyEnemyTactic, HeavyEnemyTactic];
+  index: 0 | 1;
+  committedTick?: number;
+}
 
 /** A committed value snapshot. Never recompute aim, landings or end while winding up. */
 export interface EnemyAttackPlan {

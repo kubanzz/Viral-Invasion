@@ -1,6 +1,7 @@
 import { TRAITS } from '../game/battleConfig';
 import type { TraitId } from '../game/battleTypes';
 import type { GameState } from '../game/types';
+import { eliteCycleForecast, eliteCycleWarningCounters, upcomingEliteCycle } from './eliteTacticCycleHud';
 
 const escape = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]!));
 const names = (traits: readonly TraitId[]) => traits.map(id => `${TRAITS[id].symbol}${TRAITS[id].name}`).join(' / ');
@@ -34,11 +35,14 @@ export function endlessEvolutionWarningContent(state: GameState): string | null 
   const decision = pending.decision, main = TRAITS[decision.main];
   const companions = decision.traits.filter(id => id !== decision.main).map(id => TRAITS[id].name);
   const seconds = Math.max(0, pending.appliesAt - state.elapsed).toFixed(1);
+  const cycle = upcomingEliteCycle(state), shown = cycle ? decision.traits.map(id => TRAITS[id]) : [main];
   return `<div class="warning-title"><strong>△ 进化前兆 · ${escape(main.name)}</strong><b>${seconds}s</b></div>
     <p class="endless-evolution-generation">第 ${decision.generation} 代${companions.length ? ` · 伴随变异：${companions.map(escape).join(' / ')}` : ''}</p>
-    <p class="endless-evolution-ability"><span>获得</span>${escape(main.ability)}</p>
-    <div class="endless-evolution-cost"><span>代价</span>${escape(main.cost)}</div>
-    <div class="counter"><span>基础反制</span>${escape(main.counter)}</div>`;
+    ${cycle ? `<p class="endless-elite-cycle">${escape(eliteCycleForecast(state))}</p>` : ''}
+    ${cycle ? `<div class="counter endless-elite-counter"><span>双招反制</span>${eliteCycleWarningCounters(state).map(escape).join('<br>')}</div>` : ''}
+    <p class="endless-evolution-ability"><span>获得</span>${shown.map(info => `${cycle ? `${escape(info.name)}：` : ''}${escape(info.ability)}`).join('<br>')}</p>
+    <div class="endless-evolution-cost"><span>代价</span>${shown.map(info => `${cycle ? `${escape(info.name)}：` : ''}${escape(info.cost)}`).join('<br>')}</div>
+    <div class="counter"><span>基础反制</span>${shown.map(info => `${cycle ? `${escape(info.name)}：` : ''}${escape(info.counter)}`).join('<br>')}</div>`;
 }
 
 export function updateEndlessEvolutionWarning(state: GameState): void {

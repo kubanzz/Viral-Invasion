@@ -1,0 +1,95 @@
+{
+  "scope": "Text-only static preparation audit. No execution of the new measurement script, generated driver, compiler, simulation or preview command.",
+  "script": {
+    "path": ".tools/compare-duet-v087.mjs",
+    "sha256": "1e283acefc10e9a099fe1b9a4229a257918e7363876102c0768b2d6072750ba5",
+    "bytes": 42157
+  },
+  "originalDriver": {
+    "path": "artifacts/tactics-v082/final-attempt-1/candidate/active-driver.mjs",
+    "sha256": "ae21a4d1e033f37420724b79ccbc0a1cf1cb882b11b88e5fab029fa6f2aecac3",
+    "expectedSha256": "ae21a4d1e033f37420724b79ccbc0a1cf1cb882b11b88e5fab029fa6f2aecac3"
+  },
+  "protectedRegions": [
+    {
+      "region": "activeInput",
+      "originalByteIdentical": true,
+      "restoredAfterDisclosedChangesByteIdentical": true,
+      "originalUtf8Sha256": "95b2e07e50c0ae6b559a58c6a075bf45be300b5d28e4a0b0e403628d87a50f73"
+    },
+    {
+      "region": "run",
+      "originalByteIdentical": false,
+      "restoredAfterDisclosedChangesByteIdentical": true,
+      "originalUtf8Sha256": "8dbcbf4d435f7a14df8076b6ec3756d06d4faffc175582a24602f92ce15b973f"
+    },
+    {
+      "region": "modal",
+      "originalByteIdentical": false,
+      "restoredAfterDisclosedChangesByteIdentical": true,
+      "originalUtf8Sha256": "e36a556ca7adac34e79ddb5ea1be0114f59a245d04d1239962f3f28df986e46f"
+    },
+    {
+      "region": "protocol",
+      "originalByteIdentical": true,
+      "restoredAfterDisclosedChangesByteIdentical": true,
+      "originalUtf8Sha256": "4d907854b84bba5ff853be075be7e3e829c76bad10cdd81ef89e80014e189893"
+    }
+  ],
+  "prioritiesByteIdentical": true,
+  "priorities": "const priorities = ['multishot', 'power', 'haste', 'pierce', 'vitality', 'immune', 'nova', 'dash', 'scan'];",
+  "disclosedSelection": "const option = draft.options.filter(option => option.id !== 'catalysis' && priorities.includes(option.id)).slice().sort((a, b) => priorities.indexOf(a.id) - priorities.indexOf(b.id))[0]; if (!option) throw new Error('No permitted known non-catalysis growth option');",
+  "disclosedGoal": "if (s.endless.clearedWaves >= 35) { stop = 'thirty-five-waves-cleared'; break; }",
+  "unchanged900And120Budgets": true,
+  "cases": [
+    {
+      "version": "baseline",
+      "seed": 7,
+      "replay": false
+    },
+    {
+      "version": "baseline",
+      "seed": 71,
+      "replay": false
+    },
+    {
+      "version": "baseline",
+      "seed": 19,
+      "replay": false
+    },
+    {
+      "version": "candidate",
+      "seed": 7,
+      "replay": false
+    },
+    {
+      "version": "candidate",
+      "seed": 71,
+      "replay": false
+    },
+    {
+      "version": "candidate",
+      "seed": 19,
+      "replay": false
+    },
+    {
+      "version": "candidate",
+      "seed": 71,
+      "replay": true
+    }
+  ],
+  "manifests": [
+    {
+      "path": ".tools/duet-v086-baseline/isolation-manifest.json",
+      "inputCount": 226,
+      "sha256": "d0868d85aada7bfa6e9afc6a180a59af559f42091a30dae7b70ee413c02d5f64"
+    },
+    {
+      "path": ".tools/duet-v087-source/isolation-manifest.json",
+      "inputCount": 226,
+      "sha256": "0c5f02ca474ae05f52843968b6f21ee15933b02aabcc1651306c55ed0bdc13b3"
+    }
+  ],
+  "comparisonOutputExists": false,
+  "limitation": "Text transforms verify the declared source edits preserve protected regions. The generated observer wrapper and all invariants will additionally be checked by makeDriver before any case only after separate run authorization."
+}

@@ -64,8 +64,11 @@ describe('a saved, readable endless generation warning', () => {
     const row = nodes.get('endless-traits')!.textContent;
     expect(row).toContain('将出现：◇晶壳 / ◌潜伏'); expect(row).toContain('当前：⋈裂殖 / ◌潜伏'); expect(row).toContain('混编');
     const objective = nodes.get('endless-objective')!.textContent;
-    expect(objective).toContain(`精英 · ${ENEMY_TACTIC_INFO['crystal-charge'].name}`);
-    expect(objective).toContain(ENEMY_TACTIC_INFO['crystal-charge'].counter); expect(objective).toContain('混编');
+    expect(objective).toContain(`首只精英双招：${ENEMY_TACTIC_INFO['crystal-charge'].name} → ${ENEMY_TACTIC_INFO['mimic-corrosion'].name}`);
+    expect(objective).toContain('冲锋锁向后侧闪'); expect(objective).toContain('Q打断侵蚀'); expect(objective).toContain('混编');
+    const card = nodes.get('endless-evolution-warning')!.innerHTML;
+    expect(card).toContain(ENEMY_TACTIC_INFO['crystal-charge'].counter);
+    expect(card).toContain(ENEMY_TACTIC_INFO['mimic-corrosion'].counter);
     expect(nodes.get('endless-evolution-warning')!.hidden).toBe(false);
     expect(f.state).toEqual(before);
   });

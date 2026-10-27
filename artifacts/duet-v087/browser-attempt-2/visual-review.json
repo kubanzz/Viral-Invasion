@@ -1,0 +1,32 @@
+{
+  "pass": true,
+  "scope": "Agent visual inspection of captured pixels only; not human playtesting or comprehension validation.",
+  "productionHud": {
+    "buildRevision": "V2; final V3 changes only the separate scene-label renderer colors",
+    "reviewed": [
+      "chrome natural-duet-warning.png and natural-duet-warning-scrolled.png",
+      "edge natural-duet-warning.png and natural-duet-warning-scrolled.png",
+      "chrome natural-duet-mimic-corrosion.png and natural-duet-active-recovery.png",
+      "edge test-failed-1.png"
+    ],
+    "findings": [
+      "Both explicit tactic counters appear near the top of the warning at1366x768 and1100x560.",
+      "Warnings remain inside the viewport. Lower base-counter text requires actual scrolling: Chrome23px, Edge16px. Screenshots show the bottom content after scrolling.",
+      "V2 scene labels used dark text on a dark backplate, so a two-color correction was required.",
+      "Edge's failure screenshot shows the actual organ-loss result; it is not a successful natural observation."
+    ]
+  },
+  "finalSceneLabels": {
+    "revision": "V3",
+    "agentReview": "artifacts/duet-v087/render-label-v3/replay-attempt-1/visual-review.json",
+    "rootReviewedImages": [
+      "artifacts/duet-v087/render-label-v3/replay-attempt-1/chrome-windup/same-tick-normal.png",
+      "artifacts/duet-v087/render-label-v3/replay-attempt-1/edge-recovery/same-tick-low.png"
+    ],
+    "findings": [
+      "Pale text clearly distinguishes actual mimic windup and recovery plus next crystal charge against the existing dark plate.",
+      "The implementation agent inspected all8 final replay PNGs; root separately inspected the1366x768 normal windup and1100x560 low-effect recovery.",
+      "These are identical Chrome natural-source snapshots rendered without stepping in each browser. They contain no production HUD and are not new natural gameplay runs."
+    ]
+  }
+}

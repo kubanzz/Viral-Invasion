@@ -4,6 +4,7 @@ import { ENEMY_TACTIC_INFO } from '../game/enemyTacticInfo';
 import { endlessSupportTactics } from '../game/endless';
 import { endlessEvolutionWarningMarkup, endlessTraitCopy, endlessUpcomingTraits, updateEndlessEvolutionWarning } from './endlessEvolutionWarning';
 import { catalysisToolCopy } from './catalysisHud';
+import { eliteCycleCounter, eliteCycleForecast, eliteCycleStatus } from './eliteTacticCycleHud';
 import type { EnemyTactic } from '../game/enemyTacticsTypes';
 import { activeWorld, BALANCE, type GameState } from '../game/types';
 import type { EndlessProfileData, EndlessProfileSnapshot, EndlessRunRecord } from '../meta/endlessProfile';
@@ -46,13 +47,15 @@ function threatCopy(state: GameState, upcoming = false): string {
   if (upcoming && state.endless?.eliteWave) {
     const traits = endlessUpcomingTraits(state);
     const tactic: EnemyTactic = traits[0] === 'CARAPACE' ? 'crystal-charge' : traits[0] === 'FISSION' ? 'fission-burst' : 'mimic-corrosion';
-    return `精英 · ${tacticCopy(tactic)}${state.endless.wave >= 16 ? ` 混编：${mixedSupportCopy(state)}。` : ''}`;
+    return `${eliteCycleForecast(state) || `精英 · ${tacticCopy(tactic)}`}${state.endless.wave >= 16 ? ` 混编：${mixedSupportCopy(state)}。` : ''}`;
   }
   if (upcoming && state.endless && state.endless.wave >= 16) {
     return `${mixedSupportCopy(state)}。锁线侧闪，双圈离圈，侵蚀 Q 打断；远距支援可接近或 Q 部署细胞。`;
   }
   const threats = state.targets.filter(target => target.hp > 0 && target.tactic && target.tactic !== 'melee');
   const active = threats.find(target => target.attackPlan || target.charge) ?? threats[0];
+  const cycleStatus = active ? eliteCycleStatus(state, active) : '';
+  if (cycleStatus) return `${cycleStatus} · ${eliteCycleCounter(state, active!)}`;
   if (active?.tactic) return tacticCopy(active.tactic);
   if (upcoming && (state.endless?.supportRemaining ?? 0) > 0) return tacticCopy('thin-ray');
   return '1 按住净化 · 2 清群打断 · Q 召集或指挥小队。';
@@ -171,7 +174,7 @@ export function endlessOverlay(state: GameState, help: boolean, lowEffects: bool
     <p><strong>催化裂解 · 可选改造。</strong>第6次成长起，已有新星Ⅰ或免疫军团Ⅰ可抽到这一分支。选后2直伤降为最多8并失去击退，用来铺设最多3体、4秒的催化标记；随后用1命中任一标记体，或指挥真实细胞接触咬击，整批兑现一次110半径爆发，最多伤及3体。选择爆心与衔接时机，有效再铺会覆盖旧批；不用这张卡可保留原范围清群。</p>
     <p><strong>Q 不只是扫描。</strong>Q 就绪时，准星对准敌体可下达短时围猎指令；指空地则区域部署。细胞会实际移动并吞噬；指定目标结束后恢复自动选敌。小队仍在且召集冷却中时，Q 就绪后再按 Q 改指挥点；细胞从原位赶往新战线，不续命、不重置咬击冷却、不额外耗组织。免疫军团强化伤害、持续和召集效率。</p>
     <p><strong>读编队，换打法。</strong>正面双潮、交叉夹击、聚群猎场与侧翼点射会改变接敌方向与节奏。第16波起三名支援混用已见过的招式，第30波起四名，分批入场。轻型支援基础耐久68，无精英被动特性，可直接净化；精英仍有其变异。重型招式同类最多一体起手，总并发最多三体。</p>
-    <p><strong>第20波起，病毒也会换代。</strong>每5波参考近期有效行动，轻度调整下一代变异倾向。提前8秒读进化预警，查看主变异获得的能力、付出的代价和基础反制，再决定接近、清群或保护组织。</p>
+    <p><strong>第20波起，病毒也会换代。</strong>每5波参考近期有效行动，轻度调整下一代变异倾向。提前8秒读进化预警，查看两项变异的能力、代价与基础反制。该波第一只精英兼具本代两项变异，按“主招→恢复→伴招→恢复”交替；第30波起的第二只精英仍单招。看清当前前摇，侧闪冲锋、离开双圈、Q打断侵蚀，利用恢复窗口清除。成功用2推开其正在施展的招式也会打断并留下恢复；催化改造后的2没有击退。</p>
     <p>${specialTactics.map(tactic => `<strong>${escape(ENEMY_TACTIC_INFO[tactic].name)}</strong> · ${escape(ENEMY_TACTIC_INFO[tactic].counter)}${tactic === 'crystal-charge' ? '让开路线后反打。' : ''}`).join('<br>')}</p>
     <p><strong>每5波协议联动重配。</strong>清除精英波后，除战斗进化外再获一次免费协议草案。优先补齐显影围猎或共振连锁的伙伴；最多三槽，进阶至Ⅲ后仍可调校。免样本、可放弃，不会抵消本波战斗成长。</p>
     <p>连击需要连续净化维持；清波与升级后继续下一波。Esc、失焦与手册暂停模拟；暂停里可主动撤离并结算。死亡也记录本局成绩。战绩独立保存，下一局从基础能力重新构筑，最高通关只计完全清除的波次。</p>${buildSummary(state)}</div>
