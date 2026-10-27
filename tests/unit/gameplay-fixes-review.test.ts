@@ -51,16 +51,21 @@ describe('independent review of melee cover and shared damage guards', () => {
     expect(f.state.battle!.stats.playerDamage).toBe(0); expect(target.attackAt).toBeUndefined();
   });
 
-  it('clamps a lethal hit to real remaining durability and suppresses a second zero-damage identity on the same tick', () => {
+  it('clamps a lethal hit and freezes the unprocessed second attack without a zero-damage identity', () => {
     const first = actor('lethal-first', { x: 800, y: 650 }), second = actor('lethal-second', { x: 900, y: 650 });
     const f = fixture('endless', [first, second]); f.state.player.hp = 5;
     f.step(); const deadline = first.attackAt!;
     expect(second.attackAt).toBe(deadline);
+    const secondWarning = { attackAt: second.attackAt, attackAim: { ...second.attackAim! }, attackTarget: second.attackTarget };
     while (f.state.phase === 'playing' && f.state.elapsed + 1e-9 < deadline) f.step();
     const hits = f.events.filter(event => event.type === 'PLAYER_HURT');
     expect(f.state.player.hp).toBe(0); expect(f.state.phase).toBe('result');
     expect(hits).toHaveLength(1); expect(hits[0].data).toMatchObject({ actorId: first.id, damage: 5, remainingHp: 0, reason: 'enemy-attack' });
     expect(f.state.battle!.stats.playerDamage).toBe(5);
-    expect(first.attackAt).toBeUndefined(); expect(second.attackAt).toBeUndefined();
+    expect(first.attackAt).toBeUndefined(); expect(second).toMatchObject(secondWarning);
+    expect(f.events.filter(event => event.tick === f.state.tick && event.data.actorId === second.id)).toHaveLength(0);
+    const terminal = f.session.snapshot(), eventCount = f.events.length;
+    for (let tick = 0; tick < 120; tick++) f.step();
+    expect(f.session.snapshot()).toEqual(terminal); expect(f.events).toHaveLength(eventCount);
   });
 });

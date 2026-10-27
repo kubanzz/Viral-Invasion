@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-27T18:56:53.584Z",
+  "version": "0.8.1",
+  "status": "technical-candidate-delivered-open-gameplay-and-human-items",
+  "gameplayCommit": "b9ae6fae0a8a8a98cfd1c96669bb4b03d88546d1",
+  "release": {
+    "path": "releases/Viral-Invasion-G4-v0.8.1.zip",
+    "bytes": 5254754,
+    "sha256": "531ae19232aaf229f39b3e86d06938f9ffb0e2f8e738edeefbffbb08e9adac29",
+    "gameJsSha256": "4d245ac6bf8d766538cad1602515f1475e24c42db2277fc010eca66e1cff4a4d",
+    "buildMetaSha256": "877508bd655e3ebad920bbf1ee90e7a797d04d771f27d4ef3c02b9a2ba129543",
+    "independentInspection": "release/inspection-1/inspection.json",
+    "decodedFiles": 5,
+    "pass": true,
+    "sourceInputsMatched": 128,
+    "inspectorScriptCopy": "release/inspector-source.mjs",
+    "inspectorSha256": "90966e96e47e08eb0fddbea9bc8b4fc34f0a0fc88fc70b73c46f807f33d0c474",
+    "inspectorExecutionLocation": ".tools/inspect-v081-release.mjs"
+  },
+  "rules": {
+    "finalNonSeed": {
+      "files": 79,
+      "tests": 635,
+      "passed": 635,
+      "report": "regression/final-nonseed-results.json",
+      "reportSha256": "e0fc94bf95f29c18794978c1e8f3c2a3d776625bb113352e525086e4f81a126e"
+    },
+    "completeSessions": {
+      "seeds": 1000,
+      "outcomes": {
+        "wins": 1000,
+        "losses": 0,
+        "publicMenuExits": 0,
+        "invariantFailures": 0
+      },
+      "replayEqual": true,
+      "preparedReplayEqual": true,
+      "report": "regression/full-system-seeds.json",
+      "sourceLineage": "regression/final-source-lineage.json",
+      "unchangedInputs": 40,
+      "builtRuntimeMatches": 29,
+      "erasedTypeSources": 9,
+      "testInputs": 2,
+      "scope": "These simulations are carried forward by unchanged runtime and test inputs; they were not rerun on the renderer-only body correction."
+    },
+    "initialFullRun": {
+      "passed": 633,
+      "failed": 1,
+      "total": 634,
+      "report": "integrated-full.json",
+      "cause": "Old test required consuming a later attack after same-tick lethal hit."
+    },
+    "testOnlyFollowup": {
+      "passed": 19,
+      "failed": 0,
+      "report": "terminal-followup.json"
+    },
+    "initialFocused": {
+      "passed": 67,
+      "failed": 0,
+      "report": "integrated-focused.json"
+    }
+  },
+  "pacing": {
+    "report": "pacing-overlap/attempt-2/report.json",
+    "comparison": "pacing-overlap/comparison.json",
+    "scope": "Six normal public-input policies (7/71 x shooting/area/immune) cleared 30 waves 34.63–57.27 simulation seconds sooner than v080. Terminal-guard addition did not change the six recorded outcomes/inputs versus attempt1. Not a human fun or balance proof."
+  },
+  "native": {
+    "report": "native/run-2026-10-27T18-24-57-713Z/report.json",
+    "reportSha256": "0cbca63d873de4aa9228c38ce7036abdac2c5d3ea9e020f0618299cd2eb54244",
+    "passed": true,
+    "channels": [
+      {
+        "channel": "chrome",
+        "passed": true,
+        "cases": {
+          "nativeThirtySecondFreeze": {
+            "passed": true,
+            "fullStateSha256": "3ea13c90598f720c863cf504826a723e6700dbc53c70ed6af5f501e6060df152",
+            "hiddenObserved": false,
+            "visibilityEvents": []
+          },
+          "naturalCampaignXpDraft": {
+            "passed": true,
+            "draftId": "13:2:draft:1",
+            "source": "xp",
+            "zooms": [
+              {
+                "factor": 1.25,
+                "passed": true
+              },
+              {
+                "factor": 1.5,
+                "passed": true
+              }
+            ]
+          },
+          "trainingZoom": [
+            {
+              "factor": 1.25,
+              "passed": true
+            },
+            {
+              "factor": 1.5,
+              "passed": true
+            },
+            {
+              "factor": 1,
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "channel": "msedge",
+        "passed": true,
+        "cases": {
+          "nativeThirtySecondFreeze": {
+            "passed": true,
+            "fullStateSha256": "d22b4c40034758a0af0af518c3fbf25107a43872b78043979cd2d3aa2a340046",
+            "hiddenObserved": false,
+            "visibilityEvents": []
+          },
+          "naturalCampaignXpDraft": {
+            "passed": true,
+            "draftId": "13:2:draft:1",
+            "source": "xp",
+            "zooms": [
+              {
+                "factor": 1.25,
+                "passed": true
+              },
+              {
+                "factor": 1.5,
+                "passed": true
+              }
+            ]
+          },
+          "trainingZoom": [
+            {
+              "factor": 1.25,
+              "passed": true
+            },
+            {
+              "factor": 1.5,
+              "passed": true
+            },
+            {
+              "factor": 1,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "originalFailedCandidate": "native/run-2026-10-27T18-10-57-431Z/report.json",
+    "limits": [
+      "Original c6dba run remains a partial failure from receipt sampling before pending logs drained. Corrected runner retains real event names and asserts complete identities exactly once.",
+      "hidden=false and no visibilitychange; no physical keyboard shortcut coverage.",
+      "Only one natural campaign XP draft and training hit-test subset.",
+      "Zoom PNG capture has scale/crop limitations; no full text readability claim."
+    ]
+  },
+  "presentation": {
+    "index": "../art-v081/verification-summary.json",
+    "indexSha256": "13c762581e8a02c7f7840f080b03bb1efba13ced6876a1402e00035288308f75",
+    "ownerReportedPass": true,
+    "scope": "Current final source, native sprites/occlusion/danger and pixel icon checks are owned by the art thread. Root did not stage its sources/docs."
+  },
+  "performance": {
+    "report": "../art-v081/performance/report.json",
+    "pass": true,
+    "activeSimulationSeconds": 600.2833333333333,
+    "metrics": {
+      "standard": {
+        "frames": 18009,
+        "activeDurationMs": 300143.90000000614,
+        "averageFps": 60.001219415086005,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 17.100000000034925
+      },
+      "low": {
+        "frames": 18006,
+        "activeDurationMs": 300093.80000000005,
+        "averageFps": 60.00123961241451,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 17.099999999976717
+      }
+    },
+    "maxActors": 24,
+    "maxCells": 3,
+    "naturalSamples": 116,
+    "scope": "Local offline headless Chrome, retained real producers and public actions; approximate polling coexistence, not every-frame full population or universal hardware qualification. Natural memory and post-GC observations do not prove unlimited leak-free operation."
+  },
+  "finalBrowsers": {
+    "formalRoutePassed": 1,
+    "naturalFiveWavePassed": 2,
+    "extractedOfflineModeBrowserGroupsPassed": 4,
+    "details": "../art-v081/verification-summary.json"
+  },
+  "currentStationaryCounterexample": {
+    "report": "stationary-candidate/attempt-2/report.json",
+    "sourceClosed": true,
+    "scope": "Same original only1 policy bytes, no move/Q/2/3/Space/E. Both seeds7/71 clear30 waves; damage0/38, finalHP160/180, damagewaves11–30=0. Latest pacing change does not resolve the measured stationary tactic. Attempt1 stopped during source preflight before any run; preserved."
+  },
+  "openItems": [
+    "Current two-seed stationary counterexample remains; movement and environmental decisions need further design/validation.",
+    "Human blind playtesting remains0/5; early comprehension, 10–15 minute campaign pacing, repeat intent and commercial potential are unproven.",
+    "This release does not rerun the entire historical multi-win/loss/storage browser matrix or fresh dependency installation; current browser scope is listed above."
+  ],
+  "goalCompleted": false
+}

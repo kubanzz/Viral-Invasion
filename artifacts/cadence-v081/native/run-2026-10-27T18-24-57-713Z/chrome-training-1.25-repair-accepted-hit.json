@@ -1,0 +1,718 @@
+{
+  "passed": true,
+  "tool": 3,
+  "target": {
+    "x": 780,
+    "y": 610,
+    "hp": 25,
+    "maxHp": 100,
+    "radius": 43
+  },
+  "position": {
+    "screen": {
+      "x": 668.8000000000001,
+      "y": 421.6053333333333
+    },
+    "back": {
+      "x": 780.0000000000001,
+      "y": 610.0000000000001
+    },
+    "x": 668.8000000000001,
+    "y": 421.6053333333333,
+    "canvas": {
+      "left": 0,
+      "top": 0,
+      "width": 1080,
+      "height": 644
+    },
+    "hitsCanvas": true,
+    "innerWidth": 1080,
+    "innerHeight": 644
+  },
+  "before": {
+    "game": "viral-invasion",
+    "schemaVersion": 1,
+    "seed": 7,
+    "phase": "playing",
+    "tick": 45,
+    "elapsed": 0.75,
+    "player": {
+      "x": 330,
+      "y": 440,
+      "hp": 100,
+      "radius": 19,
+      "facing": -0.4346699878157875,
+      "moving": false,
+      "dashUntil": 0,
+      "dashReady": 0,
+      "hurtUntil": 0,
+      "actionUntil": 0.4666666666666667
+    },
+    "targets": [
+      {
+        "id": "single-1",
+        "kind": "single",
+        "x": 582,
+        "y": 323,
+        "radius": 25,
+        "hp": 66,
+        "maxHp": 100,
+        "hitUntil": 0.49666666666666665,
+        "scanned": false
+      },
+      {
+        "id": "cluster-1",
+        "kind": "cluster",
+        "x": 828,
+        "y": 403,
+        "radius": 21,
+        "hp": 60,
+        "maxHp": 60,
+        "hitUntil": 0,
+        "scanned": false
+      },
+      {
+        "id": "cluster-2",
+        "kind": "cluster",
+        "x": 870,
+        "y": 428,
+        "radius": 21,
+        "hp": 60,
+        "maxHp": 60,
+        "hitUntil": 0,
+        "scanned": false
+      },
+      {
+        "id": "cluster-3",
+        "kind": "cluster",
+        "x": 814,
+        "y": 456,
+        "radius": 21,
+        "hp": 60,
+        "maxHp": 60,
+        "hitUntil": 0,
+        "scanned": false
+      }
+    ],
+    "tissue": {
+      "x": 780,
+      "y": 610,
+      "hp": 25,
+      "maxHp": 100,
+      "radius": 43
+    },
+    "terminal": {
+      "x": 340,
+      "y": 610
+    },
+    "tool": 3,
+    "cooldowns": {
+      "1": 0.49666666666666665,
+      "2": 0,
+      "3": 0
+    },
+    "scanReady": 0,
+    "scanUntil": 0,
+    "effects": [],
+    "events": [
+      {
+        "type": "RUN_STARTED",
+        "tick": 0,
+        "data": {
+          "seed": 7,
+          "mode": "training",
+          "startAtTick": 0,
+          "encounterConfig": "training-1",
+          "counterGuide": "adaptive",
+          "firstTraitOverride": ""
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 19,
+        "data": {
+          "tool": 1,
+          "x": 582.0000784737723,
+          "y": 323.0000332028723,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 19,
+        "data": {
+          "id": "single-1",
+          "organId": "heart",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 66,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 42,
+        "data": {
+          "tool": 3
+        }
+      }
+    ],
+    "message": "先净化两类靶标，再修复受损组织。",
+    "messageUntil": 8,
+    "shots": 1,
+    "hits": 1,
+    "scans": 0,
+    "dashes": 0,
+    "result": null,
+    "runMetrics": {
+      "runId": "7:metrics:2",
+      "lastSequence": 4,
+      "lastTick": 42,
+      "ended": false,
+      "frame": {
+        "tick": 42,
+        "entries": []
+      },
+      "summary": {
+        "schemaVersion": 1,
+        "limited": false,
+        "care": {
+          "repairActions": 0,
+          "repaired": 0,
+          "organLoss": 0,
+          "organCost": 0,
+          "playerDamage": 0,
+          "organs": {
+            "heart": {
+              "repairActions": 0,
+              "repaired": 0,
+              "loss": 0,
+              "cost": 0
+            },
+            "lung": {
+              "repairActions": 0,
+              "repaired": 0,
+              "loss": 0,
+              "cost": 0
+            }
+          }
+        },
+        "control": {
+          "chainTriggers": 0,
+          "chainHops": 0,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 0,
+          "patrolBites": 0,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 0,
+          "pulseUses": 0,
+          "crystalExposures": 0,
+          "corePulseHits": 0,
+          "airwayCloses": 0,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [],
+          "migrationChoice": null,
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [],
+          "coreCleared": false
+        }
+      }
+    }
+  },
+  "after": {
+    "game": "viral-invasion",
+    "schemaVersion": 1,
+    "seed": 7,
+    "phase": "playing",
+    "tick": 48,
+    "elapsed": 0.8,
+    "player": {
+      "x": 330,
+      "y": 440,
+      "hp": 100,
+      "radius": 19,
+      "facing": 0.36120370321174305,
+      "moving": false,
+      "dashUntil": 0,
+      "dashReady": 0,
+      "hurtUntil": 0,
+      "actionUntil": 0.9166666666666666
+    },
+    "targets": [
+      {
+        "id": "single-1",
+        "kind": "single",
+        "x": 582,
+        "y": 323,
+        "radius": 25,
+        "hp": 66,
+        "maxHp": 100,
+        "hitUntil": 0.49666666666666665,
+        "scanned": false
+      },
+      {
+        "id": "cluster-1",
+        "kind": "cluster",
+        "x": 828,
+        "y": 403,
+        "radius": 21,
+        "hp": 60,
+        "maxHp": 60,
+        "hitUntil": 0,
+        "scanned": false
+      },
+      {
+        "id": "cluster-2",
+        "kind": "cluster",
+        "x": 870,
+        "y": 428,
+        "radius": 21,
+        "hp": 60,
+        "maxHp": 60,
+        "hitUntil": 0,
+        "scanned": false
+      },
+      {
+        "id": "cluster-3",
+        "kind": "cluster",
+        "x": 814,
+        "y": 456,
+        "radius": 21,
+        "hp": 60,
+        "maxHp": 60,
+        "hitUntil": 0,
+        "scanned": false
+      }
+    ],
+    "tissue": {
+      "x": 780,
+      "y": 610,
+      "hp": 50,
+      "maxHp": 100,
+      "radius": 43
+    },
+    "terminal": {
+      "x": 340,
+      "y": 610
+    },
+    "tool": 3,
+    "cooldowns": {
+      "1": 0.49666666666666665,
+      "2": 0,
+      "3": 1.4666666666666666
+    },
+    "scanReady": 0,
+    "scanUntil": 0,
+    "effects": [
+      {
+        "id": 3,
+        "kind": "heal",
+        "from": {
+          "x": 330,
+          "y": 440
+        },
+        "to": {
+          "x": 779.9999829404843,
+          "y": 609.999966670761
+        },
+        "radius": 35,
+        "born": 0.7666666666666666,
+        "duration": 0.55
+      }
+    ],
+    "events": [
+      {
+        "type": "RUN_STARTED",
+        "tick": 0,
+        "data": {
+          "seed": 7,
+          "mode": "training",
+          "startAtTick": 0,
+          "encounterConfig": "training-1",
+          "counterGuide": "adaptive",
+          "firstTraitOverride": ""
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 19,
+        "data": {
+          "tool": 1,
+          "x": 582.0000784737723,
+          "y": 323.0000332028723,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 19,
+        "data": {
+          "id": "single-1",
+          "organId": "heart",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 66,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 42,
+        "data": {
+          "tool": 3
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 46,
+        "data": {
+          "tool": 3,
+          "x": 779.9999829404843,
+          "y": 609.999966670761
+        }
+      },
+      {
+        "type": "ORGAN_INTEGRITY_CHANGED",
+        "tick": 46,
+        "data": {
+          "organId": "heart",
+          "before": 25,
+          "after": 50,
+          "reason": "repair"
+        }
+      }
+    ],
+    "message": "组织修复 +25，完整度 50%。",
+    "messageUntil": 3.7666666666666666,
+    "shots": 1,
+    "hits": 1,
+    "scans": 0,
+    "dashes": 0,
+    "result": null,
+    "runMetrics": {
+      "runId": "7:metrics:2",
+      "lastSequence": 6,
+      "lastTick": 46,
+      "ended": false,
+      "frame": {
+        "tick": 46,
+        "entries": []
+      },
+      "summary": {
+        "schemaVersion": 1,
+        "limited": false,
+        "care": {
+          "repairActions": 1,
+          "repaired": 25,
+          "organLoss": 0,
+          "organCost": 0,
+          "playerDamage": 0,
+          "organs": {
+            "heart": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 0,
+              "cost": 0
+            },
+            "lung": {
+              "repairActions": 0,
+              "repaired": 0,
+              "loss": 0,
+              "cost": 0
+            }
+          }
+        },
+        "control": {
+          "chainTriggers": 0,
+          "chainHops": 0,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 0,
+          "patrolBites": 0,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 0,
+          "pulseUses": 0,
+          "crystalExposures": 0,
+          "corePulseHits": 0,
+          "airwayCloses": 0,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [],
+          "migrationChoice": null,
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [],
+          "coreCleared": false
+        }
+      }
+    },
+    "messagePriority": 0
+  },
+  "settled": {
+    "game": "viral-invasion",
+    "schemaVersion": 1,
+    "seed": 7,
+    "phase": "playing",
+    "tick": 64,
+    "elapsed": 1.0666666666666667,
+    "player": {
+      "x": 330,
+      "y": 440,
+      "hp": 100,
+      "radius": 19,
+      "facing": 0.36120370321174305,
+      "moving": false,
+      "dashUntil": 0,
+      "dashReady": 0,
+      "hurtUntil": 0,
+      "actionUntil": 0.9166666666666666
+    },
+    "targets": [
+      {
+        "id": "single-1",
+        "kind": "single",
+        "x": 582,
+        "y": 323,
+        "radius": 25,
+        "hp": 66,
+        "maxHp": 100,
+        "hitUntil": 0.49666666666666665,
+        "scanned": false
+      },
+      {
+        "id": "cluster-1",
+        "kind": "cluster",
+        "x": 828,
+        "y": 403,
+        "radius": 21,
+        "hp": 60,
+        "maxHp": 60,
+        "hitUntil": 0,
+        "scanned": false
+      },
+      {
+        "id": "cluster-2",
+        "kind": "cluster",
+        "x": 870,
+        "y": 428,
+        "radius": 21,
+        "hp": 60,
+        "maxHp": 60,
+        "hitUntil": 0,
+        "scanned": false
+      },
+      {
+        "id": "cluster-3",
+        "kind": "cluster",
+        "x": 814,
+        "y": 456,
+        "radius": 21,
+        "hp": 60,
+        "maxHp": 60,
+        "hitUntil": 0,
+        "scanned": false
+      }
+    ],
+    "tissue": {
+      "x": 780,
+      "y": 610,
+      "hp": 50,
+      "maxHp": 100,
+      "radius": 43
+    },
+    "terminal": {
+      "x": 340,
+      "y": 610
+    },
+    "tool": 3,
+    "cooldowns": {
+      "1": 0.49666666666666665,
+      "2": 0,
+      "3": 1.4666666666666666
+    },
+    "scanReady": 0,
+    "scanUntil": 0,
+    "effects": [
+      {
+        "id": 3,
+        "kind": "heal",
+        "from": {
+          "x": 330,
+          "y": 440
+        },
+        "to": {
+          "x": 779.9999829404843,
+          "y": 609.999966670761
+        },
+        "radius": 35,
+        "born": 0.7666666666666666,
+        "duration": 0.55
+      }
+    ],
+    "events": [
+      {
+        "type": "RUN_STARTED",
+        "tick": 0,
+        "data": {
+          "seed": 7,
+          "mode": "training",
+          "startAtTick": 0,
+          "encounterConfig": "training-1",
+          "counterGuide": "adaptive",
+          "firstTraitOverride": ""
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 19,
+        "data": {
+          "tool": 1,
+          "x": 582.0000784737723,
+          "y": 323.0000332028723,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 19,
+        "data": {
+          "id": "single-1",
+          "organId": "heart",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 66,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 42,
+        "data": {
+          "tool": 3
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 46,
+        "data": {
+          "tool": 3,
+          "x": 779.9999829404843,
+          "y": 609.999966670761
+        }
+      },
+      {
+        "type": "ORGAN_INTEGRITY_CHANGED",
+        "tick": 46,
+        "data": {
+          "organId": "heart",
+          "before": 25,
+          "after": 50,
+          "reason": "repair"
+        }
+      }
+    ],
+    "message": "组织修复 +25，完整度 50%。",
+    "messageUntil": 3.7666666666666666,
+    "shots": 1,
+    "hits": 1,
+    "scans": 0,
+    "dashes": 0,
+    "result": null,
+    "runMetrics": {
+      "runId": "7:metrics:2",
+      "lastSequence": 6,
+      "lastTick": 46,
+      "ended": false,
+      "frame": {
+        "tick": 46,
+        "entries": []
+      },
+      "summary": {
+        "schemaVersion": 1,
+        "limited": false,
+        "care": {
+          "repairActions": 1,
+          "repaired": 25,
+          "organLoss": 0,
+          "organCost": 0,
+          "playerDamage": 0,
+          "organs": {
+            "heart": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 0,
+              "cost": 0
+            },
+            "lung": {
+              "repairActions": 0,
+              "repaired": 0,
+              "loss": 0,
+              "cost": 0
+            }
+          }
+        },
+        "control": {
+          "chainTriggers": 0,
+          "chainHops": 0,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 0,
+          "patrolBites": 0,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 0,
+          "pulseUses": 0,
+          "crystalExposures": 0,
+          "corePulseHits": 0,
+          "airwayCloses": 0,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [],
+          "migrationChoice": null,
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [],
+          "coreCleared": false
+        }
+      }
+    },
+    "messagePriority": 0
+  },
+  "fired": [
+    {
+      "type": "TOOL_FIRED",
+      "tick": 46,
+      "data": {
+        "tool": 3,
+        "x": 779.9999829404843,
+        "y": 609.999966670761
+      }
+    }
+  ],
+  "actual": [
+    {
+      "type": "ORGAN_INTEGRITY_CHANGED",
+      "tick": 46,
+      "data": {
+        "organId": "heart",
+        "before": 25,
+        "after": 50,
+        "reason": "repair"
+      }
+    }
+  ]
+}
