@@ -217,7 +217,7 @@ describe('continuous endless wave director', () => {
       if (wave > 1) {
         f.advance(E.intermissionSeconds); expect(f.state.endless!.wave).toBe(wave);
         const warning = f.state.endless!.warningSeconds;
-        expect(warning).toBe(wave % 5 === 0 || wave === 3 ? E.traitWarningSeconds : E.warningSeconds);
+        expect(warning).toBe(wave % 5 === 0 || wave === 3 || wave === 16 ? E.traitWarningSeconds : E.warningSeconds);
         f.advance(warning - .01); expect(f.state.endless!.phase).toBe('warning'); f.advance(.01);
       }
       if (wave % 5 === 0) {

@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "createdAtUtc": "2026-10-27T16:42:18.842044+00:00",
+  "workspace": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\late-support-source",
+  "modifiedProductionFiles": [
+    "src/game/endless.ts"
+  ],
+  "modifiedTestFiles": [
+    "tests/unit/endless-director.test.ts",
+    "tests/unit/endless-formations.test.ts"
+  ],
+  "mainWorkspaceProductionWrites": false,
+  "sources": [
+    {
+      "path": "src/game/endless.ts",
+      "sha256": "0ba4b5d2e231fe4ab9f800b614bc785a9f860c5b0a316637f35ac2bb18794368"
+    },
+    {
+      "path": "tests/unit/endless-director.test.ts",
+      "sha256": "892b6fbf8ad0dc55caf815b667942a36bd9506814be9b973136db8a35bae1d3b"
+    },
+    {
+      "path": "tests/unit/endless-formations.test.ts",
+      "sha256": "c3ac31ea95ec43cbc70e7b5e5d3c29642e0d2e12775e0d4d6eece4b5a4648dc8"
+    }
+  ],
+  "focusedEvidence": {
+    "path": "focused-export-final.json",
+    "sha256": "81fddc383b954bac45c581d7dbd74c2bdee3a6344a604bbfcd40356e723a3eb5",
+    "passed": 30,
+    "failed": 0
+  },
+  "independentSpawnEvidence": {
+    "path": "unit-reachability-final.json",
+    "sha256": "a3a773178be7d25736ea952107149351a07c7157452ff477965c496835e80244",
+    "passed": 5,
+    "failed": 0,
+    "detail": "reachability-final.json"
+  },
+  "strictTypecheck": "Passed targeted strict noEmit compilation of endless.ts and the two director/formation tests, including transitive imports. Independent spawn targeted strict compilation passed per spatial agent.",
+  "earlierGlobalTypecheck": "At the earlier full-isolation check, pulse-world-reachability.test.ts referenced a historical artifact helper absent from the copy; this is separate from targeted compilation. Root owns final full check.",
+  "largeSampleRun": false,
+  "boundaries": "No growth.ts, Target/type, renderer, HUD, passive trait, actual attack LOS/damage or navigation changes made by this subagent. Root independently owns battle admission, tactic copy and HUD integration; spatial owns its new reachability test."
+}

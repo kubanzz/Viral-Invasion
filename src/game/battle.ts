@@ -504,7 +504,12 @@ export class BattleDirector {
       const plan = special ? enemyAttackPlan(target, s) : undefined;
       if (special && plan) {
         target.facing = Math.atan2(plan.aim.y - target.y, plan.aim.x - target.x);
-        if (s.elapsed >= (target.attackReady ?? 0) && s.targets.filter(actor => actor.hp > 0 && (actor.attackAt !== undefined || actor.charge !== undefined)).length < 3) {
+        const sameHeavyTactic = plan.kind !== 'thin-ray' && s.targets.some(actor => actor.hp > 0 && actor.id !== target.id
+          && (actor.attackPlan?.kind === plan.kind && actor.attackAt !== undefined || plan.kind === 'crystal-charge' && !!actor.charge));
+        // A mixed cohort may combine known threats, but it must not stack two
+        // copies of the same heavy footprint/channel before one has resolved.
+        if (s.elapsed >= (target.attackReady ?? 0) && !sameHeavyTactic
+          && s.targets.filter(actor => actor.hp > 0 && (actor.attackAt !== undefined || actor.charge !== undefined)).length < 3) {
           target.attackPlan = plan; target.attackAt = s.elapsed + plan.windup;
           target.attackWindup = plan.windup; target.attackAim = { ...plan.aim }; target.attackRadius = plan.radius;
           target.attackTarget = plan.kind === 'mimic-corrosion' ? 'tissue' : 'player';

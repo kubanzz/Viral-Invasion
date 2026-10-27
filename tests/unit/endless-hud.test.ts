@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { GameSession } from '../../src/game/session';
 import { offerEndlessUpgrade } from '../../src/game/endlessGrowth';
 import { ENEMY_TACTIC_INFO } from '../../src/game/enemyTacticInfo';
+import { endlessSupportTactics } from '../../src/game/endless';
 import type { EnemyTactic } from '../../src/game/enemyTacticsTypes';
 import { emptyEndlessProfile, EndlessProfileStore } from '../../src/meta/endlessProfile';
 import { endlessHudMarkup, endlessMenuEntry, endlessOverlay, endlessRemaining, updateEndlessHud } from '../../src/ui/endlessHud';
@@ -144,6 +145,25 @@ describe('continuous challenge UI contracts', () => {
     expect(nodes.get('endless-objective')!.textContent).toContain('精英波联动重配');
     expect(nodes.get('endless-objective')!.textContent).toContain('免样本、可放弃');
     expect(nodes.get('endless-objective')!.textContent).toContain('战斗进化照常获得');
+    expect(state).toEqual(before);
+  });
+
+  it.each([16, 30])('warns about the real mixed support roster at wave %s even in the compact-visible row', wave => {
+    const state = session().state, nodes = mountHud();
+    Object.assign(state.endless!, { wave, phase: 'warning', formationLabel: '交叉夹击 · 混编支援' });
+    const before = structuredClone(state);
+    updateEndlessHud(state);
+    const roster = endlessSupportTactics(state.seed, wave);
+    expect(new Set(roster).size).toBe(3);
+    for (const tactic of roster) {
+      expect(nodes.get('endless-objective')!.textContent).toContain(ENEMY_TACTIC_INFO[tactic].name);
+      expect(nodes.get('endless-traits')!.textContent).toContain(ENEMY_TACTIC_INFO[tactic].name);
+    }
+    expect(nodes.get('endless-objective')!.textContent).toContain('侵蚀 Q 打断');
+    if (wave === 30) expect(nodes.get('endless-traits')!.textContent).toContain('点射支援×2');
+    state.endless!.phase = 'combat'; updateEndlessHud(state);
+    expect(nodes.get('endless-traits')!.textContent).not.toContain('混编');
+    state.endless!.phase = 'warning';
     expect(state).toEqual(before);
   });
 });

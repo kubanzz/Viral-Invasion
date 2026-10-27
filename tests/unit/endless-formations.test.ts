@@ -3,6 +3,7 @@ import { distance } from '../../src/actors/collision';
 import { initializeBattle } from '../../src/game/battle';
 import { EndlessDirector, ENDLESS_BALANCE, initializeEndless } from '../../src/game/endless';
 import { clipChargeEnd, enemyAttackHits, enemyAttackPlan, enemyRayEnd, segmentDistance } from '../../src/game/enemyTactics';
+import { ENEMY_TACTIC_INFO } from '../../src/game/enemyTacticInfo';
 import type { EnemyTactic } from '../../src/game/enemyTacticsTypes';
 import type { EndlessHost } from '../../src/game/endlessTypes';
 import type { GameEvent, GameState, Target, WorldGeometry } from '../../src/game/types';
@@ -18,10 +19,10 @@ function fixture(seed = 71, world = openWorld) {
     tool: 1, cooldowns: { 1: 0, 2: 0, 3: 0 }, scanReady: 0, scanUntil: 0, effects: [], events: [], message: '', messageUntil: 0,
     shots: 0, hits: 0, scans: 0, dashes: 0, result: null };
   initializeBattle(state, { milestone: 'G3', encounterMode: 'fixture' }); state.world = world; initializeEndless(state);
-  const events: GameEvent[] = [], completed: number[] = [];
+  const events: GameEvent[] = [], completed: number[] = [], messages: string[] = [];
   let director: EndlessDirector;
   const host: EndlessHost = { state, emit(type, data) { const event = { type, data, tick: state.tick }; events.push(event); director.recordEvent(event); },
-    effect() {}, message() {}, completeWave(wave) { completed.push(wave); } };
+    effect() {}, message(text) { messages.push(text); }, completeWave(wave) { completed.push(wave); } };
   director = new EndlessDirector(host);
   function advance(seconds: number) { state.elapsed += seconds; state.tick++; director.beforeInput(); director.afterInput(); }
   function nextWave() {
@@ -37,7 +38,16 @@ function fixture(seed = 71, world = openWorld) {
     }
     if (state.endless!.phase === 'warning') advance(state.endless!.phaseUntil - state.elapsed);
   }
-  return { state, director, events, completed, advance, nextWave, enter };
+  return { state, director, events, completed, messages, advance, nextWave, enter };
+}
+
+/** Director-only arrival fixture; real damage/attack acceptance is tested separately. */
+function spawnRemaining(f: ReturnType<typeof fixture>): void {
+  for (let batch = 0; batch < 12 && f.state.endless!.remainingToSpawn > 0; batch++) {
+    for (const target of f.state.targets) target.hp = 0;
+    f.advance(Math.max(0, f.state.endless!.nextSpawnAt - f.state.elapsed));
+  }
+  expect(f.state.endless!.remainingToSpawn).toBe(0);
 }
 
 function actor(tactic: EnemyTactic, state: GameState, patch: Partial<Target> = {}): Target {
@@ -114,7 +124,7 @@ describe('real finite challenge formations', () => {
       f.enter(wave); const s = f.state, e = s.endless!;
       expect(e.batchSchedule.flatMap(batch => batch.roles)).toHaveLength(e.totalToSpawn);
       expect(e.batchSchedule.length).toBeLessThanOrEqual(10); expect(e.totalToSpawn).toBeLessThanOrEqual(28);
-      expect(e.batchSchedule.flatMap(batch => batch.roles).filter(role => role === 'support').length).toBeLessThanOrEqual(2);
+      expect(e.batchSchedule.flatMap(batch => batch.roles).filter(role => role === 'support').length).toBe(wave < 3 ? 0 : wave < 6 ? 1 : wave < 16 ? 2 : wave < 30 ? 3 : 4);
       if (wave % 5 === 0) {
         expect(e.warningSeconds).toBe(8);
         const elite = s.targets.find(target => target.role === 'elite')!;
@@ -126,6 +136,65 @@ describe('real finite challenge formations', () => {
       if (wave < 35) f.nextWave();
     }
     expect(tactics).toEqual(new Set(['crystal-charge', 'fission-burst', 'mimic-corrosion']));
+  });
+
+  it('warns for eight seconds before the first mixed support wave and names its counters without granting passive traits', () => {
+    const f = fixture(71); f.enter(15); f.nextWave(); const e = f.state.endless!;
+    expect(e.wave).toBe(16); expect(e.phase).toBe('warning'); expect(e.warningSeconds).toBe(8);
+    expect(e.formationLabel).toContain('混编支援');
+    const warning = f.messages.at(-1)!;
+    for (const hint of ['混编支援', '点射', '侧闪', '离圈', 'Q']) expect(warning).toContain(hint);
+    f.advance(7.99); expect(f.state.targets).toHaveLength(0); f.advance(.01); spawnRemaining(f);
+    const supports = f.state.targets.filter(target => target.role === 'virus' && target.tactic !== 'melee');
+    for (const support of supports) {
+      expect(warning).toContain(ENEMY_TACTIC_INFO[support.tactic!].name);
+      expect(support.traits).toEqual([]); expect(support.kind).toBe('single'); expect(support.maxHp).toBe(68);
+    }
+  });
+
+  it('replaces finite budget slots with three or four spaced, diverse supports and preserves their legal arrivals', () => {
+    for (const seed of [7, 19, 71]) for (const wave of [16, 17, 18, 29, 30, 35]) {
+      const f = fixture(seed); f.enter(wave); const s = f.state, e = s.endless!;
+      const slots = e.batchSchedule.flatMap((batch, batchIndex) => batch.roles.flatMap((role, member) => role === 'support' ? [batchIndex * 3 + member] : []));
+      expect(slots).toEqual(wave < 30 ? [2, 8, 14] : [2, 8, 14, 20]);
+      expect(e.batchSchedule.every(batch => batch.roles.filter(role => role === 'support').length <= 1)).toBe(true);
+      expect(e.batchSchedule.flatMap(batch => batch.roles)).toHaveLength(28);
+      spawnRemaining(f);
+      const arrivals = s.targets.filter(target => target.sourceId === `endless:wave:${wave}`);
+      const supports = arrivals.filter(target => target.role === 'virus' && target.tactic !== 'melee');
+      expect(arrivals).toHaveLength(28); expect(supports).toHaveLength(wave < 30 ? 3 : 4); expect(e.supportRemaining).toBe(0);
+      expect(supports[0].tactic).toBe('thin-ray'); if (wave >= 30) expect(supports[3].tactic).toBe('thin-ray');
+      const mixed = supports.filter(target => target.tactic !== 'thin-ray').map(target => target.tactic!);
+      expect(mixed).toHaveLength(2); expect(new Set(mixed).size).toBe(2);
+      for (const support of supports) {
+        expect(['thin-ray', 'crystal-charge', 'fission-burst', 'mimic-corrosion']).toContain(support.tactic);
+        expect(support.maxHp).toBe(68); expect(support.traits).toEqual([]); expect(support.generation).toBe(0);
+        expect(support.attackReady! - support.born!).toBeCloseTo(.2);
+        expect(distance(s.player, support)).toBeGreaterThanOrEqual(380); expect(distance(s.player, support)).toBeLessThanOrEqual(500);
+      }
+      for (const elite of arrivals.filter(target => target.role === 'elite')) expect(elite.maxHp).toBeLessThanOrEqual(204);
+      expect(supports[1].born! - supports[0].born!).toBeGreaterThanOrEqual(2.6 - 1e-7);
+      expect(supports[2].born! - supports[1].born!).toBeGreaterThanOrEqual(2.6 - 1e-7);
+    }
+  });
+
+  it('keeps support arrival choices deterministic and rotates only previously presented elite tactics', () => {
+    const pairs = new Set<string>();
+    for (const seed of [7, 19, 71]) {
+      const taught = new Set<EnemyTactic>();
+      const lesson = fixture(seed);
+      for (const wave of [5, 10, 15]) { lesson.enter(wave); taught.add(lesson.state.targets.find(target => target.role === 'elite')!.tactic!); }
+      expect(taught.size).toBe(3);
+      for (const wave of [16, 17, 18]) {
+        const a = fixture(seed), b = fixture(seed);
+        for (const f of [a, b]) { f.enter(wave); spawnRemaining(f); }
+        expect(a.state.endless).toEqual(b.state.endless); expect(a.state.targets).toEqual(b.state.targets); expect(a.events).toEqual(b.events);
+        const mixed = a.state.targets.filter(target => target.role === 'virus' && target.tactic !== 'melee' && target.tactic !== 'thin-ray').map(target => target.tactic!);
+        for (const tactic of mixed) expect(taught.has(tactic)).toBe(true);
+        pairs.add(mixed.join('+'));
+      }
+    }
+    expect(pairs.size).toBeGreaterThanOrEqual(3);
   });
 });
 

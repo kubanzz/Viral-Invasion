@@ -1,6 +1,7 @@
 import { BATTLE_BALANCE, TRAITS } from '../game/battleConfig';
 import { createEndlessGrowth, endlessCombatStats, ENDLESS_UPGRADES, ENDLESS_UPGRADE_IDS } from '../game/endlessGrowth';
 import { ENEMY_TACTIC_INFO } from '../game/enemyTacticInfo';
+import { endlessSupportTactics } from '../game/endless';
 import type { EnemyTactic } from '../game/enemyTacticsTypes';
 import { activeWorld, BALANCE, type GameState } from '../game/types';
 import type { EndlessProfileData, EndlessProfileSnapshot, EndlessRunRecord } from '../meta/endlessProfile';
@@ -32,7 +33,16 @@ function tacticCopy(tactic: EnemyTactic): string {
   const info = ENEMY_TACTIC_INFO[tactic];
   return `${info.name}：${info.counter}${tactic === 'crystal-charge' ? '让开路线后反打。' : ''}`;
 }
+function mixedSupportCopy(state: GameState): string {
+  const e = state.endless;
+  if (!e || e.wave < 16) return '';
+  const tactics = endlessSupportTactics(state.seed, e.wave);
+  return [...new Set(tactics)].map(tactic => `${ENEMY_TACTIC_INFO[tactic].name}${tactics.filter(item => item === tactic).length > 1 ? '×2' : ''}`).join(' / ');
+}
 function threatCopy(state: GameState, upcoming = false): string {
+  if (upcoming && state.endless && state.endless.wave >= 16) {
+    return `${mixedSupportCopy(state)}。锁线侧闪，双圈离圈，侵蚀 Q 打断；轻型支援可直接净化。`;
+  }
   const threats = state.targets.filter(target => target.hp > 0 && target.tactic && target.tactic !== 'melee');
   const active = threats.find(target => target.attackPlan || target.charge) ?? threats[0];
   if (active?.tactic) return tacticCopy(active.tactic);
@@ -105,7 +115,9 @@ export function updateEndlessHud(state: GameState): void {
   text('endless-spawn-plan', `场上 ${alive} · 待入场 ${e.remainingToSpawn}${e.pendingChildren ? ` · 待分裂 ${e.pendingChildren}` : ''}`);
   text('endless-phase', phase.title); text('endless-objective', phase.detail);
   const phaseNode = document.getElementById('endless-phase'); if (phaseNode) phaseNode.dataset.alert = String(phase.alert);
-  text('endless-traits', e.traits.length ? `当前变异：${e.traits.map(id => `${TRAITS[id].symbol}${TRAITS[id].name}`).join(' / ')}` : `普通病毒 · 每 5 波精英，下次第 ${Math.ceil((e.wave + 1) / 5) * 5} 波`);
+  const traitText = e.traits.length ? `当前变异：${e.traits.map(id => `${TRAITS[id].symbol}${TRAITS[id].name}`).join(' / ')}` : `普通病毒 · 每 5 波精英，下次第 ${Math.ceil((e.wave + 1) / 5) * 5} 波`;
+  // This row stays visible at compact heights where the longer objective hides.
+  text('endless-traits', e.phase === 'warning' && e.wave >= 16 ? `${traitText}；混编：${mixedSupportCopy(state)}` : traitText);
   text('endless-score', String(e.score)); text('endless-combo', `连击 ${e.combo} · 最高 ${e.bestCombo}`);
   text('endless-hp', `${Math.ceil(state.player.hp)} / ${stats.maxHp}`); meter('endless-hp-meter', state.player.hp / stats.maxHp);
   text('endless-tissue', `${Math.ceil(state.tissue.hp / state.tissue.maxHp * 100)}%`); meter('endless-tissue-meter', state.tissue.hp / state.tissue.maxHp);
@@ -151,7 +163,7 @@ export function endlessOverlay(state: GameState, help: boolean, lowEffects: bool
     <div class="help-grid"><div><kbd>WASD</kbd>移动</div><div><kbd>鼠标</kbd>瞄准 · 按住左键连续行动</div><div><kbd>1</kbd>精确净化 · 扇射/贯穿可改变射击</div><div><kbd>2</kbd>范围裂解 · 击退打断</div><div><kbd>3</kbd>瞄准＋组织抢修，也能恢复少量耐久</div><div><kbd>Q</kbd>扫描显形 · 召集或指挥免疫小队</div><div><kbd>Space</kbd>冲刺脱围，升级后沿路径造成伤害</div><div><kbd>E</kbd>靠近◇阀门，朝鼠标发动冲流</div></div>
     <p><strong>每次清波三选一。</strong>战斗进化会立即改变真实攻击：更多射线、贯穿、扩大裂解、冲刺斩、Q爆发、免疫军团、耐久与射速；选项会写明本次前后数值。战斗进化可持续获得，已达到机制上限的项目会退出选池，数值成长仍会继续。左下原协议与这些强化同时生效。</p>
     <p><strong>Q 不只是扫描。</strong>鼠标指向敌群按 Q，细胞会实际移动并吞噬。小队仍在且召集冷却中时，再按 Q 改指挥点；细胞从原位赶往新战线，不续命、不重置咬击冷却、不额外耗组织。免疫军团强化伤害、持续和召集效率。</p>
-    <p><strong>读编队，换打法。</strong>正面双潮、交叉夹击、聚群猎场与侧翼点射会改变接敌方向与节奏。普通体基础耐久保持68，后续加入支援体、精英与变异混编。</p>
+    <p><strong>读编队，换打法。</strong>正面双潮、交叉夹击、聚群猎场与侧翼点射会改变接敌方向与节奏。第16波起三名支援混用已见过的招式，第30波起四名，分批入场。轻型支援基础耐久68，无精英被动特性，可直接净化；精英仍有其变异。重型招式同类最多一体起手，总并发最多三体。</p>
     <p>${specialTactics.map(tactic => `<strong>${escape(ENEMY_TACTIC_INFO[tactic].name)}</strong> · ${escape(ENEMY_TACTIC_INFO[tactic].counter)}${tactic === 'crystal-charge' ? '让开路线后反打。' : ''}`).join('<br>')}</p>
     <p><strong>每5波协议联动重配。</strong>清除精英波后，除战斗进化外再获一次免费协议草案。优先补齐显影围猎或共振连锁的伙伴；最多三槽，进阶至Ⅲ后仍可调校。免样本、可放弃，不会抵消本波战斗成长。</p>
     <p>连击需要连续净化维持；清波与升级后继续下一波。Esc、失焦与手册暂停模拟；暂停里可主动撤离并结算。死亡也记录本局成绩。战绩独立保存，下一局从基础能力重新构筑，最高通关只计完全清除的波次。</p>${buildSummary(state)}</div>

@@ -1,0 +1,145 @@
+{
+  "generatedAt": "2026-10-27T16:48:27.878Z",
+  "scope": "Independent small GameSession fixtures. Not natural survival, difficulty, human readability or universal danger-union escape evidence.",
+  "sourceHashes": {
+    "src/game/battle.ts": "f5f0939705902ca0800323ab2c25eb8a310f61281e3c01effecf93da18bdffc2",
+    "src/game/session.ts": "1c77a5a623cb1f0dad24dc39f41d5ae1ceb3a0586e5f6591fd0c35a0e78f5c5e",
+    "src/game/enemyTactics.ts": "5756bc8247bf72fb3db833ac191eeb3c58afe3b8f0505e1d1e65f8d1f28a64e4",
+    "tests/unit/support-counter-review.test.ts": "667474ac68c8ad495daeed5705a07077c29ef70139f6e2ba93e0527879eb6bac"
+  },
+  "cases": [
+    {
+      "name": "real-area-displacement-during-charge",
+      "oldEndsAt": 2.197435897435897,
+      "remainingHp": 3,
+      "displacement": {
+        "type": "AREA_DISPLACED",
+        "tick": 74,
+        "data": {
+          "targetId": "pushed-charge",
+          "distance": 85
+        }
+      },
+      "limitation": "Base tool2 leaves 3HP on a 68HP support; interruption depends on actual displacement or a kill. Zero displacement at walls is not asserted."
+    },
+    {
+      "name": "real-kill-during-charge",
+      "oldEndsAt": 2.197435897435897,
+      "hits": [
+        {
+          "type": "TARGET_HIT",
+          "tick": 74,
+          "data": {
+            "id": "killed-charge",
+            "organId": "heart",
+            "damage": 34,
+            "rawDamage": 34,
+            "remainingHp": 34,
+            "tool": 1,
+            "cause": "basic"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 86,
+          "data": {
+            "id": "killed-charge",
+            "organId": "heart",
+            "damage": 34,
+            "rawDamage": 34,
+            "remainingHp": 0,
+            "tool": 1,
+            "cause": "basic"
+          }
+        }
+      ]
+    },
+    {
+      "name": "single-open-world-three-threat-movement-escape",
+      "movement": "upward normal movement, 150 fixed ticks, no dash/fire/Q",
+      "start": {
+        "x": 1100,
+        "y": 700
+      },
+      "end": {
+        "x": 1100,
+        "y": 112.50000000000088
+      },
+      "snapshots": [
+        {
+          "kind": "thin-ray",
+          "origin": {
+            "x": 680,
+            "y": 700
+          },
+          "aim": {
+            "x": 1100,
+            "y": 700
+          },
+          "range": 530,
+          "windup": 1.05,
+          "interval": 3.2,
+          "radius": 18,
+          "landings": [],
+          "playerDamage": 14,
+          "tissueDamage": 0,
+          "recoveryExposure": 0
+        },
+        {
+          "kind": "crystal-charge",
+          "origin": {
+            "x": 1100,
+            "y": 1120
+          },
+          "aim": {
+            "x": 1100,
+            "y": 700
+          },
+          "range": 500,
+          "windup": 1.2,
+          "interval": 3.8,
+          "radius": 34,
+          "landings": [],
+          "playerDamage": 14,
+          "tissueDamage": 0,
+          "recoveryExposure": 2,
+          "chargeEnd": {
+            "x": 1100,
+            "y": 610
+          },
+          "chargeSpeed": 520
+        },
+        {
+          "kind": "fission-burst",
+          "origin": {
+            "x": 1400,
+            "y": 450
+          },
+          "aim": {
+            "x": 1100,
+            "y": 700
+          },
+          "range": 500,
+          "windup": 1.25,
+          "interval": 3.8,
+          "radius": 62,
+          "landings": [
+            {
+              "x": 1100,
+              "y": 700
+            },
+            {
+              "x": 1212.6724543409484,
+              "y": 835.2069452091382
+            }
+          ],
+          "playerDamage": 14,
+          "tissueDamage": 0,
+          "recoveryExposure": 1.5
+        }
+      ],
+      "playerDamage": 0,
+      "limitation": "One explicit open-world layout only. This does not prove all overlaps, boundary cases, layouts or danger unions escapable."
+    }
+  ]
+}

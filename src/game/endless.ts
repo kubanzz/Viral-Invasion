@@ -4,6 +4,7 @@ import { BATTLE_BALANCE, TRAITS } from './battleConfig';
 import type { TraitId } from './battleTypes';
 import type { EndlessBatch, EndlessFormation, EndlessGameState, EndlessHost, EndlessSpawnRole, EndlessState } from './endlessTypes';
 import type { EnemyTactic } from './enemyTacticsTypes';
+import { ENEMY_TACTIC_INFO } from './enemyTacticInfo';
 import { activeWorld, type GameEvent, type GameState, type Target, type Vec } from './types';
 export type { EndlessHost, EndlessState } from './endlessTypes';
 
@@ -23,6 +24,17 @@ const FORMATIONS: readonly EndlessFormation[] = ['front', 'cross', 'fission-pack
 const FORMATION_LABELS: Record<EndlessFormation, string> = { front: '正面双潮', cross: '交叉夹击', 'fission-pack': '聚群猎场', mixed: '侧翼点射' };
 const sourceId = (wave: number) => `endless:wave:${wave}`;
 const safeAdd = (value: number, amount: number) => Math.min(Number.MAX_SAFE_INTEGER, value + amount);
+const MIXED_SUPPORT_TACTICS: readonly EnemyTactic[] = ['crystal-charge', 'fission-burst', 'mimic-corrosion'];
+
+/** Later supports reuse attacks presented by the three early elite lessons. */
+export function endlessSupportTactics(seed: number, wave: number): EnemyTactic[] {
+  if (wave < 16) return Array.from({ length: wave < 3 ? 0 : wave < 6 ? 1 : 2 }, () => 'thin-ray' as const);
+  const rotation = new SeedRng((seed ^ 0x53555050) >>> 0).int(0, 2);
+  const first = (rotation + wave - 16) % MIXED_SUPPORT_TACTICS.length;
+  const tactics: EnemyTactic[] = ['thin-ray', MIXED_SUPPORT_TACTICS[first], MIXED_SUPPORT_TACTICS[(first + 1) % MIXED_SUPPORT_TACTICS.length]];
+  if (wave >= 30) tactics.push('thin-ray');
+  return tactics;
+}
 
 function wavePlan(seed: number, wave: number): Pick<EndlessState, 'traits' | 'title' | 'eliteWave' | 'eliteRemaining' | 'warningSeconds' | 'totalToSpawn' | 'formation' | 'formationLabel' | 'batchSchedule' | 'supportRemaining'> {
   const eliteWave = wave % 5 === 0;
@@ -31,14 +43,14 @@ function wavePlan(seed: number, wave: number): Pick<EndlessState, 'traits' | 'ti
   const traits: TraitId[] = generation === 0 ? [] : [TRAIT_ORDER[(offset + generation - 1) % 3]];
   if (generation >= 3) traits.push(TRAIT_ORDER[(offset + generation - 2) % 3]);
   const formation = traits[0] === 'FISSION' && wave % 2 === 1 ? 'fission-pack' : FORMATIONS[(wave - 1) % FORMATIONS.length];
-  const formationLabel = FORMATION_LABELS[formation];
+  const formationLabel = `${FORMATION_LABELS[formation]}${wave >= 16 ? ' · 混编支援' : ''}`;
   const title = eliteWave ? `精英围猎 · ${TRAITS[traits[0]].name}` : traits.length ? `${TRAITS[traits[0]].name} · ${formationLabel}` : formationLabel;
   const eliteRemaining = eliteWave ? Math.min(2, 1 + Math.floor((wave - 5) / 25)) : 0;
   const totalToSpawn = Math.min(ENDLESS_BALANCE.maximumWaveBudget, 6 + wave * 2);
-  const supportRemaining = wave < 3 ? 0 : wave < 6 ? 1 : 2;
+  const supportRemaining = endlessSupportTactics(seed, wave).length;
   const roles: EndlessSpawnRole[] = Array.from({ length: totalToSpawn }, () => 'ordinary');
   for (let elite = 0; elite < eliteRemaining; elite++) roles[elite * 3] = 'elite';
-  for (let support = 0; support < supportRemaining; support++) roles[support * 3 + 2] = 'support';
+  for (let support = 0; support < supportRemaining; support++) roles[support * (wave >= 16 ? 6 : 3) + 2] = 'support';
   const rotation = new SeedRng((seed ^ Math.imul(wave, 0x45d9f3b)) >>> 0).int(0, 7);
   const pairInterval = Math.max(2.6, 4.2 - (wave - 1) * .035);
   const batchSchedule: EndlessBatch[] = [];
@@ -50,7 +62,7 @@ function wavePlan(seed: number, wave: number): Pick<EndlessState, 'traits' | 'ti
       roles: roles.slice(batch * 3, batch * 3 + 3) });
   }
   return { traits, title, eliteWave, eliteRemaining, formation, formationLabel, batchSchedule, supportRemaining,
-    warningSeconds: eliteWave || wave === 3 ? ENDLESS_BALANCE.traitWarningSeconds : ENDLESS_BALANCE.warningSeconds, totalToSpawn };
+    warningSeconds: eliteWave || wave === 3 || wave === 16 ? ENDLESS_BALANCE.traitWarningSeconds : ENDLESS_BALANCE.warningSeconds, totalToSpawn };
 }
 
 /** Called after initializeBattle; retains its large world and existing tool rules. */
@@ -134,7 +146,8 @@ export class EndlessDirector {
       this.state.battle!.stageLabel = `第 ${wave} 波 · ${e.title}`;
       this.host.emit('ENDLESS_WAVE_WARNING', { wave, title: e.title, duration: e.warningSeconds, traits: e.traits.join('+'), elite: e.eliteWave, formation: e.formation, supports: e.supportRemaining });
       const counter = e.traits.map(trait => `${TRAITS[trait].name}：${TRAITS[trait].counter}`).join('；');
-      this.host.message(`第 ${wave} 波 · ${e.title}，${e.warningSeconds} 秒后到达。${wave === 3 ? '新敌：点射体锁定细线后攻击，侧移避开；可直接净化。' : counter || '移动拉线，2 范围裂解，Q 召集免疫援助。'}`, e.warningSeconds, 2);
+      const supportHint = wave >= 16 ? `混编支援：${endlessSupportTactics(this.state.seed, wave).map(tactic => ENEMY_TACTIC_INFO[tactic].name).join(' / ')}。线与冲锋锁定后侧闪，双圈向空侧离圈，侵蚀用 Q 打断；轻型支援可直接净化。` : '';
+      this.host.message(`第 ${wave} 波 · ${e.title}，${e.warningSeconds} 秒后到达。${supportHint || (wave === 3 ? '新敌：点射体锁定细线后攻击，侧移避开；可直接净化。' : counter || '移动拉线，2 范围裂解，Q 召集免疫援助。')}`, e.warningSeconds, 2);
       return;
     }
     e.phase = 'combat'; e.phaseStartedAt = now; e.phaseUntil = 0; e.nextSpawnAt = now;
@@ -194,6 +207,7 @@ export class EndlessDirector {
     // A blocked finite batch retries; it does not create an unbounded backlog or skip promised roles.
     e.nextSpawnAt = now + .25;
     const directions = new Set<string>();
+    const supportList = endlessSupportTactics(this.state.seed, e.wave);
     let spawned = 0;
     while (e.batchMemberIndex < batch.roles.length && e.remainingToSpawn > 0) {
       const population = this.population();
@@ -205,7 +219,7 @@ export class EndlessDirector {
       if (traits.includes('FISSION') && population.parents >= ENDLESS_BALANCE.maximumFissionParents) traits = [];
       const cost = traits.includes('FISSION') ? 2 : 1;
       if (population.reserved + cost > ENDLESS_BALANCE.maximumActors) break;
-      const tactic: EnemyTactic = support ? 'thin-ray' : !elite ? 'melee'
+      const tactic: EnemyTactic = support ? supportList[supportList.length - e.supportRemaining] : !elite ? 'melee'
         : traits[0] === 'CARAPACE' ? 'crystal-charge' : traits[0] === 'FISSION' ? 'fission-burst' : 'mimic-corrosion';
       const radius = elite ? 30 : 22, position = this.spawnPosition(e.spawnSerial, radius, role, tactic, batch, e.batchMemberIndex);
       if (!position) break;
@@ -242,6 +256,7 @@ export class EndlessDirector {
     const sector = batch.sector + (role === 'support' ? 2 : 0);
     const inner = role === 'elite' || role === 'support' ? 380 : ENDLESS_BALANCE.spawnRingInner;
     const outer = role === 'elite' ? 480 : role === 'support' ? 500 : ENDLESS_BALANCE.spawnRingOuter;
+    let corrosionFallback: Vec | undefined;
     for (let attempt = 0; attempt < 48; attempt++) {
       // Start inside the planned cohort; only fan farther when geometry or existing bodies reject it.
       const offset = (member - 1) * batch.spread + (attempt < 12 ? 0 : Math.floor((attempt - 12) / 6 + 1) * Math.PI / 4);
@@ -260,10 +275,16 @@ export class EndlessDirector {
         const aim = tactic === 'mimic-corrosion' ? state.tissue : state.player;
         const aimLength = distance(candidate, aim), block = wallHit(candidate, normalized(aim.x - candidate.x, aim.y - candidate.y), aimLength, geometry);
         const playerBlock = wallHit(state.player, normalized(candidate.x - state.player.x, candidate.y - state.player.y), playerDistance, geometry);
-        if (block !== null && block < aimLength - aim.radius || playerBlock !== null && playerBlock < playerDistance - radius) continue;
+        if (playerBlock !== null && playerBlock < playerDistance - radius) continue;
+        if (block !== null && block < aimLength - aim.radius) {
+          // A corrosion body may enter a player-counterable pocket and navigate
+          // to tissue LOS. Its real attack still requires the existing LOS test.
+          if (tactic === 'mimic-corrosion') corrosionFallback ??= candidate;
+          continue;
+        }
       }
       return candidate;
     }
-    return undefined;
+    return corrosionFallback;
   }
 }

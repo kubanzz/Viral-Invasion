@@ -1,0 +1,1118 @@
+{
+  "generatedAt": "2026-10-27T16:39:06.310Z",
+  "scope": "Isolated director fixtures, not natural survival or player evidence. No private rule replacement; wave/start/cursor fixtures are explicit.",
+  "sourceHashes": {
+    "src/game/endless.ts": "66b24a0be7f3c968ec2298116da4e594a503a5c9e16be3a27e6ad682278bbbb9",
+    "src/game/battle.ts": "f5f0939705902ca0800323ab2c25eb8a310f61281e3c01effecf93da18bdffc2",
+    "src/game/enemyTactics.ts": "5756bc8247bf72fb3db833ac191eeb3c58afe3b8f0505e1d1e65f8d1f28a64e4",
+    "src/actors/enemyNavigation.ts": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd",
+    "src/actors/collision.ts": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0",
+    "tests/unit/support-spawn-reachability.test.ts": "2d296e38a3cb10982f89f7109037ae127e36329ecdf529e5e486337b2a69bd4a"
+  },
+  "cases": [
+    {
+      "name": "legacy-wave16-seed19-serial5-geometric-witness",
+      "fixture": "Original 3b second-support geometric witness only. This does not label serial5 as a support in the new 2/8/14 profile.",
+      "seed": 19,
+      "wave": 16,
+      "serial": 5,
+      "batchIndex": 1,
+      "sector": 7,
+      "roles": [
+        "ordinary",
+        "ordinary",
+        "ordinary"
+      ],
+      "player": {
+        "x": 105,
+        "y": 650
+      },
+      "tissue": {
+        "x": 1200,
+        "y": 900
+      },
+      "candidate": {
+        "x": 325.85282966276645,
+        "y": 979.4159627477459
+      },
+      "repeat": {
+        "x": 325.85282966276645,
+        "y": 979.4159627477459
+      },
+      "pointShotControl": {
+        "x": 325.85282966276645,
+        "y": 979.4159627477459
+      }
+    },
+    {
+      "name": "existing-wave15-seed47-corrosion-elite-real-director-queue",
+      "fixture": "Only starting wave/player are set before the real director executes all admission/retry rules. No forced tactic or private replacement.",
+      "seed": 47,
+      "wave": 15,
+      "player": {
+        "x": 105,
+        "y": 650
+      },
+      "tissue": {
+        "x": 1200,
+        "y": 900
+      },
+      "before": {
+        "remaining": 28,
+        "serial": 0
+      },
+      "after": {
+        "remaining": 22,
+        "serial": 6
+      },
+      "attempts": [
+        {
+          "elapsed": 8,
+          "serial": 3,
+          "remaining": 25,
+          "batch": 1,
+          "member": 0
+        },
+        {
+          "elapsed": 8.25,
+          "serial": 3,
+          "remaining": 25,
+          "batch": 1,
+          "member": 0
+        },
+        {
+          "elapsed": 8.5,
+          "serial": 3,
+          "remaining": 25,
+          "batch": 1,
+          "member": 0
+        },
+        {
+          "elapsed": 8.75,
+          "serial": 6,
+          "remaining": 22,
+          "batch": 2,
+          "member": 0
+        },
+        {
+          "elapsed": 9,
+          "serial": 6,
+          "remaining": 22,
+          "batch": 2,
+          "member": 0
+        },
+        {
+          "elapsed": 9.25,
+          "serial": 6,
+          "remaining": 22,
+          "batch": 2,
+          "member": 0
+        },
+        {
+          "elapsed": 9.5,
+          "serial": 6,
+          "remaining": 22,
+          "batch": 2,
+          "member": 0
+        },
+        {
+          "elapsed": 9.75,
+          "serial": 6,
+          "remaining": 22,
+          "batch": 2,
+          "member": 0
+        },
+        {
+          "elapsed": 10,
+          "serial": 6,
+          "remaining": 22,
+          "batch": 2,
+          "member": 0
+        },
+        {
+          "elapsed": 10.25,
+          "serial": 6,
+          "remaining": 22,
+          "batch": 2,
+          "member": 0
+        },
+        {
+          "elapsed": 10.5,
+          "serial": 6,
+          "remaining": 22,
+          "batch": 2,
+          "member": 0
+        },
+        {
+          "elapsed": 10.75,
+          "serial": 6,
+          "remaining": 22,
+          "batch": 2,
+          "member": 0
+        }
+      ],
+      "births": [
+        {
+          "type": "ACTOR_SPAWNED",
+          "data": {
+            "id": "elite-3",
+            "role": "elite",
+            "generation": 0,
+            "sourceId": "endless:wave:15",
+            "traits": "MIMIC",
+            "wave": 15,
+            "tactic": "mimic-corrosion",
+            "formation": "fission-pack"
+          },
+          "tick": 480
+        },
+        {
+          "type": "ACTOR_SPAWNED",
+          "data": {
+            "id": "virus-4",
+            "role": "virus",
+            "generation": 0,
+            "sourceId": "endless:wave:15",
+            "traits": "FISSION",
+            "wave": 15,
+            "tactic": "melee",
+            "formation": "fission-pack"
+          },
+          "tick": 480
+        },
+        {
+          "type": "ACTOR_SPAWNED",
+          "data": {
+            "id": "virus-5",
+            "role": "virus",
+            "generation": 0,
+            "sourceId": "endless:wave:15",
+            "traits": "",
+            "wave": 15,
+            "tactic": "thin-ray",
+            "formation": "fission-pack"
+          },
+          "tick": 480
+        },
+        {
+          "type": "ACTOR_SPAWNED",
+          "data": {
+            "id": "virus-6",
+            "role": "virus",
+            "generation": 0,
+            "sourceId": "endless:wave:15",
+            "traits": "FISSION",
+            "wave": 15,
+            "tactic": "melee",
+            "formation": "fission-pack"
+          },
+          "tick": 525
+        },
+        {
+          "type": "ACTOR_SPAWNED",
+          "data": {
+            "id": "virus-7",
+            "role": "virus",
+            "generation": 0,
+            "sourceId": "endless:wave:15",
+            "traits": "MIMIC",
+            "wave": 15,
+            "tactic": "melee",
+            "formation": "fission-pack"
+          },
+          "tick": 525
+        },
+        {
+          "type": "ACTOR_SPAWNED",
+          "data": {
+            "id": "virus-8",
+            "role": "virus",
+            "generation": 0,
+            "sourceId": "endless:wave:15",
+            "traits": "",
+            "wave": 15,
+            "tactic": "thin-ray",
+            "formation": "fission-pack"
+          },
+          "tick": 525
+        }
+      ],
+      "actors": [
+        {
+          "id": "elite-3",
+          "role": "elite",
+          "tactic": "mimic-corrosion",
+          "x": 174.07631279462458,
+          "y": 1114.1088218053214
+        },
+        {
+          "id": "virus-4",
+          "role": "virus",
+          "tactic": "melee",
+          "x": 107,
+          "y": 1127.0534223555571
+        },
+        {
+          "id": "virus-5",
+          "role": "virus",
+          "tactic": "thin-ray",
+          "x": 150.88382861989425,
+          "y": 172.7792167466592
+        },
+        {
+          "id": "virus-6",
+          "role": "virus",
+          "tactic": "melee",
+          "x": 155.0384271968284,
+          "y": 1199.8361818880444
+        },
+        {
+          "id": "virus-7",
+          "role": "virus",
+          "tactic": "melee",
+          "x": 107,
+          "y": 1053.4913178000074
+        },
+        {
+          "id": "virus-8",
+          "role": "virus",
+          "tactic": "thin-ray",
+          "x": 176.61750261906553,
+          "y": 224.97588984551186
+        }
+      ]
+    },
+    {
+      "name": "actual-corrosion-admission-16-18-14",
+      "scenario": {
+        "seed": 18,
+        "wave": 16,
+        "serial": 14,
+        "role": "virus"
+      },
+      "scheduledSlots": [
+        2,
+        8,
+        14
+      ],
+      "fixture": "Wave and player start injected before real GameSession.step. Player/tissue durability raised to prevent early termination; no player attacks or actor state rewrites. This is not natural survival evidence.",
+      "birth": {
+        "id": "virus-17",
+        "serial": 14,
+        "at": 15.366666666666667,
+        "position": {
+          "x": 362.7829330868852,
+          "y": 1037.1318428509267
+        },
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "traits": [],
+        "legal": true,
+        "playerDistance": 465.1054765749723,
+        "playerCanShoot": true,
+        "tissueVisible": false,
+        "remaining": 13
+      },
+      "committed": {
+        "at": 19.016666666666666,
+        "event": {
+          "type": "ENEMY_TACTIC_COMMITTED",
+          "tick": 1141,
+          "data": {
+            "actorId": "virus-17",
+            "tactic": "mimic-corrosion",
+            "windup": 1.8,
+            "x": 694.4319677859683,
+            "y": 911.5948604077333,
+            "aimX": 1200,
+            "aimY": 900
+          }
+        },
+        "position": {
+          "x": 694.4319677859683,
+          "y": 911.5948604077333
+        },
+        "tissueVisible": true,
+        "distanceToTissue": 505.7009748701727
+      },
+      "births": [
+        {
+          "id": "virus-3",
+          "serial": 0,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 167
+          }
+        },
+        {
+          "id": "virus-4",
+          "serial": 1,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 468.2733015624478,
+            "y": 264.0269724196406
+          }
+        },
+        {
+          "id": "virus-5",
+          "serial": 2,
+          "tactic": "thin-ray",
+          "role": "virus",
+          "position": {
+            "x": 506.25630178206205,
+            "y": 723.2572760514277
+          }
+        },
+        {
+          "id": "virus-6",
+          "serial": 3,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 208.78058362469096,
+            "y": 1186.4266656601762
+          }
+        },
+        {
+          "id": "virus-7",
+          "serial": 4,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 1210.0379686715287
+          }
+        },
+        {
+          "id": "virus-8",
+          "serial": 5,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 1102.8264085602805
+          }
+        },
+        {
+          "id": "virus-9",
+          "serial": 6,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 545.8841145583674,
+            "y": 567.8637533775419
+          }
+        },
+        {
+          "id": "virus-10",
+          "serial": 7,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 547.0708064202765,
+            "y": 637.293247844402
+          }
+        },
+        {
+          "id": "virus-11",
+          "serial": 8,
+          "tactic": "fission-burst",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 1048.9536911490595
+          }
+        },
+        {
+          "id": "virus-12",
+          "serial": 9,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 206.00596429530776
+          }
+        },
+        {
+          "id": "virus-13",
+          "serial": 10,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 278.49165405569147
+          }
+        },
+        {
+          "id": "virus-14",
+          "serial": 11,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 199.00666822994322,
+            "y": 226.43982520546683
+          }
+        },
+        {
+          "id": "virus-15",
+          "serial": 12,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 454.78794498377954,
+            "y": 184.72856660332388
+          }
+        },
+        {
+          "id": "virus-16",
+          "serial": 13,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 485.5254897504758,
+            "y": 258.3533160189267
+          }
+        },
+        {
+          "id": "virus-17",
+          "serial": 14,
+          "tactic": "mimic-corrosion",
+          "role": "virus",
+          "position": {
+            "x": 362.7829330868852,
+            "y": 1037.1318428509267
+          }
+        },
+        {
+          "id": "virus-18",
+          "serial": 15,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 1025.7218196359097
+          }
+        },
+        {
+          "id": "virus-19",
+          "serial": 16,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 266.14707759904167
+          }
+        },
+        {
+          "id": "virus-20",
+          "serial": 17,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 205.55179007828343
+          }
+        }
+      ],
+      "actualSeconds": 19.016666666666666,
+      "phase": "playing",
+      "blockedTicks": 218,
+      "illegalTicks": 0,
+      "maxPopulation": 18,
+      "maxReservedPopulation": 22,
+      "maxConcurrent": 3,
+      "remaining": 10,
+      "spawnSerial": 18,
+      "totalToSpawn": 28,
+      "paths": [
+        {
+          "at": 16,
+          "position": {
+            "x": 420.5933152821394,
+            "y": 1015.249249581012
+          },
+          "tissueVisible": false
+        },
+        {
+          "at": 17,
+          "position": {
+            "x": 511.87286611675125,
+            "y": 980.697786523252
+          },
+          "tissueVisible": false
+        },
+        {
+          "at": 18,
+          "position": {
+            "x": 603.1524169513598,
+            "y": 946.1463234654921
+          },
+          "tissueVisible": false
+        },
+        {
+          "at": 19,
+          "position": {
+            "x": 694.4319677859683,
+            "y": 911.5948604077333
+          },
+          "tissueVisible": true
+        }
+      ]
+    },
+    {
+      "name": "actual-corrosion-admission-18-1-8",
+      "scenario": {
+        "seed": 1,
+        "wave": 18,
+        "serial": 8,
+        "role": "virus"
+      },
+      "scheduledSlots": [
+        2,
+        8,
+        14
+      ],
+      "fixture": "Wave and player start injected before real GameSession.step. Player/tissue durability raised to prevent early termination; no player attacks or actor state rewrites. This is not natural survival evidence.",
+      "birth": {
+        "id": "virus-11",
+        "serial": 8,
+        "at": 5.616666666666666,
+        "position": {
+          "x": 334.10150342888085,
+          "y": 963.2726033507101
+        },
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "traits": [],
+        "legal": true,
+        "playerDistance": 388.10723116621375,
+        "playerCanShoot": true,
+        "tissueVisible": false,
+        "remaining": 19
+      },
+      "committed": {
+        "at": 8.466666666666667,
+        "event": {
+          "type": "ENEMY_TACTIC_COMMITTED",
+          "tick": 508,
+          "data": {
+            "actorId": "virus-11",
+            "tactic": "mimic-corrosion",
+            "windup": 1.8,
+            "x": 619.0469991343788,
+            "y": 913.6930794697754,
+            "aimX": 1200,
+            "aimY": 900
+          }
+        },
+        "position": {
+          "x": 619.0469991343788,
+          "y": 913.6930794697754
+        },
+        "tissueVisible": true,
+        "distanceToTissue": 581.1143516039989
+      },
+      "births": [
+        {
+          "id": "virus-3",
+          "serial": 0,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 296.5960129931997
+          }
+        },
+        {
+          "id": "virus-4",
+          "serial": 1,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 234.65887449062126
+          }
+        },
+        {
+          "id": "virus-5",
+          "serial": 2,
+          "tactic": "thin-ray",
+          "role": "virus",
+          "position": {
+            "x": 519.6383695178426,
+            "y": 376.84597892640227
+          }
+        },
+        {
+          "id": "virus-6",
+          "serial": 3,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 540.703894267242,
+            "y": 971.3721047248941
+          }
+        },
+        {
+          "id": "virus-7",
+          "serial": 4,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 488.9341743736669,
+            "y": 1040.7535897057762
+          }
+        },
+        {
+          "id": "virus-8",
+          "serial": 5,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 400.4841094515843,
+            "y": 1077.3655031917965
+          }
+        },
+        {
+          "id": "virus-9",
+          "serial": 6,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 341.54551324212173,
+            "y": 278.5212600256365
+          }
+        },
+        {
+          "id": "virus-10",
+          "serial": 7,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 518.5272756661648,
+            "y": 227.64484333908865
+          }
+        },
+        {
+          "id": "virus-11",
+          "serial": 8,
+          "tactic": "mimic-corrosion",
+          "role": "virus",
+          "position": {
+            "x": 334.10150342888085,
+            "y": 963.2726033507101
+          }
+        },
+        {
+          "id": "virus-12",
+          "serial": 9,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 1120.7308018637166
+          }
+        },
+        {
+          "id": "virus-13",
+          "serial": 10,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 1040.4218608827389
+          }
+        },
+        {
+          "id": "virus-14",
+          "serial": 11,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 291.97302750913536
+          }
+        }
+      ],
+      "actualSeconds": 8.466666666666667,
+      "phase": "playing",
+      "blockedTicks": 170,
+      "illegalTicks": 0,
+      "maxPopulation": 12,
+      "maxReservedPopulation": 12,
+      "maxConcurrent": 3,
+      "remaining": 16,
+      "spawnSerial": 12,
+      "totalToSpawn": 28,
+      "paths": [
+        {
+          "at": 6,
+          "position": {
+            "x": 372.65295284786,
+            "y": 956.5647854138779
+          },
+          "tissueVisible": false
+        },
+        {
+          "at": 7,
+          "position": {
+            "x": 473.22195133215337,
+            "y": 939.0661299264893
+          },
+          "tissueVisible": false
+        },
+        {
+          "at": 8,
+          "position": {
+            "x": 573.7909498164468,
+            "y": 921.5674744391008
+          },
+          "tissueVisible": false
+        }
+      ]
+    },
+    {
+      "name": "actual-corrosion-admission-15-47-0",
+      "scenario": {
+        "seed": 47,
+        "wave": 15,
+        "serial": 0,
+        "role": "elite"
+      },
+      "scheduledSlots": [
+        2,
+        5
+      ],
+      "fixture": "Wave and player start injected before real GameSession.step. Player/tissue durability raised to prevent early termination; no player attacks or actor state rewrites. This is not natural survival evidence.",
+      "birth": {
+        "id": "elite-3",
+        "serial": 0,
+        "at": 8,
+        "position": {
+          "x": 174.07631279462458,
+          "y": 1114.1088218053214
+        },
+        "role": "elite",
+        "radius": 30,
+        "hp": 170,
+        "traits": [
+          "MIMIC"
+        ],
+        "legal": true,
+        "playerDistance": 469.2212009988727,
+        "playerCanShoot": true,
+        "tissueVisible": false,
+        "remaining": 27
+      },
+      "committed": {
+        "at": 18.9,
+        "event": {
+          "type": "ENEMY_TACTIC_COMMITTED",
+          "tick": 1134,
+          "data": {
+            "actorId": "elite-3",
+            "tactic": "mimic-corrosion",
+            "windup": 1.8,
+            "x": 692.2876281152597,
+            "y": 1087.0490452459653,
+            "aimX": 1200,
+            "aimY": 900
+          }
+        },
+        "position": {
+          "x": 692.2876281152597,
+          "y": 1087.0490452459653
+        },
+        "tissueVisible": true,
+        "distanceToTissue": 541.0722667927603
+      },
+      "births": [
+        {
+          "id": "elite-3",
+          "serial": 0,
+          "tactic": "mimic-corrosion",
+          "role": "elite",
+          "position": {
+            "x": 174.07631279462458,
+            "y": 1114.1088218053214
+          }
+        },
+        {
+          "id": "virus-4",
+          "serial": 1,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 1127.0534223555571
+          }
+        },
+        {
+          "id": "virus-5",
+          "serial": 2,
+          "tactic": "thin-ray",
+          "role": "virus",
+          "position": {
+            "x": 150.88382861989425,
+            "y": 172.7792167466592
+          }
+        },
+        {
+          "id": "virus-6",
+          "serial": 3,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 155.0384271968284,
+            "y": 1199.8361818880444
+          }
+        },
+        {
+          "id": "virus-7",
+          "serial": 4,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 1167.8814608212067
+          }
+        },
+        {
+          "id": "virus-8",
+          "serial": 5,
+          "tactic": "thin-ray",
+          "role": "virus",
+          "position": {
+            "x": 176.61750261906553,
+            "y": 224.97588984551186
+          }
+        },
+        {
+          "id": "virus-9",
+          "serial": 6,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 1003.60387838836
+          }
+        },
+        {
+          "id": "virus-10",
+          "serial": 7,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 274.13684624272037
+          }
+        },
+        {
+          "id": "virus-11",
+          "serial": 8,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 207.95534700325152
+          }
+        },
+        {
+          "id": "virus-12",
+          "serial": 9,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 1094.2851227231033
+          }
+        },
+        {
+          "id": "virus-13",
+          "serial": 10,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 427.0997908140886,
+            "y": 312.59604919771175
+          }
+        },
+        {
+          "id": "virus-14",
+          "serial": 11,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 548.8893304613318,
+            "y": 318.772025339845
+          }
+        },
+        {
+          "id": "virus-15",
+          "serial": 12,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 171.32126447263147,
+            "y": 1109.2361505510935
+          }
+        },
+        {
+          "id": "virus-16",
+          "serial": 13,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107.99944422696271,
+            "y": 1136.364969188917
+          }
+        },
+        {
+          "id": "virus-17",
+          "serial": 14,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 993.7485854922016
+          }
+        },
+        {
+          "id": "virus-18",
+          "serial": 15,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 156.89706458554835,
+            "y": 1187.2252295057058
+          }
+        },
+        {
+          "id": "virus-19",
+          "serial": 16,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 1003.0738719717326
+          }
+        },
+        {
+          "id": "virus-20",
+          "serial": 17,
+          "tactic": "melee",
+          "role": "virus",
+          "position": {
+            "x": 107,
+            "y": 1161.3983635649943
+          }
+        }
+      ],
+      "actualSeconds": 18.9,
+      "phase": "playing",
+      "blockedTicks": 653,
+      "illegalTicks": 0,
+      "maxPopulation": 18,
+      "maxReservedPopulation": 22,
+      "maxConcurrent": 3,
+      "remaining": 10,
+      "spawnSerial": 18,
+      "totalToSpawn": 28,
+      "paths": [
+        {
+          "at": 8,
+          "position": {
+            "x": 174.07631279462458,
+            "y": 1114.1088218053214
+          },
+          "tissueVisible": false
+        },
+        {
+          "at": 9,
+          "position": {
+            "x": 221.69144130800527,
+            "y": 1111.6224717386153
+          },
+          "tissueVisible": false
+        },
+        {
+          "at": 10,
+          "position": {
+            "x": 269.3065698213864,
+            "y": 1109.1361216719092
+          },
+          "tissueVisible": false
+        },
+        {
+          "at": 11,
+          "position": {
+            "x": 316.9216983347688,
+            "y": 1106.6497716052031
+          },
+          "tissueVisible": false
+        },
+        {
+          "at": 12,
+          "position": {
+            "x": 364.5368268481512,
+            "y": 1104.163421538497
+          },
+          "tissueVisible": false
+        },
+        {
+          "at": 13,
+          "position": {
+            "x": 412.1519553615335,
+            "y": 1101.677071471791
+          },
+          "tissueVisible": false
+        },
+        {
+          "at": 14,
+          "position": {
+            "x": 459.7670838749128,
+            "y": 1099.1907214050802
+          },
+          "tissueVisible": false
+        },
+        {
+          "at": 15,
+          "position": {
+            "x": 507.3822123882918,
+            "y": 1096.7043713383675
+          },
+          "tissueVisible": false
+        },
+        {
+          "at": 16,
+          "position": {
+            "x": 554.9973409016739,
+            "y": 1094.2180212716544
+          },
+          "tissueVisible": false
+        },
+        {
+          "at": 17,
+          "position": {
+            "x": 602.6124694150562,
+            "y": 1091.7316712049414
+          },
+          "tissueVisible": false
+        },
+        {
+          "at": 18,
+          "position": {
+            "x": 650.2275979284386,
+            "y": 1089.2453211382285
+          },
+          "tissueVisible": false
+        }
+      ]
+    }
+  ]
+}
