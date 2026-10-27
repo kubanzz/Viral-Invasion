@@ -466,7 +466,7 @@ export class BattleDirector {
     } else {
       if (b.organLowSince !== null) {
         this.host.emit('ORGAN_ALARM_CLEARED', { organId: b.organId });
-        this.notice('组织抢修成功：器官警报解除，全身稳定缓慢恢复。', 5, 3);
+        this.notice('器官警报解除；完整度达到 50% 后，全身稳定才会缓慢恢复。', 5, 3);
       }
       b.organLowSince = null;
       if (s.tissue.hp >= 50) p.vitality = Math.min(100, p.vitality + .25 * BALANCE.step);

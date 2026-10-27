@@ -1,6 +1,7 @@
 import type { OrganId, TraitId } from './battleTypes';
 import type { Effect, GameEvent, GameState, Target, Tool, Vec, WorldGeometry } from './types';
 import type { RunPreparation } from './preparation';
+import type { RunMetrics } from './runMetrics';
 
 export type ProtocolId = 'PULSE_BREAK' | 'PURIFY_CHAIN' | 'IMMUNE_BEACON' | 'EXPOSE_TRACE';
 export type Tuning = 'balanced' | 'focused' | 'extended';
@@ -62,6 +63,9 @@ export interface GrowthContext {
   targets: readonly Target[]; tool: Tool;
   geometry?: WorldGeometry;
   rhythmCycle?: number;
+  /** Host acceptance facts, supplied after the common event reducer has run. */
+  acceptedMetrics?: RunMetrics;
+  acceptedEvents?: readonly GameEvent[];
 }
 export interface DamageOrigin { cause: 'basic' | 'protocol'; rootId?: string; wasPulseExposed?: boolean; protocolId?: ProtocolId; allowChain?: boolean }
 interface ProtocolCommandBase { protocolId: ProtocolId; rootId: string; organId: OrganId }

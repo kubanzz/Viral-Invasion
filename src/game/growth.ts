@@ -3,7 +3,7 @@ import { SeedRng } from '../core/rng';
 import type { OrganId } from './battleTypes';
 import { activeWorld, type GameEvent, type GameState, type Target, type Vec, type WorldGeometry } from './types';
 import { GROWTH_BALANCE as B, makeDraftOption, PROTOCOL_IDS, PROTOCOLS, TUNINGS, getBeaconConfig, getChainConfig, getPulseConfig, getTraceConfig, PATROL_CONFIG, protocolRank, PROTOCOL_ACTIONS, chainRicochetPeriod } from './protocols';
-import type { DamageOrigin, DraftIntent, DraftOption, DraftResolution, EquippedProtocol, GrowthCommand, GrowthContext, GrowthState, ProtocolDraft, ProtocolId, ProtocolRank, ResearchResult, ResearchDirectionId, ResearchConfirmIntent, ResearchRequestIntent, ResearchRequestResult, ResearchConfirmResult, ResearchCancelResult } from './growthTypes';
+import type { DamageOrigin, DraftIntent, DraftOption, DraftResolution, EquippedProtocol, GrowthCommand, GrowthContext, GrowthState, GrowthHistoryEntry, ProtocolDraft, ProtocolId, ProtocolRank, ResearchResult, ResearchDirectionId, ResearchConfirmIntent, ResearchRequestIntent, ResearchRequestResult, ResearchConfirmResult, ResearchCancelResult } from './growthTypes';
 import { advanceImmuneCells, summonImmuneCells } from './immuneCells';
 import { availableResearchDirections, RESEARCH_DIRECTIONS } from './research';
 import { parsePreparation, preparationForPlan, type RunPreparation } from './preparation';
@@ -13,7 +13,20 @@ export type { GrowthCommand, GrowthContext, GrowthState, DamageOrigin, DraftInte
 export function growthContext(state: GameState): GrowthContext {
   return { tick: state.tick, elapsed: state.elapsed, active: state.phase === 'playing', organId: state.battle?.organId ?? 'heart',
     rhythm: state.battle?.pulse.phase ?? 'rest', deviceOrigin: state.battle?.pulse.origin ?? state.terminal,
-    player: state.player, aim: state.battle?.lastAim ?? state.player, tissue: state.tissue, targets: state.targets, tool: state.tool, geometry: activeWorld(state), rhythmCycle: state.battle?.pulse.cycleIndex };
+    player: state.player, aim: state.battle?.lastAim ?? state.player, tissue: state.tissue, targets: state.targets, tool: state.tool, geometry: activeWorld(state), rhythmCycle: state.battle?.pulse.cycleIndex,
+    acceptedMetrics: state.runMetrics, acceptedEvents: state.events };
+}
+
+/** Requested protocol logs are not damage receipts. Join the real host hit. */
+export function acceptedProtocolHit(event: GameEvent, events: readonly GameEvent[], organId: OrganId): GameEvent | undefined {
+  const protocolId = event.type === 'PROTOCOL_RESONANCE_HIT' ? 'PULSE_BREAK'
+    : event.type === 'PROTOCOL_CHAIN_HIT' || event.type === 'PROTOCOL_RICOCHET_HIT' ? 'PURIFY_CHAIN' : null;
+  const { rootId, targetId, hop } = event.data;
+  if (!protocolId || event.data.protocolId !== protocolId || typeof rootId !== 'string' || !rootId
+    || typeof targetId !== 'string' || !targetId || event.type === 'PROTOCOL_CHAIN_HIT' && (!Number.isInteger(hop) || Number(hop) < 1 || Number(hop) > 3)) return;
+  return events.find(hit => hit.type === 'TARGET_HIT' && hit.tick === event.tick && hit.data.cause === 'protocol'
+    && hit.data.protocolId === protocolId && hit.data.rootId === rootId && hit.data.id === targetId && hit.data.organId === organId
+    && typeof hit.data.damage === 'number' && Number.isFinite(hit.data.damage) && hit.data.damage > 0);
 }
 const hashString = (value: string, start = 2166136261): number => {
   let hash = start >>> 0; for (const char of value) hash = Math.imul(hash ^ char.charCodeAt(0), 16777619) >>> 0; return hash;
@@ -28,6 +41,8 @@ const stableNearest = (from: Vec, targets: readonly Target[]): Target[] => [...t
 /** Independent run-local state. All world mutations return through the host's common damage path. */
 export class GrowthController {
   readonly state: GrowthState;
+  private acceptedHistoryTick = -1;
+  private acceptedHistory = new Map<string, { entry: GrowthHistoryEntry; targets: Set<string>; damage: number; synergy: boolean }>();
   constructor(seed: number, runId = `${seed >>> 0}:growth`, preparation?: RunPreparation) {
     const initialPreparation = parsePreparation(preparation) ?? preparationForPlan('field');
     const starter = initialPreparation.starterProtocolId;
@@ -52,9 +67,48 @@ export class GrowthController {
   private observeTime(elapsed: number): void {
     if(Number.isFinite(elapsed))this.state.lastElapsed=Math.max(this.state.lastElapsed,elapsed);
   }
-  private remember(type: string, text: string, at = this.state.lastElapsed): void {
-    this.state.protocolHistory.push({ at, type, text });
+  private remember(type: string, text: string, at = this.state.lastElapsed): GrowthHistoryEntry {
+    const entry = { at, type, text };
+    this.state.protocolHistory.push(entry);
     if (this.state.protocolHistory.length > 128) this.state.protocolHistory.shift();
+    return entry;
+  }
+  private recordAcceptedEffect(event: GameEvent, context: GrowthContext | undefined, elapsed: number): void {
+    const frame = context?.acceptedMetrics?.frame;
+    if (!context || !frame || frame.tick !== event.tick || event.tick < this.acceptedHistoryTick) return;
+    if (event.tick !== this.acceptedHistoryTick) { this.acceptedHistoryTick = event.tick; this.acceptedHistory.clear(); }
+    const rootId = event.data.rootId;
+    if (typeof rootId !== 'string' || !rootId) return;
+    if (event.type === 'PROTOCOL_SYNERGY' && event.data.pair === 'PULSE_BREAK+PURIFY_CHAIN') {
+      const accepted = this.acceptedHistory.get(`PROTOCOL_CHAIN_HIT:${rootId}`);
+      if (accepted && frame.entries.some(entry => entry.kind === 'pulse-chain' && entry.rootId === rootId)) {
+        accepted.synergy = true;
+        accepted.entry.text = this.actualEffectText('PROTOCOL_CHAIN_HIT', accepted);
+      }
+      return;
+    }
+    const hit = acceptedProtocolHit(event, context.acceptedEvents ?? [], context.organId);
+    if (!hit) return;
+    const kind = event.type === 'PROTOCOL_CHAIN_HIT' ? 'chain' : event.type === 'PROTOCOL_RICOCHET_HIT' ? 'ricochet' : 'resonance';
+    if (!frame.entries.some(entry => entry.kind === kind && entry.rootId === rootId && entry.targetId === event.data.targetId && entry.protocolId === hit.data.protocolId)) return;
+    const key = `${event.type}:${rootId}`;
+    let accepted = this.acceptedHistory.get(key);
+    if (!accepted) {
+      // The host proof frame is bounded; this map contains at most its accepted roots.
+      accepted = { entry: this.remember(event.type, '', elapsed), targets: new Set(), damage: 0, synergy: false };
+      this.acceptedHistory.set(key, accepted);
+    }
+    const targetId = String(event.data.targetId);
+    if (accepted.targets.has(targetId)) return;
+    accepted.targets.add(targetId); accepted.damage += Number(hit.data.damage);
+    if (!this.state.protocolHistory.includes(accepted.entry)) accepted.entry = this.remember(event.type, '', elapsed);
+    accepted.entry.text = this.actualEffectText(event.type, accepted);
+  }
+  private actualEffectText(type: string, accepted: { targets: Set<string>; damage: number; synergy: boolean }): string {
+    const damage = Number(accepted.damage.toFixed(2)), count = accepted.targets.size;
+    if (type === 'PROTOCOL_CHAIN_HIT') return `${accepted.synergy ? '共振联动 · ' : ''}连锁净化：实际命中 ${count} 跳，共 ${damage} 点伤害。`;
+    if (type === 'PROTOCOL_RICOCHET_HIT') return `连锁进阶：实际折射 ${count} 体，共 ${damage} 点伤害。`;
+    return `节律共振：实际追加 ${damage} 点伤害（${count} 体）。`;
   }
   private log(type: string, data: GameEvent['data']): void { this.state.pendingLogs.push({ type, data }); }
   private equipped(id: ProtocolId): EquippedProtocol | undefined { return this.state.equipped.find(slot=>slot.id===id); }
@@ -83,8 +137,9 @@ export class GrowthController {
   recordEvent(event: GameEvent, context?: GrowthContext): void {
     const s=this.state, data=event.data, elapsed=context?.elapsed??event.tick/60;
     this.observeTime(elapsed);
-    if(event.type==='RUN_ENDED') { s.ended=true;s.draft=null;s.pendingResearch=null;s.pendingLevels=[];s.beacon=null;s.cells=[];s.marks=[];s.resonance=[];return; }
+    if(event.type==='RUN_ENDED') { s.ended=true;s.draft=null;s.pendingResearch=null;s.pendingLevels=[];s.beacon=null;s.cells=[];s.marks=[];s.resonance=[];this.acceptedHistory.clear();return; }
     if(s.ended)return;
+    this.recordAcceptedEffect(event, context, elapsed);
     const organ:OrganId=data.organId==='lung'?'lung':data.organId==='heart'?'heart':context?.organId??'heart';
     if(event.type==='INFECTION_SOURCE_CLEARED') {
       const id=String(data.nodeId??data.id??'');if(id)this.award(`source:${organ}:${id}`,20,2,elapsed);
@@ -333,7 +388,7 @@ export class GrowthController {
     const accepted=this.budget(context,commands);if(!accepted.length)return ricochet;
     this.state.resonance.push({targetId:target.id,organId:context.organId,cycle});
     this.activated('PULSE_BREAK');
-    this.remember('PROTOCOL_RESONANCE_HIT',`节律共振：追加 ${config.bonusDamage}，破绽 ${config.exposeSeconds} 秒。`,context.elapsed);
+    this.remember('PROTOCOL_RESONANCE_PLANNED',`节律共振计划：尝试追加 ${config.bonusDamage} 点伤害、破绽 ${config.exposeSeconds} 秒；实际命中另行记录。`,context.elapsed);
     return [...ricochet,...accepted];
   }
   private ricochetOnHit(context:GrowthContext,target:Target,origin:DamageOrigin):GrowthCommand[] {
@@ -350,7 +405,7 @@ export class GrowthController {
       {kind:'log',type:'PROTOCOL_RICOCHET_HIT',data:{protocolId:'PURIFY_CHAIN',rootId,targetId:next.id,damage:config.damage,period,rank}}];
     const accepted=this.budget(context,commands);if(!accepted.length)return[];
     this.state.chainCharge=0;this.activated('PURIFY_CHAIN');
-    this.remember('PROTOCOL_RICOCHET_HIT',`连锁进阶：${period}次命中蓄能，折射 ${config.damage}。`,context.elapsed);
+    this.remember('PROTOCOL_RICOCHET_PLANNED',`连锁进阶计划：${period} 次命中蓄能，尝试折射 ${config.damage} 点伤害；实际命中另行记录。`,context.elapsed);
     return accepted;
   }
   onKill(context:GrowthContext,target:Target,origin:DamageOrigin={cause:'basic'}):GrowthCommand[] {
@@ -378,7 +433,7 @@ export class GrowthController {
     const accepted=this.budget(context,commands);if(!accepted.length)return[];
     this.state.chainRoots.push(rootId);if(this.state.chainRoots.length>256)this.state.chainRoots.shift();
     this.activated('PURIFY_CHAIN');
-    this.remember('PROTOCOL_CHAIN_HIT',`${synergy?'共振联动 · ':''}连锁净化 ${actual} 跳。`,context.elapsed);
+    this.remember('PROTOCOL_CHAIN_PLANNED',`${synergy?'共振联动 · ':''}连锁净化计划：尝试 ${actual} 跳；实际命中另行记录。`,context.elapsed);
     return accepted;
   }
 

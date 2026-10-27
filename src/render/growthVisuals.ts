@@ -1,5 +1,6 @@
 import type { GrowthState } from '../game/growthTypes';
 import type { GameState, Vec } from '../game/types';
+import { acceptedProtocolHit } from '../game/growth';
 import { drawImmuneSquadLabel } from './immuneVisuals';
 import { selectImmuneTraceCues } from './immuneTraceCues';
 
@@ -104,6 +105,7 @@ export class GrowthVisuals {
     const visible = state.events.filter(event => state.tick >= event.tick && state.tick - event.tick <= 30);
     for (const event of visible) {
       if (!['PROTOCOL_RESONANCE_HIT', 'PROTOCOL_CHAIN_HIT', 'PROTOCOL_RICOCHET_HIT'].includes(event.type)) continue;
+      if (!acceptedProtocolHit(event, state.events, state.battle.organId)) continue;
       const target = state.targets.find(item => item.id === event.data.targetId);
       if (!target) continue;
       const progress = (state.tick - event.tick) / 30;
@@ -117,7 +119,13 @@ export class GrowthVisuals {
           ctx.fillStyle = '#ddd0e4'; ctx.fill(); ctx.strokeStyle = '#fff0bf'; ctx.lineWidth = 1; ctx.stroke();
         }
       } else if (event.type === 'PROTOCOL_CHAIN_HIT' || event.type === 'PROTOCOL_RICOCHET_HIT') {
-        const hop = event.type === 'PROTOCOL_RICOCHET_HIT' ? 1 : Number(event.data.hop);
+        const acceptedTargets = new Set<string>();
+        for (const prior of state.events) {
+          if (prior.type === 'PROTOCOL_CHAIN_HIT' && prior.tick === event.tick && prior.data.rootId === event.data.rootId
+            && acceptedProtocolHit(prior, state.events, state.battle.organId)) acceptedTargets.add(String(prior.data.targetId));
+          if (prior === event) break;
+        }
+        const hop = event.type === 'PROTOCOL_RICOCHET_HIT' ? 1 : acceptedTargets.size;
         if (Number.isInteger(hop) && hop >= 1 && hop <= 3) {
           ctx.translate(target.x, target.y); ctx.scale(1, 1 / .72);
           ctx.beginPath(); ctx.ellipse(target.radius + 7, -target.radius * .7, 8, 8, 0, 0, TAU); ctx.fillStyle = '#254b49'; ctx.fill(); ctx.strokeStyle = '#bcf8d9'; ctx.lineWidth = 1; ctx.stroke();
