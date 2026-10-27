@@ -51,7 +51,8 @@ for(const [index,seed]of seeds.entries())test(`G4: complete browser seed ${seed}
 for(const [index,seed]of [17,31,59,83,97].entries())test(`G4: real defeat seed ${seed}, one saved loss and independent retry`,async({page,context},info)=>{
   test.skip(info.project.name!==(index<3?'chrome':'edge'),'Five failure seeds are split across Chrome and Edge.');test.setTimeout(100000);
   await context.setOffline(true);await page.goto(`${entry}?seed=${seed}`);await page.locator('[data-action="start"]').click();
-  await walk(page,{x:610,y:420},25);
+  const opening=await readState(page);
+  await walk(page,{x:opening.tissue.x-110,y:opening.tissue.y-70},25);
   const deadline=Date.now()+75000;
   while(Date.now()<deadline){const s=await readState(page);if(s.phase==='result')break;if(s.growth?.draft)await page.locator('[data-action="draft-discard"]').click();await page.waitForTimeout(250);}
   const failed=await readState(page);expect(failed.result).toMatchObject({success:false});expect(failed.player.hp).toBe(0);
