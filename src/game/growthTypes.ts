@@ -70,7 +70,7 @@ export interface GrowthContext {
   acceptedMetrics?: RunMetrics;
   acceptedEvents?: readonly GameEvent[];
 }
-export interface DamageOrigin { cause: 'basic' | 'protocol' | 'ability'; rootId?: string; wasPulseExposed?: boolean; protocolId?: ProtocolId; allowChain?: boolean }
+export interface DamageOrigin { cause: 'basic' | 'protocol' | 'ability'; ability?: 'nova' | 'scan' | 'dash'; rootId?: string; wasPulseExposed?: boolean; protocolId?: ProtocolId; allowChain?: boolean }
 interface ProtocolCommandBase { protocolId: ProtocolId; rootId: string; organId: OrganId }
 export type GrowthCommand =
   | (ProtocolCommandBase & { kind: 'damage'; targetId: string; amount: number; cause: 'protocol'; hop: number; allowChain?: boolean })

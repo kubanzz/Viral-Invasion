@@ -1,5 +1,16 @@
 import type { TraitId } from './battleTypes';
 import type { Effect, GameEvent, GameState, MessagePriority } from './types';
+import type { BehaviorBin } from './evolutionTypes';
+import type { EndlessEvolutionDecision } from './endlessEvolutionTypes';
+
+export type EndlessEvolutionWarning = Extract<EndlessEvolutionDecision, { kind: 'warn' }>;
+export interface EndlessAdaptationState {
+  history: BehaviorBin[];
+  /** Oldest to newest; only the latest three main axes survive. */
+  recentPrimaries: TraitId[];
+  current?: EndlessEvolutionWarning;
+  pending?: { decision: EndlessEvolutionWarning; warnedAt: number; appliesAt: number };
+}
 
 export type EndlessFormation = 'front' | 'cross' | 'fission-pack' | 'mixed';
 export type EndlessSpawnRole = 'ordinary' | 'support' | 'elite';
@@ -44,6 +55,7 @@ export interface EndlessState {
   batchIndex: number;
   batchMemberIndex: number;
   supportRemaining: number;
+  evolution?: EndlessAdaptationState;
 }
 
 export interface EndlessHost {

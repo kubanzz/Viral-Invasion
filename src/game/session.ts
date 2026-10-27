@@ -431,7 +431,8 @@ export class GameSession {
     if (origin.cause === 'basic') state.hits++;
     this.effect('hit', target, target, target.radius, .3);
     this.emit('TARGET_HIT', { id: target.id, organId: state.battle?.organId ?? 'heart', damage: beforeHp - target.hp, rawDamage, remainingHp: target.hp, tool: state.tool, cause: origin.cause,
-      ...(origin.rootId ? { rootId: origin.rootId } : {}), ...(origin.protocolId ? { protocolId: origin.protocolId } : {}) });
+      ...(origin.rootId ? { rootId: origin.rootId } : {}), ...(origin.protocolId ? { protocolId: origin.protocolId } : {}),
+      ...(origin.ability ? { ability: origin.ability } : {}) });
     if (target.hp === 0) {
       this.emit('TARGET_CLEARED', { id: target.id, kind: target.kind });
       if (this.battleDirector) this.battleDirector.cleared(target);
@@ -465,7 +466,7 @@ export class GameSession {
     }
   }
 
-  private endlessRadialAttack(center: Vec, radius: number, amount: number, ability: string): void {
+  private endlessRadialAttack(center: Vec, radius: number, amount: number, ability: NonNullable<DamageOrigin['ability']>): void {
     const state = this.state;
     this.effect('burst', center, center, radius, .45);
     let hits = 0;
@@ -474,7 +475,7 @@ export class GameSession {
       if (target.hp <= 0 || gap > radius + target.radius) continue;
       const wall = wallHit(center, normalized(target.x - center.x, target.y - center.y), gap, activeWorld(state));
       if (wall !== null && wall < gap - target.radius) continue;
-      this.damage(target, amount, { cause: 'ability', rootId: `endless:${ability}:${state.tick}` }); hits++;
+      this.damage(target, amount, { cause: 'ability', ability, rootId: `endless:${ability}:${state.tick}` }); hits++;
     }
     this.emit('COMBAT_ABILITY_TRIGGERED', { ability, hits, radius, damage: amount });
   }
@@ -492,7 +493,7 @@ export class GameSession {
       const wall = wallHit(closest, normalized(target.x - closest.x, target.y - closest.y), gap, activeWorld(state));
       if (wall !== null && wall < gap - target.radius) continue;
       this.endlessDashHits.add(target.id);
-      this.damage(target, combat.dashDamage * combat.damageMultiplier, { cause: 'ability', rootId: `endless:dash:${state.dashes}` });
+      this.damage(target, combat.dashDamage * combat.damageMultiplier, { cause: 'ability', ability: 'dash', rootId: `endless:dash:${state.dashes}` });
       this.effect('chain', closest, target, 12, .22);
       this.emit('COMBAT_ABILITY_HIT', { ability: 'dash', id: target.id, damage: combat.dashDamage * combat.damageMultiplier });
     }

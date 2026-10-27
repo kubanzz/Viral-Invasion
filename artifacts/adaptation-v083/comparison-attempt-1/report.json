@@ -1,0 +1,5233 @@
+{
+  "schemaVersion": 1,
+  "measuredAtUtc": "2026-10-27T20:00:54.456Z",
+  "command": "node .tools/compare-adaptation-v083.mjs --run",
+  "scope": "24 natural public-input runs of two frozen simulation versions. Not the helper 1000-seed matrix, browser/performance, human fun, or retention evidence.",
+  "seeds": [
+    7,
+    71,
+    19,
+    47,
+    113,
+    211
+  ],
+  "policies": [
+    "precision",
+    "area"
+  ],
+  "plannedRuns": 24,
+  "completedRuns": 24,
+  "goalWaves": 30,
+  "totalSimulationBudgetSeconds": 900,
+  "perWaveSimulationBudgetSeconds": 120,
+  "retries": 0,
+  "originalDriver": {
+    "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\tactics-v082\\final-attempt-1\\candidate\\active-driver.mjs",
+    "sha256": "ae21a4d1e033f37420724b79ccbc0a1cf1cb882b11b88e5fab029fa6f2aecac3"
+  },
+  "measurementScriptSha256": "5f6dd9d8c527b7d9f350adf8857a9b62f265cce533adae9980077aa115108cbb",
+  "policy": {
+    "precision": "Exact saved activeInput; unchanged original run/modal/growth bytes.",
+    "area": "Only activeInput tool field changes to ready tool2, otherwise tool1; movement, aim, Q, priorities and public modal handling unchanged.",
+    "publicMutationScope": "Only saved start/step/discardDraft/chooseCombatUpgrade/resume. Observer writes only external records, never game state.",
+    "outcomePolicy": "No forced victory, damage, adaptation difference or failure. All real deaths, timeouts and measurement errors retained; no seed swaps or retries.",
+    "beforeWave20Definition": "Hash inputs evaluated while the pre-step wave<20, including the boundary-advancing step; compare versions within the same seed and policy only.",
+    "probabilityDefinition": "At most55% for a newly drawn main, not marginal inclusion of a retained companion."
+  },
+  "frozenVersions": [
+    {
+      "version": "baseline",
+      "sourceDirectory": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\tactics-v082-source",
+      "bundleSha256": "c045027036f035aee9ce7e15ba15914e1b77a124f803ea0c695636e0e8febe39",
+      "sourceFingerprints": [
+        {
+          "path": "src/actors/collision.ts",
+          "sha256": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0",
+          "bytes": 5520
+        },
+        {
+          "path": "src/actors/enemyCrowd.ts",
+          "sha256": "0058ef0430088c57ad39a2bb1e48708bf1feb18c9910e018f60277c60ce4ca97",
+          "bytes": 5866
+        },
+        {
+          "path": "src/actors/enemyNavigation.ts",
+          "sha256": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd",
+          "bytes": 6781
+        },
+        {
+          "path": "src/core/clock.ts",
+          "sha256": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+          "bytes": 1156
+        },
+        {
+          "path": "src/core/events.ts",
+          "sha256": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+          "bytes": 887
+        },
+        {
+          "path": "src/core/rng.ts",
+          "sha256": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+          "bytes": 680
+        },
+        {
+          "path": "src/game/battle.ts",
+          "sha256": "c2d9dc908b3292b20e11b72eb2050b1e92cb1607f8d5d1d005d237f482b32812",
+          "bytes": 44563
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "sha256": "f39249306407ab27ef6bd2b66eebed67dbcad8d2b03a6b251f3e202a0715a84f",
+          "bytes": 1703
+        },
+        {
+          "path": "src/game/campaign.ts",
+          "sha256": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+          "bytes": 29358
+        },
+        {
+          "path": "src/game/campaignEncounters.ts",
+          "sha256": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+          "bytes": 15407
+        },
+        {
+          "path": "src/game/counterLesson.ts",
+          "sha256": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+          "bytes": 1173
+        },
+        {
+          "path": "src/game/encounterConfig.ts",
+          "sha256": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+          "bytes": 384
+        },
+        {
+          "path": "src/game/endless.ts",
+          "sha256": "01a1a33c550986337433cbb4273e9a87d21affea732e3dee20cda04e11032f1f",
+          "bytes": 22909
+        },
+        {
+          "path": "src/game/endlessGrowth.ts",
+          "sha256": "90697bf89912a94c3abae2b39baadf584f0e58677857cd625e13c208fd67fa56",
+          "bytes": 9238
+        },
+        {
+          "path": "src/game/enemyFacing.ts",
+          "sha256": "f2f97826b5fbae1d19bfcd718eac2c216800187c86003d11bcfc9c8c63cec24d",
+          "bytes": 1216
+        },
+        {
+          "path": "src/game/enemyPositioning.ts",
+          "sha256": "d01aff7f39ea4d4a3c34f306947452e93de57b93106a56c103bb64c9c097a878",
+          "bytes": 3649
+        },
+        {
+          "path": "src/game/enemyTacticInfo.ts",
+          "sha256": "befeaea914373092dd6ac306b8f5fd709218576504a7c4e123fbb961d7500ff6",
+          "bytes": 785
+        },
+        {
+          "path": "src/game/enemyTactics.ts",
+          "sha256": "c3c52f6f9ec170bce7cf262fe87418930028ab0de1fbb276163e689b97ca805b",
+          "bytes": 7163
+        },
+        {
+          "path": "src/game/evolution.ts",
+          "sha256": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+          "bytes": 8002
+        },
+        {
+          "path": "src/game/growth.ts",
+          "sha256": "85b7eacab58b0b640f3a8d6fd75fc6fd8338f0b9ae4a712772f739ae74c3eadc",
+          "bytes": 43376
+        },
+        {
+          "path": "src/game/immuneCells.ts",
+          "sha256": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80",
+          "bytes": 14829
+        },
+        {
+          "path": "src/game/motherCore.ts",
+          "sha256": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+          "bytes": 17472
+        },
+        {
+          "path": "src/game/organConfig.ts",
+          "sha256": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+          "bytes": 6689
+        },
+        {
+          "path": "src/game/organRules.ts",
+          "sha256": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+          "bytes": 2894
+        },
+        {
+          "path": "src/game/preparation.ts",
+          "sha256": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+          "bytes": 1484
+        },
+        {
+          "path": "src/game/protocols.ts",
+          "sha256": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+          "bytes": 8434
+        },
+        {
+          "path": "src/game/research.ts",
+          "sha256": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+          "bytes": 1415
+        },
+        {
+          "path": "src/game/runMetrics.ts",
+          "sha256": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+          "bytes": 19735
+        },
+        {
+          "path": "src/game/session.ts",
+          "sha256": "1c77a5a623cb1f0dad24dc39f41d5ae1ceb3a0586e5f6591fd0c35a0e78f5c5e",
+          "bytes": 50647
+        },
+        {
+          "path": "src/game/tacticalFeedback.ts",
+          "sha256": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+          "bytes": 8923
+        },
+        {
+          "path": "src/game/types.ts",
+          "sha256": "e9044af954fcfff9586ecfa2c308ff0bcc25bd1b324089d5b5fca68ffa39f1f1",
+          "bytes": 4202
+        },
+        {
+          "path": "tests/helpers/g3Driver.ts",
+          "sha256": "2dcaa812ae1aa99d5ada5c6e3f4d6e431047483f0e0dd399ed36328b446e6f3b",
+          "bytes": 6883
+        }
+      ],
+      "runtimeOutputInputs": [
+        "src/actors/collision.ts",
+        "src/actors/enemyCrowd.ts",
+        "src/actors/enemyNavigation.ts",
+        "src/core/events.ts",
+        "src/core/rng.ts",
+        "src/game/battle.ts",
+        "src/game/battleConfig.ts",
+        "src/game/campaign.ts",
+        "src/game/campaignEncounters.ts",
+        "src/game/counterLesson.ts",
+        "src/game/encounterConfig.ts",
+        "src/game/endless.ts",
+        "src/game/endlessGrowth.ts",
+        "src/game/enemyFacing.ts",
+        "src/game/enemyPositioning.ts",
+        "src/game/enemyTacticInfo.ts",
+        "src/game/enemyTactics.ts",
+        "src/game/evolution.ts",
+        "src/game/growth.ts",
+        "src/game/immuneCells.ts",
+        "src/game/motherCore.ts",
+        "src/game/organConfig.ts",
+        "src/game/organRules.ts",
+        "src/game/preparation.ts",
+        "src/game/protocols.ts",
+        "src/game/research.ts",
+        "src/game/runMetrics.ts",
+        "src/game/session.ts",
+        "src/game/tacticalFeedback.ts",
+        "src/game/types.ts",
+        "tests/helpers/g3Driver.ts"
+      ]
+    },
+    {
+      "version": "candidate",
+      "sourceDirectory": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\adaptation-v083-source",
+      "bundleSha256": "31c137bc77e70f1257e837bfcedc07ced1cbddedab67229eef7fd0ebae71925c",
+      "sourceFingerprints": [
+        {
+          "path": "src/actors/collision.ts",
+          "sha256": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0",
+          "bytes": 5520
+        },
+        {
+          "path": "src/actors/enemyCrowd.ts",
+          "sha256": "0058ef0430088c57ad39a2bb1e48708bf1feb18c9910e018f60277c60ce4ca97",
+          "bytes": 5866
+        },
+        {
+          "path": "src/actors/enemyNavigation.ts",
+          "sha256": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd",
+          "bytes": 6781
+        },
+        {
+          "path": "src/core/clock.ts",
+          "sha256": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+          "bytes": 1156
+        },
+        {
+          "path": "src/core/events.ts",
+          "sha256": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+          "bytes": 887
+        },
+        {
+          "path": "src/core/rng.ts",
+          "sha256": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+          "bytes": 680
+        },
+        {
+          "path": "src/game/battle.ts",
+          "sha256": "c2d9dc908b3292b20e11b72eb2050b1e92cb1607f8d5d1d005d237f482b32812",
+          "bytes": 44563
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "sha256": "f39249306407ab27ef6bd2b66eebed67dbcad8d2b03a6b251f3e202a0715a84f",
+          "bytes": 1703
+        },
+        {
+          "path": "src/game/campaign.ts",
+          "sha256": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+          "bytes": 29358
+        },
+        {
+          "path": "src/game/campaignEncounters.ts",
+          "sha256": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+          "bytes": 15407
+        },
+        {
+          "path": "src/game/counterLesson.ts",
+          "sha256": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+          "bytes": 1173
+        },
+        {
+          "path": "src/game/encounterConfig.ts",
+          "sha256": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+          "bytes": 384
+        },
+        {
+          "path": "src/game/endless.ts",
+          "sha256": "55b6088f2334b21b6ca42ef31d37b763bfcedac1803d2a6d61ad7b9c13b6d726",
+          "bytes": 26483
+        },
+        {
+          "path": "src/game/endlessBehavior.ts",
+          "sha256": "d5c0c5f9c1a3342d3c06df923f34ea7f3d29fd8a135d14fe3c6fa6245197a0ad",
+          "bytes": 1908
+        },
+        {
+          "path": "src/game/endlessEvolution.ts",
+          "sha256": "b3ad9b394634da947bf9aa7ff32d9b9ccb7774909771c524a078d490bba1db4f",
+          "bytes": 4487
+        },
+        {
+          "path": "src/game/endlessGrowth.ts",
+          "sha256": "90697bf89912a94c3abae2b39baadf584f0e58677857cd625e13c208fd67fa56",
+          "bytes": 9238
+        },
+        {
+          "path": "src/game/enemyFacing.ts",
+          "sha256": "f2f97826b5fbae1d19bfcd718eac2c216800187c86003d11bcfc9c8c63cec24d",
+          "bytes": 1216
+        },
+        {
+          "path": "src/game/enemyPositioning.ts",
+          "sha256": "d01aff7f39ea4d4a3c34f306947452e93de57b93106a56c103bb64c9c097a878",
+          "bytes": 3649
+        },
+        {
+          "path": "src/game/enemyTacticInfo.ts",
+          "sha256": "befeaea914373092dd6ac306b8f5fd709218576504a7c4e123fbb961d7500ff6",
+          "bytes": 785
+        },
+        {
+          "path": "src/game/enemyTactics.ts",
+          "sha256": "c3c52f6f9ec170bce7cf262fe87418930028ab0de1fbb276163e689b97ca805b",
+          "bytes": 7163
+        },
+        {
+          "path": "src/game/evolution.ts",
+          "sha256": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+          "bytes": 8002
+        },
+        {
+          "path": "src/game/growth.ts",
+          "sha256": "85b7eacab58b0b640f3a8d6fd75fc6fd8338f0b9ae4a712772f739ae74c3eadc",
+          "bytes": 43376
+        },
+        {
+          "path": "src/game/immuneCells.ts",
+          "sha256": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80",
+          "bytes": 14829
+        },
+        {
+          "path": "src/game/motherCore.ts",
+          "sha256": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+          "bytes": 17472
+        },
+        {
+          "path": "src/game/organConfig.ts",
+          "sha256": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+          "bytes": 6689
+        },
+        {
+          "path": "src/game/organRules.ts",
+          "sha256": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+          "bytes": 2894
+        },
+        {
+          "path": "src/game/preparation.ts",
+          "sha256": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+          "bytes": 1484
+        },
+        {
+          "path": "src/game/protocols.ts",
+          "sha256": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+          "bytes": 8434
+        },
+        {
+          "path": "src/game/research.ts",
+          "sha256": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+          "bytes": 1415
+        },
+        {
+          "path": "src/game/runMetrics.ts",
+          "sha256": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+          "bytes": 19735
+        },
+        {
+          "path": "src/game/session.ts",
+          "sha256": "5bedaaee2a8fc42eaf73928c86e748b4a364ba67b22785733dd71d768fb9e1df",
+          "bytes": 50765
+        },
+        {
+          "path": "src/game/tacticalFeedback.ts",
+          "sha256": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+          "bytes": 8923
+        },
+        {
+          "path": "src/game/types.ts",
+          "sha256": "e9044af954fcfff9586ecfa2c308ff0bcc25bd1b324089d5b5fca68ffa39f1f1",
+          "bytes": 4202
+        },
+        {
+          "path": "tests/helpers/g3Driver.ts",
+          "sha256": "2dcaa812ae1aa99d5ada5c6e3f4d6e431047483f0e0dd399ed36328b446e6f3b",
+          "bytes": 6883
+        }
+      ],
+      "runtimeOutputInputs": [
+        "src/actors/collision.ts",
+        "src/actors/enemyCrowd.ts",
+        "src/actors/enemyNavigation.ts",
+        "src/core/events.ts",
+        "src/core/rng.ts",
+        "src/game/battle.ts",
+        "src/game/battleConfig.ts",
+        "src/game/campaign.ts",
+        "src/game/campaignEncounters.ts",
+        "src/game/counterLesson.ts",
+        "src/game/encounterConfig.ts",
+        "src/game/endless.ts",
+        "src/game/endlessBehavior.ts",
+        "src/game/endlessEvolution.ts",
+        "src/game/endlessGrowth.ts",
+        "src/game/enemyFacing.ts",
+        "src/game/enemyPositioning.ts",
+        "src/game/enemyTacticInfo.ts",
+        "src/game/enemyTactics.ts",
+        "src/game/evolution.ts",
+        "src/game/growth.ts",
+        "src/game/immuneCells.ts",
+        "src/game/motherCore.ts",
+        "src/game/organConfig.ts",
+        "src/game/organRules.ts",
+        "src/game/preparation.ts",
+        "src/game/protocols.ts",
+        "src/game/research.ts",
+        "src/game/runMetrics.ts",
+        "src/game/session.ts",
+        "src/game/tacticalFeedback.ts",
+        "src/game/types.ts",
+        "tests/helpers/g3Driver.ts"
+      ]
+    }
+  ],
+  "sourceChecks": [
+    {
+      "version": "baseline",
+      "unchanged": true,
+      "sourceCount": 32
+    },
+    {
+      "version": "candidate",
+      "unchanged": true,
+      "sourceCount": 34
+    }
+  ],
+  "compatibility": {
+    "baseline/precision": {
+      "activeInputRestoredByteIdentical": true,
+      "originalRunByteIdentical": true,
+      "choosePendingByteIdentical": true,
+      "prioritiesByteIdentical": true,
+      "originalActiveInputSha256": "95b2e07e50c0ae6b559a58c6a075bf45be300b5d28e4a0b0e403628d87a50f73",
+      "executedActiveInputSha256": "95b2e07e50c0ae6b559a58c6a075bf45be300b5d28e4a0b0e403628d87a50f73",
+      "originalRunSha256": "8dbcbf4d435f7a14df8076b6ec3756d06d4faffc175582a24602f92ce15b973f",
+      "choosePendingSha256": "e36a556ca7adac34e79ddb5ea1be0114f59a245d04d1239962f3f28df986e46f",
+      "prioritiesSha256": "7199bb48aeda48bb7a606fb1fcabb3b2437f2a9be6a50e5229cddd8e1fde7968",
+      "onlyPolicyChange": "none",
+      "observer": "Read-only GameSession subclass observes before/after public step and public bus; original run and public choice code retained byte-for-byte."
+    },
+    "baseline/area": {
+      "activeInputRestoredByteIdentical": true,
+      "originalRunByteIdentical": true,
+      "choosePendingByteIdentical": true,
+      "prioritiesByteIdentical": true,
+      "originalActiveInputSha256": "95b2e07e50c0ae6b559a58c6a075bf45be300b5d28e4a0b0e403628d87a50f73",
+      "executedActiveInputSha256": "8245fe5ecf6cd39f8cee0fa1e6644842a7b9ede1a7e21ed00a45f0d6fa094e49",
+      "originalRunSha256": "8dbcbf4d435f7a14df8076b6ec3756d06d4faffc175582a24602f92ce15b973f",
+      "choosePendingSha256": "e36a556ca7adac34e79ddb5ea1be0114f59a245d04d1239962f3f28df986e46f",
+      "prioritiesSha256": "7199bb48aeda48bb7a606fb1fcabb3b2437f2a9be6a50e5229cddd8e1fde7968",
+      "onlyPolicyChange": "tool2 while its published cooldown is ready, otherwise tool1",
+      "observer": "Read-only GameSession subclass observes before/after public step and public bus; original run and public choice code retained byte-for-byte."
+    },
+    "candidate/precision": {
+      "activeInputRestoredByteIdentical": true,
+      "originalRunByteIdentical": true,
+      "choosePendingByteIdentical": true,
+      "prioritiesByteIdentical": true,
+      "originalActiveInputSha256": "95b2e07e50c0ae6b559a58c6a075bf45be300b5d28e4a0b0e403628d87a50f73",
+      "executedActiveInputSha256": "95b2e07e50c0ae6b559a58c6a075bf45be300b5d28e4a0b0e403628d87a50f73",
+      "originalRunSha256": "8dbcbf4d435f7a14df8076b6ec3756d06d4faffc175582a24602f92ce15b973f",
+      "choosePendingSha256": "e36a556ca7adac34e79ddb5ea1be0114f59a245d04d1239962f3f28df986e46f",
+      "prioritiesSha256": "7199bb48aeda48bb7a606fb1fcabb3b2437f2a9be6a50e5229cddd8e1fde7968",
+      "onlyPolicyChange": "none",
+      "observer": "Read-only GameSession subclass observes before/after public step and public bus; original run and public choice code retained byte-for-byte."
+    },
+    "candidate/area": {
+      "activeInputRestoredByteIdentical": true,
+      "originalRunByteIdentical": true,
+      "choosePendingByteIdentical": true,
+      "prioritiesByteIdentical": true,
+      "originalActiveInputSha256": "95b2e07e50c0ae6b559a58c6a075bf45be300b5d28e4a0b0e403628d87a50f73",
+      "executedActiveInputSha256": "8245fe5ecf6cd39f8cee0fa1e6644842a7b9ede1a7e21ed00a45f0d6fa094e49",
+      "originalRunSha256": "8dbcbf4d435f7a14df8076b6ec3756d06d4faffc175582a24602f92ce15b973f",
+      "choosePendingSha256": "e36a556ca7adac34e79ddb5ea1be0114f59a245d04d1239962f3f28df986e46f",
+      "prioritiesSha256": "7199bb48aeda48bb7a606fb1fcabb3b2437f2a9be6a50e5229cddd8e1fde7968",
+      "onlyPolicyChange": "tool2 while its published cooldown is ready, otherwise tool1",
+      "observer": "Read-only GameSession subclass observes before/after public step and public bus; original run and public choice code retained byte-for-byte."
+    }
+  },
+  "prefixComparisons": [
+    {
+      "seed": 7,
+      "policy": "precision",
+      "bothCoveredThroughWave19": true,
+      "inputPrefixEqual": true,
+      "baselinePrefix": {
+        "inputSha256": "0a0067ca66bcf92b8ce3e40fd50834ee79aa4d382292ea35973741a6afff77a0",
+        "frames": 14233,
+        "capturedThroughWave19": true
+      },
+      "candidatePrefix": {
+        "inputSha256": "0a0067ca66bcf92b8ce3e40fd50834ee79aa4d382292ea35973741a6afff77a0",
+        "frames": 14233,
+        "capturedThroughWave19": true
+      },
+      "teachingComparisons": [
+        {
+          "wave": 5,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          }
+        },
+        {
+          "wave": 10,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC"
+            ],
+            "startedTraits": [
+              "MIMIC"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC"
+            ],
+            "startedTraits": [
+              "MIMIC"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        },
+        {
+          "wave": 15,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "startedTraits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "startedTraits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "seed": 7,
+      "policy": "area",
+      "bothCoveredThroughWave19": true,
+      "inputPrefixEqual": true,
+      "baselinePrefix": {
+        "inputSha256": "3c231db5f433fda86536f28c92fc59d9fc28bc19521a81173ca9a6483b01f49f",
+        "frames": 13649,
+        "capturedThroughWave19": true
+      },
+      "candidatePrefix": {
+        "inputSha256": "3c231db5f433fda86536f28c92fc59d9fc28bc19521a81173ca9a6483b01f49f",
+        "frames": 13649,
+        "capturedThroughWave19": true
+      },
+      "teachingComparisons": [
+        {
+          "wave": 5,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          }
+        },
+        {
+          "wave": 10,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC"
+            ],
+            "startedTraits": [
+              "MIMIC"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC"
+            ],
+            "startedTraits": [
+              "MIMIC"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        },
+        {
+          "wave": 15,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "startedTraits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "startedTraits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "seed": 71,
+      "policy": "precision",
+      "bothCoveredThroughWave19": true,
+      "inputPrefixEqual": true,
+      "baselinePrefix": {
+        "inputSha256": "9fccee5fa03fb60f071b1c6ce4122802fb0ce7d9e63ab61f7f015594e324207b",
+        "frames": 15731,
+        "capturedThroughWave19": true
+      },
+      "candidatePrefix": {
+        "inputSha256": "9fccee5fa03fb60f071b1c6ce4122802fb0ce7d9e63ab61f7f015594e324207b",
+        "frames": 15731,
+        "capturedThroughWave19": true
+      },
+      "teachingComparisons": [
+        {
+          "wave": 5,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          }
+        },
+        {
+          "wave": 10,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        },
+        {
+          "wave": 15,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "seed": 71,
+      "policy": "area",
+      "bothCoveredThroughWave19": true,
+      "inputPrefixEqual": true,
+      "baselinePrefix": {
+        "inputSha256": "5d13fbce2e42bcb0f6b78844d5abd1f85432b9fe38196e0c2b3c1ad176530073",
+        "frames": 13961,
+        "capturedThroughWave19": true
+      },
+      "candidatePrefix": {
+        "inputSha256": "5d13fbce2e42bcb0f6b78844d5abd1f85432b9fe38196e0c2b3c1ad176530073",
+        "frames": 13961,
+        "capturedThroughWave19": true
+      },
+      "teachingComparisons": [
+        {
+          "wave": 5,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          }
+        },
+        {
+          "wave": 10,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        },
+        {
+          "wave": 15,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "seed": 19,
+      "policy": "precision",
+      "bothCoveredThroughWave19": true,
+      "inputPrefixEqual": true,
+      "baselinePrefix": {
+        "inputSha256": "c28d0ef81501c9e0757ad0612078ca7dcfaf835af6bfeed2c59b418b81ff81f0",
+        "frames": 15311,
+        "capturedThroughWave19": true
+      },
+      "candidatePrefix": {
+        "inputSha256": "c28d0ef81501c9e0757ad0612078ca7dcfaf835af6bfeed2c59b418b81ff81f0",
+        "frames": 15311,
+        "capturedThroughWave19": true
+      },
+      "teachingComparisons": [
+        {
+          "wave": 5,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          }
+        },
+        {
+          "wave": 10,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        },
+        {
+          "wave": 15,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "seed": 19,
+      "policy": "area",
+      "bothCoveredThroughWave19": true,
+      "inputPrefixEqual": true,
+      "baselinePrefix": {
+        "inputSha256": "9c6b3f8258e26a66ef257d7d447e3fa65bba636b04fe93ef76aa98f233870584",
+        "frames": 14511,
+        "capturedThroughWave19": true
+      },
+      "candidatePrefix": {
+        "inputSha256": "9c6b3f8258e26a66ef257d7d447e3fa65bba636b04fe93ef76aa98f233870584",
+        "frames": 14511,
+        "capturedThroughWave19": true
+      },
+      "teachingComparisons": [
+        {
+          "wave": 5,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          }
+        },
+        {
+          "wave": 10,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        },
+        {
+          "wave": 15,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "seed": 47,
+      "policy": "precision",
+      "bothCoveredThroughWave19": true,
+      "inputPrefixEqual": true,
+      "baselinePrefix": {
+        "inputSha256": "07e52bb2f3de58f4ac0dd95111156aebe91bde448f24ac2b63bc9a596c2c7f8d",
+        "frames": 15332,
+        "capturedThroughWave19": true
+      },
+      "candidatePrefix": {
+        "inputSha256": "07e52bb2f3de58f4ac0dd95111156aebe91bde448f24ac2b63bc9a596c2c7f8d",
+        "frames": 15332,
+        "capturedThroughWave19": true
+      },
+      "teachingComparisons": [
+        {
+          "wave": 5,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          }
+        },
+        {
+          "wave": 10,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        },
+        {
+          "wave": 15,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "seed": 47,
+      "policy": "area",
+      "bothCoveredThroughWave19": true,
+      "inputPrefixEqual": true,
+      "baselinePrefix": {
+        "inputSha256": "791615dd6b1bf66343fa1d0e95c0d95ab65fa2dff3aae0ca830f40df1e88bf31",
+        "frames": 14447,
+        "capturedThroughWave19": true
+      },
+      "candidatePrefix": {
+        "inputSha256": "791615dd6b1bf66343fa1d0e95c0d95ab65fa2dff3aae0ca830f40df1e88bf31",
+        "frames": 14447,
+        "capturedThroughWave19": true
+      },
+      "teachingComparisons": [
+        {
+          "wave": 5,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          }
+        },
+        {
+          "wave": 10,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        },
+        {
+          "wave": 15,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "seed": 113,
+      "policy": "precision",
+      "bothCoveredThroughWave19": true,
+      "inputPrefixEqual": true,
+      "baselinePrefix": {
+        "inputSha256": "69880ab75cff3c7550465eeaf6d4dec010f270c0fef5445dce24581f3c7a5010",
+        "frames": 15336,
+        "capturedThroughWave19": true
+      },
+      "candidatePrefix": {
+        "inputSha256": "69880ab75cff3c7550465eeaf6d4dec010f270c0fef5445dce24581f3c7a5010",
+        "frames": 15336,
+        "capturedThroughWave19": true
+      },
+      "teachingComparisons": [
+        {
+          "wave": 5,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          }
+        },
+        {
+          "wave": 10,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        },
+        {
+          "wave": 15,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "seed": 113,
+      "policy": "area",
+      "bothCoveredThroughWave19": true,
+      "inputPrefixEqual": true,
+      "baselinePrefix": {
+        "inputSha256": "e3fc12fdb18cc9365d4f3d477197ff334e8cfdd52084c16ec59152fc509145d5",
+        "frames": 14420,
+        "capturedThroughWave19": true
+      },
+      "candidatePrefix": {
+        "inputSha256": "e3fc12fdb18cc9365d4f3d477197ff334e8cfdd52084c16ec59152fc509145d5",
+        "frames": 14420,
+        "capturedThroughWave19": true
+      },
+      "teachingComparisons": [
+        {
+          "wave": 5,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          }
+        },
+        {
+          "wave": 10,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        },
+        {
+          "wave": 15,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "seed": 211,
+      "policy": "precision",
+      "bothCoveredThroughWave19": true,
+      "inputPrefixEqual": true,
+      "baselinePrefix": {
+        "inputSha256": "13a91d771afdab3a4fab818052864cfe5bc44f180cdb813abd4d82ce122ab70c",
+        "frames": 15056,
+        "capturedThroughWave19": true
+      },
+      "candidatePrefix": {
+        "inputSha256": "13a91d771afdab3a4fab818052864cfe5bc44f180cdb813abd4d82ce122ab70c",
+        "frames": 15056,
+        "capturedThroughWave19": true
+      },
+      "teachingComparisons": [
+        {
+          "wave": 5,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          }
+        },
+        {
+          "wave": 10,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        },
+        {
+          "wave": 15,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "seed": 211,
+      "policy": "area",
+      "bothCoveredThroughWave19": true,
+      "inputPrefixEqual": true,
+      "baselinePrefix": {
+        "inputSha256": "99546eed324b12cc2691dc4758ef1e85682eee3956f2bffb80390c34eb5399de",
+        "frames": 14148,
+        "capturedThroughWave19": true
+      },
+      "candidatePrefix": {
+        "inputSha256": "99546eed324b12cc2691dc4758ef1e85682eee3956f2bffb80390c34eb5399de",
+        "frames": 14148,
+        "capturedThroughWave19": true
+      },
+      "teachingComparisons": [
+        {
+          "wave": 5,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 5,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "CARAPACE"
+            ],
+            "startedTraits": [
+              "CARAPACE"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "CARAPACE"
+                ],
+                "tactic": "crystal-charge",
+                "hp": 136,
+                "maxHp": 136
+              }
+            ]
+          }
+        },
+        {
+          "wave": 10,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 10,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "FISSION"
+            ],
+            "startedTraits": [
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "FISSION"
+                ],
+                "tactic": "fission-burst",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        },
+        {
+          "wave": 15,
+          "bothCovered": true,
+          "exactTeachingEqual": true,
+          "baseline": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          },
+          "candidate": {
+            "wave": 15,
+            "covered": true,
+            "warningSeconds": 8,
+            "announcedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "startedTraits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "elites": [
+              {
+                "traits": [
+                  "MIMIC"
+                ],
+                "tactic": "mimic-corrosion",
+                "hp": 170,
+                "maxHp": 170
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "behaviorComparisons": [
+    {
+      "seed": 7,
+      "generations": [
+        {
+          "generation": 4,
+          "bothObserved": true,
+          "precision": {
+            "main": "MIMIC",
+            "traits": [
+              "MIMIC",
+              "CARAPACE"
+            ],
+            "summary": {
+              "precisionDamage": 13239.760000000037,
+              "areaDamage": 0,
+              "precisionRatio": 1,
+              "areaRatio": 0,
+              "scans": 22,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 294,
+              "fromTick": 8833,
+              "toTick": 14233
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.5147915736590536,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.9846145228783849,
+                "probability": 0.37146650875856563
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.08,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.918,
+                "probability": 0.3463347808881373
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.88,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.748,
+                "probability": 0.282198710353297
+              }
+            ],
+            "roll": 0.7717140999156982
+          },
+          "area": {
+            "main": "MIMIC",
+            "traits": [
+              "MIMIC",
+              "CARAPACE"
+            ],
+            "summary": {
+              "precisionDamage": 10637.58400000002,
+              "areaDamage": 2655.8959999999997,
+              "precisionRatio": 0.8002106295717903,
+              "areaRatio": 0.19978937042820957,
+              "scans": 22,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 281,
+              "fromTick": 8249,
+              "toTick": 13649
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.445922475150962,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.9398496088481254,
+                "probability": 0.3534083837195906
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.1036193717261966,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.9380764659672671,
+                "probability": 0.35274163496135463
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.919365619543661,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.7814607766121119,
+                "probability": 0.2938499813190547
+              }
+            ],
+            "roll": 0.7717140999156982
+          },
+          "mainChanged": false,
+          "candidateProbabilitiesChanged": true
+        },
+        {
+          "generation": 5,
+          "bothObserved": true,
+          "precision": {
+            "main": "MIMIC",
+            "traits": [
+              "MIMIC",
+              "CARAPACE"
+            ],
+            "summary": {
+              "precisionDamage": 15162.559999999945,
+              "areaDamage": 0,
+              "precisionRatio": 1,
+              "areaRatio": 0,
+              "scans": 23,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 317,
+              "fromTick": 12530,
+              "toTick": 17930
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.515443467755374,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 1.288126947592068,
+                "probability": 0.438119499787936
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.08,
+                "varietyMultiplier": 1,
+                "rawWeight": 1.08,
+                "probability": 0.3673310776204777
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.88,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.5720000000000001,
+                "probability": 0.19454942259158634
+              }
+            ],
+            "roll": 0.9140502102673054
+          },
+          "area": {
+            "main": "MIMIC",
+            "traits": [
+              "MIMIC",
+              "CARAPACE"
+            ],
+            "summary": {
+              "precisionDamage": 12229.479999999967,
+              "areaDamage": 3665.88,
+              "precisionRatio": 0.769374207315845,
+              "areaRatio": 0.23062579268415484,
+              "scans": 22,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 301,
+              "fromTick": 11658,
+              "toTick": 17058
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.4359349029782495,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 1.2205446675315121,
+                "probability": 0.4166414236062233
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.1073312060121676,
+                "varietyMultiplier": 1,
+                "rawWeight": 1.1073312060121676,
+                "probability": 0.3779952199615785
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.9255520100202792,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.6016088065131815,
+                "probability": 0.20536335643219827
+              }
+            ],
+            "roll": 0.9140502102673054
+          },
+          "mainChanged": false,
+          "candidateProbabilitiesChanged": true
+        },
+        {
+          "generation": 6,
+          "bothObserved": true,
+          "precision": {
+            "main": "CARAPACE",
+            "traits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 15169.92,
+              "areaDamage": 0,
+              "precisionRatio": 1,
+              "areaRatio": 0,
+              "scans": 25,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 316,
+              "fromTick": 15867,
+              "toTick": 21267
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.5154456496845787,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 1.288128802231892,
+                "probability": 0.4381198542234122
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.08,
+                "varietyMultiplier": 1,
+                "rawWeight": 1.08,
+                "probability": 0.36733084590721243
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.88,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.5720000000000001,
+                "probability": 0.19454929986937547
+              }
+            ],
+            "roll": 0.22676214622333646
+          },
+          "area": {
+            "main": "CARAPACE",
+            "traits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 12616.863999999998,
+              "areaDamage": 3382.0479999999993,
+              "precisionRatio": 0.7886076253185217,
+              "areaRatio": 0.21139237468147834,
+              "scans": 24,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 305,
+              "fromTick": 14993,
+              "toTick": 20393
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.4426048761793386,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 1.2262141447524377,
+                "probability": 0.4184446032404526
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.1050538900390348,
+                "varietyMultiplier": 1,
+                "rawWeight": 1.1050538900390348,
+                "probability": 0.37709876252492425
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.9217564833983912,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.5991417142089543,
+                "probability": 0.20445663423462324
+              }
+            ],
+            "roll": 0.22676214622333646
+          },
+          "mainChanged": false,
+          "candidateProbabilitiesChanged": true
+        }
+      ]
+    },
+    {
+      "seed": 71,
+      "generations": [
+        {
+          "generation": 4,
+          "bothObserved": true,
+          "precision": {
+            "main": "CARAPACE",
+            "traits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 15807.104000000001,
+              "areaDamage": 0,
+              "precisionRatio": 1,
+              "areaRatio": 0,
+              "scans": 24,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 262,
+              "fromTick": 10331,
+              "toTick": 15731
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.515626941637913,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 1.2882829003922258,
+                "probability": 0.4636975234632699
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.08,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.918,
+                "probability": 0.3304199150743075
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.88,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.5720000000000001,
+                "probability": 0.20588256146242256
+              }
+            ],
+            "roll": 0.40135334408842027
+          },
+          "area": {
+            "main": "CARAPACE",
+            "traits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 14783.304000000002,
+              "areaDamage": 2409.1040000000003,
+              "precisionRatio": 0.8598739629724934,
+              "areaRatio": 0.14012603702750656,
+              "scans": 23,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 286,
+              "fromTick": 8561,
+              "toTick": 13961
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.4674951139600683,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 1.247370846866058,
+                "probability": 0.4503946667942131
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.0966217627829338,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.9321284983654937,
+                "probability": 0.33656847559448966
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.9077029379715563,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.5900069096815116,
+                "probability": 0.21303685761129734
+              }
+            ],
+            "roll": 0.40135334408842027
+          },
+          "mainChanged": false,
+          "candidateProbabilitiesChanged": true
+        },
+        {
+          "generation": 5,
+          "bothObserved": true,
+          "precision": {
+            "main": "CARAPACE",
+            "traits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 15940.048000000043,
+              "areaDamage": 0,
+              "precisionRatio": 1,
+              "areaRatio": 0,
+              "scans": 28,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 306,
+              "fromTick": 13993,
+              "toTick": 19393
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.5156629620928017,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.9851809253603212,
+                "probability": 0.37160078964675924
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.08,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.918,
+                "probability": 0.3462607893783164
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.88,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.748,
+                "probability": 0.2821384209749244
+              }
+            ],
+            "roll": 0.31318715354427695
+          },
+          "area": {
+            "main": "CARAPACE",
+            "traits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 13744.856000000029,
+              "areaDamage": 2642.0480000000007,
+              "precisionRatio": 0.8387707647521462,
+              "areaRatio": 0.16122923524785376,
+              "scans": 28,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 294,
+              "fromTick": 12035,
+              "toTick": 17435
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.4600299899245817,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.9490194934509781,
+                "probability": 0.356996353410767
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.0991142216775354,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.934247088425905,
+                "probability": 0.35143936036536505
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.9118570361292258,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.7750784807098419,
+                "probability": 0.2915642862238679
+              }
+            ],
+            "roll": 0.31318715354427695
+          },
+          "mainChanged": false,
+          "candidateProbabilitiesChanged": true
+        },
+        {
+          "generation": 6,
+          "bothObserved": true,
+          "precision": {
+            "main": "MIMIC",
+            "traits": [
+              "MIMIC",
+              "CARAPACE"
+            ],
+            "summary": {
+              "precisionDamage": 15243.264000000014,
+              "areaDamage": 0,
+              "precisionRatio": 1,
+              "areaRatio": 0,
+              "scans": 31,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 326,
+              "fromTick": 17565,
+              "toTick": 22965
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.5154672794559492,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.985053731646367,
+                "probability": 0.35017238404111634
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.08,
+                "varietyMultiplier": 1,
+                "rawWeight": 1.08,
+                "probability": 0.3839244120544827
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.88,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.748,
+                "probability": 0.265903203904401
+              }
+            ],
+            "roll": 0.9726696945726871
+          },
+          "area": {
+            "main": "MIMIC",
+            "traits": [
+              "MIMIC",
+              "CARAPACE"
+            ],
+            "summary": {
+              "precisionDamage": 12704.432000000024,
+              "areaDamage": 2802.3480000000004,
+              "precisionRatio": 0.8192824042128671,
+              "areaRatio": 0.18071759578713287,
+              "scans": 31,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 301,
+              "fromTick": 15292,
+              "toTick": 20692
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.453097566783262,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.9445134184091203,
+                "probability": 0.3344293235633453
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.101409974546024,
+                "varietyMultiplier": 1,
+                "rawWeight": 1.101409974546024,
+                "probability": 0.3899825937610961
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.9156832909100401,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.778330797273534,
+                "probability": 0.27558808267555873
+              }
+            ],
+            "roll": 0.9726696945726871
+          },
+          "mainChanged": false,
+          "candidateProbabilitiesChanged": true
+        }
+      ]
+    },
+    {
+      "seed": 19,
+      "generations": [
+        {
+          "generation": 4,
+          "bothObserved": true,
+          "precision": {
+            "main": "CARAPACE",
+            "traits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 14849.600000000004,
+              "areaDamage": 0,
+              "precisionRatio": 1,
+              "areaRatio": 0,
+              "scans": 29,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 361,
+              "fromTick": 9911,
+              "toTick": 15311
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.5153487135870722,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 1.2880464065490114,
+                "probability": 0.4636518682742484
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.08,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.918,
+                "probability": 0.3304480435733155
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.88,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.5720000000000001,
+                "probability": 0.2059000881524362
+              }
+            ],
+            "roll": 0.22833035443909466
+          },
+          "area": {
+            "main": "CARAPACE",
+            "traits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 12180.800000000001,
+              "areaDamage": 3698.4,
+              "precisionRatio": 0.7670915411355737,
+              "areaRatio": 0.2329084588644264,
+              "scans": 26,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 333,
+              "fromTick": 9111,
+              "toTick": 14511
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.4351425444051944,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 1.2198711627444152,
+                "probability": 0.44146505263990515
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.1076013732026468,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.9414611672222498,
+                "probability": 0.3407099179319458
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.9260022886710781,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.6019014876362008,
+                "probability": 0.21782502942814902
+              }
+            ],
+            "roll": 0.22833035443909466
+          },
+          "mainChanged": false,
+          "candidateProbabilitiesChanged": true
+        },
+        {
+          "generation": 5,
+          "bothObserved": true,
+          "precision": {
+            "main": "CARAPACE",
+            "traits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 14138.176000000012,
+              "areaDamage": 0,
+              "precisionRatio": 1,
+              "areaRatio": 0,
+              "scans": 32,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 463,
+              "fromTick": 13921,
+              "toTick": 19321
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.5151179285287055,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.9848266535436586,
+                "probability": 0.37151680673918447
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.08,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.918,
+                "probability": 0.3463070656743269
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.88,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.748,
+                "probability": 0.2821761275864886
+              }
+            ],
+            "roll": 0.08563196286559105
+          },
+          "area": {
+            "main": "CARAPACE",
+            "traits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 11072.511999999999,
+              "areaDamage": 3147.8319999999994,
+              "precisionRatio": 0.7786388289903536,
+              "areaRatio": 0.22136117100964647,
+              "scans": 30,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 405,
+              "fromTick": 12944,
+              "toTick": 18344
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.4387438801737324,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.9351835221129261,
+                "probability": 0.35149892639144364
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.1061949257243793,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.9402656868657223,
+                "probability": 0.35340911344255443
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.9236582095406323,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.7851094781095375,
+                "probability": 0.295091960166002
+              }
+            ],
+            "roll": 0.08563196286559105
+          },
+          "mainChanged": false,
+          "candidateProbabilitiesChanged": true
+        },
+        {
+          "generation": 6,
+          "bothObserved": true,
+          "precision": {
+            "main": "MIMIC",
+            "traits": [
+              "MIMIC",
+              "CARAPACE"
+            ],
+            "summary": {
+              "precisionDamage": 14866.763999999992,
+              "areaDamage": 0,
+              "precisionRatio": 1,
+              "areaRatio": 0,
+              "scans": 32,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 472,
+              "fromTick": 17438,
+              "toTick": 22838
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.5153540123147877,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.9849801080046121,
+                "probability": 0.35015537621533627
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.08,
+                "varietyMultiplier": 1,
+                "rawWeight": 1.08,
+                "probability": 0.3839344604417051
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.88,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.748,
+                "probability": 0.2659101633429587
+              }
+            ],
+            "roll": 0.8283725609071553
+          },
+          "area": {
+            "main": "MIMIC",
+            "traits": [
+              "MIMIC",
+              "CARAPACE"
+            ],
+            "summary": {
+              "precisionDamage": 12066.831999999993,
+              "areaDamage": 2528.7679999999996,
+              "precisionRatio": 0.826744498341966,
+              "areaRatio": 0.173255501658034,
+              "scans": 31,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 411,
+              "fromTick": 16591,
+              "toTick": 21991
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.4554491335261834,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.9460419367920193,
+                "probability": 0.33504732953555244
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.1005096217794479,
+                "varietyMultiplier": 1,
+                "rawWeight": 1.1005096217794479,
+                "probability": 0.38975313415355073
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.9141827029657466,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.7770552975208845,
+                "probability": 0.2751995363108969
+              }
+            ],
+            "roll": 0.8283725609071553
+          },
+          "mainChanged": false,
+          "candidateProbabilitiesChanged": true
+        }
+      ]
+    },
+    {
+      "seed": 47,
+      "generations": [
+        {
+          "generation": 4,
+          "bothObserved": true,
+          "precision": {
+            "main": "MIMIC",
+            "traits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "summary": {
+              "precisionDamage": 17139.439999999995,
+              "areaDamage": 0,
+              "precisionRatio": 1,
+              "areaRatio": 0,
+              "scans": 22,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 348,
+              "fromTick": 9932,
+              "toTick": 15332
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.5159629607415235,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 1.288568516630295,
+                "probability": 0.46375265138072047
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.08,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.918,
+                "probability": 0.3303859503573815
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.88,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.5720000000000001,
+                "probability": 0.2058613982618979
+              }
+            ],
+            "roll": 0.8747729919850826
+          },
+          "area": {
+            "main": "MIMIC",
+            "traits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "summary": {
+              "precisionDamage": 14552.760000000002,
+              "areaDamage": 2194.04,
+              "precisionRatio": 0.8689875080612415,
+              "areaRatio": 0.1310124919387584,
+              "scans": 23,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 344,
+              "fromTick": 9047,
+              "toTick": 14447
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.4705562112021149,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 1.2499727795217976,
+                "probability": 0.45125225005862546
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.0955359595911913,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.9312055656525126,
+                "probability": 0.336174206072368
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.9058932659853187,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.5888306228904572,
+                "probability": 0.21257354386900645
+              }
+            ],
+            "roll": 0.8747729919850826
+          },
+          "mainChanged": false,
+          "candidateProbabilitiesChanged": true
+        },
+        {
+          "generation": 5,
+          "bothObserved": true,
+          "precision": {
+            "main": "CARAPACE",
+            "traits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 18752.8,
+              "areaDamage": 0,
+              "precisionRatio": 1,
+              "areaRatio": 0,
+              "scans": 23,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 329,
+              "fromTick": 13567,
+              "toTick": 18967
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.5163066143261155,
+                "varietyMultiplier": 1,
+                "rawWeight": 1.5163066143261155,
+                "probability": 0.5043752380746453
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.08,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.918,
+                "probability": 0.30535807479696353
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.88,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.5720000000000001,
+                "probability": 0.1902666871283912
+              }
+            ],
+            "roll": 0.38963345950469375
+          },
+          "area": {
+            "main": "CARAPACE",
+            "traits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 16879.2,
+              "areaDamage": 2008.8,
+              "precisionRatio": 0.8936467598475223,
+              "areaRatio": 0.10635324015247777,
+              "scans": 24,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 317,
+              "fromTick": 12666,
+              "toTick": 18066
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.4794991617770328,
+                "varietyMultiplier": 1,
+                "rawWeight": 1.4794991617770328,
+                "probability": 0.4941687946443808
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.092628667225482,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.9287343671416596,
+                "probability": 0.31020736923159664
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.9010477787091367,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.5856810561609388,
+                "probability": 0.19562383612402257
+              }
+            ],
+            "roll": 0.38963345950469375
+          },
+          "mainChanged": false,
+          "candidateProbabilitiesChanged": true
+        },
+        {
+          "generation": 6,
+          "bothObserved": true,
+          "precision": {
+            "main": "CARAPACE",
+            "traits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 16546.080000000005,
+              "areaDamage": 0,
+              "precisionRatio": 1,
+              "areaRatio": 0,
+              "scans": 23,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 305,
+              "fromTick": 16898,
+              "toTick": 22298
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.515819917258248,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.9852829462178613,
+                "probability": 0.35022532928742983
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.08,
+                "varietyMultiplier": 1,
+                "rawWeight": 1.08,
+                "probability": 0.38389313149320337
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.88,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.748,
+                "probability": 0.26588153921936675
+              }
+            ],
+            "roll": 0.2907315012998879
+          },
+          "area": {
+            "main": "CARAPACE",
+            "traits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 14354.112,
+              "areaDamage": 2996.096,
+              "precisionRatio": 0.8273164217973641,
+              "areaRatio": 0.17268357820263597,
+              "scans": 22,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 279,
+              "fromTick": 15846,
+              "toTick": 21246
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.4562609491579817,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.9465696169526882,
+                "probability": 0.33517838225769714
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.1004858837000677,
+                "varietyMultiplier": 1,
+                "rawWeight": 1.1004858837000677,
+                "probability": 0.38967982025822556
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.9141431395001131,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.777021668575096,
+                "probability": 0.27514179748407736
+              }
+            ],
+            "roll": 0.2907315012998879
+          },
+          "mainChanged": false,
+          "candidateProbabilitiesChanged": true
+        }
+      ]
+    },
+    {
+      "seed": 113,
+      "generations": [
+        {
+          "generation": 4,
+          "bothObserved": true,
+          "precision": {
+            "main": "CARAPACE",
+            "traits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 17067.264000000003,
+              "areaDamage": 0,
+              "precisionRatio": 1,
+              "areaRatio": 0,
+              "scans": 25,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 292,
+              "fromTick": 9936,
+              "toTick": 15336
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.5159460861894507,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 1.288554173261033,
+                "probability": 0.4637498831806937
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.08,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.918,
+                "probability": 0.3303876558658545
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.88,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.5720000000000001,
+                "probability": 0.20586246095345184
+              }
+            ],
+            "roll": 0.36334772570990026
+          },
+          "area": {
+            "main": "CARAPACE",
+            "traits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 14358.568000000003,
+              "areaDamage": 2705.56,
+              "precisionRatio": 0.8414475090669736,
+              "areaRatio": 0.15855249093302626,
+              "scans": 25,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 288,
+              "fromTick": 9020,
+              "toTick": 14420
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.4610948528648537,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 1.2419306249351256,
+                "probability": 0.44862757233853373
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.0988058846644324,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.9339850019647675,
+                "probability": 0.33738714193793395
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.9113431411073876,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.592373041719802,
+                "probability": 0.21398528572353218
+              }
+            ],
+            "roll": 0.36334772570990026
+          },
+          "mainChanged": false,
+          "candidateProbabilitiesChanged": true
+        },
+        {
+          "generation": 5,
+          "bothObserved": true,
+          "precision": {
+            "main": "CARAPACE",
+            "traits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 15758.303999999984,
+              "areaDamage": 0,
+              "precisionRatio": 1,
+              "areaRatio": 0,
+              "scans": 27,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 310,
+              "fromTick": 13689,
+              "toTick": 19089
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.5156135689607118,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.9851488198244627,
+                "probability": 0.3715931797030131
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.08,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.918,
+                "probability": 0.3462649826126254
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.88,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.748,
+                "probability": 0.2821418376843614
+              }
+            ],
+            "roll": 0.03250915347598493
+          },
+          "area": {
+            "main": "CARAPACE",
+            "traits": [
+              "CARAPACE",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 13452.131999999985,
+              "areaDamage": 3214.172,
+              "precisionRatio": 0.8071454834857205,
+              "areaRatio": 0.1928545165142795,
+              "scans": 25,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 292,
+              "fromTick": 12542,
+              "toTick": 17942
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.4491510339194646,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.941948172047652,
+                "probability": 0.35414480160601913
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.102868118587214,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.9374379007991319,
+                "probability": 0.35244907230381745
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.9181135309786899,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.7803965013318863,
+                "probability": 0.2934061260901634
+              }
+            ],
+            "roll": 0.03250915347598493
+          },
+          "mainChanged": false,
+          "candidateProbabilitiesChanged": true
+        },
+        {
+          "generation": 6,
+          "bothObserved": true,
+          "precision": {
+            "main": "FISSION",
+            "traits": [
+              "FISSION",
+              "CARAPACE"
+            ],
+            "summary": {
+              "precisionDamage": 14951.03200000007,
+              "areaDamage": 0,
+              "precisionRatio": 1,
+              "areaRatio": 0,
+              "scans": 26,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 325,
+              "fromTick": 17131,
+              "toTick": 22531
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.515379852672742,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.9849969042372824,
+                "probability": 0.3501592563978861
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.08,
+                "varietyMultiplier": 1,
+                "rawWeight": 1.08,
+                "probability": 0.3839321679924962
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.88,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.748,
+                "probability": 0.2659085756096177
+              }
+            ],
+            "roll": 0.4269789776299149
+          },
+          "area": {
+            "main": "FISSION",
+            "traits": [
+              "FISSION",
+              "CARAPACE"
+            ],
+            "summary": {
+              "precisionDamage": 12063.74400000004,
+              "areaDamage": 3984.2559999999994,
+              "precisionRatio": 0.7517288135593226,
+              "areaRatio": 0.2482711864406773,
+              "scans": 26,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 294,
+              "fromTick": 15832,
+              "toTick": 21232
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.4298664697193504,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.9294132053175778,
+                "probability": 0.32858574950926817
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.1094258197932052,
+                "varietyMultiplier": 1,
+                "rawWeight": 1.1094258197932052,
+                "probability": 0.39222760386444244
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.9290430329886754,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.7896865780403741,
+                "probability": 0.2791866466262894
+              }
+            ],
+            "roll": 0.4269789776299149
+          },
+          "mainChanged": false,
+          "candidateProbabilitiesChanged": true
+        }
+      ]
+    },
+    {
+      "seed": 211,
+      "generations": [
+        {
+          "generation": 4,
+          "bothObserved": true,
+          "precision": {
+            "main": "FISSION",
+            "traits": [
+              "FISSION",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 15813.480000000001,
+              "areaDamage": 0,
+              "precisionRatio": 1,
+              "areaRatio": 0,
+              "scans": 23,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 379,
+              "fromTick": 9656,
+              "toTick": 15056
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.5156286828347119,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 1.288284380409505,
+                "probability": 0.46369780915646164
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.08,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.918,
+                "probability": 0.3304197390566229
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.88,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.5720000000000001,
+                "probability": 0.20588245178691542
+              }
+            ],
+            "roll": 0.5737032480537891
+          },
+          "area": {
+            "main": "FISSION",
+            "traits": [
+              "FISSION",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 12942.32,
+              "areaDamage": 2504.4,
+              "precisionRatio": 0.8378684924695987,
+              "areaRatio": 0.1621315075304013,
+              "scans": 23,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 360,
+              "fromTick": 8748,
+              "toTick": 14148
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.4595055321498691,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 1.2405797023273888,
+                "probability": 0.4482327164871685
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.099207092604712,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.9343260287140052,
+                "probability": 0.3375804820516293
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.9120118210078534,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.5928076836551047,
+                "probability": 0.2141868014612021
+              }
+            ],
+            "roll": 0.5737032480537891
+          },
+          "mainChanged": false,
+          "candidateProbabilitiesChanged": true
+        },
+        {
+          "generation": 5,
+          "bothObserved": true,
+          "precision": {
+            "main": "MIMIC",
+            "traits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "summary": {
+              "precisionDamage": 18572.744000000002,
+              "areaDamage": 0,
+              "precisionRatio": 1,
+              "areaRatio": 0,
+              "scans": 26,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 405,
+              "fromTick": 13098,
+              "toTick": 18498
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.5162711897632013,
+                "varietyMultiplier": 1,
+                "rawWeight": 1.5162711897632013,
+                "probability": 0.5111707907880958
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.08,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.7020000000000001,
+                "probability": 0.23666076197707364
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.88,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.748,
+                "probability": 0.2521684472348306
+              }
+            ],
+            "roll": 0.8791152557823807
+          },
+          "area": {
+            "main": "MIMIC",
+            "traits": [
+              "MIMIC",
+              "FISSION"
+            ],
+            "summary": {
+              "precisionDamage": 14776.680000000004,
+              "areaDamage": 2596,
+              "precisionRatio": 0.8505699753866416,
+              "areaRatio": 0.14943002461335841,
+              "scans": 26,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 383,
+              "fromTick": 12333,
+              "toTick": 17733
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.4643112831964165,
+                "varietyMultiplier": 1,
+                "rawWeight": 1.4643112831964165,
+                "probability": 0.4962172179827998
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.0977275179426247,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.713522886662706,
+                "probability": 0.2417944502988113
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.9095458632377076,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.7731139837520514,
+                "probability": 0.26198833171838887
+              }
+            ],
+            "roll": 0.8791152557823807
+          },
+          "mainChanged": false,
+          "candidateProbabilitiesChanged": true
+        },
+        {
+          "generation": 6,
+          "bothObserved": true,
+          "precision": {
+            "main": "FISSION",
+            "traits": [
+              "FISSION",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 19275.544,
+              "areaDamage": 0,
+              "precisionRatio": 1,
+              "areaRatio": 0,
+              "scans": 26,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 337,
+              "fromTick": 16542,
+              "toTick": 21942
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.516405748666122,
+                "varietyMultiplier": 1,
+                "rawWeight": 1.516405748666122,
+                "probability": 0.5043915809896649
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.08,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.918,
+                "probability": 0.3053480058063677
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.88,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.5720000000000001,
+                "probability": 0.19026041320396767
+              }
+            ],
+            "roll": 0.6829975694417953
+          },
+          "area": {
+            "main": "FISSION",
+            "traits": [
+              "FISSION",
+              "MIMIC"
+            ],
+            "summary": {
+              "precisionDamage": 15756.6,
+              "areaDamage": 2999.4,
+              "precisionRatio": 0.840083173384517,
+              "areaRatio": 0.15991682661548304,
+              "scans": 27,
+              "isolations": 0,
+              "repaired": 0,
+              "sampleCount": 321,
+              "fromTick": 15796,
+              "toTick": 21196
+            },
+            "candidates": [
+              {
+                "trait": "CARAPACE",
+                "baseWeight": 1.460926883308715,
+                "varietyMultiplier": 1,
+                "rawWeight": 1.460926883308715,
+                "probability": 0.4889908983197312
+              },
+              {
+                "trait": "FISSION",
+                "baseWeight": 1.0989875501160582,
+                "varietyMultiplier": 0.85,
+                "rawWeight": 0.9341394175986495,
+                "probability": 0.3126684012637946
+              },
+              {
+                "trait": "MIMIC",
+                "baseWeight": 0.9116459168600971,
+                "varietyMultiplier": 0.65,
+                "rawWeight": 0.5925698459590631,
+                "probability": 0.19834070041647409
+              }
+            ],
+            "roll": 0.6829975694417953
+          },
+          "mainChanged": false,
+          "candidateProbabilitiesChanged": true
+        }
+      ]
+    }
+  ],
+  "results": [
+    {
+      "version": "baseline",
+      "policy": "precision",
+      "seed": 7,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 378.01666666666665,
+      "finalPlayerHp": 160,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 99,
+      "inputSha256": "e9a4a78a49d5c2c07d5b9c110929ab5c0283cfc0d582de11e2e379ce03e1d726",
+      "inputFrames": 22681,
+      "beforeWave20": {
+        "inputSha256": "0a0067ca66bcf92b8ce3e40fd50834ee79aa4d382292ea35973741a6afff77a0",
+        "frames": 14233,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 0,
+      "appliedCount": 0,
+      "deferCount": 0,
+      "selectedMains": [],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 0,
+        "maximumRecentPrimaries": 0,
+        "maximumReserved": 14,
+        "maximumProbability": 0
+      },
+      "driverSha256": "f346dbf0ac96898681b599616b7cb921402eb06ea5862bebf3d9bf9158436777"
+    },
+    {
+      "version": "baseline",
+      "policy": "precision",
+      "seed": 71,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 402.9166666666667,
+      "finalPlayerHp": 180,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 114,
+      "inputSha256": "3e127d7589dd7c1a75d7eb531253cbc909c5a3ca736a9da02378fb75be4d21ec",
+      "inputFrames": 24175,
+      "beforeWave20": {
+        "inputSha256": "9fccee5fa03fb60f071b1c6ce4122802fb0ce7d9e63ab61f7f015594e324207b",
+        "frames": 15731,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 0,
+      "appliedCount": 0,
+      "deferCount": 0,
+      "selectedMains": [],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 0,
+        "maximumRecentPrimaries": 0,
+        "maximumReserved": 13,
+        "maximumProbability": 0
+      },
+      "driverSha256": "f346dbf0ac96898681b599616b7cb921402eb06ea5862bebf3d9bf9158436777"
+    },
+    {
+      "version": "baseline",
+      "policy": "precision",
+      "seed": 19,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 407,
+      "finalPlayerHp": 240,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 132,
+      "inputSha256": "bf4fa332c7db0f6452abb461d9e2254361c8662d543139d57046e7e5122ca3da",
+      "inputFrames": 24420,
+      "beforeWave20": {
+        "inputSha256": "c28d0ef81501c9e0757ad0612078ca7dcfaf835af6bfeed2c59b418b81ff81f0",
+        "frames": 15311,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 0,
+      "appliedCount": 0,
+      "deferCount": 0,
+      "selectedMains": [],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 0,
+        "maximumRecentPrimaries": 0,
+        "maximumReserved": 13,
+        "maximumProbability": 0
+      },
+      "driverSha256": "f346dbf0ac96898681b599616b7cb921402eb06ea5862bebf3d9bf9158436777"
+    },
+    {
+      "version": "baseline",
+      "policy": "precision",
+      "seed": 47,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 395.26666666666665,
+      "finalPlayerHp": 180,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 105,
+      "inputSha256": "e7d868b523cb3cfc9a118de8a3bf54d928cb571810806c5fda353f3eb694e1fb",
+      "inputFrames": 23716,
+      "beforeWave20": {
+        "inputSha256": "07e52bb2f3de58f4ac0dd95111156aebe91bde448f24ac2b63bc9a596c2c7f8d",
+        "frames": 15332,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 0,
+      "appliedCount": 0,
+      "deferCount": 0,
+      "selectedMains": [],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 0,
+        "maximumRecentPrimaries": 0,
+        "maximumReserved": 13,
+        "maximumProbability": 0
+      },
+      "driverSha256": "f346dbf0ac96898681b599616b7cb921402eb06ea5862bebf3d9bf9158436777"
+    },
+    {
+      "version": "baseline",
+      "policy": "precision",
+      "seed": 113,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 391.9166666666667,
+      "finalPlayerHp": 160,
+      "finalTissueHp": 100,
+      "playerDamage": 8,
+      "organDamage": 102,
+      "inputSha256": "c0d207bb508c676b48d30889749cff76a574b4d0811ce24c92a91fbd659e042f",
+      "inputFrames": 23515,
+      "beforeWave20": {
+        "inputSha256": "69880ab75cff3c7550465eeaf6d4dec010f270c0fef5445dce24581f3c7a5010",
+        "frames": 15336,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 0,
+      "appliedCount": 0,
+      "deferCount": 0,
+      "selectedMains": [],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 0,
+        "maximumRecentPrimaries": 0,
+        "maximumReserved": 13,
+        "maximumProbability": 0
+      },
+      "driverSha256": "f346dbf0ac96898681b599616b7cb921402eb06ea5862bebf3d9bf9158436777"
+    },
+    {
+      "version": "baseline",
+      "policy": "precision",
+      "seed": 211,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 392.98333333333335,
+      "finalPlayerHp": 200,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 105,
+      "inputSha256": "6abb8bc7aa2a8d1dd2b1f519efc7b8f22d08be2db081088fa21dc748c8cf157a",
+      "inputFrames": 23579,
+      "beforeWave20": {
+        "inputSha256": "13a91d771afdab3a4fab818052864cfe5bc44f180cdb813abd4d82ce122ab70c",
+        "frames": 15056,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 0,
+      "appliedCount": 0,
+      "deferCount": 0,
+      "selectedMains": [],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 0,
+        "maximumRecentPrimaries": 0,
+        "maximumReserved": 12,
+        "maximumProbability": 0
+      },
+      "driverSha256": "f346dbf0ac96898681b599616b7cb921402eb06ea5862bebf3d9bf9158436777"
+    },
+    {
+      "version": "baseline",
+      "policy": "area",
+      "seed": 7,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 365.9,
+      "finalPlayerHp": 160,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 90,
+      "inputSha256": "817d2c36a03fceb6eab06b7af0536796f089e40fcd14cf46f193914e78bc9513",
+      "inputFrames": 21954,
+      "beforeWave20": {
+        "inputSha256": "3c231db5f433fda86536f28c92fc59d9fc28bc19521a81173ca9a6483b01f49f",
+        "frames": 13649,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 0,
+      "appliedCount": 0,
+      "deferCount": 0,
+      "selectedMains": [],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 0,
+        "maximumRecentPrimaries": 0,
+        "maximumReserved": 14,
+        "maximumProbability": 0
+      },
+      "driverSha256": "b7f9ee803dec91420636d0ed35ee1d52235357f107e8b72d15d0aa3cdbcabb0e"
+    },
+    {
+      "version": "baseline",
+      "policy": "area",
+      "seed": 71,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 374.0333333333333,
+      "finalPlayerHp": 180,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 108,
+      "inputSha256": "8b6e090ba9f9fa8a270a2b222fc5e62c26511f9b89654650957775581e97ba46",
+      "inputFrames": 22442,
+      "beforeWave20": {
+        "inputSha256": "5d13fbce2e42bcb0f6b78844d5abd1f85432b9fe38196e0c2b3c1ad176530073",
+        "frames": 13961,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 0,
+      "appliedCount": 0,
+      "deferCount": 0,
+      "selectedMains": [],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 0,
+        "maximumRecentPrimaries": 0,
+        "maximumReserved": 15,
+        "maximumProbability": 0
+      },
+      "driverSha256": "b7f9ee803dec91420636d0ed35ee1d52235357f107e8b72d15d0aa3cdbcabb0e"
+    },
+    {
+      "version": "baseline",
+      "policy": "area",
+      "seed": 19,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 383.3333333333333,
+      "finalPlayerHp": 240,
+      "finalTissueHp": 100,
+      "playerDamage": 8,
+      "organDamage": 126,
+      "inputSha256": "4f7c6557600a72aced254a05953504b2741cc66aab8d33d1730756750ad7be9b",
+      "inputFrames": 23000,
+      "beforeWave20": {
+        "inputSha256": "9c6b3f8258e26a66ef257d7d447e3fa65bba636b04fe93ef76aa98f233870584",
+        "frames": 14511,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 0,
+      "appliedCount": 0,
+      "deferCount": 0,
+      "selectedMains": [],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 0,
+        "maximumRecentPrimaries": 0,
+        "maximumReserved": 13,
+        "maximumProbability": 0
+      },
+      "driverSha256": "b7f9ee803dec91420636d0ed35ee1d52235357f107e8b72d15d0aa3cdbcabb0e"
+    },
+    {
+      "version": "baseline",
+      "policy": "area",
+      "seed": 47,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 373.65,
+      "finalPlayerHp": 180,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 99,
+      "inputSha256": "c797cb46f10351d3b40a88ca3dc02a3a0704fd7b3fbfba386b4ddfb6c56c016a",
+      "inputFrames": 22419,
+      "beforeWave20": {
+        "inputSha256": "791615dd6b1bf66343fa1d0e95c0d95ab65fa2dff3aae0ca830f40df1e88bf31",
+        "frames": 14447,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 0,
+      "appliedCount": 0,
+      "deferCount": 0,
+      "selectedMains": [],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 0,
+        "maximumRecentPrimaries": 0,
+        "maximumReserved": 13,
+        "maximumProbability": 0
+      },
+      "driverSha256": "b7f9ee803dec91420636d0ed35ee1d52235357f107e8b72d15d0aa3cdbcabb0e"
+    },
+    {
+      "version": "baseline",
+      "policy": "area",
+      "seed": 113,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 374.3666666666667,
+      "finalPlayerHp": 160,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 96,
+      "inputSha256": "d791c61659fd5df00bf8ded061a5575145d6c3b5201a58d6b7c500e000a72f85",
+      "inputFrames": 22462,
+      "beforeWave20": {
+        "inputSha256": "e3fc12fdb18cc9365d4f3d477197ff334e8cfdd52084c16ec59152fc509145d5",
+        "frames": 14420,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 0,
+      "appliedCount": 0,
+      "deferCount": 0,
+      "selectedMains": [],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 0,
+        "maximumRecentPrimaries": 0,
+        "maximumReserved": 13,
+        "maximumProbability": 0
+      },
+      "driverSha256": "b7f9ee803dec91420636d0ed35ee1d52235357f107e8b72d15d0aa3cdbcabb0e"
+    },
+    {
+      "version": "baseline",
+      "policy": "area",
+      "seed": 211,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 373.5333333333333,
+      "finalPlayerHp": 200,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 96,
+      "inputSha256": "f595e42cbc34455ecd9b023ded01921c3646ab4e62572a7a3503d4567fd7267c",
+      "inputFrames": 22412,
+      "beforeWave20": {
+        "inputSha256": "99546eed324b12cc2691dc4758ef1e85682eee3956f2bffb80390c34eb5399de",
+        "frames": 14148,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 0,
+      "appliedCount": 0,
+      "deferCount": 0,
+      "selectedMains": [],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 0,
+        "maximumRecentPrimaries": 0,
+        "maximumReserved": 13,
+        "maximumProbability": 0
+      },
+      "driverSha256": "b7f9ee803dec91420636d0ed35ee1d52235357f107e8b72d15d0aa3cdbcabb0e"
+    },
+    {
+      "version": "candidate",
+      "policy": "precision",
+      "seed": 7,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 371.1166666666667,
+      "finalPlayerHp": 160,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 99,
+      "inputSha256": "418678db559209d299035bcf4f56f18c98938cbfe22288f1d69387867b18444f",
+      "inputFrames": 22267,
+      "beforeWave20": {
+        "inputSha256": "0a0067ca66bcf92b8ce3e40fd50834ee79aa4d382292ea35973741a6afff77a0",
+        "frames": 14233,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 3,
+      "appliedCount": 3,
+      "deferCount": 0,
+      "selectedMains": [
+        {
+          "generation": 4,
+          "main": "MIMIC",
+          "traits": [
+            "MIMIC",
+            "CARAPACE"
+          ]
+        },
+        {
+          "generation": 5,
+          "main": "MIMIC",
+          "traits": [
+            "MIMIC",
+            "CARAPACE"
+          ]
+        },
+        {
+          "generation": 6,
+          "main": "CARAPACE",
+          "traits": [
+            "CARAPACE",
+            "MIMIC"
+          ]
+        }
+      ],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 329,
+        "maximumRecentPrimaries": 3,
+        "maximumReserved": 14,
+        "maximumProbability": 0.4381198542234122
+      },
+      "driverSha256": "00626ca71a7bfe5ed7958efb75095579480f8f6b420c55e498cfc5fc8bb82f7d"
+    },
+    {
+      "version": "candidate",
+      "policy": "precision",
+      "seed": 71,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 399.23333333333335,
+      "finalPlayerHp": 180,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 111,
+      "inputSha256": "f23579d714baae512210bdb96b0c11f51dd9421166618c0e00fd316b53390c79",
+      "inputFrames": 23954,
+      "beforeWave20": {
+        "inputSha256": "9fccee5fa03fb60f071b1c6ce4122802fb0ce7d9e63ab61f7f015594e324207b",
+        "frames": 15731,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 3,
+      "appliedCount": 3,
+      "deferCount": 0,
+      "selectedMains": [
+        {
+          "generation": 4,
+          "main": "CARAPACE",
+          "traits": [
+            "CARAPACE",
+            "MIMIC"
+          ]
+        },
+        {
+          "generation": 5,
+          "main": "CARAPACE",
+          "traits": [
+            "CARAPACE",
+            "MIMIC"
+          ]
+        },
+        {
+          "generation": 6,
+          "main": "MIMIC",
+          "traits": [
+            "MIMIC",
+            "CARAPACE"
+          ]
+        }
+      ],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 362,
+        "maximumRecentPrimaries": 3,
+        "maximumReserved": 13,
+        "maximumProbability": 0.4636975234632699
+      },
+      "driverSha256": "00626ca71a7bfe5ed7958efb75095579480f8f6b420c55e498cfc5fc8bb82f7d"
+    },
+    {
+      "version": "candidate",
+      "policy": "precision",
+      "seed": 19,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 399.6166666666667,
+      "finalPlayerHp": 240,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 126,
+      "inputSha256": "e3cddf884dd3677575f093d378d1db5a6bd35697374105aabe76aa2c8dcecb2f",
+      "inputFrames": 23977,
+      "beforeWave20": {
+        "inputSha256": "c28d0ef81501c9e0757ad0612078ca7dcfaf835af6bfeed2c59b418b81ff81f0",
+        "frames": 15311,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 3,
+      "appliedCount": 3,
+      "deferCount": 0,
+      "selectedMains": [
+        {
+          "generation": 4,
+          "main": "CARAPACE",
+          "traits": [
+            "CARAPACE",
+            "MIMIC"
+          ]
+        },
+        {
+          "generation": 5,
+          "main": "CARAPACE",
+          "traits": [
+            "CARAPACE",
+            "MIMIC"
+          ]
+        },
+        {
+          "generation": 6,
+          "main": "MIMIC",
+          "traits": [
+            "MIMIC",
+            "CARAPACE"
+          ]
+        }
+      ],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 484,
+        "maximumRecentPrimaries": 3,
+        "maximumReserved": 13,
+        "maximumProbability": 0.4636518682742484
+      },
+      "driverSha256": "00626ca71a7bfe5ed7958efb75095579480f8f6b420c55e498cfc5fc8bb82f7d"
+    },
+    {
+      "version": "candidate",
+      "policy": "precision",
+      "seed": 47,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 388.31666666666666,
+      "finalPlayerHp": 180,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 102,
+      "inputSha256": "68bc0193770848a4e8c382fc2411d98c9914b8c7c89514fedc1e468e9d1dc584",
+      "inputFrames": 23299,
+      "beforeWave20": {
+        "inputSha256": "07e52bb2f3de58f4ac0dd95111156aebe91bde448f24ac2b63bc9a596c2c7f8d",
+        "frames": 15332,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 3,
+      "appliedCount": 3,
+      "deferCount": 0,
+      "selectedMains": [
+        {
+          "generation": 4,
+          "main": "MIMIC",
+          "traits": [
+            "MIMIC",
+            "FISSION"
+          ]
+        },
+        {
+          "generation": 5,
+          "main": "CARAPACE",
+          "traits": [
+            "CARAPACE",
+            "MIMIC"
+          ]
+        },
+        {
+          "generation": 6,
+          "main": "CARAPACE",
+          "traits": [
+            "CARAPACE",
+            "MIMIC"
+          ]
+        }
+      ],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 372,
+        "maximumRecentPrimaries": 3,
+        "maximumReserved": 13,
+        "maximumProbability": 0.5043752380746453
+      },
+      "driverSha256": "00626ca71a7bfe5ed7958efb75095579480f8f6b420c55e498cfc5fc8bb82f7d"
+    },
+    {
+      "version": "candidate",
+      "policy": "precision",
+      "seed": 113,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 394.6166666666667,
+      "finalPlayerHp": 160,
+      "finalTissueHp": 100,
+      "playerDamage": 8,
+      "organDamage": 105,
+      "inputSha256": "3f142801b9990947466b5317fd5253d98fac0ae26010ed90a081ba2e68244635",
+      "inputFrames": 23677,
+      "beforeWave20": {
+        "inputSha256": "69880ab75cff3c7550465eeaf6d4dec010f270c0fef5445dce24581f3c7a5010",
+        "frames": 15336,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 3,
+      "appliedCount": 3,
+      "deferCount": 0,
+      "selectedMains": [
+        {
+          "generation": 4,
+          "main": "CARAPACE",
+          "traits": [
+            "CARAPACE",
+            "MIMIC"
+          ]
+        },
+        {
+          "generation": 5,
+          "main": "CARAPACE",
+          "traits": [
+            "CARAPACE",
+            "MIMIC"
+          ]
+        },
+        {
+          "generation": 6,
+          "main": "FISSION",
+          "traits": [
+            "FISSION",
+            "CARAPACE"
+          ]
+        }
+      ],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 371,
+        "maximumRecentPrimaries": 3,
+        "maximumReserved": 13,
+        "maximumProbability": 0.4637498831806937
+      },
+      "driverSha256": "00626ca71a7bfe5ed7958efb75095579480f8f6b420c55e498cfc5fc8bb82f7d"
+    },
+    {
+      "version": "candidate",
+      "policy": "precision",
+      "seed": 211,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 382.0833333333333,
+      "finalPlayerHp": 200,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 99,
+      "inputSha256": "1b2c1695e2847f6ea9e52b993cc15fc5276229ccba398811ddd7c73b566aa2cd",
+      "inputFrames": 22925,
+      "beforeWave20": {
+        "inputSha256": "13a91d771afdab3a4fab818052864cfe5bc44f180cdb813abd4d82ce122ab70c",
+        "frames": 15056,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 3,
+      "appliedCount": 3,
+      "deferCount": 0,
+      "selectedMains": [
+        {
+          "generation": 4,
+          "main": "FISSION",
+          "traits": [
+            "FISSION",
+            "MIMIC"
+          ]
+        },
+        {
+          "generation": 5,
+          "main": "MIMIC",
+          "traits": [
+            "MIMIC",
+            "FISSION"
+          ]
+        },
+        {
+          "generation": 6,
+          "main": "FISSION",
+          "traits": [
+            "FISSION",
+            "MIMIC"
+          ]
+        }
+      ],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 496,
+        "maximumRecentPrimaries": 3,
+        "maximumReserved": 12,
+        "maximumProbability": 0.5111707907880958
+      },
+      "driverSha256": "00626ca71a7bfe5ed7958efb75095579480f8f6b420c55e498cfc5fc8bb82f7d"
+    },
+    {
+      "version": "candidate",
+      "policy": "area",
+      "seed": 7,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 356.65,
+      "finalPlayerHp": 160,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 90,
+      "inputSha256": "399c3ed451344fcc5e0760f49fc44dd194ba2d53083447a487a362e916c9a6ed",
+      "inputFrames": 21399,
+      "beforeWave20": {
+        "inputSha256": "3c231db5f433fda86536f28c92fc59d9fc28bc19521a81173ca9a6483b01f49f",
+        "frames": 13649,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 3,
+      "appliedCount": 3,
+      "deferCount": 0,
+      "selectedMains": [
+        {
+          "generation": 4,
+          "main": "MIMIC",
+          "traits": [
+            "MIMIC",
+            "CARAPACE"
+          ]
+        },
+        {
+          "generation": 5,
+          "main": "MIMIC",
+          "traits": [
+            "MIMIC",
+            "CARAPACE"
+          ]
+        },
+        {
+          "generation": 6,
+          "main": "CARAPACE",
+          "traits": [
+            "CARAPACE",
+            "MIMIC"
+          ]
+        }
+      ],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 322,
+        "maximumRecentPrimaries": 3,
+        "maximumReserved": 14,
+        "maximumProbability": 0.4184446032404526
+      },
+      "driverSha256": "efe9d25eb7a0f26a9f39097388d1848e56fbf2173e4fc435b735cfdf1f9c3382"
+    },
+    {
+      "version": "candidate",
+      "policy": "area",
+      "seed": 71,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 362.45,
+      "finalPlayerHp": 180,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 102,
+      "inputSha256": "86d067ccff1dd84d2d7140e694f93506e09debbb3f68f1bb7c8c2901221ece53",
+      "inputFrames": 21747,
+      "beforeWave20": {
+        "inputSha256": "5d13fbce2e42bcb0f6b78844d5abd1f85432b9fe38196e0c2b3c1ad176530073",
+        "frames": 13961,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 3,
+      "appliedCount": 3,
+      "deferCount": 0,
+      "selectedMains": [
+        {
+          "generation": 4,
+          "main": "CARAPACE",
+          "traits": [
+            "CARAPACE",
+            "MIMIC"
+          ]
+        },
+        {
+          "generation": 5,
+          "main": "CARAPACE",
+          "traits": [
+            "CARAPACE",
+            "MIMIC"
+          ]
+        },
+        {
+          "generation": 6,
+          "main": "MIMIC",
+          "traits": [
+            "MIMIC",
+            "CARAPACE"
+          ]
+        }
+      ],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 353,
+        "maximumRecentPrimaries": 3,
+        "maximumReserved": 15,
+        "maximumProbability": 0.4503946667942131
+      },
+      "driverSha256": "efe9d25eb7a0f26a9f39097388d1848e56fbf2173e4fc435b735cfdf1f9c3382"
+    },
+    {
+      "version": "candidate",
+      "policy": "area",
+      "seed": 19,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 383.3833333333333,
+      "finalPlayerHp": 240,
+      "finalTissueHp": 100,
+      "playerDamage": 8,
+      "organDamage": 129,
+      "inputSha256": "2598ff9b33e4361c8c1b4da1ba56463931677e52a4f9a3119a032410733d267c",
+      "inputFrames": 23003,
+      "beforeWave20": {
+        "inputSha256": "9c6b3f8258e26a66ef257d7d447e3fa65bba636b04fe93ef76aa98f233870584",
+        "frames": 14511,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 3,
+      "appliedCount": 3,
+      "deferCount": 0,
+      "selectedMains": [
+        {
+          "generation": 4,
+          "main": "CARAPACE",
+          "traits": [
+            "CARAPACE",
+            "MIMIC"
+          ]
+        },
+        {
+          "generation": 5,
+          "main": "CARAPACE",
+          "traits": [
+            "CARAPACE",
+            "MIMIC"
+          ]
+        },
+        {
+          "generation": 6,
+          "main": "MIMIC",
+          "traits": [
+            "MIMIC",
+            "CARAPACE"
+          ]
+        }
+      ],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 439,
+        "maximumRecentPrimaries": 3,
+        "maximumReserved": 13,
+        "maximumProbability": 0.44146505263990515
+      },
+      "driverSha256": "efe9d25eb7a0f26a9f39097388d1848e56fbf2173e4fc435b735cfdf1f9c3382"
+    },
+    {
+      "version": "candidate",
+      "policy": "area",
+      "seed": 47,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 370.5833333333333,
+      "finalPlayerHp": 180,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 99,
+      "inputSha256": "344ce6712b58917cafded94ca6401165f1f30229c10b2147b95d21718b7a7688",
+      "inputFrames": 22235,
+      "beforeWave20": {
+        "inputSha256": "791615dd6b1bf66343fa1d0e95c0d95ab65fa2dff3aae0ca830f40df1e88bf31",
+        "frames": 14447,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 3,
+      "appliedCount": 3,
+      "deferCount": 0,
+      "selectedMains": [
+        {
+          "generation": 4,
+          "main": "MIMIC",
+          "traits": [
+            "MIMIC",
+            "FISSION"
+          ]
+        },
+        {
+          "generation": 5,
+          "main": "CARAPACE",
+          "traits": [
+            "CARAPACE",
+            "MIMIC"
+          ]
+        },
+        {
+          "generation": 6,
+          "main": "CARAPACE",
+          "traits": [
+            "CARAPACE",
+            "MIMIC"
+          ]
+        }
+      ],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 366,
+        "maximumRecentPrimaries": 3,
+        "maximumReserved": 13,
+        "maximumProbability": 0.4941687946443808
+      },
+      "driverSha256": "efe9d25eb7a0f26a9f39097388d1848e56fbf2173e4fc435b735cfdf1f9c3382"
+    },
+    {
+      "version": "candidate",
+      "policy": "area",
+      "seed": 113,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 370.06666666666666,
+      "finalPlayerHp": 160,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 96,
+      "inputSha256": "2d70b0cdd166e18257a8e1fad40e3d7e15580bf5e681b66bdca6cd2e24a5a2da",
+      "inputFrames": 22204,
+      "beforeWave20": {
+        "inputSha256": "e3fc12fdb18cc9365d4f3d477197ff334e8cfdd52084c16ec59152fc509145d5",
+        "frames": 14420,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 3,
+      "appliedCount": 3,
+      "deferCount": 0,
+      "selectedMains": [
+        {
+          "generation": 4,
+          "main": "CARAPACE",
+          "traits": [
+            "CARAPACE",
+            "MIMIC"
+          ]
+        },
+        {
+          "generation": 5,
+          "main": "CARAPACE",
+          "traits": [
+            "CARAPACE",
+            "MIMIC"
+          ]
+        },
+        {
+          "generation": 6,
+          "main": "FISSION",
+          "traits": [
+            "FISSION",
+            "CARAPACE"
+          ]
+        }
+      ],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 390,
+        "maximumRecentPrimaries": 3,
+        "maximumReserved": 13,
+        "maximumProbability": 0.44862757233853373
+      },
+      "driverSha256": "efe9d25eb7a0f26a9f39097388d1848e56fbf2173e4fc435b735cfdf1f9c3382"
+    },
+    {
+      "version": "candidate",
+      "policy": "area",
+      "seed": 211,
+      "stop": "thirty-waves-cleared",
+      "measurementError": null,
+      "clearedWaves": 30,
+      "elapsed": 368.4,
+      "finalPlayerHp": 200,
+      "finalTissueHp": 100,
+      "playerDamage": 0,
+      "organDamage": 96,
+      "inputSha256": "79a4a284b19ce79f2a7db55966f8f5e9b0d7e644c460ae50231abcb7830422bf",
+      "inputFrames": 22104,
+      "beforeWave20": {
+        "inputSha256": "99546eed324b12cc2691dc4758ef1e85682eee3956f2bffb80390c34eb5399de",
+        "frames": 14148,
+        "capturedThroughWave19": true
+      },
+      "warningCount": 3,
+      "appliedCount": 3,
+      "deferCount": 0,
+      "selectedMains": [
+        {
+          "generation": 4,
+          "main": "FISSION",
+          "traits": [
+            "FISSION",
+            "MIMIC"
+          ]
+        },
+        {
+          "generation": 5,
+          "main": "MIMIC",
+          "traits": [
+            "MIMIC",
+            "FISSION"
+          ]
+        },
+        {
+          "generation": 6,
+          "main": "FISSION",
+          "traits": [
+            "FISSION",
+            "MIMIC"
+          ]
+        }
+      ],
+      "observedViolationKinds": 0,
+      "bounds": {
+        "maximumHistoryBins": 489,
+        "maximumRecentPrimaries": 3,
+        "maximumReserved": 13,
+        "maximumProbability": 0.4962172179827998
+      },
+      "driverSha256": "efe9d25eb7a0f26a9f39097388d1848e56fbf2173e4fc435b735cfdf1f9c3382"
+    }
+  ]
+}

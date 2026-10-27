@@ -7,6 +7,8 @@ import type { EnemyTactic } from './enemyTacticsTypes';
 import { ENEMY_TACTIC_INFO } from './enemyTacticInfo';
 import { STANDOFF_BALANCE } from './enemyPositioning';
 import { clipChargeEnd } from './enemyTactics';
+import { chooseEndlessEvolution } from './endlessEvolution';
+import { recordEndlessBehavior } from './endlessBehavior';
 import { activeWorld, type GameEvent, type GameState, type Target, type Vec } from './types';
 export type { EndlessHost, EndlessState } from './endlessTypes';
 
@@ -38,12 +40,12 @@ export function endlessSupportTactics(seed: number, wave: number): EnemyTactic[]
   return tactics;
 }
 
-function wavePlan(seed: number, wave: number): Pick<EndlessState, 'traits' | 'title' | 'eliteWave' | 'eliteRemaining' | 'warningSeconds' | 'totalToSpawn' | 'formation' | 'formationLabel' | 'batchSchedule' | 'supportRemaining'> {
+function wavePlan(seed: number, wave: number, inheritedTraits?: readonly TraitId[]): Pick<EndlessState, 'traits' | 'title' | 'eliteWave' | 'eliteRemaining' | 'warningSeconds' | 'totalToSpawn' | 'formation' | 'formationLabel' | 'batchSchedule' | 'supportRemaining'> {
   const eliteWave = wave % 5 === 0;
   const generation = Math.floor(wave / 5);
   const offset = new SeedRng((seed ^ 0x454e444c) >>> 0).int(0, 2);
-  const traits: TraitId[] = generation === 0 ? [] : [TRAIT_ORDER[(offset + generation - 1) % 3]];
-  if (generation >= 3) traits.push(TRAIT_ORDER[(offset + generation - 2) % 3]);
+  const traits: TraitId[] = inheritedTraits ? [...inheritedTraits] : generation === 0 ? [] : [TRAIT_ORDER[(offset + generation - 1) % 3]];
+  if (!inheritedTraits && generation >= 3) traits.push(TRAIT_ORDER[(offset + generation - 2) % 3]);
   const formation = traits[0] === 'FISSION' && wave % 2 === 1 ? 'fission-pack' : FORMATIONS[(wave - 1) % FORMATIONS.length];
   const formationLabel = `${FORMATION_LABELS[formation]}${wave >= 16 ? ' · 混编支援' : ''}`;
   const title = eliteWave ? `精英围猎 · ${TRAITS[traits[0]].name}` : traits.length ? `${TRAITS[traits[0]].name} · ${formationLabel}` : formationLabel;
@@ -100,6 +102,7 @@ export function initializeEndless(state: GameState): void {
     phaseStartedAt: state.elapsed, ...plan, remainingToSpawn: plan.totalToSpawn,
     spawnedIds: [], creditedKillIds: [], kills: 0, score: 0, combo: 0, bestCombo: 0, lastKillAt: -1000,
     nextSpawnAt: state.elapsed + plan.warningSeconds, batchSerial: 0, spawnSerial: 0, pendingChildren: 0, directions: [], batchIndex: 0, batchMemberIndex: 0,
+    evolution: { history: [], recentPrimaries: [] },
   };
   battle.stage = 0; battle.stageLabel = `第 1 波 · ${plan.title}`;
   battle.objective = '连续清场成长；普通感染体追击你，潜伏体侵蚀中央组织。每 5 波迎战精英。';
@@ -139,18 +142,52 @@ export class EndlessDirector {
     if (e.combo > 0 && now - e.lastKillAt > ENDLESS_BALANCE.comboSeconds) e.combo = 0;
     if (now + 1e-9 < e.phaseUntil || e.phase === 'combat') return;
     if (e.phase === 'intermission') {
-      const wave = e.wave + 1, plan = wavePlan(this.state.seed, wave);
+      const wave = e.wave + 1, evolution = e.evolution ??= { history: [], recentPrimaries: [] };
+      const previousTraits = [...e.traits];
+      const generationBoundary = wave >= 20 && wave % 5 === 0;
+      const decision = generationBoundary ? chooseEndlessEvolution({ seed: this.state.seed, generation: Math.floor(wave / 5),
+        tick: this.state.tick, organId: this.state.battle!.organId, integrity: this.state.tissue.hp,
+        history: evolution.history, previousTraits, recentPrimaries: evolution.recentPrimaries,
+        counterAvailable: { CARAPACE: true, FISSION: true, MIMIC: true } }) : undefined;
+      const inherited = decision?.kind === 'warn' ? decision.traits : wave >= 20 && previousTraits.length ? previousTraits : undefined;
+      const plan = wavePlan(this.state.seed, wave, inherited);
       Object.assign(e, plan, { wave, phase: 'warning', phaseUntil: now + plan.warningSeconds, phaseStartedAt: now,
         remainingToSpawn: plan.totalToSpawn, spawnedIds: [], creditedKillIds: [], nextSpawnAt: now + plan.warningSeconds,
         spawnSerial: 0, batchSerial: 0, pendingChildren: 0, directions: [], batchIndex: 0, batchMemberIndex: 0 });
+      if (decision?.kind === 'warn') {
+        // Announce one immutable future generation. The active set stays old
+        // until the real warning expires, before the first new body is born.
+        e.traits = previousTraits;
+        evolution.pending = { decision, warnedAt: now, appliesAt: e.phaseUntil };
+      } else delete evolution.pending;
       this.state.battle!.traits = [...e.traits];
       this.state.battle!.stage = wave - 1;
       this.state.battle!.stageLabel = `第 ${wave} 波 · ${e.title}`;
-      this.host.emit('ENDLESS_WAVE_WARNING', { wave, title: e.title, duration: e.warningSeconds, traits: e.traits.join('+'), elite: e.eliteWave, formation: e.formation, supports: e.supportRemaining });
-      const counter = e.traits.map(trait => `${TRAITS[trait].name}：${TRAITS[trait].counter}`).join('；');
+      this.host.emit('ENDLESS_WAVE_WARNING', { wave, title: e.title, duration: e.warningSeconds, traits: plan.traits.join('+'), elite: e.eliteWave, formation: e.formation, supports: e.supportRemaining });
+      if (decision?.kind === 'warn') this.host.emit('ENDLESS_EVOLUTION_WARNING', { wave, generation: decision.generation, trait: decision.main,
+        traits: decision.traits.join('+'), duration: e.warningSeconds, applyAt: e.phaseUntil, roll: decision.roll,
+        candidates: JSON.stringify(decision.candidates), summary: JSON.stringify(decision.summary) });
+      else if (decision) this.host.emit('ENDLESS_EVOLUTION_DEFERRED', { wave, reason: decision.reason });
+      const announcedTraits = evolution.pending?.decision.traits ?? e.traits;
+      const counter = announcedTraits.map(trait => `${TRAITS[trait].name}：${TRAITS[trait].counter}`).join('；');
       const supportHint = wave >= 16 ? `混编支援：${endlessSupportTactics(this.state.seed, wave).map(tactic => ENEMY_TACTIC_INFO[tactic].name).join(' / ')}。远距点射可接近射杀或 Q 部署细胞；射线侧移、冲锋侧闪，双圈离圈，侵蚀用 Q 打断。` : '';
-      this.host.message(`第 ${wave} 波 · ${e.title}，${e.warningSeconds} 秒后到达。${supportHint || (wave === 3 ? '新敌：远距点射停在射程外。接近射杀或朝它 Q 部署细胞；窄线锁定后侧移可躲开。' : counter || '移动拉线，2 范围裂解，Q 召集免疫援助。')}`, e.warningSeconds, 2);
+      const adaptiveHint = decision?.kind === 'warn' ? `适应换代 · ${TRAITS[decision.main].name}：${TRAITS[decision.main].ability}；代价：${TRAITS[decision.main].cost}；反制：${TRAITS[decision.main].counter}。` : '';
+      this.host.message(`第 ${wave} 波 · ${e.title}，${e.warningSeconds} 秒后到达。${adaptiveHint || supportHint || (wave === 3 ? '新敌：远距点射停在射程外。接近射杀或朝它 Q 部署细胞；窄线锁定后侧移可躲开。' : counter || '移动拉线，2 范围裂解，Q 召集免疫援助。')}`, e.warningSeconds, 2);
       return;
+    }
+    const evolution = e.evolution;
+    if (evolution?.pending) {
+      if (now + 1e-9 < evolution.pending.appliesAt) return;
+      const pending = evolution.pending;
+      e.traits = [...pending.decision.traits]; this.state.battle!.traits = [...e.traits];
+      evolution.current = pending.decision; delete evolution.pending;
+      evolution.recentPrimaries = [...evolution.recentPrimaries, pending.decision.main].slice(-3);
+      this.host.emit('ENDLESS_EVOLUTION_APPLIED', { wave: e.wave, generation: pending.decision.generation, trait: pending.decision.main,
+        traits: e.traits.join('+'), warnedAt: pending.warnedAt, applyAt: now });
+      this.host.effect('evolution', this.state.player, this.state.player, 100, .6);
+    } else if (e.wave <= 15 && e.wave % 5 === 0) {
+      const learned = e.evolution ??= { history: [], recentPrimaries: [] };
+      learned.recentPrimaries = [...learned.recentPrimaries, e.traits[0]].slice(-3);
     }
     e.phase = 'combat'; e.phaseStartedAt = now; e.phaseUntil = 0; e.nextSpawnAt = now;
     this.host.emit('ENDLESS_WAVE_STARTED', { wave: e.wave, title: e.title, budget: e.totalToSpawn, traits: e.traits.join('+') });
@@ -187,6 +224,12 @@ export class EndlessDirector {
 
   recordEvent(event: GameEvent): void {
     if (!this.active() || event.tick !== this.state.tick) return;
+    // Utility events have no enemy ID. Observe their accepted result before the
+    // per-actor score gate; ability provenance never comes from a held tool.
+    if (event.type === 'TARGET_HIT' || event.type === 'SCAN_COMPLETED' || event.type === 'ORGAN_INTEGRITY_CHANGED') {
+      const evolution = this.e.evolution ??= { history: [], recentPrimaries: [] };
+      evolution.history = recordEndlessBehavior(evolution.history, event, this.state.tick);
+    }
     const id = String(event.data.id ?? ''), target = this.state.targets.find(item => item.id === id);
     if (!target || !this.current(target)) return;
     if (event.type === 'ACTOR_SPAWNED') {
