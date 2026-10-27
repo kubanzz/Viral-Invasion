@@ -140,6 +140,34 @@ try {
     && !report.errors.length && !report.requests.length && report.sourceUnchanged;
   report.passScope = 'Frame budget and 24 live actors reached in each quality; a real three-cell squad coexists with 24 actors in a captured snapshot and has observed hit events; two sources remain alive including terminal state; no fatal errors/network. Sampled V8 heap trend requires separate review; not a leak-proof or native-device guarantee.';
   report.status = report.pass ? 'passed' : 'failed';
+  // Explicitly separate forced-GC/restart diagnostics from the completed frame
+  // measurement above. These later UI actions never enter frames or metrics.
+  if (process.env.VI_PERF_POST_MEMORY === '1') {
+    report.postMeasurementMemory = { scope: 'After the finished ten-minute frame measurement only: real pause/menu/restart inputs, 1.1s settling, three explicit GCs. Not natural-GC throughput or an independent ten-minute run.', checkpoints: [] };
+    const collect = async name => {
+      const state = await readState(page);
+      if (state.growth?.draft) await page.locator('[data-action="draft-discard"]').click();
+      if (await page.locator('[data-action="close-migration-guide"]').isVisible()) await page.locator('[data-action="close-migration-guide"]').click();
+      if ((await readState(page)).phase === 'playing') await page.keyboard.press('Escape');
+      const frozen = await readState(page), natural = await cdp.send('Runtime.getHeapUsage');
+      await page.waitForTimeout(1100);
+      for (let n = 0; n < 3; n++) { await cdp.send('HeapProfiler.collectGarbage'); await page.waitForTimeout(60); }
+      const collected = await cdp.send('Runtime.getHeapUsage'), dom = await cdp.send('Memory.getDOMCounters');
+      const after = await readState(page);
+      if (after.tick !== frozen.tick) throw Error('Post-measurement pause did not freeze simulation');
+      report.postMeasurementMemory.checkpoints.push({ name, phase: after.phase, tick: after.tick, natural, collected, dom });
+    };
+    await collect('finished-pressure-paused');
+    await page.locator('[data-action="menu"]').click(); await collect('returned-menu');
+    for (let n = 1; n <= 10; n++) {
+      await page.locator('[data-action="start"]').click(); await page.waitForTimeout(160); await page.keyboard.press('KeyQ');
+      const state = await readState(page);
+      if (state.growth?.draft) await page.locator('[data-action="draft-discard"]').click();
+      if ((await readState(page)).phase === 'playing') await page.keyboard.press('Escape');
+      await page.locator('[data-action="menu"]').click();
+      if (n === 5 || n === 10) await collect(`menu-after-${n}-restarts`);
+    }
+  }
   await writeFile(`${folder}/frame-times.json`, JSON.stringify(frames));
   console.log(JSON.stringify({ status: report.status, metrics: report.metrics, maxActors: report.maxActors, maxCells: report.maxCells, cellHits: report.cellHits }));
   if (!report.pass) process.exitCode = 1;

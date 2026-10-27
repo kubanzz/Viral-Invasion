@@ -14,6 +14,7 @@ import { fullRun } from './fullRunDriver';
 
 const entryPath = resolve(process.env.VI_ENTRY ?? 'dist/index.html');
 const entry = pathToFileURL(entryPath).href;
+const expectedVersion: string = process.env.VI_EXPECTED_VERSION ?? JSON.parse(readFileSync('package.json', 'utf8')).version;
 const sha = (data: string | Buffer) => createHash('sha256').update(data).digest('hex');
 const pair: ProtocolId[] = ['IMMUNE_BEACON', 'EXPOSE_TRACE'];
 // A captured moment must improve the observed 1.47-world-unit coalescence.
@@ -125,7 +126,7 @@ test('Feedback 0.6.2: real marked-cell cooperation has readable live spacing and
   try {
     // A current Node-side selector must never be used to claim an old bundle
     // displays the cue. The helper must be an input to this exact build.
-    expect(build.version).toBe('0.6.2');
+    expect(build.version).toBe(expectedVersion);
     expect(build.sourceManifest['src/render/immuneTraceCues.ts']).toBe(cueSourceSha256);
     await page.goto(`${entry}?seed=13`);
     const effects = page.locator('.profile-menu [data-action="effects"]');

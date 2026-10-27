@@ -1,0 +1,643 @@
+{
+  "schemaVersion": 1,
+  "version": "0.6.3",
+  "reviewDate": "2026-10-27",
+  "method": "Read-only visual inspection by an agent of the two actual PNG files using view_image. No browser, test, build, source edit or selector-derived visibility conclusion was used.",
+  "scope": "Two sampled still frames from the v0.6.3 browser run; this is visual evidence only, not a human playtest or an all-frame readability result.",
+  "reviews": [
+    {
+      "browser": "Chrome",
+      "quality": "standard",
+      "path": "artifacts/feedback-v063/browser/feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-chrome/immune-standard-readable.png",
+      "status": "reviewed_with_partial_occlusion",
+      "observations": [
+        "The upper immune cell and the cell to the right of the central target have distinguishable cyan-white shapes.",
+        "A third lower cell can be partly traced from its cyan-white outline and interior detail, but its lower contour meets and is partly hidden by the tissue mound rising in front of the engagement.",
+        "The cells, target body and bright contact effects form a compact cluster; the lower cell is harder to identify independently than the upper and right cells.",
+        "Short bright attack/contact cues and cyan target corner marks are visible around the central engagement.",
+        "The target silhouette and parts of the short effects overlap other bodies and the mound crest. The squad label supplies context but is not proof that three full bodies are unobstructed."
+      ],
+      "conclusion": "Cooperation cues are visible, with two clear cell bodies and a partially visible lower body. This frame does not establish three equally clear, fully separated silhouettes.",
+      "assessment": "Initial visual impression retained; consult correctionAddendum for corrected entity identification."
+    },
+    {
+      "browser": "Edge",
+      "quality": "low",
+      "path": "artifacts/feedback-v063/browser/feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-edge/immune-low-readable.png",
+      "status": "reviewed_with_partial_occlusion",
+      "observations": [
+        "The upper cell with the cross motif and the right-hand cell can be distinguished around the central target.",
+        "The lower cell has visible cyan rim and interior detail, but its bottom silhouette is partly covered by the crest of the foreground tissue mound.",
+        "The lower and right cells, central target and contact effects overlap in a small area, making immediate body counting harder than reading the squad label.",
+        "Short bright attack/contact cues and target corner marks remain visible in the low-quality frame.",
+        "The low-quality setting retains cooperation cues, but it does not remove the body and tissue-occlusion limits visible in this sample."
+      ],
+      "conclusion": "The engagement and attack target can be located; the lower cell remains partially obscured. This frame does not prove continuous unobstructed visibility of all three cells.",
+      "assessment": "Initial visual impression retained; consult correctionAddendum for corrected entity identification."
+    }
+  ],
+  "overallConclusion": "The prominent upper green cross is the beacon sign, not an immune-cell body. Three actual cell IDs exist in the bracketed states, but independent silhouette readability is limited by overlap with the beacon/target and by the raised fold-b obstacle covering part of cell:2. The screenshots do not establish three equally clear, unobstructed bodies.",
+  "followUpEvidence": [
+    "Use the lower-cell/tissue-crest overlap in both actual PNGs as a concrete case for a later occlusion-readability improvement.",
+    "A later review should inspect independent cell and target silhouettes as well as short contact lines across multiple ordinary movement frames near tissue crests, retaining unfavorable samples.",
+    "Any future presentation adjustment should preserve simulation, contact positions and depth semantics; passing selector geometry alone cannot close the visual limitation."
+  ],
+  "limitations": [
+    "The images are separate sampled frames, not a controlled same-tick Chrome/Edge comparison.",
+    "No claim is made about all positions, all terrain, all frames, human comprehension, fun or commercial potential.",
+    "This review does not independently establish test completion, event provenance or actual damage; those require the browser reports and saved state evidence."
+  ],
+  "assessmentStatus": "The reviews and initialOverallConclusion retain the first visual impressions. The correctionAddendum and current overallConclusion supersede their entity identification.",
+  "initialOverallConclusion": "Both inspected frames show active-looking cooperation cues and three partly traceable cell positions, but the lower cell is less independently readable because of body/effect overlap and the foreground tissue crest. Do not describe these frames as three fully unobstructed silhouettes or as all-frame readability acceptance.",
+  "correctionAddendum": {
+    "reason": "The initial visual review conflated the prominent upper cross sign with an upper cell. Source and ID-linked projection inspection corrects that identification; no raw screenshot, state evidence or older report has been edited.",
+    "method": "Read-only inspection of selected-attempt before/after projections, current renderer source and actual PNGs. Derived coordinates identify objects and the occluding geometry; they do not replace the visual observations or claim the screenshot has an exact endpoint tick.",
+    "sourceReferences": [
+      "src/render/growthVisuals.ts:72-84 draws the beacon body and floating cross sign.",
+      "src/render/immuneVisuals.ts:18-23 draws each actual cell body above its world anchor.",
+      "src/render/renderer.ts:90-100 and 127-140 preserve ascending world-Y entity order.",
+      "src/render/renderer.ts:580-591 draws raised opaque obstacle bodies.",
+      "src/render/renderer.ts:595-608 already fades decorative foreground for the player and live targets."
+    ],
+    "currentVersion": [
+      {
+        "browser": "chrome",
+        "evidencePath": "artifacts/feedback-v063/browser/feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-chrome/immune-readability-evidence.json",
+        "selectedScreenshot": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\feedback-v063\\browser\\feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-chrome\\immune-standard-attempt-1.png",
+        "bracket": {
+          "beforeTick": 465,
+          "afterTick": 475
+        },
+        "snapshots": [
+          {
+            "side": "before",
+            "tick": 465,
+            "beacon": {
+              "id": "13:2:scan:446:beacon",
+              "world": {
+                "x": 1631.74,
+                "y": 1021.06
+              },
+              "crossScreen": {
+                "x": 760.3,
+                "y": 388.47
+              }
+            },
+            "cells": [
+              {
+                "id": "13:2:scan:446:beacon:cell:0",
+                "world": {
+                  "x": 1622.69,
+                  "y": 1004.06
+                },
+                "anchorScreen": {
+                  "x": 750.65,
+                  "y": 417.47
+                },
+                "bodyCenterScreen": {
+                  "x": 750.65,
+                  "y": 403.6
+                }
+              },
+              {
+                "id": "13:2:scan:446:beacon:cell:1",
+                "world": {
+                  "x": 1650.99,
+                  "y": 1021.73
+                },
+                "anchorScreen": {
+                  "x": 780.83,
+                  "y": 431.04
+                },
+                "bodyCenterScreen": {
+                  "x": 780.83,
+                  "y": 417.17
+                }
+              },
+              {
+                "id": "13:2:scan:446:beacon:cell:2",
+                "world": {
+                  "x": 1621.53,
+                  "y": 1037.4
+                },
+                "anchorScreen": {
+                  "x": 749.42,
+                  "y": 443.07
+                },
+                "bodyCenterScreen": {
+                  "x": 749.42,
+                  "y": 429.21
+                }
+              }
+            ]
+          },
+          {
+            "side": "after",
+            "tick": 475,
+            "beacon": {
+              "id": "13:2:scan:446:beacon",
+              "world": {
+                "x": 1631.74,
+                "y": 1021.06
+              },
+              "crossScreen": {
+                "x": 760.3,
+                "y": 388.42
+              }
+            },
+            "cells": [
+              {
+                "id": "13:2:scan:446:beacon:cell:0",
+                "world": {
+                  "x": 1622.69,
+                  "y": 1004.06
+                },
+                "anchorScreen": {
+                  "x": 750.65,
+                  "y": 417.47
+                },
+                "bodyCenterScreen": {
+                  "x": 750.65,
+                  "y": 403.6
+                }
+              },
+              {
+                "id": "13:2:scan:446:beacon:cell:1",
+                "world": {
+                  "x": 1650.99,
+                  "y": 1021.73
+                },
+                "anchorScreen": {
+                  "x": 780.83,
+                  "y": 431.04
+                },
+                "bodyCenterScreen": {
+                  "x": 780.83,
+                  "y": 417.17
+                }
+              },
+              {
+                "id": "13:2:scan:446:beacon:cell:2",
+                "world": {
+                  "x": 1621.53,
+                  "y": 1037.4
+                },
+                "anchorScreen": {
+                  "x": 749.42,
+                  "y": 443.07
+                },
+                "bodyCenterScreen": {
+                  "x": 749.42,
+                  "y": 429.21
+                }
+              }
+            ]
+          }
+        ],
+        "lowerCellCause": {
+          "id": "13:2:scan:446:beacon:cell:2",
+          "groundCollisionClearance": 47.83,
+          "description": "Positive clearance from the real circular collider; partial occlusion comes from the raised sprite drawn later."
+        }
+      },
+      {
+        "browser": "edge",
+        "evidencePath": "artifacts/feedback-v063/browser/feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-edge/immune-readability-evidence.json",
+        "selectedScreenshot": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\feedback-v063\\browser\\feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-edge\\immune-low-attempt-1.png",
+        "bracket": {
+          "beforeTick": 477,
+          "afterTick": 488
+        },
+        "snapshots": [
+          {
+            "side": "before",
+            "tick": 477,
+            "beacon": {
+              "id": "13:2:scan:458:beacon",
+              "world": {
+                "x": 1635.09,
+                "y": 1012.81
+              },
+              "crossScreen": {
+                "x": 781.9,
+                "y": 392.39
+              }
+            },
+            "cells": [
+              {
+                "id": "13:2:scan:458:beacon:cell:0",
+                "world": {
+                  "x": 1623.27,
+                  "y": 997.69
+                },
+                "anchorScreen": {
+                  "x": 769.29,
+                  "y": 422.84
+                },
+                "bodyCenterScreen": {
+                  "x": 769.29,
+                  "y": 408.98
+                }
+              },
+              {
+                "id": "13:2:scan:458:beacon:cell:1",
+                "world": {
+                  "x": 1654.1,
+                  "y": 1010.14
+                },
+                "anchorScreen": {
+                  "x": 802.18,
+                  "y": 432.41
+                },
+                "bodyCenterScreen": {
+                  "x": 802.18,
+                  "y": 418.54
+                }
+              },
+              {
+                "id": "13:2:scan:458:beacon:cell:2",
+                "world": {
+                  "x": 1627.9,
+                  "y": 1030.61
+                },
+                "anchorScreen": {
+                  "x": 774.23,
+                  "y": 448.13
+                },
+                "bodyCenterScreen": {
+                  "x": 774.23,
+                  "y": 434.26
+                }
+              }
+            ]
+          },
+          {
+            "side": "after",
+            "tick": 488,
+            "beacon": {
+              "id": "13:2:scan:458:beacon",
+              "world": {
+                "x": 1635.09,
+                "y": 1012.81
+              },
+              "crossScreen": {
+                "x": 781.9,
+                "y": 392.86
+              }
+            },
+            "cells": [
+              {
+                "id": "13:2:scan:458:beacon:cell:0",
+                "world": {
+                  "x": 1623.27,
+                  "y": 997.69
+                },
+                "anchorScreen": {
+                  "x": 769.29,
+                  "y": 422.84
+                },
+                "bodyCenterScreen": {
+                  "x": 769.29,
+                  "y": 408.98
+                }
+              },
+              {
+                "id": "13:2:scan:458:beacon:cell:1",
+                "world": {
+                  "x": 1654.1,
+                  "y": 1010.14
+                },
+                "anchorScreen": {
+                  "x": 802.18,
+                  "y": 432.41
+                },
+                "bodyCenterScreen": {
+                  "x": 802.18,
+                  "y": 418.54
+                }
+              },
+              {
+                "id": "13:2:scan:458:beacon:cell:2",
+                "world": {
+                  "x": 1627.9,
+                  "y": 1030.61
+                },
+                "anchorScreen": {
+                  "x": 774.23,
+                  "y": 448.13
+                },
+                "bodyCenterScreen": {
+                  "x": 774.23,
+                  "y": 434.26
+                }
+              }
+            ]
+          }
+        ],
+        "lowerCellCause": {
+          "id": "13:2:scan:458:beacon:cell:2",
+          "groundCollisionClearance": 54.4,
+          "description": "Positive clearance from the real circular collider; partial occlusion comes from the raised sprite drawn later."
+        }
+      }
+    ],
+    "crossVersionCorrection": {
+      "scope": "v0.6.2 selected-attempt PNGs and projections re-inspected read-only; old raw evidence and artifacts/feedback-v062/visual-review.json remain unchanged.",
+      "finding": "The same upper green cross is a beacon sign in both v0.6.2 images. The older wording about an upper cross-bearing cell must not be used as proof of a third independently visible cell.",
+      "reviews": [
+        {
+          "browser": "chrome",
+          "evidencePath": "artifacts/feedback-v062/readability-rerun1/feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-chrome/immune-readability-evidence.json",
+          "selectedScreenshot": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\feedback-v062\\readability-rerun1\\feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-chrome\\immune-standard-attempt-1.png",
+          "bracket": {
+            "beforeTick": 504,
+            "afterTick": 518
+          },
+          "snapshots": [
+            {
+              "side": "before",
+              "tick": 504,
+              "beacon": {
+                "id": "13:2:scan:482:beacon",
+                "world": {
+                  "x": 1631.96,
+                  "y": 1004.5
+                },
+                "crossScreen": {
+                  "x": 791.39,
+                  "y": 392.42
+                }
+              },
+              "cells": [
+                {
+                  "id": "13:2:scan:482:beacon:cell:0",
+                  "world": {
+                    "x": 1656.68,
+                    "y": 1017.69
+                  },
+                  "anchorScreen": {
+                    "x": 817.76,
+                    "y": 442.97
+                  },
+                  "bodyCenterScreen": {
+                    "x": 817.76,
+                    "y": 429.11
+                  }
+                },
+                {
+                  "id": "13:2:scan:482:beacon:cell:1",
+                  "world": {
+                    "x": 1595.98,
+                    "y": 1022.57
+                  },
+                  "anchorScreen": {
+                    "x": 753.02,
+                    "y": 446.72
+                  },
+                  "bodyCenterScreen": {
+                    "x": 753.02,
+                    "y": 432.86
+                  }
+                },
+                {
+                  "id": "13:2:scan:482:beacon:cell:2",
+                  "world": {
+                    "x": 1621.99,
+                    "y": 957.58
+                  },
+                  "anchorScreen": {
+                    "x": 780.76,
+                    "y": 396.81
+                  },
+                  "bodyCenterScreen": {
+                    "x": 780.76,
+                    "y": 382.94
+                  }
+                }
+              ]
+            },
+            {
+              "side": "after",
+              "tick": 518,
+              "beacon": {
+                "id": "13:2:scan:482:beacon",
+                "world": {
+                  "x": 1631.96,
+                  "y": 1004.5
+                },
+                "crossScreen": {
+                  "x": 791.39,
+                  "y": 393.42
+                }
+              },
+              "cells": [
+                {
+                  "id": "13:2:scan:482:beacon:cell:0",
+                  "world": {
+                    "x": 1645.46,
+                    "y": 1012.95
+                  },
+                  "anchorScreen": {
+                    "x": 805.79,
+                    "y": 439.34
+                  },
+                  "bodyCenterScreen": {
+                    "x": 805.79,
+                    "y": 425.47
+                  }
+                },
+                {
+                  "id": "13:2:scan:482:beacon:cell:1",
+                  "world": {
+                    "x": 1577.07,
+                    "y": 1011.01
+                  },
+                  "anchorScreen": {
+                    "x": 732.84,
+                    "y": 437.85
+                  },
+                  "bodyCenterScreen": {
+                    "x": 732.84,
+                    "y": 423.98
+                  }
+                },
+                {
+                  "id": "13:2:scan:482:beacon:cell:2",
+                  "world": {
+                    "x": 1614.09,
+                    "y": 952.45
+                  },
+                  "anchorScreen": {
+                    "x": 772.33,
+                    "y": 392.87
+                  },
+                  "bodyCenterScreen": {
+                    "x": 772.33,
+                    "y": 379.01
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "browser": "edge",
+          "evidencePath": "artifacts/feedback-v062/readability-rerun1/feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-edge/immune-readability-evidence.json",
+          "selectedScreenshot": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\feedback-v062\\readability-rerun1\\feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-edge\\immune-low-attempt-1.png",
+          "bracket": {
+            "beforeTick": 469,
+            "afterTick": 481
+          },
+          "snapshots": [
+            {
+              "side": "before",
+              "tick": 469,
+              "beacon": {
+                "id": "13:2:scan:449:beacon",
+                "world": {
+                  "x": 1586.08,
+                  "y": 1007.56
+                },
+                "crossScreen": {
+                  "x": 630.28,
+                  "y": 390.43
+                }
+              },
+              "cells": [
+                {
+                  "id": "13:2:scan:449:beacon:cell:0",
+                  "world": {
+                    "x": 1562.58,
+                    "y": 1026.28
+                  },
+                  "anchorScreen": {
+                    "x": 605.22,
+                    "y": 446.93
+                  },
+                  "bodyCenterScreen": {
+                    "x": 605.22,
+                    "y": 433.06
+                  }
+                },
+                {
+                  "id": "13:2:scan:449:beacon:cell:1",
+                  "world": {
+                    "x": 1584.03,
+                    "y": 968.95
+                  },
+                  "anchorScreen": {
+                    "x": 628.1,
+                    "y": 402.9
+                  },
+                  "bodyCenterScreen": {
+                    "x": 628.1,
+                    "y": 389.03
+                  }
+                },
+                {
+                  "id": "13:2:scan:449:beacon:cell:2",
+                  "world": {
+                    "x": 1617.37,
+                    "y": 1020.95
+                  },
+                  "anchorScreen": {
+                    "x": 663.66,
+                    "y": 442.84
+                  },
+                  "bodyCenterScreen": {
+                    "x": 663.66,
+                    "y": 428.97
+                  }
+                }
+              ]
+            },
+            {
+              "side": "after",
+              "tick": 481,
+              "beacon": {
+                "id": "13:2:scan:449:beacon",
+                "world": {
+                  "x": 1586.08,
+                  "y": 1007.56
+                },
+                "crossScreen": {
+                  "x": 630.28,
+                  "y": 390.61
+                }
+              },
+              "cells": [
+                {
+                  "id": "13:2:scan:449:beacon:cell:0",
+                  "world": {
+                    "x": 1568.14,
+                    "y": 1029.31
+                  },
+                  "anchorScreen": {
+                    "x": 611.15,
+                    "y": 449.26
+                  },
+                  "bodyCenterScreen": {
+                    "x": 611.15,
+                    "y": 435.39
+                  }
+                },
+                {
+                  "id": "13:2:scan:449:beacon:cell:1",
+                  "world": {
+                    "x": 1578.55,
+                    "y": 961.19
+                  },
+                  "anchorScreen": {
+                    "x": 622.25,
+                    "y": 396.94
+                  },
+                  "bodyCenterScreen": {
+                    "x": 622.25,
+                    "y": 383.07
+                  }
+                },
+                {
+                  "id": "13:2:scan:449:beacon:cell:2",
+                  "world": {
+                    "x": 1632.3,
+                    "y": 1004.57
+                  },
+                  "anchorScreen": {
+                    "x": 679.59,
+                    "y": 430.26
+                  },
+                  "bodyCenterScreen": {
+                    "x": 679.59,
+                    "y": 416.39
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "occlusionCause": {
+      "kind": "raised-obstacle",
+      "obstacle": {
+        "id": "fold-b",
+        "x": 1630,
+        "y": 1190,
+        "radius": 90
+      },
+      "derivedRaisedTopWorldY": 1013.91,
+      "derivation": "Minimum of the rendered heart obstacle Bezier top, accounting for the local 1/0.72 vertical scale; rounded numeric path sampling, not a browser pixel test.",
+      "foreground": {
+        "x": 1110,
+        "y": 1195,
+        "width": 275,
+        "height": 150,
+        "expandedRightX": 1407,
+        "conclusion": "The involved players, live targets and cell anchors lie outside the foreground area; the foreground fronds are not the mound covering the lower cell."
+      },
+      "drawOrder": "All three cell anchors have y below 1190, so cells are drawn before fold-b. The obstacle upper body extends upward over cell:2 while its ground collider remains untouched.",
+      "scope": "The lower-cell obstruction is a raised obstacle visual, not evidence of collision penetration. Beacon/target overlap is an additional crowding factor."
+    },
+    "followUp": "Apply a render-only fade or contour treatment to the overlapping raised obstacle upper body, retaining stable world-Y ordering, ground/collision cues and all simulation/contact positions. Do not merely duplicate the existing foreground-rectangle fade."
+  }
+}

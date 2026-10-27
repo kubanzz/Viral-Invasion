@@ -1,0 +1,2310 @@
+{
+  "version": "0.6.2",
+  "gameSha256": "8015bf6faba161f05aade7813fe3d48c390b4d8d7faac8fe138d59670f702e3d",
+  "buildSourceManifest": {
+    "index.html": "240abc27cb391518456a6d81b8360a88946d837888c769c2756415ef9cdc84af",
+    "package-lock.json": "0435e45b5e9cfd9bcf5d48ab2894f5194aa0f39bbf0c67027a294c075a896db2",
+    "package.json": "7c23fa1f97c252e4e1061d11fbee4b418bccd0ed5fafdda49a9de10f10659af1",
+    "scripts/build-offline.mjs": "0e899f1174fb20ca34edba6cad8a800b0be44d2c2b097c62eaa5033fe37de3a8",
+    "src/actors/collision.ts": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+    "src/audio.ts": "98b239e7a9c1be0ed26d1a603fdede8d505a34da73c6cf074fc8f55e83a58a5d",
+    "src/core/clock.ts": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+    "src/core/events.ts": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+    "src/core/rng.ts": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+    "src/game/battle.ts": "8db8d61b1f3fd75de9d7427f4489a377e63cf6873730b78f947127277d0cf9da",
+    "src/game/battleConfig.ts": "937a2c91827c7184bcabf0eae13db315d52d0517d75b1696e2217f4e2c0de072",
+    "src/game/campaign.ts": "85293662c4879034afaade5fbb0575a5f14a44e74025a8b12e80afa144fdfb3a",
+    "src/game/evolution.ts": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+    "src/game/growth.ts": "2956095ebfd2b063733acaf76e38c7e06d9b9ade01cb37d7bdea1832b52f6152",
+    "src/game/immuneCells.ts": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80",
+    "src/game/motherCore.ts": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+    "src/game/organConfig.ts": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+    "src/game/organRules.ts": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+    "src/game/protocols.ts": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+    "src/game/session.ts": "d32f5815b8f1a191bd9d6d5fe97504694f82e561226475009906b3e70997dea3",
+    "src/game/tacticalFeedback.ts": "d3e312dc585fde5149c0e21bd8514fc86ed716868825b43b17b53cdfb5f52143",
+    "src/game/types.ts": "bd416eebd70e5061e6825c9f871f4414fc4523170ee76d84cbe7a34791d131af",
+    "src/input/controller.ts": "a26bac630063676bc2a168301cc5110da81a82e0d35cc9f6ee5ca3eeec51958c",
+    "src/main.ts": "a78d39b1f4653fb6b34d7685bc9dcd49e4ac6012aba08fac91fe9b14305bdc29",
+    "src/meta/profile.ts": "7c179ad3f035dcfddb705ed8d146dde69692057ec04e8fcedacc7b718257adb2",
+    "src/render/battleVisuals.ts": "eb018bf5de39ce3ebd11cc1813b2befa8448e378c8b9f11938b8066fccc508f4",
+    "src/render/camera.ts": "ca117a766229b5770d49491559dbe016aca210876315f4069f5db42081f748e5",
+    "src/render/depthSort.ts": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+    "src/render/growthVisuals.ts": "aedcf1cc105935a4694d9b752c180894ecbb0a408fca7175394f4d3493086d77",
+    "src/render/immuneTraceCues.ts": "80558b755ae1054388a982182b430b41e5ceb98119b7ad0758b694dabdfd66d7",
+    "src/render/immuneVisuals.ts": "5e44f5fbc28fc04f6f78559023f9dd3d27b306a4ed0688dc5a58d19b5c6a11e3",
+    "src/render/layers.ts": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+    "src/render/lungVisuals.ts": "48439104c1e701e7f07b2427019ba8cca7fcb74e1a5809835d54510e2aaf398f",
+    "src/render/navigation.ts": "ab776f6e94b141663e1bd46ca23da738e7ebf679ef0bf211258fc89f833355a5",
+    "src/render/occlusion.ts": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+    "src/render/organLandscape.ts": "3ea49be35cc7e1a3a4d7ac0e4356031f7255e3ad6c941e13b666fee5946f63a2",
+    "src/render/pulsePreview.ts": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+    "src/render/renderer.ts": "c9fe778a462adba3fa0d8dae27493fbff9b36e55fc8e61c5ed6f3776d95389bc",
+    "src/style.css": "a43d13267f171988d5d497bd9024a3013648b1262d1769d5de20b3d2a7e0d986",
+    "src/ui/battleHud.ts": "aaf74c1fea93321652e875b011f7c2865ab4b2bb3a767d79158f8fc1dda90a97",
+    "src/ui/campaignHud.ts": "355cb008112d87972c44a4764fd2aee2312b32e567571aad05c948f94d54d8ae",
+    "src/ui/growthHud.ts": "5e890047bd1c6228103557cb2972b9f763c8eccc741bb215747291470db2af49",
+    "src/ui/profile.css": "768e6f59157b6706a98355e682018f655b4de5ef6a489e0217f52c37784e86c8",
+    "src/ui/profileHud.ts": "62db4c3e4974c9612164d66d4fdee1398eaf7d49d8adc7d9ff41087ce2a59756",
+    "src/ui/tacticalHistory.ts": "c159a53e514049043f0a41dfb07b435a8774630993d039d68832fbb1c4db137b"
+  },
+  "driverSourceManifest": {
+    "src/game/types.ts": "bd416eebd70e5061e6825c9f871f4414fc4523170ee76d84cbe7a34791d131af",
+    "src/actors/collision.ts": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+    "tests/e2e/campaignDriver.ts": "4700b97cf3a2564a1b6dd3443f86dfdd8c4c720f7b8a7bc149b91b1b8131e1ef"
+  },
+  "scriptSha256": "bab37ca1bf112f0acf1e4594315f11ed896defb23ec4e3d92e761baf2d5971e8",
+  "startedAt": "2026-10-27T04:01:38.394Z",
+  "durationTarget": 360,
+  "status": "completed",
+  "scope": "Separate Chrome headless retained-heap diagnostic with explicit UI pauses, one-second audio settling and three CDP GCs per checkpoint. Not a throughput test, natural-GC memory guarantee, first-player session or universal leak proof. Loaded dist is frozen; source working tree may contain separately identified later UI edits.",
+  "errors": [],
+  "requests": [],
+  "samples": [
+    {
+      "activeSeconds": 0.01666666666666572,
+      "tick": 1290,
+      "elapsed": 21.5,
+      "phase": "playing",
+      "actors": 4,
+      "retainedActors": 4,
+      "cells": 1,
+      "events": 117,
+      "effects": 1,
+      "hp": 100,
+      "tissue": 100,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 6439472,
+        "totalSize": 12914688,
+        "embedderHeapUsedSize": 3423264,
+        "backingStorageSize": 298234
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 5.049999999999997,
+      "tick": 1592,
+      "elapsed": 26.53333333333333,
+      "phase": "playing",
+      "actors": 6,
+      "retainedActors": 6,
+      "cells": 3,
+      "events": 164,
+      "effects": 1,
+      "hp": 100,
+      "tissue": 100,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 5707248,
+        "totalSize": 13176832,
+        "embedderHeapUsedSize": 2495176,
+        "backingStorageSize": 297896
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 10.083333333333332,
+      "tick": 1894,
+      "elapsed": 31.566666666666666,
+      "phase": "playing",
+      "actors": 6,
+      "retainedActors": 6,
+      "cells": 0,
+      "events": 190,
+      "effects": 1,
+      "hp": 100,
+      "tissue": 100,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 4197060,
+        "totalSize": 13176832,
+        "embedderHeapUsedSize": 6437112,
+        "backingStorageSize": 298411
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 15.133333333333333,
+      "tick": 2197,
+      "elapsed": 36.61666666666667,
+      "phase": "playing",
+      "actors": 8,
+      "retainedActors": 8,
+      "cells": 0,
+      "events": 221,
+      "effects": 1,
+      "hp": 100,
+      "tissue": 100,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 6710540,
+        "totalSize": 13438976,
+        "embedderHeapUsedSize": 4356936,
+        "backingStorageSize": 297943
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 20.18333333333333,
+      "tick": 2500,
+      "elapsed": 41.666666666666664,
+      "phase": "playing",
+      "actors": 9,
+      "retainedActors": 9,
+      "cells": 3,
+      "events": 267,
+      "effects": 0,
+      "hp": 100,
+      "tissue": 95.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 5414516,
+        "totalSize": 13438976,
+        "embedderHeapUsedSize": 6086896,
+        "backingStorageSize": 297915
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 25.233333333333334,
+      "tick": 2803,
+      "elapsed": 46.71666666666667,
+      "phase": "playing",
+      "actors": 10,
+      "retainedActors": 10,
+      "cells": 0,
+      "events": 313,
+      "effects": 4,
+      "hp": 100,
+      "tissue": 100,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 4986908,
+        "totalSize": 13438976,
+        "embedderHeapUsedSize": 7360536,
+        "backingStorageSize": 298849
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 30.299999999999997,
+      "tick": 3107,
+      "elapsed": 51.78333333333333,
+      "phase": "playing",
+      "actors": 12,
+      "retainedActors": 12,
+      "cells": 0,
+      "events": 356,
+      "effects": 2,
+      "hp": 100,
+      "tissue": 100,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 5482776,
+        "totalSize": 13701120,
+        "embedderHeapUsedSize": 8701808,
+        "backingStorageSize": 298878
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 35.36666666666667,
+      "tick": 3411,
+      "elapsed": 56.85,
+      "phase": "playing",
+      "actors": 12,
+      "retainedActors": 12,
+      "cells": 3,
+      "events": 426,
+      "effects": 3,
+      "hp": 100,
+      "tissue": 100,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 4315508,
+        "totalSize": 13963264,
+        "embedderHeapUsedSize": 5256560,
+        "backingStorageSize": 297956
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 40.449999999999996,
+      "tick": 3716,
+      "elapsed": 61.93333333333333,
+      "phase": "playing",
+      "actors": 13,
+      "retainedActors": 13,
+      "cells": 0,
+      "events": 483,
+      "effects": 2,
+      "hp": 100,
+      "tissue": 96,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 4420792,
+        "totalSize": 13963264,
+        "embedderHeapUsedSize": 1974576,
+        "backingStorageSize": 297485
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 45.55,
+      "tick": 4022,
+      "elapsed": 67.03333333333333,
+      "phase": "playing",
+      "actors": 15,
+      "retainedActors": 15,
+      "cells": 0,
+      "events": 512,
+      "effects": 4,
+      "hp": 100,
+      "tissue": 99.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 5712284,
+        "totalSize": 13963264,
+        "embedderHeapUsedSize": 7218440,
+        "backingStorageSize": 299339
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 50.61666666666666,
+      "tick": 4326,
+      "elapsed": 72.1,
+      "phase": "playing",
+      "actors": 14,
+      "retainedActors": 14,
+      "cells": 3,
+      "events": 512,
+      "effects": 3,
+      "hp": 100,
+      "tissue": 95.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 5111380,
+        "totalSize": 14225408,
+        "embedderHeapUsedSize": 7610280,
+        "backingStorageSize": 298511
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 55.7,
+      "tick": 4631,
+      "elapsed": 77.18333333333334,
+      "phase": "playing",
+      "actors": 15,
+      "retainedActors": 15,
+      "cells": 0,
+      "events": 512,
+      "effects": 3,
+      "hp": 100,
+      "tissue": 91.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 5521960,
+        "totalSize": 14225408,
+        "embedderHeapUsedSize": 6427928,
+        "backingStorageSize": 299392
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 60.78333333333333,
+      "tick": 4936,
+      "elapsed": 82.26666666666667,
+      "phase": "playing",
+      "actors": 17,
+      "retainedActors": 17,
+      "cells": 0,
+      "events": 512,
+      "effects": 3,
+      "hp": 100,
+      "tissue": 87.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 5267432,
+        "totalSize": 14225408,
+        "embedderHeapUsedSize": 5324152,
+        "backingStorageSize": 299392
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 65.86666666666666,
+      "tick": 5241,
+      "elapsed": 87.35,
+      "phase": "playing",
+      "actors": 15,
+      "retainedActors": 15,
+      "cells": 3,
+      "events": 512,
+      "effects": 4,
+      "hp": 100,
+      "tissue": 96,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 7022248,
+        "totalSize": 14487552,
+        "embedderHeapUsedSize": 8607912,
+        "backingStorageSize": 298961
+      },
+      "audioActive": 9
+    },
+    {
+      "activeSeconds": 70.93333333333334,
+      "tick": 5545,
+      "elapsed": 92.41666666666667,
+      "phase": "playing",
+      "actors": 17,
+      "retainedActors": 17,
+      "cells": 0,
+      "events": 512,
+      "effects": 3,
+      "hp": 100,
+      "tissue": 96,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 10897920,
+        "totalSize": 19992576,
+        "embedderHeapUsedSize": 9515744,
+        "backingStorageSize": 299893
+      },
+      "audioActive": 7
+    },
+    {
+      "activeSeconds": 76.01666666666667,
+      "tick": 5850,
+      "elapsed": 97.5,
+      "phase": "playing",
+      "actors": 18,
+      "retainedActors": 18,
+      "cells": 0,
+      "events": 512,
+      "effects": 6,
+      "hp": 100,
+      "tissue": 87.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 4437968,
+        "totalSize": 19730432,
+        "embedderHeapUsedSize": 2124944,
+        "backingStorageSize": 297995
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 81.11666666666666,
+      "tick": 6156,
+      "elapsed": 102.6,
+      "phase": "playing",
+      "actors": 17,
+      "retainedActors": 18,
+      "cells": 3,
+      "events": 512,
+      "effects": 6,
+      "hp": 100,
+      "tissue": 100,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 10592360,
+        "totalSize": 19992576,
+        "embedderHeapUsedSize": 6802688,
+        "backingStorageSize": 298928
+      },
+      "audioActive": 7
+    },
+    {
+      "activeSeconds": 86.18333333333334,
+      "tick": 6460,
+      "elapsed": 107.66666666666667,
+      "phase": "playing",
+      "actors": 19,
+      "retainedActors": 19,
+      "cells": 0,
+      "events": 512,
+      "effects": 6,
+      "hp": 100,
+      "tissue": 96,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 10390800,
+        "totalSize": 19992576,
+        "embedderHeapUsedSize": 8486784,
+        "backingStorageSize": 299859
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 91.26666666666667,
+      "tick": 6765,
+      "elapsed": 112.75,
+      "phase": "playing",
+      "actors": 20,
+      "retainedActors": 20,
+      "cells": 0,
+      "events": 512,
+      "effects": 6,
+      "hp": 100,
+      "tissue": 96,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 8193780,
+        "totalSize": 20254720,
+        "embedderHeapUsedSize": 3317616,
+        "backingStorageSize": 297991
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 96.33333333333333,
+      "tick": 7069,
+      "elapsed": 117.81666666666666,
+      "phase": "playing",
+      "actors": 19,
+      "retainedActors": 20,
+      "cells": 3,
+      "events": 512,
+      "effects": 5,
+      "hp": 100,
+      "tissue": 92,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 8969832,
+        "totalSize": 20254720,
+        "embedderHeapUsedSize": 2664304,
+        "backingStorageSize": 297992
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 101.43333333333334,
+      "tick": 7375,
+      "elapsed": 122.91666666666667,
+      "phase": "playing",
+      "actors": 21,
+      "retainedActors": 21,
+      "cells": 0,
+      "events": 512,
+      "effects": 6,
+      "hp": 100,
+      "tissue": 100,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 9936172,
+        "totalSize": 20516864,
+        "embedderHeapUsedSize": 7371520,
+        "backingStorageSize": 298932
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 106.51666666666667,
+      "tick": 7680,
+      "elapsed": 128,
+      "phase": "playing",
+      "actors": 22,
+      "retainedActors": 22,
+      "cells": 0,
+      "events": 512,
+      "effects": 6,
+      "hp": 100,
+      "tissue": 95.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 9343168,
+        "totalSize": 20516864,
+        "embedderHeapUsedSize": 5756064,
+        "backingStorageSize": 298543
+      },
+      "audioActive": 7
+    },
+    {
+      "activeSeconds": 111.58333333333333,
+      "tick": 7984,
+      "elapsed": 133.06666666666666,
+      "phase": "playing",
+      "actors": 21,
+      "retainedActors": 23,
+      "cells": 3,
+      "events": 512,
+      "effects": 6,
+      "hp": 100,
+      "tissue": 95.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 5007412,
+        "totalSize": 20254720,
+        "embedderHeapUsedSize": 7701808,
+        "backingStorageSize": 299442
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 116.66666666666667,
+      "tick": 8289,
+      "elapsed": 138.15,
+      "phase": "playing",
+      "actors": 23,
+      "retainedActors": 23,
+      "cells": 0,
+      "events": 512,
+      "effects": 6,
+      "hp": 100,
+      "tissue": 87.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 9764780,
+        "totalSize": 20254720,
+        "embedderHeapUsedSize": 6834864,
+        "backingStorageSize": 299461
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 121.73333333333333,
+      "tick": 8593,
+      "elapsed": 143.21666666666667,
+      "phase": "playing",
+      "actors": 23,
+      "retainedActors": 23,
+      "cells": 0,
+      "events": 512,
+      "effects": 7,
+      "hp": 100,
+      "tissue": 100,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 9759060,
+        "totalSize": 20516864,
+        "embedderHeapUsedSize": 6714864,
+        "backingStorageSize": 298509
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 126.8,
+      "tick": 8897,
+      "elapsed": 148.28333333333333,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 3,
+      "events": 512,
+      "effects": 7,
+      "hp": 100,
+      "tissue": 96,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 4831632,
+        "totalSize": 19992576,
+        "embedderHeapUsedSize": 1870136,
+        "backingStorageSize": 297548
+      },
+      "audioActive": 1
+    },
+    {
+      "activeSeconds": 131.91666666666669,
+      "tick": 9204,
+      "elapsed": 153.4,
+      "phase": "playing",
+      "actors": 23,
+      "retainedActors": 23,
+      "cells": 0,
+      "events": 512,
+      "effects": 7,
+      "hp": 100,
+      "tissue": 91.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 5305288,
+        "totalSize": 10293248,
+        "embedderHeapUsedSize": 3963904,
+        "backingStorageSize": 297987
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 136.96666666666664,
+      "tick": 9507,
+      "elapsed": 158.45,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 9,
+      "hp": 100,
+      "tissue": 79.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 6565012,
+        "totalSize": 10031104,
+        "embedderHeapUsedSize": 3219288,
+        "backingStorageSize": 298449
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 142.05,
+      "tick": 9812,
+      "elapsed": 163.53333333333333,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 3,
+      "events": 512,
+      "effects": 9,
+      "hp": 100,
+      "tissue": 96,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 5118748,
+        "totalSize": 13438976,
+        "embedderHeapUsedSize": 8441312,
+        "backingStorageSize": 299372
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 147.11666666666667,
+      "tick": 10116,
+      "elapsed": 168.6,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 7,
+      "hp": 100,
+      "tissue": 96,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 6325964,
+        "totalSize": 13963264,
+        "embedderHeapUsedSize": 7577488,
+        "backingStorageSize": 298436
+      },
+      "audioActive": 7
+    },
+    {
+      "activeSeconds": 152.18333333333334,
+      "tick": 10420,
+      "elapsed": 173.66666666666666,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 7,
+      "hp": 100,
+      "tissue": 88.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 6158772,
+        "totalSize": 13963264,
+        "embedderHeapUsedSize": 7283368,
+        "backingStorageSize": 298904
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 157.26666666666665,
+      "tick": 10725,
+      "elapsed": 178.75,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 3,
+      "events": 512,
+      "effects": 9,
+      "hp": 100,
+      "tissue": 80,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 4797472,
+        "totalSize": 13963264,
+        "embedderHeapUsedSize": 2324912,
+        "backingStorageSize": 297503
+      },
+      "audioActive": 1
+    },
+    {
+      "activeSeconds": 162.33333333333331,
+      "tick": 11029,
+      "elapsed": 183.81666666666666,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 9,
+      "hp": 100,
+      "tissue": 96,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 4518680,
+        "totalSize": 13963264,
+        "embedderHeapUsedSize": 2176456,
+        "backingStorageSize": 297473
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 167.41666666666669,
+      "tick": 11334,
+      "elapsed": 188.9,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 7,
+      "hp": 100,
+      "tissue": 96,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 4665296,
+        "totalSize": 13963264,
+        "embedderHeapUsedSize": 2907656,
+        "backingStorageSize": 297982
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 172.48333333333335,
+      "tick": 11638,
+      "elapsed": 193.96666666666667,
+      "phase": "playing",
+      "actors": 23,
+      "retainedActors": 23,
+      "cells": 3,
+      "events": 512,
+      "effects": 8,
+      "hp": 100,
+      "tissue": 80,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 5031700,
+        "totalSize": 13963264,
+        "embedderHeapUsedSize": 4514600,
+        "backingStorageSize": 298004
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 177.56666666666666,
+      "tick": 11943,
+      "elapsed": 199.05,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 6,
+      "hp": 100,
+      "tissue": 79.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 4586964,
+        "totalSize": 13963264,
+        "embedderHeapUsedSize": 3925000,
+        "backingStorageSize": 297967
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 182.63333333333333,
+      "tick": 12247,
+      "elapsed": 204.11666666666667,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 7,
+      "hp": 100,
+      "tissue": 96,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 4722208,
+        "totalSize": 13963264,
+        "embedderHeapUsedSize": 4035992,
+        "backingStorageSize": 298913
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 187.73333333333335,
+      "tick": 12553,
+      "elapsed": 209.21666666666667,
+      "phase": "playing",
+      "actors": 23,
+      "retainedActors": 23,
+      "cells": 3,
+      "events": 512,
+      "effects": 7,
+      "hp": 100,
+      "tissue": 87.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 7785140,
+        "totalSize": 13963264,
+        "embedderHeapUsedSize": 6038488,
+        "backingStorageSize": 299833
+      },
+      "audioActive": 7
+    },
+    {
+      "activeSeconds": 192.8,
+      "tick": 12857,
+      "elapsed": 214.28333333333333,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 11,
+      "hp": 100,
+      "tissue": 83.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 5541576,
+        "totalSize": 13963264,
+        "embedderHeapUsedSize": 5944256,
+        "backingStorageSize": 299835
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 197.88333333333333,
+      "tick": 13162,
+      "elapsed": 219.36666666666667,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 9,
+      "hp": 100,
+      "tissue": 83.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 5335292,
+        "totalSize": 13963264,
+        "embedderHeapUsedSize": 5057392,
+        "backingStorageSize": 298437
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 202.95,
+      "tick": 13466,
+      "elapsed": 224.43333333333334,
+      "phase": "playing",
+      "actors": 23,
+      "retainedActors": 23,
+      "cells": 3,
+      "events": 512,
+      "effects": 7,
+      "hp": 100,
+      "tissue": 100,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 7077776,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 9528512,
+        "backingStorageSize": 299868
+      },
+      "audioActive": 11
+    },
+    {
+      "activeSeconds": 208.01666666666665,
+      "tick": 13770,
+      "elapsed": 229.5,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 6,
+      "hp": 100,
+      "tissue": 92,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 10332832,
+        "totalSize": 21303296,
+        "embedderHeapUsedSize": 9173288,
+        "backingStorageSize": 300295
+      },
+      "audioActive": 7
+    },
+    {
+      "activeSeconds": 213.10000000000002,
+      "tick": 14075,
+      "elapsed": 234.58333333333334,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 10,
+      "hp": 100,
+      "tissue": 84,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 9986340,
+        "totalSize": 21303296,
+        "embedderHeapUsedSize": 7895856,
+        "backingStorageSize": 298897
+      },
+      "audioActive": 7
+    },
+    {
+      "activeSeconds": 218.16666666666669,
+      "tick": 14379,
+      "elapsed": 239.65,
+      "phase": "playing",
+      "actors": 22,
+      "retainedActors": 23,
+      "cells": 3,
+      "events": 512,
+      "effects": 8,
+      "hp": 100,
+      "tissue": 92,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 9809172,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 3025968,
+        "backingStorageSize": 297967
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 223.26666666666665,
+      "tick": 14685,
+      "elapsed": 244.75,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 4,
+      "hp": 100,
+      "tissue": 100,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 4589360,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 2099136,
+        "backingStorageSize": 297473
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 228.33333333333331,
+      "tick": 14989,
+      "elapsed": 249.81666666666666,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 8,
+      "hp": 100,
+      "tissue": 96,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 10396296,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 9091784,
+        "backingStorageSize": 299834
+      },
+      "audioActive": 7
+    },
+    {
+      "activeSeconds": 233.39999999999998,
+      "tick": 15293,
+      "elapsed": 254.88333333333333,
+      "phase": "playing",
+      "actors": 23,
+      "retainedActors": 23,
+      "cells": 3,
+      "events": 512,
+      "effects": 8,
+      "hp": 100,
+      "tissue": 88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 5186260,
+        "totalSize": 22351872,
+        "embedderHeapUsedSize": 2106896,
+        "backingStorageSize": 297486
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 238.4833333333333,
+      "tick": 15598,
+      "elapsed": 259.96666666666664,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 9,
+      "hp": 100,
+      "tissue": 92,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 10472044,
+        "totalSize": 22351872,
+        "embedderHeapUsedSize": 9426896,
+        "backingStorageSize": 299313
+      },
+      "audioActive": 7
+    },
+    {
+      "activeSeconds": 243.56666666666666,
+      "tick": 15903,
+      "elapsed": 265.05,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 6,
+      "hp": 100,
+      "tissue": 96.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 9667504,
+        "totalSize": 22351872,
+        "embedderHeapUsedSize": 6990696,
+        "backingStorageSize": 298807
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 248.63333333333333,
+      "tick": 16207,
+      "elapsed": 270.1166666666667,
+      "phase": "playing",
+      "actors": 23,
+      "retainedActors": 24,
+      "cells": 3,
+      "events": 512,
+      "effects": 11,
+      "hp": 100,
+      "tissue": 95.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 6294276,
+        "totalSize": 22351872,
+        "embedderHeapUsedSize": 9185904,
+        "backingStorageSize": 299764
+      },
+      "audioActive": 9
+    },
+    {
+      "activeSeconds": 253.71666666666664,
+      "tick": 16512,
+      "elapsed": 275.2,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 9,
+      "hp": 100,
+      "tissue": 87.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 9653452,
+        "totalSize": 22351872,
+        "embedderHeapUsedSize": 7007560,
+        "backingStorageSize": 299252
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 258.7833333333333,
+      "tick": 16816,
+      "elapsed": 280.26666666666665,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 6,
+      "hp": 100,
+      "tissue": 88.75999999999999,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 9190900,
+        "totalSize": 22351872,
+        "embedderHeapUsedSize": 5864768,
+        "backingStorageSize": 298361
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 263.8666666666667,
+      "tick": 17121,
+      "elapsed": 285.35,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 3,
+      "events": 512,
+      "effects": 8,
+      "hp": 100,
+      "tissue": 96.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 4945436,
+        "totalSize": 22351872,
+        "embedderHeapUsedSize": 7805880,
+        "backingStorageSize": 299317
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 268.96666666666664,
+      "tick": 17427,
+      "elapsed": 290.45,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 9,
+      "hp": 100,
+      "tissue": 92,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 5553524,
+        "totalSize": 10031104,
+        "embedderHeapUsedSize": 4437184,
+        "backingStorageSize": 297879
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 274.0333333333333,
+      "tick": 17731,
+      "elapsed": 295.51666666666665,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 9,
+      "hp": 100,
+      "tissue": 92,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 6961168,
+        "totalSize": 10031104,
+        "embedderHeapUsedSize": 4165288,
+        "backingStorageSize": 297928
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 279.1166666666667,
+      "tick": 18036,
+      "elapsed": 300.6,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 3,
+      "events": 512,
+      "effects": 4,
+      "hp": 100,
+      "tissue": 87.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 4919684,
+        "totalSize": 12914688,
+        "embedderHeapUsedSize": 7641288,
+        "backingStorageSize": 298399
+      },
+      "audioActive": 7
+    },
+    {
+      "activeSeconds": 284.2,
+      "tick": 18341,
+      "elapsed": 305.68333333333334,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 9,
+      "hp": 100,
+      "tissue": 88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 6251216,
+        "totalSize": 13701120,
+        "embedderHeapUsedSize": 7276424,
+        "backingStorageSize": 298865
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 289.2833333333333,
+      "tick": 18646,
+      "elapsed": 310.76666666666665,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 7,
+      "hp": 100,
+      "tissue": 96.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 6010668,
+        "totalSize": 13701120,
+        "embedderHeapUsedSize": 6976472,
+        "backingStorageSize": 298865
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 294.34999999999997,
+      "tick": 18950,
+      "elapsed": 315.8333333333333,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 3,
+      "events": 512,
+      "effects": 9,
+      "hp": 100,
+      "tissue": 88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 6940716,
+        "totalSize": 13701120,
+        "embedderHeapUsedSize": 9305040,
+        "backingStorageSize": 299359
+      },
+      "audioActive": 7
+    },
+    {
+      "activeSeconds": 299.43333333333334,
+      "tick": 19255,
+      "elapsed": 320.9166666666667,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 3,
+      "hp": 100,
+      "tissue": 76,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 6210240,
+        "totalSize": 13701120,
+        "embedderHeapUsedSize": 7577472,
+        "backingStorageSize": 298406
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 304.51666666666665,
+      "tick": 19560,
+      "elapsed": 326,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 8,
+      "hp": 100,
+      "tissue": 91.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 5765676,
+        "totalSize": 13701120,
+        "embedderHeapUsedSize": 6243096,
+        "backingStorageSize": 298900
+      },
+      "audioActive": 7
+    },
+    {
+      "activeSeconds": 309.5833333333333,
+      "tick": 19864,
+      "elapsed": 331.06666666666666,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 25,
+      "cells": 3,
+      "events": 512,
+      "effects": 8,
+      "hp": 100,
+      "tissue": 87.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 4605568,
+        "totalSize": 13701120,
+        "embedderHeapUsedSize": 7912888,
+        "backingStorageSize": 299326
+      },
+      "audioActive": 7
+    },
+    {
+      "activeSeconds": 314.65,
+      "tick": 20168,
+      "elapsed": 336.1333333333333,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 6,
+      "hp": 100,
+      "tissue": 88.75999999999999,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 4634108,
+        "totalSize": 13701120,
+        "embedderHeapUsedSize": 2531080,
+        "backingStorageSize": 297944
+      },
+      "audioActive": 1
+    },
+    {
+      "activeSeconds": 319.75,
+      "tick": 20474,
+      "elapsed": 341.23333333333335,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 6,
+      "hp": 100,
+      "tissue": 67.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 10427896,
+        "totalSize": 15536128,
+        "embedderHeapUsedSize": 9326048,
+        "backingStorageSize": 299791
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 324.81666666666666,
+      "tick": 20778,
+      "elapsed": 346.3,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 3,
+      "events": 512,
+      "effects": 10,
+      "hp": 100,
+      "tissue": 96,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 7245084,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 9675320,
+        "backingStorageSize": 299327
+      },
+      "audioActive": 9
+    },
+    {
+      "activeSeconds": 329.9,
+      "tick": 21083,
+      "elapsed": 351.3833333333333,
+      "phase": "playing",
+      "actors": 23,
+      "retainedActors": 23,
+      "cells": 0,
+      "events": 512,
+      "effects": 9,
+      "hp": 100,
+      "tissue": 88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 9734944,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 7409496,
+        "backingStorageSize": 299363
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 334.96666666666664,
+      "tick": 21387,
+      "elapsed": 356.45,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 8,
+      "hp": 100,
+      "tissue": 91.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 9554620,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 6733200,
+        "backingStorageSize": 298880
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 340.04999999999995,
+      "tick": 21692,
+      "elapsed": 361.5333333333333,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 3,
+      "events": 512,
+      "effects": 8,
+      "hp": 100,
+      "tissue": 79.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 5309904,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 8692976,
+        "backingStorageSize": 299334
+      },
+      "audioActive": 7
+    },
+    {
+      "activeSeconds": 345.1166666666667,
+      "tick": 21996,
+      "elapsed": 366.6,
+      "phase": "playing",
+      "actors": 23,
+      "retainedActors": 23,
+      "cells": 0,
+      "events": 512,
+      "effects": 8,
+      "hp": 100,
+      "tissue": 100,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 9641848,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 6953616,
+        "backingStorageSize": 298865
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 350.18333333333334,
+      "tick": 22300,
+      "elapsed": 371.6666666666667,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 8,
+      "hp": 100,
+      "tissue": 92,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 9335956,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 6181488,
+        "backingStorageSize": 298862
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 355.25,
+      "tick": 22604,
+      "elapsed": 376.73333333333335,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 3,
+      "events": 512,
+      "effects": 7,
+      "hp": 100,
+      "tissue": 88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 4967876,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 7729504,
+        "backingStorageSize": 299326
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 360.3333333333333,
+      "tick": 22909,
+      "elapsed": 381.81666666666666,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 8,
+      "hp": 100,
+      "tissue": 84,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 9779596,
+        "totalSize": 21303296,
+        "embedderHeapUsedSize": 7380216,
+        "backingStorageSize": 298857
+      },
+      "audioActive": 7
+    },
+    {
+      "activeSeconds": 365.4,
+      "tick": 23213,
+      "elapsed": 386.8833333333333,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 8,
+      "hp": 100,
+      "tissue": 97,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 10052096,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 8158920,
+        "backingStorageSize": 299334
+      },
+      "audioActive": 5
+    },
+    {
+      "activeSeconds": 370.46666666666664,
+      "tick": 23517,
+      "elapsed": 391.95,
+      "phase": "playing",
+      "actors": 23,
+      "retainedActors": 23,
+      "cells": 3,
+      "events": 512,
+      "effects": 9,
+      "hp": 100,
+      "tissue": 92,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 8906600,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 2678520,
+        "backingStorageSize": 297966
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 375.54999999999995,
+      "tick": 23822,
+      "elapsed": 397.0333333333333,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 7,
+      "hp": 100,
+      "tissue": 79.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 4680008,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 2145248,
+        "backingStorageSize": 297435
+      },
+      "audioActive": 1
+    },
+    {
+      "activeSeconds": 380.6166666666667,
+      "tick": 24126,
+      "elapsed": 402.1,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 10,
+      "hp": 100,
+      "tissue": 87.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 10337972,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 8817216,
+        "backingStorageSize": 299350
+      },
+      "audioActive": 7
+    },
+    {
+      "activeSeconds": 385.68333333333334,
+      "tick": 24430,
+      "elapsed": 407.1666666666667,
+      "phase": "playing",
+      "actors": 23,
+      "retainedActors": 24,
+      "cells": 3,
+      "events": 512,
+      "effects": 7,
+      "hp": 100,
+      "tissue": 100,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 8887100,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 2646432,
+        "backingStorageSize": 297931
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 390.8333333333333,
+      "tick": 24739,
+      "elapsed": 412.31666666666666,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 9,
+      "hp": 100,
+      "tissue": 91.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 8139320,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 2958816,
+        "backingStorageSize": 297932
+      },
+      "audioActive": 3
+    },
+    {
+      "activeSeconds": 395.9,
+      "tick": 25043,
+      "elapsed": 417.3833333333333,
+      "phase": "playing",
+      "actors": 24,
+      "retainedActors": 24,
+      "cells": 0,
+      "events": 512,
+      "effects": 8,
+      "hp": 100,
+      "tissue": 91.88,
+      "sourceHp": [
+        238,
+        202
+      ],
+      "heap": {
+        "usedSize": 4551040,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 1738000,
+        "backingStorageSize": 297411
+      },
+      "audioActive": 3
+    }
+  ],
+  "checkpoints": [
+    {
+      "name": "fresh-menu",
+      "activeSeconds": 0,
+      "state": {
+        "tick": 0,
+        "elapsed": 0,
+        "phase": "menu",
+        "actors": 6,
+        "retainedActors": 6,
+        "cells": 0,
+        "events": 0,
+        "effects": 0,
+        "hp": 100,
+        "tissue": 62,
+        "sourceHp": [
+          238,
+          238
+        ]
+      },
+      "natural": {
+        "usedSize": 2100284,
+        "totalSize": 5242880,
+        "embedderHeapUsedSize": 2876048,
+        "backingStorageSize": 296728
+      },
+      "collected": {
+        "usedSize": 1943852,
+        "totalSize": 2883584,
+        "embedderHeapUsedSize": 2097032,
+        "backingStorageSize": 296432
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 394,
+        "jsEventListeners": 11
+      },
+      "audio": {
+        "active": 0,
+        "types": {}
+      }
+    },
+    {
+      "name": "pressure-120",
+      "activeSeconds": 126.8,
+      "state": {
+        "tick": 8904,
+        "elapsed": 148.4,
+        "phase": "paused",
+        "actors": 23,
+        "retainedActors": 24,
+        "cells": 3,
+        "events": 512,
+        "effects": 8,
+        "hp": 100,
+        "tissue": 88,
+        "sourceHp": [
+          238,
+          202
+        ]
+      },
+      "natural": {
+        "usedSize": 4804996,
+        "totalSize": 21303296,
+        "embedderHeapUsedSize": 3589816,
+        "backingStorageSize": 298528
+      },
+      "collected": {
+        "usedSize": 4494840,
+        "totalSize": 5050368,
+        "embedderHeapUsedSize": 2718672,
+        "backingStorageSize": 297960
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 410,
+        "jsEventListeners": 24
+      },
+      "audio": {
+        "active": 1,
+        "types": {
+          "AudioDestination": 1
+        }
+      }
+    },
+    {
+      "name": "pressure-240",
+      "activeSeconds": 263.8666666666667,
+      "state": {
+        "tick": 17127,
+        "elapsed": 285.45,
+        "phase": "paused",
+        "actors": 23,
+        "retainedActors": 24,
+        "cells": 3,
+        "events": 512,
+        "effects": 6,
+        "hp": 100,
+        "tissue": 84.88,
+        "sourceHp": [
+          238,
+          202
+        ]
+      },
+      "natural": {
+        "usedSize": 4758200,
+        "totalSize": 22351872,
+        "embedderHeapUsedSize": 9307184,
+        "backingStorageSize": 299339
+      },
+      "collected": {
+        "usedSize": 4715384,
+        "totalSize": 5574656,
+        "embedderHeapUsedSize": 2880912,
+        "backingStorageSize": 297875
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 410,
+        "jsEventListeners": 24
+      },
+      "audio": {
+        "active": 1,
+        "types": {
+          "AudioDestination": 1
+        }
+      }
+    },
+    {
+      "name": "pressure-360",
+      "activeSeconds": 395.9,
+      "state": {
+        "tick": 25049,
+        "elapsed": 417.48333333333335,
+        "phase": "paused",
+        "actors": 24,
+        "retainedActors": 24,
+        "cells": 0,
+        "events": 512,
+        "effects": 8,
+        "hp": 100,
+        "tissue": 83.88,
+        "sourceHp": [
+          238,
+          202
+        ]
+      },
+      "natural": {
+        "usedSize": 4707712,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 3481768,
+        "backingStorageSize": 297954
+      },
+      "collected": {
+        "usedSize": 4570424,
+        "totalSize": 5312512,
+        "embedderHeapUsedSize": 3025480,
+        "backingStorageSize": 297875
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 410,
+        "jsEventListeners": 24
+      },
+      "audio": {
+        "active": 1,
+        "types": {
+          "AudioDestination": 1
+        }
+      }
+    },
+    {
+      "name": "returned-menu",
+      "activeSeconds": 360,
+      "state": {
+        "tick": 0,
+        "elapsed": 0,
+        "phase": "menu",
+        "actors": 6,
+        "retainedActors": 6,
+        "cells": 0,
+        "events": 0,
+        "effects": 0,
+        "hp": 100,
+        "tissue": 62,
+        "sourceHp": [
+          238,
+          238
+        ]
+      },
+      "natural": {
+        "usedSize": 5663544,
+        "totalSize": 9506816,
+        "embedderHeapUsedSize": 4708824,
+        "backingStorageSize": 298152
+      },
+      "collected": {
+        "usedSize": 3685832,
+        "totalSize": 4263936,
+        "embedderHeapUsedSize": 2475416,
+        "backingStorageSize": 297673
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 455,
+        "jsEventListeners": 24
+      },
+      "audio": {
+        "active": 1,
+        "types": {
+          "AudioDestination": 1
+        }
+      }
+    },
+    {
+      "name": "menu-after-5-restarts",
+      "activeSeconds": 360,
+      "state": {
+        "tick": 0,
+        "elapsed": 0,
+        "phase": "menu",
+        "actors": 6,
+        "retainedActors": 6,
+        "cells": 0,
+        "events": 0,
+        "effects": 0,
+        "hp": 100,
+        "tissue": 62,
+        "sourceHp": [
+          238,
+          238
+        ]
+      },
+      "natural": {
+        "usedSize": 3884808,
+        "totalSize": 6885376,
+        "embedderHeapUsedSize": 7482520,
+        "backingStorageSize": 297937
+      },
+      "collected": {
+        "usedSize": 3905328,
+        "totalSize": 4788224,
+        "embedderHeapUsedSize": 2350840,
+        "backingStorageSize": 297673
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 413,
+        "jsEventListeners": 24
+      },
+      "audio": {
+        "active": 1,
+        "types": {
+          "AudioDestination": 1
+        }
+      }
+    },
+    {
+      "name": "menu-after-10-restarts",
+      "activeSeconds": 360,
+      "state": {
+        "tick": 0,
+        "elapsed": 0,
+        "phase": "menu",
+        "actors": 6,
+        "retainedActors": 6,
+        "cells": 0,
+        "events": 0,
+        "effects": 0,
+        "hp": 100,
+        "tissue": 62,
+        "sourceHp": [
+          238,
+          238
+        ]
+      },
+      "natural": {
+        "usedSize": 4021448,
+        "totalSize": 6623232,
+        "embedderHeapUsedSize": 5451544,
+        "backingStorageSize": 297901
+      },
+      "collected": {
+        "usedSize": 3968636,
+        "totalSize": 4788224,
+        "embedderHeapUsedSize": 2436744,
+        "backingStorageSize": 297673
+      },
+      "dom": {
+        "documents": 1,
+        "nodes": 413,
+        "jsEventListeners": 24
+      },
+      "audio": {
+        "active": 1,
+        "types": {
+          "AudioDestination": 1
+        }
+      }
+    }
+  ],
+  "audio": {
+    "created": 3883,
+    "destroyed": 3882,
+    "byType": {
+      "AudioDestination": 1,
+      "Oscillator": 1941,
+      "Gain": 1941
+    },
+    "activeAtEnd": 1,
+    "available": true
+  },
+  "maxActors": 24,
+  "maxCells": 3,
+  "initial": {
+    "tick": 1289,
+    "elapsed": 21.483333333333334,
+    "phase": "playing",
+    "actors": 4,
+    "retainedActors": 4,
+    "cells": 1,
+    "events": 117,
+    "effects": 1,
+    "hp": 100,
+    "tissue": 100,
+    "sourceHp": [
+      238,
+      202
+    ]
+  },
+  "final": {
+    "tick": 25043,
+    "elapsed": 417.3833333333333,
+    "phase": "playing",
+    "actors": 24,
+    "retainedActors": 24,
+    "cells": 0,
+    "events": 512,
+    "effects": 8,
+    "hp": 100,
+    "tissue": 91.88,
+    "sourceHp": [
+      238,
+      202
+    ]
+  },
+  "sourceUnchanged": true,
+  "acceptance": "Measurement completion only. Interpret retained heap, audio nodes and DOM counters separately; no automatic leak-free or full M16-04 pass.",
+  "finishedAt": "2026-10-27T04:08:50.027Z"
+}

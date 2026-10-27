@@ -1,0 +1,654 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-27T04:13:49.088Z",
+  "status": "audited_observations_only",
+  "inputs": {
+    "report": {
+      "path": "artifacts/memory-v062-baseline/report.json",
+      "sha256": "875e0c30ffda004105e206d885bd9cdbd7f304799b80be7b01351dfcdeefb5b0",
+      "bytes": 53840
+    },
+    "scriptCopy": {
+      "path": "artifacts/memory-v062-baseline/diagnostic-script.mjs",
+      "recordedSha256": "bab37ca1bf112f0acf1e4594315f11ed896defb23ec4e3d92e761baf2d5971e8",
+      "actualSha256": "bab37ca1bf112f0acf1e4594315f11ed896defb23ec4e3d92e761baf2d5971e8",
+      "matches": true
+    },
+    "baselineVersion": "0.6.2",
+    "baselineGameSha256": "8015bf6faba161f05aade7813fe3d48c390b4d8d7faac8fe138d59670f702e3d",
+    "knownV062GameSha256": "8015bf6faba161f05aade7813fe3d48c390b4d8d7faac8fe138d59670f702e3d",
+    "baselineMatchesKnownV062": true,
+    "baselineGameSourceRevision": "f83514dcd39b0cfd14c21ca643c4f95db5ddb80f",
+    "recordedBuildInputCount": 45,
+    "recordedBuildInputsMatchV062Provenance": true,
+    "buildInputMismatches": [],
+    "sourceUnchangedDuringRun": true,
+    "scope": "Audits the saved frozen v0.6.2 baseline. Current workspace or dist may already contain separately tested v0.6.3 changes and are deliberately not treated as this baseline."
+  },
+  "method": {
+    "activity": "Read-only saved JSON/script/provenance audit; only this new review file was written. No browser, build, tests, new GC or simulation executed.",
+    "runtime": "Chrome headless, offline file entry, 1366x768; real DOM combat/progression/menu/restart input.",
+    "collection": "At each checkpoint: release held input, pause via UI when playing, read natural heap, wait 1100ms for audio settling, then three HeapProfiler.collectGarbage calls separated by 60ms; read heap and Memory.getDOMCounters. Script requires paused tick to remain unchanged.",
+    "heapCounters": "CDP Runtime.getHeapUsage, bytes; decimal MB values divide by 1,000,000.",
+    "audioCounters": "CDP WebAudio audioNodeCreated/audioNodeWillBeDestroyed events and a live node-ID Map. Saved totals/types are audited; the raw report does not retain the complete per-node event ledger.",
+    "separateFromFps": true,
+    "reason": "Explicit pauses, audio settling and forced GC change execution. These observations are not the natural-GC/FPS performance run and do not establish a throughput or full M16-04 pass."
+  },
+  "completion": {
+    "recordedStatus": "completed",
+    "errors": [],
+    "remoteHttpRequests": [],
+    "startedAt": "2026-10-27T04:01:38.394Z",
+    "finishedAt": "2026-10-27T04:08:50.027Z",
+    "wallDurationSeconds": 431.633,
+    "expectedCheckpointNames": [
+      "fresh-menu",
+      "pressure-120",
+      "pressure-240",
+      "pressure-360",
+      "returned-menu",
+      "menu-after-5-restarts",
+      "menu-after-10-restarts"
+    ],
+    "checkpointNamesMatch": true,
+    "checkpointCount": 7,
+    "sampleCount": 79,
+    "firstPressureSampleActiveSeconds": 0.01666666666666572,
+    "lastPressureSampleActiveSeconds": 395.9,
+    "reportedDurationTarget": 360,
+    "actualFinalSampleElapsed": 417.3833333333333,
+    "initialPressureElapsed": 21.483333333333334,
+    "finalPrePauseActiveSeconds": 395.9,
+    "finalPlayerHp": 100,
+    "finalAliveSourceHp": [
+      238,
+      202
+    ],
+    "finalBothSourcesAlive": true,
+    "recordedMaxActors": 24,
+    "recordedMaxCells": 3
+  },
+  "sampledPopulation": {
+    "counts": {
+      "actors": {
+        "min": 4,
+        "median": 24,
+        "max": 24
+      },
+      "retainedActors": {
+        "min": 4,
+        "median": 24,
+        "max": 25
+      },
+      "cells": {
+        "min": 0,
+        "median": 0,
+        "max": 3
+      },
+      "events": {
+        "min": 117,
+        "median": 512,
+        "max": 512
+      },
+      "effects": {
+        "min": 0,
+        "median": 7,
+        "max": 11
+      },
+      "audioActive": {
+        "min": 1,
+        "median": 5,
+        "max": 11
+      },
+      "hp": {
+        "min": 100,
+        "median": 100,
+        "max": 100
+      },
+      "tissue": {
+        "min": 67.88,
+        "median": 92,
+        "max": 100
+      }
+    },
+    "joint24ActorsAnd3CellsSampleCount": 10,
+    "notes": [
+      "These are sampled entity counts, not the same actors or cells held constant across checkpoints.",
+      "Every pressure sample retains two live sources; distinct recorded source-HP arrays are listed in observedSourceHpArrays. Source IDs are not preserved by the count-only projection."
+    ],
+    "everyPressureSampleHasTwoLiveSources": true,
+    "observedSourceHpArrays": [
+      [
+        238,
+        202
+      ]
+    ]
+  },
+  "checkpoints": [
+    {
+      "name": "fresh-menu",
+      "recordedActiveSeconds": 0,
+      "actualPausedRunActiveSeconds": null,
+      "stateCounts": {
+        "tick": 0,
+        "elapsed": 0,
+        "phase": "menu",
+        "actors": 6,
+        "retainedActors": 6,
+        "cells": 0,
+        "events": 0,
+        "effects": 0,
+        "hp": 100,
+        "tissue": 62,
+        "sourceHp": [
+          238,
+          238
+        ]
+      },
+      "naturalHeapBytes": {
+        "usedSize": 2100284,
+        "totalSize": 5242880,
+        "embedderHeapUsedSize": 2876048,
+        "backingStorageSize": 296728
+      },
+      "postForcedGcHeapBytes": {
+        "usedSize": 1943852,
+        "totalSize": 2883584,
+        "embedderHeapUsedSize": 2097032,
+        "backingStorageSize": 296432
+      },
+      "postForcedGcUsedDecimalMB": 1.943852,
+      "dom": {
+        "documents": 1,
+        "nodes": 394,
+        "jsEventListeners": 11
+      },
+      "audio": {
+        "active": 0,
+        "types": {}
+      }
+    },
+    {
+      "name": "pressure-120",
+      "recordedActiveSeconds": 126.8,
+      "actualPausedRunActiveSeconds": 126.91666666666667,
+      "stateCounts": {
+        "tick": 8904,
+        "elapsed": 148.4,
+        "phase": "paused",
+        "actors": 23,
+        "retainedActors": 24,
+        "cells": 3,
+        "events": 512,
+        "effects": 8,
+        "hp": 100,
+        "tissue": 88,
+        "sourceHp": [
+          238,
+          202
+        ]
+      },
+      "naturalHeapBytes": {
+        "usedSize": 4804996,
+        "totalSize": 21303296,
+        "embedderHeapUsedSize": 3589816,
+        "backingStorageSize": 298528
+      },
+      "postForcedGcHeapBytes": {
+        "usedSize": 4494840,
+        "totalSize": 5050368,
+        "embedderHeapUsedSize": 2718672,
+        "backingStorageSize": 297960
+      },
+      "postForcedGcUsedDecimalMB": 4.49484,
+      "dom": {
+        "documents": 1,
+        "nodes": 410,
+        "jsEventListeners": 24
+      },
+      "audio": {
+        "active": 1,
+        "types": {
+          "AudioDestination": 1
+        }
+      }
+    },
+    {
+      "name": "pressure-240",
+      "recordedActiveSeconds": 263.8666666666667,
+      "actualPausedRunActiveSeconds": 263.96666666666664,
+      "stateCounts": {
+        "tick": 17127,
+        "elapsed": 285.45,
+        "phase": "paused",
+        "actors": 23,
+        "retainedActors": 24,
+        "cells": 3,
+        "events": 512,
+        "effects": 6,
+        "hp": 100,
+        "tissue": 84.88,
+        "sourceHp": [
+          238,
+          202
+        ]
+      },
+      "naturalHeapBytes": {
+        "usedSize": 4758200,
+        "totalSize": 22351872,
+        "embedderHeapUsedSize": 9307184,
+        "backingStorageSize": 299339
+      },
+      "postForcedGcHeapBytes": {
+        "usedSize": 4715384,
+        "totalSize": 5574656,
+        "embedderHeapUsedSize": 2880912,
+        "backingStorageSize": 297875
+      },
+      "postForcedGcUsedDecimalMB": 4.715384,
+      "dom": {
+        "documents": 1,
+        "nodes": 410,
+        "jsEventListeners": 24
+      },
+      "audio": {
+        "active": 1,
+        "types": {
+          "AudioDestination": 1
+        }
+      }
+    },
+    {
+      "name": "pressure-360",
+      "recordedActiveSeconds": 395.9,
+      "actualPausedRunActiveSeconds": 396,
+      "stateCounts": {
+        "tick": 25049,
+        "elapsed": 417.48333333333335,
+        "phase": "paused",
+        "actors": 24,
+        "retainedActors": 24,
+        "cells": 0,
+        "events": 512,
+        "effects": 8,
+        "hp": 100,
+        "tissue": 83.88,
+        "sourceHp": [
+          238,
+          202
+        ]
+      },
+      "naturalHeapBytes": {
+        "usedSize": 4707712,
+        "totalSize": 21041152,
+        "embedderHeapUsedSize": 3481768,
+        "backingStorageSize": 297954
+      },
+      "postForcedGcHeapBytes": {
+        "usedSize": 4570424,
+        "totalSize": 5312512,
+        "embedderHeapUsedSize": 3025480,
+        "backingStorageSize": 297875
+      },
+      "postForcedGcUsedDecimalMB": 4.570424,
+      "dom": {
+        "documents": 1,
+        "nodes": 410,
+        "jsEventListeners": 24
+      },
+      "audio": {
+        "active": 1,
+        "types": {
+          "AudioDestination": 1
+        }
+      }
+    },
+    {
+      "name": "returned-menu",
+      "recordedActiveSeconds": 360,
+      "actualPausedRunActiveSeconds": null,
+      "stateCounts": {
+        "tick": 0,
+        "elapsed": 0,
+        "phase": "menu",
+        "actors": 6,
+        "retainedActors": 6,
+        "cells": 0,
+        "events": 0,
+        "effects": 0,
+        "hp": 100,
+        "tissue": 62,
+        "sourceHp": [
+          238,
+          238
+        ]
+      },
+      "naturalHeapBytes": {
+        "usedSize": 5663544,
+        "totalSize": 9506816,
+        "embedderHeapUsedSize": 4708824,
+        "backingStorageSize": 298152
+      },
+      "postForcedGcHeapBytes": {
+        "usedSize": 3685832,
+        "totalSize": 4263936,
+        "embedderHeapUsedSize": 2475416,
+        "backingStorageSize": 297673
+      },
+      "postForcedGcUsedDecimalMB": 3.685832,
+      "dom": {
+        "documents": 1,
+        "nodes": 455,
+        "jsEventListeners": 24
+      },
+      "audio": {
+        "active": 1,
+        "types": {
+          "AudioDestination": 1
+        }
+      }
+    },
+    {
+      "name": "menu-after-5-restarts",
+      "recordedActiveSeconds": 360,
+      "actualPausedRunActiveSeconds": null,
+      "stateCounts": {
+        "tick": 0,
+        "elapsed": 0,
+        "phase": "menu",
+        "actors": 6,
+        "retainedActors": 6,
+        "cells": 0,
+        "events": 0,
+        "effects": 0,
+        "hp": 100,
+        "tissue": 62,
+        "sourceHp": [
+          238,
+          238
+        ]
+      },
+      "naturalHeapBytes": {
+        "usedSize": 3884808,
+        "totalSize": 6885376,
+        "embedderHeapUsedSize": 7482520,
+        "backingStorageSize": 297937
+      },
+      "postForcedGcHeapBytes": {
+        "usedSize": 3905328,
+        "totalSize": 4788224,
+        "embedderHeapUsedSize": 2350840,
+        "backingStorageSize": 297673
+      },
+      "postForcedGcUsedDecimalMB": 3.905328,
+      "dom": {
+        "documents": 1,
+        "nodes": 413,
+        "jsEventListeners": 24
+      },
+      "audio": {
+        "active": 1,
+        "types": {
+          "AudioDestination": 1
+        }
+      }
+    },
+    {
+      "name": "menu-after-10-restarts",
+      "recordedActiveSeconds": 360,
+      "actualPausedRunActiveSeconds": null,
+      "stateCounts": {
+        "tick": 0,
+        "elapsed": 0,
+        "phase": "menu",
+        "actors": 6,
+        "retainedActors": 6,
+        "cells": 0,
+        "events": 0,
+        "effects": 0,
+        "hp": 100,
+        "tissue": 62,
+        "sourceHp": [
+          238,
+          238
+        ]
+      },
+      "naturalHeapBytes": {
+        "usedSize": 4021448,
+        "totalSize": 6623232,
+        "embedderHeapUsedSize": 5451544,
+        "backingStorageSize": 297901
+      },
+      "postForcedGcHeapBytes": {
+        "usedSize": 3968636,
+        "totalSize": 4788224,
+        "embedderHeapUsedSize": 2436744,
+        "backingStorageSize": 297673
+      },
+      "postForcedGcUsedDecimalMB": 3.968636,
+      "dom": {
+        "documents": 1,
+        "nodes": 413,
+        "jsEventListeners": 24
+      },
+      "audio": {
+        "active": 1,
+        "types": {
+          "AudioDestination": 1
+        }
+      }
+    }
+  ],
+  "pressureAssessment": {
+    "postGcUsedBytes": [
+      4494840,
+      4715384,
+      4570424
+    ],
+    "postGcUsedDecimalMB": [
+      4.49484,
+      4.715384,
+      4.570424
+    ],
+    "postGcUsedRange": {
+      "min": 4494840,
+      "median": 4570424,
+      "max": 4715384
+    },
+    "firstToLastUsed": {
+      "fromBytes": 4494840,
+      "toBytes": 4570424,
+      "changeBytes": 75584,
+      "changePercent": 1.6815726477471982
+    },
+    "sameRecordedPopulationAcrossAllPressureCheckpoints": false,
+    "populations": [
+      {
+        "name": "pressure-120",
+        "actors": 23,
+        "retainedActors": 24,
+        "cells": 3,
+        "events": 512,
+        "effects": 8
+      },
+      {
+        "name": "pressure-240",
+        "actors": 23,
+        "retainedActors": 24,
+        "cells": 3,
+        "events": 512,
+        "effects": 6
+      },
+      {
+        "name": "pressure-360",
+        "actors": 24,
+        "retainedActors": 24,
+        "cells": 0,
+        "events": 512,
+        "effects": 8
+      }
+    ],
+    "triggerVersusPausedPopulation": [
+      {
+        "name": "pressure-120",
+        "triggerActiveSeconds": 126.8,
+        "triggerTick": 8897,
+        "triggerActors": 24,
+        "triggerRetainedActors": 24,
+        "triggerCells": 3,
+        "pausedTick": 8904,
+        "pausedActors": 23,
+        "pausedRetainedActors": 24,
+        "pausedCells": 3
+      },
+      {
+        "name": "pressure-240",
+        "triggerActiveSeconds": 263.8666666666667,
+        "triggerTick": 17121,
+        "triggerActors": 24,
+        "triggerRetainedActors": 24,
+        "triggerCells": 3,
+        "pausedTick": 17127,
+        "pausedActors": 23,
+        "pausedRetainedActors": 24,
+        "pausedCells": 3
+      },
+      {
+        "name": "pressure-360",
+        "triggerActiveSeconds": 395.9,
+        "triggerTick": 25043,
+        "triggerActors": 24,
+        "triggerRetainedActors": 24,
+        "triggerCells": 0,
+        "pausedTick": 25049,
+        "pausedActors": 24,
+        "pausedRetainedActors": 24,
+        "pausedCells": 0
+      }
+    ],
+    "domStableAcrossPressure": true,
+    "audioDestinationOnlyAtEveryPressureCheckpoint": true,
+    "conclusion": "Post-GC used heap is 4.494840/4.715384/4.570424 decimal MB. The middle value is highest; this short series is not monotonic retained-heap growth. Checkpoints are not equal-population samples: live actors are 23/23/24 and cells 3/3/0, although retained actors and events are 24 and 512 in all three. At the first two trigger samples there were 24 live actors and 3 cells, but gameplay continued briefly while input was cleared and Escape was delivered; one actor was gone by the paused sample. The final checkpoint used the timeout fallback with no cells. These differences preclude a strict same-population A/B claim."
+  },
+  "menuRestartAssessment": {
+    "freshMenuPostGcUsedBytes": 1943852,
+    "returnedMenuPostGcUsedBytes": 3685832,
+    "after5PostGcUsedBytes": 3905328,
+    "after10PostGcUsedBytes": 3968636,
+    "after5DecimalMB": 3.905328,
+    "after10DecimalMB": 3.968636,
+    "after5To10Used": {
+      "fromBytes": 3905328,
+      "toBytes": 3968636,
+      "changeBytes": 63308,
+      "changePercent": 1.6210674237861822
+    },
+    "sameRecordedGameCountsAfter5And10": true,
+    "domAfter5": {
+      "documents": 1,
+      "nodes": 413,
+      "jsEventListeners": 24
+    },
+    "domAfter10": {
+      "documents": 1,
+      "nodes": 413,
+      "jsEventListeners": 24
+    },
+    "domStableAfter5And10": true,
+    "allDomObservations": [
+      {
+        "name": "fresh-menu",
+        "documents": 1,
+        "nodes": 394,
+        "jsEventListeners": 11
+      },
+      {
+        "name": "pressure-120",
+        "documents": 1,
+        "nodes": 410,
+        "jsEventListeners": 24
+      },
+      {
+        "name": "pressure-240",
+        "documents": 1,
+        "nodes": 410,
+        "jsEventListeners": 24
+      },
+      {
+        "name": "pressure-360",
+        "documents": 1,
+        "nodes": 410,
+        "jsEventListeners": 24
+      },
+      {
+        "name": "returned-menu",
+        "documents": 1,
+        "nodes": 455,
+        "jsEventListeners": 24
+      },
+      {
+        "name": "menu-after-5-restarts",
+        "documents": 1,
+        "nodes": 413,
+        "jsEventListeners": 24
+      },
+      {
+        "name": "menu-after-10-restarts",
+        "documents": 1,
+        "nodes": 413,
+        "jsEventListeners": 24
+      }
+    ],
+    "conclusion": "After 5/10 actual start-to-menu loops, the recorded menu game counts match and post-GC used heap is 3.905328/3.968636 MB (+63,308 B, about +1.62%). Both have 1 document, 413 DOM nodes and 24 listeners. The cold menu was 394 nodes/11 listeners; pressure was 410/24 and the immediate returned menu 455/24. UI transitions therefore do not have identical counts, while the two later comparable menu checkpoints do. This does not prove every object or hidden runtime/profile state is identical or that memory is constant; the cold-menu heap is not an interchangeable warmed baseline."
+  },
+  "audioAssessment": {
+    "created": 3883,
+    "destroyed": 3882,
+    "byType": {
+      "AudioDestination": 1,
+      "Oscillator": 1941,
+      "Gain": 1941
+    },
+    "activeAtEnd": 1,
+    "available": true,
+    "netCreatedMinusDestroyed": 1,
+    "totalCreatedMatchesTypeSum": true,
+    "netMatchesActiveAtEnd": true,
+    "finalCheckpointTypes": {
+      "AudioDestination": 1
+    },
+    "onlyDestinationAtEnd": true,
+    "conclusion": "The CDP tracker reports 3883 created (1 destination, 1941 oscillators, 1941 gains), 3882 destroyed, and only the destination remaining at the end. Settled pressure and warmed-menu checkpoints likewise contain only the destination. In-flight pressure samples range from 1 to 11 audio nodes. This baseline does not show oscillators/gains permanently accumulating across these checkpoints. Because v0.6.2 already reclaims them under this diagnostic, it does not establish that the later explicit-disconnect patch fixed a demonstrated baseline node leak."
+  },
+  "metadataLimitations": {
+    "rawPreserved": true,
+    "returnedMenuActiveSecondsFieldIsTargetNotMeasured": true,
+    "affectedCheckpoints": [
+      {
+        "name": "returned-menu",
+        "rawActiveSeconds": 360
+      },
+      {
+        "name": "menu-after-5-restarts",
+        "rawActiveSeconds": 360
+      },
+      {
+        "name": "menu-after-10-restarts",
+        "rawActiveSeconds": 360
+      }
+    ],
+    "explanation": "The archived script passes durationTarget=360 to returned-menu and both restart-menu checkpoints. Those raw activeSeconds labels are target metadata, not measured accumulated pressure time or restart gameplay duration. The last pressure-loop sample is 395.9 active seconds; its paused checkpoint is 396.0 seconds relative to the pressure initial elapsed value. Pressure checkpoint activeSeconds labels are the pre-pause trigger sample and can precede the paused state by about 0.10-0.117 seconds. Preserve these raw values and use actual pressure samples/elapsed values for the exposure range. A corrected future script does not retroactively change this raw run."
+  },
+  "conclusion": {
+    "statement": "This frozen-v0.6.2 baseline completed with bounded sampled game counts, stable DOM/listener counts within the pressure and later-menu groups, no recorded page errors or HTTP requests, post-GC pressure heap around 4.49-4.72 MB and only the audio destination surviving settling/GC. The saved observations do not establish sustained live-object growth, but also do not prove absence of leaks.",
+    "excludedClaims": [
+      "Strict matched-population or matched-time A/B against v0.6.3",
+      "Natural-GC memory plateau or constant total V8 heap capacity",
+      "Process RSS, GPU memory or browser-wide retained memory",
+      "FPS/throughput/M16-04 acceptance from forced-GC checkpoints",
+      "A proven baseline audio leak or a proven causal memory improvement from the later cleanup patch",
+      "Exactly 360 measured active pressure seconds"
+    ]
+  },
+  "integrityChecksPass": true
+}

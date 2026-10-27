@@ -1,0 +1,153 @@
+{
+  "scope": "Natural-GC samples during the ten-minute frame benchmark; explicit-GC/restarts occur only after those metrics were finalized. Different public-input runs/populations and V8 allocation schedules prevent a strict causal memory A/B against 0.6.2. No RSS/GPU or universal leak claim.",
+  "sampleCount": 119,
+  "windows": {
+    "firstMinute": {
+      "count": 12,
+      "used": {
+        "min": 4000168,
+        "median": 6155598,
+        "max": 7334932
+      },
+      "allocated": {
+        "min": 13438976,
+        "median": 14225408,
+        "max": 14749696
+      }
+    },
+    "warm": {
+      "count": 36,
+      "used": {
+        "min": 4612200,
+        "median": 9100700,
+        "max": 10791240
+      },
+      "allocated": {
+        "min": 21565440,
+        "median": 23138304,
+        "max": 23662592
+      }
+    },
+    "late": {
+      "count": 36,
+      "used": {
+        "min": 5600296,
+        "median": 9646448,
+        "max": 17895872
+      },
+      "allocated": {
+        "min": 37031936,
+        "median": 37294080,
+        "max": 38866944
+      }
+    },
+    "lastMinute": {
+      "count": 12,
+      "used": {
+        "min": 5888824,
+        "median": 9869354,
+        "max": 15500396
+      },
+      "allocated": {
+        "min": 37031936,
+        "median": 37294080,
+        "max": 38866944
+      }
+    }
+  },
+  "postMeasurement": {
+    "scope": "After the finished ten-minute frame measurement only: real pause/menu/restart inputs, 1.1s settling, three explicit GCs. Not natural-GC throughput or an independent ten-minute run.",
+    "checkpoints": [
+      {
+        "name": "finished-pressure-paused",
+        "phase": "paused",
+        "tick": 37601,
+        "natural": {
+          "usedSize": 8160480,
+          "totalSize": 38866944,
+          "embedderHeapUsedSize": 3127928,
+          "backingStorageSize": 297797
+        },
+        "collected": {
+          "usedSize": 4382664,
+          "totalSize": 5050368,
+          "embedderHeapUsedSize": 2791472,
+          "backingStorageSize": 297721
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 388,
+          "jsEventListeners": 24
+        }
+      },
+      {
+        "name": "returned-menu",
+        "phase": "menu",
+        "tick": 0,
+        "natural": {
+          "usedSize": 5675488,
+          "totalSize": 8982528,
+          "embedderHeapUsedSize": 4095200,
+          "backingStorageSize": 298720
+        },
+        "collected": {
+          "usedSize": 3559260,
+          "totalSize": 4263936,
+          "embedderHeapUsedSize": 2438960,
+          "backingStorageSize": 298316
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 400,
+          "jsEventListeners": 24
+        }
+      },
+      {
+        "name": "menu-after-5-restarts",
+        "phase": "menu",
+        "tick": 0,
+        "natural": {
+          "usedSize": 5064084,
+          "totalSize": 7147520,
+          "embedderHeapUsedSize": 7373392,
+          "backingStorageSize": 298601
+        },
+        "collected": {
+          "usedSize": 3666812,
+          "totalSize": 4263936,
+          "embedderHeapUsedSize": 2423704,
+          "backingStorageSize": 298316
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 400,
+          "jsEventListeners": 24
+        }
+      },
+      {
+        "name": "menu-after-10-restarts",
+        "phase": "menu",
+        "tick": 0,
+        "natural": {
+          "usedSize": 4057072,
+          "totalSize": 6361088,
+          "embedderHeapUsedSize": 7248816,
+          "backingStorageSize": 298601
+        },
+        "collected": {
+          "usedSize": 3693300,
+          "totalSize": 4263936,
+          "embedderHeapUsedSize": 2376312,
+          "backingStorageSize": 298316
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 400,
+          "jsEventListeners": 24
+        }
+      }
+    ]
+  },
+  "baselineAudit": "artifacts/feedback-v063/memory-baseline-review.json",
+  "acceptance": "Observed counters and finite restart coverage, not full memory-stability certification."
+}

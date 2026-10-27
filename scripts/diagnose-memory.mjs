@@ -78,7 +78,7 @@ try {
     await page.keyboard.press('Digit1'); await aim(page, target); await page.mouse.down(); await page.waitForTimeout(180); await page.mouse.up();
   }
   await repair(await readState(page));
-  const initial = await readState(page), began = Date.now(); let next = 120;
+  const initial = await readState(page), began = Date.now(); let next = 120, finishedActive = 0;
   if (counts(initial).sourceHp.length !== 2) throw Error('A source was lost during setup');
   report.initial = counts(initial);
   while (true) {
@@ -94,17 +94,17 @@ try {
     if (active >= next && ((c.actors === 24 && c.cells === 3) || active >= next + 35)) {
       await checkpoint(`pressure-${next}`, active); next += 120;
     }
-    if (active >= duration && next > duration) { report.final = c; break; }
+    if (active >= duration && next > duration) { report.final = c; finishedActive = active; break; }
     await page.keyboard.press('Digit3'); await aim(page, s.tissue); await page.mouse.down();
     if (s.elapsed - lastScan > 3.1) { await page.keyboard.press('KeyQ'); lastScan = s.elapsed; }
     await save(); await page.waitForTimeout(5000);
   }
   await clear(); await page.keyboard.press('Escape'); await page.locator('[data-action="menu"]').click();
-  await checkpoint('returned-menu', duration);
+  await checkpoint('returned-menu', finishedActive);
   for (let n = 1; n <= 10; n++) {
     await page.locator('[data-action="start"]').click(); await page.waitForTimeout(160); await page.keyboard.press('KeyQ');
     await page.keyboard.press('Escape'); await page.locator('[data-action="menu"]').click();
-    if (n === 5 || n === 10) await checkpoint(`menu-after-${n}-restarts`, duration);
+    if (n === 5 || n === 10) await checkpoint(`menu-after-${n}-restarts`, finishedActive);
   }
   report.audio.activeAtEnd = audio.size;
   report.sourceUnchanged = gameSha256 === sha(await readFile('dist/game.js'));
