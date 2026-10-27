@@ -5,6 +5,8 @@ import type { ProtocolId } from '../game/growthTypes';
 import { PROTOCOL_IDS, PROTOCOLS } from '../game/protocols';
 import type { GameState } from '../game/types';
 import type { CounterGuideVariant } from '../game/encounterTypes';
+import { availableStartingPlans, parsePreparation, preparationForPlan, type RunPreparation, type StartingPlanId } from '../game/preparation';
+import { parseRunMetricsSummary, summarizeRunMetrics, type RunMetricsSummary } from '../game/runMetrics';
 
 export const PROFILE_SCHEMA_VERSION = 1 as const;
 export const PROFILE_STORAGE_KEY = 'viral-invasion:1:profile';
@@ -13,6 +15,7 @@ export interface RunEncounterRecord {
   configId: 'campaign-1' | 'fixture-1'; guideVariant: CounterGuideVariant;
   firstTraitOverride?: TraitId; guideCompleted: boolean; guideSkipped: boolean;
   counterMethod?: 'rear' | 'pulse';
+  preparation?: RunPreparation;
 }
 export interface ProfileStorage {
   getItem(key: string): string | null;
@@ -41,12 +44,14 @@ export interface RunSummary {
   coreCleared: boolean; stats: RunStats; timeline: RunTimelineEntry[];
   suggestion: string; suggestionEvidence: string;
   encounter?: RunEncounterRecord;
+  review?: RunMetricsSummary;
 }
 export interface RunRecord extends RunSummary { runId: string }
 export interface ProfileData {
   game: 'viral-invasion'; schemaVersion: typeof PROFILE_SCHEMA_VERSION;
   discoveredTraits: TraitId[]; discoveredWeaknesses: TraitId[]; unlockedProtocols: ProtocolId[];
   achievements: AchievementId[]; settings: ProfileSettings;
+  startingPlan: StartingPlanId;
   onboarding: { migrationGuideAcknowledged: boolean; counterGuideVersion: number; counterGuideCompleted: boolean; counterGuideSkipped: boolean };
   stats: { runs: number; wins: number; losses: number; kills: number; sourceClears: number; coreClears: number };
   best: { fastestVictory: { runId: string; seed: number; durationSeconds: number; encounter?: RunEncounterRecord } | null; mostKills: number; mostSources: number; longestRunSeconds: number };
@@ -90,7 +95,7 @@ export function emptyProfile(): ProfileData {
   return {
     game: 'viral-invasion', schemaVersion: PROFILE_SCHEMA_VERSION,
     discoveredTraits: [], discoveredWeaknesses: [], unlockedProtocols: [], achievements: [],
-    settings: { sound: true, lowEffects: false },
+    settings: { sound: true, lowEffects: false }, startingPlan: 'field',
     onboarding: { migrationGuideAcknowledged: false, counterGuideVersion: COUNTER_GUIDE_VERSION, counterGuideCompleted: false, counterGuideSkipped: false },
     stats: { runs: 0, wins: 0, losses: 0, kills: 0, sourceClears: 0, coreClears: 0 },
     best: { fastestVictory: null, mostKills: 0, mostSources: 0, longestRunSeconds: 0 },
@@ -104,10 +109,13 @@ function parseEncounter(value: unknown): RunEncounterRecord | null {
     || typeof value.guideCompleted !== 'boolean' || typeof value.guideSkipped !== 'boolean'
     || value.firstTraitOverride !== undefined && !TRAIT_IDS.includes(value.firstTraitOverride as TraitId)
     || value.counterMethod !== undefined && !['rear', 'pulse'].includes(String(value.counterMethod))) return null;
+  const preparation = value.preparation === undefined ? undefined : parsePreparation(value.preparation);
+  if (preparation === null) return null;
   return { configId: value.configId as RunEncounterRecord['configId'], guideVariant: value.guideVariant as CounterGuideVariant,
     guideCompleted: value.guideCompleted, guideSkipped: value.guideSkipped,
     ...(value.firstTraitOverride !== undefined ? { firstTraitOverride: value.firstTraitOverride as TraitId } : {}),
-    ...(value.counterMethod !== undefined ? { counterMethod: value.counterMethod as 'rear' | 'pulse' } : {}) };
+    ...(value.counterMethod !== undefined ? { counterMethod: value.counterMethod as 'rear' | 'pulse' } : {}),
+    ...(preparation ? { preparation } : {}) };
 }
 function parseRecord(value: unknown): RunRecord | null {
   if (!ownObject(value) || !runIdValid(value.runId) || !uint32(value.seed) || typeof value.success !== 'boolean'
@@ -118,6 +126,8 @@ function parseRecord(value: unknown): RunRecord | null {
     || !Array.isArray(value.timeline) || value.timeline.length > 30 || !textValid(value.suggestion) || !textValid(value.suggestionEvidence)) return null;
   const encounter = value.encounter === undefined ? undefined : parseEncounter(value.encounter);
   if (encounter === null) return null;
+  const review = value.review === undefined ? undefined : parseRunMetricsSummary(value.review);
+  if (value.review !== undefined && !review) return null;
   const timeline: RunTimelineEntry[] = [];
   for (const entry of value.timeline) {
     if (!ownObject(entry) || !duration(entry.at) || !['virus', 'antibody', 'campaign'].includes(String(entry.side)) || !textValid(entry.text)) return null;
@@ -128,7 +138,7 @@ function parseRecord(value: unknown): RunRecord | null {
     traits: [...value.traits], protocols: [...value.protocols], migrationChoice: value.migrationChoice as MigrationChoice | null,
     coreCleared: value.coreCleared, stats: Object.fromEntries(RUN_STAT_KEYS.map(key => [key, (value.stats as Record<string, number>)[key]])) as unknown as RunStats,
     timeline, suggestion: value.suggestion, suggestionEvidence: value.suggestionEvidence,
-    ...(encounter ? { encounter } : {}),
+    ...(encounter ? { encounter } : {}), ...(review ? { review } : {}),
   };
 }
 function parseProfile(value: unknown): ProfileData | null {
@@ -166,6 +176,7 @@ function parseProfile(value: unknown): ProfileData | null {
     game: 'viral-invasion', schemaVersion: PROFILE_SCHEMA_VERSION,
     discoveredTraits: [...value.discoveredTraits], discoveredWeaknesses: [...value.discoveredWeaknesses], unlockedProtocols: [...value.unlockedProtocols], achievements: [...value.achievements],
     settings: { sound: value.settings.sound, lowEffects: value.settings.lowEffects },
+    startingPlan: availableStartingPlans(value.unlockedProtocols as ProtocolId[]).includes(value.startingPlan as StartingPlanId) ? value.startingPlan as StartingPlanId : 'field',
     // Additive schema-1 field: old discoveries never imply that a guide was acknowledged.
     onboarding: { migrationGuideAcknowledged: ownObject(value.onboarding) && value.onboarding.migrationGuideAcknowledged === true,
       counterGuideVersion: ownObject(value.onboarding) && count(value.onboarding.counterGuideVersion) ? value.onboarding.counterGuideVersion : 0,
@@ -178,13 +189,14 @@ function parseProfile(value: unknown): ProfileData | null {
 }
 
 function runProtocols(state: GameState): ProtocolId[] {
-  const chosen = [...state.growth?.equipped.map(slot => slot.id) ?? []];
+  const chosen = [...state.growth?.carriedProtocols ?? [], ...state.growth?.equipped.map(slot => slot.id) ?? []];
   for (const event of state.events) if (event.type === 'PROTOCOL_EQUIPPED' && PROTOCOL_IDS.includes(event.data.protocolId as ProtocolId)) chosen.push(event.data.protocolId as ProtocolId);
-  // The run's independent history also survives truncation of the diagnostic event log.
+  // Compatibility fallback for older fixtures. Current runs retain a fixed
+  // four-protocol set independently of both bounded diagnostic histories.
   for (const entry of state.growth?.protocolHistory ?? []) if (entry.type === 'PROTOCOL_EQUIPPED') {
     for (const id of PROTOCOL_IDS) if (entry.text.startsWith(`${PROTOCOLS[id].name}：`)) chosen.push(id);
   }
-  return unique(chosen);
+  return unique(chosen).filter(id => PROTOCOL_IDS.includes(id));
 }
 function advice(state: GameState): Pick<RunSummary, 'suggestion' | 'suggestionEvidence'> {
   const battle = state.battle, campaign = state.campaign;
@@ -192,8 +204,8 @@ function advice(state: GameState): Pick<RunSummary, 'suggestion' | 'suggestionEv
   if (!state.result?.success && state.player.hp <= 0) return answer(`本局救援体耐久耗尽，使用冲刺 ${state.dashes} 次。`, '下局先读带齿轮廓的攻击前摇，横向走出危险区；需要脱离包围时用 Space 冲刺，靠近组织修复还能恢复少量耐久。');
   if (!state.result?.success && battle && battle.pressure.vitality <= 0) return answer(`本局全身稳定耗尽，完成有效修复 ${battle.stats.repairs} 次。`, '下局看到器官濒危警报时，先用 3 瞄准十字组织抢修；进入另一器官前净化源头或关闭传播路线，减轻离场压力。');
   if (!state.result?.success && battle && battle.pressure.infection >= 95) return answer(`本局结束时感染负荷 ${Math.round(battle.pressure.infection)}%，净化感染源 ${battle.stats.sourceClears} 个。`, '下局优先摧毁有增殖环的感染源，再处理追兵；感染满载后的倒数仍能通过清源和修复挽回。');
-  if (campaign?.migration.choice === 'ignore') return answer('本局放任迁移，肺部建立了额外感染源。', '同种子重试时试试另一条路线：去出口 E 追击，或在心脏隔离闸 E 保持两秒封锁，比较不同压力代价。');
-  if (campaign?.migration.choice === 'pursue' && campaign.migration.interceptSucceeded === false) return answer('本局选择追击，但迁移群仍建立了新源。', '下局追击后先找肺部气道：在拦截倒数结束前清除迁移小体，或用 E 关闭气道截流；新源已建立时仍可净化挽回。');
+  if (campaign?.migration.choice === 'ignore') return answer('本局选择放任迁移，肺部承担了新增感染源的风险。', '同种子重试时试试另一条路线：去出口 E 追击，或在心脏隔离闸 E 保持两秒封锁，比较不同压力代价。');
+  if (campaign?.migration.choice === 'pursue' && campaign.migration.interceptSucceeded === false) return answer('本局选择追击，但未在拦截窗口内截住迁移。', '下局追击后先找肺部气道：在拦截倒数结束前清除迁移小体，或用 E 关闭气道截流；新源已建立时仍可净化挽回。');
   if (campaign?.core.combat?.traits.includes('MIMIC') && campaign.core.combat.scanInterrupts === 0) return answer('本局遇到潜伏母巢，尚未用扫描打断组织侵蚀。', '下局为母巢的组织侵蚀前摇保留 Q：扫描能取消这次侵蚀并打开破绽，比只追着核心射击更从容。');
   if (battle?.traits.includes('CARAPACE') && battle.stats.pulses === 0) return answer('本局出现晶壳，定向冲流使用次数为 0。', '下局遇到晶壳先绕后；靠近心脏阀门时朝目标按 E，用少量组织完整度换取击退与破壳窗口。');
   if (battle?.traits.includes('FISSION') && !(battle.behaviorHistory ?? []).some(bin => bin.areaDamage > 0)) return answer('本局出现裂殖，近期没有有效范围裂解伤害。', '下局让母体和小体保持聚集，再用 2 范围裂解；肺部吸气阶段也能帮助聚拢敌群。');
@@ -218,10 +230,12 @@ export function buildRunSummary(state: GameState): RunSummary {
     seed: state.seed >>> 0, success: state.result?.success ?? false, reason: (state.result?.reason ?? '病例尚未结束').slice(0, 2000), durationSeconds: safeDuration(state.elapsed),
     traits: unique(battle?.traits ?? []), protocols: runProtocols(state), migrationChoice: campaign?.migration.choice ?? null,
     coreCleared: campaign?.core.status === 'cleared',
+    ...(state.runMetrics ? { review: summarizeRunMetrics(state.runMetrics) } : {}),
     stats: { kills: safeCount(battle?.stats.kills), sourceClears: safeCount(battle?.stats.sourceClears), eliteClears: safeCount(battle?.stats.eliteClears), repairs: safeCount(battle?.stats.repairs), pulses: safeCount(battle?.stats.pulses), scans: safeCount(state.scans), dashes: safeCount(state.dashes), travels: safeCount(campaign?.stats.travels) },
     timeline: timeline.filter((entry, index) => timeline.findIndex(other => other.at === entry.at && other.side === entry.side && other.text === entry.text) === index).slice(-30),
     ...(battle?.encounter ? { encounter: { configId: battle.encounter.configId, guideVariant: battle.encounter.guideVariant,
       guideCompleted: battle.encounter.firstCounter.completedAt !== null, guideSkipped: battle.encounter.firstCounter.skippedAt !== null,
+      preparation: state.growth?.preparation ?? preparationForPlan('field'),
       ...(battle.forcedFirstTrait ? { firstTraitOverride: battle.forcedFirstTrait } : {}),
       ...(battle.encounter.firstCounter.counterHit ? { counterMethod: battle.encounter.firstCounter.counterHit.method } : {}) } } : {}),
     ...advice(state),
@@ -296,6 +310,12 @@ export class ProfileStore {
     }
     if (changed) this.persist();
     return this.load();
+  }
+  /** Permanent records expand starting choices; all equipment is freshly I-rank. */
+  selectStartingPlan(plan: StartingPlanId): boolean {
+    if (!availableStartingPlans(this.value.unlockedProtocols).includes(plan)) return false;
+    if (this.value.startingPlan !== plan) { this.value.startingPlan = plan; this.persist(); }
+    return true;
   }
   /** Only an explicit button/Escape dismissal acknowledges the guide, not discovering traits or showing it. */
   acknowledgeMigrationGuide(): ProfileSnapshot {

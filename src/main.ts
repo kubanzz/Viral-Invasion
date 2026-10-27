@@ -17,6 +17,9 @@ import { profileOverlay, profileMenuMarkup, profileResultMarkup } from './ui/pro
 import './ui/profile.css';
 import { encounterHudMarkup, updateEncounterHud, encounterHelpMarkup } from './ui/encounterHud';
 import './ui/encounter.css';
+import { startingPlanOverlay } from './ui/startingPlanHud';
+import './ui/startingPlan.css';
+import { preparationForPlan, type StartingPlanId } from './game/preparation';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
 const app = document.querySelector<HTMLDivElement>('#app')!;
@@ -46,6 +49,8 @@ let growthDetailsReturnSelector = '.growth-panel [data-action="growth-details"]'
 let growthDetailsReturnLabel = '返回战场';
 let resetClockAfterStep = false;
 let profileOpen = false;
+let startingPlanOpen = false;
+let startingPlanSelection = profile.data.startingPlan;
 let resumeAfterProfile = false;
 let runId = '';
 let migrationGuide = false;
@@ -86,6 +91,7 @@ session.bus.on('event', event => {
 const el = (id: string) => document.getElementById(id)!;
 const formatTime = (seconds: number) => `${Math.floor(seconds/60).toString().padStart(2,'0')}:${Math.floor(seconds%60).toString().padStart(2,'0')}`;
 function togglePause() {
+  if (startingPlanOpen) { startingPlanOpen = false; input.clear(); clock.reset(); return; }
   input.clear(); clock.reset();
   if (growthDetails) { closeGrowthDetails(); return; }
   if (profileOpen) { profileOpen = false; if (resumeAfterProfile) session.resume(); resumeAfterProfile = false; return; }
@@ -97,22 +103,26 @@ function togglePause() {
   if (session.state.phase === 'playing') session.pause();
   else if (session.state.phase === 'paused') session.resume();
 }
-function start(newSeed?: number, replay?: RunEncounterRecord, preserveCurrent = false) {
+function start(newSeed?: number, replay?: RunEncounterRecord | null, preserveCurrent = false) {
   input.clear(); clock.reset(); help = false; history = false; resumeAfterHelp = false; resumeAfterHistory = false;
   growthDetails = false; resumeAfterGrowthDetails = false;
-  profileOpen = false; migrationGuide = false; migrationGuidePending = false;
+  profileOpen = false; startingPlanOpen = false; migrationGuide = false; migrationGuidePending = false;
   runId = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}:${performance.now()}:${Math.random().toString(36).slice(2)}`;
   document.body.classList.remove('crisis');
-  sound.unlock(); session.start(newSeed ?? session.state.seed, preserveCurrent ? undefined : replay ? replayRunOptions(replay, firstTrait) : newRunOptions(profile.data, firstTrait));
+  const options = replay ? replayRunOptions(replay, firstTrait) : newRunOptions(profile.data, firstTrait);
+  // Records predating preparation replay with no preloaded protocol. They must
+  // not silently borrow the newly selected menu preference.
+  if (replay === null) options.preparation = preparationForPlan('field');
+  sound.unlock(); session.start(newSeed ?? session.state.seed, preserveCurrent ? undefined : options);
 }
 function showHelp() {
-  if (profileOpen || migrationGuide || history || help || growthDetails) return;
+  if (profileOpen || startingPlanOpen || migrationGuide || history || help || growthDetails) return;
   resumeAfterHelp = session.state.phase === 'playing';
   if (resumeAfterHelp) session.pause();
   input.clear(); clock.reset(); help = true;
 }
 function showGrowthDetails(button: HTMLButtonElement) {
-  if (!session.state.growth || growthDetails || profileOpen || migrationGuide) return;
+  if (!session.state.growth || growthDetails || profileOpen || startingPlanOpen || migrationGuide) return;
   resumeAfterGrowthDetails = session.state.phase === 'playing';
   growthDetailsReturnSelector = button.closest('#overlay-host') ? '#overlay-host [data-action="growth-details"]' : '.growth-panel [data-action="growth-details"]';
   growthDetailsReturnLabel = help ? '返回作战手册' : history ? '返回战术记录' : session.state.growth.pendingResearch ? '返回研究方向' : session.state.growth.draft ? '返回进化草案' : resumeAfterGrowthDetails ? '返回战场' : '返回上一级';
@@ -138,6 +148,17 @@ app.addEventListener('click', event => {
   const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-action]');
   if (!button) return;
   const action = button.dataset.action!;
+  if (action === 'starting-plan') {
+    if (!['menu', 'result'].includes(session.state.phase)) return;
+    startingPlanOpen = true; profileOpen = false; help = false; history = false;
+    input.clear(); clock.reset(); return;
+  }
+  if (action === 'close-starting-plan') { startingPlanOpen = false; input.clear(); clock.reset(); return; }
+  if (action === 'plan-select') {
+    if (!startingPlanOpen || !['menu', 'result'].includes(session.state.phase)) return;
+    if (profile.selectStartingPlan(button.dataset.plan as StartingPlanId)) { startingPlanOpen = false; startingPlanSelection = profile.data.startingPlan; }
+    input.clear(); clock.reset(); return;
+  }
   if (action === 'growth-details') { showGrowthDetails(button); return; }
   if (action === 'close-growth-details') { closeGrowthDetails(); return; }
   if (action === 'profile') { resumeAfterProfile = session.state.phase === 'playing'; session.pause(); profileOpen = true; input.clear(); clock.reset(); button.blur(); return; }
@@ -145,7 +166,7 @@ app.addEventListener('click', event => {
   if (action === 'replay-record') {
     const seed = Number(button.dataset.seed), data = profile.data, record = data.recentRuns.find(run => run.runId === button.dataset.runId && run.seed === seed);
     const best = data.best.fastestVictory, encounter = record?.encounter ?? (best && best.runId === button.dataset.runId && best.seed === seed ? best.encounter : undefined);
-    if (Number.isInteger(seed) && seed >= 0 && seed <= 0xffffffff) start(seed, encounter);
+    if (Number.isInteger(seed) && seed >= 0 && seed <= 0xffffffff) start(seed, encounter ?? null);
     return;
   }
   if (action === 'skip-counter-guide') { session.skipCounterGuide(); input.clear(); clock.reset(); button.blur(); return; }
@@ -176,7 +197,7 @@ app.addEventListener('click', event => {
   if (action === 'retry') start(undefined, undefined, true);
   if (action === 'new') start((session.state.seed + 2654435761) >>> 0);
   if (action === 'pause' || action === 'continue') togglePause();
-  if (action === 'menu') { input.clear(); clock.reset(); help = false; history = false; growthDetails = false; resumeAfterGrowthDetails = false; profileOpen = false; migrationGuide = false; migrationGuidePending = false; session.menu(); document.body.classList.remove('crisis'); }
+  if (action === 'menu') { input.clear(); clock.reset(); help = false; history = false; growthDetails = false; resumeAfterGrowthDetails = false; profileOpen = false; startingPlanOpen = false; migrationGuide = false; migrationGuidePending = false; session.menu(); document.body.classList.remove('crisis'); }
   if (action === 'help') showHelp();
   if (action === 'close-help') { help = false; input.clear(); clock.reset(); if (resumeAfterHelp) session.resume(); resumeAfterHelp = false; }
   if (action === 'practice-hit') { help = false; input.clear(); clock.reset(); session.resume(); input.queuePracticeHit(); resumeAfterHelp = false; }
@@ -189,7 +210,7 @@ app.addEventListener('click', event => {
 function updateOverlay() {
   const state = session.state;
   const draft = state.growth?.draft;
-  const key = `${state.phase}:${help}:${lowEffects}:${history}:${growthDetails}:${profileOpen}:${migrationGuide}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}:${state.growth?.pendingResearch?.id}:${state.battle?.encounter?.firstCounter.guideStatus}`;
+  const key = `${state.phase}:${help}:${lowEffects}:${history}:${growthDetails}:${profileOpen}:${startingPlanOpen}:${startingPlanSelection}:${migrationGuide}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}:${state.growth?.pendingResearch?.id}:${state.battle?.encounter?.firstCounter.guideStatus}`;
   if (key === overlayKey) return;
   overlayKey = key;
   el('hud').hidden = state.phase === 'menu' || state.phase === 'result';
@@ -203,6 +224,7 @@ function updateOverlay() {
     host.querySelector<HTMLButtonElement>('[data-action="close-growth-details"]')?.focus({ preventScroll: true });
     return;
   }
+  if (startingPlanOpen) { host.innerHTML = startingPlanOverlay(profile.data); return; }
   if (profileOpen) { host.innerHTML = profileOverlay(profile.data, profile.status); return; }
   if (migrationGuide) { host.innerHTML = `<div class="overlay"><section class="modal" role="dialog" aria-modal="true" aria-label="首次迁移指引"><div class="eyebrow">THE NEXT CHAMBER / 首次迁移</div><h2>病毒要去另一个器官了。</h2><p>倒数已暂停。你可以去器官出口（见小地图）按 E 追击，或在隔离闸（见小地图）按 E 留守 2 秒封锁。放任会让肺部新增感染源，仍可补救。</p><p>追击后清掉迁移小体，或关闭肺部气道；器官图会显示心脏残留风险，出口可双向返回。此说明之后可在作战手册回看。</p><div class="actions"><button class="primary" data-action="close-migration-guide">明白了，继续作战</button></div></section></div>`; return; }
   if (state.battle) {
@@ -286,7 +308,7 @@ renderer.resize(); updateOverlay(); updateHud(); requestAnimationFrame(frame);
 
 // Read-only diagnostics for browser regression. Inputs always use the real DOM.
 Object.defineProperty(window, '__viral', { value: Object.freeze({
-  version: '0.7.1-G4', snapshot: () => session.snapshot(),
+  version: '0.7.2-G4', snapshot: () => session.snapshot(),
   toScreen: (point: { x: number; y: number }) => renderer.camera.worldToScreen(point),
   toWorld: (point: { x: number; y: number }) => renderer.camera.screenToWorld(point),
   diagnostics: () => renderer.diagnostics(session.state),

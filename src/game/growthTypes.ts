@@ -1,5 +1,6 @@
 import type { OrganId, TraitId } from './battleTypes';
 import type { Effect, GameEvent, GameState, Target, Tool, Vec, WorldGeometry } from './types';
+import type { RunPreparation } from './preparation';
 
 export type ProtocolId = 'PULSE_BREAK' | 'PURIFY_CHAIN' | 'IMMUNE_BEACON' | 'EXPOSE_TRACE';
 export type Tuning = 'balanced' | 'focused' | 'extended';
@@ -36,6 +37,9 @@ export interface BeaconState extends Vec {
 export interface GrowthHistoryEntry { at: number; type: string; text: string }
 export interface GrowthState {
   runId: string; seed: number; lastElapsed: number; xp: number; level: number; nextXp: number | null; research: number;
+  preparation?: RunPreparation; starterDebt?: 0 | 1;
+  /** Independent run evidence: accepted equipment commits survive bounded logs and replacement. */
+  carriedProtocols?: ProtocolId[];
   equipped: EquippedProtocol[]; draft: ProtocolDraft | null; pendingLevels: number[];
   consumedDraftIds: string[]; rewardedKeys: string[]; sourceKillCounts: Record<string, number>;
   damageTakenByOrgan: Record<OrganId, number>; protectionNeeded: Record<OrganId, boolean>;

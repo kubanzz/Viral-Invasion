@@ -54,10 +54,10 @@ export function tacticalFeedback(event: GameEvent): Feedback | undefined {
     case 'MIGRATION_PREEMPTIVELY_BLOCKED': return item('隔离闸提前关闭，迁移自动封锁；病毒会滞留为心脏新感染源。');
     case 'MIGRATION_DECIDED': {
       const choice = d.choice === 'pursue' ? 'pursue' : d.choice === 'block' ? 'block' : 'ignore';
-      return item(choice === 'pursue' ? '追击进入肺部：12 秒内清除迁移小体或关闭气道，阻止额外感染源。' : choice === 'block' ? '迁移已封锁：肺部未被激活，心脏新增滞留感染源并承压 −4。' : '放任迁移：肺部新增感染源并受损；出口开放，仍可救援。', 2, 8, `:${choice}`);
+      return item(choice === 'pursue' ? '追击进入肺部：12 秒内清除迁移小体或关闭气道，阻止额外感染源。' : choice === 'block' ? '迁移已封锁：肺部未被激活，心脏承压 −4，并面临滞留感染源风险。' : '放任迁移：肺部受损并面临新增感染源风险；出口开放，仍可救援。', 2, 8, `:${choice}`);
     }
     case 'MIGRATION_INTERCEPTED': return item('迁移被拦截，肺部未建立额外感染源。继续净化并保护器官。');
-    case 'MIGRATION_ESTABLISHED': return item('未能及时拦截，迁移群在肺部建立新感染源。仍可净化该源挽回。');
+    case 'MIGRATION_ESTABLISHED': return item('未能及时拦截，肺部面临新增感染源风险。发现新源后及时净化，仍可挽回。');
     case 'CORE_LOCATED': return item(`主要感染源已净化。前往${organ(d.organId)}复测台按 E，唤醒双特性母巢。`, 2, 8);
     case 'CORE_COMBAT_STARTED': return item('母巢已苏醒：交替使用本局两种特性。躲开前摇或 Q 打断侵蚀，逐层打开核膜。');
     case 'CORE_MEMBRANE_BROKEN': return item(`母巢${t?.name ?? ''}核膜已破，剩余 ${Number(d.remaining) || 0} 层。`, 2, 5, `:${trait ?? 'unknown'}`);

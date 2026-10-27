@@ -4,7 +4,7 @@ import type { GameState } from '../../src/game/types';
 import type { DraftOption, ProtocolId, ResearchDirectionId } from '../../src/game/growthTypes';
 import { availableResearchDirections, RESEARCH_DIRECTIONS } from '../../src/game/research';
 import { GROWTH_BALANCE, makeDraftOption, PROTOCOLS } from '../../src/game/protocols';
-import { draftOverlay, growthDetailsOverlay, growthHelpMarkup, growthHudMarkup, researchDirectionOverlay, updateGrowthHud } from '../../src/ui/growthHud';
+import { draftOverlay, growthDetailsOverlay, growthHelpMarkup, growthHistoryMarkup, growthHudMarkup, researchDirectionOverlay, updateGrowthHud } from '../../src/ui/growthHud';
 
 function fixture(directions: ResearchDirectionId[] = ['general', 'CARAPACE']): GameState {
   const session = new GameSession(13, { campaign: true, milestone: 'G3' }); session.start();
@@ -121,11 +121,61 @@ describe('directed research presentation', () => {
     updateGrowthHud(state); const originalChildren = slots.children;
     expect((nodes['research-hint'] as { textContent: string }).textContent).toContain('诊断后可定向');
     for (let index = 0; index < 24; index++) {
-      state.growth!.research = index; state.growth!.activations = { IMMUNE_BEACON: index };
+      state.growth!.research = index; state.growth!.activations = { IMMUNE_BEACON: index + 999 };
+      state.runMetrics!.summary.control.beaconBites = index;
       state.growth!.rewardedKeys = ['diagnose:CARAPACE', 'diagnose:MIMIC']; updateGrowthHud(state);
     }
     expect(rebuilds).toBe(1); expect(slots.children).toBe(originalChildren);
-    expect(counter.textContent).toBe('触发 23');
+    expect(counter.textContent).toBe('咬击 23');
     expect((nodes['research-hint'] as { textContent: string }).textContent).toContain('可定向 2 类');
+  });
+
+  it('uses accepted zero-damage exclusions in details and history even when planned activations are high', () => {
+    const state = fixture();
+    state.growth!.equipped = ['PULSE_BREAK', 'PURIFY_CHAIN', 'IMMUNE_BEACON'].map(id => ({ id: id as ProtocolId, tuning: 'balanced' }));
+    state.growth!.activations = { PULSE_BREAK: 999, PURIFY_CHAIN: 999, IMMUNE_BEACON: 999 };
+    for (const html of [growthDetailsOverlay(state, '返回'), growthHistoryMarkup(state)]) {
+      expect(html).toContain('实际共振命中 0 次'); expect(html).toContain('实际咬击 0 次');
+      expect(html).toContain('连锁 0 次 / 0 跳；折射 0 次');
+      expect(html).not.toContain('999'); expect(html).not.toContain('本局实际触发');
+    }
+    const details = growthDetailsOverlay(state, '返回');
+    expect(details).toContain('每条净化链至少一次真实邻体正伤害计一次');
+    expect(details).toContain('不按整队轮次计');
+    delete state.runMetrics;
+    for (const html of [growthDetailsOverlay(state, '返回'), growthHistoryMarkup(state)]) {
+      expect(html.match(/未记录真实命中/g)).toHaveLength(3);
+      expect(html).not.toContain('实际共振命中 0 次'); expect(html).not.toContain('实际咬击 0 次');
+    }
+    state.growth!.equipped = [{ id: 'EXPOSE_TRACE', tuning: 'balanced' }]; state.growth!.activations = { EXPOSE_TRACE: 17 };
+    expect(growthDetailsOverlay(state, '返回')).toContain('显影施加次数 17 次');
+    expect(growthHistoryMarkup(state)).toContain('显影施加次数 17 次');
+    delete state.growth!.activations;
+    expect(growthDetailsOverlay(state, '返回')).toContain('显影施加次数未记录');
+  });
+
+  it('updates accepted resonance, chain and ricochet counts without rebuilding protocol slots', () => {
+    const state = fixture();
+    state.growth!.equipped = [{ id: 'PULSE_BREAK', tuning: 'balanced' }, { id: 'PURIFY_CHAIN', tuning: 'balanced' }];
+    state.growth!.activations = { PULSE_BREAK: 999, PURIFY_CHAIN: 999 };
+    let rebuilds = 0;
+    const counters = [{ textContent: '' }, { textContent: '' }, { textContent: '' }];
+    const slots = { children: [] as { querySelector: () => typeof counters[number] }[],
+      set innerHTML(_value: string) { rebuilds++; this.children = counters.map(counter => ({ querySelector: () => counter })); } };
+    const nodes: Record<string, unknown> = { 'protocol-slots': slots };
+    for (const id of ['growth-research', 'growth-xp', 'xp-meter', 'research-hint', 'evolution-feedback']) nodes[id] = { textContent: '', style: {}, hidden: false };
+    vi.stubGlobal('document', { getElementById: (id: string) => nodes[id] });
+    updateGrowthHud(state); const originalChildren = slots.children;
+    expect(counters[0].textContent).toBe('共振 0'); expect(counters[1].textContent).toBe('链 0 · 折 0');
+    const control = state.runMetrics!.summary.control;
+    control.resonanceHits = 3; control.chainTriggers = 4; control.chainHops = 7; control.ricochetHits = 2;
+    updateGrowthHud(state);
+    expect(counters[0].textContent).toBe('共振 3'); expect(counters[1].textContent).toBe('链 4 · 折 2');
+    expect(growthDetailsOverlay(state, '返回')).toContain('连锁 4 次 / 7 跳；折射 2 次');
+    expect(growthHistoryMarkup(state)).toContain('实际共振命中 3 次');
+    expect(rebuilds).toBe(1); expect(slots.children).toBe(originalChildren);
+    delete state.runMetrics; updateGrowthHud(state);
+    expect(counters[0].textContent).toBe('命中未记录'); expect(counters[1].textContent).toBe('命中未记录');
+    expect(rebuilds).toBe(1);
   });
 });

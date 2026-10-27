@@ -14,6 +14,7 @@ import type { MotherCoreCommand, MotherCoreContext } from './motherCoreTypes';
 import { BATTLE_BALANCE as B } from './battleConfig';
 import { sourceTarget } from './organConfig';
 import { recordTacticalEvent } from './tacticalFeedback';
+import { createRunMetrics, reduceRunMetrics } from './runMetrics';
 
 // Exporting the clock here is convenient for hosts, while it remains independently testable.
 export { FixedClock };
@@ -35,6 +36,8 @@ export class GameSession {
   private motherController: MotherCoreController | undefined;
   private campaignTransactions = new Set<string>();
   private deferredCampaign: CampaignCommand[] = [];
+  private metricsSerial = 0;
+  private metricsSequence = 0;
 
   constructor(seed = 130026, private options: CampaignOptions = {}) {
     this.options = { ...options };
@@ -46,7 +49,8 @@ export class GameSession {
 
   private resetGrowth(): void {
     this.draftPauseId = null;
-    this.growthController = this.state.battle && this.state.battle.milestone !== 'G1' ? new GrowthController(this.state.seed, `${this.state.seed}:${++this.runSerial}`) : undefined;
+    this.growthController = this.state.battle && this.state.battle.milestone !== 'G1'
+      ? new GrowthController(this.state.seed, `${this.state.seed}:${++this.runSerial}`, this.state.battle.encounter?.configId === 'campaign-1' ? this.options.preparation : undefined) : undefined;
     if (this.growthController) this.state.growth = this.growthController.state;
   }
 
@@ -74,11 +78,13 @@ export class GameSession {
       message: '先净化两类靶标，再修复受损组织。', messageUntil: 8,
       shots: 0, hits: 0, scans: 0, dashes: 0, result: null,
     };
+    this.metricsSequence = 0;
+    state.runMetrics = createRunMetrics(`${seed >>> 0}:metrics:${++this.metricsSerial}`);
     if (this.options.campaign) initializeBattle(state, this.options);
     return state;
   }
 
-  start(seed = this.state.seed, runOptions?: Pick<CampaignOptions, 'counterGuide' | 'encounterMode' | 'firstTrait'>): void {
+  start(seed = this.state.seed, runOptions?: Pick<CampaignOptions, 'counterGuide' | 'encounterMode' | 'firstTrait' | 'preparation'>): void {
     if (runOptions) this.options = { ...this.options, ...runOptions };
     this.effectId = 0;
     this.dashDirection = { x: 1, y: 0 };
@@ -90,6 +96,9 @@ export class GameSession {
       encounterConfig: this.state.battle?.encounter?.configId ?? (this.state.battle ? 'fixture-1' : 'training-1'),
       counterGuide: this.state.battle?.encounter?.guideVariant ?? 'adaptive',
       firstTraitOverride: this.options.firstTrait ?? '' });
+    // The prepared I-rank protocol is a deliberate starting choice, not restored
+    // equipment. Drain only its accepted setup telemetry after RUN_STARTED.
+    this.flushPausedGrowthLogs();
   }
 
   restart(seed = this.state.seed): void { this.start(seed); }
@@ -128,6 +137,8 @@ export class GameSession {
 
   emit(type: string, data: GameEvent['data']): void {
     const event: GameEvent = { type, tick: this.state.tick, data };
+    if (this.state.runMetrics) this.state.runMetrics = reduceRunMetrics(this.state.runMetrics,
+      { runId: this.state.runMetrics.runId, sequence: ++this.metricsSequence, event });
     this.state.events.push(event);
     // The training log is bounded, even if the player spends hours experimenting.
     if (this.state.events.length > 512) this.state.events.shift();
@@ -353,7 +364,8 @@ export class GameSession {
     target.hitUntil = state.elapsed + .18;
     if (origin.cause === 'basic') state.hits++;
     this.effect('hit', target, target, target.radius, .3);
-    this.emit('TARGET_HIT', { id: target.id, damage: beforeHp - target.hp, rawDamage, remainingHp: target.hp, tool: state.tool, cause: origin.cause });
+    this.emit('TARGET_HIT', { id: target.id, organId: state.battle?.organId ?? 'heart', damage: beforeHp - target.hp, rawDamage, remainingHp: target.hp, tool: state.tool, cause: origin.cause,
+      ...(origin.rootId ? { rootId: origin.rootId } : {}), ...(origin.protocolId ? { protocolId: origin.protocolId } : {}) });
     if (target.hp === 0) {
       this.emit('TARGET_CLEARED', { id: target.id, kind: target.kind });
       if (this.battleDirector) this.battleDirector.cleared(target);

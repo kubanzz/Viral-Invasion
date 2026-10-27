@@ -1,6 +1,7 @@
 import type { Vec } from './types';
 import type { BehaviorBin, EvolutionDecision } from './evolutionTypes';
 import type { CounterGuideVariant, EncounterMode, EncounterState } from './encounterTypes';
+import type { RunPreparation } from './preparation';
 export type { CounterGuideVariant } from './encounterTypes';
 
 export type TraitId = 'CARAPACE' | 'FISSION' | 'MIMIC';
@@ -38,5 +39,5 @@ export interface BattleState {
   forcedFirstTrait?: TraitId; behaviorHistory?: BehaviorBin[]; evolutionDecisions?: EvolutionDecision[];
   encounter?: EncounterState;
 }
-export interface CampaignOptions { campaign?: boolean; firstTrait?: TraitId; milestone?: 'G1' | 'G2' | 'G3'; encounterMode?: EncounterMode; counterGuide?: CounterGuideVariant }
+export interface CampaignOptions { campaign?: boolean; firstTrait?: TraitId; milestone?: 'G1' | 'G2' | 'G3'; encounterMode?: EncounterMode; counterGuide?: CounterGuideVariant; preparation?: RunPreparation }
 export interface TraitInfo { id: TraitId; name: string; symbol: string; ability: string; cost: string; counter: string }

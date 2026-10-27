@@ -212,6 +212,12 @@ for (const sample of cases) test(`Directed research: ${sample.trait}, free modal
     final = await readState(page); observe(final);
     expect(final.result).toMatchObject({ success: true }); expect(researched).toBe(true); expect(reviewedCrisis).toBe(true);
     expect(final.campaign!.encounters!.crisis.interruptions).toBeGreaterThan(0);
+    const metrics = final.runMetrics!.summary.control;
+    expect(final.runMetrics!.summary.limited).toBe(false);
+    expect(metrics.crisisPulseInterrupts + metrics.crisisAirwayInterrupts).toBe(final.campaign!.encounters!.crisis.interruptions);
+    expect(metrics.migrationChoice).toBe(final.campaign!.migration.choice);
+    expect(metrics.coreScanInterrupts).toBe(final.campaign!.core.combat!.scanInterrupts);
+    expect(metrics.coreCleared).toBe(true);
     expect(final.campaign!.encounters!.crisis.status).toBe('cleared');
     expect(final.growth!.pendingResearch).toBeNull();
     const saved = await page.evaluate(key => JSON.parse(localStorage.getItem(key)!), PROFILE_STORAGE_KEY);

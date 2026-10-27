@@ -12,6 +12,7 @@ const folder = process.env.VI_PERF_OUTPUT ?? 'artifacts/research-v071/performanc
 const seed = Number(process.env.VI_PERF_SEED ?? 13);
 const producerIds = ['source-b', 'heart-retained-source'];
 const protectedIds = new Set(producerIds);
+const metricsFrameLimit = 256;
 const hash = value => createHash('sha256').update(value).digest('hex');
 const source = await readFile(new URL(import.meta.url));
 const helper = await build({ stdin: { contents: `export { readState, aim, chooseDraftInput } from './tests/e2e/campaignDriver';
@@ -38,8 +39,10 @@ const report = { version: buildMetadata.version, releaseGameJsSha256: gameHash, 
   method: 'Offline local Chrome headless; normal formal entry, explicit FISSION/adaptive case; only real DOM input and read-only game snapshots. Natural Runtime.getHeapUsage/DOM counters every five seconds. No forced GC in setup, warmup, frame measurement, or natural samples. This is a retained-production pressure run, not a completed victory or a human playtest.',
   setupPlan: 'Clear source-a normally for first XP draft; equip IMMUNE_BEACON; actually clear the exact first FISSION guardian; block migration using the real heart gate; retain source-b and heart-retained-source with open production routes. Keep repairing and Q at tissue; warm to 24 before measurement.',
   cellHitCountScope: 'Lower bound of distinct recent accepted hit events observed during read-only polling, not an exact total damage counter.',
+  runMetricsScope: 'Read-only cumulative summary plus maximum ephemeral frame-entry count across host snapshots; numeric counters must stay finite and nonnegative, frame entries at most 256, and the summary must never be marked limited. Polling does not inspect every simulation tick.',
   densityScope: 'Counts and duration estimates come from ~250ms read-only snapshots. Saved 24+3 snapshots prove coexistence, not uninterrupted 24 actors over every measured frame.',
   status: 'preparing', errors: [], requests: [], setupEvents: [], samples: [], transitions: [], maxActors: 0, maxCells: 0, cellHits: 0,
+  runMetrics: { frameLimit: metricsFrameLimit, maxFrameEntries: 0, observedSnapshots: 0, finalSummary: null },
   coverage: { standard: { polls: 0, actorsSum: 0, capPolls: 0, capAndThreeCellPolls: 0, estimatedCapSeconds: 0 }, low: { polls: 0, actorsSum: 0, capPolls: 0, capAndThreeCellPolls: 0, estimatedCapSeconds: 0 } } };
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
 const frames = { standard: [], low: [] }, observedHits = new Set(), observedSetupEvents = new Map();
@@ -63,9 +66,23 @@ function producers(state) {
       nextSpawnAt: Number.isFinite(next) ? next : null, producing: !!actor && actor.hp > 0 && !!node?.active && edges.some(edge => edge.open) && Number.isFinite(next) };
   });
 }
+function assertRunMetrics(state) {
+  const metrics = state.runMetrics;
+  if (!metrics?.summary || !Array.isArray(metrics.frame?.entries)) throw Error('The pressure case must expose the new cumulative run metrics and ephemeral frame entries');
+  if (metrics.summary.limited !== false) throw Error('The pressure case cumulative metrics became incomplete');
+  if (metrics.frame.entries.length > metricsFrameLimit) throw Error(`Run metrics ephemeral frame exceeded ${metricsFrameLimit} entries`);
+  const checkNumbers = (value, path) => {
+    if (typeof value === 'number' && (!Number.isFinite(value) || value < 0)) throw Error(`Run metrics numeric accumulator is invalid at ${path}: ${value}`);
+    if (value && typeof value === 'object') for (const [key, child] of Object.entries(value)) checkNumbers(child, `${path}.${key}`);
+  };
+  checkNumbers(metrics.summary, 'summary');
+  report.runMetrics.maxFrameEntries = Math.max(report.runMetrics.maxFrameEntries, metrics.frame.entries.length);
+  report.runMetrics.observedSnapshots++;
+}
 function assertFormal(state) {
   const encounter = state.battle?.encounter;
   if (encounter?.configId !== 'campaign-1' || encounter.guideVariant !== 'adaptive' || state.battle.firstTrait !== 'FISSION') throw Error('The pressure case must be formal FISSION/adaptive, never a fixture or an injected guide variant');
+  assertRunMetrics(state);
 }
 function assertProduction(state) {
   assertFormal(state);
@@ -121,6 +138,7 @@ async function naturalSample(name, state, activeSeconds, mode) {
   return { name, wallSeconds: (Date.now() - report.wallStartedAt) / 1000, activeSimulationSeconds: activeSeconds, tick: state.tick, mode,
     alive: live(state).length, cells: state.growth.cells?.length ?? 0, hp: state.player.hp, tissue: state.tissue.hp, infection: state.battle.pressure.infection,
     retainedActors: state.targets.length, events: state.events.length, effects: state.effects.length, producers: producers(state),
+    runMetrics: { frameEntries: state.runMetrics.frame.entries.length, summary: state.runMetrics.summary },
     heap, naturalV8: { usedBytes: heap.usedSize, allocatedCapacityBytes: heap.totalSize, embedderUsedBytes: heap.embedderHeapUsedSize, backingStorageBytes: heap.backingStorageSize }, dom, forcedGc: false };
 }
 async function drain() {
@@ -191,7 +209,7 @@ try {
     report.activeSimulationSeconds = active;
     if (await overlays(state)) continue;
     if (state.phase !== 'playing') throw Error(`Measurement stopped in ${state.phase}`);
-    if (active >= 600) { report.finalState = state; report.samples.push(await naturalSample('terminal', state, active, mode)); break; }
+    if (active >= 600) { report.finalState = state; report.runMetrics.finalSummary = state.runMetrics.summary; report.samples.push(await naturalSample('terminal', state, active, mode)); break; }
     if (mode === 'standard' && active >= 300) {
       await release(); await page.keyboard.press('Escape'); await drain();
       await page.locator('#overlay-host [data-action="effects"]').click();

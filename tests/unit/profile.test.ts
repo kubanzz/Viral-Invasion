@@ -3,6 +3,7 @@ import { GameSession } from '../../src/game/session';
 import type { GameState } from '../../src/game/types';
 import { buildRunSummary, emptyProfile, ProfileStore, PROFILE_STORAGE_KEY, type ProfileStorage } from '../../src/meta/profile';
 import { newRunOptions, replayRunOptions } from '../../src/meta/runOptions';
+import { preparationForPlan } from '../../src/game/preparation';
 
 class MemoryStorage implements ProfileStorage {
   readonly items = new Map<string, string>();
@@ -250,7 +251,7 @@ describe('versioned counter onboarding and run replay', () => {
     storage.items.set(PROFILE_STORAGE_KEY, JSON.stringify({ ...emptyProfile(), discoveredTraits: ['CARAPACE'], onboarding: { migrationGuideAcknowledged: true } }));
     const store = new ProfileStore(storage);
     expect(store.data.onboarding).toEqual({ migrationGuideAcknowledged: true, counterGuideVersion: 0, counterGuideCompleted: false, counterGuideSkipped: false });
-    expect(newRunOptions(store.data)).toEqual({ counterGuide: 'guided', encounterMode: 'formal', firstTrait: undefined });
+    expect(newRunOptions(store.data)).toEqual({ counterGuide: 'guided', encounterMode: 'formal', firstTrait: undefined, preparation: preparationForPlan('field') });
   });
 
   it('persists skipped and subsequently completed independently and idempotently', () => {
@@ -304,7 +305,7 @@ describe('versioned counter onboarding and run replay', () => {
     const session = new GameSession(27, { campaign: true, milestone: 'G3', firstTrait: 'MIMIC' }); session.start();
     session.finish(false, 'serialization fixture'); store.recordRun(session.state, 'override-run');
     const record = new ProfileStore(storage).data.recentRuns[0];
-    expect(record.encounter).toEqual({ configId: 'campaign-1', guideVariant: 'adaptive', firstTraitOverride: 'MIMIC', guideCompleted: false, guideSkipped: false });
+    expect(record.encounter).toEqual({ configId: 'campaign-1', guideVariant: 'adaptive', firstTraitOverride: 'MIMIC', guideCompleted: false, guideSkipped: false, preparation: preparationForPlan('field') });
     const replay = new GameSession(record.seed, { campaign: true, milestone: 'G3', ...replayRunOptions(record.encounter!) }); replay.start();
     expect(replay.state.battle!.forcedFirstTrait).toBe('MIMIC'); expect(replay.state.battle!.encounter!.guideVariant).toBe('adaptive');
     expect(replay.state.growth!.equipped).toEqual([]); expect(replay.state.player.hp).toBe(100);
@@ -322,7 +323,7 @@ describe('versioned counter onboarding and run replay', () => {
     const loaded = new ProfileStore(storage), record = loaded.data.best.fastestVictory!;
     expect(loaded.data.recentRuns.some(run => run.runId === 'best-guided')).toBe(false);
     expect(record.encounter).toEqual(buildRunSummary(best).encounter);
-    expect(replayRunOptions(record.encounter!)).toEqual({ counterGuide: 'guided', encounterMode: 'formal', firstTrait: 'CARAPACE' });
+    expect(replayRunOptions(record.encounter!)).toEqual({ counterGuide: 'guided', encounterMode: 'formal', firstTrait: 'CARAPACE', preparation: preparationForPlan('field') });
   });
 
   it.each([{ counterGuideVersion: -1 }, { counterGuideCompleted: 'true' }, { counterGuideSkipped: 1 }])('rejects malformed counter onboarding: %s', patch => {

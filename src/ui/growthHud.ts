@@ -1,4 +1,5 @@
 import type { GameState } from '../game/types';
+import type { ProtocolId } from '../game/growthTypes';
 import { describeProtocol, GROWTH_BALANCE, PATROL_CONFIG, PROTOCOLS, TUNING_NAMES, protocolRank, protocolAction, RANK_NAMES } from '../game/protocols';
 import { availableResearchDirections, RESEARCH_DIRECTIONS } from '../game/research';
 
@@ -8,10 +9,28 @@ const slotViews = new WeakMap<HTMLElement, { signature: string; counts: (HTMLEle
 const feedbackViews = new WeakMap<HTMLElement, { title: string; hint: string }>();
 export const growthDetailsEntryMarkup = `<button class="growth-details-entry" data-action="growth-details">当前配装详情</button>`;
 export const growthHudMarkup = `<aside class="growth-panel"><div class="growth-heading"><span>我的进化 · 抗体构筑</span><b id="growth-research">样本 0</b></div><div class="xp-label" id="growth-xp"></div><div class="meter"><i id="xp-meter"></i></div><div id="protocol-slots" class="protocol-slots"></div>${growthDetailsEntryMarkup}<p id="research-hint">Q 诊断 → 研究台 E 选方向</p></aside><div id="evolution-feedback" class="evolution-feedback" role="status" hidden></div>`;
-export const growthHelpMarkup = `<p><b>我的进化：</b>经验来自清源、精英、首次诊断与保护组织；达标时三选一。四种协议是四条不同的规则路线，每次显示三个候选，可装备 ${GROWTH_BALANCE.slots} 种。重复选择已有协议先升至Ⅱ/Ⅲ阶，实际提高效果；Ⅲ阶后才改变校准取向。</p><p><b>诊断 → 定向研究：</b>Q 实际诊断过的变异会开放对应研究方向。靠近研究台按 E，先选择方向；确认时才消耗 ${GROWTH_BALANCE.researchCost} 样本并生成三选一草案，选方向前取消免费。定向候选保证包含相关主协议与联动伙伴，仍可自由选择任意候选；通用研究保持随机。草案生成后放弃不退样本，研究与经验共用同一套配装，研究和草案期间暂停。</p><p><b>免疫协同：</b>没有协议时，Q 也能召来一只短时侦巡细胞协助清理。装备免疫灯塔后，Q 变为三只免疫细胞小队，在标记区移动、追击并接触吞噬；小队会带来组织承压。异常显影让 Q 留下减速轨迹，小队优先围猎显影体。</p><p><b>组合打法：</b>共振裂解需要靠近装置、配合冲流相位命中；与连锁净化搭配，破绽清除可增加一跳，总计最多 3 跳。槽位下方会显示使用提示和本局触发数，草案同时展示前后变化与代价。</p>`;
+export const growthHelpMarkup = `<p><b>我的进化：</b>经验来自清源、精英、首次诊断与保护组织；达标时三选一。四种协议是四条不同的规则路线，每次显示三个候选，可装备 ${GROWTH_BALANCE.slots} 种。重复选择已有协议先升至Ⅱ/Ⅲ阶，实际提高效果；Ⅲ阶后才改变校准取向。</p><p><b>诊断 → 定向研究：</b>Q 实际诊断过的变异会开放对应研究方向。靠近研究台按 E，先选择方向；确认时才消耗 ${GROWTH_BALANCE.researchCost} 样本并生成三选一草案，选方向前取消免费。定向候选保证包含相关主协议与联动伙伴，仍可自由选择任意候选；通用研究保持随机。草案生成后放弃不退样本，研究与经验共用同一套配装，研究和草案期间暂停。</p><p><b>免疫协同：</b>没有协议时，Q 也能召来一只短时侦巡细胞协助清理。装备免疫灯塔后，Q 变为三只免疫细胞小队，在标记区移动、追击并接触吞噬；小队会带来组织承压。异常显影让 Q 留下减速轨迹，小队优先围猎显影体。</p><p><b>组合打法：</b>共振裂解需要靠近装置、配合冲流相位命中；与连锁净化搭配，破绽清除可增加一跳，总计最多 3 跳。槽位下方会显示使用提示和实际命中／显影施加记录，草案同时展示前后变化与代价。</p>`;
+function preparationCopy(state: GameState): string {
+  const growth=state.growth;
+  if(!growth?.preparation?.starterProtocolId)return '';
+  return growth.starterDebt===1 ? `初始预装已提前使用首份经验成长；${GROWTH_BALANCE.xpThresholds[0]} XP 只结清预支，不生成草案；${GROWTH_BALANCE.xpThresholds[1]} XP 起正常选择。` : '初始预装的首份经验成长已结清；后续经验草案正常生成。';
+}
+/** Combat counters come from accepted positive-damage facts, never planned activations. */
+function protocolRecord(state: GameState, id: ProtocolId): { hud: string; summary: string; definition: string } {
+  if(id==='EXPOSE_TRACE'){
+    if(!state.growth?.activations)return {hud:'显影未记录',summary:'显影施加次数未记录',definition:'本局没有完整显影施加记录。'};
+    const count=state.growth?.activations?.EXPOSE_TRACE??0;
+    return {hud:`显影 ${count}`,summary:`显影施加次数 ${count} 次`,definition:'按扫描实际施加标记记录，不代表造成伤害。'};
+  }
+  const control=state.runMetrics?.summary.control;
+  if(!control)return {hud:'命中未记录',summary:'未记录真实命中',definition:'本局没有完整命中记录。'};
+  if(id==='PULSE_BREAK')return {hud:`共振 ${control.resonanceHits}`,summary:`实际共振命中 ${control.resonanceHits} 次`,definition:'仅计实际造成正伤害的共振命中。'};
+  if(id==='IMMUNE_BEACON')return {hud:`咬击 ${control.beaconBites}`,summary:`实际咬击 ${control.beaconBites} 次`,definition:'按每只灯塔细胞实际造成正伤害的咬击计数，不按整队轮次计。'};
+  return {hud:`链 ${control.chainTriggers} · 折 ${control.ricochetHits}`,summary:`连锁 ${control.chainTriggers} 次 / ${control.chainHops} 跳；折射 ${control.ricochetHits} 次`,definition:'每条净化链至少一次真实邻体正伤害计一次；跳数按实际命中计，进阶折射单列。'};
+}
 export function growthHistoryMarkup(state: GameState): string {
   const growth=state.growth;if(!growth)return '';
-  return `<div class="trait-history"><article><h3>抗体路线</h3><p>${growth.equipped.map(p=>`${PROTOCOLS[p.id].symbol} ${PROTOCOLS[p.id].name} ${RANK_NAMES[protocolRank(p)]} · ${TUNING_NAMES[p.tuning]} · 触发 ${growth.activations?.[p.id]??0} 次`).join(' → ')||'无协议构筑 · Q 仍可召集基础免疫侦巡'}</p><p>经验 ${growth.xp} · 样本 ${growth.research} · 进化 Lv.${growth.level}</p></article></div><ol class="event-history">${growth.protocolHistory.slice().reverse().map(item=>`<li><time>${Math.floor(item.at/60).toString().padStart(2,'0')}:${Math.floor(item.at%60).toString().padStart(2,'0')}</time><span>${escape(item.text)}</span></li>`).join('')}</ol>`;
+  return `<div class="trait-history"><article><h3>抗体路线</h3><p>${growth.equipped.map(p=>`${PROTOCOLS[p.id].symbol} ${PROTOCOLS[p.id].name} ${RANK_NAMES[protocolRank(p)]} · ${TUNING_NAMES[p.tuning]} · ${protocolRecord(state,p.id).summary}`).join(' → ')||'无协议构筑 · Q 仍可召集基础免疫侦巡'}</p><p>经验 ${growth.xp} · 样本 ${growth.research} · 进化 Lv.${growth.level}${preparationCopy(state)?`<br>${preparationCopy(state)}`:''}</p></article></div><ol class="event-history">${growth.protocolHistory.slice().reverse().map(item=>`<li><time>${Math.floor(item.at/60).toString().padStart(2,'0')}:${Math.floor(item.at%60).toString().padStart(2,'0')}</time><span>${escape(item.text)}</span></li>`).join('')}</ol>`;
 }
 
 /** Rendered once on opening, outside the frequently refreshed HUD slots. */
@@ -21,16 +40,16 @@ export function growthDetailsOverlay(state: GameState, returnLabel: string): str
   const slots=Array.from({length:GROWTH_BALANCE.slots},(_,index)=>{
     const slot=growth.equipped[index];
     if(!slot)return `<article class="growth-detail-card empty" data-slot="${index}"><h3>槽位 ${index+1} · 空协议槽</h3><p>通过战斗经验或研究台获得草案，再选择新能力。空槽不影响基础 Q 免疫侦巡。</p></article>`;
-    const info=PROTOCOLS[slot.id],rank=protocolRank(slot),description=describeProtocol(slot.id,slot.tuning,rank),count=growth.activations?.[slot.id]??0;
-    return `<article class="growth-detail-card" data-protocol="${slot.id}" data-rank="${rank}" data-tuning="${slot.tuning}"><h3>${info.symbol} ${escape(info.name)} ${RANK_NAMES[rank]} <small>${escape(TUNING_NAMES[slot.tuning])}</small></h3><p class="growth-detail-count">本局实际触发 <strong data-activation-count="${count}">${count}</strong> 次</p><dl><dt>触发条件</dt><dd>${escape(info.trigger)}</dd><dt>当前效果</dt><dd class="growth-detail-effect">${escape(description.effect)}</dd><dt>代价与限制</dt><dd class="growth-detail-cost">${escape(description.cost)}</dd><dt>现在这样用</dt><dd class="growth-detail-action">${escape(protocolAction(slot.id,rank))}</dd></dl></article>`;
+    const info=PROTOCOLS[slot.id],rank=protocolRank(slot),description=describeProtocol(slot.id,slot.tuning,rank),record=protocolRecord(state,slot.id);
+    return `<article class="growth-detail-card" data-protocol="${slot.id}" data-rank="${rank}" data-tuning="${slot.tuning}"><h3>${info.symbol} ${escape(info.name)} ${RANK_NAMES[rank]} <small>${escape(TUNING_NAMES[slot.tuning])}</small></h3><p class="growth-detail-count"><strong>${escape(record.summary)}</strong><br>${escape(record.definition)}</p><dl><dt>触发条件</dt><dd>${escape(info.trigger)}</dd><dt>当前效果</dt><dd class="growth-detail-effect">${escape(description.effect)}</dd><dt>代价与限制</dt><dd class="growth-detail-cost">${escape(description.cost)}</dd><dt>现在这样用</dt><dd class="growth-detail-action">${escape(protocolAction(slot.id,rank))}</dd></dl></article>`;
   }).join('');
-  return `<div class="overlay"><section class="modal growth-details" role="dialog" aria-modal="true" aria-label="当前配装详情"><div class="growth-details-header"><div><div class="eyebrow">MY EVOLUTION / 我的进化</div><h2>当前配装详情</h2></div><button data-action="close-growth-details">${escape(returnLabel)} <kbd>Esc</kbd></button></div><p class="growth-details-summary">${growth.equipped.length} / ${GROWTH_BALANCE.slots} 槽 · 进化 Lv.${growth.level} · 经验 ${growth.xp} · 样本 ${growth.research}<br>模拟已暂停，触发次数记录本局实际生效次数；重复选择已有协议可进阶至Ⅲ阶。</p><div class="growth-details-scroll" tabindex="0" role="region" aria-label="配装效果与使用说明"><div class="growth-details-grid">${slots}</div><article class="growth-detail-patrol"><h3>Q · ${hasBeacon?'免疫小队已接管召集':'基础免疫侦巡随时可用'}</h3><p>${hasBeacon?'当前装备免疫灯塔，Q 召集三只免疫细胞；持续、伤害、冷却与组织代价见上方协议。':'未装备免疫灯塔时，Q 召来一只免疫细胞，不占协议槽、不消耗组织完整度。'}</p><p>基础侦巡：持续 ${PATROL_CONFIG.duration} 秒，活动范围 ${PATROL_CONFIG.radius}，每 ${PATROL_CONFIG.interval} 秒 ${PATROL_CONFIG.damage} 伤害，冷却 ${PATROL_CONFIG.cooldown} 秒。鼠标指向敌群，再按 Q，细胞会移动并接触吞噬目标。</p></article></div></section></div>`;
+  return `<div class="overlay"><section class="modal growth-details" role="dialog" aria-modal="true" aria-label="当前配装详情"><div class="growth-details-header"><div><div class="eyebrow">MY EVOLUTION / 我的进化</div><h2>当前配装详情</h2></div><button data-action="close-growth-details">${escape(returnLabel)} <kbd>Esc</kbd></button></div><p class="growth-details-summary">${growth.equipped.length} / ${GROWTH_BALANCE.slots} 槽 · 进化 Lv.${growth.level} · 经验 ${growth.xp} · 样本 ${growth.research}<br>模拟已暂停；命中仅计实际正伤害，显影单独记录标记施加。重复选择已有协议可进阶至Ⅲ阶。${preparationCopy(state)?`<br>${preparationCopy(state)}`:''}</p><div class="growth-details-scroll" tabindex="0" role="region" aria-label="配装效果与使用说明"><div class="growth-details-grid">${slots}</div><article class="growth-detail-patrol"><h3>Q · ${hasBeacon?'免疫小队已接管召集':'基础免疫侦巡随时可用'}</h3><p>${hasBeacon?'当前装备免疫灯塔，Q 召集三只免疫细胞；持续、伤害、冷却与组织代价见上方协议。':'未装备免疫灯塔时，Q 召来一只免疫细胞，不占协议槽、不消耗组织完整度。'}</p><p>基础侦巡：持续 ${PATROL_CONFIG.duration} 秒，活动范围 ${PATROL_CONFIG.radius}，每 ${PATROL_CONFIG.interval} 秒 ${PATROL_CONFIG.damage} 伤害，冷却 ${PATROL_CONFIG.cooldown} 秒。鼠标指向敌群，再按 Q，细胞会移动并接触吞噬目标。</p></article></div></section></div>`;
 }
 
 export function updateGrowthHud(state: GameState): void {
   const growth=state.growth;if(!growth)return;
   document.getElementById('growth-research')!.textContent=`样本 ${growth.research}`;
-  document.getElementById('growth-xp')!.textContent=`进化 Lv.${growth.level} · 经验 ${growth.xp}${growth.nextXp===null?' / 已达本局上限':` / ${growth.nextXp}`}`;
+  document.getElementById('growth-xp')!.textContent=growth.starterDebt===1 ? `预装待结清 · ${growth.xp}/${GROWTH_BALANCE.xpThresholds[0]} XP · 下份草案 ${GROWTH_BALANCE.xpThresholds[1]}` : `${growth.preparation?.starterProtocolId?'预支已结清 · ':`进化 Lv.${growth.level} · `}经验 ${growth.xp}${growth.nextXp===null?' / 已达本局上限':` / ${growth.nextXp}`}`;
   const floor=GROWTH_BALANCE.xpThresholds[growth.level-1]??0;
   document.getElementById('xp-meter')!.style.width=`${growth.nextXp===null?100:Math.max(0,Math.min(100,(growth.xp-floor)/(growth.nextXp-floor)*100))}%`;
   const slots=document.getElementById('protocol-slots')!;
@@ -44,8 +63,8 @@ export function updateGrowthHud(state: GameState): void {
     slots.innerHTML=Array.from({length:GROWTH_BALANCE.slots},(_,i)=>{
       const equipped=growth.equipped[i];if(!equipped)return `<div class="protocol-slot empty"><span>${i+1}</span> 空协议槽</div>`;
       const protocol=PROTOCOLS[equipped.id],rank=protocolRank(equipped),description=describeProtocol(equipped.id,equipped.tuning,rank);
-      const count=growth.activations?.[equipped.id]??0;
-      return `<div class="protocol-slot" data-protocol="${equipped.id}" title="${escape(`${protocol.trigger}。${description.effect} ${description.cost} ${protocolAction(equipped.id,rank)}`)}"><span>${protocol.symbol}</span><b>${protocol.name} ${RANK_NAMES[rank]}</b><small>${count?'触发 '+count:'待触发'}</small></div>`;
+      const record=protocolRecord(state,equipped.id);
+      return `<div class="protocol-slot" data-protocol="${equipped.id}" title="${escape(`${protocol.trigger}。${description.effect} ${description.cost} ${protocolAction(equipped.id,rank)}`)}"><span>${protocol.symbol}</span><b>${protocol.name} ${RANK_NAMES[rank]}</b><small>${escape(record.hud)}</small></div>`;
     }).join('');
     view={signature,counts:Array.from(slots.children,node=>node.querySelector<HTMLElement>('small'))};
     slotViews.set(slots,view);
@@ -53,7 +72,7 @@ export function updateGrowthHud(state: GameState): void {
   for(let i=0;i<GROWTH_BALANCE.slots;i++){
     const equipped=growth.equipped[i],counter=view.counts[i];
     if(!equipped||!counter)continue;
-    const count=growth.activations?.[equipped.id]??0,text=count?'触发 '+count:'待触发';
+    const text=protocolRecord(state,equipped.id).hud;
     if(counter.textContent!==text)counter.textContent=text;
   }
   const beacon=growth.beacon;

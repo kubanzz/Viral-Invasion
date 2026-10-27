@@ -6,6 +6,7 @@ import { GROWTH_BALANCE as B, makeDraftOption, PROTOCOL_IDS, PROTOCOLS, TUNINGS,
 import type { DamageOrigin, DraftIntent, DraftOption, DraftResolution, EquippedProtocol, GrowthCommand, GrowthContext, GrowthState, ProtocolDraft, ProtocolId, ProtocolRank, ResearchResult, ResearchDirectionId, ResearchConfirmIntent, ResearchRequestIntent, ResearchRequestResult, ResearchConfirmResult, ResearchCancelResult } from './growthTypes';
 import { advanceImmuneCells, summonImmuneCells } from './immuneCells';
 import { availableResearchDirections, RESEARCH_DIRECTIONS } from './research';
+import { parsePreparation, preparationForPlan, type RunPreparation } from './preparation';
 
 export type { GrowthCommand, GrowthContext, GrowthState, DamageOrigin, DraftIntent, DraftResolution } from './growthTypes';
 
@@ -27,13 +28,25 @@ const stableNearest = (from: Vec, targets: readonly Target[]): Target[] => [...t
 /** Independent run-local state. All world mutations return through the host's common damage path. */
 export class GrowthController {
   readonly state: GrowthState;
-  constructor(seed: number, runId = `${seed >>> 0}:growth`) {
+  constructor(seed: number, runId = `${seed >>> 0}:growth`, preparation?: RunPreparation) {
+    const initialPreparation = parsePreparation(preparation) ?? preparationForPlan('field');
+    const starter = initialPreparation.starterProtocolId;
     this.state = { runId, seed: seed >>> 0, lastElapsed: 0, xp: 0, level: 0, nextXp: B.xpThresholds[0], research: 0,
-      equipped: [], draft: null, pendingLevels: [], consumedDraftIds: [], rewardedKeys: [], sourceKillCounts: {},
+      preparation: initialPreparation, starterDebt: starter ? 1 : 0, carriedProtocols: starter ? [starter] : [],
+      equipped: starter ? [{ id: starter, tuning: 'balanced' }] : [], draft: null, pendingLevels: [], consumedDraftIds: [], rewardedKeys: [], sourceKillCounts: {},
       damageTakenByOrgan: { heart: 0, lung: 0 }, protectionNeeded: { heart: false, lung: false },
       draftSerial: 0, historyHash: 2166136261, ended: false, pendingResearch: null, researchSerial: 0,
       beacon: null, beaconReadyAt: 0, cells: [], activations: {}, marks: [], resonance: [], chainRoots: [], protocolHistory: [], pendingLogs: [],
       budgetTick: -1, budgetUsed: 0, skippedCommands: 0 };
+    if (starter) {
+      const title = `${PROTOCOLS[starter].name} Ⅰ · 初始预装`;
+      const hint = `${PROTOCOL_ACTIONS[starter]}已预支首份成长，${B.xpThresholds[0]} XP 仅结清；下一份草案 ${B.xpThresholds[1]} XP。`;
+      this.state.lastEvolution = { protocolId: starter, rank: 1, until: 8, title, hint };
+      this.log('PROTOCOL_EQUIPPED', { source: 'preparation', protocolId: starter, tuning: 'balanced', rank: 1, slots: 1, actionHint: PROTOCOL_ACTIONS[starter] });
+      this.log('PREPARATION_APPLIED', { version: initialPreparation.version, starterProtocolId: starter, prepaidChoices: 1, repaymentXp: B.xpThresholds[0], nextDraftXp: B.xpThresholds[1] });
+      this.remember('PROTOCOL_EQUIPPED', `${PROTOCOLS[starter].name}：初始预装 Ⅰ · 均衡。`);
+      this.remember('PREPARATION_APPLIED', hint);
+    }
   }
 
   private observeTime(elapsed: number): void {
@@ -55,7 +68,13 @@ export class GrowthController {
     this.log('GROWTH_REWARD',{key,xp,research,totalXp:s.xp,totalResearch:s.research});
     this.remember('GROWTH_REWARD',`研究证据 +${research}，经验 +${xp}。`,elapsed);
     while(s.level<B.xpThresholds.length&&s.xp>=B.xpThresholds[s.level]) {
-      s.pendingLevels.push(++s.level);this.log('GROWTH_LEVEL_GAINED',{level:s.level,xp:s.xp});
+      ++s.level;this.log('GROWTH_LEVEL_GAINED',{level:s.level,xp:s.xp});
+      if (s.starterDebt === 1) {
+        s.starterDebt = 0;
+        const nextDraftXp = B.xpThresholds[s.level] ?? null;
+        this.log('PREPARATION_REPAID', { level: s.level, xp: s.xp, nextDraftXp });
+        this.remember('PREPARATION_REPAID', `已用本次成长结清初始预装；经验保留 ${s.xp}。${nextDraftXp === null ? '本局经验成长已全部完成。' : s.xp >= nextDraftXp ? `下一份草案阈值 ${nextDraftXp} XP 已达到，将照常排队。` : `下一份草案 ${nextDraftXp} XP。`}`, elapsed);
+      } else s.pendingLevels.push(s.level);
     }
     s.nextXp=B.xpThresholds[s.level]??null;
   }
@@ -236,6 +255,7 @@ export class GrowthController {
       s.equipped[index]={id:option.protocolId,tuning:option.tuning};
     }
     this.cleanupChanged(previous,s.equipped);
+    s.carriedProtocols = PROTOCOL_IDS.filter(id => id === option.protocolId || s.carriedProtocols?.includes(id));
     s.lastEvolution={protocolId:option.protocolId,rank:option.rank??1,until:s.lastElapsed+8,title:option.title,hint:option.actionHint??PROTOCOL_ACTIONS[option.protocolId]};
     // Newly evolved Q protocols can be demonstrated on the next accepted scan.
     if(option.protocolId==='IMMUNE_BEACON'||option.protocolId==='EXPOSE_TRACE')s.beaconReadyAt=Math.min(s.beaconReadyAt,s.lastElapsed);

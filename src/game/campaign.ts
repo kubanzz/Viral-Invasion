@@ -113,7 +113,7 @@ export class CampaignDirector {
         this.reserveSource('heart','heart-retained-source',getOrganDefinition('heart').retainedSource,`${migration.id}:retained-source`),
         {kind:'organDamage',organId:'heart',amount:B.blockOrganCost,reason:'migration-block-pressure',eventId:`${migration.id}:block-cost`},
         {kind:'infectionDelta',amount:B.blockInfection,reason:'migration-retained',eventId:`${migration.id}:retained-load`},
-        this.notice('迁移已封锁：肺部未被激活。病毒滞留为心脏新感染源，组织承压 −4；清除它后在心脏迎战母巢。',game,8));
+        this.notice('迁移已封锁：肺部未被激活。心脏组织承压 −4，并面临滞留感染源风险；发现新源后及时清除，再迎战母巢。',game,8));
     }else{
       const lung=this.state.arenas.lung;if(!lung.activated)lung.lastPressureAt=game.elapsed;lung.activated=true;lung.nextBackgroundAt=game.elapsed+Math.max(0,lung.nextBackgroundElapsed-lung.offscreenElapsed);lung.departedAt=game.elapsed;
       this.state.core.organId='lung';
@@ -122,7 +122,7 @@ export class CampaignDirector {
         commands.push(this.reserveSource('lung','lung-migrated-source',getOrganDefinition('lung').migratedSource,`${migration.id}:migrated-source`),
           {kind:'organDamage',organId:'lung',amount:B.ignoreOrganCost,reason:'migration-established',eventId:`${migration.id}:ignore-cost`},
           {kind:'infectionDelta',amount:B.ignoreInfection,reason:'migration-established',eventId:`${migration.id}:ignore-load`},
-          this.notice('迁移群在肺部建立感染源：肺部完整度 −10，感染 +8。出口保持开放，及时前往救援仍可挽回。',game,8));
+          this.notice('已放任迁移：肺部完整度 −10，感染 +8，并面临新增感染源风险。出口保持开放，及时前往救援仍可挽回。',game,8));
       }else{
         migration.status='pursuing';migration.interceptUntil=game.elapsed+B.interceptDuration;
         migration.carrierIds=Array.from({length:3},(_,index)=>`migration-carrier-${index}`);
@@ -247,7 +247,7 @@ export class CampaignDirector {
       if(removed||expired||atGoal){
         migration.status='resolved';migration.interceptResolvedAt=game.elapsed;migration.interceptSucceeded=removed||!lung.flow!.airwayOpen;
         if(migration.interceptSucceeded)commands.push(this.log('MIGRATION_INTERCEPTED',{eventId:migration.id,by:removed?'clear':'closed-airway'}),this.notice('迁移被拦截，肺部未建立额外感染源。继续净化已有感染源并保护器官。',game,6));
-        else commands.push(this.reserveSource('lung','lung-migrated-source',getOrganDefinition('lung').migratedSource,`${migration.id}:pursuit-missed-source`),{kind:'infectionDelta',amount:5,reason:'migration-intercept-missed',eventId:`${migration.id}:pursuit-missed-load`},this.log('MIGRATION_ESTABLISHED',{eventId:migration.id,reason:atGoal?'arrived':'intercept-expired'}),this.notice('未能及时拦截，迁移群在肺部建立新源。仍可净化该源挽回。',game,6));
+        else commands.push(this.reserveSource('lung','lung-migrated-source',getOrganDefinition('lung').migratedSource,`${migration.id}:pursuit-missed-source`),{kind:'infectionDelta',amount:5,reason:'migration-intercept-missed',eventId:`${migration.id}:pursuit-missed-load`},this.log('MIGRATION_ESTABLISHED',{eventId:migration.id,reason:atGoal?'arrived':'intercept-expired'}),this.notice('未能及时拦截，肺部面临新增感染源风险。发现新源后及时净化，仍可挽回。',game,6));
       }else if(game.battle!.organId==='lung'&&lung.flow!.airwayOpen){
         const goal=getOrganDefinition('lung').migrationGoal;
         for(const target of alive){const direction=normalized(goal.x-target.x,goal.y-target.y);commands.push({kind:'moveActor',organId:'lung',targetId:target.id,delta:{x:direction.x*B.carrierSpeed*BALANCE.step,y:direction.y*B.carrierSpeed*BALANCE.step}});}
