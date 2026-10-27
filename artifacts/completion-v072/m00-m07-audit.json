@@ -1,0 +1,2956 @@
+{
+  "schemaVersion": 1,
+  "scope": "Original v1.3 M00–M07 all39 AC + RUN01–05/11 all6 paths",
+  "auditedAt": "2026-10-27T08:35:23.877Z",
+  "candidate": {
+    "version": "0.7.2",
+    "sourceRevision": "dee94391012b08103d5443e23a361cfd08eae75e",
+    "currentHead": "be666a3ad4edb90a7ddd62fa958489596d870f51",
+    "bundleSha256": "6b5396f6b09c123dd2cbe5f6feacff1641f0f7c41a92b6ac1e55883dd8d1d9e3",
+    "unitReport": "artifacts/preparation-v072/unit-candidate-c.json",
+    "unitReportSha256": "baa81b760140dfe60c8bbf67001886d04485603038676e026012eed8d74c7676",
+    "passedNonBatchUnits": 366
+  },
+  "verdictDefinitions": {
+    "proven": "Original technical scope directly supported by candidate-C passing tests/raw and checked current source; not subjective fun or universal proof.",
+    "partial": "Some exact subrequirements rely only on older build/browser evidence or remain native/human gates; code need not be missing.",
+    "missing": "No usable implementation/evidence found.",
+    "contradicted": "Observed evidence conflicts with required behavior."
+  },
+  "summary": {
+    "total": 45,
+    "byVerdict": {
+      "proven": 29,
+      "partial": 16,
+      "missing": 0,
+      "contradicted": 0
+    },
+    "productionBlockersFound": [],
+    "safeAutomatableEvidenceGaps": [
+      "Fresh current revision clone npm-ci/build/dev/test (authorized next; not yet executed here).",
+      "Current C G0 offline training completion, controls, final-Canvas depth and three size/DPR live-hit paths using existing g0 suite.",
+      "Current C ordinary CARAPACE/FISSION/MIMIC causal browser paths using existing G1/gaps tests; three-state/weakness visual captures.",
+      "Current contour black/white render-only comparison using existing capture-silhouettes workflow, clearly separated from live gameplay and human identification."
+    ],
+    "nonAutomatableGates": [
+      "Real native OS focus/minimize and physical browser Ctrl zoom remain unverified; synthetic blur/viewport are not substitutes.",
+      "VIS12/first3min understanding/first-run10–15min/two-run strategy change/voluntary replay require genuine player observations; standard players0/5.",
+      "Finite600s/headless samples do not close full memory-stability or all-device certification."
+    ],
+    "upcomingAuthorizedWork": "A separate clean run will be saved under artifacts/completion-v072/clean; it will not retroactively modify this pre-execution audit."
+  },
+  "method": "Read-only filesystem/JSON/test-source inspection and Git comparisons only; no test/browser/build/install started by this audit.",
+  "productionOrTestsChangedFromCandidate": [
+    "tests/e2e/feedback-growth-hud-stability.spec.ts",
+    "tests/e2e/feedback-v061-growth-details.spec.ts"
+  ],
+  "originalDesignChangedFromBaseline": [],
+  "items": [
+    {
+      "id": "AC-M00-01",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 153,
+        "text": "核实仓库名、npm 包名、HTML 标题、游戏 UI 和新存档前缀均采用 Viral Invasion；新目录含 `package.json`、锁文件、`src/`、`tests/`、`Docs/`、`.gitignore` 与 README；能说明源码与 `dist` 的关系，并记录真实 Git 提交/哈希。"
+      },
+      "verdict": "proven",
+      "summary": "当前品牌、工程结构、会话／存档命名与真实源码和发行来源一致。",
+      "evidence": [
+        {
+          "kind": "current-source",
+          "path": "package.json",
+          "line": 2,
+          "claim": "Package identity and build/test scripts exist.",
+          "sha256": "8a314960c8a95fe2f46553d71163718d578ab0212681a4ace9f6f7a4e8907aed",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-source",
+          "path": "index.html",
+          "line": 8,
+          "claim": "HTML title is Viral Invasion.",
+          "sha256": "240abc27cb391518456a6d81b8360a88946d837888c769c2756415ef9cdc84af",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-source",
+          "path": "src/game/types.ts",
+          "line": 32,
+          "claim": "Session game identity.",
+          "sha256": "c8d67e724f3176da9783dc2e7b9b059ede419f2bfa5e14b7e0063d3390324cbb",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-source",
+          "path": "src/meta/profile.ts",
+          "line": 12,
+          "claim": "Versioned local profile namespace.",
+          "sha256": "7fd5d16754e633e6f2364b74772c2f9154e68bd7e3abbd33391a617838d94c81",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/release-files.json",
+          "sha256": "83a8194190b72d65c56d4ba54d621c3e8b20c1675809f76255e17226767d4475",
+          "scope": "Candidate C revision, bundle and five release-file hashes."
+        },
+        {
+          "kind": "current-raw",
+          "path": "README.md",
+          "sha256": "e5d33765c9ff599cbe41823c50ff86b086f46d48596c091398508396928a308f",
+          "scope": "Explains source/dist and local commands."
+        }
+      ],
+      "currentSourceStatus": "read-only-current-source-check",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需实现修复；后续发行继续记录版本来源。"
+    },
+    {
+      "id": "AC-M00-02",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 154,
+        "text": "在全新检出/干净环境能执行 `npm ci`、`npm run dev`、`npm run build`、`npm test`（E2E 待基础场景就绪），无对原仓库路径的依赖；命令、退出码、结果如实报告。"
+      },
+      "verdict": "partial",
+      "summary": "现工作区C构建／366单元／1000批次成立，但唯一已有干净clone安装记录属于G0 v0.1.1，当前依赖清单已变。",
+      "evidence": [
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/clean-check.json",
+          "sha256": "801625413ece4eebb84ac09ce770c26e3df9b48717ec71e301e8040afc983a3c",
+          "scope": "Fresh clone npm ci/build/test exited0, 30 tests; package and lockfile are old G0."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/verification-summary.json",
+          "sha256": "c6a3ab793cc38dc8f2a9c0e5059ca900293de20f5a29972dc07ec8605056ddcb",
+          "scope": "C build and current test qualification; not a fresh npm-ci clone."
+        }
+      ],
+      "currentSourceStatus": "historical-only",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [
+        "不能把旧clean结果视作当前依赖的安装证明。"
+      ],
+      "nextStep": "已获授权：be666a3独立干净clone执行npm ci、build、dev HTTP200并正常停止、npm test；另存当前原始命令退出与哈希。"
+    },
+    {
+      "id": "AC-M00-03",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 155,
+        "text": "静态检索构建脚本、源码和资产引用，不能指向旧“心脏巡游”本地绝对路径、旧项目文件、外网 CDN 或未经允许的资源；旧工程不存在时也能独立构建。"
+      },
+      "verdict": "proven",
+      "summary": "当前发行全本地classic构建，当前源码只读检索无fetch/WebSocket/CDN或旧游戏绝对路径；双浏览器断网实操成立。",
+      "evidence": [
+        {
+          "kind": "current-source",
+          "path": "scripts/build-offline.mjs",
+          "line": 7,
+          "claim": "Classic bundle; inline CSS and local game.js.",
+          "sha256": "0e899f1174fb20ca34edba6cad8a800b0be44d2c2b097c62eaa5033fe37de3a8",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/release-smoke/report.json",
+          "sha256": "62197cbe1652f07643b5188b2e101a3472cb5b5b70a07dd0730ba1c6d7bc9064",
+          "scope": "C extracted release offline file entry, no remote requests/errors."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/browser/functional-final-summary.json",
+          "sha256": "7e9585dd2e957e00dc99cd45bcd39419138f79da58301ceca896b2e1367c6f21",
+          "scope": "Four candidate-C real browser cases, six earned formal victories, two assigned skips; no training/DPR/OS blanket coverage."
+        }
+      ],
+      "currentSourceStatus": "read-only-current-source-check",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [
+        "favicon内联SVG的xmlns HTTP字符串不是网络依赖；无外部资产授权待项。"
+      ],
+      "nextStep": "保持本地资源审计。"
+    },
+    {
+      "id": "AC-M00-04",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 156,
+        "text": "只在新仓库执行初始化/提交；若目标目录非空先保护现有文件，不覆盖未知或未提交内容；提交前清理密钥、个人路径和无关构建缓存。"
+      },
+      "verdict": "proven",
+      "summary": "独立本地Git历史、原DesignDoc保留，当前工作区源文件无未提交覆盖迹象，发行缓存按ignore排除。",
+      "evidence": [
+        {
+          "kind": "current-source",
+          "path": ".gitignore",
+          "line": 1,
+          "claim": "Dependencies/build/cache/release directories ignored.",
+          "sha256": "81f3b4cb275da62e9eaf1b20113106089f346f575a303f01f1a814817ebb0741",
+          "matchesCandidateManifest": null
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/provenance-final.json",
+          "sha256": "f32fb6b97f1d4100fd61a05dfec50a6b871fedc3897eb4a9fcb2fe30d3f39f93",
+          "scope": "Current source revision and recorded artifact provenance."
+        },
+        {
+          "kind": "current-raw",
+          "path": "Docs/ViralInvasion_TestMatrix.md",
+          "sha256": "bd878114ec902a31bacafd7bf8ff1e94c6715021d959e41674639a27cdaf328d",
+          "scope": "Records independent402ad26 design baseline and later actual local commits."
+        }
+      ],
+      "currentSourceStatus": "read-only-current-source-check",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [
+        "此项是历史初始化／保护行为审计；无法从当前文件重演每个早期文件操作，原设计从402ad26至HEAD无差异。"
+      ],
+      "nextStep": "保持范围明确提交；仓库无remote不伪称push。"
+    },
+    {
+      "id": "AC-M01-01",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 162,
+        "text": "G0 用训练靶/测试规则验证：相同配置 + 相同 seed + 相同输入序列产生相同模拟状态及事件序列；G1 起把感染体出生、变异选择、伤害与结算纳入相同契约（允许非玩法相关帧渲染差异）。"
+      },
+      "verdict": "proven",
+      "summary": "当前训练确定性测试和正式会话重复回放均直接通过。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/session.test.ts",
+          "testFileSha256": "52df9b67aca789b6286e2d8d9e082014130269f9d6b696f2ffcf1c15426ae4d1",
+          "tests": [
+            {
+              "name": "training session same seed plus same input produces identical states and events",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/core.test.ts",
+          "testFileSha256": "91869ec592759e3a48eed01270eec4e1e6f2d9552793937fdc515bbaba2af389",
+          "tests": [
+            {
+              "name": "deterministic foundation replays random values and supports zero seeds without degenerating",
+              "status": "passed"
+            },
+            {
+              "name": "deterministic foundation runs fixed steps independent of render frequency",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g2-integration.test.ts",
+          "testFileSha256": "f3b31fff3b9acdca9aa116846ac2c366d9748e6ccf91abde0cdbd861f95da08c",
+          "tests": [
+            {
+              "name": "G2 shared-session integration replays the same real inputs and choices to the same weighted evolution decisions",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/simulation-final/full-system-audit.json",
+          "sha256": "a169084b76bfb8815d8a58ffc1ccf264ca712c77ee8d45be8666e49ed6b181b8",
+          "scope": "Candidate C 1000 formal public-input sessions, 500 empty base/500 protocols; route and trait invariants plus seed91/seed4 replay; not browser/human."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/core/rng.ts",
+          "line": 2,
+          "claim": "Gameplay randomness seeded.",
+          "sha256": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+          "matchesCandidateManifest": true
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需新实现；改变玩法后重新执行确定性回归。"
+    },
+    {
+      "id": "AC-M01-02",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 163,
+        "text": "G0 暂停 30 秒时训练场实体、模拟时钟与事件数不推进；后台失焦恢复不一次性追赶积压帧。G1 起同样约束病毒增长/转移和感染负荷。"
+      },
+      "verdict": "partial",
+      "summary": "暂停／时钟积压处理当前单元已验证；真实OS失焦、最小化后的浏览器恢复仍无有效原生输入证据。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/session.test.ts",
+          "testFileSha256": "52df9b67aca789b6286e2d8d9e082014130269f9d6b696f2ffcf1c15426ae4d1",
+          "tests": [
+            {
+              "name": "training session freezes all state and event counts during 30 seconds paused",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/core.test.ts",
+          "testFileSha256": "91869ec592759e3a48eed01270eec4e1e6f2d9552793937fdc515bbaba2af389",
+          "tests": [
+            {
+              "name": "deterministic foundation discards paused time, background gaps and overloaded frames",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g1-audit.test.ts",
+          "testFileSha256": "c83d3900a38357caddebb5b47c872c575cd21b989f3e742ccbaaa0a32589bb2b",
+          "tests": [
+            {
+              "name": "G1 independent interaction audit 30 paused seconds freeze an active mutation warning and fatal infection clock, and retry clears both",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/input/controller.ts",
+          "line": 32,
+          "claim": "Clear held keys/fire on blur.",
+          "sha256": "a26bac630063676bc2a168301cc5110da81a82e0d35cc9f6ee5ca3eeec51958c",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/G4-patch/final-report.json",
+          "sha256": "5f2f654ae16cce7c0f71b3aef15acb4add651730e248b018ca54c138c37832f6",
+          "scope": "Historical synthetic blur only; not physical OS focus/minimize.",
+          "testName": "focus loss clears movement and does not catch up background time; provenance recorded"
+        },
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/native-probe-attempt.json",
+          "sha256": "76a6a84e21e5e6b07152201ace450fd38573e681d70a637129b01761a85ace06",
+          "scope": "Native attempt stopped before OS input; explicitly incomplete."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [
+        "真实30墙钟秒训练暂停是历史浏览器证据；单元1800暂停step不是实际等30秒。"
+      ],
+      "nextStep": "保留待设备门槛；可先重跑现有pause/synthetic-blur E2E补当前浏览器子项，不能因此关闭物理OS部分。"
+    },
+    {
+      "id": "AC-M01-03",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 164,
+        "text": "连续执行“开局→暂停→继续→重开→新 seed 开局”，上一局敌人、事件、计时器、输入按住状态及协议状态均被正确清除。"
+      },
+      "verdict": "proven",
+      "summary": "当前训练重置、草案旧意图、预装/指标隔离和C浏览器重试／新病例／刷新回放直接覆盖生命周期。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/session.test.ts",
+          "testFileSha256": "52df9b67aca789b6286e2d8d9e082014130269f9d6b696f2ffcf1c15426ae4d1",
+          "tests": [
+            {
+              "name": "training session resets the run, cooldowns, events, effects and results with same or new seed",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g2-integration.test.ts",
+          "testFileSha256": "f3b31fff3b9acdca9aa116846ac2c366d9748e6ccf91abde0cdbd861f95da08c",
+          "tests": [
+            {
+              "name": "G2 shared-session integration isolates retry run identity and rejects delayed intents from the prior same-seed run",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/preparation-session.test.ts",
+          "testFileSha256": "039ee542e37837cdc8cf5cf621154cc25c19f6bcf0b803608df9b9e900ef80fc",
+          "tests": [
+            {
+              "name": "starting plan, accepted session actions and archive continuity preloads a real I-rank squad, repays the first real XP threshold, then offers the next upgrade normally",
+              "status": "passed"
+            },
+            {
+              "name": "starting plan, accepted session actions and archive continuity persists a prepared best/recent replay independently of menu preference and defaults old records to field",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/browser/functional-final-summary.json",
+          "sha256": "7e9585dd2e957e00dc99cd45bcd39419138f79da58301ceca896b2e1367c6f21",
+          "scope": "Four candidate-C real browser cases, six earned formal victories, two assigned skips; no training/DPR/OS blanket coverage."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/main.ts",
+          "line": 106,
+          "claim": "Host resets input and modal lifecycle per case.",
+          "sha256": "30ddfcdeee20d25a497bfe35fe3c55e3e3a9063fe0b23beb3baa1ef66b4f2b4d",
+          "matchesCandidateManifest": true
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需实现修复；原生按住键失焦仍归M01-02。"
+    },
+    {
+      "id": "AC-M01-04",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 165,
+        "text": "事件 payload 与字段类型可单测；重复结束调用只产生一个 `RUN_ENDED`；随机逻辑不得直接依赖 `Math.random()`。"
+      },
+      "verdict": "proven",
+      "summary": "typed bus、单次结束与确定性玩法随机当前直接验证；两处Math.random仅用于非玩法身份／storage nonce。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/core.test.ts",
+          "testFileSha256": "91869ec592759e3a48eed01270eec4e1e6f2d9552793937fdc515bbaba2af389",
+          "tests": [
+            {
+              "name": "deterministic foundation replays random values and supports zero seeds without degenerating",
+              "status": "passed"
+            },
+            {
+              "name": "deterministic foundation dispatches typed payloads, unsubscribes and clears listeners",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/session.test.ts",
+          "testFileSha256": "52df9b67aca789b6286e2d8d9e082014130269f9d6b696f2ffcf1c15426ae4d1",
+          "tests": [
+            {
+              "name": "training session finishes and emits RUN_ENDED only once",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/game/session.ts",
+          "line": 133,
+          "claim": "Idempotent terminal guard.",
+          "sha256": "57173793b76938e051b5bb080017d58a35611eb3b283f0a527742b6e9eaece2a",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-source",
+          "path": "src/main.ts",
+          "line": 110,
+          "claim": "Non-gameplay profile run identity fallback.",
+          "sha256": "30ddfcdeee20d25a497bfe35fe3c55e3e3a9063fe0b23beb3baa1ef66b4f2b4d",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-source",
+          "path": "src/meta/profile.ts",
+          "line": 282,
+          "claim": "Storage capability probe nonce only.",
+          "sha256": "7fd5d16754e633e6f2364b74772c2f9154e68bd7e3abbd33391a617838d94c81",
+          "matchesCandidateManifest": true
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "保持玩法RNG独立；不要写“全src不存在Math.random”。"
+    },
+    {
+      "id": "AC-M02-01",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 171,
+        "text": "启动后无需旧工程即可进入训练场，完成“净化靶标→修复组织→E 复测”并获得一次成功结算；暂停、继续、退出/重开有效；UI、计时与实体不会在重开后残留。"
+      },
+      "verdict": "partial",
+      "summary": "当前训练完整输入单元成立；C只重新完成正式战役，最新训练场完整浏览器通关属旧v051构建。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/session.test.ts",
+          "testFileSha256": "52df9b67aca789b6286e2d8d9e082014130269f9d6b696f2ffcf1c15426ae4d1",
+          "tests": [
+            {
+              "name": "training session resets the run, cooldowns, events, effects and results with same or new seed",
+              "status": "passed"
+            },
+            {
+              "name": "training session completes two target categories, tissue repair and nearby E retest using inputs",
+              "status": "passed"
+            },
+            {
+              "name": "training session does not allow incomplete objectives at a nearby terminal",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/G4-patch/final-report.json",
+          "sha256": "5f2f654ae16cce7c0f71b3aef15acb4add651730e248b018ca54c138c37832f6",
+          "scope": "Historical Chrome/Edge training completion and retries.",
+          "testName": "RUN-01: offline file release completes both target families, repair, retest, and clean retries"
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/browser/functional-final-summary.json",
+          "sha256": "7e9585dd2e957e00dc99cd45bcd39419138f79da58301ceca896b2e1367c6f21",
+          "scope": "Four candidate-C real browser cases, six earned formal victories, two assigned skips; no training/DPR/OS blanket coverage."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "可用现有g0.spec.ts在C离线包重新跑两浏览器RUN-01，不需新功能。"
+    },
+    {
+      "id": "AC-M02-02",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 172,
+        "text": "移动/冲刺、1/2/3、Q、E 与鼠标瞄准在训练场有可观察、可测试结果（例如靶标受伤、组织修复、扫描信息、装置响应）；错误工具给出明确反馈。"
+      },
+      "verdict": "partial",
+      "summary": "当前工具/移动/错工具/扫描/冲刺单元通过，训练键鼠交互与帮助DOM的全链为历史浏览器。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/session.test.ts",
+          "testFileSha256": "52df9b67aca789b6286e2d8d9e082014130269f9d6b696f2ffcf1c15426ae4d1",
+          "tests": [
+            {
+              "name": "training session moves equally fast on axes and diagonals; dash obeys its cooldown",
+              "status": "passed"
+            },
+            {
+              "name": "training session keeps muzzle and shot aligned when movement crosses the aim point (dash=false)",
+              "status": "passed"
+            },
+            {
+              "name": "training session keeps muzzle and shot aligned when movement crosses the aim point (dash=true)",
+              "status": "passed"
+            },
+            {
+              "name": "training session aims the muzzle and shot from the resolved position after a collision",
+              "status": "passed"
+            },
+            {
+              "name": "training session scan reveals in-range targets and cannot spam during cooldown",
+              "status": "passed"
+            },
+            {
+              "name": "training session rejects wrong tools and out-of-range interactions without changing health",
+              "status": "passed"
+            },
+            {
+              "name": "training session hits the nearest target in a line and blocks fire through visible obstacles",
+              "status": "passed"
+            },
+            {
+              "name": "training session completes two target categories, tissue repair and nearby E retest using inputs",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/collision.test.ts",
+          "testFileSha256": "db93a08b7a65b2a075bdf0a8c3d7f96e1056dba654c934ebcb580833020952de",
+          "tests": [
+            {
+              "name": "2D collisions and rays normalizes diagonal movement and handles stationary input",
+              "status": "passed"
+            },
+            {
+              "name": "2D collisions and rays keeps dashes outside walls and arena boundaries without tunnelling",
+              "status": "passed"
+            },
+            {
+              "name": "2D collisions and rays uses the same obstacle footprints for movement and firing",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/G4-patch/final-report.json",
+          "sha256": "5f2f654ae16cce7c0f71b3aef15acb4add651730e248b018ca54c138c37832f6",
+          "scope": "OldC-independent training controls E2E; not re-executed in v072.",
+          "testName": "AC-M02-02 and VIS-02: eight-way motion, 360-degree aim, scan, dash, tool feedback, help, and collision"
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "现有g0控制专项在C两浏览器重跑即可补直接浏览器证据。"
+    },
+    {
+      "id": "AC-M02-03",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 173,
+        "text": "正式发行包在 Chrome/Edge 断网和 `file://` 下均可打开并玩完训练场；没有远程请求，也不会因 ES module、资源路径或 CORS 错误白屏。"
+      },
+      "verdict": "partial",
+      "summary": "C断网file发行启动、移动、暂停/Q和六次正式胜利有直接证据；要求的“玩完训练场”尚未C重跑。",
+      "evidence": [
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/release-smoke/report.json",
+          "sha256": "62197cbe1652f07643b5188b2e101a3472cb5b5b70a07dd0730ba1c6d7bc9064",
+          "scope": "Candidate C extracted ZIP smoke on both installed browsers."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/browser/functional-final-summary.json",
+          "sha256": "7e9585dd2e957e00dc99cd45bcd39419138f79da58301ceca896b2e1367c6f21",
+          "scope": "Four candidate-C real browser cases, six earned formal victories, two assigned skips; no training/DPR/OS blanket coverage."
+        },
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/G4-patch/final-report.json",
+          "sha256": "5f2f654ae16cce7c0f71b3aef15acb4add651730e248b018ca54c138c37832f6",
+          "scope": "Oldtraining offline completion.",
+          "testName": "RUN-01: offline file release completes both target families, repair, retest, and clean retries"
+        }
+      ],
+      "currentSourceStatus": "historical-only",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "C两浏览器离线RUN-01重验；保持console/pageerror/network原始数组。"
+    },
+    {
+      "id": "AC-M02-04",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 174,
+        "text": "1366×768、1920×1080 和 DPR 1/2 下鼠标命中、Canvas 坐标、碰撞和 HUD 对齐；键位帮助展示实际配置；无需与任何旧版本截图保持一致。"
+      },
+      "verdict": "partial",
+      "summary": "当前正逆投影单元覆盖规定1366/DPR1与1920/DPR2；C浏览器方案／研究页面覆盖三窗口，当前训练射击DPR矩阵未重验。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/render.test.ts",
+          "testFileSha256": "68a0dc8d2f77baf1543b4678f2ed5d9adb77372bb91630e96fc9604390f4c1c5",
+          "tests": [
+            {
+              "name": "render coordinates and depth contracts round-trips CSS pointer positions at 1366×768 DPR 1",
+              "status": "passed"
+            },
+            {
+              "name": "render coordinates and depth contracts round-trips CSS pointer positions at 1920×1080 DPR 2",
+              "status": "passed"
+            },
+            {
+              "name": "render coordinates and depth contracts round-trips CSS pointer positions at 1024×768 DPR 2",
+              "status": "passed"
+            },
+            {
+              "name": "render coordinates and depth contracts round-trips CSS pointer positions at 1093×614 DPR 1.25",
+              "status": "passed"
+            },
+            {
+              "name": "render coordinates and depth contracts projects the same ground plane after resize and applies that projection to canvas",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/camera-follow.test.ts",
+          "testFileSha256": "987f025c15493e4edfa0fed8918cb6693101be3ce54017589f314a0054cc4437",
+          "tests": [
+            {
+              "name": "campaign follow camera keeps actor scale and inverse pointer mapping while travelling across both organs",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/collision.test.ts",
+          "testFileSha256": "db93a08b7a65b2a075bdf0a8c3d7f96e1056dba654c934ebcb580833020952de",
+          "tests": [
+            {
+              "name": "2D collisions and rays uses the same obstacle footprints for movement and firing",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/browser/functional-final-summary.json",
+          "sha256": "7e9585dd2e957e00dc99cd45bcd39419138f79da58301ceca896b2e1367c6f21",
+          "scope": "Four candidate-C real browser cases, six earned formal victories, two assigned skips; no training/DPR/OS blanket coverage."
+        },
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/verification-summary.json",
+          "sha256": "047782f35441e8f04be1247f6adc075f705f4eb8572990eedae0fe017d269667",
+          "scope": "Historical three-window/DPR live hit/backing-canvas evidence."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "现有g0.spec.ts参数化窗口/DPR命中用例可安全重跑C；实际Ctrl缩放另外待设备，viewport不是物理Ctrl。"
+    },
+    {
+      "id": "AC-M02-05",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 175,
+        "text": "心脏训练场呈现 3/4 斜俯视视觉结构：角色能看到头顶/正侧面，场景含至少远景、地形、接地阴影、前景组织；鼠标 360° 瞄准与 WASD 八向平面移动成立，无平台跳跃/重力。"
+      },
+      "verdict": "partial",
+      "summary": "当前二维逻辑和分层绘制代码／投影单元有效，C正式实机图具3/4层次；C训练完整画面和八向键鼠专项仍仅历史。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/session.test.ts",
+          "testFileSha256": "52df9b67aca789b6286e2d8d9e082014130269f9d6b696f2ffcf1c15426ae4d1",
+          "tests": [
+            {
+              "name": "training session moves equally fast on axes and diagonals; dash obeys its cooldown",
+              "status": "passed"
+            },
+            {
+              "name": "training session keeps muzzle and shot aligned when movement crosses the aim point (dash=false)",
+              "status": "passed"
+            },
+            {
+              "name": "training session keeps muzzle and shot aligned when movement crosses the aim point (dash=true)",
+              "status": "passed"
+            },
+            {
+              "name": "training session aims the muzzle and shot from the resolved position after a collision",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/render.test.ts",
+          "testFileSha256": "68a0dc8d2f77baf1543b4678f2ed5d9adb77372bb91630e96fc9604390f4c1c5",
+          "tests": [
+            {
+              "name": "render coordinates and depth contracts projects the same ground plane after resize and applies that projection to canvas",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/render/renderer.ts",
+          "line": 106,
+          "claim": "Layered 3/4 Canvas rendering.",
+          "sha256": "def49278c80f1204267059b934c21f62e3cacc6736a4e572c59f8188b80be268",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-source",
+          "path": "src/render/layers.ts",
+          "line": 1,
+          "claim": "Explicit layer contract.",
+          "sha256": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/visual-review.json",
+          "sha256": "6433fc147f7cf7c2cf4e2a3f2f3d626986043873a24fe9577baba747fd59d4b2",
+          "scope": "C actual formal screenshots, agent visual review; not human or current training full review."
+        },
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/G4-patch/final-report.json",
+          "sha256": "5f2f654ae16cce7c0f71b3aef15acb4add651730e248b018ca54c138c37832f6",
+          "scope": "Historical real training control visuals.",
+          "testName": "AC-M02-02 and VIS-02: eight-way motion, 360-degree aim, scan, dash, tool feedback, help, and collision"
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "重跑现有G0 controls与overview并审阅C原图；不需商业级素材或新增镜头。"
+    },
+    {
+      "id": "AC-M02-06",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 176,
+        "text": "角色、病毒靶标和设施按接地锚点 Y 深度正确遮挡；前景组织遮挡关键对象时可淡化或描轮廓，绝不长期遮死玩家；若屏幕非等比投影，逆变换鼠标命中可测试。"
+      },
+      "verdict": "partial",
+      "summary": "当前深度排序、前景及隆起保护单元覆盖；最终Canvas像素前后关系专项原始证据属旧包。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/render.test.ts",
+          "testFileSha256": "68a0dc8d2f77baf1543b4678f2ed5d9adb77372bb91630e96fc9604390f4c1c5",
+          "tests": [
+            {
+              "name": "render coordinates and depth contracts sorts by foot anchors, preserves ties and leaves input unchanged",
+              "status": "passed"
+            },
+            {
+              "name": "render coordinates and depth contracts fades decorative foreground at inclusive head/foot safety boundaries",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/geometry.test.ts",
+          "testFileSha256": "3eddd9a6e626316c1028991f3e9372cd84c64f6b6627c1a8b0d45acb616d66d3",
+          "tests": [
+            {
+              "name": "active organ geometry fades the visible organ foreground at its actual footprint",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/raised-obstacle-occlusion.test.ts",
+          "testFileSha256": "ebd79dc77396e5701638b42ee8e593cc3c5325d58463eae8dbb072d366c159f8",
+          "tests": [
+            {
+              "name": "raised obstacle upper-body occlusion ignores dead, expired, other-organ and fully transparent newborn actors; includes stable same-Y order",
+              "status": "passed"
+            },
+            {
+              "name": "raised obstacle upper-body occlusion protects actual player/head and live target body envelopes, not just ground points",
+              "status": "passed"
+            },
+            {
+              "name": "raised obstacle upper-body occlusion runs real heart/lung draw callbacks with opaque shadows and leaves complete simulation state unchanged",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/render/depthSort.ts",
+          "line": 3,
+          "claim": "GroundY stable order.",
+          "sha256": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/G4-patch/final-report.json",
+          "sha256": "5f2f654ae16cce7c0f71b3aef15acb4add651730e248b018ca54c138c37832f6",
+          "scope": "Historical final-Canvas overlap pixel proof, not C rerun.",
+          "testName": "VIS-04 and RUN-11: foot-anchor Y sorting and walkable foreground fade"
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "用现有VIS04/RUN11专项对C重新拍摄并核对像素；继续保留样本边界，不承诺全帧零遮挡。"
+    },
+    {
+      "id": "AC-M03-01",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 182,
+        "text": "感染源每个固定模拟间隔沿开放边扩散，关闭边后不再穿透传播，打开后按冷却恢复；地图能直观看出路径。"
+      },
+      "verdict": "proven",
+      "summary": "开放边传播、关闭冻结和重开完整冷却当前真实宿主单元直接覆盖；当前C压力场真实开放生产持续。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g1-audit.test.ts",
+          "testFileSha256": "c83d3900a38357caddebb5b47c872c575cd21b989f3e742ccbaaa0a32589bb2b",
+          "tests": [
+            {
+              "name": "G1 independent interaction audit a reopened gate observes a full propagation cooldown instead of replaying closed intervals",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/organRules.test.ts",
+          "testFileSha256": "6f9ef13e88af81763e6e93e0c622cfb2d4158471c481022ef3661accf694b229",
+          "tests": [
+            {
+              "name": "G3 lung physics closing the airway removes actual flow, changes a real route once and charges only the lung",
+              "status": "passed"
+            },
+            {
+              "name": "G3 lung physics mass differences are real and 180 seconds of changing flow respects lung footprints and boundaries",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/game/battle.ts",
+          "line": 345,
+          "claim": "World graph edge cooldown.",
+          "sha256": "95d949a7b69d91ee522b717433bcd6060cf9347bfcc86c7fae9d4b54a65fc8e9",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-source",
+          "path": "src/render/renderer.ts",
+          "line": 99,
+          "claim": "World rendering shares state.",
+          "sha256": "def49278c80f1204267059b934c21f62e3cacc6736a4e572c59f8188b80be268",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/performance/attempt-1/report.json",
+          "sha256": "fa556722b99fc5818cbbf65c19224cbbecfecaaff99febbb6d8035af6a38e9a3",
+          "scope": "Candidate C retained-production 600.1667 active-second headless pressure, bounded actors/cache, finite natural memory observation; not leak-free or all-device certification."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [
+        "单元fixture与正式压力范围分列，地图可读性仍无真人结论。"
+      ],
+      "nextStep": "无需代码修复；补当前G1浏览器时可附闭边路径画面。"
+    },
+    {
+      "id": "AC-M03-02",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 183,
+        "text": "组织健康受到真实攻击或感染下降，治疗后上升，始终 clamp 至 0–100；无负数或超上限。"
+      },
+      "verdict": "proven",
+      "summary": "当前实际伤害/有效修复clamp测试与逐step器官范围验证、长压均直接支持。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g1-audit.test.ts",
+          "testFileSha256": "c83d3900a38357caddebb5b47c872c575cd21b989f3e742ccbaaa0a32589bb2b",
+          "tests": [
+            {
+              "name": "G1 independent interaction audit actual repair exits a lethal infection countdown and cannot farm relief from a fully repaired organ",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/battle.test.ts",
+          "testFileSha256": "1a64a42ebc23fe01986ebacafb1f15012ca0f375023953761985bb9759b78702",
+          "tests": [
+            {
+              "name": "G1 battle rules gives an organ alarm grace period, recovers through actual repair, and separates failure reasons",
+              "status": "passed"
+            },
+            {
+              "name": "G1 battle rules runs 20 minutes of the combat system at hard population and memory bounds",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/run-metrics.test.ts",
+          "testFileSha256": "77acd220aa6c3e1f04be1a0a15a023a433a524a39b0931e46164f913149eb01d",
+          "tests": [
+            {
+              "name": "accepted run outcome counters counts exact repair increases, actual tissue losses and active costs separately",
+              "status": "passed"
+            },
+            {
+              "name": "accepted run outcome counters marks positive protocol loss missing accepted attribution as incomplete and ignores malformed facts",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/simulation-final/full-system-audit.json",
+          "sha256": "a169084b76bfb8815d8a58ffc1ccf264ca712c77ee8d45be8666e49ed6b181b8",
+          "scope": "Candidate C 1000 formal public-input sessions, 500 empty base/500 protocols; route and trait invariants plus seed91/seed4 replay; not browser/human."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/game/session.ts",
+          "line": 546,
+          "claim": "Actual host clamped organ damage.",
+          "sha256": "57173793b76938e051b5bb080017d58a35611eb3b283f0a527742b6e9eaece2a",
+          "matchesCandidateManifest": true
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需新实现；不能用名义治疗量代替真实delta。"
+    },
+    {
+      "id": "AC-M03-03",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 184,
+        "text": "感染单位/节点上限和传播频率独立配置；运行 20 分钟压力模拟仍不无限分裂和卡死。"
+      },
+      "verdict": "proven",
+      "summary": "当前C单元确有1200模拟秒系统stress，并非运行耗时；限制分别配置且当前C长压接受单位上限。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/battle.test.ts",
+          "testFileSha256": "1a64a42ebc23fe01986ebacafb1f15012ca0f375023953761985bb9759b78702",
+          "tests": [
+            {
+              "name": "G1 battle rules runs 20 minutes of the combat system at hard population and memory bounds",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current system-host stress deliberately keeps running after failure; directly advances1200seconds, not a playable victory or FPS claim."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/game/battleConfig.ts",
+          "line": 11,
+          "claim": "Actor cap central config.",
+          "sha256": "937a2c91827c7184bcabf0eae13db315d52d0517d75b1696e2217f4e2c0de072",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/performance/attempt-1/report.json",
+          "sha256": "fa556722b99fc5818cbbf65c19224cbbecfecaaff99febbb6d8035af6a38e9a3",
+          "scope": "Candidate C retained-production 600.1667 active-second headless pressure, bounded actors/cache, finite natural memory observation; not leak-free or all-device certification."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/simulation-final/full-system-audit.json",
+          "sha256": "a169084b76bfb8815d8a58ffc1ccf264ca712c77ee8d45be8666e49ed6b181b8",
+          "scope": "Candidate C 1000 formal public-input sessions, 500 empty base/500 protocols; route and trait invariants plus seed91/seed4 replay; not browser/human."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [
+        "系统stress不会证明20分钟真人生存或无内存泄漏；本条有限population/queue边界与完整M16内存门槛不同。"
+      ],
+      "nextStep": "无需重复压力；节点总数结构有限。"
+    },
+    {
+      "id": "AC-M03-04",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 185,
+        "text": "被净化的感染源不再产生新单位，且对应 XP/目标事件只奖励一次。"
+      },
+      "verdict": "proven",
+      "summary": "当前清源停产/一次事件及奖励key去重有直接单元，当前正式会话也以实际清源推进。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/battle.test.ts",
+          "testFileSha256": "1a64a42ebc23fe01986ebacafb1f15012ca0f375023953761985bb9759b78702",
+          "tests": [
+            {
+              "name": "G1 battle rules clears each source exactly once, stopping its production and reducing pressure",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/growth.test.ts",
+          "testFileSha256": "42768983543a367422f5fdb8fbbbdd075b841526514eb2a091b4f878653bc488",
+          "tests": [
+            {
+              "name": "G2 event rewards and protocol drafts source, elite and discovery rewards are stable after diagnostic logs are discarded",
+              "status": "passed"
+            },
+            {
+              "name": "G2 event rewards and protocol drafts ordinary rewards diminish by source and children or duplicate clears cannot farm XP",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/game/battle.ts",
+          "line": 153,
+          "claim": "Node disabled and clear event once.",
+          "sha256": "95d949a7b69d91ee522b717433bcd6060cf9347bfcc86c7fae9d4b54a65fc8e9",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/simulation-final/full-system-audit.json",
+          "sha256": "a169084b76bfb8815d8a58ffc1ccf264ca712c77ee8d45be8666e49ed6b181b8",
+          "scope": "Candidate C 1000 formal public-input sessions, 500 empty base/500 protocols; route and trait invariants plus seed91/seed4 replay; not browser/human."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需新实现。"
+    },
+    {
+      "id": "AC-M03-05",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 186,
+        "text": "器官网络路径、屏幕描绘与二维碰撞多边形由一致的世界坐标驱动；视觉中不存在不可理解的假高台、画出可走但逻辑不可走的通道或不显示的阻挡。"
+      },
+      "verdict": "proven",
+      "summary": "当前共用world几何、碰撞/射线/路径和设施可达性单元直接覆盖，C实机与长压图为同源世界。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/geometry.test.ts",
+          "testFileSha256": "3eddd9a6e626316c1028991f3e9372cd84c64f6b6627c1a8b0d45acb616d66d3",
+          "tests": [
+            {
+              "name": "active organ geometry uses the selected footprints and bounds for rays, dash substeps and previews without mutating the heart",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/collision.test.ts",
+          "testFileSha256": "db93a08b7a65b2a075bdf0a8c3d7f96e1056dba654c934ebcb580833020952de",
+          "tests": [
+            {
+              "name": "2D collisions and rays uses the same obstacle footprints for movement and firing",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/campaign-space.test.ts",
+          "testFileSha256": "38d65131be28bb95c7db3de196af6b1d22e186b7aabdb8692a108711cebae615",
+          "tests": [
+            {
+              "name": "Campaign spatial revision separates usable facilities, keeps landmarks outside collisions, and leaves explicit route-width clearance",
+              "status": "passed"
+            },
+            {
+              "name": "Campaign spatial revision keeps both migration choices reachable within the real 12-second warning across a walkable grid, without dash or teleport",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/raised-obstacle-occlusion.test.ts",
+          "testFileSha256": "ebd79dc77396e5701638b42ee8e593cc3c5325d58463eae8dbb072d366c159f8",
+          "tests": [
+            {
+              "name": "raised obstacle upper-body occlusion runs real heart/lung draw callbacks with opaque shadows and leaves complete simulation state unchanged",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/game/organConfig.ts",
+          "line": 20,
+          "claim": "Shared organ geometry.",
+          "sha256": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/visual-review.json",
+          "sha256": "6433fc147f7cf7c2cf4e2a3f2f3d626986043873a24fe9577baba747fd59d4b2",
+          "scope": "Current actual formal screenshots with overlap limits."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [
+        "为技术几何一致性证明，非每位置全帧图像的穷举。"
+      ],
+      "nextStep": "无需结构修复；真人是否理解路径仍待盲测。"
+    },
+    {
+      "id": "AC-M04-01",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 192,
+        "text": "普通体可被合理击中、受伤、消灭；来源清除减少压力；敌人对玩家/组织造成伤害有不同反馈。"
+      },
+      "verdict": "proven",
+      "summary": "实际攻击/清除/来源减压、玩家与组织不同接受事件和表现代码有当前单元与浏览器支撑。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/session.test.ts",
+          "testFileSha256": "52df9b67aca789b6286e2d8d9e082014130269f9d6b696f2ffcf1c15426ae4d1",
+          "tests": [
+            {
+              "name": "training session hits the nearest target in a line and blocks fire through visible obstacles",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/battle.test.ts",
+          "testFileSha256": "1a64a42ebc23fe01986ebacafb1f15012ca0f375023953761985bb9759b78702",
+          "tests": [
+            {
+              "name": "G1 battle rules clears each source exactly once, stopping its production and reducing pressure",
+              "status": "passed"
+            },
+            {
+              "name": "G1 battle rules does not resurrect zero vitality through regeneration and keeps overlapping player/tissue attack identities separate",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/run-metrics.test.ts",
+          "testFileSha256": "77acd220aa6c3e1f04be1a0a15a023a433a524a39b0931e46164f913149eb01d",
+          "tests": [
+            {
+              "name": "accepted run outcome counters counts exact repair increases, actual tissue losses and active costs separately",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/game/battle.ts",
+          "line": 405,
+          "claim": "Separate actual player damage feedback.",
+          "sha256": "95d949a7b69d91ee522b717433bcd6060cf9347bfcc86c7fae9d4b54a65fc8e9",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/browser/functional-final-summary.json",
+          "sha256": "7e9585dd2e957e00dc99cd45bcd39419138f79da58301ceca896b2e1367c6f21",
+          "scope": "Four candidate-C real browser cases, six earned formal victories, two assigned skips; no training/DPR/OS blanket coverage."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需代码修复。"
+    },
+    {
+      "id": "AC-M04-02",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 193,
+        "text": "精英承载 trait，母巢可组合至多两种本局特性；新增特性不能绕过实体死亡/结算规则。"
+      },
+      "verdict": "proven",
+      "summary": "当前精英trait、六种母巢配对及基础伤害核膜门槛直接测试，C六胜和1000正式会话未跳过两个母巢特性。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/motherCore.test.ts",
+          "testFileSha256": "b5184048acfd72e2c164f90b1cc2b00628334a3e57d4e250384d9a0527f93f43",
+          "tests": [
+            {
+              "name": "G3 mother core combat controller retains a serializable one/two-trait state and rejects an invalid extra-trait core",
+              "status": "passed"
+            },
+            {
+              "name": "G3 mother core combat controller emits core-cleared exactly once and cancels pending attacks/children without an early positive-HP win",
+              "status": "passed"
+            },
+            {
+              "name": "G3 mother core combat controller exposes both CARAPACE / FISSION turns under repeated lethal burst without leaving a ghost brood",
+              "status": "passed"
+            },
+            {
+              "name": "G3 mother core combat controller exposes both CARAPACE / MIMIC turns under repeated lethal burst without leaving a ghost brood",
+              "status": "passed"
+            },
+            {
+              "name": "G3 mother core combat controller exposes both FISSION / CARAPACE turns under repeated lethal burst without leaving a ghost brood",
+              "status": "passed"
+            },
+            {
+              "name": "G3 mother core combat controller exposes both FISSION / MIMIC turns under repeated lethal burst without leaving a ghost brood",
+              "status": "passed"
+            },
+            {
+              "name": "G3 mother core combat controller exposes both MIMIC / CARAPACE turns under repeated lethal burst without leaving a ghost brood",
+              "status": "passed"
+            },
+            {
+              "name": "G3 mother core combat controller exposes both MIMIC / FISSION turns under repeated lethal burst without leaving a ghost brood",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/campaign.test.ts",
+          "testFileSha256": "caa43e5ac34f18a82baeaaee6f82086346d3a88342a7dde94ccd8559f743f89f",
+          "tests": [
+            {
+              "name": "G3 campaign arenas and decisions intercepts all retest inputs, unlocks one real two-trait core only after every required source and checks every victory threshold",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/simulation-final/full-system-audit.json",
+          "sha256": "a169084b76bfb8815d8a58ffc1ccf264ca712c77ee8d45be8666e49ed6b181b8",
+          "scope": "Candidate C 1000 formal public-input sessions, 500 empty base/500 protocols; route and trait invariants plus seed91/seed4 replay; not browser/human."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/browser/functional-final-summary.json",
+          "sha256": "7e9585dd2e957e00dc99cd45bcd39419138f79da58301ceca896b2e1367c6f21",
+          "scope": "Four candidate-C real browser cases, six earned formal victories, two assigned skips; no training/DPR/OS blanket coverage."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需新内容。"
+    },
+    {
+      "id": "AC-M04-03",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 194,
+        "text": "敌人离场、迁移或死亡后不会留下继续造成伤害的幽灵碰撞体。"
+      },
+      "verdict": "proven",
+      "summary": "当前死亡前摇取消、尸体清理、离器官控制器/细胞撤离和终局伤害顺序直接覆盖。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g1-audit.test.ts",
+          "testFileSha256": "c83d3900a38357caddebb5b47c872c575cd21b989f3e742ccbaaa0a32589bb2b",
+          "tests": [
+            {
+              "name": "G1 independent interaction audit killing an actor during its attack windup cancels the delayed damage and clears its corpse",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/motherCore.test.ts",
+          "testFileSha256": "b5184048acfd72e2c164f90b1cc2b00628334a3e57d4e250384d9a0527f93f43",
+          "tests": [
+            {
+              "name": "G3 mother core combat controller freezes inactive state, keeps a travelling core and gives a fresh return telegraph",
+              "status": "passed"
+            },
+            {
+              "name": "G3 mother core combat controller emits core-cleared exactly once and cancels pending attacks/children without an early positive-HP win",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g3-boundaries.test.ts",
+          "testFileSha256": "29c3eb5dda083a6111b4d083b1e1c2f742c3b5cef5f29ef70d144757c8c2ac65",
+          "tests": [
+            {
+              "name": "G3 independent session boundaries withdraws organ-bound immune cells in the same accepted trip without resetting the summon cooldown",
+              "status": "passed"
+            },
+            {
+              "name": "G3 independent session boundaries resolves a lethal mother-core attack before a queued same-tick exit trip",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/game/battle.ts",
+          "line": 375,
+          "claim": "Dead actors bypass active combat.",
+          "sha256": "95d949a7b69d91ee522b717433bcd6060cf9347bfcc86c7fae9d4b54a65fc8e9",
+          "matchesCandidateManifest": true
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需代码修复；现有fixture用于边界机制而非真实胜局。"
+    },
+    {
+      "id": "AC-M04-04",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 195,
+        "text": "敌人数量达到上限时采用排队/合并/跳过安全策略，不持续创建内存对象。"
+      },
+      "verdict": "proven",
+      "summary": "当前20分钟system population/corpse边界与1000逐step cap成立；源/core请求在宿主达到cap时有限排队，长压对象未指数增长。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/battle.test.ts",
+          "testFileSha256": "1a64a42ebc23fe01986ebacafb1f15012ca0f375023953761985bb9759b78702",
+          "tests": [
+            {
+              "name": "G1 battle rules runs 20 minutes of the combat system at hard population and memory bounds",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/campaign-encounters.test.ts",
+          "testFileSha256": "e8b52a10dba62b9d3be51faf5b23c4220eb95bb4c8fe143ba539be6e0e7bf2ad",
+          "tests": [
+            {
+              "name": "formal five-stage campaign encounters accepts only a real heart sector/LOS hit, resets its full window once, and does not clear or reward the source",
+              "status": "passed"
+            },
+            {
+              "name": "formal five-stage campaign encounters waits for actual source acceptance at the 24-actor cap, without silently removing actors or replaying guards",
+              "status": "passed"
+            },
+            {
+              "name": "formal five-stage campaign encounters requires the exact accepted crisis clear for IV and the original source/elite conditions for a unique core unlock",
+              "status": "passed"
+            },
+            {
+              "name": "formal five-stage campaign encounters keeps both sources walkable and separated, with a real unobstructed heart environmental sector",
+              "status": "passed"
+            },
+            {
+              "name": "formal five-stage campaign encounters clears the real 68HP host source with two base shots using none protocols",
+              "status": "passed"
+            },
+            {
+              "name": "formal five-stage campaign encounters clears the real 68HP host source with two base shots using trace protocols",
+              "status": "passed"
+            },
+            {
+              "name": "formal five-stage campaign encounters lets the real trace+immune pipeline physically surround and clear the crisis source",
+              "status": "passed"
+            },
+            {
+              "name": "formal five-stage campaign encounters lets a real basic-tool source clear chain into the finite nearby guards",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/simulation-final/full-system-audit.json",
+          "sha256": "a169084b76bfb8815d8a58ffc1ccf264ca712c77ee8d45be8666e49ed6b181b8",
+          "scope": "Candidate C 1000 formal public-input sessions, 500 empty base/500 protocols; route and trait invariants plus seed91/seed4 replay; not browser/human."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/performance/attempt-1/report.json",
+          "sha256": "fa556722b99fc5818cbbf65c19224cbbecfecaaff99febbb6d8035af6a38e9a3",
+          "scope": "Candidate C retained-production 600.1667 active-second headless pressure, bounded actors/cache, finite natural memory observation; not leak-free or all-device certification."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/game/session.ts",
+          "line": 536,
+          "claim": "Accepted spawn cap queues command, not unbounded live actor creation.",
+          "sha256": "57173793b76938e051b5bb080017d58a35611eb3b283f0a527742b6e9eaece2a",
+          "matchesCandidateManifest": true
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需扩容；完整内存无泄漏仍未关闭。"
+    },
+    {
+      "id": "AC-M04-05",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 196,
+        "text": "在实际游戏视野尺度、简化黑白剪影下，玩家、普通病毒、晶壳/裂殖/潜伏体均有可区分的头身或外轮廓；有接地位置和被击反应。"
+      },
+      "verdict": "partial",
+      "summary": "不同轮廓和命中反应代码仍存在，历史黑白剪影图有证据；C实战缩放的专门黑白对照未重采。",
+      "evidence": [
+        {
+          "kind": "current-source",
+          "path": "src/render/battleVisuals.ts",
+          "line": 33,
+          "claim": "Actual contour branches by trait.",
+          "sha256": "eb018bf5de39ce3ebd11cc1813b2befa8448e378c8b9f11938b8066fccc508f4",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/raised-obstacle-occlusion.test.ts",
+          "testFileSha256": "ebd79dc77396e5701638b42ee8e593cc3c5325d58463eae8dbb072d366c159f8",
+          "tests": [
+            {
+              "name": "raised obstacle upper-body occlusion uses the real heart silhouette and a legal cell behind its collision footprint",
+              "status": "passed"
+            },
+            {
+              "name": "raised obstacle upper-body occlusion protects actual player/head and live target body envelopes, not just ground points",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/g1-visual/silhouettes.png",
+          "sha256": "0d3f4492706f7264e7b7a5a818daaf2250bb331f3f64447b245d5dd0aeabb268",
+          "scope": "G1 render-only black/white comparison, not a C live screenshot or human identification."
+        },
+        {
+          "kind": "current-raw",
+          "path": "scripts/capture-silhouettes.mjs",
+          "sha256": "cdc4fd085d136b19fab6affbd8f5ec532965fa0c38a6df935f0942b6bc90c3ad",
+          "scope": "Existing render-only capture script, deliberately not gameplay execution."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "可用现有capture-silhouettes脚本另目录生成C派生黑白图并目视；同时引用当前战场实际缩放图，真人辨认仍另列VIS12。"
+    },
+    {
+      "id": "AC-M05-01",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 202,
+        "text": "对每种变异，测试未变异行为、≥8 秒预警、变异后行为均可观察；至少一种视觉形态变化和一个明确弱点提示。"
+      },
+      "verdict": "partial",
+      "summary": "当前三trait≥8秒前兆/生效行为单位直接通过，C浏览器覆盖晶壳与潜伏；每trait同场景before/warning/after完整视觉组仍历史。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/battle.test.ts",
+          "testFileSha256": "1a64a42ebc23fe01986ebacafb1f15012ca0f375023953761985bb9759b78702",
+          "tests": [
+            {
+              "name": "G1 battle rules warns for at least 8 simulation seconds before applying CARAPACE",
+              "status": "passed"
+            },
+            {
+              "name": "G1 battle rules warns for at least 8 simulation seconds before applying FISSION",
+              "status": "passed"
+            },
+            {
+              "name": "G1 battle rules warns for at least 8 simulation seconds before applying MIMIC",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/encounter-counter.test.ts",
+          "testFileSha256": "9a57833dc6fe050384b55e22d223bf991ffa3f88a3b83416c984169a3b8d147a",
+          "tests": [
+            {
+              "name": "versioned first-counter encounter starts early only after clear-source plus real scan and preserves eight simulation seconds of warning",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/encounter-presentation.test.ts",
+          "testFileSha256": "54598f92a99d68339ae28aaa761c3e7df2e28a4ac18f8eb4bad0060159ef281c",
+          "tests": [
+            {
+              "name": "encounter presentation uses accepted run state shows actual adaptive traits without inventing a crystal-shell encounter",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/browser/functional-final-summary.json",
+          "sha256": "7e9585dd2e957e00dc99cd45bcd39419138f79da58301ceca896b2e1367c6f21",
+          "scope": "Four candidate-C real browser cases, six earned formal victories, two assigned skips; no training/DPR/OS blanket coverage."
+        },
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/G1/e2e-report.json",
+          "sha256": "487edd8372534424ab9b5a8ec5464d18789c3c131b822a9d54517d0c2874a026",
+          "scope": "Historical actual CARAPACE/MIMIC opening cases,including later FISSION."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "可用现有G1/G2和capture演进路径在C重取三trait状态图；不把后台数值测试当视觉三态。"
+    },
+    {
+      "id": "AC-M05-02",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 203,
+        "text": "晶壳遇到心跳/破甲窗口有效；裂殖小体数量有上限；潜伏体有可通过 Q 发现的规律，不能永久隐形无解。"
+      },
+      "verdict": "proven",
+      "summary": "当前晶壳破壳、有限一代裂殖、Q与周期潜伏及修复反制直接测试；C浏览器有真实首冲流与Q诊断。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/battle.test.ts",
+          "testFileSha256": "1a64a42ebc23fe01986ebacafb1f15012ca0f375023953761985bb9759b78702",
+          "tests": [
+            {
+              "name": "G1 battle rules makes carapace frontal resistance, rear weakness and slower movement real",
+              "status": "passed"
+            },
+            {
+              "name": "G1 battle rules mimics remain base-counterable, periodically disturb and Q reveals them",
+              "status": "passed"
+            },
+            {
+              "name": "G1 battle rules fission advertises finite child landing points and cannot recursively divide",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g1-audit.test.ts",
+          "testFileSha256": "c83d3900a38357caddebb5b47c872c575cd21b989f3e742ccbaaa0a32589bb2b",
+          "tests": [
+            {
+              "name": "G1 independent interaction audit E uses the aimed sector once, retains outside actors, and resolves all pushes to reachable ground",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/encounter-counter.test.ts",
+          "testFileSha256": "9a57833dc6fe050384b55e22d223bf991ffa3f88a3b83416c984169a3b8d147a",
+          "tests": [
+            {
+              "name": "versioned first-counter encounter credits a real valve pulse bound to this guardian, then a real frontal basic hit",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/browser/functional-final-summary.json",
+          "sha256": "7e9585dd2e957e00dc99cd45bcd39419138f79da58301ceca896b2e1367c6f21",
+          "scope": "Four candidate-C real browser cases, six earned formal victories, two assigned skips; no training/DPR/OS blanket coverage."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需新玩法。"
+    },
+    {
+      "id": "AC-M05-03",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 204,
+        "text": "不装备任何随机专属抗体的基础工具组合仍然可以击败三类变异敌人（效率可不同）。"
+      },
+      "verdict": "proven",
+      "summary": "当前三类G1开局公开输入都能不装专属协议通关；当前C500空装正式路线且三特性/六序均有覆盖。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/battle.test.ts",
+          "testFileSha256": "1a64a42ebc23fe01986ebacafb1f15012ca0f375023953761985bb9759b78702",
+          "tests": [
+            {
+              "name": "G1 battle rules uses real input objectives and active retest to complete all three opening trait scenarios",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g2-integration.test.ts",
+          "testFileSha256": "f3b31fff3b9acdca9aa116846ac2c366d9748e6ccf91abde0cdbd861f95da08c",
+          "tests": [
+            {
+              "name": "G2 shared-session integration completes the CARAPACE opening through legal inputs while deliberately avoiding the known trait counters in every draft",
+              "status": "passed"
+            },
+            {
+              "name": "G2 shared-session integration completes the FISSION opening through legal inputs while deliberately avoiding the known trait counters in every draft",
+              "status": "passed"
+            },
+            {
+              "name": "G2 shared-session integration completes the MIMIC opening through legal inputs while deliberately avoiding the known trait counters in every draft",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/motherCore.test.ts",
+          "testFileSha256": "b5184048acfd72e2c164f90b1cc2b00628334a3e57d4e250384d9a0527f93f43",
+          "tests": [
+            {
+              "name": "G3 mother core combat controller permits ordinary basic-tool damage throughout the membrane sequence and never requires a protocol",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/simulation-final/full-system-audit.json",
+          "sha256": "a169084b76bfb8815d8a58ffc1ccf264ca712c77ee8d45be8666e49ed6b181b8",
+          "scope": "Candidate C 1000 formal public-input sessions, 500 empty base/500 protocols; route and trait invariants plus seed91/seed4 replay; not browser/human."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "保留基础反制兜底；不得把500模拟称真人可通关。"
+    },
+    {
+      "id": "AC-M05-04",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 205,
+        "text": "同一变异被重复应用不无限叠加效果；死亡/迁移能正确清理状态。"
+      },
+      "verdict": "proven",
+      "summary": "当前traits集合去重、至多两种、死亡清理和旅行持久/撤离有直接测试；不叠加重复主trait。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/evolution.test.ts",
+          "testFileSha256": "4fef0e986e726c0b85f53677c9b096603b55e7c45fbbd599e9a3bfcd3b8f9b87",
+          "tests": [
+            {
+              "name": "G2 deterministic evolution director filters unavailable base counters, prevents repeats and stops at two main traits",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g1-audit.test.ts",
+          "testFileSha256": "c83d3900a38357caddebb5b47c872c575cd21b989f3e742ccbaaa0a32589bb2b",
+          "tests": [
+            {
+              "name": "G1 independent interaction audit killing an actor during its attack windup cancels the delayed damage and clears its corpse",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/campaign.test.ts",
+          "testFileSha256": "caa43e5ac34f18a82baeaaee6f82086346d3a88342a7dde94ccd8559f743f89f",
+          "tests": [
+            {
+              "name": "G3 campaign arenas and decisions preserves cleared actors, organ damage, player health and every global ability cooldown across return travel",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g3-boundaries.test.ts",
+          "testFileSha256": "29c3eb5dda083a6111b4d083b1e1c2f742c3b5cef5f29ef70d144757c8c2ac65",
+          "tests": [
+            {
+              "name": "G3 independent session boundaries round trips preserve local HP, cleared sources, closed routes and all global cooldowns",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/game/battle.ts",
+          "line": 323,
+          "claim": "Application uniqueness guard.",
+          "sha256": "95d949a7b69d91ee522b717433bcd6060cf9347bfcc86c7fae9d4b54a65fc8e9",
+          "matchesCandidateManifest": true
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需改规则；迁移保留本局合法trait而非把它误当临时状态必须清零。"
+    },
+    {
+      "id": "AC-M05-05",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 206,
+        "text": "变异至少有一种真实代价（减速、脆弱、周期暴露等），战斗效果可测试。"
+      },
+      "verdict": "proven",
+      "summary": "晶壳实际减速、裂殖脆弱一代、潜伏周期显露/修复伤害当前直接测试，代价在UI有明确文字。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/battle.test.ts",
+          "testFileSha256": "1a64a42ebc23fe01986ebacafb1f15012ca0f375023953761985bb9759b78702",
+          "tests": [
+            {
+              "name": "G1 battle rules makes carapace frontal resistance, rear weakness and slower movement real",
+              "status": "passed"
+            },
+            {
+              "name": "G1 battle rules mimics remain base-counterable, periodically disturb and Q reveals them",
+              "status": "passed"
+            },
+            {
+              "name": "G1 battle rules fission advertises finite child landing points and cannot recursively divide",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/game/battleConfig.ts",
+          "line": 4,
+          "claim": "Trait ability/cost/counter data.",
+          "sha256": "937a2c91827c7184bcabf0eae13db315d52d0517d75b1696e2217f4e2c0de072",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-source",
+          "path": "src/ui/battleHud.ts",
+          "line": 46,
+          "claim": "Actual cost text rendered.",
+          "sha256": "aaf74c1fea93321652e875b011f7c2865ab4b2bb3a767d79158f8fc1dda90a97",
+          "matchesCandidateManifest": true
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需新实现。"
+    },
+    {
+      "id": "AC-M05-06",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 207,
+        "text": "每类变异具备肉眼可辨的形态变化与可回看的弱点标识；对照预警、变异后、破绽状态画面，不以简单更换颜色替代进化美术。"
+      },
+      "verdict": "partial",
+      "summary": "当前有非换色轮廓、可回看弱点与文本单元；C每trait预警/变异/破绽画面对照不齐，历史组不自动迁移。",
+      "evidence": [
+        {
+          "kind": "current-source",
+          "path": "src/render/battleVisuals.ts",
+          "line": 33,
+          "claim": "Crystals/multilobes/mimic outline differences.",
+          "sha256": "eb018bf5de39ce3ebd11cc1813b2befa8448e378c8b9f11938b8066fccc508f4",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/tactical-feedback.test.ts",
+          "testFileSha256": "92020ca75208bf22a7b59e290de7995835b5bde426441e53396a7f8f95d2e5c8",
+          "tests": [
+            {
+              "name": "bounded tactical explanations and notification priority retains critical causes after more than 512 raw events and 128 recent messages in G1",
+              "status": "passed"
+            },
+            {
+              "name": "bounded tactical explanations and notification priority retains critical causes after more than 512 raw events and 128 recent messages in G3",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/encounter-presentation.test.ts",
+          "testFileSha256": "54598f92a99d68339ae28aaa761c3e7df2e28a4ac18f8eb4bad0060159ef281c",
+          "tests": [
+            {
+              "name": "encounter presentation uses accepted run state shows actual adaptive traits without inventing a crystal-shell encounter",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/g1-visual/silhouettes.png",
+          "sha256": "0d3f4492706f7264e7b7a5a818daaf2250bb331f3f64447b245d5dd0aeabb268",
+          "scope": "Historical render-only silhouettes."
+        },
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/G2/verification-summary.json",
+          "sha256": "d6c59fe1acb2f94e92360814231bfd02d8df09a1358d7de931ffa61d2566835e",
+          "scope": "Historical G2 evolution visual provenance."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "现有三trait/browser视觉专项刷新C，同步区分代理技术审阅与5人主观辨识。"
+    },
+    {
+      "id": "AC-M06-01",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 213,
+        "text": "近 90 秒同一动作策略能改变部分候选的概率，但不能让某一特性必然出现；有权重和选择决策日志。"
+      },
+      "verdict": "proven",
+      "summary": "当前90秒窗口、有效伤害策略软偏置、55%上限与决策可追踪直接单元通过。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/evolution.test.ts",
+          "testFileSha256": "4fef0e986e726c0b85f53677c9b096603b55e7c45fbbd599e9a3bfcd3b8f9b87",
+          "tests": [
+            {
+              "name": "G2 deterministic evolution director coalesces accepted events by fixed tick without mutating serializable history",
+              "status": "passed"
+            },
+            {
+              "name": "G2 deterministic evolution director keeps exactly the latest 90 seconds and expires idle history even without a new action",
+              "status": "passed"
+            },
+            {
+              "name": "G2 deterministic evolution director changes partial candidate probabilities softly rather than forcing a response",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/game/battle.ts",
+          "line": 312,
+          "claim": "Accepted evolution decision log binding.",
+          "sha256": "95d949a7b69d91ee522b717433bcd6060cf9347bfcc86c7fae9d4b54a65fc8e9",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-source",
+          "path": "src/game/evolution.ts",
+          "line": 7,
+          "claim": "Configured rolling history and capped probabilities.",
+          "sha256": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+          "matchesCandidateManifest": true
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需新算法；固定首次引导／显式trait覆盖在配置中与adaptive区别。"
+    },
+    {
+      "id": "AC-M06-02",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 214,
+        "text": "对 1000 个不同 seed（自动无玩家压力模拟），不存在空候选池崩溃、非法组合、未预警立即进化和缺乏基础反制的特性。"
+      },
+      "verdict": "proven",
+      "summary": "当前director单元确实1000seed双阶段/策略/基础反制合法性，另C完整1000正式会话验证宿主边界。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/evolution.test.ts",
+          "testFileSha256": "4fef0e986e726c0b85f53677c9b096603b55e7c45fbbd599e9a3bfcd3b8f9b87",
+          "tests": [
+            {
+              "name": "G2 deterministic evolution director actually audits 1000 seeds, both stages, alternate strategies, legal counters and reproducible warnings",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/evolution.test.ts",
+          "testFileSha256": "4fef0e986e726c0b85f53677c9b096603b55e7c45fbbd599e9a3bfcd3b8f9b87",
+          "tests": [
+            {
+              "name": "G2 deterministic evolution director filters unavailable base counters, prevents repeats and stops at two main traits",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/encounter-counter.test.ts",
+          "testFileSha256": "9a57833dc6fe050384b55e22d223bf991ffa3f88a3b83416c984169a3b8d147a",
+          "tests": [
+            {
+              "name": "versioned first-counter encounter starts early only after clear-source plus real scan and preserves eight simulation seconds of warning",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/simulation-final/full-system-audit.json",
+          "sha256": "a169084b76bfb8815d8a58ffc1ccf264ca712c77ee8d45be8666e49ed6b181b8",
+          "scope": "Candidate C 1000 formal public-input sessions, 500 empty base/500 protocols; route and trait invariants plus seed91/seed4 replay; not browser/human."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需额外种子数量；区分纯director假设与正式公开输入会话。"
+    },
+    {
+      "id": "AC-M06-03",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 215,
+        "text": "同种子同输入产生同一进化序列；不同种子提供可观察差异，但不要求每局不同。"
+      },
+      "verdict": "proven",
+      "summary": "当前独立seed/相同输入的进化结果和全会话hash直接相同，并出现六种有序两trait组合。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/evolution.test.ts",
+          "testFileSha256": "4fef0e986e726c0b85f53677c9b096603b55e7c45fbbd599e9a3bfcd3b8f9b87",
+          "tests": [
+            {
+              "name": "G2 deterministic evolution director uses an independent seeded choice unaffected by unrelated RNG consumers or input object order",
+              "status": "passed"
+            },
+            {
+              "name": "G2 deterministic evolution director actually audits 1000 seeds, both stages, alternate strategies, legal counters and reproducible warnings",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g2-integration.test.ts",
+          "testFileSha256": "f3b31fff3b9acdca9aa116846ac2c366d9748e6ccf91abde0cdbd861f95da08c",
+          "tests": [
+            {
+              "name": "G2 shared-session integration replays the same real inputs and choices to the same weighted evolution decisions",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/simulation-final/full-system-audit.json",
+          "sha256": "a169084b76bfb8815d8a58ffc1ccf264ca712c77ee8d45be8666e49ed6b181b8",
+          "scope": "Candidate C 1000 formal public-input sessions, 500 empty base/500 protocols; route and trait invariants plus seed91/seed4 replay; not browser/human."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需新实现；不同seed不承诺每一局都不同。"
+    },
+    {
+      "id": "AC-M06-04",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 216,
+        "text": "每阶段最多按配置出现主特性数（MVP 两种）；连续重复同一 trait 有保护规则。"
+      },
+      "verdict": "proven",
+      "summary": "当前候选去重、两种trait上限和跨1000session invariant直接通过。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/evolution.test.ts",
+          "testFileSha256": "4fef0e986e726c0b85f53677c9b096603b55e7c45fbbd599e9a3bfcd3b8f9b87",
+          "tests": [
+            {
+              "name": "G2 deterministic evolution director filters unavailable base counters, prevents repeats and stops at two main traits",
+              "status": "passed"
+            },
+            {
+              "name": "G2 deterministic evolution director actually audits 1000 seeds, both stages, alternate strategies, legal counters and reproducible warnings",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/simulation-final/full-system-audit.json",
+          "sha256": "a169084b76bfb8815d8a58ffc1ccf264ca712c77ee8d45be8666e49ed6b181b8",
+          "scope": "Candidate C 1000 formal public-input sessions, 500 empty base/500 protocols; route and trait invariants plus seed91/seed4 replay; not browser/human."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/game/evolution.ts",
+          "line": 7,
+          "claim": "Trait cap and seen filtering.",
+          "sha256": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+          "matchesCandidateManifest": true
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需新增trait。"
+    },
+    {
+      "id": "AC-M06-05",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 217,
+        "text": "进化 UI 显示获得的能力、代价及弱点，不使用“病毒升级”一个模糊词代替。"
+      },
+      "verdict": "proven",
+      "summary": "当前预警、战术记录和手册明确能力/代价/反制，C两种实际预警方向浏览器直接验证。",
+      "evidence": [
+        {
+          "kind": "current-source",
+          "path": "src/ui/battleHud.ts",
+          "line": 46,
+          "claim": "Warning card ability/cost/counter fields.",
+          "sha256": "aaf74c1fea93321652e875b011f7c2865ab4b2bb3a767d79158f8fc1dda90a97",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/encounter-presentation.test.ts",
+          "testFileSha256": "54598f92a99d68339ae28aaa761c3e7df2e28a4ac18f8eb4bad0060159ef281c",
+          "tests": [
+            {
+              "name": "encounter presentation uses accepted run state shows actual adaptive traits without inventing a crystal-shell encounter",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/tactical-feedback.test.ts",
+          "testFileSha256": "92020ca75208bf22a7b59e290de7995835b5bde426441e53396a7f8f95d2e5c8",
+          "tests": [
+            {
+              "name": "bounded tactical explanations and notification priority protects EVOLUTION_WARNING from scan, repair and routine action spam, then expires",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/browser/functional-final-summary.json",
+          "sha256": "7e9585dd2e957e00dc99cd45bcd39419138f79da58301ceca896b2e1367c6f21",
+          "scope": "Four candidate-C real browser cases, six earned formal victories, two assigned skips; no training/DPR/OS blanket coverage."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需代码修复；玩家是否理解是M14-02/真人门槛。"
+    },
+    {
+      "id": "AC-M07-01",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 223,
+        "text": "挂机导致可理解的恶化；净化感染源/抢修/截断传播能实际使压力下降或增长放缓，HUD 与日志一致。"
+      },
+      "verdict": "proven",
+      "summary": "当前挂机恶化、清源减压、有效修复解除危机、关边传播改变有实际宿主测试和C开放生产压力。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/battle.test.ts",
+          "testFileSha256": "1a64a42ebc23fe01986ebacafb1f15012ca0f375023953761985bb9759b78702",
+          "tests": [
+            {
+              "name": "G1 battle rules clears each source exactly once, stopping its production and reducing pressure",
+              "status": "passed"
+            },
+            {
+              "name": "G1 battle rules gives an organ alarm grace period, recovers through actual repair, and separates failure reasons",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g1-audit.test.ts",
+          "testFileSha256": "c83d3900a38357caddebb5b47c872c575cd21b989f3e742ccbaaa0a32589bb2b",
+          "tests": [
+            {
+              "name": "G1 independent interaction audit a reopened gate observes a full propagation cooldown instead of replaying closed intervals",
+              "status": "passed"
+            },
+            {
+              "name": "G1 independent interaction audit actual repair exits a lethal infection countdown and cannot farm relief from a fully repaired organ",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/performance/attempt-1/report.json",
+          "sha256": "fa556722b99fc5818cbbf65c19224cbbecfecaaff99febbb6d8035af6a38e9a3",
+          "scope": "Candidate C retained-production 600.1667 active-second headless pressure, bounded actors/cache, finite natural memory observation; not leak-free or all-device certification."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/ui/battleHud.ts",
+          "line": 32,
+          "claim": "HUD reads actual pressure.",
+          "sha256": "aaf74c1fea93321652e875b011f7c2865ab4b2bb3a767d79158f8fc1dda90a97",
+          "matchesCandidateManifest": true
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需新实现；当前实际浏览器临界→恢复专项可另刷新，归RUN09非本次RUN。"
+    },
+    {
+      "id": "AC-M07-02",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 224,
+        "text": "感染负荷达到 100 后进入 15 秒倒计时；降回 100 以下可退出致命状态；暂停不消耗倒计时。"
+      },
+      "verdict": "proven",
+      "summary": "当前15秒致命倒数、真实治疗降回退出、暂停冻结与三终态失败顺序直接覆盖。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g1-audit.test.ts",
+          "testFileSha256": "c83d3900a38357caddebb5b47c872c575cd21b989f3e742ccbaaa0a32589bb2b",
+          "tests": [
+            {
+              "name": "G1 independent interaction audit 30 paused seconds freeze an active mutation warning and fatal infection clock, and retry clears both",
+              "status": "passed"
+            },
+            {
+              "name": "G1 independent interaction audit actual repair exits a lethal infection countdown and cannot farm relief from a fully repaired organ",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g3-boundaries.test.ts",
+          "testFileSha256": "29c3eb5dda083a6111b4d083b1e1c2f742c3b5cef5f29ef70d144757c8c2ac65",
+          "tests": [
+            {
+              "name": "G3 independent session boundaries keeps infection failure terminal before healing, travel or retest",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/game/battle.ts",
+          "line": 53,
+          "claim": "Lethal infection timing state.",
+          "sha256": "95d949a7b69d91ee522b717433bcd6060cf9347bfcc86c7fae9d4b54a65fc8e9",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-source",
+          "path": "src/game/battleConfig.ts",
+          "line": 21,
+          "claim": "Explicit configured countdown.",
+          "sha256": "937a2c91827c7184bcabf0eae13db315d52d0517d75b1696e2217f4e2c0de072",
+          "matchesCandidateManifest": true
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需改规则；可用现有gaps fixture补当前浏览器因果，而非必需新玩法。"
+    },
+    {
+      "id": "AC-M07-03",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 225,
+        "text": "单个器官健康低下应先触发警报、再影响全身稳定；不能无警告瞬时导致整局结束。"
+      },
+      "verdict": "proven",
+      "summary": "当前器官警报宽限后才扣vitality、修复恢复、三类失败独立检查有直接单元。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/battle.test.ts",
+          "testFileSha256": "1a64a42ebc23fe01986ebacafb1f15012ca0f375023953761985bb9759b78702",
+          "tests": [
+            {
+              "name": "G1 battle rules gives an organ alarm grace period, recovers through actual repair, and separates failure reasons",
+              "status": "passed"
+            },
+            {
+              "name": "G1 battle rules does not resurrect zero vitality through regeneration and keeps overlapping player/tissue attack identities separate",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g3-boundaries.test.ts",
+          "testFileSha256": "29c3eb5dda083a6111b4d083b1e1c2f742c3b5cef5f29ef70d144757c8c2ac65",
+          "tests": [
+            {
+              "name": "G3 independent session boundaries keeps vitality failure terminal before healing, travel or retest",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-source",
+          "path": "src/game/battle.ts",
+          "line": 59,
+          "claim": "Organ alarm grace and later vitality loss.",
+          "sha256": "95d949a7b69d91ee522b717433bcd6060cf9347bfcc86c7fae9d4b54a65fc8e9",
+          "matchesCandidateManifest": true
+        },
+        {
+          "kind": "current-source",
+          "path": "src/game/session.ts",
+          "line": 505,
+          "claim": "Campaign all-organ alarm path.",
+          "sha256": "57173793b76938e051b5bb080017d58a35611eb3b283f0a527742b6e9eaece2a",
+          "matchesCandidateManifest": true
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需代码修复；后台救援机会由有限离场预算另支持。"
+    },
+    {
+      "id": "AC-M07-04",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 226,
+        "text": "在预设的“落后但未失败”状态下至少存在一个可观察的恢复行动；长期失败不产生无法操作却迟迟不结束的软锁。"
+      },
+      "verdict": "proven",
+      "summary": "当前落后fixture有效治疗解除致命状态、错误门/往返/超时处理可恢复和终态不软锁；独立压力host不是正常不结束游戏。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g1-audit.test.ts",
+          "testFileSha256": "c83d3900a38357caddebb5b47c872c575cd21b989f3e742ccbaaa0a32589bb2b",
+          "tests": [
+            {
+              "name": "G1 independent interaction audit actual repair exits a lethal infection countdown and cannot farm relief from a fully repaired organ",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/campaign.test.ts",
+          "testFileSha256": "caa43e5ac34f18a82baeaaee6f82086346d3a88342a7dde94ccd8559f743f89f",
+          "tests": [
+            {
+              "name": "G3 campaign arenas and decisions ignoring migration activates and damages the unvisited lung, creates one real source and remains recoverable",
+              "status": "passed"
+            },
+            {
+              "name": "G3 campaign arenas and decisions uses one bounded background batch after a long gap, honors grace/closure and caps damage per trip",
+              "status": "passed"
+            },
+            {
+              "name": "G3 campaign arenas and decisions 90 seconds of three-second return trips cannot reset cumulative offscreen grace or erase damage",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g3-boundaries.test.ts",
+          "testFileSha256": "29c3eb5dda083a6111b4d083b1e1c2f742c3b5cef5f29ef70d144757c8c2ac65",
+          "tests": [
+            {
+              "name": "G3 independent session boundaries keeps player failure terminal before healing, travel or retest",
+              "status": "passed"
+            },
+            {
+              "name": "G3 independent session boundaries keeps vitality failure terminal before healing, travel or retest",
+              "status": "passed"
+            },
+            {
+              "name": "G3 independent session boundaries keeps infection failure terminal before healing, travel or retest",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g3-integration.test.ts",
+          "testFileSha256": "34f2b1c3b5a4c5bd083f65cd895c55a84d610d3983946e1fe0858e786b327b7f",
+          "tests": [
+            {
+              "name": "G3 shared-session campaign wins through public input after pursue migration, real core phases and retest",
+              "status": "passed"
+            },
+            {
+              "name": "G3 shared-session campaign wins through public input after block migration, real core phases and retest",
+              "status": "passed"
+            },
+            {
+              "name": "G3 shared-session campaign wins through public input after ignore migration, real core phases and retest",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/simulation-final/full-system-audit.json",
+          "sha256": "a169084b76bfb8815d8a58ffc1ccf264ca712c77ee8d45be8666e49ed6b181b8",
+          "scope": "Candidate C 1000 formal public-input sessions, 500 empty base/500 protocols; route and trait invariants plus seed91/seed4 replay; not browser/human."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需代码修复；真人能否察觉恢复行动仍需新手观察。"
+    },
+    {
+      "id": "RUN-01",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 384,
+        "text": "全新安装与操作冒烟：从干净仓库 `npm ci`→构建→断网打开 `dist/index.html`→进入训练场→移动、扫描、三工具、E、暂停及重开正常。"
+      },
+      "verdict": "partial",
+      "summary": "仅旧干净clone+训练浏览器有完整路径；当前C正式胜利和发行smoke不能替代从当前干净安装到训练完成的原完整链。",
+      "evidence": [
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/clean-check.json",
+          "sha256": "801625413ece4eebb84ac09ce770c26e3df9b48717ec71e301e8040afc983a3c",
+          "scope": "OldG0 fresh clone installation/build/test."
+        },
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/G4-patch/final-report.json",
+          "sha256": "5f2f654ae16cce7c0f71b3aef15acb4add651730e248b018ca54c138c37832f6",
+          "scope": "Old training route.",
+          "testName": "RUN-01: offline file release completes both target families, repair, retest, and clean retries"
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/release-smoke/report.json",
+          "sha256": "62197cbe1652f07643b5188b2e101a3472cb5b5b70a07dd0730ba1c6d7bc9064",
+          "scope": "Current extracted release smoke, not complete training."
+        }
+      ],
+      "currentSourceStatus": "historical-only",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "先执行已授权当前clean npm链；随后用现有g0 RUN01在C两浏览器离线完整操作，分开记录。"
+    },
+    {
+      "id": "RUN-02",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 385,
+        "text": "新模式心脏开局：扫描、射击、治疗、组织压力、XP 和日志相匹配。"
+      },
+      "verdict": "proven",
+      "summary": "当前C正式空装开局实际清源/扫描/工具/成长、实测预装代价与有效修复结算一致，单位测试补完整XP/损伤映射。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/growth.integration.test.ts",
+          "testFileSha256": "5b60639dadd9a7787a9c6c5e811245bd9ad517d915c21bc9207debfce48a60de",
+          "tests": [
+            {
+              "name": "G2 shared-session protocol integration accepted Q pays actual tissue cost and trace multiplies actual mimic movement through the common enemy update",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/g2-integration.test.ts",
+          "testFileSha256": "f3b31fff3b9acdca9aa116846ac2c366d9748e6ccf91abde0cdbd861f95da08c",
+          "tests": [
+            {
+              "name": "G2 shared-session integration earns two event-driven drafts through legal combat/scan, freezes their world and resumes only after resolving them",
+              "status": "passed"
+            },
+            {
+              "name": "G2 shared-session integration records actual base damage, excluding overkill and protocol damage from the behavior window",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/run-metrics.test.ts",
+          "testFileSha256": "77acd220aa6c3e1f04be1a0a15a023a433a524a39b0931e46164f913149eb01d",
+          "tests": [
+            {
+              "name": "accepted run outcome counters counts exact repair increases, actual tissue losses and active costs separately",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/browser/functional-final-summary.json",
+          "sha256": "7e9585dd2e957e00dc99cd45bcd39419138f79da58301ceca896b2e1367c6f21",
+          "scope": "Four candidate-C real browser cases, six earned formal victories, two assigned skips; no training/DPR/OS blanket coverage."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "无需新增功能；不将装备事实当命中。"
+    },
+    {
+      "id": "RUN-03",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 386,
+        "text": "晶壳：预警→减伤→心跳破绽→反制成功。"
+      },
+      "verdict": "partial",
+      "summary": "当前C有真实冲流后基础弱点首反制，单位有正面减伤；同一局完整“预警→实际减伤→冲流→清除”专项raw仍主要历史。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/battle.test.ts",
+          "testFileSha256": "1a64a42ebc23fe01986ebacafb1f15012ca0f375023953761985bb9759b78702",
+          "tests": [
+            {
+              "name": "G1 battle rules warns for at least 8 simulation seconds before applying CARAPACE",
+              "status": "passed"
+            },
+            {
+              "name": "G1 battle rules warns for at least 8 simulation seconds before applying FISSION",
+              "status": "passed"
+            },
+            {
+              "name": "G1 battle rules warns for at least 8 simulation seconds before applying MIMIC",
+              "status": "passed"
+            },
+            {
+              "name": "G1 battle rules makes carapace frontal resistance, rear weakness and slower movement real",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/encounter-counter.test.ts",
+          "testFileSha256": "9a57833dc6fe050384b55e22d223bf991ffa3f88a3b83416c984169a3b8d147a",
+          "tests": [
+            {
+              "name": "versioned first-counter encounter credits a real valve pulse bound to this guardian, then a real frontal basic hit",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/browser/functional-final-summary.json",
+          "sha256": "7e9585dd2e957e00dc99cd45bcd39419138f79da58301ceca896b2e1367c6f21",
+          "scope": "Four candidate-C real browser cases, six earned formal victories, two assigned skips; no training/DPR/OS blanket coverage."
+        },
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/G1/e2e-report.json",
+          "sha256": "487edd8372534424ab9b5a8ec5464d18789c3c131b822a9d54517d0c2874a026",
+          "scope": "Historical MIMIC second traitCARAPACE explicit resisted/basic pulse kill chain."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "重跑现有G1晶壳/相关机制E2E在C，保留同target/tick实际伤害链；无需改数值。"
+    },
+    {
+      "id": "RUN-04",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 387,
+        "text": "裂殖：击败母体→有限分裂→连锁净化/范围处理→无无限复制。"
+      },
+      "verdict": "partial",
+      "summary": "当前C单元闭合母体→2子体→范围清除无孙代；历史两浏览器真实G1fixture因果成立，C该专项未重跑。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/battle.test.ts",
+          "testFileSha256": "1a64a42ebc23fe01986ebacafb1f15012ca0f375023953761985bb9759b78702",
+          "tests": [
+            {
+              "name": "G1 battle rules fission advertises finite child landing points and cannot recursively divide",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/g4-gaps-first-chrome.json",
+          "sha256": "084ef73ada40480b59e1b139467f4aaf1a255d79299ed6cef1435a50449cccdc",
+          "scope": "Historical same-parent/two-children/actual area clear sequence.",
+          "testName": "RUN04 gap: G1 fixture real FISSION mother -> two finite children -> one basic area clear, no grandchildren"
+        },
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/g4-gaps-first-edge.json",
+          "sha256": "1f9a640e48077c2717c4dbcdd7837d8ccdb58e6eb2099c5d0ddd51ba32df5e4b",
+          "scope": "Historical independent Edge sequence."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "现有g4-acceptance-gaps RUN04用例对C两浏览器重跑；明示G1fixture，不冒充完整战役胜局。"
+    },
+    {
+      "id": "RUN-05",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 388,
+        "text": "潜伏：可通过 Q/显影发现→击杀/治疗→损伤停止。"
+      },
+      "verdict": "partial",
+      "summary": "当前C潜伏Q诊断/显影/母巢中断直接可见；普通潜伏死亡或治疗使损伤停止的完整浏览器因果目前仍旧raw，当前单位覆盖机制。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/battle.test.ts",
+          "testFileSha256": "1a64a42ebc23fe01986ebacafb1f15012ca0f375023953761985bb9759b78702",
+          "tests": [
+            {
+              "name": "G1 battle rules mimics remain base-counterable, periodically disturb and Q reveals them",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/motherCore.test.ts",
+          "testFileSha256": "b5184048acfd72e2c164f90b1cc2b00628334a3e57d4e250384d9a0527f93f43",
+          "tests": [
+            {
+              "name": "G3 mother core combat controller makes mimic periodically visible and allows a real in-range Q to interrupt tissue corrosion",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/browser/functional-final-summary.json",
+          "sha256": "7e9585dd2e957e00dc99cd45bcd39419138f79da58301ceca896b2e1367c6f21",
+          "scope": "Four candidate-C real browser cases, six earned formal victories, two assigned skips; no training/DPR/OS blanket coverage."
+        },
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/G1/e2e-report.json",
+          "sha256": "487edd8372534424ab9b5a8ec5464d18789c3c131b822a9d54517d0c2874a026",
+          "scope": "Historical MIMIC actualQ reveal/base clear/tissue damage stop."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "现有G1 MIMIC专项对C重跑，采目标身份与组织损伤停止，避免仅用诊断/选卡代替击杀。"
+    },
+    {
+      "id": "RUN-11",
+      "originalRequirement": {
+        "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+        "line": 394,
+        "text": "斜俯视空间与命中：二维自由移动→经过前景组织→Y 排序切换→360° 射击/修复→缩放后坐标与命中一致，场景没有横版重力/假遮挡软锁。"
+      },
+      "verdict": "partial",
+      "summary": "当前坐标/深度/几何单位、C正式真实移动射击成立；指定最终Canvas遮挡和DPR射击完整路径仍是历史，物理Ctrl缩放没有证据。",
+      "evidence": [
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/render.test.ts",
+          "testFileSha256": "68a0dc8d2f77baf1543b4678f2ed5d9adb77372bb91630e96fc9604390f4c1c5",
+          "tests": [
+            {
+              "name": "render coordinates and depth contracts round-trips CSS pointer positions at 1366×768 DPR 1",
+              "status": "passed"
+            },
+            {
+              "name": "render coordinates and depth contracts round-trips CSS pointer positions at 1920×1080 DPR 2",
+              "status": "passed"
+            },
+            {
+              "name": "render coordinates and depth contracts round-trips CSS pointer positions at 1024×768 DPR 2",
+              "status": "passed"
+            },
+            {
+              "name": "render coordinates and depth contracts round-trips CSS pointer positions at 1093×614 DPR 1.25",
+              "status": "passed"
+            },
+            {
+              "name": "render coordinates and depth contracts sorts by foot anchors, preserves ties and leaves input unchanged",
+              "status": "passed"
+            },
+            {
+              "name": "render coordinates and depth contracts fades decorative foreground at inclusive head/foot safety boundaries",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/camera-follow.test.ts",
+          "testFileSha256": "987f025c15493e4edfa0fed8918cb6693101be3ce54017589f314a0054cc4437",
+          "tests": [
+            {
+              "name": "campaign follow camera keeps actor scale and inverse pointer mapping while travelling across both organs",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "current-unit-result",
+          "path": "artifacts/preparation-v072/unit-candidate-c.json",
+          "testFile": "tests/unit/geometry.test.ts",
+          "testFileSha256": "3eddd9a6e626316c1028991f3e9372cd84c64f6b6627c1a8b0d45acb616d66d3",
+          "tests": [
+            {
+              "name": "active organ geometry uses the selected footprints and bounds for rays, dash substeps and previews without mutating the heart",
+              "status": "passed"
+            }
+          ],
+          "scope": "Current candidate-C tests; mechanism fixtures where described, not human or browser input."
+        },
+        {
+          "kind": "historical-raw",
+          "path": "artifacts/G4-patch/final-report.json",
+          "sha256": "5f2f654ae16cce7c0f71b3aef15acb4add651730e248b018ca54c138c37832f6",
+          "scope": "Historical actual Canvas overlap-pixel and world route.",
+          "testName": "VIS-04 and RUN-11: foot-anchor Y sorting and walkable foreground fade"
+        },
+        {
+          "kind": "current-raw",
+          "path": "artifacts/preparation-v072/browser/functional-final-summary.json",
+          "sha256": "7e9585dd2e957e00dc99cd45bcd39419138f79da58301ceca896b2e1367c6f21",
+          "scope": "Four candidate-C real browser cases, six earned formal victories, two assigned skips; no training/DPR/OS blanket coverage."
+        }
+      ],
+      "currentSourceStatus": "directly-exercised-by-current-tests",
+      "historicalEvidenceIsCurrentPass": false,
+      "limitations": [],
+      "nextStep": "现有g0 VIS04/尺寸DPR射击对C重跑可补技术项；真实Ctrl+/−作为独立原生设备门槛保留。"
+    }
+  ]
+}

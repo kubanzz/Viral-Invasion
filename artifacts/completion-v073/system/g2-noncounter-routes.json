@@ -1,0 +1,527 @@
+{
+  "schemaVersion": 1,
+  "expectedCases": 3,
+  "complete": true,
+  "method": "Unit integration using public InputFrame and DraftIntent; explicit opening-trait scenario; no victory-state injection.",
+  "limitation": "Choices avoid first/current/warned trait counters. Equipment chosen before a later trait becomes known may incidentally counter that later trait.",
+  "runs": [
+    {
+      "seed": 91,
+      "firstTrait": "CARAPACE",
+      "elapsed": 41.86666666666667,
+      "finalTraits": [
+        "CARAPACE",
+        "FISSION"
+      ],
+      "finalEquipment": [
+        {
+          "id": "PURIFY_CHAIN",
+          "tuning": "balanced"
+        },
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced"
+        },
+        {
+          "id": "EXPOSE_TRACE",
+          "tuning": "balanced",
+          "rank": 3
+        }
+      ],
+      "result": {
+        "success": true,
+        "reason": "心脏切片复测通过：感染源及两种变异精英清除，组织恢复稳定。"
+      },
+      "objectives": {
+        "sourceClears": 2,
+        "eliteClears": 2,
+        "integrity": 75,
+        "infection": 0,
+        "activeRetest": true
+      },
+      "route": [
+        {
+          "tick": 58,
+          "draftId": "91:2:draft:1",
+          "threats": [
+            "CARAPACE"
+          ],
+          "excluded": [
+            "PULSE_BREAK"
+          ],
+          "candidates": [
+            "PURIFY_CHAIN:equip:balanced:rank1",
+            "IMMUNE_BEACON:equip:balanced:rank1",
+            "PULSE_BREAK:equip:balanced:rank1"
+          ],
+          "action": "equip",
+          "protocol": "PURIFY_CHAIN",
+          "equipment": [
+            "PURIFY_CHAIN:balanced"
+          ]
+        },
+        {
+          "tick": 124,
+          "draftId": "91:2:draft:2",
+          "threats": [
+            "CARAPACE"
+          ],
+          "excluded": [
+            "PULSE_BREAK"
+          ],
+          "candidates": [
+            "IMMUNE_BEACON:equip:balanced:rank1",
+            "PULSE_BREAK:equip:balanced:rank1",
+            "PURIFY_CHAIN:retune:balanced:rank2"
+          ],
+          "action": "equip",
+          "protocol": "IMMUNE_BEACON",
+          "equipment": [
+            "PURIFY_CHAIN:balanced",
+            "IMMUNE_BEACON:balanced"
+          ]
+        },
+        {
+          "tick": 2457,
+          "draftId": "91:2:draft:3",
+          "threats": [
+            "CARAPACE",
+            "FISSION"
+          ],
+          "excluded": [
+            "PULSE_BREAK",
+            "PURIFY_CHAIN",
+            "IMMUNE_BEACON"
+          ],
+          "candidates": [
+            "EXPOSE_TRACE:equip:balanced:rank1",
+            "PULSE_BREAK:equip:balanced:rank1",
+            "IMMUNE_BEACON:retune:balanced:rank2"
+          ],
+          "action": "equip",
+          "protocol": "EXPOSE_TRACE",
+          "equipment": [
+            "PURIFY_CHAIN:balanced",
+            "IMMUNE_BEACON:balanced",
+            "EXPOSE_TRACE:balanced"
+          ]
+        },
+        {
+          "tick": 2508,
+          "draftId": "91:2:draft:4",
+          "threats": [
+            "CARAPACE",
+            "FISSION"
+          ],
+          "excluded": [
+            "PULSE_BREAK",
+            "PURIFY_CHAIN",
+            "IMMUNE_BEACON"
+          ],
+          "candidates": [
+            "PULSE_BREAK:equip:balanced:rank1",
+            "IMMUNE_BEACON:retune:balanced:rank2",
+            "EXPOSE_TRACE:retune:balanced:rank2"
+          ],
+          "action": "retune",
+          "protocol": "EXPOSE_TRACE",
+          "equipment": [
+            "PURIFY_CHAIN:balanced",
+            "IMMUNE_BEACON:balanced",
+            "EXPOSE_TRACE:balanced"
+          ]
+        },
+        {
+          "tick": 2509,
+          "draftId": "91:2:draft:5",
+          "threats": [
+            "CARAPACE",
+            "FISSION"
+          ],
+          "excluded": [
+            "PULSE_BREAK",
+            "PURIFY_CHAIN",
+            "IMMUNE_BEACON"
+          ],
+          "candidates": [
+            "PURIFY_CHAIN:retune:balanced:rank2",
+            "PULSE_BREAK:equip:balanced:rank1",
+            "IMMUNE_BEACON:retune:balanced:rank2"
+          ],
+          "action": "discard-no-noncounter-option",
+          "equipment": [
+            "PURIFY_CHAIN:balanced",
+            "IMMUNE_BEACON:balanced",
+            "EXPOSE_TRACE:balanced"
+          ]
+        },
+        {
+          "tick": 2510,
+          "draftId": "91:2:draft:6",
+          "threats": [
+            "CARAPACE",
+            "FISSION"
+          ],
+          "excluded": [
+            "PULSE_BREAK",
+            "PURIFY_CHAIN",
+            "IMMUNE_BEACON"
+          ],
+          "candidates": [
+            "PULSE_BREAK:equip:balanced:rank1",
+            "EXPOSE_TRACE:retune:balanced:rank3",
+            "PURIFY_CHAIN:retune:balanced:rank2"
+          ],
+          "action": "retune",
+          "protocol": "EXPOSE_TRACE",
+          "equipment": [
+            "PURIFY_CHAIN:balanced",
+            "IMMUNE_BEACON:balanced",
+            "EXPOSE_TRACE:balanced"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": 91,
+      "firstTrait": "FISSION",
+      "elapsed": 42.78333333333333,
+      "finalTraits": [
+        "FISSION",
+        "CARAPACE"
+      ],
+      "finalEquipment": [
+        {
+          "id": "PULSE_BREAK",
+          "tuning": "balanced"
+        },
+        {
+          "id": "EXPOSE_TRACE",
+          "tuning": "focused",
+          "rank": 3
+        }
+      ],
+      "result": {
+        "success": true,
+        "reason": "心脏切片复测通过：感染源及两种变异精英清除，组织恢复稳定。"
+      },
+      "objectives": {
+        "sourceClears": 2,
+        "eliteClears": 2,
+        "integrity": 87,
+        "infection": 0,
+        "activeRetest": true
+      },
+      "route": [
+        {
+          "tick": 58,
+          "draftId": "91:2:draft:1",
+          "threats": [
+            "FISSION"
+          ],
+          "excluded": [
+            "PURIFY_CHAIN",
+            "IMMUNE_BEACON"
+          ],
+          "candidates": [
+            "PURIFY_CHAIN:equip:balanced:rank1",
+            "IMMUNE_BEACON:equip:balanced:rank1",
+            "PULSE_BREAK:equip:balanced:rank1"
+          ],
+          "action": "equip",
+          "protocol": "PULSE_BREAK",
+          "equipment": [
+            "PULSE_BREAK:balanced"
+          ]
+        },
+        {
+          "tick": 148,
+          "draftId": "91:2:draft:2",
+          "threats": [
+            "FISSION"
+          ],
+          "excluded": [
+            "PURIFY_CHAIN",
+            "IMMUNE_BEACON"
+          ],
+          "candidates": [
+            "IMMUNE_BEACON:equip:balanced:rank1",
+            "EXPOSE_TRACE:equip:balanced:rank1",
+            "PULSE_BREAK:retune:balanced:rank2"
+          ],
+          "action": "equip",
+          "protocol": "EXPOSE_TRACE",
+          "equipment": [
+            "PULSE_BREAK:balanced",
+            "EXPOSE_TRACE:balanced"
+          ]
+        },
+        {
+          "tick": 2512,
+          "draftId": "91:2:draft:3",
+          "threats": [
+            "FISSION",
+            "CARAPACE"
+          ],
+          "excluded": [
+            "PURIFY_CHAIN",
+            "IMMUNE_BEACON",
+            "PULSE_BREAK"
+          ],
+          "candidates": [
+            "PURIFY_CHAIN:equip:balanced:rank1",
+            "EXPOSE_TRACE:retune:balanced:rank2",
+            "PULSE_BREAK:retune:balanced:rank2"
+          ],
+          "action": "retune",
+          "protocol": "EXPOSE_TRACE",
+          "equipment": [
+            "PULSE_BREAK:balanced",
+            "EXPOSE_TRACE:balanced"
+          ]
+        },
+        {
+          "tick": 2563,
+          "draftId": "91:2:draft:4",
+          "threats": [
+            "FISSION",
+            "CARAPACE"
+          ],
+          "excluded": [
+            "PURIFY_CHAIN",
+            "IMMUNE_BEACON",
+            "PULSE_BREAK"
+          ],
+          "candidates": [
+            "EXPOSE_TRACE:retune:balanced:rank3",
+            "IMMUNE_BEACON:equip:balanced:rank1",
+            "PURIFY_CHAIN:equip:balanced:rank1"
+          ],
+          "action": "retune",
+          "protocol": "EXPOSE_TRACE",
+          "equipment": [
+            "PULSE_BREAK:balanced",
+            "EXPOSE_TRACE:balanced"
+          ]
+        },
+        {
+          "tick": 2564,
+          "draftId": "91:2:draft:5",
+          "threats": [
+            "FISSION",
+            "CARAPACE"
+          ],
+          "excluded": [
+            "PURIFY_CHAIN",
+            "IMMUNE_BEACON",
+            "PULSE_BREAK"
+          ],
+          "candidates": [
+            "IMMUNE_BEACON:equip:balanced:rank1",
+            "PULSE_BREAK:retune:balanced:rank2",
+            "EXPOSE_TRACE:retune:focused:rank3"
+          ],
+          "action": "retune",
+          "protocol": "EXPOSE_TRACE",
+          "equipment": [
+            "PULSE_BREAK:balanced",
+            "EXPOSE_TRACE:focused"
+          ]
+        },
+        {
+          "tick": 2565,
+          "draftId": "91:2:draft:6",
+          "threats": [
+            "FISSION",
+            "CARAPACE"
+          ],
+          "excluded": [
+            "PURIFY_CHAIN",
+            "IMMUNE_BEACON",
+            "PULSE_BREAK"
+          ],
+          "candidates": [
+            "PULSE_BREAK:retune:balanced:rank2",
+            "IMMUNE_BEACON:equip:balanced:rank1",
+            "PURIFY_CHAIN:equip:balanced:rank1"
+          ],
+          "action": "discard-no-noncounter-option",
+          "equipment": [
+            "PULSE_BREAK:balanced",
+            "EXPOSE_TRACE:focused"
+          ]
+        }
+      ]
+    },
+    {
+      "seed": 91,
+      "firstTrait": "MIMIC",
+      "elapsed": 42.78333333333333,
+      "finalTraits": [
+        "MIMIC",
+        "CARAPACE"
+      ],
+      "finalEquipment": [
+        {
+          "id": "PURIFY_CHAIN",
+          "tuning": "balanced",
+          "rank": 3
+        },
+        {
+          "id": "PULSE_BREAK",
+          "tuning": "balanced"
+        }
+      ],
+      "result": {
+        "success": true,
+        "reason": "心脏切片复测通过：感染源及两种变异精英清除，组织恢复稳定。"
+      },
+      "objectives": {
+        "sourceClears": 2,
+        "eliteClears": 2,
+        "integrity": 87,
+        "infection": 0,
+        "activeRetest": true
+      },
+      "route": [
+        {
+          "tick": 58,
+          "draftId": "91:2:draft:1",
+          "threats": [
+            "MIMIC"
+          ],
+          "excluded": [
+            "EXPOSE_TRACE",
+            "IMMUNE_BEACON"
+          ],
+          "candidates": [
+            "PURIFY_CHAIN:equip:balanced:rank1",
+            "IMMUNE_BEACON:equip:balanced:rank1",
+            "PULSE_BREAK:equip:balanced:rank1"
+          ],
+          "action": "equip",
+          "protocol": "PURIFY_CHAIN",
+          "equipment": [
+            "PURIFY_CHAIN:balanced"
+          ]
+        },
+        {
+          "tick": 124,
+          "draftId": "91:2:draft:2",
+          "threats": [
+            "MIMIC"
+          ],
+          "excluded": [
+            "EXPOSE_TRACE",
+            "IMMUNE_BEACON"
+          ],
+          "candidates": [
+            "IMMUNE_BEACON:equip:balanced:rank1",
+            "PULSE_BREAK:equip:balanced:rank1",
+            "PURIFY_CHAIN:retune:balanced:rank2"
+          ],
+          "action": "equip",
+          "protocol": "PULSE_BREAK",
+          "equipment": [
+            "PURIFY_CHAIN:balanced",
+            "PULSE_BREAK:balanced"
+          ]
+        },
+        {
+          "tick": 2512,
+          "draftId": "91:2:draft:3",
+          "threats": [
+            "MIMIC",
+            "CARAPACE"
+          ],
+          "excluded": [
+            "EXPOSE_TRACE",
+            "IMMUNE_BEACON",
+            "PULSE_BREAK"
+          ],
+          "candidates": [
+            "IMMUNE_BEACON:equip:balanced:rank1",
+            "EXPOSE_TRACE:equip:balanced:rank1",
+            "PULSE_BREAK:retune:balanced:rank2"
+          ],
+          "action": "discard-no-noncounter-option",
+          "equipment": [
+            "PURIFY_CHAIN:balanced",
+            "PULSE_BREAK:balanced"
+          ]
+        },
+        {
+          "tick": 2563,
+          "draftId": "91:2:draft:4",
+          "threats": [
+            "MIMIC",
+            "CARAPACE"
+          ],
+          "excluded": [
+            "EXPOSE_TRACE",
+            "IMMUNE_BEACON",
+            "PULSE_BREAK"
+          ],
+          "candidates": [
+            "PULSE_BREAK:retune:balanced:rank2",
+            "IMMUNE_BEACON:equip:balanced:rank1",
+            "PURIFY_CHAIN:retune:balanced:rank2"
+          ],
+          "action": "retune",
+          "protocol": "PURIFY_CHAIN",
+          "equipment": [
+            "PURIFY_CHAIN:balanced",
+            "PULSE_BREAK:balanced"
+          ]
+        },
+        {
+          "tick": 2564,
+          "draftId": "91:2:draft:5",
+          "threats": [
+            "MIMIC",
+            "CARAPACE"
+          ],
+          "excluded": [
+            "EXPOSE_TRACE",
+            "IMMUNE_BEACON",
+            "PULSE_BREAK"
+          ],
+          "candidates": [
+            "EXPOSE_TRACE:equip:balanced:rank1",
+            "PULSE_BREAK:retune:balanced:rank2",
+            "IMMUNE_BEACON:equip:balanced:rank1"
+          ],
+          "action": "discard-no-noncounter-option",
+          "equipment": [
+            "PURIFY_CHAIN:balanced",
+            "PULSE_BREAK:balanced"
+          ]
+        },
+        {
+          "tick": 2565,
+          "draftId": "91:2:draft:6",
+          "threats": [
+            "MIMIC",
+            "CARAPACE"
+          ],
+          "excluded": [
+            "EXPOSE_TRACE",
+            "IMMUNE_BEACON",
+            "PULSE_BREAK"
+          ],
+          "candidates": [
+            "EXPOSE_TRACE:equip:balanced:rank1",
+            "IMMUNE_BEACON:equip:balanced:rank1",
+            "PURIFY_CHAIN:retune:balanced:rank3"
+          ],
+          "action": "retune",
+          "protocol": "PURIFY_CHAIN",
+          "equipment": [
+            "PURIFY_CHAIN:balanced",
+            "PULSE_BREAK:balanced"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+import{readFileSync,writeFileSync,existsSync}from'node:fs';import{createHash}from'node:crypto';
+const folder='artifacts/completion-v073/clean',read=p=>JSON.parse(readFileSync(folder+'/'+p)),hash=p=>createHash('sha256').update(readFileSync(folder+'/'+p)).digest('hex');
+if(existsSync(folder+'/closure.json'))throw Error('Preserve prior clean closure.');
+const summary=read('summary.json'),http=read('dev-http.json'),stop=read('dev-stop.json');
+const pass=summary.allChecksPassed&&http.httpStatus===200&&http.sourceEntry&&stop.result.exit_code===0&&stop.trackedStatusAfterStop==='';
+const result={completedAt:new Date().toISOString(),revision:summary.revision,pass,method:'Additive clean-environment command closure. Raw npm ci/build/test records and dev HTTP/PTY exit remain separately retained.',commands:['git clone --no-hardlinks --no-checkout','clone-local core.longpaths=true before checkout','git checkout --detach4da3002','npm ci','npm run build','npm test -- --maxWorkers=2 ...','npm run dev -- --port5189 --strictPort (HTTP200 then normalq+Enter exit0)'],summary:'summary.json',devHttp:'dev-http.json',devStop:'dev-stop.json',hashes:Object.fromEntries(['summary.json','dev-http.json','dev-stop.json'].map(p=>[p,hash(p)])),scope:'Current369 tests=368 nonbatch+one1000-session batch. Repeated clean batch is reproducibility evidence, not additional unique gameplay coverage.'};
+writeFileSync(folder+'/closure.json',JSON.stringify(result,null,2));console.log(JSON.stringify({pass}));if(!pass)process.exitCode=1;

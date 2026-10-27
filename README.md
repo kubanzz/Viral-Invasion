@@ -1,12 +1,12 @@
 # Viral Invasion · 病毒入侵
 
-在巨人体内作战的生物幻想动作小游戏。当前为 **v0.7.2 / G4 试玩优化候选**：2400×1500心肺战场、Ⅰ–Ⅲ阶抗体进化、实体免疫细胞、跨器官抉择与双特性母巢。本轮补齐可实际生效的初始抗体方案，以及按真实伤害和修复计算的结算复盘；研究台保留诊断驱动的方向选择。根据玩家关于空间拥挤、成长无感和攻击单调的反馈持续改造，趣味与首玩节奏仍需复玩检验。
+在巨人体内作战的生物幻想动作小游戏。当前开发候选为 **v0.7.3 / G4 试玩优化候选**：2400×1500心肺战场、Ⅰ–Ⅲ阶抗体进化、实体免疫细胞、跨器官抉择与双特性母巢，包含定向研究、初始抗体方案和真实行动结算。本版补修冲流实际位移反馈与结果首屏复盘入口。根据玩家关于空间拥挤、成长无感和攻击单调的反馈持续改造，趣味与首玩节奏仍需复玩检验。
 
 ## 立即游玩
 
 双击 `Start-Game.cmd`，或用 Chrome / Edge 直接打开 `dist/index.html`。发行文件完全本地运行，不需要服务器、账号或网络。交付目录中的 `dist/` 为构建产物，不进入 Git；从源码检出后先构建。
 
-离线候选发行：[Viral-Invasion-G4-v0.7.2.zip](releases/Viral-Invasion-G4-v0.7.2.zip)。完整解压后双击其中的 `Open-Game.cmd`。改动和验证见 [v0.7.2验收](Docs/ViralInvasion_v0.7.2_Acceptance.md)，原始证据入口为 [本轮验证汇总](artifacts/preparation-v072/verification-summary.json)。历史版本：[v0.7.1定向研究](Docs/ViralInvasion_v0.7.1_Acceptance.md)、[v0.7.0首次反制与阶段遭遇](Docs/ViralInvasion_v0.7.0_Acceptance.md)、[v0.6.4遮挡修复](Docs/ViralInvasion_v0.6.4_Acceptance.md)、[v0.6.3稳定性](Docs/ViralInvasion_v0.6.3_Acceptance.md)、[v0.6.2围击与协攻](Docs/ViralInvasion_v0.6.2_Acceptance.md)、[v0.6.1详情与音效](Docs/ViralInvasion_v0.6.1_Acceptance.md)、[v0.6.0试玩反馈处理](Docs/ViralInvasion_PlaytestFeedback_v0.6.0.md)、[v0.5.1记录](Docs/ViralInvasion_G4_v0.5.1.md)、[v0.5.0验收](Docs/ViralInvasion_G4_Acceptance.md)。发行文件保留于本机，不进入 Git。
+离线候选：[Viral-Invasion-G4-v0.7.3.zip](releases/Viral-Invasion-G4-v0.7.3.zip)。完整解压后双击 `Open-Game.cmd`；五文件指纹、Chrome／Edge断网冒烟与本机600秒帧率预算已通过。构建与验证见 [v0.7.3验收](Docs/ViralInvasion_v0.7.3_Acceptance.md)、[最终来源核对](artifacts/completion-v073/provenance-final.json)、[验证汇总](artifacts/completion-v073/verification-summary.json)。历史 [v0.7.2发行](releases/Viral-Invasion-G4-v0.7.2.zip)、[验收](Docs/ViralInvasion_v0.7.2_Acceptance.md)与[验证汇总](artifacts/preparation-v072/verification-summary.json)独立保留。其他历史版本：[v0.7.1定向研究](Docs/ViralInvasion_v0.7.1_Acceptance.md)、[v0.7.0首次反制与阶段遭遇](Docs/ViralInvasion_v0.7.0_Acceptance.md)、[v0.6.4遮挡修复](Docs/ViralInvasion_v0.6.4_Acceptance.md)、[v0.6.3稳定性](Docs/ViralInvasion_v0.6.3_Acceptance.md)、[v0.6.2围击与协攻](Docs/ViralInvasion_v0.6.2_Acceptance.md)、[v0.6.1详情与音效](Docs/ViralInvasion_v0.6.1_Acceptance.md)、[v0.6.0试玩反馈处理](Docs/ViralInvasion_PlaytestFeedback_v0.6.0.md)、[v0.5.1记录](Docs/ViralInvasion_G4_v0.5.1.md)、[v0.5.0验收](Docs/ViralInvasion_G4_Acceptance.md)。发行文件保留于本机，不进入 Git。
 
 本轮可直接体验：开局按 **Q** 召一只短时免疫侦巡；首份进化草案选择**免疫灯塔**后，把鼠标指向附近敌群再按Q，会出现三只协同细胞。搭配**异常显影**，可观察优先围猎标记体及真实咬击提示；停火片刻更容易看清接敌过程，追逐或狭窄地形仍可能部分重叠。将**连锁净化升至Ⅱ阶**，精确净化每三次基础命中可折射邻体，Ⅲ阶缩短至两次。按 **2** 可击退可移动敌人、打断前摇。右下小地图显示设施、目标距离与镜头范围，设施已经分散到不同区域。正式地图可行动地面约为旧版 **4.23倍**；训练与阶段夹具保留小图。
 
@@ -81,12 +81,16 @@ dist/              index.html + game.js，无ES模块、CDN或远程资源
 
 G0–G3 功能与 G4 存档、档案和首次迁移指引已实现。真实浏览器、离线发行包与设备性能的最终证据见测试矩阵；原始设计文件完整保存在 `DesignDoc_v1.3/`。
 
-v0.7.2：366项非批次单元通过，另有新跑的1000个完整正式模拟会话全部通过。500局为空装基础路线；另外500局协议路线覆盖现场应答及四种预装各100，交叉两种引导和三迁移路线；seed91与预装seed4分别重放一致。该批次直接执行TypeScript，不调用研究API，不代表1000次浏览器或研究确认。
+v0.7.3当前已完成44个测试文件、369项测试，全部通过；其中368项非批次，另1项批次包含1000个正式模拟会话及4次回放执行。1000局全胜、0退出／不变量错误，500局为空装基础路线，另500局协议路线覆盖现场应答及四种预装各100，交叉两种引导和三迁移路线；seed91与预装seed4分别重放一致。直接执行TypeScript且不调用研究API，不代表1000次浏览器或研究确认。
 
-最终C包4个实际浏览器功能用例通过，包含初始方案两例中的4次真实胜局，以及定向研究两例中的2次真实胜局；2个研究项目分配skip不计通过。覆盖从空档解锁、真实预装／细胞命中、20XP偿还、55XP草案、结算存档、重试和刷新回放，以及免费取消、唯一扣样本与实际危机中断。三个窗口尺寸的方案页及两种小窗口研究页均有原始截图。不是全量历史E2E重跑，并行功能回归不作FPS结论。
+本版完整浏览器110分配项中84通过、26分配skip、0失败，约17.4分钟，源码及构建前后不变；另一次定向轮10通过／4skip独立保留，不相加为唯一覆盖。独立干净检出完成`npm ci`、构建、44文件369项测试／1000局、开发服务HTTP200及正常退出，构建与本包逐字节一致。独立真实胜局的四窗口结果探针通过：1920／1366首屏复盘入口可见，1100×560／800×600需滚动且入口、4主按钮和展开末部档案可达。ZIP静态校验与双浏览器断网冒烟通过，见[v0.7.3验收](Docs/ViralInvasion_v0.7.3_Acceptance.md)。并行功能回归不作FPS结论。
 
-本包的独占长时间性能、自然内存、终后GC／重开观察、ZIP五文件解压与离线冒烟分别登记在[v0.7.2验收](Docs/ViralInvasion_v0.7.2_Acceptance.md)和[验证汇总](artifacts/preparation-v072/verification-summary.json)。保留旧ab构建的首轮Chrome断言失败、旧单元期望失败和中间构建证据，不将其混计为最终C资格。实际统计有界、采用真实扣血与修复事实；不推算未造成的伤害。
+本包另一次独占Chrome155 headless压力完成600.183有效模拟秒，标准／低效约300秒，59.9813／60.0013FPS、p95均16.8ms；两档均采样24活体＋3细胞，非全程满额或全屏可辨。实际整局咬击1037含setup／warmup，905只是去重语义日志。119自然样本与终后GC／10重开观察分列，保留容量扩张，不宣称无泄漏。15张[原始画面审阅](artifacts/completion-v073/visual-review.json)与[内存审阅](artifacts/completion-v073/performance/attempt-1/memory-review.json)分别记录实际范围和限制。
 
-本机Chrome155 headless单次600.167有效模拟秒通过，标准／低效各约300秒、约60FPS／p95 16.8ms；两档采样24活体＋3细胞同时存在，非全程满额或全部屏内可辨。116自然内存样本与终后GC／10重开分列，不宣称无泄漏。ZIP五文件指纹一致，Chrome／Edge双浏览器断网冒烟通过。
+历史v0.7.2最终C的4个实际浏览器用例（6次真实胜局／2分配skip）、独占长时间性能、自然内存、终后GC／重开观察、ZIP五文件解压与离线冒烟分别登记在[v0.7.2验收](Docs/ViralInvasion_v0.7.2_Acceptance.md)和[验证汇总](artifacts/preparation-v072/verification-summary.json)，不重标为v0.7.3。旧C补充完整套件的77通过／7失败／26分配skip也原样保留；七项在新包定向复跑闭环，不拼接成单次完整通过。实际统计有界、采用真实扣血与修复事实；不推算未造成的伤害。
+
+上述历史C包在本机Chrome155 headless单次600.167有效模拟秒通过，标准／低效各约300秒、约60FPS／p95 16.8ms；两档采样24活体＋3细胞同时存在，非全程满额或全部屏内可辨。116自然内存样本与终后GC／10重开分列，不宣称无泄漏。其ZIP五文件指纹一致，Chrome／Edge双浏览器断网冒烟通过；这些不是本版新测量。
 
 [初始方案与真实结算](Docs/ViralInvasion_StartPlan_ResultReview_Plan.md)补齐跨局实际选择与行动回看。当前1000熟练模拟平均54.03秒，只证明合法快速路线，不代表真人首局；标准五人盲测仍0/5，首玩10–15分钟、反制理解、复玩意愿及商业价值仍待真人观察。物理OS失焦／最小化、真实Ctrl缩放及完整内存稳定也仍待验收。
+
+[原设计终态范围审计](artifacts/completion-v073/requirements-terminal-closure.json)在完整浏览器／干净检出截止下为112要求中的73项proven、39项仍开放；随后独立技术证据另记，不据此声称全部规划或趣味已验收。

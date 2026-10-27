@@ -1,0 +1,11 @@
+import{readFileSync,writeFileSync,readdirSync,statSync,existsSync}from'node:fs';
+import{createHash}from'node:crypto';import{execFileSync}from'node:child_process';
+const root='artifacts/completion-v073',output=root+'/evidence-inventory.json';
+if(existsSync(output))throw Error('Preserve prior inventory.');
+const walk=d=>readdirSync(d).sort().flatMap(n=>{const p=d+'/'+n;return statSync(p).isDirectory()?walk(p):[p];});
+const paths=[...walk('artifacts/completion-v072'),...walk(root)];
+const ignored=new Set(execFileSync('git',['check-ignore','--stdin'],{input:paths.join('\n')+'\n',encoding:'utf8',maxBuffer:8*1024*1024,windowsHide:true}).trim().split(/\r?\n/));
+const files=paths.map(path=>({path,bytes:statSync(path).size,sha256:createHash('sha256').update(readFileSync(path)).digest('hex'),disposition:ignored.has(path)?'preserved locally; ignored by Git':'retained in task evidence; eligible for Git'}));
+const totals={files:files.length,bytes:files.reduce((n,f)=>n+f.bytes,0),gitEligibleFiles:files.filter(f=>!ignored.has(f.path)).length,gitEligibleBytes:files.filter(f=>!ignored.has(f.path)).reduce((n,f)=>n+f.bytes,0)};
+writeFileSync(output,JSON.stringify({generatedAt:new Date().toISOString(),method:'Read-only final inventory of both original completion audit and current qualification trees. Includes hashes of ignored raw logs/runtime artifacts; no deletion, game execution or altered raw report. Inventory excludes itself.',totals,files},null,2));
+console.log(JSON.stringify({totals,large:files.filter(f=>f.bytes>10*1024*1024).map(({path,bytes,disposition})=>({path,bytes,disposition}))}));

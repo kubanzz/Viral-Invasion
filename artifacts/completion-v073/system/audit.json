@@ -1,0 +1,1803 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-27T09:10:09.923Z",
+  "auditMode": "Read-only derived review of completed v0.7.3 unit/system raw output; no new simulation, browser, test, build or production change.",
+  "version": "0.7.3",
+  "bundleSha256": "71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54",
+  "buildMetadata": {
+    "path": "dist/build-meta.json",
+    "sha256": "6a9a0f2d1994de897f4cc7c9010cb27088e6eb55d65d105c7cf33c32b52ec9db",
+    "version": "0.7.3",
+    "sourceInputCount": 60,
+    "scope": "Build exists separately; completed unit command did not produce the bundle. Simulations directly execute TypeScript, not game.js."
+  },
+  "rawInputs": {
+    "pre-run.json": {
+      "path": "artifacts/completion-v073/system/pre-run.json",
+      "sha256": "4812e99e8d844e9903acc6a7bf3dda8cf7a78620610e302212dada1a4e8ae6d4",
+      "bytes": 11895
+    },
+    "execution.json": {
+      "path": "artifacts/completion-v073/system/execution.json",
+      "sha256": "0aa8296b37dbba03781cb716fe81bccd8a4afb2523314f7ccd0f29306370bd47",
+      "bytes": 12025
+    },
+    "unit.json": {
+      "path": "artifacts/completion-v073/system/unit.json",
+      "sha256": "7d40e5b9f49d5d964509f64c38094420b035ba45da0f725f4fc32e05477be4ac",
+      "bytes": 154851
+    },
+    "full-system-seeds.json": {
+      "path": "artifacts/completion-v073/system/full-system-seeds.json",
+      "sha256": "fd5efda6572c0dd10f3cc584d8c79d5bf76b0a302343fab1842dc0817ca92b44",
+      "bytes": 6816031
+    }
+  },
+  "checks": {
+    "complete1000": true,
+    "seeds1Through1000": true,
+    "outcomesMatchRaw": true,
+    "all1000Win": true,
+    "unit369Passed": true,
+    "unit44Files": true,
+    "oneBatchTest": true,
+    "base500Empty": true,
+    "protocolsFivePlans100Each": true,
+    "initialPlanEquipmentExact": true,
+    "eachPlanVariant50AndAllRoutes": true,
+    "bothGuideVariants500": true,
+    "routes334333333": true,
+    "actualMetricsFiniteCompleteConsistent": true,
+    "perStepMetricBoundGuardPresent": true,
+    "finalStarterDebtZero": true,
+    "allFiveStagesActual": true,
+    "allFormal": true,
+    "realCrisisCleared1000": true,
+    "guidedActualCounters500": true,
+    "allCoreAndRetestWins": true,
+    "sixTraitOrders": true,
+    "base91Replay": true,
+    "prepared4Replay": true,
+    "executionTerminal": true,
+    "simulation31Current": true,
+    "simulation31InPreRun": true,
+    "allRecordedExecutionSourcesCurrent": true,
+    "simulationReportedUnchanged": true,
+    "simulationManifestFingerprintMatches": true,
+    "executionReportedUnchanged": true,
+    "buildInputsMatchCurrent": true
+  },
+  "allChecksPassed": true,
+  "testTotals": {
+    "actualFiles": 44,
+    "total": 369,
+    "passed": 369,
+    "failed": 0,
+    "nonBatchTests": 368,
+    "batchTests": 1,
+    "batchSessions": 1000,
+    "scope": "One Vitest batch test contains 1000 sessions plus four replay executions. Sessions are not 1000 individual Vitest or browser cases."
+  },
+  "outcomes": {
+    "wins": 1000,
+    "losses": 0,
+    "publicMenuExits": 0,
+    "invariantFailures": 0
+  },
+  "routeDistribution": {
+    "block": 333,
+    "ignore": 333,
+    "pursue": 334
+  },
+  "modeCoverage": {
+    "base": 500,
+    "protocols": 500
+  },
+  "preparationCoverage": {
+    "field": {
+      "total": 600,
+      "base": 500,
+      "protocols": 100,
+      "wins": 600,
+      "initiallyPrepaid": 0,
+      "remainingStarterDebt": 0
+    },
+    "PULSE_BREAK": {
+      "total": 100,
+      "base": 0,
+      "protocols": 100,
+      "wins": 100,
+      "initiallyPrepaid": 100,
+      "remainingStarterDebt": 0
+    },
+    "PURIFY_CHAIN": {
+      "total": 100,
+      "base": 0,
+      "protocols": 100,
+      "wins": 100,
+      "initiallyPrepaid": 100,
+      "remainingStarterDebt": 0
+    },
+    "IMMUNE_BEACON": {
+      "total": 100,
+      "base": 0,
+      "protocols": 100,
+      "wins": 100,
+      "initiallyPrepaid": 100,
+      "remainingStarterDebt": 0
+    },
+    "EXPOSE_TRACE": {
+      "total": 100,
+      "base": 0,
+      "protocols": 100,
+      "wins": 100,
+      "initiallyPrepaid": 100,
+      "remainingStarterDebt": 0
+    }
+  },
+  "variantCoverage": {
+    "guided": {
+      "total": 500,
+      "wins": 500,
+      "actualCounterHits": 500,
+      "completedGuideEvents": 500
+    },
+    "adaptive": {
+      "total": 500,
+      "wins": 500,
+      "actualCounterHits": 0,
+      "completedGuideEvents": 0
+    }
+  },
+  "preparationVariantRouteCoverage": {
+    "field": {
+      "guided": {
+        "total": 50,
+        "wins": 50,
+        "routes": {
+          "block": 17,
+          "ignore": 16,
+          "pursue": 17
+        }
+      },
+      "adaptive": {
+        "total": 50,
+        "wins": 50,
+        "routes": {
+          "block": 17,
+          "ignore": 17,
+          "pursue": 16
+        }
+      }
+    },
+    "PULSE_BREAK": {
+      "guided": {
+        "total": 50,
+        "wins": 50,
+        "routes": {
+          "block": 17,
+          "ignore": 16,
+          "pursue": 17
+        }
+      },
+      "adaptive": {
+        "total": 50,
+        "wins": 50,
+        "routes": {
+          "block": 16,
+          "ignore": 17,
+          "pursue": 17
+        }
+      }
+    },
+    "PURIFY_CHAIN": {
+      "guided": {
+        "total": 50,
+        "wins": 50,
+        "routes": {
+          "block": 17,
+          "ignore": 17,
+          "pursue": 16
+        }
+      },
+      "adaptive": {
+        "total": 50,
+        "wins": 50,
+        "routes": {
+          "block": 16,
+          "ignore": 17,
+          "pursue": 17
+        }
+      }
+    },
+    "IMMUNE_BEACON": {
+      "guided": {
+        "total": 50,
+        "wins": 50,
+        "routes": {
+          "block": 17,
+          "ignore": 17,
+          "pursue": 16
+        }
+      },
+      "adaptive": {
+        "total": 50,
+        "wins": 50,
+        "routes": {
+          "block": 17,
+          "ignore": 16,
+          "pursue": 17
+        }
+      }
+    },
+    "EXPOSE_TRACE": {
+      "guided": {
+        "total": 50,
+        "wins": 50,
+        "routes": {
+          "block": 16,
+          "ignore": 17,
+          "pursue": 17
+        }
+      },
+      "adaptive": {
+        "total": 50,
+        "wins": 50,
+        "routes": {
+          "block": 17,
+          "ignore": 16,
+          "pursue": 17
+        }
+      }
+    }
+  },
+  "traitSequenceCoverage": {
+    "CARAPACE>FISSION": 363,
+    "CARAPACE>MIMIC": 337,
+    "FISSION>CARAPACE": 81,
+    "FISSION>MIMIC": 64,
+    "MIMIC>CARAPACE": 88,
+    "MIMIC>FISSION": 67
+  },
+  "actualCareAggregate": {
+    "repairActions": 1809,
+    "repaired": 45225,
+    "organLoss": 23208,
+    "organCost": 9362,
+    "playerDamage": 1191
+  },
+  "actualControlAggregate": {
+    "chainTriggers": 977,
+    "chainHops": 1348,
+    "ricochetHits": 210,
+    "resonanceHits": 254,
+    "beaconBites": 1289,
+    "patrolBites": 2728,
+    "synergyPulseChain": 48,
+    "synergyTraceBeacon": 704,
+    "scans": 17451,
+    "pulseUses": 500,
+    "crystalExposures": 500,
+    "corePulseHits": 0,
+    "airwayCloses": 667,
+    "airwayOpens": 0,
+    "crisisPulseInterrupts": 0,
+    "crisisAirwayInterrupts": 0,
+    "coreScanInterrupts": 287
+  },
+  "actualHitRunCoverage": {
+    "chainTriggers": 321,
+    "chainHops": 321,
+    "ricochetHits": 105,
+    "resonanceHits": 181,
+    "beaconBites": 199,
+    "patrolBites": 834,
+    "synergyPulseChain": 48,
+    "synergyTraceBeacon": 101,
+    "scans": 1000,
+    "pulseUses": 500,
+    "crystalExposures": 500,
+    "corePulseHits": 0,
+    "airwayCloses": 667,
+    "airwayOpens": 0,
+    "crisisPulseInterrupts": 0,
+    "crisisAirwayInterrupts": 0,
+    "coreScanInterrupts": 287
+  },
+  "metricFailures": [],
+  "metricBounds": {
+    "frameEntryLimit": 256,
+    "sourceGuardPresent": true,
+    "observedFrameMaximum": null,
+    "basis": "Frozen validate() checks proof-cache <=256, complete finite nonnegative metrics and ending consistency after each driver action; no run reports an invariant failure. Final serialized summaries independently checked here.",
+    "rawLimitation": "The per-run output does not export runtime frame entries or their maxima. This is not 1000 direct exported maximum-value observations. Actual root/target hit joins are implemented by the source reducer and separately unit tested; final aggregates alone cannot reconstruct all individual accepted joins."
+  },
+  "stageCoverage": {
+    "I": {
+      "entered": 1000,
+      "completed": 1000,
+      "orderedWithinRun": 1000
+    },
+    "II": {
+      "entered": 1000,
+      "completed": 1000,
+      "orderedWithinRun": 1000
+    },
+    "III": {
+      "entered": 1000,
+      "completed": 1000,
+      "orderedWithinRun": 1000
+    },
+    "IV": {
+      "entered": 1000,
+      "completed": 1000,
+      "orderedWithinRun": 1000
+    },
+    "V": {
+      "entered": 1000,
+      "completed": 1000,
+      "orderedWithinRun": 1000
+    }
+  },
+  "firstCounter": {
+    "resolved": 1000,
+    "guided500ActualCounterHits": 500,
+    "actualCounterMethods": {
+      "pulse": 500
+    }
+  },
+  "crisisCoverage": {
+    "status": {
+      "cleared": 1000
+    },
+    "organs": {
+      "heart": 333,
+      "lung": 667
+    },
+    "impacts": 0,
+    "guardsRequestedRuns": 0,
+    "interruptedRuns": 0,
+    "interruptions": 0,
+    "scope": "Actual stage IV targets are cleared; a fast zero-impact route does not cover impact damage, support guards or environmental interruption branches merely by visiting the stage."
+  },
+  "researchEvents": {
+    "RESEARCH_REQUESTED": {
+      "events": 0,
+      "runs": 0
+    },
+    "RESEARCH_CONFIRMED": {
+      "events": 0,
+      "runs": 0
+    },
+    "RESEARCH_SPENT": {
+      "events": 0,
+      "runs": 0
+    },
+    "RESEARCH_CANCELLED": {
+      "events": 0,
+      "runs": 0
+    }
+  },
+  "eventTotals": {
+    "ACTOR_SPAWNED": 9616,
+    "AIRWAY_CHANGED": 667,
+    "AREA_DISPLACED": 3474,
+    "ATTACK_TELEGRAPHED": 3519,
+    "BATTLE_DIAGNOSED": 17451,
+    "CAMPAIGN_CORE_CLEARED": 1000,
+    "CAMPAIGN_STAGE_COMPLETED": 5000,
+    "CAMPAIGN_STAGE_ENTERED": 5000,
+    "CARAPACE_RESISTED": 4351,
+    "CORE_ATTACK_RESOLVED": 1760,
+    "CORE_ATTACK_TELEGRAPHED": 2383,
+    "CORE_AWAKEN_REQUESTED": 1000,
+    "CORE_BROOD_RELEASED": 460,
+    "CORE_CLEARED": 1000,
+    "CORE_COMBAT_STARTED": 1000,
+    "CORE_CORROSION_INTERRUPTED": 287,
+    "CORE_LOCATED": 1000,
+    "CORE_MEMBRANES_OPENED": 1000,
+    "CORE_MEMBRANE_BROKEN": 2000,
+    "CORE_PHASE_CHANGED": 2383,
+    "CORE_SCAN_REVEALED": 1497,
+    "COUNTER_GUIDE_COMPLETED": 500,
+    "ELITE_CLEARED": 2000,
+    "EVOLUTION_APPLIED": 2000,
+    "EVOLUTION_ROLLED": 1500,
+    "EVOLUTION_WARNING": 2000,
+    "FIRST_COUNTER_RESOLVED": 1000,
+    "FISSION_SPAWNED": 1014,
+    "FISSION_WARNING": 1014,
+    "GROWTH_LEVEL_GAINED": 4000,
+    "GROWTH_REWARD": 13578,
+    "IMMUNE_PATROL_CREATED": 13242,
+    "IMMUNE_PATROL_HIT": 2728,
+    "INFECTION_CHANGED": 666,
+    "INFECTION_SOURCE_CLEARED": 4333,
+    "INFECTION_SPREAD": 1649,
+    "INPUT_RESET_REQUESTED": 4267,
+    "LUNG_PHASE_CHANGED": 4640,
+    "MIGRATION_BLOCK_STARTED": 333,
+    "MIGRATION_DECIDED": 1000,
+    "MIGRATION_INTERCEPTED": 334,
+    "MIGRATION_WARNING": 1000,
+    "ORGAN_CRISIS_ARMED": 1000,
+    "ORGAN_CRISIS_CLEARED": 1000,
+    "ORGAN_CRISIS_STARTED": 1000,
+    "ORGAN_INTEGRITY_CHANGED": 7076,
+    "ORGAN_TRAVELLED": 667,
+    "PLAYER_HURT": 158,
+    "PREPARATION_REPAID": 400,
+    "PRESSURE_RELIEVED": 1809,
+    "PROTOCOL_BEACON_CREATED": 1343,
+    "PROTOCOL_BEACON_HIT": 1289,
+    "PROTOCOL_CHAIN_HIT": 1361,
+    "PROTOCOL_DRAFT_COMMITTED": 1600,
+    "PROTOCOL_DRAFT_DISCARDED": 2000,
+    "PROTOCOL_DRAFT_OPENED": 3600,
+    "PROTOCOL_EQUIPPED": 1600,
+    "PROTOCOL_RESONANCE_HIT": 254,
+    "PROTOCOL_RICOCHET_HIT": 210,
+    "PROTOCOL_SYNERGY": 752,
+    "PROTOCOL_TRACE_APPLIED": 4177,
+    "PULSE_TRIGGERED": 500,
+    "RETEST_COMPLETED": 1000,
+    "ROUTE_CHANGED": 1000,
+    "RUN_ENDED": 1000,
+    "RUN_PAUSED": 3600,
+    "RUN_RESUMED": 3600,
+    "SCAN_COMPLETED": 17451,
+    "TARGET_CLEARED": 15617,
+    "TARGET_HIT": 76280,
+    "TOOL_FIRED": 169919,
+    "TOOL_REJECTED": 16180,
+    "TOOL_SELECTED": 56730
+  },
+  "eventRunCoverage": {
+    "ACTOR_SPAWNED": 1000,
+    "AIRWAY_CHANGED": 667,
+    "AREA_DISPLACED": 1000,
+    "ATTACK_TELEGRAPHED": 940,
+    "BATTLE_DIAGNOSED": 1000,
+    "CAMPAIGN_CORE_CLEARED": 1000,
+    "CAMPAIGN_STAGE_COMPLETED": 1000,
+    "CAMPAIGN_STAGE_ENTERED": 1000,
+    "CARAPACE_RESISTED": 369,
+    "CORE_ATTACK_RESOLVED": 1000,
+    "CORE_ATTACK_TELEGRAPHED": 1000,
+    "CORE_AWAKEN_REQUESTED": 1000,
+    "CORE_BROOD_RELEASED": 460,
+    "CORE_CLEARED": 1000,
+    "CORE_COMBAT_STARTED": 1000,
+    "CORE_CORROSION_INTERRUPTED": 287,
+    "CORE_LOCATED": 1000,
+    "CORE_MEMBRANES_OPENED": 1000,
+    "CORE_MEMBRANE_BROKEN": 1000,
+    "CORE_PHASE_CHANGED": 1000,
+    "CORE_SCAN_REVEALED": 1000,
+    "COUNTER_GUIDE_COMPLETED": 500,
+    "ELITE_CLEARED": 1000,
+    "EVOLUTION_APPLIED": 1000,
+    "EVOLUTION_ROLLED": 1000,
+    "EVOLUTION_WARNING": 1000,
+    "FIRST_COUNTER_RESOLVED": 1000,
+    "FISSION_SPAWNED": 575,
+    "FISSION_WARNING": 575,
+    "GROWTH_LEVEL_GAINED": 1000,
+    "GROWTH_REWARD": 1000,
+    "IMMUNE_PATROL_CREATED": 903,
+    "IMMUNE_PATROL_HIT": 834,
+    "INFECTION_CHANGED": 666,
+    "INFECTION_SOURCE_CLEARED": 1000,
+    "INFECTION_SPREAD": 998,
+    "INPUT_RESET_REQUESTED": 1000,
+    "LUNG_PHASE_CHANGED": 667,
+    "MIGRATION_BLOCK_STARTED": 333,
+    "MIGRATION_DECIDED": 1000,
+    "MIGRATION_INTERCEPTED": 334,
+    "MIGRATION_WARNING": 1000,
+    "ORGAN_CRISIS_ARMED": 1000,
+    "ORGAN_CRISIS_CLEARED": 1000,
+    "ORGAN_CRISIS_STARTED": 1000,
+    "ORGAN_INTEGRITY_CHANGED": 1000,
+    "ORGAN_TRAVELLED": 667,
+    "PLAYER_HURT": 156,
+    "PREPARATION_REPAID": 400,
+    "PRESSURE_RELIEVED": 1000,
+    "PROTOCOL_BEACON_CREATED": 352,
+    "PROTOCOL_BEACON_HIT": 199,
+    "PROTOCOL_CHAIN_HIT": 322,
+    "PROTOCOL_DRAFT_COMMITTED": 500,
+    "PROTOCOL_DRAFT_DISCARDED": 500,
+    "PROTOCOL_DRAFT_OPENED": 1000,
+    "PROTOCOL_EQUIPPED": 500,
+    "PROTOCOL_RESONANCE_HIT": 181,
+    "PROTOCOL_RICOCHET_HIT": 105,
+    "PROTOCOL_SYNERGY": 149,
+    "PROTOCOL_TRACE_APPLIED": 343,
+    "PULSE_TRIGGERED": 500,
+    "RETEST_COMPLETED": 1000,
+    "ROUTE_CHANGED": 1000,
+    "RUN_ENDED": 1000,
+    "RUN_PAUSED": 1000,
+    "RUN_RESUMED": 1000,
+    "SCAN_COMPLETED": 1000,
+    "TARGET_CLEARED": 1000,
+    "TARGET_HIT": 1000,
+    "TOOL_FIRED": 1000,
+    "TOOL_REJECTED": 1000,
+    "TOOL_SELECTED": 1000
+  },
+  "elapsedSeconds": {
+    "minimum": 46.18333333333333,
+    "median": 48.55,
+    "maximum": 66.88333333333333,
+    "mean": 54.03046666666655
+  },
+  "peakActivePerOrgan": {
+    "minimum": 4,
+    "median": 6,
+    "maximum": 7,
+    "mean": 5.681
+  },
+  "peakStoredPerOrgan": {
+    "minimum": 5,
+    "median": 7,
+    "maximum": 11,
+    "mean": 7.557
+  },
+  "replays": [
+    {
+      "seed": 91,
+      "preparation": "field",
+      "equal": true,
+      "first": "cdc1f3086b2f5da7b258ec2350bcdd66adcdbbd651e4716499cec090c86bc06d",
+      "second": "cdc1f3086b2f5da7b258ec2350bcdd66adcdbbd651e4716499cec090c86bc06d",
+      "pairHashesEqual": true,
+      "reportedEqualAgrees": true,
+      "matchesCorrespondingBatchRun": true,
+      "scope": "Read-only verification of two previously executed replay hashes and the corresponding batch summary; this audit does not execute replay."
+    },
+    {
+      "seed": 4,
+      "preparation": "PULSE_BREAK",
+      "equal": true,
+      "first": "15740df6674d6ba609b4e69ada00f0cbc15a7746dbbd1a33beafc25e5a7a168b",
+      "second": "15740df6674d6ba609b4e69ada00f0cbc15a7746dbbd1a33beafc25e5a7a168b",
+      "pairHashesEqual": true,
+      "reportedEqualAgrees": true,
+      "matchesCorrespondingBatchRun": true,
+      "scope": "Read-only verification of two previously executed replay hashes and the corresponding batch summary; this audit does not execute replay."
+    }
+  ],
+  "simulationSourceSha256": "e9e9228482576516969d6e6adcd626073204dce90bb37f96525e1f7fc9101d61",
+  "simulationSources": [
+    {
+      "path": "src/actors/collision.ts",
+      "expectedSha256": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+      "currentSha256": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+      "matches": true,
+      "preRunSha256": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/core/clock.ts",
+      "expectedSha256": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+      "currentSha256": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+      "matches": true,
+      "preRunSha256": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/core/events.ts",
+      "expectedSha256": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+      "currentSha256": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+      "matches": true,
+      "preRunSha256": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/core/rng.ts",
+      "expectedSha256": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+      "currentSha256": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+      "matches": true,
+      "preRunSha256": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/battle.ts",
+      "expectedSha256": "7f2a312b8c7f155ca3bbf28c34c0303ba0ca52a74630deb70f9db1b72043c9b7",
+      "currentSha256": "7f2a312b8c7f155ca3bbf28c34c0303ba0ca52a74630deb70f9db1b72043c9b7",
+      "matches": true,
+      "preRunSha256": "7f2a312b8c7f155ca3bbf28c34c0303ba0ca52a74630deb70f9db1b72043c9b7",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/battleConfig.ts",
+      "expectedSha256": "937a2c91827c7184bcabf0eae13db315d52d0517d75b1696e2217f4e2c0de072",
+      "currentSha256": "937a2c91827c7184bcabf0eae13db315d52d0517d75b1696e2217f4e2c0de072",
+      "matches": true,
+      "preRunSha256": "937a2c91827c7184bcabf0eae13db315d52d0517d75b1696e2217f4e2c0de072",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/battleTypes.ts",
+      "expectedSha256": "6a061520db6c6483c5ec14847cf29a8619bb4ec8ee23d166b8b6de09bfef84c7",
+      "currentSha256": "6a061520db6c6483c5ec14847cf29a8619bb4ec8ee23d166b8b6de09bfef84c7",
+      "matches": true,
+      "preRunSha256": "6a061520db6c6483c5ec14847cf29a8619bb4ec8ee23d166b8b6de09bfef84c7",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/campaign.ts",
+      "expectedSha256": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+      "currentSha256": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+      "matches": true,
+      "preRunSha256": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/campaignEncounters.ts",
+      "expectedSha256": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+      "currentSha256": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+      "matches": true,
+      "preRunSha256": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/campaignTypes.ts",
+      "expectedSha256": "ff301247b34797b7731bc5e0e0b792eef99bbf75eefd4955d2876a4e7c2788dd",
+      "currentSha256": "ff301247b34797b7731bc5e0e0b792eef99bbf75eefd4955d2876a4e7c2788dd",
+      "matches": true,
+      "preRunSha256": "ff301247b34797b7731bc5e0e0b792eef99bbf75eefd4955d2876a4e7c2788dd",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/counterLesson.ts",
+      "expectedSha256": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+      "currentSha256": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+      "matches": true,
+      "preRunSha256": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/encounterConfig.ts",
+      "expectedSha256": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+      "currentSha256": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+      "matches": true,
+      "preRunSha256": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/encounterTypes.ts",
+      "expectedSha256": "7d5027852136cd4504fa10439903f342a7f9d78adb6ada65adf6105bb7c54c10",
+      "currentSha256": "7d5027852136cd4504fa10439903f342a7f9d78adb6ada65adf6105bb7c54c10",
+      "matches": true,
+      "preRunSha256": "7d5027852136cd4504fa10439903f342a7f9d78adb6ada65adf6105bb7c54c10",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/evolution.ts",
+      "expectedSha256": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+      "currentSha256": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+      "matches": true,
+      "preRunSha256": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/evolutionTypes.ts",
+      "expectedSha256": "dbd661c484a7d442f1e23d939f1c67e7699e14259213d729e292e74b04fd90fa",
+      "currentSha256": "dbd661c484a7d442f1e23d939f1c67e7699e14259213d729e292e74b04fd90fa",
+      "matches": true,
+      "preRunSha256": "dbd661c484a7d442f1e23d939f1c67e7699e14259213d729e292e74b04fd90fa",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/growth.ts",
+      "expectedSha256": "f68c344485ea4fcd20bd7054795b29a40446431c7f13a50af53df34274e6c82b",
+      "currentSha256": "f68c344485ea4fcd20bd7054795b29a40446431c7f13a50af53df34274e6c82b",
+      "matches": true,
+      "preRunSha256": "f68c344485ea4fcd20bd7054795b29a40446431c7f13a50af53df34274e6c82b",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/growthTypes.ts",
+      "expectedSha256": "5975f29d54e39b69538888c60b322cd5f6eb031195ee604d4226e0f7b327b65b",
+      "currentSha256": "5975f29d54e39b69538888c60b322cd5f6eb031195ee604d4226e0f7b327b65b",
+      "matches": true,
+      "preRunSha256": "5975f29d54e39b69538888c60b322cd5f6eb031195ee604d4226e0f7b327b65b",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/immuneCells.ts",
+      "expectedSha256": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80",
+      "currentSha256": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80",
+      "matches": true,
+      "preRunSha256": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/motherCore.ts",
+      "expectedSha256": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+      "currentSha256": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+      "matches": true,
+      "preRunSha256": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/motherCoreTypes.ts",
+      "expectedSha256": "8b3b2442074429be623bae033eaab9b1ba61fc95d138dc33025f905c6db97e00",
+      "currentSha256": "8b3b2442074429be623bae033eaab9b1ba61fc95d138dc33025f905c6db97e00",
+      "matches": true,
+      "preRunSha256": "8b3b2442074429be623bae033eaab9b1ba61fc95d138dc33025f905c6db97e00",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/organConfig.ts",
+      "expectedSha256": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+      "currentSha256": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+      "matches": true,
+      "preRunSha256": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/organRules.ts",
+      "expectedSha256": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+      "currentSha256": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+      "matches": true,
+      "preRunSha256": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/preparation.ts",
+      "expectedSha256": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+      "currentSha256": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+      "matches": true,
+      "preRunSha256": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/protocols.ts",
+      "expectedSha256": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+      "currentSha256": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+      "matches": true,
+      "preRunSha256": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/research.ts",
+      "expectedSha256": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+      "currentSha256": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+      "matches": true,
+      "preRunSha256": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/runMetrics.ts",
+      "expectedSha256": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+      "currentSha256": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+      "matches": true,
+      "preRunSha256": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/session.ts",
+      "expectedSha256": "57173793b76938e051b5bb080017d58a35611eb3b283f0a527742b6e9eaece2a",
+      "currentSha256": "57173793b76938e051b5bb080017d58a35611eb3b283f0a527742b6e9eaece2a",
+      "matches": true,
+      "preRunSha256": "57173793b76938e051b5bb080017d58a35611eb3b283f0a527742b6e9eaece2a",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/tacticalFeedback.ts",
+      "expectedSha256": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+      "currentSha256": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+      "matches": true,
+      "preRunSha256": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+      "preRunMatches": true
+    },
+    {
+      "path": "src/game/types.ts",
+      "expectedSha256": "c8d67e724f3176da9783dc2e7b9b059ede419f2bfa5e14b7e0063d3390324cbb",
+      "currentSha256": "c8d67e724f3176da9783dc2e7b9b059ede419f2bfa5e14b7e0063d3390324cbb",
+      "matches": true,
+      "preRunSha256": "c8d67e724f3176da9783dc2e7b9b059ede419f2bfa5e14b7e0063d3390324cbb",
+      "preRunMatches": true
+    },
+    {
+      "path": "tests/helpers/g3Driver.ts",
+      "expectedSha256": "2dcaa812ae1aa99d5ada5c6e3f4d6e431047483f0e0dd399ed36328b446e6f3b",
+      "currentSha256": "2dcaa812ae1aa99d5ada5c6e3f4d6e431047483f0e0dd399ed36328b446e6f3b",
+      "matches": true,
+      "preRunSha256": "2dcaa812ae1aa99d5ada5c6e3f4d6e431047483f0e0dd399ed36328b446e6f3b",
+      "preRunMatches": true
+    },
+    {
+      "path": "tests/unit/full-system-seeds.test.ts",
+      "expectedSha256": "a01ff10ba69e0449419d9341883983b732414385fc2d3ed5a347ff6c5834264d",
+      "currentSha256": "a01ff10ba69e0449419d9341883983b732414385fc2d3ed5a347ff6c5834264d",
+      "matches": true,
+      "preRunSha256": "a01ff10ba69e0449419d9341883983b732414385fc2d3ed5a347ff6c5834264d",
+      "preRunMatches": true
+    }
+  ],
+  "fullExecutionSources": [
+    {
+      "path": "src/actors/collision.ts",
+      "sha256": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/audio.ts",
+      "sha256": "015ef7700c5e2628741f2be5058858f9d654efd519bde0c516189ed7f0325f98",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/core/clock.ts",
+      "sha256": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/core/events.ts",
+      "sha256": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/core/rng.ts",
+      "sha256": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/battle.ts",
+      "sha256": "7f2a312b8c7f155ca3bbf28c34c0303ba0ca52a74630deb70f9db1b72043c9b7",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/battleConfig.ts",
+      "sha256": "937a2c91827c7184bcabf0eae13db315d52d0517d75b1696e2217f4e2c0de072",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/battleTypes.ts",
+      "sha256": "6a061520db6c6483c5ec14847cf29a8619bb4ec8ee23d166b8b6de09bfef84c7",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/campaign.ts",
+      "sha256": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/campaignEncounters.ts",
+      "sha256": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/campaignTypes.ts",
+      "sha256": "ff301247b34797b7731bc5e0e0b792eef99bbf75eefd4955d2876a4e7c2788dd",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/counterLesson.ts",
+      "sha256": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/encounterConfig.ts",
+      "sha256": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/encounterTypes.ts",
+      "sha256": "7d5027852136cd4504fa10439903f342a7f9d78adb6ada65adf6105bb7c54c10",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/evolution.ts",
+      "sha256": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/evolutionTypes.ts",
+      "sha256": "dbd661c484a7d442f1e23d939f1c67e7699e14259213d729e292e74b04fd90fa",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/growth.ts",
+      "sha256": "f68c344485ea4fcd20bd7054795b29a40446431c7f13a50af53df34274e6c82b",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/growthTypes.ts",
+      "sha256": "5975f29d54e39b69538888c60b322cd5f6eb031195ee604d4226e0f7b327b65b",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/immuneCells.ts",
+      "sha256": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/motherCore.ts",
+      "sha256": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/motherCoreTypes.ts",
+      "sha256": "8b3b2442074429be623bae033eaab9b1ba61fc95d138dc33025f905c6db97e00",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/organConfig.ts",
+      "sha256": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/organRules.ts",
+      "sha256": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/preparation.ts",
+      "sha256": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/protocols.ts",
+      "sha256": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/research.ts",
+      "sha256": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/runMetrics.ts",
+      "sha256": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/session.ts",
+      "sha256": "57173793b76938e051b5bb080017d58a35611eb3b283f0a527742b6e9eaece2a",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/tacticalFeedback.ts",
+      "sha256": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/game/types.ts",
+      "sha256": "c8d67e724f3176da9783dc2e7b9b059ede419f2bfa5e14b7e0063d3390324cbb",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/input/controller.ts",
+      "sha256": "a26bac630063676bc2a168301cc5110da81a82e0d35cc9f6ee5ca3eeec51958c",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/main.ts",
+      "sha256": "9625c9e69064cff21aea547a650d10d396b58dbcb445cff16777ddec095e4867",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/meta/profile.ts",
+      "sha256": "7fd5d16754e633e6f2364b74772c2f9154e68bd7e3abbd33391a617838d94c81",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/meta/runOptions.ts",
+      "sha256": "2afc173d0af2f55b907dae5baceda1d5f222af59ef6c021bb4a16170e0ee9c26",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/render/battleVisuals.ts",
+      "sha256": "eb018bf5de39ce3ebd11cc1813b2befa8448e378c8b9f11938b8066fccc508f4",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/render/camera.ts",
+      "sha256": "ca117a766229b5770d49491559dbe016aca210876315f4069f5db42081f748e5",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/render/depthSort.ts",
+      "sha256": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/render/encounterVisuals.ts",
+      "sha256": "e54daa69e6da56935f5b6741bb5bf565a3909389d2bdc5f6935d1a5d9303616c",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/render/growthVisuals.ts",
+      "sha256": "aedcf1cc105935a4694d9b752c180894ecbb0a408fca7175394f4d3493086d77",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/render/immuneTraceCues.ts",
+      "sha256": "80558b755ae1054388a982182b430b41e5ceb98119b7ad0758b694dabdfd66d7",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/render/immuneVisuals.ts",
+      "sha256": "07a8b19251d4bb706065ce4443fe0816f1d48ced6e5f5419244f30552bc3ac2c",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/render/index.ts",
+      "sha256": "2698caf58367ca3ce04087e293e350a0b9fd790087b5948406b2d60d77eb7bf8",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/render/layers.ts",
+      "sha256": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/render/lungVisuals.ts",
+      "sha256": "20d5256b03d2c784d9b4027d996484458243b891eba4fa41d58cf98073233d2b",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/render/navigation.ts",
+      "sha256": "ab776f6e94b141663e1bd46ca23da738e7ebf679ef0bf211258fc89f833355a5",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/render/occlusion.ts",
+      "sha256": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/render/organLandscape.ts",
+      "sha256": "3ea49be35cc7e1a3a4d7ac0e4356031f7255e3ad6c941e13b666fee5946f63a2",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/render/pulsePreview.ts",
+      "sha256": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/render/raisedObstacleGeometry.ts",
+      "sha256": "373e3f145fd521367be7adc93c8461b5407cfe384866f2eb59c2a3ee645a3df6",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/render/raisedObstacleOcclusion.ts",
+      "sha256": "0486c6daed7617275f28aab6406f84783a3e3695ae1059e9a2c99634f47308f1",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/render/renderer.ts",
+      "sha256": "def49278c80f1204267059b934c21f62e3cacc6736a4e572c59f8188b80be268",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/style.css",
+      "sha256": "a43d13267f171988d5d497bd9024a3013648b1262d1769d5de20b3d2a7e0d986",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/ui/battleHud.ts",
+      "sha256": "aaf74c1fea93321652e875b011f7c2865ab4b2bb3a767d79158f8fc1dda90a97",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/ui/campaignHud.ts",
+      "sha256": "2bf4317ceee2a5d17deb46278d19e19fc89dc79df16c1bc437a6acbc0c7f0cc3",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/ui/encounter.css",
+      "sha256": "e5a9925b175251afb21833c663c4aa1ca7ff56370836b9de390fe62d5b9e7ffe",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/ui/encounterHud.ts",
+      "sha256": "1cb4ef363f9471a78f615c58301f66e04ce689be4f8475120ed045f86502877d",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/ui/growthHud.ts",
+      "sha256": "78b435a66782398d9bc5202032d6fa0fea80ad217be26a621dc26850ef460786",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/ui/profile.css",
+      "sha256": "e7a171fa930fc5c43a81550554c7f68abc7c8e11515bb55ef2098ca00fd35cc7",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/ui/profileHud.ts",
+      "sha256": "ce14fcd40a45ae663ffc94df955609f5ab7056d48fb7fe76264f020a6e473363",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/ui/research.css",
+      "sha256": "db48bcb15fbb3cc242530ab682b220a4caaafd73e939adf204a90d401da69bed",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/ui/startingPlan.css",
+      "sha256": "8de9969303735e56cdab18a1070dc1068f3786e6276c71e76791f684bdc4b2d3",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/ui/startingPlanHud.ts",
+      "sha256": "bdf944c887ea8f1cb7860b853542d26e833db154ddd02bc818ef5500761ee2d2",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "src/ui/tacticalHistory.ts",
+      "sha256": "c159a53e514049043f0a41dfb07b435a8774630993d039d68832fbb1c4db137b",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/area-control.test.ts",
+      "sha256": "ace26616be786f720cd87573cf6878b36640af879b129c0c5762a6427dbb9cb6",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/audio.test.ts",
+      "sha256": "0e5aa592d09544d150f0a7c0f09dac7d2a7af448909b9ab5432be599f62d8e4e",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/battle.test.ts",
+      "sha256": "1a64a42ebc23fe01986ebacafb1f15012ca0f375023953761985bb9759b78702",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/camera-follow.test.ts",
+      "sha256": "987f025c15493e4edfa0fed8918cb6693101be3ce54017589f314a0054cc4437",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/campaign-encounters.test.ts",
+      "sha256": "e8b52a10dba62b9d3be51faf5b23c4220eb95bb4c8fe143ba539be6e0e7bf2ad",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/campaign-space.test.ts",
+      "sha256": "38d65131be28bb95c7db3de196af6b1d22e186b7aabdb8692a108711cebae615",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/campaign.test.ts",
+      "sha256": "caa43e5ac34f18a82baeaaee6f82086346d3a88342a7dde94ccd8559f743f89f",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/carried-protocols.test.ts",
+      "sha256": "a297316ff5e32c782b8b10c56b7f17f6817723ce5d1306e84664c7545149e201",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/collision.test.ts",
+      "sha256": "db93a08b7a65b2a075bdf0a8c3d7f96e1056dba654c934ebcb580833020952de",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/core.test.ts",
+      "sha256": "91869ec592759e3a48eed01270eec4e1e6f2d9552793937fdc515bbaba2af389",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/coreVisuals.test.ts",
+      "sha256": "30dea1db4a3f0a2a3714bb43540426f90cbafdfcc51babde70153972db9e989d",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/encounter-counter.test.ts",
+      "sha256": "9a57833dc6fe050384b55e22d223bf991ffa3f88a3b83416c984169a3b8d147a",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/encounter-history.test.ts",
+      "sha256": "f4aac9e9cf0b9582cde5796a4dae28bebdffdce63e7ee1f53d9d15100baa00e4",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/encounter-presentation.test.ts",
+      "sha256": "54598f92a99d68339ae28aaa761c3e7df2e28a4ac18f8eb4bad0060159ef281c",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/evolution.test.ts",
+      "sha256": "4fef0e986e726c0b85f53677c9b096603b55e7c45fbbd599e9a3bfcd3b8f9b87",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/full-system-seeds.test.ts",
+      "sha256": "a01ff10ba69e0449419d9341883983b732414385fc2d3ed5a347ff6c5834264d",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/g1-audit.test.ts",
+      "sha256": "c83d3900a38357caddebb5b47c872c575cd21b989f3e742ccbaaa0a32589bb2b",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/g2-integration.test.ts",
+      "sha256": "f3b31fff3b9acdca9aa116846ac2c366d9748e6ccf91abde0cdbd861f95da08c",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/g3-boundaries.test.ts",
+      "sha256": "29c3eb5dda083a6111b4d083b1e1c2f742c3b5cef5f29ef70d144757c8c2ac65",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/g3-integration.test.ts",
+      "sha256": "34f2b1c3b5a4c5bd083f65cd895c55a84d610d3983946e1fe0858e786b327b7f",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/geometry.test.ts",
+      "sha256": "3eddd9a6e626316c1028991f3e9372cd84c64f6b6627c1a8b0d45acb616d66d3",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/growth-evolution.test.ts",
+      "sha256": "f59914bbb7004458a344bbee5ae8cd1d15c528fb083cf58b533244e89d4856c5",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/growth.integration.test.ts",
+      "sha256": "5b60639dadd9a7787a9c6c5e811245bd9ad517d915c21bc9207debfce48a60de",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/growth.test.ts",
+      "sha256": "42768983543a367422f5fdb8fbbbdd075b841526514eb2a091b4f878653bc488",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/immune-cells.test.ts",
+      "sha256": "033327b64b9e7d1f5646165429421e499d3e92b16a71eaa76e2a98d7fec2b52d",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/immune-trace-cues.test.ts",
+      "sha256": "5fef6f13916ead8e48e4a6033df7d6231b002cbe9fd1e55a19e8685b77824db8",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/motherCore.test.ts",
+      "sha256": "b5184048acfd72e2c164f90b1cc2b00628334a3e57d4e250384d9a0527f93f43",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/navigation.test.ts",
+      "sha256": "aabd691845292b0afb37800eda25a06578f6e6723bfb6e5613c13e96d7e7a1ef",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/organRules.test.ts",
+      "sha256": "6f9ef13e88af81763e6e93e0c622cfb2d4158471c481022ef3661accf694b229",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/preparation-session.test.ts",
+      "sha256": "039ee542e37837cdc8cf5cf621154cc25c19f6bcf0b803608df9b9e900ef80fc",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/preparation.test.ts",
+      "sha256": "12c5a8e6daa83e7085e87b07cdf64b08346b925ef07ee5c2bfbe69008851e2c1",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/profile.test.ts",
+      "sha256": "72b2719d5ba23a76cd4ed45564b247bf051f042a044d148cf8fb0034a8af5a8c",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/protocols.test.ts",
+      "sha256": "252bb83cc70080e3bd6d99d5f4b01c256e90c4d644ffc47dedc6204836ca9511",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/pulse-displacement.test.ts",
+      "sha256": "dc7db4f4907219bd31407fb0d3814d2c867982a7d197b852f2a6a3b31f538f26",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/pulsePreview.test.ts",
+      "sha256": "9940e1339f43f7266abbb1e63a44f9b42a8c0a62c975f8a3f97bd12c5e023e47",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/raised-obstacle-occlusion.test.ts",
+      "sha256": "ebd79dc77396e5701638b42ee8e593cc3c5325d58463eae8dbb072d366c159f8",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/render.test.ts",
+      "sha256": "68a0dc8d2f77baf1543b4678f2ed5d9adb77372bb91630e96fc9604390f4c1c5",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/research-presentation.test.ts",
+      "sha256": "dbb5c14b4fd6549972d1d45155e97a6ed91933cb53ac70b99767f38625151cae",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/research-session.test.ts",
+      "sha256": "bcf2b02e70a3d2f16a9cafe68f06838fcb83e26ff608ca6f104cbef9dff1e773",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/research.test.ts",
+      "sha256": "d3353eb74c72eb9bd68f66fe3d432094e3943d62957b7105fc3e20fbe39214c9",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/run-metrics.test.ts",
+      "sha256": "77acd220aa6c3e1f04be1a0a15a023a433a524a39b0931e46164f913149eb01d",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/session.test.ts",
+      "sha256": "52df9b67aca789b6286e2d8d9e082014130269f9d6b696f2ffcf1c15426ae4d1",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/starting-plan-presentation.test.ts",
+      "sha256": "5527380bd8ad63115b247cd0d8651adb6679328dcae0a4dc23d839b273fbebb5",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/unit/tactical-feedback.test.ts",
+      "sha256": "92020ca75208bf22a7b59e290de7995835b5bde426441e53396a7f8f95d2e5c8",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "tests/helpers/g3Driver.ts",
+      "sha256": "2dcaa812ae1aa99d5ada5c6e3f4d6e431047483f0e0dd399ed36328b446e6f3b",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "package.json",
+      "sha256": "42cca9275382c65ff2df3df9384a08db2c6a5f5549b890aad9fb38de84cb9bcf",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "4bd907820abdaf62de7ecad6a1d40fe2dbe9c55de1d53e4e5bafc806b2a42f3f",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    },
+    {
+      "path": "vitest.config.ts",
+      "sha256": "33eaa940920acb14117fbad41c2516818a00de39570267c4df543a7542511145",
+      "matchesCurrent": true,
+      "matchesExecution": true
+    }
+  ],
+  "buildSources": [
+    {
+      "path": "index.html",
+      "sha256": "240abc27cb391518456a6d81b8360a88946d837888c769c2756415ef9cdc84af",
+      "matchesCurrent": true
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "4bd907820abdaf62de7ecad6a1d40fe2dbe9c55de1d53e4e5bafc806b2a42f3f",
+      "matchesCurrent": true
+    },
+    {
+      "path": "package.json",
+      "sha256": "42cca9275382c65ff2df3df9384a08db2c6a5f5549b890aad9fb38de84cb9bcf",
+      "matchesCurrent": true
+    },
+    {
+      "path": "scripts/build-offline.mjs",
+      "sha256": "0e899f1174fb20ca34edba6cad8a800b0be44d2c2b097c62eaa5033fe37de3a8",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/actors/collision.ts",
+      "sha256": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/audio.ts",
+      "sha256": "015ef7700c5e2628741f2be5058858f9d654efd519bde0c516189ed7f0325f98",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/core/clock.ts",
+      "sha256": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/core/events.ts",
+      "sha256": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/core/rng.ts",
+      "sha256": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/game/battle.ts",
+      "sha256": "7f2a312b8c7f155ca3bbf28c34c0303ba0ca52a74630deb70f9db1b72043c9b7",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/game/battleConfig.ts",
+      "sha256": "937a2c91827c7184bcabf0eae13db315d52d0517d75b1696e2217f4e2c0de072",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/game/campaign.ts",
+      "sha256": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/game/campaignEncounters.ts",
+      "sha256": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/game/counterLesson.ts",
+      "sha256": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/game/encounterConfig.ts",
+      "sha256": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/game/evolution.ts",
+      "sha256": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/game/growth.ts",
+      "sha256": "f68c344485ea4fcd20bd7054795b29a40446431c7f13a50af53df34274e6c82b",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/game/immuneCells.ts",
+      "sha256": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/game/motherCore.ts",
+      "sha256": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/game/organConfig.ts",
+      "sha256": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/game/organRules.ts",
+      "sha256": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/game/preparation.ts",
+      "sha256": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/game/protocols.ts",
+      "sha256": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/game/research.ts",
+      "sha256": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/game/runMetrics.ts",
+      "sha256": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/game/session.ts",
+      "sha256": "57173793b76938e051b5bb080017d58a35611eb3b283f0a527742b6e9eaece2a",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/game/tacticalFeedback.ts",
+      "sha256": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/game/types.ts",
+      "sha256": "c8d67e724f3176da9783dc2e7b9b059ede419f2bfa5e14b7e0063d3390324cbb",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/input/controller.ts",
+      "sha256": "a26bac630063676bc2a168301cc5110da81a82e0d35cc9f6ee5ca3eeec51958c",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/main.ts",
+      "sha256": "9625c9e69064cff21aea547a650d10d396b58dbcb445cff16777ddec095e4867",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/meta/profile.ts",
+      "sha256": "7fd5d16754e633e6f2364b74772c2f9154e68bd7e3abbd33391a617838d94c81",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/meta/runOptions.ts",
+      "sha256": "2afc173d0af2f55b907dae5baceda1d5f222af59ef6c021bb4a16170e0ee9c26",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/render/battleVisuals.ts",
+      "sha256": "eb018bf5de39ce3ebd11cc1813b2befa8448e378c8b9f11938b8066fccc508f4",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/render/camera.ts",
+      "sha256": "ca117a766229b5770d49491559dbe016aca210876315f4069f5db42081f748e5",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/render/depthSort.ts",
+      "sha256": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/render/encounterVisuals.ts",
+      "sha256": "e54daa69e6da56935f5b6741bb5bf565a3909389d2bdc5f6935d1a5d9303616c",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/render/growthVisuals.ts",
+      "sha256": "aedcf1cc105935a4694d9b752c180894ecbb0a408fca7175394f4d3493086d77",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/render/immuneTraceCues.ts",
+      "sha256": "80558b755ae1054388a982182b430b41e5ceb98119b7ad0758b694dabdfd66d7",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/render/immuneVisuals.ts",
+      "sha256": "07a8b19251d4bb706065ce4443fe0816f1d48ced6e5f5419244f30552bc3ac2c",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/render/layers.ts",
+      "sha256": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/render/lungVisuals.ts",
+      "sha256": "20d5256b03d2c784d9b4027d996484458243b891eba4fa41d58cf98073233d2b",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/render/navigation.ts",
+      "sha256": "ab776f6e94b141663e1bd46ca23da738e7ebf679ef0bf211258fc89f833355a5",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/render/occlusion.ts",
+      "sha256": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/render/organLandscape.ts",
+      "sha256": "3ea49be35cc7e1a3a4d7ac0e4356031f7255e3ad6c941e13b666fee5946f63a2",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/render/pulsePreview.ts",
+      "sha256": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/render/raisedObstacleGeometry.ts",
+      "sha256": "373e3f145fd521367be7adc93c8461b5407cfe384866f2eb59c2a3ee645a3df6",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/render/raisedObstacleOcclusion.ts",
+      "sha256": "0486c6daed7617275f28aab6406f84783a3e3695ae1059e9a2c99634f47308f1",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/render/renderer.ts",
+      "sha256": "def49278c80f1204267059b934c21f62e3cacc6736a4e572c59f8188b80be268",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/style.css",
+      "sha256": "a43d13267f171988d5d497bd9024a3013648b1262d1769d5de20b3d2a7e0d986",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/ui/battleHud.ts",
+      "sha256": "aaf74c1fea93321652e875b011f7c2865ab4b2bb3a767d79158f8fc1dda90a97",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/ui/campaignHud.ts",
+      "sha256": "2bf4317ceee2a5d17deb46278d19e19fc89dc79df16c1bc437a6acbc0c7f0cc3",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/ui/encounter.css",
+      "sha256": "e5a9925b175251afb21833c663c4aa1ca7ff56370836b9de390fe62d5b9e7ffe",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/ui/encounterHud.ts",
+      "sha256": "1cb4ef363f9471a78f615c58301f66e04ce689be4f8475120ed045f86502877d",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/ui/growthHud.ts",
+      "sha256": "78b435a66782398d9bc5202032d6fa0fea80ad217be26a621dc26850ef460786",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/ui/profile.css",
+      "sha256": "e7a171fa930fc5c43a81550554c7f68abc7c8e11515bb55ef2098ca00fd35cc7",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/ui/profileHud.ts",
+      "sha256": "ce14fcd40a45ae663ffc94df955609f5ab7056d48fb7fe76264f020a6e473363",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/ui/research.css",
+      "sha256": "db48bcb15fbb3cc242530ab682b220a4caaafd73e939adf204a90d401da69bed",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/ui/startingPlan.css",
+      "sha256": "8de9969303735e56cdab18a1070dc1068f3786e6276c71e76791f684bdc4b2d3",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/ui/startingPlanHud.ts",
+      "sha256": "bdf944c887ea8f1cb7860b853542d26e833db154ddd02bc818ef5500761ee2d2",
+      "matchesCurrent": true
+    },
+    {
+      "path": "src/ui/tacticalHistory.ts",
+      "sha256": "c159a53e514049043f0a41dfb07b435a8774630993d039d68832fbb1c4db137b",
+      "matchesCurrent": true
+    }
+  ],
+  "limitations": [
+    "1000 complete formal TypeScript sessions are neither 1000 real browser games nor new-player evidence. Fast strategy times do not validate the 10–15 minute first-play target or fun/retention.",
+    "Fixed start options enter through public GameSession.start. The 1000 cases do not independently unlock or validate archive eligibility 1000 times.",
+    "The frozen raw summary does not export carriedProtocols. Do not claim 1000 direct carried-array assertions or preservation-after-log-eviction observations.",
+    "Research counts are explicitly derived above. If all four are zero, this batch provides no actual research transaction coverage; separate unit/browser evidence is required.",
+    "Events are aggregate telemetry and some describe planned effects. Only metrics.control is used for actual accepted-hit aggregates; raw event counts must not be relabeled as actual damage counts.",
+    "baseCountersAvailable is a configuration/availability flag, not proof that every basic counter was used against every trait in every run.",
+    "No frame-rate, long-session memory, native OS, Ctrl zoom, human-blind-test or publishing conclusion is drawn."
+  ]
+}

@@ -1,10 +1,10 @@
 # Viral Invasion 实施计划
 
-当前版本：v0.7.2-G4 技术候选 · 设计基线：v1.3 · 日期：2026-10-27
+当前版本：v0.7.3-G4 技术候选（本轮技术范围通过，产品门槛未关闭） · 设计基线：v1.3 · 日期：2026-10-27
 
 本文将六份设计文档转为分阶段工作清单。实现、自动测试、真实浏览器输入、真人试玩分别登记；计划条目不代表已实现或已通过。测试结果以 `ViralInvasion_TestMatrix.md` 和真实产物为准。
 
-用户真实试玩后的空间、进化与协同改造见 [v0.6.0反馈记录](ViralInvasion_PlaytestFeedback_v0.6.0.md)；后续定向研究、初始抗体方案与真实行动结算见 [v0.7.1验收](ViralInvasion_v0.7.1_Acceptance.md)、[v0.7.2验收](ViralInvasion_v0.7.2_Acceptance.md)。下列阶段清单保留各阶段当时实现和证据范围，不将历史测试自动迁移为当前包通过。
+用户真实试玩后的空间、进化与协同改造见 [v0.6.0反馈记录](ViralInvasion_PlaytestFeedback_v0.6.0.md)；后续定向研究、初始抗体方案与真实行动结算见 [v0.7.1验收](ViralInvasion_v0.7.1_Acceptance.md)、[v0.7.2验收](ViralInvasion_v0.7.2_Acceptance.md)。本轮冲流事实及结果首屏补修见 [v0.7.3验收](ViralInvasion_v0.7.3_Acceptance.md)。下列阶段清单保留各阶段当时实现和证据范围，不将历史测试自动迁移为当前包通过。
 
 ## 本轮范围与阶段门禁
 
@@ -126,3 +126,17 @@ G3 使用 `src/game/campaign.ts`、`organConfig.ts`、`organRules.ts`、`motherC
 G4 新增 `src/meta/profile.ts`、`src/ui/profileHud.ts` 与 `profile.css`，完成版本化局外档案、唯一结算去重、发现/成就/最近10局、同seed重试和坏档/存储不可用降级。设置可从菜单、暂停和帮助直接操作；首次迁移有暂停指引；结算额外复盘默认折叠，首屏可见入口和原建议。最终游戏源码为 `e8a956e`，v0.5.0，补充独立关键类别记录与提示优先级，普通操作不能覆盖危机。旧功能轮17项通过/15项分配跳过，d24d074布局轮Chrome seed1单项复验通过；最终b44包已重新完整运行17项G4病例及4项机制专项，通过后另做604秒性能，不混同版本。
 
 最终172项单元/系统测试含1000个完整公开输入会话（基础/协议各500局、三种迁移选择和六种有序特性组合），1000胜、0不变量失败；新轮指纹5aeafbf67fb6950111c3c603f86da4d218edf2327634d33726e3e20bd877cefb。该策略平均56.0145模拟秒，不证明首玩10–15分钟或高密度性能。最终证据、发行哈希和性能适用范围另见测试矩阵及G4验收；真人0/5、M13-01、物理OS失焦与真实Ctrl缩放保持未关闭，产品价值仍须真实玩家数据支持。
+
+## v0.7.3 当前补修与验证范围
+
+源码提交 `4da30026696c99b6ad936a9fcd60911cc4f59770`，60项构建输入，冻结game.js SHA256 `71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54`。本版只修正实际零位移被计为推开及结果页间距，另修测试驱动的部署条件／DOM等待；不新增玩法。旧C完整浏览器首轮77通过／7失败／26分配skip保留，七个失败在新包定向复跑闭环，逐项来源见[v0.7.3验收](ViralInvasion_v0.7.3_Acceptance.md)。
+
+已完成[44文件369项测试](../artifacts/completion-v073/system/unit.json)，由368项非批次及1项含1000正式会话的批次构成；1000胜、0退出／不变量错误，seed91空装与seed4预装各重放一致，输入审计通过。新包[定向浏览器](../artifacts/completion-v073/browser/targeted-1/report.json)10通过／4分配skip、退出0，源码及三构建文件未变。浏览器启动时revision仍为be666a3，工作区manifest连接到已提交源码，不误称启动于4da3002。
+
+完整浏览器[full-1](../artifacts/completion-v073/browser/full-1/execution.json)已终态退出0：84通过／26分配skip／0失败，约17.4分钟，源码与三构建输出未变。[独立干净检出](../artifacts/completion-v073/clean/closure.json)完成`npm ci`／构建／44文件369项测试（含另一次1000局全胜）及开发服务HTTP200后`q+Enter`退出0；三输出相同，重复批次证明复现、不增加唯一玩法覆盖。
+
+[四窗口结果探针](../artifacts/completion-v073/result-layout/report.json)通过：真实seed1正常胜利一次后，1920×1080／1366×768折叠入口在首屏，1100×560／800×600需真实滚动，四主按钮及展开末部档案可达，实际展开／开关档案且结果快照不变；不声称执行了重试／新局／菜单导航。ZIP131450字节、SHA256 `aadaa868db319af4d21b742ff15891be5c2e7852ce90c8b88a4fc720df7c10cb`，[静态五文件](../artifacts/completion-v073/release-unpack-validation.json)和[双浏览器断网冒烟](../artifacts/completion-v073/release-smoke/report.json)通过。
+
+新包单次独占[压力终态](../artifacts/completion-v073/performance/attempt-1/execution.json)退出0、保持冻结：600.183有效模拟秒，标准300.0435秒／59.9813FPS、低效300.1435秒／60.0013FPS、p95均16.8ms；24活体＋3细胞仅为采样共存，非全程满额。整局实际咬击1037含setup／warmup，905为轮询语义日志，不能改称accepted下界。119自然样本和[终后GC／10重开](../artifacts/completion-v073/performance/attempt-1/memory-review.json)分列，容量扩张保留；菜单3GC后used4,632,492→10重开4,776,624 bytes，节点453／453／424、监听37／37／37，不据此证明无泄漏。[15张原图审阅](../artifacts/completion-v073/visual-review.json)、[最终来源](../artifacts/completion-v073/provenance-final.json)与[汇总](../artifacts/completion-v073/verification-summary.json)独立关联本版。
+
+[原设计范围审计](../artifacts/completion-v073/requirements-terminal-closure.json)在full／clean截止下112要求中73proven、36partial、3missing，39仍开放；之后完成的布局／压力／发行技术证据另记，不自动关闭全部规划。旧C的干净检出、性能和发行只保留历史证据；首玩节奏、三分钟理解、两局策略变化、自发复玩、真人0/5、原生OS失焦／最小化、真实Ctrl缩放及完整内存稳定继续未关闭，不由自动化推断孵化或商业价值。

@@ -1,0 +1,714 @@
+{
+  "schemaVersion": 1,
+  "completedAt": "2026-10-27T08:44:18.186Z",
+  "method": "Fresh local git clone --no-hardlinks, detached be666a3; clone-local long-path recovery; full real npm ci -> npm run build -> npm run dev -> npm test. Separate clone dependencies and artifacts; no main-workspace source/test/dist mutation.",
+  "clone": {
+    "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072",
+    "revision": "be666a3ad4edb90a7ddd62fa958489596d870f51",
+    "initialCheckoutHadLongPathErrors": true,
+    "recovery": "longpath-recovery.json",
+    "finalTrackedStatus": "",
+    "sourceChanges": "",
+    "originalDesignChanges": ""
+  },
+  "toolchain": {
+    "node": "v24.19.0",
+    "npm": "11.6.2",
+    "nodeBin": "C:/Users/SEASUN/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin",
+    "npmToolBin": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/node_modules/.bin",
+    "dependencySource": "npm ci inside clone; no main node_modules reuse"
+  },
+  "commands": [
+    {
+      "command": "git clone --no-hardlinks --no-checkout <main-workspace> <new-clean-clone>",
+      "exitCode": 0,
+      "log": "01-clone.log"
+    },
+    {
+      "command": "git checkout --detach be666a3",
+      "exitCode": 0,
+      "log": "02-checkout.log",
+      "limitation": "Git exit0 still left14 historical PNG files absent because ofWindows long paths; status detected and initial raw retained."
+    },
+    {
+      "command": "git config core.longpaths true; git restore tracked artifact paths from HEAD",
+      "exitCode": 0,
+      "log": "03-longpath-recovery.log",
+      "record": "longpath-recovery.json"
+    },
+    {
+      "command": "npm ci",
+      "startedAt": "2026-10-27T08:36:35.0652209Z",
+      "endedAt": "2026-10-27T08:36:38.6102830Z",
+      "exitCode": 0,
+      "node": "v24.19.0",
+      "npm": "11.6.2",
+      "dependencyDirectory": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\completion-clean-v072\\node_modules",
+      "reusedMainDependencies": false,
+      "log": "04-npm-ci.log"
+    },
+    {
+      "command": "npm run build",
+      "startedAt": "2026-10-27T08:36:46.8959883Z",
+      "endedAt": "2026-10-27T08:36:52.8371894Z",
+      "exitCode": 0,
+      "output": "clone/dist",
+      "mainDistModified": false,
+      "log": "05-npm-build.log"
+    },
+    {
+      "command": "npm run dev -- --port 5188 --strictPort",
+      "httpStatus": 200,
+      "stopCommand": "Vite interactive q + Enter",
+      "exitCode": 0,
+      "log": "06-dev-transcript.log",
+      "record": "dev-http.json",
+      "note": "Vite q+Enter normal exit. Log is marked concise transcript, not raw ANSI. Exact short title false is preserved; actual Chinese-subtitle title explained inbuild-fingerprint."
+    },
+    {
+      "command": "npm test -- --reporter=default --reporter=json --outputFile=<clean/unit.json>",
+      "startedAt": "2026-10-27T08:37:47.9106516Z",
+      "endedAt": "2026-10-27T08:43:28.3218082Z",
+      "exitCode": 0,
+      "report": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\completion-v072\\clean\\unit.json",
+      "mainEvidenceOverwritten": false,
+      "log": "07-npm-test.log"
+    }
+  ],
+  "checks": {
+    "clonedExpectedRevision": true,
+    "cloneCleanAfterLongPathRecovery": true,
+    "ciPassed": true,
+    "dependencyDirIsIndependentDirectory": true,
+    "buildPassed": true,
+    "devHttp200": true,
+    "devStoppedNormally": true,
+    "npmTestExitedZero": true,
+    "all367TestsPassed": true,
+    "all43TestFilesPassed": true,
+    "full1000SessionsPassed": true,
+    "baseAndPreparedReplaysEqual": true,
+    "cloneProductionAndTestsUnmodified": true,
+    "originalDesignUnmodified": true,
+    "all60BuildInputsRemainUnchanged": true,
+    "freshBuildEqualsCandidateC": true
+  },
+  "allChecksPassed": true,
+  "testResults": {
+    "filesPassed": 43,
+    "testsPassed": 367,
+    "testsFailed": 0,
+    "nonBatchTests": 366,
+    "batchTests": 1,
+    "simulatedSessions": 1000,
+    "outcomes": {
+      "wins": 1000,
+      "losses": 0,
+      "publicMenuExits": 0,
+      "invariantFailures": 0
+    },
+    "replay": {
+      "seed": 91,
+      "preparation": "field",
+      "equal": true,
+      "first": "cdc1f3086b2f5da7b258ec2350bcdd66adcdbbd651e4716499cec090c86bc06d",
+      "second": "cdc1f3086b2f5da7b258ec2350bcdd66adcdbbd651e4716499cec090c86bc06d"
+    },
+    "preparedReplay": {
+      "seed": 4,
+      "preparation": "PULSE_BREAK",
+      "equal": true,
+      "first": "15740df6674d6ba609b4e69ada00f0cbc15a7746dbbd1a33beafc25e5a7a168b",
+      "second": "15740df6674d6ba609b4e69ada00f0cbc15a7746dbbd1a33beafc25e5a7a168b"
+    },
+    "scope": "367 tests =366 non-batch +one test containing1000 formal sessions; not1366 tests, browser runs, human completion, or FPS evidence.",
+    "reporterSuiteCount": 90,
+    "fileCountDefinition": "Files counted from unit.testResults (43); Vitest numPassedTestSuites=90 includes nested describe suites and is not file count."
+  },
+  "build": {
+    "sourceInputs": 60,
+    "metadata": "build-meta.json",
+    "fingerprint": "build-fingerprint.json",
+    "gameJsSha256": "6b5396f6b09c123dd2cbe5f6feacff1641f0f7c41a92b6ac1e55883dd8d1d9e3",
+    "matchesMainCandidateC": true,
+    "allInputsUnchanged": true
+  },
+  "sourceManifestChecks": {
+    "index.html": {
+      "recorded": "240abc27cb391518456a6d81b8360a88946d837888c769c2756415ef9cdc84af",
+      "current": "240abc27cb391518456a6d81b8360a88946d837888c769c2756415ef9cdc84af",
+      "unchanged": true
+    },
+    "package-lock.json": {
+      "recorded": "034fdc97f2ac1fa95ffa2b5628e2e539d2cd63dd87336de4bae7896001a254bc",
+      "current": "034fdc97f2ac1fa95ffa2b5628e2e539d2cd63dd87336de4bae7896001a254bc",
+      "unchanged": true
+    },
+    "package.json": {
+      "recorded": "8a314960c8a95fe2f46553d71163718d578ab0212681a4ace9f6f7a4e8907aed",
+      "current": "8a314960c8a95fe2f46553d71163718d578ab0212681a4ace9f6f7a4e8907aed",
+      "unchanged": true
+    },
+    "scripts/build-offline.mjs": {
+      "recorded": "0e899f1174fb20ca34edba6cad8a800b0be44d2c2b097c62eaa5033fe37de3a8",
+      "current": "0e899f1174fb20ca34edba6cad8a800b0be44d2c2b097c62eaa5033fe37de3a8",
+      "unchanged": true
+    },
+    "src/actors/collision.ts": {
+      "recorded": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+      "current": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+      "unchanged": true
+    },
+    "src/audio.ts": {
+      "recorded": "015ef7700c5e2628741f2be5058858f9d654efd519bde0c516189ed7f0325f98",
+      "current": "015ef7700c5e2628741f2be5058858f9d654efd519bde0c516189ed7f0325f98",
+      "unchanged": true
+    },
+    "src/core/clock.ts": {
+      "recorded": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+      "current": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+      "unchanged": true
+    },
+    "src/core/events.ts": {
+      "recorded": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+      "current": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+      "unchanged": true
+    },
+    "src/core/rng.ts": {
+      "recorded": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+      "current": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+      "unchanged": true
+    },
+    "src/game/battle.ts": {
+      "recorded": "95d949a7b69d91ee522b717433bcd6060cf9347bfcc86c7fae9d4b54a65fc8e9",
+      "current": "95d949a7b69d91ee522b717433bcd6060cf9347bfcc86c7fae9d4b54a65fc8e9",
+      "unchanged": true
+    },
+    "src/game/battleConfig.ts": {
+      "recorded": "937a2c91827c7184bcabf0eae13db315d52d0517d75b1696e2217f4e2c0de072",
+      "current": "937a2c91827c7184bcabf0eae13db315d52d0517d75b1696e2217f4e2c0de072",
+      "unchanged": true
+    },
+    "src/game/campaign.ts": {
+      "recorded": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+      "current": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+      "unchanged": true
+    },
+    "src/game/campaignEncounters.ts": {
+      "recorded": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+      "current": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+      "unchanged": true
+    },
+    "src/game/counterLesson.ts": {
+      "recorded": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+      "current": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+      "unchanged": true
+    },
+    "src/game/encounterConfig.ts": {
+      "recorded": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+      "current": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+      "unchanged": true
+    },
+    "src/game/evolution.ts": {
+      "recorded": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+      "current": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+      "unchanged": true
+    },
+    "src/game/growth.ts": {
+      "recorded": "f68c344485ea4fcd20bd7054795b29a40446431c7f13a50af53df34274e6c82b",
+      "current": "f68c344485ea4fcd20bd7054795b29a40446431c7f13a50af53df34274e6c82b",
+      "unchanged": true
+    },
+    "src/game/immuneCells.ts": {
+      "recorded": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80",
+      "current": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80",
+      "unchanged": true
+    },
+    "src/game/motherCore.ts": {
+      "recorded": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+      "current": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+      "unchanged": true
+    },
+    "src/game/organConfig.ts": {
+      "recorded": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+      "current": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+      "unchanged": true
+    },
+    "src/game/organRules.ts": {
+      "recorded": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+      "current": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+      "unchanged": true
+    },
+    "src/game/preparation.ts": {
+      "recorded": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+      "current": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+      "unchanged": true
+    },
+    "src/game/protocols.ts": {
+      "recorded": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+      "current": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+      "unchanged": true
+    },
+    "src/game/research.ts": {
+      "recorded": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+      "current": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+      "unchanged": true
+    },
+    "src/game/runMetrics.ts": {
+      "recorded": "375ead6557982148cbb6dea82e711a6cacc6c529f525b0b690d3b09629661827",
+      "current": "375ead6557982148cbb6dea82e711a6cacc6c529f525b0b690d3b09629661827",
+      "unchanged": true
+    },
+    "src/game/session.ts": {
+      "recorded": "57173793b76938e051b5bb080017d58a35611eb3b283f0a527742b6e9eaece2a",
+      "current": "57173793b76938e051b5bb080017d58a35611eb3b283f0a527742b6e9eaece2a",
+      "unchanged": true
+    },
+    "src/game/tacticalFeedback.ts": {
+      "recorded": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+      "current": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+      "unchanged": true
+    },
+    "src/game/types.ts": {
+      "recorded": "c8d67e724f3176da9783dc2e7b9b059ede419f2bfa5e14b7e0063d3390324cbb",
+      "current": "c8d67e724f3176da9783dc2e7b9b059ede419f2bfa5e14b7e0063d3390324cbb",
+      "unchanged": true
+    },
+    "src/input/controller.ts": {
+      "recorded": "a26bac630063676bc2a168301cc5110da81a82e0d35cc9f6ee5ca3eeec51958c",
+      "current": "a26bac630063676bc2a168301cc5110da81a82e0d35cc9f6ee5ca3eeec51958c",
+      "unchanged": true
+    },
+    "src/main.ts": {
+      "recorded": "30ddfcdeee20d25a497bfe35fe3c55e3e3a9063fe0b23beb3baa1ef66b4f2b4d",
+      "current": "30ddfcdeee20d25a497bfe35fe3c55e3e3a9063fe0b23beb3baa1ef66b4f2b4d",
+      "unchanged": true
+    },
+    "src/meta/profile.ts": {
+      "recorded": "7fd5d16754e633e6f2364b74772c2f9154e68bd7e3abbd33391a617838d94c81",
+      "current": "7fd5d16754e633e6f2364b74772c2f9154e68bd7e3abbd33391a617838d94c81",
+      "unchanged": true
+    },
+    "src/meta/runOptions.ts": {
+      "recorded": "2afc173d0af2f55b907dae5baceda1d5f222af59ef6c021bb4a16170e0ee9c26",
+      "current": "2afc173d0af2f55b907dae5baceda1d5f222af59ef6c021bb4a16170e0ee9c26",
+      "unchanged": true
+    },
+    "src/render/battleVisuals.ts": {
+      "recorded": "eb018bf5de39ce3ebd11cc1813b2befa8448e378c8b9f11938b8066fccc508f4",
+      "current": "eb018bf5de39ce3ebd11cc1813b2befa8448e378c8b9f11938b8066fccc508f4",
+      "unchanged": true
+    },
+    "src/render/camera.ts": {
+      "recorded": "ca117a766229b5770d49491559dbe016aca210876315f4069f5db42081f748e5",
+      "current": "ca117a766229b5770d49491559dbe016aca210876315f4069f5db42081f748e5",
+      "unchanged": true
+    },
+    "src/render/depthSort.ts": {
+      "recorded": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+      "current": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+      "unchanged": true
+    },
+    "src/render/encounterVisuals.ts": {
+      "recorded": "e54daa69e6da56935f5b6741bb5bf565a3909389d2bdc5f6935d1a5d9303616c",
+      "current": "e54daa69e6da56935f5b6741bb5bf565a3909389d2bdc5f6935d1a5d9303616c",
+      "unchanged": true
+    },
+    "src/render/growthVisuals.ts": {
+      "recorded": "aedcf1cc105935a4694d9b752c180894ecbb0a408fca7175394f4d3493086d77",
+      "current": "aedcf1cc105935a4694d9b752c180894ecbb0a408fca7175394f4d3493086d77",
+      "unchanged": true
+    },
+    "src/render/immuneTraceCues.ts": {
+      "recorded": "80558b755ae1054388a982182b430b41e5ceb98119b7ad0758b694dabdfd66d7",
+      "current": "80558b755ae1054388a982182b430b41e5ceb98119b7ad0758b694dabdfd66d7",
+      "unchanged": true
+    },
+    "src/render/immuneVisuals.ts": {
+      "recorded": "07a8b19251d4bb706065ce4443fe0816f1d48ced6e5f5419244f30552bc3ac2c",
+      "current": "07a8b19251d4bb706065ce4443fe0816f1d48ced6e5f5419244f30552bc3ac2c",
+      "unchanged": true
+    },
+    "src/render/layers.ts": {
+      "recorded": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+      "current": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+      "unchanged": true
+    },
+    "src/render/lungVisuals.ts": {
+      "recorded": "20d5256b03d2c784d9b4027d996484458243b891eba4fa41d58cf98073233d2b",
+      "current": "20d5256b03d2c784d9b4027d996484458243b891eba4fa41d58cf98073233d2b",
+      "unchanged": true
+    },
+    "src/render/navigation.ts": {
+      "recorded": "ab776f6e94b141663e1bd46ca23da738e7ebf679ef0bf211258fc89f833355a5",
+      "current": "ab776f6e94b141663e1bd46ca23da738e7ebf679ef0bf211258fc89f833355a5",
+      "unchanged": true
+    },
+    "src/render/occlusion.ts": {
+      "recorded": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+      "current": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+      "unchanged": true
+    },
+    "src/render/organLandscape.ts": {
+      "recorded": "3ea49be35cc7e1a3a4d7ac0e4356031f7255e3ad6c941e13b666fee5946f63a2",
+      "current": "3ea49be35cc7e1a3a4d7ac0e4356031f7255e3ad6c941e13b666fee5946f63a2",
+      "unchanged": true
+    },
+    "src/render/pulsePreview.ts": {
+      "recorded": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+      "current": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+      "unchanged": true
+    },
+    "src/render/raisedObstacleGeometry.ts": {
+      "recorded": "373e3f145fd521367be7adc93c8461b5407cfe384866f2eb59c2a3ee645a3df6",
+      "current": "373e3f145fd521367be7adc93c8461b5407cfe384866f2eb59c2a3ee645a3df6",
+      "unchanged": true
+    },
+    "src/render/raisedObstacleOcclusion.ts": {
+      "recorded": "0486c6daed7617275f28aab6406f84783a3e3695ae1059e9a2c99634f47308f1",
+      "current": "0486c6daed7617275f28aab6406f84783a3e3695ae1059e9a2c99634f47308f1",
+      "unchanged": true
+    },
+    "src/render/renderer.ts": {
+      "recorded": "def49278c80f1204267059b934c21f62e3cacc6736a4e572c59f8188b80be268",
+      "current": "def49278c80f1204267059b934c21f62e3cacc6736a4e572c59f8188b80be268",
+      "unchanged": true
+    },
+    "src/style.css": {
+      "recorded": "a43d13267f171988d5d497bd9024a3013648b1262d1769d5de20b3d2a7e0d986",
+      "current": "a43d13267f171988d5d497bd9024a3013648b1262d1769d5de20b3d2a7e0d986",
+      "unchanged": true
+    },
+    "src/ui/battleHud.ts": {
+      "recorded": "aaf74c1fea93321652e875b011f7c2865ab4b2bb3a767d79158f8fc1dda90a97",
+      "current": "aaf74c1fea93321652e875b011f7c2865ab4b2bb3a767d79158f8fc1dda90a97",
+      "unchanged": true
+    },
+    "src/ui/campaignHud.ts": {
+      "recorded": "2bf4317ceee2a5d17deb46278d19e19fc89dc79df16c1bc437a6acbc0c7f0cc3",
+      "current": "2bf4317ceee2a5d17deb46278d19e19fc89dc79df16c1bc437a6acbc0c7f0cc3",
+      "unchanged": true
+    },
+    "src/ui/encounter.css": {
+      "recorded": "e5a9925b175251afb21833c663c4aa1ca7ff56370836b9de390fe62d5b9e7ffe",
+      "current": "e5a9925b175251afb21833c663c4aa1ca7ff56370836b9de390fe62d5b9e7ffe",
+      "unchanged": true
+    },
+    "src/ui/encounterHud.ts": {
+      "recorded": "1cb4ef363f9471a78f615c58301f66e04ce689be4f8475120ed045f86502877d",
+      "current": "1cb4ef363f9471a78f615c58301f66e04ce689be4f8475120ed045f86502877d",
+      "unchanged": true
+    },
+    "src/ui/growthHud.ts": {
+      "recorded": "78b435a66782398d9bc5202032d6fa0fea80ad217be26a621dc26850ef460786",
+      "current": "78b435a66782398d9bc5202032d6fa0fea80ad217be26a621dc26850ef460786",
+      "unchanged": true
+    },
+    "src/ui/profile.css": {
+      "recorded": "fc078c638b882a104e03797a17b6f3b7542ea730944a14eb401d55bfe01704af",
+      "current": "fc078c638b882a104e03797a17b6f3b7542ea730944a14eb401d55bfe01704af",
+      "unchanged": true
+    },
+    "src/ui/profileHud.ts": {
+      "recorded": "ce14fcd40a45ae663ffc94df955609f5ab7056d48fb7fe76264f020a6e473363",
+      "current": "ce14fcd40a45ae663ffc94df955609f5ab7056d48fb7fe76264f020a6e473363",
+      "unchanged": true
+    },
+    "src/ui/research.css": {
+      "recorded": "db48bcb15fbb3cc242530ab682b220a4caaafd73e939adf204a90d401da69bed",
+      "current": "db48bcb15fbb3cc242530ab682b220a4caaafd73e939adf204a90d401da69bed",
+      "unchanged": true
+    },
+    "src/ui/startingPlan.css": {
+      "recorded": "8de9969303735e56cdab18a1070dc1068f3786e6276c71e76791f684bdc4b2d3",
+      "current": "8de9969303735e56cdab18a1070dc1068f3786e6276c71e76791f684bdc4b2d3",
+      "unchanged": true
+    },
+    "src/ui/startingPlanHud.ts": {
+      "recorded": "bdf944c887ea8f1cb7860b853542d26e833db154ddd02bc818ef5500761ee2d2",
+      "current": "bdf944c887ea8f1cb7860b853542d26e833db154ddd02bc818ef5500761ee2d2",
+      "unchanged": true
+    },
+    "src/ui/tacticalHistory.ts": {
+      "recorded": "c159a53e514049043f0a41dfb07b435a8774630993d039d68832fbb1c4db137b",
+      "current": "c159a53e514049043f0a41dfb07b435a8774630993d039d68832fbb1c4db137b",
+      "unchanged": true
+    }
+  },
+  "mainWorktreeConcurrentTestChanges": [
+    "tests/e2e/feedback-growth-hud-stability.spec.ts",
+    "tests/e2e/feedback-v061-growth-details.spec.ts"
+  ],
+  "limitations": [
+    "No browser or nativeOS operation was launched by this clean task; HTTP200 does not prove playable training completion.",
+    "Fresh build/install/test closes current clean-environment command chain only; M01-02 physical focus, M02 training/DPR/browser paths and human gates retain their own scope.",
+    "Existing main E2E test maintenance was not copied into this frozen be666a3 clone; differences listed separately.",
+    "Initial Windows checkoutlongpath issue is recovered and retained, not reported as a first-attempt flawless checkout."
+  ],
+  "testFiles": [
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/area-control.test.ts",
+      "status": "passed",
+      "assertions": 1,
+      "passed": 1
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/audio.test.ts",
+      "status": "passed",
+      "assertions": 6,
+      "passed": 6
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/battle.test.ts",
+      "status": "passed",
+      "assertions": 12,
+      "passed": 12
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/camera-follow.test.ts",
+      "status": "passed",
+      "assertions": 2,
+      "passed": 2
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/campaign-encounters.test.ts",
+      "status": "passed",
+      "assertions": 18,
+      "passed": 18
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/campaign-space.test.ts",
+      "status": "passed",
+      "assertions": 3,
+      "passed": 3
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/campaign.test.ts",
+      "status": "passed",
+      "assertions": 10,
+      "passed": 10
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/carried-protocols.test.ts",
+      "status": "passed",
+      "assertions": 6,
+      "passed": 6
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/collision.test.ts",
+      "status": "passed",
+      "assertions": 4,
+      "passed": 4
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/core.test.ts",
+      "status": "passed",
+      "assertions": 4,
+      "passed": 4
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/coreVisuals.test.ts",
+      "status": "passed",
+      "assertions": 4,
+      "passed": 4
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/encounter-counter.test.ts",
+      "status": "passed",
+      "assertions": 12,
+      "passed": 12
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/encounter-history.test.ts",
+      "status": "passed",
+      "assertions": 6,
+      "passed": 6
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/encounter-presentation.test.ts",
+      "status": "passed",
+      "assertions": 6,
+      "passed": 6
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/evolution.test.ts",
+      "status": "passed",
+      "assertions": 8,
+      "passed": 8
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/full-system-seeds.test.ts",
+      "status": "passed",
+      "assertions": 1,
+      "passed": 1
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/g1-audit.test.ts",
+      "status": "passed",
+      "assertions": 5,
+      "passed": 5
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/g2-integration.test.ts",
+      "status": "passed",
+      "assertions": 9,
+      "passed": 9
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/g3-boundaries.test.ts",
+      "status": "passed",
+      "assertions": 9,
+      "passed": 9
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/g3-integration.test.ts",
+      "status": "passed",
+      "assertions": 4,
+      "passed": 4
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/geometry.test.ts",
+      "status": "passed",
+      "assertions": 2,
+      "passed": 2
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/growth-evolution.test.ts",
+      "status": "passed",
+      "assertions": 7,
+      "passed": 7
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/growth.integration.test.ts",
+      "status": "passed",
+      "assertions": 3,
+      "passed": 3
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/growth.test.ts",
+      "status": "passed",
+      "assertions": 10,
+      "passed": 10
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/immune-cells.test.ts",
+      "status": "passed",
+      "assertions": 14,
+      "passed": 14
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/immune-trace-cues.test.ts",
+      "status": "passed",
+      "assertions": 7,
+      "passed": 7
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/motherCore.test.ts",
+      "status": "passed",
+      "assertions": 18,
+      "passed": 18
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/navigation.test.ts",
+      "status": "passed",
+      "assertions": 4,
+      "passed": 4
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/organRules.test.ts",
+      "status": "passed",
+      "assertions": 3,
+      "passed": 3
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/preparation-session.test.ts",
+      "status": "passed",
+      "assertions": 3,
+      "passed": 3
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/preparation.test.ts",
+      "status": "passed",
+      "assertions": 12,
+      "passed": 12
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/profile.test.ts",
+      "status": "passed",
+      "assertions": 41,
+      "passed": 41
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/protocols.test.ts",
+      "status": "passed",
+      "assertions": 11,
+      "passed": 11
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/pulsePreview.test.ts",
+      "status": "passed",
+      "assertions": 2,
+      "passed": 2
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/raised-obstacle-occlusion.test.ts",
+      "status": "passed",
+      "assertions": 13,
+      "passed": 13
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/render.test.ts",
+      "status": "passed",
+      "assertions": 7,
+      "passed": 7
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/research-presentation.test.ts",
+      "status": "passed",
+      "assertions": 15,
+      "passed": 15
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/research-session.test.ts",
+      "status": "passed",
+      "assertions": 4,
+      "passed": 4
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/research.test.ts",
+      "status": "passed",
+      "assertions": 12,
+      "passed": 12
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/run-metrics.test.ts",
+      "status": "passed",
+      "assertions": 14,
+      "passed": 14
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/session.test.ts",
+      "status": "passed",
+      "assertions": 15,
+      "passed": 15
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/starting-plan-presentation.test.ts",
+      "status": "passed",
+      "assertions": 11,
+      "passed": 11
+    },
+    {
+      "path": "D:/Workspace/Projects/xsj/Viral-Invasion/.tools/completion-clean-v072/tests/unit/tactical-feedback.test.ts",
+      "status": "passed",
+      "assertions": 9,
+      "passed": 9
+    }
+  ],
+  "derivedAuditCorrection": {
+    "at": "2026-10-27T08:44:48.441Z",
+    "firstAudit": "summary-first-suite-count.json",
+    "reason": "Initial derived audit compared numPassedTestSuites(90) with43 files. Corrected to testResults.length and per-file assertion statuses. Raw npm/Vitest reports unchanged; no test rerun.",
+    "noRawReportModified": true
+  }
+}

@@ -1,6 +1,6 @@
 # Viral Invasion：独立新项目验收项追踪矩阵（v1.3）
 
-> 最新技术候选为[v0.7.1](ViralInvasion_v0.7.1_Acceptance.md)：新增诊断驱动的定向研究与危机回看。318单元、1000正式模拟会话通过；最终包研究2项＋G4资格17项首轮通过，17分配skip不算通过。规则、最终构建及旧尝试归属见S节；首玩节奏、真人及原生设备验收仍未关闭。
+> 最新技术候选为[v0.7.3](ViralInvasion_v0.7.3_Acceptance.md)：补修冲流实际位移反馈与结果首屏入口。44文件369项测试（368非批次＋1项1000正式会话批次）、完整浏览器84通过／26分配skip、独立干净检出、四窗口结果页、ZIP静态／双浏览器断网冒烟及本机600秒帧率预算均通过；另定向10通过／4skip独立保留，有限内存观察已登记。逐项来源和旧七失败闭环见U节，历史v0.7.2见T节；首玩节奏、真人、原生设备与完整内存稳定仍未关闭。A–D节的旧阶段状态不自动表示当前包已重跑同范围。
 
 > 历史v0.5.0技术登记（2026-10-27）：原设计v1.3保持不变。源码e8a956e/game.js b44cc8…：172/172单元、1000完整会话通过；同包分批53项真实浏览器检查通过（G0–G3既有32＋G4病例17＋机制专项4），15项按浏览器分配跳过不计通过。604秒本机headless压力达到帧率预算，精确堆后段平台但保留早期低点抬升；ZIP解压/双浏览器冒烟通过。M13-01节奏未通过、真人0/5、真实OS失焦/Ctrl缩放未执行；完整产品验收仍未关闭。
 
@@ -451,3 +451,24 @@ M13-01首玩时长、M14-02理解、五人盲测0/5、策略变化／自发复�
 ZIP132919字节，SHA256 `ddfc99d10771d86a9c47cddbdc74ea6f3394b4e3e285e309309a39d21dadb90e`。五文件解压指纹一致，性能浏览器退出后Chrome／Edge[断网冒烟](../artifacts/preparation-v072/release-smoke/report.json)移动、暂停／继续、Q通过，页面异常／HTTP请求均0。15张[人工画面复核](../artifacts/preparation-v072/visual-review.json)区分完整帧、元素截图及DOM断言，并保留局部叠合边界；旧248MiB失败trace本机保留、大小与SHA单独[登记](../artifacts/preparation-v072/preserved-large-files.json)，不进入Git。
 
 本轮关闭“局外记录没有实际起始选择”和“结算缺少治疗／连锁因果”两个实现缺口。M13-01首玩节奏、M14-02理解、标准五人盲测0/5、真人策略变化／自发复玩、趣味／孵化价值、原生OS失焦／最小化、物理Ctrl缩放与完整内存稳定继续未关闭。无配置远端，本地dev-zbj提交未推送。
+
+## U. v0.7.3 冲流事实、结算布局与完整回归 · 2026-10-27
+
+游戏与测试源码`4da30026696c99b6ad936a9fcd60911cc4f59770`，60项构建输入，game.js SHA256 `71615abc92b3f5878f8b199ed0d5bd319d7f9dfe0e1f21d8baf595783b65ca54`。只修正零位移被计作推开、结果页间距及测试驱动部署／等待，不新增玩法。原始DesignDoc_v1.3不变。
+
+| 关联要求 | 已完成证据及范围 |
+|---|---|
+| M10／M14：真实环境反馈 | 边界零位移时推开0，但暴露与中断仍有效；实际移动时计推开1且不越界。两个隔离单元夹具包含在369项全套内，不冒充浏览器注入通关。 |
+| M13／M16：单元与完整模拟 | [原始单元](../artifacts/completion-v073/system/unit.json)44文件369项全过、退出0，368非批次＋1批次包含1000正式会话及4次回放执行。[1000局原始输出](../artifacts/completion-v073/system/full-system-seeds.json)1000胜、0败／退出／不变量错误；500空装基础、500协议路线的五方案各100，guided/adaptive各500，三迁移334／333／333。31项模拟输入不变；seed91空装、seed4预装各重放一致。 |
+| GDD§10.3：结算事实边界 | [只读系统审计](../artifacts/completion-v073/system/audit.json)确认宿主接受统计完整、有限、与终局一致，每步≤256缓存由冻结校验器检查；原始批次未导出1000局各自缓存峰值。全部在危机冲击前清源、没有调用研究API，不自动覆盖冲击／环境中断／研究分支。熟练路线均54.0305模拟秒，不替代真人。 |
+| M08／M09／M14：定向真实浏览器 | [原始报告](../artifacts/completion-v073/browser/targeted-1/report.json)10通过／0失败／4分配skip，约259.03秒，退出0。双端空装侦巡位移与正扣血、三路线进阶实际生效、双端同小队遮挡截图括号与标记咬击、双端旧档首次迁移、G4 seed1均通过。宿主扣血按同tick/root/target连接，不以计划激活代替伤害；并行功能回归没有FPS结论。 |
+| M14：结果首屏与小窗滚动 | 原G4 seed1折叠summary底部≤768的断言未改且通过。[独立结果探针](../artifacts/completion-v073/result-layout/report.json)由空档真实seed1追击胜利一次，检查同一冻结结果：1920×1080／1366×768初始summary底869.46875／713.46875，在首屏；1100×560／800×600初始底683.9375，需真实wheel滚动且可达。四主按钮检查可见／裁剪／命中点及trial行动性，未执行导航；复盘和末部档案实际开关，四窗结果快照保持，页面／控制台／HTTP／失败请求数组为空。不是Ctrl缩放或真人辨认。 |
+| 旧失败与来源分代 | 旧C完整套件[首轮报告](../artifacts/completion-v072/browser/attempt-1/report.json)77过／7失败／26skip保留：真结果布局1、出生即在咬击距离却强求移动2、全速路线没有进阶部署1、清源过早致遮挡演示无活目标2、快照先于指引DOM1。现以合法偏移召唤、停止射击／真实引敌和等待原DOM修订驱动；七项已在新包定向闭环，详见[完整说明](ViralInvasion_v0.7.3_Acceptance.md)，不拼接为无失败完整轮。 |
+| 提交与执行身份 | 浏览器预运行revision为be666a3，当时工作区含073修正；源码随后提交4da3002。通过保存manifest和构建SHA连接，而非声称启动于新提交。[定向终态](../artifacts/completion-v073/browser/targeted-1/execution.json)确认源码与三构建文件未变。 |
+| M00／M16：完整浏览器与干净复现 | [full-1原始报告](../artifacts/completion-v073/browser/full-1/report.json)110分配项=84通过＋26分配skip，0失败／flaky、1041.090秒，约17.4分钟、退出0；前后源码与三构建文件未变。[独立073检出闭环](../artifacts/completion-v073/clean/closure.json)实际检出4da3002，`npm ci`／构建／完整44文件369项及1000局均退出0，开发服务HTTP200后PTY实际`q+Enter`正常退出0；三输出逐字节相同。干净重复1000证明复现，不叠加唯一覆盖；定向10项与full84也不相加为94唯一用例。 |
+| 离线发行 | ZIP131450字节、SHA256 `aadaa868db319af4d21b742ff15891be5c2e7852ce90c8b88a4fc720df7c10cb`，[五文件静态解压](../artifacts/completion-v073/release-unpack-validation.json)一致。[Chrome155／Edge156断网file冒烟](../artifacts/completion-v073/release-smoke/report.json)及[执行登记](../artifacts/completion-v073/release-smoke/execution.json)退出0，实际开局／移动／暂停tick冻结／继续／Q，两端页面错误和HTTP请求数组均空，输入前后未变。冒烟不是完整胜局、原生设备或性能资格。 |
+| M16：独占本机帧预算 | 单次[原始压力](../artifacts/completion-v073/performance/attempt-1/report.json)及[执行终态](../artifacts/completion-v073/performance/attempt-1/execution.json)退出0／pass=true、输入保持冻结；Chrome155 headless600.183有效模拟秒／600.386测量墙钟秒，标准帧300.0435秒／59.9813FPS、低效300.1435秒／60.0013FPS，p95均16.8ms，最长33.4／17.2ms。两档均有采样24活体＋3细胞，24体估计136.183／133.600秒，非全程满额或全部屏内可辨；两截图为不同实际时刻。 |
+| M16：计数／内存边界 | 整局accepted灯塔咬击1037含setup／warmup；905仅轮询去重语义日志，原报告的accepted下界措辞由execution／memory-review明确纠正。2391快照缓存观察最大2／256，未limited，非逐tick最大值。[119自然样本](../artifacts/completion-v073/performance/attempt-1/memory-window-audit.json)首／末60秒used中位14,798,746→17,692,728 bytes、容量41,488,384→70,656,000；测量无强GC。[终后每点3GC](../artifacts/completion-v073/performance/attempt-1/memory-review.json)菜单used4,632,492，5／10重开4,794,564／4,776,624 bytes，节点453／453／424、监听37／37／37。保留容量扩张，不写相同节点或无泄漏。raw wall756.028秒不含post，outer766.790秒含全部阶段，分开记录。 |
+| VIS：原始画面技术审阅 | 根代理[查看15张未编辑原图](../artifacts/completion-v073/visual-review.json)，逐张保存SHA、实际画面与状态／事件证据边界。细胞／目标／装置局部叠合、短窗滚动裁剪及镜头外敌人明确保留，不等同标准五人辨识、每帧不重叠或同状态A/B。 |
+
+最终[逐输入来源](../artifacts/completion-v073/provenance-final.json)及[验证汇总](../artifacts/completion-v073/verification-summary.json)连接本包各终态；旧C clean、600.167秒和ZIP资格仍仅为历史证据。[原设计终态范围审计](../artifacts/completion-v073/requirements-terminal-closure.json)在完整浏览器／干净检出截止下112要求中73proven、36partial、3missing，共39仍开放；该审计明确不消费后来独立完成的布局、压力／内存及发行冒烟，本文另记而不自动关闭全部要求。首玩10–15分钟、首次三分钟理解、两局策略变化、主动复玩、真人0/5、原生OS失焦／最小化、真实Ctrl缩放及完整内存稳定继续未关闭；不由脚本推定趣味、孵化或商业价值。无远端，仅本地提交。
