@@ -1,2 +1,2 @@
 import { defineConfig } from 'vitest/config';
-export default defineConfig({ test: { include: ['tests/unit/**/*.test.ts'], reporters: ['default', 'json'], outputFile: { json: 'artifacts/unit-results.json' } } });
+export default defineConfig({ test: { include: ['tests/unit/**/*.test.ts'], reporters: ['default', 'json'], outputFile: { json: 'artifacts/unit-generated/unit-results.json' } } });

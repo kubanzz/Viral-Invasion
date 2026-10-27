@@ -175,7 +175,7 @@ describe('G2 shared-session integration', () => {
       result: session.state.result, objectives: { sourceClears: session.state.battle!.stats.sourceClears,
         eliteClears: session.state.battle!.stats.eliteClears, integrity: session.state.tissue.hp,
         infection: session.state.battle!.pressure.infection, activeRetest: true }, route });
-    const evidencePath = resolve(process.env.VI_G2_REPORT ?? 'artifacts/g2-noncounter-routes.json');
+    const evidencePath = resolve(process.env.VI_G2_REPORT ?? 'artifacts/unit-generated/g2-noncounter-routes.json');
     mkdirSync(dirname(evidencePath), { recursive: true });
     writeFileSync(evidencePath, JSON.stringify({ schemaVersion: 1, expectedCases: 3, complete: noncounterEvidence.length === 3,
       method: 'Unit integration using public InputFrame and DraftIntent; explicit opening-trait scenario; no victory-state injection.',

@@ -1,5 +1,5 @@
 import type { GameState } from '../game/types';
-import { TRAITS } from '../game/battleConfig';
+import { TRAITS, BATTLE_BALANCE } from '../game/battleConfig';
 import { campaignHudMarkup, campaignOverlay, updateCampaignHud } from './campaignHud';
 import { tacticalHistoryMarkup } from './tacticalHistory';
 
@@ -8,15 +8,22 @@ const time = (seconds: number) => `${Math.floor(seconds / 60).toString().padStar
 const get = (id: string) => document.getElementById(id)!;
 
 export const battleHudMarkup = `
-  <section class="objective battle-objective"><div class="eyebrow" id="battle-stage">HEART / 心脏防线</div><h2 id="objective-title">阻止感染扩散</h2><p id="battle-objective"></p><div class="battle-progress" id="battle-progress"></div><p class="interaction-hint" id="interaction-hint">靠近装置 · E 交互</p></section>
+  <section class="objective battle-objective"><div class="eyebrow" id="battle-stage">HEART / 心脏防线</div><h2 id="objective-title">阻止感染扩散</h2><p id="battle-objective"></p><div class="battle-progress" id="battle-progress"></div><p class="interaction-hint" id="interaction-hint">靠近装置 · E 交互</p><div class="trait-strip" id="trait-strip"></div></section>
   <aside class="telemetry battle-telemetry">
     <div class="readout"><label>战士耐久 <b id="hp-label">100</b></label><div class="meter"><i id="hp-meter"></i></div></div>
-    <div class="readout"><label><span id="organ-integrity-name">心脏完整度</span><b id="tissue-label">70%</b></label><div class="meter"><i id="tissue-meter"></i></div><p>按 3 瞄准十字节点抢修</p></div>
-    <div class="readout pressure"><label>感染负荷 <b id="infection-label">0%</b></label><div class="meter"><i id="infection-meter"></i></div><p id="crisis-label">净化感染源，截断传播</p><div class="vitality">全身稳定 <b id="vitality-label">100%</b></div></div>
+    <div class="readout"><label><span id="organ-integrity-name">心脏完整度</span><b id="tissue-label">70%</b></label><div class="meter"><i id="tissue-meter"></i></div><p class="readout-help">3 · 瞄准十字节点抢修</p></div>
+    <div class="readout pressure"><label>感染负荷 <b id="infection-label">0%</b></label><div class="meter"><i id="infection-meter"></i></div><p id="crisis-label" class="crisis-hint" data-urgency="none">净化感染源，截断传播</p><div class="vitality">全身稳定 <b id="vitality-label">100%</b></div></div>
     <div class="pulse-readout"><span id="pulse-phase"></span><b id="pulse-ready"></b><small id="pulse-explanation">阀门附近 E · 朝鼠标冲流<br>击退 / 破壳 · 消耗组织完整度</small></div>
   </aside>
   <div class="evolution-card" id="evolution-card" role="status" hidden></div>
-  <div class="trait-strip" id="trait-strip"></div>${campaignHudMarkup}`;
+  ${campaignHudMarkup}`;
+
+export function battleCrisisContent(state: GameState): { text: string; urgency: 'fatal' | 'organ' | 'none' } {
+  const pressure = state.battle!.pressure;
+  if (pressure.criticalSince !== null) return { text: `⚠ 感染失控：${Math.max(0, BATTLE_BALANCE.crisisDuration - (state.elapsed - pressure.criticalSince)).toFixed(1)} 秒 · 立即净化或抢修`, urgency: 'fatal' };
+  if (pressure.organAlarm) return { text: '⚠ 器官濒危：抢修阻止稳定下降', urgency: 'organ' };
+  return { text: '净化感染源 / 抢修降低压力', urgency: 'none' };
+}
 
 export function updateBattleHud(state: GameState): void {
   const battle = state.battle!;
@@ -32,7 +39,8 @@ export function updateBattleHud(state: GameState): void {
   get('infection-label').textContent = `${Math.ceil(pressure.infection)}%`;
   get('infection-meter').style.width = `${pressure.infection}%`;
   get('vitality-label').textContent = `${Math.ceil(pressure.vitality)}%`;
-  get('crisis-label').textContent = pressure.criticalSince !== null ? `⚠ 感染失控：${Math.max(0, 15 - (state.elapsed - pressure.criticalSince)).toFixed(1)} 秒 · 立即净化或抢修` : pressure.organAlarm ? '⚠ 器官濒危：抢修可阻止全身稳定下降' : '净化感染源 / 关闭隔离闸可降低压力';
+  const crisis = battleCrisisContent(state), crisisLabel = get('crisis-label');
+  crisisLabel.textContent = crisis.text; crisisLabel.dataset.urgency = crisis.urgency;
   document.body.classList.toggle('crisis', pressure.criticalSince !== null || pressure.organAlarm);
   get('pulse-phase').textContent = `${({ charge: '△ 蓄力', surge: '≋ 冲流', rest: '◡ 舒缓' } as const)[pulse.phase]} ${pulse.phaseRemaining.toFixed(1)}s`;
   get('pulse-ready').textContent = pulse.readyAt > state.elapsed ? `冲流冷却 ${(pulse.readyAt - state.elapsed).toFixed(1)}s` : 'E 冲流就绪';

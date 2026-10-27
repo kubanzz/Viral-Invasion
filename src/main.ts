@@ -20,6 +20,7 @@ import './ui/encounter.css';
 import { startingPlanOverlay } from './ui/startingPlanHud';
 import './ui/startingPlan.css';
 import { preparationForPlan, type StartingPlanId } from './game/preparation';
+import { readVisibleHudRects } from './ui/hudLayout';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
 const app = document.querySelector<HTMLDivElement>('#app')!;
@@ -260,6 +261,7 @@ function updateHud() {
     updateEncounterHud(s);
     el('message').textContent = s.messageUntil > s.elapsed ? s.message : s.battle.objective;
     updateCommonHud();
+    refreshHudRects();
     return;
   }
   const cleared = s.targets.filter(t=>t.hp<=0).length;
@@ -276,6 +278,14 @@ function updateHud() {
   el('tissue-meter').style.width = `${s.tissue.hp}%`;
   el('message').textContent = s.messageUntil > s.elapsed ? s.message : allCleared?(repaired?'靠近复测终端，按 E 确认训练成果':'按 3 · 点击右下方受损组织，修复至 100%'):'按 Q 扫描 · 按 1 或 2 净化靶标底部的瞄准环';
   updateCommonHud();
+  refreshHudRects();
+}
+function refreshHudRects() {
+  const point = renderer.camera.worldToScreen(session.state.player), scale = renderer.camera.scale;
+  renderer.setHudRects(readVisibleHudRects(canvas, {
+    active: session.state.phase === 'playing', now: performance.now(),
+    player: { left: point.x - 27 * scale, right: point.x + 27 * scale, top: point.y - 68 * scale, bottom: point.y + 10 * scale },
+  }));
 }
 function updateCommonHud() {
   const s = session.state;
@@ -303,12 +313,12 @@ function frame(now: number) {
   if (now-lastHud > 50) { updateHud(); lastHud=now; }
   requestAnimationFrame(frame);
 }
-window.addEventListener('resize', () => { renderer.resize(); clock.reset(); });
-renderer.resize(); updateOverlay(); updateHud(); requestAnimationFrame(frame);
+window.addEventListener('resize', () => { renderer.resize(); renderer.prepareCamera(session.state); refreshHudRects(); clock.reset(); });
+renderer.resize(); renderer.prepareCamera(session.state); updateOverlay(); updateHud(); requestAnimationFrame(frame);
 
 // Read-only diagnostics for browser regression. Inputs always use the real DOM.
 Object.defineProperty(window, '__viral', { value: Object.freeze({
-  version: '0.7.4-G4', snapshot: () => session.snapshot(),
+  version: '0.7.5-G4', snapshot: () => session.snapshot(),
   toScreen: (point: { x: number; y: number }) => renderer.camera.worldToScreen(point),
   toWorld: (point: { x: number; y: number }) => renderer.camera.screenToWorld(point),
   diagnostics: () => renderer.diagnostics(session.state),

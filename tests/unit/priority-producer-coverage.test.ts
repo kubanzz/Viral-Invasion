@@ -40,7 +40,7 @@ describe('exhaustive shipped high-priority feedback categories',()=>{
       expect(game.state.tacticalRecords!.find(record=>record.key===feedback.key)?.text).toBe(feedback.text);
       const escaped=feedback.text.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');expect(markup).toContain(escaped);
     }
-    const output=resolve(process.env.VI_PRIORITY_PRODUCERS_REPORT??'artifacts/completion-v074/priority-audit/category-coverage-first.json');mkdirSync(dirname(output),{recursive:true});
+    const output=resolve(process.env.VI_PRIORITY_PRODUCERS_REPORT??'artifacts/unit-generated/priority-producer-coverage.json');mkdirSync(dirname(output),{recursive:true});
     writeFileSync(output,JSON.stringify({method:'Explicit feedback fixtures across every shipped tacticalFeedback switch category and valid trait/organ/choice variants. Accepted through GameSession.emit, then1000 ordinary messages/events. Actual history markup checked; no live browser state injection or natural ending claim.',examples:feedbacks,highPriorityUniqueKeys:uniqueHigh.size,totalRecordKeys:before.tacticalRecords!.length,recordLimit:TACTICAL_RECORD_LIMIT,rawEventsAfter:game.state.events.length,allHighCategoriesRetained:true,allHighCategoriesRendered:true,ordinaryMessagesDidNotReplaceUrgent:true},null,2));
   });
 });

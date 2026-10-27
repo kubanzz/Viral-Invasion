@@ -1,8 +1,9 @@
-import type { GameState, WorldGeometry } from '../game/types';
+import type { GameState, Vec, WorldGeometry } from '../game/types';
 import type { LungFlowState } from '../game/campaignTypes';
 import { lungFlowDirection } from '../game/organRules';
 import { CAMPAIGN_BALANCE } from '../game/organConfig';
 import { drawRaisedBodyLayers, traceRaisedObstacle } from './raisedObstacleGeometry';
+import type { SceneLabelSink } from './sceneLabels';
 
 const TAU = Math.PI * 2;
 const hash = (n: number): number => { const value = Math.sin(n * 129.1 + 73.7) * 43158.5453; return value - Math.floor(value); };
@@ -103,7 +104,7 @@ export function drawLungForeground(ctx: CanvasRenderingContext2D, state: GameSta
   ctx.restore();
 }
 
-export function drawLungAirflow(ctx: CanvasRenderingContext2D, state: GameState, flow: LungFlowState, low: boolean): void {
+export function drawLungAirflow(ctx: CanvasRenderingContext2D, state: GameState, flow: LungFlowState, low: boolean, labels?: SceneLabelSink): void {
   for (let i = 0; i < 10; i++) {
     const x = 330 + (i % 5) * 165, y = 300 + Math.floor(i / 5) * 240;
     const direction = lungFlowDirection(flow, { x, y }), angle = Math.atan2(direction.y, direction.x);
@@ -126,13 +127,16 @@ export function drawLungAirflow(ctx: CanvasRenderingContext2D, state: GameState,
     ctx.save(); ctx.globalAlpha = .2; ctx.lineWidth = 1.5;
     ellipse(ctx, x, 66, 42 + expansion * 5, 58 + expansion * 7, '#b7d9d207', '#d3e8df'); ctx.restore();
   }
-  ctx.save(); ctx.globalAlpha = .65; ctx.translate(670, 165); ctx.scale(1, 1 / .72);
-  label(ctx, `${flow.phase === 'inhale' ? '吸气 · 聚拢' : '呼气 · 扩散'}　${Math.max(0, flow.phaseRemaining).toFixed(1)}s${flow.airwayOpen ? '' : ' · 气道已封闭'}`, 0, 0, '#d0e7dc', 11);
-  ctx.restore();
+  const phase = `${flow.phase === 'inhale' ? '吸气 · 聚拢' : '呼气 · 扩散'}　${Math.max(0, flow.phaseRemaining).toFixed(1)}s${flow.airwayOpen ? '' : ' · 气道已封闭'}`;
+  if (labels) labels.add({ id: 'lung-phase', anchor: { x: 670, y: 165 }, priority: 30, lines: [{ text: phase, color: '#d0e7dc', size: 11 }] });
+  else {
+    ctx.save(); ctx.globalAlpha = .65; ctx.translate(670, 165); ctx.scale(1, 1 / .72);
+    label(ctx, phase, 0, 0, '#d0e7dc', 11); ctx.restore();
+  }
 }
 
 /** Called inside a device's local (uncompressed) entity transform. */
-export function drawLungAirway(ctx: CanvasRenderingContext2D, state: GameState, flow: LungFlowState, near: boolean): void {
+export function drawLungAirway(ctx: CanvasRenderingContext2D, state: GameState, flow: LungFlowState, near: boolean, labels?: SceneLabelSink, anchor?: Vec): void {
   ellipse(ctx, 0, 2, 38, 12, '#375967', '#b7cfc4');
   for (const sign of [-1, 1]) {
     ctx.beginPath(); ctx.moveTo(sign * 34, -3); ctx.bezierCurveTo(sign * 43, -42, sign * 20, -65, 0, -53);
@@ -145,12 +149,22 @@ export function drawLungAirway(ctx: CanvasRenderingContext2D, state: GameState, 
   } else {
     line(ctx, [-10, -34, 10, -14], '#416779', 2.5); line(ctx, [-10, -14, 10, -34], '#416779', 2.5);
   }
-  label(ctx, flow.airwayOpen ? '气道 · 已开启' : '气道 · 已封闭', 0, 28, '#d6e7db', 11);
-  label(ctx, flow.airwayOpen ? '聚散气流 / 传播' : '气流与传播均停止', 0, 44, '#b8d4c8', 9);
-  if (near) {
-    const cost = flow.airwayOpen ? CAMPAIGN_BALANCE.closeAirwayCost : CAMPAIGN_BALANCE.openAirwayCost;
-    const cooldown = CAMPAIGN_BALANCE.airwayCooldown - (state.elapsed - flow.changedAt);
-    label(ctx, cooldown > 0 ? `气道切换冷却 ${cooldown.toFixed(1)}s` : `[ E ] ${flow.airwayOpen ? '封闭' : '开启'} · 组织 −${cost}`, 0, -72, '#e2efdc', 11);
+  const status = flow.airwayOpen ? '气道 · 已开启' : '气道 · 已封闭';
+  const effect = flow.airwayOpen ? '聚散气流 / 传播' : '气流与传播均停止';
+  const cost = flow.airwayOpen ? CAMPAIGN_BALANCE.closeAirwayCost : CAMPAIGN_BALANCE.openAirwayCost;
+  const cooldown = CAMPAIGN_BALANCE.airwayCooldown - (state.elapsed - flow.changedAt);
+  const action = cooldown > 0 ? `气道切换冷却 ${cooldown.toFixed(1)}s` : `[ E ] ${flow.airwayOpen ? '封闭' : '开启'} · 组织 −${cost}`;
+  const pressure = flow.pressureUntil > state.elapsed ? `△ 切换承压 ${(flow.pressureUntil - state.elapsed).toFixed(1)}s` : '';
+  if (labels && anchor) {
+    labels.add({ id: 'device:airway', anchor, offset: { x: 0, y: near ? -72 : 28 }, priority: near ? 70 : 30, essential: near,
+      lines: [{ text: status, color: '#d6e7db', size: 11 }, { text: near ? action : effect, color: '#d1e7d1', size: 10 },
+        ...(pressure ? [{ text: pressure, color: '#f2d1a5', size: 10 }] : [])] });
+    return;
   }
-  if (flow.pressureUntil > state.elapsed) label(ctx, `△ 切换承压 ${(flow.pressureUntil - state.elapsed).toFixed(1)}s`, 0, -89, '#f2d1a5', 10);
+  label(ctx, status, 0, 28, '#d6e7db', 11);
+  label(ctx, effect, 0, 44, '#b8d4c8', 9);
+  if (near) {
+    label(ctx, action, 0, -72, '#e2efdc', 11);
+  }
+  if (pressure) label(ctx, pressure, 0, -89, '#f2d1a5', 10);
 }

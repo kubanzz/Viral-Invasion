@@ -33,13 +33,12 @@ export const campaignHudMarkup = `
     <p id="mother-core-membrane"></p>
   </section>`;
 
-function arenaSummary(state: GameState, id: OrganId): string {
+export function arenaSummary(state: GameState, id: OrganId): string {
   const c = state.campaign!, arena = c.arenas[id], current = c.activeOrganId === id;
   const hp = current ? state.tissue.hp : arena.tissue.hp;
   const sources = arena.targets.filter(target => target.hp > 0 && target.role === 'source').length;
-  const status = !arena.activated ? '尚未激活' : current ? '当前器官' : hp < 50 ? '需返回抢修' : sources ? '离场仍有感染源' : '感染源已清';
-  const risk = arena.backgroundLoss > 0 ? `离场损伤 −${arena.backgroundLoss.toFixed(1)}` : sources && arena.activated && !current ? '开放感染源会低频侵蚀' : '';
-  return `<div class="organ-map-node ${current ? 'current' : ''} ${arena.activated ? 'activated' : 'dormant'} ${hp < 50 && arena.activated ? 'at-risk' : ''}"><span class="organ-map-symbol">${id === 'heart' ? '♥' : '◖◗'}</span><div><div class="organ-map-label"><b>${organName(id)}</b><strong>${Math.ceil(hp)}%</strong></div><div class="meter"><i style="width:${Math.max(0, Math.min(100, hp))}%"></i></div><small>${status}${risk ? ` · ${risk}` : ''}</small></div></div>`;
+  const risk = !arena.activated ? '尚未激活' : [hp < 50 ? current ? '△ 需抢修' : '△ 需回救' : '', arena.backgroundLoss > 0 ? `离场损伤 −${arena.backgroundLoss.toFixed(1)}` : '', sources && !current ? `残留 ${sources} 个感染源` : ''].filter(Boolean).join(' · ');
+  return `<div class="organ-map-node ${current ? 'current' : ''} ${arena.activated ? 'activated' : 'dormant'} ${hp < 50 && arena.activated ? 'at-risk' : ''}"><span class="organ-map-symbol">${id === 'heart' ? '♥' : '◖◗'}</span><div><div class="organ-map-label"><b>${organName(id)}</b><strong>${Math.ceil(hp)}%</strong></div><div class="meter"><i style="width:${Math.max(0, Math.min(100, hp))}%"></i></div><small class="organ-risk">${risk}</small></div></div>`;
 }
 
 function migrationOutcome(state: GameState): string {

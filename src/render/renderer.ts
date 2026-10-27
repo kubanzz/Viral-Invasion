@@ -9,14 +9,15 @@ import { BATTLE_BALANCE } from '../game/battleConfig';
 import { wallHit } from '../actors/collision';
 import { pulsePreviewPolygon } from './pulsePreview';
 import { GrowthVisuals } from './growthVisuals';
-import { drawEncounterSignals } from './encounterVisuals';
+import { drawEncounterGround, drawEncounterDangers } from './encounterVisuals';
 import { GROWTH_BALANCE, PROTOCOLS, protocolRank } from '../game/protocols';
 import { drawLungAirflow, drawLungAirway, drawLungEnvironment, drawLungForeground, drawLungObstacle } from './lungVisuals';
 import { drawOrganLandscape } from './organLandscape';
 import { drawNavigationMap } from './navigation';
-import { drawImmuneCell } from './immuneVisuals';
+import { drawImmuneCell, immuneCellBody, IMMUNE_BODY_LIFT } from './immuneVisuals';
 import { getRaisedActorBodies, getRaisedObstacleOcclusion, PLAYER_HEAD_SHAPE, playerBodyPose } from './raisedObstacleOcclusion';
 import { drawRaisedBodyLayers, traceRaisedObstacle } from './raisedObstacleGeometry';
+import { SceneLabels, type SceneLabel, type LabelRect } from './sceneLabels';
 
 const TAU = Math.PI * 2;
 const hash = (n: number): number => { const a = Math.sin(n * 127.1 + 311.7) * 43758.5453123; return a - Math.floor(a); };
@@ -64,6 +65,11 @@ export class Renderer {
   private dpr = 1;
   private readonly growthVisuals = new GrowthVisuals();
   private readonly landscapes = new Map<string, HTMLCanvasElement>();
+  private readonly labels = new SceneLabels();
+  private hudRects: readonly LabelRect[] = [];
+
+  /** UI updates this read-only presentation snapshot after its batched DOM read. */
+  setHudRects(rects: readonly LabelRect[]): void { this.hudRects = rects.map(rect => ({ ...rect })); }
 
   constructor(private readonly canvas: HTMLCanvasElement) {
     const context = canvas.getContext('2d', { alpha: false });
@@ -86,8 +92,8 @@ export class Renderer {
   }
   prepareCamera(state: GameState): void { this.camera.follow(state.player, activeWorld(state)); }
 
-  diagnostics(state: GameState): { depthOrder: string[]; occluded: boolean; foregroundOpacity: number; layerOrder: typeof LAYER_ORDER } {
-    return { depthOrder: depthSort(this.entities(state)).map(entity => entity.id), occluded: isForegroundOccluded(state.player, activeWorld(state)), foregroundOpacity: foregroundOpacity(state.player, activeWorld(state)), layerOrder: LAYER_ORDER };
+  diagnostics(state: GameState) {
+    return { depthOrder: depthSort(this.entities(state)).map(entity => entity.id), occluded: isForegroundOccluded(state.player, activeWorld(state)), foregroundOpacity: foregroundOpacity(state.player, activeWorld(state)), layerOrder: LAYER_ORDER, labels: this.labels.diagnostics(), hudRects: this.hudRects.map(rect => ({ ...rect })) };
   }
 
   private entities(state: GameState): { id: string; y: number; kind: string; index?: number }[] {
@@ -106,6 +112,13 @@ export class Renderer {
   render(state: GameState, aim: Vec, opts: { lowEffects?: boolean } = {}): void {
     this.prepareCamera(state);
     const ctx = this.ctx;
+    this.labels.begin({ width: this.width, height: this.height, scale: this.camera.scale,
+      project: point => this.camera.worldToScreen(point), blocked: this.hudRects,
+      scope: `${state.growth?.runId ?? state.seed}:${state.battle?.organId ?? 'training'}` });
+    // Labels yield to the player's body and exact ground aim. Their shapes stay
+    // in world space; only the surrounding explanatory text can move.
+    this.reserveLabelPoint(state.player, 30, 78, 12);
+    this.reserveLabelPoint(aim, 17, 17, 17);
     ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     ctx.fillStyle = '#120d1b'; ctx.fillRect(0, 0, this.width, this.height);
     if (state.battle?.organId === 'lung' && activeWorld(state).width <= 1200 && !this.lungBackground) {
@@ -125,7 +138,7 @@ export class Renderer {
     }
     this.drawAtmosphere(ctx, state, Boolean(opts.lowEffects));
     this.drawGroundSignals(ctx, state, aim);
-    drawEncounterSignals(ctx, state, Boolean(opts.lowEffects));
+    drawEncounterGround(ctx, state, Boolean(opts.lowEffects), this.labels);
     this.growthVisuals.drawGround(ctx, state, state.growth, Boolean(opts.lowEffects));
     this.drawShadows(ctx, state);
     const raisedActorBodies = getRaisedActorBodies(state);
@@ -140,24 +153,41 @@ export class Renderer {
         if (state.battle?.organId === 'lung') drawLungObstacle(ctx, obstacle, opacity); else this.drawObstacle(ctx, obstacle, opacity);
       }
       if (entity.kind === 'device') this.drawBattleDevice(ctx, state.battle!.graph.nodes.find(node => node.id === entity.id)!, state);
-      if (entity.kind === 'beacon') this.growthVisuals.drawBeacon(ctx, state, state.growth);
-      if (entity.kind === 'immune') drawImmuneCell(ctx, state.growth!.cells![entity.index!], state.elapsed, Boolean(opts.lowEffects));
+      if (entity.kind === 'beacon') this.growthVisuals.drawBeacon(ctx, state, state.growth, this.labels);
+      if (entity.kind === 'immune') {
+        const cell = state.growth!.cells![entity.index!], body = immuneCellBody(cell, state.elapsed);
+        if (body.alpha > 0) {
+          const extent = body.radius * 1.12 + 8;
+          this.reserveLabelPoint(cell, extent, extent - IMMUNE_BODY_LIFT, Math.max(12, extent + IMMUNE_BODY_LIFT));
+        }
+        drawImmuneCell(ctx, cell, state.elapsed, Boolean(opts.lowEffects));
+      }
     }
     this.drawForeground(ctx, state);
     this.drawEffects(ctx, state, Boolean(opts.lowEffects));
     this.growthVisuals.drawMarks(ctx, state, state.growth);
-    this.growthVisuals.drawProtocolHits(ctx, state, state.growth);
+    this.growthVisuals.drawProtocolHits(ctx, state, state.growth, this.labels);
     if (state.battle) {
+      drawEncounterDangers(ctx, state, Boolean(opts.lowEffects), this.labels);
       this.drawBattleDangers(ctx, state);
-      if (state.campaign?.core.combat) drawMotherCoreDangers(ctx, state, state.campaign.core.combat);
-      drawBattleLabels(ctx, state);
+      if (state.campaign?.core.combat) drawMotherCoreDangers(ctx, state, state.campaign.core.combat, this.labels);
+      drawBattleLabels(ctx, state, this.labels);
       this.drawTissueMarker(ctx, state);
     }
     this.drawCrosshair(ctx, state, aim);
     ctx.restore();
+    this.labels.draw(ctx);
     const map = document.querySelector<HTMLCanvasElement>('#tactical-map');
     if (map && state.campaign) drawNavigationMap(map, state, { topLeft: this.camera.screenToWorld({ x: 0, y: 0 }), bottomRight: this.camera.screenToWorld({ x: this.width, y: this.height }) });
   }
+
+  private reserveLabelPoint(point: Vec, halfWidth: number, above: number, below: number): void {
+    const p = this.camera.worldToScreen(point), scale = this.camera.scale;
+    this.labels.reserveScreen({ left: p.x - halfWidth * scale, right: p.x + halfWidth * scale,
+      top: p.y - above * scale, bottom: p.y + below * scale });
+  }
+
+  private addEntityLabel(label: SceneLabel): void { this.labels.add(label); }
 
   private drawEnvironment(ctx: CanvasRenderingContext2D): void {
     const gradient = ctx.createRadialGradient(650, 360, 80, 600, 420, 1000);
@@ -224,7 +254,7 @@ export class Renderer {
 
   private drawAtmosphere(ctx: CanvasRenderingContext2D, state: GameState, low: boolean): void {
     const flow = state.battle?.organId === 'lung' ? state.campaign?.arenas.lung.flow : undefined;
-    if (flow) { drawLungAirflow(ctx, state, flow, low); return; }
+    if (flow) { drawLungAirflow(ctx, state, flow, low, this.labels); return; }
     const time = state.elapsed;
     if (!low) for (let i = 0; i < 24; i++) {
       const x = 95 + ((hash(i * 2) * 1000 + time * (4 + hash(i) * 6)) % 1030);
@@ -345,7 +375,7 @@ export class Renderer {
     ctx.save(); ctx.translate(node.x, node.y); ctx.scale(1, 1 / .72);
     const flow = state.battle?.organId === 'lung' ? state.campaign?.arenas.lung.flow : undefined;
     if (node.id === 'airway' && flow) {
-      drawLungAirway(ctx, state, flow, near);
+      drawLungAirway(ctx, state, flow, near, this.labels, node);
     } else if (node.kind === 'exit') {
       const destination = state.battle?.organId === 'lung' ? '心脏' : '肺部';
       const readyAt = state.campaign?.travelReadyAt ?? 0, ready = node.active && time >= readyAt;
@@ -355,9 +385,10 @@ export class Renderer {
       const sign = state.battle?.organId === 'lung' ? -1 : 1;
       line(ctx, [-sign * 10, -29, sign * 10, -29], ready ? '#d8f1d8' : '#889b98', 2.5);
       line(ctx, [sign * 3, -36, sign * 10, -29, sign * 3, -22], ready ? '#d8f1d8' : '#889b98', 2.5);
-      text(ctx, `通往${destination}`, 0, 28, '#d8e8d9', 11);
-      text(ctx, !node.active ? '迁移阶段开启' : ready ? '双向通道 · E' : `通行冷却 ${Math.ceil(readyAt - time)}s`, 0, 44, '#b5cbc4', 9);
-      if (near) text(ctx, !node.active ? '通道尚未开启' : ready ? `[ E ] ${state.campaign?.migration.status === 'warning' ? '追击至' : '前往'}${destination}` : '通行充能中', 0, -76, '#e4f0d9', 11);
+      this.addEntityLabel({ id: `device:${node.id}`, anchor: node, offset: { x: 0, y: near ? -76 : 28 }, priority: near ? 70 : 30, essential: near,
+        lines: [{ text: `通往${destination}`, color: '#d8e8d9', size: 11 },
+          { text: near ? !node.active ? '通道尚未开启' : ready ? `[ E ] ${state.campaign?.migration.status === 'warning' ? '追击至' : '前往'}${destination}` : '通行充能中'
+            : !node.active ? '迁移阶段开启' : ready ? '双向通道 · E' : `通行冷却 ${Math.ceil(readyAt - time)}s`, color: '#b5cbc4', size: 10 }] });
     } else if (node.kind === 'valve') {
       const ready = time >= battle.pulse.readyAt, surge = battle.pulse.phase === 'surge';
       ellipse(ctx, 0, 3, 37, 12, '#6f3b46', '#c79076');
@@ -368,12 +399,10 @@ export class Renderer {
       }
       ellipse(ctx, 0, -17, 11, 17, '#71394a', ready ? '#f7d397' : '#a99988');
       line(ctx, [-5, -17, 0, -23, 5, -17, 0, -10, -5, -17], ready ? '#ffe0a8' : '#ad9a8b', 2);
-      text(ctx, '定向冲流阀', 0, 28, '#f4d3ac', 11);
-      text(ctx, ready ? `E · 组织 -${BATTLE_BALANCE.pulseCost}` : `${Math.ceil(battle.pulse.readyAt - time)}s 充能`, 0, 44, ready ? '#f6dba9' : '#bbaba0', 10);
-      if (near) {
-        const phase = battle.pulse.phase === 'charge' ? '蓄力' : surge ? '冲流节律' : '舒缓';
-        text(ctx, `${phase} · 鼠标定向`, 0, -69, '#f6dfbb', 11);
-      }
+      const phase = battle.pulse.phase === 'charge' ? '蓄力' : surge ? '冲流节律' : '舒缓';
+      this.addEntityLabel({ id: `device:${node.id}`, anchor: node, offset: { x: 0, y: near ? -69 : 28 }, priority: near ? 70 : 30, essential: near,
+        lines: [{ text: near ? `定向冲流 · ${phase}` : '定向冲流阀', color: '#f4d3ac', size: 11 },
+          { text: ready ? `E · 组织 −${BATTLE_BALANCE.pulseCost}${near ? ' · 鼠标定向' : ''}` : `${Math.ceil(battle.pulse.readyAt - time)}s 充能`, color: ready ? '#f6dba9' : '#bbaba0', size: 10 }] });
     } else if (node.kind === 'gate') {
       const closed = !battle.graph.edges.filter(edge => edge.from === node.id || edge.to === node.id).some(edge => edge.open);
       for (const x of [-25, 25]) {
@@ -385,8 +414,9 @@ export class Renderer {
         for (let y = -29; y < 0; y += 8) line(ctx, [-17, y, 17, y], '#c2e4cb88', 1.5);
         line(ctx, [-5, -25, 5, -10], '#e0edcf', 2); line(ctx, [-5, -10, 5, -25], '#e0edcf', 2);
       } else line(ctx, [-18, -3, 18, -3], '#bba98b66', 2);
-      text(ctx, closed ? '隔离闸 · 已关闭' : '隔离闸 · 已开放', 0, 28, '#d2dbc0', 11);
-      if (near) text(ctx, closed ? '[ E ] 恢复通路' : '[ E ] 截断传播', 0, -57, '#e4efd3', 11);
+      this.addEntityLabel({ id: `device:${node.id}`, anchor: node, offset: { x: 0, y: near ? -57 : 28 }, priority: near ? 70 : 30, essential: near,
+        lines: [{ text: closed ? '隔离闸 · 已关闭' : '隔离闸 · 已开放', color: '#d2dbc0', size: 11 },
+          ...(near ? [{ text: closed ? '[ E ] 恢复通路' : '[ E ] 截断传播', color: '#e4efd3', size: 10 }] : [])] });
     } else {
       ellipse(ctx, 0, 3, 34, 11, '#36544e', '#a5bc9f');
       ctx.beginPath(); ctx.roundRect(-28, -30, 56, 29, 6); ctx.fillStyle = '#809f8c'; ctx.fill(); ctx.strokeStyle = '#cbd5b4'; ctx.lineWidth = 1.5; ctx.stroke();
@@ -396,9 +426,9 @@ export class Renderer {
         line(ctx, [x, -44, x, -34], '#72baa6', 3); ellipse(ctx, x, -50, 4, 2, '#f0e6c6');
       }
       const samples = Math.floor(state.growth?.research ?? 0);
-      text(ctx, '抗体研究台', 0, 28, '#d2e7cd', 11);
-      text(ctx, `样本 ${samples} / ${GROWTH_BALANCE.researchCost}`, 0, 44, '#b6cfb7', 10);
-      if (near) text(ctx, '[ E ] 研究 / 校准', 0, -70, '#e4efd3', 11);
+      this.addEntityLabel({ id: `device:${node.id}`, anchor: node, offset: { x: 0, y: near ? -70 : 28 }, priority: near ? 70 : 30, essential: near,
+        lines: [{ text: near ? '[ E ] 抗体研究 / 校准' : '抗体研究台', color: '#d2e7cd', size: 11 },
+          { text: `样本 ${samples} / ${GROWTH_BALANCE.researchCost}`, color: '#b6cfb7', size: 10 }] });
     }
     ctx.restore();
   }
@@ -407,17 +437,20 @@ export class Renderer {
     for (const target of state.targets) {
       if ((target.splitAt ?? 0) > state.elapsed) {
         const remaining = (target.splitAt ?? 0) - state.elapsed;
-        for (const landing of target.splitPositions ?? []) {
+        for (const [index, landing] of (target.splitPositions ?? []).entries()) {
           ctx.save(); ctx.setLineDash([3, 4]); ctx.lineWidth = 1.7;
           ellipse(ctx, landing.x, landing.y, 18, 18, '#f7cf8f12', '#f3cf95'); ctx.setLineDash([]);
           line(ctx, [landing.x - 5, landing.y, landing.x + 5, landing.y], '#ffdfab', 1.5);
-          text(ctx, `⋈ ${remaining.toFixed(1)}s`, landing.x, landing.y - 25, '#f4d7a3', 11);
+          this.reserveLabelPoint(landing, 10, 10, 10);
+          this.labels.add({ id: `split:${target.id}:${index}`, anchor: landing, offset: { x: 0, y: -25 * this.camera.yScale }, priority: 100, essential: true,
+            lines: [{ text: `⋈ ${remaining.toFixed(1)}s`, color: '#f4d7a3', size: 11 }] });
           ctx.restore();
         }
       }
       if (target.role === 'core' && state.campaign?.core.combat?.coreId === target.id) continue;
       if (target.hp <= 0 || !target.attackAim || (target.attackAt ?? 0) <= state.elapsed) continue;
       const center = target.attackAim, radius = target.attackRadius ?? BATTLE_BALANCE.attackRadius;
+      this.reserveLabelPoint(center, 9, 9, 9);
       const remaining = (target.attackAt ?? 0) - state.elapsed;
       const progress = 1 - clamp(remaining / BATTLE_BALANCE.attackWindup, 0, 1);
       ctx.save(); ctx.lineWidth = 2;
@@ -548,10 +581,18 @@ export class Renderer {
     ellipse(ctx, 30, -10, 12, 12, '#d5edcf', '#3c7161');
     line(ctx, [24, -10, 36, -10], '#2d7265', 3);
     line(ctx, [30, -16, 30, -4], '#2d7265', 3);
-    ctx.fillStyle = '#211d30'; ctx.beginPath(); ctx.roundRect(-37, 12, 74, 5, 2); ctx.fill();
-    ctx.fillStyle = ratio === 1 ? '#9be4b7' : '#e5ae80'; ctx.beginPath(); ctx.roundRect(-37, 12, Math.max(1, 74 * ratio), 5, 2); ctx.fill();
-    text(ctx, ratio === 1 ? '组织修复完成' : `受损组织  ${Math.round(tissue.hp)}%`, 0, 35, ratio === 1 ? '#b9eec5' : '#f1d6bb', 12);
-    text(ctx, '03  /  组织修复注射', 0, 52, '#c9aaa1', 9);
+    if (state.battle) {
+      const near = Math.hypot(tissue.x - state.player.x, tissue.y - state.player.y) <= BALANCE.range;
+      this.labels.add({ id: 'tissue', anchor: tissue, offset: { x: 0, y: 35 }, priority: 75, essential: true,
+        lines: [{ text: ratio >= 1 ? '✚ 组织修复完成' : `✚ 组织 ${Math.round(ratio * 100)}%`, color: ratio >= 1 ? '#b9eec5' : '#f1d6bb', size: 12 },
+          ...(near && ratio < 1 ? [{ text: '3 · 瞄准组织修复', color: '#c9cbb4', size: 10 }] : [])],
+        bar: { ratio, color: ratio >= 1 ? '#9be4b7' : '#e5ae80', width: 74 } });
+    } else {
+      ctx.fillStyle = '#211d30'; ctx.beginPath(); ctx.roundRect(-37, 12, 74, 5, 2); ctx.fill();
+      ctx.fillStyle = ratio === 1 ? '#9be4b7' : '#e5ae80'; ctx.beginPath(); ctx.roundRect(-37, 12, Math.max(1, 74 * ratio), 5, 2); ctx.fill();
+      text(ctx, ratio === 1 ? '组织修复完成' : `受损组织  ${Math.round(tissue.hp)}%`, 0, 35, ratio === 1 ? '#b9eec5' : '#f1d6bb', 12);
+      text(ctx, '03  /  组织修复注射', 0, 52, '#c9aaa1', 9);
+    }
     ctx.restore();
   }
 
@@ -574,11 +615,15 @@ export class Renderer {
     ctx.beginPath(); ctx.roundRect(-21, -59, 42, 24, 5); ctx.fillStyle = '#173f4b'; ctx.fill();
     line(ctx, [-16, -47, -9, -47, -5, -53, 0, -41, 5, -49, 10, -47, 16, -47], ready ? '#a7f5c5' : '#7bd6d8', 2);
     ellipse(ctx, -14, -20, 2, 2, ready ? '#b8f2b5' : '#f1bf80'); ellipse(ctx, 13, -20, 2, 2, '#8ed7d1');
-    if (near && state.phase === 'playing') {
+    if (state.battle) {
+      this.labels.add({ id: 'terminal', anchor: position, offset: { x: 0, y: near ? -96 : 28 }, priority: near ? 70 : 30, essential: near,
+        lines: [{ text: '复测终端', color: '#d6e5cc', size: 11 },
+          { text: near ? ready ? '[ E ] 完成复测' : '[ E ] 查看复测条件' : ready ? 'E · 可复测' : '等待稳定', color: '#b9d8be', size: 10 }] });
+    } else if (near && state.phase === 'playing') {
       ctx.fillStyle = '#173c42e8'; ctx.beginPath(); ctx.roundRect(-68, -104, 136, 25, 6); ctx.fill(); ctx.strokeStyle = '#8acfc0'; ctx.lineWidth = 1; ctx.stroke();
       text(ctx, ready ? '[ E ]  完成复测' : state.battle ? '[ E ]  查看复测条件' : '[ E ]  查看训练进度', 0, -87, '#e1f0d3', 11);
     }
-    text(ctx, '复测终端', 0, 28, '#d6e5cc', 12); text(ctx, 'RETURN  /  E', 0, 44, '#9ab8af', 9);
+    if (!state.battle) { text(ctx, '复测终端', 0, 28, '#d6e5cc', 12); text(ctx, 'RETURN  /  E', 0, 44, '#9ab8af', 9); }
     ctx.restore();
   }
 

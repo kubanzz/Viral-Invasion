@@ -1,10 +1,11 @@
 import type { TraitId } from '../game/battleTypes';
-import type { GameState, Target } from '../game/types';
+import type { GameState, Target, Vec } from '../game/types';
 import { BATTLE_BALANCE } from '../game/battleConfig';
 import { activeWorld } from '../game/types';
 import { wallHit } from '../actors/collision';
 import { MOTHER_CORE_BALANCE, motherCoreDisturbed } from '../game/motherCore';
 import type { MotherCoreState } from '../game/motherCoreTypes';
+import type { SceneLabelSink } from './sceneLabels';
 
 const TAU = Math.PI * 2;
 
@@ -257,13 +258,24 @@ function drawMotherCore(ctx: CanvasRenderingContext2D, target: Target, state: Ga
 }
 
 /** Every warning is read directly from the serialized attack used for damage. */
-export function drawMotherCoreDangers(ctx: CanvasRenderingContext2D, state: GameState, combat: MotherCoreState): void {
+export function drawMotherCoreDangers(ctx: CanvasRenderingContext2D, state: GameState, combat: MotherCoreState, labels?: SceneLabelSink): void {
   const attack = combat.attack;
   if (!attack || combat.organId !== state.battle?.organId || attack.resolveAt <= state.elapsed) return;
   const remaining = attack.resolveAt - state.elapsed, duration = attack.resolveAt - attack.startedAt;
   const progress = Math.max(0, Math.min(1, (state.elapsed - attack.startedAt) / duration));
+  const caption = (value: string, x: number, y: number, color: string, size = 11) => {
+    if (labels) labels.add({ id: `core-danger:${combat.coreId}:${attack.id}`, anchor: { x, y }, priority: 100, essential: true, lines: [{ text: value, color, size }] });
+    else groundLabel(ctx, value, x, y, color, size);
+  };
+  const protectPoint = (point: Vec, radius = 10) => labels?.reserveWorld?.({ left: point.x - radius, right: point.x + radius, top: point.y - radius, bottom: point.y + radius });
   ctx.save(); ctx.lineWidth = 2;
   if (attack.kind === 'crystal-sweep') {
+    protectPoint(attack.origin);
+    for (const sign of [-1, 1]) {
+      const angle = attack.angle + sign * attack.halfAngle, direction = { x: Math.cos(angle), y: Math.sin(angle) };
+      const length = Math.min(attack.range, wallHit(attack.origin, direction, attack.range, activeWorld(state)) ?? attack.range);
+      protectPoint({ x: attack.origin.x + direction.x * length, y: attack.origin.y + direction.y * length }, 5);
+    }
     ctx.beginPath(); ctx.moveTo(attack.origin.x, attack.origin.y);
     for (let i = 0; i <= 64; i++) {
       const angle = attack.angle - attack.halfAngle + i / 64 * attack.halfAngle * 2, direction = { x: Math.cos(angle), y: Math.sin(angle) };
@@ -280,6 +292,7 @@ export function drawMotherCoreDangers(ctx: CanvasRenderingContext2D, state: Game
   } else {
     const centers = attack.kind === 'brood' ? attack.landings : [attack.aim];
     for (const center of centers) {
+      protectPoint(center); protectPoint({ x: center.x, y: center.y - attack.radius - 5 }, 5);
       ctx.setLineDash(attack.kind === 'brood' ? [3, 5] : []);
       ellipse(ctx, center.x, center.y, attack.radius, attack.radius, '#f5be8b13', '#ffd29b'); ctx.setLineDash([]);
       ctx.beginPath(); ctx.arc(center.x, center.y, attack.radius + 5, -Math.PI / 2, -Math.PI / 2 + TAU * progress); ctx.strokeStyle = '#ffe7b1'; ctx.lineWidth = 3; ctx.stroke();
@@ -289,12 +302,12 @@ export function drawMotherCoreDangers(ctx: CanvasRenderingContext2D, state: Game
       ctx.setLineDash([5, 7]); line(ctx, [attack.origin.x, attack.origin.y, attack.aim.x, attack.aim.y], '#f4d9b4', 1.5); ctx.setLineDash([]);
       const near = Math.hypot(state.player.x - attack.origin.x, state.player.y - attack.origin.y) <= MOTHER_CORE_BALANCE.scanRange;
       const counter = !near ? '靠近母巢后 Q 中断' : state.scanReady > state.elapsed ? `Q 冷却 ${(state.scanReady - state.elapsed).toFixed(1)}s · 抢修组织` : 'Q 扫描中断侵蚀';
-      groundLabel(ctx, `${counter} · ${remaining.toFixed(1)}s`, (attack.origin.x + attack.aim.x) / 2, (attack.origin.y + attack.aim.y) / 2 - 20, '#ffe5b7', 12);
+      caption(`${counter} · ${remaining.toFixed(1)}s`, (attack.origin.x + attack.aim.x) / 2, (attack.origin.y + attack.aim.y) / 2 - 20, '#ffe5b7', 12);
     }
   }
   if (attack.kind !== 'corrosion') {
     const anchor = attack.kind === 'crystal-sweep' ? { x: attack.origin.x + Math.cos(attack.angle) * attack.range * .6, y: attack.origin.y + Math.sin(attack.angle) * attack.range * .6 } : attack.aim;
-    groundLabel(ctx, `${attack.kind === 'brood' ? '⋈ 有限分裂' : attack.kind === 'crystal-sweep' ? '◇ 晶壳横扫' : '⋈ 裂殖爆发'} ${remaining.toFixed(1)}s`, anchor.x, anchor.y - 32, '#ffe6b4', 11);
+    caption(`${attack.kind === 'brood' ? '⋈ 有限分裂' : attack.kind === 'crystal-sweep' ? '◇ 晶壳横扫' : '⋈ 裂殖爆发'} ${remaining.toFixed(1)}s`, anchor.x, anchor.y - 32, '#ffe6b4', 11);
   }
   ctx.restore();
 }
@@ -303,12 +316,67 @@ const TRAIT_SYMBOL: Record<TraitId, string> = { CARAPACE: '◇', FISSION: '⋈',
 type LabelBox = { left: number; right: number; top: number; bottom: number };
 const overlaps = (a: LabelBox, b: LabelBox): boolean => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
 
+/** Protect actual small sprite features, not a full empty body bounding box. */
+function reserveTargetFeatures(labels: SceneLabelSink, target: Target, state: GameState): void {
+  const r = target.radius, time = state.elapsed, core = state.campaign?.core.combat;
+  // The sprite is drawn at worldY*.72, then local y is uncompressed. Convert
+  // local feature bounds back to ground-world y before reserveWorld projects it.
+  const local = (x: number, y: number, rx: number, ry: number) => labels.reserveWorld?.({
+    left: target.x + x - rx, right: target.x + x + rx,
+    top: target.y + (y - ry) / .72, bottom: target.y + (y + ry) / .72,
+  });
+  const isMother = target.role === 'core' && core?.coreId === target.id;
+  local(0, isMother ? 2 : 1, isMother ? 16 : 11, isMother ? 7 : 6);
+  if (isMother) {
+    const lift = core.phase === 'windup' ? -3 : core.phase === 'recovery' ? 3 : Math.sin(time * 2.8) * 1.4;
+    const bodyY = -r * .96 + lift;
+    local(0, bodyY - r * .14, r * .38 + 2, r * .55 + 2); // Real lantern weak point.
+    local(0, bodyY - r * 1.21, 10, 8);
+  } else {
+    const bob = target.role === 'source' ? Math.sin(time * 2) * 1.2 : Math.sin(time * 5 + target.x) * 2;
+    const bodyY = -r * .8 + bob;
+    if (target.traits?.[0] === 'CARAPACE') local(-.15 * r, bodyY + .09 * r, r * .39 + 2, r * .43 + 2);
+    else local(0, bodyY - 3, Math.max(9, r * .45 + 2), 8);
+    if (target.role === 'elite' || target.role === 'core') local(0, bodyY - r * 1.08 - 18, 8, 8);
+  }
+}
+
 /** Information floats above entities; ordinary names cannot drown an elite or weakness. */
-export function drawBattleLabels(ctx: CanvasRenderingContext2D, state: GameState): void {
+export function drawBattleLabels(ctx: CanvasRenderingContext2D, state: GameState, labels?: SceneLabelSink): void {
   const time = state.elapsed, aim = state.battle?.lastAim;
   const aimed = (target: Target): boolean => !!aim && Math.hypot(target.x - aim.x, target.y - aim.y) <= target.radius + 12;
   const priority = (target: Target): number => target.role === 'core' ? 0 : target.role === 'elite' ? 1 : target.role === 'source' ? 2 : aimed(target) ? 3 : 4;
   const targets = state.targets.filter(target => target.hp > 0).sort((a, b) => priority(a) - priority(b) || a.id.localeCompare(b.id));
+  if (labels) {
+    for (const target of targets) {
+      const full = target.role === 'source' || target.role === 'elite' || target.role === 'core', focused = aimed(target);
+      const exposed = (target.exposedUntil ?? 0) > time;
+      const traced = state.growth?.marks.some(mark => mark.targetId === target.id && mark.organId === state.battle?.organId && mark.until > time) ?? false;
+      const mimic = target.traits?.includes('MIMIC') && (target.revealedUntil ?? 0) <= time && state.scanUntil <= time && !exposed && !traced;
+      if (mimic) continue;
+      if (full || focused || exposed) reserveTargetFeatures(labels, target, state);
+      const bar = full || focused || target.hitUntil > time, symbols = target.traits?.map(id => TRAIT_SYMBOL[id]).join('') ?? '';
+      if (!full && !bar && (!symbols || !target.scanned)) continue;
+      const role = target.role === 'core' ? '母巢' : target.role === 'elite' ? '精英' : '感染源';
+      const name = full ? `${role}${target.traits?.length ? ' · ' + target.traits.map(id => TRAIT_NAME[id]).join('·') : ''}` : symbols;
+      const baseY = -target.radius * 1.96 - (target.role === 'elite' || target.role === 'core' ? 17 : 7);
+      labels.add({ id: `target:${target.id}`, anchor: { x: target.x, y: target.y }, offset: { x: 0, y: baseY - 7 },
+        priority: focused || exposed ? 90 : target.role === 'core' ? 85 : target.role === 'elite' ? 80 : target.role === 'source' ? 70 : bar ? 65 : 35,
+        essential: bar || exposed, lines: name ? [{ text: name, color: full ? '#f4dcc2' : '#e6d0b9', size: full ? 10 : 11 }] : [],
+        ...(bar ? { bar: { ratio: target.hp / target.maxHp, color: exposed ? '#ffe4a1' : '#f2bd9c', width: target.radius * 2 } } : {}) });
+    }
+    const groups: Target[][] = [];
+    for (const target of targets.filter(item => (item.exposedUntil ?? 0) > time)) {
+      const group = !aimed(target) && groups.find(items => !aimed(items[0]) && Math.hypot(items[0].x - target.x, items[0].y - target.y) < 65);
+      if (group) group.push(target); else groups.push([target]);
+    }
+    for (const group of groups) {
+      const target = group[0], seconds = Math.ceil(Math.min(...group.map(item => item.exposedUntil!)) - time);
+      labels.add({ id: `weakness:${target.id}`, anchor: { x: target.x, y: target.y }, offset: { x: 0, y: 23 }, priority: 90, essential: true,
+        lines: [{ text: `◇ 破绽 ${seconds}s${group.length > 1 ? ` ×${group.length}` : ''}`, color: '#ffe6b0', size: 11 }] });
+    }
+    return;
+  }
   const occupied: LabelBox[] = [];
   for (const target of targets) {
     const full = target.role === 'source' || target.role === 'elite' || target.role === 'core';
