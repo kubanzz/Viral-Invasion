@@ -3,12 +3,13 @@ import { createHash } from 'node:crypto';
 import { copyFileSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import type { GameEvent, GameState } from '../../src/game/types';
+import { activeWorld, type GameEvent, type GameState } from '../../src/game/types';
+import { normalized, wallHit } from '../../src/actors/collision';
 import type { ProtocolId } from '../../src/game/growthTypes';
 import { protocolRank } from '../../src/game/protocols';
 import { PROFILE_STORAGE_KEY } from '../../src/meta/profile';
 import { IMMUNE_TRACE_CUE_TICKS, selectImmuneTraceCues, type ImmuneTraceCue } from '../../src/render/immuneTraceCues';
-import { readState } from './campaignDriver';
+import { aim, readState } from './campaignDriver';
 import { fullRun } from './fullRunDriver';
 
 const entryPath = resolve(process.env.VI_ENTRY ?? 'dist/index.html');
@@ -58,7 +59,7 @@ test('Feedback 0.6.2: real marked-cell cooperation has readable live spacing and
   await context.setOffline(true);
   await page.setViewportSize({ width: 1366, height: 768 });
   const low = info.project.name === 'edge', quality = low ? 'low' : 'standard';
-  const errors: string[] = [], remote: string[] = [], drafts: unknown[] = [];
+  const errors: string[] = [], remote: string[] = [], drafts: unknown[] = [], demonstrations: unknown[] = [];
   page.on('pageerror', error => errors.push(error.message));
   page.on('request', request => { if (/^https?:/i.test(request.url())) remote.push(request.url()); });
   const build = JSON.parse(readFileSync(resolve(dirname(entryPath), 'build-meta.json'), 'utf8'));
@@ -68,6 +69,59 @@ test('Feedback 0.6.2: real marked-cell cooperation has readable live spacing and
   const attempts: CaptureAttempt[] = [];
   let selected: CaptureAttempt | undefined, final: GameState | undefined, retry: GameState | undefined;
   let qualityControl: unknown;
+  const capture = async (state: GameState) => {
+    if (selected || attempts.length >= 8 || (state.growth?.cells?.length ?? 0) !== 3 || !pair.every(id => state.growth!.equipped.some(slot => slot.id === id)) || !selectImmuneTraceCues(state).length) return;
+    const before = analyze(await projectedState(page));
+    // Start early in the unchanged 24-tick fade to leave enough time for the
+    // screenshot IPC; both endpoints must still retain the same actual bite.
+    if (!readable(before) || !before.cues.some(cue => cue.progress <= .2)) return;
+    const screenshot = info.outputPath(`immune-${quality}-attempt-${attempts.length + 1}.png`);
+    const screenshotStartedAt = new Date().toISOString();
+    await page.screenshot({ path: screenshot });
+    const screenshotFinishedAt = new Date().toISOString();
+    const after = analyze(await projectedState(page));
+    const beforeRoots = new Set(before.hits.map(event => String(event.data.rootId)));
+    const commonHitRoots = after.hits.map(event => String(event.data.rootId)).filter(root => beforeRoots.has(root));
+    const sameCells = before.projection.cells.map(cell => cell.id).sort().join('|') === after.projection.cells.map(cell => cell.id).sort().join('|');
+    const passed = readable(after) && sameCells && before.projection.state.growth!.beacon!.id === after.projection.state.growth!.beacon!.id && commonHitRoots.length > 0;
+    const attempt = { before, after, screenshot, screenshotStartedAt, screenshotFinishedAt, commonHitRoots, passed };
+    attempts.push(attempt);
+    if (passed) { selected = attempt; copyFileSync(screenshot, info.outputPath(`immune-${quality}-readable.png`)); }
+  };
+  const demonstrateAfterDraft = async () => {
+    const before = await readState(page);
+    if (selected || before.phase !== 'playing' || !pair.every(id => before.growth!.equipped.some(slot => slot.id === id))) return;
+    const targets = before.targets.filter(target => {
+      if (target.hp <= 0 || target.role === 'core') return false;
+      const distance = Math.hypot(target.x - before.player.x, target.y - before.player.y);
+      if (distance > 400) return false;
+      const wall = wallHit(before.player, normalized(target.x - before.player.x, target.y - before.player.y), distance, activeWorld(before));
+      return wall === null || wall >= distance - 1;
+    }).sort((a, b) => b.hp - a.hp || Math.hypot(a.x - before.player.x, a.y - before.player.y) - Math.hypot(b.x - before.player.x, b.y - before.player.y));
+    const target = targets[0];
+    if (!target || before.scanReady > before.elapsed || before.growth!.beaconReadyAt > before.elapsed) {
+      demonstrations.push({ before, target: target ?? null, skipped: 'No live clear-path near target or Q/squad cooldown not ready; no combat state was written.' });
+      return;
+    }
+    // fullRun releases movement and mouse before onDraft, then continues with a
+    // fresh snapshot after it. A deliberate stop-fire here preserves this real
+    // target long enough for the squad's 0.25-second first-bite delay.
+    const demonstration = { before, target, input: 'mouse.up → aim at live target → Q → observe without firing or movement', observations: [] as unknown[], after: null as GameState | null };
+    demonstrations.push(demonstration);
+    await page.mouse.up();
+    await aim(page, target);
+    await page.keyboard.press('KeyQ');
+    const deadline = Date.now() + 3000;
+    try {
+      while (Date.now() < deadline && !selected) {
+        const state = await readState(page);
+        demonstration.observations.push({ tick: state.tick, phase: state.phase, beacon: state.growth!.beacon, cells: state.growth!.cells, target: state.targets.find(item => item.id === target.id) ?? null, cues: selectImmuneTraceCues(state), recentBites: state.events.filter(event => event.type === 'PROTOCOL_BEACON_HIT' && event.tick >= before.tick) });
+        if (state.phase !== 'playing') break;
+        await capture(state);
+        await page.waitForTimeout(40);
+      }
+    } finally { await page.mouse.up(); demonstration.after = await readState(page); }
+  };
   try {
     // A current Node-side selector must never be used to claim an old bundle
     // displays the cue. The helper must be an input to this exact build.
@@ -102,24 +156,11 @@ test('Feedback 0.6.2: real marked-cell cooperation has readable live spacing and
         await page.locator(`[data-action="draft-replace"][data-slot="${replacementSlot}"]`).click();
       }
       drafts.push({ before: state, selected: option, replacementSlot, after: await readState(page) });
+      await demonstrateAfterDraft();
     }, async state => {
       // This callback only observes and screenshots. Pausing here would clear
       // the game's held keys without updating fullRun's held-key bookkeeping.
-      if (selected || attempts.length >= 8 || (state.growth?.cells?.length ?? 0) !== 3 || !pair.every(id => state.growth!.equipped.some(slot => slot.id === id)) || !selectImmuneTraceCues(state).length) return;
-      const before = analyze(await projectedState(page));
-      if (!readable(before) || !before.cues.some(cue => cue.progress <= .35)) return;
-      const screenshot = info.outputPath(`immune-${quality}-attempt-${attempts.length + 1}.png`);
-      const screenshotStartedAt = new Date().toISOString();
-      await page.screenshot({ path: screenshot });
-      const screenshotFinishedAt = new Date().toISOString();
-      const after = analyze(await projectedState(page));
-      const beforeRoots = new Set(before.hits.map(event => String(event.data.rootId)));
-      const commonHitRoots = after.hits.map(event => String(event.data.rootId)).filter(root => beforeRoots.has(root));
-      const sameCells = before.projection.cells.map(cell => cell.id).sort().join('|') === after.projection.cells.map(cell => cell.id).sort().join('|');
-      const passed = readable(after) && sameCells && before.projection.state.growth!.beacon!.id === after.projection.state.growth!.beacon!.id && commonHitRoots.length > 0;
-      const attempt = { before, after, screenshot, screenshotStartedAt, screenshotFinishedAt, commonHitRoots, passed };
-      attempts.push(attempt);
-      if (passed) { selected = attempt; copyFileSync(screenshot, info.outputPath(`immune-${quality}-readable.png`)); }
+      await capture(state);
     });
 
     final = await readState(page);
@@ -147,6 +188,6 @@ test('Feedback 0.6.2: real marked-cell cooperation has readable live spacing and
     expect(errors).toEqual([]);
     expect(remote).toEqual([]);
   } finally {
-    writeFileSync(info.outputPath('immune-readability-evidence.json'), JSON.stringify({ seed: 13, route: 'ignore', browserProject: info.project.name, quality, qualityControl, build, bundleSha256, cueSourceSha256, thresholds: { minimumWorldSpacing, minimumScreenSpacing, viewport: { width: 1366, height: 768 }, rationale: 'Momentary capture lower bounds, chosen against the observed near-coincident cells; permits some silhouette overlap and makes no all-frame occlusion guarantee.' }, captureScope: 'A real screenshot is bracketed by two separately acquired state/projection snapshots. The same current-squad marked bite must remain fresh on both sides; neither endpoint is claimed to be the exact screenshot tick. The PNG still requires manual readability review.', drafts, attempts, selectedScreenshot: selected?.screenshot ?? null, final: final ?? null, retry: retry ?? null, errors, remote }, null, 2));
+    writeFileSync(info.outputPath('immune-readability-evidence.json'), JSON.stringify({ seed: 13, route: 'ignore', browserProject: info.project.name, quality, qualityControl, build, bundleSha256, cueSourceSha256, thresholds: { minimumWorldSpacing, minimumScreenSpacing, viewport: { width: 1366, height: 768 }, rationale: 'Momentary capture lower bounds, chosen against the observed near-coincident cells; permits some silhouette overlap and makes no all-frame occlusion guarantee.' }, captureScope: 'A real screenshot is bracketed by two separately acquired state/projection snapshots. The same current-squad marked bite must remain fresh on both sides; neither endpoint is claimed to be the exact screenshot tick. The PNG still requires manual readability review.', drafts, demonstrations, attempts, selectedScreenshot: selected?.screenshot ?? null, final: final ?? null, retry: retry ?? null, errors, remote }, null, 2));
   }
 });
