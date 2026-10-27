@@ -293,6 +293,17 @@ export class GameSession {
           const localWall = wallHit(aim, toTarget, targetDistance, activeWorld(state));
           if (localWall !== null && localWall < targetDistance - target.radius) continue;
           this.damage(target, BALANCE.damage[2]);
+          if (state.campaign && target.hp > 0 && target.role !== 'source' && target.role !== 'core') {
+            const direction = normalized(target.x - aim.x, target.y - aim.y);
+            const fallback = normalized(target.x - state.player.x, target.y - state.player.y);
+            const moved = moveWithCollision(target, { x: (direction.x || direction.y ? direction.x : fallback.x) * 85, y: (direction.x || direction.y ? direction.y : fallback.y) * 85 }, target.radius, activeWorld(state));
+            const pushed = distance(target, moved); target.x = moved.x; target.y = moved.y;
+            if (pushed > 1) {
+              target.attackAt = undefined; target.attackAim = undefined; target.attackTarget = undefined;
+              target.attackReady = Math.max(target.attackReady ?? 0, state.elapsed + .45);
+              this.emit('AREA_DISPLACED', { targetId: target.id, distance: pushed });
+            }
+          }
           count++;
         }
       }
@@ -369,6 +380,11 @@ export class GameSession {
   chooseDraft(intent: DraftIntent): DraftResolution {
     if (!this.growthController) return { kind: 'rejected', reason: 'no-growth' };
     const result = this.growthController.chooseDraft(intent);
+    if (result.kind === 'committed') {
+      const evolved = this.state.growth?.lastEvolution;
+      if (evolved?.protocolId === 'IMMUNE_BEACON' || evolved?.protocolId === 'EXPOSE_TRACE') this.state.scanReady = Math.min(this.state.scanReady, this.state.elapsed);
+      this.effect('evolution', this.state.player, this.state.player, 55, 1);
+    }
     this.resolveDraftPause(result, intent.draftId); return result;
   }
   discardDraft(draftId: string): DraftResolution {

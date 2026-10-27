@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 import { GameSession } from '../../src/game/session';
 import { BALANCE, activeWorld, type InputFrame, type Target, type Vec } from '../../src/game/types';
 import { getOrganDefinition } from '../../src/game/organConfig';
-import { WORLD } from '../../src/game/types';
 
 const idle = (aim: Vec = { x: 780, y: 610 }): InputFrame => ({ moveX: 0, moveY: 0, aim, fire: false });
 const campaign = (): GameSession => { const game = new GameSession(91, { campaign: true, milestone: 'G3' }); game.start(); return game; };
@@ -46,7 +45,7 @@ describe('G3 independent session boundaries', () => {
     Object.assign(s.player, getOrganDefinition('heart').exit);
     game.step({ ...idle(), interact: true });
     expect(s.battle!.organId).toBe('lung');
-    expect(activeWorld(s).obstacles.map(obstacle => obstacle.id)).toEqual(['alveolus-a', 'alveolus-b']);
+    expect(activeWorld(s)).toEqual(getOrganDefinition('lung').geometry);
     expect(s.player.hp).toBe(73);
     expect(s.cooldowns).toEqual({ 1: 25, 2: 26, 3: 27 });
     expect(s.scanReady).toBe(29); expect(s.player.dashReady).toBe(28);
@@ -56,7 +55,7 @@ describe('G3 independent session boundaries', () => {
     advance(game, 3.1);
     game.step({ ...idle(), interact: true });
     expect(s.battle!.organId).toBe('heart'); expect(c.stats.travels).toBe(2);
-    expect(activeWorld(s)).toEqual(WORLD);
+    expect(activeWorld(s)).toEqual(getOrganDefinition('heart').geometry);
     expect(s.tissue.hp).toBe(44); expect(c.arenas.lung.tissue.hp).toBe(69);
     expect(s.targets.find(target => target.id === cleared.id)!.hp).toBe(0);
     expect(s.targets.find(target => target.id === damaged.id)!.hp).toBe(111);
@@ -90,6 +89,18 @@ describe('G3 independent session boundaries', () => {
     }
     const unearned = campaign(); retestFixture(unearned); unearned.state.campaign!.core.status = 'active';
     unearned.step({ ...idle(), interact: true }); expect(unearned.state.result).toBeNull();
+  });
+
+  it('withdraws organ-bound immune cells in the same accepted trip without resetting the summon cooldown', () => {
+    const game=campaign(),s=game.state;unlockedTravel(game);
+    s.battle!.nextEvolutionAt=Infinity;
+    game.step({...idle(s.player),scan:true});
+    expect(s.growth!.cells!.length).toBeGreaterThan(0);expect(s.growth!.beacon?.organId).toBe('heart');
+    const readyAt=s.growth!.beaconReadyAt;
+    Object.assign(s.player,getOrganDefinition('heart').exit);
+    game.step({...idle(),interact:true});
+    expect(s.battle!.organId).toBe('lung');expect(s.growth!.cells).toEqual([]);expect(s.growth!.beacon).toBeNull();
+    expect(s.growth!.beaconReadyAt).toBe(readyAt);
   });
 
   it('rechecks organ integrity after a same-tick enemy strike instead of accepting an early retest', () => {

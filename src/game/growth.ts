@@ -2,8 +2,9 @@ import { distance, normalized, wallHit, moveWithCollision } from '../actors/coll
 import { SeedRng } from '../core/rng';
 import type { OrganId } from './battleTypes';
 import { activeWorld, type GameEvent, type GameState, type Target, type Vec, type WorldGeometry } from './types';
-import { BEACON_CONFIG, CHAIN_CONFIG, GROWTH_BALANCE as B, makeDraftOption, PROTOCOL_IDS, PROTOCOLS, PULSE_CONFIG, TRACE_CONFIG, TUNINGS } from './protocols';
-import type { DamageOrigin, DraftIntent, DraftOption, DraftResolution, EquippedProtocol, GrowthCommand, GrowthContext, GrowthState, ProtocolDraft, ProtocolId, ResearchResult } from './growthTypes';
+import { GROWTH_BALANCE as B, makeDraftOption, PROTOCOL_IDS, PROTOCOLS, TUNINGS, getBeaconConfig, getChainConfig, getPulseConfig, getTraceConfig, PATROL_CONFIG, protocolRank, PROTOCOL_ACTIONS, chainRicochetPeriod } from './protocols';
+import type { DamageOrigin, DraftIntent, DraftOption, DraftResolution, EquippedProtocol, GrowthCommand, GrowthContext, GrowthState, ProtocolDraft, ProtocolId, ProtocolRank, ResearchResult } from './growthTypes';
+import { advanceImmuneCells, summonImmuneCells } from './immuneCells';
 
 export type { GrowthCommand, GrowthContext, GrowthState, DamageOrigin, DraftIntent, DraftResolution } from './growthTypes';
 
@@ -30,7 +31,7 @@ export class GrowthController {
       equipped: [], draft: null, pendingLevels: [], consumedDraftIds: [], rewardedKeys: [], sourceKillCounts: {},
       damageTakenByOrgan: { heart: 0, lung: 0 }, protectionNeeded: { heart: false, lung: false },
       draftSerial: 0, historyHash: 2166136261, ended: false,
-      beacon: null, beaconReadyAt: 0, marks: [], resonance: [], chainRoots: [], protocolHistory: [], pendingLogs: [],
+      beacon: null, beaconReadyAt: 0, cells: [], activations: {}, marks: [], resonance: [], chainRoots: [], protocolHistory: [], pendingLogs: [],
       budgetTick: -1, budgetUsed: 0, skippedCommands: 0 };
   }
 
@@ -43,6 +44,10 @@ export class GrowthController {
   }
   private log(type: string, data: GameEvent['data']): void { this.state.pendingLogs.push({ type, data }); }
   private equipped(id: ProtocolId): EquippedProtocol | undefined { return this.state.equipped.find(slot=>slot.id===id); }
+  private activated(id: ProtocolId): void {
+    this.state.activations ??= {};
+    this.state.activations[id] = (this.state.activations[id] ?? 0) + 1;
+  }
   private award(key: string, xp: number, research: number, elapsed: number): void {
     const s=this.state; if(s.rewardedKeys.includes(key))return;
     s.rewardedKeys.push(key);s.xp+=xp;s.research+=research;
@@ -58,7 +63,7 @@ export class GrowthController {
   recordEvent(event: GameEvent, context?: GrowthContext): void {
     const s=this.state, data=event.data, elapsed=context?.elapsed??event.tick/60;
     this.observeTime(elapsed);
-    if(event.type==='RUN_ENDED') { s.ended=true;s.draft=null;s.pendingLevels=[];s.beacon=null;s.marks=[];s.resonance=[];return; }
+    if(event.type==='RUN_ENDED') { s.ended=true;s.draft=null;s.pendingLevels=[];s.beacon=null;s.cells=[];s.marks=[];s.resonance=[];return; }
     if(s.ended)return;
     const organ:OrganId=data.organId==='lung'?'lung':data.organId==='heart'?'heart':context?.organId??'heart';
     if(event.type==='INFECTION_SOURCE_CLEARED') {
@@ -97,15 +102,28 @@ export class GrowthController {
   }
   private createDraft(source: ProtocolDraft['source'], level?: number): ProtocolDraft {
     const s=this.state, serial=++s.draftSerial;
-    const equipment=s.equipped.map(slot=>`${slot.id}:${slot.tuning}`).sort().join('|');
+    const equipment=s.equipped.map(slot=>`${slot.id}:${slot.tuning}:${protocolRank(slot)}`).sort().join('|');
     const rng=new SeedRng((s.seed^Math.imul(serial,0x9e3779b1)^hashString(equipment,s.historyHash))>>>0);
     const newOptions:DraftOption[]=[],retunes:DraftOption[]=[];
     for(const id of PROTOCOL_IDS) {
       const current=this.equipped(id);
       if(!current)newOptions.push(makeDraftOption(id,'balanced','equip'));
-      else {const options=TUNINGS.filter(tuning=>tuning!==current.tuning);retunes.push(makeDraftOption(id,options[rng.int(0,options.length-1)],'retune'));}
+      else if (protocolRank(current) < B.maxRank) retunes.push(makeDraftOption(id,current.tuning,'retune',(protocolRank(current)+1) as ProtocolRank,current));
+      else {const options=TUNINGS.filter(tuning=>tuning!==current.tuning);retunes.push(makeDraftOption(id,options[rng.int(0,options.length-1)],'retune',protocolRank(current),current));}
     }
-    const ordered=[...this.shuffled(newOptions,rng),...this.shuffled(retunes,rng)].slice(0,3);
+    const shuffledNew=this.shuffled(newOptions,rng);
+    // The opening presents different attack loops, including an immediately usable summon.
+    const opening=s.equipped.length===0&&serial===1;
+    const firstChoices=opening?[shuffledNew.find(o=>o.protocolId==='IMMUNE_BEACON')!,shuffledNew.find(o=>o.protocolId==='PURIFY_CHAIN')!,shuffledNew.find(o=>o.protocolId!=='IMMUNE_BEACON'&&o.protocolId!=='PURIFY_CHAIN')!]:shuffledNew;
+    let ordered:DraftOption[];
+    const upgrades=retunes.filter(option=>(option.rank??1)>protocolRank(this.equipped(option.protocolId)));
+    if(!opening&&upgrades.length){
+      // After the first acquisition, every draft teaches that an existing route
+      // can evolve. Keep a new route alongside it whenever one remains available.
+      const guaranteed=[this.shuffled(upgrades,rng)[0],...(shuffledNew.length?[shuffledNew[0]]:[])];
+      const selected=new Set(guaranteed.map(option=>option.protocolId));
+      ordered=[...guaranteed,...this.shuffled([...newOptions,...retunes].filter(option=>!selected.has(option.protocolId)),rng)].slice(0,3);
+    }else ordered=[...firstChoices,...this.shuffled(retunes,rng)].slice(0,3);
     if(ordered.length!==3)throw new Error('Protocol candidate pool must provide three legal distinct choices');
     const options=this.shuffled(ordered,rng) as ProtocolDraft['options'];
     const draft:ProtocolDraft={id:`${s.runId}:draft:${serial}`,source,serial,level,options,status:'choosing'};
@@ -132,15 +150,16 @@ export class GrowthController {
   }
   private finishDraft(kind:'committed'|'discarded',draft:ProtocolDraft): DraftResolution {
     const s=this.state;s.consumedDraftIds.push(draft.id);s.draft=null;
-    s.historyHash=hashString(`${kind}:${draft.serial}:${s.equipped.map(e=>`${e.id}:${e.tuning}`).join('|')}`,s.historyHash);
+    s.historyHash=hashString(`${kind}:${draft.serial}:${s.equipped.map(e=>`${e.id}:${e.tuning}:${protocolRank(e)}`).join('|')}`,s.historyHash);
     this.log(kind==='committed'?'PROTOCOL_DRAFT_COMMITTED':'PROTOCOL_DRAFT_DISCARDED',{draftId:draft.id,source:draft.source});
     this.openNextLevel();const nextDraft=s.draft as ProtocolDraft|null;return{kind,draftId:draft.id,nextDraftId:nextDraft?.id};
   }
   private cleanupChanged(previous:EquippedProtocol[],next:EquippedProtocol[]): void {
-    const changed=(id:ProtocolId)=>previous.find(p=>p.id===id)?.tuning!==next.find(p=>p.id===id)?.tuning;
-    if(changed('IMMUNE_BEACON'))this.state.beacon=null;
+    const changed=(id:ProtocolId)=>{const a=previous.find(p=>p.id===id),b=next.find(p=>p.id===id);return a?.tuning!==b?.tuning||!!a!==!!b||protocolRank(a)!==protocolRank(b);};
+    if(changed('IMMUNE_BEACON')&&this.state.beacon?.mode!=='patrol'){this.state.beacon=null;this.state.cells=[];}
     if(changed('EXPOSE_TRACE'))this.state.marks=[];
     if(changed('PULSE_BREAK'))this.state.resonance=[];
+    if(changed('PURIFY_CHAIN'))this.state.chainCharge=0;
   }
   chooseDraft(intent:DraftIntent):DraftResolution {
     const draft=this.currentDraft(intent.draftId,intent.runId);
@@ -151,8 +170,9 @@ export class GrowthController {
     if(option.kind==='retune') {
       if(draft.status!=='choosing')return{kind:'rejected',reason:'replacement-pending'};
       const index=s.equipped.findIndex(slot=>slot.id===option.protocolId);
-      if(index<0||s.equipped[index].tuning===option.tuning)return{kind:'rejected',reason:'option-no-longer-legal'};
-      s.equipped[index]={id:option.protocolId,tuning:option.tuning};
+      const current=s.equipped[index],rank=option.rank??1;
+      if(index<0||rank<protocolRank(current)||rank>Math.min(B.maxRank,protocolRank(current)+1)||current.tuning===option.tuning&&protocolRank(current)===rank)return{kind:'rejected',reason:'option-no-longer-legal'};
+      s.equipped[index]={id:option.protocolId,tuning:option.tuning,...(rank>1?{rank}:{})};
     } else if(s.equipped.some(slot=>slot.id===option.protocolId))return{kind:'rejected',reason:'duplicate-protocol'};
     else if(s.equipped.length<B.slots) {
       if(draft.status!=='choosing')return{kind:'rejected',reason:'replacement-pending'};
@@ -168,7 +188,10 @@ export class GrowthController {
       s.equipped[index]={id:option.protocolId,tuning:option.tuning};
     }
     this.cleanupChanged(previous,s.equipped);
-    this.log('PROTOCOL_EQUIPPED',{draftId:draft.id,protocolId:option.protocolId,tuning:option.tuning,kind:option.kind,slots:s.equipped.length});
+    s.lastEvolution={protocolId:option.protocolId,rank:option.rank??1,until:s.lastElapsed+8,title:option.title,hint:option.actionHint??PROTOCOL_ACTIONS[option.protocolId]};
+    // Newly evolved Q protocols can be demonstrated on the next accepted scan.
+    if(option.protocolId==='IMMUNE_BEACON'||option.protocolId==='EXPOSE_TRACE')s.beaconReadyAt=Math.min(s.beaconReadyAt,s.lastElapsed);
+    this.log('PROTOCOL_EQUIPPED',{draftId:draft.id,protocolId:option.protocolId,tuning:option.tuning,rank:option.rank??1,kind:option.kind,slots:s.equipped.length,actionHint:option.actionHint??PROTOCOL_ACTIONS[option.protocolId]});
     this.remember('PROTOCOL_EQUIPPED',`${PROTOCOLS[option.protocolId].name}：${option.title}。`);
     return this.finishDraft('committed',draft);
   }
@@ -193,11 +216,11 @@ export class GrowthController {
   onScan(context:GrowthContext):GrowthCommand[] {
     this.observeTime(context.elapsed);
     if(this.state.ended||!context.active)return[];
-    const previous={marks:this.state.marks.map(mark=>({...mark})),beacon:this.state.beacon,readyAt:this.state.beaconReadyAt,history:this.state.protocolHistory.slice()};
+    const previous={marks:this.state.marks.map(mark=>({...mark})),beacon:this.state.beacon,cells:this.state.cells,readyAt:this.state.beaconReadyAt,history:this.state.protocolHistory.slice()};
     const commands:GrowthCommand[]=[],trace=this.equipped('EXPOSE_TRACE'),beacon=this.equipped('IMMUNE_BEACON');
     const rootId=`${this.state.runId}:scan:${context.tick}`;
     if(trace) {
-      const config=TRACE_CONFIG[trace.tuning];let count=0;
+      const config=getTraceConfig(trace.tuning,protocolRank(trace));let count=0;
       for(const target of context.targets)if(target.hp>0&&distance(context.player,target)<=B.scanRadius) {
         const mark={targetId:target.id,organId:context.organId,until:context.elapsed+config.duration,slowUntil:context.elapsed+config.slowDuration,factor:config.factor};
         this.state.marks=this.state.marks.filter(old=>old.targetId!==target.id||old.organId!==context.organId);this.state.marks.push(mark);count++;
@@ -205,39 +228,61 @@ export class GrowthController {
       commands.push({kind:'log',type:'PROTOCOL_TRACE_APPLIED',data:{protocolId:'EXPOSE_TRACE',rootId,count,duration:config.duration,slow:config.factor}});
       this.remember('PROTOCOL_TRACE_APPLIED',`显影追踪 ${count} 体，持续 ${config.duration} 秒。`,context.elapsed);
     }
-    if(beacon&&context.elapsed+1e-9>=this.state.beaconReadyAt) {
-      const config=BEACON_CONFIG[beacon.tuning];
+    if(!beacon||context.elapsed+1e-9>=this.state.beaconReadyAt) {
+      const config=beacon?getBeaconConfig(beacon.tuning,protocolRank(beacon)):{...PATROL_CONFIG,tissueCost:0};
       const direction=normalized(context.aim.x-context.player.x,context.aim.y-context.player.y),length=Math.min(B.beaconPlacementRange,distance(context.player,context.aim));
       const wall=wallHit(context.player,direction,length,context.geometry);
       const travel=Math.max(0,Math.min(length,wall===null?length:wall-18));
       const position=moveWithCollision(context.player,{x:direction.x*travel,y:direction.y*travel},12,context.geometry);
       this.state.beacon={...point(position),id:`${rootId}:beacon`,organId:context.organId,born:context.elapsed,until:context.elapsed+config.duration,
-        radius:config.radius,damage:config.damage,interval:config.interval,nextAttackAt:context.elapsed+.1,tuning:beacon.tuning};
+        radius:config.radius,damage:config.damage,interval:config.interval,nextAttackAt:context.elapsed+.1,tuning:beacon?.tuning??'balanced',mode:beacon?'protocol':'patrol'};
+      this.state.cells=summonImmuneCells(this.state.beacon,context,beacon?3:1);
       this.state.beaconReadyAt=context.elapsed+config.cooldown;
       const base={protocolId:'IMMUNE_BEACON' as const,rootId,organId:context.organId};
-      commands.push({...base,kind:'organCost',amount:config.tissueCost},{...base,kind:'effect',effect:'scan',from:point(position),to:point(position),radius:config.radius,duration:.6},
-        {kind:'log',type:'PROTOCOL_BEACON_CREATED',data:{protocolId:'IMMUNE_BEACON',rootId,x:position.x,y:position.y,duration:config.duration,cost:config.tissueCost,cooldown:config.cooldown}});
-      this.remember('PROTOCOL_BEACON_CREATED',`免疫灯塔召集，组织承压 −${config.tissueCost}。`,context.elapsed);
+      if(beacon)commands.push({...base,kind:'organCost',amount:config.tissueCost});
+      commands.push({...base,kind:'effect',effect:'scan',from:point(position),to:point(position),radius:config.radius,duration:.6},
+        {kind:'log',type:beacon?'PROTOCOL_BEACON_CREATED':'IMMUNE_PATROL_CREATED',data:{...(beacon?{protocolId:'IMMUNE_BEACON'}:{}),rootId,x:position.x,y:position.y,duration:config.duration,cost:config.tissueCost,cooldown:config.cooldown,cells:beacon?3:1}});
+      this.remember(beacon?'PROTOCOL_BEACON_CREATED':'IMMUNE_PATROL_CREATED',beacon?`三只免疫细胞出击，组织承压 −${config.tissueCost}。`:'Q 召来一只免疫侦巡细胞，短时协助清理。',context.elapsed);
     }
     const accepted=this.budget(context,commands);
-    if(commands.length&&!accepted.length){this.state.marks=previous.marks;this.state.beacon=previous.beacon;this.state.beaconReadyAt=previous.readyAt;this.state.protocolHistory=previous.history;}
+    if(commands.length&&!accepted.length){this.state.marks=previous.marks;this.state.beacon=previous.beacon;this.state.cells=previous.cells;this.state.beaconReadyAt=previous.readyAt;this.state.protocolHistory=previous.history;}
+    else if(trace&&this.state.marks.some(mark=>mark.organId===context.organId))this.activated('EXPOSE_TRACE');
     return accepted;
   }
   onHit(context:GrowthContext,target:Target,origin:DamageOrigin={cause:'basic'}):GrowthCommand[] {
     this.observeTime(context.elapsed);
     if(this.state.ended||!context.active||origin.cause!=='basic'||target.hp<=0||context.tool===3)return[];
-    const slot=this.equipped('PULSE_BREAK');if(!slot||context.rhythm!=='surge')return[];
-    const config=PULSE_CONFIG[slot.tuning];if(distance(context.player,context.deviceOrigin)>config.deviceRange)return[];
+    const ricochet=this.ricochetOnHit(context,target,origin);
+    const slot=this.equipped('PULSE_BREAK');if(!slot||context.rhythm!=='surge')return ricochet;
+    const config=getPulseConfig(slot.tuning,protocolRank(slot));if(distance(context.player,context.deviceOrigin)>config.deviceRange)return ricochet;
     const cycle=context.rhythmCycle??Math.floor(context.elapsed/6);
-    if(this.state.resonance.some(hit=>hit.targetId===target.id&&hit.organId===context.organId&&hit.cycle===cycle))return[];
+    if(this.state.resonance.some(hit=>hit.targetId===target.id&&hit.organId===context.organId&&hit.cycle===cycle))return ricochet;
     const rootId=origin.rootId??`${this.state.runId}:hit:${context.tick}:${target.id}`,base={protocolId:'PULSE_BREAK' as const,rootId,organId:context.organId};
     const commands:GrowthCommand[]=[{...base,kind:'expose',targetId:target.id,until:context.elapsed+config.exposeSeconds,revealUntil:context.elapsed+config.exposeSeconds},
       {...base,kind:'effect',effect:'evolution',from:point(target),to:point(target),radius:target.radius+12,duration:.35},
       {...base,kind:'damage',targetId:target.id,amount:config.bonusDamage,cause:'protocol',hop:0,allowChain:true},
       {kind:'log',type:'PROTOCOL_RESONANCE_HIT',data:{protocolId:'PULSE_BREAK',rootId,targetId:target.id,bonus:config.bonusDamage,exposeSeconds:config.exposeSeconds,cycle}}];
-    const accepted=this.budget(context,commands);if(!accepted.length)return[];
+    const accepted=this.budget(context,commands);if(!accepted.length)return ricochet;
     this.state.resonance.push({targetId:target.id,organId:context.organId,cycle});
+    this.activated('PULSE_BREAK');
     this.remember('PROTOCOL_RESONANCE_HIT',`节律共振：追加 ${config.bonusDamage}，破绽 ${config.exposeSeconds} 秒。`,context.elapsed);
+    return [...ricochet,...accepted];
+  }
+  private ricochetOnHit(context:GrowthContext,target:Target,origin:DamageOrigin):GrowthCommand[] {
+    const slot=this.equipped('PURIFY_CHAIN');if(!slot)return[];
+    const rank=protocolRank(slot),period=chainRicochetPeriod(rank);if(!period)return[];
+    this.state.chainCharge=Math.min(period,(this.state.chainCharge??0)+1);
+    if(this.state.chainCharge<period)return[];
+    const config=getChainConfig(slot.tuning,rank);
+    const next=stableNearest(target,context.targets.filter(candidate=>candidate.hp>0&&candidate.id!==target.id&&distance(target,candidate)<=config.range&&unobstructed(target,candidate,context.geometry)))[0];
+    if(!next)return[];
+    const rootId=origin.rootId??`${this.state.runId}:ricochet:${context.tick}:${target.id}`,base={protocolId:'PURIFY_CHAIN' as const,rootId,organId:context.organId};
+    const commands:GrowthCommand[]=[{...base,kind:'effect',effect:'chain',from:point(target),to:point(next),radius:12,duration:.35},
+      {...base,kind:'damage',targetId:next.id,amount:config.damage,cause:'protocol',hop:1},
+      {kind:'log',type:'PROTOCOL_RICOCHET_HIT',data:{protocolId:'PURIFY_CHAIN',rootId,targetId:next.id,damage:config.damage,period,rank}}];
+    const accepted=this.budget(context,commands);if(!accepted.length)return[];
+    this.state.chainCharge=0;this.activated('PURIFY_CHAIN');
+    this.remember('PROTOCOL_RICOCHET_HIT',`连锁进阶：${period}次命中蓄能，折射 ${config.damage}。`,context.elapsed);
     return accepted;
   }
   onKill(context:GrowthContext,target:Target,origin:DamageOrigin={cause:'basic'}):GrowthCommand[] {
@@ -247,7 +292,7 @@ export class GrowthController {
     const rootId=origin.rootId??`${this.state.runId}:hit:${context.tick}:${target.id}`;
     if(this.state.chainRoots.includes(rootId))return[];
     const synergy=!!this.equipped('PULSE_BREAK')&&!!origin.wasPulseExposed;
-    const config=CHAIN_CONFIG[slot.tuning],hops=Math.min(B.chainCap,config.jumps+(synergy?1:0));
+    const config=getChainConfig(slot.tuning,protocolRank(slot)),hops=Math.min(B.chainCap,config.jumps+(synergy?1:0));
     const visited=new Set([target.id]),commands:GrowthCommand[]=[];
     let from:Vec=target,actual=0;
     for(let hop=1;hop<=hops;hop++) {
@@ -264,6 +309,7 @@ export class GrowthController {
     if(synergy)commands.push({kind:'log',type:'PROTOCOL_SYNERGY',data:{pair:'PULSE_BREAK+PURIFY_CHAIN',rootId,hops:actual,cap:B.chainCap}});
     const accepted=this.budget(context,commands);if(!accepted.length)return[];
     this.state.chainRoots.push(rootId);if(this.state.chainRoots.length>256)this.state.chainRoots.shift();
+    this.activated('PURIFY_CHAIN');
     this.remember('PROTOCOL_CHAIN_HIT',`${synergy?'共振联动 · ':''}连锁净化 ${actual} 跳。`,context.elapsed);
     return accepted;
   }
@@ -277,24 +323,16 @@ export class GrowthController {
     s.marks=s.marks.filter(mark=>mark.until>context.elapsed&&(mark.organId!==context.organId||liveIds.has(mark.targetId)));
     s.resonance=s.resonance.filter(hit=>hit.organId===context.organId&&hit.cycle===(context.rhythmCycle??Math.floor(context.elapsed/6))&&liveIds.has(hit.targetId));
     if(!this.equipped('EXPOSE_TRACE'))s.marks=[];
-    if(!this.equipped('IMMUNE_BEACON'))s.beacon=null;
+    if(!this.equipped('IMMUNE_BEACON')&&s.beacon?.mode!=='patrol')s.beacon=null;
     if(s.beacon&&(s.beacon.until<=context.elapsed||s.beacon.organId!==context.organId))s.beacon=null;
-    const beacon=s.beacon;
-    if(beacon&&context.elapsed+1e-9>=beacon.nextAttackAt) {
-      // At most one attack per fixed update. No catch-up burst after pause or organ travel.
-      beacon.nextAttackAt=context.elapsed+beacon.interval;
-      const eligible=context.targets.filter(target=>target.hp>0&&distance(beacon,target)<=beacon.radius&&unobstructed(beacon,target,context.geometry));
-      const traced=this.equipped('EXPOSE_TRACE')?eligible.filter(target=>s.marks.some(mark=>mark.targetId===target.id&&mark.organId===context.organId&&mark.until>context.elapsed)):[];
-      const target=stableNearest(beacon,traced.length?traced:eligible)[0];
-      if(target) {
-        const rootId=`${beacon.id}:attack:${context.tick}`,base={protocolId:'IMMUNE_BEACON' as const,rootId,organId:context.organId};
-        const commands:GrowthCommand[]=[{...base,kind:'effect',effect:'beam',from:point(beacon),to:point(target),radius:0,duration:.2},
-          {...base,kind:'damage',targetId:target.id,amount:beacon.damage,cause:'protocol',hop:0},
-          {kind:'log',type:'PROTOCOL_BEACON_HIT',data:{protocolId:'IMMUNE_BEACON',rootId,targetId:target.id,damage:beacon.damage,prioritizedTrace:traced.length>0}}];
-        if(traced.length)commands.push({kind:'log',type:'PROTOCOL_SYNERGY',data:{pair:'EXPOSE_TRACE+IMMUNE_BEACON',rootId,targetId:target.id}});
-        logs.push(...this.budget(context,commands));
-      }
-    }
+    const traced=this.equipped('EXPOSE_TRACE')?s.marks.filter(mark=>mark.organId===context.organId&&mark.until>context.elapsed).map(mark=>mark.targetId):[];
+    const advanced=advanceImmuneCells(s.cells??[],s.beacon,context,s.beacon?.mode==='patrol'?[]:traced);
+    const cellCommands=this.budget(context,advanced.commands);
+    // Rejected combat commands cannot consume an ally attack or advance its cooldown.
+    if(!advanced.commands.length||cellCommands.length)s.cells=advanced.cells;
+    if(!s.beacon)s.cells=[];
+    for(const command of cellCommands)if(command.kind==='log'&&command.type==='PROTOCOL_BEACON_HIT')this.activated('IMMUNE_BEACON');
+    logs.push(...cellCommands);
     if(s.skippedCommands){logs.push({kind:'log',type:'PROTOCOL_BUDGET_SKIPPED',data:{tick:context.tick,skipped:s.skippedCommands,budget:B.commandBudget}});s.skippedCommands=0;}
     this.openNextLevel();
     // Draft-open logs are emitted in the same frame, before the host pauses for the draft.

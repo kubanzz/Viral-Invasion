@@ -16,7 +16,7 @@ const actor=(id:string,x:number,y:number):Target=>({id,x,y,kind:'single',role:'v
 
 describe('G3 lung physics',()=>{
   it('maps actual breath timing to common rhythm and uses one vector function for physics and the visible sampled arrows',()=>{
-    const{game,director,flow}=fixture();game.targets=[actor('ordinary',600,400)];
+    const{game,director,flow}=fixture();game.targets=[actor('ordinary',flow.origin.x-250,flow.origin.y-180)];
     game.tick=120;game.elapsed=2;const inhale=director.beforeInput(game).find(command=>command.kind==='moveActor')!;
     expect(flow.phase).toBe('inhale');expect(game.battle!.pulse.phase).toBe('charge');
     expect(inhale).toMatchObject({delta:{x:expect.any(Number),y:expect.any(Number)}});
@@ -28,7 +28,7 @@ describe('G3 lung physics',()=>{
   });
 
   it('closing the airway removes actual flow, changes a real route once and charges only the lung',()=>{
-    const{game,flow,director}=fixture();game.elapsed=2;game.tick=120;game.targets=[actor('ordinary',600,400)];
+    const{game,flow,director}=fixture();game.elapsed=2;game.tick=120;game.targets=[actor('ordinary',flow.origin.x-250,flow.origin.y-180)];
     const heart=director.state.arenas.heart.tissue.hp;
     const commands=toggleAirway(flow,game);expect(commands).toContainEqual(expect.objectContaining({kind:'organDamage',organId:'lung',amount:B.closeAirwayCost}));
     expect(commands).toContainEqual(expect.objectContaining({kind:'setRoute',nodeId:'airway',open:false}));
@@ -38,7 +38,8 @@ describe('G3 lung physics',()=>{
   });
 
   it('mass differences are real and 180 seconds of changing flow respects lung footprints and boundaries',()=>{
-    const{game,flow,director}=fixture();game.targets=[actor('light',600,400),actor('shell',600,400),actor('child',600,400),{...actor('source',610,330),role:'source'},{...actor('core',780,390),role:'core'}];
+    const{game,flow,director}=fixture(),x=flow.origin.x-250,y=flow.origin.y-180;
+    game.targets=[actor('light',x,y),actor('shell',x,y),actor('child',x,y),{...actor('source',x+60,y-70),role:'source'},{...actor('core',x+360,y+80),role:'core'}];
     game.targets[1].traits=['CARAPACE'];game.targets[2].generation=1;
     const first=advanceLungFlow(flow,game).filter(command=>command.kind==='moveActor');expect(first).toHaveLength(3);
     const length=(id:string)=>{const command=first.find(command=>command.kind==='moveActor'&&command.targetId===id)!;return command.kind==='moveActor'?Math.hypot(command.delta.x,command.delta.y):0;};
@@ -54,7 +55,7 @@ describe('G3 lung physics',()=>{
       expect(target.x).toBeGreaterThanOrEqual(geometry.bounds.left+target.radius);expect(target.x).toBeLessThanOrEqual(geometry.bounds.right-target.radius);
       for(const obstacle of geometry.obstacles)expect(distance(target,obstacle)).toBeGreaterThanOrEqual(target.radius+obstacle.radius-1e-7);
     }
-    expect(game.elapsed).toBe(180);expect(game.targets.find(target=>target.id==='source')!.x).toBe(610);
+    expect(game.elapsed).toBe(180);expect(game.targets.find(target=>target.id==='source')!.x).toBe(x+60);
     const paused=structuredClone(flow);game.phase='paused';expect(director.beforeInput(game)).toEqual([]);expect(flow).toEqual(paused);
   });
 });

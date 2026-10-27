@@ -3,10 +3,12 @@ import type { Effect, GameEvent, GameState, Target, Tool, Vec, WorldGeometry } f
 
 export type ProtocolId = 'PULSE_BREAK' | 'PURIFY_CHAIN' | 'IMMUNE_BEACON' | 'EXPOSE_TRACE';
 export type Tuning = 'balanced' | 'focused' | 'extended';
-export interface EquippedProtocol { id: ProtocolId; tuning: Tuning }
+export type ProtocolRank = 1 | 2 | 3;
+export interface EquippedProtocol { id: ProtocolId; tuning: Tuning; rank?: ProtocolRank }
 export interface DraftOption {
   id: string; kind: 'equip' | 'retune'; protocolId: ProtocolId; tuning: Tuning;
   title: string; trigger: string; effect: string; cost: string; tags: string[];
+  rank?: ProtocolRank; change?: string; actionHint?: string;
 }
 export interface ProtocolDraft {
   id: string; source: 'xp' | 'research'; serial: number; level?: number;
@@ -19,6 +21,7 @@ export interface TraceMark {
 export interface BeaconState extends Vec {
   id: string; organId: OrganId; born: number; until: number; radius: number;
   damage: number; interval: number; nextAttackAt: number; tuning: Tuning;
+  mode?: 'patrol' | 'protocol';
 }
 export interface GrowthHistoryEntry { at: number; type: string; text: string }
 export interface GrowthState {
@@ -28,8 +31,12 @@ export interface GrowthState {
   damageTakenByOrgan: Record<OrganId, number>; protectionNeeded: Record<OrganId, boolean>;
   draftSerial: number; historyHash: number; ended: boolean;
   beacon: BeaconState | null; beaconReadyAt: number; marks: TraceMark[];
+  cells?: import('./immuneCells').ImmuneCellState[];
+  activations?: Partial<Record<ProtocolId, number>>;
+  lastEvolution?: { protocolId: ProtocolId; rank: ProtocolRank; until: number; title: string; hint: string };
   resonance: Array<{ targetId: string; organId: OrganId; cycle: number }>;
   chainRoots: string[];
+  chainCharge?: number;
   protocolHistory: GrowthHistoryEntry[];
   pendingLogs: Array<{ type: string; data: GameEvent['data'] }>;
   budgetTick: number; budgetUsed: number; skippedCommands: number;

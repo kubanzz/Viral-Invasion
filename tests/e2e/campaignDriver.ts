@@ -1,12 +1,17 @@
 import type { Page } from '@playwright/test';
-import type { GameState, Vec } from '../../src/game/types';
-import { WORLD } from '../../src/game/types';
+import type { GameState, Vec, WorldGeometry } from '../../src/game/types';
+import { activeWorld, WORLD } from '../../src/game/types';
 import { normalized, wallHit } from '../../src/actors/collision';
 import type { ProtocolId } from '../../src/game/growthTypes';
 
 export const readState = (page: Page): Promise<GameState> => page.evaluate(() => window.__viral.snapshot());
 export async function aim(page: Page, target: Vec): Promise<void> {
-  const p = await page.evaluate(point => window.__viral.toScreen(point), target);
+  const p = await page.evaluate(point => {
+    const target = window.__viral.toScreen(point), player = window.__viral.toScreen(window.__viral.snapshot().player);
+    const dx=target.x-player.x,dy=target.y-player.y;
+    const ratio=Math.min(1,dx>0?(innerWidth-24-player.x)/dx:dx<0?(24-player.x)/dx:1,dy>0?(innerHeight-108-player.y)/dy:dy<0?(85-player.y)/dy:1);
+    return {x:player.x+dx*Math.max(0,ratio),y:player.y+dy*Math.max(0,ratio)};
+  }, target);
   await page.mouse.move(p.x, p.y);
 }
 export async function keyMove(page: Page, from: Vec, to: Vec, duration = 100): Promise<void> {
@@ -19,14 +24,14 @@ export async function keyMove(page: Page, from: Vec, to: Vec, duration = 100): P
 
 // Navigation is test-side planning around the game's visible collision footprints.
 // It issues only real key holds; no simulation or player state is written.
-function route(from: Vec, target: Vec): Vec {
-  const clear = (a: Vec, b: Vec) => WORLD.obstacles.every(o => {
+function route(from: Vec, target: Vec, geometry: WorldGeometry = WORLD): Vec {
+  const clear = (a: Vec, b: Vec) => geometry.obstacles.every(o => {
     const dx=b.x-a.x,dy=b.y-a.y, length=dx*dx+dy*dy;
     const t=Math.max(0,Math.min(1,((o.x-a.x)*dx+(o.y-a.y)*dy)/(length||1)));
     return Math.hypot(a.x+dx*t-o.x,a.y+dy*t-o.y)>o.radius+28;
   });
   if(clear(from,target)) return target;
-  const nodes: Vec[]=[from,target,...WORLD.obstacles.flatMap(o=>Array.from({length:12},(_,i)=>({x:o.x+Math.cos(i*Math.PI/6)*(o.radius+65),y:o.y+Math.sin(i*Math.PI/6)*(o.radius+65)})))];
+  const nodes: Vec[]=[from,target,...geometry.obstacles.flatMap(o=>Array.from({length:12},(_,i)=>({x:o.x+Math.cos(i*Math.PI/6)*(o.radius+65),y:o.y+Math.sin(i*Math.PI/6)*(o.radius+65)})))];
   const costs=nodes.map(()=>Infinity), previous=nodes.map(()=>-1), visited=new Set<number>(); costs[0]=0;
   for(let n=0;n<nodes.length;n++) {
     let current=-1; for(let i=0;i<nodes.length;i++) if(!visited.has(i)&&(current<0||costs[i]<costs[current])) current=i;
@@ -39,7 +44,7 @@ function route(from: Vec, target: Vec): Vec {
 }
 export async function walk(page: Page, target: Vec, tolerance=30): Promise<void> {
   const deadline=Date.now()+12000;
-  while(Date.now()<deadline){const s=await readState(page);if(s.phase==='paused'&&s.growth?.draft){await chooseDraftInput(page);continue;}if(s.phase!=='playing')throw new Error(`Walk interrupted: ${s.phase}`);if(Math.hypot(s.player.x-target.x,s.player.y-target.y)<tolerance)return;await keyMove(page,s.player,route(s.player,target));}
+  while(Date.now()<deadline){const s=await readState(page);if(s.phase==='paused'&&s.growth?.draft){await chooseDraftInput(page);continue;}if(s.phase!=='playing')throw new Error(`Walk interrupted: ${s.phase}`);if(Math.hypot(s.player.x-target.x,s.player.y-target.y)<tolerance)return;await keyMove(page,s.player,route(s.player,target,activeWorld(s)));}
   throw new Error(`Unreachable waypoint ${JSON.stringify(target)}`);
 }
 export async function chooseDraftInput(page: Page, priorities: readonly ProtocolId[] = ['PULSE_BREAK','PURIFY_CHAIN','EXPOSE_TRACE','IMMUNE_BEACON']): Promise<void> {

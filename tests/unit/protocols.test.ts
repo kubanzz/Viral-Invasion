@@ -8,6 +8,11 @@ const actor=(id:string,x=700,y=400):Target=>({id,x,y,role:'virus',kind:'single',
 const context=(targets:Target[]=[]):GrowthContext=>({tick:132,elapsed:2.2,active:true,organId:'heart',rhythm:'surge',player:{x:730,y:230},aim:{x:700,y:400},deviceOrigin:{x:730,y:230},tissue:{x:780,y:610,hp:60,maxHp:100,radius:43},targets,tool:1});
 function controller(ids:ProtocolId[]):GrowthController {const c=new GrowthController(55,'protocol-fixture');c.state.equipped=ids.map(id=>({id,tuning:'balanced'}));return c;}
 const damage=(commands:GrowthCommand[])=>commands.filter((command):command is Extract<GrowthCommand,{kind:'damage'}>=>command.kind==='damage');
+function advanceCells(c:GrowthController,ctx:GrowthContext,seconds:number):GrowthCommand[] {
+  const commands:GrowthCommand[]=[];
+  for(let step=1;step<=Math.ceil(seconds*60);step++)commands.push(...c.afterInput({...ctx,tick:ctx.tick+step,elapsed:ctx.elapsed+step/60}));
+  return commands;
+}
 
 describe('G2 protocol effects and bounded synergies',()=>{
   it('resonates on ordinary targets only near the device, during surge, once per target and rhythm',()=>{
@@ -84,9 +89,12 @@ describe('G2 protocol effects and bounded synergies',()=>{
     expect(c.state.beacon).toMatchObject({y:400,radius:190,until:8.2});expect(c.state.beacon!.x).toBeCloseTo(700);
     const ready=c.state.beaconReadyAt;expect(c.onScan({...ctx,tick:133,elapsed:2.22}).filter(command=>command.kind==='organCost')).toHaveLength(0);
     expect(c.state.beaconReadyAt).toBe(ready);
-    const fired=c.afterInput({...ctx,tick:145,elapsed:2.42});
-    expect(damage(fired)).toEqual([expect.objectContaining({targetId:t.id,amount:24,protocolId:'IMMUNE_BEACON'})]);
-    expect(damage(c.afterInput({...ctx,tick:146,elapsed:2.44}))).toHaveLength(0);
+    expect(c.state.cells).toHaveLength(3);
+    const fired=advanceCells(c,ctx,.7);
+    expect(damage(fired)).toHaveLength(3);
+    expect(damage(fired).every(hit=>hit.targetId===t.id&&hit.amount===8&&hit.protocolId==='IMMUNE_BEACON')).toBe(true);
+    expect(damage(fired).reduce((total,hit)=>total+hit.amount,0)).toBe(BEACON_CONFIG.balanced.damage);
+    expect(damage(c.afterInput({...ctx,tick:175,elapsed:2.91}))).toHaveLength(0);
     c.afterInput({...ctx,tick:600,elapsed:10});expect(c.state.beacon).toBeNull();
   });
 
@@ -103,12 +111,12 @@ describe('G2 protocol effects and bounded synergies',()=>{
   it('trace and beacon synergy prioritizes a marked reachable enemy over a nearer unmarked spawn',()=>{
     const far=actor('marked',850,400),near=actor('new-unmarked',730,420),ctx=context([far]);ctx.player={x:600,y:400};ctx.aim={x:700,y:400};
     const c=controller(['EXPOSE_TRACE','IMMUNE_BEACON']);c.onScan(ctx);
-    const shot=c.afterInput({...ctx,tick:145,elapsed:2.42,targets:[near,far]});
+    const shot=advanceCells(c,{...ctx,targets:[near,far]},1.1);
     expect(damage(shot)[0].targetId).toBe('marked');
     expect(shot.find(command=>command.kind==='log'&&command.type==='PROTOCOL_BEACON_HIT')).toMatchObject({data:{prioritizedTrace:true,targetId:'marked'}});
     expect(shot.some(command=>command.kind==='log'&&command.type==='PROTOCOL_SYNERGY')).toBe(true);
     const plain=controller(['IMMUNE_BEACON']);plain.onScan({...ctx,targets:[near,far]});
-    expect(damage(plain.afterInput({...ctx,tick:145,elapsed:2.42,targets:[near,far]}))[0].targetId).toBe('new-unmarked');
+    expect(damage(advanceCells(plain,{...ctx,targets:[near,far]},1.1))[0].targetId).toBe('new-unmarked');
   });
 
   it('removing beacon or trace atomically cancels their future temporary effects',()=>{

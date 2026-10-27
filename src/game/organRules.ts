@@ -1,5 +1,5 @@
 import { normalized } from '../actors/collision';
-import { BALANCE, type GameState, type Vec } from './types';
+import { activeWorld, BALANCE, type GameState, type Vec } from './types';
 import { CAMPAIGN_BALANCE as B } from './organConfig';
 import type { CampaignCommand, LungFlowState } from './campaignTypes';
 
@@ -19,7 +19,8 @@ export function advanceLungFlow(flow:LungFlowState,game:GameState):CampaignComma
   flow.direction=phase==='inhale'?{x:0,y:-1}:{x:0,y:1};
   if(!flow.airwayOpen)return commands;
   for(const target of game.targets){
-    if(target.hp<=0||target.role==='source'||target.role==='core'||target.x<280||target.x>1040||target.y<180||target.y>680)continue;
+    const bounds = activeWorld(game).bounds;
+    if(target.hp<=0||target.role==='source'||target.role==='core'||target.x<bounds.left||target.x>bounds.right||target.y<bounds.top||target.y>bounds.bottom)continue;
     const mass=target.traits?.includes('CARAPACE') ? .35 : (target.generation??0)>0 ? 1.45 : target.role==='elite' ? .6 : 1;
     const direction=lungFlowDirection(flow,target);
     commands.push({kind:'moveActor',organId:'lung',targetId:target.id,delta:{x:direction.x*flow.strength*mass*BALANCE.step,y:direction.y*flow.strength*mass*BALANCE.step}});

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { GrowthController } from '../../src/game/growth';
 import type { GrowthContext, ProtocolId } from '../../src/game/growthTypes';
 import type { GameEvent, Target } from '../../src/game/types';
+import { protocolRank } from '../../src/game/protocols';
 
 const actor=(id:string,x=700,y=400,role:Target['role']='virus'):Target=>({id,x,y,role,kind:'single',hp:68,maxHp:68,radius:22,hitUntil:0,scanned:false,traits:[],generation:0,sourceId:'source-a'});
 const context=(targets:Target[]=[]):GrowthContext=>({tick:60,elapsed:1,active:true,organId:'heart',rhythm:'rest',player:{x:600,y:400},aim:{x:700,y:400},deviceOrigin:{x:730,y:230},tissue:{x:780,y:610,hp:60,maxHp:100,radius:43},targets,tool:1});
@@ -9,7 +10,8 @@ const event=(type:string,data:GameEvent['data']):GameEvent=>({type,tick:60,data}
 const source=(id:string)=>event('INFECTION_SOURCE_CLEARED',{nodeId:id,organId:'heart'});
 function chooseFirst(controller:GrowthController):void {
   const draft=controller.state.draft!;
-  const result=controller.chooseDraft({runId:controller.state.runId,draftId:draft.id,optionId:draft.options[0].id});
+  const option=draft.options.find(option=>option.kind==='equip')??draft.options[0];
+  const result=controller.chooseDraft({runId:controller.state.runId,draftId:draft.id,optionId:option.id});
   expect(result.kind).toBe('committed');
 }
 
@@ -109,12 +111,12 @@ describe('G2 event rewards and protocol drafts',()=>{
     expect(c.openResearch('research',ctx)).toMatchObject({kind:'rejected',reason:'insufficient-samples',missing:3});
   });
 
-  it('keeps three distinct legal choices after repeated full-slot calibration changes',()=>{
+  it('keeps three distinct legal choices, advancing rank before offering calibration changes',()=>{
     const c=new GrowthController(909);c.state.equipped=[{id:'PULSE_BREAK',tuning:'balanced'},{id:'PURIFY_CHAIN',tuning:'focused'},{id:'IMMUNE_BEACON',tuning:'extended'}];
     for(let i=0;i<30;i++){
       c.state.research=3;c.openResearch('research',context());const draft=c.state.draft!;
       expect(new Set(draft.options.map(o=>o.protocolId)).size).toBe(3);
-      expect(draft.options.every(o=>o.kind==='equip'||c.state.equipped.find(slot=>slot.id===o.protocolId)?.tuning!==o.tuning)).toBe(true);
+      expect(draft.options.every(o=>{const old=c.state.equipped.find(slot=>slot.id===o.protocolId);return o.kind==='equip'||(o.rank??1)>protocolRank(old)||old?.tuning!==o.tuning;})).toBe(true);
       const retune=draft.options.find(o=>o.kind==='retune')!;
       expect(c.chooseDraft({runId:c.state.runId,draftId:draft.id,optionId:retune.id}).kind).toBe('committed');
       expect(c.state.equipped).toHaveLength(3);

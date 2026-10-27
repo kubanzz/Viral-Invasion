@@ -1,5 +1,6 @@
 import type { GrowthState } from '../game/growthTypes';
 import type { GameState, Vec } from '../game/types';
+import { drawImmuneSquadLabel } from './immuneVisuals';
 
 const TAU = Math.PI * 2;
 function ellipse(ctx: CanvasRenderingContext2D, p: Vec, radius: number, fill: string, stroke: string): void {
@@ -70,6 +71,8 @@ export class GrowthVisuals {
   drawBeacon(ctx: CanvasRenderingContext2D, state: GameState, growth: GrowthState | undefined): void {
     const beacon = growth?.beacon;
     if (!beacon || beacon.organId !== state.battle?.organId || beacon.until <= state.elapsed) return;
+    drawImmuneSquadLabel(ctx, beacon, growth?.cells?.length ?? 0, beacon.mode === 'patrol');
+    if (beacon.mode === 'patrol') return;
     ctx.save(); ctx.translate(beacon.x, beacon.y); ctx.scale(1, 1 / .72);
     ctx.beginPath(); ctx.ellipse(0, 2, 22, 8, 0, 0, TAU); ctx.fillStyle = '#284f4e'; ctx.fill(); ctx.strokeStyle = '#9bd8bc'; ctx.lineWidth = 1.5; ctx.stroke();
     ctx.beginPath(); ctx.roundRect(-13, -23, 26, 24, 8); ctx.fillStyle = '#c3e3cf'; ctx.fill(); ctx.strokeStyle = '#3c7069'; ctx.stroke();
@@ -99,7 +102,7 @@ export class GrowthVisuals {
     if (!growth || !state.battle) return;
     const visible = state.events.filter(event => state.tick >= event.tick && state.tick - event.tick <= 30);
     for (const event of visible) {
-      if (!['PROTOCOL_RESONANCE_HIT', 'PROTOCOL_CHAIN_HIT', 'PROTOCOL_BEACON_HIT'].includes(event.type)) continue;
+      if (!['PROTOCOL_RESONANCE_HIT', 'PROTOCOL_CHAIN_HIT', 'PROTOCOL_RICOCHET_HIT', 'PROTOCOL_BEACON_HIT'].includes(event.type)) continue;
       const target = state.targets.find(item => item.id === event.data.targetId);
       if (!target) continue;
       const progress = (state.tick - event.tick) / 30;
@@ -112,12 +115,12 @@ export class GrowthVisuals {
           ctx.beginPath(); ctx.moveTo(x - 4, y + 4); ctx.lineTo(x + 2, y - 6); ctx.lineTo(x + 6, y + 3); ctx.closePath();
           ctx.fillStyle = '#ddd0e4'; ctx.fill(); ctx.strokeStyle = '#fff0bf'; ctx.lineWidth = 1; ctx.stroke();
         }
-      } else if (event.type === 'PROTOCOL_CHAIN_HIT') {
-        const hop = Number(event.data.hop);
+      } else if (event.type === 'PROTOCOL_CHAIN_HIT' || event.type === 'PROTOCOL_RICOCHET_HIT') {
+        const hop = event.type === 'PROTOCOL_RICOCHET_HIT' ? 1 : Number(event.data.hop);
         if (Number.isInteger(hop) && hop >= 1 && hop <= 3) {
           ctx.translate(target.x, target.y); ctx.scale(1, 1 / .72);
           ctx.beginPath(); ctx.ellipse(target.radius + 7, -target.radius * .7, 8, 8, 0, 0, TAU); ctx.fillStyle = '#254b49'; ctx.fill(); ctx.strokeStyle = '#bcf8d9'; ctx.lineWidth = 1; ctx.stroke();
-          label(ctx, String(hop), target.radius + 7, -target.radius * .7 + 3, '#ddffe7', 10);
+          label(ctx, event.type === 'PROTOCOL_RICOCHET_HIT' ? '折' : String(hop), target.radius + 7, -target.radius * .7 + 3, '#ddffe7', 10);
         }
       } else {
         const beacon = growth.beacon;

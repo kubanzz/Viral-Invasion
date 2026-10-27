@@ -9,8 +9,11 @@ import { BATTLE_BALANCE } from '../game/battleConfig';
 import { wallHit } from '../actors/collision';
 import { pulsePreviewPolygon } from './pulsePreview';
 import { GrowthVisuals } from './growthVisuals';
-import { GROWTH_BALANCE } from '../game/protocols';
+import { GROWTH_BALANCE, PROTOCOLS, protocolRank } from '../game/protocols';
 import { drawLungAirflow, drawLungAirway, drawLungEnvironment, drawLungForeground, drawLungObstacle } from './lungVisuals';
+import { drawOrganLandscape } from './organLandscape';
+import { drawNavigationMap } from './navigation';
+import { drawImmuneCell } from './immuneVisuals';
 
 const TAU = Math.PI * 2;
 const hash = (n: number): number => { const a = Math.sin(n * 127.1 + 311.7) * 43758.5453123; return a - Math.floor(a); };
@@ -57,6 +60,7 @@ export class Renderer {
   private height = 900;
   private dpr = 1;
   private readonly growthVisuals = new GrowthVisuals();
+  private readonly landscapes = new Map<string, HTMLCanvasElement>();
 
   constructor(private readonly canvas: HTMLCanvasElement) {
     const context = canvas.getContext('2d', { alpha: false });
@@ -77,6 +81,7 @@ export class Renderer {
     this.canvas.width = Math.round(this.width * this.dpr); this.canvas.height = Math.round(this.height * this.dpr);
     this.camera.resize(this.width, this.height);
   }
+  prepareCamera(state: GameState): void { this.camera.follow(state.player, activeWorld(state)); }
 
   diagnostics(state: GameState): { depthOrder: string[]; occluded: boolean; foregroundOpacity: number; layerOrder: typeof LAYER_ORDER } {
     return { depthOrder: depthSort(this.entities(state)).map(entity => entity.id), occluded: isForegroundOccluded(state.player, activeWorld(state)), foregroundOpacity: foregroundOpacity(state.player, activeWorld(state)), layerOrder: LAYER_ORDER };
@@ -90,20 +95,31 @@ export class Renderer {
       { id: 'terminal', y: state.terminal.y, kind: 'terminal' },
       ...(state.battle?.graph.nodes.filter(node => node.kind === 'valve' || node.kind === 'gate' || node.kind === 'research' || node.kind === 'exit').map(node => ({ id: node.id, y: node.y, kind: 'device' })) ?? []),
       ...(state.growth?.beacon && state.growth.beacon.organId === state.battle?.organId && state.growth.beacon.until > state.elapsed ? [{ id: state.growth.beacon.id, y: state.growth.beacon.y, kind: 'beacon' }] : []),
+      ...(state.growth?.cells?.flatMap((cell, index) => cell.organId === state.battle?.organId && cell.until > state.elapsed ? [{ id: cell.id, y: cell.y, kind: 'immune', index }] : []) ?? []),
       ...activeWorld(state).obstacles.map(obstacle => ({ id: obstacle.id, y: obstacle.y, kind: 'obstacle' })),
     ];
   }
 
   render(state: GameState, aim: Vec, opts: { lowEffects?: boolean } = {}): void {
+    this.prepareCamera(state);
     const ctx = this.ctx;
     ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     ctx.fillStyle = '#120d1b'; ctx.fillRect(0, 0, this.width, this.height);
-    if (state.battle?.organId === 'lung' && !this.lungBackground) {
+    if (state.battle?.organId === 'lung' && activeWorld(state).width <= 1200 && !this.lungBackground) {
       this.lungBackground = document.createElement('canvas'); this.lungBackground.width = 1440; this.lungBackground.height = 900;
       const bg = this.lungBackground.getContext('2d')!; const staticCamera = new Camera(); staticCamera.apply(bg); drawLungEnvironment(bg, activeWorld(state));
     }
-    ctx.drawImage(state.battle?.organId === 'lung' ? this.lungBackground! : this.background, this.camera.offsetX, this.camera.offsetY, 1440 * this.camera.scale, 900 * this.camera.scale);
+    const world = activeWorld(state), large = world.width > 1200;
+    if (!large) ctx.drawImage(state.battle?.organId === 'lung' ? this.lungBackground! : this.background, this.camera.offsetX, this.camera.offsetY, 1440 * this.camera.scale, 900 * this.camera.scale);
     ctx.save(); this.camera.apply(ctx);
+    if (large) {
+      const organ = state.battle?.organId ?? 'heart', key = `${organ}:${world.width}:${world.height}`;
+      if (!this.landscapes.has(key)) {
+        const background = document.createElement('canvas'); background.width = world.width + 200; background.height = world.height + 350;
+        const bg = background.getContext('2d')!; bg.translate(100, 200); drawOrganLandscape(bg, world, organ); this.landscapes.set(key, background);
+      }
+      ctx.drawImage(this.landscapes.get(key)!, -100, -200);
+    }
     this.drawAtmosphere(ctx, state, Boolean(opts.lowEffects));
     this.drawGroundSignals(ctx, state, aim);
     this.growthVisuals.drawGround(ctx, state, state.growth, Boolean(opts.lowEffects));
@@ -119,6 +135,7 @@ export class Renderer {
       }
       if (entity.kind === 'device') this.drawBattleDevice(ctx, state.battle!.graph.nodes.find(node => node.id === entity.id)!, state);
       if (entity.kind === 'beacon') this.growthVisuals.drawBeacon(ctx, state, state.growth);
+      if (entity.kind === 'immune') drawImmuneCell(ctx, state.growth!.cells![entity.index!], state.elapsed, Boolean(opts.lowEffects));
     }
     this.drawForeground(ctx, state);
     this.drawEffects(ctx, state, Boolean(opts.lowEffects));
@@ -132,6 +149,8 @@ export class Renderer {
     }
     this.drawCrosshair(ctx, state, aim);
     ctx.restore();
+    const map = document.querySelector<HTMLCanvasElement>('#tactical-map');
+    if (map && state.campaign) drawNavigationMap(map, state, { topLeft: this.camera.screenToWorld({ x: 0, y: 0 }), bottomRight: this.camera.screenToWorld({ x: this.width, y: this.height }) });
   }
 
   private drawEnvironment(ctx: CanvasRenderingContext2D): void {
@@ -420,6 +439,12 @@ export class Renderer {
     const direction = Math.atan2(Math.sin(p.facing) * .72, Math.cos(p.facing));
     ctx.save(); ctx.translate(p.x, p.y); ctx.scale(1, 1 / .72);
     ellipse(ctx, 0, 2, 23, 8, '#78eee80b', '#93f8ed98');
+    for (const [index, slot] of (state.growth?.equipped ?? []).entries()) {
+      const angle = -Math.PI * .85 + index * Math.PI * .35, x = Math.cos(angle) * 36, y = -35 + Math.sin(angle) * 30;
+      ellipse(ctx, x, y, 8 + protocolRank(slot), 8 + protocolRank(slot), '#254f48e8', '#c1f3d9');
+      text(ctx, PROTOCOLS[slot.id].symbol, x, y + 4, '#d9ffe5', 11);
+      for (let level = 0; level < protocolRank(slot); level++) ellipse(ctx, x - 5 + level * 5, y + 14, 1.5, 1.5, '#d4f6ba');
+    }
     // Chunky boots, backpack and the visible front establish the elevated view.
     ctx.save(); ctx.translate(0, -bob);
     ctx.fillStyle = '#153b50'; ctx.strokeStyle = '#102b3b'; ctx.lineWidth = 2;
@@ -606,6 +631,10 @@ export class Renderer {
       } else if (effect.kind === 'burst') {
         ctx.lineWidth = 2; ellipse(ctx, effect.to.x, effect.to.y, effect.radius, effect.radius, '#8ce7d712', '#b6ffeb');
         ellipse(ctx, effect.to.x, effect.to.y, Math.max(1, effect.radius * progress), Math.max(1, effect.radius * progress), '#8ce7d709', '#c6f8dd');
+        if (state.campaign) for (let i = 0; i < 8; i++) {
+          const angle = i / 8 * TAU, inner = effect.radius * (.2 + progress * .5), outer = Math.min(effect.radius, inner + 16);
+          line(ctx, [effect.to.x + Math.cos(angle) * inner, effect.to.y + Math.sin(angle) * inner, effect.to.x + Math.cos(angle) * outer, effect.to.y + Math.sin(angle) * outer], '#d6ffe3', 2);
+        }
         if (!low) this.sparks(ctx, effect, progress, '#bcffe7', 13);
       } else if (effect.kind === 'heal') {
         ctx.lineWidth = 2; ellipse(ctx, effect.to.x, effect.to.y, 44 + progress * 17, 44 + progress * 17, '#a8f7bd0e', '#b0ffc9');

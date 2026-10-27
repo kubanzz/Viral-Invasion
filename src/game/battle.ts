@@ -4,6 +4,7 @@ import { activeWorld, BALANCE, type Effect, type GameEvent, type GameState, type
 import type { BattleState, CampaignOptions, TraitId } from './battleTypes';
 import { BATTLE_BALANCE as B, TRAITS } from './battleConfig';
 import { recordBehavior, chooseEvolution } from './evolution';
+import { getOrganDefinition } from './organConfig';
 
 export interface BattleHost {
   state: GameState;
@@ -19,17 +20,24 @@ const BRANCHES: TraitId[] = ['CARAPACE', 'FISSION', 'MIMIC'];
 export function initializeBattle(state: GameState, options: CampaignOptions): void {
   const rng = new SeedRng(state.seed);
   const firstTrait = options.firstTrait ?? BRANCHES[rng.int(0, 2)];
+  const layout = options.milestone === 'G3' ? getOrganDefinition('heart') : undefined;
+  if (layout) {
+    state.world = layout.geometry;
+    Object.assign(state.player, layout.playerStart);
+    Object.assign(state.tissue, layout.tissue);
+    state.terminal = { ...layout.terminal };
+  }
   state.tissue.hp = 62;
   state.targets = [];
   const nodes: BattleState['graph']['nodes'] = [
-    { id: 'source-a', kind: 'source', x: 610, y: 330, active: true, infected: true },
-    { id: 'source-b', kind: 'source', x: 920, y: 435, active: true, infected: true },
-    { id: 'gate', kind: 'gate', x: 335, y: 230, active: true, infected: false },
-    { id: 'valve', kind: 'valve', x: 730, y: 230, active: true, infected: false },
+    { id: 'source-a', kind: 'source', ...(layout?.sourcePositions[0] ?? { x: 610, y: 330 }), active: true, infected: true },
+    { id: 'source-b', kind: 'source', ...(layout?.sourcePositions[1] ?? { x: 920, y: 435 }), active: true, infected: true },
+    { id: 'gate', kind: 'gate', ...(layout?.gate ?? { x: 335, y: 230 }), active: true, infected: false },
+    { id: 'valve', kind: 'valve', ...(layout?.device ?? { x: 730, y: 230 }), active: true, infected: false },
     { id: 'tissue', kind: 'tissue', x: state.tissue.x, y: state.tissue.y, active: true, infected: false },
     { id: 'retest', kind: 'retest', ...state.terminal, active: true, infected: false },
   ];
-  if (options.milestone && options.milestone !== 'G1') nodes.push({ id: 'research', kind: 'research', x: 475, y: 610, active: true, infected: false });
+  if (options.milestone && options.milestone !== 'G1') nodes.push({ id: 'research', kind: 'research', ...(layout?.research ?? { x: 475, y: 610 }), active: true, infected: false });
   const edges = [['source-a', 'gate'], ['gate', 'tissue'], ['source-b', 'valve'], ['valve', 'tissue']].map(([from, to]) => {
     const a = nodes.find(node => node.id === from)!;
     const b = nodes.find(node => node.id === to)!;
@@ -38,10 +46,10 @@ export function initializeBattle(state: GameState, options: CampaignOptions): vo
   state.battle = {
     milestone: options.milestone ?? 'G1', organId: 'heart', graph: { nodes, edges },
     pressure: { infection: 26, vitality: 100, criticalSince: null, organAlarm: false, crisisReason: '' },
-    pulse: { phase: 'charge', phaseRemaining: 2, readyAt: 0, activeUntil: 0, origin: { x: 730, y: 230 }, direction: Math.PI / 2, uses: 0 },
+    pulse: { phase: 'charge', phaseRemaining: 2, readyAt: 0, activeUntil: 0, origin: { ...(layout?.device ?? { x: 730, y: 230 }) }, direction: Math.PI / 2, uses: 0 },
     warning: null, traits: [], defeatedTraits: [], nextEvolutionAt: B.firstWarningAt,
     stage: 0, stageLabel: 'Ⅰ · 初始感染', objective: 'Q 诊断感染源；清除两处感染源并保护十字组织。', readyToRetest: false,
-    lastAim: { x: 610, y: 330 }, stats: { kills: 0, sourceClears: 0, eliteClears: 0, repairs: 0, pulses: 0, playerDamage: 0, tissueDamage: 0, scans: 0 },
+    lastAim: { ...(layout?.sourcePositions[0] ?? { x: 610, y: 330 }) }, stats: { kills: 0, sourceClears: 0, eliteClears: 0, repairs: 0, pulses: 0, playerDamage: 0, tissueDamage: 0, scans: 0 },
     nextSpawnAt: { 'source-a': B.spawnInterval, 'source-b': B.spawnInterval + 2 }, nextActorId: 0,
     firstTrait, recentNotice: '', gateChangedAt: -10, organLowSince: null, eliteSpawned: 0, history: [],
     ...(options.milestone && options.milestone !== 'G1' ? { forcedFirstTrait: options.firstTrait, behaviorHistory: [], evolutionDecisions: [] } : {}),
@@ -51,7 +59,7 @@ export function initializeBattle(state: GameState, options: CampaignOptions): vo
   }
   for (let i = 0; i < 4; i++) {
     const source = i < 2 ? nodes[0] : nodes[1];
-    const position = moveWithCollision(source, { x: rng.int(-80, 80), y: rng.int(-65, 65) }, 22);
+    const position = moveWithCollision(source, { x: rng.int(-80, 80), y: rng.int(-65, 65) }, 22, activeWorld(state));
     state.targets.push({ ...position, id: `virus-${++state.battle.nextActorId}`, kind: 'single', role: 'virus', radius: 22, hp: B.ordinaryHp, maxHp: B.ordinaryHp, hitUntil: 0, scanned: false, traits: [], facing: 0, born: 0, attackReady: 1 + i * .3, generation: 0, sourceId: source.id });
   }
   state.message = '感染正在沿血管传播。Q 诊断，1 精准净化，2 清群，3 修复；靠近装置按 E。';
@@ -281,9 +289,10 @@ export class BattleDirector {
         const ordinary = s.targets.find(t => t.hp > 0 && t.role === 'virus');
         if (ordinary) { ordinary.hp = 0; ordinary.deadAt = s.elapsed; ordinary.attackAt = undefined; }
       }
-      this.spawn({ x: 785, y: 390 }, 'elite', [trait]);
+      const elitePosition = s.campaign ? getOrganDefinition(b.organId).elitePosition : { x: 785, y: 390 };
+      this.spawn(elitePosition, 'elite', [trait]);
       b.eliteSpawned++;
-      this.host.effect('evolution', { x: 785, y: 390 }, { x: 785, y: 390 }, 110, 1.4);
+      this.host.effect('evolution', elitePosition, elitePosition, 110, 1.4);
       this.host.emit('EVOLUTION_APPLIED', { trait, warningDuration: s.elapsed - b.warning.startedAt, traits: b.traits.join('+') });
       this.notice(`${TRAITS[trait].symbol} ${TRAITS[trait].name}已出现。弱点：${TRAITS[trait].counter}`, 7, 2);
     }

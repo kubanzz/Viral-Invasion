@@ -2,6 +2,7 @@ import { test, expect, type Page } from '@playwright/test';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { writeFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { emptyProfile, PROFILE_STORAGE_KEY } from '../../src/meta/profile';
 import { readState, aim, chooseDraftInput } from './campaignDriver';
 import { fullRun } from './fullRunDriver';
@@ -99,7 +100,7 @@ test('UI patch: Tab reaches archive, arrows scroll it, and paused input does not
 test('UI patch: URL accepts uint32 seed zero and rejects malformed or out of range values', async ({ page }) => {
   for (const [query, expected] of [['?seed=0', 0], ['?seed=4294967295', 4294967295], ['', 130026], ['?seed=', 130026], ['?seed=-1', 130026], ['?seed=1.5', 130026], ['?seed=4294967296', 130026], ['?seed=NaN', 130026]] as const) {
     await page.goto(entry + query);
-    expect(await page.evaluate(() => window.__viral.version)).toBe('0.5.1-G4');
+    expect(await page.evaluate(() => window.__viral.version)).toBe(`${JSON.parse(readFileSync('package.json','utf8')).version}-G4`);
     expect((await readState(page)).seed).toBe(expected);
   }
   await page.goto(entry + '?scenario=training&seed=0');

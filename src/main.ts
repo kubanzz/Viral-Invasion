@@ -54,10 +54,12 @@ app.innerHTML = `
   </main><div id="overlay-host"></div>`;
 if (!trainingFixture) {
   app.classList.add('campaign');
+  canvas.setAttribute('aria-label', '病毒入侵战场：WASD移动，鼠标瞄准，1精准净化，2范围控场，3抢修，Q召集免疫细胞，E交互');
   document.querySelector('.objective')!.remove();
   document.querySelector('.telemetry')!.remove();
   document.querySelector('#hud')!.insertAdjacentHTML('afterbegin', battleHudMarkup);
   if (session.state.growth) document.querySelector('#hud')!.insertAdjacentHTML('beforeend', growthHudMarkup);
+  if (session.state.campaign) document.querySelector('.tool[data-action="tool-2"] small')!.textContent = '群体 · 击退打断';
   document.querySelector('.micro-footer')!.textContent = `${milestone === 'G3' ? 'G4' : milestone} · ${milestone === 'G3' ? '器官联防' : '心脏防线'} / 架空生物幻想`;
 }
 const input = new Controller(canvas, () => togglePause(), () => {
@@ -147,13 +149,17 @@ function updateOverlay() {
   el('hud').inert = modalActive;
   const host = el('overlay-host');
   if (profileOpen) { host.innerHTML = profileOverlay(profile.data, profile.status); return; }
-  if (migrationGuide) { host.innerHTML = `<div class="overlay"><section class="modal" role="dialog" aria-modal="true" aria-label="首次迁移指引"><div class="eyebrow">THE NEXT CHAMBER / 首次迁移</div><h2>病毒要去另一个器官了。</h2><p>倒数已暂停。你可以去右上出口按 E 追击，或在左上隔离闸按 E 留守 2 秒封锁。放任会让肺部新增感染源，仍可补救。</p><p>追击后清掉迁移小体，或关闭肺部气道；器官图会显示心脏残留风险，出口可双向返回。此说明之后可在作战手册回看。</p><div class="actions"><button class="primary" data-action="close-migration-guide">明白了，继续作战</button></div></section></div>`; return; }
+  if (migrationGuide) { host.innerHTML = `<div class="overlay"><section class="modal" role="dialog" aria-modal="true" aria-label="首次迁移指引"><div class="eyebrow">THE NEXT CHAMBER / 首次迁移</div><h2>病毒要去另一个器官了。</h2><p>倒数已暂停。你可以去器官出口（见小地图）按 E 追击，或在隔离闸（见小地图）按 E 留守 2 秒封锁。放任会让肺部新增感染源，仍可补救。</p><p>追击后清掉迁移小体，或关闭肺部气道；器官图会显示心脏残留风险，出口可双向返回。此说明之后可在作战手册回看。</p><div class="actions"><button class="primary" data-action="close-migration-guide">明白了，继续作战</button></div></section></div>`; return; }
   if (state.battle) {
     host.innerHTML = (!help && !history && state.phase === 'paused' ? draftOverlay(state) : null) ?? battleOverlay(state, help, resumeAfterHelp, lowEffects, history) ?? '';
     if (state.growth && help) host.querySelector('.help-grid')?.insertAdjacentHTML('afterend', growthHelpMarkup);
     if (state.growth && history) host.querySelector('h2')?.insertAdjacentHTML('afterend', growthHistoryMarkup(state));
     if (state.campaign) host.querySelector('.switches')?.insertAdjacentHTML('beforeend', `<button data-action="sound">声音 ${sound.enabled?'开':'关'}</button>`);
     if (state.campaign && state.phase === 'menu' && !help && !history) host.querySelector('.intro-card')?.insertAdjacentHTML('beforeend', profileMenuMarkup(profile.data, profile.status));
+    if (state.campaign && state.phase === 'menu' && !help && !history) {
+      const footnote = host.querySelector('.intro-footnote');
+      if (footnote) footnote.textContent = '心肺探索战场 · 协议进阶 · 免疫细胞协同 · 完全离线';
+    }
     if (state.campaign && state.phase === 'result' && !help && !history) host.querySelector('.modal')?.insertAdjacentHTML('beforeend', profileResultMarkup(state, profile.data, profile.status));
     return;
   }
@@ -203,13 +209,15 @@ function updateCommonHud() {
 }
 let lastHud = 0;
 function frame(now: number) {
+  renderer.prepareCamera(session.state);
   const aim = renderer.camera.screenToWorld(input.pointer);
   clock.advance(now, dt => session.step(input.frame(aim), dt), session.state.phase === 'playing');
   if (resetClockAfterStep) { clock.reset(); resetClockAfterStep = false; }
   if (migrationGuidePending && session.state.phase === 'playing' && !session.state.growth?.draft) {
     migrationGuidePending = false; migrationGuideSeen = true; migrationGuide = true; session.pause(); input.clear(); clock.reset();
   }
-  renderer.render(session.state, aim, { lowEffects });
+  renderer.prepareCamera(session.state);
+  renderer.render(session.state, renderer.camera.screenToWorld(input.pointer), { lowEffects });
   sound.update(session.state);
   updateOverlay();
   if (now-lastHud > 50) { updateHud(); lastHud=now; }
@@ -220,7 +228,7 @@ renderer.resize(); updateOverlay(); updateHud(); requestAnimationFrame(frame);
 
 // Read-only diagnostics for browser regression. Inputs always use the real DOM.
 Object.defineProperty(window, '__viral', { value: Object.freeze({
-  version: '0.5.1-G4', snapshot: () => session.snapshot(),
+  version: '0.6.0-G4', snapshot: () => session.snapshot(),
   toScreen: (point: { x: number; y: number }) => renderer.camera.worldToScreen(point),
   toWorld: (point: { x: number; y: number }) => renderer.camera.screenToWorld(point),
   diagnostics: () => renderer.diagnostics(session.state),

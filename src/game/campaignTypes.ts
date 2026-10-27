@@ -54,5 +54,8 @@ export interface CampaignInteraction { handled: boolean; commands: CampaignComma
 export interface OrganDefinition {
   id: OrganId; geometry: WorldGeometry; entry: Vec; exit: Vec; tissue: Vec; terminal: Vec;
   research: Vec; device: Vec; corePosition: Vec; migrationGoal: Vec;
+  playerStart: Vec; gate: Vec; sourcePositions: readonly Vec[]; elitePosition: Vec;
+  retainedSource: Vec; migratedSource: Vec; carrierStarts: readonly Vec[]; flowOrigin: Vec;
+  regions: readonly { id: string; label: string; x: number; y: number; radius: number }[];
 }
 export type CampaignNode = Pick<OrganNode, 'id' | 'kind' | 'x' | 'y' | 'active'>;

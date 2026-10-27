@@ -1,6 +1,6 @@
 import { TRAITS } from '../game/battleConfig';
 import type { TraitId } from '../game/battleTypes';
-import { PROTOCOL_IDS, PROTOCOLS, TUNING_NAMES } from '../game/protocols';
+import { PROTOCOL_IDS, PROTOCOLS, TUNING_NAMES, RANK_NAMES, protocolRank } from '../game/protocols';
 import type { GameState } from '../game/types';
 import { ACHIEVEMENTS, buildRunSummary, type AchievementId, type ProfileData, type ProfileStatus, type RunRecord, type RunSummary } from '../meta/profile';
 
@@ -72,6 +72,6 @@ export function profileMenuMarkup(data: ProfileData, status: ProfileStatus): str
 /** Append to a result modal. All history, reasons and advice are escaped before rendering. */
 export function profileResultMarkup(state: GameState, data: ProfileData, status: ProfileStatus): string {
   const summary = buildRunSummary(state);
-  const finalEquipment = state.growth?.equipped.map(slot => `${PROTOCOLS[slot.id].name} · ${TUNING_NAMES[slot.tuning]}`).join(' / ');
+  const finalEquipment = state.growth?.equipped.map(slot => `${PROTOCOLS[slot.id].name} ${RANK_NAMES[protocolRank(slot)]} · ${TUNING_NAMES[slot.tuning]}`).join(' / ');
   return `<details class="profile-result profile-recap" aria-label="本局进化与下次战术"><summary>展开病例复盘：抗体路线与下次战术</summary><section class="profile-recap-content"><div class="profile-section-heading"><h3>把这次经历，变成下一种打法。</h3><span>SEED ${seed(summary.seed)}</span></div>${pathMarkup(summary)}${finalEquipment ? `<p class="profile-final-equipment">最终携带 · ${escape(finalEquipment)}</p>` : ''}<article class="profile-next-attempt"><span class="profile-next-label">下一局，可以试试</span><p>${escape(summary.suggestion)}</p><small>本局依据 · ${escape(summary.suggestionEvidence)}</small></article><div class="profile-result-archive"><span>档案已记录 ${data.stats.runs} 份病例 · ${data.achievements.length} 项里程碑</span><button data-action="profile" class="profile-result-link">查看局外档案 <span aria-hidden="true">↗</span></button></div>${storageMarkup(status, true)}</section></details>`;
 }

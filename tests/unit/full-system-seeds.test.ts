@@ -1,15 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { GameSession } from '../../src/game/session';
 import { BALANCE, activeWorld, type GameState, type InputFrame } from '../../src/game/types';
 import { BATTLE_BALANCE } from '../../src/game/battleConfig';
 import type { MigrationChoice } from '../../src/game/campaignTypes';
 import { distance, normalized } from '../../src/actors/collision';
 import { g3Input, waypoint } from '../helpers/g3Driver';
+import { IMMUNE_CELL_BALANCE } from '../../src/game/immuneCells';
 
-const REPORT = resolve('artifacts/g4-full-system-seeds.json');
+const REPORT = resolve(process.env.VI_SYSTEM_REPORT ?? 'artifacts/g4-full-system-seeds.json');
 const SEED_COUNT = 1000;
 const MAX_STEPS = 300 * 60;
 const choices: MigrationChoice[] = ['pursue', 'block', 'ignore'];
@@ -49,6 +50,15 @@ function validate(state: GameState): { alive: number; stored: number } {
   guard(growth.equipped.length <= 3 && new Set(growth.equipped.map(item => item.id)).size === growth.equipped.length, 'invalid protocol slots');
   guard(Number.isFinite(growth.xp) && growth.xp >= 0 && Number.isFinite(growth.research) && growth.research >= 0, 'invalid growth resources');
   if (growth.draft) guard(new Set(growth.draft.options.map(option => option.protocolId)).size === 3, 'draft lacks three distinct protocols');
+  const cells=growth.cells??[];
+  guard(cells.length<=IMMUNE_CELL_BALANCE.maximum&&new Set(cells.map(cell=>cell.id)).size===cells.length,'invalid immune cell population');
+  for(const cell of cells){
+    const geometry=campaign.arenas[cell.organId].geometry;
+    guard(cell.organId===battle.organId,'immune cell leaked across organs');
+    finiteRange(cell.x,geometry.bounds.left+cell.radius,geometry.bounds.right-cell.radius,`${cell.id}.x`);
+    finiteRange(cell.y,geometry.bounds.top+cell.radius,geometry.bounds.bottom-cell.radius,`${cell.id}.y`);
+    guard(Number.isFinite(cell.damage)&&cell.damage>0&&Number.isFinite(cell.until),'invalid immune cell values');
+  }
   let alive = 0, stored = 0;
   for (const arena of Object.values(campaign.arenas)) {
     finiteRange(arena.tissue.hp, 0, 100, `${arena.organId}.integrity`);
@@ -135,7 +145,7 @@ function execute(seed: number, choice: MigrationChoice, mode: Mode): { summary: 
 
 describe('G4 complete-session seed coverage', () => {
   it('runs 1000 complete seeded sessions with bounded states, legal build/base inputs and reproducible endings', () => {
-    mkdirSync(resolve('artifacts'), { recursive: true });
+    mkdirSync(dirname(REPORT), { recursive: true });
     const startedAt = new Date().toISOString(), manifest = simulationManifest(), runs: Summary[] = [];
     let firstFailure: GameState | undefined;
     const save = (complete: boolean, replay?: { seed: number; equal: boolean; first: string; second: string }): void => {
@@ -160,12 +170,14 @@ describe('G4 complete-session seed coverage', () => {
     const replay1 = execute(91, 'pursue', 'base').summary, replay2 = execute(91, 'pursue', 'base').summary;
     const replay = { seed: 91, equal: replay1.finalStateSha256 === replay2.finalStateSha256, first: replay1.finalStateSha256, second: replay2.finalStateSha256 };
     save(runs.length === SEED_COUNT && !firstFailure, replay);
-    expect(firstFailure, 'Counterexample is saved in artifacts/g4-full-system-seeds.json').toBeUndefined();
+    expect(firstFailure, `Counterexample is saved in ${REPORT}`).toBeUndefined();
     expect(runs).toHaveLength(SEED_COUNT); expect(replay.equal).toBe(true);
     expect(runs.every(run => run.baseCountersAvailable)).toBe(true);
     expect(fingerprint(simulationManifest())).toBe(fingerprint(manifest));
     for (const choice of choices) for (const mode of ['base', 'protocols'] as const) expect(runs.some(run => run.choice === choice && run.mode === mode && run.outcome === 'win')).toBe(true);
     expect(new Set(runs.filter(run => run.traits.length === 2).map(run => run.traits.join('>'))).size).toBe(6);
     console.info('FULL_SESSION_SEEDS_COMPLETE', JSON.stringify({ seeds: runs.length, wins: runs.filter(run => run.outcome === 'win').length, losses: runs.filter(run => run.outcome === 'loss').length, exits: runs.filter(run => run.outcome === 'exit').length, replayEqual: replay.equal }));
-  }, 300_000);
+  // The expanded campaign and real cell navigation require a larger batch
+  // runner budget; the per-seed action cap and every gameplay invariant stay fixed.
+  }, 900_000);
 });
