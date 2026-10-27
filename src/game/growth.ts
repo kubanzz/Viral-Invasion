@@ -70,6 +70,8 @@ export class GrowthController {
   readonly state: GrowthState;
   private acceptedHistoryTick = -1;
   private acceptedHistory = new Map<string, { entry: GrowthHistoryEntry; targets: Set<string>; damage: number; synergy: boolean }>();
+  private ricochetTick = -1;
+  private acceptedRicochets = 0;
   constructor(seed: number, runId = `${seed >>> 0}:growth`, preparation?: RunPreparation) {
     const initialPreparation = parsePreparation(preparation) ?? preparationForPlan('field');
     const starter = initialPreparation.starterProtocolId;
@@ -489,11 +491,16 @@ export class GrowthController {
     const config=getChainConfig(slot.tuning,rank);
     const next=stableNearest(target,context.targets.filter(candidate=>candidate.hp>0&&candidate.id!==target.id&&distance(target,candidate)<=config.range&&unobstructed(target,candidate,context.geometry)))[0];
     if(!next)return[];
-    const rootId=origin.rootId??`${this.state.runId}:ricochet:${context.tick}:${target.id}`,base={protocolId:'PURIFY_CHAIN' as const,rootId,organId:context.organId};
+    // Each accepted fold is its own transaction, even when several rays share
+    // a source and tick. The command budget bounds this tick-local ordinal.
+    const ordinal=this.ricochetTick===context.tick?this.acceptedRicochets+1:1;
+    const rootId=`${this.state.runId}:ricochet:${context.tick}:${ordinal}`,base={protocolId:'PURIFY_CHAIN' as const,rootId,organId:context.organId};
     const commands:GrowthCommand[]=[{...base,kind:'effect',effect:'chain',from:point(target),to:point(next),radius:12,duration:.35},
       {...base,kind:'damage',targetId:next.id,amount:config.damage,cause:'protocol',hop:1},
-      {kind:'log',type:'PROTOCOL_RICOCHET_HIT',data:{protocolId:'PURIFY_CHAIN',rootId,targetId:next.id,damage:config.damage,period,rank}}];
+      {kind:'log',type:'PROTOCOL_RICOCHET_HIT',data:{protocolId:'PURIFY_CHAIN',rootId,targetId:next.id,damage:config.damage,period,rank,
+        ...(origin.rootId?{sourceRootId:origin.rootId}:{})}}];
     const accepted=this.budget(context,commands);if(!accepted.length)return[];
+    this.ricochetTick=context.tick;this.acceptedRicochets=ordinal;
     this.state.chainCharge=0;this.activated('PURIFY_CHAIN');
     this.remember('PROTOCOL_RICOCHET_PLANNED',`连锁进阶计划：${period} 次命中蓄能，尝试折射 ${config.damage} 点伤害；实际命中另行记录。`,context.elapsed);
     return accepted;

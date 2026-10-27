@@ -1,0 +1,146 @@
+{
+  "scope": "One isolated receipt-identity repair; targeted mechanism fixtures, not natural progression, browser, full campaign, balance, or human playtest evidence.",
+  "status": "Owned source frozen after 9 new and 107 related tests plus strict full-project tsc passed.",
+  "ownedPaths": [
+    ".tools/ricochet-v086-source/src/game/growth.ts",
+    ".tools/ricochet-v086-source/tests/unit/ricochet-receipts.integration.test.ts"
+  ],
+  "baseline": {
+    "actualDamage": 140,
+    "reportedRicochets": 1,
+    "history": [
+      {
+        "at": 0.016666666666666666,
+        "type": "PROTOCOL_RICOCHET_HIT",
+        "text": "连锁进阶：实际折射 1 体，共 70 点伤害。"
+      }
+    ],
+    "roots": [
+      "71:2:ricochet:1:a"
+    ],
+    "expectedFailure": "Two positive 70-damage receipts collide at one root; expected two roots, observed one."
+  },
+  "candidate": {
+    "actualDamage": 140,
+    "reportedRicochets": 2,
+    "history": [
+      {
+        "at": 0.016666666666666666,
+        "type": "PROTOCOL_RICOCHET_HIT",
+        "text": "连锁进阶：实际折射 1 体，共 70 点伤害。"
+      },
+      {
+        "at": 0.016666666666666666,
+        "type": "PROTOCOL_RICOCHET_HIT",
+        "text": "连锁进阶：实际折射 1 体，共 70 点伤害。"
+      }
+    ],
+    "roots": [
+      "71:2:ricochet:1:1",
+      "71:2:ricochet:1:2"
+    ]
+  },
+  "behaviorPreservation": {
+    "allPublicStepEventsEqualAfterRemovingOnlyRootIds": true,
+    "aHpSame": true,
+    "bHpSame": true,
+    "chainChargeSame": true,
+    "chainCharge": 1,
+    "budgetUsedSame": true,
+    "budgetUsed": 6,
+    "skippedCommandsSame": true,
+    "skippedCommands": 0,
+    "activationsSame": true
+  },
+  "identityRule": "Every budget-accepted ricochet receives runId + tick + accepted tick-local ordinal. Upstream origin.rootId remains in the fold log as sourceRootId, never as its deduplication identity. Budget/no-neighbor rejection does not commit the ordinal. Organ changes do not reset it; a later tick resets only the ordinal. New controller resets the private scalars.",
+  "productRule": "Each surviving positive basic hit counts toward rankIII period2; current UI says every two hits, not every two shots. Five real rays may therefore legitimately trigger twice. Damage and cadence remain unchanged.",
+  "deduplication": "runMetrics, acceptedProtocolHit, accepted history, HUD, GrowthTypes, chain frequency and damage formulas unchanged.",
+  "targetedCoverage": [
+    "one public five-ray step",
+    "same nonempty upstream root",
+    "duplicate receipt and log replay",
+    "actual HP clipping 70+5",
+    "budget rejection and same-tick retry",
+    "no-neighbor rejection",
+    "organ same-tick identity and next-tick reset",
+    "independent identical controllers and restart deterministic replay",
+    "lethal basic chain and no recursion"
+  ],
+  "testReports": [
+    {
+      "path": "baseline-vitest.json",
+      "passed": 0,
+      "failed": 1,
+      "pending": 8,
+      "total": 9
+    },
+    {
+      "path": "candidate-targeted-vitest.json",
+      "passed": 9,
+      "failed": 0,
+      "pending": 0,
+      "total": 9
+    },
+    {
+      "path": "related-vitest.json",
+      "passed": 107,
+      "failed": 0,
+      "pending": 0,
+      "total": 107
+    }
+  ],
+  "typecheck": {
+    "command": "node node_modules/typescript/bin/tsc --noEmit",
+    "exitCode": 0,
+    "stdoutBytes": 0,
+    "stderrBytes": 0
+  },
+  "unexpectedChangesToExistingIsolatedInputs": [],
+  "hashes": [
+    {
+      "path": "src/game/growth.ts",
+      "sha256": "8608e6fc8c02de77e2ca190b571ef0ba6be920ffdda43219daa82f5a6ac4956b",
+      "bytes": 44212
+    },
+    {
+      "path": ".tools/ricochet-v086-source/src/game/growth.ts",
+      "sha256": "a301bbf29a8970580583e08a33d5db9bc453812c9903621a627afbc96f9f17bf",
+      "bytes": 44619
+    },
+    {
+      "path": ".tools/ricochet-v086-source/tests/unit/ricochet-receipts.integration.test.ts",
+      "sha256": "ea58f78114a5802a84eced765232686fcfe83c15157d10e6d00d157824d77e10",
+      "bytes": 11648
+    },
+    {
+      "path": "artifacts/ricochet-v086/regression/baseline-raw-receipts.json",
+      "sha256": "a787a064ba9fd7d2a838e6bcecfd78da7f5664323e329b7b7ef61e2d120d14ba",
+      "bytes": 10827
+    },
+    {
+      "path": "artifacts/ricochet-v086/regression/baseline-vitest.json",
+      "sha256": "1e8056c66ea644536db4130956fbd62cd297370849969722ec7172ff84639079",
+      "bytes": 5455
+    },
+    {
+      "path": "artifacts/ricochet-v086/regression/candidate-raw-receipts.json",
+      "sha256": "684d637d5192feb96b76912a0e6cf45ceb4716af146c481d17a9235e63e0d89e",
+      "bytes": 11535
+    },
+    {
+      "path": "artifacts/ricochet-v086/regression/candidate-targeted-vitest.json",
+      "sha256": "e2b358b0331efc8817c3ab1f057170f3bd08844ecea924d3540f34fdbbcad08f",
+      "bytes": 4602
+    },
+    {
+      "path": "artifacts/ricochet-v086/regression/related-vitest.json",
+      "sha256": "3806da4f0c2949ad988c126bac05e9b8c79058d46011e8d8cea3284839395a45",
+      "bytes": 46771
+    }
+  ],
+  "limitations": [
+    "Private receipt ordinals are not a resumable-run persistence schema; existing snapshots are read-only and the game recreates GrowthController on restart.",
+    "No main workspace edits or broad simulations by this subtask.",
+    "No claim of improved balance, fun, retention, or commercial value."
+  ]
+}

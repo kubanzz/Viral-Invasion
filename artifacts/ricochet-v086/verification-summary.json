@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 1,
+  "version": "0.8.6",
+  "at": "2026-10-27T21:32:17.199Z",
+  "technicalCandidate": true,
+  "change": "Give each independent budget-accepted ricochet a unique transaction identity; keep actual damage and strict metrics/history deduplication.",
+  "regression": {
+    "files": 94,
+    "passed": 851,
+    "strictTypecheckExitCode": 0,
+    "completeCampaignSessions": 1000,
+    "campaignWins": 1000,
+    "campaignReplayPairsEqual": 2
+  },
+  "fixture": {
+    "publicSteps": 1,
+    "actualDamageBoth": 140,
+    "oldReportedHits": 1,
+    "newReportedHits": 2,
+    "oldHistoryDamage": 70,
+    "newHistoryDamage": 140,
+    "eventsEqualExceptRootId": true,
+    "scope": "Explicit preset fixture using real available elite HP/radius; does not claim natural acquisition."
+  },
+  "source": {
+    "pass": true,
+    "deliveryInputs": 139,
+    "preservedSharedInputs": 5
+  },
+  "browser": {
+    "testsPassed": 2,
+    "results": [
+      {
+        "project": "chrome",
+        "raw": "artifacts/ricochet-v086/browser-attempt-1/chrome/output/ricochet-v086-natural-acqu-da27c-nd-paused-equipment-details-chrome/natural-ricochet.json",
+        "viewport": {
+          "width": 1366,
+          "height": 768
+        },
+        "wave": 5,
+        "elapsed": 44.3,
+        "chainRank": 2,
+        "actualRicochetHits": 3,
+        "actualRicochetDamage": 115.6,
+        "uniqueRoots": 3,
+        "sameTickSameVictimGroups": [],
+        "historyEntries": 3,
+        "pass": true
+      },
+      {
+        "project": "edge",
+        "raw": "artifacts/ricochet-v086/browser-attempt-1/edge/output/ricochet-v086-natural-acqu-da27c-nd-paused-equipment-details-edge/natural-ricochet.json",
+        "viewport": {
+          "width": 1100,
+          "height": 560
+        },
+        "wave": 5,
+        "elapsed": 45.93333333333333,
+        "chainRank": 2,
+        "actualRicochetHits": 3,
+        "actualRicochetDamage": 111.8,
+        "uniqueRoots": 3,
+        "sameTickSameVictimGroups": [],
+        "historyEntries": 3,
+        "pass": true
+      }
+    ],
+    "offlineModeGroups": 4,
+    "visualReview": "Two original screenshots inspected; count labels readable in1366x768 and1100x560. Long equipment descriptions use the existing scroll region."
+  },
+  "release": {
+    "zip": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-G4-v0.8.6.zip",
+    "bytes": 5263763,
+    "sha256": "ee6e782f72c5385a6a0e3bc08e4e7a2e674638dff92f32b9927ceb6252c4218a",
+    "gameSha256": "4e62dcb2ab26a18194f1d2986cb1c2c97ee090f0034ab6016ce418e46fe4a7cf",
+    "independentCrc32Pass": true,
+    "files": 5
+  },
+  "humanBlindPlaytests": {
+    "completed": 0,
+    "required": 5
+  },
+  "preservedFailures": [
+    "Initial targeted baseline regression expected2 distinct roots but observed1; actual damage140/old history70 preserved.",
+    "First main-worktree runner refused an existing isolated output path withEEXIST. Renamed main streams and added preflight; no source or assertion change."
+  ],
+  "limitations": [
+    "No natural same-tick same-victim collision claim unless present in original browser groups.",
+    "No new performance, human fun, first-session duration, replay-intent or incubation-value validation.",
+    "No retrospective repair of already saved historical metrics.",
+    "Late dual-tactic elite proposal is planning only, not an implemented feature."
+  ],
+  "scripts": [
+    {
+      "path": "artifacts/ricochet-v086/tools/init-ricochet-v086.mjs",
+      "sha256": "22174d89f497cafb60cfb0f79d6eaa2a991314a08f3b0f810642ad42a0c54407"
+    },
+    {
+      "path": "artifacts/ricochet-v086/tools/integrate-ricochet-v086.mjs",
+      "sha256": "330bc322ab03c7b9464833f25ecae09978a73a700894c5eb7675791226fe4b0d"
+    },
+    {
+      "path": "artifacts/ricochet-v086/tools/run-ricochet-v086-checks.mjs",
+      "sha256": "1c267dec542a62e435f6ad652b262e9f3a9077bf8767536771ff69fb158854d8"
+    },
+    {
+      "path": "artifacts/ricochet-v086/tools/run-ricochet-v086-browser.mjs",
+      "sha256": "06c4d990e48c09b864b27fef60ad9122c3f33cf060af38aaa3f5ad821ec43e30"
+    },
+    {
+      "path": "artifacts/ricochet-v086/tools/prepare-delivery-v086.mjs",
+      "sha256": "09cb0e85fab312f829d6d248158be7a214c5c7b16c6eebeb70fc45139d4ba0ac"
+    },
+    {
+      "path": "artifacts/ricochet-v086/tools/inspect-v086-release.mjs",
+      "sha256": "7675c263e66c35a385fc0491fd5282b3ea116365337d4c1c7e9a9c09eded215e"
+    },
+    {
+      "path": "artifacts/ricochet-v086/tools/verify-offline-v086.mjs",
+      "sha256": "7c4db06d8100a777ad1d20e04bed0224ad03435c9d18b12832bd3775515d09a6"
+    },
+    {
+      "path": "artifacts/ricochet-v086/tools/finalize-evidence-v086.mjs",
+      "sha256": "01089c2d31aa4a3b650b4c928e1b90175898ce7d01ffec74d37bb5059166e5c4"
+    }
+  ],
+  "references": [
+    {
+      "path": "Docs/ViralInvasion_RicochetReceipts_v0.8.6.md",
+      "sha256": "7eebb713f7553e0d069ebdfd413c460b74f5ad663078ec3c31ac4c6788a2a320"
+    },
+    {
+      "path": "Docs/ViralInvasion_Playtest.md",
+      "sha256": "a47aa8579418936285466c65f16e13a8cafdf7376278f86524f9acef919b49c0"
+    },
+    {
+      "path": "artifacts/ricochet-v086/regression/implementation-report.json",
+      "sha256": "72aea8314c86643b688902879ab0310d5854009a941141fa8d9dba6c513c27ed"
+    },
+    {
+      "path": "artifacts/ricochet-v086/regression/baseline-raw-receipts.json",
+      "sha256": "a787a064ba9fd7d2a838e6bcecfd78da7f5664323e329b7b7ef61e2d120d14ba"
+    },
+    {
+      "path": "artifacts/ricochet-v086/regression/candidate-raw-receipts.json",
+      "sha256": "684d637d5192feb96b76912a0e6cf45ceb4716af146c481d17a9235e63e0d89e"
+    },
+    {
+      "path": "artifacts/ricochet-v086/regression/baseline-vitest.json",
+      "sha256": "1e8056c66ea644536db4130956fbd62cd297370849969722ec7172ff84639079"
+    },
+    {
+      "path": "artifacts/ricochet-v086/regression/nonseed-results.json",
+      "sha256": "cac004f28d8e078355a9fc2866160bbc14a24cf10a74dbf6ef50a1117bc90046"
+    },
+    {
+      "path": "artifacts/ricochet-v086/regression/full-system-seeds.json",
+      "sha256": "0da746eb743dd4755b578e528dea71cb960a62ad952d50e3fe1cd45cf0881b3a"
+    },
+    {
+      "path": "artifacts/ricochet-v086/browser-attempt-1/summary.json",
+      "sha256": "bc9887dc63b84c5fd88fc22217ce73261886587ec456a04869f44e9a87876597"
+    },
+    {
+      "path": "artifacts/ricochet-v086/browser-attempt-1/actual-receipts-review.json",
+      "sha256": "9cd4df126c77d0cb9d0b01cbb0137f8c1bb95596bee459339952f556fed39493"
+    },
+    {
+      "path": "artifacts/ricochet-v086/integration/final-source-lineage.json",
+      "sha256": "739d07f5083acef07aef26a5c2f6c50e484bef8b336bbd03eb7e7cc27733df91"
+    },
+    {
+      "path": "artifacts/ricochet-v086/release/inspection-1/inspection.json",
+      "sha256": "effb38048951772988e16a035161c1ea2a5ece30a64113703e43483c463adb4e"
+    },
+    {
+      "path": "artifacts/ricochet-v086/release/offline-smoke-1/report.json",
+      "sha256": "2961f6042c7f1cad018ae34c1d7c1dcfe1e816610396448bd3cf3cdeaddd783e"
+    },
+    {
+      "path": "artifacts/releases/v0.8.6/release-package.json",
+      "sha256": "ccd0fb9ad1fdf6a52514a5cd5e283304c488b490e0b53376efd6c6cb0395a1d6"
+    },
+    {
+      "path": "dist/game.js",
+      "sha256": "4e62dcb2ab26a18194f1d2986cb1c2c97ee090f0034ab6016ce418e46fe4a7cf"
+    },
+    {
+      "path": "dist/build-meta.json",
+      "sha256": "099edd387aeb44ec0976853a879d03888e83590ec951bba5006f400e477b328a"
+    }
+  ]
+}

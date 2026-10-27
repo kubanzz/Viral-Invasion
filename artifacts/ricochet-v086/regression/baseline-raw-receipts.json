@@ -1,0 +1,451 @@
+{
+  "scope": "Explicit post-growth fixture; one public step, unchanged host damage path. Not natural acquisition, campaign, browser, or human evidence.",
+  "input": {
+    "moveX": 0,
+    "moveY": 0,
+    "aim": {
+      "x": 600,
+      "y": 500
+    },
+    "tool": 1,
+    "fire": true
+  },
+  "preset": {
+    "player": {
+      "x": 500,
+      "y": 500
+    },
+    "targets": [
+      {
+        "id": "a",
+        "x": 600,
+        "y": 500,
+        "hp": 204,
+        "radius": 30
+      },
+      {
+        "id": "b",
+        "x": 750,
+        "y": 500,
+        "hp": 204,
+        "radius": 30
+      }
+    ],
+    "ranks": {
+      "multishot": 2
+    },
+    "protocol": {
+      "id": "PURIFY_CHAIN",
+      "tuning": "balanced",
+      "rank": 3
+    },
+    "chainCharge": 0
+  },
+  "result": {
+    "aHp": 34,
+    "bHp": 64,
+    "actualBDamage": 140,
+    "ricochetHits": 1,
+    "uniqueRoots": [
+      "71:2:ricochet:1:a"
+    ],
+    "history": [
+      {
+        "at": 0.016666666666666666,
+        "type": "PROTOCOL_RICOCHET_HIT",
+        "text": "连锁进阶：实际折射 1 体，共 70 点伤害。"
+      }
+    ],
+    "receipts": [
+      {
+        "type": "TARGET_HIT",
+        "tick": 1,
+        "data": {
+          "id": "b",
+          "organId": "heart",
+          "damage": 70,
+          "rawDamage": 70,
+          "remainingHp": 134,
+          "tool": 1,
+          "cause": "protocol",
+          "rootId": "71:2:ricochet:1:a",
+          "protocolId": "PURIFY_CHAIN"
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 1,
+        "data": {
+          "id": "b",
+          "organId": "heart",
+          "damage": 70,
+          "rawDamage": 70,
+          "remainingHp": 64,
+          "tool": 1,
+          "cause": "protocol",
+          "rootId": "71:2:ricochet:1:a",
+          "protocolId": "PURIFY_CHAIN"
+        }
+      }
+    ],
+    "logs": [
+      {
+        "type": "PROTOCOL_RICOCHET_HIT",
+        "tick": 1,
+        "data": {
+          "protocolId": "PURIFY_CHAIN",
+          "rootId": "71:2:ricochet:1:a",
+          "targetId": "b",
+          "damage": 70,
+          "period": 2,
+          "rank": 3
+        }
+      },
+      {
+        "type": "PROTOCOL_RICOCHET_HIT",
+        "tick": 1,
+        "data": {
+          "protocolId": "PURIFY_CHAIN",
+          "rootId": "71:2:ricochet:1:a",
+          "targetId": "b",
+          "damage": 70,
+          "period": 2,
+          "rank": 3
+        }
+      }
+    ],
+    "events": [
+      {
+        "type": "RUN_STARTED",
+        "tick": 0,
+        "data": {
+          "seed": 71,
+          "mode": "endless",
+          "startAtTick": 0,
+          "encounterConfig": "endless-1",
+          "counterGuide": "adaptive",
+          "firstTraitOverride": ""
+        }
+      },
+      {
+        "type": "PROTOCOL_EQUIPPED",
+        "tick": 0,
+        "data": {
+          "source": "preparation",
+          "protocolId": "IMMUNE_BEACON",
+          "tuning": "balanced",
+          "rank": 1,
+          "slots": 1,
+          "actionHint": "Q 就绪时，指敌体短时优先围猎；指空地部署区域，细胞实际移动咬击。"
+        }
+      },
+      {
+        "type": "PREPARATION_APPLIED",
+        "tick": 0,
+        "data": {
+          "version": 1,
+          "starterProtocolId": "IMMUNE_BEACON",
+          "prepaidChoices": 1,
+          "repaymentXp": 20,
+          "nextDraftXp": 55
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 1,
+        "data": {
+          "id": "a",
+          "organId": "heart",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 170,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 1,
+        "data": {
+          "id": "a",
+          "organId": "heart",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 136,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 1,
+        "data": {
+          "id": "b",
+          "organId": "heart",
+          "damage": 70,
+          "rawDamage": 70,
+          "remainingHp": 134,
+          "tool": 1,
+          "cause": "protocol",
+          "rootId": "71:2:ricochet:1:a",
+          "protocolId": "PURIFY_CHAIN"
+        }
+      },
+      {
+        "type": "PROTOCOL_RICOCHET_HIT",
+        "tick": 1,
+        "data": {
+          "protocolId": "PURIFY_CHAIN",
+          "rootId": "71:2:ricochet:1:a",
+          "targetId": "b",
+          "damage": 70,
+          "period": 2,
+          "rank": 3
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 1,
+        "data": {
+          "id": "a",
+          "organId": "heart",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 102,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 1,
+        "data": {
+          "id": "a",
+          "organId": "heart",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 68,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 1,
+        "data": {
+          "id": "b",
+          "organId": "heart",
+          "damage": 70,
+          "rawDamage": 70,
+          "remainingHp": 64,
+          "tool": 1,
+          "cause": "protocol",
+          "rootId": "71:2:ricochet:1:a",
+          "protocolId": "PURIFY_CHAIN"
+        }
+      },
+      {
+        "type": "PROTOCOL_RICOCHET_HIT",
+        "tick": 1,
+        "data": {
+          "protocolId": "PURIFY_CHAIN",
+          "rootId": "71:2:ricochet:1:a",
+          "targetId": "b",
+          "damage": 70,
+          "period": 2,
+          "rank": 3
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 1,
+        "data": {
+          "id": "a",
+          "organId": "heart",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 34,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1,
+        "data": {
+          "tool": 1,
+          "x": 600,
+          "y": 500,
+          "hit": true,
+          "rays": 5,
+          "pierce": 0
+        }
+      }
+    ],
+    "metrics": {
+      "runId": "71:metrics:2",
+      "lastSequence": 13,
+      "lastTick": 1,
+      "ended": false,
+      "frame": {
+        "tick": 1,
+        "entries": [
+          {
+            "kind": "hit",
+            "rootId": "71:2:ricochet:1:a",
+            "targetId": "b",
+            "protocolId": "PURIFY_CHAIN"
+          },
+          {
+            "kind": "ricochet",
+            "rootId": "71:2:ricochet:1:a",
+            "targetId": "b",
+            "protocolId": "PURIFY_CHAIN"
+          }
+        ]
+      },
+      "summary": {
+        "schemaVersion": 1,
+        "limited": false,
+        "care": {
+          "repairActions": 0,
+          "repaired": 0,
+          "organLoss": 0,
+          "organCost": 0,
+          "playerDamage": 0,
+          "organs": {
+            "heart": {
+              "repairActions": 0,
+              "repaired": 0,
+              "loss": 0,
+              "cost": 0
+            },
+            "lung": {
+              "repairActions": 0,
+              "repaired": 0,
+              "loss": 0,
+              "cost": 0
+            }
+          }
+        },
+        "control": {
+          "chainTriggers": 0,
+          "chainHops": 0,
+          "ricochetHits": 1,
+          "resonanceHits": 0,
+          "beaconBites": 0,
+          "patrolBites": 0,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 0,
+          "pulseUses": 0,
+          "crystalExposures": 0,
+          "corePulseHits": 0,
+          "airwayCloses": 0,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [],
+          "migrationChoice": null,
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [],
+          "coreCleared": false
+        }
+      }
+    },
+    "growth": {
+      "runId": "71:2",
+      "seed": 71,
+      "lastElapsed": 0.016666666666666666,
+      "xp": 0,
+      "level": 0,
+      "nextXp": 20,
+      "research": 0,
+      "preparation": {
+        "version": 1,
+        "starterProtocolId": "IMMUNE_BEACON"
+      },
+      "starterDebt": 1,
+      "carriedProtocols": [
+        "IMMUNE_BEACON"
+      ],
+      "equipped": [
+        {
+          "id": "PURIFY_CHAIN",
+          "tuning": "balanced",
+          "rank": 3
+        }
+      ],
+      "draft": null,
+      "pendingLevels": [],
+      "consumedDraftIds": [],
+      "rewardedKeys": [],
+      "sourceKillCounts": {},
+      "lastMilestoneWave": 0,
+      "nextMilestoneWave": null,
+      "damageTakenByOrgan": {
+        "heart": 0,
+        "lung": 0
+      },
+      "protectionNeeded": {
+        "heart": false,
+        "lung": false
+      },
+      "draftSerial": 0,
+      "historyHash": 2166136261,
+      "ended": false,
+      "pendingResearch": null,
+      "researchSerial": 0,
+      "beacon": null,
+      "beaconReadyAt": 0,
+      "cells": [],
+      "activations": {
+        "PURIFY_CHAIN": 2
+      },
+      "marks": [],
+      "resonance": [],
+      "chainRoots": [],
+      "protocolHistory": [
+        {
+          "at": 0,
+          "type": "PROTOCOL_EQUIPPED",
+          "text": "免疫灯塔：初始预装 Ⅰ · 均衡。"
+        },
+        {
+          "at": 0,
+          "type": "PREPARATION_APPLIED",
+          "text": "Q 就绪时，指敌体短时优先围猎；指空地部署区域，细胞实际移动咬击。已预支首份成长，20 XP 仅结清；下一份草案 55 XP。"
+        },
+        {
+          "at": 0.016666666666666666,
+          "type": "PROTOCOL_RICOCHET_PLANNED",
+          "text": "连锁进阶计划：2 次命中蓄能，尝试折射 70 点伤害；实际命中另行记录。"
+        },
+        {
+          "at": 0.016666666666666666,
+          "type": "PROTOCOL_RICOCHET_HIT",
+          "text": "连锁进阶：实际折射 1 体，共 70 点伤害。"
+        },
+        {
+          "at": 0.016666666666666666,
+          "type": "PROTOCOL_RICOCHET_PLANNED",
+          "text": "连锁进阶计划：2 次命中蓄能，尝试折射 70 点伤害；实际命中另行记录。"
+        }
+      ],
+      "pendingLogs": [],
+      "budgetTick": 1,
+      "budgetUsed": 6,
+      "skippedCommands": 0,
+      "lastEvolution": {
+        "protocolId": "IMMUNE_BEACON",
+        "rank": 1,
+        "until": 8,
+        "title": "免疫灯塔 Ⅰ · 初始预装",
+        "hint": "Q 就绪时，指敌体短时优先围猎；指空地部署区域，细胞实际移动咬击。已预支首份成长，20 XP 仅结清；下一份草案 55 XP。"
+      },
+      "chainCharge": 1
+    }
+  }
+}

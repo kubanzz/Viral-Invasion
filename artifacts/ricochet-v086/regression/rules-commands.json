@@ -1,0 +1,34 @@
+{
+  "mode": "rules",
+  "checks": [
+    {
+      "name": "main-typecheck",
+      "args": [
+        "node_modules/typescript/bin/tsc",
+        "--noEmit"
+      ],
+      "startedAt": "2026-10-27T21:26:41.460Z",
+      "finishedAt": "2026-10-27T21:26:47.641Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "name": "main-nonseed",
+      "args": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--exclude",
+        "tests/unit/full-system-seeds.test.ts",
+        "--maxWorkers=2",
+        "--reporter=json",
+        "--outputFile=D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\ricochet-v086\\regression\\nonseed-results.json"
+      ],
+      "startedAt": "2026-10-27T21:26:47.642Z",
+      "finishedAt": "2026-10-27T21:27:31.054Z",
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    }
+  ]
+}

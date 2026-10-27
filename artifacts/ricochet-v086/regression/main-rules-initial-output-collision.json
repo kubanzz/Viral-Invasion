@@ -1,0 +1,9 @@
+{
+  "scope": "Record of the first main-worktree orchestration failure; not a game failure or a reconstructed raw compiler log.",
+  "command": "node .tools/run-ricochet-v086-checks.mjs rules",
+  "exitCode": 1,
+  "reason": "After invoking TypeScript, writeFileSync with flag wx refused to replace the existing isolated-check typecheck-stdout.txt. The following full rule suite did not run in this attempt. The original isolated report remained untouched.",
+  "errorCode": "EEXIST",
+  "path": "artifacts/ricochet-v086/regression/typecheck-stdout.txt",
+  "repair": "Main-worktree streams use main-typecheck/main-nonseed prefixes, and the runner preflights all stream destinations before invoking a command. Gameplay source and test expectations did not change."
+}
