@@ -7,8 +7,9 @@ import { BALANCE, type Tool } from './game/types';
 import { Soundscape } from './audio';
 import { battleHudMarkup, battleOverlay, updateBattleHud } from './ui/battleHud';
 import type { TraitId } from './game/battleTypes';
-import type { ProtocolId } from './game/growthTypes';
-import { draftOverlay, growthHudMarkup, updateGrowthHud, growthHelpMarkup, growthHistoryMarkup, growthDetailsEntryMarkup, growthDetailsOverlay } from './ui/growthHud';
+import type { ProtocolId, ResearchDirectionId } from './game/growthTypes';
+import { draftOverlay, researchDirectionOverlay, growthHudMarkup, updateGrowthHud, growthHelpMarkup, growthHistoryMarkup, growthDetailsEntryMarkup, growthDetailsOverlay } from './ui/growthHud';
+import './ui/research.css';
 import { ProfileStore } from './meta/profile';
 import type { RunEncounterRecord } from './meta/profile';
 import { newRunOptions, replayRunOptions } from './meta/runOptions';
@@ -91,6 +92,8 @@ function togglePause() {
   if (migrationGuide) { closeMigrationGuide(); return; }
   if (history) { history = false; if (resumeAfterHistory) session.resume(); resumeAfterHistory = false; return; }
   if (help) { help = false; if (resumeAfterHelp) session.resume(); resumeAfterHelp = false; return; }
+  const research = session.state.growth?.pendingResearch;
+  if (research) { session.cancelResearch({ runId: research.runId, requestId: research.id }); return; }
   if (session.state.phase === 'playing') session.pause();
   else if (session.state.phase === 'paused') session.resume();
 }
@@ -112,7 +115,7 @@ function showGrowthDetails(button: HTMLButtonElement) {
   if (!session.state.growth || growthDetails || profileOpen || migrationGuide) return;
   resumeAfterGrowthDetails = session.state.phase === 'playing';
   growthDetailsReturnSelector = button.closest('#overlay-host') ? '#overlay-host [data-action="growth-details"]' : '.growth-panel [data-action="growth-details"]';
-  growthDetailsReturnLabel = help ? '返回作战手册' : history ? '返回战术记录' : session.state.growth.draft ? '返回进化草案' : resumeAfterGrowthDetails ? '返回战场' : '返回上一级';
+  growthDetailsReturnLabel = help ? '返回作战手册' : history ? '返回战术记录' : session.state.growth.pendingResearch ? '返回研究方向' : session.state.growth.draft ? '返回进化草案' : resumeAfterGrowthDetails ? '返回战场' : '返回上一级';
   if (resumeAfterGrowthDetails) session.pause();
   input.clear(); clock.reset(); growthDetails = true;
   updateOverlay();
@@ -146,6 +149,14 @@ app.addEventListener('click', event => {
     return;
   }
   if (action === 'skip-counter-guide') { session.skipCounterGuide(); input.clear(); clock.reset(); button.blur(); return; }
+  if (action === 'research-confirm' || action === 'research-cancel') {
+    const growth = session.state.growth;
+    if (!growth) return;
+    const intent = { runId: growth.runId, requestId: button.dataset.request! };
+    if (action === 'research-confirm') session.confirmResearch({ ...intent, direction: button.dataset.direction as ResearchDirectionId });
+    else session.cancelResearch(intent);
+    input.clear(); clock.reset(); button.blur(); return;
+  }
   if (action === 'close-migration-guide') { closeMigrationGuide(); return; }
   if (action.startsWith('migration-')) {
     session.chooseMigration(action.slice(10) as 'pursue' | 'block' | 'ignore', button.dataset.migration!);
@@ -178,7 +189,7 @@ app.addEventListener('click', event => {
 function updateOverlay() {
   const state = session.state;
   const draft = state.growth?.draft;
-  const key = `${state.phase}:${help}:${lowEffects}:${history}:${growthDetails}:${profileOpen}:${migrationGuide}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}:${state.battle?.encounter?.firstCounter.guideStatus}`;
+  const key = `${state.phase}:${help}:${lowEffects}:${history}:${growthDetails}:${profileOpen}:${migrationGuide}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}:${state.growth?.pendingResearch?.id}:${state.battle?.encounter?.firstCounter.guideStatus}`;
   if (key === overlayKey) return;
   overlayKey = key;
   el('hud').hidden = state.phase === 'menu' || state.phase === 'result';
@@ -195,11 +206,11 @@ function updateOverlay() {
   if (profileOpen) { host.innerHTML = profileOverlay(profile.data, profile.status); return; }
   if (migrationGuide) { host.innerHTML = `<div class="overlay"><section class="modal" role="dialog" aria-modal="true" aria-label="首次迁移指引"><div class="eyebrow">THE NEXT CHAMBER / 首次迁移</div><h2>病毒要去另一个器官了。</h2><p>倒数已暂停。你可以去器官出口（见小地图）按 E 追击，或在隔离闸（见小地图）按 E 留守 2 秒封锁。放任会让肺部新增感染源，仍可补救。</p><p>追击后清掉迁移小体，或关闭肺部气道；器官图会显示心脏残留风险，出口可双向返回。此说明之后可在作战手册回看。</p><div class="actions"><button class="primary" data-action="close-migration-guide">明白了，继续作战</button></div></section></div>`; return; }
   if (state.battle) {
-    host.innerHTML = (!help && !history && state.phase === 'paused' ? draftOverlay(state) : null) ?? battleOverlay(state, help, resumeAfterHelp, lowEffects, history) ?? '';
+    host.innerHTML = (!help && !history && state.phase === 'paused' ? researchDirectionOverlay(state) ?? draftOverlay(state) : null) ?? battleOverlay(state, help, resumeAfterHelp, lowEffects, history) ?? '';
     if (state.growth && help) host.querySelector('.help-grid')?.insertAdjacentHTML('afterend', growthHelpMarkup);
     if (help) host.querySelector('.help-grid')?.insertAdjacentHTML('afterend', encounterHelpMarkup(state));
     if (state.growth && history) host.querySelector('h2')?.insertAdjacentHTML('afterend', growthHistoryMarkup(state));
-    if (state.growth && (help || history || state.phase === 'paused' || state.phase === 'result')) host.querySelector('.actions')?.insertAdjacentHTML('beforeend', growthDetailsEntryMarkup);
+    if (state.growth && (help || history || state.phase === 'paused' || state.phase === 'result') && !host.querySelector('[data-action="growth-details"]')) host.querySelector('.actions')?.insertAdjacentHTML('beforeend', growthDetailsEntryMarkup);
     if (state.campaign) host.querySelector('.switches')?.insertAdjacentHTML('beforeend', `<button data-action="sound">声音 ${sound.enabled?'开':'关'}</button>`);
     if (state.campaign && state.phase === 'menu' && !help && !history) host.querySelector('.intro-card')?.insertAdjacentHTML('beforeend', profileMenuMarkup(profile.data, profile.status));
     if (state.campaign && state.phase === 'menu' && !help && !history) {
@@ -260,7 +271,7 @@ function frame(now: number) {
   const aim = renderer.camera.screenToWorld(input.pointer);
   clock.advance(now, dt => session.step(input.frame(aim), dt), session.state.phase === 'playing');
   if (resetClockAfterStep) { clock.reset(); resetClockAfterStep = false; }
-  if (migrationGuidePending && session.state.phase === 'playing' && !session.state.growth?.draft) {
+  if (migrationGuidePending && session.state.phase === 'playing' && !session.state.growth?.draft && !session.state.growth?.pendingResearch) {
     migrationGuidePending = false; migrationGuideSeen = true; migrationGuide = true; session.pause(); input.clear(); clock.reset();
   }
   renderer.prepareCamera(session.state);
@@ -275,7 +286,7 @@ renderer.resize(); updateOverlay(); updateHud(); requestAnimationFrame(frame);
 
 // Read-only diagnostics for browser regression. Inputs always use the real DOM.
 Object.defineProperty(window, '__viral', { value: Object.freeze({
-  version: '0.7.0-G4', snapshot: () => session.snapshot(),
+  version: '0.7.1-G4', snapshot: () => session.snapshot(),
   toScreen: (point: { x: number; y: number }) => renderer.camera.worldToScreen(point),
   toWorld: (point: { x: number; y: number }) => renderer.camera.screenToWorld(point),
   diagnostics: () => renderer.diagnostics(session.state),

@@ -3,8 +3,9 @@ import { SeedRng } from '../core/rng';
 import type { OrganId } from './battleTypes';
 import { activeWorld, type GameEvent, type GameState, type Target, type Vec, type WorldGeometry } from './types';
 import { GROWTH_BALANCE as B, makeDraftOption, PROTOCOL_IDS, PROTOCOLS, TUNINGS, getBeaconConfig, getChainConfig, getPulseConfig, getTraceConfig, PATROL_CONFIG, protocolRank, PROTOCOL_ACTIONS, chainRicochetPeriod } from './protocols';
-import type { DamageOrigin, DraftIntent, DraftOption, DraftResolution, EquippedProtocol, GrowthCommand, GrowthContext, GrowthState, ProtocolDraft, ProtocolId, ProtocolRank, ResearchResult } from './growthTypes';
+import type { DamageOrigin, DraftIntent, DraftOption, DraftResolution, EquippedProtocol, GrowthCommand, GrowthContext, GrowthState, ProtocolDraft, ProtocolId, ProtocolRank, ResearchResult, ResearchDirectionId, ResearchConfirmIntent, ResearchRequestIntent, ResearchRequestResult, ResearchConfirmResult, ResearchCancelResult } from './growthTypes';
 import { advanceImmuneCells, summonImmuneCells } from './immuneCells';
+import { availableResearchDirections, RESEARCH_DIRECTIONS } from './research';
 
 export type { GrowthCommand, GrowthContext, GrowthState, DamageOrigin, DraftIntent, DraftResolution } from './growthTypes';
 
@@ -30,7 +31,7 @@ export class GrowthController {
     this.state = { runId, seed: seed >>> 0, lastElapsed: 0, xp: 0, level: 0, nextXp: B.xpThresholds[0], research: 0,
       equipped: [], draft: null, pendingLevels: [], consumedDraftIds: [], rewardedKeys: [], sourceKillCounts: {},
       damageTakenByOrgan: { heart: 0, lung: 0 }, protectionNeeded: { heart: false, lung: false },
-      draftSerial: 0, historyHash: 2166136261, ended: false,
+      draftSerial: 0, historyHash: 2166136261, ended: false, pendingResearch: null, researchSerial: 0,
       beacon: null, beaconReadyAt: 0, cells: [], activations: {}, marks: [], resonance: [], chainRoots: [], protocolHistory: [], pendingLogs: [],
       budgetTick: -1, budgetUsed: 0, skippedCommands: 0 };
   }
@@ -63,7 +64,7 @@ export class GrowthController {
   recordEvent(event: GameEvent, context?: GrowthContext): void {
     const s=this.state, data=event.data, elapsed=context?.elapsed??event.tick/60;
     this.observeTime(elapsed);
-    if(event.type==='RUN_ENDED') { s.ended=true;s.draft=null;s.pendingLevels=[];s.beacon=null;s.cells=[];s.marks=[];s.resonance=[];return; }
+    if(event.type==='RUN_ENDED') { s.ended=true;s.draft=null;s.pendingResearch=null;s.pendingLevels=[];s.beacon=null;s.cells=[];s.marks=[];s.resonance=[];return; }
     if(s.ended)return;
     const organ:OrganId=data.organId==='lung'?'lung':data.organId==='heart'?'heart':context?.organId??'heart';
     if(event.type==='INFECTION_SOURCE_CLEARED') {
@@ -100,10 +101,11 @@ export class GrowthController {
   private shuffled<T>(values: readonly T[], rng: SeedRng): T[] {
     const result=[...values];for(let i=result.length-1;i>0;i--){const j=rng.int(0,i);[result[i],result[j]]=[result[j],result[i]];}return result;
   }
-  private createDraft(source: ProtocolDraft['source'], level?: number): ProtocolDraft {
+  private createDraft(source: ProtocolDraft['source'], level?: number, researchDirection?: ResearchDirectionId, requestId?: string): ProtocolDraft {
     const s=this.state, serial=++s.draftSerial;
     const equipment=s.equipped.map(slot=>`${slot.id}:${slot.tuning}:${protocolRank(slot)}`).sort().join('|');
-    const rng=new SeedRng((s.seed^Math.imul(serial,0x9e3779b1)^hashString(equipment,s.historyHash))>>>0);
+    const focusHash=source==='research'&&researchDirection&&researchDirection!=='general'?hashString(`research:${researchDirection}`):0;
+    const rng=new SeedRng((s.seed^Math.imul(serial,0x9e3779b1)^hashString(equipment,s.historyHash)^focusHash)>>>0);
     const newOptions:DraftOption[]=[],retunes:DraftOption[]=[];
     for(const id of PROTOCOL_IDS) {
       const current=this.equipped(id);
@@ -117,7 +119,12 @@ export class GrowthController {
     const firstChoices=opening?[shuffledNew.find(o=>o.protocolId==='IMMUNE_BEACON')!,shuffledNew.find(o=>o.protocolId==='PURIFY_CHAIN')!,shuffledNew.find(o=>o.protocolId!=='IMMUNE_BEACON'&&o.protocolId!=='PURIFY_CHAIN')!]:shuffledNew;
     let ordered:DraftOption[];
     const upgrades=retunes.filter(option=>(option.rank??1)>protocolRank(this.equipped(option.protocolId)));
-    if(!opening&&upgrades.length){
+    if(source==='research'&&researchDirection&&researchDirection!=='general'){
+      const info=RESEARCH_DIRECTIONS[researchDirection],pool=[...newOptions,...retunes];
+      const guaranteed=[info.primary!,info.partner!].map(id=>pool.find(option=>option.protocolId===id)!);
+      const ids=new Set(guaranteed.map(option=>option.protocolId));
+      ordered=[...guaranteed,...this.shuffled(pool.filter(option=>!ids.has(option.protocolId)),rng).slice(0,1)];
+    }else if(!opening&&upgrades.length){
       // After the first acquisition, every draft teaches that an existing route
       // can evolve. Keep a new route alongside it whenever one remains available.
       const guaranteed=[this.shuffled(upgrades,rng)[0],...(shuffledNew.length?[shuffledNew[0]]:[])];
@@ -126,19 +133,60 @@ export class GrowthController {
     }else ordered=[...firstChoices,...this.shuffled(retunes,rng)].slice(0,3);
     if(ordered.length!==3)throw new Error('Protocol candidate pool must provide three legal distinct choices');
     const options=this.shuffled(ordered,rng) as ProtocolDraft['options'];
-    const draft:ProtocolDraft={id:`${s.runId}:draft:${serial}`,source,serial,level,options,status:'choosing'};
-    s.draft=draft;this.log('PROTOCOL_DRAFT_OPENED',{draftId:draft.id,source,serial,level:level??0});
+    const draft:ProtocolDraft={id:`${s.runId}:draft:${serial}`,source,serial,level,options,status:'choosing',...(source==='research'&&researchDirection?{researchDirection}:{})};
+    s.draft=draft;this.log('PROTOCOL_DRAFT_OPENED',{draftId:draft.id,source,serial,level:level??0,...(source==='research'?{researchDirection:researchDirection??'general',...(requestId?{requestId}:{})}:{})});
+    if(source==='research')this.remember('PROTOCOL_DRAFT_OPENED',`${RESEARCH_DIRECTIONS[researchDirection??'general'].title}：三种不同协议候选已就绪，可新装、进阶或改造。`);
     return draft;
   }
   private openNextLevel(): void {
-    if(!this.state.draft&&!this.state.ended&&this.state.pendingLevels.length)this.createDraft('xp',this.state.pendingLevels.shift()!);
+    if(!this.state.draft&&!this.state.pendingResearch&&!this.state.ended&&this.state.pendingLevels.length)this.createDraft('xp',this.state.pendingLevels.shift()!);
+  }
+  requestResearch(nodeId: string, context: GrowthContext): ResearchRequestResult {
+    this.observeTime(context.elapsed);
+    const s=this.state;
+    if(s.ended||!context.active)return{kind:'rejected',reason:'run-inactive'};
+    this.openNextLevel();
+    if(s.draft)return{kind:'rejected',reason:'draft-active'};
+    if(s.pendingResearch)return{kind:'rejected',reason:'research-pending'};
+    if(!Number.isFinite(s.research)||s.research<B.researchCost)return{kind:'rejected',reason:'insufficient-samples',missing:B.researchCost-s.research};
+    const serial=(s.researchSerial??0)+1;s.researchSerial=serial;
+    const offer={id:`${s.runId}:research:${serial}`,runId:s.runId,nodeId,organId:context.organId,directions:availableResearchDirections(s.rewardedKeys)};
+    s.pendingResearch=offer;
+    this.log('RESEARCH_REQUESTED',{requestId:offer.id,nodeId,organId:offer.organId,directions:offer.directions.join(','),cost:B.researchCost});
+    this.remember('RESEARCH_REQUESTED','研究方向待确认：仅实际诊断的变异可作定向依据，确认前不消耗样本。');
+    return{kind:'requested',requestId:offer.id};
+  }
+  confirmResearch(intent: ResearchConfirmIntent): ResearchConfirmResult {
+    const s=this.state,offer=s.pendingResearch;
+    if(s.ended)return{kind:'rejected',reason:'run-inactive'};
+    if(intent.runId!==s.runId||!offer||offer.runId!==intent.runId||offer.id!==intent.requestId)return{kind:'rejected',reason:'stale-request-or-run'};
+    if(s.draft)return{kind:'rejected',reason:'draft-active'};
+    if(!offer.directions.includes(intent.direction))return{kind:'rejected',reason:'invalid-direction'};
+    if(!Number.isFinite(s.research)||s.research<B.researchCost)return{kind:'rejected',reason:'insufficient-samples',missing:B.researchCost-s.research};
+    s.research-=B.researchCost;s.pendingResearch=null;
+    this.log('RESEARCH_CONFIRMED',{requestId:offer.id,nodeId:offer.nodeId,organId:offer.organId,researchDirection:intent.direction,cost:B.researchCost});
+    const draft=this.createDraft('research',undefined,intent.direction,offer.id);
+    this.log('RESEARCH_SPENT',{requestId:offer.id,nodeId:offer.nodeId,organId:offer.organId,researchDirection:intent.direction,cost:B.researchCost,draftId:draft.id,remaining:s.research});
+    this.remember('RESEARCH_CONFIRMED',`选择${RESEARCH_DIRECTIONS[intent.direction].title}，消耗 ${B.researchCost} 样本；生成后放弃不返还。`);
+    this.remember('RESEARCH_SPENT',`样本 −${B.researchCost}，剩余 ${s.research}；${RESEARCH_DIRECTIONS[intent.direction].title}草案已生成。`);
+    return{kind:'opened',draftId:draft.id,cost:B.researchCost,requestId:offer.id};
+  }
+  cancelResearch(intent: ResearchRequestIntent): ResearchCancelResult {
+    const s=this.state,offer=s.pendingResearch;
+    if(s.ended)return{kind:'rejected',reason:'run-inactive'};
+    if(intent.runId!==s.runId||!offer||offer.runId!==intent.runId||offer.id!==intent.requestId)return{kind:'rejected',reason:'stale-request-or-run'};
+    s.pendingResearch=null;
+    this.log('RESEARCH_CANCELLED',{requestId:offer.id,nodeId:offer.nodeId,organId:offer.organId,cost:0});
+    this.remember('RESEARCH_CANCELLED','已取消研究方向确认，未消耗样本。');
+    this.openNextLevel();
+    return{kind:'cancelled',requestId:offer.id,...(s.draft?{nextDraftId:s.draft.id}:{})};
   }
   openResearch(nodeId: string, context: GrowthContext): ResearchResult {
     this.observeTime(context.elapsed);
     const s=this.state;
     if(s.ended||!context.active)return{kind:'rejected',reason:'run-inactive'};
     this.openNextLevel();
-    if(s.draft)return{kind:'rejected',reason:'draft-active'};
+    if(s.draft||s.pendingResearch)return{kind:'rejected',reason:'draft-active'};
     if(s.research<B.researchCost)return{kind:'rejected',reason:'insufficient-samples',missing:B.researchCost-s.research};
     s.research-=B.researchCost;const draft=this.createDraft('research');
     this.log('RESEARCH_SPENT',{nodeId,cost:B.researchCost,draftId:draft.id,remaining:s.research});

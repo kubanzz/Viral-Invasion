@@ -6,7 +6,7 @@ import { activeWorld, BALANCE, type Effect, type GameEvent, type GameState, type
 import { BattleDirector, initializeBattle } from './battle';
 import type { CampaignOptions } from './battleTypes';
 import { GrowthController, growthContext } from './growth';
-import type { DamageOrigin, DraftIntent, DraftResolution, GrowthCommand } from './growthTypes';
+import type { DamageOrigin, DraftIntent, DraftResolution, GrowthCommand, ResearchConfirmIntent, ResearchRequestIntent, ResearchConfirmResult, ResearchCancelResult } from './growthTypes';
 import { CampaignDirector } from './campaign';
 import type { CampaignCommand, MigrationChoice } from './campaignTypes';
 import { MotherCoreController, MOTHER_CORE_BALANCE } from './motherCore';
@@ -103,7 +103,7 @@ export class GameSession {
 
   resume(): void {
     if (this.state.phase !== 'paused') return;
-    if (this.state.growth?.draft) return;
+    if (this.state.growth?.draft || this.state.growth?.pendingResearch) return;
     this.state.phase = 'playing';
     this.emit('RUN_RESUMED', {});
   }
@@ -231,7 +231,11 @@ export class GameSession {
       }
       this.campaignController.captureCurrent(state);
     }
-    if (state.phase === 'playing' && state.growth?.draft) { this.draftPauseId = state.growth.draft.id; this.pause(); }
+    const growthModal = state.growth?.draft?.id ?? state.growth?.pendingResearch?.id;
+    if (state.phase === 'playing' && growthModal) {
+      this.draftPauseId = growthModal; this.pause();
+      this.emit('INPUT_RESET_REQUESTED', { reason: state.growth?.pendingResearch ? 'research-direction-opened' : 'protocol-draft-opened' });
+    }
   }
 
   private scan(): void {
@@ -398,6 +402,45 @@ export class GameSession {
     this.resolveDraftPause(result, draftId); return result;
   }
   backToDraft(draftId: string): void { this.growthController?.backToDraft(draftId, this.state.growth!.runId); }
+
+  private ownsResearchPause(intent: ResearchRequestIntent): boolean {
+    const offer = this.state.growth?.pendingResearch, battle = this.state.battle;
+    if (!offer || !battle || this.state.phase !== 'paused' || this.state.player.hp <= 0 || battle.pressure.vitality <= 0
+      || this.draftPauseId !== intent.requestId || offer.id !== intent.requestId || offer.runId !== intent.runId || offer.organId !== battle.organId) return false;
+    const node = battle.graph.nodes.find(node => node.id === offer.nodeId && node.kind === 'research');
+    return !!node && distance(this.state.player, node) <= BALANCE.interactionRange;
+  }
+
+  /** UI transactions use the pause that belongs to this exact research request. */
+  confirmResearch(intent: ResearchConfirmIntent): ResearchConfirmResult {
+    if (!this.growthController || !this.ownsResearchPause(intent)) return { kind: 'rejected', reason: 'stale-request-or-run' };
+    const result = this.growthController.confirmResearch(intent);
+    if (result.kind === 'opened') {
+      this.draftPauseId = result.draftId;
+      this.flushPausedGrowthLogs();
+      this.emit('INPUT_RESET_REQUESTED', { reason: 'research-direction-confirmed' });
+    }
+    return result;
+  }
+
+  cancelResearch(intent: ResearchRequestIntent): ResearchCancelResult {
+    if (!this.growthController || !this.ownsResearchPause(intent)) return { kind: 'rejected', reason: 'stale-request-or-run' };
+    const result = this.growthController.cancelResearch(intent);
+    if (result.kind === 'cancelled') {
+      this.flushPausedGrowthLogs();
+      this.draftPauseId = this.state.growth?.draft?.id ?? null;
+      if (!this.draftPauseId) this.resume();
+      this.emit('INPUT_RESET_REQUESTED', { reason: 'research-direction-cancelled' });
+    }
+    return result;
+  }
+
+  private flushPausedGrowthLogs(): void {
+    // Only accepted transaction telemetry is drained while reading the modal;
+    // combat, growth timers and deferred world commands remain frozen.
+    for (const log of this.state.growth?.pendingLogs.splice(0) ?? []) this.emit(log.type, log.data);
+  }
+
   private resolveDraftPause(result: DraftResolution, draftId: string): void {
     if (result.kind === 'rejected' || this.draftPauseId !== draftId) return;
     if (this.state.growth?.draft) this.draftPauseId = this.state.growth.draft.id;
@@ -571,7 +614,9 @@ export class GameSession {
     if (this.growthController && this.state.battle) {
       const nearest = this.state.battle.graph.nodes.filter(n => ['valve','gate','retest','research','exit'].includes(n.kind)).sort((a,b)=>distance(a,this.state.player)-distance(b,this.state.player))[0];
       if (nearest?.kind === 'research' && distance(nearest,this.state.player) <= BALANCE.interactionRange) {
-        const result = this.growthController.openResearch(nearest.id, growthContext(this.state));
+        const result = this.state.battle.encounter?.configId === 'campaign-1'
+          ? this.growthController.requestResearch(nearest.id, growthContext(this.state))
+          : this.growthController.openResearch(nearest.id, growthContext(this.state));
         if (result.kind === 'rejected') this.message(result.reason === 'insufficient-samples' ? `研究需要更多样本，还差 ${result.missing ?? 1}。清除感染源或首次诊断变异可收集。` : '当前研究草案尚未完成。');
         return;
       }

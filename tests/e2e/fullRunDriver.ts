@@ -24,7 +24,7 @@ export async function fullRun(page:Page,choice:MigrationChoice,onScene?:(name:st
     if(s.growth?.draft){await release();await page.mouse.up();if(onDraft)await onDraft(s);else if(build)await chooseDraftInput(page);else await page.locator('[data-action="draft-discard"]').click();continue;}
     if(s.phase!=='playing')throw new Error(`Unexpected ${s.phase} at ${s.elapsed}`);
     // A callback that opens a real modal can request fresh key holds afterward.
-    if(onUpdate&&await onUpdate(s))await release();
+    if(onUpdate&&await onUpdate(s)){await release();await page.mouse.up();continue;}
     const scene=s.campaign!.core.combat?.attack?'core':s.battle!.organId==='lung'?'lung':s.campaign!.migration.status==='warning'?'migration':null;
     if(scene&&!seen.has(scene)){seen.add(scene);if(onScene)await onScene(scene);}
     const planned=g3Input(s,choice),input=options.inputOverride?await options.inputOverride(s,planned):planned;

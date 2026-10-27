@@ -1,9 +1,18 @@
-import type { OrganId } from './battleTypes';
+import type { OrganId, TraitId } from './battleTypes';
 import type { Effect, GameEvent, GameState, Target, Tool, Vec, WorldGeometry } from './types';
 
 export type ProtocolId = 'PULSE_BREAK' | 'PURIFY_CHAIN' | 'IMMUNE_BEACON' | 'EXPOSE_TRACE';
 export type Tuning = 'balanced' | 'focused' | 'extended';
 export type ProtocolRank = 1 | 2 | 3;
+export type ResearchDirectionId = 'general' | TraitId;
+export interface ResearchOffer { id: string; runId: string; nodeId: string; organId: OrganId; directions: ResearchDirectionId[] }
+export interface ResearchRequestIntent { runId: string; requestId: string }
+export interface ResearchConfirmIntent extends ResearchRequestIntent { direction: ResearchDirectionId }
+export type ResearchRejectReason = 'run-inactive' | 'draft-active' | 'research-pending' | 'insufficient-samples' | 'stale-request-or-run' | 'invalid-direction';
+export type ResearchRejection = { kind: 'rejected'; reason: ResearchRejectReason; missing?: number };
+export type ResearchRequestResult = { kind: 'requested'; requestId: string } | ResearchRejection;
+export type ResearchConfirmResult = { kind: 'opened'; draftId: string; cost: number; requestId: string } | ResearchRejection;
+export type ResearchCancelResult = { kind: 'cancelled'; requestId: string; nextDraftId?: string } | ResearchRejection;
 export interface EquippedProtocol { id: ProtocolId; tuning: Tuning; rank?: ProtocolRank }
 export interface DraftOption {
   id: string; kind: 'equip' | 'retune'; protocolId: ProtocolId; tuning: Tuning;
@@ -14,6 +23,7 @@ export interface ProtocolDraft {
   id: string; source: 'xp' | 'research'; serial: number; level?: number;
   options: [DraftOption, DraftOption, DraftOption];
   status: 'choosing' | 'replacing'; selectedOptionId?: string;
+  researchDirection?: ResearchDirectionId;
 }
 export interface TraceMark {
   targetId: string; organId: OrganId; until: number; slowUntil: number; factor: number;
@@ -30,6 +40,7 @@ export interface GrowthState {
   consumedDraftIds: string[]; rewardedKeys: string[]; sourceKillCounts: Record<string, number>;
   damageTakenByOrgan: Record<OrganId, number>; protectionNeeded: Record<OrganId, boolean>;
   draftSerial: number; historyHash: number; ended: boolean;
+  pendingResearch?: ResearchOffer | null; researchSerial?: number;
   beacon: BeaconState | null; beaconReadyAt: number; marks: TraceMark[];
   cells?: import('./immuneCells').ImmuneCellState[];
   activations?: Partial<Record<ProtocolId, number>>;

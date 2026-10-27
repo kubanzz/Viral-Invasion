@@ -8,8 +8,36 @@ interface Feedback { key: string; text: string; priority: MessagePriority; secon
 const traitId = (value: unknown): TraitId | undefined => value === 'CARAPACE' || value === 'FISSION' || value === 'MIMIC' ? value : undefined;
 const organ = (value: unknown) => value === 'lung' ? '肺部' : value === 'heart' ? '心脏' : '当前器官';
 const number = (value: unknown) => Number.isFinite(Number(value)) ? Number(value) : 0;
+const organCrisisEvent = (type: string) => type === 'ORGAN_CRISIS_STARTED' || type === 'ORGAN_CRISIS_INTERRUPTED' || type === 'ORGAN_CRISIS_CLEARED';
+const positive = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value) && value > 0;
+const count = (value: unknown): value is number => typeof value === 'number' && Number.isSafeInteger(value) && value >= 0;
+
+function organCrisisFeedback(event: GameEvent): Feedback | undefined {
+  const d = event.data;
+  if ((d.organId !== 'heart' && d.organId !== 'lung') || typeof d.sourceId !== 'string' || !d.sourceId.trim() || d.sourceId.length > 128) return;
+  // One configured crisis per organ. Keep source IDs out of record keys so a
+  // producer ID can never create unbounded categories or evict other causes.
+  const label = organ(d.organId), key = `${event.type}:${d.organId}`;
+  if (event.type === 'ORGAN_CRISIS_STARTED') {
+    if (!positive(d.chargeSeconds) || !count(d.maximumImpacts) || typeof d.blockedByAirway !== 'boolean') return;
+    return { key, text: d.blockedByAirway
+      ? `${label}传播支点已出现；气道已关闭，冲击充能暂停。可先抢修，再净化支点；重新开放气道后充能继续。`
+      : `${label}传播支点已出现，开始 ${d.chargeSeconds} 秒充能，最多 ${d.maximumImpacts} 次组织冲击。可净化支点，或借器官装置中断并抢修。`, priority: 2, seconds: 9 };
+  }
+  if (event.type === 'ORGAN_CRISIS_INTERRUPTED') {
+    if (!positive(d.chargeSeconds) || !count(d.interruptions) || d.interruptions === 0) return;
+    if (d.reason === 'pulse' && d.organId === 'heart') return { key: `${key}:pulse`, text: `${label}冲流已打断支点充能，重置为 ${d.chargeSeconds} 秒；支点仍需净化。`, priority: 2, seconds: 6 };
+    if (d.reason === 'airway' && d.organId === 'lung') return { key: `${key}:airway`, text: `${label}气道已截断支点充能，充能暂停；可先抢修，支点仍需净化。`, priority: 2, seconds: 6 };
+    return;
+  }
+  if (event.type === 'ORGAN_CRISIS_CLEARED') {
+    if (!count(d.impacts) || !count(d.interruptions)) return;
+    return { key, text: `${label}危机源已净化，组织冲击已停止。实际冲击 ${d.impacts} 次、中断 ${d.interruptions} 次；受损组织仍需按实际完整度修复。`, priority: 2, seconds: 5 };
+  }
+}
 
 export function tacticalFeedback(event: GameEvent): Feedback | undefined {
+  if (organCrisisEvent(event.type)) return organCrisisFeedback(event);
   const d = event.data, trait = traitId(d.trait), t = trait ? TRAITS[trait] : undefined;
   const organKey = d.organId === 'lung' ? 'lung' : d.organId === 'heart' ? 'heart' : 'current';
   const item = (text: string, priority: MessagePriority = 2, seconds = 7, suffix = '', toast = true): Feedback => ({ key: `${event.type}${suffix}`, text, priority, seconds, toast });
@@ -48,11 +76,16 @@ export function tacticalFeedback(event: GameEvent): Feedback | undefined {
 
 /** One latest record per finite category, plus first time/count; ordinary spam cannot evict it. */
 export function recordTacticalEvent(state: GameState, event: GameEvent): Feedback | undefined {
+  const crisisEvent = organCrisisEvent(event.type);
+  if (crisisEvent && (state.phase !== 'playing' || !Number.isSafeInteger(event.tick) || event.tick !== state.tick || event.tick < 0)) return;
   const feedback = tacticalFeedback(event);
   if (!feedback || !state.battle) return;
   const records = state.tacticalRecords ??= [];
   const at = event.tick / 60;
   const existing = records.find(record => record.key === feedback.key);
+  // Accepted crisis producers emit each lifecycle transition once per tick.
+  // Duplicate delivery must not inflate counts or replay an obsolete warning.
+  if (crisisEvent && existing && at <= existing.at) return;
   if (existing) { existing.at = at; existing.text = feedback.text; existing.count = Math.min(Number.MAX_SAFE_INTEGER, existing.count + 1); }
   else if (records.length < TACTICAL_RECORD_LIMIT) records.push({ key: feedback.key, eventType: event.type, firstAt: at, at, text: feedback.text, count: 1 });
   return feedback;
