@@ -195,5 +195,8 @@ describe('G1 battle rules', () => {
     expect(state.battle!.pressure.infection).toBeLessThanOrEqual(100);
     expect(state.tissue.hp).toBeGreaterThanOrEqual(0);
     expect(state.player.hp).toBeGreaterThanOrEqual(0);
-  }, 20000);
+  // This asserts 72,000 simulated ticks and bounded state, not a 20-second
+  // product performance budget. The unchanged v076 path also takes ~19s in
+  // isolation; leave headroom for workers/OS scheduling on developer machines.
+  }, 45000);
 });

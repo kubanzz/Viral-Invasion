@@ -58,6 +58,7 @@ export interface GrowthState {
   budgetTick: number; budgetUsed: number; skippedCommands: number;
 }
 export interface GrowthContext {
+  endless?: boolean;
   tick: number; elapsed: number; organId: OrganId; active: boolean; rhythm: 'charge' | 'surge' | 'rest';
   player: Vec; aim: Vec; tissue: GameState['tissue']; deviceOrigin: Vec;
   targets: readonly Target[]; tool: Tool;
@@ -67,7 +68,7 @@ export interface GrowthContext {
   acceptedMetrics?: RunMetrics;
   acceptedEvents?: readonly GameEvent[];
 }
-export interface DamageOrigin { cause: 'basic' | 'protocol'; rootId?: string; wasPulseExposed?: boolean; protocolId?: ProtocolId; allowChain?: boolean }
+export interface DamageOrigin { cause: 'basic' | 'protocol' | 'ability'; rootId?: string; wasPulseExposed?: boolean; protocolId?: ProtocolId; allowChain?: boolean }
 interface ProtocolCommandBase { protocolId: ProtocolId; rootId: string; organId: OrganId }
 export type GrowthCommand =
   | (ProtocolCommandBase & { kind: 'damage'; targetId: string; amount: number; cause: 'protocol'; hop: number; allowChain?: boolean })

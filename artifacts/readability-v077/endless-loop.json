@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "reviewedAtUtc": "2026-10-27T14:45:04Z",
+  "reviewer": "/root/immune_combat",
+  "status": "six-real-session-tests-passed-scoped-evidence",
+  "command": "node node_modules/vitest/vitest.mjs run tests/unit/endless-loop.test.ts --reporter=default",
+  "exitCode": 0,
+  "testFilesPassed": 1,
+  "testsPassed": 6,
+  "testsFailed": 0,
+  "testDurationMs": 4596,
+  "totalDurationSeconds": 5.12,
+  "testStartedLocal": "2026-10-27 22:43:27 Asia/Shanghai",
+  "naturalInputRun": {
+    "seed": 71,
+    "mode": "endless",
+    "pairedSessions": 2,
+    "elapsedSeconds": 224.75,
+    "clearedWaves": 12,
+    "combatUpgradesAccepted": 12,
+    "maxLiving": 6,
+    "maxTelegraphs": 0,
+    "frozenPoseChecks": 0,
+    "pendingFissionTicks": 1983,
+    "dualSimultaneousModalPauses": 0,
+    "finalPlayerHp": 100,
+    "finalTissueHp": 96,
+    "inputSha256": "99ff727c073750f5ba6af9b7f51fbcde7bcc578ea33218f49f87d32e25b492fb",
+    "mutationScope": "Only GameSession.start/step/chooseDraft/chooseCombatUpgrade/resume public actions. Reads state for aiming/navigation/choice. No HP, target, world, position, wave, clock or upgrade-state edits in the12-wave run.",
+    "determinism": "Two same-seed sessions receive identical normal inputs and matching public choices; complete snapshots match every300 loop iterations and at the end.",
+    "choices": [
+      "combat:1:multishot",
+      "combat:2:nova",
+      "protocol:PURIFY_CHAIN:balanced:1",
+      "combat:3:immune",
+      "combat:4:multishot",
+      "protocol:IMMUNE_BEACON:balanced:2",
+      "combat:5:nova",
+      "protocol:IMMUNE_BEACON:balanced:3",
+      "combat:6:power",
+      "combat:7:power",
+      "combat:8:power",
+      "protocol:PURIFY_CHAIN:balanced:2",
+      "combat:9:nova",
+      "combat:10:pierce",
+      "combat:11:immune",
+      "combat:12:nova"
+    ]
+  },
+  "tests": [
+    {
+      "name": "naturally clears12 waves with public inputs/choices and reproduces the same seed,input and choices",
+      "kind": "untouched-natural-input",
+      "result": "passed"
+    },
+    {
+      "name": "loses naturally with no attacks,no post-death clear reward,and same-seed restart resets run-local state",
+      "kind": "untouched-natural-input-and-public-restart",
+      "result": "passed"
+    },
+    {
+      "name": "terminal HP checked before clearing an otherwise empty wave",
+      "kind": "explicit-terminal-order-fixture",
+      "result": "passed"
+    },
+    {
+      "name": "real parent damage/death,delayed fission children,child kills,upgrade pause and next wave",
+      "kind": "explicit-one-parent-fixture-through-real-session-combat",
+      "result": "passed",
+      "children": 2,
+      "acceptedKills": 3,
+      "waveClearEvents": 1
+    },
+    {
+      "name": "five elite bodies,at most three committed blasts,frozen body/aim until resolution,player dodges actual blasts",
+      "kind": "explicit-five-elite-fixture",
+      "result": "passed",
+      "maximumTelegraphs": 3,
+      "committedBodies": 3,
+      "frozenTicks": 55,
+      "bodyAimChecks": 165,
+      "fixtureEliteHp": 10000,
+      "note": "Durable fixture bodies preserve attacks for contract observation; these HP values are not natural difficulty or production elite HP."
+    },
+    {
+      "name": "sixteen living targets plus four pending parents materialize eight children to population24 before another primary batch",
+      "kind": "explicit-population-reservation-fixture",
+      "result": "passed",
+      "initialLiving": 16,
+      "pendingChildren": 8,
+      "finalLiving": 24,
+      "primaryBudgetBeforeAfter": [
+        12,
+        12
+      ]
+    }
+  ],
+  "readOnlyReview": {
+    "severeIssueReproduced": false,
+    "clearGate": "Director waits for remainingToSpawn=0,no living targets and no pending splitAt child promises; tested actual delayed children before clear.",
+    "population": "Reservations count living fission parents at net future cost2 and dead pending landing slots,then share the host maxActors24; real materialization reaches24 without stealing primary slots.",
+    "pause": "Session pauses after a clear; combat and later protocol choices use public APIs,elapsed/phaseUntil stay frozen while paused,and next warning waits through the resumed intermission. The sampled run opens sequential pauses rather than simultaneous modals.",
+    "death": "Session checks failure before endless afterInput; director rejects dead player/tissue state. Natural death,post-result no-op and terminal empty-wave ordering pass.",
+    "elite": "Battle reserves a three-telegraph slot before committing; frozen aim and body are unchanged while that same pending commitment remains; direct knockback/death/resolution may legitimately end it.",
+    "birth": "Current director uses420-600 world ring,minimum340 distance,geometry/bounds/body gap checks. Central setup and12-wave seed71 complete without bot progress timeout.",
+    "pathLimit": "Enemy direct pursuit plus fixed tangent fallback is not complete pathfinding. The bot navigates around visible obstacles and may approach stalled enemies; this single natural run does not prove every seed/corner or indefinite enemy reachability."
+  },
+  "limitations": [
+    "Unit GameSession simulation,not a browser,rendering,performance,memory or human-fun acceptance.",
+    "Natural run has only6 peak living bodies and0 committed enemy telegraphs; population24 and frozen elite attacks are supported by separate labeled fixtures.",
+    "Single natural seed71 through12 waves,not a guarantee that all seeds,build choices or high endless waves are balanced.",
+    "No new source changes were made by this review task; only the new test file and this new evidence JSON were authored."
+  ],
+  "priorIndependentDirectorCheck": {
+    "test": "tests/unit/endless-director.test.ts",
+    "testsPassed": 10,
+    "includes": "31 sequential director waves,trait rotation,finite HP,children reservations,phase pauses,kill dedupe,and deterministic state restoration",
+    "scope": "Separate director unit fixtures;not claimed as natural-input combat."
+  },
+  "fingerprints": [
+    {
+      "path": "src/game/session.ts",
+      "sha256": "57e5417e1583e6dde0f7b800d176edd3e81e6d36ce204fc65cd926b941d56b6e"
+    },
+    {
+      "path": "src/game/battle.ts",
+      "sha256": "3da18c51e6bc68209284d1908a4159635eb2c70c647ef53dac014ad91ef10b5f"
+    },
+    {
+      "path": "src/game/endless.ts",
+      "sha256": "e95061de109b1a7bbee1e7525ca42dad0e33b3c54add9ddba27dbaa5c4cd16e4"
+    },
+    {
+      "path": "src/game/endlessTypes.ts",
+      "sha256": "cdeb821ea2ac71d482edfad81ee0ecf4e669b14744f16e16a691e255c95145e4"
+    },
+    {
+      "path": "src/game/endlessGrowth.ts",
+      "sha256": "65b58828e4f509d13049b0bf538748ad0333903519654d6d8781da756413515d"
+    },
+    {
+      "path": "src/game/endlessGrowthTypes.ts",
+      "sha256": "c72b05c08cf5b43a8611d18656f8b67f8069114d9989367ff97967a6c2d19c3c"
+    },
+    {
+      "path": "src/game/growth.ts",
+      "sha256": "48923b6d4f474bbeb5ff294b53ce5a29fa481df720bcffd3215c6738f48c0ec9"
+    },
+    {
+      "path": "tests/unit/endless-loop.test.ts",
+      "sha256": "ccf45cb0a81a7e3f5e2624979fa80331e6523f9ff29782d7f80e284bbea8d851"
+    },
+    {
+      "path": "tests/unit/endless-director.test.ts",
+      "sha256": "e934f877831ac638dcd930f55fd818715ff682e4bab0fe10bebc9978d2021358"
+    }
+  ]
+}

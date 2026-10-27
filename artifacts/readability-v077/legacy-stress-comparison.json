@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-10-27T14:48:34.441Z",
+  "scope": "legacy G1 1200 simulated seconds / 72000 fixed ticks population-memory stress",
+  "runtime": {
+    "node": "v24.19.0",
+    "platform": "win32",
+    "arch": "x64",
+    "cpu": "Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz",
+    "vitest": "5.0.5",
+    "esbuild": "0.28.2"
+  },
+  "methodology": {
+    "baseline": "8364bf1",
+    "originalTest": "tests/unit/battle.test.ts: runs 20 minutes of the combat system at hard population and memory bounds",
+    "identicalNormalizedTestSource": true,
+    "temporaryChange": "Only the frozen test timeout literal is changed from 20000ms to 60000ms. All 72000 iterations and every original assertion are retained.",
+    "sourceFreeze": "All runtime src imports are captured by esbuild onLoad. Old uses git show 8364bf1:path; current uses file reads. SHA256 normalizes CRLF to LF. The module-preserving snapshots copy the same recorded imports without bundling.",
+    "isolation": "Every process is sequential, maxWorkers=1, fileParallelism=false. Parent deferred browser simulation and long tests during this benchmark window.",
+    "order": [
+      "old-1",
+      "current-1",
+      "old-2",
+      "current-2",
+      "old-3",
+      "current-3",
+      "old-modules-1",
+      "current-modules-1"
+    ],
+    "measuredDuration": "Vitest assertionResults.duration for the complete test body, including per-tick assertions; excludes process startup/import/transform time."
+  },
+  "sourceMetadata": {
+    "baseline": "8364bf1",
+    "testSourceHash": "1a64a42ebc23fe01986ebacafb1f15012ca0f375023953761985bb9759b78702",
+    "baselineTestHash": "1a64a42ebc23fe01986ebacafb1f15012ca0f375023953761985bb9759b78702",
+    "sources": {
+      "old": {
+        "src/actors/collision.ts": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+        "src/game/session.ts": "57173793b76938e051b5bb080017d58a35611eb3b283f0a527742b6e9eaece2a",
+        "src/game/battleConfig.ts": "668eb109c820d6e548997aec3ea9e00deca6f4d6120680870538037aa8a70f27",
+        "src/game/types.ts": "c8d67e724f3176da9783dc2e7b9b059ede419f2bfa5e14b7e0063d3390324cbb",
+        "src/game/battle.ts": "c995ac47634fe9177455293446f2033a502c194a187bb001a7e58a614b3a84b0",
+        "src/core/rng.ts": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+        "src/core/events.ts": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+        "src/core/clock.ts": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+        "src/game/growth.ts": "49b6f0bb5c3e8cffe142d16a5db926795b6f8f35b5b0fbf9428d4f1bc39c5aab",
+        "src/game/organConfig.ts": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+        "src/game/tacticalFeedback.ts": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+        "src/game/campaign.ts": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+        "src/game/motherCore.ts": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+        "src/game/runMetrics.ts": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+        "src/game/evolution.ts": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+        "src/game/counterLesson.ts": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+        "src/game/encounterConfig.ts": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+        "src/actors/enemyCrowd.ts": "d62b72b6af9b5b6ddedc581debc68074b598c36349820ca3333b32aeb51f9d21",
+        "src/game/organRules.ts": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+        "src/game/campaignEncounters.ts": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+        "src/game/immuneCells.ts": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80",
+        "src/game/protocols.ts": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+        "src/game/preparation.ts": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+        "src/game/research.ts": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0"
+      },
+      "current": {
+        "src/actors/collision.ts": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+        "src/game/battle.ts": "bfafda15e7652089c2c6542e4bab5f79fb65b9cb8003677d2a7f9ef89212d3b2",
+        "src/game/battleConfig.ts": "668eb109c820d6e548997aec3ea9e00deca6f4d6120680870538037aa8a70f27",
+        "src/game/session.ts": "d8f0d0c839bdd386236577016dd3d45bb5fa396e19586348b9b9828997b7bdf1",
+        "src/game/types.ts": "121da8d1979d450abbec42330ab8beb9fa3a6ee7249066970611d5009836e253",
+        "src/game/endlessGrowth.ts": "65b58828e4f509d13049b0bf538748ad0333903519654d6d8781da756413515d",
+        "src/game/evolution.ts": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+        "src/core/rng.ts": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+        "src/game/encounterConfig.ts": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+        "src/actors/enemyCrowd.ts": "d62b72b6af9b5b6ddedc581debc68074b598c36349820ca3333b32aeb51f9d21",
+        "src/game/organConfig.ts": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+        "src/game/counterLesson.ts": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+        "src/core/clock.ts": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+        "src/core/events.ts": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+        "src/game/growth.ts": "48923b6d4f474bbeb5ff294b53ce5a29fa481df720bcffd3215c6738f48c0ec9",
+        "src/game/immuneCells.ts": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80",
+        "src/game/tacticalFeedback.ts": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+        "src/game/campaign.ts": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+        "src/game/endless.ts": "e95061de109b1a7bbee1e7525ca42dad0e33b3c54add9ddba27dbaa5c4cd16e4",
+        "src/game/motherCore.ts": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+        "src/game/runMetrics.ts": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+        "src/game/preparation.ts": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+        "src/game/protocols.ts": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+        "src/game/research.ts": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+        "src/game/campaignEncounters.ts": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+        "src/game/organRules.ts": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59"
+      }
+    }
+  },
+  "changedRuntimeSources": [
+    "src/game/session.ts",
+    "src/game/types.ts",
+    "src/game/battle.ts",
+    "src/game/growth.ts",
+    "src/game/endlessGrowth.ts",
+    "src/game/endless.ts"
+  ],
+  "unchangedCrowdSource": true,
+  "summaries": {
+    "bundled": {
+      "oldMs": [
+        17127.668,
+        16532.930600000003,
+        17974.8554
+      ],
+      "currentMs": [
+        17454.235800000002,
+        17305.1487,
+        18305.8556
+      ],
+      "oldMeanMs": 17211.818000000003,
+      "currentMeanMs": 17688.413366666664,
+      "currentVersusOldPercent": 2.769000733488247,
+      "originalTimeoutMs": 20000,
+      "currentMeanTimeoutHeadroomPercent": 13.068366197781533
+    },
+    "modulePreserving": {
+      "oldMs": [
+        18651.8367
+      ],
+      "currentMs": [
+        18735.2344
+      ],
+      "oldMeanMs": 18651.8367,
+      "currentMeanMs": 18735.2344,
+      "currentVersusOldPercent": 0.4471286197782476,
+      "originalTimeoutMs": 20000,
+      "currentMeanTimeoutHeadroomPercent": 6.750732726354358
+    }
+  },
+  "measurements": [
+    {
+      "name": "old-1",
+      "variant": "old",
+      "method": "esbuild-bundled-vitest",
+      "durationMs": 17127.668,
+      "status": "passed",
+      "failureMessages": [],
+      "rawReport": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\perf-v077\\old-1.json",
+      "rawReportSha256": "d51eabc892a89b94c44b25c975758a337dc49e5a5fa2f1b3f7d5638375e41821"
+    },
+    {
+      "name": "current-1",
+      "variant": "current",
+      "method": "esbuild-bundled-vitest",
+      "durationMs": 17454.235800000002,
+      "status": "passed",
+      "failureMessages": [],
+      "rawReport": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\perf-v077\\current-1.json",
+      "rawReportSha256": "0645122c1535ae2d66af272b122347efa960efad51f59887e92001e8287939b7"
+    },
+    {
+      "name": "old-2",
+      "variant": "old",
+      "method": "esbuild-bundled-vitest",
+      "durationMs": 16532.930600000003,
+      "status": "passed",
+      "failureMessages": [],
+      "rawReport": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\perf-v077\\old-2.json",
+      "rawReportSha256": "ea89721fe84c87ec17a5ac63182ea5f124964524294d859785b3ba75dd49cd64"
+    },
+    {
+      "name": "current-2",
+      "variant": "current",
+      "method": "esbuild-bundled-vitest",
+      "durationMs": 17305.1487,
+      "status": "passed",
+      "failureMessages": [],
+      "rawReport": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\perf-v077\\current-2.json",
+      "rawReportSha256": "17ee43a0ca0a9fab4c9f87c2b4e3a8b9bb88cafd3e2d1ef7c0a2657e692cda8a"
+    },
+    {
+      "name": "old-3",
+      "variant": "old",
+      "method": "esbuild-bundled-vitest",
+      "durationMs": 17974.8554,
+      "status": "passed",
+      "failureMessages": [],
+      "rawReport": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\perf-v077\\old-3.json",
+      "rawReportSha256": "eff38aae45394d3b059f7b5ec1e6d7b284de4af410c17374678ca8f0b06d59aa"
+    },
+    {
+      "name": "current-3",
+      "variant": "current",
+      "method": "esbuild-bundled-vitest",
+      "durationMs": 18305.8556,
+      "status": "passed",
+      "failureMessages": [],
+      "rawReport": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\perf-v077\\current-3.json",
+      "rawReportSha256": "bfbea2b596048e6ae7b184fa356d254e74e71c6d7a81a9e6a9d91bffe1757938"
+    },
+    {
+      "name": "old-modules-1",
+      "variant": "old",
+      "method": "module-preserving-vitest",
+      "durationMs": 18651.8367,
+      "status": "passed",
+      "failureMessages": [],
+      "rawReport": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\perf-v077\\old-modules-1.json",
+      "rawReportSha256": "0cdf4905885c4d6fd9c9aab921d95a831a4d29501debc6935f5c67b125936c76"
+    },
+    {
+      "name": "current-modules-1",
+      "variant": "current",
+      "method": "module-preserving-vitest",
+      "durationMs": 18735.2344,
+      "status": "passed",
+      "failureMessages": [],
+      "rawReport": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\perf-v077\\current-modules-1.json",
+      "rawReportSha256": "f652c67615797c47deee0561cf3c514600f9f9cefb45b50899f720becf86b42d"
+    }
+  ],
+  "hotPathReview": [
+    "GameSession is used only to create/start the seed-71 G1 initial state. The stress loop directly calls BattleDirector.beforeInput/afterInput; session.step, new endless director, upgrade projection and immune-cell simulation do not execute in this loop.",
+    "The loop has no endless state. New endless branches take their legacy path; the new simultaneous attack cap scan is guarded by s.endless and is skipped.",
+    "Existing planEnemySpacing evaluates pair overlaps plus up to five collision/energy candidates per moving overlapping body; moveEnemyThroughCrowd also checks live neighbors. These repeatedly visited crowd algorithms are byte-equivalent after line-ending normalization to 8364bf1.",
+    "No CPU sampling was performed. The hot-path notes are source inspection, not measured function-level percentages."
+  ],
+  "conclusion": {
+    "result": "No evidence of a material runtime regression in this legacy stress scenario. The original 20s wall-clock timeout has little headroom even for the old revision.",
+    "suggestedTimeoutMs": 30000,
+    "rationale": "Module-preserving current completes in about 18.74s versus old 18.65s (+0.45%). 30s provides about 60% headroom over this observed complete run without weakening simulation duration, population, memory or health assertions.",
+    "limits": [
+      "The module-preserving comparison is one sequential pair, and bundled comparisons are three sequential pairs; these are diagnostics, not a statistical performance guarantee.",
+      "Host load, CPU scheduling and test-runner overhead can move wall time. The earlier parent-observed 21.176s timeout is not replayed or overwritten by this report.",
+      "This is a non-rendered post-failure G1 system stress host, not browser FPS, a successful player run, or endless-mode performance acceptance."
+    ]
+  },
+  "reproduction": {
+    "prepare": "node .tools/perf-v077.mjs",
+    "runner": ".tools/perf-v077.mjs",
+    "runnerSource": "import { build } from 'esbuild';\nimport { execFileSync } from 'node:child_process';\nimport { readFileSync, writeFileSync, mkdirSync } from 'node:fs';\nimport { dirname, relative, resolve, sep } from 'node:path';\nimport { createHash } from 'node:crypto';\n\nconst root = process.cwd();\nconst outdir = resolve(root, '.tools/perf-v077');\nmkdirSync(outdir, { recursive: true });\nconst test = resolve(root, 'tests/unit/battle.test.ts');\nconst baseline = '8364bf1';\nconst oldTest = execFileSync('git', ['show', `${baseline}:tests/unit/battle.test.ts`], { encoding: 'utf8' });\nconst hash = text => createHash('sha256').update(text.replaceAll('\\r\\n', '\\n')).digest('hex');\nconst metadata = { baseline, testSourceHash: hash(readFileSync(test, 'utf8')), baselineTestHash: hash(oldTest), sources: {} };\nfor (const version of ['old', 'current']) {\n  const sources = {};\n  await build({ entryPoints: [test], outfile: resolve(outdir, `${version}.test.mjs`), bundle: true,\n    platform: 'node', format: 'esm', target: 'node22', sourcemap: 'inline', external: ['vitest'],\n    plugins: [{ name: 'record-and-freeze-source', setup(build) {\n      build.onLoad({ filter: /\\.ts$/ }, args => {\n        const path = relative(root, args.path).split(sep).join('/');\n        if (args.path === test) {\n          const contents = readFileSync(test, 'utf8');\n          if (contents.split('}, 20000);').length !== 2) throw new Error('Expected the single original stress timeout');\n          return { contents: contents.replace('}, 20000);', '}, 60000);'), loader: 'ts' };\n        }\n        if (!path.startsWith('src/')) return;\n        const contents = version === 'old'\n          ? execFileSync('git', ['show', `${baseline}:${path}`], { encoding: 'utf8' })\n          : readFileSync(args.path, 'utf8');\n        sources[path] = hash(contents);\n        return { contents, loader: 'ts' };\n      });\n    } }],\n  });\n  metadata.sources[version] = sources;\n}\nwriteFileSync(resolve(outdir, 'metadata.json'), JSON.stringify(metadata, null, 2));\nfor (const version of ['old', 'current']) {\n  const snapshot = resolve(outdir, `${version}-modules`);\n  for (const path of Object.keys(metadata.sources[version])) {\n    const contents = version === 'old'\n      ? execFileSync('git', ['show', `${baseline}:${path}`], { encoding: 'utf8' })\n      : readFileSync(resolve(root, path), 'utf8');\n    if (hash(contents) !== metadata.sources[version][path]) throw new Error(`Source changed while freezing ${path}`);\n    const destination = resolve(snapshot, path);\n    mkdirSync(dirname(destination), { recursive: true });\n    writeFileSync(destination, contents);\n  }\n  const destination = resolve(snapshot, 'tests/unit/battle.test.ts');\n  mkdirSync(dirname(destination), { recursive: true });\n  writeFileSync(destination, readFileSync(test, 'utf8').replace('}, 20000);', '}, 60000);'));\n}\nwriteFileSync(resolve(outdir, 'vitest.config.mts'), `export default { test: { include: ['.tools/perf-v077/*.test.mjs', '.tools/perf-v077/*-modules/tests/unit/battle.test.ts'], reporters: ['default'], maxWorkers: 1, fileParallelism: false, testTimeout: 60000 } };\\n`);\nconsole.log(JSON.stringify({ output: outdir, identicalTest: metadata.testSourceHash === metadata.baselineTestHash,\n  sourceCount: Object.fromEntries(Object.entries(metadata.sources).map(([key, sources]) => [key, Object.keys(sources).length])) }));\n",
+    "bundledOld": "node node_modules/vitest/vitest.mjs run .tools/perf-v077/old.test.mjs --config .tools/perf-v077/vitest.config.mts --testNamePattern 'runs 20 minutes' --reporter=json --outputFile=.tools/perf-v077/old-1.json",
+    "bundledCurrent": "node node_modules/vitest/vitest.mjs run .tools/perf-v077/current.test.mjs --config .tools/perf-v077/vitest.config.mts --testNamePattern 'runs 20 minutes' --reporter=json --outputFile=.tools/perf-v077/current-1.json",
+    "modulesOld": "node node_modules/vitest/vitest.mjs run .tools/perf-v077/old-modules/tests/unit/battle.test.ts --config .tools/perf-v077/vitest.config.mts --testNamePattern 'runs 20 minutes' --reporter=json --outputFile=.tools/perf-v077/old-modules-1.json",
+    "modulesCurrent": "node node_modules/vitest/vitest.mjs run .tools/perf-v077/current-modules/tests/unit/battle.test.ts --config .tools/perf-v077/vitest.config.mts --testNamePattern 'runs 20 minutes' --reporter=json --outputFile=.tools/perf-v077/current-modules-1.json"
+  }
+}

@@ -21,6 +21,11 @@ import { startingPlanOverlay } from './ui/startingPlanHud';
 import './ui/startingPlan.css';
 import { preparationForPlan, type StartingPlanId } from './game/preparation';
 import { readVisibleHudRects } from './ui/hudLayout';
+import { endlessHudMarkup, updateEndlessHud, endlessOverlay, endlessMenuEntry } from './ui/endlessHud';
+import { EndlessProfileStore } from './meta/endlessProfile';
+import { endlessCombatStats } from './game/endlessGrowth';
+import type { EndlessUpgradeId } from './game/endlessGrowthTypes';
+import './ui/endless.css';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
 const app = document.querySelector<HTMLDivElement>('#app')!;
@@ -33,6 +38,7 @@ const trainingFixture = params.get('scenario') === 'training';
 const firstTrait = ['CARAPACE', 'FISSION', 'MIMIC'].includes(params.get('trait') ?? '') ? params.get('trait') as TraitId : undefined;
 const milestone = params.get('fixture') === 'G1' ? 'G1' : params.get('fixture') === 'G2' ? 'G2' : 'G3';
 const profile = new ProfileStore();
+const endlessProfile = new EndlessProfileStore();
 const session = new GameSession(initialSeed, { campaign: !trainingFixture, ...newRunOptions(profile.data, firstTrait), milestone });
 const clock = new FixedClock();
 const renderer = new Renderer(canvas);
@@ -75,6 +81,7 @@ if (!trainingFixture) {
   document.querySelector('#hud')!.insertAdjacentHTML('afterbegin', battleHudMarkup);
   document.querySelector('.battle-objective')!.insertAdjacentHTML('beforeend', encounterHudMarkup);
   if (session.state.growth) document.querySelector('#hud')!.insertAdjacentHTML('beforeend', growthHudMarkup);
+  document.querySelector('#hud')!.insertAdjacentHTML('beforeend', endlessHudMarkup());
   if (session.state.campaign) document.querySelector('.tool[data-action="tool-2"] small')!.textContent = '群体 · 击退打断';
   document.querySelector('.micro-footer')!.textContent = `${milestone === 'G3' ? 'G4' : milestone} · ${milestone === 'G3' ? '器官联防' : '心脏防线'} / 架空生物幻想`;
 }
@@ -85,6 +92,7 @@ const input = new Controller(canvas, () => togglePause(), () => {
 session.bus.on('event', event => {
   if (event.type === 'INPUT_RESET_REQUESTED') { input.clear(); resetClockAfterStep = true; }
   if (event.type === 'RUN_ENDED' && session.state.campaign && runId) profile.recordRun(session.state, runId);
+  if (event.type === 'RUN_ENDED' && session.state.endless && runId) endlessProfile.recordRun(session.state, runId);
   if (event.type === 'MIGRATION_WARNING' && !migrationGuideSeen) migrationGuidePending = true;
   if (event.type === 'COUNTER_GUIDE_COMPLETED') profile.acknowledgeCounterGuide('completed');
   if (event.type === 'COUNTER_GUIDE_SKIPPED') profile.acknowledgeCounterGuide('skipped');
@@ -104,7 +112,7 @@ function togglePause() {
   if (session.state.phase === 'playing') session.pause();
   else if (session.state.phase === 'paused') session.resume();
 }
-function start(newSeed?: number, replay?: RunEncounterRecord | null, preserveCurrent = false) {
+function start(newSeed?: number, replay?: RunEncounterRecord | null, preserveCurrent = false, mode: 'campaign' | 'endless' = session.state.endless ? 'endless' : 'campaign') {
   input.clear(); clock.reset(); help = false; history = false; resumeAfterHelp = false; resumeAfterHistory = false;
   growthDetails = false; resumeAfterGrowthDetails = false;
   profileOpen = false; startingPlanOpen = false; migrationGuide = false; migrationGuidePending = false;
@@ -114,7 +122,8 @@ function start(newSeed?: number, replay?: RunEncounterRecord | null, preserveCur
   // Records predating preparation replay with no preloaded protocol. They must
   // not silently borrow the newly selected menu preference.
   if (replay === null) options.preparation = preparationForPlan('field');
-  sound.unlock(); session.start(newSeed ?? session.state.seed, preserveCurrent ? undefined : options);
+  sound.unlock(); session.start(newSeed ?? session.state.seed, preserveCurrent ? { mode } : { ...options, mode });
+  document.body.classList.toggle('endless-mode', !!session.state.endless);
 }
 function showHelp() {
   if (profileOpen || startingPlanOpen || migrationGuide || history || help || growthDetails) return;
@@ -167,7 +176,7 @@ app.addEventListener('click', event => {
   if (action === 'replay-record') {
     const seed = Number(button.dataset.seed), data = profile.data, record = data.recentRuns.find(run => run.runId === button.dataset.runId && run.seed === seed);
     const best = data.best.fastestVictory, encounter = record?.encounter ?? (best && best.runId === button.dataset.runId && best.seed === seed ? best.encounter : undefined);
-    if (Number.isInteger(seed) && seed >= 0 && seed <= 0xffffffff) start(seed, encounter ?? null);
+    if (Number.isInteger(seed) && seed >= 0 && seed <= 0xffffffff) start(seed, encounter ?? null, false, 'campaign');
     return;
   }
   if (action === 'skip-counter-guide') { session.skipCounterGuide(); input.clear(); clock.reset(); button.blur(); return; }
@@ -194,7 +203,19 @@ app.addEventListener('click', event => {
     overlayKey = ''; button.blur(); return;
   }
   if (action.startsWith('tool-')) { input.select(Number(action.at(-1)) as Tool); return; }
-  if (action === 'start') start();
+  if (action === 'endless-start') { start(undefined, undefined, false, 'endless'); return; }
+  if (action === 'endless-upgrade') {
+    session.chooseCombatUpgrade(button.dataset.draft!, button.dataset.upgrade as EndlessUpgradeId, button.dataset.run!);
+    input.clear(); clock.reset(); overlayKey = ''; button.blur(); return;
+  }
+  if (action === 'endless-extract') {
+    if (session.state.endless && session.state.phase === 'paused' && !session.state.endlessGrowth?.draft && !session.state.growth?.draft) {
+      session.finish(true, `主动撤离：已完成 ${session.state.endless.clearedWaves} 波，得分 ${session.state.endless.score}。`);
+      input.clear(); clock.reset();
+    }
+    return;
+  }
+  if (action === 'start') start(undefined, undefined, false, 'campaign');
   if (action === 'retry') start(undefined, undefined, true);
   if (action === 'new') start((session.state.seed + 2654435761) >>> 0);
   if (action === 'pause' || action === 'continue') togglePause();
@@ -211,7 +232,7 @@ app.addEventListener('click', event => {
 function updateOverlay() {
   const state = session.state;
   const draft = state.growth?.draft;
-  const key = `${state.phase}:${help}:${lowEffects}:${history}:${growthDetails}:${profileOpen}:${startingPlanOpen}:${startingPlanSelection}:${migrationGuide}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}:${state.growth?.pendingResearch?.id}:${state.battle?.encounter?.firstCounter.guideStatus}`;
+  const key = `${!!state.endless}:${state.endlessGrowth?.draft?.id}:${state.phase}:${help}:${lowEffects}:${history}:${growthDetails}:${profileOpen}:${startingPlanOpen}:${startingPlanSelection}:${migrationGuide}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}:${state.growth?.pendingResearch?.id}:${state.battle?.encounter?.firstCounter.guideStatus}`;
   if (key === overlayKey) return;
   overlayKey = key;
   el('hud').hidden = state.phase === 'menu' || state.phase === 'result';
@@ -228,6 +249,11 @@ function updateOverlay() {
   if (startingPlanOpen) { host.innerHTML = startingPlanOverlay(profile.data); return; }
   if (profileOpen) { host.innerHTML = profileOverlay(profile.data, profile.status); return; }
   if (migrationGuide) { host.innerHTML = `<div class="overlay"><section class="modal" role="dialog" aria-modal="true" aria-label="首次迁移指引"><div class="eyebrow">THE NEXT CHAMBER / 首次迁移</div><h2>病毒要去另一个器官了。</h2><p>倒数已暂停。你可以去器官出口（见小地图）按 E 追击，或在隔离闸（见小地图）按 E 留守 2 秒封锁。放任会让肺部新增感染源，仍可补救。</p><p>追击后清掉迁移小体，或关闭肺部气道；器官图会显示心脏残留风险，出口可双向返回。此说明之后可在作战手册回看。</p><div class="actions"><button class="primary" data-action="close-migration-guide">明白了，继续作战</button></div></section></div>`; return; }
+  if (state.endless) {
+    host.innerHTML = (!help && state.phase === 'paused' ? draftOverlay(state) : null)
+      ?? endlessOverlay(state, help, lowEffects, { data: endlessProfile.data, status: endlessProfile.status }) ?? '';
+    return;
+  }
   if (state.battle) {
     host.innerHTML = (!help && !history && state.phase === 'paused' ? researchDirectionOverlay(state) ?? draftOverlay(state) : null) ?? battleOverlay(state, help, resumeAfterHelp, lowEffects, history) ?? '';
     if (state.growth && help) host.querySelector('.help-grid')?.insertAdjacentHTML('afterend', growthHelpMarkup);
@@ -236,6 +262,8 @@ function updateOverlay() {
     if (state.growth && (help || history || state.phase === 'paused' || state.phase === 'result') && !host.querySelector('[data-action="growth-details"]')) host.querySelector('.actions')?.insertAdjacentHTML('beforeend', growthDetailsEntryMarkup);
     if (state.campaign) host.querySelector('.switches')?.insertAdjacentHTML('beforeend', `<button data-action="sound">声音 ${sound.enabled?'开':'关'}</button>`);
     if (state.campaign && state.phase === 'menu' && !help && !history) host.querySelector('.intro-card')?.insertAdjacentHTML('beforeend', profileMenuMarkup(profile.data, profile.status));
+    if (state.campaign && state.phase === 'menu' && !help && !history) host.querySelector('.actions')?.insertAdjacentHTML('afterbegin', endlessMenuEntry({ data: endlessProfile.data, status: endlessProfile.status }));
+    if (state.campaign && state.phase === 'result' && !help && !history) host.querySelector('.actions')?.insertAdjacentHTML('afterbegin', endlessMenuEntry({ data: endlessProfile.data, status: endlessProfile.status }));
     if (state.campaign && state.phase === 'menu' && !help && !history) {
       const footnote = host.querySelector('.intro-footnote');
       if (footnote) footnote.textContent = '心肺探索战场 · 协议进阶 · 免疫细胞协同 · 完全离线';
@@ -255,6 +283,14 @@ function updateOverlay() {
 }
 function updateHud() {
   const s = session.state;
+  document.body.classList.toggle('endless-mode', !!s.endless);
+  if (s.endless) {
+    document.body.classList.remove('dual-organ');
+    updateEndlessHud(s);
+    updateGrowthHud(s);
+    el('message').textContent = s.messageUntil > s.elapsed ? s.message : s.battle?.objective ?? '';
+    updateCommonHud(); refreshHudRects(); return;
+  }
   if (s.battle) {
     updateBattleHud(s);
     updateGrowthHud(s);
@@ -289,11 +325,19 @@ function refreshHudRects() {
 }
 function updateCommonHud() {
   const s = session.state;
-  document.querySelector('.status-chip')!.textContent = s.battle?.organId === 'lung' ? 'LUNG / 02' : 'HEART / 01';
+  const combat = s.endlessGrowth ? endlessCombatStats(s.endlessGrowth) : undefined;
+  document.querySelector('.status-chip')!.textContent = s.endless ? `连续挑战 / ${s.endless.wave}` : s.battle?.organId === 'lung' ? 'LUNG / 02' : 'HEART / 01';
   el('dash-ready').textContent = s.player.dashReady > s.elapsed ? `${(s.player.dashReady-s.elapsed).toFixed(1)}s`:'就绪';
   el('scan-ready').textContent = s.scanReady > s.elapsed ? `${(s.scanReady-s.elapsed).toFixed(1)}s`:'就绪';
   el('run-time').textContent = `SEED ${s.seed}　 /　${formatTime(s.elapsed)}`;
-  document.querySelectorAll<HTMLButtonElement>('.tool').forEach((button,index)=>{const tool=(index+1) as Tool;button.classList.toggle('selected',s.tool===tool);button.setAttribute('aria-pressed',String(s.tool===tool));el(`charge-${tool}`).style.width=`${Math.max(0,1-Math.max(0,s.cooldowns[tool]-s.elapsed)/BALANCE.cooldowns[tool])*100}%`;});
+  document.querySelectorAll<HTMLButtonElement>('.tool').forEach((button,index)=>{
+    const tool=(index+1) as Tool, cooldown = (tool === 1 ? combat?.primaryCooldown : tool === 2 ? combat?.areaCooldown : undefined) ?? BALANCE.cooldowns[tool];
+    button.classList.toggle('selected',s.tool===tool);button.setAttribute('aria-pressed',String(s.tool===tool));
+    el(`charge-${tool}`).style.width=`${Math.max(0,1-Math.max(0,s.cooldowns[tool]-s.elapsed)/cooldown)*100}%`;
+    if (tool === 1) button.querySelector('small')!.textContent = combat ? `${combat.shotRays} 束 · 贯穿 +${combat.pierceCount}` : '单点 · 快速冷却';
+    if (tool === 2) button.querySelector('small')!.textContent = combat ? `范围 ${combat.areaRadius} · 击退` : s.campaign ? '群体 · 击退打断' : '群体 · 94 范围';
+  });
+  document.querySelector('.micro-footer')!.textContent = s.endless ? 'v0.7.7 · 连续进化挑战 / 架空生物幻想' : `${milestone === 'G3' ? 'G4' : milestone} · ${s.battle ? '器官联防' : '基础训练'} / 架空生物幻想`;
   document.querySelectorAll<HTMLButtonElement>('[data-action="sound"]').forEach(button => { button.textContent = `声音 ${sound.enabled?'开':'关'}`; });
   document.querySelector<HTMLButtonElement>('[data-action="pause"]')!.hidden = s.phase === 'menu' || s.phase === 'result';
 }
@@ -318,7 +362,7 @@ renderer.resize(); renderer.prepareCamera(session.state); updateOverlay(); updat
 
 // Read-only diagnostics for browser regression. Inputs always use the real DOM.
 Object.defineProperty(window, '__viral', { value: Object.freeze({
-  version: '0.7.6-G4', snapshot: () => session.snapshot(),
+  version: '0.7.7-G4', snapshot: () => session.snapshot(),
   toScreen: (point: { x: number; y: number }) => renderer.camera.worldToScreen(point),
   toWorld: (point: { x: number; y: number }) => renderer.camera.screenToWorld(point),
   diagnostics: () => renderer.diagnostics(session.state),

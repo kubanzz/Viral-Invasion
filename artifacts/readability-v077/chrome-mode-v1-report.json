@@ -1,0 +1,216 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\node_modules\\playwright\\cli.js",
+      "test",
+      "tests/e2e/endless-v077.spec.ts",
+      "--project=chrome",
+      "--grep",
+      "isolation"
+    ],
+    "configFile": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\playwright.config.ts",
+    "rootDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/readability-v077/chrome-mode-v1-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chrome",
+        "name": "chrome",
+        "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/readability-v077/chrome-mode-v1-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "edge",
+        "name": "edge",
+        "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\readability-v077\\chrome-mode-v1-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "chrome",
+        "testDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
+        "snapshotDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 90000,
+        "use": {
+          "browserName": "chromium",
+          "headless": true,
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "deviceScaleFactor": 1,
+          "actionTimeout": 8000,
+          "screenshot": "only-on-failure",
+          "video": "off",
+          "trace": "off",
+          "channel": "chrome"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "chrome"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/readability-v077/chrome-mode-v1-report.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "artifacts/readability-v077/chrome-mode-v1-html",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "endless-v077.spec.ts",
+      "file": "endless-v077.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "mode isolation and 1100x560 combat panels",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 1930,
+                  "error": {
+                    "message": "Error: Visible panels overlap: .endless-wave-panel / .growth-panel\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m",
+                    "stack": "Error: Visible panels overlap: .endless-wave-panel / .growth-panel\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\endless-v077.spec.ts:35:86",
+                    "location": {
+                      "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\endless-v077.spec.ts",
+                      "column": 86,
+                      "line": 35
+                    },
+                    "snippet": "  33 |   await page.screenshot({ path: info.outputPath('compact-panels.png') });\n  34 |   for (const pair of [['.endless-wave-panel', '.growth-panel'], ['.endless-vitals', '.endless-build-panel'], ['.endless-build-panel', '.endless-navigation'], ['.growth-panel', '.dock-wrap']]) {\n> 35 |     expect(overlap(pair[0], pair[1]), `Visible panels overlap: ${pair.join(' / ')}`).toBe(false);\n     |                                                                                      ^\n  36 |   }\n  37 |   await page.keyboard.press('Escape'); await page.locator('[data-action=\"menu\"]').click();\n  38 |   await page.locator('[data-action=\"start\"]').click();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\endless-v077.spec.ts",
+                        "column": 86,
+                        "line": 35
+                      },
+                      "message": "Error: Visible panels overlap: .endless-wave-panel / .growth-panel\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m\n\n  33 |   await page.screenshot({ path: info.outputPath('compact-panels.png') });\n  34 |   for (const pair of [['.endless-wave-panel', '.growth-panel'], ['.endless-vitals', '.endless-build-panel'], ['.endless-build-panel', '.endless-navigation'], ['.growth-panel', '.dock-wrap']]) {\n> 35 |     expect(overlap(pair[0], pair[1]), `Visible panels overlap: ${pair.join(' / ')}`).toBe(false);\n     |                                                                                      ^\n  36 |   }\n  37 |   await page.keyboard.press('Escape'); await page.locator('[data-action=\"menu\"]').click();\n  38 |   await page.locator('[data-action=\"start\"]').click();\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\endless-v077.spec.ts:35:86"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-27T14:59:11.323Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\readability-v077\\chrome-mode-v1-results\\endless-v077-mode-isolation-and-1100x560-combat-panels-chrome\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\readability-v077\\chrome-mode-v1-results\\endless-v077-mode-isolation-and-1100x560-combat-panels-chrome\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\endless-v077.spec.ts",
+                    "column": 86,
+                    "line": 35
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "88d9018d134608a23b12-aa9e463cb9e8bcfd272f",
+          "file": "endless-v077.spec.ts",
+          "line": 14,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-27T14:59:10.503Z",
+    "duration": 3482.066,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

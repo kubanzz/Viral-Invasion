@@ -15,6 +15,10 @@ import { BATTLE_BALANCE as B } from './battleConfig';
 import { sourceTarget } from './organConfig';
 import { recordTacticalEvent } from './tacticalFeedback';
 import { createRunMetrics, reduceRunMetrics } from './runMetrics';
+import { EndlessDirector, initializeEndless } from './endless';
+import { createEndlessGrowth, offerEndlessUpgrade, chooseEndlessUpgrade, endlessCombatStats } from './endlessGrowth';
+import type { EndlessUpgradeId } from './endlessGrowthTypes';
+import { summonImmuneCells } from './immuneCells';
 
 // Exporting the clock here is convenient for hosts, while it remains independently testable.
 export { FixedClock };
@@ -38,11 +42,13 @@ export class GameSession {
   private deferredCampaign: CampaignCommand[] = [];
   private metricsSerial = 0;
   private metricsSequence = 0;
+  private endlessDirector: EndlessDirector | undefined;
+  private endlessDashHits = new Set<string>();
 
   constructor(seed = 130026, private options: CampaignOptions = {}) {
-    this.options = { ...options };
+    this.options = { ...options, ...(options.mode === 'endless' ? { campaign: true, milestone: 'G3' } : {}) };
     this.state = this.initial(seed);
-    if (options.campaign) this.battleDirector = new BattleDirector(this);
+    if (this.options.campaign) this.battleDirector = new BattleDirector(this);
     this.resetGrowth();
     this.resetCampaign();
   }
@@ -50,13 +56,17 @@ export class GameSession {
   private resetGrowth(): void {
     this.draftPauseId = null;
     this.growthController = this.state.battle && this.state.battle.milestone !== 'G1'
-      ? new GrowthController(this.state.seed, `${this.state.seed}:${++this.runSerial}`, this.state.battle.encounter?.configId === 'campaign-1' ? this.options.preparation : undefined) : undefined;
+      ? new GrowthController(this.state.seed, `${this.state.seed}:${++this.runSerial}`, this.state.endless
+        ? { version: 1, starterProtocolId: 'IMMUNE_BEACON' }
+        : this.state.battle.encounter?.configId === 'campaign-1' ? this.options.preparation : undefined) : undefined;
     if (this.growthController) this.state.growth = this.growthController.state;
   }
 
   private resetCampaign(): void {
     this.campaignTransactions.clear(); this.deferredCampaign = []; this.motherController = undefined;
-    this.campaignController = this.state.battle?.milestone === 'G3' ? new CampaignDirector(this.state.seed, this.state) : undefined;
+    this.endlessDashHits.clear();
+    this.endlessDirector = this.state.endless ? new EndlessDirector(this) : undefined;
+    this.campaignController = !this.state.endless && this.state.battle?.milestone === 'G3' ? new CampaignDirector(this.state.seed, this.state) : undefined;
     if (this.campaignController) this.state.campaign = this.campaignController.state;
   }
 
@@ -81,19 +91,25 @@ export class GameSession {
     this.metricsSequence = 0;
     state.runMetrics = createRunMetrics(`${seed >>> 0}:metrics:${++this.metricsSerial}`);
     if (this.options.campaign) initializeBattle(state, this.options);
+    if (this.options.mode === 'endless' && state.battle) {
+      initializeEndless(state);
+      state.endlessGrowth = createEndlessGrowth(seed);
+    }
     return state;
   }
 
-  start(seed = this.state.seed, runOptions?: Pick<CampaignOptions, 'counterGuide' | 'encounterMode' | 'firstTrait' | 'preparation'>): void {
+  start(seed = this.state.seed, runOptions?: Pick<CampaignOptions, 'mode' | 'counterGuide' | 'encounterMode' | 'firstTrait' | 'preparation'>): void {
     if (runOptions) this.options = { ...this.options, ...runOptions };
+    if (this.options.mode === 'endless') this.options = { ...this.options, campaign: true, milestone: 'G3' };
     this.effectId = 0;
     this.dashDirection = { x: 1, y: 0 };
     this.state = this.initial(seed);
+    this.battleDirector = this.state.battle ? new BattleDirector(this) : undefined;
     this.resetGrowth();
     this.resetCampaign();
     this.state.phase = 'playing';
-    this.emit('RUN_STARTED', { seed: this.state.seed, mode: this.state.battle ? 'campaign' : 'training', startAtTick: 0,
-      encounterConfig: this.state.battle?.encounter?.configId ?? (this.state.battle ? 'fixture-1' : 'training-1'),
+    this.emit('RUN_STARTED', { seed: this.state.seed, mode: this.state.endless ? 'endless' : this.state.battle ? 'campaign' : 'training', startAtTick: 0,
+      encounterConfig: this.state.endless ? 'endless-1' : this.state.battle?.encounter?.configId ?? (this.state.battle ? 'fixture-1' : 'training-1'),
       counterGuide: this.state.battle?.encounter?.guideVariant ?? 'adaptive',
       firstTraitOverride: this.options.firstTrait ?? '' });
     // The prepared I-rank protocol is a deliberate starting choice, not restored
@@ -112,13 +128,14 @@ export class GameSession {
 
   resume(): void {
     if (this.state.phase !== 'paused') return;
-    if (this.state.growth?.draft || this.state.growth?.pendingResearch) return;
+    if (this.state.growth?.draft || this.state.growth?.pendingResearch || this.state.endlessGrowth?.draft) return;
     this.state.phase = 'playing';
     this.emit('RUN_RESUMED', {});
   }
 
   menu(): void {
     const seed = this.state.seed;
+    this.options = { ...this.options, mode: 'campaign' };
     this.state = this.initial(seed);
     this.resetGrowth();
     this.resetCampaign();
@@ -130,6 +147,7 @@ export class GameSession {
     this.state.result = { success, reason };
     this.state.phase = 'result';
     this.state.player.moving = false;
+    if (this.state.endlessGrowth) this.state.endlessGrowth.draft = null;
     this.emit('RUN_ENDED', { success, reason, seed: this.state.seed, durationSimMs: Math.round(this.state.elapsed * 1000) });
   }
 
@@ -147,6 +165,7 @@ export class GameSession {
     this.battleDirector?.recordEvent(event);
     this.growthController?.recordEvent(event, growthContext(this.state));
     this.campaignController?.recordEvent(event, this.state);
+    this.endlessDirector?.recordEvent(event);
     if (type === 'PULSE_TRIGGERED' && data.coreHit === true) {
       const context = this.coreContext();
       if (context && this.motherController) this.applyCoreCommands(this.motherController.onPulse(context));
@@ -178,6 +197,7 @@ export class GameSession {
     state.elapsed = state.tick * BALANCE.step;
     state.effects = state.effects.filter(effect => state.elapsed - effect.born < effect.duration);
     this.battleDirector?.beforeInput(input);
+    this.endlessDirector?.beforeInput();
     if (this.campaignController) this.applyCampaignCommands(this.campaignController.beforeInput(state));
     if (this.checkFailure()) return;
     if (input.tool && input.tool !== state.tool) {
@@ -194,6 +214,7 @@ export class GameSession {
         state.player.dashUntil = state.elapsed + BALANCE.dashDuration;
         state.player.dashReady = state.elapsed + BALANCE.dashCooldown;
         state.dashes++;
+        this.endlessDashHits.clear();
         this.effect('dash', state.player, state.player, 25, .3);
         this.emit('PLAYER_DASHED', { x: state.player.x, y: state.player.y });
       } else this.message('冲刺正在充能。', 1);
@@ -206,6 +227,7 @@ export class GameSession {
     const after = moveWithCollision(state.player, desired, state.player.radius, activeWorld(state));
     state.player.x = after.x;
     state.player.y = after.y;
+    if (dashing && state.endlessGrowth) this.endlessDashAttack(before, after);
     // Dash chooses its travel direction from the pre-move aim, but the muzzle
     // must face from the actual post-collision position used by the shot below.
     const finalAim = normalized(input.aim.x - after.x, input.aim.y - after.y);
@@ -227,12 +249,14 @@ export class GameSession {
     if (input.fire) this.fire(input.aim);
     if (input.interact) this.interact();
     if (state.phase === 'playing') this.battleDirector?.afterInput();
+    if (state.phase === 'playing' && state.endless && this.checkFailure()) return;
     if (state.phase === 'playing') this.campaignController?.captureCurrent(state);
     if (state.phase === 'playing') {
       const context = this.coreContext();
       if (context && this.motherController) this.applyCoreCommands(this.motherController.tick(context));
     }
     if (state.phase === 'playing' && this.growthController) this.applyGrowthCommands(this.growthController.afterInput(growthContext(state)));
+    if (state.phase === 'playing' && !this.checkFailure()) this.endlessDirector?.afterInput();
     if (state.phase === 'playing' && this.campaignController) {
       this.applyCampaignCommands(this.campaignController.afterInput(state));
       this.updateBodyVitality();
@@ -242,7 +266,7 @@ export class GameSession {
       }
       this.campaignController.captureCurrent(state);
     }
-    const growthModal = state.growth?.draft?.id ?? state.growth?.pendingResearch?.id;
+    const growthModal = state.growth?.draft?.id ?? state.growth?.pendingResearch?.id ?? state.endlessGrowth?.draft?.id;
     if (state.phase === 'playing' && growthModal) {
       this.draftPauseId = growthModal; this.pause();
       this.emit('INPUT_RESET_REQUESTED', { reason: state.growth?.pendingResearch ? 'research-direction-opened' : 'protocol-draft-opened' });
@@ -252,7 +276,8 @@ export class GameSession {
   private scan(): void {
     const state = this.state;
     if (state.elapsed < state.scanReady) { this.message('扫描正在充能。', 1); return; }
-    state.scanReady = state.elapsed + BALANCE.scanCooldown;
+    const combat = state.endlessGrowth ? endlessCombatStats(state.endlessGrowth) : undefined;
+    state.scanReady = state.elapsed + (combat?.scanCooldown ?? BALANCE.scanCooldown);
     state.scanUntil = state.elapsed + 2;
     state.scans++;
     let found = 0;
@@ -268,14 +293,26 @@ export class GameSession {
     this.battleDirector?.scan();
     const coreContext = this.coreContext();
     if (coreContext && this.motherController) this.applyCoreCommands(this.motherController.onScan(coreContext));
-    if (this.growthController) this.applyGrowthCommands(this.growthController.onScan(growthContext(state)));
+    if (this.growthController) {
+      this.applyGrowthCommands(this.growthController.onScan(growthContext(state)));
+      if (combat && state.growth?.beacon?.born === state.elapsed) {
+        const beacon = state.growth.beacon;
+        beacon.until += combat.cellDurationBonus;
+        state.growth.beaconReadyAt = state.elapsed + (state.growth.beaconReadyAt - state.elapsed) * combat.cellCooldownMultiplier;
+        state.growth.cells = summonImmuneCells(beacon, growthContext(state), 3);
+      }
+    }
+    if (combat && combat.scanDamage > 0) this.endlessRadialAttack(state.player, 260, combat.scanDamage * combat.damageMultiplier, 'scan');
+    if (state.endless) this.message('Q 显影并召集免疫小队：细胞会靠近目标并咬击，朝敌群方向扫描可部署在前线。', 3);
   }
 
   private fire(aim: Vec): void {
     const state = this.state;
     const tool = state.tool;
+    const combat = state.endlessGrowth ? endlessCombatStats(state.endlessGrowth) : undefined;
     if (state.elapsed + 1e-9 < state.cooldowns[tool]) return;
-    state.cooldowns[tool] = state.elapsed + BALANCE.cooldowns[tool];
+    const cooldown = (tool === 1 ? combat?.primaryCooldown : tool === 2 ? combat?.areaCooldown : undefined) ?? BALANCE.cooldowns[tool];
+    state.cooldowns[tool] = state.elapsed + cooldown;
     state.player.actionUntil = state.elapsed + .15;
     const direction = normalized(aim.x - state.player.x, aim.y - state.player.y);
     const aimDistance = distance(state.player, aim);
@@ -283,6 +320,24 @@ export class GameSession {
     const wall = wallHit(state.player, direction, range, activeWorld(state));
     if (tool === 1) {
       state.shots++;
+      if (combat) {
+        const angle = Math.atan2(direction.y, direction.x);
+        let hitCount = 0;
+        for (let ray = 0; ray < combat.shotRays; ray++) {
+          const offset = ray === 0 ? 0 : Math.ceil(ray / 2) * (ray % 2 ? -1 : 1) * .14;
+          const shot = { x: Math.cos(angle + offset), y: Math.sin(angle + offset) };
+          const limit = wallHit(state.player, shot, range, activeWorld(state)) ?? range;
+          const hits = state.targets.filter(target => target.hp > 0).map(target => ({ target,
+            at: rayCircle(state.player, shot, target, target.radius, range) }))
+            .filter((hit): hit is { target: Target; at: number } => hit.at !== null && hit.at < limit)
+            .sort((a, b) => a.at - b.at).slice(0, 1 + combat.pierceCount);
+          const endAt = hits.length > combat.pierceCount ? hits.at(-1)!.at : limit;
+          this.effect('beam', state.player, { x: state.player.x + shot.x * endAt, y: state.player.y + shot.y * endAt }, 0, .14);
+          for (const hit of hits) { this.damage(hit.target, BALANCE.damage[1] * combat.damageMultiplier); hitCount++; }
+        }
+        this.emit('TOOL_FIRED', { tool, x: aim.x, y: aim.y, hit: hitCount > 0, rays: combat.shotRays, pierce: combat.pierceCount });
+        return;
+      }
       let nearest: Target | undefined;
       let limit = wall ?? range;
       for (const target of state.targets) {
@@ -304,16 +359,17 @@ export class GameSession {
     this.emit('TOOL_FIRED', { tool, x: aim.x, y: aim.y });
     if (tool === 2) {
       state.shots++;
-      this.effect('burst', aim, aim, BALANCE.areaRadius, .55);
+      const radius = combat?.areaRadius ?? BALANCE.areaRadius;
+      this.effect('burst', aim, aim, radius, .55);
       let count = 0;
       for (const target of state.targets) {
-        if (target.hp > 0 && distance(aim, target) <= BALANCE.areaRadius + target.radius) {
+        if (target.hp > 0 && distance(aim, target) <= radius + target.radius) {
           const toTarget = normalized(target.x - aim.x, target.y - aim.y);
           const targetDistance = distance(aim, target);
           const localWall = wallHit(aim, toTarget, targetDistance, activeWorld(state));
           if (localWall !== null && localWall < targetDistance - target.radius) continue;
-          this.damage(target, BALANCE.damage[2]);
-          if (state.campaign && target.hp > 0 && target.role !== 'source' && target.role !== 'core') {
+          this.damage(target, BALANCE.damage[2] * (combat?.damageMultiplier ?? 1) * (combat?.areaDamageMultiplier ?? 1));
+          if ((state.campaign || state.endless) && target.hp > 0 && target.role !== 'source' && target.role !== 'core') {
             const direction = normalized(target.x - aim.x, target.y - aim.y);
             const fallback = normalized(target.x - state.player.x, target.y - state.player.y);
             const moved = moveWithCollision(target, { x: (direction.x || direction.y ? direction.x : fallback.x) * 85, y: (direction.x || direction.y ? direction.y : fallback.y) * 85 }, target.radius, activeWorld(state));
@@ -327,7 +383,7 @@ export class GameSession {
           count++;
         }
       }
-      if (count) this.message(`范围裂解命中 ${count} 个靶标。`);
+      if (count) this.message(`范围裂解命中 ${count} 个${state.endless ? '感染体' : '靶标'}。`);
       else if (distance(aim, state.tissue) < state.tissue.radius + BALANCE.areaRadius) this.message('范围裂解不能修复组织，请按 3。');
       return;
     }
@@ -340,7 +396,9 @@ export class GameSession {
     state.tissue.hp = clamp(state.tissue.hp + BALANCE.repair, 0, state.tissue.maxHp);
     const amount = state.tissue.hp - before;
     this.emit('ORGAN_INTEGRITY_CHANGED', { organId: state.battle?.organId ?? 'heart', before, after: state.tissue.hp, reason: 'repair' });
-    if (amount > 0) this.message(state.tissue.hp === state.tissue.maxHp ? '组织修复完成！清空靶标后返回复测台，按 E。' : `组织修复 +${amount}，完整度 ${state.tissue.hp}%。`);
+    if (amount > 0) this.message(state.tissue.hp === state.tissue.maxHp
+      ? state.endless ? '组织已修复，继续清除本波敌群。' : '组织修复完成！清空靶标后返回复测台，按 E。'
+      : `组织修复 +${amount}，完整度 ${state.tissue.hp}%。`);
     else this.message('组织已经完全修复。');
     this.battleDirector?.repaired(amount);
     this.battleDirector?.repairMimics(aim, (target, damage) => this.damage(target, damage));
@@ -384,7 +442,10 @@ export class GameSession {
       if (!state.battle || command.organId !== state.battle.organId || state.phase === 'result') continue;
       if (command.kind === 'damage') {
         const target = state.targets.find(t => t.id === command.targetId && t.hp > 0);
-        if (target) this.damage(target, command.amount, { cause: 'protocol', rootId: command.rootId, protocolId: command.protocolId, allowChain: command.allowChain });
+        const multiplier = state.endlessGrowth ? endlessCombatStats(state.endlessGrowth) : undefined;
+        if (target) this.damage(target, command.amount * (multiplier?.damageMultiplier ?? 1)
+          * (command.protocolId === 'IMMUNE_BEACON' ? multiplier?.cellDamageMultiplier ?? 1 : 1),
+          { cause: 'protocol', rootId: command.rootId, protocolId: command.protocolId, allowChain: command.allowChain });
       } else if (command.kind === 'expose') {
         const target = state.targets.find(t => t.id === command.targetId && t.hp > 0);
         if (target) { target.exposedUntil = Math.max(target.exposedUntil ?? 0, command.until); target.revealedUntil = Math.max(target.revealedUntil ?? 0, command.revealUntil); }
@@ -394,6 +455,71 @@ export class GameSession {
         this.emit('ORGAN_INTEGRITY_CHANGED', { organId: state.battle.organId, before, after: state.tissue.hp, reason: 'protocol-pressure', protocolId: command.protocolId });
       }
     }
+  }
+
+  private endlessRadialAttack(center: Vec, radius: number, amount: number, ability: string): void {
+    const state = this.state;
+    this.effect('burst', center, center, radius, .45);
+    let hits = 0;
+    for (const target of [...state.targets]) {
+      const gap = distance(center, target);
+      if (target.hp <= 0 || gap > radius + target.radius) continue;
+      const wall = wallHit(center, normalized(target.x - center.x, target.y - center.y), gap, activeWorld(state));
+      if (wall !== null && wall < gap - target.radius) continue;
+      this.damage(target, amount, { cause: 'ability', rootId: `endless:${ability}:${state.tick}` }); hits++;
+    }
+    this.emit('COMBAT_ABILITY_TRIGGERED', { ability, hits, radius, damage: amount });
+  }
+
+  private endlessDashAttack(from: Vec, to: Vec): void {
+    const state = this.state, combat = endlessCombatStats(state.endlessGrowth!);
+    if (combat.dashDamage <= 0) return;
+    const dx = to.x - from.x, dy = to.y - from.y, squared = dx * dx + dy * dy;
+    for (const target of [...state.targets]) {
+      if (target.hp <= 0 || this.endlessDashHits.has(target.id)) continue;
+      const t = clamp(((target.x - from.x) * dx + (target.y - from.y) * dy) / (squared || 1), 0, 1);
+      const closest = { x: from.x + dx * t, y: from.y + dy * t };
+      const gap = distance(closest, target);
+      if (gap > 64 + target.radius) continue;
+      const wall = wallHit(closest, normalized(target.x - closest.x, target.y - closest.y), gap, activeWorld(state));
+      if (wall !== null && wall < gap - target.radius) continue;
+      this.endlessDashHits.add(target.id);
+      this.damage(target, combat.dashDamage * combat.damageMultiplier, { cause: 'ability', rootId: `endless:dash:${state.dashes}` });
+      this.effect('chain', closest, target, 12, .22);
+      this.emit('COMBAT_ABILITY_HIT', { ability: 'dash', id: target.id, damage: combat.dashDamage * combat.damageMultiplier });
+    }
+  }
+
+  /** A clear reward is accepted by the wave director exactly once. */
+  completeWave(wave: number): void {
+    const state = this.state;
+    if (!state.endless || !state.endlessGrowth || state.phase !== 'playing') return;
+    offerEndlessUpgrade(state.endlessGrowth, wave);
+    this.growthController?.rewardEndlessWave(wave, state.elapsed);
+    this.effect('success', state.player, state.player, 110, .8);
+    this.message(`第 ${wave} 波清除！选择一次实战进化；确认后恢复耐久和组织。`, 5, 2);
+  }
+
+  chooseCombatUpgrade(draftId: string, upgradeId: EndlessUpgradeId, runId: string): boolean {
+    const state = this.state, growth = state.endlessGrowth;
+    if (state.phase !== 'paused' || !state.endless || !growth || !state.growth || state.growth.runId !== runId || state.growth?.draft || state.growth?.pendingResearch
+      || !chooseEndlessUpgrade(growth, draftId, upgradeId)) return false;
+    const stats = endlessCombatStats(growth);
+    const before = state.player.hp, organBefore = state.tissue.hp;
+    state.player.hp = Math.min(stats.maxHp, state.player.hp + 18 + (upgradeId === 'vitality' ? 20 : 0));
+    state.tissue.hp = Math.min(state.tissue.maxHp, state.tissue.hp + 12);
+    state.cooldowns[1] = state.cooldowns[2] = state.elapsed;
+    state.scanReady = state.elapsed;
+    if (state.growth) state.growth.beaconReadyAt = state.elapsed;
+    this.effect('evolution', state.player, state.player, 75, 1);
+    this.emit('COMBAT_UPGRADE_COMMITTED', { draftId, upgradeId, level: growth.level, wave: state.endless.clearedWaves,
+      healed: state.player.hp - before, organRepaired: state.tissue.hp - organBefore });
+    this.emit('ORGAN_INTEGRITY_CHANGED', { organId: 'heart', before: organBefore, after: state.tissue.hp, reason: 'wave-supply' });
+    this.message(`${growth.lastChoice?.title ?? '实战进化'}已生效 · 耐久 +${Math.round(state.player.hp - before)} / 组织 +${Math.round(state.tissue.hp - organBefore)}`, 5, 2);
+    this.draftPauseId = null;
+    this.resume();
+    this.emit('INPUT_RESET_REQUESTED', { reason: 'combat-upgrade-committed' });
+    return true;
   }
 
   slowFactor(targetId: string): number { return this.growthController?.slowFactor(targetId, this.state.battle!.organId, this.state.elapsed) ?? 1; }
@@ -486,6 +612,7 @@ export class GameSession {
     const state = this.state;
     if (state.phase !== 'playing') return true;
     if (state.player.hp <= 0) this.finish(false, '救援体耐久耗尽：观察前摇，冲刺脱离危险区域。');
+    else if (state.endless && state.tissue.hp <= 0) this.finish(false, '核心组织失守：潜伏体优先侵蚀组织，用 Q 定位、2 清群、3 抢修。');
     else if (state.battle && state.battle.pressure.vitality <= 0) this.finish(false, '身体崩溃：激活器官长期濒危，全身稳定耗尽。');
     else if (state.battle?.pressure.criticalSince !== null && state.battle?.pressure.criticalSince !== undefined && state.battle.pressure.infection >= 100 && state.elapsed - state.battle.pressure.criticalSince + 1e-9 >= B.crisisDuration) this.finish(false, '感染失控：负荷 100 持续 15 秒。');
     return state.phase !== 'playing';
@@ -615,6 +742,12 @@ export class GameSession {
   }
 
   private interact(): void {
+    if (this.state.endless) {
+      const valve = this.state.battle?.graph.nodes.find(node => node.kind === 'valve');
+      if (valve && distance(valve, this.state.player) <= BALANCE.interactionRange) this.battleDirector?.pulse();
+      else this.message('靠近中央上方阀门按 E，朝鼠标冲流击退并破壳；3 瞄准十字组织抢修。', 3);
+      return;
+    }
     if (this.campaignController && this.state.battle) {
       const nearest = this.state.battle.graph.nodes.filter(n => ['valve','gate','retest','research','exit'].includes(n.kind)).sort((a,b)=>distance(a,this.state.player)-distance(b,this.state.player))[0];
       if (nearest && distance(nearest, this.state.player) <= BALANCE.interactionRange) {

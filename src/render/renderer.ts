@@ -1,4 +1,5 @@
 import { activeWorld, BALANCE, WORLD, type Effect, type GameState, type Target, type Vec, type WorldGeometry } from '../game/types';
+import { endlessCombatStats } from '../game/endlessGrowth';
 import { Camera } from './camera';
 import { depthSort } from './depthSort';
 import { foregroundOpacity, isForegroundOccluded } from './occlusion';
@@ -18,6 +19,7 @@ import { drawImmuneCell, immuneCellBody, IMMUNE_BODY_LIFT } from './immuneVisual
 import { getRaisedActorBodies, getRaisedObstacleOcclusion, PLAYER_HEAD_SHAPE, playerBodyPose } from './raisedObstacleOcclusion';
 import { drawRaisedBodyLayers, traceRaisedObstacle } from './raisedObstacleGeometry';
 import { SceneLabels, type SceneLabel, type LabelRect } from './sceneLabels';
+import { drawPlayerPresence, playerPresence } from './playerPresence';
 
 const TAU = Math.PI * 2;
 const hash = (n: number): number => { const a = Math.sin(n * 127.1 + 311.7) * 43758.5453123; return a - Math.floor(a); };
@@ -93,7 +95,7 @@ export class Renderer {
   prepareCamera(state: GameState): void { this.camera.follow(state.player, activeWorld(state)); }
 
   diagnostics(state: GameState) {
-    return { depthOrder: depthSort(this.entities(state)).map(entity => entity.id), occluded: isForegroundOccluded(state.player, activeWorld(state)), foregroundOpacity: foregroundOpacity(state.player, activeWorld(state)), layerOrder: LAYER_ORDER, labels: this.labels.diagnostics(), hudRects: this.hudRects.map(rect => ({ ...rect })) };
+    return { depthOrder: depthSort(this.entities(state)).map(entity => entity.id), occluded: isForegroundOccluded(state.player, activeWorld(state)), foregroundOpacity: foregroundOpacity(state.player, activeWorld(state)), layerOrder: LAYER_ORDER, labels: this.labels.diagnostics(), hudRects: this.hudRects.map(rect => ({ ...rect })), playerPresence: playerPresence(state) };
   }
 
   private entities(state: GameState): { id: string; y: number; kind: string; index?: number }[] {
@@ -101,7 +103,7 @@ export class Renderer {
       { id: 'player', y: state.player.y, kind: 'player' },
       ...state.targets.map((target, index) => ({ id: target.id, y: target.y, kind: 'target', index })),
       { id: 'tissue', y: state.tissue.y, kind: 'tissue' },
-      { id: 'terminal', y: state.terminal.y, kind: 'terminal' },
+      ...(state.endless ? [] : [{ id: 'terminal', y: state.terminal.y, kind: 'terminal' }]),
       ...(state.battle?.graph.nodes.filter(node => node.kind === 'valve' || node.kind === 'gate' || node.kind === 'research' || node.kind === 'exit').map(node => ({ id: node.id, y: node.y, kind: 'device' })) ?? []),
       ...(state.growth?.beacon && state.growth.beacon.organId === state.battle?.organId && state.growth.beacon.until > state.elapsed ? [{ id: state.growth.beacon.id, y: state.growth.beacon.y, kind: 'beacon' }] : []),
       ...(state.growth?.cells?.flatMap((cell, index) => cell.organId === state.battle?.organId && cell.until > state.elapsed ? [{ id: cell.id, y: cell.y, kind: 'immune', index }] : []) ?? []),
@@ -174,6 +176,7 @@ export class Renderer {
       drawBattleLabels(ctx, state, this.labels);
       this.drawTissueMarker(ctx, state);
     }
+    drawPlayerPresence(ctx, state, playerPresence(state, raisedActorBodies));
     this.drawCrosshair(ctx, state, aim);
     ctx.restore();
     this.labels.draw(ctx);
@@ -282,7 +285,8 @@ export class Renderer {
     if (state.phase === 'playing' && state.tool === 2) {
       const distance = Math.hypot(aim.x - state.player.x, aim.y - state.player.y);
       ctx.save(); ctx.setLineDash([5, 6]); ctx.lineWidth = 1.5;
-      ellipse(ctx, aim.x, aim.y, BALANCE.areaRadius, BALANCE.areaRadius, '#92f5e508', distance <= BALANCE.range ? '#a6f2e376' : '#f39c6270'); ctx.restore();
+      const radius = state.endlessGrowth ? endlessCombatStats(state.endlessGrowth).areaRadius : BALANCE.areaRadius;
+      ellipse(ctx, aim.x, aim.y, radius, radius, '#92f5e508', distance <= BALANCE.range ? '#a6f2e376' : '#f39c6270'); ctx.restore();
     }
     // Decorative endpoint ticks share the exact physical floor boundary.
     for (const [x, y, dx, dy] of [[80, 125, 25, 25], [1120, 125, -25, 25], [80, 720, 25, -25], [1120, 720, -25, -25]]) {

@@ -50,6 +50,11 @@ export function updateGrowthHud(state: GameState): void {
   const growth=state.growth;if(!growth)return;
   document.getElementById('growth-research')!.textContent=`样本 ${growth.research}`;
   document.getElementById('growth-xp')!.textContent=growth.starterDebt===1 ? `预装待结清 · ${growth.xp}/${GROWTH_BALANCE.xpThresholds[0]} XP · 下份草案 ${GROWTH_BALANCE.xpThresholds[1]}` : `${growth.preparation?.starterProtocolId?'预支已结清 · ':`进化 Lv.${growth.level} · `}经验 ${growth.xp}${growth.nextXp===null?' / 已达本局上限':` / ${growth.nextXp}`}`;
+  if (state.endless) {
+    document.getElementById('growth-research')!.textContent = '清波获得协议经验';
+    document.getElementById('growth-xp')!.textContent = growth.nextXp === null ? '协议经验已完成 · 战斗进化继续'
+      : `协议 Lv.${growth.level} · ${growth.xp} / ${growth.nextXp} XP`;
+  }
   const floor=GROWTH_BALANCE.xpThresholds[growth.level-1]??0;
   document.getElementById('xp-meter')!.style.width=`${growth.nextXp===null?100:Math.max(0,Math.min(100,(growth.xp-floor)/(growth.nextXp-floor)*100))}%`;
   const slots=document.getElementById('protocol-slots')!;
@@ -79,6 +84,8 @@ export function updateGrowthHud(state: GameState): void {
   const hasBeacon=growth.equipped.some(slot=>slot.id==='IMMUNE_BEACON');
   const diagnosed=availableResearchDirections(growth.rewardedKeys).length-1;
   document.getElementById('research-hint')!.textContent=beacon&&beacon.until>state.elapsed?`${beacon.mode==='patrol'?'免疫侦巡':'免疫小队'} ${growth.cells?.length??0} 体 · ${Math.max(0,beacon.until-state.elapsed).toFixed(1)}s`:hasBeacon&&growth.beaconReadyAt>state.elapsed?`小队再召集 ${Math.ceil(growth.beaconReadyAt-state.elapsed)}s · E 研究`:`Q 诊断 · E 研究（${diagnosed?`可定向 ${diagnosed} 类`:'诊断后可定向'}）`;
+  if (state.endless && !(beacon && beacon.until > state.elapsed)) document.getElementById('research-hint')!.textContent =
+    hasBeacon && growth.beaconReadyAt > state.elapsed ? `小队再召集 ${Math.ceil(growth.beaconReadyAt-state.elapsed)}s` : '朝敌群按 Q · 部署免疫小队';
   const feedback=document.getElementById('evolution-feedback');
   if(feedback){
     const evolution=growth.lastEvolution;feedback.hidden=!evolution||state.elapsed>=evolution.until;

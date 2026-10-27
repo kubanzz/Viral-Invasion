@@ -28,7 +28,7 @@ export function projectedRaisedObstacle(obstacle: RaisedObstacle, organ: Obstacl
 function projectBounds(local: VisualBounds, x: number, y: number, lift = 0): VisualBounds {
   return { left: x + local.left, right: x + local.right, top: y * SPRITE_Y_SCALE + lift + local.top, bottom: y * SPRITE_Y_SCALE + lift + local.bottom };
 }
-function playerBounds(state: GameState): VisualBounds {
+export function playerVisualBounds(state: GameState): VisualBounds {
   const { bob, direction } = playerBodyPose(state), head = PLAYER_HEAD_SHAPE;
   // Shared helmet plus conservative extents of the drawn backpack/suit/boots
   // and the actual rotated tool/tether. Excludes labels, orbit icons and VFX.
@@ -52,7 +52,7 @@ function outlineBounds(trait: TraitId | undefined): VisualBounds {
   traceVirusOutline(recorder, trait, 1);
   const bounds = boundsOf(points); virusBounds.set(key, bounds); return bounds;
 }
-function targetBounds(target: Target, state: GameState): VisualBounds {
+export function targetVisualBounds(target: Target, state: GameState): VisualBounds {
   const r = target.radius, t = state.elapsed, source = target.role === 'source', core = state.campaign?.core.combat;
   if (!state.battle) {
     const appendage = r * .93 * 1.28 + (target.kind === 'cluster' ? 6 : 5);
@@ -90,8 +90,8 @@ export function getRaisedActorBodies(state: GameState): RaisedActorBody[] {
   const obstacles = activeWorld(state).obstacles.map(obstacle => ({ obstacle, ...projectedRaisedObstacle(obstacle, organ) }));
   const relevant = (groundY: number, bounds: VisualBounds) => obstacles.some(shape => groundY <= shape.obstacle.y && boundsOverlap(bounds, shape.upperBounds));
   const result: RaisedActorBody[] = [];
-  if (state.player.hp > 0) { const bodyBounds = playerBounds(state); if (relevant(state.player.y, bodyBounds)) result.push({ id: 'player', kind: 'player', groundY: state.player.y, bodyBounds }); }
-  for (const target of state.targets) if (target.hp > 0) { const bodyBounds = targetBounds(target, state); if (relevant(target.y, bodyBounds)) result.push({ id: target.id, kind: 'target', groundY: target.y, bodyBounds }); }
+  if (state.player.hp > 0) { const bodyBounds = playerVisualBounds(state); if (relevant(state.player.y, bodyBounds)) result.push({ id: 'player', kind: 'player', groundY: state.player.y, bodyBounds }); }
+  for (const target of state.targets) if (target.hp > 0) { const bodyBounds = targetVisualBounds(target, state); if (relevant(target.y, bodyBounds)) result.push({ id: target.id, kind: 'target', groundY: target.y, bodyBounds }); }
   for (const cell of state.growth?.cells ?? []) {
     if (cell.organId !== state.battle?.organId || cell.until <= state.elapsed || cell.born >= state.elapsed) continue;
     const extent = Math.hypot(cell.radius + 3, (cell.radius + 3) * .88) * 1.12 + 1;

@@ -6,11 +6,13 @@ import { createHash } from 'node:crypto';
 
 const directory = process.argv[2];
 if (!directory) throw new Error('Usage: node scripts/verify-release.mjs <unpacked-release-directory>');
-const output = process.env.VI_RELEASE_REPORT ?? 'artifacts/G4/release-smoke';
+const mode = process.argv[3] ?? 'campaign';
+if (!['campaign', 'endless'].includes(mode)) throw new Error('Expected campaign or endless mode');
+const output = process.env.VI_RELEASE_REPORT ?? process.argv[4] ?? 'artifacts/G4/release-smoke';
 await mkdir(output, { recursive: true });
 const hash = async path => createHash('sha256').update(await readFile(path)).digest('hex');
 const report = { scope: 'Smoke test of the unpacked player release; offline file entry, real DOM keyboard/mouse, read-only diagnostics. Not a complete victory, performance or human playtest.',
-  directory, hashes: {}, browsers: [], pass: false };
+  directory, mode, hashes: {}, browsers: [], pass: false };
 for (const name of ['index.html', 'game.js', 'build-meta.json']) {
   const packaged = await hash(resolve(directory, name)), built = await hash(resolve('dist', name));
   report.hashes[name] = { packaged, built, match: packaged === built };
@@ -25,10 +27,12 @@ for (const channel of ['chrome', 'msedge']) {
     page.on('pageerror', error => errors.push(error.message));
     page.on('request', request => { if (/^https?:/i.test(request.url())) remoteRequests.push(request.url()); });
     await page.goto(pathToFileURL(resolve(directory, 'index.html')).href);
-    await page.locator('[data-action="start"]').waitFor({ state: 'visible' });
+    const start = page.locator(`[data-action="${mode === 'endless' ? 'endless-start' : 'start'}"]`);
+    await start.waitFor({ state: 'visible' });
     await page.screenshot({ path: `${output}/${channel}-menu.png` });
-    await page.locator('[data-action="start"]').click();
+    await start.click();
     const before = await page.evaluate(() => window.__viral.snapshot());
+    if ((mode === 'endless') !== !!before.endless || (mode === 'campaign') !== !!before.campaign) throw new Error(`${channel}: wrong release mode.`);
     await page.keyboard.down('KeyD'); await page.waitForTimeout(220); await page.keyboard.up('KeyD');
     const moved = await page.evaluate(() => window.__viral.snapshot());
     if (moved.phase !== 'playing' || moved.player.x <= before.player.x || moved.tick <= before.tick) throw new Error(`${channel}: movement did not advance.`);

@@ -11,7 +11,7 @@ import { parsePreparation, preparationForPlan, type RunPreparation } from './pre
 export type { GrowthCommand, GrowthContext, GrowthState, DamageOrigin, DraftIntent, DraftResolution } from './growthTypes';
 
 export function growthContext(state: GameState): GrowthContext {
-  return { tick: state.tick, elapsed: state.elapsed, active: state.phase === 'playing', organId: state.battle?.organId ?? 'heart',
+  return { endless: !!state.endless, tick: state.tick, elapsed: state.elapsed, active: state.phase === 'playing', organId: state.battle?.organId ?? 'heart',
     rhythm: state.battle?.pulse.phase ?? 'rest', deviceOrigin: state.battle?.pulse.origin ?? state.terminal,
     player: state.player, aim: state.battle?.lastAim ?? state.player, tissue: state.tissue, targets: state.targets, tool: state.tool, geometry: activeWorld(state), rhythmCycle: state.battle?.pulse.cycleIndex,
     acceptedMetrics: state.runMetrics, acceptedEvents: state.events };
@@ -140,6 +140,9 @@ export class GrowthController {
     if(event.type==='RUN_ENDED') { s.ended=true;s.draft=null;s.pendingResearch=null;s.pendingLevels=[];s.beacon=null;s.cells=[];s.marks=[];s.resonance=[];this.acceptedHistory.clear();return; }
     if(s.ended)return;
     this.recordAcceptedEffect(event, context, elapsed);
+    // Continuous challenges reward completed waves. Per-actor reward ledgers
+    // belong to the finite campaign and must not grow with an endless run.
+    if (context?.endless) return;
     const organ:OrganId=data.organId==='lung'?'lung':data.organId==='heart'?'heart':context?.organId??'heart';
     if(event.type==='INFECTION_SOURCE_CLEARED') {
       const id=String(data.nodeId??data.id??'');if(id)this.award(`source:${organ}:${id}`,20,2,elapsed);
@@ -170,6 +173,14 @@ export class GrowthController {
         s.protectionNeeded[organ]=false;this.award(`protect:${organ}`,15,1,elapsed);
       }
     }
+  }
+
+  rewardEndlessWave(wave: number, elapsed: number): void {
+    if (this.state.ended || this.state.nextXp === null || !Number.isInteger(wave) || wave < 1) return;
+    this.award(`endless-wave:${wave}`, 30, 0, elapsed);
+    // Queue both clear rewards before the host pauses. Resolving one card must
+    // reveal the other without briefly resuming combat for a simulation tick.
+    this.openNextLevel();
   }
 
   private shuffled<T>(values: readonly T[], rng: SeedRng): T[] {

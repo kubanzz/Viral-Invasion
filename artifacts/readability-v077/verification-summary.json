@@ -1,0 +1,138 @@
+{
+  "version": "0.7.7",
+  "candidate": "continuous-evolution",
+  "generatedAt": "2026-10-27T15:03:06.329Z",
+  "baselineCommit": "8364bf1",
+  "design": "DesignDoc_v1.3/ViralInvasion_GDD_v1.3.md",
+  "build": {
+    "gameSha256": "f3353587dcbc91e27814a70a23f87af117fcced3e2ba6ef3d5e4945a6b043269",
+    "indexSha256": "7f5e171c9798f4445a451e42d20d5a89e598016de183ad1531bb678f3a3027a0",
+    "metadataSha256": "7ed9227e7b471e6a6afdab784fd6fc70388cd0a403641a1c51f128c1bb352ce0",
+    "sourcePaths": 69,
+    "savedSourceManifestMatches": true
+  },
+  "typecheck": {
+    "command": "node node_modules/typescript/bin/tsc --noEmit",
+    "exitCode": 0
+  },
+  "release": {
+    "packageReport": "artifacts/readability-v077/release-package.json",
+    "unpackedSmokeReport": "artifacts/readability-v077/release-smoke/report.json",
+    "offlineBrowsersPassed": ["chrome", "msedge"],
+    "remoteRequests": 0,
+    "pageErrors": 0
+  },
+  "unit": {
+    "path": "artifacts/readability-v077/unit-final.json",
+    "files": 60,
+    "passed": 504,
+    "failed": 0,
+    "excluded": [
+      "tests/unit/full-system-seeds.test.ts"
+    ],
+    "reason": "The frozen v076 1000-session campaign audit is not repeated for the new mode; current ordinary campaign integration is included."
+  },
+  "followup": [
+    {
+      "path": "artifacts/readability-v077/queued-rewards-unit.json",
+      "passed": 39,
+      "purpose": "Queue simultaneous protocol and combat clear rewards before pausing; natural 12-wave replay remains deterministic."
+    },
+    {
+      "path": "artifacts/readability-v077/final-presentation-unit.json",
+      "passed": 18,
+      "purpose": "Final challenge introduction and presentation after responsive CSS fixes."
+    }
+  ],
+  "browser": [
+    {
+      "path": "artifacts/readability-v077/chrome-v3-report.json",
+      "expected": 1,
+      "unexpected": 0,
+      "skipped": 0,
+      "sha256": "bddeb5e5c7a26db1fa4a02bbd9409f5124c4f8d11efe60e9c94eebc39c669779"
+    },
+    {
+      "path": "artifacts/readability-v077/edge-v1-report.json",
+      "expected": 1,
+      "unexpected": 0,
+      "skipped": 0,
+      "sha256": "3274b8af7f272804a5628a266d359b078c1be0c9b204af7c01a92daf44257424"
+    },
+    {
+      "path": "artifacts/readability-v077/chrome-mode-v2-report.json",
+      "expected": 1,
+      "unexpected": 0,
+      "skipped": 0,
+      "sha256": "4383213590f9b3bfa9394a893cdfb99ee7e460bbdc6aa41b480e80a1b58a9ebf"
+    },
+    {
+      "path": "artifacts/readability-v077/edge-mode-v1-report.json",
+      "expected": 1,
+      "unexpected": 0,
+      "skipped": 0,
+      "sha256": "7a601bbd68b25f3df07a01092d8778b4d903746cbbb7b26fe1f9d817bfa13019"
+    }
+  ],
+  "browserScope": [
+    "Offline file:// Chrome/Edge",
+    "Real mouse and keyboard only; read-only game snapshots",
+    "Three-cell squad summons and positive accepted HP-loss receipts",
+    "Two real wave clears; visible first upgrade and subsequent three-ray shots",
+    "Pause tick freeze; extraction; persisted record after reload; clean same-seed retry",
+    "Campaign/challenge/menu isolation; 1100x560 panel separation"
+  ],
+  "retainedFailures": [
+    {
+      "path": "artifacts/readability-v077/unit-integration.json",
+      "outcome": "462 passed, one legacy 72000-tick stress test exceeded its original 20s runner timeout"
+    },
+    {
+      "path": "artifacts/readability-v077/unit-battle-isolated.json",
+      "outcome": "11 passed, same legacy stress timeout under isolation; audited old/current comparison retained separately"
+    },
+    {
+      "path": "artifacts/readability-v077/chrome-report.json",
+      "outcome": "Zero-height HUD container visibility assertion; found and fixed panel overlap"
+    },
+    {
+      "path": "artifacts/readability-v077/chrome-v2-report.json",
+      "outcome": "An XP reward opened between post-clear snapshot and pause request; queue timing fixed and test handles pending choices"
+    },
+    {
+      "path": "artifacts/readability-v077/chrome-mode-v1-report.json",
+      "outcome": "1100x560 protocol panel overlapped wave panel; compact-mode CSS fixed"
+    }
+  ],
+  "naturalLoop": {
+    "seed": 71,
+    "clearedWaves": 12,
+    "simulatedSeconds": 224.75,
+    "peakLiving": 6,
+    "peakTelegraphs": 0,
+    "source": "artifacts/readability-v077/queued-rewards-unit.json",
+    "inputSha256": "99ff727c073750f5ba6af9b7f51fbcde7bcc578ea33218f49f87d32e25b492fb",
+    "note": "Public fixed-step input and choices; no HP/world/target injection. The final replay includes four dual-reward pauses. These results do not prove maximum-population performance or human balance."
+  },
+  "independentFixtures": {
+    "source": "artifacts/readability-v077/endless-loop.json",
+    "population": 24,
+    "simultaneousEliteTelegraphs": 3,
+    "frozenPoseChecks": 165,
+    "note": "Explicit controlled fixtures, separate from natural play."
+  },
+  "legacyStress": {
+    "source": "artifacts/readability-v077/legacy-stress-comparison.json",
+    "oldModulesSeconds": 18.6518367,
+    "currentModulesSeconds": 18.7352344,
+    "allAssertionsRetained": true,
+    "runnerTimeoutNowMs": 45000,
+    "note": "Runner walltime headroom only; not a new-mode FPS measurement."
+  },
+  "limits": [
+    "Human blind playtesting remains deferred; fun, retention and commercial potential are unvalidated.",
+    "Enemy pursuit uses existing local collision/tangent navigation; this sample does not prove every seed/corner.",
+    "No new long browser FPS/memory benchmark, native minimize/focus or real zoom coverage is claimed.",
+    "Final responsive CSS/introduction were verified by focused presentation tests and mode-isolation browsers; the longer browser combat run preceded only those presentation refinements."
+  ]
+}

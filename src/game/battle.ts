@@ -8,6 +8,7 @@ import { getOrganDefinition } from './organConfig';
 import { ENCOUNTER_CONFIGS } from './encounterConfig';
 import { acceptedFirstCounter } from './counterLesson';
 import { ENEMY_CROWD, moveEnemyThroughCrowd, planEnemySpacing } from '../actors/enemyCrowd';
+import { endlessCombatStats } from './endlessGrowth';
 
 export interface BattleHost {
   state: GameState;
@@ -178,7 +179,7 @@ export class BattleDirector {
         }
         for (const trait of target.traits ?? []) if (!b.defeatedTraits.includes(trait)) b.defeatedTraits.push(trait);
         this.host.emit('ELITE_CLEARED', { id: target.id, organId: b.organId, trait: target.traits?.join('+') ?? '' });
-        this.notice(`变异精英已清除（${b.stats.eliteClears}/2）。保持组织，继续诊断。`);
+        this.notice(s.endless ? '变异精英已清除！继续清场领取本波进化。' : `变异精英已清除（${b.stats.eliteClears}/2）。保持组织，继续诊断。`);
       }
       if (target.role !== 'core' && target.traits?.includes('FISSION') && (target.generation ?? 0) === 0) {
         target.splitAt = s.elapsed + B.fissionDelay;
@@ -192,9 +193,10 @@ export class BattleDirector {
     if (amount <= 0) return;
     this.b.stats.repairs++;
     this.b.pressure.infection = Math.max(0, this.b.pressure.infection - B.repairRelief);
-    if (distance(this.s.player, this.s.tissue) < 200) this.s.player.hp = Math.min(100, this.s.player.hp + 4);
+    if (distance(this.s.player, this.s.tissue) < 200) this.s.player.hp = Math.min(this.s.endlessGrowth ? endlessCombatStats(this.s.endlessGrowth).maxHp : 100, this.s.player.hp + 4);
     this.host.emit('PRESSURE_RELIEVED', { reason: 'repair', amount: B.repairRelief });
-    this.host.message(`组织修复 +${Math.round(amount)}；感染负荷 -${B.repairRelief}。近距离修复可恢复耐久。`, 3);
+    this.host.message(this.s.endless ? `组织修复 +${Math.round(amount)}。近距离修复可恢复耐久。`
+      : `组织修复 +${Math.round(amount)}；感染负荷 -${B.repairRelief}。近距离修复可恢复耐久。`, 3);
   }
 
   /** Repair can also reveal and damage tissue mimics; it never damages normal tissue. */
@@ -273,11 +275,9 @@ export class BattleDirector {
   }
 
   afterInput(): void {
-    this.evolution();
-    this.spread();
+    if (!this.s.endless) { this.evolution(); this.spread(); }
     this.enemies();
-    this.pressure();
-    this.objectives();
+    if (!this.s.endless) { this.pressure(); this.objectives(); }
     // Dead sources remain as inert landmarks. Other corpses have a short bounded lifetime.
     this.s.targets = this.s.targets.filter(t => t.hp > 0 || t.role === 'source' || this.s.elapsed - (t.deadAt ?? this.s.elapsed) < 1.5);
   }
@@ -372,7 +372,8 @@ export class BattleDirector {
 
   private enemies(): void {
     const { s, b } = this;
-    const speed = (target: Target) => B.enemySpeed * (target.traits?.includes('CARAPACE') ? B.carapaceSpeed : 1)
+    const wave = s.endless?.wave ?? 1;
+    const speed = (target: Target) => B.enemySpeed * (s.endless ? 1 + Math.min(.9, (wave - 1) * .035) : 1) * (target.traits?.includes('CARAPACE') ? B.carapaceSpeed : 1)
       * (target.traits?.includes('MIMIC') ? B.mimicSpeed : 1) * (this.host.slowFactor?.(target.id) ?? 1);
     const spacing = planEnemySpacing(s.targets, activeWorld(s), {
       maxStep: target => speed(target) * BALANCE.step * ENEMY_CROWD.separationSpeedFactor,
@@ -394,32 +395,35 @@ export class BattleDirector {
       }
       if (target.role === 'source' || target.role === 'core' || this.host.isMigratingActor?.(target.id)) continue;
       const mimic = target.traits?.includes('MIMIC');
-      const goal = mimic || distance(target, s.player) > 270 ? s.tissue : s.player;
+      const goal = mimic || !s.endless && distance(target, s.player) > 270 ? s.tissue : s.player;
       const dir = normalized(goal.x - target.x, goal.y - target.y);
       if (target.attackAt !== undefined) {
         if (s.elapsed + 1e-9 < target.attackAt) continue;
         const aim = target.attackAim!;
+        const radius = target.attackRadius ?? B.attackRadius;
         const attackingTissue = target.attackTarget === 'tissue';
         if (attackingTissue) {
           if (distance(target, s.tissue) <= B.attackRadius + s.tissue.radius) {
             const before = s.tissue.hp;
-            s.tissue.hp = Math.max(0, before - B.tissueDamage);
+            s.tissue.hp = Math.max(0, before - (B.tissueDamage + (s.endless ? Math.floor((wave - 1) / 8) : 0)));
             b.stats.tissueDamage += before - s.tissue.hp;
             this.host.emit('ORGAN_INTEGRITY_CHANGED', { organId: b.organId, before, after: s.tissue.hp, reason: 'enemy-attack', actorId: target.id });
             this.host.effect('hit', s.tissue, s.tissue, 45, .3);
           }
-        } else if (distance(s.player, aim) <= B.attackRadius + s.player.radius && s.elapsed >= s.player.dashUntil) {
+        } else if (distance(s.player, aim) <= radius + s.player.radius && s.elapsed >= s.player.dashUntil) {
           const before = s.player.hp;
-          s.player.hp = Math.max(0, before - B.playerDamage);
+          s.player.hp = Math.max(0, before - (B.playerDamage + (s.endless ? Math.floor((wave - 1) / 4) + (target.role === 'elite' ? 5 : 0) : 0)));
           b.stats.playerDamage += before - s.player.hp;
           s.player.hurtUntil = s.elapsed + .5;
           this.host.emit('PLAYER_HURT', { damage: before - s.player.hp, remainingHp: s.player.hp, reason: 'enemy-attack', actorId: target.id });
           this.host.effect('hit', s.player, s.player, 22, .3);
         }
-        target.attackAt = undefined; target.attackAim = undefined; target.attackTarget = undefined; target.attackReady = s.elapsed + B.attackInterval;
+        target.attackAt = undefined; target.attackAim = undefined; target.attackTarget = undefined;
+        target.attackReady = s.elapsed + (s.endless ? Math.max(1.1, B.attackInterval - (wave - 1) * .025) : B.attackInterval);
       }
       target.facing = Math.atan2(dir.y, dir.x);
-      const reach = B.attackRadius + (goal === s.tissue ? s.tissue.radius : s.player.radius) - 8;
+      const eliteBlast = !!s.endless && target.role === 'elite' && goal === s.player;
+      const reach = eliteBlast ? 250 : B.attackRadius + (goal === s.tissue ? s.tissue.radius : s.player.radius) - 8;
       if (distance(target, goal) > reach) {
         // Relaxation already used this body's movement budget. Do not cancel
         // it with an immediate pursuit step back into the same exact stack.
@@ -434,13 +438,17 @@ export class BattleDirector {
         }
         target.x = pos.x; target.y = pos.y;
       } else if (s.elapsed >= (target.attackReady ?? 0)) {
+        // Reserve a slot before committing a new aim. Accepted telegraphs are
+        // never retargeted or cancelled to make room for another attacker.
+        if (s.endless && s.targets.filter(actor => actor.hp > 0 && actor.attackAt !== undefined).length >= 3) continue;
         const line = normalized(goal.x - target.x, goal.y - target.y);
         const block = wallHit(target, line, distance(target, goal), activeWorld(s));
         if (block !== null && block < distance(target, goal) - 20) continue;
-        target.attackAt = s.elapsed + B.attackWindup;
+        target.attackAt = s.elapsed + (eliteBlast ? 1.1 : B.attackWindup);
+        if (s.endless) target.attackRadius = eliteBlast ? 105 : B.attackRadius;
         target.attackAim = { x: goal.x, y: goal.y };
         target.attackTarget = goal === s.tissue ? 'tissue' : 'player';
-        this.host.effect('danger', target, target.attackAim, B.attackRadius, B.attackWindup);
+        this.host.effect('danger', target, target.attackAim, target.attackRadius ?? B.attackRadius, eliteBlast ? 1.1 : B.attackWindup);
         this.host.emit('ATTACK_TELEGRAPHED', { actorId: target.id, target: goal === s.tissue ? 'tissue' : 'player', resolveAt: target.attackAt });
       }
     }

@@ -2,6 +2,8 @@ import type { BattleState, TraitId } from './battleTypes';
 import type { GrowthState } from './growthTypes';
 import type { CampaignState } from './campaignTypes';
 import type { RunMetrics } from './runMetrics';
+import type { EndlessState } from './endlessTypes';
+import type { EndlessGrowthState } from './endlessGrowthTypes';
 export interface Vec { x: number; y: number }
 export interface WorldGeometry {
   width: number; height: number;
@@ -41,6 +43,8 @@ export interface GameState {
   growth?: GrowthState;
   world?: WorldGeometry;
   campaign?: CampaignState;
+  endless?: EndlessState;
+  endlessGrowth?: EndlessGrowthState;
   /** Accepted-action counters; independent of the bounded recent event log. */
   runMetrics?: RunMetrics;
 }
