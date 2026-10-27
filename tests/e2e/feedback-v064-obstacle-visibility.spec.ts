@@ -12,7 +12,8 @@ import { IMMUNE_TRACE_CUE_TICKS, selectImmuneTraceCues } from '../../src/render/
 import { getRaisedObstacleOcclusion, RAISED_OBSTACLE_FADED_OPACITY } from '../../src/render/raisedObstacleOcclusion';
 import { boundsOf } from '../../src/render/raisedObstacleGeometry';
 import { immuneCellBody, IMMUNE_BODY_LIFT } from '../../src/render/immuneVisuals';
-import { aim, readState, walk } from './campaignDriver';
+import { aim, keyMove, readState } from './campaignDriver';
+import { waypoint } from '../helpers/g3Driver';
 import { fullRun } from './fullRunDriver';
 
 const entryPath = resolve(process.env.VI_ENTRY ?? 'dist/index.html');
@@ -88,12 +89,18 @@ test('Feedback 0.6.4: real cells remain readable behind a raised fold in both qu
   const build = JSON.parse(readFileSync(resolve(dirname(entryPath), 'build-meta.json'), 'utf8'));
   const bundleSha256 = sha(readFileSync(resolve(dirname(entryPath), 'game.js')));
   const sourceHashes = Object.fromEntries(['src/render/raisedObstacleGeometry.ts', 'src/render/raisedObstacleOcclusion.ts', 'src/render/renderer.ts', 'src/render/lungVisuals.ts', 'src/render/immuneVisuals.ts', 'src/render/immuneTraceCues.ts'].map(path => [path, sha(readFileSync(path))]));
-  interface BiteEvidence { beaconId: string; cellId: string; event: GameEvent; observedTick: number; target: GameState['targets'][number] | null; targetResult: 'cleared' | 'alive' | 'already-removed' }
+  interface BiteEvidence { beaconId: string; cellId: string; event: GameEvent; acceptedHit: GameEvent; metricBefore: number; metricAfter: number; observedTick: number; target: GameState['targets'][number] | null; targetResult: 'cleared' | 'alive' | 'already-removed' }
   interface Attempt { before: Analysis; after: Analysis; screenshot: string; screenshotStartedAt: string; screenshotFinishedAt: string; commonOcclusionPairs: string[]; passed: boolean }
   const attempts: Attempt[] = [];
   const acceptedBites: BiteEvidence[] = [], demonstratedSquads = new Set<string>();
   let selected: Attempt | undefined, final: GameState | undefined, retry: GameState | undefined;
   let qualityControl: unknown;
+  let demonstrationRuns = 0, nextDemonstrationAt = 0, researchVisits = 0;
+  const proofComplete = () => !!selected && acceptedBites.some(item => item.beaconId === selected!.before.projection.state.growth!.beacon!.id);
+  const hasPair = (state: GameState) => pair.every(id => state.growth!.equipped.some(slot => slot.id === id));
+  const needsResearch = (state: GameState) => !hasPair(state) && researchVisits < 2 && state.battle!.stats.eliteClears >= 2 && state.growth!.research >= 3;
+  const safeToLure = (state: GameState) => state.phase === 'playing' && state.battle!.organId === 'heart' && !state.growth?.draft && state.player.hp >= 50 && state.tissue.hp >= 45;
+  const releaseMovement = async () => { for (const key of ['KeyW', 'KeyA', 'KeyS', 'KeyD']) await page.keyboard.up(key); await page.mouse.up(); };
   const capture = async (state: GameState, collect?: (snapshot: GameState) => void) => {
     collect?.(state);
     if (selected || attempts.length >= 8 || !state.growth?.beacon || !demonstratedSquads.has(state.growth.beacon.id) || (state.growth.cells?.length ?? 0) !== 3 || !pair.every(id => state.growth!.equipped.some(slot => slot.id === id))) return;
@@ -114,24 +121,24 @@ test('Feedback 0.6.4: real cells remain readable behind a raised fold in both qu
     attempts.push(attempt);
     if (passed) { selected = attempt; copyFileSync(screenshot, info.outputPath(`raised-fold-${quality}-actual.png`)); }
   };
-  const demonstrateAfterDraft = async () => {
+  const demonstrateAfterDraft = async (): Promise<boolean> => {
     const before = await readState(page);
-    if (selected || before.phase !== 'playing' || !pair.every(id => before.growth!.equipped.some(slot => slot.id === id))) return;
+    if (proofComplete() || demonstrationRuns >= 4 || Date.now() < nextDemonstrationAt || !safeToLure(before) || !hasPair(before)
+      || before.battle!.encounter?.firstCounter.status !== 'resolved' || before.player.hp < 70 || before.tissue.hp < 65) return false;
     const fold = activeWorld(before).obstacles.find(obstacle => obstacle.id === 'fold-b');
-    if (!fold || !before.targets.some(target => target.hp > 0 && target.role === 'virus')) {
-      demonstrations.push({ before, skipped: 'The current arena has no fold-b or live virus to lure through public movement.' });
-      return;
-    }
+    if (!fold || !before.targets.some(target => target.hp > 0 && target.role === 'virus')) return false;
+    demonstrationRuns++;
+    nextDemonstrationAt = Date.now() + 1800;
 
-    // Public movement supplies a nearby pursuer; the ground-aimed beacon fixes
-    // the body's observation area without relocating or preserving an enemy.
+    // Keep the real second source alive until this proof is complete. Its
+    // ordinary production supplies pursuers after the first guardian resolves.
     const stagingPoint = { x: fold.x + fold.radius * .5, y: fold.y - fold.radius - before.player.radius - 6 };
     const collisionMargin = Math.hypot(stagingPoint.x - fold.x, stagingPoint.y - fold.y) - fold.radius - before.player.radius;
     expect(collisionMargin).toBeGreaterThan(13);
     const beaconGround = { x: fold.x, y: fold.y - 150 };
     expect(Math.hypot(beaconGround.x - fold.x, beaconGround.y - fold.y) - fold.radius).toBeGreaterThan(12);
-    const preparation = { fold, stagingPoint, collisionMargin, beaconGround, input: 'mouse.up → real WASD walk → observe nearby live virus and real Q/squad cooldowns', afterWalk: null as GameState | null, observations: [] as unknown[] };
-    const demonstration = { before, preparation, target: null as GameState['targets'][number] | null, qBefore: null as GameState | null, squad: null as { beaconId: string; cellIds: string[] } | null, acceptedBites: [] as BiteEvidence[], input: 'coarse legal walk → aim at actual north-side ground/Q → observe bodies and independently accepted bites', observations: [] as unknown[], skipped: null as string | null, after: null as GameState | null };
+    const preparation = { fold, stagingPoint, collisionMargin, beaconGround, input: 'release real WASD/mouse → bounded real WASD lure → observe live pursuer and actual Q/squad cooldowns', afterWalk: null as GameState | null, observations: [] as unknown[] };
+    const demonstration = { before, preparation, target: null as GameState['targets'][number] | null, qBefore: null as GameState | null, squad: null as { beaconId: string; cellIds: string[] } | null, acceptedBites: [] as BiteEvidence[], input: 'legal walk → aim at actual north-side ground/Q → observe bodies and independently accepted bites', observations: [] as unknown[], skipped: null as string | null, after: null as GameState | null };
     demonstrations.push(demonstration);
     const collect = (state: GameState) => {
       const qBefore = demonstration.qBefore, beacon = state.growth?.beacon;
@@ -144,24 +151,34 @@ test('Feedback 0.6.4: real cells remain readable behind a raised fold in both qu
       if (!squad) return;
       for (const event of state.events) {
         const cellId = String(event.data.cellId);
-        if (event.type !== 'PROTOCOL_BEACON_HIT' || event.tick < qBefore.tick || event.tick > state.tick || event.data.protocolId !== 'IMMUNE_BEACON' || event.data.prioritizedTrace !== true || !(Number(event.data.damage) > 0) || !squad.cellIds.includes(cellId) || event.data.rootId !== `${cellId}:bite:${event.tick}` || demonstration.acceptedBites.some(item => item.event.data.rootId === event.data.rootId)) continue;
+        if (event.type !== 'PROTOCOL_BEACON_HIT' || event.tick < qBefore.tick || event.tick > state.tick || event.data.protocolId !== 'IMMUNE_BEACON' || event.data.prioritizedTrace !== true || !(Number(event.data.damage) > 0) || !squad.cellIds.includes(cellId) || event.data.rootId !== cellId + ':bite:' + event.tick || demonstration.acceptedBites.some(item => item.event.data.rootId === event.data.rootId)) continue;
+        const acceptedHit = state.events.find(hit => hit.type === 'TARGET_HIT' && hit.tick === event.tick && hit.data.cause === 'protocol' && hit.data.protocolId === 'IMMUNE_BEACON' && hit.data.rootId === event.data.rootId && hit.data.id === event.data.targetId && hit.data.organId === qBefore.battle!.organId && Number(hit.data.damage) > 0);
+        const metricBefore = qBefore.runMetrics!.summary.control.beaconBites, metricAfter = state.runMetrics!.summary.control.beaconBites;
+        if (!acceptedHit || metricAfter <= metricBefore) continue;
         const target = state.targets.find(item => item.id === event.data.targetId) ?? null;
-        const evidence: BiteEvidence = { beaconId: squad.beaconId, cellId, event, observedTick: state.tick, target, targetResult: target ? target.hp <= 0 ? 'cleared' : 'alive' : 'already-removed' };
+        const evidence: BiteEvidence = { beaconId: squad.beaconId, cellId, event, acceptedHit, metricBefore, metricAfter, observedTick: state.tick, target, targetResult: target ? target.hp <= 0 ? 'cleared' : 'alive' : 'already-removed' };
         demonstration.acceptedBites.push(evidence); acceptedBites.push(evidence);
       }
     };
-    await page.mouse.up();
+    await releaseMovement();
     try {
-      // onDraft starts with fullRun's keys released; walk also releases each
-      // real key hold. No position, enemy, HP, clock or equipment is written.
-      await walk(page, stagingPoint, 18);
+      // This can run from onUpdate as well as onDraft. Every local key hold is
+      // released, and onUpdate returns true so fullRun clears its held-key cache.
+      const walkDeadline = Date.now() + 12000;
+      while (Date.now() < walkDeadline) {
+        const state = await readState(page);
+        if (!safeToLure(state) || !hasPair(state)) { demonstration.skipped = 'Actual combat/health/draft interrupted the walk; resume normal public-input recovery.'; return true; }
+        if (Math.hypot(state.player.x - stagingPoint.x, state.player.y - stagingPoint.y) < 18) break;
+        await keyMove(page, state.player, waypoint(state, stagingPoint), 90);
+      }
       preparation.afterWalk = await readState(page);
+      if (Math.hypot(preparation.afterWalk.player.x - stagingPoint.x, preparation.afterWalk.player.y - stagingPoint.y) >= 18) { demonstration.skipped = 'Real WASD route did not reach the observation point within its bounded walk.'; return true; }
       const lureDeadline = Date.now() + 10000;
       let target: GameState['targets'][number] | undefined;
       while (Date.now() < lureDeadline) {
         const state = await readState(page);
-        preparation.observations.push({ tick: state.tick, phase: state.phase, player: state.player, scanReady: state.scanReady, beaconReadyAt: state.growth!.beaconReadyAt, targets: state.targets.filter(item => item.hp > 0).map(item => ({ id: item.id, role: item.role, x: item.x, y: item.y, hp: item.hp, attackAt: item.attackAt })), cells: state.growth!.cells });
-        if (state.phase !== 'playing' || !pair.every(id => state.growth!.equipped.some(slot => slot.id === id))) break;
+        preparation.observations.push({ tick: state.tick, phase: state.phase, player: state.player, tissue: state.tissue, scanReady: state.scanReady, beaconReadyAt: state.growth!.beaconReadyAt, targets: state.targets.filter(item => item.hp > 0).map(item => ({ id: item.id, role: item.role, sourceId: item.sourceId, x: item.x, y: item.y, hp: item.hp, attackAt: item.attackAt })), cells: state.growth!.cells });
+        if (!safeToLure(state) || !hasPair(state)) break;
         const candidates = state.targets.filter(candidate => {
           if (candidate.hp <= 0 || candidate.role !== 'virus' || Math.hypot(candidate.x - beaconGround.x, candidate.y - beaconGround.y) > 150) return false;
           const distance = Math.hypot(candidate.x - state.player.x, candidate.y - state.player.y);
@@ -170,22 +187,27 @@ test('Feedback 0.6.4: real cells remain readable behind a raised fold in both qu
           return wall === null || wall >= distance - 1;
         }).sort((a, b) => b.hp - a.hp || b.y - a.y);
         if (candidates.length && state.scanReady <= state.elapsed && state.growth!.beaconReadyAt <= state.elapsed) { target = candidates[0]; break; }
-        if (!state.targets.some(candidate => candidate.hp > 0 && candidate.role === 'virus')) break;
         await page.waitForTimeout(60);
       }
-      if (!target) { demonstration.skipped = 'No surviving virus remained near the actual ground beacon point with both cooldowns ready; no target was fabricated.'; return; }
+      if (!target) { demonstration.skipped = 'No live virus reached the legal ground point with both actual cooldowns ready; the source/enemy was never fabricated.'; return true; }
       demonstration.target = target;
       demonstration.qBefore = await readState(page);
       await aim(page, beaconGround); await page.keyboard.press('KeyQ');
-      const deadline = Date.now() + 3000;
-      while (Date.now() < deadline && (!selected || !demonstration.acceptedBites.length)) {
+      const deadline = Date.now() + 5000;
+      while (Date.now() < deadline && !proofComplete()) {
         const state = await readState(page);
         collect(state);
         demonstration.observations.push({ tick: state.tick, phase: state.phase, beacon: state.growth!.beacon, cells: state.growth!.cells, target: state.targets.find(item => item.id === target.id) ?? null, occlusion: activeWorld(state).obstacles.map(obstacle => ({ id: obstacle.id, ...getRaisedObstacleOcclusion(state, obstacle) })), cues: selectImmuneTraceCues(state), recentBites: state.events.filter(event => event.type === 'PROTOCOL_BEACON_HIT' && event.tick >= before.tick) });
-        if (state.phase !== 'playing') break;
+        if (!safeToLure(state)) break;
         await capture(state, collect); await page.waitForTimeout(40);
       }
-    } finally { await page.mouse.up(); demonstration.after = await readState(page); collect(demonstration.after); }
+      return true;
+    } finally {
+      await releaseMovement(); demonstration.after = await readState(page); collect(demonstration.after);
+      // A valid body bracket alone cannot finish the test. If that exact squad
+      // never made an accepted marked bite, a later real squad must prove both.
+      if (selected && selected.before.projection.state.growth!.beacon!.id === demonstration.squad?.beaconId && !proofComplete()) selected = undefined;
+    }
   };
   try {
     expect(build.version).toBe(expectedVersion);
@@ -218,8 +240,49 @@ test('Feedback 0.6.4: real cells remain readable behind a raised fold in both qu
       drafts.push({ before: state, selected: option, replacementSlot, after: await readState(page) });
       await demonstrateAfterDraft();
     }, async state => {
-      // Observe only: pausing would invalidate fullRun's held-key bookkeeping.
-      await capture(state);
+      const research = state.battle!.graph.nodes.find(node => node.kind === 'research');
+      if (state.battle!.organId === 'heart' && research && needsResearch(state) && Math.hypot(state.player.x - research.x, state.player.y - research.y) < 80) {
+        await releaseMovement();
+        await page.keyboard.press('KeyE');
+        await expect(page.locator('.research-directions')).toBeVisible();
+        const focused = page.locator('[data-action="research-confirm"][data-direction="MIMIC"]');
+        await (await focused.isVisible() ? focused : page.locator('[data-action="research-confirm"][data-direction="general"]')).click();
+        researchVisits++;
+        return true;
+      }
+      if (await demonstrateAfterDraft()) return true;
+    }, {
+      automaticScan: false,
+      inputOverride: (state, planned) => {
+        if (proofComplete() || demonstrationRuns >= 4 || state.battle!.organId !== 'heart') return { ...planned, scan: true };
+        const healing = state.tissue.hp < 65 || state.player.hp < 70 && state.tissue.hp < 99;
+        if (healing) return { ...planned, fire: planned.tool === 3, scan: false, interact: false };
+        // The default victory route destroys source-b before earning the pair.
+        // Clear source-a and the actual guardian with normal weapons instead;
+        // guardian counter uses the existing real valve/precision lesson route.
+        const first = state.battle!.encounter?.firstCounter;
+        if (!hasPair(state) && first?.status === 'active' && !first.counterHit && state.battle!.encounter?.guideVariant === 'guided') return { ...planned, scan: true };
+        const source = state.targets.find(target => target.id === 'source-b' && target.hp > 0);
+        const live = state.targets.filter(target => target.hp > 0 && target.id !== 'source-b');
+        const researching = needsResearch(state);
+        const target = !hasPair(state) && !researching ? live.find(target => target.id === 'source-a')
+          ?? live.find(target => target.id === first?.targetId)
+          ?? live.find(target => target.role === 'elite')
+          ?? live.filter(target => target.role === 'virus' && (!source || Math.hypot(target.x - source.x, target.y - source.y) > 150))
+            .sort((a, b) => Math.hypot(a.x - state.player.x, a.y - state.player.y) - Math.hypot(b.x - state.player.x, b.y - state.player.y))[0] : undefined;
+        const fold = activeWorld(state).obstacles.find(obstacle => obstacle.id === 'fold-b')!;
+        const waitingPoint = researching ? state.battle!.graph.nodes.find(node => node.kind === 'research')! : hasPair(state) ? { x: fold.x + fold.radius * .5, y: fold.y - fold.radius - state.player.radius - 6 }
+          : state.battle!.graph.nodes.find(node => node.kind === 'valve')!;
+        const distance = target ? Math.hypot(target.x - state.player.x, target.y - state.player.y) : 0;
+        const wall = target ? wallHit(state.player, normalized(target.x - state.player.x, target.y - state.player.y), distance, activeWorld(state)) : null;
+        const destination = target && (distance > 380 || wall !== null && wall < distance - target.radius) ? target : target ? state.player : waitingPoint;
+        const next = waypoint(state, destination), move = Math.hypot(destination.x - state.player.x, destination.y - state.player.y) > 18 ? normalized(next.x - state.player.x, next.y - state.player.y) : { x: 0, y: 0 };
+        const aimPoint = target ?? waitingPoint;
+        // Before the pair, scans diagnose actual guardians; no automatic Q may
+        // consume the observation squad cooldown or chew through source-b.
+        const scan = !hasPair(state) && !researching && (!source || Math.hypot(aimPoint.x - source.x, aimPoint.y - source.y) > 350);
+        return { moveX: move.x, moveY: move.y, aim: aimPoint, tool: 1, fire: !!target, scan, interact: false };
+      },
     });
     final = await readState(page);
     expect(final.result?.success).toBe(true);
@@ -227,6 +290,8 @@ test('Feedback 0.6.4: real cells remain readable behind a raised fold in both qu
     expect(pair.every(id => final!.growth!.equipped.some(slot => slot.id === id))).toBe(true);
     expect(final.growth!.activations?.IMMUNE_BEACON ?? 0).toBeGreaterThan(0);
     expect(final.growth!.activations?.EXPOSE_TRACE ?? 0).toBeGreaterThan(0);
+    expect(final.runMetrics!.summary.control.beaconBites).toBeGreaterThan(0);
+    expect(final.runMetrics!.summary.control.synergyTraceBeacon).toBeGreaterThan(0);
     expect(selected, 'No real screenshot bracket preserved the same raised-fold/cell-body overlap for three fully visible current cells').toBeDefined();
     expect(selected!.commonOcclusionPairs.length).toBeGreaterThan(0);
     expect(acceptedBites.filter(item => item.beaconId === selected!.before.projection.state.growth!.beacon!.id), 'The screenshot squad must also have a real accepted positive marked bite; its target may legitimately be cleared').not.toHaveLength(0);
@@ -242,10 +307,11 @@ test('Feedback 0.6.4: real cells remain readable behind a raised fold in both qu
     expect(retry.growth!.marks).toEqual([]);
     expect(retry.growth!.beacon).toBeNull();
     expect(retry.growth!.activations).toEqual({});
+    expect(retry.runMetrics!.summary.control.beaconBites).toBe(0);
     expect(retry.campaign!.migration.status).toBe('locked');
     expect(selectImmuneTraceCues(retry)).toEqual([]);
     expect(errors).toEqual([]); expect(remote).toEqual([]);
   } finally {
-    writeFileSync(info.outputPath('obstacle-visibility-evidence.json'), JSON.stringify({ seed: 13, route: 'ignore', browserProject: info.project.name, quality, qualityControl, build, bundleSha256, sourceHashes, fadedUpperOpacity: RAISED_OBSTACLE_FADED_OPACITY, lowerBodyOpacityContract: { value: 1, scope: 'drawRaisedBodyLayers keeps its lower pass at the incoming alpha; separately covered by the pure renderer unit tests, not measured from this PNG.' }, captureScope: 'Actual public-input body screenshot bracket. Both endpoints contain the same fold/current-cell body overlap and same beacon/three living cells, all with actual draw alpha 1 (age >= .2s, lifetime remaining >= .35s). Body/silhouette intersection is the renderer helper result; spacing alone is never sufficient. Accepted marked bites from this Q/squad are collected independently, including snapshot endpoints and finally state; a legitimately cleared target is allowed. A fresh cue is not required in the body PNG and same-frame body/cue evidence is not claimed; the unchanged v062 regression covers fresh cue screenshots. Endpoints are not claimed to equal the PNG tick. Pixel readability still needs human inspection; no cross-browser same-tick A/B or universal no-occlusion claim.', projectionScope: 'Sprite-plane (x=worldX,y=.72*worldY+spriteY) shapes converted with the real sampled camera; these are body bounds and obstacle upper silhouette, excluding beacon cross, labels, marks, hit rings and trails.', drafts, demonstrations, acceptedBites, attempts, selectedScreenshot: selected?.screenshot ?? null, final: final ?? null, retry: retry ?? null, errors, remote }, null, 2));
+    writeFileSync(info.outputPath('obstacle-visibility-evidence.json'), JSON.stringify({ seed: 13, route: 'ignore', browserProject: info.project.name, quality, qualityControl, build, bundleSha256, sourceHashes, fadedUpperOpacity: RAISED_OBSTACLE_FADED_OPACITY, lowerBodyOpacityContract: { value: 1, scope: 'drawRaisedBodyLayers keeps its lower pass at the incoming alpha; separately covered by the pure renderer unit tests, not measured from this PNG.' }, captureScope: 'Actual public-input body screenshot bracket. Both endpoints contain the same fold/current-cell body overlap and same beacon/three living cells, all with actual draw alpha 1 (age >= .2s, lifetime remaining >= .35s). Body/silhouette intersection is the renderer helper result; spacing alone is never sufficient. Accepted marked bites from this Q/squad are collected independently and joined to same-tick/root/target positive host TARGET_HIT plus a real beaconBites increase, including snapshot endpoints and finally state; a legitimately cleared target is allowed. A fresh cue is not required in the body PNG and same-frame body/cue evidence is not claimed; the unchanged v062 regression covers fresh cue screenshots. Endpoints are not claimed to equal the PNG tick. Pixel readability still needs human inspection; no cross-browser same-tick A/B or universal no-occlusion claim.', projectionScope: 'Sprite-plane (x=worldX,y=.72*worldY+spriteY) shapes converted with the real sampled camera; these are body bounds and obstacle upper silhouette, excluding beacon cross, labels, marks, hit rings and trails.', drafts, demonstrations, acceptedBites, attempts, selectedScreenshot: selected?.screenshot ?? null, final: final ?? null, retry: retry ?? null, errors, remote }, null, 2));
   }
 });

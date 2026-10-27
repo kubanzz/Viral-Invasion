@@ -154,8 +154,8 @@ export function reduceRunMetrics(previous: RunMetrics, input: AcceptedRunMetricE
     add(summary, 'pulseUses');
     if (count(d.exposed)) add(summary, 'crystalExposures', d.exposed); else summary.limited = true;
     if (d.coreHit === true) add(summary, 'corePulseHits'); else if (d.coreHit !== false) summary.limited = true;
-    // `pushed` includes bodies whose collision projection did not move. Never
-    // describe that producer field as proven displacement or avoided damage.
+    // Historical `pushed` logs can include bodies whose collision projection
+    // did not move. A push count never establishes avoided damage.
   });
   if (event.type === 'AIRWAY_CHANGED' && d.organId === 'lung' && typeof d.open === 'boolean') return modify(state, summary => add(summary, d.open ? 'airwayOpens' : 'airwayCloses'));
   if (event.type === 'ORGAN_CRISIS_INTERRUPTED' && identifier(d.sourceId)) {

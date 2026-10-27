@@ -259,13 +259,13 @@ export class BattleDirector {
       const push = target.role === 'core' ? 0 : B.pulsePush;
       const pos = moveWithCollision(target, { x: direction.x * push, y: direction.y * push }, target.radius, activeWorld(s));
       if (target.role === 'core') coreHit = true;
+      if (target.role !== 'core' && distance(target, pos) > 1e-6) pushed++;
       target.x = pos.x; target.y = pos.y;
       target.attackAt = undefined; target.attackAim = undefined;
       target.attackTarget = undefined;
       target.attackReady = s.elapsed + 1.3;
       if (target.traits?.includes('CARAPACE')) { target.exposedUntil = s.elapsed + B.pulseExpose; exposed++; exposedTargetIds.push(target.id); }
       target.revealedUntil = s.elapsed + B.scanReveal;
-      if (target.role !== 'core') pushed++;
     }
     this.host.emit('PULSE_TRIGGERED', { organId: b.organId, direction: p.direction, range: B.pulseRange, halfAngle: B.pulseHalfAngle, pushed, exposed, exposedTargetIds: exposedTargetIds.join(','), coreHit, tissueCost: B.pulseCost });
     this.notice(`定向冲流：推开 ${pushed} 体，破壳 ${exposed} 体；组织承压 -${B.pulseCost}，冷却 ${B.pulseCooldown} 秒。`, 4);

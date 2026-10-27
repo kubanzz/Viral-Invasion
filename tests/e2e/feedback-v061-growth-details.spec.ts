@@ -83,7 +83,13 @@ test('Feedback 0.6.1: current build details expose real evolved effects, freeze 
   const station = beforeResearch.battle!.graph.nodes.find(node => node.kind === 'research')!;
   await walk(page, station, 35);
   await page.keyboard.press('KeyE');
+  await expect(page.locator('.research-directions')).toBeVisible();
+  const researchOffer = await readState(page);
+  expect(researchOffer.growth!.draft).toBeNull();
+  expect(researchOffer.growth!.research).toBe(beforeResearch.growth!.research);
+  await page.locator('[data-action="research-confirm"][data-direction="general"]').click();
   await expect.poll(async () => (await readState(page)).growth?.draft?.source).toBe('research');
+  expect((await readState(page)).growth!.research).toBe(researchOffer.growth!.research - 3);
   const secondDraft = (await readState(page)).growth!.draft!;
   const advancedBeacon = secondDraft.options.find(option => option.protocolId === 'IMMUNE_BEACON' && option.rank === 2)!;
   expect(advancedBeacon).toBeDefined();
@@ -95,15 +101,20 @@ test('Feedback 0.6.1: current build details expose real evolved effects, freeze 
   await walk(page, { x: target.x - 100, y: target.y + 90 }, 45);
   const liveTarget = (await readState(page)).targets.find(candidate => candidate.id === target.id && candidate.hp > 0)!;
   expect(liveTarget).toBeDefined();
+  const beforeHits = await readState(page), initialCount = beforeHits.runMetrics!.summary.control.beaconBites;
   await aim(page, liveTarget);
   await page.keyboard.press('KeyQ');
-  await expect.poll(async () => (await readState(page)).growth!.activations?.IMMUNE_BEACON ?? 0, { timeout: 8000 }).toBeGreaterThan(0);
+  await expect.poll(async () => {
+    const state = await readState(page);
+    return state.runMetrics!.summary.control.beaconBites > initialCount
+      && state.events.some(event => event.type === 'PROTOCOL_BEACON_HIT' && event.tick >= beforeHits.tick && Number(event.data.damage) > 0);
+  }, { timeout: 8000 }).toBe(true);
 
   await page.locator(hudEntry).click();
   await expect(details).toBeVisible();
   const paused = await readState(page), equipped = paused.growth!.equipped.find(slot => slot.id === 'IMMUNE_BEACON')!;
   const rank = protocolRank(equipped), description = describeProtocol(equipped.id, equipped.tuning, rank);
-  const count = paused.growth!.activations!.IMMUNE_BEACON!;
+  const count = paused.runMetrics!.summary.control.beaconBites;
   const card = details.locator('[data-protocol="IMMUNE_BEACON"]');
   await expect(card).toHaveAttribute('data-rank', String(rank));
   await expect(card).toHaveAttribute('data-tuning', equipped.tuning);
@@ -112,9 +123,9 @@ test('Feedback 0.6.1: current build details expose real evolved effects, freeze 
   await expect(card.locator('.growth-detail-effect')).toHaveText(description.effect);
   await expect(card.locator('.growth-detail-cost')).toHaveText(description.cost);
   await expect(card.locator('.growth-detail-action')).toHaveText(protocolAction(equipped.id, rank));
-  await expect(card.locator('[data-activation-count]')).toHaveAttribute('data-activation-count', String(count));
-  await expect(card.locator('[data-activation-count]')).toHaveText(String(count));
-  expect(count).toBeGreaterThan(0);
+  await expect(card.locator('.growth-detail-count strong')).toHaveText(`实际咬击 ${count} 次`);
+  await expect(card.locator('.growth-detail-count')).toContainText('实际造成正伤害');
+  expect(count).toBeGreaterThan(initialCount);
   await page.keyboard.down('KeyD');
   await page.keyboard.press('Digit3');
   await page.keyboard.press('KeyQ');
@@ -163,11 +174,12 @@ test('Feedback 0.6.1: current build details expose real evolved effects, freeze 
   expect(retry.growth!.activations).toEqual({});
   expect(retry.growth!.cells).toEqual([]);
   expect(retry.growth!.xp).toBe(0);
+  expect(retry.runMetrics!.summary.control.beaconBites).toBe(0);
   expect(retry.player.hp).toBe(100);
   await page.locator(hudEntry).click();
   await expect(details.locator('.growth-detail-card.empty')).toHaveCount(3);
   await expect(details.locator('[data-protocol]')).toHaveCount(0);
   expect(errors).toEqual([]);
   expect(remote).toEqual([]);
-  writeFileSync(info.outputPath('growth-details-evidence.json'), JSON.stringify({ empty, firstDraft, secondDraft, acquired, paused, retry, errors, remote, build: JSON.parse(readFileSync('dist/build-meta.json', 'utf8')) }, null, 2));
+  writeFileSync(info.outputPath('growth-details-evidence.json'), JSON.stringify({ empty, firstDraft, researchOffer, secondDraft, acquired, beforeHits, paused, retry, errors, remote, build: JSON.parse(readFileSync('dist/build-meta.json', 'utf8')) }, null, 2));
 });

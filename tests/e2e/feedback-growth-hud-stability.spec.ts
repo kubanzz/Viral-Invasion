@@ -47,7 +47,7 @@ test('Feedback: protocol HUD preserves DOM between real equips, upgrades and cel
   expect(firstBeacon).toBeDefined();
   await page.locator(`[data-action="draft-option"][data-option="${firstBeacon.id}"]`).click();
   await expect(page.locator(`${beaconSlot} b`)).toHaveText('免疫灯塔 Ⅰ');
-  await expect(page.locator(`${beaconSlot} small`)).toHaveText('待触发');
+  await expect(page.locator(`${beaconSlot} small`)).toHaveText('咬击 0');
   await expect(page.locator('#evolution-feedback')).toBeVisible();
   await expectStableNode(page, beaconSlot);
   await expectStableNode(page, '#evolution-feedback strong');
@@ -57,7 +57,13 @@ test('Feedback: protocol HUD preserves DOM between real equips, upgrades and cel
   const station = equipped.battle!.graph.nodes.find(node => node.kind === 'research')!;
   await walk(page, station, 35);
   await page.keyboard.press('KeyE');
+  await expect(page.locator('.research-directions')).toBeVisible();
+  const researchOffer = await readState(page);
+  expect(researchOffer.growth!.draft).toBeNull();
+  expect(researchOffer.growth!.research).toBeGreaterThanOrEqual(3);
+  await page.locator('[data-action="research-confirm"][data-direction="general"]').click();
   await expect.poll(async () => (await readState(page)).growth?.draft?.source).toBe('research');
+  expect((await readState(page)).growth!.research).toBe(researchOffer.growth!.research - 3);
   const secondDraft = (await readState(page)).growth!.draft!;
   const advancedBeacon = secondDraft.options.find(option => option.protocolId === 'IMMUNE_BEACON' && option.rank === 2)!;
   expect(advancedBeacon).toBeDefined();
@@ -75,7 +81,7 @@ test('Feedback: protocol HUD preserves DOM between real equips, upgrades and cel
   await walk(page, { x: target.x - 100, y: target.y + 90 }, 45);
   const liveTarget = (await readState(page)).targets.find(candidate => candidate.id === target.id && candidate.hp > 0)!;
   expect(liveTarget).toBeDefined();
-  const beforeHits = await readState(page), initialCount = beforeHits.growth!.activations?.IMMUNE_BEACON ?? 0;
+  const beforeHits = await readState(page), initialCount = beforeHits.runMetrics!.summary.control.beaconBites;
   const slotNode = await page.locator(beaconSlot).elementHandle();
   const countNode = await page.locator(`${beaconSlot} small`).elementHandle();
   expect(slotNode).not.toBeNull(); expect(countNode).not.toBeNull();
@@ -84,17 +90,19 @@ test('Feedback: protocol HUD preserves DOM between real equips, upgrades and cel
     await page.keyboard.press('KeyQ');
     await expect.poll(async () => {
       const state = await readState(page);
-      return state.events.some(event => event.type === 'PROTOCOL_BEACON_HIT' && event.tick >= beforeHits.tick && Number(event.data.damage) > 0);
+      return state.runMetrics!.summary.control.beaconBites > initialCount
+        && state.events.some(event => event.type === 'PROTOCOL_BEACON_HIT' && event.tick >= beforeHits.tick && Number(event.data.damage) > 0);
     }, { timeout: 8000 }).toBe(true);
     await page.locator(detailsEntry).click();
-    const paused = await readState(page), count = paused.growth!.activations?.IMMUNE_BEACON ?? 0;
+    const paused = await readState(page), count = paused.runMetrics!.summary.control.beaconBites;
     expect(count).toBeGreaterThan(initialCount);
-    await expect(page.locator(`${beaconSlot} small`)).toHaveText(`触发 ${count}`);
+    await expect(page.locator(`${beaconSlot} small`)).toHaveText(`咬击 ${count}`);
     expect(await slotNode!.evaluate((node, selector) => node === document.querySelector(selector), beaconSlot)).toBe(true);
     expect(await countNode!.evaluate((node, selector) => node === document.querySelector(selector), `${beaconSlot} small`)).toBe(true);
     const details = page.getByRole('dialog', { name: '当前配装详情' });
     await expect(details.locator('[data-protocol="IMMUNE_BEACON"] .growth-detail-action')).toHaveText(protocolAction(slot.id, 2));
-    await expect(details.locator('[data-activation-count]')).toHaveText(String(count));
+    await expect(details.locator('[data-protocol="IMMUNE_BEACON"] .growth-detail-count strong')).toHaveText(`实际咬击 ${count} 次`);
+    await expect(details.locator('[data-protocol="IMMUNE_BEACON"] .growth-detail-count')).toContainText('实际造成正伤害');
     await page.keyboard.press('Escape');
     await page.keyboard.press('Escape');
     await page.locator('[data-action="retry"]').click();
@@ -103,6 +111,7 @@ test('Feedback: protocol HUD preserves DOM between real equips, upgrades and cel
     expect(retry.growth!.runId).not.toBe(paused.growth!.runId);
     expect(retry.growth!.equipped).toEqual([]);
     expect(retry.growth!.activations).toEqual({});
+    expect(retry.runMetrics!.summary.control.beaconBites).toBe(0);
     await expect(page.locator('#protocol-slots .empty')).toHaveCount(3);
     await expect(page.locator('#protocol-slots [data-protocol]')).toHaveCount(0);
     await expect(page.locator('#evolution-feedback')).toBeHidden();
@@ -111,6 +120,6 @@ test('Feedback: protocol HUD preserves DOM between real equips, upgrades and cel
     await expect(details.locator('.growth-detail-card.empty')).toHaveCount(3);
     await expect(details.locator('[data-protocol]')).toHaveCount(0);
     expect(errors).toEqual([]); expect(remote).toEqual([]);
-    writeFileSync(info.outputPath('growth-hud-stability.json'), JSON.stringify({ start, firstDraft, equipped, secondDraft, advanced, beforeHits, paused, retry, errors, remote, build: JSON.parse(readFileSync(resolve(dirname(entryPath), 'build-meta.json'), 'utf8')) }, null, 2));
+    writeFileSync(info.outputPath('growth-hud-stability.json'), JSON.stringify({ start, firstDraft, equipped, researchOffer, secondDraft, advanced, beforeHits, paused, retry, errors, remote, build: JSON.parse(readFileSync(resolve(dirname(entryPath), 'build-meta.json'), 'utf8')) }, null, 2));
   } finally { await slotNode?.dispose(); await countNode?.dispose(); }
 });

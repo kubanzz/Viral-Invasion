@@ -35,6 +35,13 @@ async function reachMigration(page: Page) {
     const s = await readState(page);
     await movement.syncOrgan(s.battle!.organId);
     if (s.growth?.draft) { await movement.release(); await page.mouse.up(); await chooseDraftInput(page); continue; }
+    // A snapshot can already be paused by the first migration guide while
+    // the overlay's next DOM render still trails the visibility read above.
+    if (s.phase === 'paused' && s.campaign!.migration.status === 'warning') {
+      await movement.release(); await page.mouse.up();
+      await expect(page.locator('[data-action="close-migration-guide"]')).toBeVisible();
+      return 'guide';
+    }
     if (s.phase === 'playing' && s.campaign!.migration.status === 'warning') {
       await movement.release(); await page.mouse.up();
       await page.waitForTimeout(100);
