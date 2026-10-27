@@ -17,8 +17,8 @@ export const chainRicochetPeriod = (rank: ProtocolRank): number | null => rank =
 export const PROTOCOL_ACTIONS: Record<ProtocolId, string> = {
   PULSE_BREAK: '靠近器官装置，趁冲流亮起用 1 / 2 命中，触发破壳冲击。',
   PURIFY_CHAIN: '把感染体引到一起，用 1 / 2 收尾，观察净化电弧连续跳跃。',
-  IMMUNE_BEACON: '现在按 Q 标记鼠标区域，召集三只免疫细胞追击、吞噬。',
-  EXPOSE_TRACE: '现在按 Q，让敌群显形并减速；搭配免疫细胞优先围猎标记体。',
+  IMMUNE_BEACON: 'Q 就绪时，指敌体短时优先围猎；指空地部署区域，细胞实际移动咬击。',
+  EXPOSE_TRACE: '现在按 Q，让敌群显形并减速；未指定围猎时，免疫细胞优先追踪显影体。',
 };
 export const protocolAction = (id: ProtocolId, rank: ProtocolRank = 1): string => id === 'PURIFY_CHAIN' && rank > 1
   ? `用 1 / 2 持续命中存活目标，每 ${chainRicochetPeriod(rank)} 次命中自动向邻体折射；清除后仍会连锁。`
@@ -72,8 +72,8 @@ export function protocolUpgradeSummary(id: ProtocolId, tuning: Tuning, before: P
 export function describeProtocol(id: ProtocolId, tuning: Tuning = 'balanced', rank: ProtocolRank = 1): { effect: string; cost: string } {
   if (id === 'PULSE_BREAK') { const c=getPulseConfig(tuning,rank); return { effect: `距装置 ${c.deviceRange} 内，冲流相位命中追加 ${c.bonusDamage} 共振伤害，破壳 ${c.exposeSeconds} 秒；每目标每节律最多一次。`, cost: '需要接近装置并配合节律；无时机时不追加。' }; }
   if (id === 'PURIFY_CHAIN') { const c=getChainConfig(tuning,rank); return { effect: `清除后向 ${c.range} 范围内邻体跳 ${c.jumps} 次，每跳 ${c.damage} 伤害；共振破绽清除可增为 3 跳。${rank>1?`持续命中存活目标，每${chainRicochetPeriod(rank)}次向一个邻体折射${c.damage}伤害。`:''}`, cost: '单体无邻体时无额外收益；跳跃检查视线，协议伤害不再开新链。' }; }
-  if (id === 'IMMUNE_BEACON') { const c=getBeaconConfig(tuning,rank); return { effect: `召集三只免疫细胞，持续 ${c.duration} 秒；活动范围 ${c.radius}，每 ${c.interval} 秒每轮总伤害 ${c.damage}。显影联动优先围猎标记体。`, cost: `独立冷却 ${c.cooldown} 秒；每次组织承压 −${c.tissueCost}；同时一支小队，替换后撤离。` }; }
-  const c=getTraceConfig(tuning,rank); return { effect: `标记与显形 ${c.duration} 秒，前 ${c.slowDuration} 秒移动速度 ×${c.factor}；免疫小队优先追踪标记目标。`, cost: '占用一个协议槽位，没有直接伤害。' };
+  if (id === 'IMMUNE_BEACON') { const c=getBeaconConfig(tuning,rank); return { effect: `召集三只免疫细胞，持续 ${c.duration} 秒；活动范围 ${c.radius}，每 ${c.interval} 秒每轮总伤害 ${c.damage}。Q 对准敌体可短时优先围猎；没有指定目标时优先显影体。`, cost: `独立冷却 ${c.cooldown} 秒；每次组织承压 −${c.tissueCost}；同时一支小队，替换后撤离。` }; }
+  const c=getTraceConfig(tuning,rank); return { effect: `标记与显形 ${c.duration} 秒，前 ${c.slowDuration} 秒移动速度 ×${c.factor}；未指定围猎时，免疫小队优先追踪标记目标。`, cost: '占用一个协议槽位，没有直接伤害。' };
 }
 export function makeDraftOption(protocolId: ProtocolId, tuning: Tuning, kind: DraftOption['kind'], rank: ProtocolRank = 1, previous?: EquippedProtocol): DraftOption {
   const info=PROTOCOLS[protocolId], description=describeProtocol(protocolId,tuning,rank);

@@ -1,0 +1,214 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\node_modules\\playwright\\cli.js",
+      "test",
+      "tests/e2e/focus-v084.spec.ts",
+      "--project=edge"
+    ],
+    "configFile": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\playwright.config.ts",
+    "rootDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/focus-v084/browser-attempt-1/edge/output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chrome",
+        "name": "chrome",
+        "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/focus-v084/browser-attempt-1/edge/output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "edge",
+        "name": "edge",
+        "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\focus-v084\\browser-attempt-1\\edge\\output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "edge",
+        "testDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
+        "snapshotDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 90000,
+        "use": {
+          "browserName": "chromium",
+          "headless": true,
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "deviceScaleFactor": 1,
+          "actionTimeout": 8000,
+          "screenshot": "only-on-failure",
+          "video": "off",
+          "trace": "off",
+          "channel": "msedge"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "edge"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\focus-v084\\browser-attempt-1\\edge\\report.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\focus-v084\\browser-attempt-1\\edge\\html",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "focus-v084.spec.ts",
+      "file": "focus-v084.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "natural Q focus accepts real bites, freezes on pause, and empty ground redirects the same squad",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "edge",
+              "projectName": "edge",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 13767,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('#immune-focus-status')\nExpected: visible\nReceived: hidden\nTimeout:  8000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('#immune-focus-status') with timeout 8000ms\u001b[22m\n\u001b[2m  - waiting for locator('#immune-focus-status')\u001b[22m\n\u001b[2m    - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 2.9s</p>\u001b[22m\n\u001b[2m    2 × unexpected value \"hidden\"\u001b[22m\n\u001b[2m      - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 2.8s</p>\u001b[22m\n\u001b[2m    - unexpected value \"hidden\"\u001b[22m\n\u001b[2m    - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 2.7s</p>\u001b[22m\n\u001b[2m    - unexpected value \"hidden\"\u001b[22m\n\u001b[2m    - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 2.6s</p>\u001b[22m\n\u001b[2m    - unexpected value \"hidden\"\u001b[22m\n\u001b[2m    - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 2.1s</p>\u001b[22m\n\u001b[2m    - unexpected value \"hidden\"\u001b[22m\n\u001b[2m    - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 1.6s</p>\u001b[22m\n\u001b[2m    - unexpected value \"hidden\"\u001b[22m\n\u001b[2m    - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 1.0s</p>\u001b[22m\n\u001b[2m    11 × unexpected value \"hidden\"\u001b[22m\n\u001b[2m       - locator resolved to <p hidden=\"\" role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\"></p>\u001b[22m\n\u001b[2m    - unexpected value \"hidden\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('#immune-focus-status')\nExpected: visible\nReceived: hidden\nTimeout:  8000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('#immune-focus-status') with timeout 8000ms\u001b[22m\n\u001b[2m  - waiting for locator('#immune-focus-status')\u001b[22m\n\u001b[2m    - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 2.9s</p>\u001b[22m\n\u001b[2m    2 × unexpected value \"hidden\"\u001b[22m\n\u001b[2m      - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 2.8s</p>\u001b[22m\n\u001b[2m    - unexpected value \"hidden\"\u001b[22m\n\u001b[2m    - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 2.7s</p>\u001b[22m\n\u001b[2m    - unexpected value \"hidden\"\u001b[22m\n\u001b[2m    - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 2.6s</p>\u001b[22m\n\u001b[2m    - unexpected value \"hidden\"\u001b[22m\n\u001b[2m    - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 2.1s</p>\u001b[22m\n\u001b[2m    - unexpected value \"hidden\"\u001b[22m\n\u001b[2m    - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 1.6s</p>\u001b[22m\n\u001b[2m    - unexpected value \"hidden\"\u001b[22m\n\u001b[2m    - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 1.0s</p>\u001b[22m\n\u001b[2m    11 × unexpected value \"hidden\"\u001b[22m\n\u001b[2m       - locator resolved to <p hidden=\"\" role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\"></p>\u001b[22m\n\u001b[2m    - unexpected value \"hidden\"\u001b[22m\n\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\focus-v084.spec.ts:35:83",
+                    "location": {
+                      "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\focus-v084.spec.ts",
+                      "column": 83,
+                      "line": 35
+                    },
+                    "snippet": "  33 |         firstIds = state.growth!.cells!.map(c => c.id);\n  34 |         observations.push({ acceptedOrder: state, intendedTarget: target });\n> 35 |         const status = page.locator('#immune-focus-status'); await expect(status).toBeVisible(); await expect(status).toContainText('围猎');\n     |                                                                                   ^\n  36 |         const bounds = await status.evaluate(el => { const r = el.getBoundingClientRect(); return { x: r.x, y: r.y, right: r.right, bottom: r.bottom, width: innerWidth, height: innerHeight }; });\n  37 |         expect(bounds.x).toBeGreaterThanOrEqual(0); expect(bounds.y).toBeGreaterThanOrEqual(0);\n  38 |         expect(bounds.right).toBeLessThanOrEqual(bounds.width); expect(bounds.bottom).toBeLessThanOrEqual(bounds.height);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\focus-v084.spec.ts",
+                        "column": 83,
+                        "line": 35
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('#immune-focus-status')\nExpected: visible\nReceived: hidden\nTimeout:  8000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('#immune-focus-status') with timeout 8000ms\u001b[22m\n\u001b[2m  - waiting for locator('#immune-focus-status')\u001b[22m\n\u001b[2m    - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 2.9s</p>\u001b[22m\n\u001b[2m    2 × unexpected value \"hidden\"\u001b[22m\n\u001b[2m      - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 2.8s</p>\u001b[22m\n\u001b[2m    - unexpected value \"hidden\"\u001b[22m\n\u001b[2m    - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 2.7s</p>\u001b[22m\n\u001b[2m    - unexpected value \"hidden\"\u001b[22m\n\u001b[2m    - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 2.6s</p>\u001b[22m\n\u001b[2m    - unexpected value \"hidden\"\u001b[22m\n\u001b[2m    - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 2.1s</p>\u001b[22m\n\u001b[2m    - unexpected value \"hidden\"\u001b[22m\n\u001b[2m    - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 1.6s</p>\u001b[22m\n\u001b[2m    - unexpected value \"hidden\"\u001b[22m\n\u001b[2m    - locator resolved to <p role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\">◎ 围猎 感染体 · 1.0s</p>\u001b[22m\n\u001b[2m    11 × unexpected value \"hidden\"\u001b[22m\n\u001b[2m       - locator resolved to <p hidden=\"\" role=\"status\" id=\"immune-focus-status\" class=\"immune-focus-status\"></p>\u001b[22m\n\u001b[2m    - unexpected value \"hidden\"\u001b[22m\n\n\n  33 |         firstIds = state.growth!.cells!.map(c => c.id);\n  34 |         observations.push({ acceptedOrder: state, intendedTarget: target });\n> 35 |         const status = page.locator('#immune-focus-status'); await expect(status).toBeVisible(); await expect(status).toContainText('围猎');\n     |                                                                                   ^\n  36 |         const bounds = await status.evaluate(el => { const r = el.getBoundingClientRect(); return { x: r.x, y: r.y, right: r.right, bottom: r.bottom, width: innerWidth, height: innerHeight }; });\n  37 |         expect(bounds.x).toBeGreaterThanOrEqual(0); expect(bounds.y).toBeGreaterThanOrEqual(0);\n  38 |         expect(bounds.right).toBeLessThanOrEqual(bounds.width); expect(bounds.bottom).toBeLessThanOrEqual(bounds.height);\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\focus-v084.spec.ts:35:83"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-27T20:28:28.462Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\focus-v084\\browser-attempt-1\\edge\\output\\focus-v084-natural-Q-focus-deaec-nd-redirects-the-same-squad-edge\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\focus-v084\\browser-attempt-1\\edge\\output\\focus-v084-natural-Q-focus-deaec-nd-redirects-the-same-squad-edge\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\focus-v084.spec.ts",
+                    "column": 83,
+                    "line": 35
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "7120d5e1220757391740-2b656d6f2a949aeda9e0",
+          "file": "focus-v084.spec.ts",
+          "line": 9,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-27T20:28:27.819Z",
+    "duration": 15286.324,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

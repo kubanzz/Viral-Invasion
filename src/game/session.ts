@@ -299,16 +299,18 @@ export class GameSession {
         const beacon = state.growth.beacon;
         beacon.until += combat.cellDurationBonus;
         state.growth.beaconReadyAt = state.elapsed + (state.growth.beaconReadyAt - state.elapsed) * combat.cellCooldownMultiplier;
-        state.growth.cells = summonImmuneCells(beacon, growthContext(state), 3);
+        state.growth.cells = summonImmuneCells(beacon, growthContext(state), beacon.mode === 'patrol' ? 1 : 3);
       }
     }
     if (combat && combat.scanDamage > 0) this.endlessRadialAttack(state.player, 260, combat.scanDamage * combat.damageMultiplier, 'scan');
     if (state.endless) {
+      const focused = state.events.some(event => event.tick === state.tick && ['PROTOCOL_BEACON_CREATED', 'IMMUNE_PATROL_CREATED', 'IMMUNE_SQUAD_REDIRECTED'].includes(event.type) && typeof event.data.focusTargetId === 'string');
       const redirected = state.events.some(event => event.tick === state.tick && event.type === 'IMMUNE_SQUAD_REDIRECTED');
       const interrupted = state.events.some(event => event.tick === state.tick && event.type === 'ENDLESS_CORROSION_INTERRUPTED');
-      this.message(interrupted ? '侵蚀已被扫描打断！抓住破绽净化精英。'
+      this.message(focused ? `${interrupted ? '侵蚀已被扫描打断！' : ''}围猎指令已下达；细胞优先追击指定目标，仍需实际赶到咬击。`
+        : interrupted ? '侵蚀已被扫描打断！抓住破绽净化精英。'
         : redirected ? '免疫小队正在转向新战线；保留原持续时间，继续移动接敌。'
-          : 'Q 显影并召集免疫小队：朝敌群部署，细胞会靠近目标并咬击。', 3);
+          : 'Q 显影并召集免疫小队：指敌围猎，指空地部署。', 3);
     }
   }
 

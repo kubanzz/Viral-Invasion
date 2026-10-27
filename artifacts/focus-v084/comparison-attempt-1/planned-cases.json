@@ -1,0 +1,50 @@
+{
+  "cases": [
+    {
+      "version": "baseline",
+      "seed": 7,
+      "replay": false
+    },
+    {
+      "version": "baseline",
+      "seed": 71,
+      "replay": false
+    },
+    {
+      "version": "baseline",
+      "seed": 19,
+      "replay": false
+    },
+    {
+      "version": "candidate",
+      "seed": 7,
+      "replay": false
+    },
+    {
+      "version": "candidate",
+      "seed": 71,
+      "replay": false
+    },
+    {
+      "version": "candidate",
+      "seed": 19,
+      "replay": false
+    },
+    {
+      "version": "candidate",
+      "seed": 71,
+      "replay": true
+    }
+  ],
+  "goalWaves": 15,
+  "simulationBudgetSeconds": 900,
+  "perWaveBudgetSeconds": 120,
+  "retries": 0,
+  "policyDescription": {
+    "final": "Only issue Q when ready, at least3 simulation seconds after last accepted Q, for a living legal elite or non-melee special reachable from the original clipped deployment region and within650 player distance. Each requested special ID at most once per run after real SCAN_COMPLETED. Prefer elite, then player distance, then stable ID. No eligible special: do not Q. After actual Q, withhold primary fire for3 simulation seconds; original movement/avoidance/aim otherwise unchanged.",
+    "revision": "Initial preparation considered original Q frequency plus3s fire withholding. Root revised BEFORE ANY EXECUTION because ready-Q every3s could chain withholding. The revised once-per-special gate is used by both versions. The unexecuted plan is not a failed attempt.",
+    "outcomePolicy": "Retain all real deaths, stalls, timeouts and measurement failures; no seed replacements, retries, forced damage or victory. Candidate need not be faster, win, focus every requested target, or have greater cell damage.",
+    "planner": "Baseline beaconPosition copied byte-for-byte; identical pure measurement planner in both versions. Published per-version protocol config reads and external commanded-ID/lastQ state only. No candidate helper mutates baseline.",
+    "damage": "Positive finite TARGET_HIT, cause=protocol, protocolId=IMMUNE_BEACON is the sole cell damage authority; bite logs only supply matching metadata. Baseline has requested aim recipients, never accepted focus commands."
+  }
+}

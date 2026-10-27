@@ -2,6 +2,7 @@ import { distance, moveWithCollision, normalized, wallHit } from '../actors/coll
 import type { OrganId } from './battleTypes';
 import type { BeaconState, GrowthCommand, GrowthContext } from './growthTypes';
 import { WORLD, type Target, type Vec, type WorldGeometry } from './types';
+import { activeImmuneFocusTarget } from './immuneFocus';
 
 export const IMMUNE_CELL_BALANCE = { maximum: 3, radius: 15, speed: 190, biteReach: 9, attackPose: .24, navigationInterval: .35 } as const;
 
@@ -152,16 +153,27 @@ export function advanceImmuneCells(cells: readonly ImmuneCellState[], beacon: Ce
   const reserved: { position: Vec; radius: number }[] = [];
   const remainingHp = new Map(context.targets.map(target => [target.id, target.hp]));
   const traced = new Set(beacon.mode === 'patrol' ? [] : traceIds);
+  const focus = activeImmuneFocusTarget(beacon, context);
   for (const cell of active) {
     const delta = Math.max(0, Math.min(1 / 60, context.elapsed - cell.updatedAt));
     cell.updatedAt = context.elapsed;
-    const target = chooseTarget(cell, beacon, context, traced, assigned, remainingHp);
-    if (target) assigned.set(target.id, (assigned.get(target.id) ?? 0) + 1);
     const previousTarget = cell.targetId;
-    cell.targetId = target?.id ?? null;
     const index = Math.max(0, active.findIndex(value => value.id === cell.id));
+    // A command can override automatic priorities, never physical reachability.
+    // Reuse a still-valid navigation leg rather than solving the same route each tick.
+    const focusSeat = focus && (remainingHp.get(focus.id) ?? focus.hp) > 0
+      ? contactPosition(cell, focus, index, active.length, beacon, context.geometry, reserved) : null;
+    const cachedRoute = focus && previousTarget === focus.id && cell.waypoint && context.elapsed < cell.navigationAt
+      && distance(cell, cell.waypoint) > 1e-7 && segmentClear(cell, cell.waypoint, context.geometry ?? WORLD, cell.radius);
+    const focusRoute = focusSeat && !cachedRoute && !contact(cell, cell.radius, focus!, context.geometry)
+      ? nextWaypoint(cell, focusSeat, context.geometry ?? WORLD, cell.radius) : null;
+    const canFocus = !!focus && !!focusSeat && (contact(cell, cell.radius, focus, context.geometry)
+      || !!cachedRoute || !!focusRoute && distance(cell, focusRoute) > 1e-7);
+    const target = canFocus ? focus : chooseTarget(cell, beacon, context, traced, assigned, remainingHp);
+    if (target) assigned.set(target.id, (assigned.get(target.id) ?? 0) + 1);
+    cell.targetId = target?.id ?? null;
     const orbit = index / Math.max(1, active.length) * Math.PI * 2;
-    const seat = target && active.length > 1 ? contactPosition(cell, target, index, active.length, beacon, context.geometry, reserved) : null;
+    const seat = canFocus ? focusSeat : target && active.length > 1 ? contactPosition(cell, target, index, active.length, beacon, context.geometry, reserved) : null;
     if (seat) reserved.push({ position: seat, radius: cell.radius });
     const destination = seat ?? target ?? { x: beacon.x + Math.cos(orbit) * 38, y: beacon.y + Math.sin(orbit) * 38 };
     const reach = target ? target.radius + cell.radius + IMMUNE_CELL_BALANCE.biteReach : 5;
@@ -171,7 +183,8 @@ export function advanceImmuneCells(cells: readonly ImmuneCellState[], beacon: Ce
     const wasTouching = !!target && contact(cell, cell.radius, target, context.geometry);
     if (seat ? gap > 3 : !wasTouching && gap > (target ? Math.max(1, reach - 5) : 5)) {
       if (!cell.waypoint || previousTarget !== cell.targetId || context.elapsed >= cell.navigationAt || distance(cell, cell.waypoint) < 10) {
-        cell.waypoint = context.geometry ? nextWaypoint(cell, destination, context.geometry, cell.radius) : point(destination);
+        cell.waypoint = canFocus && focusRoute ? focusRoute
+          : context.geometry ? nextWaypoint(cell, destination, context.geometry, cell.radius) : point(destination);
         cell.navigationAt = context.elapsed + IMMUNE_CELL_BALANCE.navigationInterval;
       }
       moveCell(cell, cell.waypoint, active, index, delta, context.geometry);
@@ -196,6 +209,7 @@ export function advanceImmuneCells(cells: readonly ImmuneCellState[], beacon: Ce
       { kind: 'log', type: beacon.mode === 'patrol' ? 'IMMUNE_PATROL_HIT' : 'PROTOCOL_BEACON_HIT', data: {
         protocolId: beacon.mode === 'patrol' ? 'BASE_PATROL' : 'IMMUNE_BEACON', rootId, cellId: cell.id, targetId: target.id,
         damage: amount, prioritizedTrace: traced.has(target.id), x: cell.x, y: cell.y,
+        ...(beacon.focus ? { prioritizedFocus: canFocus && target.id === focus?.id, focusTargetId: beacon.focus.targetId } : {}),
       } });
     if (traced.has(target.id)) commands.push({ kind: 'log', type: 'PROTOCOL_SYNERGY', data: { pair: 'EXPOSE_TRACE+IMMUNE_BEACON', rootId, cellId: cell.id, targetId: target.id } });
   }

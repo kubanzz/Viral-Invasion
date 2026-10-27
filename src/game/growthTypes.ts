@@ -34,6 +34,8 @@ export interface BeaconState extends Vec {
   id: string; organId: OrganId; born: number; until: number; radius: number;
   damage: number; interval: number; nextAttackAt: number; tuning: Tuning;
   mode?: 'patrol' | 'protocol';
+  /** A short command, bounded by this squad's original lifetime. */
+  focus?: { targetId: string; until: number };
 }
 export interface GrowthHistoryEntry { at: number; type: string; text: string }
 export interface GrowthState {

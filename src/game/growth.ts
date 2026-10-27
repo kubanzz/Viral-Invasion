@@ -5,6 +5,7 @@ import { activeWorld, type GameEvent, type GameState, type Target, type Vec, typ
 import { GROWTH_BALANCE as B, makeDraftOption, PROTOCOL_IDS, PROTOCOLS, TUNINGS, getBeaconConfig, getChainConfig, getPulseConfig, getTraceConfig, PATROL_CONFIG, protocolRank, PROTOCOL_ACTIONS, chainRicochetPeriod } from './protocols';
 import type { DamageOrigin, DraftIntent, DraftOption, DraftResolution, EquippedProtocol, GrowthCommand, GrowthContext, GrowthState, GrowthHistoryEntry, ProtocolDraft, ProtocolId, ProtocolRank, ResearchResult, ResearchDirectionId, ResearchConfirmIntent, ResearchRequestIntent, ResearchRequestResult, ResearchConfirmResult, ResearchCancelResult } from './growthTypes';
 import { advanceImmuneCells, summonImmuneCells } from './immuneCells';
+import { IMMUNE_FOCUS_BALANCE, selectImmuneFocusTarget } from './immuneFocus';
 import { availableResearchDirections, RESEARCH_DIRECTIONS } from './research';
 import { parsePreparation, preparationForPlan, type RunPreparation } from './preparation';
 
@@ -429,12 +430,15 @@ export class GrowthController {
       const position=beaconPosition(context);
       this.state.beacon={...point(position),id:`${rootId}:beacon`,organId:context.organId,born:context.elapsed,until:context.elapsed+config.duration,
         radius:config.radius,damage:config.damage,interval:config.interval,nextAttackAt:context.elapsed+.1,tuning:beacon?.tuning??'balanced',mode:beacon?'protocol':'patrol'};
+      const focus=selectImmuneFocusTarget(context,this.state.beacon);
+      if(focus)this.state.beacon.focus={targetId:focus.id,until:Math.min(context.elapsed+IMMUNE_FOCUS_BALANCE.duration,this.state.beacon.until)};
       this.state.cells=summonImmuneCells(this.state.beacon,context,beacon?3:1);
       this.state.beaconReadyAt=context.elapsed+config.cooldown;
       const base={protocolId:'IMMUNE_BEACON' as const,rootId,organId:context.organId};
       if(beacon)commands.push({...base,kind:'organCost',amount:config.tissueCost});
       commands.push({...base,kind:'effect',effect:'scan',from:point(position),to:point(position),radius:config.radius,duration:.6},
-        {kind:'log',type:beacon?'PROTOCOL_BEACON_CREATED':'IMMUNE_PATROL_CREATED',data:{...(beacon?{protocolId:'IMMUNE_BEACON'}:{}),rootId,x:position.x,y:position.y,duration:config.duration,cost:config.tissueCost,cooldown:config.cooldown,cells:beacon?3:1}});
+        {kind:'log',type:beacon?'PROTOCOL_BEACON_CREATED':'IMMUNE_PATROL_CREATED',data:{...(beacon?{protocolId:'IMMUNE_BEACON'}:{}),rootId,x:position.x,y:position.y,duration:config.duration,cost:config.tissueCost,cooldown:config.cooldown,cells:beacon?3:1,
+          ...(this.state.beacon.focus?{focusTargetId:this.state.beacon.focus.targetId,focusUntil:this.state.beacon.focus.until}:{})}});
       this.remember(beacon?'PROTOCOL_BEACON_CREATED':'IMMUNE_PATROL_CREATED',beacon?`三只免疫细胞出击，组织承压 −${config.tissueCost}。`:'Q 召来一只免疫侦巡细胞，短时协助清理。',context.elapsed);
     }else if(this.state.beacon&&this.state.beacon.until>context.elapsed&&this.state.beacon.organId===context.organId
       &&this.state.beacon.mode!=='patrol'&&this.state.cells?.some(cell=>cell.beaconId===this.state.beacon!.id&&cell.until>context.elapsed)) {
@@ -442,11 +446,15 @@ export class GrowthController {
       // Repoint the zone, never the bodies. Preserve every unit's independent
       // bite clock and lifetime; normal fixed updates perform the actual travel.
       this.state.beacon={...old,...position};
+      const focus=selectImmuneFocusTarget(context,this.state.beacon);
+      if(focus)this.state.beacon.focus={targetId:focus.id,until:Math.min(context.elapsed+IMMUNE_FOCUS_BALANCE.duration,old.until)};
+      else delete this.state.beacon.focus;
       this.state.cells=this.state.cells.map(cell=>({...cell,waypoint:null,navigationAt:0}));
       const base={protocolId:'IMMUNE_BEACON' as const,rootId,organId:context.organId};
       commands.push({...base,kind:'effect',effect:'scan',from:point(position),to:point(position),radius:old.radius,duration:.6},
         {kind:'log',type:'IMMUNE_SQUAD_REDIRECTED',data:{protocolId:'IMMUNE_BEACON',rootId,beaconId:old.id,
-          fromX:old.x,fromY:old.y,x:position.x,y:position.y,cells:this.state.cells.length,until:old.until,readyAt:this.state.beaconReadyAt,cost:0}});
+          fromX:old.x,fromY:old.y,x:position.x,y:position.y,cells:this.state.cells.length,until:old.until,readyAt:this.state.beaconReadyAt,cost:0,
+          ...(this.state.beacon.focus?{focusTargetId:this.state.beacon.focus.targetId,focusUntil:this.state.beacon.focus.until}:{})}});
       this.remember('IMMUNE_SQUAD_REDIRECTED','免疫小队转向新战线；保持原剩余寿命与吞噬冷却，不消耗组织。',context.elapsed);
     }
     const accepted=this.budget(context,commands);
