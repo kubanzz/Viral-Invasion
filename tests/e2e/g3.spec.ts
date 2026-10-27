@@ -5,6 +5,7 @@ import { writeFileSync } from 'node:fs';
 import { aim, readState } from './campaignDriver';
 import { g3Input, g3EnduranceInput, waypoint } from '../helpers/g3Driver';
 import type { MigrationChoice } from '../../src/game/campaignTypes';
+import { HeldMovement } from './heldMovement';
 
 const entry=pathToFileURL(resolve(process.env.VI_ENTRY ?? 'dist/index.html')).href;
 // Full snapshots already have explicit JSON evidence; tracing every clone can
@@ -18,12 +19,15 @@ for(const choice of ['pursue','block','ignore'] as MigrationChoice[]){
     await page.goto(`${entry}?seed=91`);await page.locator('[data-action="start"]').click();
     const captured=new Set<string>(),seenEvents=new Map<string,unknown>(),inputs:unknown[]=[],deadline=Date.now()+150000;
     let lastScan=-10,lastInteract=-10;
+    const movement=new HeldMovement(page);
+    try {
     while(Date.now()<deadline){
       const s=await readState(page);
+      await movement.syncOrgan(s.battle!.organId);
       for(const event of s.events)seenEvents.set(JSON.stringify(event),event);
       if(s.phase==='result')break;
-      if(await page.locator('[data-action="close-migration-guide"]').isVisible()){await page.mouse.up();await page.locator('[data-action="close-migration-guide"]').click();continue;}
-      if(s.growth?.draft){await page.mouse.up();await page.locator('[data-action="draft-discard"]').click();continue;}
+      if(await page.locator('[data-action="close-migration-guide"]').isVisible()){await movement.release();await page.mouse.up();await page.locator('[data-action="close-migration-guide"]').click();continue;}
+      if(s.growth?.draft){await movement.release();await page.mouse.up();await page.locator('[data-action="draft-discard"]').click();continue;}
       expect(s.phase).toBe('playing');
       const capture=async(name:string)=>{if(!captured.has(name)){captured.add(name);await page.screenshot({path:info.outputPath(`${name}.png`)});}};
       if(s.campaign!.migration.status==='warning')await capture('migration-warning');
@@ -38,12 +42,10 @@ for(const choice of ['pursue','block','ignore'] as MigrationChoice[]){
       if(s.elapsed-lastScan>3.1){await page.keyboard.press('KeyQ');lastScan=s.elapsed;}
       // Discrete DOM events read the same nearby device used by keyboard users.
       if(input.interact&&s.elapsed-lastInteract>.25){await page.keyboard.press('KeyE');lastInteract=s.elapsed;}
-      const keys=[Math.abs(input.moveX)>.383?input.moveX>0?'KeyD':'KeyA':'',Math.abs(input.moveY)>.383?input.moveY>0?'KeyS':'KeyW':''].filter(Boolean);
-      for(const key of keys)await page.keyboard.down(key);
+      await movement.move(input.moveX,input.moveY);
       await page.waitForTimeout(85);
-      for(const key of keys)await page.keyboard.up(key);
     }
-    await page.mouse.up();
+    } finally { await movement.release();await page.mouse.up(); }
     const final=await readState(page);
     writeFileSync(info.outputPath('route.json'),JSON.stringify({choice,errors,remote,inputs,events:[...seenEvents.values()],final},null,2));
     await page.screenshot({path:info.outputPath('result.png')});
@@ -63,10 +65,13 @@ test('G3: 180 seconds under a live lung source, breath cycles, repair and legal 
   await context.setOffline(true);await page.goto(`${entry}?seed=91`);await page.locator('[data-action="start"]').click();
   let began:number|null=null,lastScan=-10,lastInteract=-10;
   const phases=new Set<string>(),spawned=new Set<string>(),deadline=Date.now()+330000;
+  const movement=new HeldMovement(page);
+  try {
   while(Date.now()<deadline){
     const s=await readState(page);
-    if(await page.locator('[data-action="close-migration-guide"]').isVisible()){await page.mouse.up();await page.locator('[data-action="close-migration-guide"]').click();continue;}
-    if(s.growth?.draft){await page.mouse.up();await page.locator('[data-action="draft-discard"]').click();continue;}
+    await movement.syncOrgan(s.battle!.organId);
+    if(await page.locator('[data-action="close-migration-guide"]').isVisible()){await movement.release();await page.mouse.up();await page.locator('[data-action="close-migration-guide"]').click();continue;}
+    if(s.growth?.draft){await movement.release();await page.mouse.up();await page.locator('[data-action="draft-discard"]').click();continue;}
     expect(s.phase).toBe('playing');
     if(s.battle!.organId==='lung'&&began===null){began=s.elapsed;await page.screenshot({path:info.outputPath('lung-pressure-start.png')});}
     if(began!==null&&s.battle!.organId==='heart'){
@@ -85,9 +90,8 @@ test('G3: 180 seconds under a live lung source, breath cycles, repair and legal 
     if(input.fire)await page.mouse.down();else await page.mouse.up();
     if(s.elapsed-lastScan>3.1){await page.keyboard.press('KeyQ');lastScan=s.elapsed;}
     if(input.interact&&s.elapsed-lastInteract>.25){await page.keyboard.press('KeyE');lastInteract=s.elapsed;}
-    const length=Math.hypot(input.moveX,input.moveY)||1;
-    const keys=[Math.abs(input.moveX/length)>.383?input.moveX>0?'KeyD':'KeyA':'',Math.abs(input.moveY/length)>.383?input.moveY>0?'KeyS':'KeyW':''].filter(Boolean);
-    for(const key of keys)await page.keyboard.down(key);await page.waitForTimeout(85);for(const key of keys)await page.keyboard.up(key);
+    await movement.move(input.moveX,input.moveY);await page.waitForTimeout(85);
   }
+  } finally { await movement.release();await page.mouse.up(); }
   throw new Error('Lung pressure driver did not retreat before its deadline');
 });

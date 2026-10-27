@@ -3,6 +3,7 @@ import { advanceImmuneCells, IMMUNE_CELL_BALANCE, summonImmuneCells, type Immune
 import { drawImmuneCell, drawImmuneSquadLabel } from '../../src/render/immuneVisuals';
 import { GrowthController } from '../../src/game/growth';
 import { GROWTH_BALANCE } from '../../src/game/protocols';
+import { distance, normalized, wallHit } from '../../src/actors/collision';
 import type { BeaconState, GrowthCommand, GrowthContext } from '../../src/game/growthTypes';
 import type { Target, WorldGeometry } from '../../src/game/types';
 
@@ -18,6 +19,31 @@ function advance(cells: ImmuneCellState[], origin: BeaconState, ctx: GrowthConte
     const result = advanceImmuneCells(cells, origin, ctx, traces); cells = result.cells; commands.push(...result.commands);
   }
   return { cells, commands };
+}
+
+function minimumGap(cells: ImmuneCellState[]): number {
+  return Math.min(...cells.flatMap((cell, index) => cells.slice(index + 1).map(other => distance(cell, other))));
+}
+
+function inspectMovement(before: ImmuneCellState[], result: ReturnType<typeof advanceImmuneCells>, ctx: GrowthContext): void {
+  const world = ctx.geometry!;
+  for (const cell of result.cells) {
+    const previous = before.find(other => other.id === cell.id)!;
+    expect(distance(previous, cell)).toBeLessThanOrEqual(IMMUNE_CELL_BALANCE.speed / 60 + 1e-7);
+    expect(cell.x).toBeGreaterThanOrEqual(world.bounds.left + cell.radius - 1e-7);
+    expect(cell.x).toBeLessThanOrEqual(world.bounds.right - cell.radius + 1e-7);
+    expect(cell.y).toBeGreaterThanOrEqual(world.bounds.top + cell.radius - 1e-7);
+    expect(cell.y).toBeLessThanOrEqual(world.bounds.bottom - cell.radius + 1e-7);
+    for (const obstacle of world.obstacles) expect(distance(cell, obstacle)).toBeGreaterThanOrEqual(cell.radius + obstacle.radius - 1e-7);
+  }
+  for (const event of result.commands) if (event.kind === 'log' && event.type === 'PROTOCOL_BEACON_HIT') {
+    const cell = result.cells.find(other => other.id === event.data.cellId)!;
+    const target = ctx.targets.find(other => other.id === event.data.targetId)!;
+    const gap = distance(cell, target), wall = wallHit(cell, normalized(target.x - cell.x, target.y - cell.y), gap, world);
+    expect(gap).toBeLessThanOrEqual(target.radius + cell.radius + IMMUNE_CELL_BALANCE.biteReach + 1e-7);
+    expect(wall === null || wall >= gap - target.radius).toBe(true);
+    expect(event.data.x).toBe(cell.x); expect(event.data.y).toBe(cell.y);
+  }
 }
 
 describe('visible temporary immune-cell combat', () => {
@@ -140,5 +166,99 @@ describe('visible temporary immune-cell combat', () => {
     for (const low of [false, true]) for (const cell of first.cells) drawImmuneCell(canvas, cell, 2, low);
     drawImmuneSquadLabel(canvas, origin, first.cells.length);
     expect(calls).toContain('fill'); expect(calls).toContain('strokeText'); expect(first.cells).toEqual(before);
+  });
+
+  it('separates three coincident cells around coincident enemies using real positions, deterministically', () => {
+    const targets = [actor('a', 650, 500), actor('b', 650, 500)].map(target => ({ ...target, hp: 10000, maxHp: 10000 }));
+    const ctx = context(targets), origin = beacon({ x: 600 });
+    const initial = summonImmuneCells(origin, ctx).map(cell => ({ ...cell, x: 610, y: 500, attackReadyAt: 0 }));
+    let cells = initial;
+    const bitten = new Set<string>();
+    for (let tick = 1; tick <= 180; tick++) {
+      ctx.tick = tick; ctx.elapsed = tick / 60;
+      const result = advanceImmuneCells(cells, origin, ctx);
+      inspectMovement(cells, result, ctx);
+      for (const hit of damage(result.commands)) bitten.add(hit.targetId);
+      cells = result.cells;
+    }
+    expect(minimumGap(cells)).toBeGreaterThanOrEqual(30);
+    expect(bitten).toEqual(new Set(['a', 'b']));
+    const reversed = advance([...initial].reverse(), origin, { ...context([...targets].reverse()) }, 180);
+    expect(reversed.cells).toEqual(cells);
+    expect(summonImmuneCells(origin, ctx, 100)).toHaveLength(3);
+  });
+
+  it('surrounds the same target without tripling the total damage or changing per-cell cooldowns', () => {
+    const target = { ...actor('durable', 500, 500), hp: 10000, maxHp: 10000 }, origin = beacon();
+    const ready = (count: number) => summonImmuneCells(origin, context(), count).map(cell => ({ ...cell, x: 500, y: 500, attackReadyAt: 0 }));
+    const squad = advance(ready(3), origin, context([target]), 240);
+    const single = advance(ready(1), origin, context([target]), 240);
+    expect(minimumGap(squad.cells)).toBeGreaterThanOrEqual(30);
+    expect(damage(squad.commands)).toHaveLength(15);
+    expect(damage(single.commands)).toHaveLength(5);
+    expect(damage(squad.commands).every(hit => hit.amount === origin.damage / 3)).toBe(true);
+    expect(damage(squad.commands).reduce((sum, hit) => sum + hit.amount, 0)).toBe(120);
+    expect(damage(single.commands).reduce((sum, hit) => sum + hit.amount, 0)).toBe(120);
+    for (const cell of squad.cells) expect(cell.interval).toBe(origin.interval);
+  });
+
+  it('finds partial surround positions beside a fold and world edge and still bites from final legal positions', () => {
+    const world: WorldGeometry = { ...geometry, width: 230, height: 250, bounds: { left: 30, right: 200, top: 30, bottom: 220 },
+      obstacles: [{ id: 'edge-fold', x: 100, y: 110, radius: 40 }] };
+    const target = { ...actor('edge-target', 100, 173), hp: 10000, maxHp: 10000 };
+    const ctx = { ...context([target]), geometry: world }, origin = beacon({ x: 100, y: 202 });
+    let cells = summonImmuneCells(origin, ctx).map(cell => ({ ...cell, x: 100, y: 202, attackReadyAt: 0 }));
+    const bitingCells = new Set<string>();
+    for (let tick = 1; tick <= 240; tick++) {
+      ctx.tick = tick; ctx.elapsed = tick / 60;
+      const result = advanceImmuneCells(cells, origin, ctx);
+      inspectMovement(cells, result, ctx);
+      for (const event of result.commands) if (event.kind === 'log' && event.type === 'PROTOCOL_BEACON_HIT') bitingCells.add(String(event.data.cellId));
+      cells = result.cells;
+    }
+    expect(bitingCells.size).toBe(3);
+    expect(minimumGap(cells)).toBeGreaterThanOrEqual(30);
+  });
+
+  it('can leave a legal collision-tangent start, navigate around the fold and engage as a squad', () => {
+    const fold = { id: 'tangent-fold', x: 620, y: 500, radius: 55 };
+    const target = { ...actor('far-side', 740, 500), hp: 10000, maxHp: 10000 };
+    const ctx = { ...context([target]), geometry: { ...geometry, obstacles: [fold] } }, origin = beacon();
+    let cells = summonImmuneCells(origin, ctx).map(cell => ({ ...cell, x: 550, y: 500, attackReadyAt: 0 }));
+    const bitingCells = new Set<string>();
+    let walkedAround = false;
+    for (let tick = 1; tick <= 300; tick++) {
+      ctx.tick = tick; ctx.elapsed = tick / 60;
+      const result = advanceImmuneCells(cells, origin, ctx);
+      inspectMovement(cells, result, ctx);
+      for (const cell of result.cells) if (Math.abs(cell.y - fold.y) >= fold.radius + cell.radius) walkedAround = true;
+      for (const event of result.commands) if (event.kind === 'log' && event.type === 'PROTOCOL_BEACON_HIT') bitingCells.add(String(event.data.cellId));
+      cells = result.cells;
+    }
+    expect(walkedAround).toBe(true);
+    expect(bitingCells.size).toBe(3);
+  });
+
+  it('keeps attacking in a pocket too narrow for full separation and never separates at zero delta or while paused', () => {
+    const world: WorldGeometry = { ...geometry, width: 200, height: 220, bounds: { left: 75, right: 125, top: 30, bottom: 200 },
+      obstacles: [{ id: 'pocket-fold', x: 100, y: 100, radius: 60 }] };
+    const target = { ...actor('pocket-target', 100, 185), radius: 15, hp: 10000, maxHp: 10000 };
+    const ctx = { ...context([target]), geometry: world }, origin = beacon({ x: 100, y: 185 });
+    const initial = summonImmuneCells(origin, ctx).map(cell => ({ ...cell, x: 100, y: 185, attackReadyAt: 0 }));
+    let cells = initial;
+    const bitingCells = new Set<string>();
+    for (let tick = 1; tick <= 120; tick++) {
+      ctx.tick = tick; ctx.elapsed = tick / 60;
+      const result = advanceImmuneCells(cells, origin, ctx);
+      inspectMovement(cells, result, ctx);
+      for (const event of result.commands) if (event.kind === 'log' && event.type === 'PROTOCOL_BEACON_HIT') bitingCells.add(String(event.data.cellId));
+      cells = result.cells;
+    }
+    expect(bitingCells.size).toBe(3);
+    const sameTick = advanceImmuneCells(cells, origin, ctx);
+    expect(sameTick.cells.map(({ x, y }) => ({ x, y }))).toEqual(cells.map(({ x, y }) => ({ x, y })));
+    expect(damage(sameTick.commands)).toEqual([]);
+    const paused = advanceImmuneCells(initial, origin, { ...ctx, active: false });
+    expect(paused.cells).toEqual(initial); expect(paused.commands).toEqual([]);
   });
 });

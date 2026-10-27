@@ -7,6 +7,7 @@ import { emptyProfile, PROFILE_STORAGE_KEY } from '../../src/meta/profile';
 import { readState, aim, chooseDraftInput } from './campaignDriver';
 import { fullRun } from './fullRunDriver';
 import { g3Input } from '../helpers/g3Driver';
+import { HeldMovement } from './heldMovement';
 
 const entry = pathToFileURL(resolve(process.env.VI_ENTRY ?? 'dist/index.html')).href;
 test.use({ video: 'off', trace: 'off' });
@@ -25,13 +26,17 @@ async function tabTo(page: Page, selector: string) {
 async function reachMigration(page: Page) {
   const deadline = Date.now() + 65000;
   let lastScan = -10, lastInteract = -10;
+  const movement = new HeldMovement(page);
+  try {
   while (Date.now() < deadline) {
     if (await page.locator('[data-action="close-migration-guide"]').isVisible()) {
-      await page.mouse.up(); return 'guide';
+      await movement.release(); await page.mouse.up(); return 'guide';
     }
     const s = await readState(page);
-    if (s.growth?.draft) { await page.mouse.up(); await chooseDraftInput(page); continue; }
+    await movement.syncOrgan(s.battle!.organId);
+    if (s.growth?.draft) { await movement.release(); await page.mouse.up(); await chooseDraftInput(page); continue; }
     if (s.phase === 'playing' && s.campaign!.migration.status === 'warning') {
+      await movement.release(); await page.mouse.up();
       await page.waitForTimeout(100);
       return await page.locator('[data-action="close-migration-guide"]').isVisible() ? 'guide' : 'warning';
     }
@@ -42,11 +47,10 @@ async function reachMigration(page: Page) {
     if (input.fire) await page.mouse.down(); else await page.mouse.up();
     if (s.elapsed - lastScan > 3.1) { await page.keyboard.press('KeyQ'); lastScan = s.elapsed; }
     if (input.interact && s.elapsed - lastInteract > .25) { await page.keyboard.press('KeyE'); lastInteract = s.elapsed; }
-    const keys = [Math.abs(input.moveX) > .383 ? input.moveX > 0 ? 'KeyD' : 'KeyA' : '', Math.abs(input.moveY) > .383 ? input.moveY > 0 ? 'KeyS' : 'KeyW' : ''].filter(Boolean);
-    for (const key of keys) await page.keyboard.down(key);
+    await movement.move(input.moveX, input.moveY);
     await page.waitForTimeout(85);
-    for (const key of keys) await page.keyboard.up(key);
   }
+  } finally { await movement.release(); await page.mouse.up(); }
   throw new Error('Migration warning did not arrive through public input');
 }
 

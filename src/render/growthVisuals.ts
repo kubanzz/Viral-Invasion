@@ -1,6 +1,7 @@
 import type { GrowthState } from '../game/growthTypes';
 import type { GameState, Vec } from '../game/types';
 import { drawImmuneSquadLabel } from './immuneVisuals';
+import { selectImmuneTraceCues } from './immuneTraceCues';
 
 const TAU = Math.PI * 2;
 function ellipse(ctx: CanvasRenderingContext2D, p: Vec, radius: number, fill: string, stroke: string): void {
@@ -102,7 +103,7 @@ export class GrowthVisuals {
     if (!growth || !state.battle) return;
     const visible = state.events.filter(event => state.tick >= event.tick && state.tick - event.tick <= 30);
     for (const event of visible) {
-      if (!['PROTOCOL_RESONANCE_HIT', 'PROTOCOL_CHAIN_HIT', 'PROTOCOL_RICOCHET_HIT', 'PROTOCOL_BEACON_HIT'].includes(event.type)) continue;
+      if (!['PROTOCOL_RESONANCE_HIT', 'PROTOCOL_CHAIN_HIT', 'PROTOCOL_RICOCHET_HIT'].includes(event.type)) continue;
       const target = state.targets.find(item => item.id === event.data.targetId);
       if (!target) continue;
       const progress = (state.tick - event.tick) / 30;
@@ -122,17 +123,22 @@ export class GrowthVisuals {
           ctx.beginPath(); ctx.ellipse(target.radius + 7, -target.radius * .7, 8, 8, 0, 0, TAU); ctx.fillStyle = '#254b49'; ctx.fill(); ctx.strokeStyle = '#bcf8d9'; ctx.lineWidth = 1; ctx.stroke();
           label(ctx, event.type === 'PROTOCOL_RICOCHET_HIT' ? '折' : String(hop), target.radius + 7, -target.radius * .7 + 3, '#ddffe7', 10);
         }
-      } else {
-        const beacon = growth.beacon;
-        if (event.data.prioritizedTrace === true && beacon && beacon.organId === state.battle.organId && String(event.data.rootId).startsWith(`${beacon.id}:attack:`)) {
-          ctx.setLineDash([3, 7]); line(ctx, beacon, target, '#c0f4df', 1.5); ctx.setLineDash([]);
-          const r = target.radius + 10;
-          line(ctx, { x: target.x - r, y: target.y - r }, { x: target.x - r + 8, y: target.y - r }, '#dbffeb', 2);
-          line(ctx, { x: target.x - r, y: target.y - r }, { x: target.x - r, y: target.y - r + 8 }, '#dbffeb', 2);
-          line(ctx, { x: target.x + r, y: target.y + r }, { x: target.x + r - 8, y: target.y + r }, '#dbffeb', 2);
-          line(ctx, { x: target.x + r, y: target.y + r }, { x: target.x + r, y: target.y + r - 8 }, '#dbffeb', 2);
-        }
       }
+      ctx.restore();
+    }
+    // This acknowledgement is essential in both quality modes. The origin is
+    // the real cell's recorded bite position; the static beacon never shoots.
+    for (const cue of selectImmuneTraceCues(state, growth)) {
+      ctx.save(); ctx.globalAlpha = 1 - cue.progress;
+      ctx.setLineDash([3, 4]);
+      line(ctx, cue.from, cue.to, '#153c3a', 3.5);
+      line(ctx, cue.from, cue.to, '#d3ffe4', 1.5);
+      ctx.setLineDash([]);
+      const r = cue.targetRadius + 10;
+      line(ctx, { x: cue.to.x - r, y: cue.to.y - r }, { x: cue.to.x - r + 8, y: cue.to.y - r }, '#dbffeb', 2);
+      line(ctx, { x: cue.to.x - r, y: cue.to.y - r }, { x: cue.to.x - r, y: cue.to.y - r + 8 }, '#dbffeb', 2);
+      line(ctx, { x: cue.to.x + r, y: cue.to.y + r }, { x: cue.to.x + r - 8, y: cue.to.y + r }, '#dbffeb', 2);
+      line(ctx, { x: cue.to.x + r, y: cue.to.y + r }, { x: cue.to.x + r, y: cue.to.y + r - 8 }, '#dbffeb', 2);
       ctx.restore();
     }
   }
