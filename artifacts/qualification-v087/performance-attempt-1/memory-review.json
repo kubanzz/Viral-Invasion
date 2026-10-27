@@ -1,0 +1,3711 @@
+{
+  "schemaVersion": 1,
+  "status": "observations-only-no-automatic-leak-verdict",
+  "generatedAt": "2026-10-27T22:43:58.561Z",
+  "method": "Offline arithmetic over saved natural Runtime.getHeapUsage and Memory.getDOMCounters rows. No browser, game execution, process sampling or garbage collection is performed by this analyzer.",
+  "input": {
+    "reportPath": "artifacts/qualification-v087/performance-attempt-1/report.json",
+    "reportSha256": "73813998b13225a783f6e851955e7708d9b291114e3aed3755a1afc8335ab106",
+    "analyzerScriptPath": "scripts/analyze-art-performance.mjs",
+    "analyzerScriptSha256": "5669c2c849c5dab77c09c09cdf3ea7684385d621da9d1359c4330357f4377a0a",
+    "savedMeasurementScriptSha256": "90521b8b1498a61fab973ef04b59df4606d8ad62cfefa397dc0a2177438900da",
+    "savedMeasurementScriptMatchesDeclared": true,
+    "denseStates": [
+      {
+        "quality": "standard",
+        "source": "artifacts/qualification-v087/performance-attempt-1/dense-standard-state.json",
+        "sha256": "db78239483e3510425942f29548d26a2cc196b5da3dc66e067c4d0fb6ce40b93",
+        "phase": "playing",
+        "tick": 8855,
+        "aliveActors": 24,
+        "retainedActors": 25,
+        "cells": 3,
+        "events": 512,
+        "effects": 3,
+        "phaserDiagnosticsPresent": false
+      },
+      {
+        "quality": "low",
+        "source": "artifacts/qualification-v087/performance-attempt-1/dense-low-state.json",
+        "sha256": "c0b356db1e3b93b3f7fc77d7f50ec8a3e00a3e7067d11597d182879e296e8eb2",
+        "phase": "playing",
+        "tick": 26989,
+        "aliveActors": 24,
+        "retainedActors": 25,
+        "cells": 3,
+        "events": 512,
+        "effects": 7,
+        "phaserDiagnosticsPresent": false
+      }
+    ],
+    "version": "0.8.7",
+    "releaseGameJsSha256": "27a37e8a83be3b077037991e05826970629cfca01d83ce07dee5cd30e6e8b4ae",
+    "measurementScriptSha256": "90521b8b1498a61fab973ef04b59df4606d8ad62cfefa397dc0a2177438900da",
+    "runtimeStatus": "passed",
+    "runtimePass": true,
+    "sourceUnchangedDuringRun": true,
+    "device": {
+      "os": "win32",
+      "release": "10.0.26200",
+      "cpu": "Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz",
+      "logicalCpus": 16,
+      "memoryBytes": 68637700096,
+      "browser": "155.0.8059.85",
+      "mode": "headless"
+    }
+  },
+  "timing": {
+    "declaredActiveSimulationSeconds": 600.2666666666667,
+    "observedNaturalSampleSpanSeconds": 600.1999999999999,
+    "firstSampleActiveSeconds": 0.0666666666666913,
+    "lastSampleActiveSeconds": 600.2666666666667,
+    "terminalSamplePresent": true,
+    "naturalSamplesBracketTenMinutes": true,
+    "measurementWallDurationMs": 600427,
+    "sampleIntervalsActiveSeconds": {
+      "count": 115,
+      "missing": 0,
+      "min": 2.3333333333332575,
+      "median": 5.25,
+      "max": 5.349999999999966,
+      "first": 5.216666666666669,
+      "last": 2.3333333333332575
+    },
+    "preparationAndWarmupExcluded": true,
+    "forcedGcExcludedFromNaturalRows": true
+  },
+  "performance": {
+    "metrics": {
+      "standard": {
+        "frames": 18001,
+        "activeDurationMs": 300010.5000000056,
+        "averageFps": 60.00123329016706,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 17.099999999976717
+      },
+      "low": {
+        "frames": 18014,
+        "activeDurationMs": 300227.10000000003,
+        "averageFps": 60.00124572365385,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 17
+      }
+    },
+    "observerDroppedFrames": 0,
+    "errors": [],
+    "remoteRequests": [],
+    "note": "These are recorded frame/pressure results. A runtime pass does not assign a memory or human-playtest verdict."
+  },
+  "natural": {
+    "unit": "bytes for heap counters; counts for DOM/populations; seconds for time",
+    "overall": {
+      "sampleCount": 116,
+      "usedBytes": {
+        "count": 116,
+        "missing": 0,
+        "min": 11488776,
+        "median": 25752184,
+        "max": 38631236,
+        "first": 29194184,
+        "last": 27417952
+      },
+      "allocatedCapacityBytes": {
+        "count": 116,
+        "missing": 0,
+        "min": 78462976,
+        "median": 83443712,
+        "max": 84561920,
+        "first": 78462976,
+        "last": 84299776
+      },
+      "embedderUsedBytes": {
+        "count": 116,
+        "missing": 0,
+        "min": 3138552,
+        "median": 10961508,
+        "max": 22549776,
+        "first": 11691968,
+        "last": 16291160
+      },
+      "backingStorageBytes": {
+        "count": 116,
+        "missing": 0,
+        "min": 29389445,
+        "median": 29453282,
+        "max": 32971885,
+        "first": 32610387,
+        "last": 29391854
+      },
+      "dom": {
+        "documents": {
+          "count": 116,
+          "missing": 0,
+          "min": 1,
+          "median": 1,
+          "max": 1,
+          "first": 1,
+          "last": 1
+        },
+        "nodes": {
+          "count": 116,
+          "missing": 0,
+          "min": 464,
+          "median": 1108.5,
+          "max": 2081,
+          "first": 1145,
+          "last": 1549
+        },
+        "listeners": {
+          "count": 116,
+          "missing": 0,
+          "min": 60,
+          "median": 80,
+          "max": 104,
+          "first": 79,
+          "last": 90
+        }
+      },
+      "populations": {
+        "alive": {
+          "count": 116,
+          "missing": 0,
+          "min": 20,
+          "median": 23,
+          "max": 24,
+          "first": 24,
+          "last": 24
+        },
+        "cells": {
+          "count": 116,
+          "missing": 0,
+          "min": 0,
+          "median": 0,
+          "max": 3,
+          "first": 3,
+          "last": 0
+        },
+        "retainedActors": {
+          "count": 116,
+          "missing": 0,
+          "min": 21,
+          "median": 25,
+          "max": 26,
+          "first": 25,
+          "last": 25
+        },
+        "events": {
+          "count": 116,
+          "missing": 0,
+          "min": 512,
+          "median": 512,
+          "max": 512,
+          "first": 512,
+          "last": 512
+        },
+        "effects": {
+          "count": 116,
+          "missing": 0,
+          "min": 0,
+          "median": 3,
+          "max": 10,
+          "first": 3,
+          "last": 2
+        }
+      }
+    },
+    "first60Seconds": {
+      "sampleCount": 12,
+      "usedBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 12101352,
+        "median": 27970296,
+        "max": 38002288,
+        "first": 29194184,
+        "last": 16099792
+      },
+      "allocatedCapacityBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 78462976,
+        "median": 82001920,
+        "max": 82657280,
+        "first": 78462976,
+        "last": 82657280
+      },
+      "embedderUsedBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 3138552,
+        "median": 12162816,
+        "max": 22549776,
+        "first": 11691968,
+        "last": 16064584
+      },
+      "backingStorageBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 29391857,
+        "median": 32492111.5,
+        "max": 32730208,
+        "first": 32610387,
+        "last": 29394379
+      },
+      "dom": {
+        "documents": {
+          "count": 12,
+          "missing": 0,
+          "min": 1,
+          "median": 1,
+          "max": 1,
+          "first": 1,
+          "last": 1
+        },
+        "nodes": {
+          "count": 12,
+          "missing": 0,
+          "min": 464,
+          "median": 1201.5,
+          "max": 2081,
+          "first": 1145,
+          "last": 1588
+        },
+        "listeners": {
+          "count": 12,
+          "missing": 0,
+          "min": 62,
+          "median": 79.5,
+          "max": 93,
+          "first": 79,
+          "last": 82
+        }
+      },
+      "populations": {
+        "alive": {
+          "count": 12,
+          "missing": 0,
+          "min": 22,
+          "median": 24,
+          "max": 24,
+          "first": 24,
+          "last": 24
+        },
+        "cells": {
+          "count": 12,
+          "missing": 0,
+          "min": 0,
+          "median": 0,
+          "max": 3,
+          "first": 3,
+          "last": 0
+        },
+        "retainedActors": {
+          "count": 12,
+          "missing": 0,
+          "min": 24,
+          "median": 25,
+          "max": 25,
+          "first": 25,
+          "last": 25
+        },
+        "events": {
+          "count": 12,
+          "missing": 0,
+          "min": 512,
+          "median": 512,
+          "max": 512,
+          "first": 512,
+          "last": 512
+        },
+        "effects": {
+          "count": 12,
+          "missing": 0,
+          "min": 1,
+          "median": 3,
+          "max": 10,
+          "first": 3,
+          "last": 4
+        }
+      }
+    },
+    "last60Seconds": {
+      "sampleCount": 12,
+      "usedBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 12230240,
+        "median": 27463924,
+        "max": 37122572,
+        "first": 27509896,
+        "last": 27417952
+      },
+      "allocatedCapacityBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 83775488,
+        "median": 84037632,
+        "max": 84299776,
+        "first": 83775488,
+        "last": 84299776
+      },
+      "embedderUsedBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 3839320,
+        "median": 11145936,
+        "max": 19149208,
+        "first": 11008544,
+        "last": 16291160
+      },
+      "backingStorageBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 29390931,
+        "median": 30940588.5,
+        "max": 32728730,
+        "first": 32488777,
+        "last": 29391854
+      },
+      "dom": {
+        "documents": {
+          "count": 12,
+          "missing": 0,
+          "min": 1,
+          "median": 1,
+          "max": 1,
+          "first": 1,
+          "last": 1
+        },
+        "nodes": {
+          "count": 12,
+          "missing": 0,
+          "min": 508,
+          "median": 1139,
+          "max": 1743,
+          "first": 1105,
+          "last": 1549
+        },
+        "listeners": {
+          "count": 12,
+          "missing": 0,
+          "min": 74,
+          "median": 88.5,
+          "max": 104,
+          "first": 89,
+          "last": 90
+        }
+      },
+      "populations": {
+        "alive": {
+          "count": 12,
+          "missing": 0,
+          "min": 21,
+          "median": 23,
+          "max": 24,
+          "first": 24,
+          "last": 24
+        },
+        "cells": {
+          "count": 12,
+          "missing": 0,
+          "min": 0,
+          "median": 0,
+          "max": 3,
+          "first": 3,
+          "last": 0
+        },
+        "retainedActors": {
+          "count": 12,
+          "missing": 0,
+          "min": 22,
+          "median": 24.5,
+          "max": 26,
+          "first": 25,
+          "last": 25
+        },
+        "events": {
+          "count": 12,
+          "missing": 0,
+          "min": 512,
+          "median": 512,
+          "max": 512,
+          "first": 512,
+          "last": 512
+        },
+        "effects": {
+          "count": 12,
+          "missing": 0,
+          "min": 0,
+          "median": 2,
+          "max": 6,
+          "first": 3,
+          "last": 2
+        }
+      }
+    },
+    "firstLast60Changes": {
+      "usedBytes": {
+        "sampledMinimum": {
+          "before": 12101352,
+          "after": 12230240,
+          "bytesOrCount": 128888,
+          "percent": 1.0650710763557658
+        },
+        "median": {
+          "before": 27970296,
+          "after": 27463924,
+          "bytesOrCount": -506372,
+          "percent": -1.8103919958515993
+        }
+      },
+      "allocatedCapacityBytes": {
+        "sampledMinimum": {
+          "before": 78462976,
+          "after": 83775488,
+          "bytesOrCount": 5312512,
+          "percent": 6.770724577155983
+        },
+        "median": {
+          "before": 82001920,
+          "after": 84037632,
+          "bytesOrCount": 2035712,
+          "percent": 2.4825174825174825
+        }
+      },
+      "embedderUsedBytes": {
+        "sampledMinimum": {
+          "before": 3138552,
+          "after": 3839320,
+          "bytesOrCount": 700768,
+          "percent": 22.327748592344495
+        },
+        "median": {
+          "before": 12162816,
+          "after": 11145936,
+          "bytesOrCount": -1016880,
+          "percent": -8.360563869419714
+        }
+      },
+      "backingStorageBytes": {
+        "sampledMinimum": {
+          "before": 29391857,
+          "after": 29390931,
+          "bytesOrCount": -926,
+          "percent": -0.003150532475712576
+        },
+        "median": {
+          "before": 32492111.5,
+          "after": 30940588.5,
+          "bytesOrCount": -1551523,
+          "percent": -4.775075944202642
+        }
+      }
+    },
+    "minuteWindowDefinition": "[start,start+60) active simulation seconds. A final remainder, including a lone terminal sample after 600 seconds, is labelled partial and excluded from full-minute trends.",
+    "minuteWindows": [
+      {
+        "startActiveSeconds": 0,
+        "endActiveSeconds": 60,
+        "partialWindow": false,
+        "sampleCount": 12,
+        "usedBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 12101352,
+          "median": 27970296,
+          "max": 38002288,
+          "first": 29194184,
+          "last": 16099792
+        },
+        "allocatedCapacityBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 78462976,
+          "median": 82001920,
+          "max": 82657280,
+          "first": 78462976,
+          "last": 82657280
+        },
+        "embedderUsedBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 3138552,
+          "median": 12162816,
+          "max": 22549776,
+          "first": 11691968,
+          "last": 16064584
+        },
+        "backingStorageBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 29391857,
+          "median": 32492111.5,
+          "max": 32730208,
+          "first": 32610387,
+          "last": 29394379
+        },
+        "dom": {
+          "documents": {
+            "count": 12,
+            "missing": 0,
+            "min": 1,
+            "median": 1,
+            "max": 1,
+            "first": 1,
+            "last": 1
+          },
+          "nodes": {
+            "count": 12,
+            "missing": 0,
+            "min": 464,
+            "median": 1201.5,
+            "max": 2081,
+            "first": 1145,
+            "last": 1588
+          },
+          "listeners": {
+            "count": 12,
+            "missing": 0,
+            "min": 62,
+            "median": 79.5,
+            "max": 93,
+            "first": 79,
+            "last": 82
+          }
+        },
+        "populations": {
+          "alive": {
+            "count": 12,
+            "missing": 0,
+            "min": 22,
+            "median": 24,
+            "max": 24,
+            "first": 24,
+            "last": 24
+          },
+          "cells": {
+            "count": 12,
+            "missing": 0,
+            "min": 0,
+            "median": 0,
+            "max": 3,
+            "first": 3,
+            "last": 0
+          },
+          "retainedActors": {
+            "count": 12,
+            "missing": 0,
+            "min": 24,
+            "median": 25,
+            "max": 25,
+            "first": 25,
+            "last": 25
+          },
+          "events": {
+            "count": 12,
+            "missing": 0,
+            "min": 512,
+            "median": 512,
+            "max": 512,
+            "first": 512,
+            "last": 512
+          },
+          "effects": {
+            "count": 12,
+            "missing": 0,
+            "min": 1,
+            "median": 3,
+            "max": 10,
+            "first": 3,
+            "last": 4
+          }
+        }
+      },
+      {
+        "startActiveSeconds": 60,
+        "endActiveSeconds": 120,
+        "partialWindow": false,
+        "sampleCount": 11,
+        "usedBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 19699748,
+          "median": 27648984,
+          "max": 36415996,
+          "first": 30962324,
+          "last": 20712308
+        },
+        "allocatedCapacityBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 82657280,
+          "median": 83181568,
+          "max": 83443712,
+          "first": 82657280,
+          "last": 83443712
+        },
+        "embedderUsedBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 3588376,
+          "median": 9060360,
+          "max": 16839120,
+          "first": 9480752,
+          "last": 7483032
+        },
+        "backingStorageBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 29392710,
+          "median": 29394740,
+          "max": 32971885,
+          "first": 32611728,
+          "last": 29394240
+        },
+        "dom": {
+          "documents": {
+            "count": 11,
+            "missing": 0,
+            "min": 1,
+            "median": 1,
+            "max": 1,
+            "first": 1,
+            "last": 1
+          },
+          "nodes": {
+            "count": 11,
+            "missing": 0,
+            "min": 501,
+            "median": 955,
+            "max": 1678,
+            "first": 996,
+            "last": 955
+          },
+          "listeners": {
+            "count": 11,
+            "missing": 0,
+            "min": 60,
+            "median": 70,
+            "max": 91,
+            "first": 76,
+            "last": 67
+          }
+        },
+        "populations": {
+          "alive": {
+            "count": 11,
+            "missing": 0,
+            "min": 20,
+            "median": 22,
+            "max": 24,
+            "first": 23,
+            "last": 23
+          },
+          "cells": {
+            "count": 11,
+            "missing": 0,
+            "min": 0,
+            "median": 0,
+            "max": 3,
+            "first": 3,
+            "last": 0
+          },
+          "retainedActors": {
+            "count": 11,
+            "missing": 0,
+            "min": 21,
+            "median": 23,
+            "max": 25,
+            "first": 25,
+            "last": 24
+          },
+          "events": {
+            "count": 11,
+            "missing": 0,
+            "min": 512,
+            "median": 512,
+            "max": 512,
+            "first": 512,
+            "last": 512
+          },
+          "effects": {
+            "count": 11,
+            "missing": 0,
+            "min": 1,
+            "median": 3,
+            "max": 8,
+            "first": 2,
+            "last": 4
+          }
+        }
+      },
+      {
+        "startActiveSeconds": 120,
+        "endActiveSeconds": 180,
+        "partialWindow": false,
+        "sampleCount": 12,
+        "usedBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 13343952,
+          "median": 23738280,
+          "max": 37326228,
+          "first": 15710224,
+          "last": 15002232
+        },
+        "allocatedCapacityBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 82657280,
+          "median": 83312640,
+          "max": 83968000,
+          "first": 83443712,
+          "last": 82657280
+        },
+        "embedderUsedBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 3815240,
+          "median": 11932300,
+          "max": 17118248,
+          "first": 9159024,
+          "last": 12077816
+        },
+        "backingStorageBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 29391479,
+          "median": 32489395.5,
+          "max": 32609738,
+          "first": 29393278,
+          "last": 29392977
+        },
+        "dom": {
+          "documents": {
+            "count": 12,
+            "missing": 0,
+            "min": 1,
+            "median": 1,
+            "max": 1,
+            "first": 1,
+            "last": 1
+          },
+          "nodes": {
+            "count": 12,
+            "missing": 0,
+            "min": 501,
+            "median": 1251,
+            "max": 1558,
+            "first": 949,
+            "last": 1212
+          },
+          "listeners": {
+            "count": 12,
+            "missing": 0,
+            "min": 61,
+            "median": 76,
+            "max": 89,
+            "first": 70,
+            "last": 77
+          }
+        },
+        "populations": {
+          "alive": {
+            "count": 12,
+            "missing": 0,
+            "min": 22,
+            "median": 23.5,
+            "max": 24,
+            "first": 24,
+            "last": 24
+          },
+          "cells": {
+            "count": 12,
+            "missing": 0,
+            "min": 0,
+            "median": 0,
+            "max": 3,
+            "first": 0,
+            "last": 0
+          },
+          "retainedActors": {
+            "count": 12,
+            "missing": 0,
+            "min": 23,
+            "median": 25,
+            "max": 25,
+            "first": 25,
+            "last": 25
+          },
+          "events": {
+            "count": 12,
+            "missing": 0,
+            "min": 512,
+            "median": 512,
+            "max": 512,
+            "first": 512,
+            "last": 512
+          },
+          "effects": {
+            "count": 12,
+            "missing": 0,
+            "min": 1,
+            "median": 3.5,
+            "max": 6,
+            "first": 4,
+            "last": 3
+          }
+        }
+      },
+      {
+        "startActiveSeconds": 180,
+        "endActiveSeconds": 240,
+        "partialWindow": false,
+        "sampleCount": 11,
+        "usedBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 11488776,
+          "median": 24790980,
+          "max": 37612592,
+          "first": 35928220,
+          "last": 14391220
+        },
+        "allocatedCapacityBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 82395136,
+          "median": 82919424,
+          "max": 83181568,
+          "first": 82919424,
+          "last": 82919424
+        },
+        "embedderUsedBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 3890320,
+          "median": 9443880,
+          "max": 16584232,
+          "first": 7181328,
+          "last": 9844744
+        },
+        "backingStorageBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 29391123,
+          "median": 29392985,
+          "max": 32848579,
+          "first": 32489269,
+          "last": 29392640
+        },
+        "dom": {
+          "documents": {
+            "count": 11,
+            "missing": 0,
+            "min": 1,
+            "median": 1,
+            "max": 1,
+            "first": 1,
+            "last": 1
+          },
+          "nodes": {
+            "count": 11,
+            "missing": 0,
+            "min": 506,
+            "median": 1033,
+            "max": 1545,
+            "first": 885,
+            "last": 1103
+          },
+          "listeners": {
+            "count": 11,
+            "missing": 0,
+            "min": 61,
+            "median": 71,
+            "max": 83,
+            "first": 69,
+            "last": 71
+          }
+        },
+        "populations": {
+          "alive": {
+            "count": 11,
+            "missing": 0,
+            "min": 22,
+            "median": 23,
+            "max": 24,
+            "first": 24,
+            "last": 24
+          },
+          "cells": {
+            "count": 11,
+            "missing": 0,
+            "min": 0,
+            "median": 0,
+            "max": 3,
+            "first": 3,
+            "last": 0
+          },
+          "retainedActors": {
+            "count": 11,
+            "missing": 0,
+            "min": 23,
+            "median": 25,
+            "max": 25,
+            "first": 25,
+            "last": 25
+          },
+          "events": {
+            "count": 11,
+            "missing": 0,
+            "min": 512,
+            "median": 512,
+            "max": 512,
+            "first": 512,
+            "last": 512
+          },
+          "effects": {
+            "count": 11,
+            "missing": 0,
+            "min": 0,
+            "median": 3,
+            "max": 8,
+            "first": 6,
+            "last": 3
+          }
+        }
+      },
+      {
+        "startActiveSeconds": 240,
+        "endActiveSeconds": 300,
+        "partialWindow": false,
+        "sampleCount": 12,
+        "usedBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 13156020,
+          "median": 31426416,
+          "max": 36963948,
+          "first": 35753228,
+          "last": 30444176
+        },
+        "allocatedCapacityBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 82395136,
+          "median": 82657280,
+          "max": 83705856,
+          "first": 82657280,
+          "last": 82919424
+        },
+        "embedderUsedBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 3495512,
+          "median": 11118436,
+          "max": 18960256,
+          "first": 13257272,
+          "last": 15529312
+        },
+        "backingStorageBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 29390806,
+          "median": 32487692.5,
+          "max": 32608324,
+          "first": 29392757,
+          "last": 29392133
+        },
+        "dom": {
+          "documents": {
+            "count": 12,
+            "missing": 0,
+            "min": 1,
+            "median": 1,
+            "max": 1,
+            "first": 1,
+            "last": 1
+          },
+          "nodes": {
+            "count": 12,
+            "missing": 0,
+            "min": 508,
+            "median": 1087,
+            "max": 1704,
+            "first": 1403,
+            "last": 1471
+          },
+          "listeners": {
+            "count": 12,
+            "missing": 0,
+            "min": 60,
+            "median": 76,
+            "max": 90,
+            "first": 76,
+            "last": 80
+          }
+        },
+        "populations": {
+          "alive": {
+            "count": 12,
+            "missing": 0,
+            "min": 21,
+            "median": 23,
+            "max": 24,
+            "first": 24,
+            "last": 24
+          },
+          "cells": {
+            "count": 12,
+            "missing": 0,
+            "min": 0,
+            "median": 0,
+            "max": 3,
+            "first": 0,
+            "last": 0
+          },
+          "retainedActors": {
+            "count": 12,
+            "missing": 0,
+            "min": 22,
+            "median": 25,
+            "max": 25,
+            "first": 25,
+            "last": 25
+          },
+          "events": {
+            "count": 12,
+            "missing": 0,
+            "min": 512,
+            "median": 512,
+            "max": 512,
+            "first": 512,
+            "last": 512
+          },
+          "effects": {
+            "count": 12,
+            "missing": 0,
+            "min": 1,
+            "median": 4,
+            "max": 6,
+            "first": 4,
+            "last": 4
+          }
+        }
+      },
+      {
+        "startActiveSeconds": 300,
+        "endActiveSeconds": 360,
+        "partialWindow": false,
+        "sampleCount": 11,
+        "usedBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 14383832,
+          "median": 24448800,
+          "max": 37461544,
+          "first": 37461544,
+          "last": 14383832
+        },
+        "allocatedCapacityBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 83251200,
+          "median": 83513344,
+          "max": 83775488,
+          "first": 83251200,
+          "last": 83513344
+        },
+        "embedderUsedBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 5106784,
+          "median": 10378208,
+          "max": 14289688,
+          "first": 7446488,
+          "last": 6697240
+        },
+        "backingStorageBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 29391072,
+          "median": 29511736,
+          "max": 32847636,
+          "first": 32727348,
+          "last": 29391072
+        },
+        "dom": {
+          "documents": {
+            "count": 11,
+            "missing": 0,
+            "min": 1,
+            "median": 1,
+            "max": 1,
+            "first": 1,
+            "last": 1
+          },
+          "nodes": {
+            "count": 11,
+            "missing": 0,
+            "min": 615,
+            "median": 1101,
+            "max": 1438,
+            "first": 732,
+            "last": 803
+          },
+          "listeners": {
+            "count": 11,
+            "missing": 0,
+            "min": 74,
+            "median": 84,
+            "max": 94,
+            "first": 84,
+            "last": 80
+          }
+        },
+        "populations": {
+          "alive": {
+            "count": 11,
+            "missing": 0,
+            "min": 20,
+            "median": 23,
+            "max": 24,
+            "first": 23,
+            "last": 23
+          },
+          "cells": {
+            "count": 11,
+            "missing": 0,
+            "min": 0,
+            "median": 0,
+            "max": 3,
+            "first": 3,
+            "last": 0
+          },
+          "retainedActors": {
+            "count": 11,
+            "missing": 0,
+            "min": 22,
+            "median": 24,
+            "max": 26,
+            "first": 26,
+            "last": 24
+          },
+          "events": {
+            "count": 11,
+            "missing": 0,
+            "min": 512,
+            "median": 512,
+            "max": 512,
+            "first": 512,
+            "last": 512
+          },
+          "effects": {
+            "count": 11,
+            "missing": 0,
+            "min": 1,
+            "median": 3,
+            "max": 7,
+            "first": 6,
+            "last": 3
+          }
+        }
+      },
+      {
+        "startActiveSeconds": 360,
+        "endActiveSeconds": 420,
+        "partialWindow": false,
+        "sampleCount": 12,
+        "usedBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 13639204,
+          "median": 17304836,
+          "max": 38631236,
+          "first": 22822624,
+          "last": 38631236
+        },
+        "allocatedCapacityBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 82989056,
+          "median": 83513344,
+          "max": 83775488,
+          "first": 83513344,
+          "last": 83513344
+        },
+        "embedderUsedBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 5112352,
+          "median": 11067420,
+          "max": 15934304,
+          "first": 10370128,
+          "last": 15934304
+        },
+        "backingStorageBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 29391994,
+          "median": 30940872.5,
+          "max": 32730272,
+          "first": 29392931,
+          "last": 29392106
+        },
+        "dom": {
+          "documents": {
+            "count": 12,
+            "missing": 0,
+            "min": 1,
+            "median": 1,
+            "max": 1,
+            "first": 1,
+            "last": 1
+          },
+          "nodes": {
+            "count": 12,
+            "missing": 0,
+            "min": 580,
+            "median": 1148,
+            "max": 1510,
+            "first": 1101,
+            "last": 1510
+          },
+          "listeners": {
+            "count": 12,
+            "missing": 0,
+            "min": 76,
+            "median": 88.5,
+            "max": 97,
+            "first": 84,
+            "last": 93
+          }
+        },
+        "populations": {
+          "alive": {
+            "count": 12,
+            "missing": 0,
+            "min": 22,
+            "median": 24,
+            "max": 24,
+            "first": 24,
+            "last": 24
+          },
+          "cells": {
+            "count": 12,
+            "missing": 0,
+            "min": 0,
+            "median": 0,
+            "max": 3,
+            "first": 0,
+            "last": 0
+          },
+          "retainedActors": {
+            "count": 12,
+            "missing": 0,
+            "min": 23,
+            "median": 25,
+            "max": 26,
+            "first": 25,
+            "last": 25
+          },
+          "events": {
+            "count": 12,
+            "missing": 0,
+            "min": 512,
+            "median": 512,
+            "max": 512,
+            "first": 512,
+            "last": 512
+          },
+          "effects": {
+            "count": 12,
+            "missing": 0,
+            "min": 1,
+            "median": 4,
+            "max": 8,
+            "first": 4,
+            "last": 4
+          }
+        }
+      },
+      {
+        "startActiveSeconds": 420,
+        "endActiveSeconds": 480,
+        "partialWindow": false,
+        "sampleCount": 11,
+        "usedBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 11902672,
+          "median": 30444460,
+          "max": 37135984,
+          "first": 33585832,
+          "last": 16181880
+        },
+        "allocatedCapacityBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 83513344,
+          "median": 83513344,
+          "max": 84299776,
+          "first": 83513344,
+          "last": 84299776
+        },
+        "embedderUsedBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 3307320,
+          "median": 13060328,
+          "max": 17988104,
+          "first": 16841520,
+          "last": 3307320
+        },
+        "backingStorageBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 29389445,
+          "median": 29392978,
+          "max": 32729808,
+          "first": 32490310,
+          "last": 29389445
+        },
+        "dom": {
+          "documents": {
+            "count": 11,
+            "missing": 0,
+            "min": 1,
+            "median": 1,
+            "max": 1,
+            "first": 1,
+            "last": 1
+          },
+          "nodes": {
+            "count": 11,
+            "missing": 0,
+            "min": 464,
+            "median": 1325,
+            "max": 1749,
+            "first": 1599,
+            "last": 464
+          },
+          "listeners": {
+            "count": 11,
+            "missing": 0,
+            "min": 75,
+            "median": 89,
+            "max": 102,
+            "first": 101,
+            "last": 75
+          }
+        },
+        "populations": {
+          "alive": {
+            "count": 11,
+            "missing": 0,
+            "min": 21,
+            "median": 24,
+            "max": 24,
+            "first": 24,
+            "last": 24
+          },
+          "cells": {
+            "count": 11,
+            "missing": 0,
+            "min": 0,
+            "median": 0,
+            "max": 3,
+            "first": 3,
+            "last": 0
+          },
+          "retainedActors": {
+            "count": 11,
+            "missing": 0,
+            "min": 23,
+            "median": 25,
+            "max": 25,
+            "first": 25,
+            "last": 25
+          },
+          "events": {
+            "count": 11,
+            "missing": 0,
+            "min": 512,
+            "median": 512,
+            "max": 512,
+            "first": 512,
+            "last": 512
+          },
+          "effects": {
+            "count": 11,
+            "missing": 0,
+            "min": 0,
+            "median": 4,
+            "max": 8,
+            "first": 0,
+            "last": 2
+          }
+        }
+      },
+      {
+        "startActiveSeconds": 480,
+        "endActiveSeconds": 540,
+        "partialWindow": false,
+        "sampleCount": 11,
+        "usedBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 15118028,
+          "median": 23424628,
+          "max": 37605140,
+          "first": 28069500,
+          "last": 23482392
+        },
+        "allocatedCapacityBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 83251200,
+          "median": 83775488,
+          "max": 84561920,
+          "first": 83513344,
+          "last": 84299776
+        },
+        "embedderUsedBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 4757936,
+          "median": 10924096,
+          "max": 16678696,
+          "first": 4757936,
+          "last": 6143576
+        },
+        "backingStorageBytes": {
+          "count": 11,
+          "missing": 0,
+          "min": 29390548,
+          "median": 29393463,
+          "max": 32610523,
+          "first": 29390548,
+          "last": 32489100
+        },
+        "dom": {
+          "documents": {
+            "count": 11,
+            "missing": 0,
+            "min": 1,
+            "median": 1,
+            "max": 1,
+            "first": 1,
+            "last": 1
+          },
+          "nodes": {
+            "count": 11,
+            "missing": 0,
+            "min": 614,
+            "median": 1110,
+            "max": 1518,
+            "first": 614,
+            "last": 693
+          },
+          "listeners": {
+            "count": 11,
+            "missing": 0,
+            "min": 74,
+            "median": 88,
+            "max": 98,
+            "first": 74,
+            "last": 80
+          }
+        },
+        "populations": {
+          "alive": {
+            "count": 11,
+            "missing": 0,
+            "min": 22,
+            "median": 24,
+            "max": 24,
+            "first": 24,
+            "last": 23
+          },
+          "cells": {
+            "count": 11,
+            "missing": 0,
+            "min": 0,
+            "median": 0,
+            "max": 3,
+            "first": 0,
+            "last": 3
+          },
+          "retainedActors": {
+            "count": 11,
+            "missing": 0,
+            "min": 23,
+            "median": 25,
+            "max": 25,
+            "first": 25,
+            "last": 24
+          },
+          "events": {
+            "count": 11,
+            "missing": 0,
+            "min": 512,
+            "median": 512,
+            "max": 512,
+            "first": 512,
+            "last": 512
+          },
+          "effects": {
+            "count": 11,
+            "missing": 0,
+            "min": 1,
+            "median": 2,
+            "max": 5,
+            "first": 5,
+            "last": 4
+          }
+        }
+      },
+      {
+        "startActiveSeconds": 540,
+        "endActiveSeconds": 600,
+        "partialWindow": false,
+        "sampleCount": 12,
+        "usedBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 12230240,
+          "median": 27818898,
+          "max": 37122572,
+          "first": 29297788,
+          "last": 37122572
+        },
+        "allocatedCapacityBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 83775488,
+          "median": 84037632,
+          "max": 84299776,
+          "first": 83775488,
+          "last": 84037632
+        },
+        "embedderUsedBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 3839320,
+          "median": 9769924,
+          "max": 19149208,
+          "first": 4585096,
+          "last": 11283328
+        },
+        "backingStorageBytes": {
+          "count": 12,
+          "missing": 0,
+          "min": 29390931,
+          "median": 30940588.5,
+          "max": 32728730,
+          "first": 29391427,
+          "last": 29392225
+        },
+        "dom": {
+          "documents": {
+            "count": 12,
+            "missing": 0,
+            "min": 1,
+            "median": 1,
+            "max": 1,
+            "first": 1,
+            "last": 1
+          },
+          "nodes": {
+            "count": 12,
+            "missing": 0,
+            "min": 508,
+            "median": 1008.5,
+            "max": 1743,
+            "first": 614,
+            "last": 1175
+          },
+          "listeners": {
+            "count": 12,
+            "missing": 0,
+            "min": 74,
+            "median": 87,
+            "max": 104,
+            "first": 74,
+            "last": 88
+          }
+        },
+        "populations": {
+          "alive": {
+            "count": 12,
+            "missing": 0,
+            "min": 21,
+            "median": 23,
+            "max": 24,
+            "first": 24,
+            "last": 24
+          },
+          "cells": {
+            "count": 12,
+            "missing": 0,
+            "min": 0,
+            "median": 0,
+            "max": 3,
+            "first": 0,
+            "last": 0
+          },
+          "retainedActors": {
+            "count": 12,
+            "missing": 0,
+            "min": 22,
+            "median": 24.5,
+            "max": 26,
+            "first": 25,
+            "last": 25
+          },
+          "events": {
+            "count": 12,
+            "missing": 0,
+            "min": 512,
+            "median": 512,
+            "max": 512,
+            "first": 512,
+            "last": 512
+          },
+          "effects": {
+            "count": 12,
+            "missing": 0,
+            "min": 0,
+            "median": 2,
+            "max": 6,
+            "first": 2,
+            "last": 1
+          }
+        }
+      },
+      {
+        "startActiveSeconds": 600,
+        "endActiveSeconds": 600.2666666666667,
+        "partialWindow": true,
+        "sampleCount": 1,
+        "usedBytes": {
+          "count": 1,
+          "missing": 0,
+          "min": 27417952,
+          "median": 27417952,
+          "max": 27417952,
+          "first": 27417952,
+          "last": 27417952
+        },
+        "allocatedCapacityBytes": {
+          "count": 1,
+          "missing": 0,
+          "min": 84299776,
+          "median": 84299776,
+          "max": 84299776,
+          "first": 84299776,
+          "last": 84299776
+        },
+        "embedderUsedBytes": {
+          "count": 1,
+          "missing": 0,
+          "min": 16291160,
+          "median": 16291160,
+          "max": 16291160,
+          "first": 16291160,
+          "last": 16291160
+        },
+        "backingStorageBytes": {
+          "count": 1,
+          "missing": 0,
+          "min": 29391854,
+          "median": 29391854,
+          "max": 29391854,
+          "first": 29391854,
+          "last": 29391854
+        },
+        "dom": {
+          "documents": {
+            "count": 1,
+            "missing": 0,
+            "min": 1,
+            "median": 1,
+            "max": 1,
+            "first": 1,
+            "last": 1
+          },
+          "nodes": {
+            "count": 1,
+            "missing": 0,
+            "min": 1549,
+            "median": 1549,
+            "max": 1549,
+            "first": 1549,
+            "last": 1549
+          },
+          "listeners": {
+            "count": 1,
+            "missing": 0,
+            "min": 90,
+            "median": 90,
+            "max": 90,
+            "first": 90,
+            "last": 90
+          }
+        },
+        "populations": {
+          "alive": {
+            "count": 1,
+            "missing": 0,
+            "min": 24,
+            "median": 24,
+            "max": 24,
+            "first": 24,
+            "last": 24
+          },
+          "cells": {
+            "count": 1,
+            "missing": 0,
+            "min": 0,
+            "median": 0,
+            "max": 0,
+            "first": 0,
+            "last": 0
+          },
+          "retainedActors": {
+            "count": 1,
+            "missing": 0,
+            "min": 25,
+            "median": 25,
+            "max": 25,
+            "first": 25,
+            "last": 25
+          },
+          "events": {
+            "count": 1,
+            "missing": 0,
+            "min": 512,
+            "median": 512,
+            "max": 512,
+            "first": 512,
+            "last": 512
+          },
+          "effects": {
+            "count": 1,
+            "missing": 0,
+            "min": 2,
+            "median": 2,
+            "max": 2,
+            "first": 2,
+            "last": 2
+          }
+        }
+      }
+    ],
+    "laterMinuteBaseline": {
+      "definition": "First complete minute beginning at or after 60 active seconds versus the last complete minute. These sampled minima are not post-GC retained-live-object floors.",
+      "fromStartActiveSeconds": 60,
+      "toStartActiveSeconds": 540,
+      "changes": {
+        "usedBytes": {
+          "sampledMinimum": {
+            "before": 19699748,
+            "after": 12230240,
+            "bytesOrCount": -7469508,
+            "percent": -37.91676929065286
+          },
+          "median": {
+            "before": 27648984,
+            "after": 27818898,
+            "bytesOrCount": 169914,
+            "percent": 0.6145397603036697
+          }
+        },
+        "allocatedCapacityBytes": {
+          "sampledMinimum": {
+            "before": 82657280,
+            "after": 83775488,
+            "bytesOrCount": 1118208,
+            "percent": 1.3528245787908821
+          },
+          "median": {
+            "before": 83181568,
+            "after": 84037632,
+            "bytesOrCount": 856064,
+            "percent": 1.0291510734685838
+          }
+        },
+        "embedderUsedBytes": {
+          "sampledMinimum": {
+            "before": 3588376,
+            "after": 3839320,
+            "bytesOrCount": 250944,
+            "percent": 6.993247084474982
+          },
+          "median": {
+            "before": 9060360,
+            "after": 9769924,
+            "bytesOrCount": 709564,
+            "percent": 7.831521043313952
+          }
+        },
+        "backingStorageBytes": {
+          "sampledMinimum": {
+            "before": 29392710,
+            "after": 29390931,
+            "bytesOrCount": -1779,
+            "percent": -0.006052521186375805
+          },
+          "median": {
+            "before": 29394740,
+            "after": 30940588.5,
+            "bytesOrCount": 1545848.5,
+            "percent": 5.258928978449886
+          }
+        }
+      }
+    },
+    "fullMinuteTrends": {
+      "usedBytes": {
+        "medianSequenceDirection": "nonmonotonic",
+        "minimumSequenceDirection": "nonmonotonic",
+        "medianLinearSlopeBytesPerMinute": -162655.89090909093,
+        "minimumLinearSlopeBytesPerMinute": -184480.9212121212
+      },
+      "allocatedCapacityBytes": {
+        "medianSequenceDirection": "nonmonotonic",
+        "minimumSequenceDirection": "nonmonotonic",
+        "medianLinearSlopeBytesPerMinute": 158304.19393939394,
+        "minimumLinearSlopeBytesPerMinute": 356898.13333333336
+      },
+      "embedderUsedBytes": {
+        "medianSequenceDirection": "nonmonotonic",
+        "minimumSequenceDirection": "nonmonotonic",
+        "medianLinearSlopeBytesPerMinute": 7761.551515151516,
+        "minimumLinearSlopeBytesPerMinute": 104433.93939393939
+      },
+      "backingStorageBytes": {
+        "medianSequenceDirection": "nonmonotonic",
+        "minimumSequenceDirection": "nonmonotonic",
+        "medianLinearSlopeBytesPerMinute": -168406.22727272726,
+        "minimumLinearSlopeBytesPerMinute": -186.4181818181818
+      }
+    },
+    "byQuality": {
+      "standard": {
+        "sampleCount": 58,
+        "usedBytes": {
+          "count": 58,
+          "missing": 0,
+          "min": 11488776,
+          "median": 26522510,
+          "max": 38002288,
+          "first": 29194184,
+          "last": 30444176
+        },
+        "allocatedCapacityBytes": {
+          "count": 58,
+          "missing": 0,
+          "min": 78462976,
+          "median": 82919424,
+          "max": 83968000,
+          "first": 78462976,
+          "last": 82919424
+        },
+        "embedderUsedBytes": {
+          "count": 58,
+          "missing": 0,
+          "min": 3138552,
+          "median": 10480592,
+          "max": 22549776,
+          "first": 11691968,
+          "last": 15529312
+        },
+        "backingStorageBytes": {
+          "count": 58,
+          "missing": 0,
+          "min": 29390806,
+          "median": 32487692.5,
+          "max": 32971885,
+          "first": 32610387,
+          "last": 29392133
+        },
+        "dom": {
+          "documents": {
+            "count": 58,
+            "missing": 0,
+            "min": 1,
+            "median": 1,
+            "max": 1,
+            "first": 1,
+            "last": 1
+          },
+          "nodes": {
+            "count": 58,
+            "missing": 0,
+            "min": 464,
+            "median": 1105,
+            "max": 2081,
+            "first": 1145,
+            "last": 1471
+          },
+          "listeners": {
+            "count": 58,
+            "missing": 0,
+            "min": 60,
+            "median": 75,
+            "max": 93,
+            "first": 79,
+            "last": 80
+          }
+        },
+        "populations": {
+          "alive": {
+            "count": 58,
+            "missing": 0,
+            "min": 20,
+            "median": 23,
+            "max": 24,
+            "first": 24,
+            "last": 24
+          },
+          "cells": {
+            "count": 58,
+            "missing": 0,
+            "min": 0,
+            "median": 0,
+            "max": 3,
+            "first": 3,
+            "last": 0
+          },
+          "retainedActors": {
+            "count": 58,
+            "missing": 0,
+            "min": 21,
+            "median": 25,
+            "max": 25,
+            "first": 25,
+            "last": 25
+          },
+          "events": {
+            "count": 58,
+            "missing": 0,
+            "min": 512,
+            "median": 512,
+            "max": 512,
+            "first": 512,
+            "last": 512
+          },
+          "effects": {
+            "count": 58,
+            "missing": 0,
+            "min": 0,
+            "median": 3.5,
+            "max": 10,
+            "first": 3,
+            "last": 4
+          }
+        }
+      },
+      "low": {
+        "sampleCount": 58,
+        "usedBytes": {
+          "count": 58,
+          "missing": 0,
+          "min": 11902672,
+          "median": 24401394,
+          "max": 38631236,
+          "first": 37461544,
+          "last": 27417952
+        },
+        "allocatedCapacityBytes": {
+          "count": 58,
+          "missing": 0,
+          "min": 82989056,
+          "median": 83513344,
+          "max": 84561920,
+          "first": 83251200,
+          "last": 84299776
+        },
+        "embedderUsedBytes": {
+          "count": 58,
+          "missing": 0,
+          "min": 3307320,
+          "median": 11003732,
+          "max": 19149208,
+          "first": 7446488,
+          "last": 16291160
+        },
+        "backingStorageBytes": {
+          "count": 58,
+          "missing": 0,
+          "min": 29389445,
+          "median": 29393742,
+          "max": 32847636,
+          "first": 32727348,
+          "last": 29391854
+        },
+        "dom": {
+          "documents": {
+            "count": 58,
+            "missing": 0,
+            "min": 1,
+            "median": 1,
+            "max": 1,
+            "first": 1,
+            "last": 1
+          },
+          "nodes": {
+            "count": 58,
+            "missing": 0,
+            "min": 464,
+            "median": 1110.5,
+            "max": 1749,
+            "first": 732,
+            "last": 1549
+          },
+          "listeners": {
+            "count": 58,
+            "missing": 0,
+            "min": 74,
+            "median": 88,
+            "max": 104,
+            "first": 84,
+            "last": 90
+          }
+        },
+        "populations": {
+          "alive": {
+            "count": 58,
+            "missing": 0,
+            "min": 20,
+            "median": 23,
+            "max": 24,
+            "first": 23,
+            "last": 24
+          },
+          "cells": {
+            "count": 58,
+            "missing": 0,
+            "min": 0,
+            "median": 0,
+            "max": 3,
+            "first": 3,
+            "last": 0
+          },
+          "retainedActors": {
+            "count": 58,
+            "missing": 0,
+            "min": 22,
+            "median": 25,
+            "max": 26,
+            "first": 26,
+            "last": 25
+          },
+          "events": {
+            "count": 58,
+            "missing": 0,
+            "min": 512,
+            "median": 512,
+            "max": 512,
+            "first": 512,
+            "last": 512
+          },
+          "effects": {
+            "count": 58,
+            "missing": 0,
+            "min": 0,
+            "median": 3,
+            "max": 8,
+            "first": 6,
+            "last": 2
+          }
+        }
+      }
+    },
+    "sampledDecreases": {
+      "count": 65,
+      "totalDecreaseBytes": 593485312,
+      "largestDecreaseBytes": 23077564,
+      "interpretation": "A sampled fall shows lower occupied size between observations. GC events were not instrumented, so this is not an exact GC count or allocation-throughput measurement.",
+      "rows": [
+        {
+          "beforeActiveSeconds": 0.0666666666666913,
+          "afterActiveSeconds": 5.28333333333336,
+          "beforeTick": 8855,
+          "afterTick": 9168,
+          "beforeUsedBytes": 29194184,
+          "afterUsedBytes": 26382996,
+          "decreaseBytes": 2811188,
+          "decreasePercent": 9.629274104732641
+        },
+        {
+          "beforeActiveSeconds": 5.28333333333336,
+          "afterActiveSeconds": 10.300000000000011,
+          "beforeTick": 9168,
+          "afterTick": 9469,
+          "beforeUsedBytes": 26382996,
+          "afterUsedBytes": 19760912,
+          "decreaseBytes": 6622084,
+          "decreasePercent": 25.09981807979655
+        },
+        {
+          "beforeActiveSeconds": 15.600000000000023,
+          "afterActiveSeconds": 20.883333333333354,
+          "beforeTick": 9787,
+          "afterTick": 10104,
+          "beforeUsedBytes": 31237808,
+          "afterUsedBytes": 26746408,
+          "decreaseBytes": 4491400,
+          "decreasePercent": 14.378089525359783
+        },
+        {
+          "beforeActiveSeconds": 20.883333333333354,
+          "afterActiveSeconds": 26.100000000000023,
+          "beforeTick": 10104,
+          "afterTick": 10417,
+          "beforeUsedBytes": 26746408,
+          "afterUsedBytes": 15330800,
+          "decreaseBytes": 11415608,
+          "decreasePercent": 42.6809013008401
+        },
+        {
+          "beforeActiveSeconds": 41.633333333333354,
+          "afterActiveSeconds": 46.93333333333334,
+          "beforeTick": 11349,
+          "afterTick": 11667,
+          "beforeUsedBytes": 33696460,
+          "afterUsedBytes": 12101352,
+          "decreaseBytes": 21595108,
+          "decreasePercent": 64.08717117465753
+        },
+        {
+          "beforeActiveSeconds": 51.98333333333335,
+          "afterActiveSeconds": 57.25,
+          "beforeTick": 11970,
+          "afterTick": 12286,
+          "beforeUsedBytes": 38002288,
+          "afterUsedBytes": 16099792,
+          "decreaseBytes": 21902496,
+          "decreasePercent": 57.63467715417556
+        },
+        {
+          "beforeActiveSeconds": 62.48333333333335,
+          "afterActiveSeconds": 67.76666666666668,
+          "beforeTick": 12600,
+          "afterTick": 12917,
+          "beforeUsedBytes": 30962324,
+          "afterUsedBytes": 21568176,
+          "decreaseBytes": 9394148,
+          "decreasePercent": 30.340577793837436
+        },
+        {
+          "beforeActiveSeconds": 73.05000000000001,
+          "afterActiveSeconds": 78.28333333333333,
+          "beforeTick": 13234,
+          "afterTick": 13548,
+          "beforeUsedBytes": 36415996,
+          "afterUsedBytes": 31341560,
+          "decreaseBytes": 5074436,
+          "decreasePercent": 13.934634658900997
+        },
+        {
+          "beforeActiveSeconds": 78.28333333333333,
+          "afterActiveSeconds": 83.55000000000001,
+          "beforeTick": 13548,
+          "afterTick": 13864,
+          "beforeUsedBytes": 31341560,
+          "afterUsedBytes": 19699748,
+          "decreaseBytes": 11641812,
+          "decreasePercent": 37.14496661940248
+        },
+        {
+          "beforeActiveSeconds": 88.83333333333334,
+          "afterActiveSeconds": 94.06666666666669,
+          "beforeTick": 14181,
+          "afterTick": 14495,
+          "beforeUsedBytes": 27648984,
+          "afterUsedBytes": 23246704,
+          "decreaseBytes": 4402280,
+          "decreasePercent": 15.922031710098281
+        },
+        {
+          "beforeActiveSeconds": 94.06666666666669,
+          "afterActiveSeconds": 99.31666666666669,
+          "beforeTick": 14495,
+          "afterTick": 14810,
+          "beforeUsedBytes": 23246704,
+          "afterUsedBytes": 21462780,
+          "decreaseBytes": 1783924,
+          "decreasePercent": 7.6738792733800025
+        },
+        {
+          "beforeActiveSeconds": 104.58333333333334,
+          "afterActiveSeconds": 109.85000000000002,
+          "beforeTick": 15126,
+          "afterTick": 15442,
+          "beforeUsedBytes": 32565968,
+          "afterUsedBytes": 29703032,
+          "decreaseBytes": 2862936,
+          "decreasePercent": 8.791189624702696
+        },
+        {
+          "beforeActiveSeconds": 109.85000000000002,
+          "afterActiveSeconds": 114.85000000000002,
+          "beforeTick": 15442,
+          "afterTick": 15742,
+          "beforeUsedBytes": 29703032,
+          "afterUsedBytes": 20712308,
+          "decreaseBytes": 8990724,
+          "decreasePercent": 30.26870792180408
+        },
+        {
+          "beforeActiveSeconds": 114.85000000000002,
+          "afterActiveSeconds": 120.10000000000002,
+          "beforeTick": 15742,
+          "afterTick": 16057,
+          "beforeUsedBytes": 20712308,
+          "afterUsedBytes": 15710224,
+          "decreaseBytes": 5002084,
+          "decreasePercent": 24.150297494610452
+        },
+        {
+          "beforeActiveSeconds": 125.36666666666667,
+          "afterActiveSeconds": 130.65000000000003,
+          "beforeTick": 16373,
+          "afterTick": 16690,
+          "beforeUsedBytes": 35564576,
+          "afterUsedBytes": 26218828,
+          "decreaseBytes": 9345748,
+          "decreasePercent": 26.27824945811248
+        },
+        {
+          "beforeActiveSeconds": 136,
+          "afterActiveSeconds": 141.3,
+          "beforeTick": 17011,
+          "afterTick": 17329,
+          "beforeUsedBytes": 35178904,
+          "afterUsedBytes": 15484620,
+          "decreaseBytes": 19694284,
+          "decreasePercent": 55.983222217497165
+        },
+        {
+          "beforeActiveSeconds": 146.58333333333337,
+          "afterActiveSeconds": 151.85000000000002,
+          "beforeTick": 17646,
+          "afterTick": 17962,
+          "beforeUsedBytes": 22469364,
+          "afterUsedBytes": 13343952,
+          "decreaseBytes": 9125412,
+          "decreasePercent": 40.61268489842436
+        },
+        {
+          "beforeActiveSeconds": 157.10000000000002,
+          "afterActiveSeconds": 162.38333333333333,
+          "beforeTick": 18277,
+          "afterTick": 18594,
+          "beforeUsedBytes": 37326228,
+          "afterUsedBytes": 25007196,
+          "decreaseBytes": 12319032,
+          "decreasePercent": 33.00368845199145
+        },
+        {
+          "beforeActiveSeconds": 162.38333333333333,
+          "afterActiveSeconds": 167.66666666666669,
+          "beforeTick": 18594,
+          "afterTick": 18911,
+          "beforeUsedBytes": 25007196,
+          "afterUsedBytes": 19007424,
+          "decreaseBytes": 5999772,
+          "decreasePercent": 23.992182090307125
+        },
+        {
+          "beforeActiveSeconds": 172.95,
+          "afterActiveSeconds": 178.2,
+          "beforeTick": 19228,
+          "afterTick": 19543,
+          "beforeUsedBytes": 32044864,
+          "afterUsedBytes": 15002232,
+          "decreaseBytes": 17042632,
+          "decreasePercent": 53.183661506567795
+        },
+        {
+          "beforeActiveSeconds": 183.48333333333335,
+          "afterActiveSeconds": 188.75,
+          "beforeTick": 19860,
+          "afterTick": 20176,
+          "beforeUsedBytes": 35928220,
+          "afterUsedBytes": 19843544,
+          "decreaseBytes": 16084676,
+          "decreasePercent": 44.76891980732694
+        },
+        {
+          "beforeActiveSeconds": 194,
+          "afterActiveSeconds": 199.25,
+          "beforeTick": 20491,
+          "afterTick": 20806,
+          "beforeUsedBytes": 24790980,
+          "afterUsedBytes": 12806876,
+          "decreaseBytes": 11984104,
+          "decreasePercent": 48.34058193746274
+        },
+        {
+          "beforeActiveSeconds": 209.73333333333335,
+          "afterActiveSeconds": 214.98333333333335,
+          "beforeTick": 21435,
+          "afterTick": 21750,
+          "beforeUsedBytes": 37612592,
+          "afterUsedBytes": 26662024,
+          "decreaseBytes": 10950568,
+          "decreasePercent": 29.114100937260584
+        },
+        {
+          "beforeActiveSeconds": 214.98333333333335,
+          "afterActiveSeconds": 220.26666666666665,
+          "beforeTick": 21750,
+          "afterTick": 22067,
+          "beforeUsedBytes": 26662024,
+          "afterUsedBytes": 12938352,
+          "decreaseBytes": 13723672,
+          "decreasePercent": 51.472731402537185
+        },
+        {
+          "beforeActiveSeconds": 225.5,
+          "afterActiveSeconds": 230.75,
+          "beforeTick": 22381,
+          "afterTick": 22696,
+          "beforeUsedBytes": 25869000,
+          "afterUsedBytes": 11488776,
+          "decreaseBytes": 14380224,
+          "decreasePercent": 55.58863504580772
+        },
+        {
+          "beforeActiveSeconds": 241.26666666666665,
+          "afterActiveSeconds": 246.51666666666665,
+          "beforeTick": 23327,
+          "afterTick": 23642,
+          "beforeUsedBytes": 35753228,
+          "afterUsedBytes": 16186668,
+          "decreaseBytes": 19566560,
+          "decreasePercent": 54.72669488752177
+        },
+        {
+          "beforeActiveSeconds": 251.81666666666666,
+          "afterActiveSeconds": 257.05,
+          "beforeTick": 23960,
+          "afterTick": 24274,
+          "beforeUsedBytes": 36963948,
+          "afterUsedBytes": 33709332,
+          "decreaseBytes": 3254616,
+          "decreasePercent": 8.804838703917666
+        },
+        {
+          "beforeActiveSeconds": 257.05,
+          "afterActiveSeconds": 262.3,
+          "beforeTick": 24274,
+          "afterTick": 24589,
+          "beforeUsedBytes": 33709332,
+          "afterUsedBytes": 15185872,
+          "decreaseBytes": 18523460,
+          "decreasePercent": 54.9505401056301
+        },
+        {
+          "beforeActiveSeconds": 267.6,
+          "afterActiveSeconds": 272.81666666666666,
+          "beforeTick": 24907,
+          "afterTick": 25220,
+          "beforeUsedBytes": 28146184,
+          "afterUsedBytes": 13156020,
+          "decreaseBytes": 14990164,
+          "decreasePercent": 53.258246304365805
+        },
+        {
+          "beforeActiveSeconds": 278.1166666666667,
+          "afterActiveSeconds": 283.3333333333333,
+          "beforeTick": 25538,
+          "afterTick": 25851,
+          "beforeUsedBytes": 36044744,
+          "afterUsedBytes": 32408656,
+          "decreaseBytes": 3636088,
+          "decreasePercent": 10.08770654606397
+        },
+        {
+          "beforeActiveSeconds": 283.3333333333333,
+          "afterActiveSeconds": 288.5833333333333,
+          "beforeTick": 25851,
+          "afterTick": 26166,
+          "beforeUsedBytes": 32408656,
+          "afterUsedBytes": 16074860,
+          "decreaseBytes": 16333796,
+          "decreasePercent": 50.39948586575142
+        },
+        {
+          "beforeActiveSeconds": 293.85,
+          "afterActiveSeconds": 299.06666666666666,
+          "beforeTick": 26482,
+          "afterTick": 26795,
+          "beforeUsedBytes": 35068472,
+          "afterUsedBytes": 30444176,
+          "decreaseBytes": 4624296,
+          "decreasePercent": 13.186477015593951
+        },
+        {
+          "beforeActiveSeconds": 304.18333333333334,
+          "afterActiveSeconds": 309.18333333333334,
+          "beforeTick": 27102,
+          "afterTick": 27402,
+          "beforeUsedBytes": 37461544,
+          "afterUsedBytes": 24783348,
+          "decreaseBytes": 12678196,
+          "decreasePercent": 33.843228672048326
+        },
+        {
+          "beforeActiveSeconds": 309.18333333333334,
+          "afterActiveSeconds": 314.43333333333334,
+          "beforeTick": 27402,
+          "afterTick": 27717,
+          "beforeUsedBytes": 24783348,
+          "afterUsedBytes": 22588756,
+          "decreaseBytes": 2194592,
+          "decreasePercent": 8.855107066244642
+        },
+        {
+          "beforeActiveSeconds": 319.75,
+          "afterActiveSeconds": 325.06666666666666,
+          "beforeTick": 28036,
+          "afterTick": 28355,
+          "beforeUsedBytes": 33931080,
+          "afterUsedBytes": 24448800,
+          "decreaseBytes": 9482280,
+          "decreasePercent": 27.94570641429627
+        },
+        {
+          "beforeActiveSeconds": 325.06666666666666,
+          "afterActiveSeconds": 330.3666666666667,
+          "beforeTick": 28355,
+          "afterTick": 28673,
+          "beforeUsedBytes": 24448800,
+          "afterUsedBytes": 15150336,
+          "decreaseBytes": 9298464,
+          "decreasePercent": 38.032394227937566
+        },
+        {
+          "beforeActiveSeconds": 335.5833333333333,
+          "afterActiveSeconds": 340.8833333333333,
+          "beforeTick": 28986,
+          "afterTick": 29304,
+          "beforeUsedBytes": 16493608,
+          "afterUsedBytes": 15622636,
+          "decreaseBytes": 870972,
+          "decreasePercent": 5.280663879000883
+        },
+        {
+          "beforeActiveSeconds": 346.1333333333333,
+          "afterActiveSeconds": 351.2,
+          "beforeTick": 29619,
+          "afterTick": 29923,
+          "beforeUsedBytes": 37146492,
+          "afterUsedBytes": 28509700,
+          "decreaseBytes": 8636792,
+          "decreasePercent": 23.250626196411766
+        },
+        {
+          "beforeActiveSeconds": 351.2,
+          "afterActiveSeconds": 356.4666666666667,
+          "beforeTick": 29923,
+          "afterTick": 30239,
+          "beforeUsedBytes": 28509700,
+          "afterUsedBytes": 14383832,
+          "decreaseBytes": 14125868,
+          "decreasePercent": 49.54758555859936
+        },
+        {
+          "beforeActiveSeconds": 361.68333333333334,
+          "afterActiveSeconds": 366.9666666666667,
+          "beforeTick": 30552,
+          "afterTick": 30869,
+          "beforeUsedBytes": 22822624,
+          "afterUsedBytes": 15104748,
+          "decreaseBytes": 7717876,
+          "decreasePercent": 33.81677759752779
+        },
+        {
+          "beforeActiveSeconds": 366.9666666666667,
+          "afterActiveSeconds": 372.20000000000005,
+          "beforeTick": 30869,
+          "afterTick": 31183,
+          "beforeUsedBytes": 15104748,
+          "afterUsedBytes": 15063232,
+          "decreaseBytes": 41516,
+          "decreasePercent": 0.2748539730686007
+        },
+        {
+          "beforeActiveSeconds": 377.41666666666663,
+          "afterActiveSeconds": 382.70000000000005,
+          "beforeTick": 31496,
+          "afterTick": 31813,
+          "beforeUsedBytes": 27020188,
+          "afterUsedBytes": 18031804,
+          "decreaseBytes": 8988384,
+          "decreasePercent": 33.26543841959945
+        },
+        {
+          "beforeActiveSeconds": 382.70000000000005,
+          "afterActiveSeconds": 387.9333333333334,
+          "beforeTick": 31813,
+          "afterTick": 32127,
+          "beforeUsedBytes": 18031804,
+          "afterUsedBytes": 15490216,
+          "decreaseBytes": 2541588,
+          "decreasePercent": 14.09502898323429
+        },
+        {
+          "beforeActiveSeconds": 398.48333333333335,
+          "afterActiveSeconds": 403.75,
+          "beforeTick": 32760,
+          "afterTick": 33076,
+          "beforeUsedBytes": 37713940,
+          "afterUsedBytes": 14636376,
+          "decreaseBytes": 23077564,
+          "decreasePercent": 61.19107152421625
+        },
+        {
+          "beforeActiveSeconds": 408.98333333333335,
+          "afterActiveSeconds": 414.2833333333333,
+          "beforeTick": 33390,
+          "afterTick": 33708,
+          "beforeUsedBytes": 16577868,
+          "afterUsedBytes": 13639204,
+          "decreaseBytes": 2938664,
+          "decreasePercent": 17.726428995574096
+        },
+        {
+          "beforeActiveSeconds": 419.54999999999995,
+          "afterActiveSeconds": 424.76666666666665,
+          "beforeTick": 34024,
+          "afterTick": 34337,
+          "beforeUsedBytes": 38631236,
+          "afterUsedBytes": 33585832,
+          "decreaseBytes": 5045404,
+          "decreasePercent": 13.060426024163451
+        },
+        {
+          "beforeActiveSeconds": 424.76666666666665,
+          "afterActiveSeconds": 430.01666666666665,
+          "beforeTick": 34337,
+          "afterTick": 34652,
+          "beforeUsedBytes": 33585832,
+          "afterUsedBytes": 21197868,
+          "decreaseBytes": 12387964,
+          "decreasePercent": 36.884493437589995
+        },
+        {
+          "beforeActiveSeconds": 435.26666666666665,
+          "afterActiveSeconds": 440.48333333333335,
+          "beforeTick": 34967,
+          "afterTick": 35280,
+          "beforeUsedBytes": 26704436,
+          "afterUsedBytes": 11902672,
+          "decreaseBytes": 14801764,
+          "decreasePercent": 55.4281093972552
+        },
+        {
+          "beforeActiveSeconds": 445.70000000000005,
+          "afterActiveSeconds": 450.98333333333335,
+          "beforeTick": 35593,
+          "afterTick": 35910,
+          "beforeUsedBytes": 34837076,
+          "afterUsedBytes": 25635368,
+          "decreaseBytes": 9201708,
+          "decreasePercent": 26.413548599773414
+        },
+        {
+          "beforeActiveSeconds": 461.5666666666667,
+          "afterActiveSeconds": 466.8166666666667,
+          "beforeTick": 36545,
+          "afterTick": 36860,
+          "beforeUsedBytes": 37135984,
+          "afterUsedBytes": 33636296,
+          "decreaseBytes": 3499688,
+          "decreasePercent": 9.423980794476861
+        },
+        {
+          "beforeActiveSeconds": 466.8166666666667,
+          "afterActiveSeconds": 472.08333333333337,
+          "beforeTick": 36860,
+          "afterTick": 37176,
+          "beforeUsedBytes": 33636296,
+          "afterUsedBytes": 33239972,
+          "decreaseBytes": 396324,
+          "decreasePercent": 1.1782629098043376
+        },
+        {
+          "beforeActiveSeconds": 472.08333333333337,
+          "afterActiveSeconds": 477.3833333333333,
+          "beforeTick": 37176,
+          "afterTick": 37494,
+          "beforeUsedBytes": 33239972,
+          "afterUsedBytes": 16181880,
+          "decreaseBytes": 17058092,
+          "decreasePercent": 51.31800953382272
+        },
+        {
+          "beforeActiveSeconds": 482.65,
+          "afterActiveSeconds": 487.9333333333334,
+          "beforeTick": 37810,
+          "afterTick": 38127,
+          "beforeUsedBytes": 28069500,
+          "afterUsedBytes": 23424628,
+          "decreaseBytes": 4644872,
+          "decreasePercent": 16.547754680346998
+        },
+        {
+          "beforeActiveSeconds": 487.9333333333334,
+          "afterActiveSeconds": 493.2166666666667,
+          "beforeTick": 38127,
+          "afterTick": 38444,
+          "beforeUsedBytes": 23424628,
+          "afterUsedBytes": 15118028,
+          "decreaseBytes": 8306600,
+          "decreasePercent": 35.4609686864611
+        },
+        {
+          "beforeActiveSeconds": 498.45000000000005,
+          "afterActiveSeconds": 503.45000000000005,
+          "beforeTick": 38758,
+          "afterTick": 39058,
+          "beforeUsedBytes": 17729700,
+          "afterUsedBytes": 17043000,
+          "decreaseBytes": 686700,
+          "decreasePercent": 3.873161982436251
+        },
+        {
+          "beforeActiveSeconds": 503.45000000000005,
+          "afterActiveSeconds": 508.4666666666667,
+          "beforeTick": 39058,
+          "afterTick": 39359,
+          "beforeUsedBytes": 17043000,
+          "afterUsedBytes": 16101436,
+          "decreaseBytes": 941564,
+          "decreasePercent": 5.52463768115942
+        },
+        {
+          "beforeActiveSeconds": 519.0666666666667,
+          "afterActiveSeconds": 524.3166666666667,
+          "beforeTick": 39995,
+          "afterTick": 40310,
+          "beforeUsedBytes": 28480164,
+          "afterUsedBytes": 24353988,
+          "decreaseBytes": 4126176,
+          "decreasePercent": 14.487894100609813
+        },
+        {
+          "beforeActiveSeconds": 529.55,
+          "afterActiveSeconds": 534.85,
+          "beforeTick": 40624,
+          "afterTick": 40942,
+          "beforeUsedBytes": 37605140,
+          "afterUsedBytes": 23482392,
+          "decreaseBytes": 14122748,
+          "decreasePercent": 37.555366101548884
+        },
+        {
+          "beforeActiveSeconds": 540.1666666666666,
+          "afterActiveSeconds": 545.4166666666666,
+          "beforeTick": 41261,
+          "afterTick": 41576,
+          "beforeUsedBytes": 29297788,
+          "afterUsedBytes": 27509896,
+          "decreaseBytes": 1787892,
+          "decreasePercent": 6.102481183903713
+        },
+        {
+          "beforeActiveSeconds": 545.4166666666666,
+          "afterActiveSeconds": 550.7,
+          "beforeTick": 41576,
+          "afterTick": 41893,
+          "beforeUsedBytes": 27509896,
+          "afterUsedBytes": 12356788,
+          "decreaseBytes": 15153108,
+          "decreasePercent": 55.082389260940865
+        },
+        {
+          "beforeActiveSeconds": 550.7,
+          "afterActiveSeconds": 555.9666666666667,
+          "beforeTick": 41893,
+          "afterTick": 42209,
+          "beforeUsedBytes": 12356788,
+          "afterUsedBytes": 12230240,
+          "decreaseBytes": 126548,
+          "decreasePercent": 1.0241172706046264
+        },
+        {
+          "beforeActiveSeconds": 566.5,
+          "afterActiveSeconds": 571.7333333333333,
+          "beforeTick": 42841,
+          "afterTick": 43155,
+          "beforeUsedBytes": 28816152,
+          "afterUsedBytes": 28127900,
+          "decreaseBytes": 688252,
+          "decreasePercent": 2.3884243808819443
+        },
+        {
+          "beforeActiveSeconds": 577,
+          "afterActiveSeconds": 582.2666666666667,
+          "beforeTick": 43471,
+          "afterTick": 43787,
+          "beforeUsedBytes": 30857148,
+          "afterUsedBytes": 14849260,
+          "decreaseBytes": 16007888,
+          "decreasePercent": 51.87740616858045
+        },
+        {
+          "beforeActiveSeconds": 587.4666666666667,
+          "afterActiveSeconds": 592.7,
+          "beforeTick": 44099,
+          "afterTick": 44413,
+          "beforeUsedBytes": 36261176,
+          "afterUsedBytes": 23625864,
+          "decreaseBytes": 12635312,
+          "decreasePercent": 34.845290180329506
+        },
+        {
+          "beforeActiveSeconds": 597.9333333333334,
+          "afterActiveSeconds": 600.2666666666667,
+          "beforeTick": 44727,
+          "afterTick": 44867,
+          "beforeUsedBytes": 37122572,
+          "afterUsedBytes": 27417952,
+          "decreaseBytes": 9704620,
+          "decreasePercent": 26.14210028335321
+        }
+      ]
+    }
+  },
+  "postMeasurement": {
+    "present": false,
+    "scope": null,
+    "forcedGcSeparateFromNaturalMeasurement": true,
+    "checkpoints": [],
+    "missingMenuCheckpoints": [
+      "returned-menu",
+      "menu-after-5-restarts",
+      "menu-after-10-restarts"
+    ],
+    "menuStepDeltas": [],
+    "menuTenRestartDelta": null,
+    "usedBytesIncreaseAtBothMenuSteps": null,
+    "nodesIncreaseAtBothMenuSteps": null,
+    "listenersIncreaseAtBothMenuSteps": null,
+    "interpretation": "Exact same-menu-phase retained deltas are reported separately from natural observations. Both positive steps call for allocation/source-path review; they do not by themselves prove a leak. Start/Q/pause/menu cycles are not completed-game settlement cycles."
+  },
+  "presentationEvidence": {
+    "denseStandard": {
+      "tick": 8855,
+      "activeSimulationSeconds": 0.0666666666666913,
+      "producers": [
+        {
+          "id": "source-b",
+          "hp": 238,
+          "maxHp": 238,
+          "active": true,
+          "openEdges": [
+            "source-b:valve"
+          ],
+          "nextSpawnAt": 154,
+          "producing": true
+        },
+        {
+          "id": "heart-retained-source",
+          "hp": 238,
+          "maxHp": 238,
+          "active": true,
+          "openEdges": [
+            "heart-retained-source:valve"
+          ],
+          "nextSpawnAt": 155.51666666666665,
+          "producing": true
+        }
+      ]
+    },
+    "denseLow": {
+      "tick": 26989,
+      "activeSimulationSeconds": 302.3,
+      "producers": [
+        {
+          "id": "source-b",
+          "hp": 238,
+          "maxHp": 238,
+          "active": true,
+          "openEdges": [
+            "source-b:valve"
+          ],
+          "nextSpawnAt": 450,
+          "producing": true
+        },
+        {
+          "id": "heart-retained-source",
+          "hp": 238,
+          "maxHp": 238,
+          "active": true,
+          "openEdges": [
+            "heart-retained-source:valve"
+          ],
+          "nextSpawnAt": 451.51666666666665,
+          "producing": true
+        }
+      ]
+    },
+    "savedDenseGameStates": [
+      {
+        "quality": "standard",
+        "source": "artifacts/qualification-v087/performance-attempt-1/dense-standard-state.json",
+        "sha256": "db78239483e3510425942f29548d26a2cc196b5da3dc66e067c4d0fb6ce40b93",
+        "phase": "playing",
+        "tick": 8855,
+        "aliveActors": 24,
+        "retainedActors": 25,
+        "cells": 3,
+        "events": 512,
+        "effects": 3,
+        "phaserDiagnosticsPresent": false
+      },
+      {
+        "quality": "low",
+        "source": "artifacts/qualification-v087/performance-attempt-1/dense-low-state.json",
+        "sha256": "c0b356db1e3b93b3f7fc77d7f50ec8a3e00a3e7067d11597d182879e296e8eb2",
+        "phase": "playing",
+        "tick": 26989,
+        "aliveActors": 24,
+        "retainedActors": 25,
+        "cells": 3,
+        "events": 512,
+        "effects": 7,
+        "phaserDiagnosticsPresent": false
+      }
+    ],
+    "phaserTextureAndLayerCountersAvailable": false,
+    "note": "This measurement schema records gameplay snapshots at dense captures, not Phaser diagnostics. Texture, pooled-sprite and raster-layer counts cannot be inferred from actor counts."
+  },
+  "interpretationLimits": [
+    "The evidence covers only the recorded 600.267 active seconds, device, browser, route and two quality settings; no indefinite plateau, all-route or all-device claim is assigned.",
+    "Read minute medians and sampled minima together; neither one low terminal sample nor an allocated-capacity increase alone establishes retained-object stability or a leak.",
+    "Used V8 heap, allocated capacity, embedder heap and backing storage are separate counters. None is total browser/process RSS, GPU/VRAM use or the complete native Canvas/WebGL allocation.",
+    "Natural five-second occupied-size observations include temporary objects awaiting collection. Later forced-GC values describe different, explicitly collected checkpoints and must not be mixed into natural timing or trend arrays.",
+    "Slope/direction labels are arithmetic descriptions of recorded samples, with no invented leak threshold or automatic acceptance verdict."
+  ],
+  "plotRows": [
+    {
+      "activeSeconds": 0.0666666666666913,
+      "usedBytes": 29194184,
+      "allocatedCapacityBytes": 78462976,
+      "embedderUsedBytes": 11691968,
+      "backingStorageBytes": 32610387
+    },
+    {
+      "activeSeconds": 5.28333333333336,
+      "usedBytes": 26382996,
+      "allocatedCapacityBytes": 81870848,
+      "embedderUsedBytes": 9387456,
+      "backingStorageBytes": 32611238
+    },
+    {
+      "activeSeconds": 10.300000000000011,
+      "usedBytes": 19760912,
+      "allocatedCapacityBytes": 81870848,
+      "embedderUsedBytes": 3138552,
+      "backingStorageBytes": 29391857
+    },
+    {
+      "activeSeconds": 15.600000000000023,
+      "usedBytes": 31237808,
+      "allocatedCapacityBytes": 82132992,
+      "embedderUsedBytes": 11762728,
+      "backingStorageBytes": 32610355
+    },
+    {
+      "activeSeconds": 20.883333333333354,
+      "usedBytes": 26746408,
+      "allocatedCapacityBytes": 81870848,
+      "embedderUsedBytes": 12562904,
+      "backingStorageBytes": 32730208
+    },
+    {
+      "activeSeconds": 26.100000000000023,
+      "usedBytes": 15330800,
+      "allocatedCapacityBytes": 81870848,
+      "embedderUsedBytes": 9473504,
+      "backingStorageBytes": 29394236
+    },
+    {
+      "activeSeconds": 31.133333333333354,
+      "usedBytes": 32854928,
+      "allocatedCapacityBytes": 81870848,
+      "embedderUsedBytes": 16914440,
+      "backingStorageBytes": 32611909
+    },
+    {
+      "activeSeconds": 36.416666666666686,
+      "usedBytes": 33619312,
+      "allocatedCapacityBytes": 82395136,
+      "embedderUsedBytes": 17229272,
+      "backingStorageBytes": 32491636
+    },
+    {
+      "activeSeconds": 41.633333333333354,
+      "usedBytes": 33696460,
+      "allocatedCapacityBytes": 82395136,
+      "embedderUsedBytes": 14454848,
+      "backingStorageBytes": 29394828
+    },
+    {
+      "activeSeconds": 46.93333333333334,
+      "usedBytes": 12101352,
+      "allocatedCapacityBytes": 82395136,
+      "embedderUsedBytes": 7667024,
+      "backingStorageBytes": 32490051
+    },
+    {
+      "activeSeconds": 51.98333333333335,
+      "usedBytes": 38002288,
+      "allocatedCapacityBytes": 82395136,
+      "embedderUsedBytes": 22549776,
+      "backingStorageBytes": 32492587
+    },
+    {
+      "activeSeconds": 57.25,
+      "usedBytes": 16099792,
+      "allocatedCapacityBytes": 82657280,
+      "embedderUsedBytes": 16064584,
+      "backingStorageBytes": 29394379
+    },
+    {
+      "activeSeconds": 62.48333333333335,
+      "usedBytes": 30962324,
+      "allocatedCapacityBytes": 82657280,
+      "embedderUsedBytes": 9480752,
+      "backingStorageBytes": 32611728
+    },
+    {
+      "activeSeconds": 67.76666666666668,
+      "usedBytes": 21568176,
+      "allocatedCapacityBytes": 82919424,
+      "embedderUsedBytes": 6917000,
+      "backingStorageBytes": 29394740
+    },
+    {
+      "activeSeconds": 73.05000000000001,
+      "usedBytes": 36415996,
+      "allocatedCapacityBytes": 82919424,
+      "embedderUsedBytes": 9060360,
+      "backingStorageBytes": 29392858
+    },
+    {
+      "activeSeconds": 78.28333333333333,
+      "usedBytes": 31341560,
+      "allocatedCapacityBytes": 82919424,
+      "embedderUsedBytes": 16839120,
+      "backingStorageBytes": 32971885
+    },
+    {
+      "activeSeconds": 83.55000000000001,
+      "usedBytes": 19699748,
+      "allocatedCapacityBytes": 83181568,
+      "embedderUsedBytes": 11499032,
+      "backingStorageBytes": 29394278
+    },
+    {
+      "activeSeconds": 88.83333333333334,
+      "usedBytes": 27648984,
+      "allocatedCapacityBytes": 83181568,
+      "embedderUsedBytes": 12115920,
+      "backingStorageBytes": 29394804
+    },
+    {
+      "activeSeconds": 94.06666666666669,
+      "usedBytes": 23246704,
+      "allocatedCapacityBytes": 83181568,
+      "embedderUsedBytes": 6517864,
+      "backingStorageBytes": 32610721
+    },
+    {
+      "activeSeconds": 99.31666666666669,
+      "usedBytes": 21462780,
+      "allocatedCapacityBytes": 83443712,
+      "embedderUsedBytes": 3588376,
+      "backingStorageBytes": 29392710
+    },
+    {
+      "activeSeconds": 104.58333333333334,
+      "usedBytes": 32565968,
+      "allocatedCapacityBytes": 83443712,
+      "embedderUsedBytes": 5496368,
+      "backingStorageBytes": 29393265
+    },
+    {
+      "activeSeconds": 109.85000000000002,
+      "usedBytes": 29703032,
+      "allocatedCapacityBytes": 83443712,
+      "embedderUsedBytes": 12773832,
+      "backingStorageBytes": 32612211
+    },
+    {
+      "activeSeconds": 114.85000000000002,
+      "usedBytes": 20712308,
+      "allocatedCapacityBytes": 83443712,
+      "embedderUsedBytes": 7483032,
+      "backingStorageBytes": 29394240
+    },
+    {
+      "activeSeconds": 120.10000000000002,
+      "usedBytes": 15710224,
+      "allocatedCapacityBytes": 83443712,
+      "embedderUsedBytes": 9159024,
+      "backingStorageBytes": 29393278
+    },
+    {
+      "activeSeconds": 125.36666666666667,
+      "usedBytes": 35564576,
+      "allocatedCapacityBytes": 83181568,
+      "embedderUsedBytes": 15274072,
+      "backingStorageBytes": 32491965
+    },
+    {
+      "activeSeconds": 130.65000000000003,
+      "usedBytes": 26218828,
+      "allocatedCapacityBytes": 83443712,
+      "embedderUsedBytes": 11786784,
+      "backingStorageBytes": 29394251
+    },
+    {
+      "activeSeconds": 136,
+      "usedBytes": 35178904,
+      "allocatedCapacityBytes": 82919424,
+      "embedderUsedBytes": 4896208,
+      "backingStorageBytes": 32489152
+    },
+    {
+      "activeSeconds": 141.3,
+      "usedBytes": 15484620,
+      "allocatedCapacityBytes": 83968000,
+      "embedderUsedBytes": 6209312,
+      "backingStorageBytes": 32489639
+    },
+    {
+      "activeSeconds": 146.58333333333337,
+      "usedBytes": 22469364,
+      "allocatedCapacityBytes": 83181568,
+      "embedderUsedBytes": 3815240,
+      "backingStorageBytes": 29391479
+    },
+    {
+      "activeSeconds": 151.85000000000002,
+      "usedBytes": 13343952,
+      "allocatedCapacityBytes": 83443712,
+      "embedderUsedBytes": 11060280,
+      "backingStorageBytes": 32490314
+    },
+    {
+      "activeSeconds": 157.10000000000002,
+      "usedBytes": 37326228,
+      "allocatedCapacityBytes": 83443712,
+      "embedderUsedBytes": 13145896,
+      "backingStorageBytes": 32490283
+    },
+    {
+      "activeSeconds": 162.38333333333333,
+      "usedBytes": 25007196,
+      "allocatedCapacityBytes": 83443712,
+      "embedderUsedBytes": 12911080,
+      "backingStorageBytes": 29393012
+    },
+    {
+      "activeSeconds": 167.66666666666669,
+      "usedBytes": 19007424,
+      "allocatedCapacityBytes": 83181568,
+      "embedderUsedBytes": 17118248,
+      "backingStorageBytes": 32609738
+    },
+    {
+      "activeSeconds": 172.95,
+      "usedBytes": 32044864,
+      "allocatedCapacityBytes": 83181568,
+      "embedderUsedBytes": 15753448,
+      "backingStorageBytes": 32490810
+    },
+    {
+      "activeSeconds": 178.2,
+      "usedBytes": 15002232,
+      "allocatedCapacityBytes": 82657280,
+      "embedderUsedBytes": 12077816,
+      "backingStorageBytes": 29392977
+    },
+    {
+      "activeSeconds": 183.48333333333335,
+      "usedBytes": 35928220,
+      "allocatedCapacityBytes": 82919424,
+      "embedderUsedBytes": 7181328,
+      "backingStorageBytes": 32489269
+    },
+    {
+      "activeSeconds": 188.75,
+      "usedBytes": 19843544,
+      "allocatedCapacityBytes": 82657280,
+      "embedderUsedBytes": 6955824,
+      "backingStorageBytes": 29391123
+    },
+    {
+      "activeSeconds": 194,
+      "usedBytes": 24790980,
+      "allocatedCapacityBytes": 82919424,
+      "embedderUsedBytes": 11172120,
+      "backingStorageBytes": 29392978
+    },
+    {
+      "activeSeconds": 199.25,
+      "usedBytes": 12806876,
+      "allocatedCapacityBytes": 82657280,
+      "embedderUsedBytes": 10219944,
+      "backingStorageBytes": 32609584
+    },
+    {
+      "activeSeconds": 204.48333333333335,
+      "usedBytes": 30140008,
+      "allocatedCapacityBytes": 82657280,
+      "embedderUsedBytes": 8913208,
+      "backingStorageBytes": 29391593
+    },
+    {
+      "activeSeconds": 209.73333333333335,
+      "usedBytes": 37612592,
+      "allocatedCapacityBytes": 82919424,
+      "embedderUsedBytes": 9443880,
+      "backingStorageBytes": 29392985
+    },
+    {
+      "activeSeconds": 214.98333333333335,
+      "usedBytes": 26662024,
+      "allocatedCapacityBytes": 83181568,
+      "embedderUsedBytes": 3890320,
+      "backingStorageBytes": 32848579
+    },
+    {
+      "activeSeconds": 220.26666666666665,
+      "usedBytes": 12938352,
+      "allocatedCapacityBytes": 82919424,
+      "embedderUsedBytes": 16584232,
+      "backingStorageBytes": 29393010
+    },
+    {
+      "activeSeconds": 225.5,
+      "usedBytes": 25869000,
+      "allocatedCapacityBytes": 82395136,
+      "embedderUsedBytes": 4153360,
+      "backingStorageBytes": 29391949
+    },
+    {
+      "activeSeconds": 230.75,
+      "usedBytes": 11488776,
+      "allocatedCapacityBytes": 82919424,
+      "embedderUsedBytes": 10452320,
+      "backingStorageBytes": 32729469
+    },
+    {
+      "activeSeconds": 236.01666666666665,
+      "usedBytes": 14391220,
+      "allocatedCapacityBytes": 82919424,
+      "embedderUsedBytes": 9844744,
+      "backingStorageBytes": 29392640
+    },
+    {
+      "activeSeconds": 241.26666666666665,
+      "usedBytes": 35753228,
+      "allocatedCapacityBytes": 82657280,
+      "embedderUsedBytes": 13257272,
+      "backingStorageBytes": 29392757
+    },
+    {
+      "activeSeconds": 246.51666666666665,
+      "usedBytes": 16186668,
+      "allocatedCapacityBytes": 82657280,
+      "embedderUsedBytes": 16387392,
+      "backingStorageBytes": 32489032
+    },
+    {
+      "activeSeconds": 251.81666666666666,
+      "usedBytes": 36963948,
+      "allocatedCapacityBytes": 82919424,
+      "embedderUsedBytes": 12585080,
+      "backingStorageBytes": 29390806
+    },
+    {
+      "activeSeconds": 257.05,
+      "usedBytes": 33709332,
+      "allocatedCapacityBytes": 82395136,
+      "embedderUsedBytes": 4605976,
+      "backingStorageBytes": 32487453
+    },
+    {
+      "activeSeconds": 262.3,
+      "usedBytes": 15185872,
+      "allocatedCapacityBytes": 82657280,
+      "embedderUsedBytes": 6058120,
+      "backingStorageBytes": 32487932
+    },
+    {
+      "activeSeconds": 267.6,
+      "usedBytes": 28146184,
+      "allocatedCapacityBytes": 82657280,
+      "embedderUsedBytes": 5102776,
+      "backingStorageBytes": 29391115
+    },
+    {
+      "activeSeconds": 272.81666666666666,
+      "usedBytes": 13156020,
+      "allocatedCapacityBytes": 82657280,
+      "embedderUsedBytes": 10508864,
+      "backingStorageBytes": 32608324
+    },
+    {
+      "activeSeconds": 278.1166666666667,
+      "usedBytes": 36044744,
+      "allocatedCapacityBytes": 83705856,
+      "embedderUsedBytes": 11728008,
+      "backingStorageBytes": 32489273
+    },
+    {
+      "activeSeconds": 283.3333333333333,
+      "usedBytes": 32408656,
+      "allocatedCapacityBytes": 82657280,
+      "embedderUsedBytes": 9375224,
+      "backingStorageBytes": 29392089
+    },
+    {
+      "activeSeconds": 288.5833333333333,
+      "usedBytes": 16074860,
+      "allocatedCapacityBytes": 82657280,
+      "embedderUsedBytes": 3495512,
+      "backingStorageBytes": 32608066
+    },
+    {
+      "activeSeconds": 293.85,
+      "usedBytes": 35068472,
+      "allocatedCapacityBytes": 82919424,
+      "embedderUsedBytes": 18960256,
+      "backingStorageBytes": 32489877
+    },
+    {
+      "activeSeconds": 299.06666666666666,
+      "usedBytes": 30444176,
+      "allocatedCapacityBytes": 82919424,
+      "embedderUsedBytes": 15529312,
+      "backingStorageBytes": 29392133
+    },
+    {
+      "activeSeconds": 304.18333333333334,
+      "usedBytes": 37461544,
+      "allocatedCapacityBytes": 83251200,
+      "embedderUsedBytes": 7446488,
+      "backingStorageBytes": 32727348
+    },
+    {
+      "activeSeconds": 309.18333333333334,
+      "usedBytes": 24783348,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 5106784,
+      "backingStorageBytes": 32847636
+    },
+    {
+      "activeSeconds": 314.43333333333334,
+      "usedBytes": 22588756,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 7584832,
+      "backingStorageBytes": 29391922
+    },
+    {
+      "activeSeconds": 319.75,
+      "usedBytes": 33931080,
+      "allocatedCapacityBytes": 83251200,
+      "embedderUsedBytes": 12758160,
+      "backingStorageBytes": 32608951
+    },
+    {
+      "activeSeconds": 325.06666666666666,
+      "usedBytes": 24448800,
+      "allocatedCapacityBytes": 83251200,
+      "embedderUsedBytes": 11582336,
+      "backingStorageBytes": 29511736
+    },
+    {
+      "activeSeconds": 330.3666666666667,
+      "usedBytes": 15150336,
+      "allocatedCapacityBytes": 83775488,
+      "embedderUsedBytes": 14289688,
+      "backingStorageBytes": 29392463
+    },
+    {
+      "activeSeconds": 335.5833333333333,
+      "usedBytes": 16493608,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 11045184,
+      "backingStorageBytes": 32489774
+    },
+    {
+      "activeSeconds": 340.8833333333333,
+      "usedBytes": 15622636,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 10378208,
+      "backingStorageBytes": 29391940
+    },
+    {
+      "activeSeconds": 346.1333333333333,
+      "usedBytes": 37146492,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 12418816,
+      "backingStorageBytes": 29391432
+    },
+    {
+      "activeSeconds": 351.2,
+      "usedBytes": 28509700,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 6483928,
+      "backingStorageBytes": 32487720
+    },
+    {
+      "activeSeconds": 356.4666666666667,
+      "usedBytes": 14383832,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 6697240,
+      "backingStorageBytes": 29391072
+    },
+    {
+      "activeSeconds": 361.68333333333334,
+      "usedBytes": 22822624,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 10370128,
+      "backingStorageBytes": 29392931
+    },
+    {
+      "activeSeconds": 366.9666666666667,
+      "usedBytes": 15104748,
+      "allocatedCapacityBytes": 83251200,
+      "embedderUsedBytes": 10998920,
+      "backingStorageBytes": 32729725
+    },
+    {
+      "activeSeconds": 372.20000000000005,
+      "usedBytes": 15063232,
+      "allocatedCapacityBytes": 82989056,
+      "embedderUsedBytes": 9956952,
+      "backingStorageBytes": 29391994
+    },
+    {
+      "activeSeconds": 377.41666666666663,
+      "usedBytes": 27020188,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 14460600,
+      "backingStorageBytes": 29394021
+    },
+    {
+      "activeSeconds": 382.70000000000005,
+      "usedBytes": 18031804,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 14272752,
+      "backingStorageBytes": 32730272
+    },
+    {
+      "activeSeconds": 387.9333333333334,
+      "usedBytes": 15490216,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 12945032,
+      "backingStorageBytes": 29392462
+    },
+    {
+      "activeSeconds": 393.1833333333334,
+      "usedBytes": 36294028,
+      "allocatedCapacityBytes": 83775488,
+      "embedderUsedBytes": 5112352,
+      "backingStorageBytes": 32487724
+    },
+    {
+      "activeSeconds": 398.48333333333335,
+      "usedBytes": 37713940,
+      "allocatedCapacityBytes": 83775488,
+      "embedderUsedBytes": 7620600,
+      "backingStorageBytes": 32728746
+    },
+    {
+      "activeSeconds": 403.75,
+      "usedBytes": 14636376,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 6354352,
+      "backingStorageBytes": 29392427
+    },
+    {
+      "activeSeconds": 408.98333333333335,
+      "usedBytes": 16577868,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 11135920,
+      "backingStorageBytes": 32491114
+    },
+    {
+      "activeSeconds": 414.2833333333333,
+      "usedBytes": 13639204,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 15816464,
+      "backingStorageBytes": 32489295
+    },
+    {
+      "activeSeconds": 419.54999999999995,
+      "usedBytes": 38631236,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 15934304,
+      "backingStorageBytes": 29392106
+    },
+    {
+      "activeSeconds": 424.76666666666665,
+      "usedBytes": 33585832,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 16841520,
+      "backingStorageBytes": 32490310
+    },
+    {
+      "activeSeconds": 430.01666666666665,
+      "usedBytes": 21197868,
+      "allocatedCapacityBytes": 83775488,
+      "embedderUsedBytes": 17988104,
+      "backingStorageBytes": 32729344
+    },
+    {
+      "activeSeconds": 435.26666666666665,
+      "usedBytes": 26704436,
+      "allocatedCapacityBytes": 83775488,
+      "embedderUsedBytes": 14402800,
+      "backingStorageBytes": 29392978
+    },
+    {
+      "activeSeconds": 440.48333333333335,
+      "usedBytes": 11902672,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 7872416,
+      "backingStorageBytes": 32727873
+    },
+    {
+      "activeSeconds": 445.70000000000005,
+      "usedBytes": 34837076,
+      "allocatedCapacityBytes": 83775488,
+      "embedderUsedBytes": 5821888,
+      "backingStorageBytes": 29391432
+    },
+    {
+      "activeSeconds": 450.98333333333335,
+      "usedBytes": 25635368,
+      "allocatedCapacityBytes": 83775488,
+      "embedderUsedBytes": 7294144,
+      "backingStorageBytes": 29391931
+    },
+    {
+      "activeSeconds": 456.2833333333333,
+      "usedBytes": 30444460,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 15414528,
+      "backingStorageBytes": 32729808
+    },
+    {
+      "activeSeconds": 461.5666666666667,
+      "usedBytes": 37135984,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 13060328,
+      "backingStorageBytes": 29392495
+    },
+    {
+      "activeSeconds": 466.8166666666667,
+      "usedBytes": 33636296,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 15907808,
+      "backingStorageBytes": 29392497
+    },
+    {
+      "activeSeconds": 472.08333333333337,
+      "usedBytes": 33239972,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 4592520,
+      "backingStorageBytes": 32488600
+    },
+    {
+      "activeSeconds": 477.3833333333333,
+      "usedBytes": 16181880,
+      "allocatedCapacityBytes": 84299776,
+      "embedderUsedBytes": 3307320,
+      "backingStorageBytes": 29389445
+    },
+    {
+      "activeSeconds": 482.65,
+      "usedBytes": 28069500,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 4757936,
+      "backingStorageBytes": 29390548
+    },
+    {
+      "activeSeconds": 487.9333333333334,
+      "usedBytes": 23424628,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 10924096,
+      "backingStorageBytes": 32609919
+    },
+    {
+      "activeSeconds": 493.2166666666667,
+      "usedBytes": 15118028,
+      "allocatedCapacityBytes": 83775488,
+      "embedderUsedBytes": 9186944,
+      "backingStorageBytes": 29391431
+    },
+    {
+      "activeSeconds": 498.45000000000005,
+      "usedBytes": 17729700,
+      "allocatedCapacityBytes": 83775488,
+      "embedderUsedBytes": 13478184,
+      "backingStorageBytes": 29393463
+    },
+    {
+      "activeSeconds": 503.45000000000005,
+      "usedBytes": 17043000,
+      "allocatedCapacityBytes": 84299776,
+      "embedderUsedBytes": 13780312,
+      "backingStorageBytes": 32610523
+    },
+    {
+      "activeSeconds": 508.4666666666667,
+      "usedBytes": 16101436,
+      "allocatedCapacityBytes": 83251200,
+      "embedderUsedBytes": 9597312,
+      "backingStorageBytes": 29391940
+    },
+    {
+      "activeSeconds": 513.7666666666667,
+      "usedBytes": 22444556,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 12741880,
+      "backingStorageBytes": 29391432
+    },
+    {
+      "activeSeconds": 519.0666666666667,
+      "usedBytes": 28480164,
+      "allocatedCapacityBytes": 84037632,
+      "embedderUsedBytes": 16678696,
+      "backingStorageBytes": 32491050
+    },
+    {
+      "activeSeconds": 524.3166666666667,
+      "usedBytes": 24353988,
+      "allocatedCapacityBytes": 83513344,
+      "embedderUsedBytes": 15816096,
+      "backingStorageBytes": 29392931
+    },
+    {
+      "activeSeconds": 529.55,
+      "usedBytes": 37605140,
+      "allocatedCapacityBytes": 84561920,
+      "embedderUsedBytes": 5058232,
+      "backingStorageBytes": 32608537
+    },
+    {
+      "activeSeconds": 534.85,
+      "usedBytes": 23482392,
+      "allocatedCapacityBytes": 84299776,
+      "embedderUsedBytes": 6143576,
+      "backingStorageBytes": 32489100
+    },
+    {
+      "activeSeconds": 540.1666666666666,
+      "usedBytes": 29297788,
+      "allocatedCapacityBytes": 83775488,
+      "embedderUsedBytes": 4585096,
+      "backingStorageBytes": 29391427
+    },
+    {
+      "activeSeconds": 545.4166666666666,
+      "usedBytes": 27509896,
+      "allocatedCapacityBytes": 83775488,
+      "embedderUsedBytes": 11008544,
+      "backingStorageBytes": 32488777
+    },
+    {
+      "activeSeconds": 550.7,
+      "usedBytes": 12356788,
+      "allocatedCapacityBytes": 84037632,
+      "embedderUsedBytes": 12712456,
+      "backingStorageBytes": 32490185
+    },
+    {
+      "activeSeconds": 555.9666666666667,
+      "usedBytes": 12230240,
+      "allocatedCapacityBytes": 84037632,
+      "embedderUsedBytes": 11501456,
+      "backingStorageBytes": 29392400
+    },
+    {
+      "activeSeconds": 561.25,
+      "usedBytes": 16226136,
+      "allocatedCapacityBytes": 84037632,
+      "embedderUsedBytes": 3839320,
+      "backingStorageBytes": 32607520
+    },
+    {
+      "activeSeconds": 566.5,
+      "usedBytes": 28816152,
+      "allocatedCapacityBytes": 84037632,
+      "embedderUsedBytes": 19149208,
+      "backingStorageBytes": 32490590
+    },
+    {
+      "activeSeconds": 571.7333333333333,
+      "usedBytes": 28127900,
+      "allocatedCapacityBytes": 83775488,
+      "embedderUsedBytes": 4721448,
+      "backingStorageBytes": 29390931
+    },
+    {
+      "activeSeconds": 577,
+      "usedBytes": 30857148,
+      "allocatedCapacityBytes": 84037632,
+      "embedderUsedBytes": 6704968,
+      "backingStorageBytes": 32728730
+    },
+    {
+      "activeSeconds": 582.2666666666667,
+      "usedBytes": 14849260,
+      "allocatedCapacityBytes": 84037632,
+      "embedderUsedBytes": 6544024,
+      "backingStorageBytes": 29391426
+    },
+    {
+      "activeSeconds": 587.4666666666667,
+      "usedBytes": 36261176,
+      "allocatedCapacityBytes": 83775488,
+      "embedderUsedBytes": 8531304,
+      "backingStorageBytes": 29391184
+    },
+    {
+      "activeSeconds": 592.7,
+      "usedBytes": 23625864,
+      "allocatedCapacityBytes": 84299776,
+      "embedderUsedBytes": 13148192,
+      "backingStorageBytes": 32609250
+    },
+    {
+      "activeSeconds": 597.9333333333334,
+      "usedBytes": 37122572,
+      "allocatedCapacityBytes": 84037632,
+      "embedderUsedBytes": 11283328,
+      "backingStorageBytes": 29392225
+    },
+    {
+      "activeSeconds": 600.2666666666667,
+      "usedBytes": 27417952,
+      "allocatedCapacityBytes": 84299776,
+      "embedderUsedBytes": 16291160,
+      "backingStorageBytes": 29391854
+    }
+  ]
+}

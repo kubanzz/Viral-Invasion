@@ -1,0 +1,30 @@
+import { spawn } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { createWriteStream, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { finished } from 'node:stream/promises';
+const root = process.cwd(), folder = 'artifacts/qualification-v087';
+const script = '.tools/native-qualification-feasibility/qualify-v087-receipt.mjs';
+const expectedScript = '18b1068e0e3008a32e8a44c85ce0976be53241a80553110a587b3bb59e388f76';
+const expectedGame = '27a37e8a83be3b077037991e05826970629cfca01d83ce07dee5cd30e6e8b4ae';
+const sha = path => createHash('sha256').update(readFileSync(path)).digest('hex');
+const prior = JSON.parse(readFileSync(`${folder}/performance-attempt-1/runner-summary.json`, 'utf8'));
+if (!prior.finishedAt || !Object.hasOwn(prior, 'exitCode')) throw Error('Performance has not terminated');
+if (sha(script) !== expectedScript || sha('dist/game.js') !== expectedGame) throw Error('Native script/build changed');
+if (existsSync(`${folder}/native-launch.json`) || existsSync(`${folder}/native-attempt-1`)) throw Error('Preserve native attempt');
+mkdirSync(folder, { recursive: true });
+const environment = { VI_NATIVE_BUILD_SHA256: expectedGame, VI_NATIVE_GPU_WINDOW: 'granted', VI_NATIVE_ENTRY: 'dist/index.html' };
+const startedAt = new Date().toISOString();
+writeFileSync(`${folder}/native-launch.json`, JSON.stringify({ startedAt, script, scriptSha256: expectedScript, environment,
+  scope: 'One sequential Chrome/Edge native-window and official-settings qualification. Separate fresh profiles. No new simulation inputs, builds or gameplay changes.' }, null, 2), { flag: 'wx' });
+const stdout = createWriteStream(`${folder}/native.stdout.log`, { flags: 'wx' }), stderr = createWriteStream(`${folder}/native.stderr.log`, { flags: 'wx' });
+const child = spawn(process.execPath, [script, '--run'], { cwd: root, windowsHide: true, env: { ...process.env, ...environment }, stdio: ['ignore', 'pipe', 'pipe'] });
+child.stdout.pipe(stdout); child.stderr.pipe(stderr);
+child.stdout.on('data', bytes => process.stdout.write(bytes)); child.stderr.on('data', bytes => process.stderr.write(bytes));
+const completion = await new Promise(resolve => {
+  child.once('error', error => resolve({ exitCode: null, signal: null, error: String(error) }));
+  child.once('close', (exitCode, signal) => resolve({ exitCode, signal, error: null }));
+});
+await Promise.all([finished(stdout), finished(stderr)]);
+const sourceUnchanged = sha(script) === expectedScript && sha('dist/game.js') === expectedGame;
+writeFileSync(`${folder}/native-command.json`, JSON.stringify({ startedAt, finishedAt: new Date().toISOString(), ...completion, sourceUnchanged }, null, 2), { flag: 'wx' });
+if (completion.exitCode !== 0 || !sourceUnchanged) process.exitCode = 1;

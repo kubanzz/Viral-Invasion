@@ -1,0 +1,370 @@
+{
+  "schemaVersion": 1,
+  "version": "0.8.7",
+  "at": "2026-10-27T22:50:24.878Z",
+  "sourceCommit": "ebea008",
+  "gameplayChanged": false,
+  "previousGoalTurn": "progress",
+  "productGoalComplete": false,
+  "build": {
+    "gameSha256": "27a37e8a83be3b077037991e05826970629cfca01d83ce07dee5cd30e6e8b4ae",
+    "sourceInputs": 142,
+    "currentSourceMatches": true,
+    "zip": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-G4-v0.8.7.zip",
+    "zipBytes": 5266711,
+    "zipSha256": "720d7947f8966b21fbca8adb2ef27f25714e324377fa5c7b484b962fc3a448f9"
+  },
+  "pressure": {
+    "pass": true,
+    "activeSeconds": 600.2666666666667,
+    "seed": 13,
+    "modes": {
+      "standard": {
+        "frames": 18001,
+        "activeDurationMs": 300010.5000000056,
+        "averageFps": 60.00123329016706,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 17.099999999976717
+      },
+      "low": {
+        "frames": 18014,
+        "activeDurationMs": 300227.10000000003,
+        "averageFps": 60.00124572365385,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 17
+      }
+    },
+    "device": {
+      "os": "win32",
+      "release": "10.0.26200",
+      "cpu": "Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz",
+      "logicalCpus": 16,
+      "memoryBytes": 68637700096,
+      "browser": "155.0.8059.85",
+      "mode": "headless"
+    },
+    "maximumLiveActors": 24,
+    "maximumCells": 3,
+    "observedDistinctCellHitsLowerBound": 961,
+    "runMetricsMaxFrameEntries": 4,
+    "coverage": {
+      "standard": {
+        "polls": 910,
+        "actorsSum": 20930,
+        "capPolls": 403,
+        "capAndThreeCellPolls": 108,
+        "estimatedCapSeconds": 125.75000000000014
+      },
+      "low": {
+        "polls": 911,
+        "actorsSum": 21073,
+        "capPolls": 405,
+        "capAndThreeCellPolls": 147,
+        "estimatedCapSeconds": 125.64999999999992
+      }
+    },
+    "naturalSamples": 116,
+    "forcedGcRequests": 0,
+    "scope": "One formal FISSION/adaptive retained-producer pressure strategy, not a win, endless dual-elite coverage, or human playtest."
+  },
+  "memory": {
+    "arithmeticVerified": true,
+    "fullMemoryAcceptanceClosed": false,
+    "laterMinuteBaseline": {
+      "definition": "First complete minute beginning at or after 60 active seconds versus the last complete minute. These sampled minima are not post-GC retained-live-object floors.",
+      "fromStartActiveSeconds": 60,
+      "toStartActiveSeconds": 540,
+      "changes": {
+        "usedBytes": {
+          "sampledMinimum": {
+            "before": 19699748,
+            "after": 12230240,
+            "bytesOrCount": -7469508,
+            "percent": -37.91676929065286
+          },
+          "median": {
+            "before": 27648984,
+            "after": 27818898,
+            "bytesOrCount": 169914,
+            "percent": 0.6145397603036697
+          }
+        },
+        "allocatedCapacityBytes": {
+          "sampledMinimum": {
+            "before": 82657280,
+            "after": 83775488,
+            "bytesOrCount": 1118208,
+            "percent": 1.3528245787908821
+          },
+          "median": {
+            "before": 83181568,
+            "after": 84037632,
+            "bytesOrCount": 856064,
+            "percent": 1.0291510734685838
+          }
+        },
+        "embedderUsedBytes": {
+          "sampledMinimum": {
+            "before": 3588376,
+            "after": 3839320,
+            "bytesOrCount": 250944,
+            "percent": 6.993247084474982
+          },
+          "median": {
+            "before": 9060360,
+            "after": 9769924,
+            "bytesOrCount": 709564,
+            "percent": 7.831521043313952
+          }
+        },
+        "backingStorageBytes": {
+          "sampledMinimum": {
+            "before": 29392710,
+            "after": 29390931,
+            "bytesOrCount": -1779,
+            "percent": -0.006052521186375805
+          },
+          "median": {
+            "before": 29394740,
+            "after": 30940588.5,
+            "bytesOrCount": 1545848.5,
+            "percent": 5.258928978449886
+          }
+        }
+      }
+    },
+    "naturalSampledDecreases": 65,
+    "dom": {
+      "documents": {
+        "count": 116,
+        "missing": 0,
+        "min": 1,
+        "median": 1,
+        "max": 1,
+        "first": 1,
+        "last": 1
+      },
+      "nodes": {
+        "count": 116,
+        "missing": 0,
+        "min": 464,
+        "median": 1108.5,
+        "max": 2081,
+        "first": 1145,
+        "last": 1549
+      },
+      "listeners": {
+        "count": 116,
+        "missing": 0,
+        "min": 60,
+        "median": 80,
+        "max": 104,
+        "first": 79,
+        "last": 90
+      }
+    },
+    "verdict": "Finite observation only. Used-heap sequence is nonmonotonic; DOM/listeners fluctuate with an early/late level difference. No leak-free, total RSS, GPU/VRAM or complete native-memory claim."
+  },
+  "native": {
+    "passedFiniteScope": true,
+    "channels": [
+      {
+        "channel": "chrome",
+        "passed": true,
+        "cases": {
+          "nativeThirtySecondFreeze": {
+            "passed": true,
+            "fullStateSha256": "5839972a782c04ff6922869a5541b9ae2a8b60ad548724857b4e90838d9a683d",
+            "hiddenObserved": false,
+            "visibilityEvents": []
+          },
+          "naturalCampaignXpDraft": {
+            "passed": true,
+            "draftId": "13:2:draft:1",
+            "source": "xp",
+            "zooms": [
+              {
+                "factor": 1.25,
+                "passed": true
+              },
+              {
+                "factor": 1.5,
+                "passed": true
+              }
+            ]
+          },
+          "trainingZoom": [
+            {
+              "factor": 1.25,
+              "passed": true
+            },
+            {
+              "factor": 1.5,
+              "passed": true
+            },
+            {
+              "factor": 1,
+              "passed": true
+            }
+          ]
+        }
+      },
+      {
+        "channel": "msedge",
+        "passed": true,
+        "cases": {
+          "nativeThirtySecondFreeze": {
+            "passed": true,
+            "fullStateSha256": "7ec9d553d5c035c7c2e82cf2be1ae66c3acb9ceeb3fd8c4dd44246117438843f",
+            "hiddenObserved": false,
+            "visibilityEvents": []
+          },
+          "naturalCampaignXpDraft": {
+            "passed": true,
+            "draftId": "13:2:draft:1",
+            "source": "xp",
+            "zooms": [
+              {
+                "factor": 1.25,
+                "passed": true
+              },
+              {
+                "factor": 1.5,
+                "passed": true
+              }
+            ]
+          },
+          "trainingZoom": [
+            {
+              "factor": 1.25,
+              "passed": true
+            },
+            {
+              "factor": 1.5,
+              "passed": true
+            },
+            {
+              "factor": 1,
+              "passed": true
+            }
+          ]
+        }
+      }
+    ],
+    "scope": "Finite automated browser acceptance through real DOM input and CDP native browser window operations; not human hardware input, human readability or universal gameplay acceptance.",
+    "limitations": [
+      "document.hidden and visibilitychange are recorded as observed; no hidden-state assertion or synthetic fallback.",
+      "Zoom shooting/repair use the real training fixture and do not establish every campaign/layout hit case.",
+      "One naturally earned campaign XP draft per browser; not every protocol, replacement or research flow.",
+      "Observed hidden=false and no visibilitychange; no synthetic fallback. Screenshots include capture cropping and do not prove all UI text is readable.",
+      "Each browser used a fresh isolated test profile; all contexts were closed before the next browser or subsequent work."
+    ]
+  },
+  "productGaps": {
+    "humanNewPlayers": {
+      "observed": 0,
+      "required": 5
+    },
+    "unverified": [
+      "First-three-minute comprehension",
+      "Actual10–15min first-session pacing",
+      "Growth/strategy differences in real play",
+      "Voluntary replay and fun",
+      "Incubation/long-term value",
+      "Complete memory qualification"
+    ],
+    "decision": "Keep candidate gameplay frozen;0/12 normal companion actions alone is not grounds for forced survival or HP tuning. Gather natural player observations before the next gameplay change."
+  },
+  "visualInspection": {
+    "pressure": "Root viewed both actual dense pressure PNGs; different ticks and partial cap occupancy, no same-tick or human-recognition claim.",
+    "nativeZoom": "Root viewed the Edge150% training capture. Capture cropping remains; real click/receipt and geometry checks are the acceptance evidence."
+  },
+  "tools": [
+    {
+      "path": "artifacts/qualification-v087/tools/run-qualification-v087-performance-attempt-1.mjs",
+      "sha256": "c1966ba30e42d46fbd25a4b785a55d9dae4bcffdbe8cd2715f9c20862322d2c1"
+    },
+    {
+      "path": "artifacts/qualification-v087/tools/run-qualification-v087-native-attempt-1.mjs",
+      "sha256": "acef66c306427b18a81405c6aa9e84ed9c3f27d6cf22145d3f9ad2be59afbcbb"
+    },
+    {
+      "path": "artifacts/qualification-v087/tools/qualify-v087-receipt.mjs",
+      "sha256": "18b1068e0e3008a32e8a44c85ce0976be53241a80553110a587b3bb59e388f76"
+    },
+    {
+      "path": "artifacts/qualification-v087/tools/analyze-art-performance.mjs",
+      "sha256": "5669c2c849c5dab77c09c09cdf3ea7684385d621da9d1359c4330357f4377a0a"
+    },
+    {
+      "path": "artifacts/qualification-v087/tools/finalize-qualification-v087.mjs",
+      "sha256": "d25901b8d13c6296b708ed81a02f08f997f5cc989b3209a8c312c87eeffc0a31"
+    }
+  ],
+  "references": [
+    {
+      "path": "Docs/ViralInvasion_ProductReadiness_v0.8.7.md",
+      "sha256": "db4f522aab15abe0e1d80f813f5c2d1173e77d4108d75991923c3a090e97a9b2"
+    },
+    {
+      "path": "Docs/ViralInvasion_TestMatrix.md",
+      "sha256": "1f9356443ec91b90080f4459bdd4d5f16f7f02f3c58c80f508e5ca9370f9088c"
+    },
+    {
+      "path": "artifacts/qualification-v087/performance-attempt-1/runner-summary.json",
+      "sha256": "b095f550678a450b1554406ce818736fe8ac05aa10fac2e54c0915b198b0faa7"
+    },
+    {
+      "path": "artifacts/qualification-v087/performance-attempt-1/report.json",
+      "sha256": "73813998b13225a783f6e851955e7708d9b291114e3aed3755a1afc8335ab106"
+    },
+    {
+      "path": "artifacts/qualification-v087/performance-attempt-1/frame-times.json",
+      "sha256": "c0ed74bb43323ada618b4fc312cbfdc536f667f44842aa8c1813e18111638a4e"
+    },
+    {
+      "path": "artifacts/qualification-v087/performance-attempt-1/memory-review.json",
+      "sha256": "804259dfb53b249b3d2db97706a5a9a932f6ea389f231002c7026e965a4dcd2a"
+    },
+    {
+      "path": "artifacts/qualification-v087/performance-attempt-1/independent-memory-review.json",
+      "sha256": "69b3cb88f4f0952b248ad5ba9f3853cffeff9b2fe042ab3c2f4393b7efb5b301"
+    },
+    {
+      "path": "artifacts/qualification-v087/performance-attempt-1/heap-trend.svg",
+      "sha256": "eb6df3536a761377ef6170372175e4ce2b693f204154cd8f9e97ed438b1abfe1"
+    },
+    {
+      "path": "artifacts/qualification-v087/performance-attempt-1/input-binding.before.json",
+      "sha256": "b88d9598253422a2dd6f3ed12e060ba605d7a78d7c87a6454b0417ff22151a99"
+    },
+    {
+      "path": "artifacts/qualification-v087/performance-attempt-1/input-binding.after.json",
+      "sha256": "bd32938d42785594b669d83c6630b925fa26d262f7f0d42174d3e7f14bb17613"
+    },
+    {
+      "path": "artifacts/qualification-v087/native-command.json",
+      "sha256": "4834cbb3097071261b8fcf4ee0b361585193891b28d6c50076c22a4586c7f8f8"
+    },
+    {
+      "path": "artifacts/qualification-v087/native-attempt-1/report.json",
+      "sha256": "47d4e38ef937835666685348f1735f71cfe7d692da8016ce7a5c4b09835dbe07"
+    },
+    {
+      "path": "artifacts/qualification-v087/native-attempt-1/input-binding.before.json",
+      "sha256": "a94d9b4050ef86c8bf52f477f01949e702d76ef4882a42390f9054e0a3029948"
+    },
+    {
+      "path": "artifacts/qualification-v087/native-attempt-1/input-binding.after.json",
+      "sha256": "874d487adadfc9a665cb8ac9ce42bedc5c14a2a13da133f03ec6bf765a444e45"
+    },
+    {
+      "path": "artifacts/duet-v087/verification-summary.json",
+      "sha256": "aba41e25e29f66cf384badd70ee16129a9ddc2435d66999c299f2b010b657773"
+    },
+    {
+      "path": "artifacts/releases/v0.8.7/release-package.json",
+      "sha256": "78f26ee0f7ce054f3e4b7d8010245d79afe0d615da00f581b3619f16352060d5"
+    }
+  ]
+}

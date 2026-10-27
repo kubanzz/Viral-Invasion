@@ -1,0 +1,1833 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "growth_rework",
+  "generatedAt": "2026-10-27T22:45:49.355Z",
+  "method": "Independent arithmetic from terminal saved report.samples. Does not import or invoke the existing analyzer, game, browser, build, test, simulator, process sampler or GC. No memory acceptance threshold assigned.",
+  "input": {
+    "reportPath": "artifacts/qualification-v087/performance-attempt-1/report.json",
+    "reportSha256": "73813998b13225a783f6e851955e7708d9b291114e3aed3755a1afc8335ab106",
+    "derivedPath": "artifacts/qualification-v087/performance-attempt-1/memory-review.json",
+    "derivedSha256": "804259dfb53b249b3d2db97706a5a9a932f6ea389f231002c7026e965a4dcd2a",
+    "version": "0.8.7",
+    "releaseGameJsSha256": "27a37e8a83be3b077037991e05826970629cfca01d83ce07dee5cd30e6e8b4ae",
+    "POST_MEMORY": "0"
+  },
+  "arithmeticVerification": {
+    "pass": true,
+    "issues": [],
+    "mismatches": [],
+    "scope": "Natural coordinates/counter aliases, source binding, overall summaries, all minute summaries, quality summaries, first/last 60s, later baseline deltas, natural drop rows and complete-minute direction labels. This pass applies only to evidence consistency, not leak acceptance."
+  },
+  "timing": {
+    "activeSimulationSeconds": 600.2666666666667,
+    "firstSampleActiveSeconds": 0.0666666666666913,
+    "lastSampleActiveSeconds": 600.2666666666667,
+    "sampleCount": 116,
+    "fullMinuteCount": 10,
+    "partialWindows": [
+      {
+        "start": 600,
+        "samples": 1
+      }
+    ]
+  },
+  "overall": {
+    "sampleCount": 116,
+    "usedBytes": {
+      "count": 116,
+      "missing": 0,
+      "min": 11488776,
+      "median": 25752184,
+      "max": 38631236,
+      "first": 29194184,
+      "last": 27417952
+    },
+    "allocatedCapacityBytes": {
+      "count": 116,
+      "missing": 0,
+      "min": 78462976,
+      "median": 83443712,
+      "max": 84561920,
+      "first": 78462976,
+      "last": 84299776
+    },
+    "embedderUsedBytes": {
+      "count": 116,
+      "missing": 0,
+      "min": 3138552,
+      "median": 10961508,
+      "max": 22549776,
+      "first": 11691968,
+      "last": 16291160
+    },
+    "backingStorageBytes": {
+      "count": 116,
+      "missing": 0,
+      "min": 29389445,
+      "median": 29453282,
+      "max": 32971885,
+      "first": 32610387,
+      "last": 29391854
+    },
+    "dom": {
+      "documents": {
+        "count": 116,
+        "missing": 0,
+        "min": 1,
+        "median": 1,
+        "max": 1,
+        "first": 1,
+        "last": 1
+      },
+      "nodes": {
+        "count": 116,
+        "missing": 0,
+        "min": 464,
+        "median": 1108.5,
+        "max": 2081,
+        "first": 1145,
+        "last": 1549
+      },
+      "listeners": {
+        "count": 116,
+        "missing": 0,
+        "min": 60,
+        "median": 80,
+        "max": 104,
+        "first": 79,
+        "last": 90
+      }
+    },
+    "populations": {
+      "alive": {
+        "count": 116,
+        "missing": 0,
+        "min": 20,
+        "median": 23,
+        "max": 24,
+        "first": 24,
+        "last": 24
+      },
+      "cells": {
+        "count": 116,
+        "missing": 0,
+        "min": 0,
+        "median": 0,
+        "max": 3,
+        "first": 3,
+        "last": 0
+      },
+      "retainedActors": {
+        "count": 116,
+        "missing": 0,
+        "min": 21,
+        "median": 25,
+        "max": 26,
+        "first": 25,
+        "last": 25
+      },
+      "events": {
+        "count": 116,
+        "missing": 0,
+        "min": 512,
+        "median": 512,
+        "max": 512,
+        "first": 512,
+        "last": 512
+      },
+      "effects": {
+        "count": 116,
+        "missing": 0,
+        "min": 0,
+        "median": 3,
+        "max": 10,
+        "first": 3,
+        "last": 2
+      }
+    }
+  },
+  "minuteWindows": [
+    {
+      "startActiveSeconds": 0,
+      "endActiveSeconds": 60,
+      "partialWindow": false,
+      "sampleCount": 12,
+      "usedBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 12101352,
+        "median": 27970296,
+        "max": 38002288,
+        "first": 29194184,
+        "last": 16099792
+      },
+      "allocatedCapacityBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 78462976,
+        "median": 82001920,
+        "max": 82657280,
+        "first": 78462976,
+        "last": 82657280
+      },
+      "embedderUsedBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 3138552,
+        "median": 12162816,
+        "max": 22549776,
+        "first": 11691968,
+        "last": 16064584
+      },
+      "backingStorageBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 29391857,
+        "median": 32492111.5,
+        "max": 32730208,
+        "first": 32610387,
+        "last": 29394379
+      },
+      "dom": {
+        "documents": {
+          "count": 12,
+          "missing": 0,
+          "min": 1,
+          "median": 1,
+          "max": 1,
+          "first": 1,
+          "last": 1
+        },
+        "nodes": {
+          "count": 12,
+          "missing": 0,
+          "min": 464,
+          "median": 1201.5,
+          "max": 2081,
+          "first": 1145,
+          "last": 1588
+        },
+        "listeners": {
+          "count": 12,
+          "missing": 0,
+          "min": 62,
+          "median": 79.5,
+          "max": 93,
+          "first": 79,
+          "last": 82
+        }
+      },
+      "populations": {
+        "alive": {
+          "count": 12,
+          "missing": 0,
+          "min": 22,
+          "median": 24,
+          "max": 24,
+          "first": 24,
+          "last": 24
+        },
+        "cells": {
+          "count": 12,
+          "missing": 0,
+          "min": 0,
+          "median": 0,
+          "max": 3,
+          "first": 3,
+          "last": 0
+        },
+        "retainedActors": {
+          "count": 12,
+          "missing": 0,
+          "min": 24,
+          "median": 25,
+          "max": 25,
+          "first": 25,
+          "last": 25
+        },
+        "events": {
+          "count": 12,
+          "missing": 0,
+          "min": 512,
+          "median": 512,
+          "max": 512,
+          "first": 512,
+          "last": 512
+        },
+        "effects": {
+          "count": 12,
+          "missing": 0,
+          "min": 1,
+          "median": 3,
+          "max": 10,
+          "first": 3,
+          "last": 4
+        }
+      }
+    },
+    {
+      "startActiveSeconds": 60,
+      "endActiveSeconds": 120,
+      "partialWindow": false,
+      "sampleCount": 11,
+      "usedBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 19699748,
+        "median": 27648984,
+        "max": 36415996,
+        "first": 30962324,
+        "last": 20712308
+      },
+      "allocatedCapacityBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 82657280,
+        "median": 83181568,
+        "max": 83443712,
+        "first": 82657280,
+        "last": 83443712
+      },
+      "embedderUsedBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 3588376,
+        "median": 9060360,
+        "max": 16839120,
+        "first": 9480752,
+        "last": 7483032
+      },
+      "backingStorageBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 29392710,
+        "median": 29394740,
+        "max": 32971885,
+        "first": 32611728,
+        "last": 29394240
+      },
+      "dom": {
+        "documents": {
+          "count": 11,
+          "missing": 0,
+          "min": 1,
+          "median": 1,
+          "max": 1,
+          "first": 1,
+          "last": 1
+        },
+        "nodes": {
+          "count": 11,
+          "missing": 0,
+          "min": 501,
+          "median": 955,
+          "max": 1678,
+          "first": 996,
+          "last": 955
+        },
+        "listeners": {
+          "count": 11,
+          "missing": 0,
+          "min": 60,
+          "median": 70,
+          "max": 91,
+          "first": 76,
+          "last": 67
+        }
+      },
+      "populations": {
+        "alive": {
+          "count": 11,
+          "missing": 0,
+          "min": 20,
+          "median": 22,
+          "max": 24,
+          "first": 23,
+          "last": 23
+        },
+        "cells": {
+          "count": 11,
+          "missing": 0,
+          "min": 0,
+          "median": 0,
+          "max": 3,
+          "first": 3,
+          "last": 0
+        },
+        "retainedActors": {
+          "count": 11,
+          "missing": 0,
+          "min": 21,
+          "median": 23,
+          "max": 25,
+          "first": 25,
+          "last": 24
+        },
+        "events": {
+          "count": 11,
+          "missing": 0,
+          "min": 512,
+          "median": 512,
+          "max": 512,
+          "first": 512,
+          "last": 512
+        },
+        "effects": {
+          "count": 11,
+          "missing": 0,
+          "min": 1,
+          "median": 3,
+          "max": 8,
+          "first": 2,
+          "last": 4
+        }
+      }
+    },
+    {
+      "startActiveSeconds": 120,
+      "endActiveSeconds": 180,
+      "partialWindow": false,
+      "sampleCount": 12,
+      "usedBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 13343952,
+        "median": 23738280,
+        "max": 37326228,
+        "first": 15710224,
+        "last": 15002232
+      },
+      "allocatedCapacityBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 82657280,
+        "median": 83312640,
+        "max": 83968000,
+        "first": 83443712,
+        "last": 82657280
+      },
+      "embedderUsedBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 3815240,
+        "median": 11932300,
+        "max": 17118248,
+        "first": 9159024,
+        "last": 12077816
+      },
+      "backingStorageBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 29391479,
+        "median": 32489395.5,
+        "max": 32609738,
+        "first": 29393278,
+        "last": 29392977
+      },
+      "dom": {
+        "documents": {
+          "count": 12,
+          "missing": 0,
+          "min": 1,
+          "median": 1,
+          "max": 1,
+          "first": 1,
+          "last": 1
+        },
+        "nodes": {
+          "count": 12,
+          "missing": 0,
+          "min": 501,
+          "median": 1251,
+          "max": 1558,
+          "first": 949,
+          "last": 1212
+        },
+        "listeners": {
+          "count": 12,
+          "missing": 0,
+          "min": 61,
+          "median": 76,
+          "max": 89,
+          "first": 70,
+          "last": 77
+        }
+      },
+      "populations": {
+        "alive": {
+          "count": 12,
+          "missing": 0,
+          "min": 22,
+          "median": 23.5,
+          "max": 24,
+          "first": 24,
+          "last": 24
+        },
+        "cells": {
+          "count": 12,
+          "missing": 0,
+          "min": 0,
+          "median": 0,
+          "max": 3,
+          "first": 0,
+          "last": 0
+        },
+        "retainedActors": {
+          "count": 12,
+          "missing": 0,
+          "min": 23,
+          "median": 25,
+          "max": 25,
+          "first": 25,
+          "last": 25
+        },
+        "events": {
+          "count": 12,
+          "missing": 0,
+          "min": 512,
+          "median": 512,
+          "max": 512,
+          "first": 512,
+          "last": 512
+        },
+        "effects": {
+          "count": 12,
+          "missing": 0,
+          "min": 1,
+          "median": 3.5,
+          "max": 6,
+          "first": 4,
+          "last": 3
+        }
+      }
+    },
+    {
+      "startActiveSeconds": 180,
+      "endActiveSeconds": 240,
+      "partialWindow": false,
+      "sampleCount": 11,
+      "usedBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 11488776,
+        "median": 24790980,
+        "max": 37612592,
+        "first": 35928220,
+        "last": 14391220
+      },
+      "allocatedCapacityBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 82395136,
+        "median": 82919424,
+        "max": 83181568,
+        "first": 82919424,
+        "last": 82919424
+      },
+      "embedderUsedBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 3890320,
+        "median": 9443880,
+        "max": 16584232,
+        "first": 7181328,
+        "last": 9844744
+      },
+      "backingStorageBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 29391123,
+        "median": 29392985,
+        "max": 32848579,
+        "first": 32489269,
+        "last": 29392640
+      },
+      "dom": {
+        "documents": {
+          "count": 11,
+          "missing": 0,
+          "min": 1,
+          "median": 1,
+          "max": 1,
+          "first": 1,
+          "last": 1
+        },
+        "nodes": {
+          "count": 11,
+          "missing": 0,
+          "min": 506,
+          "median": 1033,
+          "max": 1545,
+          "first": 885,
+          "last": 1103
+        },
+        "listeners": {
+          "count": 11,
+          "missing": 0,
+          "min": 61,
+          "median": 71,
+          "max": 83,
+          "first": 69,
+          "last": 71
+        }
+      },
+      "populations": {
+        "alive": {
+          "count": 11,
+          "missing": 0,
+          "min": 22,
+          "median": 23,
+          "max": 24,
+          "first": 24,
+          "last": 24
+        },
+        "cells": {
+          "count": 11,
+          "missing": 0,
+          "min": 0,
+          "median": 0,
+          "max": 3,
+          "first": 3,
+          "last": 0
+        },
+        "retainedActors": {
+          "count": 11,
+          "missing": 0,
+          "min": 23,
+          "median": 25,
+          "max": 25,
+          "first": 25,
+          "last": 25
+        },
+        "events": {
+          "count": 11,
+          "missing": 0,
+          "min": 512,
+          "median": 512,
+          "max": 512,
+          "first": 512,
+          "last": 512
+        },
+        "effects": {
+          "count": 11,
+          "missing": 0,
+          "min": 0,
+          "median": 3,
+          "max": 8,
+          "first": 6,
+          "last": 3
+        }
+      }
+    },
+    {
+      "startActiveSeconds": 240,
+      "endActiveSeconds": 300,
+      "partialWindow": false,
+      "sampleCount": 12,
+      "usedBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 13156020,
+        "median": 31426416,
+        "max": 36963948,
+        "first": 35753228,
+        "last": 30444176
+      },
+      "allocatedCapacityBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 82395136,
+        "median": 82657280,
+        "max": 83705856,
+        "first": 82657280,
+        "last": 82919424
+      },
+      "embedderUsedBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 3495512,
+        "median": 11118436,
+        "max": 18960256,
+        "first": 13257272,
+        "last": 15529312
+      },
+      "backingStorageBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 29390806,
+        "median": 32487692.5,
+        "max": 32608324,
+        "first": 29392757,
+        "last": 29392133
+      },
+      "dom": {
+        "documents": {
+          "count": 12,
+          "missing": 0,
+          "min": 1,
+          "median": 1,
+          "max": 1,
+          "first": 1,
+          "last": 1
+        },
+        "nodes": {
+          "count": 12,
+          "missing": 0,
+          "min": 508,
+          "median": 1087,
+          "max": 1704,
+          "first": 1403,
+          "last": 1471
+        },
+        "listeners": {
+          "count": 12,
+          "missing": 0,
+          "min": 60,
+          "median": 76,
+          "max": 90,
+          "first": 76,
+          "last": 80
+        }
+      },
+      "populations": {
+        "alive": {
+          "count": 12,
+          "missing": 0,
+          "min": 21,
+          "median": 23,
+          "max": 24,
+          "first": 24,
+          "last": 24
+        },
+        "cells": {
+          "count": 12,
+          "missing": 0,
+          "min": 0,
+          "median": 0,
+          "max": 3,
+          "first": 0,
+          "last": 0
+        },
+        "retainedActors": {
+          "count": 12,
+          "missing": 0,
+          "min": 22,
+          "median": 25,
+          "max": 25,
+          "first": 25,
+          "last": 25
+        },
+        "events": {
+          "count": 12,
+          "missing": 0,
+          "min": 512,
+          "median": 512,
+          "max": 512,
+          "first": 512,
+          "last": 512
+        },
+        "effects": {
+          "count": 12,
+          "missing": 0,
+          "min": 1,
+          "median": 4,
+          "max": 6,
+          "first": 4,
+          "last": 4
+        }
+      }
+    },
+    {
+      "startActiveSeconds": 300,
+      "endActiveSeconds": 360,
+      "partialWindow": false,
+      "sampleCount": 11,
+      "usedBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 14383832,
+        "median": 24448800,
+        "max": 37461544,
+        "first": 37461544,
+        "last": 14383832
+      },
+      "allocatedCapacityBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 83251200,
+        "median": 83513344,
+        "max": 83775488,
+        "first": 83251200,
+        "last": 83513344
+      },
+      "embedderUsedBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 5106784,
+        "median": 10378208,
+        "max": 14289688,
+        "first": 7446488,
+        "last": 6697240
+      },
+      "backingStorageBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 29391072,
+        "median": 29511736,
+        "max": 32847636,
+        "first": 32727348,
+        "last": 29391072
+      },
+      "dom": {
+        "documents": {
+          "count": 11,
+          "missing": 0,
+          "min": 1,
+          "median": 1,
+          "max": 1,
+          "first": 1,
+          "last": 1
+        },
+        "nodes": {
+          "count": 11,
+          "missing": 0,
+          "min": 615,
+          "median": 1101,
+          "max": 1438,
+          "first": 732,
+          "last": 803
+        },
+        "listeners": {
+          "count": 11,
+          "missing": 0,
+          "min": 74,
+          "median": 84,
+          "max": 94,
+          "first": 84,
+          "last": 80
+        }
+      },
+      "populations": {
+        "alive": {
+          "count": 11,
+          "missing": 0,
+          "min": 20,
+          "median": 23,
+          "max": 24,
+          "first": 23,
+          "last": 23
+        },
+        "cells": {
+          "count": 11,
+          "missing": 0,
+          "min": 0,
+          "median": 0,
+          "max": 3,
+          "first": 3,
+          "last": 0
+        },
+        "retainedActors": {
+          "count": 11,
+          "missing": 0,
+          "min": 22,
+          "median": 24,
+          "max": 26,
+          "first": 26,
+          "last": 24
+        },
+        "events": {
+          "count": 11,
+          "missing": 0,
+          "min": 512,
+          "median": 512,
+          "max": 512,
+          "first": 512,
+          "last": 512
+        },
+        "effects": {
+          "count": 11,
+          "missing": 0,
+          "min": 1,
+          "median": 3,
+          "max": 7,
+          "first": 6,
+          "last": 3
+        }
+      }
+    },
+    {
+      "startActiveSeconds": 360,
+      "endActiveSeconds": 420,
+      "partialWindow": false,
+      "sampleCount": 12,
+      "usedBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 13639204,
+        "median": 17304836,
+        "max": 38631236,
+        "first": 22822624,
+        "last": 38631236
+      },
+      "allocatedCapacityBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 82989056,
+        "median": 83513344,
+        "max": 83775488,
+        "first": 83513344,
+        "last": 83513344
+      },
+      "embedderUsedBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 5112352,
+        "median": 11067420,
+        "max": 15934304,
+        "first": 10370128,
+        "last": 15934304
+      },
+      "backingStorageBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 29391994,
+        "median": 30940872.5,
+        "max": 32730272,
+        "first": 29392931,
+        "last": 29392106
+      },
+      "dom": {
+        "documents": {
+          "count": 12,
+          "missing": 0,
+          "min": 1,
+          "median": 1,
+          "max": 1,
+          "first": 1,
+          "last": 1
+        },
+        "nodes": {
+          "count": 12,
+          "missing": 0,
+          "min": 580,
+          "median": 1148,
+          "max": 1510,
+          "first": 1101,
+          "last": 1510
+        },
+        "listeners": {
+          "count": 12,
+          "missing": 0,
+          "min": 76,
+          "median": 88.5,
+          "max": 97,
+          "first": 84,
+          "last": 93
+        }
+      },
+      "populations": {
+        "alive": {
+          "count": 12,
+          "missing": 0,
+          "min": 22,
+          "median": 24,
+          "max": 24,
+          "first": 24,
+          "last": 24
+        },
+        "cells": {
+          "count": 12,
+          "missing": 0,
+          "min": 0,
+          "median": 0,
+          "max": 3,
+          "first": 0,
+          "last": 0
+        },
+        "retainedActors": {
+          "count": 12,
+          "missing": 0,
+          "min": 23,
+          "median": 25,
+          "max": 26,
+          "first": 25,
+          "last": 25
+        },
+        "events": {
+          "count": 12,
+          "missing": 0,
+          "min": 512,
+          "median": 512,
+          "max": 512,
+          "first": 512,
+          "last": 512
+        },
+        "effects": {
+          "count": 12,
+          "missing": 0,
+          "min": 1,
+          "median": 4,
+          "max": 8,
+          "first": 4,
+          "last": 4
+        }
+      }
+    },
+    {
+      "startActiveSeconds": 420,
+      "endActiveSeconds": 480,
+      "partialWindow": false,
+      "sampleCount": 11,
+      "usedBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 11902672,
+        "median": 30444460,
+        "max": 37135984,
+        "first": 33585832,
+        "last": 16181880
+      },
+      "allocatedCapacityBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 83513344,
+        "median": 83513344,
+        "max": 84299776,
+        "first": 83513344,
+        "last": 84299776
+      },
+      "embedderUsedBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 3307320,
+        "median": 13060328,
+        "max": 17988104,
+        "first": 16841520,
+        "last": 3307320
+      },
+      "backingStorageBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 29389445,
+        "median": 29392978,
+        "max": 32729808,
+        "first": 32490310,
+        "last": 29389445
+      },
+      "dom": {
+        "documents": {
+          "count": 11,
+          "missing": 0,
+          "min": 1,
+          "median": 1,
+          "max": 1,
+          "first": 1,
+          "last": 1
+        },
+        "nodes": {
+          "count": 11,
+          "missing": 0,
+          "min": 464,
+          "median": 1325,
+          "max": 1749,
+          "first": 1599,
+          "last": 464
+        },
+        "listeners": {
+          "count": 11,
+          "missing": 0,
+          "min": 75,
+          "median": 89,
+          "max": 102,
+          "first": 101,
+          "last": 75
+        }
+      },
+      "populations": {
+        "alive": {
+          "count": 11,
+          "missing": 0,
+          "min": 21,
+          "median": 24,
+          "max": 24,
+          "first": 24,
+          "last": 24
+        },
+        "cells": {
+          "count": 11,
+          "missing": 0,
+          "min": 0,
+          "median": 0,
+          "max": 3,
+          "first": 3,
+          "last": 0
+        },
+        "retainedActors": {
+          "count": 11,
+          "missing": 0,
+          "min": 23,
+          "median": 25,
+          "max": 25,
+          "first": 25,
+          "last": 25
+        },
+        "events": {
+          "count": 11,
+          "missing": 0,
+          "min": 512,
+          "median": 512,
+          "max": 512,
+          "first": 512,
+          "last": 512
+        },
+        "effects": {
+          "count": 11,
+          "missing": 0,
+          "min": 0,
+          "median": 4,
+          "max": 8,
+          "first": 0,
+          "last": 2
+        }
+      }
+    },
+    {
+      "startActiveSeconds": 480,
+      "endActiveSeconds": 540,
+      "partialWindow": false,
+      "sampleCount": 11,
+      "usedBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 15118028,
+        "median": 23424628,
+        "max": 37605140,
+        "first": 28069500,
+        "last": 23482392
+      },
+      "allocatedCapacityBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 83251200,
+        "median": 83775488,
+        "max": 84561920,
+        "first": 83513344,
+        "last": 84299776
+      },
+      "embedderUsedBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 4757936,
+        "median": 10924096,
+        "max": 16678696,
+        "first": 4757936,
+        "last": 6143576
+      },
+      "backingStorageBytes": {
+        "count": 11,
+        "missing": 0,
+        "min": 29390548,
+        "median": 29393463,
+        "max": 32610523,
+        "first": 29390548,
+        "last": 32489100
+      },
+      "dom": {
+        "documents": {
+          "count": 11,
+          "missing": 0,
+          "min": 1,
+          "median": 1,
+          "max": 1,
+          "first": 1,
+          "last": 1
+        },
+        "nodes": {
+          "count": 11,
+          "missing": 0,
+          "min": 614,
+          "median": 1110,
+          "max": 1518,
+          "first": 614,
+          "last": 693
+        },
+        "listeners": {
+          "count": 11,
+          "missing": 0,
+          "min": 74,
+          "median": 88,
+          "max": 98,
+          "first": 74,
+          "last": 80
+        }
+      },
+      "populations": {
+        "alive": {
+          "count": 11,
+          "missing": 0,
+          "min": 22,
+          "median": 24,
+          "max": 24,
+          "first": 24,
+          "last": 23
+        },
+        "cells": {
+          "count": 11,
+          "missing": 0,
+          "min": 0,
+          "median": 0,
+          "max": 3,
+          "first": 0,
+          "last": 3
+        },
+        "retainedActors": {
+          "count": 11,
+          "missing": 0,
+          "min": 23,
+          "median": 25,
+          "max": 25,
+          "first": 25,
+          "last": 24
+        },
+        "events": {
+          "count": 11,
+          "missing": 0,
+          "min": 512,
+          "median": 512,
+          "max": 512,
+          "first": 512,
+          "last": 512
+        },
+        "effects": {
+          "count": 11,
+          "missing": 0,
+          "min": 1,
+          "median": 2,
+          "max": 5,
+          "first": 5,
+          "last": 4
+        }
+      }
+    },
+    {
+      "startActiveSeconds": 540,
+      "endActiveSeconds": 600,
+      "partialWindow": false,
+      "sampleCount": 12,
+      "usedBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 12230240,
+        "median": 27818898,
+        "max": 37122572,
+        "first": 29297788,
+        "last": 37122572
+      },
+      "allocatedCapacityBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 83775488,
+        "median": 84037632,
+        "max": 84299776,
+        "first": 83775488,
+        "last": 84037632
+      },
+      "embedderUsedBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 3839320,
+        "median": 9769924,
+        "max": 19149208,
+        "first": 4585096,
+        "last": 11283328
+      },
+      "backingStorageBytes": {
+        "count": 12,
+        "missing": 0,
+        "min": 29390931,
+        "median": 30940588.5,
+        "max": 32728730,
+        "first": 29391427,
+        "last": 29392225
+      },
+      "dom": {
+        "documents": {
+          "count": 12,
+          "missing": 0,
+          "min": 1,
+          "median": 1,
+          "max": 1,
+          "first": 1,
+          "last": 1
+        },
+        "nodes": {
+          "count": 12,
+          "missing": 0,
+          "min": 508,
+          "median": 1008.5,
+          "max": 1743,
+          "first": 614,
+          "last": 1175
+        },
+        "listeners": {
+          "count": 12,
+          "missing": 0,
+          "min": 74,
+          "median": 87,
+          "max": 104,
+          "first": 74,
+          "last": 88
+        }
+      },
+      "populations": {
+        "alive": {
+          "count": 12,
+          "missing": 0,
+          "min": 21,
+          "median": 23,
+          "max": 24,
+          "first": 24,
+          "last": 24
+        },
+        "cells": {
+          "count": 12,
+          "missing": 0,
+          "min": 0,
+          "median": 0,
+          "max": 3,
+          "first": 0,
+          "last": 0
+        },
+        "retainedActors": {
+          "count": 12,
+          "missing": 0,
+          "min": 22,
+          "median": 24.5,
+          "max": 26,
+          "first": 25,
+          "last": 25
+        },
+        "events": {
+          "count": 12,
+          "missing": 0,
+          "min": 512,
+          "median": 512,
+          "max": 512,
+          "first": 512,
+          "last": 512
+        },
+        "effects": {
+          "count": 12,
+          "missing": 0,
+          "min": 0,
+          "median": 2,
+          "max": 6,
+          "first": 2,
+          "last": 1
+        }
+      }
+    },
+    {
+      "startActiveSeconds": 600,
+      "endActiveSeconds": 600.2666666666667,
+      "partialWindow": true,
+      "sampleCount": 1,
+      "usedBytes": {
+        "count": 1,
+        "missing": 0,
+        "min": 27417952,
+        "median": 27417952,
+        "max": 27417952,
+        "first": 27417952,
+        "last": 27417952
+      },
+      "allocatedCapacityBytes": {
+        "count": 1,
+        "missing": 0,
+        "min": 84299776,
+        "median": 84299776,
+        "max": 84299776,
+        "first": 84299776,
+        "last": 84299776
+      },
+      "embedderUsedBytes": {
+        "count": 1,
+        "missing": 0,
+        "min": 16291160,
+        "median": 16291160,
+        "max": 16291160,
+        "first": 16291160,
+        "last": 16291160
+      },
+      "backingStorageBytes": {
+        "count": 1,
+        "missing": 0,
+        "min": 29391854,
+        "median": 29391854,
+        "max": 29391854,
+        "first": 29391854,
+        "last": 29391854
+      },
+      "dom": {
+        "documents": {
+          "count": 1,
+          "missing": 0,
+          "min": 1,
+          "median": 1,
+          "max": 1,
+          "first": 1,
+          "last": 1
+        },
+        "nodes": {
+          "count": 1,
+          "missing": 0,
+          "min": 1549,
+          "median": 1549,
+          "max": 1549,
+          "first": 1549,
+          "last": 1549
+        },
+        "listeners": {
+          "count": 1,
+          "missing": 0,
+          "min": 90,
+          "median": 90,
+          "max": 90,
+          "first": 90,
+          "last": 90
+        }
+      },
+      "populations": {
+        "alive": {
+          "count": 1,
+          "missing": 0,
+          "min": 24,
+          "median": 24,
+          "max": 24,
+          "first": 24,
+          "last": 24
+        },
+        "cells": {
+          "count": 1,
+          "missing": 0,
+          "min": 0,
+          "median": 0,
+          "max": 0,
+          "first": 0,
+          "last": 0
+        },
+        "retainedActors": {
+          "count": 1,
+          "missing": 0,
+          "min": 25,
+          "median": 25,
+          "max": 25,
+          "first": 25,
+          "last": 25
+        },
+        "events": {
+          "count": 1,
+          "missing": 0,
+          "min": 512,
+          "median": 512,
+          "max": 512,
+          "first": 512,
+          "last": 512
+        },
+        "effects": {
+          "count": 1,
+          "missing": 0,
+          "min": 2,
+          "median": 2,
+          "max": 2,
+          "first": 2,
+          "last": 2
+        }
+      }
+    }
+  ],
+  "laterMinuteBaseline": {
+    "fromStartActiveSeconds": 60,
+    "toStartActiveSeconds": 540,
+    "changes": {
+      "usedBytes": {
+        "sampledMinimum": {
+          "before": 19699748,
+          "after": 12230240,
+          "bytesOrCount": -7469508,
+          "percent": -37.91676929065286
+        },
+        "median": {
+          "before": 27648984,
+          "after": 27818898,
+          "bytesOrCount": 169914,
+          "percent": 0.6145397603036697
+        }
+      },
+      "allocatedCapacityBytes": {
+        "sampledMinimum": {
+          "before": 82657280,
+          "after": 83775488,
+          "bytesOrCount": 1118208,
+          "percent": 1.3528245787908821
+        },
+        "median": {
+          "before": 83181568,
+          "after": 84037632,
+          "bytesOrCount": 856064,
+          "percent": 1.0291510734685838
+        }
+      },
+      "embedderUsedBytes": {
+        "sampledMinimum": {
+          "before": 3588376,
+          "after": 3839320,
+          "bytesOrCount": 250944,
+          "percent": 6.993247084474982
+        },
+        "median": {
+          "before": 9060360,
+          "after": 9769924,
+          "bytesOrCount": 709564,
+          "percent": 7.831521043313952
+        }
+      },
+      "backingStorageBytes": {
+        "sampledMinimum": {
+          "before": 29392710,
+          "after": 29390931,
+          "bytesOrCount": -1779,
+          "percent": -0.006052521186375805
+        },
+        "median": {
+          "before": 29394740,
+          "after": 30940588.5,
+          "bytesOrCount": 1545848.5,
+          "percent": 5.258928978449886
+        }
+      }
+    }
+  },
+  "fullMinuteDirections": {
+    "usedBytes": {
+      "minimumSequenceDirection": "nonmonotonic",
+      "medianSequenceDirection": "nonmonotonic"
+    },
+    "allocatedCapacityBytes": {
+      "minimumSequenceDirection": "nonmonotonic",
+      "medianSequenceDirection": "nonmonotonic"
+    },
+    "embedderUsedBytes": {
+      "minimumSequenceDirection": "nonmonotonic",
+      "medianSequenceDirection": "nonmonotonic"
+    },
+    "backingStorageBytes": {
+      "minimumSequenceDirection": "nonmonotonic",
+      "medianSequenceDirection": "nonmonotonic"
+    }
+  },
+  "byQuality": {
+    "standard": {
+      "sampleCount": 58,
+      "usedBytes": {
+        "count": 58,
+        "missing": 0,
+        "min": 11488776,
+        "median": 26522510,
+        "max": 38002288,
+        "first": 29194184,
+        "last": 30444176
+      },
+      "allocatedCapacityBytes": {
+        "count": 58,
+        "missing": 0,
+        "min": 78462976,
+        "median": 82919424,
+        "max": 83968000,
+        "first": 78462976,
+        "last": 82919424
+      },
+      "embedderUsedBytes": {
+        "count": 58,
+        "missing": 0,
+        "min": 3138552,
+        "median": 10480592,
+        "max": 22549776,
+        "first": 11691968,
+        "last": 15529312
+      },
+      "backingStorageBytes": {
+        "count": 58,
+        "missing": 0,
+        "min": 29390806,
+        "median": 32487692.5,
+        "max": 32971885,
+        "first": 32610387,
+        "last": 29392133
+      },
+      "dom": {
+        "documents": {
+          "count": 58,
+          "missing": 0,
+          "min": 1,
+          "median": 1,
+          "max": 1,
+          "first": 1,
+          "last": 1
+        },
+        "nodes": {
+          "count": 58,
+          "missing": 0,
+          "min": 464,
+          "median": 1105,
+          "max": 2081,
+          "first": 1145,
+          "last": 1471
+        },
+        "listeners": {
+          "count": 58,
+          "missing": 0,
+          "min": 60,
+          "median": 75,
+          "max": 93,
+          "first": 79,
+          "last": 80
+        }
+      },
+      "populations": {
+        "alive": {
+          "count": 58,
+          "missing": 0,
+          "min": 20,
+          "median": 23,
+          "max": 24,
+          "first": 24,
+          "last": 24
+        },
+        "cells": {
+          "count": 58,
+          "missing": 0,
+          "min": 0,
+          "median": 0,
+          "max": 3,
+          "first": 3,
+          "last": 0
+        },
+        "retainedActors": {
+          "count": 58,
+          "missing": 0,
+          "min": 21,
+          "median": 25,
+          "max": 25,
+          "first": 25,
+          "last": 25
+        },
+        "events": {
+          "count": 58,
+          "missing": 0,
+          "min": 512,
+          "median": 512,
+          "max": 512,
+          "first": 512,
+          "last": 512
+        },
+        "effects": {
+          "count": 58,
+          "missing": 0,
+          "min": 0,
+          "median": 3.5,
+          "max": 10,
+          "first": 3,
+          "last": 4
+        }
+      }
+    },
+    "low": {
+      "sampleCount": 58,
+      "usedBytes": {
+        "count": 58,
+        "missing": 0,
+        "min": 11902672,
+        "median": 24401394,
+        "max": 38631236,
+        "first": 37461544,
+        "last": 27417952
+      },
+      "allocatedCapacityBytes": {
+        "count": 58,
+        "missing": 0,
+        "min": 82989056,
+        "median": 83513344,
+        "max": 84561920,
+        "first": 83251200,
+        "last": 84299776
+      },
+      "embedderUsedBytes": {
+        "count": 58,
+        "missing": 0,
+        "min": 3307320,
+        "median": 11003732,
+        "max": 19149208,
+        "first": 7446488,
+        "last": 16291160
+      },
+      "backingStorageBytes": {
+        "count": 58,
+        "missing": 0,
+        "min": 29389445,
+        "median": 29393742,
+        "max": 32847636,
+        "first": 32727348,
+        "last": 29391854
+      },
+      "dom": {
+        "documents": {
+          "count": 58,
+          "missing": 0,
+          "min": 1,
+          "median": 1,
+          "max": 1,
+          "first": 1,
+          "last": 1
+        },
+        "nodes": {
+          "count": 58,
+          "missing": 0,
+          "min": 464,
+          "median": 1110.5,
+          "max": 1749,
+          "first": 732,
+          "last": 1549
+        },
+        "listeners": {
+          "count": 58,
+          "missing": 0,
+          "min": 74,
+          "median": 88,
+          "max": 104,
+          "first": 84,
+          "last": 90
+        }
+      },
+      "populations": {
+        "alive": {
+          "count": 58,
+          "missing": 0,
+          "min": 20,
+          "median": 23,
+          "max": 24,
+          "first": 23,
+          "last": 24
+        },
+        "cells": {
+          "count": 58,
+          "missing": 0,
+          "min": 0,
+          "median": 0,
+          "max": 3,
+          "first": 3,
+          "last": 0
+        },
+        "retainedActors": {
+          "count": 58,
+          "missing": 0,
+          "min": 22,
+          "median": 25,
+          "max": 26,
+          "first": 26,
+          "last": 25
+        },
+        "events": {
+          "count": 58,
+          "missing": 0,
+          "min": 512,
+          "median": 512,
+          "max": 512,
+          "first": 512,
+          "last": 512
+        },
+        "effects": {
+          "count": 58,
+          "missing": 0,
+          "min": 0,
+          "median": 3,
+          "max": 8,
+          "first": 6,
+          "last": 2
+        }
+      }
+    }
+  },
+  "naturalDrops": {
+    "count": 65,
+    "totalDecreaseBytes": 593485312,
+    "largestDecreaseBytes": 23077564,
+    "notGcEventCount": true
+  },
+  "domTrend": {
+    "documents": {
+      "minimumSequenceDirection": "constant",
+      "medianSequenceDirection": "constant",
+      "laterSampledMinimumDelta": {
+        "before": 1,
+        "after": 1,
+        "bytesOrCount": 0,
+        "percent": 0
+      },
+      "laterMedianDelta": {
+        "before": 1,
+        "after": 1,
+        "bytesOrCount": 0,
+        "percent": 0
+      },
+      "sampledDecreases": 0
+    },
+    "nodes": {
+      "minimumSequenceDirection": "nonmonotonic",
+      "medianSequenceDirection": "nonmonotonic",
+      "laterSampledMinimumDelta": {
+        "before": 501,
+        "after": 508,
+        "bytesOrCount": 7,
+        "percent": 1.3972055888223553
+      },
+      "laterMedianDelta": {
+        "before": 955,
+        "after": 1008.5,
+        "bytesOrCount": 53.5,
+        "percent": 5.602094240837696
+      },
+      "sampledDecreases": 59
+    },
+    "listeners": {
+      "minimumSequenceDirection": "nonmonotonic",
+      "medianSequenceDirection": "nonmonotonic",
+      "laterSampledMinimumDelta": {
+        "before": 60,
+        "after": 74,
+        "bytesOrCount": 14,
+        "percent": 23.333333333333332
+      },
+      "laterMedianDelta": {
+        "before": 70,
+        "after": 87,
+        "bytesOrCount": 17,
+        "percent": 24.285714285714285
+      },
+      "sampledDecreases": 60
+    }
+  },
+  "interpretation": {
+    "verdict": "observations-only-no-leak-or-memory-acceptance-verdict",
+    "usedV8": "Occupied size is nonmonotonic with sampled falls; complete-minute minima and medians must be read together.",
+    "capacity": "Allocated V8 capacity is separate from used V8 size; its rise alone does not establish a leak.",
+    "embedderAndBacking": "Their complete-minute minima/medians are nonmonotonic; endpoint-only claims of stability or growth are unsupported.",
+    "dom": "Documents are constant, nodes fluctuate and listener minima/medians must be reported explicitly rather than calling all DOM counters constant.",
+    "limits": [
+      "Finite recorded 600.267-second campaign/device/route window only.",
+      "Natural sampled decreases do not instrument exact garbage collections or prove retained-live-object floors.",
+      "No total browser/process RSS, GPU/VRAM, native Canvas/WebGL allocation or indefinite plateau qualification.",
+      "No gameplay-fun, human-playtest, endless-mode or all-device inference."
+    ]
+  }
+}
