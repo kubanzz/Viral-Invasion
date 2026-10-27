@@ -3,24 +3,38 @@ import { Soundscape } from '../../src/audio';
 import type { GameEvent, GameState } from '../../src/game/types';
 
 interface ScheduledTone { start: number; stop: number; from: number; to: number; volume: number }
+interface NodeLifecycle { connected: boolean; disconnectCalls: number }
+interface OscillatorLifecycle extends NodeLifecycle { onended: (() => void) | null }
 function audioFixture() {
   const scheduled: ScheduledTone[] = [];
+  const oscillators: OscillatorLifecycle[] = [], gains: NodeLifecycle[] = [];
   const clock = { now: 10 };
   let pending: ScheduledTone;
   const fake = {
     state: 'running', destination: {}, get currentTime() { return clock.now; }, resume: () => Promise.resolve(),
     createOscillator() {
       const tone = { start: -1, stop: -1, from: 0, to: 0, volume: 0 }; scheduled.push(tone); pending = tone;
-      return { type: '', frequency: { setValueAtTime: (value: number) => { tone.from = value; }, exponentialRampToValueAtTime: (value: number) => { tone.to = value; } },
-        connect: (node: unknown) => node, start: (at: number) => { tone.start = at; }, stop: (at: number) => { tone.stop = at; } };
+      const oscillator = { type: '', onended: null as (() => void) | null, connected: false, disconnectCalls: 0,
+        frequency: { setValueAtTime: (value: number) => { tone.from = value; }, exponentialRampToValueAtTime: (value: number) => { tone.to = value; } },
+        connect: (node: unknown) => { oscillator.connected = true; return node; },
+        disconnect: () => { oscillator.connected = false; oscillator.disconnectCalls++; },
+        start: (at: number) => { tone.start = at; }, stop: (at: number) => { tone.stop = at; } };
+      oscillators.push(oscillator); return oscillator;
     },
     createGain() {
       const tone = pending;
-      return { gain: { setValueAtTime: (value: number) => { tone.volume = value; }, exponentialRampToValueAtTime: () => {} }, connect: () => ({}) };
+      const gain = { connected: false, disconnectCalls: 0,
+        gain: { setValueAtTime: (value: number) => { tone.volume = value; }, exponentialRampToValueAtTime: () => {} },
+        connect: () => { gain.connected = true; return {}; }, disconnect: () => { gain.connected = false; gain.disconnectCalls++; } };
+      gains.push(gain); return gain;
     },
   } as unknown as AudioContext;
   const sound = new Soundscape(() => fake); sound.unlock();
-  return { sound, scheduled, clock };
+  const finishDue = (at: number) => {
+    clock.now = at;
+    scheduled.forEach((tone, index) => { if (tone.stop <= at) oscillators[index].onended?.(); });
+  };
+  return { sound, scheduled, clock, oscillators, gains, finishDue };
 }
 const event = (type: string, tick: number, data: GameEvent['data'] = {}): GameEvent => ({ type, tick, data });
 const state = (events: GameEvent[], tick = Math.max(0, ...events.map(item => item.tick)), seed = 91): GameState => ({ seed, tick, events } as GameState);
@@ -82,5 +96,56 @@ describe('event-driven sound feedback', () => {
       expect(() => unavailable.update(state([event('PROTOCOL_EQUIPPED', 1)]))).not.toThrow();
     }
     await Promise.resolve();
+  });
+
+  it('disconnects started and delayed tones only when each ends and releases their ended handlers', () => {
+    const { sound, scheduled, oscillators, gains, finishDue } = audioFixture();
+    sound.update(state([event('PROTOCOL_EQUIPPED', 100)]));
+    const schedule = structuredClone(scheduled);
+    expect(oscillators).toHaveLength(3);
+    expect(oscillators.every(node => node.connected && node.onended !== null)).toBe(true);
+    expect(gains.every(node => node.connected)).toBe(true);
+
+    finishDue(scheduled[0].stop - .001);
+    expect(oscillators.map(node => node.disconnectCalls)).toEqual([0, 0, 0]);
+    finishDue(scheduled[0].stop);
+    expect(oscillators.map(node => node.disconnectCalls)).toEqual([1, 0, 0]);
+    expect(gains.map(node => node.disconnectCalls)).toEqual([1, 0, 0]);
+    expect(oscillators[0].onended).toBeNull();
+    expect(oscillators.slice(1).every(node => node.connected && node.onended !== null)).toBe(true);
+    expect(gains.slice(1).every(node => node.connected)).toBe(true);
+
+    finishDue(scheduled[1].stop);
+    expect(oscillators.map(node => node.disconnectCalls)).toEqual([1, 1, 0]);
+    expect(gains.map(node => node.disconnectCalls)).toEqual([1, 1, 0]);
+    expect(oscillators[1].onended).toBeNull();
+    expect(oscillators[2].connected && gains[2].connected).toBe(true);
+    finishDue(scheduled[2].stop);
+    expect(oscillators.map(node => node.disconnectCalls)).toEqual([1, 1, 1]);
+    expect(gains.map(node => node.disconnectCalls)).toEqual([1, 1, 1]);
+    expect(oscillators.every(node => !node.connected && node.onended === null)).toBe(true);
+    expect(gains.every(node => !node.connected)).toBe(true);
+    expect(scheduled).toEqual(schedule);
+  });
+
+  it('handles duplicate ended delivery without disconnecting other tones or resetting event rate limits', () => {
+    const { sound, scheduled, oscillators, gains, clock } = audioFixture();
+    const first = event('TARGET_HIT', 60), hurt = event('PLAYER_HURT', 60);
+    sound.update(state([first, hurt]));
+    expect(scheduled).toHaveLength(2);
+    const ended = oscillators[0].onended!;
+    clock.now = scheduled[0].stop;
+    expect(() => { ended(); ended(); }).not.toThrow();
+    expect(oscillators[0].disconnectCalls).toBe(1); expect(gains[0].disconnectCalls).toBe(1);
+    expect(oscillators[0].onended).toBeNull();
+    expect(oscillators[1].disconnectCalls).toBe(0); expect(gains[1].disconnectCalls).toBe(0);
+    expect(oscillators[1].connected && gains[1].connected).toBe(true);
+    expect(oscillators[1].onended).not.toBeNull();
+    sound.update(state([first, hurt, event('TARGET_HIT', 61)], 61));
+    expect(scheduled).toHaveLength(2);
+    sound.update(state([first, hurt, event('TARGET_HIT', 64)], 64));
+    expect(scheduled).toHaveLength(3);
+    expect(oscillators[2].connected && gains[2].connected).toBe(true);
+    expect(oscillators[2].disconnectCalls).toBe(0); expect(gains[2].disconnectCalls).toBe(0);
   });
 });

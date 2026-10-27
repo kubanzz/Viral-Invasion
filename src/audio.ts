@@ -63,6 +63,13 @@ export class Soundscape {
     const oscillator = ctx.createOscillator(); const gain = ctx.createGain();
     oscillator.type = 'sine'; oscillator.frequency.setValueAtTime(frequency, at); oscillator.frequency.exponentialRampToValueAtTime(end, at + duration);
     gain.gain.setValueAtTime(volume, at); gain.gain.exponentialRampToValueAtTime(.001, at + duration);
+    let disconnected = false;
+    oscillator.onended = () => {
+      if (disconnected) return;
+      disconnected = true;
+      oscillator.onended = null;
+      oscillator.disconnect(); gain.disconnect();
+    };
     oscillator.connect(gain).connect(ctx.destination); oscillator.start(at); oscillator.stop(at + duration);
   }
 }

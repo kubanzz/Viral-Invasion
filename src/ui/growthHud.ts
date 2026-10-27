@@ -2,6 +2,9 @@ import type { GameState } from '../game/types';
 import { describeProtocol, GROWTH_BALANCE, PATROL_CONFIG, PROTOCOLS, TUNING_NAMES, protocolRank, protocolAction, RANK_NAMES } from '../game/protocols';
 
 const escape = (value: string) => value.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
+// Container-keyed caches let detached HUDs and their children be collected.
+const slotViews = new WeakMap<HTMLElement, { signature: string; counts: (HTMLElement | null)[] }>();
+const feedbackViews = new WeakMap<HTMLElement, { title: string; hint: string }>();
 export const growthDetailsEntryMarkup = `<button class="growth-details-entry" data-action="growth-details">当前配装详情</button>`;
 export const growthHudMarkup = `<aside class="growth-panel"><div class="growth-heading"><span>我的进化 · 抗体构筑</span><b id="growth-research">样本 0</b></div><div class="xp-label" id="growth-xp"></div><div class="meter"><i id="xp-meter"></i></div><div id="protocol-slots" class="protocol-slots"></div>${growthDetailsEntryMarkup}<p id="research-hint">靠近研究台 E · ${GROWTH_BALANCE.researchCost} 样本 / 草案</p></aside><div id="evolution-feedback" class="evolution-feedback" role="status" hidden></div>`;
 export const growthHelpMarkup = `<p><b>我的进化：</b>经验来自清源、精英、首次诊断与保护组织；达标时三选一。四种协议是四条不同的规则路线，每次显示三个候选，可装备 ${GROWTH_BALANCE.slots} 种。重复选择已有协议先升至Ⅱ/Ⅲ阶，实际提高效果；Ⅲ阶后才改变校准取向。研究台 E 消耗 ${GROWTH_BALANCE.researchCost} 样本，和经验共用同一配装。草案期间暂停。</p><p><b>免疫协同：</b>没有协议时，Q 也能召来一只短时侦巡细胞协助清理。装备免疫灯塔后，Q 变为三只免疫细胞小队，在标记区移动、追击并接触吞噬；小队会带来组织承压。异常显影让 Q 留下减速轨迹，小队优先围猎显影体。</p><p><b>组合打法：</b>共振裂解需要靠近装置、配合冲流相位命中；与连锁净化搭配，破绽清除可增加一跳，总计最多 3 跳。槽位下方会显示使用提示和本局触发数，草案同时展示前后变化与代价。</p>`;
@@ -29,17 +32,43 @@ export function updateGrowthHud(state: GameState): void {
   document.getElementById('growth-xp')!.textContent=`进化 Lv.${growth.level} · 经验 ${growth.xp}${growth.nextXp===null?' / 已达本局上限':` / ${growth.nextXp}`}`;
   const floor=GROWTH_BALANCE.xpThresholds[growth.level-1]??0;
   document.getElementById('xp-meter')!.style.width=`${growth.nextXp===null?100:Math.max(0,Math.min(100,(growth.xp-floor)/(growth.nextXp-floor)*100))}%`;
-  document.getElementById('protocol-slots')!.innerHTML=Array.from({length:GROWTH_BALANCE.slots},(_,i)=>{
-    const equipped=growth.equipped[i];if(!equipped)return `<div class="protocol-slot empty"><span>${i+1}</span> 空协议槽</div>`;
-    const protocol=PROTOCOLS[equipped.id],rank=protocolRank(equipped),description=describeProtocol(equipped.id,equipped.tuning,rank);
-    const count=growth.activations?.[equipped.id]??0;
-    return `<div class="protocol-slot" data-protocol="${equipped.id}" title="${escape(`${protocol.trigger}。${description.effect} ${description.cost} ${protocolAction(equipped.id,rank)}`)}"><span>${protocol.symbol}</span><b>${protocol.name} ${RANK_NAMES[rank]}</b><small>${count?'触发 '+count:'待触发'}</small></div>`;
-  }).join('');
+  const slots=document.getElementById('protocol-slots')!;
+  let signature='';
+  for(let i=0;i<GROWTH_BALANCE.slots;i++){
+    const equipped=growth.equipped[i];
+    signature+=equipped?`${equipped.id}:${protocolRank(equipped)}:${equipped.tuning}|`:'empty|';
+  }
+  let view=slotViews.get(slots);
+  if(!view||view.signature!==signature){
+    slots.innerHTML=Array.from({length:GROWTH_BALANCE.slots},(_,i)=>{
+      const equipped=growth.equipped[i];if(!equipped)return `<div class="protocol-slot empty"><span>${i+1}</span> 空协议槽</div>`;
+      const protocol=PROTOCOLS[equipped.id],rank=protocolRank(equipped),description=describeProtocol(equipped.id,equipped.tuning,rank);
+      const count=growth.activations?.[equipped.id]??0;
+      return `<div class="protocol-slot" data-protocol="${equipped.id}" title="${escape(`${protocol.trigger}。${description.effect} ${description.cost} ${protocolAction(equipped.id,rank)}`)}"><span>${protocol.symbol}</span><b>${protocol.name} ${RANK_NAMES[rank]}</b><small>${count?'触发 '+count:'待触发'}</small></div>`;
+    }).join('');
+    view={signature,counts:Array.from(slots.children,node=>node.querySelector<HTMLElement>('small'))};
+    slotViews.set(slots,view);
+  }
+  for(let i=0;i<GROWTH_BALANCE.slots;i++){
+    const equipped=growth.equipped[i],counter=view.counts[i];
+    if(!equipped||!counter)continue;
+    const count=growth.activations?.[equipped.id]??0,text=count?'触发 '+count:'待触发';
+    if(counter.textContent!==text)counter.textContent=text;
+  }
   const beacon=growth.beacon;
   const hasBeacon=growth.equipped.some(slot=>slot.id==='IMMUNE_BEACON');
   document.getElementById('research-hint')!.textContent=beacon&&beacon.until>state.elapsed?`${beacon.mode==='patrol'?'免疫侦巡':'免疫小队'} ${growth.cells?.length??0} 体 · ${Math.max(0,beacon.until-state.elapsed).toFixed(1)}s`:hasBeacon&&growth.beaconReadyAt>state.elapsed?`小队再召集 ${Math.ceil(growth.beaconReadyAt-state.elapsed)}s · 研究台 E`:`Q ${hasBeacon?'召集三只免疫细胞':'召集免疫侦巡'} · 研究台 E`;
   const feedback=document.getElementById('evolution-feedback');
-  if(feedback){const evolution=growth.lastEvolution;feedback.hidden=!evolution||state.elapsed>=evolution.until;if(evolution&&!feedback.hidden)feedback.innerHTML=`<strong>进化完成 · ${escape(evolution.title)}</strong><span>${escape(evolution.hint)}</span>`;}
+  if(feedback){
+    const evolution=growth.lastEvolution;feedback.hidden=!evolution||state.elapsed>=evolution.until;
+    if(evolution&&!feedback.hidden){
+      const view=feedbackViews.get(feedback);
+      if(!view||view.title!==evolution.title||view.hint!==evolution.hint){
+        feedback.innerHTML=`<strong>进化完成 · ${escape(evolution.title)}</strong><span>${escape(evolution.hint)}</span>`;
+        feedbackViews.set(feedback,{title:evolution.title,hint:evolution.hint});
+      }
+    }
+  }
 }
 
 export function draftOverlay(state: GameState): string | null {
