@@ -1,0 +1,222 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-27",
+  "version": "0.6.0",
+  "sourceRevision": "0c4fdefe2edef0f22961afd3e1ca6f808d90fa2f",
+  "build": {
+    "metadata": "artifacts/feedback-v060/final-build-meta.json",
+    "game": {
+      "sha256": "18ede73fb75281ea9d211f707180666371e34c0d3f263ad75733f615c7a2ee42",
+      "bytes": 284249
+    },
+    "buildSourceVerification": {
+      "entries": 44,
+      "currentMismatches": [],
+      "commitMismatches": []
+    }
+  },
+  "unit": {
+    "finalRegression": {
+      "report": "artifacts/feedback-v060/unit-final-except-seeds.json",
+      "total": 206,
+      "passed": 206,
+      "failed": 0,
+      "files": 27
+    },
+    "separateSystemTest": {
+      "report": "artifacts/feedback-v060/full-system-unit-rerun2.json",
+      "total": 1,
+      "passed": 1,
+      "failed": 0
+    },
+    "combinedCoverage": 207,
+    "note": "206 + 1 executed in two separate commands, not one 207-test invocation. The 1000 simulations are inside the one separate system test.",
+    "supersededRegression": {
+      "report": "artifacts/feedback-v060/all-except-seeds-unit.json",
+      "total": 202,
+      "passed": 202,
+      "note": "Earlier code generation; not added to final total."
+    }
+  },
+  "simulation": {
+    "report": "artifacts/feedback-v060/full-system-seeds-rerun2.json",
+    "audit": "artifacts/feedback-v060/system-verification.json",
+    "completed": 1000,
+    "outcomes": {
+      "wins": 1000,
+      "losses": 0,
+      "publicMenuExits": 0,
+      "invariantFailures": 0
+    },
+    "sourceSha256": "3a4b3f4e0c067116fef893942493ac877ced07b740d6436ff5e7f4d19eeedce9",
+    "sourceUnchanged": true,
+    "simulationSourceVerification": {
+      "entries": 24,
+      "currentMismatches": [],
+      "commitMismatches": []
+    },
+    "replay": {
+      "seed": 91,
+      "equal": true,
+      "first": "b57cf5afdff958334b2bf5176faeaf314399a500db11c0a24074bbf96ec41d56",
+      "second": "b57cf5afdff958334b2bf5176faeaf314399a500db11c0a24074bbf96ec41d56"
+    }
+  },
+  "browser": {
+    "method": "Offline file entry in real Chrome/Edge engines via Playwright; real DOM keyboard and mouse, read-only window.__viral diagnostics, no gameplay state injection.",
+    "final": {
+      "report": "artifacts/feedback-v060/browser-rerun2-report.json",
+      "stats": {
+        "startTime": "2026-10-27T01:53:29.649Z",
+        "duration": 176557.331,
+        "expected": 5,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "routes": [
+        {
+          "report": "artifacts/feedback-v060/browser-rerun2/feedback-v060-Feedback-blo-1d9d1-gh-a-visible-advanced-build-chrome/route.json",
+          "requestedChoice": "block",
+          "actualChoice": "block",
+          "seed": 1,
+          "browser": "chrome",
+          "success": true,
+          "simulationSeconds": 70.86666666666666,
+          "equipped": [
+            {
+              "id": "IMMUNE_BEACON",
+              "tuning": "balanced",
+              "rank": 3
+            }
+          ],
+          "activations": {
+            "IMMUNE_BEACON": 6
+          },
+          "cellsAtEnd": 0,
+          "errors": [],
+          "remoteRequests": []
+        },
+        {
+          "report": "artifacts/feedback-v060/browser-rerun2/feedback-v060-Feedback-ign-2c6f5-gh-a-visible-advanced-build-chrome/route.json",
+          "requestedChoice": "ignore",
+          "actualChoice": "ignore",
+          "seed": 13,
+          "browser": "chrome",
+          "success": true,
+          "simulationSeconds": 89.63333333333333,
+          "equipped": [
+            {
+              "id": "IMMUNE_BEACON",
+              "tuning": "balanced",
+              "rank": 3
+            },
+            {
+              "id": "EXPOSE_TRACE",
+              "tuning": "balanced"
+            }
+          ],
+          "activations": {
+            "IMMUNE_BEACON": 13,
+            "EXPOSE_TRACE": 4
+          },
+          "cellsAtEnd": 0,
+          "errors": [],
+          "remoteRequests": []
+        },
+        {
+          "report": "artifacts/feedback-v060/browser-rerun2/feedback-v060-Feedback-pur-2902e-gh-a-visible-advanced-build-edge/route.json",
+          "requestedChoice": "pursue",
+          "actualChoice": "pursue",
+          "seed": 91,
+          "browser": "edge",
+          "success": true,
+          "simulationSeconds": 71.31666666666666,
+          "equipped": [
+            {
+              "id": "PURIFY_CHAIN",
+              "tuning": "balanced",
+              "rank": 3
+            },
+            {
+              "id": "EXPOSE_TRACE",
+              "tuning": "balanced"
+            }
+          ],
+          "activations": {
+            "PURIFY_CHAIN": 4,
+            "EXPOSE_TRACE": 3
+          },
+          "cellsAtEnd": 0,
+          "errors": [],
+          "remoteRequests": []
+        }
+      ]
+    },
+    "attempts": [
+      {
+        "report": "artifacts/feedback-v060/browser-first-report.json",
+        "stats": {
+          "startTime": "2026-10-27T01:41:28.264Z",
+          "duration": 215211.12,
+          "expected": 4,
+          "skipped": 3,
+          "unexpected": 1,
+          "flaky": 0
+        },
+        "build": "artifacts/feedback-v060/browser-first-build-meta.json",
+        "cause": "Pursue case won via ignore; repeated input releases created gaps in migration-window movement."
+      },
+      {
+        "report": "artifacts/feedback-v060/browser-final-report.json",
+        "stats": {
+          "startTime": "2026-10-27T01:47:42.938Z",
+          "duration": 236724.173,
+          "expected": 3,
+          "skipped": 3,
+          "unexpected": 2,
+          "flaky": 0
+        },
+        "build": "artifacts/feedback-v060/browser-second-build-meta.json",
+        "cause": "Continuous-key driver retained stale key tracking after travel cleared input, stalling at lung entry."
+      },
+      {
+        "report": "artifacts/feedback-v060/browser-rerun2-report.json",
+        "stats": {
+          "startTime": "2026-10-27T01:53:29.649Z",
+          "duration": 176557.331,
+          "expected": 5,
+          "skipped": 3,
+          "unexpected": 0,
+          "flaky": 0
+        },
+        "build": "artifacts/feedback-v060/final-build-meta.json",
+        "resolution": "Driver holds intent between frames, releases at modals, and releases/represses intent after organ changes; finally releases all keys. No combat nerfs made for these driver fixes."
+      }
+    ],
+    "liveEvidenceScope": "Protocol screenshots have before/after brackets, not a guaranteed identical simulation tick. Three cells may overlap when biting one target.",
+    "compactLayout": {
+      "report": "artifacts/feedback-v060/compact-layout.json",
+      "screenshot": "artifacts/feedback-v060/compact-1100x560.png",
+      "reviewed": true,
+      "note": "1100x560 viewport; does not stand in for physical browser zoom."
+    }
+  },
+  "release": {
+    "manifest": "artifacts/feedback-v060/release-manifest.json",
+    "offlineSmoke": "artifacts/feedback-v060/release-smoke/report.json",
+    "pass": true
+  },
+  "feedback": {
+    "receivedPlayerFeedback": 1,
+    "standardizedFivePlayerBlindTestsCompleted": 0,
+    "requiredBlindTests": 5
+  },
+  "remainingValidation": [
+    "User replay: whether the larger map, evolution and cells feel better and promote replay.",
+    "First-player 10–15 minute pacing and standardized five-player blind observations.",
+    "Physical Windows focus/minimize and native browser zoom.",
+    "v0.6.0 sustained performance with the expanded arenas/cells; old v0.5.0 performance results are not reassigned."
+  ],
+  "documentation": "Docs/ViralInvasion_PlaytestFeedback_v0.6.0.md"
+}

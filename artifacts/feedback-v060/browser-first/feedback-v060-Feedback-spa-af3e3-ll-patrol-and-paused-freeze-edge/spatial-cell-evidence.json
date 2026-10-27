@@ -1,0 +1,5643 @@
+{
+  "start": {
+    "game": "viral-invasion",
+    "schemaVersion": 1,
+    "seed": 7,
+    "phase": "playing",
+    "tick": 8,
+    "elapsed": 0.13333333333333333,
+    "player": {
+      "x": 450,
+      "y": 1070,
+      "hp": 100,
+      "radius": 19,
+      "facing": -0.13728879229404348,
+      "moving": false,
+      "dashUntil": 0,
+      "dashReady": 0,
+      "hurtUntil": 0,
+      "actionUntil": 0
+    },
+    "targets": [
+      {
+        "id": "source-a",
+        "kind": "single",
+        "x": 1020,
+        "y": 650,
+        "active": true,
+        "infected": true,
+        "role": "source",
+        "hp": 238,
+        "maxHp": 238,
+        "radius": 34,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 0,
+        "born": 0
+      },
+      {
+        "id": "source-b",
+        "kind": "single",
+        "x": 2010,
+        "y": 1090,
+        "active": true,
+        "infected": true,
+        "role": "source",
+        "hp": 238,
+        "maxHp": 238,
+        "radius": 34,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 0,
+        "born": 0
+      },
+      {
+        "id": "virus-1",
+        "kind": "single",
+        "x": 947.2693647193826,
+        "y": 720.3559966074229,
+        "active": true,
+        "infected": true,
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 1.775021832671128,
+        "born": 0,
+        "attackReady": 1,
+        "generation": 0,
+        "sourceId": "source-a"
+      },
+      {
+        "id": "virus-2",
+        "kind": "single",
+        "x": 1048.9955984506798,
+        "y": 660.9869486731932,
+        "active": true,
+        "infected": true,
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 1.9305869885518072,
+        "born": 0,
+        "attackReady": 1.3,
+        "generation": 0,
+        "sourceId": "source-a"
+      },
+      {
+        "id": "virus-3",
+        "kind": "single",
+        "x": 1986.5016504939504,
+        "y": 1086.771902487886,
+        "active": true,
+        "infected": true,
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 3.0510115127468667,
+        "born": 0,
+        "attackReady": 1.6,
+        "generation": 0,
+        "sourceId": "source-b"
+      },
+      {
+        "id": "virus-4",
+        "kind": "single",
+        "x": 1959.496038040228,
+        "y": 1097.707395762307,
+        "active": true,
+        "infected": true,
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 3.0585994711487863,
+        "born": 0,
+        "attackReady": 1.9,
+        "generation": 0,
+        "sourceId": "source-b"
+      }
+    ],
+    "tissue": {
+      "x": 850,
+      "y": 1190,
+      "hp": 62,
+      "maxHp": 100,
+      "radius": 43
+    },
+    "terminal": {
+      "x": 350,
+      "y": 1180
+    },
+    "tool": 1,
+    "cooldowns": {
+      "1": 0,
+      "2": 0,
+      "3": 0
+    },
+    "scanReady": 0,
+    "scanUntil": 0,
+    "effects": [],
+    "events": [
+      {
+        "type": "RUN_STARTED",
+        "tick": 0,
+        "data": {
+          "seed": 7,
+          "mode": "campaign",
+          "startAtTick": 0
+        }
+      }
+    ],
+    "message": "感染正在沿血管传播。Q 诊断，1 精准净化，2 清群，3 修复；靠近装置按 E。",
+    "messageUntil": 10,
+    "shots": 0,
+    "hits": 0,
+    "scans": 0,
+    "dashes": 0,
+    "result": null,
+    "world": {
+      "width": 2400,
+      "height": 1500,
+      "bounds": {
+        "left": 85,
+        "right": 2315,
+        "top": 145,
+        "bottom": 1415
+      },
+      "obstacles": [
+        {
+          "id": "fold-a",
+          "x": 730,
+          "y": 650,
+          "radius": 85
+        },
+        {
+          "id": "fold-b",
+          "x": 1630,
+          "y": 1190,
+          "radius": 90
+        },
+        {
+          "id": "fold-c",
+          "x": 1350,
+          "y": 540,
+          "radius": 72
+        },
+        {
+          "id": "fold-d",
+          "x": 2120,
+          "y": 720,
+          "radius": 85
+        },
+        {
+          "id": "fold-e",
+          "x": 780,
+          "y": 980,
+          "radius": 70
+        }
+      ],
+      "foreground": {
+        "x": 1110,
+        "y": 1195,
+        "width": 275,
+        "height": 150
+      }
+    },
+    "battle": {
+      "milestone": "G3",
+      "organId": "heart",
+      "graph": {
+        "nodes": [
+          {
+            "id": "source-a",
+            "kind": "source",
+            "x": 1020,
+            "y": 650,
+            "active": true,
+            "infected": true
+          },
+          {
+            "id": "source-b",
+            "kind": "source",
+            "x": 2010,
+            "y": 1090,
+            "active": true,
+            "infected": true
+          },
+          {
+            "id": "gate",
+            "kind": "gate",
+            "x": 1070,
+            "y": 280,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "valve",
+            "kind": "valve",
+            "x": 1440,
+            "y": 950,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "tissue",
+            "kind": "tissue",
+            "x": 850,
+            "y": 1190,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "retest",
+            "kind": "retest",
+            "x": 350,
+            "y": 1180,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "research",
+            "kind": "research",
+            "x": 350,
+            "y": 690,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "exit",
+            "kind": "exit",
+            "x": 2170,
+            "y": 280,
+            "active": false,
+            "infected": false
+          }
+        ],
+        "edges": [
+          {
+            "id": "source-a:gate",
+            "from": "source-a",
+            "to": "gate",
+            "open": true,
+            "nextSpread": 6,
+            "flowDirection": {
+              "x": 0.13391789600139503,
+              "y": -0.9909924304103231
+            }
+          },
+          {
+            "id": "gate:tissue",
+            "from": "gate",
+            "to": "tissue",
+            "open": true,
+            "nextSpread": 6,
+            "flowDirection": {
+              "x": -0.23498856036532292,
+              "y": 0.971998136056563
+            }
+          },
+          {
+            "id": "source-b:valve",
+            "from": "source-b",
+            "to": "valve",
+            "open": true,
+            "nextSpread": 6,
+            "flowDirection": {
+              "x": -0.9711364222667793,
+              "y": -0.23852473529359491
+            }
+          },
+          {
+            "id": "valve:tissue",
+            "from": "valve",
+            "to": "tissue",
+            "open": true,
+            "nextSpread": 6,
+            "flowDirection": {
+              "x": -0.9262954009547514,
+              "y": 0.3767981292019328
+            }
+          }
+        ]
+      },
+      "pressure": {
+        "infection": 26.048533333333324,
+        "vitality": 100,
+        "criticalSince": null,
+        "organAlarm": false,
+        "crisisReason": ""
+      },
+      "pulse": {
+        "phase": "charge",
+        "phaseRemaining": 1.8666666666666667,
+        "readyAt": 0,
+        "activeUntil": 0,
+        "origin": {
+          "x": 1440,
+          "y": 950
+        },
+        "direction": 3.025663786197186,
+        "uses": 0,
+        "cycleIndex": 0
+      },
+      "warning": null,
+      "traits": [],
+      "defeatedTraits": [],
+      "nextEvolutionAt": 14,
+      "stage": 0,
+      "stageLabel": "Ⅰ · 建立防线",
+      "objective": "净化主要感染源 0/2，变异精英 0/2；保护所有激活器官。",
+      "readyToRetest": false,
+      "lastAim": {
+        "x": 667.1428571428571,
+        "y": 1040
+      },
+      "stats": {
+        "kills": 0,
+        "sourceClears": 0,
+        "eliteClears": 0,
+        "repairs": 0,
+        "pulses": 0,
+        "playerDamage": 0,
+        "tissueDamage": 0,
+        "scans": 0
+      },
+      "nextSpawnAt": {
+        "source-a": 8,
+        "source-b": 10
+      },
+      "nextActorId": 4,
+      "firstTrait": "CARAPACE",
+      "recentNotice": "",
+      "gateChangedAt": -10,
+      "organLowSince": null,
+      "eliteSpawned": 0,
+      "history": [],
+      "behaviorHistory": [],
+      "evolutionDecisions": []
+    },
+    "growth": {
+      "runId": "7:2",
+      "seed": 7,
+      "lastElapsed": 0.13333333333333333,
+      "xp": 0,
+      "level": 0,
+      "nextXp": 20,
+      "research": 0,
+      "equipped": [],
+      "draft": null,
+      "pendingLevels": [],
+      "consumedDraftIds": [],
+      "rewardedKeys": [],
+      "sourceKillCounts": {},
+      "damageTakenByOrgan": {
+        "heart": 0,
+        "lung": 0
+      },
+      "protectionNeeded": {
+        "heart": false,
+        "lung": false
+      },
+      "draftSerial": 0,
+      "historyHash": 2166136261,
+      "ended": false,
+      "beacon": null,
+      "beaconReadyAt": 0,
+      "cells": [],
+      "activations": {},
+      "marks": [],
+      "resonance": [],
+      "chainRoots": [],
+      "protocolHistory": [],
+      "pendingLogs": [],
+      "budgetTick": 8,
+      "budgetUsed": 0,
+      "skippedCommands": 0
+    },
+    "campaign": {
+      "seed": 7,
+      "activeOrganId": "heart",
+      "arenas": {
+        "heart": {
+          "organId": "heart",
+          "activated": true,
+          "geometry": {
+            "width": 2400,
+            "height": 1500,
+            "bounds": {
+              "left": 85,
+              "right": 2315,
+              "top": 145,
+              "bottom": 1415
+            },
+            "obstacles": [
+              {
+                "id": "fold-a",
+                "x": 730,
+                "y": 650,
+                "radius": 85
+              },
+              {
+                "id": "fold-b",
+                "x": 1630,
+                "y": 1190,
+                "radius": 90
+              },
+              {
+                "id": "fold-c",
+                "x": 1350,
+                "y": 540,
+                "radius": 72
+              },
+              {
+                "id": "fold-d",
+                "x": 2120,
+                "y": 720,
+                "radius": 85
+              },
+              {
+                "id": "fold-e",
+                "x": 780,
+                "y": 980,
+                "radius": 70
+              }
+            ],
+            "foreground": {
+              "x": 1110,
+              "y": 1195,
+              "width": 275,
+              "height": 150
+            }
+          },
+          "targets": [
+            {
+              "id": "source-a",
+              "kind": "single",
+              "x": 1020,
+              "y": 650,
+              "active": true,
+              "infected": true,
+              "role": "source",
+              "hp": 238,
+              "maxHp": 238,
+              "radius": 34,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0
+            },
+            {
+              "id": "source-b",
+              "kind": "single",
+              "x": 2010,
+              "y": 1090,
+              "active": true,
+              "infected": true,
+              "role": "source",
+              "hp": 238,
+              "maxHp": 238,
+              "radius": 34,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0
+            },
+            {
+              "id": "virus-1",
+              "kind": "single",
+              "x": 947.2693647193826,
+              "y": 720.3559966074229,
+              "active": true,
+              "infected": true,
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 1.775021832671128,
+              "born": 0,
+              "attackReady": 1,
+              "generation": 0,
+              "sourceId": "source-a"
+            },
+            {
+              "id": "virus-2",
+              "kind": "single",
+              "x": 1048.9955984506798,
+              "y": 660.9869486731932,
+              "active": true,
+              "infected": true,
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 1.9305869885518072,
+              "born": 0,
+              "attackReady": 1.3,
+              "generation": 0,
+              "sourceId": "source-a"
+            },
+            {
+              "id": "virus-3",
+              "kind": "single",
+              "x": 1986.5016504939504,
+              "y": 1086.771902487886,
+              "active": true,
+              "infected": true,
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 3.0510115127468667,
+              "born": 0,
+              "attackReady": 1.6,
+              "generation": 0,
+              "sourceId": "source-b"
+            },
+            {
+              "id": "virus-4",
+              "kind": "single",
+              "x": 1959.496038040228,
+              "y": 1097.707395762307,
+              "active": true,
+              "infected": true,
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 3.0585994711487863,
+              "born": 0,
+              "attackReady": 1.9,
+              "generation": 0,
+              "sourceId": "source-b"
+            }
+          ],
+          "tissue": {
+            "x": 850,
+            "y": 1190,
+            "hp": 62,
+            "maxHp": 100,
+            "radius": 43
+          },
+          "terminal": {
+            "x": 350,
+            "y": 1180
+          },
+          "graph": {
+            "nodes": [
+              {
+                "id": "source-a",
+                "kind": "source",
+                "x": 1020,
+                "y": 650,
+                "active": true,
+                "infected": true
+              },
+              {
+                "id": "source-b",
+                "kind": "source",
+                "x": 2010,
+                "y": 1090,
+                "active": true,
+                "infected": true
+              },
+              {
+                "id": "gate",
+                "kind": "gate",
+                "x": 1070,
+                "y": 280,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "valve",
+                "kind": "valve",
+                "x": 1440,
+                "y": 950,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "tissue",
+                "kind": "tissue",
+                "x": 850,
+                "y": 1190,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "retest",
+                "kind": "retest",
+                "x": 350,
+                "y": 1180,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "research",
+                "kind": "research",
+                "x": 350,
+                "y": 690,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "exit",
+                "kind": "exit",
+                "x": 2170,
+                "y": 280,
+                "active": false,
+                "infected": false
+              }
+            ],
+            "edges": [
+              {
+                "id": "source-a:gate",
+                "from": "source-a",
+                "to": "gate",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": 0.13391789600139503,
+                  "y": -0.9909924304103231
+                }
+              },
+              {
+                "id": "gate:tissue",
+                "from": "gate",
+                "to": "tissue",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": -0.23498856036532292,
+                  "y": 0.971998136056563
+                }
+              },
+              {
+                "id": "source-b:valve",
+                "from": "source-b",
+                "to": "valve",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": -0.9711364222667793,
+                  "y": -0.23852473529359491
+                }
+              },
+              {
+                "id": "valve:tissue",
+                "from": "valve",
+                "to": "tissue",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": -0.9262954009547514,
+                  "y": 0.3767981292019328
+                }
+              }
+            ]
+          },
+          "pulse": {
+            "phase": "charge",
+            "phaseRemaining": 1.8666666666666667,
+            "readyAt": 0,
+            "activeUntil": 0,
+            "origin": {
+              "x": 1440,
+              "y": 950
+            },
+            "direction": 3.025663786197186,
+            "uses": 0,
+            "cycleIndex": 0
+          },
+          "nextSpawnAt": {
+            "source-a": 8,
+            "source-b": 10
+          },
+          "gateChangedAt": -10,
+          "organLowSince": null,
+          "departedAt": null,
+          "nextBackgroundAt": 5,
+          "backgroundLoss": 0,
+          "backgroundReason": "",
+          "offscreenElapsed": 0,
+          "nextBackgroundElapsed": 10,
+          "lastPressureAt": 0.13333333333333333,
+          "totalBackgroundLoss": 0
+        },
+        "lung": {
+          "organId": "lung",
+          "activated": false,
+          "geometry": {
+            "width": 2400,
+            "height": 1500,
+            "bounds": {
+              "left": 85,
+              "right": 2315,
+              "top": 145,
+              "bottom": 1415
+            },
+            "obstacles": [
+              {
+                "id": "alveolus-a",
+                "x": 850,
+                "y": 650,
+                "radius": 100
+              },
+              {
+                "id": "alveolus-b",
+                "x": 1740,
+                "y": 1090,
+                "radius": 105
+              },
+              {
+                "id": "alveolus-c",
+                "x": 1900,
+                "y": 360,
+                "radius": 78
+              },
+              {
+                "id": "alveolus-d",
+                "x": 650,
+                "y": 1330,
+                "radius": 68
+              }
+            ],
+            "foreground": {
+              "x": 1010,
+              "y": 1220,
+              "width": 285,
+              "height": 150
+            }
+          },
+          "targets": [
+            {
+              "x": 1570,
+              "y": 600,
+              "id": "lung-source-a",
+              "kind": "single",
+              "role": "source",
+              "radius": 34,
+              "hp": 238,
+              "maxHp": 238,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0
+            },
+            {
+              "x": 1605,
+              "y": 560,
+              "id": "lung-initial-0",
+              "kind": "single",
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0,
+              "attackReady": 1.5,
+              "generation": 0,
+              "sourceId": "lung-source-a"
+            },
+            {
+              "x": 1554,
+              "y": 598,
+              "id": "lung-initial-1",
+              "kind": "single",
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0,
+              "attackReady": 1.5,
+              "generation": 0,
+              "sourceId": "lung-source-a"
+            }
+          ],
+          "tissue": {
+            "x": 1260,
+            "y": 1120,
+            "hp": 76,
+            "maxHp": 100,
+            "radius": 43
+          },
+          "terminal": {
+            "x": 350,
+            "y": 650
+          },
+          "graph": {
+            "nodes": [
+              {
+                "id": "lung-source-a",
+                "kind": "source",
+                "x": 1570,
+                "y": 600,
+                "active": true,
+                "infected": true
+              },
+              {
+                "id": "airway",
+                "kind": "gate",
+                "x": 1250,
+                "y": 330,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "tissue",
+                "kind": "tissue",
+                "x": 1260,
+                "y": 1120,
+                "hp": 76,
+                "maxHp": 100,
+                "radius": 43,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "retest",
+                "kind": "retest",
+                "x": 350,
+                "y": 650,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "research",
+                "kind": "research",
+                "x": 800,
+                "y": 1150,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "exit",
+                "kind": "exit",
+                "x": 350,
+                "y": 1060,
+                "active": true,
+                "infected": false
+              }
+            ],
+            "edges": [
+              {
+                "id": "lung-source-a:airway",
+                "from": "lung-source-a",
+                "to": "airway",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": -0.7642914835078909,
+                  "y": -0.6448709392097829
+                }
+              },
+              {
+                "id": "airway:tissue",
+                "from": "airway",
+                "to": "tissue",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": 0.012657213851396143,
+                  "y": 0.9999198942602954
+                }
+              }
+            ]
+          },
+          "pulse": {
+            "phase": "charge",
+            "phaseRemaining": 2,
+            "readyAt": 0,
+            "activeUntil": 0,
+            "origin": {
+              "x": 1250,
+              "y": 330
+            },
+            "direction": 1.5707963267948966,
+            "uses": 0
+          },
+          "nextSpawnAt": {
+            "lung-source-a": 8
+          },
+          "gateChangedAt": -10,
+          "organLowSince": null,
+          "departedAt": null,
+          "nextBackgroundAt": 5,
+          "backgroundLoss": 0,
+          "backgroundReason": "",
+          "offscreenElapsed": 0,
+          "nextBackgroundElapsed": 10,
+          "lastPressureAt": 0.13333333333333333,
+          "totalBackgroundLoss": 0,
+          "flow": {
+            "phase": "inhale",
+            "phaseRemaining": 4,
+            "airwayOpen": true,
+            "changedAt": -10,
+            "pressureUntil": 0,
+            "origin": {
+              "x": 1470,
+              "y": 800
+            },
+            "direction": {
+              "x": 0,
+              "y": 1
+            },
+            "strength": 36
+          }
+        }
+      },
+      "phase": "contain",
+      "travelReadyAt": 0,
+      "migration": {
+        "id": "migration:7:1",
+        "status": "locked",
+        "from": "heart",
+        "to": "lung",
+        "warnedAt": 0,
+        "deadline": 0,
+        "choice": null,
+        "resolvedAt": null,
+        "blockStartedAt": null,
+        "carrierIds": [],
+        "clearedCarrierIds": [],
+        "interceptUntil": null,
+        "interceptSucceeded": null,
+        "interceptResolvedAt": null
+      },
+      "core": {
+        "status": "locked",
+        "organId": "heart",
+        "actorId": "mother-core",
+        "traits": [],
+        "clearedAt": null
+      },
+      "requiredSourceIds": {
+        "heart": [
+          "source-a",
+          "source-b"
+        ],
+        "lung": [
+          "lung-source-a"
+        ]
+      },
+      "clearedSourceIds": [],
+      "clearedEliteIds": [],
+      "transactionIds": [],
+      "pendingCommands": [],
+      "history": [],
+      "progress": {
+        "sourceClears": 0,
+        "sourceTotal": 2,
+        "eliteClears": 0,
+        "coreCleared": false,
+        "organConditions": true,
+        "infectionCondition": true
+      },
+      "stats": {
+        "travels": 0,
+        "airwayUses": 0,
+        "backgroundDamage": 0,
+        "migrationChoice": null
+      }
+    }
+  },
+  "before": {
+    "origin": {
+      "x": 31.11111111111111,
+      "y": -302.4
+    },
+    "player": {
+      "x": 381.11111111111114,
+      "y": 296.8
+    }
+  },
+  "summoned": {
+    "game": "viral-invasion",
+    "schemaVersion": 1,
+    "seed": 7,
+    "phase": "playing",
+    "tick": 193,
+    "elapsed": 3.216666666666667,
+    "player": {
+      "x": 846.3508413471661,
+      "y": 751.9824919861662,
+      "hp": 100,
+      "radius": 19,
+      "facing": -0.5310217538480325,
+      "moving": false,
+      "dashUntil": 0,
+      "dashReady": 0,
+      "hurtUntil": 0,
+      "actionUntil": 0
+    },
+    "targets": [
+      {
+        "id": "source-a",
+        "kind": "single",
+        "x": 1020,
+        "y": 650,
+        "active": true,
+        "infected": true,
+        "role": "source",
+        "hp": 238,
+        "maxHp": 238,
+        "radius": 34,
+        "hitUntil": 0,
+        "scanned": true,
+        "traits": [],
+        "facing": 0,
+        "born": 0,
+        "revealedUntil": 8.083333333333334
+      },
+      {
+        "id": "source-b",
+        "kind": "single",
+        "x": 2010,
+        "y": 1090,
+        "active": true,
+        "infected": true,
+        "role": "source",
+        "hp": 238,
+        "maxHp": 238,
+        "radius": 34,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 0,
+        "born": 0
+      },
+      {
+        "id": "virus-1",
+        "kind": "single",
+        "x": 862.7498178407815,
+        "y": 807.924713530508,
+        "active": true,
+        "infected": true,
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": true,
+        "traits": [],
+        "facing": -2.1423798191193586,
+        "born": 0,
+        "attackReady": 1,
+        "generation": 0,
+        "sourceId": "source-a",
+        "attackAt": 3.6533333333333333,
+        "attackAim": {
+          "x": 826.767508013833,
+          "y": 751.9824919861662
+        },
+        "attackTarget": "player",
+        "revealedUntil": 8.083333333333334
+      },
+      {
+        "id": "virus-2",
+        "kind": "single",
+        "x": 945.670337486474,
+        "y": 783.3286149093832,
+        "active": true,
+        "infected": true,
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": true,
+        "traits": [],
+        "facing": -2.835877935020723,
+        "born": 0,
+        "attackReady": 1.3,
+        "generation": 0,
+        "sourceId": "source-a",
+        "revealedUntil": 8.083333333333334
+      },
+      {
+        "id": "virus-3",
+        "kind": "single",
+        "x": 1789.9773181665525,
+        "y": 1104.6221475202524,
+        "active": true,
+        "infected": true,
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 3.051011512746876,
+        "born": 0,
+        "attackReady": 1.6,
+        "generation": 0,
+        "sourceId": "source-b"
+      },
+      {
+        "id": "virus-4",
+        "kind": "single",
+        "x": 1762.8419177205026,
+        "y": 1114.065922765656,
+        "active": true,
+        "infected": true,
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 3.058599471148796,
+        "born": 0,
+        "attackReady": 1.9,
+        "generation": 0,
+        "sourceId": "source-b"
+      }
+    ],
+    "tissue": {
+      "x": 850,
+      "y": 1190,
+      "hp": 62,
+      "maxHp": 100,
+      "radius": 43
+    },
+    "terminal": {
+      "x": 350,
+      "y": 1180
+    },
+    "tool": 1,
+    "cooldowns": {
+      "1": 0,
+      "2": 0,
+      "3": 0
+    },
+    "scanReady": 6.083333333333334,
+    "scanUntil": 5.083333333333334,
+    "effects": [
+      {
+        "id": 1,
+        "kind": "danger",
+        "from": {
+          "x": 862.7498178407815,
+          "y": 807.924713530508
+        },
+        "to": {
+          "x": 826.767508013833,
+          "y": 751.9824919861662
+        },
+        "radius": 58,
+        "born": 2.933333333333333,
+        "duration": 0.72
+      },
+      {
+        "id": 2,
+        "kind": "scan",
+        "from": {
+          "x": 846.3508413471661,
+          "y": 751.9824919861662
+        },
+        "to": {
+          "x": 846.3508413471661,
+          "y": 751.9824919861662
+        },
+        "radius": 650,
+        "born": 3.0833333333333335,
+        "duration": 1.1
+      },
+      {
+        "id": 3,
+        "kind": "scan",
+        "from": {
+          "x": 1020.0000374269634,
+          "y": 649.9999938172214
+        },
+        "to": {
+          "x": 1020.0000374269634,
+          "y": 649.9999938172214
+        },
+        "radius": 190,
+        "born": 3.0833333333333335,
+        "duration": 0.6
+      }
+    ],
+    "events": [
+      {
+        "type": "RUN_STARTED",
+        "tick": 0,
+        "data": {
+          "seed": 7,
+          "mode": "campaign",
+          "startAtTick": 0
+        }
+      },
+      {
+        "type": "ATTACK_TELEGRAPHED",
+        "tick": 176,
+        "data": {
+          "actorId": "virus-1",
+          "target": "player",
+          "resolveAt": 3.6533333333333333
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 185,
+        "data": {
+          "found": 3,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 185,
+        "data": {
+          "count": 3,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 185,
+        "data": {
+          "rootId": "7:2:scan:185",
+          "x": 1020.0000374269634,
+          "y": 649.9999938172214,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "GROWTH_REWARD",
+        "tick": 185,
+        "data": {
+          "key": "diagnose:baseline",
+          "xp": 6,
+          "research": 1,
+          "totalXp": 6,
+          "totalResearch": 1
+        }
+      }
+    ],
+    "message": "诊断 3 个感染体。◇ 晶壳绕后/冲流；⋈ 裂殖用 2；◌ 潜伏用 Q/组织修复。",
+    "messageUntil": 9.083333333333334,
+    "shots": 0,
+    "hits": 0,
+    "scans": 1,
+    "dashes": 0,
+    "result": null,
+    "world": {
+      "width": 2400,
+      "height": 1500,
+      "bounds": {
+        "left": 85,
+        "right": 2315,
+        "top": 145,
+        "bottom": 1415
+      },
+      "obstacles": [
+        {
+          "id": "fold-a",
+          "x": 730,
+          "y": 650,
+          "radius": 85
+        },
+        {
+          "id": "fold-b",
+          "x": 1630,
+          "y": 1190,
+          "radius": 90
+        },
+        {
+          "id": "fold-c",
+          "x": 1350,
+          "y": 540,
+          "radius": 72
+        },
+        {
+          "id": "fold-d",
+          "x": 2120,
+          "y": 720,
+          "radius": 85
+        },
+        {
+          "id": "fold-e",
+          "x": 780,
+          "y": 980,
+          "radius": 70
+        }
+      ],
+      "foreground": {
+        "x": 1110,
+        "y": 1195,
+        "width": 275,
+        "height": 150
+      }
+    },
+    "battle": {
+      "milestone": "G3",
+      "organId": "heart",
+      "graph": {
+        "nodes": [
+          {
+            "id": "source-a",
+            "kind": "source",
+            "x": 1020,
+            "y": 650,
+            "active": true,
+            "infected": true
+          },
+          {
+            "id": "source-b",
+            "kind": "source",
+            "x": 2010,
+            "y": 1090,
+            "active": true,
+            "infected": true
+          },
+          {
+            "id": "gate",
+            "kind": "gate",
+            "x": 1070,
+            "y": 280,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "valve",
+            "kind": "valve",
+            "x": 1440,
+            "y": 950,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "tissue",
+            "kind": "tissue",
+            "x": 850,
+            "y": 1190,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "retest",
+            "kind": "retest",
+            "x": 350,
+            "y": 1180,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "research",
+            "kind": "research",
+            "x": 350,
+            "y": 690,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "exit",
+            "kind": "exit",
+            "x": 2170,
+            "y": 280,
+            "active": false,
+            "infected": false
+          }
+        ],
+        "edges": [
+          {
+            "id": "source-a:gate",
+            "from": "source-a",
+            "to": "gate",
+            "open": true,
+            "nextSpread": 6,
+            "flowDirection": {
+              "x": 0.13391789600139503,
+              "y": -0.9909924304103231
+            }
+          },
+          {
+            "id": "gate:tissue",
+            "from": "gate",
+            "to": "tissue",
+            "open": true,
+            "nextSpread": 6,
+            "flowDirection": {
+              "x": -0.23498856036532292,
+              "y": 0.971998136056563
+            }
+          },
+          {
+            "id": "source-b:valve",
+            "from": "source-b",
+            "to": "valve",
+            "open": true,
+            "nextSpread": 6,
+            "flowDirection": {
+              "x": -0.9711364222667793,
+              "y": -0.23852473529359491
+            }
+          },
+          {
+            "id": "valve:tissue",
+            "from": "valve",
+            "to": "tissue",
+            "open": true,
+            "nextSpread": 6,
+            "flowDirection": {
+              "x": -0.9262954009547514,
+              "y": 0.3767981292019328
+            }
+          }
+        ]
+      },
+      "pressure": {
+        "infection": 27.170866666666452,
+        "vitality": 100,
+        "criticalSince": null,
+        "organAlarm": false,
+        "crisisReason": ""
+      },
+      "pulse": {
+        "phase": "rest",
+        "phaseRemaining": 2.783333333333333,
+        "readyAt": 0,
+        "activeUntil": 0,
+        "origin": {
+          "x": 1440,
+          "y": 950
+        },
+        "direction": -2.521343115711861,
+        "uses": 0,
+        "cycleIndex": 0
+      },
+      "warning": null,
+      "traits": [],
+      "defeatedTraits": [],
+      "nextEvolutionAt": 14,
+      "stage": 0,
+      "stageLabel": "Ⅰ · 建立防线",
+      "objective": "净化主要感染源 0/2，变异精英 0/2；保护所有激活器官。",
+      "readyToRetest": false,
+      "lastAim": {
+        "x": 1020.0000374269653,
+        "y": 649.9999938172209
+      },
+      "stats": {
+        "kills": 0,
+        "sourceClears": 0,
+        "eliteClears": 0,
+        "repairs": 0,
+        "pulses": 0,
+        "playerDamage": 0,
+        "tissueDamage": 0,
+        "scans": 1
+      },
+      "nextSpawnAt": {
+        "source-a": 8,
+        "source-b": 10
+      },
+      "nextActorId": 4,
+      "firstTrait": "CARAPACE",
+      "recentNotice": "",
+      "gateChangedAt": -10,
+      "organLowSince": null,
+      "eliteSpawned": 0,
+      "history": [],
+      "behaviorHistory": [
+        {
+          "tick": 185,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        }
+      ],
+      "evolutionDecisions": []
+    },
+    "growth": {
+      "runId": "7:2",
+      "seed": 7,
+      "lastElapsed": 3.216666666666667,
+      "xp": 6,
+      "level": 0,
+      "nextXp": 20,
+      "research": 1,
+      "equipped": [],
+      "draft": null,
+      "pendingLevels": [],
+      "consumedDraftIds": [],
+      "rewardedKeys": [
+        "diagnose:baseline"
+      ],
+      "sourceKillCounts": {},
+      "damageTakenByOrgan": {
+        "heart": 0,
+        "lung": 0
+      },
+      "protectionNeeded": {
+        "heart": false,
+        "lung": false
+      },
+      "draftSerial": 0,
+      "historyHash": 2166136261,
+      "ended": false,
+      "beacon": {
+        "x": 1020.0000374269634,
+        "y": 649.9999938172214,
+        "id": "7:2:scan:185:beacon",
+        "organId": "heart",
+        "born": 3.0833333333333335,
+        "until": 6.583333333333334,
+        "radius": 190,
+        "damage": 12,
+        "interval": 1.2,
+        "nextAttackAt": 3.1833333333333336,
+        "tuning": "balanced",
+        "mode": "patrol"
+      },
+      "beaconReadyAt": 6.083333333333334,
+      "cells": [
+        {
+          "x": 1010.6118638955836,
+          "y": 643.5295491789884,
+          "id": "7:2:scan:185:beacon:cell:0",
+          "organId": "heart",
+          "born": 3.0833333333333335,
+          "until": 6.583333333333334,
+          "radius": 15,
+          "damage": 12,
+          "interval": 1.2,
+          "nextAttackAt": 3.1833333333333336,
+          "tuning": "balanced",
+          "mode": "patrol",
+          "beaconId": "7:2:scan:185:beacon",
+          "facing": 1.9504359727627338,
+          "updatedAt": 3.216666666666667,
+          "attackReadyAt": 3.3333333333333335,
+          "attackUntil": 0,
+          "targetId": "virus-2",
+          "activity": "seeking",
+          "navigationAt": 3.4333333333333336,
+          "waypoint": {
+            "x": 953.8079979353636,
+            "y": 785.8969334636826
+          }
+        }
+      ],
+      "activations": {},
+      "marks": [],
+      "resonance": [],
+      "chainRoots": [],
+      "protocolHistory": [
+        {
+          "at": 3.0833333333333335,
+          "type": "GROWTH_REWARD",
+          "text": "研究证据 +1，经验 +6。"
+        },
+        {
+          "at": 3.0833333333333335,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        }
+      ],
+      "pendingLogs": [],
+      "budgetTick": 193,
+      "budgetUsed": 0,
+      "skippedCommands": 0
+    },
+    "campaign": {
+      "seed": 7,
+      "activeOrganId": "heart",
+      "arenas": {
+        "heart": {
+          "organId": "heart",
+          "activated": true,
+          "geometry": {
+            "width": 2400,
+            "height": 1500,
+            "bounds": {
+              "left": 85,
+              "right": 2315,
+              "top": 145,
+              "bottom": 1415
+            },
+            "obstacles": [
+              {
+                "id": "fold-a",
+                "x": 730,
+                "y": 650,
+                "radius": 85
+              },
+              {
+                "id": "fold-b",
+                "x": 1630,
+                "y": 1190,
+                "radius": 90
+              },
+              {
+                "id": "fold-c",
+                "x": 1350,
+                "y": 540,
+                "radius": 72
+              },
+              {
+                "id": "fold-d",
+                "x": 2120,
+                "y": 720,
+                "radius": 85
+              },
+              {
+                "id": "fold-e",
+                "x": 780,
+                "y": 980,
+                "radius": 70
+              }
+            ],
+            "foreground": {
+              "x": 1110,
+              "y": 1195,
+              "width": 275,
+              "height": 150
+            }
+          },
+          "targets": [
+            {
+              "id": "source-a",
+              "kind": "single",
+              "x": 1020,
+              "y": 650,
+              "active": true,
+              "infected": true,
+              "role": "source",
+              "hp": 238,
+              "maxHp": 238,
+              "radius": 34,
+              "hitUntil": 0,
+              "scanned": true,
+              "traits": [],
+              "facing": 0,
+              "born": 0,
+              "revealedUntil": 8.083333333333334
+            },
+            {
+              "id": "source-b",
+              "kind": "single",
+              "x": 2010,
+              "y": 1090,
+              "active": true,
+              "infected": true,
+              "role": "source",
+              "hp": 238,
+              "maxHp": 238,
+              "radius": 34,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0
+            },
+            {
+              "id": "virus-1",
+              "kind": "single",
+              "x": 862.7498178407815,
+              "y": 807.924713530508,
+              "active": true,
+              "infected": true,
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": true,
+              "traits": [],
+              "facing": -2.1423798191193586,
+              "born": 0,
+              "attackReady": 1,
+              "generation": 0,
+              "sourceId": "source-a",
+              "attackAt": 3.6533333333333333,
+              "attackAim": {
+                "x": 826.767508013833,
+                "y": 751.9824919861662
+              },
+              "attackTarget": "player",
+              "revealedUntil": 8.083333333333334
+            },
+            {
+              "id": "virus-2",
+              "kind": "single",
+              "x": 945.670337486474,
+              "y": 783.3286149093832,
+              "active": true,
+              "infected": true,
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": true,
+              "traits": [],
+              "facing": -2.835877935020723,
+              "born": 0,
+              "attackReady": 1.3,
+              "generation": 0,
+              "sourceId": "source-a",
+              "revealedUntil": 8.083333333333334
+            },
+            {
+              "id": "virus-3",
+              "kind": "single",
+              "x": 1789.9773181665525,
+              "y": 1104.6221475202524,
+              "active": true,
+              "infected": true,
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 3.051011512746876,
+              "born": 0,
+              "attackReady": 1.6,
+              "generation": 0,
+              "sourceId": "source-b"
+            },
+            {
+              "id": "virus-4",
+              "kind": "single",
+              "x": 1762.8419177205026,
+              "y": 1114.065922765656,
+              "active": true,
+              "infected": true,
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 3.058599471148796,
+              "born": 0,
+              "attackReady": 1.9,
+              "generation": 0,
+              "sourceId": "source-b"
+            }
+          ],
+          "tissue": {
+            "x": 850,
+            "y": 1190,
+            "hp": 62,
+            "maxHp": 100,
+            "radius": 43
+          },
+          "terminal": {
+            "x": 350,
+            "y": 1180
+          },
+          "graph": {
+            "nodes": [
+              {
+                "id": "source-a",
+                "kind": "source",
+                "x": 1020,
+                "y": 650,
+                "active": true,
+                "infected": true
+              },
+              {
+                "id": "source-b",
+                "kind": "source",
+                "x": 2010,
+                "y": 1090,
+                "active": true,
+                "infected": true
+              },
+              {
+                "id": "gate",
+                "kind": "gate",
+                "x": 1070,
+                "y": 280,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "valve",
+                "kind": "valve",
+                "x": 1440,
+                "y": 950,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "tissue",
+                "kind": "tissue",
+                "x": 850,
+                "y": 1190,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "retest",
+                "kind": "retest",
+                "x": 350,
+                "y": 1180,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "research",
+                "kind": "research",
+                "x": 350,
+                "y": 690,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "exit",
+                "kind": "exit",
+                "x": 2170,
+                "y": 280,
+                "active": false,
+                "infected": false
+              }
+            ],
+            "edges": [
+              {
+                "id": "source-a:gate",
+                "from": "source-a",
+                "to": "gate",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": 0.13391789600139503,
+                  "y": -0.9909924304103231
+                }
+              },
+              {
+                "id": "gate:tissue",
+                "from": "gate",
+                "to": "tissue",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": -0.23498856036532292,
+                  "y": 0.971998136056563
+                }
+              },
+              {
+                "id": "source-b:valve",
+                "from": "source-b",
+                "to": "valve",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": -0.9711364222667793,
+                  "y": -0.23852473529359491
+                }
+              },
+              {
+                "id": "valve:tissue",
+                "from": "valve",
+                "to": "tissue",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": -0.9262954009547514,
+                  "y": 0.3767981292019328
+                }
+              }
+            ]
+          },
+          "pulse": {
+            "phase": "rest",
+            "phaseRemaining": 2.783333333333333,
+            "readyAt": 0,
+            "activeUntil": 0,
+            "origin": {
+              "x": 1440,
+              "y": 950
+            },
+            "direction": -2.521343115711861,
+            "uses": 0,
+            "cycleIndex": 0
+          },
+          "nextSpawnAt": {
+            "source-a": 8,
+            "source-b": 10
+          },
+          "gateChangedAt": -10,
+          "organLowSince": null,
+          "departedAt": null,
+          "nextBackgroundAt": 5,
+          "backgroundLoss": 0,
+          "backgroundReason": "",
+          "offscreenElapsed": 0,
+          "nextBackgroundElapsed": 10,
+          "lastPressureAt": 3.216666666666667,
+          "totalBackgroundLoss": 0
+        },
+        "lung": {
+          "organId": "lung",
+          "activated": false,
+          "geometry": {
+            "width": 2400,
+            "height": 1500,
+            "bounds": {
+              "left": 85,
+              "right": 2315,
+              "top": 145,
+              "bottom": 1415
+            },
+            "obstacles": [
+              {
+                "id": "alveolus-a",
+                "x": 850,
+                "y": 650,
+                "radius": 100
+              },
+              {
+                "id": "alveolus-b",
+                "x": 1740,
+                "y": 1090,
+                "radius": 105
+              },
+              {
+                "id": "alveolus-c",
+                "x": 1900,
+                "y": 360,
+                "radius": 78
+              },
+              {
+                "id": "alveolus-d",
+                "x": 650,
+                "y": 1330,
+                "radius": 68
+              }
+            ],
+            "foreground": {
+              "x": 1010,
+              "y": 1220,
+              "width": 285,
+              "height": 150
+            }
+          },
+          "targets": [
+            {
+              "x": 1570,
+              "y": 600,
+              "id": "lung-source-a",
+              "kind": "single",
+              "role": "source",
+              "radius": 34,
+              "hp": 238,
+              "maxHp": 238,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0
+            },
+            {
+              "x": 1605,
+              "y": 560,
+              "id": "lung-initial-0",
+              "kind": "single",
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0,
+              "attackReady": 1.5,
+              "generation": 0,
+              "sourceId": "lung-source-a"
+            },
+            {
+              "x": 1554,
+              "y": 598,
+              "id": "lung-initial-1",
+              "kind": "single",
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0,
+              "attackReady": 1.5,
+              "generation": 0,
+              "sourceId": "lung-source-a"
+            }
+          ],
+          "tissue": {
+            "x": 1260,
+            "y": 1120,
+            "hp": 76,
+            "maxHp": 100,
+            "radius": 43
+          },
+          "terminal": {
+            "x": 350,
+            "y": 650
+          },
+          "graph": {
+            "nodes": [
+              {
+                "id": "lung-source-a",
+                "kind": "source",
+                "x": 1570,
+                "y": 600,
+                "active": true,
+                "infected": true
+              },
+              {
+                "id": "airway",
+                "kind": "gate",
+                "x": 1250,
+                "y": 330,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "tissue",
+                "kind": "tissue",
+                "x": 1260,
+                "y": 1120,
+                "hp": 76,
+                "maxHp": 100,
+                "radius": 43,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "retest",
+                "kind": "retest",
+                "x": 350,
+                "y": 650,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "research",
+                "kind": "research",
+                "x": 800,
+                "y": 1150,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "exit",
+                "kind": "exit",
+                "x": 350,
+                "y": 1060,
+                "active": true,
+                "infected": false
+              }
+            ],
+            "edges": [
+              {
+                "id": "lung-source-a:airway",
+                "from": "lung-source-a",
+                "to": "airway",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": -0.7642914835078909,
+                  "y": -0.6448709392097829
+                }
+              },
+              {
+                "id": "airway:tissue",
+                "from": "airway",
+                "to": "tissue",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": 0.012657213851396143,
+                  "y": 0.9999198942602954
+                }
+              }
+            ]
+          },
+          "pulse": {
+            "phase": "charge",
+            "phaseRemaining": 2,
+            "readyAt": 0,
+            "activeUntil": 0,
+            "origin": {
+              "x": 1250,
+              "y": 330
+            },
+            "direction": 1.5707963267948966,
+            "uses": 0
+          },
+          "nextSpawnAt": {
+            "lung-source-a": 8
+          },
+          "gateChangedAt": -10,
+          "organLowSince": null,
+          "departedAt": null,
+          "nextBackgroundAt": 5,
+          "backgroundLoss": 0,
+          "backgroundReason": "",
+          "offscreenElapsed": 0,
+          "nextBackgroundElapsed": 10,
+          "lastPressureAt": 3.216666666666667,
+          "totalBackgroundLoss": 0,
+          "flow": {
+            "phase": "inhale",
+            "phaseRemaining": 4,
+            "airwayOpen": true,
+            "changedAt": -10,
+            "pressureUntil": 0,
+            "origin": {
+              "x": 1470,
+              "y": 800
+            },
+            "direction": {
+              "x": 0,
+              "y": 1
+            },
+            "strength": 36
+          }
+        }
+      },
+      "phase": "contain",
+      "travelReadyAt": 0,
+      "migration": {
+        "id": "migration:7:1",
+        "status": "locked",
+        "from": "heart",
+        "to": "lung",
+        "warnedAt": 0,
+        "deadline": 0,
+        "choice": null,
+        "resolvedAt": null,
+        "blockStartedAt": null,
+        "carrierIds": [],
+        "clearedCarrierIds": [],
+        "interceptUntil": null,
+        "interceptSucceeded": null,
+        "interceptResolvedAt": null
+      },
+      "core": {
+        "status": "locked",
+        "organId": "heart",
+        "actorId": "mother-core",
+        "traits": [],
+        "clearedAt": null
+      },
+      "requiredSourceIds": {
+        "heart": [
+          "source-a",
+          "source-b"
+        ],
+        "lung": [
+          "lung-source-a"
+        ]
+      },
+      "clearedSourceIds": [],
+      "clearedEliteIds": [],
+      "transactionIds": [],
+      "pendingCommands": [],
+      "history": [],
+      "progress": {
+        "sourceClears": 0,
+        "sourceTotal": 2,
+        "eliteClears": 0,
+        "coreCleared": false,
+        "organConditions": true,
+        "infectionCondition": true
+      },
+      "stats": {
+        "travels": 0,
+        "airwayUses": 0,
+        "backgroundDamage": 0,
+        "migrationChoice": null
+      }
+    },
+    "messagePriority": 0
+  },
+  "attacked": {
+    "game": "viral-invasion",
+    "schemaVersion": 1,
+    "seed": 7,
+    "phase": "playing",
+    "tick": 252,
+    "elapsed": 4.2,
+    "player": {
+      "x": 846.3508413471661,
+      "y": 751.9824919861662,
+      "hp": 93,
+      "radius": 19,
+      "facing": -0.5310217538480325,
+      "moving": false,
+      "dashUntil": 0,
+      "dashReady": 0,
+      "hurtUntil": 4.166666666666666,
+      "actionUntil": 0
+    },
+    "targets": [
+      {
+        "id": "source-a",
+        "kind": "single",
+        "x": 1020,
+        "y": 650,
+        "active": true,
+        "infected": true,
+        "role": "source",
+        "hp": 238,
+        "maxHp": 238,
+        "radius": 34,
+        "hitUntil": 0,
+        "scanned": true,
+        "traits": [],
+        "facing": 0,
+        "born": 0,
+        "revealedUntil": 8.083333333333334
+      },
+      {
+        "id": "source-b",
+        "kind": "single",
+        "x": 2010,
+        "y": 1090,
+        "active": true,
+        "infected": true,
+        "role": "source",
+        "hp": 238,
+        "maxHp": 238,
+        "radius": 34,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 0,
+        "born": 0
+      },
+      {
+        "id": "virus-1",
+        "kind": "single",
+        "x": 862.7498178407815,
+        "y": 807.924713530508,
+        "active": true,
+        "infected": true,
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": true,
+        "traits": [],
+        "facing": -1.855948934329159,
+        "born": 0,
+        "attackReady": 5.866666666666667,
+        "generation": 0,
+        "sourceId": "source-a",
+        "revealedUntil": 8.083333333333334
+      },
+      {
+        "id": "virus-2",
+        "kind": "single",
+        "x": 912.1024881348043,
+        "y": 772.7343008728972,
+        "active": true,
+        "infected": true,
+        "role": "virus",
+        "radius": 22,
+        "hp": 56,
+        "maxHp": 68,
+        "hitUntil": 4.046666666666667,
+        "scanned": true,
+        "traits": [],
+        "facing": -2.8358779350207115,
+        "born": 0,
+        "attackReady": 1.3,
+        "generation": 0,
+        "sourceId": "source-a",
+        "revealedUntil": 8.083333333333334,
+        "attackAt": 4.503333333333333,
+        "attackAim": {
+          "x": 846.3508413471661,
+          "y": 751.9824919861662
+        },
+        "attackTarget": "player"
+      },
+      {
+        "id": "virus-3",
+        "kind": "single",
+        "x": 1727.3019905594365,
+        "y": 1110.3149283684124,
+        "active": true,
+        "infected": true,
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 3.0510115127468795,
+        "born": 0,
+        "attackReady": 1.6,
+        "generation": 0,
+        "sourceId": "source-b"
+      },
+      {
+        "id": "virus-4",
+        "kind": "single",
+        "x": 1709.3084355418528,
+        "y": 1110.9166765246694,
+        "active": true,
+        "infected": true,
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 3.0504288204416246,
+        "born": 0,
+        "attackReady": 1.9,
+        "generation": 0,
+        "sourceId": "source-b"
+      }
+    ],
+    "tissue": {
+      "x": 850,
+      "y": 1190,
+      "hp": 62,
+      "maxHp": 100,
+      "radius": 43
+    },
+    "terminal": {
+      "x": 350,
+      "y": 1180
+    },
+    "tool": 1,
+    "cooldowns": {
+      "1": 0,
+      "2": 0,
+      "3": 0
+    },
+    "scanReady": 6.083333333333334,
+    "scanUntil": 5.083333333333334,
+    "effects": [
+      {
+        "id": 5,
+        "kind": "danger",
+        "from": {
+          "x": 912.1024881348043,
+          "y": 772.7343008728972
+        },
+        "to": {
+          "x": 846.3508413471661,
+          "y": 751.9824919861662
+        },
+        "radius": 58,
+        "born": 3.783333333333333,
+        "duration": 0.72
+      }
+    ],
+    "events": [
+      {
+        "type": "RUN_STARTED",
+        "tick": 0,
+        "data": {
+          "seed": 7,
+          "mode": "campaign",
+          "startAtTick": 0
+        }
+      },
+      {
+        "type": "ATTACK_TELEGRAPHED",
+        "tick": 176,
+        "data": {
+          "actorId": "virus-1",
+          "target": "player",
+          "resolveAt": 3.6533333333333333
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 185,
+        "data": {
+          "found": 3,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 185,
+        "data": {
+          "count": 3,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 185,
+        "data": {
+          "rootId": "7:2:scan:185",
+          "x": 1020.0000374269634,
+          "y": 649.9999938172214,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "GROWTH_REWARD",
+        "tick": 185,
+        "data": {
+          "key": "diagnose:baseline",
+          "xp": 6,
+          "research": 1,
+          "totalXp": 6,
+          "totalResearch": 1
+        }
+      },
+      {
+        "type": "PLAYER_HURT",
+        "tick": 220,
+        "data": {
+          "damage": 7,
+          "remainingHp": 93,
+          "reason": "enemy-attack",
+          "actorId": "virus-1"
+        }
+      },
+      {
+        "type": "ATTACK_TELEGRAPHED",
+        "tick": 227,
+        "data": {
+          "actorId": "virus-2",
+          "target": "player",
+          "resolveAt": 4.503333333333333
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 232,
+        "data": {
+          "id": "virus-2",
+          "damage": 12,
+          "rawDamage": 12,
+          "remainingHp": 56,
+          "tool": 1,
+          "cause": "protocol"
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_HIT",
+        "tick": 232,
+        "data": {
+          "protocolId": "BASE_PATROL",
+          "rootId": "7:2:scan:185:beacon:cell:0:bite:232",
+          "cellId": "7:2:scan:185:beacon:cell:0",
+          "targetId": "virus-2",
+          "damage": 12,
+          "prioritizedTrace": false,
+          "x": 948.6911359326078,
+          "y": 744.9614562686381
+        }
+      }
+    ],
+    "message": "诊断 3 个感染体。◇ 晶壳绕后/冲流；⋈ 裂殖用 2；◌ 潜伏用 Q/组织修复。",
+    "messageUntil": 9.083333333333334,
+    "shots": 0,
+    "hits": 0,
+    "scans": 1,
+    "dashes": 0,
+    "result": null,
+    "world": {
+      "width": 2400,
+      "height": 1500,
+      "bounds": {
+        "left": 85,
+        "right": 2315,
+        "top": 145,
+        "bottom": 1415
+      },
+      "obstacles": [
+        {
+          "id": "fold-a",
+          "x": 730,
+          "y": 650,
+          "radius": 85
+        },
+        {
+          "id": "fold-b",
+          "x": 1630,
+          "y": 1190,
+          "radius": 90
+        },
+        {
+          "id": "fold-c",
+          "x": 1350,
+          "y": 540,
+          "radius": 72
+        },
+        {
+          "id": "fold-d",
+          "x": 2120,
+          "y": 720,
+          "radius": 85
+        },
+        {
+          "id": "fold-e",
+          "x": 780,
+          "y": 980,
+          "radius": 70
+        }
+      ],
+      "foreground": {
+        "x": 1110,
+        "y": 1195,
+        "width": 275,
+        "height": 150
+      }
+    },
+    "battle": {
+      "milestone": "G3",
+      "organId": "heart",
+      "graph": {
+        "nodes": [
+          {
+            "id": "source-a",
+            "kind": "source",
+            "x": 1020,
+            "y": 650,
+            "active": true,
+            "infected": true
+          },
+          {
+            "id": "source-b",
+            "kind": "source",
+            "x": 2010,
+            "y": 1090,
+            "active": true,
+            "infected": true
+          },
+          {
+            "id": "gate",
+            "kind": "gate",
+            "x": 1070,
+            "y": 280,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "valve",
+            "kind": "valve",
+            "x": 1440,
+            "y": 950,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "tissue",
+            "kind": "tissue",
+            "x": 850,
+            "y": 1190,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "retest",
+            "kind": "retest",
+            "x": 350,
+            "y": 1180,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "research",
+            "kind": "research",
+            "x": 350,
+            "y": 690,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "exit",
+            "kind": "exit",
+            "x": 2170,
+            "y": 280,
+            "active": false,
+            "infected": false
+          }
+        ],
+        "edges": [
+          {
+            "id": "source-a:gate",
+            "from": "source-a",
+            "to": "gate",
+            "open": true,
+            "nextSpread": 6,
+            "flowDirection": {
+              "x": 0.13391789600139503,
+              "y": -0.9909924304103231
+            }
+          },
+          {
+            "id": "gate:tissue",
+            "from": "gate",
+            "to": "tissue",
+            "open": true,
+            "nextSpread": 6,
+            "flowDirection": {
+              "x": -0.23498856036532292,
+              "y": 0.971998136056563
+            }
+          },
+          {
+            "id": "source-b:valve",
+            "from": "source-b",
+            "to": "valve",
+            "open": true,
+            "nextSpread": 6,
+            "flowDirection": {
+              "x": -0.9711364222667793,
+              "y": -0.23852473529359491
+            }
+          },
+          {
+            "id": "valve:tissue",
+            "from": "valve",
+            "to": "tissue",
+            "open": true,
+            "nextSpread": 6,
+            "flowDirection": {
+              "x": -0.9262954009547514,
+              "y": 0.3767981292019328
+            }
+          }
+        ]
+      },
+      "pressure": {
+        "infection": 27.52879999999972,
+        "vitality": 100,
+        "criticalSince": null,
+        "organAlarm": false,
+        "crisisReason": ""
+      },
+      "pulse": {
+        "phase": "rest",
+        "phaseRemaining": 1.7999999999999998,
+        "readyAt": 0,
+        "activeUntil": 0,
+        "origin": {
+          "x": 1440,
+          "y": 950
+        },
+        "direction": -2.521343115711861,
+        "uses": 0,
+        "cycleIndex": 0
+      },
+      "warning": null,
+      "traits": [],
+      "defeatedTraits": [],
+      "nextEvolutionAt": 14,
+      "stage": 0,
+      "stageLabel": "Ⅰ · 建立防线",
+      "objective": "净化主要感染源 0/2，变异精英 0/2；保护所有激活器官。",
+      "readyToRetest": false,
+      "lastAim": {
+        "x": 1020.0000374269653,
+        "y": 649.9999938172209
+      },
+      "stats": {
+        "kills": 0,
+        "sourceClears": 0,
+        "eliteClears": 0,
+        "repairs": 0,
+        "pulses": 0,
+        "playerDamage": 7,
+        "tissueDamage": 0,
+        "scans": 1
+      },
+      "nextSpawnAt": {
+        "source-a": 8,
+        "source-b": 10
+      },
+      "nextActorId": 4,
+      "firstTrait": "CARAPACE",
+      "recentNotice": "",
+      "gateChangedAt": -10,
+      "organLowSince": null,
+      "eliteSpawned": 0,
+      "history": [],
+      "behaviorHistory": [
+        {
+          "tick": 185,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        }
+      ],
+      "evolutionDecisions": []
+    },
+    "growth": {
+      "runId": "7:2",
+      "seed": 7,
+      "lastElapsed": 4.2,
+      "xp": 6,
+      "level": 0,
+      "nextXp": 20,
+      "research": 1,
+      "equipped": [],
+      "draft": null,
+      "pendingLevels": [],
+      "consumedDraftIds": [],
+      "rewardedKeys": [
+        "diagnose:baseline"
+      ],
+      "sourceKillCounts": {},
+      "damageTakenByOrgan": {
+        "heart": 0,
+        "lung": 0
+      },
+      "protectionNeeded": {
+        "heart": false,
+        "lung": false
+      },
+      "draftSerial": 0,
+      "historyHash": 2166136261,
+      "ended": false,
+      "beacon": {
+        "x": 1020.0000374269634,
+        "y": 649.9999938172214,
+        "id": "7:2:scan:185:beacon",
+        "organId": "heart",
+        "born": 3.0833333333333335,
+        "until": 6.583333333333334,
+        "radius": 190,
+        "damage": 12,
+        "interval": 1.2,
+        "nextAttackAt": 3.1833333333333336,
+        "tuning": "balanced",
+        "mode": "patrol"
+      },
+      "beaconReadyAt": 6.083333333333334,
+      "cells": [
+        {
+          "x": 948.6911359326078,
+          "y": 744.9614562686381,
+          "id": "7:2:scan:185:beacon:cell:0",
+          "organId": "heart",
+          "born": 3.0833333333333335,
+          "until": 6.583333333333334,
+          "radius": 15,
+          "damage": 12,
+          "interval": 1.2,
+          "nextAttackAt": 3.1833333333333336,
+          "tuning": "balanced",
+          "mode": "patrol",
+          "beaconId": "7:2:scan:185:beacon",
+          "facing": 2.4923206462214313,
+          "updatedAt": 4.2,
+          "attackReadyAt": 5.066666666666666,
+          "attackUntil": 4.1066666666666665,
+          "targetId": "virus-2",
+          "activity": "guarding",
+          "navigationAt": 4.1499999999999995,
+          "waypoint": {
+            "x": 912.1024881348043,
+            "y": 772.7343008728972
+          }
+        }
+      ],
+      "activations": {},
+      "marks": [],
+      "resonance": [],
+      "chainRoots": [],
+      "protocolHistory": [
+        {
+          "at": 3.0833333333333335,
+          "type": "GROWTH_REWARD",
+          "text": "研究证据 +1，经验 +6。"
+        },
+        {
+          "at": 3.0833333333333335,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        }
+      ],
+      "pendingLogs": [],
+      "budgetTick": 252,
+      "budgetUsed": 0,
+      "skippedCommands": 0
+    },
+    "campaign": {
+      "seed": 7,
+      "activeOrganId": "heart",
+      "arenas": {
+        "heart": {
+          "organId": "heart",
+          "activated": true,
+          "geometry": {
+            "width": 2400,
+            "height": 1500,
+            "bounds": {
+              "left": 85,
+              "right": 2315,
+              "top": 145,
+              "bottom": 1415
+            },
+            "obstacles": [
+              {
+                "id": "fold-a",
+                "x": 730,
+                "y": 650,
+                "radius": 85
+              },
+              {
+                "id": "fold-b",
+                "x": 1630,
+                "y": 1190,
+                "radius": 90
+              },
+              {
+                "id": "fold-c",
+                "x": 1350,
+                "y": 540,
+                "radius": 72
+              },
+              {
+                "id": "fold-d",
+                "x": 2120,
+                "y": 720,
+                "radius": 85
+              },
+              {
+                "id": "fold-e",
+                "x": 780,
+                "y": 980,
+                "radius": 70
+              }
+            ],
+            "foreground": {
+              "x": 1110,
+              "y": 1195,
+              "width": 275,
+              "height": 150
+            }
+          },
+          "targets": [
+            {
+              "id": "source-a",
+              "kind": "single",
+              "x": 1020,
+              "y": 650,
+              "active": true,
+              "infected": true,
+              "role": "source",
+              "hp": 238,
+              "maxHp": 238,
+              "radius": 34,
+              "hitUntil": 0,
+              "scanned": true,
+              "traits": [],
+              "facing": 0,
+              "born": 0,
+              "revealedUntil": 8.083333333333334
+            },
+            {
+              "id": "source-b",
+              "kind": "single",
+              "x": 2010,
+              "y": 1090,
+              "active": true,
+              "infected": true,
+              "role": "source",
+              "hp": 238,
+              "maxHp": 238,
+              "radius": 34,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0
+            },
+            {
+              "id": "virus-1",
+              "kind": "single",
+              "x": 862.7498178407815,
+              "y": 807.924713530508,
+              "active": true,
+              "infected": true,
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": true,
+              "traits": [],
+              "facing": -1.855948934329159,
+              "born": 0,
+              "attackReady": 5.866666666666667,
+              "generation": 0,
+              "sourceId": "source-a",
+              "revealedUntil": 8.083333333333334
+            },
+            {
+              "id": "virus-2",
+              "kind": "single",
+              "x": 912.1024881348043,
+              "y": 772.7343008728972,
+              "active": true,
+              "infected": true,
+              "role": "virus",
+              "radius": 22,
+              "hp": 56,
+              "maxHp": 68,
+              "hitUntil": 4.046666666666667,
+              "scanned": true,
+              "traits": [],
+              "facing": -2.8358779350207115,
+              "born": 0,
+              "attackReady": 1.3,
+              "generation": 0,
+              "sourceId": "source-a",
+              "revealedUntil": 8.083333333333334,
+              "attackAt": 4.503333333333333,
+              "attackAim": {
+                "x": 846.3508413471661,
+                "y": 751.9824919861662
+              },
+              "attackTarget": "player"
+            },
+            {
+              "id": "virus-3",
+              "kind": "single",
+              "x": 1727.3019905594365,
+              "y": 1110.3149283684124,
+              "active": true,
+              "infected": true,
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 3.0510115127468795,
+              "born": 0,
+              "attackReady": 1.6,
+              "generation": 0,
+              "sourceId": "source-b"
+            },
+            {
+              "id": "virus-4",
+              "kind": "single",
+              "x": 1709.3084355418528,
+              "y": 1110.9166765246694,
+              "active": true,
+              "infected": true,
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 3.0504288204416246,
+              "born": 0,
+              "attackReady": 1.9,
+              "generation": 0,
+              "sourceId": "source-b"
+            }
+          ],
+          "tissue": {
+            "x": 850,
+            "y": 1190,
+            "hp": 62,
+            "maxHp": 100,
+            "radius": 43
+          },
+          "terminal": {
+            "x": 350,
+            "y": 1180
+          },
+          "graph": {
+            "nodes": [
+              {
+                "id": "source-a",
+                "kind": "source",
+                "x": 1020,
+                "y": 650,
+                "active": true,
+                "infected": true
+              },
+              {
+                "id": "source-b",
+                "kind": "source",
+                "x": 2010,
+                "y": 1090,
+                "active": true,
+                "infected": true
+              },
+              {
+                "id": "gate",
+                "kind": "gate",
+                "x": 1070,
+                "y": 280,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "valve",
+                "kind": "valve",
+                "x": 1440,
+                "y": 950,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "tissue",
+                "kind": "tissue",
+                "x": 850,
+                "y": 1190,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "retest",
+                "kind": "retest",
+                "x": 350,
+                "y": 1180,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "research",
+                "kind": "research",
+                "x": 350,
+                "y": 690,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "exit",
+                "kind": "exit",
+                "x": 2170,
+                "y": 280,
+                "active": false,
+                "infected": false
+              }
+            ],
+            "edges": [
+              {
+                "id": "source-a:gate",
+                "from": "source-a",
+                "to": "gate",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": 0.13391789600139503,
+                  "y": -0.9909924304103231
+                }
+              },
+              {
+                "id": "gate:tissue",
+                "from": "gate",
+                "to": "tissue",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": -0.23498856036532292,
+                  "y": 0.971998136056563
+                }
+              },
+              {
+                "id": "source-b:valve",
+                "from": "source-b",
+                "to": "valve",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": -0.9711364222667793,
+                  "y": -0.23852473529359491
+                }
+              },
+              {
+                "id": "valve:tissue",
+                "from": "valve",
+                "to": "tissue",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": -0.9262954009547514,
+                  "y": 0.3767981292019328
+                }
+              }
+            ]
+          },
+          "pulse": {
+            "phase": "rest",
+            "phaseRemaining": 1.7999999999999998,
+            "readyAt": 0,
+            "activeUntil": 0,
+            "origin": {
+              "x": 1440,
+              "y": 950
+            },
+            "direction": -2.521343115711861,
+            "uses": 0,
+            "cycleIndex": 0
+          },
+          "nextSpawnAt": {
+            "source-a": 8,
+            "source-b": 10
+          },
+          "gateChangedAt": -10,
+          "organLowSince": null,
+          "departedAt": null,
+          "nextBackgroundAt": 5,
+          "backgroundLoss": 0,
+          "backgroundReason": "",
+          "offscreenElapsed": 0,
+          "nextBackgroundElapsed": 10,
+          "lastPressureAt": 4.2,
+          "totalBackgroundLoss": 0
+        },
+        "lung": {
+          "organId": "lung",
+          "activated": false,
+          "geometry": {
+            "width": 2400,
+            "height": 1500,
+            "bounds": {
+              "left": 85,
+              "right": 2315,
+              "top": 145,
+              "bottom": 1415
+            },
+            "obstacles": [
+              {
+                "id": "alveolus-a",
+                "x": 850,
+                "y": 650,
+                "radius": 100
+              },
+              {
+                "id": "alveolus-b",
+                "x": 1740,
+                "y": 1090,
+                "radius": 105
+              },
+              {
+                "id": "alveolus-c",
+                "x": 1900,
+                "y": 360,
+                "radius": 78
+              },
+              {
+                "id": "alveolus-d",
+                "x": 650,
+                "y": 1330,
+                "radius": 68
+              }
+            ],
+            "foreground": {
+              "x": 1010,
+              "y": 1220,
+              "width": 285,
+              "height": 150
+            }
+          },
+          "targets": [
+            {
+              "x": 1570,
+              "y": 600,
+              "id": "lung-source-a",
+              "kind": "single",
+              "role": "source",
+              "radius": 34,
+              "hp": 238,
+              "maxHp": 238,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0
+            },
+            {
+              "x": 1605,
+              "y": 560,
+              "id": "lung-initial-0",
+              "kind": "single",
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0,
+              "attackReady": 1.5,
+              "generation": 0,
+              "sourceId": "lung-source-a"
+            },
+            {
+              "x": 1554,
+              "y": 598,
+              "id": "lung-initial-1",
+              "kind": "single",
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0,
+              "attackReady": 1.5,
+              "generation": 0,
+              "sourceId": "lung-source-a"
+            }
+          ],
+          "tissue": {
+            "x": 1260,
+            "y": 1120,
+            "hp": 76,
+            "maxHp": 100,
+            "radius": 43
+          },
+          "terminal": {
+            "x": 350,
+            "y": 650
+          },
+          "graph": {
+            "nodes": [
+              {
+                "id": "lung-source-a",
+                "kind": "source",
+                "x": 1570,
+                "y": 600,
+                "active": true,
+                "infected": true
+              },
+              {
+                "id": "airway",
+                "kind": "gate",
+                "x": 1250,
+                "y": 330,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "tissue",
+                "kind": "tissue",
+                "x": 1260,
+                "y": 1120,
+                "hp": 76,
+                "maxHp": 100,
+                "radius": 43,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "retest",
+                "kind": "retest",
+                "x": 350,
+                "y": 650,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "research",
+                "kind": "research",
+                "x": 800,
+                "y": 1150,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "exit",
+                "kind": "exit",
+                "x": 350,
+                "y": 1060,
+                "active": true,
+                "infected": false
+              }
+            ],
+            "edges": [
+              {
+                "id": "lung-source-a:airway",
+                "from": "lung-source-a",
+                "to": "airway",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": -0.7642914835078909,
+                  "y": -0.6448709392097829
+                }
+              },
+              {
+                "id": "airway:tissue",
+                "from": "airway",
+                "to": "tissue",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": 0.012657213851396143,
+                  "y": 0.9999198942602954
+                }
+              }
+            ]
+          },
+          "pulse": {
+            "phase": "charge",
+            "phaseRemaining": 2,
+            "readyAt": 0,
+            "activeUntil": 0,
+            "origin": {
+              "x": 1250,
+              "y": 330
+            },
+            "direction": 1.5707963267948966,
+            "uses": 0
+          },
+          "nextSpawnAt": {
+            "lung-source-a": 8
+          },
+          "gateChangedAt": -10,
+          "organLowSince": null,
+          "departedAt": null,
+          "nextBackgroundAt": 5,
+          "backgroundLoss": 0,
+          "backgroundReason": "",
+          "offscreenElapsed": 0,
+          "nextBackgroundElapsed": 10,
+          "lastPressureAt": 4.2,
+          "totalBackgroundLoss": 0,
+          "flow": {
+            "phase": "inhale",
+            "phaseRemaining": 4,
+            "airwayOpen": true,
+            "changedAt": -10,
+            "pressureUntil": 0,
+            "origin": {
+              "x": 1470,
+              "y": 800
+            },
+            "direction": {
+              "x": 0,
+              "y": 1
+            },
+            "strength": 36
+          }
+        }
+      },
+      "phase": "contain",
+      "travelReadyAt": 0,
+      "migration": {
+        "id": "migration:7:1",
+        "status": "locked",
+        "from": "heart",
+        "to": "lung",
+        "warnedAt": 0,
+        "deadline": 0,
+        "choice": null,
+        "resolvedAt": null,
+        "blockStartedAt": null,
+        "carrierIds": [],
+        "clearedCarrierIds": [],
+        "interceptUntil": null,
+        "interceptSucceeded": null,
+        "interceptResolvedAt": null
+      },
+      "core": {
+        "status": "locked",
+        "organId": "heart",
+        "actorId": "mother-core",
+        "traits": [],
+        "clearedAt": null
+      },
+      "requiredSourceIds": {
+        "heart": [
+          "source-a",
+          "source-b"
+        ],
+        "lung": [
+          "lung-source-a"
+        ]
+      },
+      "clearedSourceIds": [],
+      "clearedEliteIds": [],
+      "transactionIds": [],
+      "pendingCommands": [],
+      "history": [],
+      "progress": {
+        "sourceClears": 0,
+        "sourceTotal": 2,
+        "eliteClears": 0,
+        "coreCleared": false,
+        "organConditions": true,
+        "infectionCondition": true
+      },
+      "stats": {
+        "travels": 0,
+        "airwayUses": 0,
+        "backgroundDamage": 0,
+        "migrationChoice": null
+      }
+    },
+    "messagePriority": 0
+  },
+  "after": {
+    "origin": {
+      "x": -108.27287660335146,
+      "y": -141.11019551225309
+    },
+    "player": {
+      "x": 550,
+      "y": 280
+    }
+  },
+  "paused": {
+    "game": "viral-invasion",
+    "schemaVersion": 1,
+    "seed": 7,
+    "phase": "paused",
+    "tick": 261,
+    "elapsed": 4.35,
+    "player": {
+      "x": 846.3508413471661,
+      "y": 751.9824919861662,
+      "hp": 93,
+      "radius": 19,
+      "facing": -0.5310217538480325,
+      "moving": false,
+      "dashUntil": 0,
+      "dashReady": 0,
+      "hurtUntil": 4.166666666666666,
+      "actionUntil": 0
+    },
+    "targets": [
+      {
+        "id": "source-a",
+        "kind": "single",
+        "x": 1020,
+        "y": 650,
+        "active": true,
+        "infected": true,
+        "role": "source",
+        "hp": 238,
+        "maxHp": 238,
+        "radius": 34,
+        "hitUntil": 0,
+        "scanned": true,
+        "traits": [],
+        "facing": 0,
+        "born": 0,
+        "revealedUntil": 8.083333333333334
+      },
+      {
+        "id": "source-b",
+        "kind": "single",
+        "x": 2010,
+        "y": 1090,
+        "active": true,
+        "infected": true,
+        "role": "source",
+        "hp": 238,
+        "maxHp": 238,
+        "radius": 34,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 0,
+        "born": 0
+      },
+      {
+        "id": "virus-1",
+        "kind": "single",
+        "x": 862.7498178407815,
+        "y": 807.924713530508,
+        "active": true,
+        "infected": true,
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": true,
+        "traits": [],
+        "facing": -1.855948934329159,
+        "born": 0,
+        "attackReady": 5.866666666666667,
+        "generation": 0,
+        "sourceId": "source-a",
+        "revealedUntil": 8.083333333333334
+      },
+      {
+        "id": "virus-2",
+        "kind": "single",
+        "x": 912.1024881348043,
+        "y": 772.7343008728972,
+        "active": true,
+        "infected": true,
+        "role": "virus",
+        "radius": 22,
+        "hp": 56,
+        "maxHp": 68,
+        "hitUntil": 4.046666666666667,
+        "scanned": true,
+        "traits": [],
+        "facing": -2.8358779350207115,
+        "born": 0,
+        "attackReady": 1.3,
+        "generation": 0,
+        "sourceId": "source-a",
+        "revealedUntil": 8.083333333333334,
+        "attackAt": 4.503333333333333,
+        "attackAim": {
+          "x": 846.3508413471661,
+          "y": 751.9824919861662
+        },
+        "attackTarget": "player"
+      },
+      {
+        "id": "virus-3",
+        "kind": "single",
+        "x": 1717.7413473651307,
+        "y": 1111.1833186672843,
+        "active": true,
+        "infected": true,
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 3.0510115127468804,
+        "born": 0,
+        "attackReady": 1.6,
+        "generation": 0,
+        "sourceId": "source-b"
+      },
+      {
+        "id": "virus-4",
+        "kind": "single",
+        "x": 1704.7101030304088,
+        "y": 1106.5589998550731,
+        "active": true,
+        "infected": true,
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 3.0448968548686706,
+        "born": 0,
+        "attackReady": 1.9,
+        "generation": 0,
+        "sourceId": "source-b"
+      }
+    ],
+    "tissue": {
+      "x": 850,
+      "y": 1190,
+      "hp": 62,
+      "maxHp": 100,
+      "radius": 43
+    },
+    "terminal": {
+      "x": 350,
+      "y": 1180
+    },
+    "tool": 1,
+    "cooldowns": {
+      "1": 0,
+      "2": 0,
+      "3": 0
+    },
+    "scanReady": 6.083333333333334,
+    "scanUntil": 5.083333333333334,
+    "effects": [
+      {
+        "id": 5,
+        "kind": "danger",
+        "from": {
+          "x": 912.1024881348043,
+          "y": 772.7343008728972
+        },
+        "to": {
+          "x": 846.3508413471661,
+          "y": 751.9824919861662
+        },
+        "radius": 58,
+        "born": 3.783333333333333,
+        "duration": 0.72
+      }
+    ],
+    "events": [
+      {
+        "type": "RUN_STARTED",
+        "tick": 0,
+        "data": {
+          "seed": 7,
+          "mode": "campaign",
+          "startAtTick": 0
+        }
+      },
+      {
+        "type": "ATTACK_TELEGRAPHED",
+        "tick": 176,
+        "data": {
+          "actorId": "virus-1",
+          "target": "player",
+          "resolveAt": 3.6533333333333333
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 185,
+        "data": {
+          "found": 3,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 185,
+        "data": {
+          "count": 3,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 185,
+        "data": {
+          "rootId": "7:2:scan:185",
+          "x": 1020.0000374269634,
+          "y": 649.9999938172214,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "GROWTH_REWARD",
+        "tick": 185,
+        "data": {
+          "key": "diagnose:baseline",
+          "xp": 6,
+          "research": 1,
+          "totalXp": 6,
+          "totalResearch": 1
+        }
+      },
+      {
+        "type": "PLAYER_HURT",
+        "tick": 220,
+        "data": {
+          "damage": 7,
+          "remainingHp": 93,
+          "reason": "enemy-attack",
+          "actorId": "virus-1"
+        }
+      },
+      {
+        "type": "ATTACK_TELEGRAPHED",
+        "tick": 227,
+        "data": {
+          "actorId": "virus-2",
+          "target": "player",
+          "resolveAt": 4.503333333333333
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 232,
+        "data": {
+          "id": "virus-2",
+          "damage": 12,
+          "rawDamage": 12,
+          "remainingHp": 56,
+          "tool": 1,
+          "cause": "protocol"
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_HIT",
+        "tick": 232,
+        "data": {
+          "protocolId": "BASE_PATROL",
+          "rootId": "7:2:scan:185:beacon:cell:0:bite:232",
+          "cellId": "7:2:scan:185:beacon:cell:0",
+          "targetId": "virus-2",
+          "damage": 12,
+          "prioritizedTrace": false,
+          "x": 948.6911359326078,
+          "y": 744.9614562686381
+        }
+      },
+      {
+        "type": "RUN_PAUSED",
+        "tick": 261,
+        "data": {}
+      }
+    ],
+    "message": "诊断 3 个感染体。◇ 晶壳绕后/冲流；⋈ 裂殖用 2；◌ 潜伏用 Q/组织修复。",
+    "messageUntil": 9.083333333333334,
+    "shots": 0,
+    "hits": 0,
+    "scans": 1,
+    "dashes": 0,
+    "result": null,
+    "world": {
+      "width": 2400,
+      "height": 1500,
+      "bounds": {
+        "left": 85,
+        "right": 2315,
+        "top": 145,
+        "bottom": 1415
+      },
+      "obstacles": [
+        {
+          "id": "fold-a",
+          "x": 730,
+          "y": 650,
+          "radius": 85
+        },
+        {
+          "id": "fold-b",
+          "x": 1630,
+          "y": 1190,
+          "radius": 90
+        },
+        {
+          "id": "fold-c",
+          "x": 1350,
+          "y": 540,
+          "radius": 72
+        },
+        {
+          "id": "fold-d",
+          "x": 2120,
+          "y": 720,
+          "radius": 85
+        },
+        {
+          "id": "fold-e",
+          "x": 780,
+          "y": 980,
+          "radius": 70
+        }
+      ],
+      "foreground": {
+        "x": 1110,
+        "y": 1195,
+        "width": 275,
+        "height": 150
+      }
+    },
+    "battle": {
+      "milestone": "G3",
+      "organId": "heart",
+      "graph": {
+        "nodes": [
+          {
+            "id": "source-a",
+            "kind": "source",
+            "x": 1020,
+            "y": 650,
+            "active": true,
+            "infected": true
+          },
+          {
+            "id": "source-b",
+            "kind": "source",
+            "x": 2010,
+            "y": 1090,
+            "active": true,
+            "infected": true
+          },
+          {
+            "id": "gate",
+            "kind": "gate",
+            "x": 1070,
+            "y": 280,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "valve",
+            "kind": "valve",
+            "x": 1440,
+            "y": 950,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "tissue",
+            "kind": "tissue",
+            "x": 850,
+            "y": 1190,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "retest",
+            "kind": "retest",
+            "x": 350,
+            "y": 1180,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "research",
+            "kind": "research",
+            "x": 350,
+            "y": 690,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "exit",
+            "kind": "exit",
+            "x": 2170,
+            "y": 280,
+            "active": false,
+            "infected": false
+          }
+        ],
+        "edges": [
+          {
+            "id": "source-a:gate",
+            "from": "source-a",
+            "to": "gate",
+            "open": true,
+            "nextSpread": 6,
+            "flowDirection": {
+              "x": 0.13391789600139503,
+              "y": -0.9909924304103231
+            }
+          },
+          {
+            "id": "gate:tissue",
+            "from": "gate",
+            "to": "tissue",
+            "open": true,
+            "nextSpread": 6,
+            "flowDirection": {
+              "x": -0.23498856036532292,
+              "y": 0.971998136056563
+            }
+          },
+          {
+            "id": "source-b:valve",
+            "from": "source-b",
+            "to": "valve",
+            "open": true,
+            "nextSpread": 6,
+            "flowDirection": {
+              "x": -0.9711364222667793,
+              "y": -0.23852473529359491
+            }
+          },
+          {
+            "id": "valve:tissue",
+            "from": "valve",
+            "to": "tissue",
+            "open": true,
+            "nextSpread": 6,
+            "flowDirection": {
+              "x": -0.9262954009547514,
+              "y": 0.3767981292019328
+            }
+          }
+        ]
+      },
+      "pressure": {
+        "infection": 27.58339999999971,
+        "vitality": 100,
+        "criticalSince": null,
+        "organAlarm": false,
+        "crisisReason": ""
+      },
+      "pulse": {
+        "phase": "rest",
+        "phaseRemaining": 1.6500000000000004,
+        "readyAt": 0,
+        "activeUntil": 0,
+        "origin": {
+          "x": 1440,
+          "y": 950
+        },
+        "direction": -2.521343115711861,
+        "uses": 0,
+        "cycleIndex": 0
+      },
+      "warning": null,
+      "traits": [],
+      "defeatedTraits": [],
+      "nextEvolutionAt": 14,
+      "stage": 0,
+      "stageLabel": "Ⅰ · 建立防线",
+      "objective": "净化主要感染源 0/2，变异精英 0/2；保护所有激活器官。",
+      "readyToRetest": false,
+      "lastAim": {
+        "x": 1020.0000374269653,
+        "y": 649.9999938172209
+      },
+      "stats": {
+        "kills": 0,
+        "sourceClears": 0,
+        "eliteClears": 0,
+        "repairs": 0,
+        "pulses": 0,
+        "playerDamage": 7,
+        "tissueDamage": 0,
+        "scans": 1
+      },
+      "nextSpawnAt": {
+        "source-a": 8,
+        "source-b": 10
+      },
+      "nextActorId": 4,
+      "firstTrait": "CARAPACE",
+      "recentNotice": "",
+      "gateChangedAt": -10,
+      "organLowSince": null,
+      "eliteSpawned": 0,
+      "history": [],
+      "behaviorHistory": [
+        {
+          "tick": 185,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        }
+      ],
+      "evolutionDecisions": []
+    },
+    "growth": {
+      "runId": "7:2",
+      "seed": 7,
+      "lastElapsed": 4.35,
+      "xp": 6,
+      "level": 0,
+      "nextXp": 20,
+      "research": 1,
+      "equipped": [],
+      "draft": null,
+      "pendingLevels": [],
+      "consumedDraftIds": [],
+      "rewardedKeys": [
+        "diagnose:baseline"
+      ],
+      "sourceKillCounts": {},
+      "damageTakenByOrgan": {
+        "heart": 0,
+        "lung": 0
+      },
+      "protectionNeeded": {
+        "heart": false,
+        "lung": false
+      },
+      "draftSerial": 0,
+      "historyHash": 2166136261,
+      "ended": false,
+      "beacon": {
+        "x": 1020.0000374269634,
+        "y": 649.9999938172214,
+        "id": "7:2:scan:185:beacon",
+        "organId": "heart",
+        "born": 3.0833333333333335,
+        "until": 6.583333333333334,
+        "radius": 190,
+        "damage": 12,
+        "interval": 1.2,
+        "nextAttackAt": 3.1833333333333336,
+        "tuning": "balanced",
+        "mode": "patrol"
+      },
+      "beaconReadyAt": 6.083333333333334,
+      "cells": [
+        {
+          "x": 948.6911359326078,
+          "y": 744.9614562686381,
+          "id": "7:2:scan:185:beacon:cell:0",
+          "organId": "heart",
+          "born": 3.0833333333333335,
+          "until": 6.583333333333334,
+          "radius": 15,
+          "damage": 12,
+          "interval": 1.2,
+          "nextAttackAt": 3.1833333333333336,
+          "tuning": "balanced",
+          "mode": "patrol",
+          "beaconId": "7:2:scan:185:beacon",
+          "facing": 2.4923206462214313,
+          "updatedAt": 4.35,
+          "attackReadyAt": 5.066666666666666,
+          "attackUntil": 4.1066666666666665,
+          "targetId": "virus-2",
+          "activity": "guarding",
+          "navigationAt": 4.1499999999999995,
+          "waypoint": {
+            "x": 912.1024881348043,
+            "y": 772.7343008728972
+          }
+        }
+      ],
+      "activations": {},
+      "marks": [],
+      "resonance": [],
+      "chainRoots": [],
+      "protocolHistory": [
+        {
+          "at": 3.0833333333333335,
+          "type": "GROWTH_REWARD",
+          "text": "研究证据 +1，经验 +6。"
+        },
+        {
+          "at": 3.0833333333333335,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        }
+      ],
+      "pendingLogs": [],
+      "budgetTick": 261,
+      "budgetUsed": 0,
+      "skippedCommands": 0
+    },
+    "campaign": {
+      "seed": 7,
+      "activeOrganId": "heart",
+      "arenas": {
+        "heart": {
+          "organId": "heart",
+          "activated": true,
+          "geometry": {
+            "width": 2400,
+            "height": 1500,
+            "bounds": {
+              "left": 85,
+              "right": 2315,
+              "top": 145,
+              "bottom": 1415
+            },
+            "obstacles": [
+              {
+                "id": "fold-a",
+                "x": 730,
+                "y": 650,
+                "radius": 85
+              },
+              {
+                "id": "fold-b",
+                "x": 1630,
+                "y": 1190,
+                "radius": 90
+              },
+              {
+                "id": "fold-c",
+                "x": 1350,
+                "y": 540,
+                "radius": 72
+              },
+              {
+                "id": "fold-d",
+                "x": 2120,
+                "y": 720,
+                "radius": 85
+              },
+              {
+                "id": "fold-e",
+                "x": 780,
+                "y": 980,
+                "radius": 70
+              }
+            ],
+            "foreground": {
+              "x": 1110,
+              "y": 1195,
+              "width": 275,
+              "height": 150
+            }
+          },
+          "targets": [
+            {
+              "id": "source-a",
+              "kind": "single",
+              "x": 1020,
+              "y": 650,
+              "active": true,
+              "infected": true,
+              "role": "source",
+              "hp": 238,
+              "maxHp": 238,
+              "radius": 34,
+              "hitUntil": 0,
+              "scanned": true,
+              "traits": [],
+              "facing": 0,
+              "born": 0,
+              "revealedUntil": 8.083333333333334
+            },
+            {
+              "id": "source-b",
+              "kind": "single",
+              "x": 2010,
+              "y": 1090,
+              "active": true,
+              "infected": true,
+              "role": "source",
+              "hp": 238,
+              "maxHp": 238,
+              "radius": 34,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0
+            },
+            {
+              "id": "virus-1",
+              "kind": "single",
+              "x": 862.7498178407815,
+              "y": 807.924713530508,
+              "active": true,
+              "infected": true,
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": true,
+              "traits": [],
+              "facing": -1.855948934329159,
+              "born": 0,
+              "attackReady": 5.866666666666667,
+              "generation": 0,
+              "sourceId": "source-a",
+              "revealedUntil": 8.083333333333334
+            },
+            {
+              "id": "virus-2",
+              "kind": "single",
+              "x": 912.1024881348043,
+              "y": 772.7343008728972,
+              "active": true,
+              "infected": true,
+              "role": "virus",
+              "radius": 22,
+              "hp": 56,
+              "maxHp": 68,
+              "hitUntil": 4.046666666666667,
+              "scanned": true,
+              "traits": [],
+              "facing": -2.8358779350207115,
+              "born": 0,
+              "attackReady": 1.3,
+              "generation": 0,
+              "sourceId": "source-a",
+              "revealedUntil": 8.083333333333334,
+              "attackAt": 4.503333333333333,
+              "attackAim": {
+                "x": 846.3508413471661,
+                "y": 751.9824919861662
+              },
+              "attackTarget": "player"
+            },
+            {
+              "id": "virus-3",
+              "kind": "single",
+              "x": 1717.7413473651307,
+              "y": 1111.1833186672843,
+              "active": true,
+              "infected": true,
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 3.0510115127468804,
+              "born": 0,
+              "attackReady": 1.6,
+              "generation": 0,
+              "sourceId": "source-b"
+            },
+            {
+              "id": "virus-4",
+              "kind": "single",
+              "x": 1704.7101030304088,
+              "y": 1106.5589998550731,
+              "active": true,
+              "infected": true,
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 3.0448968548686706,
+              "born": 0,
+              "attackReady": 1.9,
+              "generation": 0,
+              "sourceId": "source-b"
+            }
+          ],
+          "tissue": {
+            "x": 850,
+            "y": 1190,
+            "hp": 62,
+            "maxHp": 100,
+            "radius": 43
+          },
+          "terminal": {
+            "x": 350,
+            "y": 1180
+          },
+          "graph": {
+            "nodes": [
+              {
+                "id": "source-a",
+                "kind": "source",
+                "x": 1020,
+                "y": 650,
+                "active": true,
+                "infected": true
+              },
+              {
+                "id": "source-b",
+                "kind": "source",
+                "x": 2010,
+                "y": 1090,
+                "active": true,
+                "infected": true
+              },
+              {
+                "id": "gate",
+                "kind": "gate",
+                "x": 1070,
+                "y": 280,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "valve",
+                "kind": "valve",
+                "x": 1440,
+                "y": 950,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "tissue",
+                "kind": "tissue",
+                "x": 850,
+                "y": 1190,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "retest",
+                "kind": "retest",
+                "x": 350,
+                "y": 1180,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "research",
+                "kind": "research",
+                "x": 350,
+                "y": 690,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "exit",
+                "kind": "exit",
+                "x": 2170,
+                "y": 280,
+                "active": false,
+                "infected": false
+              }
+            ],
+            "edges": [
+              {
+                "id": "source-a:gate",
+                "from": "source-a",
+                "to": "gate",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": 0.13391789600139503,
+                  "y": -0.9909924304103231
+                }
+              },
+              {
+                "id": "gate:tissue",
+                "from": "gate",
+                "to": "tissue",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": -0.23498856036532292,
+                  "y": 0.971998136056563
+                }
+              },
+              {
+                "id": "source-b:valve",
+                "from": "source-b",
+                "to": "valve",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": -0.9711364222667793,
+                  "y": -0.23852473529359491
+                }
+              },
+              {
+                "id": "valve:tissue",
+                "from": "valve",
+                "to": "tissue",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": -0.9262954009547514,
+                  "y": 0.3767981292019328
+                }
+              }
+            ]
+          },
+          "pulse": {
+            "phase": "rest",
+            "phaseRemaining": 1.6500000000000004,
+            "readyAt": 0,
+            "activeUntil": 0,
+            "origin": {
+              "x": 1440,
+              "y": 950
+            },
+            "direction": -2.521343115711861,
+            "uses": 0,
+            "cycleIndex": 0
+          },
+          "nextSpawnAt": {
+            "source-a": 8,
+            "source-b": 10
+          },
+          "gateChangedAt": -10,
+          "organLowSince": null,
+          "departedAt": null,
+          "nextBackgroundAt": 5,
+          "backgroundLoss": 0,
+          "backgroundReason": "",
+          "offscreenElapsed": 0,
+          "nextBackgroundElapsed": 10,
+          "lastPressureAt": 4.35,
+          "totalBackgroundLoss": 0
+        },
+        "lung": {
+          "organId": "lung",
+          "activated": false,
+          "geometry": {
+            "width": 2400,
+            "height": 1500,
+            "bounds": {
+              "left": 85,
+              "right": 2315,
+              "top": 145,
+              "bottom": 1415
+            },
+            "obstacles": [
+              {
+                "id": "alveolus-a",
+                "x": 850,
+                "y": 650,
+                "radius": 100
+              },
+              {
+                "id": "alveolus-b",
+                "x": 1740,
+                "y": 1090,
+                "radius": 105
+              },
+              {
+                "id": "alveolus-c",
+                "x": 1900,
+                "y": 360,
+                "radius": 78
+              },
+              {
+                "id": "alveolus-d",
+                "x": 650,
+                "y": 1330,
+                "radius": 68
+              }
+            ],
+            "foreground": {
+              "x": 1010,
+              "y": 1220,
+              "width": 285,
+              "height": 150
+            }
+          },
+          "targets": [
+            {
+              "x": 1570,
+              "y": 600,
+              "id": "lung-source-a",
+              "kind": "single",
+              "role": "source",
+              "radius": 34,
+              "hp": 238,
+              "maxHp": 238,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0
+            },
+            {
+              "x": 1605,
+              "y": 560,
+              "id": "lung-initial-0",
+              "kind": "single",
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0,
+              "attackReady": 1.5,
+              "generation": 0,
+              "sourceId": "lung-source-a"
+            },
+            {
+              "x": 1554,
+              "y": 598,
+              "id": "lung-initial-1",
+              "kind": "single",
+              "role": "virus",
+              "radius": 22,
+              "hp": 68,
+              "maxHp": 68,
+              "hitUntil": 0,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0,
+              "attackReady": 1.5,
+              "generation": 0,
+              "sourceId": "lung-source-a"
+            }
+          ],
+          "tissue": {
+            "x": 1260,
+            "y": 1120,
+            "hp": 76,
+            "maxHp": 100,
+            "radius": 43
+          },
+          "terminal": {
+            "x": 350,
+            "y": 650
+          },
+          "graph": {
+            "nodes": [
+              {
+                "id": "lung-source-a",
+                "kind": "source",
+                "x": 1570,
+                "y": 600,
+                "active": true,
+                "infected": true
+              },
+              {
+                "id": "airway",
+                "kind": "gate",
+                "x": 1250,
+                "y": 330,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "tissue",
+                "kind": "tissue",
+                "x": 1260,
+                "y": 1120,
+                "hp": 76,
+                "maxHp": 100,
+                "radius": 43,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "retest",
+                "kind": "retest",
+                "x": 350,
+                "y": 650,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "research",
+                "kind": "research",
+                "x": 800,
+                "y": 1150,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "exit",
+                "kind": "exit",
+                "x": 350,
+                "y": 1060,
+                "active": true,
+                "infected": false
+              }
+            ],
+            "edges": [
+              {
+                "id": "lung-source-a:airway",
+                "from": "lung-source-a",
+                "to": "airway",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": -0.7642914835078909,
+                  "y": -0.6448709392097829
+                }
+              },
+              {
+                "id": "airway:tissue",
+                "from": "airway",
+                "to": "tissue",
+                "open": true,
+                "nextSpread": 6,
+                "flowDirection": {
+                  "x": 0.012657213851396143,
+                  "y": 0.9999198942602954
+                }
+              }
+            ]
+          },
+          "pulse": {
+            "phase": "charge",
+            "phaseRemaining": 2,
+            "readyAt": 0,
+            "activeUntil": 0,
+            "origin": {
+              "x": 1250,
+              "y": 330
+            },
+            "direction": 1.5707963267948966,
+            "uses": 0
+          },
+          "nextSpawnAt": {
+            "lung-source-a": 8
+          },
+          "gateChangedAt": -10,
+          "organLowSince": null,
+          "departedAt": null,
+          "nextBackgroundAt": 5,
+          "backgroundLoss": 0,
+          "backgroundReason": "",
+          "offscreenElapsed": 0,
+          "nextBackgroundElapsed": 10,
+          "lastPressureAt": 4.35,
+          "totalBackgroundLoss": 0,
+          "flow": {
+            "phase": "inhale",
+            "phaseRemaining": 4,
+            "airwayOpen": true,
+            "changedAt": -10,
+            "pressureUntil": 0,
+            "origin": {
+              "x": 1470,
+              "y": 800
+            },
+            "direction": {
+              "x": 0,
+              "y": 1
+            },
+            "strength": 36
+          }
+        }
+      },
+      "phase": "contain",
+      "travelReadyAt": 0,
+      "migration": {
+        "id": "migration:7:1",
+        "status": "locked",
+        "from": "heart",
+        "to": "lung",
+        "warnedAt": 0,
+        "deadline": 0,
+        "choice": null,
+        "resolvedAt": null,
+        "blockStartedAt": null,
+        "carrierIds": [],
+        "clearedCarrierIds": [],
+        "interceptUntil": null,
+        "interceptSucceeded": null,
+        "interceptResolvedAt": null
+      },
+      "core": {
+        "status": "locked",
+        "organId": "heart",
+        "actorId": "mother-core",
+        "traits": [],
+        "clearedAt": null
+      },
+      "requiredSourceIds": {
+        "heart": [
+          "source-a",
+          "source-b"
+        ],
+        "lung": [
+          "lung-source-a"
+        ]
+      },
+      "clearedSourceIds": [],
+      "clearedEliteIds": [],
+      "transactionIds": [],
+      "pendingCommands": [],
+      "history": [],
+      "progress": {
+        "sourceClears": 0,
+        "sourceTotal": 2,
+        "eliteClears": 0,
+        "coreCleared": false,
+        "organConditions": true,
+        "infectionCondition": true
+      },
+      "stats": {
+        "travels": 0,
+        "airwayUses": 0,
+        "backgroundDamage": 0,
+        "migrationChoice": null
+      }
+    },
+    "messagePriority": 0
+  },
+  "build": {
+    "game": "viral-invasion",
+    "version": "0.6.0",
+    "stage": "G4",
+    "format": "iife",
+    "sourceManifest": {
+      "index.html": "240abc27cb391518456a6d81b8360a88946d837888c769c2756415ef9cdc84af",
+      "package-lock.json": "04aaa55b5128d82301d833b5ab708d87e39a1a1c3597b41c2397a8f9e373e704",
+      "package.json": "48705a0e4bd79151f2812e5e4702cf69b750c6da7b41d771bdd058329b575f7d",
+      "scripts/build-offline.mjs": "0e899f1174fb20ca34edba6cad8a800b0be44d2c2b097c62eaa5033fe37de3a8",
+      "src/actors/collision.ts": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+      "src/audio.ts": "a25b84c45747b82e088e74728e701fe6f492a32b9317569ce3de34d3b11437cc",
+      "src/core/clock.ts": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12",
+      "src/core/events.ts": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+      "src/core/rng.ts": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+      "src/game/battle.ts": "8db8d61b1f3fd75de9d7427f4489a377e63cf6873730b78f947127277d0cf9da",
+      "src/game/battleConfig.ts": "937a2c91827c7184bcabf0eae13db315d52d0517d75b1696e2217f4e2c0de072",
+      "src/game/campaign.ts": "85293662c4879034afaade5fbb0575a5f14a44e74025a8b12e80afa144fdfb3a",
+      "src/game/evolution.ts": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+      "src/game/growth.ts": "2956095ebfd2b063733acaf76e38c7e06d9b9ade01cb37d7bdea1832b52f6152",
+      "src/game/immuneCells.ts": "d11683bd8819e4fdbf299e19913ad0435b6539d0310782fa8526c8b5b054ea6f",
+      "src/game/motherCore.ts": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+      "src/game/organConfig.ts": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+      "src/game/organRules.ts": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+      "src/game/protocols.ts": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+      "src/game/session.ts": "d32f5815b8f1a191bd9d6d5fe97504694f82e561226475009906b3e70997dea3",
+      "src/game/tacticalFeedback.ts": "d3e312dc585fde5149c0e21bd8514fc86ed716868825b43b17b53cdfb5f52143",
+      "src/game/types.ts": "bd416eebd70e5061e6825c9f871f4414fc4523170ee76d84cbe7a34791d131af",
+      "src/input/controller.ts": "a26bac630063676bc2a168301cc5110da81a82e0d35cc9f6ee5ca3eeec51958c",
+      "src/main.ts": "b73dd10a0eba0ffe5fa8486cfb19fb3dce4a3a5aa1cd95ad8bbc88713ecf4204",
+      "src/meta/profile.ts": "7c179ad3f035dcfddb705ed8d146dde69692057ec04e8fcedacc7b718257adb2",
+      "src/render/battleVisuals.ts": "eb018bf5de39ce3ebd11cc1813b2befa8448e378c8b9f11938b8066fccc508f4",
+      "src/render/camera.ts": "ca117a766229b5770d49491559dbe016aca210876315f4069f5db42081f748e5",
+      "src/render/depthSort.ts": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+      "src/render/growthVisuals.ts": "b023909d13f74106d18f0d54cd710500992da8942ef477e52a7a883f45a78e1d",
+      "src/render/immuneVisuals.ts": "5e44f5fbc28fc04f6f78559023f9dd3d27b306a4ed0688dc5a58d19b5c6a11e3",
+      "src/render/layers.ts": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+      "src/render/lungVisuals.ts": "48439104c1e701e7f07b2427019ba8cca7fcb74e1a5809835d54510e2aaf398f",
+      "src/render/navigation.ts": "295634aa0a2578b16683a2c04055e4c89aeee386740b4b1dc91d0520399c7c78",
+      "src/render/occlusion.ts": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+      "src/render/organLandscape.ts": "3ea49be35cc7e1a3a4d7ac0e4356031f7255e3ad6c941e13b666fee5946f63a2",
+      "src/render/pulsePreview.ts": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+      "src/render/renderer.ts": "2cdd5fb6e1278cfe3bfbf46dd4adc427d0ad45358dfe0bab64978cd9d5c73fc6",
+      "src/style.css": "51c94f740c48e8a0c2ccfa6707eb84762d5432ae9afce931e333f3deba4213f1",
+      "src/ui/battleHud.ts": "aaf74c1fea93321652e875b011f7c2865ab4b2bb3a767d79158f8fc1dda90a97",
+      "src/ui/campaignHud.ts": "19da828ca26d37903f09a5025f9f5d51aca6ab9baf2cfa7e51221d7c4ceaf003",
+      "src/ui/growthHud.ts": "0dfeef060e9363a7239edddb4e8b242e24d8aeea04bbd843ab92d6f6b10cbfbe",
+      "src/ui/profile.css": "768e6f59157b6706a98355e682018f655b4de5ef6a489e0217f52c37784e86c8",
+      "src/ui/profileHud.ts": "18086bb6a83eacbaa092ca35d937e6bea9602a988f9a7bc390862ecebf2444f5",
+      "src/ui/tacticalHistory.ts": "c159a53e514049043f0a41dfb07b435a8774630993d039d68832fbb1c4db137b"
+    },
+    "inputs": {
+      "src/style.css": {
+        "bytes": 22710,
+        "imports": []
+      },
+      "src/core/clock.ts": {
+        "bytes": 1156,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/core/events.ts": {
+        "bytes": 887,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/core/rng.ts": {
+        "bytes": 680,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/game/types.ts": {
+        "bytes": 3531,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/actors/collision.ts": {
+        "bytes": 2408,
+        "imports": [
+          {
+            "path": "src/game/types.ts",
+            "kind": "import-statement",
+            "original": "../game/types"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/game/battleConfig.ts": {
+        "bytes": 1664,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/game/evolution.ts": {
+        "bytes": 8002,
+        "imports": [
+          {
+            "path": "src/core/rng.ts",
+            "kind": "import-statement",
+            "original": "../core/rng"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/game/organConfig.ts": {
+        "bytes": 6689,
+        "imports": [
+          {
+            "path": "src/actors/collision.ts",
+            "kind": "import-statement",
+            "original": "../actors/collision"
+          },
+          {
+            "path": "src/core/rng.ts",
+            "kind": "import-statement",
+            "original": "../core/rng"
+          },
+          {
+            "path": "./types",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "src/game/battleConfig.ts",
+            "kind": "import-statement",
+            "original": "./battleConfig"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/game/battle.ts": {
+        "bytes": 29310,
+        "imports": [
+          {
+            "path": "src/actors/collision.ts",
+            "kind": "import-statement",
+            "original": "../actors/collision"
+          },
+          {
+            "path": "src/core/rng.ts",
+            "kind": "import-statement",
+            "original": "../core/rng"
+          },
+          {
+            "path": "src/game/types.ts",
+            "kind": "import-statement",
+            "original": "./types"
+          },
+          {
+            "path": "src/game/battleConfig.ts",
+            "kind": "import-statement",
+            "original": "./battleConfig"
+          },
+          {
+            "path": "src/game/evolution.ts",
+            "kind": "import-statement",
+            "original": "./evolution"
+          },
+          {
+            "path": "src/game/organConfig.ts",
+            "kind": "import-statement",
+            "original": "./organConfig"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/game/protocols.ts": {
+        "bytes": 8434,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/game/immuneCells.ts": {
+        "bytes": 9725,
+        "imports": [
+          {
+            "path": "src/actors/collision.ts",
+            "kind": "import-statement",
+            "original": "../actors/collision"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/game/growth.ts": {
+        "bytes": 26566,
+        "imports": [
+          {
+            "path": "src/actors/collision.ts",
+            "kind": "import-statement",
+            "original": "../actors/collision"
+          },
+          {
+            "path": "src/core/rng.ts",
+            "kind": "import-statement",
+            "original": "../core/rng"
+          },
+          {
+            "path": "src/game/types.ts",
+            "kind": "import-statement",
+            "original": "./types"
+          },
+          {
+            "path": "src/game/protocols.ts",
+            "kind": "import-statement",
+            "original": "./protocols"
+          },
+          {
+            "path": "src/game/immuneCells.ts",
+            "kind": "import-statement",
+            "original": "./immuneCells"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/game/organRules.ts": {
+        "bytes": 2894,
+        "imports": [
+          {
+            "path": "src/actors/collision.ts",
+            "kind": "import-statement",
+            "original": "../actors/collision"
+          },
+          {
+            "path": "src/game/types.ts",
+            "kind": "import-statement",
+            "original": "./types"
+          },
+          {
+            "path": "src/game/organConfig.ts",
+            "kind": "import-statement",
+            "original": "./organConfig"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/game/campaign.ts": {
+        "bytes": 27355,
+        "imports": [
+          {
+            "path": "src/actors/collision.ts",
+            "kind": "import-statement",
+            "original": "../actors/collision"
+          },
+          {
+            "path": "src/game/types.ts",
+            "kind": "import-statement",
+            "original": "./types"
+          },
+          {
+            "path": "src/game/organConfig.ts",
+            "kind": "import-statement",
+            "original": "./organConfig"
+          },
+          {
+            "path": "src/game/organRules.ts",
+            "kind": "import-statement",
+            "original": "./organRules"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/game/motherCore.ts": {
+        "bytes": 17472,
+        "imports": [
+          {
+            "path": "src/actors/collision.ts",
+            "kind": "import-statement",
+            "original": "../actors/collision"
+          },
+          {
+            "path": "src/game/types.ts",
+            "kind": "import-statement",
+            "original": "./types"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/game/tacticalFeedback.ts": {
+        "bytes": 6056,
+        "imports": [
+          {
+            "path": "src/game/battleConfig.ts",
+            "kind": "import-statement",
+            "original": "./battleConfig"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/game/session.ts": {
+        "bytes": 36199,
+        "imports": [
+          {
+            "path": "src/core/clock.ts",
+            "kind": "import-statement",
+            "original": "../core/clock"
+          },
+          {
+            "path": "src/core/events.ts",
+            "kind": "import-statement",
+            "original": "../core/events"
+          },
+          {
+            "path": "src/core/rng.ts",
+            "kind": "import-statement",
+            "original": "../core/rng"
+          },
+          {
+            "path": "src/actors/collision.ts",
+            "kind": "import-statement",
+            "original": "../actors/collision"
+          },
+          {
+            "path": "src/game/types.ts",
+            "kind": "import-statement",
+            "original": "./types"
+          },
+          {
+            "path": "src/game/battle.ts",
+            "kind": "import-statement",
+            "original": "./battle"
+          },
+          {
+            "path": "src/game/growth.ts",
+            "kind": "import-statement",
+            "original": "./growth"
+          },
+          {
+            "path": "src/game/campaign.ts",
+            "kind": "import-statement",
+            "original": "./campaign"
+          },
+          {
+            "path": "src/game/motherCore.ts",
+            "kind": "import-statement",
+            "original": "./motherCore"
+          },
+          {
+            "path": "src/game/battleConfig.ts",
+            "kind": "import-statement",
+            "original": "./battleConfig"
+          },
+          {
+            "path": "src/game/organConfig.ts",
+            "kind": "import-statement",
+            "original": "./organConfig"
+          },
+          {
+            "path": "src/game/tacticalFeedback.ts",
+            "kind": "import-statement",
+            "original": "./tacticalFeedback"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/input/controller.ts": {
+        "bytes": 3016,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/render/camera.ts": {
+        "bytes": 2163,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/render/depthSort.ts": {
+        "bytes": 368,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/render/occlusion.ts": {
+        "bytes": 554,
+        "imports": [
+          {
+            "path": "src/game/types.ts",
+            "kind": "import-statement",
+            "original": "../game/types"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/render/layers.ts": {
+        "bytes": 129,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/render/battleVisuals.ts": {
+        "bytes": 22972,
+        "imports": [
+          {
+            "path": "src/game/battleConfig.ts",
+            "kind": "import-statement",
+            "original": "../game/battleConfig"
+          },
+          {
+            "path": "src/game/types.ts",
+            "kind": "import-statement",
+            "original": "../game/types"
+          },
+          {
+            "path": "src/actors/collision.ts",
+            "kind": "import-statement",
+            "original": "../actors/collision"
+          },
+          {
+            "path": "src/game/motherCore.ts",
+            "kind": "import-statement",
+            "original": "../game/motherCore"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/render/pulsePreview.ts": {
+        "bytes": 858,
+        "imports": [
+          {
+            "path": "src/actors/collision.ts",
+            "kind": "import-statement",
+            "original": "../actors/collision"
+          },
+          {
+            "path": "src/game/battleConfig.ts",
+            "kind": "import-statement",
+            "original": "../game/battleConfig"
+          },
+          {
+            "path": "src/game/types.ts",
+            "kind": "import-statement",
+            "original": "../game/types"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/render/immuneVisuals.ts": {
+        "bytes": 3451,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/render/growthVisuals.ts": {
+        "bytes": 8618,
+        "imports": [
+          {
+            "path": "src/render/immuneVisuals.ts",
+            "kind": "import-statement",
+            "original": "./immuneVisuals"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/render/lungVisuals.ts": {
+        "bytes": 11358,
+        "imports": [
+          {
+            "path": "src/game/organRules.ts",
+            "kind": "import-statement",
+            "original": "../game/organRules"
+          },
+          {
+            "path": "src/game/organConfig.ts",
+            "kind": "import-statement",
+            "original": "../game/organConfig"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/render/organLandscape.ts": {
+        "bytes": 4275,
+        "imports": [
+          {
+            "path": "src/game/organConfig.ts",
+            "kind": "import-statement",
+            "original": "../game/organConfig"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/render/navigation.ts": {
+        "bytes": 4355,
+        "imports": [
+          {
+            "path": "src/game/types.ts",
+            "kind": "import-statement",
+            "original": "../game/types"
+          },
+          {
+            "path": "src/actors/collision.ts",
+            "kind": "import-statement",
+            "original": "../actors/collision"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/render/renderer.ts": {
+        "bytes": 46317,
+        "imports": [
+          {
+            "path": "src/game/types.ts",
+            "kind": "import-statement",
+            "original": "../game/types"
+          },
+          {
+            "path": "src/render/camera.ts",
+            "kind": "import-statement",
+            "original": "./camera"
+          },
+          {
+            "path": "src/render/depthSort.ts",
+            "kind": "import-statement",
+            "original": "./depthSort"
+          },
+          {
+            "path": "src/render/occlusion.ts",
+            "kind": "import-statement",
+            "original": "./occlusion"
+          },
+          {
+            "path": "src/render/layers.ts",
+            "kind": "import-statement",
+            "original": "./layers"
+          },
+          {
+            "path": "src/render/battleVisuals.ts",
+            "kind": "import-statement",
+            "original": "./battleVisuals"
+          },
+          {
+            "path": "src/game/battleConfig.ts",
+            "kind": "import-statement",
+            "original": "../game/battleConfig"
+          },
+          {
+            "path": "src/actors/collision.ts",
+            "kind": "import-statement",
+            "original": "../actors/collision"
+          },
+          {
+            "path": "src/render/pulsePreview.ts",
+            "kind": "import-statement",
+            "original": "./pulsePreview"
+          },
+          {
+            "path": "src/render/growthVisuals.ts",
+            "kind": "import-statement",
+            "original": "./growthVisuals"
+          },
+          {
+            "path": "src/game/protocols.ts",
+            "kind": "import-statement",
+            "original": "../game/protocols"
+          },
+          {
+            "path": "src/render/lungVisuals.ts",
+            "kind": "import-statement",
+            "original": "./lungVisuals"
+          },
+          {
+            "path": "src/render/organLandscape.ts",
+            "kind": "import-statement",
+            "original": "./organLandscape"
+          },
+          {
+            "path": "src/render/navigation.ts",
+            "kind": "import-statement",
+            "original": "./navigation"
+          },
+          {
+            "path": "src/render/immuneVisuals.ts",
+            "kind": "import-statement",
+            "original": "./immuneVisuals"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/audio.ts": {
+        "bytes": 1715,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/ui/tacticalHistory.ts": {
+        "bytes": 1183,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/ui/campaignHud.ts": {
+        "bytes": 23745,
+        "imports": [
+          {
+            "path": "src/game/types.ts",
+            "kind": "import-statement",
+            "original": "../game/types"
+          },
+          {
+            "path": "src/game/battleConfig.ts",
+            "kind": "import-statement",
+            "original": "../game/battleConfig"
+          },
+          {
+            "path": "src/game/organConfig.ts",
+            "kind": "import-statement",
+            "original": "../game/organConfig"
+          },
+          {
+            "path": "src/ui/tacticalHistory.ts",
+            "kind": "import-statement",
+            "original": "./tacticalHistory"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/ui/battleHud.ts": {
+        "bytes": 11428,
+        "imports": [
+          {
+            "path": "src/game/battleConfig.ts",
+            "kind": "import-statement",
+            "original": "../game/battleConfig"
+          },
+          {
+            "path": "src/ui/campaignHud.ts",
+            "kind": "import-statement",
+            "original": "./campaignHud"
+          },
+          {
+            "path": "src/ui/tacticalHistory.ts",
+            "kind": "import-statement",
+            "original": "./tacticalHistory"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/ui/growthHud.ts": {
+        "bytes": 8393,
+        "imports": [
+          {
+            "path": "src/game/protocols.ts",
+            "kind": "import-statement",
+            "original": "../game/protocols"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/meta/profile.ts": {
+        "bytes": 24409,
+        "imports": [
+          {
+            "path": "../game/battleConfig",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "src/game/protocols.ts",
+            "kind": "import-statement",
+            "original": "../game/protocols"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/ui/profileHud.ts": {
+        "bytes": 13960,
+        "imports": [
+          {
+            "path": "src/game/battleConfig.ts",
+            "kind": "import-statement",
+            "original": "../game/battleConfig"
+          },
+          {
+            "path": "src/game/protocols.ts",
+            "kind": "import-statement",
+            "original": "../game/protocols"
+          },
+          {
+            "path": "src/meta/profile.ts",
+            "kind": "import-statement",
+            "original": "../meta/profile"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/ui/profile.css": {
+        "bytes": 17009,
+        "imports": []
+      },
+      "src/main.ts": {
+        "bytes": 20827,
+        "imports": [
+          {
+            "path": "src/style.css",
+            "kind": "import-statement",
+            "original": "./style.css"
+          },
+          {
+            "path": "src/game/session.ts",
+            "kind": "import-statement",
+            "original": "./game/session"
+          },
+          {
+            "path": "src/core/clock.ts",
+            "kind": "import-statement",
+            "original": "./core/clock"
+          },
+          {
+            "path": "src/input/controller.ts",
+            "kind": "import-statement",
+            "original": "./input/controller"
+          },
+          {
+            "path": "src/render/renderer.ts",
+            "kind": "import-statement",
+            "original": "./render/renderer"
+          },
+          {
+            "path": "src/game/types.ts",
+            "kind": "import-statement",
+            "original": "./game/types"
+          },
+          {
+            "path": "src/audio.ts",
+            "kind": "import-statement",
+            "original": "./audio"
+          },
+          {
+            "path": "src/ui/battleHud.ts",
+            "kind": "import-statement",
+            "original": "./ui/battleHud"
+          },
+          {
+            "path": "src/ui/growthHud.ts",
+            "kind": "import-statement",
+            "original": "./ui/growthHud"
+          },
+          {
+            "path": "src/meta/profile.ts",
+            "kind": "import-statement",
+            "original": "./meta/profile"
+          },
+          {
+            "path": "src/ui/profileHud.ts",
+            "kind": "import-statement",
+            "original": "./ui/profileHud"
+          },
+          {
+            "path": "src/ui/profile.css",
+            "kind": "import-statement",
+            "original": "./ui/profile.css"
+          }
+        ],
+        "format": "esm"
+      }
+    },
+    "outputs": {
+      "dist/game.js": {
+        "imports": [],
+        "exports": [],
+        "entryPoint": "src/main.ts",
+        "cssBundle": "dist/game.css",
+        "inputs": {
+          "src/style.css": {
+            "bytesInOutput": 0
+          },
+          "src/core/clock.ts": {
+            "bytesInOutput": 544
+          },
+          "src/core/events.ts": {
+            "bytesInOutput": 275
+          },
+          "src/core/rng.ts": {
+            "bytesInOutput": 361
+          },
+          "src/game/types.ts": {
+            "bytesInOutput": 475
+          },
+          "src/actors/collision.ts": {
+            "bytesInOutput": 846
+          },
+          "src/game/battleConfig.ts": {
+            "bytesInOutput": 1655
+          },
+          "src/game/evolution.ts": {
+            "bytesInOutput": 3329
+          },
+          "src/game/organConfig.ts": {
+            "bytesInOutput": 4734
+          },
+          "src/game/battle.ts": {
+            "bytesInOutput": 20659
+          },
+          "src/game/protocols.ts": {
+            "bytesInOutput": 6849
+          },
+          "src/game/immuneCells.ts": {
+            "bytesInOutput": 4180
+          },
+          "src/game/growth.ts": {
+            "bytesInOutput": 16957
+          },
+          "src/game/organRules.ts": {
+            "bytesInOutput": 1965
+          },
+          "src/game/campaign.ts": {
+            "bytesInOutput": 22129
+          },
+          "src/game/motherCore.ts": {
+            "bytesInOutput": 10182
+          },
+          "src/game/tacticalFeedback.ts": {
+            "bytesInOutput": 6118
+          },
+          "src/game/session.ts": {
+            "bytesInOutput": 23040
+          },
+          "src/input/controller.ts": {
+            "bytesInOutput": 2230
+          },
+          "src/render/camera.ts": {
+            "bytesInOutput": 1245
+          },
+          "src/render/depthSort.ts": {
+            "bytesInOutput": 126
+          },
+          "src/render/occlusion.ts": {
+            "bytesInOutput": 157
+          },
+          "src/render/layers.ts": {
+            "bytesInOutput": 93
+          },
+          "src/render/battleVisuals.ts": {
+            "bytesInOutput": 12861
+          },
+          "src/render/pulsePreview.ts": {
+            "bytesInOutput": 227
+          },
+          "src/render/immuneVisuals.ts": {
+            "bytesInOutput": 1828
+          },
+          "src/render/growthVisuals.ts": {
+            "bytesInOutput": 4751
+          },
+          "src/render/lungVisuals.ts": {
+            "bytesInOutput": 6687
+          },
+          "src/render/organLandscape.ts": {
+            "bytesInOutput": 2483
+          },
+          "src/render/navigation.ts": {
+            "bytesInOutput": 2913
+          },
+          "src/render/renderer.ts": {
+            "bytesInOutput": 26454
+          },
+          "src/audio.ts": {
+            "bytesInOutput": 1069
+          },
+          "src/ui/tacticalHistory.ts": {
+            "bytesInOutput": 943
+          },
+          "src/ui/campaignHud.ts": {
+            "bytesInOutput": 25621
+          },
+          "src/ui/battleHud.ts": {
+            "bytesInOutput": 12450
+          },
+          "src/ui/growthHud.ts": {
+            "bytesInOutput": 8693
+          },
+          "src/meta/profile.ts": {
+            "bytesInOutput": 17496
+          },
+          "src/ui/profileHud.ts": {
+            "bytesInOutput": 13185
+          },
+          "src/ui/profile.css": {
+            "bytesInOutput": 0
+          },
+          "src/main.ts": {
+            "bytesInOutput": 16878
+          }
+        },
+        "bytes": 282713
+      },
+      "dist/game.css": {
+        "imports": [],
+        "inputs": {
+          "src/style.css": {
+            "bytesInOutput": 22541
+          },
+          "src/ui/profile.css": {
+            "bytesInOutput": 16942
+          }
+        },
+        "bytes": 39484
+      }
+    }
+  }
+}

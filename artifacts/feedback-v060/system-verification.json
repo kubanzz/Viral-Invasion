@@ -1,0 +1,104 @@
+{
+  "date": "2026-10-27",
+  "attempts": [
+    {
+      "report": "artifacts/feedback-v060/full-system-seeds.json",
+      "unit": "artifacts/feedback-v060/full-system-unit.json",
+      "completed": 1,
+      "outcomes": {
+        "wins": 0,
+        "losses": 0,
+        "publicMenuExits": 0,
+        "invariantFailures": 1
+      },
+      "reason": "immune cell leaked across organs",
+      "resolution": "Accepted travel now withdraws organ-bound cells and beacon in the same transaction; summon cooldown preserved. Dedicated public-Q/E travel regression added."
+    },
+    {
+      "report": "artifacts/feedback-v060/full-system-seeds-rerun1.json",
+      "unit": "artifacts/feedback-v060/full-system-unit-rerun1.json",
+      "completed": 1000,
+      "outcomes": {
+        "wins": 1000,
+        "losses": 0,
+        "publicMenuExits": 0,
+        "invariantFailures": 0
+      },
+      "runner": "failed: 360612ms exceeded old 300000ms test budget; functional sessions and replay complete"
+    },
+    {
+      "report": "artifacts/feedback-v060/full-system-seeds-rerun2.json",
+      "unit": "artifacts/feedback-v060/full-system-unit-rerun2.json",
+      "completed": 1000,
+      "outcomes": {
+        "wins": 1000,
+        "losses": 0,
+        "publicMenuExits": 0,
+        "invariantFailures": 0
+      },
+      "runner": "passed: 387437ms within 900000ms batch budget",
+      "exitCode": 0
+    }
+  ],
+  "simulationSourceSha256": "3a4b3f4e0c067116fef893942493ac877ced07b740d6436ff5e7f4d19eeedce9",
+  "simulationSourceUnchanged": true,
+  "currentManifestMismatches": [],
+  "changedManifestEntriesBetweenRerun1And2": [
+    "tests/unit/full-system-seeds.test.ts"
+  ],
+  "allRunSummariesSameBetweenRerun1And2": true,
+  "unit": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0
+  },
+  "replay": {
+    "seed": 91,
+    "equal": true,
+    "first": "b57cf5afdff958334b2bf5176faeaf314399a500db11c0a24074bbf96ec41d56",
+    "second": "b57cf5afdff958334b2bf5176faeaf314399a500db11c0a24074bbf96ec41d56"
+  },
+  "modes": {
+    "base": {
+      "total": 500,
+      "wins": 500
+    },
+    "protocols": {
+      "total": 500,
+      "wins": 500
+    }
+  },
+  "traitSequences": {
+    "CARAPACE>FISSION": 222,
+    "CARAPACE>MIMIC": 194,
+    "FISSION>CARAPACE": 158,
+    "FISSION>MIMIC": 126,
+    "MIMIC>CARAPACE": 173,
+    "MIMIC>FISSION": 127
+  },
+  "simulationSeconds": {
+    "mean": 73.20558333333314,
+    "min": 65.55,
+    "max": 85.5
+  },
+  "featureEvents": {
+    "IMMUNE_PATROL_CREATED": 17351,
+    "PROTOCOL_DRAFT_OPENED": 3943,
+    "PROTOCOL_DRAFT_DISCARDED": 1979,
+    "IMMUNE_PATROL_HIT": 2714,
+    "PROTOCOL_EQUIPPED": 1964,
+    "PROTOCOL_DRAFT_COMMITTED": 1964,
+    "PROTOCOL_CHAIN_HIT": 1422,
+    "PROTOCOL_TRACE_APPLIED": 5079,
+    "PROTOCOL_BEACON_CREATED": 1813,
+    "PROTOCOL_BEACON_HIT": 1124,
+    "PROTOCOL_SYNERGY": 410,
+    "PROTOCOL_RICOCHET_HIT": 189,
+    "PROTOCOL_RESONANCE_HIT": 111
+  },
+  "limitations": [
+    "These are deterministic public-input simulations, not browser or human playtests.",
+    "Only the batch harness time budget changed between rerun1 and rerun2; per-seed action cap and all gameplay invariants stayed fixed.",
+    "Source manifests include the test harness, so the timeout-only change correctly changes their fingerprint."
+  ]
+}
