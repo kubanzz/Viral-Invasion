@@ -382,6 +382,12 @@ export class BattleDirector {
     }
   }
 
+  private canStrikeBody(origin: Vec, body: Vec & { radius: number }): boolean {
+    const length = distance(origin, body);
+    const block = wallHit(origin, normalized(body.x - origin.x, body.y - origin.y), length, activeWorld(this.s));
+    return block === null || block >= length - body.radius;
+  }
+
   private damagePlayer(target: Target, amount: number, reason: string): boolean {
     const { s, b } = this;
     if (s.player.hp <= 0 || s.elapsed < s.player.dashUntil || amount <= 0) return false;
@@ -460,7 +466,7 @@ export class BattleDirector {
   }
 
   private enemies(): void {
-    const { s, b } = this;
+    const { s } = this;
     this.navigator.prune(s.targets);
     for (const target of s.targets) if (target.recoverUntil !== undefined && target.recoverUntil <= s.elapsed) target.recoverUntil = undefined;
     const wave = s.endless?.wave ?? 1;
@@ -513,20 +519,13 @@ export class BattleDirector {
         const radius = target.attackRadius ?? B.attackRadius;
         const attackingTissue = target.attackTarget === 'tissue';
         if (attackingTissue) {
-          if (distance(target, s.tissue) <= B.attackRadius + s.tissue.radius) {
-            const before = s.tissue.hp;
-            s.tissue.hp = Math.max(0, before - (B.tissueDamage + (s.endless ? Math.floor((wave - 1) / 8) : 0)));
-            b.stats.tissueDamage += before - s.tissue.hp;
-            this.host.emit('ORGAN_INTEGRITY_CHANGED', { organId: b.organId, before, after: s.tissue.hp, reason: 'enemy-attack', actorId: target.id });
-            this.host.effect('hit', s.tissue, s.tissue, 45, .3);
+          if (distance(target, s.tissue) <= B.attackRadius + s.tissue.radius && this.canStrikeBody(target, s.tissue)) {
+            this.damageTissue(target, B.tissueDamage + (s.endless ? Math.floor((wave - 1) / 8) : 0));
           }
-        } else if (distance(s.player, aim) <= radius + s.player.radius && s.elapsed >= s.player.dashUntil) {
-          const before = s.player.hp;
-          s.player.hp = Math.max(0, before - (B.playerDamage + (s.endless ? Math.floor((wave - 1) / 4) + (target.role === 'elite' ? 5 : 0) : 0)));
-          b.stats.playerDamage += before - s.player.hp;
-          s.player.hurtUntil = s.elapsed + .5;
-          this.host.emit('PLAYER_HURT', { damage: before - s.player.hp, remainingHp: s.player.hp, reason: 'enemy-attack', actorId: target.id });
-          this.host.effect('hit', s.player, s.player, 22, .3);
+        } else if (distance(s.player, aim) <= radius + s.player.radius && this.canStrikeBody(target, s.player)) {
+          // The frozen warning remains valid, but a legal move behind a fold
+          // must block the strike at resolution just as it blocks ranged tools.
+          this.damagePlayer(target, B.playerDamage + (s.endless ? Math.floor((wave - 1) / 4) + (target.role === 'elite' ? 5 : 0) : 0), 'enemy-attack');
         }
         target.attackAt = undefined; target.attackAim = undefined; target.attackTarget = undefined;
         target.attackReady = s.elapsed + (s.endless ? Math.max(1.1, B.attackInterval - (wave - 1) * .025) : B.attackInterval);

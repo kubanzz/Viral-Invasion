@@ -1,9 +1,14 @@
 import { SeedRng } from '../core/rng';
 import type { EndlessCombatStats, EndlessGrowthState, EndlessUpgradeId, EndlessUpgradeOption } from './endlessGrowthTypes';
+import { BALANCE } from './types';
 
 export type * from './endlessGrowthTypes';
 
 export const ENDLESS_UPGRADE_IDS: readonly EndlessUpgradeId[] = ['power', 'multishot', 'pierce', 'nova', 'dash', 'scan', 'vitality', 'haste', 'immune'];
+const PRIMARY_BASE_TICKS = Math.ceil(BALANCE.cooldowns[1] / BALANCE.step);
+// The old .09s floor already fired every six 60Hz ticks. Keep that real floor,
+// and use one fewer tick per rank so no accepted haste rank is a dead choice.
+const PRIMARY_MIN_TICKS = 6;
 
 export const ENDLESS_UPGRADES: Record<EndlessUpgradeId, { title: string; maxRank?: number; newMechanic: boolean }> = {
   power: { title: '净化突破', newMechanic: false },
@@ -13,7 +18,7 @@ export const ENDLESS_UPGRADES: Record<EndlessUpgradeId, { title: string; maxRank
   dash: { title: '冲刺斩', newMechanic: true },
   scan: { title: '扫描爆发', newMechanic: true },
   vitality: { title: '生命扩容', newMechanic: false },
-  haste: { title: '急速净化', maxRank: 7, newMechanic: false },
+  haste: { title: '急速净化', maxRank: PRIMARY_BASE_TICKS - PRIMARY_MIN_TICKS, newMechanic: false },
   immune: { title: '免疫军团', newMechanic: true },
 };
 
@@ -38,7 +43,7 @@ export function endlessCombatStats(growth: EndlessGrowthState): EndlessCombatSta
     pierceCount: pierce,
     areaRadius: 94 + nova * 14,
     areaDamageMultiplier: 1 + nova * .15,
-    primaryCooldown: Math.max(.09, .18 * .9 ** haste),
+    primaryCooldown: haste === 0 ? BALANCE.cooldowns[1] : Math.max(PRIMARY_MIN_TICKS, PRIMARY_BASE_TICKS - haste) * BALANCE.step,
     areaCooldown: Math.max(.6, Number((1.2 - nova * .1).toFixed(6))),
     dashDamage: dash * 40,
     scanDamage: scan * 30,
@@ -54,6 +59,7 @@ const display = (value: number): string => Number.isInteger(value) ? String(valu
 function optionFor(growth: EndlessGrowthState, id: EndlessUpgradeId): EndlessUpgradeOption {
   const currentRank = rank(growth, id), nextRank = currentRank + 1;
   const before = endlessCombatStats(growth), after = endlessCombatStats({ ...growth, ranks: { ...growth.ranks, [id]: nextRank } });
+  const beforeShotTicks = Math.ceil(before.primaryCooldown / BALANCE.step - 1e-9), afterShotTicks = Math.ceil(after.primaryCooldown / BALANCE.step - 1e-9);
   const change = (a: number, b: number) => `${display(a)} → ${display(b)}`;
   const description: Record<EndlessUpgradeId, string> = {
     power: `基础净化伤害倍率 ×${display(before.damageMultiplier)} → ×${display(after.damageMultiplier)}；强化现有攻击。`,
@@ -63,7 +69,7 @@ function optionFor(growth: EndlessGrowthState, id: EndlessUpgradeId): EndlessUpg
     dash: `Space 沿实际冲刺路径斩击周围敌人，基础伤害 ${change(before.dashDamage, after.dashDamage)}，判定半径 64。`,
     scan: `Q 扫描同时引爆身边 260 范围，基础伤害 ${change(before.scanDamage, after.scanDamage)}；扫描显形继续生效。`,
     vitality: `最大耐久 ${change(before.maxHp, after.maxHp)}；本次补给按新的耐久上限结算。`,
-    haste: `精准净化冷却 ${change(before.primaryCooldown, after.primaryCooldown)} 秒；整组扇射共用一次冷却。`,
+    haste: `精准净化间隔约 ${change(beforeShotTicks * BALANCE.step, afterShotTicks * BALANCE.step)} 秒；射速约 ${change(1 / (beforeShotTicks * BALANCE.step), 1 / (afterShotTicks * BALANCE.step))} 发/秒；整组扇射共用一次间隔。`,
     immune: `免疫细胞伤害倍率 ${change(before.cellDamageMultiplier, after.cellDamageMultiplier)}，额外寿命 ${change(before.cellDurationBonus, after.cellDurationBonus)} 秒；Q 冷却 ${change(before.scanCooldown, after.scanCooldown)} 秒，小队独立冷却倍率 ${change(before.cellCooldownMultiplier, after.cellCooldownMultiplier)}。`,
   };
   return { id, title: ENDLESS_UPGRADES[id].title, description: description[id], currentRank, nextRank };

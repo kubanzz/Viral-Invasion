@@ -146,6 +146,16 @@ export class EndlessDirector {
     if (!this.active() || this.e.phase !== 'combat') return;
     const e = this.e, now = this.state.elapsed;
     this.population();
+    // A strong clear advances the finite queue instead of waiting out its full
+    // schedule. Min preserves an earlier deadline and never resets this short
+    // countdown on later ticks. Pending fission keeps its real warning window.
+    if (e.remainingToSpawn > 0 && e.pendingChildren === 0 && !this.state.targets.some(target => target.hp > 0)
+      && e.nextSpawnAt > now + .5 + 1e-9) {
+      const previousSpawnAt = e.nextSpawnAt;
+      e.nextSpawnAt = now + .5;
+      this.host.emit('ENDLESS_PURSUIT_ACCELERATED', { wave: e.wave, batch: e.batchIndex + 1,
+        previousSpawnAt, nextSpawnAt: e.nextSpawnAt, reducedBy: previousSpawnAt - e.nextSpawnAt });
+    }
     if (e.remainingToSpawn > 0 && now + 1e-9 >= e.nextSpawnAt) this.spawnBatch();
     this.population();
     // Pending fission is a real unresolved enemy promise, even after every parent died.

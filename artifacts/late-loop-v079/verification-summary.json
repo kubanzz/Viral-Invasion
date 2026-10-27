@@ -1,0 +1,70 @@
+{
+  "generatedAt": "2026-10-27T16:17:41.726Z",
+  "baselineCommit": "decb009f74b07ebd02b276663042bc9c304ba67b",
+  "scope": "Pure gameplay changes awaiting integrated visual candidate; no new public release version.",
+  "sources": {
+    "src/game/battle.ts": "8250d64f82f9d59d72d78f797920ace8452b624726fbd28a3b8cfbbdbc1f5045",
+    "src/game/endless.ts": "4c25dc4ccb0d4e04fd0b2756a519845ba9b9b27e5330c930777370d96dede15c",
+    "src/game/endlessGrowth.ts": "90697bf89912a94c3abae2b39baadf584f0e58677857cd625e13c208fd67fa56"
+  },
+  "typecheck": {
+    "scope": "Strict compilation of GameSession dependency graph and all changed gameplay tests; excludes the visual host.",
+    "command": [
+      "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "--strict",
+      "--skipLibCheck",
+      "--target",
+      "ES2022",
+      "--module",
+      "ESNext",
+      "--moduleResolution",
+      "Bundler",
+      "--lib",
+      "ES2022,DOM,DOM.Iterable",
+      "--types",
+      "node",
+      "src/game/session.ts",
+      "src/game/battle.ts",
+      "src/game/endless.ts",
+      "src/game/endlessGrowth.ts",
+      "tests/unit/endless-growth.test.ts",
+      "tests/unit/endless-director.test.ts",
+      "tests/unit/endless-haste-cadence.test.ts",
+      "tests/unit/melee-cover.test.ts",
+      "tests/unit/gameplay-fixes-review.test.ts"
+    ],
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "ordinaryAttempt": {
+    "path": "artifacts/late-loop-v079/unit-final-v2.json",
+    "passedFiles": 67,
+    "passedTests": 547,
+    "failedSuites": [
+      "danger-readability.test.ts",
+      "raised-obstacle-occlusion.test.ts"
+    ],
+    "reason": "Phaser visual migration imports window at Node module initialization; shared visual files belong to the art thread. Raw failure preserved and reported; not an integrated pass."
+  },
+  "independentReview": {
+    "path": "artifacts/late-loop-v079/independent-melee-haste-review.json",
+    "passed": 22
+  },
+  "natural": {
+    "baseline": "artifacts/late-loop-v079/attempt-1/report.json",
+    "current": "artifacts/late-loop-v079/attempt-2/report.json",
+    "comparison": "artifacts/late-loop-v079/attempt-2/comparison.md",
+    "sourceMapping": "artifacts/late-loop-v079/attempt-2/source-map.json",
+    "runs": 6,
+    "targetWaves": 30,
+    "scope": "Same public-input strategies/priorities, not identical input frames; combined three-change observation, not a single-variable experiment."
+  },
+  "limits": [
+    "No new integrated browser/build/typecheck qualification while Phaser presentation is being migrated in the shared workspace.",
+    "Mid/late mechanical repetition and high no-live-body time remain; human comprehension, fun and retention remain unproven.",
+    "The audit directory label v079 is not a separately published v0.7.9 package."
+  ]
+}

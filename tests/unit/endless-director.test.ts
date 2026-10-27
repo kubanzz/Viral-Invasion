@@ -3,6 +3,7 @@ import { distance } from '../../src/actors/collision';
 import { initializeBattle } from '../../src/game/battle';
 import { ENDLESS_BALANCE as E, EndlessDirector, initializeEndless } from '../../src/game/endless';
 import type { EndlessGameState, EndlessHost } from '../../src/game/endlessTypes';
+import { GameSession } from '../../src/game/session';
 import type { GameEvent, Target } from '../../src/game/types';
 
 function fixture(seed = 71) {
@@ -67,6 +68,91 @@ describe('continuous endless wave director', () => {
     expect(f.state.endless).toEqual(before);
     f.state.phase = 'result'; f.advance(100); expect(f.state.endless).toEqual(before);
     f.state.phase = 'playing'; f.state.player.hp = 0; f.advance(100); expect(f.state.endless).toEqual(before);
+  });
+
+  it('brings the next real batch within half a second of an actual public-input clear', () => {
+    const session = new GameSession(71, { mode: 'endless' }); session.start();
+    const s = session.state, pursuit: GameEvent[] = [];
+    const idle = { moveX: 0, moveY: 0, aim: { x: s.player.x + 1, y: s.player.y }, fire: false };
+    session.bus.on('event', event => { if (event.type === 'ENDLESS_PURSUIT_ACCELERATED') pursuit.push(event); });
+    for (let tick = 0; tick < 8 * 60 && pursuit.length === 0; tick++) {
+      const target = s.targets.filter(actor => actor.hp > 0).sort((a, b) => distance(s.player, a) - distance(s.player, b))[0];
+      session.step(target ? { ...idle, aim: { x: target.x, y: target.y }, fire: true, tool: 1 } : idle);
+    }
+    expect(pursuit).toHaveLength(1);
+    expect(s.endless!.kills).toBe(6); expect(s.targets.filter(target => target.hp > 0)).toHaveLength(0);
+    expect(s.events.some(event => event.type === 'TARGET_CLEARED')).toBe(true);
+    const remaining = s.endless!.remainingToSpawn, deadline = s.endless!.nextSpawnAt, clearAt = s.elapsed;
+    expect(deadline - clearAt).toBeCloseTo(.5);
+    expect(Number(pursuit[0].data.previousSpawnAt)).toBeGreaterThan(deadline);
+    for (let tick = 0; tick < 29; tick++) session.step(idle);
+    expect(s.endless!.remainingToSpawn).toBe(remaining); expect(s.endless!.nextSpawnAt).toBe(deadline);
+    expect(pursuit).toHaveLength(1); session.step(idle);
+    expect(s.endless!.remainingToSpawn).toBe(0);
+    const arrivals = s.targets.filter(target => target.hp > 0); expect(arrivals).toHaveLength(remaining);
+    for (const target of arrivals) {
+      expect(target.born).toBeCloseTo(clearAt + .5); expect(target.attackReady! - target.born!).toBeCloseTo(E.spawnGrace);
+      expect(distance(target, s.player)).toBeGreaterThanOrEqual(E.minimumSpawnDistance);
+    }
+  });
+
+  it('keeps closer scheduled arrivals and does not accelerate while any living body or fission promise remains', () => {
+    const f = fixture(); f.advance(E.warningSeconds); f.advance(.45);
+    const original = f.state.endless!.nextSpawnAt;
+    f.director.afterInput(); expect(f.state.endless!.nextSpawnAt).toBe(original);
+    for (const target of f.state.targets) f.clear(target);
+    const parent = f.state.targets[0]; parent.splitAt = f.state.elapsed + .8;
+    parent.splitPositions = [{ x: parent.x - 27, y: parent.y }, { x: parent.x + 27, y: parent.y }];
+    f.director.afterInput(); expect(f.state.endless!.pendingChildren).toBe(2);
+    expect(f.state.endless!.nextSpawnAt).toBe(original);
+    expect(f.events.some(event => event.type === 'ENDLESS_PURSUIT_ACCELERATED')).toBe(false);
+    parent.splitAt = undefined;
+    f.state.endless!.nextSpawnAt = f.state.elapsed + .2;
+    const closer = f.state.endless!.nextSpawnAt; f.director.afterInput();
+    expect(f.state.endless!.nextSpawnAt).toBe(closer);
+    expect(f.events.some(event => event.type === 'ENDLESS_PURSUIT_ACCELERATED')).toBe(false);
+    f.advance(.2); expect(f.state.targets.filter(target => target.hp > 0)).toHaveLength(2);
+  });
+
+  it('freezes a pending pursuit while paused or terminal and never spawns overdue catch-up batches', () => {
+    for (const terminal of ['paused', 'result', 'player-dead', 'tissue-dead'] as const) {
+      const f = fixture(); f.advance(E.warningSeconds); f.advance(.45);
+      for (const target of f.state.targets) f.clear(target);
+      if (terminal === 'player-dead') f.state.player.hp = 0;
+      else if (terminal === 'tissue-dead') f.state.tissue.hp = 0;
+      else f.state.phase = terminal;
+      const before = structuredClone(f.state.endless), actors = f.state.targets.length;
+      f.director.afterInput(); f.advance(100);
+      expect(f.state.endless).toEqual(before); expect(f.state.targets).toHaveLength(actors);
+      expect(f.events.some(event => event.type === 'ENDLESS_PURSUIT_ACCELERATED')).toBe(false);
+    }
+    const paused = fixture(); paused.advance(E.warningSeconds); paused.advance(.45);
+    for (const target of paused.state.targets) paused.clear(target);
+    paused.director.afterInput(); paused.state.phase = 'paused';
+    const accepted = structuredClone(paused.state.endless); paused.advance(100);
+    expect(paused.state.endless).toEqual(accepted);
+    expect(paused.events.filter(event => event.type === 'ENDLESS_PURSUIT_ACCELERATED')).toHaveLength(1);
+    expect(paused.state.targets.filter(target => target.hp > 0)).toHaveLength(0);
+    const f = fixture(); f.advance(E.warningSeconds); f.finishWave();
+    f.advance(E.intermissionSeconds); f.advance(E.warningSeconds); f.advance(.7);
+    for (const target of f.state.targets) f.clear(target);
+    f.director.afterInput(); expect(f.state.endless!.nextSpawnAt - f.state.elapsed).toBeCloseTo(.5);
+    const serial = f.state.endless!.batchSerial; f.advance(100);
+    expect(f.state.endless!.batchSerial).toBe(serial + 1);
+    expect(f.state.endless!.remainingToSpawn).toBe(1);
+    expect(f.state.endless!.nextSpawnAt).toBeGreaterThan(f.state.elapsed);
+  });
+
+  it('reproduces pursuit deadlines, actual arrivals and events for the same seed and clear actions', () => {
+    const a = fixture(17), b = fixture(17);
+    for (const f of [a, b]) {
+      f.advance(E.warningSeconds); f.advance(.45);
+      for (const target of f.state.targets) f.clear(target);
+      f.director.afterInput(); f.advance(.25); f.advance(.25);
+    }
+    expect(a.events.filter(event => event.type === 'ENDLESS_PURSUIT_ACCELERATED')).toHaveLength(1);
+    expect(a.events).toEqual(b.events); expect(a.state.endless).toEqual(b.state.endless);
+    expect(a.state.targets).toEqual(b.state.targets);
   });
 
   it('completes only after finite reinforcements and every living body, gives exactly one reward, then starts another wave', () => {

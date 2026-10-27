@@ -1,0 +1,1097 @@
+{
+  "schemaVersion": 1,
+  "scope": "Six natural public-input GameSession runs from one frozen production simulation bundle. No browser,performance,memory or human-fun acceptance.",
+  "mapping": {
+    "schemaVersion": 1,
+    "baselineReportSha256": "f06ea02f53aa5137fcad36b5c997498f07ff9454a4a986f5a75de85bce35c398",
+    "currentReportSha256": "56216b2b64691ad4ac6736d85846195d27ae723f40e9d3d65a597344bdf257ee",
+    "baselineBundleSha256": "54c27c47fe6e94a038eab1f5ce6fb0b08aaa5fd51cfe9c25437fc796b28d0b96",
+    "currentBundleSha256": "6b0c93a42992fd4b8bc447026b5d1c9d5595785e68649c4d875a99e938315df0",
+    "currentSourcesUnchangedDuringMeasurement": true,
+    "inputFunctionUnchanged": true,
+    "changedFiles": [
+      {
+        "before": {
+          "path": "src/game/battle.ts",
+          "sha256": "284c08fc0bd3a15cb5d633ec31415d861d87dbc3234025cd00dca673b2cb4d7c"
+        },
+        "after": {
+          "path": "src/game/battle.ts",
+          "sha256": "8250d64f82f9d59d72d78f797920ace8452b624726fbd28a3b8cfbbdbc1f5045"
+        }
+      },
+      {
+        "before": {
+          "path": "src/game/endless.ts",
+          "sha256": "ebc4a61195a6a1631c0eb61efda0582dd891363bbdc052aa342571c771a1b281"
+        },
+        "after": {
+          "path": "src/game/endless.ts",
+          "sha256": "4c25dc4ccb0d4e04fd0b2756a519845ba9b9b27e5330c930777370d96dede15c"
+        }
+      },
+      {
+        "before": {
+          "path": "src/game/endlessGrowth.ts",
+          "sha256": "65b58828e4f509d13049b0bf538748ad0333903519654d6d8781da756413515d"
+        },
+        "after": {
+          "path": "src/game/endlessGrowth.ts",
+          "sha256": "90697bf89912a94c3abae2b39baadf584f0e58677857cd625e13c208fd67fa56"
+        }
+      }
+    ],
+    "attribution": "The current revision includes pursuit pacing, root ordinary-melee recovery/LOS fixes, and fixed-60Hz haste upgrade corrections. Same public-input strategy and priorities, not identical input frames. Paired time changes are combined-revision observations, not a single-variable causal experiment. Pursuit receipts directly record accepted scheduled time cuts."
+  },
+  "runs": [
+    {
+      "seed": 7,
+      "build": "shooting",
+      "stop": "thirty-waves-cleared",
+      "clearedWaves": 30,
+      "baselineElapsed": 539.0833333333334,
+      "currentElapsed": 365.2,
+      "elapsedReductionRatio": 0.32255371773071584,
+      "pursuitCount": 109,
+      "scheduledWaitReductionSeconds": 172.22666666666677,
+      "maxLiving": 8,
+      "maxConcurrent": 2,
+      "maxCells": 3,
+      "playerDamage": 0,
+      "playerDamageByReason": {},
+      "tissueLossByReason": {
+        "protocol-pressure": 126,
+        "pulse-pressure": 36
+      },
+      "castOutcomes": {
+        "killed-during-windup": 18,
+        "killed-during-charge": 1,
+        "resolved": 1
+      },
+      "baselineBands": [
+        {
+          "fromWave": 1,
+          "throughWave": 10,
+          "elapsedSeconds": 152.15,
+          "phaseSeconds": {
+            "warning": 38,
+            "intermission": 9.999999999999998,
+            "combat": 104.15
+          },
+          "combatWithLiveEnemiesSeconds": 42.13333333333334,
+          "emptyAwaitingScheduledSpawnSeconds": 47.699999999999974,
+          "emptyPendingFissionSeconds": 14.316666666666691,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.7230802935699419,
+          "pursuitCount": 0,
+          "scheduledWaitReductionSeconds": 0,
+          "telegraphs": 6,
+          "castOutcomes": {
+            "killed-during-windup": 6
+          },
+          "playerDamage": 0,
+          "maxLiving": 8,
+          "maxConcurrent": 2
+        },
+        {
+          "fromWave": 11,
+          "throughWave": 20,
+          "elapsedSeconds": 198.29999999999998,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 10,
+            "combat": 156.29999999999998
+          },
+          "combatWithLiveEnemiesSeconds": 34.21666666666633,
+          "emptyAwaitingScheduledSpawnSeconds": 118.58333333333371,
+          "emptyPendingFissionSeconds": 3.499999999999943,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.8274499915952278,
+          "pursuitCount": 0,
+          "scheduledWaitReductionSeconds": 0,
+          "telegraphs": 12,
+          "castOutcomes": {
+            "killed-during-windup": 10,
+            "killed-during-charge": 1,
+            "resolved": 1
+          },
+          "playerDamage": 0,
+          "maxLiving": 4,
+          "maxConcurrent": 1
+        },
+        {
+          "fromWave": 21,
+          "throughWave": 30,
+          "elapsedSeconds": 188.63333333333338,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 9,
+            "combat": 147.63333333333338
+          },
+          "combatWithLiveEnemiesSeconds": 27.300000000000693,
+          "emptyAwaitingScheduledSpawnSeconds": 73.79999999999984,
+          "emptyPendingFissionSeconds": 46.53333333333285,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.8552747835306554,
+          "pursuitCount": 0,
+          "scheduledWaitReductionSeconds": 0,
+          "telegraphs": 3,
+          "castOutcomes": {
+            "killed-during-windup": 3
+          },
+          "playerDamage": 0,
+          "maxLiving": 6,
+          "maxConcurrent": 1
+        }
+      ],
+      "currentBands": [
+        {
+          "fromWave": 1,
+          "throughWave": 10,
+          "elapsedSeconds": 116.81666666666666,
+          "phaseSeconds": {
+            "warning": 38,
+            "intermission": 9.999999999999998,
+            "combat": 68.81666666666666
+          },
+          "combatWithLiveEnemiesSeconds": 42.833333333333414,
+          "emptyAwaitingScheduledSpawnSeconds": 12.533333333333331,
+          "emptyPendingFissionSeconds": 13.449999999999918,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.6333285775431581,
+          "pursuitCount": 21,
+          "scheduledWaitReductionSeconds": 34.45000000000003,
+          "telegraphs": 6,
+          "castOutcomes": {
+            "killed-during-windup": 6
+          },
+          "playerDamage": 0,
+          "maxLiving": 8,
+          "maxConcurrent": 2
+        },
+        {
+          "fromWave": 11,
+          "throughWave": 20,
+          "elapsedSeconds": 113.38333333333333,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 10,
+            "combat": 71.38333333333333
+          },
+          "combatWithLiveEnemiesSeconds": 35.56666666666652,
+          "emptyAwaitingScheduledSpawnSeconds": 32.31666666666672,
+          "emptyPendingFissionSeconds": 3.5000000000000853,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.6863148610906965,
+          "pursuitCount": 46,
+          "scheduledWaitReductionSeconds": 84.83333333333329,
+          "telegraphs": 11,
+          "castOutcomes": {
+            "killed-during-windup": 9,
+            "killed-during-charge": 1,
+            "resolved": 1
+          },
+          "playerDamage": 0,
+          "maxLiving": 4,
+          "maxConcurrent": 1
+        },
+        {
+          "fromWave": 21,
+          "throughWave": 30,
+          "elapsedSeconds": 135,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 8.999999999999972,
+            "combat": 94.00000000000003
+          },
+          "combatWithLiveEnemiesSeconds": 23.68333333333348,
+          "emptyAwaitingScheduledSpawnSeconds": 21.666666666666686,
+          "emptyPendingFissionSeconds": 48.649999999999864,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.8245679012345668,
+          "pursuitCount": 42,
+          "scheduledWaitReductionSeconds": 52.94333333333344,
+          "telegraphs": 3,
+          "castOutcomes": {
+            "killed-during-windup": 3
+          },
+          "playerDamage": 0,
+          "maxLiving": 6,
+          "maxConcurrent": 1
+        }
+      ]
+    },
+    {
+      "seed": 7,
+      "build": "area",
+      "stop": "thirty-waves-cleared",
+      "clearedWaves": 30,
+      "baselineElapsed": 537.4833333333333,
+      "currentElapsed": 348.96666666666664,
+      "elapsedReductionRatio": 0.3507395578157463,
+      "pursuitCount": 122,
+      "scheduledWaitReductionSeconds": 187.1666666666665,
+      "maxLiving": 8,
+      "maxConcurrent": 1,
+      "maxCells": 3,
+      "playerDamage": 0,
+      "playerDamageByReason": {},
+      "tissueLossByReason": {
+        "protocol-pressure": 120,
+        "pulse-pressure": 28
+      },
+      "castOutcomes": {
+        "killed-during-windup": 8
+      },
+      "baselineBands": [
+        {
+          "fromWave": 1,
+          "throughWave": 10,
+          "elapsedSeconds": 151.85,
+          "phaseSeconds": {
+            "warning": 37.99999999999998,
+            "intermission": 9.999999999999998,
+            "combat": 103.85000000000001
+          },
+          "combatWithLiveEnemiesSeconds": 34.75000000000007,
+          "emptyAwaitingScheduledSpawnSeconds": 53.71666666666664,
+          "emptyPendingFissionSeconds": 15.383333333333304,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.7711557458017776,
+          "pursuitCount": 0,
+          "scheduledWaitReductionSeconds": 0,
+          "telegraphs": 5,
+          "castOutcomes": {
+            "killed-during-windup": 5
+          },
+          "playerDamage": 0,
+          "maxLiving": 8,
+          "maxConcurrent": 1
+        },
+        {
+          "fromWave": 11,
+          "throughWave": 20,
+          "elapsedSeconds": 197.98333333333332,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 10,
+            "combat": 155.98333333333332
+          },
+          "combatWithLiveEnemiesSeconds": 18.349999999999937,
+          "emptyAwaitingScheduledSpawnSeconds": 133.8666666666668,
+          "emptyPendingFissionSeconds": 3.7666666666665947,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.907315430591801,
+          "pursuitCount": 0,
+          "scheduledWaitReductionSeconds": 0,
+          "telegraphs": 3,
+          "castOutcomes": {
+            "killed-during-windup": 3
+          },
+          "playerDamage": 0,
+          "maxLiving": 4,
+          "maxConcurrent": 1
+        },
+        {
+          "fromWave": 21,
+          "throughWave": 30,
+          "elapsedSeconds": 187.65000000000003,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 9,
+            "combat": 146.65000000000003
+          },
+          "combatWithLiveEnemiesSeconds": 18.983333333333405,
+          "emptyAwaitingScheduledSpawnSeconds": 76.33333333333337,
+          "emptyPendingFissionSeconds": 51.33333333333326,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.8988364863664621,
+          "pursuitCount": 0,
+          "scheduledWaitReductionSeconds": 0,
+          "telegraphs": 0,
+          "castOutcomes": {},
+          "playerDamage": 0,
+          "maxLiving": 6,
+          "maxConcurrent": 0
+        }
+      ],
+      "currentBands": [
+        {
+          "fromWave": 1,
+          "throughWave": 10,
+          "elapsedSeconds": 111.96666666666667,
+          "phaseSeconds": {
+            "warning": 38,
+            "intermission": 9.999999999999996,
+            "combat": 63.96666666666667
+          },
+          "combatWithLiveEnemiesSeconds": 34.31666666666672,
+          "emptyAwaitingScheduledSpawnSeconds": 13.383333333333315,
+          "emptyPendingFissionSeconds": 16.266666666666637,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.6935099732063109,
+          "pursuitCount": 23,
+          "scheduledWaitReductionSeconds": 39.53333333333339,
+          "telegraphs": 5,
+          "castOutcomes": {
+            "killed-during-windup": 5
+          },
+          "playerDamage": 0,
+          "maxLiving": 8,
+          "maxConcurrent": 1
+        },
+        {
+          "fromWave": 11,
+          "throughWave": 20,
+          "elapsedSeconds": 102.91666666666666,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 10,
+            "combat": 60.91666666666666
+          },
+          "combatWithLiveEnemiesSeconds": 19.683333333333294,
+          "emptyAwaitingScheduledSpawnSeconds": 37.516666666666666,
+          "emptyPendingFissionSeconds": 3.716666666666697,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.8087449392712555,
+          "pursuitCount": 56,
+          "scheduledWaitReductionSeconds": 94.46666666666653,
+          "telegraphs": 3,
+          "castOutcomes": {
+            "killed-during-windup": 3
+          },
+          "playerDamage": 0,
+          "maxLiving": 4,
+          "maxConcurrent": 1
+        },
+        {
+          "fromWave": 21,
+          "throughWave": 30,
+          "elapsedSeconds": 134.08333333333331,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 9,
+            "combat": 93.08333333333331
+          },
+          "combatWithLiveEnemiesSeconds": 20.899999999999835,
+          "emptyAwaitingScheduledSpawnSeconds": 21.883333333333326,
+          "emptyPendingFissionSeconds": 50.30000000000015,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.8441267868241156,
+          "pursuitCount": 43,
+          "scheduledWaitReductionSeconds": 53.16666666666657,
+          "telegraphs": 0,
+          "castOutcomes": {},
+          "playerDamage": 0,
+          "maxLiving": 6,
+          "maxConcurrent": 0
+        }
+      ]
+    },
+    {
+      "seed": 7,
+      "build": "immune",
+      "stop": "thirty-waves-cleared",
+      "clearedWaves": 30,
+      "baselineElapsed": 579.6,
+      "currentElapsed": 510.6333333333333,
+      "elapsedReductionRatio": 0.118990108120543,
+      "pursuitCount": 69,
+      "scheduledWaitReductionSeconds": 59.70333333333332,
+      "maxLiving": 10,
+      "maxConcurrent": 2,
+      "maxCells": 3,
+      "playerDamage": 0,
+      "playerDamageByReason": {},
+      "tissueLossByReason": {
+        "protocol-pressure": 171,
+        "pulse-pressure": 64
+      },
+      "castOutcomes": {
+        "killed-during-windup": 42,
+        "cancelled-other": 1,
+        "resolved": 1
+      },
+      "baselineBands": [
+        {
+          "fromWave": 1,
+          "throughWave": 10,
+          "elapsedSeconds": 165.58333333333334,
+          "phaseSeconds": {
+            "warning": 37.99999999999999,
+            "intermission": 10,
+            "combat": 117.58333333333336
+          },
+          "combatWithLiveEnemiesSeconds": 94.81666666666666,
+          "emptyAwaitingScheduledSpawnSeconds": 15.03333333333332,
+          "emptyPendingFissionSeconds": 7.733333333333363,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.4273779567186714,
+          "pursuitCount": 0,
+          "scheduledWaitReductionSeconds": 0,
+          "telegraphs": 14,
+          "castOutcomes": {
+            "killed-during-windup": 14
+          },
+          "playerDamage": 0,
+          "maxLiving": 10,
+          "maxConcurrent": 2
+        },
+        {
+          "fromWave": 11,
+          "throughWave": 20,
+          "elapsedSeconds": 210.48333333333332,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 10,
+            "combat": 168.48333333333332
+          },
+          "combatWithLiveEnemiesSeconds": 95.4,
+          "emptyAwaitingScheduledSpawnSeconds": 70.84999999999997,
+          "emptyPendingFissionSeconds": 2.2333333333333485,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.5467574629820254,
+          "pursuitCount": 0,
+          "scheduledWaitReductionSeconds": 0,
+          "telegraphs": 16,
+          "castOutcomes": {
+            "killed-during-windup": 15,
+            "resolved": 1
+          },
+          "playerDamage": 0,
+          "maxLiving": 6,
+          "maxConcurrent": 1
+        },
+        {
+          "fromWave": 21,
+          "throughWave": 30,
+          "elapsedSeconds": 203.53333333333336,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 9,
+            "combat": 162.53333333333336
+          },
+          "combatWithLiveEnemiesSeconds": 91.51666666666665,
+          "emptyAwaitingScheduledSpawnSeconds": 38.55000000000007,
+          "emptyPendingFissionSeconds": 32.46666666666664,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.5503603013429414,
+          "pursuitCount": 0,
+          "scheduledWaitReductionSeconds": 0,
+          "telegraphs": 12,
+          "castOutcomes": {
+            "killed-during-windup": 12
+          },
+          "playerDamage": 0,
+          "maxLiving": 8,
+          "maxConcurrent": 2
+        }
+      ],
+      "currentBands": [
+        {
+          "fromWave": 1,
+          "throughWave": 10,
+          "elapsedSeconds": 154.46666666666667,
+          "phaseSeconds": {
+            "warning": 38,
+            "intermission": 10,
+            "combat": 106.46666666666667
+          },
+          "combatWithLiveEnemiesSeconds": 95.15000000000005,
+          "emptyAwaitingScheduledSpawnSeconds": 5.450000000000003,
+          "emptyPendingFissionSeconds": 5.866666666666617,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.3840094950366851,
+          "pursuitCount": 8,
+          "scheduledWaitReductionSeconds": 7.903333333333337,
+          "telegraphs": 16,
+          "castOutcomes": {
+            "killed-during-windup": 15,
+            "cancelled-other": 1
+          },
+          "playerDamage": 0,
+          "maxLiving": 10,
+          "maxConcurrent": 2
+        },
+        {
+          "fromWave": 11,
+          "throughWave": 20,
+          "elapsedSeconds": 177.88333333333335,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 10,
+            "combat": 135.88333333333335
+          },
+          "combatWithLiveEnemiesSeconds": 112.96666666666673,
+          "emptyAwaitingScheduledSpawnSeconds": 20.733333333333235,
+          "emptyPendingFissionSeconds": 2.183333333333394,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.3649395671320151,
+          "pursuitCount": 35,
+          "scheduledWaitReductionSeconds": 35.04833333333349,
+          "telegraphs": 17,
+          "castOutcomes": {
+            "killed-during-windup": 16,
+            "resolved": 1
+          },
+          "playerDamage": 0,
+          "maxLiving": 6,
+          "maxConcurrent": 1
+        },
+        {
+          "fromWave": 21,
+          "throughWave": 30,
+          "elapsedSeconds": 178.2833333333333,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 9,
+            "combat": 137.2833333333333
+          },
+          "combatWithLiveEnemiesSeconds": 88.2000000000001,
+          "emptyAwaitingScheduledSpawnSeconds": 16.38333333333344,
+          "emptyPendingFissionSeconds": 32.69999999999976,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.5052818547256234,
+          "pursuitCount": 26,
+          "scheduledWaitReductionSeconds": 16.751666666666495,
+          "telegraphs": 11,
+          "castOutcomes": {
+            "killed-during-windup": 11
+          },
+          "playerDamage": 0,
+          "maxLiving": 6,
+          "maxConcurrent": 2
+        }
+      ]
+    },
+    {
+      "seed": 71,
+      "build": "shooting",
+      "stop": "thirty-waves-cleared",
+      "clearedWaves": 30,
+      "baselineElapsed": 537.05,
+      "currentElapsed": 373.93333333333334,
+      "elapsedReductionRatio": 0.3037271514135865,
+      "pursuitCount": 110,
+      "scheduledWaitReductionSeconds": 163.81999999999996,
+      "maxLiving": 6,
+      "maxConcurrent": 2,
+      "maxCells": 3,
+      "playerDamage": 0,
+      "playerDamageByReason": {},
+      "tissueLossByReason": {
+        "protocol-pressure": 108,
+        "pulse-pressure": 24
+      },
+      "castOutcomes": {
+        "killed-during-charge": 2,
+        "resolved": 1,
+        "killed-during-windup": 12
+      },
+      "baselineBands": [
+        {
+          "fromWave": 1,
+          "throughWave": 10,
+          "elapsedSeconds": 148.03333333333333,
+          "phaseSeconds": {
+            "warning": 37.999999999999986,
+            "intermission": 10.000000000000002,
+            "combat": 100.03333333333335
+          },
+          "combatWithLiveEnemiesSeconds": 44.60000000000009,
+          "emptyAwaitingScheduledSpawnSeconds": 51.299999999999955,
+          "emptyPendingFissionSeconds": 4.133333333333297,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.6987165052916005,
+          "pursuitCount": 0,
+          "scheduledWaitReductionSeconds": 0,
+          "telegraphs": 8,
+          "castOutcomes": {
+            "killed-during-windup": 7,
+            "resolved": 1
+          },
+          "playerDamage": 0,
+          "maxLiving": 6,
+          "maxConcurrent": 2
+        },
+        {
+          "fromWave": 11,
+          "throughWave": 20,
+          "elapsedSeconds": 204.21666666666667,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 10,
+            "combat": 162.21666666666667
+          },
+          "combatWithLiveEnemiesSeconds": 28.30000000000004,
+          "emptyAwaitingScheduledSpawnSeconds": 83.03333333333322,
+          "emptyPendingFissionSeconds": 50.88333333333341,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.8614216926466985,
+          "pursuitCount": 0,
+          "scheduledWaitReductionSeconds": 0,
+          "telegraphs": 2,
+          "castOutcomes": {
+            "killed-during-windup": 1,
+            "killed-during-charge": 1
+          },
+          "playerDamage": 0,
+          "maxLiving": 6,
+          "maxConcurrent": 1
+        },
+        {
+          "fromWave": 21,
+          "throughWave": 30,
+          "elapsedSeconds": 184.79999999999995,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 9,
+            "combat": 143.79999999999995
+          },
+          "combatWithLiveEnemiesSeconds": 22.933333333333564,
+          "emptyAwaitingScheduledSpawnSeconds": 88.2166666666663,
+          "emptyPendingFissionSeconds": 32.65000000000009,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.8759018759018746,
+          "pursuitCount": 0,
+          "scheduledWaitReductionSeconds": 0,
+          "telegraphs": 6,
+          "castOutcomes": {
+            "killed-during-windup": 6
+          },
+          "playerDamage": 0,
+          "maxLiving": 4,
+          "maxConcurrent": 1
+        }
+      ],
+      "currentBands": [
+        {
+          "fromWave": 1,
+          "throughWave": 10,
+          "elapsedSeconds": 108.81666666666666,
+          "phaseSeconds": {
+            "warning": 38,
+            "intermission": 10,
+            "combat": 60.81666666666666
+          },
+          "combatWithLiveEnemiesSeconds": 44.78333333333333,
+          "emptyAwaitingScheduledSpawnSeconds": 11.833333333333346,
+          "emptyPendingFissionSeconds": 4.199999999999989,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.5884515239699801,
+          "pursuitCount": 21,
+          "scheduledWaitReductionSeconds": 40.11500000000002,
+          "telegraphs": 7,
+          "castOutcomes": {
+            "killed-during-charge": 1,
+            "resolved": 1,
+            "killed-during-windup": 5
+          },
+          "playerDamage": 0,
+          "maxLiving": 6,
+          "maxConcurrent": 2
+        },
+        {
+          "fromWave": 11,
+          "throughWave": 20,
+          "elapsedSeconds": 143.05,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 10,
+            "combat": 101.05000000000001
+          },
+          "combatWithLiveEnemiesSeconds": 28.466666666666754,
+          "emptyAwaitingScheduledSpawnSeconds": 21.666666666666657,
+          "emptyPendingFissionSeconds": 50.9166666666666,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.8010019806594425,
+          "pursuitCount": 42,
+          "scheduledWaitReductionSeconds": 61.40999999999984,
+          "telegraphs": 2,
+          "castOutcomes": {
+            "killed-during-windup": 1,
+            "killed-during-charge": 1
+          },
+          "playerDamage": 0,
+          "maxLiving": 6,
+          "maxConcurrent": 1
+        },
+        {
+          "fromWave": 21,
+          "throughWave": 30,
+          "elapsedSeconds": 122.06666666666666,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 9,
+            "combat": 81.06666666666666
+          },
+          "combatWithLiveEnemiesSeconds": 21.833333333333428,
+          "emptyAwaitingScheduledSpawnSeconds": 26.56666666666672,
+          "emptyPendingFissionSeconds": 32.666666666666515,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.8211359912616049,
+          "pursuitCount": 47,
+          "scheduledWaitReductionSeconds": 62.2950000000001,
+          "telegraphs": 6,
+          "castOutcomes": {
+            "killed-during-windup": 6
+          },
+          "playerDamage": 0,
+          "maxLiving": 4,
+          "maxConcurrent": 1
+        }
+      ]
+    },
+    {
+      "seed": 71,
+      "build": "area",
+      "stop": "thirty-waves-cleared",
+      "clearedWaves": 30,
+      "baselineElapsed": 536.0666666666666,
+      "currentElapsed": 357.98333333333335,
+      "elapsedReductionRatio": 0.33220370600671545,
+      "pursuitCount": 121,
+      "scheduledWaitReductionSeconds": 176.12833333333347,
+      "maxLiving": 7,
+      "maxConcurrent": 1,
+      "maxCells": 3,
+      "playerDamage": 0,
+      "playerDamageByReason": {},
+      "tissueLossByReason": {
+        "protocol-pressure": 120,
+        "pulse-pressure": 28
+      },
+      "castOutcomes": {
+        "killed-during-windup": 5
+      },
+      "baselineBands": [
+        {
+          "fromWave": 1,
+          "throughWave": 10,
+          "elapsedSeconds": 146.85,
+          "phaseSeconds": {
+            "warning": 38,
+            "intermission": 9.999999999999998,
+            "combat": 98.85
+          },
+          "combatWithLiveEnemiesSeconds": 29.500000000000025,
+          "emptyAwaitingScheduledSpawnSeconds": 63.29999999999998,
+          "emptyPendingFissionSeconds": 6.049999999999983,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.7991147429349674,
+          "pursuitCount": 0,
+          "scheduledWaitReductionSeconds": 0,
+          "telegraphs": 4,
+          "castOutcomes": {
+            "killed-during-windup": 4
+          },
+          "playerDamage": 0,
+          "maxLiving": 7,
+          "maxConcurrent": 1
+        },
+        {
+          "fromWave": 11,
+          "throughWave": 20,
+          "elapsedSeconds": 204.91666666666666,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 10,
+            "combat": 162.91666666666666
+          },
+          "combatWithLiveEnemiesSeconds": 29.39999999999978,
+          "emptyAwaitingScheduledSpawnSeconds": 82.65000000000015,
+          "emptyPendingFissionSeconds": 50.86666666666673,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.8565270435136245,
+          "pursuitCount": 0,
+          "scheduledWaitReductionSeconds": 0,
+          "telegraphs": 3,
+          "castOutcomes": {
+            "killed-during-windup": 3
+          },
+          "playerDamage": 0,
+          "maxLiving": 7,
+          "maxConcurrent": 1
+        },
+        {
+          "fromWave": 21,
+          "throughWave": 30,
+          "elapsedSeconds": 184.29999999999995,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 9,
+            "combat": 143.29999999999995
+          },
+          "combatWithLiveEnemiesSeconds": 11.416666666666117,
+          "emptyAwaitingScheduledSpawnSeconds": 95.8000000000003,
+          "emptyPendingFissionSeconds": 36.08333333333354,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.9380538976306776,
+          "pursuitCount": 0,
+          "scheduledWaitReductionSeconds": 0,
+          "telegraphs": 0,
+          "castOutcomes": {},
+          "playerDamage": 0,
+          "maxLiving": 4,
+          "maxConcurrent": 0
+        }
+      ],
+      "currentBands": [
+        {
+          "fromWave": 1,
+          "throughWave": 10,
+          "elapsedSeconds": 97.33333333333333,
+          "phaseSeconds": {
+            "warning": 38,
+            "intermission": 10.000000000000004,
+            "combat": 49.33333333333333
+          },
+          "combatWithLiveEnemiesSeconds": 27.499999999999975,
+          "emptyAwaitingScheduledSpawnSeconds": 16.050000000000004,
+          "emptyPendingFissionSeconds": 5.783333333333346,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.7174657534246578,
+          "pursuitCount": 27,
+          "scheduledWaitReductionSeconds": 48.04000000000002,
+          "telegraphs": 3,
+          "castOutcomes": {
+            "killed-during-windup": 3
+          },
+          "playerDamage": 0,
+          "maxLiving": 7,
+          "maxConcurrent": 1
+        },
+        {
+          "fromWave": 11,
+          "throughWave": 20,
+          "elapsedSeconds": 142.86666666666667,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 10,
+            "combat": 100.86666666666666
+          },
+          "combatWithLiveEnemiesSeconds": 29.266666666666765,
+          "emptyAwaitingScheduledSpawnSeconds": 21.5,
+          "emptyPendingFissionSeconds": 50.099999999999895,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.7951469902006526,
+          "pursuitCount": 43,
+          "scheduledWaitReductionSeconds": 61.67666666666648,
+          "telegraphs": 2,
+          "castOutcomes": {
+            "killed-during-windup": 2
+          },
+          "playerDamage": 0,
+          "maxLiving": 6,
+          "maxConcurrent": 1
+        },
+        {
+          "fromWave": 21,
+          "throughWave": 30,
+          "elapsedSeconds": 117.78333333333336,
+          "phaseSeconds": {
+            "warning": 32.00000000000003,
+            "intermission": 9,
+            "combat": 76.78333333333333
+          },
+          "combatWithLiveEnemiesSeconds": 11.883333333332928,
+          "emptyAwaitingScheduledSpawnSeconds": 28.85000000000005,
+          "emptyPendingFissionSeconds": 36.05000000000035,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.8991085326163895,
+          "pursuitCount": 51,
+          "scheduledWaitReductionSeconds": 66.41166666666697,
+          "telegraphs": 0,
+          "castOutcomes": {},
+          "playerDamage": 0,
+          "maxLiving": 3,
+          "maxConcurrent": 0
+        }
+      ]
+    },
+    {
+      "seed": 71,
+      "build": "immune",
+      "stop": "thirty-waves-cleared",
+      "clearedWaves": 30,
+      "baselineElapsed": 581.0333333333333,
+      "currentElapsed": 515.0166666666667,
+      "elapsedReductionRatio": 0.11361941368825657,
+      "pursuitCount": 66,
+      "scheduledWaitReductionSeconds": 66.38000000000018,
+      "maxLiving": 8,
+      "maxConcurrent": 2,
+      "maxCells": 3,
+      "playerDamage": 16,
+      "playerDamageByReason": {
+        "crystal-charge": 16
+      },
+      "tissueLossByReason": {
+        "protocol-pressure": 174,
+        "pulse-pressure": 52
+      },
+      "castOutcomes": {
+        "killed-during-windup": 45,
+        "resolved": 3,
+        "charge-finished": 1
+      },
+      "baselineBands": [
+        {
+          "fromWave": 1,
+          "throughWave": 10,
+          "elapsedSeconds": 170.08333333333334,
+          "phaseSeconds": {
+            "warning": 38,
+            "intermission": 10,
+            "combat": 122.08333333333334
+          },
+          "combatWithLiveEnemiesSeconds": 105.83333333333337,
+          "emptyAwaitingScheduledSpawnSeconds": 15.61666666666665,
+          "emptyPendingFissionSeconds": 0.6333333333333258,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.37775600195982345,
+          "pursuitCount": 0,
+          "scheduledWaitReductionSeconds": 0,
+          "telegraphs": 14,
+          "castOutcomes": {
+            "killed-during-windup": 11,
+            "resolved": 3
+          },
+          "playerDamage": 0,
+          "maxLiving": 9,
+          "maxConcurrent": 2
+        },
+        {
+          "fromWave": 11,
+          "throughWave": 20,
+          "elapsedSeconds": 220.6,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 10,
+            "combat": 178.6
+          },
+          "combatWithLiveEnemiesSeconds": 116.25000000000003,
+          "emptyAwaitingScheduledSpawnSeconds": 33.133333333333326,
+          "emptyPendingFissionSeconds": 29.21666666666664,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.47302810516772426,
+          "pursuitCount": 0,
+          "scheduledWaitReductionSeconds": 0,
+          "telegraphs": 20,
+          "castOutcomes": {
+            "killed-during-windup": 19,
+            "cancelled-other": 1
+          },
+          "playerDamage": 0,
+          "maxLiving": 8,
+          "maxConcurrent": 2
+        },
+        {
+          "fromWave": 21,
+          "throughWave": 30,
+          "elapsedSeconds": 190.34999999999997,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 9,
+            "combat": 149.34999999999997
+          },
+          "combatWithLiveEnemiesSeconds": 76.16666666666606,
+          "emptyAwaitingScheduledSpawnSeconds": 47.683333333333564,
+          "emptyPendingFissionSeconds": 25.50000000000034,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.5998599071885155,
+          "pursuitCount": 0,
+          "scheduledWaitReductionSeconds": 0,
+          "telegraphs": 16,
+          "castOutcomes": {
+            "killed-during-windup": 16
+          },
+          "playerDamage": 0,
+          "maxLiving": 6,
+          "maxConcurrent": 1
+        }
+      ],
+      "currentBands": [
+        {
+          "fromWave": 1,
+          "throughWave": 10,
+          "elapsedSeconds": 159.05,
+          "phaseSeconds": {
+            "warning": 38,
+            "intermission": 10,
+            "combat": 111.05000000000001
+          },
+          "combatWithLiveEnemiesSeconds": 104.71666666666667,
+          "emptyAwaitingScheduledSpawnSeconds": 5.383333333333333,
+          "emptyPendingFissionSeconds": 0.950000000000017,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.3416116525201719,
+          "pursuitCount": 9,
+          "scheduledWaitReductionSeconds": 10.954999999999995,
+          "telegraphs": 12,
+          "castOutcomes": {
+            "killed-during-windup": 9,
+            "resolved": 3
+          },
+          "playerDamage": 0,
+          "maxLiving": 8,
+          "maxConcurrent": 2
+        },
+        {
+          "fromWave": 11,
+          "throughWave": 20,
+          "elapsedSeconds": 193.21666666666664,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 10,
+            "combat": 151.21666666666664
+          },
+          "combatWithLiveEnemiesSeconds": 105.28333333333327,
+          "emptyAwaitingScheduledSpawnSeconds": 15.433333333333394,
+          "emptyPendingFissionSeconds": 30.49999999999997,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.4551022168549989,
+          "pursuitCount": 26,
+          "scheduledWaitReductionSeconds": 24.828333333333433,
+          "telegraphs": 20,
+          "castOutcomes": {
+            "killed-during-windup": 19,
+            "charge-finished": 1
+          },
+          "playerDamage": 16,
+          "maxLiving": 8,
+          "maxConcurrent": 2
+        },
+        {
+          "fromWave": 21,
+          "throughWave": 30,
+          "elapsedSeconds": 162.75,
+          "phaseSeconds": {
+            "warning": 32,
+            "intermission": 8.999999999999943,
+            "combat": 121.75000000000006
+          },
+          "combatWithLiveEnemiesSeconds": 80.98333333333329,
+          "emptyAwaitingScheduledSpawnSeconds": 17.616666666666788,
+          "emptyPendingFissionSeconds": 23.149999999999977,
+          "emptyCombatOtherSeconds": 0,
+          "mandatoryPhaseAndEmptyCombatRatio": 0.5024065540194576,
+          "pursuitCount": 31,
+          "scheduledWaitReductionSeconds": 30.59666666666675,
+          "telegraphs": 17,
+          "castOutcomes": {
+            "killed-during-windup": 17
+          },
+          "playerDamage": 0,
+          "maxLiving": 7,
+          "maxConcurrent": 1
+        }
+      ]
+    }
+  ],
+  "waitingDefinition": "Warning/intermission plus combat ticks with no living target. Pending fission and awaiting scheduled spawn are disjoint. Movement/repair remain possible; modal decision time is excluded.",
+  "checks": {
+    "focusedDirectorFormationAndRealSessionTests": "33/33 passed",
+    "previousGlobalTypecheck": "Failed only at separately-owned src/render/phaserRenderer.ts:99: LungFlowState.airwayClosed; root owns final global validation."
+  }
+}
