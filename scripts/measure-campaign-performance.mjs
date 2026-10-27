@@ -195,7 +195,7 @@ try {
     if (mode === 'standard' && active >= 300) {
       await release(); await page.keyboard.press('Escape'); await drain();
       await page.locator('#overlay-host [data-action="effects"]').click();
-      if (!(await page.locator('#overlay-host [data-action="effects"]').innerText()).includes('低')) throw Error('Real quality UI did not switch to low effects');
+      await page.waitForFunction(() => document.querySelector('#overlay-host [data-action="effects"]')?.textContent?.includes('低'), undefined, { timeout: 8000 });
       await page.evaluate(() => { window.__viCampaignPerf.mode = 'low'; window.__viCampaignPerf.last = null; });
       await page.locator('[data-action="continue"]').click(); report.transitions.push({ mode: 'low', activeSimulationSeconds: active, tick: state.tick }); mode = 'low'; previousCoverage = null;
     }
