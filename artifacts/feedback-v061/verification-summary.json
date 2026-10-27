@@ -1,0 +1,191 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-27",
+  "version": "0.6.1",
+  "gameSourceRevision": "a65bfab9be840ff765f0cd92e6cb751b4c4837ca",
+  "game": {
+    "bytes": 289665,
+    "sha256": "18ec5e8dc4d6362f979a6d2ad108060e5897c6a808e7c12cce404bf42bae119d"
+  },
+  "build": {
+    "metadata": "artifacts/feedback-v061/build-meta.json",
+    "inputCount": 44,
+    "proof": "artifacts/feedback-v061/release-manifest.json"
+  },
+  "unit": {
+    "report": "artifacts/feedback-v061/unit.json",
+    "total": 210,
+    "passed": 210,
+    "failed": 0,
+    "typecheck": "artifacts/feedback-v061/typecheck-final-attempts.json"
+  },
+  "simulation": {
+    "proof": "artifacts/feedback-v061/simulation-source-reuse.json",
+    "rerunForThisPatch": false,
+    "unchangedInputs": 24,
+    "scope": "No new 1000-session run was executed for 0.6.1. The simulator/gameplay/harness inputs are byte-identical to the successful 0.6.0 rerun2, so this report maps that evidence only to those unchanged modules. Audio and UI are verified by separate 0.6.1 tests."
+  },
+  "browser": {
+    "main": {
+      "report": "artifacts/feedback-v061/browser-report.json",
+      "stats": {
+        "startTime": "2026-10-27T02:18:49.616Z",
+        "duration": 488570.817,
+        "expected": 19,
+        "skipped": 15,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "audit": "artifacts/feedback-v061/browser-verification.json"
+    },
+    "synergy": {
+      "fixture": "G2 legacy chamber, same growth/cells rules; not a 2400x1500 campaign victory",
+      "testSource": {
+        "path": "tests/e2e/g2.spec.ts",
+        "sha256": "c68599bad00c50d617a875d3b772999db99e08c463db3016297e55309dd10f18"
+      },
+      "final": {
+        "report": "artifacts/feedback-v061/synergy-rerun2-report.json",
+        "stats": {
+          "startTime": "2026-10-27T02:49:50.070Z",
+          "duration": 67598.407,
+          "expected": 2,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        }
+      },
+      "attempts": [
+        {
+          "report": "artifacts/feedback-v061/synergy-report.json",
+          "stats": {
+            "startTime": "2026-10-27T02:38:38.171Z",
+            "duration": 62480.599,
+            "expected": 0,
+            "skipped": 0,
+            "unexpected": 2,
+            "flaky": 0
+          },
+          "reason": "One area shot per six-second rhythm did not finish a marked target within four seconds; new patrol can also reduce a body below the area-shot survival threshold."
+        },
+        {
+          "report": "artifacts/feedback-v061/synergy-rerun1-report.json",
+          "stats": {
+            "startTime": "2026-10-27T02:46:20.068Z",
+            "duration": 59059.798,
+            "expected": 0,
+            "skipped": 0,
+            "unexpected": 2,
+            "flaky": 0
+          },
+          "reason": "Real first synergy succeeded, but fixed two-research loop equipped the fourth beacon then replaced it back out with pulse."
+        },
+        {
+          "report": "artifacts/feedback-v061/synergy-rerun2-report.json",
+          "stats": {
+            "startTime": "2026-10-27T02:49:50.070Z",
+            "duration": 67598.407,
+            "expected": 2,
+            "skipped": 0,
+            "unexpected": 0,
+            "flaky": 0
+          },
+          "resolution": "Follow the actually exposed target with precision fire; stop only after verified paid fourth-protocol replacement and both desired protocols are equipped. Both real synergies and active retest victory remain required."
+        }
+      ]
+    },
+    "finalUniquePassed": 21,
+    "allocationSkipped": 15,
+    "aggregation": "19 formal-entry checks plus 2 G2 mechanic checks in separate commands. Not one 21-pass invocation or a rerun of all historical E2E.",
+    "errorMonitoringScope": "10 wins and 2 details collect pageerror/HTTP arrays. The 5 defeat and 2 storage-fault cases do not collect those arrays. G2 synergy collects page errors only.",
+    "focusComparisonTypeFix": "After browser success, the focus identity comparison was rewritten from includes to some to satisfy TypeScript without changing DOM behavior; see final typecheck attempts."
+  },
+  "performance": {
+    "report": "artifacts/feedback-v061/performance/report.json",
+    "pass": true,
+    "activeSimulationSeconds": 601.1166666666667,
+    "wallDurationMs": 601392,
+    "metrics": {
+      "standard": {
+        "frames": 18023,
+        "activeDurationMs": 300377.2,
+        "averageFps": 60.00122512627456,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 17.30000000000291
+      },
+      "low": {
+        "frames": 18047,
+        "activeDurationMs": 300777.19999999995,
+        "averageFps": 60.001223496993795,
+        "p95Ms": 16.79999999998836,
+        "maxMs": 17.199999999953434
+      }
+    },
+    "device": {
+      "os": "win32",
+      "release": "10.0.26200",
+      "cpu": "Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz",
+      "logicalCpus": 16,
+      "memoryBytes": 68637700096,
+      "browser": "155.0.8059.85",
+      "mode": "headless"
+    },
+    "maxActiveEnemies": 24,
+    "maxCells": 3,
+    "observedCellHitLowerBound": 878,
+    "coexistence": {
+      "tick": 24547,
+      "mode": "low",
+      "activeSimulationSeconds": 387.06666666666666
+    },
+    "memoryReview": "artifacts/feedback-v061/performance/memory-review.json",
+    "memoryConclusion": {
+      "status": "reviewed_with_limits",
+      "statement": "The saved ten-active-minute run passed its frame-budget and pressure checks. Sampled used heap settles into a broadly similar post-warmup envelope; backing storage is narrow and embedder heap fluctuates without a rising later median. Total V8 heap capacity still rises in later windows, so this evidence does not establish a total-memory plateau or absence of leaks. Script copy, current script, game bundle, recorded build inputs and terminal survival are verified separately below.",
+      "doesNotEstablish": [
+        "No memory leak",
+        "Stable process RSS or total browser/GPU memory",
+        "Native foreground-device performance",
+        "An exact cumulative cell-hit count",
+        "Three active cells or hit events independently sustained in both quality modes"
+      ]
+    },
+    "failedPredecessor": "artifacts/feedback-v060/performance-first/report.json",
+    "scope": "Frame budget and 24 live actors reached in each quality; a real three-cell squad coexists with 24 actors in a captured snapshot and has observed hit events; two sources remain alive including terminal state; no fatal errors/network. Sampled V8 heap trend requires separate review; not a leak-proof or native-device guarantee."
+  },
+  "renderInvariance": {
+    "report": "artifacts/feedback-v061/render-invariance/report.json",
+    "pass": true,
+    "framesPerMode": 12,
+    "input": "artifacts/feedback-v061/performance/dense-cells-state.json",
+    "inputActiveEnemies": 24,
+    "inputCells": 3,
+    "sourceInputCount": 21,
+    "scope": [
+      "Technical rendering comparison derived from a read-only snapshot; no main.ts, GameSession.step(), live release state writes, or game-time advancement.",
+      "Complete JSON equality plus SHA-256 of full state, HP, damage records, and collision geometry are checked at render-call boundaries.",
+      "Not a same-input gameplay replay, browser victory, ten-minute performance measurement, visual readability acceptance, or human playtest.",
+      "This verifies rendering does not change gameplay state. Shared danger/collision geometry remains covered separately by existing coreVisuals and geometry unit tests.",
+      "Images are Canvas2D backing stores only, with no HUD. Visual differences between normal/low effects are permitted."
+    ]
+  },
+  "release": {
+    "manifest": "artifacts/feedback-v061/release-manifest.json",
+    "archive": {
+      "path": "releases/Viral-Invasion-G4-v0.6.1.zip",
+      "bytes": 106135,
+      "sha256": "ae9bc9ac50cfc65c3a343aef99a93aa608b949afa22029b0de74ced54d6debf8"
+    },
+    "offlineSmoke": "artifacts/feedback-v061/release-smoke/report.json",
+    "pass": true
+  },
+  "remaining": {
+    "standardFivePlayerBlindTests": "0/5; one user feedback recorded separately",
+    "humanPacing": "10–15 minute first play, strategy change and replay willingness need original observations",
+    "nativeInput": "Physical Windows focus/minimize and real browser zoom remain unverified",
+    "memory": "Reserved V8 totalSize still rises; no total-memory plateau or no-leak guarantee",
+    "coverage": "Historical G0–G3 browser suites were not all rerun on this patch",
+    "readability": "Three cells may overlap when biting the same target"
+  },
+  "documentation": "Docs/ViralInvasion_v0.6.1_Acceptance.md"
+}

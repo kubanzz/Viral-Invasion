@@ -1,0 +1,1730 @@
+{
+  "schemaVersion": 1,
+  "kind": "read-only browser evidence index",
+  "version": "0.6.1",
+  "sourceCommit": "a65bfab",
+  "sourceCommitFull": "a65bfab9be840ff765f0cd92e6cb751b4c4837ca",
+  "gameJsSha256": "18ec5e8dc4d6362f979a6d2ad108060e5897c6a808e7c12cce404bf42bae119d",
+  "createdBy": "Read-only report/JSON/source audit; this action did not run a browser, test or build.",
+  "browserReport": {
+    "path": "artifacts/feedback-v061/browser-report.json",
+    "sha256": "af7cf97dd2562663bccad02f0510157c98972147f1400d69d0028bfd126c382d",
+    "stats": {
+      "startTime": "2026-10-27T02:18:49.616Z",
+      "duration": 488570.817,
+      "expected": 19,
+      "skipped": 15,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "runnerErrors": [],
+    "command": [
+      "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/e2e/g4.spec.ts",
+      "tests/e2e/feedback-v061-growth-details.spec.ts",
+      "--workers=2"
+    ]
+  },
+  "provenance": {
+    "buildMeta": {
+      "path": "dist/build-meta.json",
+      "sha256": "29c43159f9b61361976d33ddd7bbc3ef438359782d5f1a6647fe4d40b759f02e"
+    },
+    "buildVersion": "0.6.1",
+    "buildInputFiles": 44,
+    "manifestMismatches": [],
+    "productionSourceGitStatus": "",
+    "testSourceGitStatus": "",
+    "testSources": [
+      {
+        "path": "tests/e2e/g4.spec.ts",
+        "sha256": "83f0e5963c2ac034a2a8363767173d8f3356f273769d4daccd81e86f60890196"
+      },
+      {
+        "path": "tests/e2e/feedback-v061-growth-details.spec.ts",
+        "sha256": "611e4844d73a42226afd77c4ccf6aa3c1821c5112c7c7b97f16b33483e541b9e"
+      },
+      {
+        "path": "tests/e2e/fullRunDriver.ts",
+        "sha256": "c7c18d0c65f63e5fe4053c82dbb534780f2355c38f592963a688001d4a2a512f"
+      },
+      {
+        "path": "tests/e2e/campaignDriver.ts",
+        "sha256": "4700b97cf3a2564a1b6dd3443f86dfdd8c4c720f7b8a7bc149b91b1b8131e1ef"
+      }
+    ],
+    "scope": "All 19 pass results belong to this final combined report and frozen a65bfab build. The detailed case JSON embeds matching source manifests. Win/defeat JSON does not independently embed a bundle hash; its same-run provenance is the final report output directory and frozen build/source audit."
+  },
+  "summary": {
+    "caseIdentities": 34,
+    "passed": 19,
+    "skipped": 15,
+    "unexpected": 0,
+    "flaky": 0,
+    "wins": 10,
+    "defeats": 5,
+    "storageFaultTests": 2,
+    "storageFaultSubcases": 6,
+    "detailTests": 2,
+    "winRoutes": {
+      "pursue": [
+        1,
+        29,
+        73,
+        233
+      ],
+      "block": [
+        7,
+        41,
+        91
+      ],
+      "ignore": [
+        13,
+        57,
+        127
+      ]
+    },
+    "monitoredCases": 12,
+    "pageErrorsInMonitoredCases": 0,
+    "httpRequestsInMonitoredCases": 0,
+    "unmonitoredBrowserErrorNetworkCases": 7
+  },
+  "checks": {
+    "uniqueCaseIdentities": true,
+    "reportStatsMatch": true,
+    "passedCount": true,
+    "skippedCount": true,
+    "tenDistinctWins": true,
+    "fiveDistinctDefeats": true,
+    "twoDetailCases": true,
+    "twoStorageFaultCases": true,
+    "monitoredPageErrorsEmpty": true,
+    "monitoredHttpRequestsEmpty": true,
+    "bundleMatches": true,
+    "productionSourcesUnchanged": true,
+    "testSourcesUnchanged": true,
+    "buildSourceManifestMatches": true,
+    "headMatchesSource": true
+  },
+  "retryEvidenceScope": {
+    "proof": "Assertions in the passed Playwright test and its unchanged test source; the win/defeat JSON is written before the later retry and does not contain a separate retry snapshot.",
+    "winAssertions": [
+      "new seed differs",
+      "reload returns to menu",
+      "archive replay restores original seed",
+      "HP=100",
+      "XP=0",
+      "travels=0",
+      "traits=[]",
+      "elapsed<2s",
+      "saved run count remains 1"
+    ],
+    "defeatAssertions": [
+      "same seed",
+      "HP=100",
+      "XP=0",
+      "migration.status=locked",
+      "saved run count remains 1"
+    ]
+  },
+  "errorMonitoringBoundary": "Only the 10 win and 2 detail cases collect pageerror and HTTP(S) request arrays. Defeat and storage-fault cases are passed assertions but their browser errors/network are uncollected; do not extrapolate the 12 empty arrays to all 19 cases. Browser console messages are not collected here.",
+  "wins": [
+    {
+      "identity": "g4.spec.ts:13:chrome:G4: complete browser seed 1, archive persistence and clean seed replay",
+      "browserProject": "chrome",
+      "path": "artifacts/feedback-v061/browser/g4-G4-complete-browser-see-ba143-tence-and-clean-seed-replay-chrome/win.json",
+      "sha256": "fc540dc6905863a9cee3557e7dcbde7539365f6ed9745c89ab6116311f0b0a2c",
+      "seed": 1,
+      "requestedRoute": "pursue",
+      "migrationChoice": "pursue",
+      "recordedRoute": "pursue",
+      "result": {
+        "success": true,
+        "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。"
+      },
+      "phase": "result",
+      "simulatedSeconds": 70.98333333333333,
+      "playerHp": 100,
+      "infection": 0,
+      "coreStatus": "cleared",
+      "activatedOrganIntegrity": {
+        "heart": 84,
+        "lung": 67
+      },
+      "traits": [
+        "FISSION",
+        "CARAPACE"
+      ],
+      "equipped": [
+        {
+          "id": "EXPOSE_TRACE",
+          "tuning": "balanced"
+        },
+        {
+          "id": "PURIFY_CHAIN",
+          "tuning": "balanced"
+        },
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced"
+        }
+      ],
+      "activations": {
+        "PURIFY_CHAIN": 5,
+        "EXPOSE_TRACE": 1
+      },
+      "savedStats": {
+        "runs": 1,
+        "wins": 1,
+        "losses": 0,
+        "kills": 15,
+        "sourceClears": 3,
+        "coreClears": 1
+      },
+      "savedSeed": 1,
+      "errorsAndNetwork": {
+        "instrumentation": "pageerror and HTTP(S) request listeners in this test",
+        "pageErrors": [],
+        "httpRequests": []
+      },
+      "cleanReplayEvidence": {
+        "passedTestIdentity": "g4.spec.ts:13:chrome:G4: complete browser seed 1, archive persistence and clean seed replay",
+        "separateReplaySnapshotInJson": false
+      }
+    },
+    {
+      "identity": "g4.spec.ts:13:chrome:G4: complete browser seed 7, archive persistence and clean seed replay",
+      "browserProject": "chrome",
+      "path": "artifacts/feedback-v061/browser/g4-G4-complete-browser-see-fd2e9-tence-and-clean-seed-replay-chrome/win.json",
+      "sha256": "261c9b784cf19c833b82e7168c7029c26490ef9b464e0a4cda86cecbbf6d9e60",
+      "seed": 7,
+      "requestedRoute": "block",
+      "migrationChoice": "block",
+      "recordedRoute": "block",
+      "result": {
+        "success": true,
+        "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。"
+      },
+      "phase": "result",
+      "simulatedSeconds": 69.11666666666666,
+      "playerHp": 100,
+      "infection": 0,
+      "coreStatus": "cleared",
+      "activatedOrganIntegrity": {
+        "heart": 71
+      },
+      "traits": [
+        "MIMIC",
+        "CARAPACE"
+      ],
+      "equipped": [],
+      "activations": {},
+      "savedStats": {
+        "runs": 1,
+        "wins": 1,
+        "losses": 0,
+        "kills": 7,
+        "sourceClears": 3,
+        "coreClears": 1
+      },
+      "savedSeed": 7,
+      "errorsAndNetwork": {
+        "instrumentation": "pageerror and HTTP(S) request listeners in this test",
+        "pageErrors": [],
+        "httpRequests": []
+      },
+      "cleanReplayEvidence": {
+        "passedTestIdentity": "g4.spec.ts:13:chrome:G4: complete browser seed 7, archive persistence and clean seed replay",
+        "separateReplaySnapshotInJson": false
+      }
+    },
+    {
+      "identity": "g4.spec.ts:13:chrome:G4: complete browser seed 13, archive persistence and clean seed replay",
+      "browserProject": "chrome",
+      "path": "artifacts/feedback-v061/browser/g4-G4-complete-browser-see-9818f-tence-and-clean-seed-replay-chrome/win.json",
+      "sha256": "62f933503ffcb4ae925f412512816fbb20b243ddfc42fcfcd0bb0680bf93876a",
+      "seed": 13,
+      "requestedRoute": "ignore",
+      "migrationChoice": "ignore",
+      "recordedRoute": "ignore",
+      "result": {
+        "success": true,
+        "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。"
+      },
+      "phase": "result",
+      "simulatedSeconds": 90.23333333333333,
+      "playerHp": 100,
+      "infection": 0,
+      "coreStatus": "cleared",
+      "activatedOrganIntegrity": {
+        "heart": 87,
+        "lung": 70
+      },
+      "traits": [
+        "MIMIC",
+        "CARAPACE"
+      ],
+      "equipped": [
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced"
+        },
+        {
+          "id": "PURIFY_CHAIN",
+          "tuning": "balanced"
+        },
+        {
+          "id": "EXPOSE_TRACE",
+          "tuning": "balanced"
+        }
+      ],
+      "activations": {
+        "EXPOSE_TRACE": 5,
+        "IMMUNE_BEACON": 10,
+        "PURIFY_CHAIN": 1
+      },
+      "savedStats": {
+        "runs": 1,
+        "wins": 1,
+        "losses": 0,
+        "kills": 11,
+        "sourceClears": 4,
+        "coreClears": 1
+      },
+      "savedSeed": 13,
+      "errorsAndNetwork": {
+        "instrumentation": "pageerror and HTTP(S) request listeners in this test",
+        "pageErrors": [],
+        "httpRequests": []
+      },
+      "cleanReplayEvidence": {
+        "passedTestIdentity": "g4.spec.ts:13:chrome:G4: complete browser seed 13, archive persistence and clean seed replay",
+        "separateReplaySnapshotInJson": false
+      }
+    },
+    {
+      "identity": "g4.spec.ts:13:chrome:G4: complete browser seed 29, archive persistence and clean seed replay",
+      "browserProject": "chrome",
+      "path": "artifacts/feedback-v061/browser/g4-G4-complete-browser-see-0d5ed-tence-and-clean-seed-replay-chrome/win.json",
+      "sha256": "d490591a89263843195acd3b8b543cfa1d34c1ce93f2aa2eb9226ecc7bd9ed0f",
+      "seed": 29,
+      "requestedRoute": "pursue",
+      "migrationChoice": "pursue",
+      "recordedRoute": "pursue",
+      "result": {
+        "success": true,
+        "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。"
+      },
+      "phase": "result",
+      "simulatedSeconds": 70.9,
+      "playerHp": 81,
+      "infection": 0,
+      "coreStatus": "cleared",
+      "activatedOrganIntegrity": {
+        "heart": 87,
+        "lung": 82
+      },
+      "traits": [
+        "CARAPACE",
+        "FISSION"
+      ],
+      "equipped": [],
+      "activations": {},
+      "savedStats": {
+        "runs": 1,
+        "wins": 1,
+        "losses": 0,
+        "kills": 17,
+        "sourceClears": 3,
+        "coreClears": 1
+      },
+      "savedSeed": 29,
+      "errorsAndNetwork": {
+        "instrumentation": "pageerror and HTTP(S) request listeners in this test",
+        "pageErrors": [],
+        "httpRequests": []
+      },
+      "cleanReplayEvidence": {
+        "passedTestIdentity": "g4.spec.ts:13:chrome:G4: complete browser seed 29, archive persistence and clean seed replay",
+        "separateReplaySnapshotInJson": false
+      }
+    },
+    {
+      "identity": "g4.spec.ts:13:chrome:G4: complete browser seed 41, archive persistence and clean seed replay",
+      "browserProject": "chrome",
+      "path": "artifacts/feedback-v061/browser/g4-G4-complete-browser-see-a29a1-tence-and-clean-seed-replay-chrome/win.json",
+      "sha256": "55984625699e0983232a23ca1e3772ba0e5b2cf143d2b5159fc9e296dee84abe",
+      "seed": 41,
+      "requestedRoute": "block",
+      "migrationChoice": "block",
+      "recordedRoute": "block",
+      "result": {
+        "success": true,
+        "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。"
+      },
+      "phase": "result",
+      "simulatedSeconds": 67.81666666666666,
+      "playerHp": 88,
+      "infection": 0,
+      "coreStatus": "cleared",
+      "activatedOrganIntegrity": {
+        "heart": 77
+      },
+      "traits": [
+        "CARAPACE",
+        "FISSION"
+      ],
+      "equipped": [
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced"
+        },
+        {
+          "id": "EXPOSE_TRACE",
+          "tuning": "balanced"
+        },
+        {
+          "id": "PULSE_BREAK",
+          "tuning": "balanced"
+        }
+      ],
+      "activations": {
+        "PURIFY_CHAIN": 2,
+        "EXPOSE_TRACE": 4,
+        "PULSE_BREAK": 1
+      },
+      "savedStats": {
+        "runs": 1,
+        "wins": 1,
+        "losses": 0,
+        "kills": 9,
+        "sourceClears": 3,
+        "coreClears": 1
+      },
+      "savedSeed": 41,
+      "errorsAndNetwork": {
+        "instrumentation": "pageerror and HTTP(S) request listeners in this test",
+        "pageErrors": [],
+        "httpRequests": []
+      },
+      "cleanReplayEvidence": {
+        "passedTestIdentity": "g4.spec.ts:13:chrome:G4: complete browser seed 41, archive persistence and clean seed replay",
+        "separateReplaySnapshotInJson": false
+      }
+    },
+    {
+      "identity": "g4.spec.ts:13:edge:G4: complete browser seed 57, archive persistence and clean seed replay",
+      "browserProject": "edge",
+      "path": "artifacts/feedback-v061/browser/g4-G4-complete-browser-see-64e8f-tence-and-clean-seed-replay-edge/win.json",
+      "sha256": "14395d3887db602425ddc05dc0af2703d2ecdb9cf38737ed6ccb09d1fb62276f",
+      "seed": 57,
+      "requestedRoute": "ignore",
+      "migrationChoice": "ignore",
+      "recordedRoute": "ignore",
+      "result": {
+        "success": true,
+        "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。"
+      },
+      "phase": "result",
+      "simulatedSeconds": 89.9,
+      "playerHp": 100,
+      "infection": 0,
+      "coreStatus": "cleared",
+      "activatedOrganIntegrity": {
+        "heart": 87,
+        "lung": 68
+      },
+      "traits": [
+        "MIMIC",
+        "CARAPACE"
+      ],
+      "equipped": [],
+      "activations": {},
+      "savedStats": {
+        "runs": 1,
+        "wins": 1,
+        "losses": 0,
+        "kills": 11,
+        "sourceClears": 4,
+        "coreClears": 1
+      },
+      "savedSeed": 57,
+      "errorsAndNetwork": {
+        "instrumentation": "pageerror and HTTP(S) request listeners in this test",
+        "pageErrors": [],
+        "httpRequests": []
+      },
+      "cleanReplayEvidence": {
+        "passedTestIdentity": "g4.spec.ts:13:edge:G4: complete browser seed 57, archive persistence and clean seed replay",
+        "separateReplaySnapshotInJson": false
+      }
+    },
+    {
+      "identity": "g4.spec.ts:13:edge:G4: complete browser seed 73, archive persistence and clean seed replay",
+      "browserProject": "edge",
+      "path": "artifacts/feedback-v061/browser/g4-G4-complete-browser-see-ffc25-tence-and-clean-seed-replay-edge/win.json",
+      "sha256": "c957c7a4636ba4779a3f40d61bbb14eeae23b134f37a85132e1c0c621e147fbd",
+      "seed": 73,
+      "requestedRoute": "pursue",
+      "migrationChoice": "pursue",
+      "recordedRoute": "pursue",
+      "result": {
+        "success": true,
+        "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。"
+      },
+      "phase": "result",
+      "simulatedSeconds": 70.46666666666667,
+      "playerHp": 100,
+      "infection": 0,
+      "coreStatus": "cleared",
+      "activatedOrganIntegrity": {
+        "heart": 81,
+        "lung": 67
+      },
+      "traits": [
+        "CARAPACE",
+        "MIMIC"
+      ],
+      "equipped": [
+        {
+          "id": "EXPOSE_TRACE",
+          "tuning": "balanced"
+        },
+        {
+          "id": "PURIFY_CHAIN",
+          "tuning": "balanced"
+        },
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced"
+        }
+      ],
+      "activations": {
+        "PULSE_BREAK": 1,
+        "PURIFY_CHAIN": 4,
+        "EXPOSE_TRACE": 1
+      },
+      "savedStats": {
+        "runs": 1,
+        "wins": 1,
+        "losses": 0,
+        "kills": 13,
+        "sourceClears": 3,
+        "coreClears": 1
+      },
+      "savedSeed": 73,
+      "errorsAndNetwork": {
+        "instrumentation": "pageerror and HTTP(S) request listeners in this test",
+        "pageErrors": [],
+        "httpRequests": []
+      },
+      "cleanReplayEvidence": {
+        "passedTestIdentity": "g4.spec.ts:13:edge:G4: complete browser seed 73, archive persistence and clean seed replay",
+        "separateReplaySnapshotInJson": false
+      }
+    },
+    {
+      "identity": "g4.spec.ts:13:edge:G4: complete browser seed 91, archive persistence and clean seed replay",
+      "browserProject": "edge",
+      "path": "artifacts/feedback-v061/browser/g4-G4-complete-browser-see-02880-tence-and-clean-seed-replay-edge/win.json",
+      "sha256": "7954427699c88e2489e6b5fb605cd60001f5487df4103cad4d0c1f5b3817cf1e",
+      "seed": 91,
+      "requestedRoute": "block",
+      "migrationChoice": "block",
+      "recordedRoute": "block",
+      "result": {
+        "success": true,
+        "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。"
+      },
+      "phase": "result",
+      "simulatedSeconds": 70.11666666666666,
+      "playerHp": 100,
+      "infection": 0,
+      "coreStatus": "cleared",
+      "activatedOrganIntegrity": {
+        "heart": 71
+      },
+      "traits": [
+        "MIMIC",
+        "CARAPACE"
+      ],
+      "equipped": [],
+      "activations": {},
+      "savedStats": {
+        "runs": 1,
+        "wins": 1,
+        "losses": 0,
+        "kills": 7,
+        "sourceClears": 3,
+        "coreClears": 1
+      },
+      "savedSeed": 91,
+      "errorsAndNetwork": {
+        "instrumentation": "pageerror and HTTP(S) request listeners in this test",
+        "pageErrors": [],
+        "httpRequests": []
+      },
+      "cleanReplayEvidence": {
+        "passedTestIdentity": "g4.spec.ts:13:edge:G4: complete browser seed 91, archive persistence and clean seed replay",
+        "separateReplaySnapshotInJson": false
+      }
+    },
+    {
+      "identity": "g4.spec.ts:13:edge:G4: complete browser seed 127, archive persistence and clean seed replay",
+      "browserProject": "edge",
+      "path": "artifacts/feedback-v061/browser/g4-G4-complete-browser-see-0417b-tence-and-clean-seed-replay-edge/win.json",
+      "sha256": "6193bd5a9c8c022f70883868e77ae3f1bc700a79eee7aad79ad250e41ef642be",
+      "seed": 127,
+      "requestedRoute": "ignore",
+      "migrationChoice": "ignore",
+      "recordedRoute": "ignore",
+      "result": {
+        "success": true,
+        "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。"
+      },
+      "phase": "result",
+      "simulatedSeconds": 90.26666666666667,
+      "playerHp": 100,
+      "infection": 0,
+      "coreStatus": "cleared",
+      "activatedOrganIntegrity": {
+        "heart": 87,
+        "lung": 82
+      },
+      "traits": [
+        "FISSION",
+        "MIMIC"
+      ],
+      "equipped": [
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced"
+        },
+        {
+          "id": "EXPOSE_TRACE",
+          "tuning": "balanced"
+        },
+        {
+          "id": "PULSE_BREAK",
+          "tuning": "balanced"
+        }
+      ],
+      "activations": {
+        "PURIFY_CHAIN": 4,
+        "EXPOSE_TRACE": 4
+      },
+      "savedStats": {
+        "runs": 1,
+        "wins": 1,
+        "losses": 0,
+        "kills": 13,
+        "sourceClears": 4,
+        "coreClears": 1
+      },
+      "savedSeed": 127,
+      "errorsAndNetwork": {
+        "instrumentation": "pageerror and HTTP(S) request listeners in this test",
+        "pageErrors": [],
+        "httpRequests": []
+      },
+      "cleanReplayEvidence": {
+        "passedTestIdentity": "g4.spec.ts:13:edge:G4: complete browser seed 127, archive persistence and clean seed replay",
+        "separateReplaySnapshotInJson": false
+      }
+    },
+    {
+      "identity": "g4.spec.ts:13:edge:G4: complete browser seed 233, archive persistence and clean seed replay",
+      "browserProject": "edge",
+      "path": "artifacts/feedback-v061/browser/g4-G4-complete-browser-see-afaac-tence-and-clean-seed-replay-edge/win.json",
+      "sha256": "9158ed4acab385bb88e167a9a2cbb627170377795d0c244ab15a7a7d8e4243d4",
+      "seed": 233,
+      "requestedRoute": "pursue",
+      "migrationChoice": "pursue",
+      "recordedRoute": "pursue",
+      "result": {
+        "success": true,
+        "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。"
+      },
+      "phase": "result",
+      "simulatedSeconds": 70.86666666666666,
+      "playerHp": 86,
+      "infection": 0,
+      "coreStatus": "cleared",
+      "activatedOrganIntegrity": {
+        "heart": 87,
+        "lung": 82
+      },
+      "traits": [
+        "FISSION",
+        "MIMIC"
+      ],
+      "equipped": [],
+      "activations": {},
+      "savedStats": {
+        "runs": 1,
+        "wins": 1,
+        "losses": 0,
+        "kills": 15,
+        "sourceClears": 3,
+        "coreClears": 1
+      },
+      "savedSeed": 233,
+      "errorsAndNetwork": {
+        "instrumentation": "pageerror and HTTP(S) request listeners in this test",
+        "pageErrors": [],
+        "httpRequests": []
+      },
+      "cleanReplayEvidence": {
+        "passedTestIdentity": "g4.spec.ts:13:edge:G4: complete browser seed 233, archive persistence and clean seed replay",
+        "separateReplaySnapshotInJson": false
+      }
+    }
+  ],
+  "defeats": [
+    {
+      "identity": "g4.spec.ts:51:chrome:G4: real defeat seed 17, one saved loss and independent retry",
+      "browserProject": "chrome",
+      "path": "artifacts/feedback-v061/browser/g4-G4-real-defeat-seed-17--5d374--loss-and-independent-retry-chrome/defeat.json",
+      "sha256": "aea4531a899927d0b31bd1d11b4fe1bae0679380604b1fcd7af4bb2359cfa8d2",
+      "seed": 17,
+      "result": {
+        "success": false,
+        "reason": "救援体耐久耗尽：避开带齿轮廓的攻击预警，利用冲刺脱离。"
+      },
+      "phase": "result",
+      "simulatedSeconds": 21.933333333333334,
+      "playerHp": 0,
+      "migrationChoice": null,
+      "recordedRoute": null,
+      "runEndedEvents": [
+        {
+          "tick": 1316,
+          "data": {
+            "success": false,
+            "reason": "救援体耐久耗尽：避开带齿轮廓的攻击预警，利用冲刺脱离。",
+            "seed": 17,
+            "durationSimMs": 21933
+          }
+        }
+      ],
+      "savedStats": {
+        "runs": 1,
+        "wins": 0,
+        "losses": 1,
+        "kills": 0,
+        "sourceClears": 0,
+        "coreClears": 0
+      },
+      "cleanRetryEvidence": {
+        "passedTestIdentity": "g4.spec.ts:51:chrome:G4: real defeat seed 17, one saved loss and independent retry",
+        "separateRetrySnapshotInJson": false
+      },
+      "errorsAndNetwork": {
+        "instrumentation": "Not collected by this test. Playwright test errors are recorded separately and do not prove browser pageerror/request coverage.",
+        "pageErrors": null,
+        "httpRequests": null
+      }
+    },
+    {
+      "identity": "g4.spec.ts:51:chrome:G4: real defeat seed 31, one saved loss and independent retry",
+      "browserProject": "chrome",
+      "path": "artifacts/feedback-v061/browser/g4-G4-real-defeat-seed-31--f2131--loss-and-independent-retry-chrome/defeat.json",
+      "sha256": "aa09d168e8978efa80c3ebc9325429b76b37e757fca18f98e5549517995cd3e6",
+      "seed": 31,
+      "result": {
+        "success": false,
+        "reason": "救援体耐久耗尽：避开带齿轮廓的攻击预警，利用冲刺脱离。"
+      },
+      "phase": "result",
+      "simulatedSeconds": 22.35,
+      "playerHp": 0,
+      "migrationChoice": null,
+      "recordedRoute": null,
+      "runEndedEvents": [
+        {
+          "tick": 1341,
+          "data": {
+            "success": false,
+            "reason": "救援体耐久耗尽：避开带齿轮廓的攻击预警，利用冲刺脱离。",
+            "seed": 31,
+            "durationSimMs": 22350
+          }
+        }
+      ],
+      "savedStats": {
+        "runs": 1,
+        "wins": 0,
+        "losses": 1,
+        "kills": 0,
+        "sourceClears": 0,
+        "coreClears": 0
+      },
+      "cleanRetryEvidence": {
+        "passedTestIdentity": "g4.spec.ts:51:chrome:G4: real defeat seed 31, one saved loss and independent retry",
+        "separateRetrySnapshotInJson": false
+      },
+      "errorsAndNetwork": {
+        "instrumentation": "Not collected by this test. Playwright test errors are recorded separately and do not prove browser pageerror/request coverage.",
+        "pageErrors": null,
+        "httpRequests": null
+      }
+    },
+    {
+      "identity": "g4.spec.ts:51:chrome:G4: real defeat seed 59, one saved loss and independent retry",
+      "browserProject": "chrome",
+      "path": "artifacts/feedback-v061/browser/g4-G4-real-defeat-seed-59--ff6a4--loss-and-independent-retry-chrome/defeat.json",
+      "sha256": "7e6a1efa921c085d316385ad7bcafd6ca0c959125703dab71f05e5b21618ed10",
+      "seed": 59,
+      "result": {
+        "success": false,
+        "reason": "救援体耐久耗尽：避开带齿轮廓的攻击预警，利用冲刺脱离。"
+      },
+      "phase": "result",
+      "simulatedSeconds": 21.866666666666667,
+      "playerHp": 0,
+      "migrationChoice": null,
+      "recordedRoute": null,
+      "runEndedEvents": [
+        {
+          "tick": 1312,
+          "data": {
+            "success": false,
+            "reason": "救援体耐久耗尽：避开带齿轮廓的攻击预警，利用冲刺脱离。",
+            "seed": 59,
+            "durationSimMs": 21867
+          }
+        }
+      ],
+      "savedStats": {
+        "runs": 1,
+        "wins": 0,
+        "losses": 1,
+        "kills": 0,
+        "sourceClears": 0,
+        "coreClears": 0
+      },
+      "cleanRetryEvidence": {
+        "passedTestIdentity": "g4.spec.ts:51:chrome:G4: real defeat seed 59, one saved loss and independent retry",
+        "separateRetrySnapshotInJson": false
+      },
+      "errorsAndNetwork": {
+        "instrumentation": "Not collected by this test. Playwright test errors are recorded separately and do not prove browser pageerror/request coverage.",
+        "pageErrors": null,
+        "httpRequests": null
+      }
+    },
+    {
+      "identity": "g4.spec.ts:51:edge:G4: real defeat seed 83, one saved loss and independent retry",
+      "browserProject": "edge",
+      "path": "artifacts/feedback-v061/browser/g4-G4-real-defeat-seed-83--f7c0c--loss-and-independent-retry-edge/defeat.json",
+      "sha256": "b08ea8057d37aee79b8a9e7203db98fe20a30df0eb93a2651cf696db6520f1ed",
+      "seed": 83,
+      "result": {
+        "success": false,
+        "reason": "救援体耐久耗尽：避开带齿轮廓的攻击预警，利用冲刺脱离。"
+      },
+      "phase": "result",
+      "simulatedSeconds": 22.083333333333332,
+      "playerHp": 0,
+      "migrationChoice": null,
+      "recordedRoute": null,
+      "runEndedEvents": [
+        {
+          "tick": 1325,
+          "data": {
+            "success": false,
+            "reason": "救援体耐久耗尽：避开带齿轮廓的攻击预警，利用冲刺脱离。",
+            "seed": 83,
+            "durationSimMs": 22083
+          }
+        }
+      ],
+      "savedStats": {
+        "runs": 1,
+        "wins": 0,
+        "losses": 1,
+        "kills": 0,
+        "sourceClears": 0,
+        "coreClears": 0
+      },
+      "cleanRetryEvidence": {
+        "passedTestIdentity": "g4.spec.ts:51:edge:G4: real defeat seed 83, one saved loss and independent retry",
+        "separateRetrySnapshotInJson": false
+      },
+      "errorsAndNetwork": {
+        "instrumentation": "Not collected by this test. Playwright test errors are recorded separately and do not prove browser pageerror/request coverage.",
+        "pageErrors": null,
+        "httpRequests": null
+      }
+    },
+    {
+      "identity": "g4.spec.ts:51:edge:G4: real defeat seed 97, one saved loss and independent retry",
+      "browserProject": "edge",
+      "path": "artifacts/feedback-v061/browser/g4-G4-real-defeat-seed-97--dbe6d--loss-and-independent-retry-edge/defeat.json",
+      "sha256": "f11b963cdada76531f90a932d9039072f1b2b73b17e88ce06f5d12fc2ef66bca",
+      "seed": 97,
+      "result": {
+        "success": false,
+        "reason": "救援体耐久耗尽：避开带齿轮廓的攻击预警，利用冲刺脱离。"
+      },
+      "phase": "result",
+      "simulatedSeconds": 21.983333333333334,
+      "playerHp": 0,
+      "migrationChoice": null,
+      "recordedRoute": null,
+      "runEndedEvents": [
+        {
+          "tick": 1319,
+          "data": {
+            "success": false,
+            "reason": "救援体耐久耗尽：避开带齿轮廓的攻击预警，利用冲刺脱离。",
+            "seed": 97,
+            "durationSimMs": 21983
+          }
+        }
+      ],
+      "savedStats": {
+        "runs": 1,
+        "wins": 0,
+        "losses": 1,
+        "kills": 0,
+        "sourceClears": 0,
+        "coreClears": 0
+      },
+      "cleanRetryEvidence": {
+        "passedTestIdentity": "g4.spec.ts:51:edge:G4: real defeat seed 97, one saved loss and independent retry",
+        "separateRetrySnapshotInJson": false
+      },
+      "errorsAndNetwork": {
+        "instrumentation": "Not collected by this test. Playwright test errors are recorded separately and do not prove browser pageerror/request coverage.",
+        "pageErrors": null,
+        "httpRequests": null
+      }
+    }
+  ],
+  "details": [
+    {
+      "identity": "feedback-v061-growth-details.spec.ts:19:chrome:Feedback 0.6.1: current build details expose real evolved effects, freeze input and return to their origin",
+      "browserProject": "chrome",
+      "path": "artifacts/feedback-v061/browser/feedback-v061-growth-detai-7ae38--and-return-to-their-origin-chrome/growth-details-evidence.json",
+      "sha256": "6b6358f08de44e525b7154a9902df563f65c1b8e9166e5d782eb7a5c086f5730",
+      "durationMs": 13703,
+      "sourceFixture": "Default formal campaign entry; no fixture query",
+      "viewport": {
+        "width": 850,
+        "height": 560
+      },
+      "world": {
+        "width": 2400,
+        "height": 1500
+      },
+      "emptySlots": 3,
+      "acquisition": {
+        "firstDraft": "xp",
+        "secondDraft": "research",
+        "equipped": [
+          {
+            "id": "IMMUNE_BEACON",
+            "tuning": "balanced",
+            "rank": 2
+          }
+        ],
+        "activations": {
+          "IMMUNE_BEACON": 3
+        }
+      },
+      "frozenPhase": "paused",
+      "frozenTick": 559,
+      "retrySnapshot": {
+        "seed": 130026,
+        "phase": "playing",
+        "playerHp": 100,
+        "xp": 0,
+        "equipped": [],
+        "cells": [],
+        "activations": {},
+        "newRunId": true
+      },
+      "buildVersion": "0.6.1",
+      "buildManifestMatchesCurrent": true,
+      "errorsAndNetwork": {
+        "instrumentation": "pageerror and HTTP(S) request listeners in this test",
+        "pageErrors": [],
+        "httpRequests": []
+      },
+      "screenshot": "artifacts/feedback-v061/browser/feedback-v061-growth-detai-7ae38--and-return-to-their-origin-chrome/advanced-build-details.png",
+      "assertionsInPassedTest": [
+        "static HUD focus survives refresh",
+        "empty-slot Q patrol explanation",
+        "keyboard Tab and ArrowDown scrolling",
+        "held input cleared on opening",
+        "full snapshot frozen while details open",
+        "rank/tuning/effect/cost/action/count match real equipped state",
+        "Escape resumes direct battlefield origin",
+        "nested pause/help/history origins remain paused and restore focus",
+        "clean retry and empty details"
+      ]
+    },
+    {
+      "identity": "feedback-v061-growth-details.spec.ts:19:edge:Feedback 0.6.1: current build details expose real evolved effects, freeze input and return to their origin",
+      "browserProject": "edge",
+      "path": "artifacts/feedback-v061/browser/feedback-v061-growth-detai-7ae38--and-return-to-their-origin-edge/growth-details-evidence.json",
+      "sha256": "27f852063646cf4f7d2b45c4f2449b1c56ac66ad2b4c87be9dca52fd87d9053b",
+      "durationMs": 13884,
+      "sourceFixture": "Default formal campaign entry; no fixture query",
+      "viewport": {
+        "width": 850,
+        "height": 560
+      },
+      "world": {
+        "width": 2400,
+        "height": 1500
+      },
+      "emptySlots": 3,
+      "acquisition": {
+        "firstDraft": "xp",
+        "secondDraft": "research",
+        "equipped": [
+          {
+            "id": "IMMUNE_BEACON",
+            "tuning": "balanced",
+            "rank": 2
+          }
+        ],
+        "activations": {
+          "IMMUNE_BEACON": 3
+        }
+      },
+      "frozenPhase": "paused",
+      "frozenTick": 580,
+      "retrySnapshot": {
+        "seed": 130026,
+        "phase": "playing",
+        "playerHp": 100,
+        "xp": 0,
+        "equipped": [],
+        "cells": [],
+        "activations": {},
+        "newRunId": true
+      },
+      "buildVersion": "0.6.1",
+      "buildManifestMatchesCurrent": true,
+      "errorsAndNetwork": {
+        "instrumentation": "pageerror and HTTP(S) request listeners in this test",
+        "pageErrors": [],
+        "httpRequests": []
+      },
+      "screenshot": "artifacts/feedback-v061/browser/feedback-v061-growth-detai-7ae38--and-return-to-their-origin-edge/advanced-build-details.png",
+      "assertionsInPassedTest": [
+        "static HUD focus survives refresh",
+        "empty-slot Q patrol explanation",
+        "keyboard Tab and ArrowDown scrolling",
+        "held input cleared on opening",
+        "full snapshot frozen while details open",
+        "rank/tuning/effect/cost/action/count match real equipped state",
+        "Escape resumes direct battlefield origin",
+        "nested pause/help/history origins remain paused and restore focus",
+        "clean retry and empty details"
+      ]
+    }
+  ],
+  "storageFaults": [
+    {
+      "identity": "g4.spec.ts:65:chrome:G4: corrupt, old and unavailable storage fault fixtures still boot with a visible explanation",
+      "browserProject": "chrome",
+      "durationMs": 3426,
+      "subcases": [
+        "corrupt JSON",
+        "schemaVersion 0 old storage",
+        "localStorage unavailable fixture"
+      ],
+      "screenshots": [
+        {
+          "path": "artifacts/feedback-v061/browser/g4-G4-corrupt-old-and-unav-90c40--with-a-visible-explanation-chrome/corrupt.png",
+          "sha256": "5dadcaf75236c4147cb49666b87804db4924ec4a5f3e22b73aed1067a1381134"
+        },
+        {
+          "path": "artifacts/feedback-v061/browser/g4-G4-corrupt-old-and-unav-90c40--with-a-visible-explanation-chrome/old.png",
+          "sha256": "0b4ae7136e76158532ed5c4b3e5902cd9d96ef3c0d6bfc6557eeeb83dd873b2d"
+        },
+        {
+          "path": "artifacts/feedback-v061/browser/g4-G4-corrupt-old-and-unav-90c40--with-a-visible-explanation-chrome/unavailable.png",
+          "sha256": "bea535401e011c41e4f20924860d02ee63d053ffc0cfc2bc4e0057547d092c10"
+        }
+      ],
+      "proof": "Three fixture branches, visible explanation, archive opens and game starts asserted in the passed test. No standalone storage JSON is emitted.",
+      "errorsAndNetwork": {
+        "instrumentation": "No pageerror/request arrays collected by this test.",
+        "pageErrors": null,
+        "httpRequests": null
+      }
+    },
+    {
+      "identity": "g4.spec.ts:65:edge:G4: corrupt, old and unavailable storage fault fixtures still boot with a visible explanation",
+      "browserProject": "edge",
+      "durationMs": 2879,
+      "subcases": [
+        "corrupt JSON",
+        "schemaVersion 0 old storage",
+        "localStorage unavailable fixture"
+      ],
+      "screenshots": [
+        {
+          "path": "artifacts/feedback-v061/browser/g4-G4-corrupt-old-and-unav-90c40--with-a-visible-explanation-edge/corrupt.png",
+          "sha256": "5dadcaf75236c4147cb49666b87804db4924ec4a5f3e22b73aed1067a1381134"
+        },
+        {
+          "path": "artifacts/feedback-v061/browser/g4-G4-corrupt-old-and-unav-90c40--with-a-visible-explanation-edge/old.png",
+          "sha256": "0b4ae7136e76158532ed5c4b3e5902cd9d96ef3c0d6bfc6557eeeb83dd873b2d"
+        },
+        {
+          "path": "artifacts/feedback-v061/browser/g4-G4-corrupt-old-and-unav-90c40--with-a-visible-explanation-edge/unavailable.png",
+          "sha256": "bea535401e011c41e4f20924860d02ee63d053ffc0cfc2bc4e0057547d092c10"
+        }
+      ],
+      "proof": "Three fixture branches, visible explanation, archive opens and game starts asserted in the passed test. No standalone storage JSON is emitted.",
+      "errorsAndNetwork": {
+        "instrumentation": "No pageerror/request arrays collected by this test.",
+        "pageErrors": null,
+        "httpRequests": null
+      }
+    }
+  ],
+  "testCases": [
+    {
+      "identity": "feedback-v061-growth-details.spec.ts:19:chrome:Feedback 0.6.1: current build details expose real evolved effects, freeze input and return to their origin",
+      "reportSpecId": "fe36bc5e4568b8021f67-9591b24292f1985831f4",
+      "file": "tests/e2e/feedback-v061-growth-details.spec.ts",
+      "line": 19,
+      "title": "Feedback 0.6.1: current build details expose real evolved effects, freeze input and return to their origin",
+      "browserProject": "chrome",
+      "outcome": "expected",
+      "status": "passed",
+      "durationMs": 13703,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": []
+    },
+    {
+      "identity": "feedback-v061-growth-details.spec.ts:19:edge:Feedback 0.6.1: current build details expose real evolved effects, freeze input and return to their origin",
+      "reportSpecId": "fe36bc5e4568b8021f67-b11ad0e91fd4b8c84076",
+      "file": "tests/e2e/feedback-v061-growth-details.spec.ts",
+      "line": 19,
+      "title": "Feedback 0.6.1: current build details expose real evolved effects, freeze input and return to their origin",
+      "browserProject": "edge",
+      "outcome": "expected",
+      "status": "passed",
+      "durationMs": 13884,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": []
+    },
+    {
+      "identity": "g4.spec.ts:13:chrome:G4: complete browser seed 1, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-63ede854051f3b9678e3",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 1, archive persistence and clean seed replay",
+      "browserProject": "chrome",
+      "outcome": "expected",
+      "status": "passed",
+      "durationMs": 75081,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": []
+    },
+    {
+      "identity": "g4.spec.ts:13:chrome:G4: complete browser seed 7, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-5819ecb56c17f38aff9e",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 7, archive persistence and clean seed replay",
+      "browserProject": "chrome",
+      "outcome": "expected",
+      "status": "passed",
+      "durationMs": 71825,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": []
+    },
+    {
+      "identity": "g4.spec.ts:13:chrome:G4: complete browser seed 13, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-a9abcbe1de4e059e7bef",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 13, archive persistence and clean seed replay",
+      "browserProject": "chrome",
+      "outcome": "expected",
+      "status": "passed",
+      "durationMs": 93184,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": []
+    },
+    {
+      "identity": "g4.spec.ts:13:chrome:G4: complete browser seed 29, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-10bf48d180665af076d1",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 29, archive persistence and clean seed replay",
+      "browserProject": "chrome",
+      "outcome": "expected",
+      "status": "passed",
+      "durationMs": 73570,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": []
+    },
+    {
+      "identity": "g4.spec.ts:13:chrome:G4: complete browser seed 41, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-d79fe7575dbf76a6557b",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 41, archive persistence and clean seed replay",
+      "browserProject": "chrome",
+      "outcome": "expected",
+      "status": "passed",
+      "durationMs": 70722,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": []
+    },
+    {
+      "identity": "g4.spec.ts:13:chrome:G4: complete browser seed 57, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-d2873d9e2933e7279c39",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 57, archive persistence and clean seed replay",
+      "browserProject": "chrome",
+      "outcome": "skipped",
+      "status": "skipped",
+      "durationMs": 346,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Ten distinct seeds are split across Chrome and Edge.",
+          "location": {
+            "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+            "line": 14,
+            "column": 8
+          }
+        }
+      ]
+    },
+    {
+      "identity": "g4.spec.ts:13:chrome:G4: complete browser seed 73, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-08684d2847b63585d454",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 73, archive persistence and clean seed replay",
+      "browserProject": "chrome",
+      "outcome": "skipped",
+      "status": "skipped",
+      "durationMs": 351,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Ten distinct seeds are split across Chrome and Edge.",
+          "location": {
+            "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+            "line": 14,
+            "column": 8
+          }
+        }
+      ]
+    },
+    {
+      "identity": "g4.spec.ts:13:chrome:G4: complete browser seed 91, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-e43f074dad06db6eb1e8",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 91, archive persistence and clean seed replay",
+      "browserProject": "chrome",
+      "outcome": "skipped",
+      "status": "skipped",
+      "durationMs": 315,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Ten distinct seeds are split across Chrome and Edge.",
+          "location": {
+            "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+            "line": 14,
+            "column": 8
+          }
+        }
+      ]
+    },
+    {
+      "identity": "g4.spec.ts:13:chrome:G4: complete browser seed 127, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-c6ae6ccbeaad90a86732",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 127, archive persistence and clean seed replay",
+      "browserProject": "chrome",
+      "outcome": "skipped",
+      "status": "skipped",
+      "durationMs": 341,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Ten distinct seeds are split across Chrome and Edge.",
+          "location": {
+            "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+            "line": 14,
+            "column": 8
+          }
+        }
+      ]
+    },
+    {
+      "identity": "g4.spec.ts:13:chrome:G4: complete browser seed 233, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-f86f549c02fcce171fd3",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 233, archive persistence and clean seed replay",
+      "browserProject": "chrome",
+      "outcome": "skipped",
+      "status": "skipped",
+      "durationMs": 330,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Ten distinct seeds are split across Chrome and Edge.",
+          "location": {
+            "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+            "line": 14,
+            "column": 8
+          }
+        }
+      ]
+    },
+    {
+      "identity": "g4.spec.ts:51:chrome:G4: real defeat seed 17, one saved loss and independent retry",
+      "reportSpecId": "1854c446263ca3327faf-aa095269be21e71676ee",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 51,
+      "title": "G4: real defeat seed 17, one saved loss and independent retry",
+      "browserProject": "chrome",
+      "outcome": "expected",
+      "status": "passed",
+      "durationMs": 23077,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": []
+    },
+    {
+      "identity": "g4.spec.ts:51:chrome:G4: real defeat seed 31, one saved loss and independent retry",
+      "reportSpecId": "1854c446263ca3327faf-aa4d08bebee8d9976757",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 51,
+      "title": "G4: real defeat seed 31, one saved loss and independent retry",
+      "browserProject": "chrome",
+      "outcome": "expected",
+      "status": "passed",
+      "durationMs": 23599,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": []
+    },
+    {
+      "identity": "g4.spec.ts:51:chrome:G4: real defeat seed 59, one saved loss and independent retry",
+      "reportSpecId": "1854c446263ca3327faf-cff6c5b924996535b727",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 51,
+      "title": "G4: real defeat seed 59, one saved loss and independent retry",
+      "browserProject": "chrome",
+      "outcome": "expected",
+      "status": "passed",
+      "durationMs": 22919,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": []
+    },
+    {
+      "identity": "g4.spec.ts:51:chrome:G4: real defeat seed 83, one saved loss and independent retry",
+      "reportSpecId": "1854c446263ca3327faf-74203f3ea7ee0997e82d",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 51,
+      "title": "G4: real defeat seed 83, one saved loss and independent retry",
+      "browserProject": "chrome",
+      "outcome": "skipped",
+      "status": "skipped",
+      "durationMs": 331,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Five failure seeds are split across Chrome and Edge.",
+          "location": {
+            "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+            "line": 52,
+            "column": 8
+          }
+        }
+      ]
+    },
+    {
+      "identity": "g4.spec.ts:51:chrome:G4: real defeat seed 97, one saved loss and independent retry",
+      "reportSpecId": "1854c446263ca3327faf-1e7c0cd94b02d6db5f74",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 51,
+      "title": "G4: real defeat seed 97, one saved loss and independent retry",
+      "browserProject": "chrome",
+      "outcome": "skipped",
+      "status": "skipped",
+      "durationMs": 356,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Five failure seeds are split across Chrome and Edge.",
+          "location": {
+            "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+            "line": 52,
+            "column": 8
+          }
+        }
+      ]
+    },
+    {
+      "identity": "g4.spec.ts:65:chrome:G4: corrupt, old and unavailable storage fault fixtures still boot with a visible explanation",
+      "reportSpecId": "1854c446263ca3327faf-524ed2c173313bd81f0d",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 65,
+      "title": "G4: corrupt, old and unavailable storage fault fixtures still boot with a visible explanation",
+      "browserProject": "chrome",
+      "outcome": "expected",
+      "status": "passed",
+      "durationMs": 3426,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": []
+    },
+    {
+      "identity": "g4.spec.ts:13:edge:G4: complete browser seed 1, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-d70a0e8e9a2be2f1bf22",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 1, archive persistence and clean seed replay",
+      "browserProject": "edge",
+      "outcome": "skipped",
+      "status": "skipped",
+      "durationMs": 308,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Ten distinct seeds are split across Chrome and Edge.",
+          "location": {
+            "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+            "line": 14,
+            "column": 8
+          }
+        }
+      ]
+    },
+    {
+      "identity": "g4.spec.ts:13:edge:G4: complete browser seed 7, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-2767424f8ad79a4bc662",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 7, archive persistence and clean seed replay",
+      "browserProject": "edge",
+      "outcome": "skipped",
+      "status": "skipped",
+      "durationMs": 321,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Ten distinct seeds are split across Chrome and Edge.",
+          "location": {
+            "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+            "line": 14,
+            "column": 8
+          }
+        }
+      ]
+    },
+    {
+      "identity": "g4.spec.ts:13:edge:G4: complete browser seed 13, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-28c8e9c6bc35d0fb3d3a",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 13, archive persistence and clean seed replay",
+      "browserProject": "edge",
+      "outcome": "skipped",
+      "status": "skipped",
+      "durationMs": 312,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Ten distinct seeds are split across Chrome and Edge.",
+          "location": {
+            "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+            "line": 14,
+            "column": 8
+          }
+        }
+      ]
+    },
+    {
+      "identity": "g4.spec.ts:13:edge:G4: complete browser seed 29, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-ce13c288ea118d827807",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 29, archive persistence and clean seed replay",
+      "browserProject": "edge",
+      "outcome": "skipped",
+      "status": "skipped",
+      "durationMs": 318,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Ten distinct seeds are split across Chrome and Edge.",
+          "location": {
+            "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+            "line": 14,
+            "column": 8
+          }
+        }
+      ]
+    },
+    {
+      "identity": "g4.spec.ts:13:edge:G4: complete browser seed 41, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-7e25d013b30b3eec4c60",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 41, archive persistence and clean seed replay",
+      "browserProject": "edge",
+      "outcome": "skipped",
+      "status": "skipped",
+      "durationMs": 278,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Ten distinct seeds are split across Chrome and Edge.",
+          "location": {
+            "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+            "line": 14,
+            "column": 8
+          }
+        }
+      ]
+    },
+    {
+      "identity": "g4.spec.ts:13:edge:G4: complete browser seed 57, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-f0bb5b742f99ffeed511",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 57, archive persistence and clean seed replay",
+      "browserProject": "edge",
+      "outcome": "expected",
+      "status": "passed",
+      "durationMs": 92459,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": []
+    },
+    {
+      "identity": "g4.spec.ts:13:edge:G4: complete browser seed 73, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-47b0e0a33971ee1264a8",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 73, archive persistence and clean seed replay",
+      "browserProject": "edge",
+      "outcome": "expected",
+      "status": "passed",
+      "durationMs": 73577,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": []
+    },
+    {
+      "identity": "g4.spec.ts:13:edge:G4: complete browser seed 91, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-232192cbef7b5b564d1e",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 91, archive persistence and clean seed replay",
+      "browserProject": "edge",
+      "outcome": "expected",
+      "status": "passed",
+      "durationMs": 72583,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": []
+    },
+    {
+      "identity": "g4.spec.ts:13:edge:G4: complete browser seed 127, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-2331669aa4252120b022",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 127, archive persistence and clean seed replay",
+      "browserProject": "edge",
+      "outcome": "expected",
+      "status": "passed",
+      "durationMs": 93158,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": []
+    },
+    {
+      "identity": "g4.spec.ts:13:edge:G4: complete browser seed 233, archive persistence and clean seed replay",
+      "reportSpecId": "1854c446263ca3327faf-a5205ad64f38fb76f831",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 13,
+      "title": "G4: complete browser seed 233, archive persistence and clean seed replay",
+      "browserProject": "edge",
+      "outcome": "expected",
+      "status": "passed",
+      "durationMs": 73640,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": []
+    },
+    {
+      "identity": "g4.spec.ts:51:edge:G4: real defeat seed 17, one saved loss and independent retry",
+      "reportSpecId": "1854c446263ca3327faf-47cdce52f4521dede411",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 51,
+      "title": "G4: real defeat seed 17, one saved loss and independent retry",
+      "browserProject": "edge",
+      "outcome": "skipped",
+      "status": "skipped",
+      "durationMs": 299,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Five failure seeds are split across Chrome and Edge.",
+          "location": {
+            "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+            "line": 52,
+            "column": 8
+          }
+        }
+      ]
+    },
+    {
+      "identity": "g4.spec.ts:51:edge:G4: real defeat seed 31, one saved loss and independent retry",
+      "reportSpecId": "1854c446263ca3327faf-52025929bcf594e57ad7",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 51,
+      "title": "G4: real defeat seed 31, one saved loss and independent retry",
+      "browserProject": "edge",
+      "outcome": "skipped",
+      "status": "skipped",
+      "durationMs": 322,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Five failure seeds are split across Chrome and Edge.",
+          "location": {
+            "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+            "line": 52,
+            "column": 8
+          }
+        }
+      ]
+    },
+    {
+      "identity": "g4.spec.ts:51:edge:G4: real defeat seed 59, one saved loss and independent retry",
+      "reportSpecId": "1854c446263ca3327faf-5ff34ef46b105b1b784d",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 51,
+      "title": "G4: real defeat seed 59, one saved loss and independent retry",
+      "browserProject": "edge",
+      "outcome": "skipped",
+      "status": "skipped",
+      "durationMs": 316,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Five failure seeds are split across Chrome and Edge.",
+          "location": {
+            "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\g4.spec.ts",
+            "line": 52,
+            "column": 8
+          }
+        }
+      ]
+    },
+    {
+      "identity": "g4.spec.ts:51:edge:G4: real defeat seed 83, one saved loss and independent retry",
+      "reportSpecId": "1854c446263ca3327faf-7e5125ab42777a87b4da",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 51,
+      "title": "G4: real defeat seed 83, one saved loss and independent retry",
+      "browserProject": "edge",
+      "outcome": "expected",
+      "status": "passed",
+      "durationMs": 23145,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": []
+    },
+    {
+      "identity": "g4.spec.ts:51:edge:G4: real defeat seed 97, one saved loss and independent retry",
+      "reportSpecId": "1854c446263ca3327faf-0a62424a7c0b010c2578",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 51,
+      "title": "G4: real defeat seed 97, one saved loss and independent retry",
+      "browserProject": "edge",
+      "outcome": "expected",
+      "status": "passed",
+      "durationMs": 23164,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": []
+    },
+    {
+      "identity": "g4.spec.ts:65:edge:G4: corrupt, old and unavailable storage fault fixtures still boot with a visible explanation",
+      "reportSpecId": "1854c446263ca3327faf-383ab1619dfd2bf2af07",
+      "file": "tests/e2e/g4.spec.ts",
+      "line": 65,
+      "title": "G4: corrupt, old and unavailable storage fault fixtures still boot with a visible explanation",
+      "browserProject": "edge",
+      "outcome": "expected",
+      "status": "passed",
+      "durationMs": 2879,
+      "retriesUsed": 0,
+      "testErrors": [],
+      "annotations": []
+    }
+  ],
+  "excludedClaims": [
+    "15 assigned skips are not passes",
+    "5 observed failures are HP=0 failures, not independent browser proof of all possible defeat mechanisms",
+    "Short scripted wins are not first-player timing or fun/retention evidence",
+    "Physical OS blur/minimize and real Ctrl zoom remain unverified",
+    "Performance and release ZIP are outside this index"
+  ]
+}

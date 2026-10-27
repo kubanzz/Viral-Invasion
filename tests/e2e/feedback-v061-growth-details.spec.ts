@@ -10,7 +10,7 @@ test.use({ video: 'off', trace: 'off' });
 
 async function tabTo(page: Page, selector: string) {
   for (let count = 0; count < 32; count++) {
-    if (await page.locator(selector).evaluateAll(nodes => nodes.includes(document.activeElement!))) return;
+    if (await page.locator(selector).evaluateAll(nodes => nodes.some(node => node === document.activeElement))) return;
     await page.keyboard.press('Tab');
   }
   throw new Error(`Keyboard could not reach ${selector}`);

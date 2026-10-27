@@ -1,0 +1,15 @@
+{
+  "scope": "Final typecheck after the new browser specs were added; the game build inputs were unchanged.",
+  "attempts": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "exitCode": 1,
+      "diagnostic": "tests/e2e/feedback-v061-growth-details.spec.ts(13,74): error TS2345: Argument of type 'Element' is not assignable to parameter of type 'HTMLElement | SVGElement'.",
+      "resolution": "Use nodes.some(node => node === document.activeElement) for the same DOM focus identity check, avoiding a narrower Array.includes argument type. This changes only the test's static typing and preserves its browser behavior."
+    },
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "exitCode": 0
+    }
+  ]
+}

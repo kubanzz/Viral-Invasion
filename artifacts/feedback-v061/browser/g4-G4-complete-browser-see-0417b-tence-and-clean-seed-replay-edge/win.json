@@ -1,0 +1,7662 @@
+{
+  "seed": 127,
+  "choice": "ignore",
+  "final": {
+    "game": "viral-invasion",
+    "schemaVersion": 1,
+    "seed": 127,
+    "phase": "result",
+    "tick": 5416,
+    "elapsed": 90.26666666666667,
+    "player": {
+      "x": 406.54987866161923,
+      "y": 675.2058570168743,
+      "hp": 100,
+      "radius": 19,
+      "facing": -2.7222972020468243,
+      "moving": false,
+      "dashUntil": 59.96666666666667,
+      "dashReady": 0,
+      "hurtUntil": 0,
+      "actionUntil": 85.41666666666667
+    },
+    "targets": [
+      {
+        "x": 1570,
+        "y": 600,
+        "id": "lung-source-a",
+        "kind": "single",
+        "role": "source",
+        "radius": 34,
+        "hp": 0,
+        "maxHp": 238,
+        "hitUntil": 64.51333333333334,
+        "scanned": true,
+        "traits": [],
+        "facing": 0,
+        "born": 0,
+        "attackReady": 60.96666666666667,
+        "revealedUntil": 0,
+        "deadAt": 64.33333333333333,
+        "exposedUntil": 0
+      },
+      {
+        "x": 2050,
+        "y": 1110,
+        "id": "lung-migrated-source",
+        "kind": "single",
+        "role": "source",
+        "radius": 34,
+        "hp": 0,
+        "maxHp": 238,
+        "hitUntil": 70.23,
+        "scanned": false,
+        "traits": [],
+        "facing": 0,
+        "born": 0,
+        "attackReady": 60.96666666666667,
+        "deadAt": 70.05,
+        "revealedUntil": 0,
+        "exposedUntil": 0
+      }
+    ],
+    "tissue": {
+      "x": 1260,
+      "y": 1120,
+      "hp": 82,
+      "maxHp": 100,
+      "radius": 43
+    },
+    "terminal": {
+      "x": 350,
+      "y": 650
+    },
+    "tool": 2,
+    "cooldowns": {
+      "1": 85.44666666666667,
+      "2": 85.71666666666667,
+      "3": 67.96666666666667
+    },
+    "scanReady": 92.9,
+    "scanUntil": 91.9,
+    "effects": [
+      {
+        "id": 338,
+        "kind": "scan",
+        "from": {
+          "x": 481.2448942580927,
+          "y": 702.9008726133476
+        },
+        "to": {
+          "x": 481.2448942580927,
+          "y": 702.9008726133476
+        },
+        "radius": 650,
+        "born": 89.9,
+        "duration": 1.1
+      },
+      {
+        "id": 339,
+        "kind": "success",
+        "from": {
+          "x": 350,
+          "y": 650
+        },
+        "to": {
+          "x": 350,
+          "y": 650
+        },
+        "radius": 180,
+        "born": 90.26666666666667,
+        "duration": 1.5
+      }
+    ],
+    "events": [
+      {
+        "type": "INFECTION_SPREAD",
+        "tick": 360,
+        "data": {
+          "organId": "heart",
+          "edgeId": "source-b:valve",
+          "from": "source-b",
+          "to": "valve"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 366,
+        "data": {
+          "tool": 1,
+          "x": 1992.039001734142,
+          "y": 1095.5390193507503,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 366,
+        "data": {
+          "id": "source-b",
+          "damage": 3,
+          "rawDamage": 34,
+          "remainingHp": 0,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TARGET_CLEARED",
+        "tick": 366,
+        "data": {
+          "id": "source-b",
+          "kind": "single"
+        }
+      },
+      {
+        "type": "INFECTION_SOURCE_CLEARED",
+        "tick": 366,
+        "data": {
+          "organId": "heart",
+          "nodeId": "source-b",
+          "actor": "player"
+        }
+      },
+      {
+        "type": "GROWTH_REWARD",
+        "tick": 366,
+        "data": {
+          "key": "source:heart:source-b",
+          "xp": 20,
+          "research": 2,
+          "totalXp": 46,
+          "totalResearch": 5
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 377,
+        "data": {
+          "tool": 1,
+          "x": 1664.7365776211866,
+          "y": 1038.1646214371353,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 377,
+        "data": {
+          "id": "virus-4",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 34,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 388,
+        "data": {
+          "tool": 1,
+          "x": 1647.8489420722763,
+          "y": 1029.7500350520443,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 388,
+        "data": {
+          "id": "virus-4",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 0,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TARGET_CLEARED",
+        "tick": 388,
+        "data": {
+          "id": "virus-4",
+          "kind": "single"
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 388,
+        "data": {
+          "id": "virus-3",
+          "damage": 38,
+          "rawDamage": 38,
+          "remainingHp": 30,
+          "tool": 1,
+          "cause": "protocol"
+        }
+      },
+      {
+        "type": "PROTOCOL_CHAIN_HIT",
+        "tick": 388,
+        "data": {
+          "protocolId": "PURIFY_CHAIN",
+          "rootId": "127:2:hit:388:virus-4",
+          "targetId": "virus-3",
+          "hop": 1,
+          "damage": 38
+        }
+      },
+      {
+        "type": "GROWTH_REWARD",
+        "tick": 388,
+        "data": {
+          "key": "ordinary:heart:virus-4",
+          "xp": 4,
+          "research": 0,
+          "totalXp": 50,
+          "totalResearch": 5
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 393,
+        "data": {
+          "found": 2,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 393,
+        "data": {
+          "count": 2,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 393,
+        "data": {
+          "rootId": "127:2:scan:393",
+          "x": 1676.0155667772715,
+          "y": 1041.9761000519427,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 399,
+        "data": {
+          "tool": 1,
+          "x": 1652.5155667772722,
+          "y": 1041.9761000519425,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 399,
+        "data": {
+          "id": "virus-3",
+          "damage": 30,
+          "rawDamage": 34,
+          "remainingHp": 0,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TARGET_CLEARED",
+        "tick": 399,
+        "data": {
+          "id": "virus-3",
+          "kind": "single"
+        }
+      },
+      {
+        "type": "GROWTH_REWARD",
+        "tick": 399,
+        "data": {
+          "key": "ordinary:heart:virus-3",
+          "xp": 2,
+          "research": 0,
+          "totalXp": 52,
+          "totalResearch": 5
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 410,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_REJECTED",
+        "tick": 410,
+        "data": {
+          "tool": 2,
+          "reason": "range"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 417,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 417,
+        "data": {
+          "tool": 1,
+          "x": 947.427465867084,
+          "y": 976.7038085505794,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 417,
+        "data": {
+          "id": "virus-1",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 34,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 428,
+        "data": {
+          "tool": 1,
+          "x": 958.3897071988195,
+          "y": 991.4329904760352,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 428,
+        "data": {
+          "id": "virus-1",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 0,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TARGET_CLEARED",
+        "tick": 428,
+        "data": {
+          "id": "virus-1",
+          "kind": "single"
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 428,
+        "data": {
+          "id": "virus-2",
+          "damage": 38,
+          "rawDamage": 38,
+          "remainingHp": 30,
+          "tool": 1,
+          "cause": "protocol"
+        }
+      },
+      {
+        "type": "PROTOCOL_CHAIN_HIT",
+        "tick": 428,
+        "data": {
+          "protocolId": "PURIFY_CHAIN",
+          "rootId": "127:2:hit:428:virus-1",
+          "targetId": "virus-2",
+          "hop": 1,
+          "damage": 38
+        }
+      },
+      {
+        "type": "GROWTH_REWARD",
+        "tick": 428,
+        "data": {
+          "key": "ordinary:heart:virus-1",
+          "xp": 4,
+          "research": 0,
+          "totalXp": 56,
+          "totalResearch": 5
+        }
+      },
+      {
+        "type": "GROWTH_LEVEL_GAINED",
+        "tick": 428,
+        "data": {
+          "level": 2,
+          "xp": 56
+        }
+      },
+      {
+        "type": "PROTOCOL_DRAFT_OPENED",
+        "tick": 428,
+        "data": {
+          "draftId": "127:2:draft:2",
+          "source": "xp",
+          "serial": 2,
+          "level": 2
+        }
+      },
+      {
+        "type": "RUN_PAUSED",
+        "tick": 428,
+        "data": {}
+      },
+      {
+        "type": "RUN_RESUMED",
+        "tick": 428,
+        "data": {}
+      },
+      {
+        "type": "PROTOCOL_EQUIPPED",
+        "tick": 429,
+        "data": {
+          "draftId": "127:2:draft:2",
+          "protocolId": "EXPOSE_TRACE",
+          "tuning": "balanced",
+          "rank": 1,
+          "kind": "equip",
+          "slots": 2,
+          "actionHint": "现在按 Q，让敌群显形并减速；搭配免疫细胞优先围猎标记体。"
+        }
+      },
+      {
+        "type": "PROTOCOL_DRAFT_COMMITTED",
+        "tick": 429,
+        "data": {
+          "draftId": "127:2:draft:2",
+          "source": "xp"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 439,
+        "data": {
+          "tool": 1,
+          "x": 915.8122125775419,
+          "y": 1021.2655125504167,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 439,
+        "data": {
+          "id": "virus-2",
+          "damage": 30,
+          "rawDamage": 34,
+          "remainingHp": 0,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TARGET_CLEARED",
+        "tick": 439,
+        "data": {
+          "id": "virus-2",
+          "kind": "single"
+        }
+      },
+      {
+        "type": "GROWTH_REWARD",
+        "tick": 439,
+        "data": {
+          "key": "ordinary:heart:virus-2",
+          "xp": 2,
+          "research": 0,
+          "totalXp": 58,
+          "totalResearch": 5
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 487,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 589,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 589,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 589,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:589",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 589,
+        "data": {
+          "rootId": "127:2:scan:589",
+          "x": 636.6516082257746,
+          "y": 1063.3409921061238,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 783,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 783,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 783,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:783",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 783,
+        "data": {
+          "rootId": "127:2:scan:783",
+          "x": 640.0000090663332,
+          "y": 1059.9999809265137,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "EVOLUTION_ROLLED",
+        "tick": 840,
+        "data": {
+          "trait": "FISSION",
+          "roll": 0.5301619111560285,
+          "candidates": "[{\"trait\":\"CARAPACE\",\"rawWeight\":1.3648792048929665,\"probability\":0.3997398154077644},{\"trait\":\"FISSION\",\"rawWeight\":1.0447232415902141,\"probability\":0.305973945715015},{\"trait\":\"MIMIC\",\"rawWeight\":1.004816513761468,\"probability\":0.29428623887722066}]",
+          "summary": "{\"precisionDamage\":542,\"areaDamage\":130,\"precisionRatio\":0.8065476190476191,\"areaRatio\":0.19345238095238096,\"scans\":5,\"isolations\":0,\"repaired\":25,\"sampleCount\":25,\"fromTick\":0,\"toTick\":840}"
+        }
+      },
+      {
+        "type": "EVOLUTION_WARNING",
+        "tick": 840,
+        "data": {
+          "trait": "FISSION",
+          "duration": 8,
+          "applyAt": 22
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 977,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 977,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 977,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:977",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 977,
+        "data": {
+          "rootId": "127:2:scan:977",
+          "x": 640.0000090663332,
+          "y": 1059.9999809265137,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 1166,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 1166,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 1166,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:1166",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 1166,
+        "data": {
+          "rootId": "127:2:scan:1166",
+          "x": 640.0000090663332,
+          "y": 1059.9999809265137,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "ACTOR_SPAWNED",
+        "tick": 1320,
+        "data": {
+          "id": "elite-5",
+          "role": "elite",
+          "generation": 0,
+          "sourceId": "",
+          "traits": "FISSION"
+        }
+      },
+      {
+        "type": "EVOLUTION_APPLIED",
+        "tick": 1320,
+        "data": {
+          "trait": "FISSION",
+          "warningDuration": 8,
+          "traits": "FISSION"
+        }
+      },
+      {
+        "type": "TOOL_REJECTED",
+        "tick": 1325,
+        "data": {
+          "tool": 2,
+          "reason": "range"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 1332,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1332,
+        "data": {
+          "tool": 1,
+          "x": 1295.6989175542885,
+          "y": 681.4321959018706,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1343,
+        "data": {
+          "tool": 1,
+          "x": 1338.7822508876216,
+          "y": 657.5250013669331,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1354,
+        "data": {
+          "tool": 1,
+          "x": 1362.4281360000352,
+          "y": 650.6770833333333,
+          "hit": false
+        }
+      },
+      {
+        "type": "COLLISION_BLOCKED",
+        "tick": 1360,
+        "data": {
+          "x": 773.1942122135374,
+          "y": 1068.7394007902105
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 1360,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 1360,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 1360,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:1360",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 1360,
+        "data": {
+          "rootId": "127:2:scan:1360",
+          "x": 794.3460034905066,
+          "y": 1060.735321785761,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1365,
+        "data": {
+          "tool": 1,
+          "x": 1380.3716661599224,
+          "y": 650.6770833333333,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1376,
+        "data": {
+          "tool": 1,
+          "x": 1379.3042819452353,
+          "y": 650.6770833333333,
+          "hit": false
+        }
+      },
+      {
+        "type": "COLLISION_BLOCKED",
+        "tick": 1380,
+        "data": {
+          "x": 836.0388287418228,
+          "y": 1049.1422423214972
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1387,
+        "data": {
+          "tool": 1,
+          "x": 1388.684799996857,
+          "y": 643.5513599152096,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1398,
+        "data": {
+          "tool": 1,
+          "x": 1421.583132155419,
+          "y": 613.086842759089,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 1401,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_REJECTED",
+        "tick": 1401,
+        "data": {
+          "tool": 2,
+          "reason": "range"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 1409,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1409,
+        "data": {
+          "tool": 1,
+          "x": 1462.6909980053872,
+          "y": 582.6223256029684,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1420,
+        "data": {
+          "tool": 1,
+          "x": 1516.1386847171718,
+          "y": 552.1578084468479,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1431,
+        "data": {
+          "tool": 1,
+          "x": 1539.771307952394,
+          "y": 535.9493911506007,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1442,
+        "data": {
+          "tool": 1,
+          "x": 1541.1106114854676,
+          "y": 534.2432408971495,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1453,
+        "data": {
+          "tool": 1,
+          "x": 1512.1040745644398,
+          "y": 562.5977594300649,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 1453,
+        "data": {
+          "id": "elite-5",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 204,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1464,
+        "data": {
+          "tool": 1,
+          "x": 1510.6739078826697,
+          "y": 563.6610992596724,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 1464,
+        "data": {
+          "id": "elite-5",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 170,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1475,
+        "data": {
+          "tool": 1,
+          "x": 1512.787633107638,
+          "y": 561.2213549065405,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 1475,
+        "data": {
+          "id": "elite-5",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 136,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 1477,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1477,
+        "data": {
+          "tool": 2,
+          "x": 1518.3266362269326,
+          "y": 555.6823517872458
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 1477,
+        "data": {
+          "id": "elite-5",
+          "damage": 65,
+          "rawDamage": 65,
+          "remainingHp": 71,
+          "tool": 2,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "AREA_DISPLACED",
+        "tick": 1477,
+        "data": {
+          "targetId": "elite-5",
+          "distance": 84.99999999999977
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 1486,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1486,
+        "data": {
+          "tool": 1,
+          "x": 1422.4805323743542,
+          "y": 649.9879823376189,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 1486,
+        "data": {
+          "id": "elite-5",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 37,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1497,
+        "data": {
+          "tool": 1,
+          "x": 1407.6638344914552,
+          "y": 656.575297387672,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 1497,
+        "data": {
+          "id": "elite-5",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 3,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1508,
+        "data": {
+          "tool": 1,
+          "x": 1395.9878383468417,
+          "y": 663.8945093475108,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 1508,
+        "data": {
+          "id": "elite-5",
+          "damage": 3,
+          "rawDamage": 34,
+          "remainingHp": 0,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TARGET_CLEARED",
+        "tick": 1508,
+        "data": {
+          "id": "elite-5",
+          "kind": "cluster"
+        }
+      },
+      {
+        "type": "ELITE_CLEARED",
+        "tick": 1508,
+        "data": {
+          "id": "elite-5",
+          "organId": "heart",
+          "trait": "FISSION"
+        }
+      },
+      {
+        "type": "FISSION_WARNING",
+        "tick": 1508,
+        "data": {
+          "parentId": "elite-5",
+          "children": 2,
+          "applyAt": 25.933333333333334
+        }
+      },
+      {
+        "type": "GROWTH_REWARD",
+        "tick": 1508,
+        "data": {
+          "key": "elite:heart:elite-5",
+          "xp": 30,
+          "research": 2,
+          "totalXp": 88,
+          "totalResearch": 7
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 1549,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 1549,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 1549,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:1549",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 1549,
+        "data": {
+          "rootId": "127:2:scan:1549",
+          "x": 805.104313947576,
+          "y": 898.4888370564984,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "ACTOR_SPAWNED",
+        "tick": 1556,
+        "data": {
+          "id": "virus-6",
+          "role": "virus",
+          "generation": 1,
+          "sourceId": "",
+          "traits": "FISSION"
+        }
+      },
+      {
+        "type": "ACTOR_SPAWNED",
+        "tick": 1556,
+        "data": {
+          "id": "virus-7",
+          "role": "virus",
+          "generation": 1,
+          "sourceId": "",
+          "traits": "FISSION"
+        }
+      },
+      {
+        "type": "FISSION_SPAWNED",
+        "tick": 1556,
+        "data": {
+          "parentId": "elite-5",
+          "children": 2,
+          "generation": 1
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 1557,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_REJECTED",
+        "tick": 1567,
+        "data": {
+          "tool": 2,
+          "reason": "range"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 1575,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1575,
+        "data": {
+          "tool": 1,
+          "x": 1364.6240750978118,
+          "y": 689.4535933617188,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 1575,
+        "data": {
+          "id": "virus-6",
+          "damage": 22,
+          "rawDamage": 34,
+          "remainingHp": 0,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TARGET_CLEARED",
+        "tick": 1575,
+        "data": {
+          "id": "virus-6",
+          "kind": "cluster"
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 1575,
+        "data": {
+          "id": "virus-7",
+          "damage": 22,
+          "rawDamage": 38,
+          "remainingHp": 0,
+          "tool": 1,
+          "cause": "protocol"
+        }
+      },
+      {
+        "type": "TARGET_CLEARED",
+        "tick": 1575,
+        "data": {
+          "id": "virus-7",
+          "kind": "cluster"
+        }
+      },
+      {
+        "type": "PROTOCOL_CHAIN_HIT",
+        "tick": 1575,
+        "data": {
+          "protocolId": "PURIFY_CHAIN",
+          "rootId": "127:2:hit:1575:virus-6",
+          "targetId": "virus-7",
+          "hop": 1,
+          "damage": 38
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 1646,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 1740,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 1740,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 1740,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:1740",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 1740,
+        "data": {
+          "rootId": "127:2:scan:1740",
+          "x": 640.0000185571403,
+          "y": 1059.9999809265137,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "EVOLUTION_ROLLED",
+        "tick": 1920,
+        "data": {
+          "trait": "MIMIC",
+          "roll": 0.6736558140255511,
+          "candidates": "[{\"trait\":\"CARAPACE\",\"rawWeight\":1.396037691401649,\"probability\":0.55},{\"trait\":\"MIMIC\",\"rawWeight\":0.9594522968197879,\"probability\":0.45}]",
+          "summary": "{\"precisionDamage\":737,\"areaDamage\":195,\"precisionRatio\":0.7907725321888412,\"areaRatio\":0.2092274678111588,\"scans\":10,\"isolations\":0,\"repaired\":25,\"sampleCount\":38,\"fromTick\":0,\"toTick\":1920}"
+        }
+      },
+      {
+        "type": "EVOLUTION_WARNING",
+        "tick": 1920,
+        "data": {
+          "trait": "MIMIC",
+          "duration": 8,
+          "applyAt": 40
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 1930,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 1930,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 1930,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:1930",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 1930,
+        "data": {
+          "rootId": "127:2:scan:1930",
+          "x": 640.0000185571403,
+          "y": 1059.9999809265137,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 2122,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 2122,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 2122,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:2122",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 2122,
+        "data": {
+          "rootId": "127:2:scan:2122",
+          "x": 640.0000185571403,
+          "y": 1059.9999809265137,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 2315,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 2315,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 2315,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:2315",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 2315,
+        "data": {
+          "rootId": "127:2:scan:2315",
+          "x": 640.0000185571403,
+          "y": 1059.9999809265137,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "ACTOR_SPAWNED",
+        "tick": 2400,
+        "data": {
+          "id": "elite-8",
+          "role": "elite",
+          "generation": 0,
+          "sourceId": "",
+          "traits": "MIMIC"
+        }
+      },
+      {
+        "type": "EVOLUTION_APPLIED",
+        "tick": 2400,
+        "data": {
+          "trait": "MIMIC",
+          "warningDuration": 8,
+          "traits": "FISSION+MIMIC"
+        }
+      },
+      {
+        "type": "MIGRATION_WARNING",
+        "tick": 2400,
+        "data": {
+          "eventId": "migration:127:1",
+          "from": "heart",
+          "to": "lung",
+          "deadline": 52
+        }
+      },
+      {
+        "type": "RUN_PAUSED",
+        "tick": 2400,
+        "data": {}
+      },
+      {
+        "type": "RUN_RESUMED",
+        "tick": 2400,
+        "data": {}
+      },
+      {
+        "type": "TOOL_REJECTED",
+        "tick": 2413,
+        "data": {
+          "tool": 2,
+          "reason": "range"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 2422,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 2422,
+        "data": {
+          "tool": 1,
+          "x": 1291.651633699962,
+          "y": 675.9511017799376,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 2433,
+        "data": {
+          "tool": 1,
+          "x": 1330.8183003666286,
+          "y": 664.5446105798085,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 2444,
+        "data": {
+          "tool": 1,
+          "x": 1369.2692204716086,
+          "y": 650.6770833333333,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 2455,
+        "data": {
+          "tool": 1,
+          "x": 1382.4900105110157,
+          "y": 650.6770833333333,
+          "hit": false
+        }
+      },
+      {
+        "type": "COLLISION_BLOCKED",
+        "tick": 2460,
+        "data": {
+          "x": 817.7774788765612,
+          "y": 1060.5845027888797
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 2466,
+        "data": {
+          "tool": 1,
+          "x": 1393.7185462683672,
+          "y": 650.6770833333333,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 2477,
+        "data": {
+          "tool": 1,
+          "x": 1396.8175925379196,
+          "y": 631.5000524846103,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 2488,
+        "data": {
+          "tool": 1,
+          "x": 1435.2094320817355,
+          "y": 601.0355353284897,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 2494,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_REJECTED",
+        "tick": 2494,
+        "data": {
+          "tool": 2,
+          "reason": "range"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 2504,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 2504,
+        "data": {
+          "tool": 1,
+          "x": 1499.4830430346278,
+          "y": 556.7235103741325,
+          "hit": false
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 2506,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 2506,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 2506,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:2506",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 2506,
+        "data": {
+          "rootId": "127:2:scan:2506",
+          "x": 1293.1544494238678,
+          "y": 698.2465991785398,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 2515,
+        "data": {
+          "tool": 1,
+          "x": 1541.6221359964125,
+          "y": 526.2589932180119,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 2526,
+        "data": {
+          "tool": 1,
+          "x": 1571.4604011046044,
+          "y": 506.0739542469812,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 2537,
+        "data": {
+          "tool": 1,
+          "x": 1573.5147628379502,
+          "y": 503.8361190855448,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 2548,
+        "data": {
+          "tool": 1,
+          "x": 1572.799737452567,
+          "y": 504.36779541786314,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 2559,
+        "data": {
+          "tool": 1,
+          "x": 1563.3890020114425,
+          "y": 513.5747703940015,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 2559,
+        "data": {
+          "id": "elite-8",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 204,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 2570,
+        "data": {
+          "tool": 1,
+          "x": 1564.6690251490083,
+          "y": 512.0705408088343,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 2570,
+        "data": {
+          "id": "elite-8",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 170,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 2573,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 2573,
+        "data": {
+          "tool": 2,
+          "x": 1543.7930671541992,
+          "y": 532.7223122242569
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 2573,
+        "data": {
+          "id": "elite-8",
+          "damage": 65,
+          "rawDamage": 65,
+          "remainingHp": 105,
+          "tool": 2,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "AREA_DISPLACED",
+        "tick": 2573,
+        "data": {
+          "targetId": "elite-8",
+          "distance": 85
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 2584,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 2584,
+        "data": {
+          "tool": 1,
+          "x": 1478.217200010641,
+          "y": 594.8504869735594,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 2584,
+        "data": {
+          "id": "elite-8",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 71,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 2595,
+        "data": {
+          "tool": 1,
+          "x": 1442.9672000106402,
+          "y": 594.8504869735594,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 2595,
+        "data": {
+          "id": "elite-8",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 37,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 2606,
+        "data": {
+          "tool": 1,
+          "x": 1427.3453954553822,
+          "y": 598.5184376037474,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 2606,
+        "data": {
+          "id": "elite-8",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 3,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 2609,
+        "data": {
+          "id": "elite-8",
+          "damage": 3,
+          "rawDamage": 3,
+          "remainingHp": 0,
+          "tool": 1,
+          "cause": "protocol"
+        }
+      },
+      {
+        "type": "TARGET_CLEARED",
+        "tick": 2609,
+        "data": {
+          "id": "elite-8",
+          "kind": "single"
+        }
+      },
+      {
+        "type": "ELITE_CLEARED",
+        "tick": 2609,
+        "data": {
+          "id": "elite-8",
+          "organId": "heart",
+          "trait": "MIMIC"
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_HIT",
+        "tick": 2609,
+        "data": {
+          "protocolId": "BASE_PATROL",
+          "rootId": "127:2:scan:2506:beacon:cell:0:bite:2609",
+          "cellId": "127:2:scan:2506:beacon:cell:0",
+          "targetId": "elite-8",
+          "damage": 3,
+          "prioritizedTrace": false,
+          "x": 1422.8373751753898,
+          "y": 632.5380545578712
+        }
+      },
+      {
+        "type": "GROWTH_REWARD",
+        "tick": 2610,
+        "data": {
+          "key": "elite:heart:elite-8",
+          "xp": 30,
+          "research": 2,
+          "totalXp": 118,
+          "totalResearch": 9
+        }
+      },
+      {
+        "type": "GROWTH_LEVEL_GAINED",
+        "tick": 2610,
+        "data": {
+          "level": 3,
+          "xp": 118
+        }
+      },
+      {
+        "type": "PROTOCOL_DRAFT_OPENED",
+        "tick": 2610,
+        "data": {
+          "draftId": "127:2:draft:3",
+          "source": "xp",
+          "serial": 3,
+          "level": 3
+        }
+      },
+      {
+        "type": "RUN_PAUSED",
+        "tick": 2610,
+        "data": {}
+      },
+      {
+        "type": "RUN_RESUMED",
+        "tick": 2610,
+        "data": {}
+      },
+      {
+        "type": "PROTOCOL_EQUIPPED",
+        "tick": 2611,
+        "data": {
+          "draftId": "127:2:draft:3",
+          "protocolId": "PULSE_BREAK",
+          "tuning": "balanced",
+          "rank": 1,
+          "kind": "equip",
+          "slots": 3,
+          "actionHint": "靠近器官装置，趁冲流亮起用 1 / 2 命中，触发破壳冲击。"
+        }
+      },
+      {
+        "type": "PROTOCOL_DRAFT_COMMITTED",
+        "tick": 2611,
+        "data": {
+          "draftId": "127:2:draft:3",
+          "source": "xp"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 2652,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 2699,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 2699,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 2699,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:2699",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 2699,
+        "data": {
+          "rootId": "127:2:scan:2699",
+          "x": 634.5516166988369,
+          "y": 1053.9808504914408,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 2887,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 2887,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 2887,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:2887",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 2887,
+        "data": {
+          "rootId": "127:2:scan:2887",
+          "x": 640.0000271398997,
+          "y": 1059.9999809265137,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 3077,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 3077,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 3077,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:3077",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 3077,
+        "data": {
+          "rootId": "127:2:scan:3077",
+          "x": 640.0000271398997,
+          "y": 1059.9999809265137,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "MIGRATION_DECIDED",
+        "tick": 3120,
+        "data": {
+          "eventId": "migration:127:1",
+          "choice": "ignore",
+          "from": "heart",
+          "to": "lung",
+          "at": 52
+        }
+      },
+      {
+        "type": "ACTOR_SPAWNED",
+        "tick": 3120,
+        "data": {
+          "organId": "lung",
+          "id": "lung-migrated-source",
+          "role": "source"
+        }
+      },
+      {
+        "type": "ORGAN_INTEGRITY_CHANGED",
+        "tick": 3120,
+        "data": {
+          "organId": "lung",
+          "before": 76,
+          "after": 66,
+          "reason": "migration-established"
+        }
+      },
+      {
+        "type": "INFECTION_CHANGED",
+        "tick": 3120,
+        "data": {
+          "before": 0,
+          "after": 8,
+          "reason": "migration-established"
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 3271,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 3271,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 3271,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:3271",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 3271,
+        "data": {
+          "rootId": "127:2:scan:3271",
+          "x": 1450.5088868967136,
+          "y": 637.0147611454747,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 3464,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 3464,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 3464,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:3464",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 3464,
+        "data": {
+          "rootId": "127:2:scan:3464",
+          "x": 2077.295903024662,
+          "y": 323.1134214564759,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "INPUT_RESET_REQUESTED",
+        "tick": 3598,
+        "data": {
+          "reason": "organ-travel"
+        }
+      },
+      {
+        "type": "ORGAN_TRAVELLED",
+        "tick": 3599,
+        "data": {
+          "from": "heart",
+          "to": "lung",
+          "eventId": "travel:127:3598",
+          "backgroundLoss": 0
+        }
+      },
+      {
+        "type": "LUNG_PHASE_CHANGED",
+        "tick": 3600,
+        "data": {
+          "phase": "exhale",
+          "airwayOpen": true,
+          "organId": "lung"
+        }
+      },
+      {
+        "type": "TOOL_REJECTED",
+        "tick": 3617,
+        "data": {
+          "tool": 2,
+          "reason": "range"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 3625,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3625,
+        "data": {
+          "tool": 1,
+          "x": 1218.125,
+          "y": 742.3640739702192,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3636,
+        "data": {
+          "tool": 1,
+          "x": 1218.125,
+          "y": 734.2977306231502,
+          "hit": false
+        }
+      },
+      {
+        "type": "INFECTION_SPREAD",
+        "tick": 3643,
+        "data": {
+          "organId": "lung",
+          "edgeId": "lung-source-a:airway",
+          "from": "lung-source-a",
+          "to": "airway"
+        }
+      },
+      {
+        "type": "ACTOR_SPAWNED",
+        "tick": 3643,
+        "data": {
+          "id": "virus-9",
+          "role": "virus",
+          "generation": 0,
+          "sourceId": "lung-source-a",
+          "traits": "MIMIC"
+        }
+      },
+      {
+        "type": "ACTOR_SPAWNED",
+        "tick": 3643,
+        "data": {
+          "id": "virus-10",
+          "role": "virus",
+          "generation": 0,
+          "sourceId": "lung-migrated-source",
+          "traits": "MIMIC"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3647,
+        "data": {
+          "tool": 1,
+          "x": 1218.125,
+          "y": 723.5563705549914,
+          "hit": false
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 3656,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 3656,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 3656,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:3656",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 3656,
+        "data": {
+          "rootId": "127:2:scan:3656",
+          "x": 957.0028141274349,
+          "y": 809.9090227425188,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3658,
+        "data": {
+          "tool": 1,
+          "x": 1218.125,
+          "y": 712.5601211575582,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3669,
+        "data": {
+          "tool": 1,
+          "x": 1218.125,
+          "y": 705.5158782590976,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3680,
+        "data": {
+          "tool": 1,
+          "x": 1242.2910982577814,
+          "y": 691.5109652073369,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3691,
+        "data": {
+          "tool": 1,
+          "x": 1272.755615413902,
+          "y": 674.9042299382708,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 3695,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_REJECTED",
+        "tick": 3695,
+        "data": {
+          "tool": 2,
+          "reason": "range"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 3705,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3705,
+        "data": {
+          "tool": 1,
+          "x": 1321.8531232121381,
+          "y": 674.4652240829867,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3716,
+        "data": {
+          "tool": 1,
+          "x": 1364.9364565454712,
+          "y": 669.1202769038281,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3727,
+        "data": {
+          "tool": 1,
+          "x": 1393.7786372489636,
+          "y": 634.3185911191588,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3738,
+        "data": {
+          "tool": 1,
+          "x": 1427.0126559647315,
+          "y": 632.7013396509088,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3749,
+        "data": {
+          "tool": 1,
+          "x": 1470.0959892980645,
+          "y": 628.0180835016168,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3760,
+        "data": {
+          "tool": 1,
+          "x": 1508.5906622033203,
+          "y": 609.0680918275417,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3771,
+        "data": {
+          "tool": 1,
+          "x": 1544.7910048945373,
+          "y": 608.5334487772343,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 3774,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_REJECTED",
+        "tick": 3774,
+        "data": {
+          "tool": 2,
+          "reason": "range"
+        }
+      },
+      {
+        "type": "LUNG_PHASE_CHANGED",
+        "tick": 3780,
+        "data": {
+          "phase": "inhale",
+          "airwayOpen": true,
+          "organId": "lung"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 3785,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3785,
+        "data": {
+          "tool": 1,
+          "x": 1569.9999636538564,
+          "y": 600.0000067822377,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3796,
+        "data": {
+          "tool": 1,
+          "x": 1570.0000482200562,
+          "y": 600.0000112256408,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3807,
+        "data": {
+          "tool": 1,
+          "x": 1578.3084916794764,
+          "y": 591.6915025984756,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 3807,
+        "data": {
+          "id": "lung-source-a",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 204,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3818,
+        "data": {
+          "tool": 1,
+          "x": 1583.8475480201673,
+          "y": 586.1524955309578,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 3818,
+        "data": {
+          "id": "lung-source-a",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 170,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3829,
+        "data": {
+          "tool": 1,
+          "x": 1583.8475494902527,
+          "y": 586.1525083659872,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 3829,
+        "data": {
+          "id": "lung-source-a",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 136,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3840,
+        "data": {
+          "tool": 1,
+          "x": 1586.617021175182,
+          "y": 583.3829715133131,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 3840,
+        "data": {
+          "id": "lung-source-a",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 102,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 3845,
+        "data": {
+          "found": 4,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 3845,
+        "data": {
+          "count": 4,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 3845,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:3845",
+          "count": 4,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 3845,
+        "data": {
+          "rootId": "127:2:scan:3845",
+          "x": 1559.2262771863816,
+          "y": 593.2248949073664,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "GROWTH_REWARD",
+        "tick": 3845,
+        "data": {
+          "key": "diagnose:MIMIC",
+          "xp": 8,
+          "research": 2,
+          "totalXp": 126,
+          "totalResearch": 11
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3851,
+        "data": {
+          "tool": 1,
+          "x": 1592.1559630749548,
+          "y": 577.844004182225,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 3851,
+        "data": {
+          "id": "lung-source-a",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 68,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 3853,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3853,
+        "data": {
+          "tool": 2,
+          "x": 1597.6949661942494,
+          "y": 572.3050010629304
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 3853,
+        "data": {
+          "id": "lung-source-a",
+          "damage": 65,
+          "rawDamage": 65,
+          "remainingHp": 3,
+          "tool": 2,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 3860,
+        "data": {
+          "id": "lung-source-a",
+          "damage": 3,
+          "rawDamage": 3,
+          "remainingHp": 0,
+          "tool": 2,
+          "cause": "protocol"
+        }
+      },
+      {
+        "type": "TARGET_CLEARED",
+        "tick": 3860,
+        "data": {
+          "id": "lung-source-a",
+          "kind": "single"
+        }
+      },
+      {
+        "type": "INFECTION_SOURCE_CLEARED",
+        "tick": 3860,
+        "data": {
+          "organId": "lung",
+          "nodeId": "lung-source-a",
+          "actor": "player"
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_HIT",
+        "tick": 3860,
+        "data": {
+          "protocolId": "BASE_PATROL",
+          "rootId": "127:2:scan:3845:beacon:cell:0:bite:3860",
+          "cellId": "127:2:scan:3845:beacon:cell:0",
+          "targetId": "lung-source-a",
+          "damage": 3,
+          "prioritizedTrace": false,
+          "x": 1559.2262771863816,
+          "y": 563.2248949073664
+        }
+      },
+      {
+        "type": "GROWTH_REWARD",
+        "tick": 3861,
+        "data": {
+          "key": "source:lung:lung-source-a",
+          "xp": 20,
+          "research": 2,
+          "totalXp": 146,
+          "totalResearch": 13
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 3864,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3864,
+        "data": {
+          "tool": 1,
+          "x": 1706.6258987556434,
+          "y": 871.0136911898298,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3875,
+        "data": {
+          "tool": 1,
+          "x": 1682.0576707348014,
+          "y": 830.2246880705351,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3886,
+        "data": {
+          "tool": 1,
+          "x": 1653.764245048355,
+          "y": 788.2885198442209,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3897,
+        "data": {
+          "tool": 1,
+          "x": 1668.359125668831,
+          "y": 779.3750000000001,
+          "hit": false
+        }
+      },
+      {
+        "type": "ROUTE_CHANGED",
+        "tick": 3905,
+        "data": {
+          "organId": "lung",
+          "nodeId": "airway",
+          "open": false
+        }
+      },
+      {
+        "type": "ORGAN_INTEGRITY_CHANGED",
+        "tick": 3905,
+        "data": {
+          "organId": "lung",
+          "before": 66,
+          "after": 63,
+          "reason": "airway-pressure"
+        }
+      },
+      {
+        "type": "AIRWAY_CHANGED",
+        "tick": 3905,
+        "data": {
+          "organId": "lung",
+          "open": false,
+          "tissueCost": 3
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3908,
+        "data": {
+          "tool": 1,
+          "x": 1690.198709007826,
+          "y": 779.3750000000001,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3919,
+        "data": {
+          "tool": 1,
+          "x": 1706.546594139662,
+          "y": 779.3750000000001,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3930,
+        "data": {
+          "tool": 1,
+          "x": 1693.8482298818494,
+          "y": 779.3750000000001,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 3934,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_REJECTED",
+        "tick": 3934,
+        "data": {
+          "tool": 2,
+          "reason": "range"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 3945,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3945,
+        "data": {
+          "tool": 1,
+          "x": 1684.0525450673963,
+          "y": 806.1679902109221,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3956,
+        "data": {
+          "tool": 1,
+          "x": 1711.219331261244,
+          "y": 849.2513235442557,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3967,
+        "data": {
+          "tool": 1,
+          "x": 1742.024537560072,
+          "y": 892.3346568775889,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3978,
+        "data": {
+          "tool": 1,
+          "x": 1777.2516264882947,
+          "y": 935.4179902109217,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 3989,
+        "data": {
+          "tool": 1,
+          "x": 1813.5780348745252,
+          "y": 978.5013235442548,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 3994,
+        "data": {
+          "tool": 3
+        }
+      },
+      {
+        "type": "TOOL_REJECTED",
+        "tick": 3994,
+        "data": {
+          "tool": 3,
+          "reason": "range"
+        }
+      },
+      {
+        "type": "LUNG_PHASE_CHANGED",
+        "tick": 4020,
+        "data": {
+          "phase": "exhale",
+          "airwayOpen": false,
+          "organId": "lung"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4036,
+        "data": {
+          "tool": 3,
+          "x": 1260.000020500746,
+          "y": 1119.9999992085188
+        }
+      },
+      {
+        "type": "ORGAN_INTEGRITY_CHANGED",
+        "tick": 4036,
+        "data": {
+          "organId": "lung",
+          "before": 63,
+          "after": 88,
+          "reason": "repair"
+        }
+      },
+      {
+        "type": "PRESSURE_RELIEVED",
+        "tick": 4036,
+        "data": {
+          "reason": "repair",
+          "amount": 1.5
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 4037,
+        "data": {
+          "found": 3,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 4037,
+        "data": {
+          "count": 3,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 4037,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:4037",
+          "count": 3,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "IMMUNE_PATROL_CREATED",
+        "tick": 4037,
+        "data": {
+          "rootId": "127:2:scan:4037",
+          "x": 1260.0000205007466,
+          "y": 1123.9166658751867,
+          "duration": 3.5,
+          "cost": 0,
+          "cooldown": 3,
+          "cells": 1
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 4046,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4046,
+        "data": {
+          "tool": 2,
+          "x": 1260.000020500746,
+          "y": 1159.1666658751851
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 4058,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4058,
+        "data": {
+          "tool": 1,
+          "x": 1908.1861764557434,
+          "y": 1054.1692808501607,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4069,
+        "data": {
+          "tool": 1,
+          "x": 1951.2695097890776,
+          "y": 1074.2042298349425,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4080,
+        "data": {
+          "tool": 1,
+          "x": 1994.3528431224117,
+          "y": 1088.533822221824,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4080,
+        "data": {
+          "id": "virus-9",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 34,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4091,
+        "data": {
+          "tool": 1,
+          "x": 2037.436176455746,
+          "y": 1103.2499705982889,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4091,
+        "data": {
+          "id": "virus-9",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 0,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TARGET_CLEARED",
+        "tick": 4091,
+        "data": {
+          "id": "virus-9",
+          "kind": "single"
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4091,
+        "data": {
+          "id": "lung-initial-0",
+          "damage": 38,
+          "rawDamage": 38,
+          "remainingHp": 30,
+          "tool": 1,
+          "cause": "protocol"
+        }
+      },
+      {
+        "type": "PROTOCOL_CHAIN_HIT",
+        "tick": 4091,
+        "data": {
+          "protocolId": "PURIFY_CHAIN",
+          "rootId": "127:2:hit:4091:virus-9",
+          "targetId": "lung-initial-0",
+          "hop": 1,
+          "damage": 38
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4091,
+        "data": {
+          "id": "lung-initial-1",
+          "damage": 38,
+          "rawDamage": 38,
+          "remainingHp": 30,
+          "tool": 1,
+          "cause": "protocol"
+        }
+      },
+      {
+        "type": "PROTOCOL_CHAIN_HIT",
+        "tick": 4091,
+        "data": {
+          "protocolId": "PURIFY_CHAIN",
+          "rootId": "127:2:hit:4091:virus-9",
+          "targetId": "lung-initial-1",
+          "hop": 2,
+          "damage": 38
+        }
+      },
+      {
+        "type": "GROWTH_REWARD",
+        "tick": 4091,
+        "data": {
+          "key": "ordinary:lung:virus-9",
+          "xp": 4,
+          "research": 0,
+          "totalXp": 150,
+          "totalResearch": 13
+        }
+      },
+      {
+        "type": "GROWTH_LEVEL_GAINED",
+        "tick": 4091,
+        "data": {
+          "level": 4,
+          "xp": 150
+        }
+      },
+      {
+        "type": "PROTOCOL_DRAFT_OPENED",
+        "tick": 4091,
+        "data": {
+          "draftId": "127:2:draft:4",
+          "source": "xp",
+          "serial": 4,
+          "level": 4
+        }
+      },
+      {
+        "type": "RUN_PAUSED",
+        "tick": 4091,
+        "data": {}
+      },
+      {
+        "type": "RUN_RESUMED",
+        "tick": 4091,
+        "data": {}
+      },
+      {
+        "type": "PROTOCOL_EQUIPPED",
+        "tick": 4092,
+        "data": {
+          "draftId": "127:2:draft:4",
+          "protocolId": "IMMUNE_BEACON",
+          "tuning": "balanced",
+          "rank": 1,
+          "kind": "equip",
+          "slots": 3,
+          "actionHint": "现在按 Q 标记鼠标区域，召集三只免疫细胞追击、吞噬。"
+        }
+      },
+      {
+        "type": "PROTOCOL_DRAFT_COMMITTED",
+        "tick": 4092,
+        "data": {
+          "draftId": "127:2:draft:4",
+          "source": "xp"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4102,
+        "data": {
+          "tool": 1,
+          "x": 2064.852843122413,
+          "y": 1106.4140235615457,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4113,
+        "data": {
+          "tool": 1,
+          "x": 2081.3333551056494,
+          "y": 1109.9999979369527,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4124,
+        "data": {
+          "tool": 1,
+          "x": 2077.416678266458,
+          "y": 1109.9999979369527,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 4127,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_REJECTED",
+        "tick": 4127,
+        "data": {
+          "tool": 2,
+          "reason": "range"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 4137,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4137,
+        "data": {
+          "tool": 1,
+          "x": 2049.9999808978478,
+          "y": 1109.999962148746,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4137,
+        "data": {
+          "id": "lung-migrated-source",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 204,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4148,
+        "data": {
+          "tool": 1,
+          "x": 2052.769452582777,
+          "y": 1112.7695387378499,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4148,
+        "data": {
+          "id": "lung-migrated-source",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 170,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4159,
+        "data": {
+          "tool": 1,
+          "x": 2053.9167032675878,
+          "y": 1110.00002039495,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4159,
+        "data": {
+          "id": "lung-migrated-source",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 136,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4170,
+        "data": {
+          "tool": 1,
+          "x": 2053.9166930950623,
+          "y": 1110.00002039495,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4170,
+        "data": {
+          "id": "lung-migrated-source",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 102,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4181,
+        "data": {
+          "tool": 1,
+          "x": 2052.769538803429,
+          "y": 1112.7695175111944,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4181,
+        "data": {
+          "id": "lung-migrated-source",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 68,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4192,
+        "data": {
+          "tool": 1,
+          "x": 2083.4682601557524,
+          "y": 1140.3766276177676,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4192,
+        "data": {
+          "id": "lung-migrated-source",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 34,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "LUNG_PHASE_CHANGED",
+        "tick": 4200,
+        "data": {
+          "phase": "inhale",
+          "airwayOpen": false,
+          "organId": "lung"
+        }
+      },
+      {
+        "type": "COLLISION_BLOCKED",
+        "tick": 4200,
+        "data": {
+          "x": 1750.796529255721,
+          "y": 966.4709145341455
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4203,
+        "data": {
+          "tool": 1,
+          "x": 2036.403568053837,
+          "y": 1108.922551504494,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4203,
+        "data": {
+          "id": "lung-migrated-source",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 0,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TARGET_CLEARED",
+        "tick": 4203,
+        "data": {
+          "id": "lung-migrated-source",
+          "kind": "single"
+        }
+      },
+      {
+        "type": "INFECTION_SOURCE_CLEARED",
+        "tick": 4203,
+        "data": {
+          "organId": "lung",
+          "nodeId": "lung-migrated-source",
+          "actor": "player"
+        }
+      },
+      {
+        "type": "GROWTH_REWARD",
+        "tick": 4203,
+        "data": {
+          "key": "source:lung:lung-migrated-source",
+          "xp": 20,
+          "research": 2,
+          "totalXp": 170,
+          "totalResearch": 15
+        }
+      },
+      {
+        "type": "CORE_LOCATED",
+        "tick": 4203,
+        "data": {
+          "coreId": "mother-core",
+          "organId": "lung",
+          "traits": "FISSION+MIMIC"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 4210,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_REJECTED",
+        "tick": 4210,
+        "data": {
+          "tool": 2,
+          "reason": "blocked"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 4223,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4223,
+        "data": {
+          "tool": 1,
+          "x": 1682.8427303281367,
+          "y": 1207.8378433913344,
+          "hit": false
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 4234,
+        "data": {
+          "found": 3,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 4234,
+        "data": {
+          "count": 3,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 4234,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:4234",
+          "count": 3,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "ORGAN_INTEGRITY_CHANGED",
+        "tick": 4234,
+        "data": {
+          "organId": "lung",
+          "before": 88,
+          "after": 85,
+          "reason": "protocol-pressure",
+          "protocolId": "IMMUNE_BEACON"
+        }
+      },
+      {
+        "type": "PROTOCOL_BEACON_CREATED",
+        "tick": 4234,
+        "data": {
+          "protocolId": "IMMUNE_BEACON",
+          "rootId": "127:2:scan:4234",
+          "x": 1405.7088942177004,
+          "y": 936.3380506565533,
+          "duration": 6,
+          "cost": 3,
+          "cooldown": 12,
+          "cells": 3
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4234,
+        "data": {
+          "tool": 1,
+          "x": 1405.708894217703,
+          "y": 936.3380506565525,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4234,
+        "data": {
+          "id": "lung-initial-0",
+          "damage": 30,
+          "rawDamage": 34,
+          "remainingHp": 0,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TARGET_CLEARED",
+        "tick": 4234,
+        "data": {
+          "id": "lung-initial-0",
+          "kind": "single"
+        }
+      },
+      {
+        "type": "GROWTH_REWARD",
+        "tick": 4234,
+        "data": {
+          "key": "ordinary:lung:lung-initial-0",
+          "xp": 2,
+          "research": 0,
+          "totalXp": 172,
+          "totalResearch": 15
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4245,
+        "data": {
+          "tool": 1,
+          "x": 1412.1132756518248,
+          "y": 941.3652653426283,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4245,
+        "data": {
+          "id": "lung-initial-1",
+          "damage": 30,
+          "rawDamage": 34,
+          "remainingHp": 0,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TARGET_CLEARED",
+        "tick": 4245,
+        "data": {
+          "id": "lung-initial-1",
+          "kind": "single"
+        }
+      },
+      {
+        "type": "GROWTH_REWARD",
+        "tick": 4245,
+        "data": {
+          "key": "ordinary:lung:lung-initial-1",
+          "xp": 1,
+          "research": 0,
+          "totalXp": 173,
+          "totalResearch": 15
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4256,
+        "data": {
+          "tool": 1,
+          "x": 1369.0299423184906,
+          "y": 941.3652653426283,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4267,
+        "data": {
+          "tool": 1,
+          "x": 1659.605199301929,
+          "y": 1203.8243050307387,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4267,
+        "data": {
+          "id": "virus-10",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 34,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4278,
+        "data": {
+          "tool": 1,
+          "x": 1616.5218659685947,
+          "y": 1203.8243050307387,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 4289,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4289,
+        "data": {
+          "tool": 2,
+          "x": 1616.4176776853094,
+          "y": 1202.9890452752861
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4289,
+        "data": {
+          "id": "virus-10",
+          "damage": 34,
+          "rawDamage": 65,
+          "remainingHp": 0,
+          "tool": 2,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TARGET_CLEARED",
+        "tick": 4289,
+        "data": {
+          "id": "virus-10",
+          "kind": "single"
+        }
+      },
+      {
+        "type": "GROWTH_REWARD",
+        "tick": 4289,
+        "data": {
+          "key": "ordinary:lung:virus-10",
+          "xp": 4,
+          "research": 0,
+          "totalXp": 177,
+          "totalResearch": 15
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 4300,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4300,
+        "data": {
+          "tool": 1,
+          "x": 745.2530798561256,
+          "y": 773.2904985477877,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 4372,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 4422,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 4422,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 4422,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:4422",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "LUNG_PHASE_CHANGED",
+        "tick": 4440,
+        "data": {
+          "phase": "exhale",
+          "airwayOpen": false,
+          "organId": "lung"
+        }
+      },
+      {
+        "type": "ACTOR_SPAWNED",
+        "tick": 4574,
+        "data": {
+          "organId": "lung",
+          "id": "mother-core",
+          "role": "core"
+        }
+      },
+      {
+        "type": "CORE_AWAKEN_REQUESTED",
+        "tick": 4574,
+        "data": {
+          "coreId": "mother-core",
+          "organId": "lung",
+          "traits": "FISSION+MIMIC"
+        }
+      },
+      {
+        "type": "CORE_COMBAT_STARTED",
+        "tick": 4574,
+        "data": {
+          "coreId": "mother-core",
+          "organId": "lung",
+          "traits": "FISSION+MIMIC",
+          "warningSeconds": 2,
+          "membranes": 2,
+          "floorRatio": 0.5
+        }
+      },
+      {
+        "type": "TOOL_REJECTED",
+        "tick": 4585,
+        "data": {
+          "tool": 2,
+          "reason": "range"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 4595,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4595,
+        "data": {
+          "tool": 1,
+          "x": 1218.125,
+          "y": 680.51549751485,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4606,
+        "data": {
+          "tool": 1,
+          "x": 1218.125,
+          "y": 680.0468460611961,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4617,
+        "data": {
+          "tool": 1,
+          "x": 1218.125,
+          "y": 704.3680087364294,
+          "hit": false
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 4619,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 4619,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 4619,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:4619",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "LUNG_PHASE_CHANGED",
+        "tick": 4620,
+        "data": {
+          "phase": "inhale",
+          "airwayOpen": false,
+          "organId": "lung"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4628,
+        "data": {
+          "tool": 1,
+          "x": 1218.125,
+          "y": 694.9021385799672,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4639,
+        "data": {
+          "tool": 1,
+          "x": 1218.125,
+          "y": 715.4062281954108,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4650,
+        "data": {
+          "tool": 1,
+          "x": 1218.125,
+          "y": 720.046079328277,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4661,
+        "data": {
+          "tool": 1,
+          "x": 1255.2151201913562,
+          "y": 721.0189776851045,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 4671,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_REJECTED",
+        "tick": 4671,
+        "data": {
+          "tool": 2,
+          "reason": "range"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 4682,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4682,
+        "data": {
+          "tool": 1,
+          "x": 1327.1406342281816,
+          "y": 731.4520991819523,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4693,
+        "data": {
+          "tool": 1,
+          "x": 1369.0768024544952,
+          "y": 731.5312060221579,
+          "hit": false
+        }
+      },
+      {
+        "type": "CORE_PHASE_CHANGED",
+        "tick": 4694,
+        "data": {
+          "coreId": "mother-core",
+          "organId": "lung",
+          "trait": "FISSION",
+          "phaseIndex": 0
+        }
+      },
+      {
+        "type": "CORE_ATTACK_TELEGRAPHED",
+        "tick": 4694,
+        "data": {
+          "coreId": "mother-core",
+          "organId": "lung",
+          "attackId": "mother-core:attack:1",
+          "kind": "fission-burst",
+          "trait": "FISSION",
+          "resolveAt": 79.33333333333333,
+          "x": 759.0976357878285,
+          "y": 769.3689100448834,
+          "angle": -1.5124999999999966,
+          "range": 0,
+          "radius": 88,
+          "halfAngle": 0
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4704,
+        "data": {
+          "tool": 1,
+          "x": 1412.160135787828,
+          "y": 731.5312060221579,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4715,
+        "data": {
+          "tool": 1,
+          "x": 1455.243469121161,
+          "y": 728.7199330831118,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4726,
+        "data": {
+          "tool": 1,
+          "x": 1498.326802454494,
+          "y": 727.1516156697817,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4737,
+        "data": {
+          "tool": 1,
+          "x": 1541.410135787827,
+          "y": 725.2805066609926,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4748,
+        "data": {
+          "tool": 1,
+          "x": 1584.4934691211597,
+          "y": 723.2358289266176,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 4754,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_REJECTED",
+        "tick": 4754,
+        "data": {
+          "tool": 2,
+          "reason": "range"
+        }
+      },
+      {
+        "type": "CORE_MEMBRANE_BROKEN",
+        "tick": 4760,
+        "data": {
+          "coreId": "mother-core",
+          "organId": "lung",
+          "trait": "FISSION",
+          "remaining": 1,
+          "total": 2,
+          "floorRatio": 0.5,
+          "seenTraits": "FISSION"
+        }
+      },
+      {
+        "type": "CORE_ATTACK_RESOLVED",
+        "tick": 4760,
+        "data": {
+          "coreId": "mother-core",
+          "organId": "lung",
+          "attackId": "mother-core:attack:1",
+          "kind": "fission-burst",
+          "recovery": 2.4,
+          "damageCommands": 0
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 4765,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4765,
+        "data": {
+          "tool": 1,
+          "x": 1651.0768024544927,
+          "y": 720.992270360842,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4776,
+        "data": {
+          "tool": 1,
+          "x": 1694.160135787827,
+          "y": 718.5193531219708,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4787,
+        "data": {
+          "tool": 1,
+          "x": 1737.243469121161,
+          "y": 715.7799633845236,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4798,
+        "data": {
+          "tool": 1,
+          "x": 1780.3268024544952,
+          "y": 712.728642672752,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4809,
+        "data": {
+          "tool": 1,
+          "x": 1823.4101357878294,
+          "y": 709.3088857834088,
+          "hit": false
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 4811,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 4811,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 4811,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:4811",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4820,
+        "data": {
+          "tool": 1,
+          "x": 1866.4934691211636,
+          "y": 701.484107226585,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4831,
+        "data": {
+          "tool": 1,
+          "x": 1905.660135787831,
+          "y": 701.484107226585,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 4832,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_REJECTED",
+        "tick": 4832,
+        "data": {
+          "tool": 2,
+          "reason": "range"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 4843,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4843,
+        "data": {
+          "tool": 1,
+          "x": 1923.0833789925846,
+          "y": 699.9999913081076,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4843,
+        "data": {
+          "id": "mother-core",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 646,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4854,
+        "data": {
+          "tool": 1,
+          "x": 1923.0833688200594,
+          "y": 699.9999913081076,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4854,
+        "data": {
+          "id": "mother-core",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 612,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "LUNG_PHASE_CHANGED",
+        "tick": 4860,
+        "data": {
+          "phase": "exhale",
+          "airwayOpen": false,
+          "organId": "lung"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4865,
+        "data": {
+          "tool": 1,
+          "x": 1919.1666182300537,
+          "y": 699.9999913081076,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4865,
+        "data": {
+          "id": "mother-core",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 578,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4876,
+        "data": {
+          "tool": 1,
+          "x": 1923.083348475009,
+          "y": 699.9999913081076,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4876,
+        "data": {
+          "id": "mother-core",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 544,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4887,
+        "data": {
+          "tool": 1,
+          "x": 1919.1667123259213,
+          "y": 699.9999913081076,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4887,
+        "data": {
+          "id": "mother-core",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 510,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4898,
+        "data": {
+          "tool": 1,
+          "x": 1862.907814093132,
+          "y": 724.9255053449335,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4898,
+        "data": {
+          "id": "mother-core",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 476,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "CORE_PHASE_CHANGED",
+        "tick": 4904,
+        "data": {
+          "coreId": "mother-core",
+          "organId": "lung",
+          "trait": "MIMIC",
+          "phaseIndex": 1
+        }
+      },
+      {
+        "type": "CORE_ATTACK_TELEGRAPHED",
+        "tick": 4904,
+        "data": {
+          "coreId": "mother-core",
+          "organId": "lung",
+          "attackId": "mother-core:attack:2",
+          "kind": "corrosion",
+          "trait": "MIMIC",
+          "resolveAt": 83.53333333333333,
+          "x": 1260,
+          "y": 1120,
+          "angle": -3.3125000000000133,
+          "range": 0,
+          "radius": 55,
+          "halfAngle": 0
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4909,
+        "data": {
+          "tool": 1,
+          "x": 1901.8776551580056,
+          "y": 705.5389899839993,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4909,
+        "data": {
+          "id": "mother-core",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 442,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 4912,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4912,
+        "data": {
+          "tool": 2,
+          "x": 1913.6276551580058,
+          "y": 705.5389899839993
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4912,
+        "data": {
+          "id": "mother-core",
+          "damage": 65,
+          "rawDamage": 65,
+          "remainingHp": 377,
+          "tool": 2,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 4924,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4924,
+        "data": {
+          "tool": 1,
+          "x": 1848.6666591659805,
+          "y": 700.0000098178818,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4924,
+        "data": {
+          "id": "mother-core",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 343,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4935,
+        "data": {
+          "tool": 1,
+          "x": 1836.9166769679002,
+          "y": 700.0000098178818,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 4935,
+        "data": {
+          "id": "mother-core",
+          "damage": 3,
+          "rawDamage": 34,
+          "remainingHp": 340,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4946,
+        "data": {
+          "tool": 1,
+          "x": 1907.4167202011363,
+          "y": 700.0000098178818,
+          "hit": true
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4957,
+        "data": {
+          "tool": 1,
+          "x": 1915.249961981736,
+          "y": 700.0000098178818,
+          "hit": true
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4968,
+        "data": {
+          "tool": 1,
+          "x": 1860.4166184758765,
+          "y": 700.0000098178818,
+          "hit": true
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4979,
+        "data": {
+          "tool": 1,
+          "x": 1844.7500103012337,
+          "y": 700.0000098178818,
+          "hit": true
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4990,
+        "data": {
+          "tool": 1,
+          "x": 1899.583313116989,
+          "y": 700.0000098178818,
+          "hit": true
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 4993,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 4993,
+        "data": {
+          "tool": 2,
+          "x": 1911.3333131169893,
+          "y": 700.0000098178818
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 5004,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 5004,
+        "data": {
+          "tool": 1,
+          "x": 1879.9999518092102,
+          "y": 700.0000098178818,
+          "hit": true
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 5005,
+        "data": {
+          "found": 1,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 5005,
+        "data": {
+          "count": 1,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "CORE_MEMBRANE_BROKEN",
+        "tick": 5005,
+        "data": {
+          "coreId": "mother-core",
+          "organId": "lung",
+          "trait": "MIMIC",
+          "remaining": 0,
+          "total": 2,
+          "floorRatio": 0,
+          "seenTraits": "FISSION+MIMIC"
+        }
+      },
+      {
+        "type": "CORE_MEMBRANES_OPENED",
+        "tick": 5005,
+        "data": {
+          "coreId": "mother-core",
+          "organId": "lung",
+          "seenTraits": "FISSION+MIMIC"
+        }
+      },
+      {
+        "type": "CORE_CORROSION_INTERRUPTED",
+        "tick": 5005,
+        "data": {
+          "coreId": "mother-core",
+          "organId": "lung",
+          "attackId": "mother-core:attack:2",
+          "by": "scan",
+          "exposure": 3.5
+        }
+      },
+      {
+        "type": "CORE_SCAN_REVEALED",
+        "tick": 5005,
+        "data": {
+          "coreId": "mother-core",
+          "organId": "lung",
+          "duration": 5,
+          "interrupted": true
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 5005,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:5005",
+          "count": 1,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "ORGAN_INTEGRITY_CHANGED",
+        "tick": 5005,
+        "data": {
+          "organId": "lung",
+          "before": 85,
+          "after": 82,
+          "reason": "protocol-pressure",
+          "protocolId": "IMMUNE_BEACON"
+        }
+      },
+      {
+        "type": "PROTOCOL_BEACON_CREATED",
+        "tick": 5005,
+        "data": {
+          "protocolId": "IMMUNE_BEACON",
+          "rootId": "127:2:scan:5005",
+          "x": 1883.9166184758735,
+          "y": 700.0000098178813,
+          "duration": 6,
+          "cost": 3,
+          "cooldown": 12,
+          "cells": 3
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 5015,
+        "data": {
+          "tool": 1,
+          "x": 1848.6666184758762,
+          "y": 700.0000098178818,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 5015,
+        "data": {
+          "id": "mother-core",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 306,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 5026,
+        "data": {
+          "tool": 1,
+          "x": 1911.3333766952778,
+          "y": 700.0000098178818,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 5026,
+        "data": {
+          "id": "mother-core",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 272,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 5037,
+        "data": {
+          "tool": 1,
+          "x": 1848.6666184758762,
+          "y": 700.0000098178818,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 5037,
+        "data": {
+          "id": "mother-core",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 238,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "LUNG_PHASE_CHANGED",
+        "tick": 5040,
+        "data": {
+          "phase": "inhale",
+          "airwayOpen": false,
+          "organId": "lung"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 5048,
+        "data": {
+          "tool": 1,
+          "x": 1911.3333766952778,
+          "y": 700.0000098178818,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 5048,
+        "data": {
+          "id": "mother-core",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 204,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 5059,
+        "data": {
+          "tool": 1,
+          "x": 1852.5833588933567,
+          "y": 700.0000098178818,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 5059,
+        "data": {
+          "id": "mother-core",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 170,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 5070,
+        "data": {
+          "tool": 1,
+          "x": 1907.4166362777974,
+          "y": 700.0000098178818,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 5070,
+        "data": {
+          "id": "mother-core",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 136,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 5071,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 5071,
+        "data": {
+          "tool": 2,
+          "x": 1911.333302944464,
+          "y": 700.0000098178818
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 5071,
+        "data": {
+          "id": "mother-core",
+          "damage": 65,
+          "rawDamage": 65,
+          "remainingHp": 71,
+          "tool": 2,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 5083,
+        "data": {
+          "tool": 1
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 5083,
+        "data": {
+          "tool": 1,
+          "x": 1848.6666184758762,
+          "y": 700.0000098178818,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 5083,
+        "data": {
+          "id": "mother-core",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 37,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 5094,
+        "data": {
+          "tool": 1,
+          "x": 1836.916636277796,
+          "y": 700.0000098178818,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 5094,
+        "data": {
+          "id": "mother-core",
+          "damage": 34,
+          "rawDamage": 34,
+          "remainingHp": 3,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 5105,
+        "data": {
+          "tool": 1,
+          "x": 1907.4166464503226,
+          "y": 700.0000098178818,
+          "hit": true
+        }
+      },
+      {
+        "type": "TARGET_HIT",
+        "tick": 5105,
+        "data": {
+          "id": "mother-core",
+          "damage": 3,
+          "rawDamage": 34,
+          "remainingHp": 0,
+          "tool": 1,
+          "cause": "basic"
+        }
+      },
+      {
+        "type": "TARGET_CLEARED",
+        "tick": 5105,
+        "data": {
+          "id": "mother-core",
+          "kind": "single"
+        }
+      },
+      {
+        "type": "CORE_CLEARED",
+        "tick": 5105,
+        "data": {
+          "coreId": "mother-core",
+          "organId": "lung",
+          "actorId": "mother-core",
+          "traits": "FISSION+MIMIC",
+          "elapsed": 85.08333333333333,
+          "scanInterrupts": 1,
+          "broodWaves": 0
+        }
+      },
+      {
+        "type": "CAMPAIGN_CORE_CLEARED",
+        "tick": 5105,
+        "data": {
+          "coreId": "mother-core",
+          "organId": "lung"
+        }
+      },
+      {
+        "type": "TOOL_FIRED",
+        "tick": 5116,
+        "data": {
+          "tool": 1,
+          "x": 1919.1666286484028,
+          "y": 700.0000098178818,
+          "hit": false
+        }
+      },
+      {
+        "type": "TOOL_SELECTED",
+        "tick": 5152,
+        "data": {
+          "tool": 2
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 5198,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 5198,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 5198,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:5198",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "LUNG_PHASE_CHANGED",
+        "tick": 5280,
+        "data": {
+          "phase": "exhale",
+          "airwayOpen": false,
+          "organId": "lung"
+        }
+      },
+      {
+        "type": "SCAN_COMPLETED",
+        "tick": 5394,
+        "data": {
+          "found": 0,
+          "radius": 650
+        }
+      },
+      {
+        "type": "BATTLE_DIAGNOSED",
+        "tick": 5394,
+        "data": {
+          "count": 0,
+          "revealSeconds": 5
+        }
+      },
+      {
+        "type": "PROTOCOL_TRACE_APPLIED",
+        "tick": 5394,
+        "data": {
+          "protocolId": "EXPOSE_TRACE",
+          "rootId": "127:2:scan:5394",
+          "count": 0,
+          "duration": 9,
+          "slow": 0.7
+        }
+      },
+      {
+        "type": "RETEST_COMPLETED",
+        "tick": 5416,
+        "data": {
+          "organs": "heart:87.0,lung:82.0",
+          "infection": 0
+        }
+      },
+      {
+        "type": "RUN_ENDED",
+        "tick": 5416,
+        "data": {
+          "success": true,
+          "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。",
+          "seed": 127,
+          "durationSimMs": 90267
+        }
+      }
+    ],
+    "message": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。",
+    "messageUntil": 98.26666666666667,
+    "shots": 183,
+    "hits": 73,
+    "scans": 29,
+    "dashes": 0,
+    "result": {
+      "success": true,
+      "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。"
+    },
+    "world": {
+      "width": 2400,
+      "height": 1500,
+      "bounds": {
+        "left": 85,
+        "right": 2315,
+        "top": 145,
+        "bottom": 1415
+      },
+      "obstacles": [
+        {
+          "id": "alveolus-a",
+          "x": 850,
+          "y": 650,
+          "radius": 100
+        },
+        {
+          "id": "alveolus-b",
+          "x": 1740,
+          "y": 1090,
+          "radius": 105
+        },
+        {
+          "id": "alveolus-c",
+          "x": 1900,
+          "y": 360,
+          "radius": 78
+        },
+        {
+          "id": "alveolus-d",
+          "x": 650,
+          "y": 1330,
+          "radius": 68
+        }
+      ],
+      "foreground": {
+        "x": 1010,
+        "y": 1220,
+        "width": 285,
+        "height": 150
+      }
+    },
+    "battle": {
+      "milestone": "G3",
+      "organId": "lung",
+      "graph": {
+        "nodes": [
+          {
+            "id": "lung-source-a",
+            "kind": "source",
+            "x": 1570,
+            "y": 600,
+            "active": false,
+            "infected": false
+          },
+          {
+            "id": "airway",
+            "kind": "gate",
+            "x": 1250,
+            "y": 330,
+            "active": false,
+            "infected": false
+          },
+          {
+            "id": "tissue",
+            "kind": "tissue",
+            "x": 1260,
+            "y": 1120,
+            "hp": 76,
+            "maxHp": 100,
+            "radius": 43,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "retest",
+            "kind": "retest",
+            "x": 350,
+            "y": 650,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "research",
+            "kind": "research",
+            "x": 800,
+            "y": 1150,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "exit",
+            "kind": "exit",
+            "x": 350,
+            "y": 1060,
+            "active": true,
+            "infected": false
+          },
+          {
+            "x": 2050,
+            "y": 1110,
+            "id": "lung-migrated-source",
+            "kind": "source",
+            "active": false,
+            "infected": false
+          }
+        ],
+        "edges": [
+          {
+            "id": "lung-source-a:airway",
+            "from": "lung-source-a",
+            "to": "airway",
+            "open": false,
+            "nextSpread": 95.08333333333333,
+            "flowDirection": {
+              "x": -0.7642914835078909,
+              "y": -0.6448709392097829
+            }
+          },
+          {
+            "id": "airway:tissue",
+            "from": "airway",
+            "to": "tissue",
+            "open": false,
+            "nextSpread": 95.08333333333333,
+            "flowDirection": {
+              "x": 0.012657213851396143,
+              "y": 0.9999198942602954
+            }
+          },
+          {
+            "id": "lung-migrated-source:airway",
+            "from": "lung-migrated-source",
+            "to": "airway",
+            "open": false,
+            "nextSpread": 95.08333333333333,
+            "flowDirection": {
+              "x": -0.7160001396200408,
+              "y": -0.6981001361295398
+            }
+          }
+        ]
+      },
+      "pressure": {
+        "infection": 0,
+        "vitality": 100,
+        "criticalSince": null,
+        "organAlarm": false,
+        "crisisReason": ""
+      },
+      "pulse": {
+        "phase": "surge",
+        "phaseRemaining": 0.7333333333333343,
+        "readyAt": 0,
+        "activeUntil": 0,
+        "origin": {
+          "x": 1250,
+          "y": 330
+        },
+        "direction": 2.7999771566135006,
+        "uses": 0,
+        "cycleIndex": 12
+      },
+      "warning": null,
+      "traits": [
+        "FISSION",
+        "MIMIC"
+      ],
+      "defeatedTraits": [
+        "FISSION",
+        "MIMIC"
+      ],
+      "nextEvolutionAt": 50,
+      "stage": 5,
+      "stageLabel": "Ⅵ · 稳定复测",
+      "objective": "母巢与器官指标达标。靠近当前器官复测终端按 E，完成本局。",
+      "readyToRetest": true,
+      "lastAim": {
+        "x": 350,
+        "y": 650.0000064156781
+      },
+      "stats": {
+        "kills": 13,
+        "sourceClears": 4,
+        "eliteClears": 2,
+        "repairs": 2,
+        "pulses": 0,
+        "playerDamage": 0,
+        "tissueDamage": 13,
+        "scans": 29
+      },
+      "nextSpawnAt": {
+        "lung-source-a": 68.71666666666667,
+        "lung-migrated-source": 76.71666666666667
+      },
+      "nextActorId": 10,
+      "firstTrait": "CARAPACE",
+      "recentNotice": "感染源已净化（本局累计 4），停止增殖，感染负荷 -14。",
+      "gateChangedAt": -10,
+      "organLowSince": null,
+      "eliteSpawned": 2,
+      "history": [
+        {
+          "at": 1.8333333333333333,
+          "text": "感染源已净化（本局累计 1），停止增殖，感染负荷 -14。"
+        },
+        {
+          "at": 6.1,
+          "text": "感染源已净化（本局累计 2），停止增殖，感染负荷 -14。"
+        },
+        {
+          "at": 14,
+          "text": "变异预警 · 裂殖：母体死亡后分出 2 个小体。代价：小体仅 22 耐久且不能继续分裂。反制：2 范围裂解；群体保持聚集时一并清除"
+        },
+        {
+          "at": 22,
+          "text": "⋈ 裂殖已出现。弱点：2 范围裂解；群体保持聚集时一并清除"
+        },
+        {
+          "at": 25.133333333333333,
+          "text": "变异精英已清除（1/2）。保持组织，继续诊断。"
+        },
+        {
+          "at": 32,
+          "text": "变异预警 · 潜伏：拟态组织，优先侵蚀组织。代价：移动速度降低 50%；每 6 秒扰动 1.2 秒。反制：Q 扫描显形 5 秒；基础射击仍有效；3 修复组织同时清除附近潜伏体"
+        },
+        {
+          "at": 40,
+          "text": "◌ 潜伏已出现。弱点：Q 扫描显形 5 秒；基础射击仍有效；3 修复组织同时清除附近潜伏体"
+        },
+        {
+          "at": 43.483333333333334,
+          "text": "变异精英已清除（2/2）。保持组织，继续诊断。"
+        },
+        {
+          "at": 64.33333333333333,
+          "text": "感染源已净化（本局累计 3），停止增殖，感染负荷 -14。"
+        },
+        {
+          "at": 70.05,
+          "text": "感染源已净化（本局累计 4），停止增殖，感染负荷 -14。"
+        }
+      ],
+      "behaviorHistory": [
+        {
+          "tick": 6,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 25
+        },
+        {
+          "tick": 53,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 64,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 75,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 86,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 91,
+          "precisionDamage": 0,
+          "areaDamage": 65,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 99,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 110,
+          "precisionDamage": 3,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 200,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 309,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 320,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 327,
+          "precisionDamage": 0,
+          "areaDamage": 65,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 333,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 344,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 355,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 366,
+          "precisionDamage": 3,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 377,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 388,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 393,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 399,
+          "precisionDamage": 30,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 417,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 428,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 439,
+          "precisionDamage": 30,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 589,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 783,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 977,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 1166,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 1360,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 1453,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 1464,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 1475,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 1477,
+          "precisionDamage": 0,
+          "areaDamage": 65,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 1486,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 1497,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 1508,
+          "precisionDamage": 3,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 1549,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 1575,
+          "precisionDamage": 22,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 1740,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 1930,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 2122,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 2315,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 2506,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 2559,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 2570,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 2573,
+          "precisionDamage": 0,
+          "areaDamage": 65,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 2584,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 2595,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 2606,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 2699,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 2887,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 3077,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 3271,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 3464,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 3656,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 3807,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 3818,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 3829,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 3840,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 3845,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 3851,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 3853,
+          "precisionDamage": 0,
+          "areaDamage": 65,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 3905,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 1,
+          "repaired": 0
+        },
+        {
+          "tick": 4036,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 25
+        },
+        {
+          "tick": 4037,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4080,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4091,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4137,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4148,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4159,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4170,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4181,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4192,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4203,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4234,
+          "precisionDamage": 30,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4245,
+          "precisionDamage": 30,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4267,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4289,
+          "precisionDamage": 0,
+          "areaDamage": 34,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4422,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4619,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4811,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4843,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4854,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4865,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4876,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4887,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4898,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4909,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4912,
+          "precisionDamage": 0,
+          "areaDamage": 65,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4924,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 4935,
+          "precisionDamage": 3,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 5005,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 5015,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 5026,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 5037,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 5048,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 5059,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 5070,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 5071,
+          "precisionDamage": 0,
+          "areaDamage": 65,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 5083,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 5094,
+          "precisionDamage": 34,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 5105,
+          "precisionDamage": 3,
+          "areaDamage": 0,
+          "scans": 0,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 5198,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        },
+        {
+          "tick": 5394,
+          "precisionDamage": 0,
+          "areaDamage": 0,
+          "scans": 1,
+          "isolations": 0,
+          "repaired": 0
+        }
+      ],
+      "evolutionDecisions": [
+        {
+          "kind": "warn",
+          "trait": "FISSION",
+          "warningSeconds": 8,
+          "roll": 0.5301619111560285,
+          "candidates": [
+            {
+              "trait": "CARAPACE",
+              "rawWeight": 1.3648792048929665,
+              "probability": 0.3997398154077644
+            },
+            {
+              "trait": "FISSION",
+              "rawWeight": 1.0447232415902141,
+              "probability": 0.305973945715015
+            },
+            {
+              "trait": "MIMIC",
+              "rawWeight": 1.004816513761468,
+              "probability": 0.29428623887722066
+            }
+          ],
+          "summary": {
+            "precisionDamage": 542,
+            "areaDamage": 130,
+            "precisionRatio": 0.8065476190476191,
+            "areaRatio": 0.19345238095238096,
+            "scans": 5,
+            "isolations": 0,
+            "repaired": 25,
+            "sampleCount": 25,
+            "fromTick": 0,
+            "toTick": 840
+          }
+        },
+        {
+          "kind": "warn",
+          "trait": "MIMIC",
+          "warningSeconds": 8,
+          "roll": 0.6736558140255511,
+          "candidates": [
+            {
+              "trait": "CARAPACE",
+              "rawWeight": 1.396037691401649,
+              "probability": 0.55
+            },
+            {
+              "trait": "MIMIC",
+              "rawWeight": 0.9594522968197879,
+              "probability": 0.45
+            }
+          ],
+          "summary": {
+            "precisionDamage": 737,
+            "areaDamage": 195,
+            "precisionRatio": 0.7907725321888412,
+            "areaRatio": 0.2092274678111588,
+            "scans": 10,
+            "isolations": 0,
+            "repaired": 25,
+            "sampleCount": 38,
+            "fromTick": 0,
+            "toTick": 1920
+          }
+        }
+      ]
+    },
+    "growth": {
+      "runId": "127:2",
+      "seed": 127,
+      "lastElapsed": 90.26666666666667,
+      "xp": 177,
+      "level": 4,
+      "nextXp": 220,
+      "research": 15,
+      "equipped": [
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced"
+        },
+        {
+          "id": "EXPOSE_TRACE",
+          "tuning": "balanced"
+        },
+        {
+          "id": "PULSE_BREAK",
+          "tuning": "balanced"
+        }
+      ],
+      "draft": null,
+      "pendingLevels": [],
+      "consumedDraftIds": [
+        "127:2:draft:1",
+        "127:2:draft:2",
+        "127:2:draft:3",
+        "127:2:draft:4"
+      ],
+      "rewardedKeys": [
+        "source:heart:source-a",
+        "diagnose:baseline",
+        "source:heart:source-b",
+        "ordinary:heart:virus-4",
+        "ordinary:heart:virus-3",
+        "ordinary:heart:virus-1",
+        "ordinary:heart:virus-2",
+        "elite:heart:elite-5",
+        "elite:heart:elite-8",
+        "diagnose:MIMIC",
+        "source:lung:lung-source-a",
+        "ordinary:lung:virus-9",
+        "source:lung:lung-migrated-source",
+        "ordinary:lung:lung-initial-0",
+        "ordinary:lung:lung-initial-1",
+        "ordinary:lung:virus-10"
+      ],
+      "sourceKillCounts": {
+        "heart:source-b": 2,
+        "heart:source-a": 2,
+        "lung:lung-source-a": 3,
+        "lung:lung-migrated-source": 1
+      },
+      "damageTakenByOrgan": {
+        "heart": 0,
+        "lung": 0
+      },
+      "protectionNeeded": {
+        "heart": false,
+        "lung": false
+      },
+      "draftSerial": 4,
+      "historyHash": 3692206137,
+      "ended": true,
+      "beacon": null,
+      "beaconReadyAt": 95.41666666666667,
+      "cells": [],
+      "activations": {
+        "PURIFY_CHAIN": 4,
+        "EXPOSE_TRACE": 4
+      },
+      "marks": [],
+      "resonance": [],
+      "chainRoots": [
+        "127:2:hit:388:virus-4",
+        "127:2:hit:428:virus-1",
+        "127:2:hit:1575:virus-6",
+        "127:2:hit:4091:virus-9"
+      ],
+      "protocolHistory": [
+        {
+          "at": 0.1,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 1.8333333333333333,
+          "type": "GROWTH_REWARD",
+          "text": "研究证据 +2，经验 +20。"
+        },
+        {
+          "at": 1.8333333333333333,
+          "type": "PROTOCOL_EQUIPPED",
+          "text": "连锁净化：连锁净化 Ⅰ · 均衡。"
+        },
+        {
+          "at": 3.3333333333333335,
+          "type": "GROWTH_REWARD",
+          "text": "研究证据 +1，经验 +6。"
+        },
+        {
+          "at": 3.3333333333333335,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 6.1,
+          "type": "GROWTH_REWARD",
+          "text": "研究证据 +2，经验 +20。"
+        },
+        {
+          "at": 6.466666666666667,
+          "type": "GROWTH_REWARD",
+          "text": "研究证据 +0，经验 +4。"
+        },
+        {
+          "at": 6.466666666666667,
+          "type": "PROTOCOL_CHAIN_HIT",
+          "text": "连锁净化 1 跳。"
+        },
+        {
+          "at": 6.55,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 6.6499999999999995,
+          "type": "GROWTH_REWARD",
+          "text": "研究证据 +0，经验 +2。"
+        },
+        {
+          "at": 7.133333333333333,
+          "type": "GROWTH_REWARD",
+          "text": "研究证据 +0，经验 +4。"
+        },
+        {
+          "at": 7.133333333333333,
+          "type": "PROTOCOL_CHAIN_HIT",
+          "text": "连锁净化 1 跳。"
+        },
+        {
+          "at": 7.133333333333333,
+          "type": "PROTOCOL_EQUIPPED",
+          "text": "异常显影：异常显影 Ⅰ · 均衡。"
+        },
+        {
+          "at": 7.316666666666666,
+          "type": "GROWTH_REWARD",
+          "text": "研究证据 +0，经验 +2。"
+        },
+        {
+          "at": 9.816666666666666,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 9.816666666666666,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 13.049999999999999,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 13.049999999999999,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 16.28333333333333,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 16.28333333333333,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 19.433333333333334,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 19.433333333333334,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 22.666666666666668,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 22.666666666666668,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 25.133333333333333,
+          "type": "GROWTH_REWARD",
+          "text": "研究证据 +2，经验 +30。"
+        },
+        {
+          "at": 25.816666666666666,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 25.816666666666666,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 26.25,
+          "type": "PROTOCOL_CHAIN_HIT",
+          "text": "连锁净化 1 跳。"
+        },
+        {
+          "at": 29,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 29,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 32.166666666666664,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 32.166666666666664,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 35.36666666666667,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 35.36666666666667,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 38.583333333333336,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 38.583333333333336,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 41.766666666666666,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 41.766666666666666,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 43.483333333333334,
+          "type": "GROWTH_REWARD",
+          "text": "研究证据 +2，经验 +30。"
+        },
+        {
+          "at": 43.5,
+          "type": "PROTOCOL_EQUIPPED",
+          "text": "共振裂解：共振裂解 Ⅰ · 均衡。"
+        },
+        {
+          "at": 44.983333333333334,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 44.983333333333334,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 48.11666666666667,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 48.11666666666667,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 51.28333333333333,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 51.28333333333333,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 54.516666666666666,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 54.516666666666666,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 57.733333333333334,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 57.733333333333334,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 60.93333333333333,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 60.93333333333333,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 64.08333333333333,
+          "type": "GROWTH_REWARD",
+          "text": "研究证据 +2，经验 +8。"
+        },
+        {
+          "at": 64.08333333333333,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 4 体，持续 9 秒。"
+        },
+        {
+          "at": 64.08333333333333,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 64.33333333333333,
+          "type": "GROWTH_REWARD",
+          "text": "研究证据 +2，经验 +20。"
+        },
+        {
+          "at": 67.28333333333333,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 3 体，持续 9 秒。"
+        },
+        {
+          "at": 67.28333333333333,
+          "type": "IMMUNE_PATROL_CREATED",
+          "text": "Q 召来一只免疫侦巡细胞，短时协助清理。"
+        },
+        {
+          "at": 68.18333333333334,
+          "type": "GROWTH_REWARD",
+          "text": "研究证据 +0，经验 +4。"
+        },
+        {
+          "at": 68.18333333333334,
+          "type": "PROTOCOL_CHAIN_HIT",
+          "text": "连锁净化 2 跳。"
+        },
+        {
+          "at": 68.18333333333334,
+          "type": "PROTOCOL_EQUIPPED",
+          "text": "免疫灯塔：免疫灯塔 Ⅰ · 均衡。"
+        },
+        {
+          "at": 70.05,
+          "type": "GROWTH_REWARD",
+          "text": "研究证据 +2，经验 +20。"
+        },
+        {
+          "at": 70.56666666666666,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 3 体，持续 9 秒。"
+        },
+        {
+          "at": 70.56666666666666,
+          "type": "PROTOCOL_BEACON_CREATED",
+          "text": "三只免疫细胞出击，组织承压 −3。"
+        },
+        {
+          "at": 70.56666666666666,
+          "type": "GROWTH_REWARD",
+          "text": "研究证据 +0，经验 +2。"
+        },
+        {
+          "at": 70.75,
+          "type": "GROWTH_REWARD",
+          "text": "研究证据 +0，经验 +1。"
+        },
+        {
+          "at": 71.48333333333333,
+          "type": "GROWTH_REWARD",
+          "text": "研究证据 +0，经验 +4。"
+        },
+        {
+          "at": 73.7,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 76.98333333333333,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 80.18333333333334,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 83.41666666666667,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 1 体，持续 9 秒。"
+        },
+        {
+          "at": 83.41666666666667,
+          "type": "PROTOCOL_BEACON_CREATED",
+          "text": "三只免疫细胞出击，组织承压 −3。"
+        },
+        {
+          "at": 86.63333333333333,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        },
+        {
+          "at": 89.9,
+          "type": "PROTOCOL_TRACE_APPLIED",
+          "text": "显影追踪 0 体，持续 9 秒。"
+        }
+      ],
+      "pendingLogs": [],
+      "budgetTick": 5416,
+      "budgetUsed": 0,
+      "skippedCommands": 0,
+      "chainCharge": 0,
+      "lastEvolution": {
+        "protocolId": "IMMUNE_BEACON",
+        "rank": 1,
+        "until": 76.18333333333334,
+        "title": "免疫灯塔 Ⅰ · 均衡",
+        "hint": "现在按 Q 标记鼠标区域，召集三只免疫细胞追击、吞噬。"
+      }
+    },
+    "campaign": {
+      "seed": 127,
+      "activeOrganId": "lung",
+      "arenas": {
+        "heart": {
+          "organId": "heart",
+          "activated": true,
+          "geometry": {
+            "width": 2400,
+            "height": 1500,
+            "bounds": {
+              "left": 85,
+              "right": 2315,
+              "top": 145,
+              "bottom": 1415
+            },
+            "obstacles": [
+              {
+                "id": "fold-a",
+                "x": 730,
+                "y": 650,
+                "radius": 85
+              },
+              {
+                "id": "fold-b",
+                "x": 1630,
+                "y": 1190,
+                "radius": 90
+              },
+              {
+                "id": "fold-c",
+                "x": 1350,
+                "y": 540,
+                "radius": 72
+              },
+              {
+                "id": "fold-d",
+                "x": 2120,
+                "y": 720,
+                "radius": 85
+              },
+              {
+                "id": "fold-e",
+                "x": 780,
+                "y": 980,
+                "radius": 70
+              }
+            ],
+            "foreground": {
+              "x": 1110,
+              "y": 1195,
+              "width": 275,
+              "height": 150
+            }
+          },
+          "targets": [
+            {
+              "id": "source-a",
+              "kind": "single",
+              "x": 1020,
+              "y": 650,
+              "active": true,
+              "infected": true,
+              "role": "source",
+              "hp": 0,
+              "maxHp": 238,
+              "radius": 34,
+              "hitUntil": 2.013333333333333,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0,
+              "deadAt": 1.8333333333333333,
+              "revealedUntil": 0,
+              "exposedUntil": 0
+            },
+            {
+              "id": "source-b",
+              "kind": "single",
+              "x": 2010,
+              "y": 1090,
+              "active": true,
+              "infected": true,
+              "role": "source",
+              "hp": 0,
+              "maxHp": 238,
+              "radius": 34,
+              "hitUntil": 6.279999999999999,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0,
+              "deadAt": 6.1,
+              "revealedUntil": 0,
+              "exposedUntil": 0
+            }
+          ],
+          "tissue": {
+            "x": 850,
+            "y": 1190,
+            "hp": 87,
+            "maxHp": 100,
+            "radius": 43
+          },
+          "terminal": {
+            "x": 350,
+            "y": 1180
+          },
+          "graph": {
+            "nodes": [
+              {
+                "id": "source-a",
+                "kind": "source",
+                "x": 1020,
+                "y": 650,
+                "active": false,
+                "infected": false
+              },
+              {
+                "id": "source-b",
+                "kind": "source",
+                "x": 2010,
+                "y": 1090,
+                "active": false,
+                "infected": false
+              },
+              {
+                "id": "gate",
+                "kind": "gate",
+                "x": 1070,
+                "y": 280,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "valve",
+                "kind": "valve",
+                "x": 1440,
+                "y": 950,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "tissue",
+                "kind": "tissue",
+                "x": 850,
+                "y": 1190,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "retest",
+                "kind": "retest",
+                "x": 350,
+                "y": 1180,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "research",
+                "kind": "research",
+                "x": 350,
+                "y": 690,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "exit",
+                "kind": "exit",
+                "x": 2170,
+                "y": 280,
+                "active": true,
+                "infected": false
+              }
+            ],
+            "edges": [
+              {
+                "id": "source-a:gate",
+                "from": "source-a",
+                "to": "gate",
+                "open": true,
+                "nextSpread": 60,
+                "flowDirection": {
+                  "x": 0.13391789600139503,
+                  "y": -0.9909924304103231
+                }
+              },
+              {
+                "id": "gate:tissue",
+                "from": "gate",
+                "to": "tissue",
+                "open": true,
+                "nextSpread": 60,
+                "flowDirection": {
+                  "x": -0.23498856036532292,
+                  "y": 0.971998136056563
+                }
+              },
+              {
+                "id": "source-b:valve",
+                "from": "source-b",
+                "to": "valve",
+                "open": true,
+                "nextSpread": 60,
+                "flowDirection": {
+                  "x": -0.9711364222667793,
+                  "y": -0.23852473529359491
+                }
+              },
+              {
+                "id": "valve:tissue",
+                "from": "valve",
+                "to": "tissue",
+                "open": true,
+                "nextSpread": 60,
+                "flowDirection": {
+                  "x": -0.9262954009547514,
+                  "y": 0.3767981292019328
+                }
+              }
+            ]
+          },
+          "pulse": {
+            "phase": "rest",
+            "phaseRemaining": 0.03333333333333144,
+            "readyAt": 0,
+            "activeUntil": 0,
+            "origin": {
+              "x": 1440,
+              "y": 950
+            },
+            "direction": -0.7425672200924062,
+            "uses": 0,
+            "cycleIndex": 9
+          },
+          "nextSpawnAt": {
+            "source-a": 8,
+            "source-b": 10
+          },
+          "gateChangedAt": -10,
+          "organLowSince": null,
+          "departedAt": 59.96666666666667,
+          "nextBackgroundAt": 94.96666666666667,
+          "backgroundLoss": 0,
+          "backgroundReason": "",
+          "offscreenElapsed": 30.299999999999997,
+          "nextBackgroundElapsed": 35,
+          "lastPressureAt": 90.26666666666667,
+          "totalBackgroundLoss": 0
+        },
+        "lung": {
+          "organId": "lung",
+          "activated": true,
+          "geometry": {
+            "width": 2400,
+            "height": 1500,
+            "bounds": {
+              "left": 85,
+              "right": 2315,
+              "top": 145,
+              "bottom": 1415
+            },
+            "obstacles": [
+              {
+                "id": "alveolus-a",
+                "x": 850,
+                "y": 650,
+                "radius": 100
+              },
+              {
+                "id": "alveolus-b",
+                "x": 1740,
+                "y": 1090,
+                "radius": 105
+              },
+              {
+                "id": "alveolus-c",
+                "x": 1900,
+                "y": 360,
+                "radius": 78
+              },
+              {
+                "id": "alveolus-d",
+                "x": 650,
+                "y": 1330,
+                "radius": 68
+              }
+            ],
+            "foreground": {
+              "x": 1010,
+              "y": 1220,
+              "width": 285,
+              "height": 150
+            }
+          },
+          "targets": [
+            {
+              "x": 1570,
+              "y": 600,
+              "id": "lung-source-a",
+              "kind": "single",
+              "role": "source",
+              "radius": 34,
+              "hp": 0,
+              "maxHp": 238,
+              "hitUntil": 64.51333333333334,
+              "scanned": true,
+              "traits": [],
+              "facing": 0,
+              "born": 0,
+              "attackReady": 60.96666666666667,
+              "revealedUntil": 0,
+              "deadAt": 64.33333333333333,
+              "exposedUntil": 0
+            },
+            {
+              "x": 2050,
+              "y": 1110,
+              "id": "lung-migrated-source",
+              "kind": "single",
+              "role": "source",
+              "radius": 34,
+              "hp": 0,
+              "maxHp": 238,
+              "hitUntil": 70.23,
+              "scanned": false,
+              "traits": [],
+              "facing": 0,
+              "born": 0,
+              "attackReady": 60.96666666666667,
+              "deadAt": 70.05,
+              "revealedUntil": 0,
+              "exposedUntil": 0
+            }
+          ],
+          "tissue": {
+            "x": 1260,
+            "y": 1120,
+            "hp": 82,
+            "maxHp": 100,
+            "radius": 43
+          },
+          "terminal": {
+            "x": 350,
+            "y": 650
+          },
+          "graph": {
+            "nodes": [
+              {
+                "id": "lung-source-a",
+                "kind": "source",
+                "x": 1570,
+                "y": 600,
+                "active": false,
+                "infected": false
+              },
+              {
+                "id": "airway",
+                "kind": "gate",
+                "x": 1250,
+                "y": 330,
+                "active": false,
+                "infected": false
+              },
+              {
+                "id": "tissue",
+                "kind": "tissue",
+                "x": 1260,
+                "y": 1120,
+                "hp": 76,
+                "maxHp": 100,
+                "radius": 43,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "retest",
+                "kind": "retest",
+                "x": 350,
+                "y": 650,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "research",
+                "kind": "research",
+                "x": 800,
+                "y": 1150,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "exit",
+                "kind": "exit",
+                "x": 350,
+                "y": 1060,
+                "active": true,
+                "infected": false
+              },
+              {
+                "x": 2050,
+                "y": 1110,
+                "id": "lung-migrated-source",
+                "kind": "source",
+                "active": false,
+                "infected": false
+              }
+            ],
+            "edges": [
+              {
+                "id": "lung-source-a:airway",
+                "from": "lung-source-a",
+                "to": "airway",
+                "open": false,
+                "nextSpread": 95.08333333333333,
+                "flowDirection": {
+                  "x": -0.7642914835078909,
+                  "y": -0.6448709392097829
+                }
+              },
+              {
+                "id": "airway:tissue",
+                "from": "airway",
+                "to": "tissue",
+                "open": false,
+                "nextSpread": 95.08333333333333,
+                "flowDirection": {
+                  "x": 0.012657213851396143,
+                  "y": 0.9999198942602954
+                }
+              },
+              {
+                "id": "lung-migrated-source:airway",
+                "from": "lung-migrated-source",
+                "to": "airway",
+                "open": false,
+                "nextSpread": 95.08333333333333,
+                "flowDirection": {
+                  "x": -0.7160001396200408,
+                  "y": -0.6981001361295398
+                }
+              }
+            ]
+          },
+          "pulse": {
+            "phase": "surge",
+            "phaseRemaining": 0.7333333333333343,
+            "readyAt": 0,
+            "activeUntil": 0,
+            "origin": {
+              "x": 1250,
+              "y": 330
+            },
+            "direction": 2.7999771566135006,
+            "uses": 0,
+            "cycleIndex": 12
+          },
+          "nextSpawnAt": {
+            "lung-source-a": 68.71666666666667,
+            "lung-migrated-source": 76.71666666666667
+          },
+          "gateChangedAt": -10,
+          "organLowSince": null,
+          "departedAt": null,
+          "nextBackgroundAt": 62,
+          "backgroundLoss": 0,
+          "backgroundReason": "",
+          "offscreenElapsed": 7.966666666666669,
+          "nextBackgroundElapsed": 10,
+          "lastPressureAt": 90.26666666666667,
+          "totalBackgroundLoss": 0,
+          "flow": {
+            "phase": "exhale",
+            "phaseRemaining": 0.7333333333333343,
+            "airwayOpen": false,
+            "changedAt": 65.08333333333333,
+            "pressureUntil": 69.08333333333333,
+            "origin": {
+              "x": 1470,
+              "y": 800
+            },
+            "direction": {
+              "x": 0,
+              "y": 1
+            },
+            "strength": 36
+          }
+        }
+      },
+      "phase": "retest",
+      "travelReadyAt": 62.96666666666667,
+      "migration": {
+        "id": "migration:127:1",
+        "status": "resolved",
+        "from": "heart",
+        "to": "lung",
+        "warnedAt": 40,
+        "deadline": 52,
+        "choice": "ignore",
+        "resolvedAt": 52,
+        "blockStartedAt": null,
+        "carrierIds": [],
+        "clearedCarrierIds": [],
+        "interceptUntil": null,
+        "interceptSucceeded": false,
+        "interceptResolvedAt": 52
+      },
+      "core": {
+        "status": "cleared",
+        "organId": "lung",
+        "actorId": "mother-core",
+        "traits": [
+          "FISSION",
+          "MIMIC"
+        ],
+        "clearedAt": 85.08333333333333,
+        "combat": {
+          "schemaVersion": 1,
+          "coreId": "mother-core",
+          "organId": "lung",
+          "traits": [
+            "FISSION",
+            "MIMIC"
+          ],
+          "activeTrait": "MIMIC",
+          "phase": "defeated",
+          "phaseIndex": 2,
+          "phaseStartedAt": 83.41666666666667,
+          "facing": -3.3890954179496275,
+          "nextActionAt": 85.81666666666668,
+          "attack": null,
+          "exposedUntil": 0,
+          "revealedUntil": 0,
+          "broodQueued": [],
+          "broodReleased": [],
+          "attackSerial": 2,
+          "attacksResolved": 1,
+          "scanInterrupts": 1,
+          "cleared": true,
+          "clearedAt": 85.08333333333333,
+          "lastTick": 5104,
+          "introduced": true,
+          "lastScanTick": 5005,
+          "lastPulseTick": -1,
+          "seenTraits": [
+            "FISSION",
+            "MIMIC"
+          ],
+          "membrane": {
+            "total": 2,
+            "remaining": 0,
+            "floorRatio": 0,
+            "thresholdReached": true
+          }
+        }
+      },
+      "requiredSourceIds": {
+        "heart": [
+          "source-a",
+          "source-b"
+        ],
+        "lung": [
+          "lung-source-a",
+          "lung-migrated-source"
+        ]
+      },
+      "clearedSourceIds": [
+        "heart:source-a",
+        "heart:source-b",
+        "lung:lung-source-a",
+        "lung:lung-migrated-source"
+      ],
+      "clearedEliteIds": [
+        "heart:elite-5",
+        "heart:elite-8"
+      ],
+      "transactionIds": [
+        "applied:travel:127:3598"
+      ],
+      "pendingCommands": [],
+      "history": [
+        {
+          "at": 40,
+          "text": "病毒向肺部迁移：12 秒。出口 E 追击；心脏隔离闸 E 保持 2 秒封锁；不响应则肺部建立新源。"
+        },
+        {
+          "at": 52,
+          "text": "迁移群在肺部建立感染源：肺部完整度 −10，感染 +8。出口保持开放，及时前往救援仍可挽回。"
+        },
+        {
+          "at": 59.96666666666667,
+          "text": "进入肺部：吸气聚拢、呼气分散；E 气道会实际截流。"
+        },
+        {
+          "at": 70.05,
+          "text": "主要感染源已净化。前往肺部复测台按 E，唤醒本局双特性母巢。"
+        },
+        {
+          "at": 76.23333333333333,
+          "text": "母巢被唤醒：它将交替使用本局两种特性。读清前摇，利用基础弱点与器官环境。"
+        },
+        {
+          "at": 85.08333333333333,
+          "text": "母巢已净化。检查所有激活器官 ≥50%、感染 <35，再到复测终端按 E。"
+        }
+      ],
+      "progress": {
+        "sourceClears": 4,
+        "sourceTotal": 4,
+        "eliteClears": 2,
+        "coreCleared": true,
+        "organConditions": true,
+        "infectionCondition": true
+      },
+      "stats": {
+        "travels": 1,
+        "airwayUses": 1,
+        "backgroundDamage": 0,
+        "migrationChoice": "ignore"
+      }
+    },
+    "messagePriority": 3,
+    "tacticalRecords": [
+      {
+        "key": "INFECTION_SOURCE_CLEARED:heart",
+        "eventType": "INFECTION_SOURCE_CLEARED",
+        "firstAt": 1.8333333333333333,
+        "at": 6.1,
+        "text": "心脏感染源已净化，停止增援并降低感染负荷。",
+        "count": 2
+      },
+      {
+        "key": "EVOLUTION_WARNING:FISSION",
+        "eventType": "EVOLUTION_WARNING",
+        "firstAt": 14,
+        "at": 14,
+        "text": "变异预警 · 裂殖：母体死亡后分出 2 个小体。代价：小体仅 22 耐久且不能继续分裂。反制：2 范围裂解；群体保持聚集时一并清除。",
+        "count": 1
+      },
+      {
+        "key": "EVOLUTION_APPLIED:FISSION",
+        "eventType": "EVOLUTION_APPLIED",
+        "firstAt": 22,
+        "at": 22,
+        "text": "⋈ 裂殖已出现。弱点：2 范围裂解；群体保持聚集时一并清除。",
+        "count": 1
+      },
+      {
+        "key": "ELITE_CLEARED:FISSION",
+        "eventType": "ELITE_CLEARED",
+        "firstAt": 25.133333333333333,
+        "at": 25.133333333333333,
+        "text": "心脏裂殖精英已清除。保持组织，继续处理当前目标。",
+        "count": 1
+      },
+      {
+        "key": "EVOLUTION_WARNING:MIMIC",
+        "eventType": "EVOLUTION_WARNING",
+        "firstAt": 32,
+        "at": 32,
+        "text": "变异预警 · 潜伏：拟态组织，优先侵蚀组织。代价：移动速度降低 50%；每 6 秒扰动 1.2 秒。反制：Q 扫描显形 5 秒；基础射击仍有效；3 修复组织同时清除附近潜伏体。",
+        "count": 1
+      },
+      {
+        "key": "EVOLUTION_APPLIED:MIMIC",
+        "eventType": "EVOLUTION_APPLIED",
+        "firstAt": 40,
+        "at": 40,
+        "text": "◌ 潜伏已出现。弱点：Q 扫描显形 5 秒；基础射击仍有效；3 修复组织同时清除附近潜伏体。",
+        "count": 1
+      },
+      {
+        "key": "MIGRATION_WARNING",
+        "eventType": "MIGRATION_WARNING",
+        "firstAt": 40,
+        "at": 40,
+        "text": "病毒向肺部迁移：12 秒。出口 E 追击；心脏隔离闸 E 保持 2 秒封锁；不响应则肺部建立新源。",
+        "count": 1
+      },
+      {
+        "key": "ELITE_CLEARED:MIMIC",
+        "eventType": "ELITE_CLEARED",
+        "firstAt": 43.483333333333334,
+        "at": 43.483333333333334,
+        "text": "心脏潜伏精英已清除。保持组织，继续处理当前目标。",
+        "count": 1
+      },
+      {
+        "key": "MIGRATION_DECIDED:ignore",
+        "eventType": "MIGRATION_DECIDED",
+        "firstAt": 52,
+        "at": 52,
+        "text": "放任迁移：肺部新增感染源并受损；出口开放，仍可救援。",
+        "count": 1
+      },
+      {
+        "key": "ORGAN_TRAVELLED:lung",
+        "eventType": "ORGAN_TRAVELLED",
+        "firstAt": 59.983333333333334,
+        "at": 59.983333333333334,
+        "text": "进入肺部；该器官离场期间损伤 0.0。",
+        "count": 1
+      },
+      {
+        "key": "INFECTION_SOURCE_CLEARED:lung",
+        "eventType": "INFECTION_SOURCE_CLEARED",
+        "firstAt": 64.33333333333333,
+        "at": 70.05,
+        "text": "肺部感染源已净化，停止增援并降低感染负荷。",
+        "count": 2
+      },
+      {
+        "key": "CORE_LOCATED",
+        "eventType": "CORE_LOCATED",
+        "firstAt": 70.05,
+        "at": 70.05,
+        "text": "主要感染源已净化。前往肺部复测台按 E，唤醒双特性母巢。",
+        "count": 1
+      },
+      {
+        "key": "CORE_COMBAT_STARTED",
+        "eventType": "CORE_COMBAT_STARTED",
+        "firstAt": 76.23333333333333,
+        "at": 76.23333333333333,
+        "text": "母巢已苏醒：交替使用本局两种特性。躲开前摇或 Q 打断侵蚀，逐层打开核膜。",
+        "count": 1
+      },
+      {
+        "key": "CORE_MEMBRANE_BROKEN:FISSION",
+        "eventType": "CORE_MEMBRANE_BROKEN",
+        "firstAt": 79.33333333333333,
+        "at": 79.33333333333333,
+        "text": "母巢裂殖核膜已破，剩余 1 层。",
+        "count": 1
+      },
+      {
+        "key": "CORE_MEMBRANE_BROKEN:MIMIC",
+        "eventType": "CORE_MEMBRANE_BROKEN",
+        "firstAt": 83.41666666666667,
+        "at": 83.41666666666667,
+        "text": "母巢潜伏核膜已破，剩余 0 层。",
+        "count": 1
+      },
+      {
+        "key": "CORE_MEMBRANES_OPENED",
+        "eventType": "CORE_MEMBRANES_OPENED",
+        "firstAt": 83.41666666666667,
+        "at": 83.41666666666667,
+        "text": "母巢核膜全部打开！继续净化核心，保护器官。",
+        "count": 1
+      },
+      {
+        "key": "CORE_CORROSION_INTERRUPTED",
+        "eventType": "CORE_CORROSION_INTERRUPTED",
+        "firstAt": 83.41666666666667,
+        "at": 83.41666666666667,
+        "text": "Q 扫描已打断母巢侵蚀，形成破绽。",
+        "count": 1
+      },
+      {
+        "key": "CORE_CLEARED",
+        "eventType": "CORE_CLEARED",
+        "firstAt": 85.08333333333333,
+        "at": 85.08333333333333,
+        "text": "母巢已净化。所有激活器官 ≥50%、感染 <35 后，到复测终端按 E。",
+        "count": 1
+      },
+      {
+        "key": "RETEST_COMPLETED",
+        "eventType": "RETEST_COMPLETED",
+        "firstAt": 90.26666666666667,
+        "at": 90.26666666666667,
+        "text": "主动复测已通过，器官与感染门槛全部满足。",
+        "count": 1
+      },
+      {
+        "key": "RUN_ENDED",
+        "eventType": "RUN_ENDED",
+        "firstAt": 90.26666666666667,
+        "at": 90.26666666666667,
+        "text": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。",
+        "count": 1
+      }
+    ]
+  },
+  "saved": {
+    "game": "viral-invasion",
+    "schemaVersion": 1,
+    "discoveredTraits": [
+      "FISSION",
+      "MIMIC"
+    ],
+    "discoveredWeaknesses": [
+      "MIMIC",
+      "FISSION"
+    ],
+    "unlockedProtocols": [
+      "IMMUNE_BEACON",
+      "EXPOSE_TRACE",
+      "PULSE_BREAK",
+      "PURIFY_CHAIN"
+    ],
+    "achievements": [
+      "FIRST_SOURCE",
+      "FIRST_VICTORY",
+      "CORE_PURIFIED",
+      "TWO_ORGANS",
+      "THREE_PROTOCOLS"
+    ],
+    "settings": {
+      "sound": true,
+      "lowEffects": false
+    },
+    "onboarding": {
+      "migrationGuideAcknowledged": true
+    },
+    "stats": {
+      "runs": 1,
+      "wins": 1,
+      "losses": 0,
+      "kills": 13,
+      "sourceClears": 4,
+      "coreClears": 1
+    },
+    "best": {
+      "fastestVictory": {
+        "runId": "ab30cf3a-ed1f-4954-a0b5-b02e844868a8",
+        "seed": 127,
+        "durationSeconds": 90.26666666666667
+      },
+      "mostKills": 13,
+      "mostSources": 4,
+      "longestRunSeconds": 90.26666666666667
+    },
+    "recentRuns": [
+      {
+        "runId": "ab30cf3a-ed1f-4954-a0b5-b02e844868a8",
+        "seed": 127,
+        "success": true,
+        "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。",
+        "durationSeconds": 90.26666666666667,
+        "traits": [
+          "FISSION",
+          "MIMIC"
+        ],
+        "protocols": [
+          "IMMUNE_BEACON",
+          "EXPOSE_TRACE",
+          "PULSE_BREAK",
+          "PURIFY_CHAIN"
+        ],
+        "migrationChoice": "ignore",
+        "coreCleared": true,
+        "stats": {
+          "kills": 13,
+          "sourceClears": 4,
+          "eliteClears": 2,
+          "repairs": 2,
+          "pulses": 0,
+          "scans": 29,
+          "dashes": 0,
+          "travels": 1
+        },
+        "timeline": [
+          {
+            "at": 1.8333333333333333,
+            "text": "连锁净化：连锁净化 Ⅰ · 均衡。",
+            "side": "antibody"
+          },
+          {
+            "at": 7.133333333333333,
+            "text": "异常显影：异常显影 Ⅰ · 均衡。",
+            "side": "antibody"
+          },
+          {
+            "at": 14,
+            "text": "变异预警 · 裂殖：母体死亡后分出 2 个小体。代价：小体仅 22 耐久且不能继续分裂。反制：2 范围裂解；群体保持聚集时一并清除",
+            "side": "virus"
+          },
+          {
+            "at": 22,
+            "text": "⋈ 裂殖已出现。弱点：2 范围裂解；群体保持聚集时一并清除",
+            "side": "virus"
+          },
+          {
+            "at": 32,
+            "text": "变异预警 · 潜伏：拟态组织，优先侵蚀组织。代价：移动速度降低 50%；每 6 秒扰动 1.2 秒。反制：Q 扫描显形 5 秒；基础射击仍有效；3 修复组织同时清除附近潜伏体",
+            "side": "virus"
+          },
+          {
+            "at": 40,
+            "text": "◌ 潜伏已出现。弱点：Q 扫描显形 5 秒；基础射击仍有效；3 修复组织同时清除附近潜伏体",
+            "side": "virus"
+          },
+          {
+            "at": 40,
+            "text": "病毒向肺部迁移：12 秒。出口 E 追击；心脏隔离闸 E 保持 2 秒封锁；不响应则肺部建立新源。",
+            "side": "campaign"
+          },
+          {
+            "at": 43.5,
+            "text": "共振裂解：共振裂解 Ⅰ · 均衡。",
+            "side": "antibody"
+          },
+          {
+            "at": 52,
+            "text": "迁移群在肺部建立感染源：肺部完整度 −10，感染 +8。出口保持开放，及时前往救援仍可挽回。",
+            "side": "campaign"
+          },
+          {
+            "at": 59.96666666666667,
+            "text": "进入肺部：吸气聚拢、呼气分散；E 气道会实际截流。",
+            "side": "campaign"
+          },
+          {
+            "at": 68.18333333333334,
+            "text": "免疫灯塔：免疫灯塔 Ⅰ · 均衡。",
+            "side": "antibody"
+          },
+          {
+            "at": 70.05,
+            "text": "主要感染源已净化。前往肺部复测台按 E，唤醒本局双特性母巢。",
+            "side": "campaign"
+          },
+          {
+            "at": 76.23333333333333,
+            "text": "母巢被唤醒：它将交替使用本局两种特性。读清前摇，利用基础弱点与器官环境。",
+            "side": "campaign"
+          },
+          {
+            "at": 85.08333333333333,
+            "text": "母巢已净化。检查所有激活器官 ≥50%、感染 <35，再到复测终端按 E。",
+            "side": "campaign"
+          }
+        ],
+        "suggestion": "同种子重试时试试另一条路线：去出口 E 追击，或在心脏隔离闸 E 保持两秒封锁，比较不同压力代价。",
+        "suggestionEvidence": "本局放任迁移，肺部建立了额外感染源。"
+      }
+    ],
+    "recordedRunIds": [
+      "ab30cf3a-ed1f-4954-a0b5-b02e844868a8"
+    ]
+  },
+  "errors": [],
+  "remote": []
+}

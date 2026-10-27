@@ -24,6 +24,7 @@ const gameHash = hash(await readFile('dist/game.js'));
 const report = { version: buildMetadata.version, releaseGameJsSha256: gameHash,
   buildSourceManifest: buildMetadata.sourceManifest, measurementScriptSha256: hash(measurementSource), driverSourceManifest,
   method: 'Local Chrome headless, offline file entry, real DOM inputs and read-only game snapshots. Real beacon draft acquisition; source actors retained. Frame observer writes only its own separate measurement object. No forced GC. Not a human or native foreground-device test.',
+  cellHitCountScope: 'Lower bound of unique recent hit events observed at five-second snapshots; not an exact cumulative damage or hit total.',
   status: 'running', errors: [], requests: [], samples: [], maxActors: 0, maxCells: 0, cellHits: 0 };
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
 const frames = { standard: [], low: [] };
@@ -87,9 +88,14 @@ try {
     if (Date.now() - began > 900000) throw Error('Ten active minutes exceeded the wall-clock budget');
     const s = await readState(page), active = s.elapsed - initial.elapsed;
     report.activeSimulationSeconds = active;
-    if (active >= 600) break;
     if (s.phase === 'result') throw Error(`Pressure run ended: ${s.result.reason}`);
+    if (s.targets.filter(t => t.role === 'source' && t.hp > 0).length !== 2) throw Error('A source was cleared during pressure measurement');
+    if (active >= 600) { report.finalState = s; break; }
     if (s.growth.draft) { await clear(); await page.locator('[data-action="draft-discard"]').click(); continue; }
+    if (s.phase === 'paused' && await page.locator('[data-action="close-migration-guide"]').isVisible()) {
+      await clear(); await page.locator('[data-action="close-migration-guide"]').click(); continue;
+    }
+    if (s.phase !== 'playing') throw Error(`Unexpected pressure phase: ${s.phase}`);
     if (!low && active >= 300) {
       await clear(); await page.keyboard.press('Escape'); await page.locator('[data-action="effects"]').click();
       await page.evaluate(() => { window.__viFeedbackPerf.mode = 'low'; });
@@ -101,7 +107,6 @@ try {
     report.maxActors = Math.max(report.maxActors, alive); report.maxCells = Math.max(report.maxCells, cells);
     for (const event of s.events) if (event.type === 'PROTOCOL_BEACON_HIT') observedHits.add(`${event.tick}:${event.data.cellId}:${event.data.targetId}`);
     report.cellHits = observedHits.size;
-    if (s.targets.filter(t => t.role === 'source' && t.hp > 0).length !== 2) throw Error('A source was cleared during pressure measurement');
     const heap = await cdp.send('Runtime.getHeapUsage');
     report.samples.push({ wallSeconds: (Date.now() - began) / 1000, activeSimulationSeconds: active,
       tick: s.tick, alive, cells, hp: s.player.hp, tissue: s.tissue.hp, retainedActors: s.targets.length,
@@ -131,8 +136,9 @@ try {
   report.sourceUnchanged = gameHash === hash(await readFile('dist/game.js'));
   report.pass = Object.values(report.metrics).every(m => m.averageFps >= 50 && m.p95Ms <= 33)
     && report.maxActors === 24 && report.maxCells === 3 && report.cellHits > 0
+    && !!report.dense_standard && !!report.dense_low && !!report.dense_cells
     && !report.errors.length && !report.requests.length && report.sourceUnchanged;
-  report.passScope = 'Frame budget in each quality, 24 live actors reached, real three-cell squad with actual hits, two live sources, no fatal errors/network. Sampled V8 heap trend requires separate review; not a leak-proof or native-device guarantee.';
+  report.passScope = 'Frame budget and 24 live actors reached in each quality; a real three-cell squad coexists with 24 actors in a captured snapshot and has observed hit events; two sources remain alive including terminal state; no fatal errors/network. Sampled V8 heap trend requires separate review; not a leak-proof or native-device guarantee.';
   report.status = report.pass ? 'passed' : 'failed';
   await writeFile(`${folder}/frame-times.json`, JSON.stringify(frames));
   console.log(JSON.stringify({ status: report.status, metrics: report.metrics, maxActors: report.maxActors, maxCells: report.maxCells, cellHits: report.cellHits }));
