@@ -1,0 +1,56 @@
+[
+  {
+    "label": "01-archive-and-extract",
+    "executable": "C:/Users/SEASUN/AppData/Local/Programs/Python/Python312/python.exe",
+    "args": [
+      "-c",
+      "import pathlib,sys,zipfile\nsrc=pathlib.Path(sys.argv[1]); out=pathlib.Path(sys.argv[2]); target=pathlib.Path(sys.argv[3])\nwith zipfile.ZipFile(out,\"x\",compression=zipfile.ZIP_DEFLATED,compresslevel=6) as z:\n for p in sorted(src.rglob(\"*\")):\n  if p.is_file(): z.write(p,p.relative_to(src).as_posix())\nwith zipfile.ZipFile(out) as z:\n assert z.testzip() is None\n z.extractall(target)\nprint(\"Archive CRC and extraction passed\")",
+      "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\source",
+      "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-SourceCandidate-v0.8.7.zip",
+      "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work"
+    ],
+    "cwd": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62",
+    "startedAt": "2026-10-27T23:05:02.423Z",
+    "status": "passed",
+    "pid": 82972,
+    "exitCode": 0,
+    "endedAt": "2026-10-27T23:05:06.253Z",
+    "log": "01-archive-and-extract.log",
+    "logSha256": "f9187d1c2f5cdd4b2320c979403668cbb21fb0940bbde4ce336d94af7707a7b5"
+  },
+  {
+    "label": "02-npm-ci",
+    "executable": "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+    "args": [
+      "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\node_modules\\npm\\bin\\npm-cli.js",
+      "ci",
+      "--no-audit",
+      "--no-fund"
+    ],
+    "cwd": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work",
+    "startedAt": "2026-10-27T23:05:06.609Z",
+    "status": "passed",
+    "pid": 74516,
+    "exitCode": 0,
+    "endedAt": "2026-10-27T23:05:20.208Z",
+    "log": "02-npm-ci.log",
+    "logSha256": "4046ce254061c7bdbd69e40c12e092e62a471db37ba2b3136f60e1b0ddf61109"
+  },
+  {
+    "label": "03-npm-build",
+    "executable": "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+    "args": [
+      "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\node_modules\\npm\\bin\\npm-cli.js",
+      "run",
+      "build"
+    ],
+    "cwd": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work",
+    "startedAt": "2026-10-27T23:05:20.217Z",
+    "status": "failed",
+    "pid": 2096,
+    "exitCode": 1,
+    "endedAt": "2026-10-27T23:05:23.898Z",
+    "log": "03-npm-build.log",
+    "logSha256": "6421e7cdee32b182de7991331ff076f129003edfe76e905b485f207561e97368"
+  }
+]

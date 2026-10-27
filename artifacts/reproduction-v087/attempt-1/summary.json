@@ -1,0 +1,95 @@
+{
+  "version": "0.8.7",
+  "startedAt": "2026-10-27T23:05:02.330Z",
+  "status": "failed",
+  "root": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion",
+  "isolatedRoot": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62",
+  "work": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work",
+  "archive": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-SourceCandidate-v0.8.7.zip",
+  "node": "v24.19.0",
+  "npm": "11.6.2",
+  "sourceCommit": "142e6562bd6df64c215d3c79a1f5a39bd613c832",
+  "method": "Frozen complete worktree snapshot, independently archived/extracted into a fresh temporary directory. No node_modules, generated art, dist, Git data, or links are copied. npm ci installs independent dependencies; local artwork is regenerated with an unavailable upstream. This is snapshot reproducibility, not a clean Git HEAD claim.",
+  "sourceFiles": 452,
+  "sourceBytes": 72002557,
+  "expectedBuild": {
+    "game.js": "27a37e8a83be3b077037991e05826970629cfca01d83ce07dee5cd30e6e8b4ae",
+    "index.html": "44a0df2bd0d8c269210c55b163c0bddafcee990ed07068e6f1f3e8a67c2bf348",
+    "build-meta.json": "b2a718f3044c0788ed07de3028fa813c826a5c11e5c8485b74b81f1e420b2bc7"
+  },
+  "originalBuildInputs": 142,
+  "commands": [
+    {
+      "label": "01-archive-and-extract",
+      "executable": "C:/Users/SEASUN/AppData/Local/Programs/Python/Python312/python.exe",
+      "args": [
+        "-c",
+        "import pathlib,sys,zipfile\nsrc=pathlib.Path(sys.argv[1]); out=pathlib.Path(sys.argv[2]); target=pathlib.Path(sys.argv[3])\nwith zipfile.ZipFile(out,\"x\",compression=zipfile.ZIP_DEFLATED,compresslevel=6) as z:\n for p in sorted(src.rglob(\"*\")):\n  if p.is_file(): z.write(p,p.relative_to(src).as_posix())\nwith zipfile.ZipFile(out) as z:\n assert z.testzip() is None\n z.extractall(target)\nprint(\"Archive CRC and extraction passed\")",
+        "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\source",
+        "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-SourceCandidate-v0.8.7.zip",
+        "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work"
+      ],
+      "cwd": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62",
+      "startedAt": "2026-10-27T23:05:02.423Z",
+      "status": "passed",
+      "pid": 82972,
+      "exitCode": 0,
+      "endedAt": "2026-10-27T23:05:06.253Z",
+      "log": "01-archive-and-extract.log",
+      "logSha256": "f9187d1c2f5cdd4b2320c979403668cbb21fb0940bbde4ce336d94af7707a7b5"
+    },
+    {
+      "label": "02-npm-ci",
+      "executable": "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\node_modules\\npm\\bin\\npm-cli.js",
+        "ci",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work",
+      "startedAt": "2026-10-27T23:05:06.609Z",
+      "status": "passed",
+      "pid": 74516,
+      "exitCode": 0,
+      "endedAt": "2026-10-27T23:05:20.208Z",
+      "log": "02-npm-ci.log",
+      "logSha256": "4046ce254061c7bdbd69e40c12e092e62a471db37ba2b3136f60e1b0ddf61109"
+    },
+    {
+      "label": "03-npm-build",
+      "executable": "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\node_modules\\npm\\bin\\npm-cli.js",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work",
+      "startedAt": "2026-10-27T23:05:20.217Z",
+      "status": "failed",
+      "pid": 2096,
+      "exitCode": 1,
+      "endedAt": "2026-10-27T23:05:23.898Z",
+      "log": "03-npm-build.log",
+      "logSha256": "6421e7cdee32b182de7991331ff076f129003edfe76e905b485f207561e97368"
+    }
+  ],
+  "archiveSha256": "4ffb9e500354574cf6436ba8ddec2196d01470b0bcef58febb429a23f1794560",
+  "archiveBytes": 64287505,
+  "initiallyAbsent": [
+    "node_modules",
+    "dist",
+    ".art-generated",
+    ".git"
+  ],
+  "resolvedDependencies": {
+    "esbuild": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work\\node_modules\\esbuild\\lib\\main.js",
+    "vitest": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work\\node_modules\\vitest\\index.cjs",
+    "phaser": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work\\node_modules\\phaser\\dist\\phaser.js",
+    "sharp": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work\\node_modules\\sharp\\dist\\index.cjs",
+    "vite": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work\\node_modules\\vite\\dist\\node\\index.js"
+  },
+  "pass": false,
+  "error": "Error: 03-npm-build failed: 1; l-snapshot; +0/~0, 0 unreviewed candidate(s).\n\n> viral-invasion@0.8.7 build\n> npm run typecheck && node scripts/build-offline.mjs\n\nnode:internal/modules/cjs/loader:1520\r\n  throw err;\r\n  ^\r\n\r\nError: Cannot find module 'D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\node_modules\\npm\\bin\\node_modules\\npm\\bin\\npm-prefix.js'\r\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1517:15)\r\n    at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)\r\n    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)\r\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1122:12)\r\n    at Module._load (node:internal/modules/cjs/loader:1294:5)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\r\n    at node:internal/main/run_main_module:33:47 {\r\n  code: 'MODULE_NOT_FOUND',\r\n  requireStack: []\r\n}\r\n\r\nNode.js v24.19.0\r\nnode:internal/modules/cjs/loader:1520\r\n  throw err;\r\n  ^\r\n\r\nError: Cannot find module 'D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\node_modules\\npm\\bin\\node_modules\\npm\\bin\\npm-cli.js'\r\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1517:15)\r\n    at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)\r\n    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)\r\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1122:12)\r\n    at Module._load (node:internal/modules/cjs/loader:1294:5)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\r\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\r\n    at node:internal/main/run_main_module:33:47 {\r\n  code: 'MODULE_NOT_FOUND',\r\n  requireStack: []\r\n}\r\n\r\nNode.js v24.19.0\r\n\n    at run (file:///D:/Workspace/Projects/xsj/Viral-Invasion/.tools/reproduce-v087-attempt-1.mjs:79:29)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async file:///D:/Workspace/Projects/xsj/Viral-Invasion/.tools/reproduce-v087-attempt-1.mjs:99:3",
+  "finishedAt": "2026-10-27T23:05:23.899Z"
+}

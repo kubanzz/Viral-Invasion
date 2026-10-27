@@ -1,0 +1,117 @@
+{
+  "version": "0.8.7",
+  "status": "awaiting-dev",
+  "pass": false,
+  "startedAt": "2026-10-27T23:06:27.609Z",
+  "originalAttempt": "artifacts/reproduction-v087/attempt-1/summary.json",
+  "originalAttemptSha256": "0eae8e740e204009b4357d3de97c70674c0be41c006517a813360ea79fc19552",
+  "originalFailurePreserved": true,
+  "reason": "The first independent npm ci succeeded. The environment-provided npm.cmd has an invalid prefix-relative path, so nested npm run typecheck failed before compilation. Resume the identical independently installed snapshot with an absolute Node/npm launcher. No source edits, new dependency install, seed replacement or original-result rewriting.",
+  "root": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion",
+  "work": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work",
+  "isolatedRoot": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62",
+  "toolBin": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\npm-launcher",
+  "npmCli": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\node_modules\\npm\\bin\\npm-cli.js",
+  "commands": [
+    {
+      "label": "01-npm-build",
+      "executable": "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\node_modules\\npm\\bin\\npm-cli.js",
+        "run",
+        "build"
+      ],
+      "cwd": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work",
+      "startedAt": "2026-10-27T23:06:27.611Z",
+      "status": "passed",
+      "pid": 43612,
+      "exitCode": 0,
+      "endedAt": "2026-10-27T23:06:35.615Z",
+      "log": "01-npm-build.log",
+      "logSha256": "05995eb50e18c048caa57fe34c60765dc656b2d475aa96559562a46cb899fc70"
+    },
+    {
+      "label": "02-npm-test",
+      "executable": "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "args": [
+        "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\node_modules\\npm\\bin\\npm-cli.js",
+        "test",
+        "--",
+        "--maxWorkers=2",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\reproduction-v087\\continuation-1\\unit.json"
+      ],
+      "cwd": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work",
+      "startedAt": "2026-10-27T23:06:35.727Z",
+      "status": "passed",
+      "pid": 74924,
+      "exitCode": 0,
+      "endedAt": "2026-10-27T23:11:56.265Z",
+      "log": "02-npm-test.log",
+      "logSha256": "9aac690c3d20a1e75ff0b45fb46fdd02477d71a646f8ae6af1c6a474296a4708"
+    }
+  ],
+  "archive": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-SourceCandidate-v0.8.7.zip",
+  "archiveSha256": "4ffb9e500354574cf6436ba8ddec2196d01470b0bcef58febb429a23f1794560",
+  "sourceFiles": 452,
+  "method": "Frozen complete worktree snapshot, independently archived/extracted into a fresh temporary directory. No node_modules, generated art, dist, Git data, or links are copied. npm ci installs independent dependencies; local artwork is regenerated with an unavailable upstream. This is snapshot reproducibility, not a clean Git HEAD claim.",
+  "initialConditions": [
+    "node_modules",
+    "dist",
+    ".art-generated",
+    ".git"
+  ],
+  "resolvedDependencies": {
+    "esbuild": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work\\node_modules\\esbuild\\lib\\main.js",
+    "vitest": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work\\node_modules\\vitest\\index.cjs",
+    "phaser": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work\\node_modules\\phaser\\dist\\phaser.js",
+    "sharp": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work\\node_modules\\sharp\\dist\\index.cjs",
+    "vite": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\work\\node_modules\\vite\\dist\\node\\index.js"
+  },
+  "build": {
+    "game.js": {
+      "expectedSha256": "27a37e8a83be3b077037991e05826970629cfca01d83ce07dee5cd30e6e8b4ae",
+      "actualSha256": "27a37e8a83be3b077037991e05826970629cfca01d83ce07dee5cd30e6e8b4ae",
+      "equal": true
+    },
+    "index.html": {
+      "expectedSha256": "44a0df2bd0d8c269210c55b163c0bddafcee990ed07068e6f1f3e8a67c2bf348",
+      "actualSha256": "44a0df2bd0d8c269210c55b163c0bddafcee990ed07068e6f1f3e8a67c2bf348",
+      "equal": true
+    },
+    "build-meta.json": {
+      "expectedSha256": "b2a718f3044c0788ed07de3028fa813c826a5c11e5c8485b74b81f1e420b2bc7",
+      "actualSha256": "b2a718f3044c0788ed07de3028fa813c826a5c11e5c8485b74b81f1e420b2bc7",
+      "equal": true
+    }
+  },
+  "buildInputs": 142,
+  "artSource": {
+    "mode": "local-snapshot",
+    "sourceRoot": "C:\\Users\\SEASUN\\AppData\\Local\\Temp\\viral-reproduction-v087-9R1C62\\nonexistent-upstream",
+    "upstreamExists": false
+  },
+  "tests": {
+    "success": true,
+    "files": 98,
+    "passed": 921,
+    "failed": 0,
+    "pending": 0
+  },
+  "sessions": {
+    "complete": true,
+    "completed": 1000,
+    "outcomes": {
+      "wins": 1000,
+      "losses": 0,
+      "publicMenuExits": 0,
+      "invariantFailures": 0
+    }
+  },
+  "sourceChanges": [],
+  "mainBuildUnchanged": true,
+  "installBuildTestsPassed": true,
+  "devPending": "A real PTY npm run dev, HTTP request, and normal q/Enter stop will be recorded separately.",
+  "finishedAt": "2026-10-27T23:11:56.771Z"
+}
