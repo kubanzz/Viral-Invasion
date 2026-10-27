@@ -14,6 +14,8 @@ import { drawLungAirflow, drawLungAirway, drawLungEnvironment, drawLungForegroun
 import { drawOrganLandscape } from './organLandscape';
 import { drawNavigationMap } from './navigation';
 import { drawImmuneCell } from './immuneVisuals';
+import { getRaisedActorBodies, getRaisedObstacleOcclusion, PLAYER_HEAD_SHAPE, playerBodyPose } from './raisedObstacleOcclusion';
+import { drawRaisedBodyLayers, traceRaisedObstacle } from './raisedObstacleGeometry';
 
 const TAU = Math.PI * 2;
 const hash = (n: number): number => { const a = Math.sin(n * 127.1 + 311.7) * 43758.5453123; return a - Math.floor(a); };
@@ -124,6 +126,7 @@ export class Renderer {
     this.drawGroundSignals(ctx, state, aim);
     this.growthVisuals.drawGround(ctx, state, state.growth, Boolean(opts.lowEffects));
     this.drawShadows(ctx, state);
+    const raisedActorBodies = getRaisedActorBodies(state);
     for (const entity of depthSort(this.entities(state))) {
       if (entity.kind === 'player') this.drawPlayer(ctx, state);
       if (entity.kind === 'target') this.drawTarget(ctx, state.targets[entity.index!], state);
@@ -131,7 +134,8 @@ export class Renderer {
       if (entity.kind === 'terminal') this.drawTerminal(ctx, state);
       if (entity.kind === 'obstacle') {
         const obstacle = activeWorld(state).obstacles.find(obstacle => obstacle.id === entity.id)!;
-        if (state.battle?.organId === 'lung') drawLungObstacle(ctx, obstacle); else this.drawObstacle(ctx, obstacle);
+        const opacity = getRaisedObstacleOcclusion(state, obstacle, raisedActorBodies).upperOpacity;
+        if (state.battle?.organId === 'lung') drawLungObstacle(ctx, obstacle, opacity); else this.drawObstacle(ctx, obstacle, opacity);
       }
       if (entity.kind === 'device') this.drawBattleDevice(ctx, state.battle!.graph.nodes.find(node => node.id === entity.id)!, state);
       if (entity.kind === 'beacon') this.growthVisuals.drawBeacon(ctx, state, state.growth);
@@ -434,9 +438,7 @@ export class Renderer {
 
   private drawPlayer(ctx: CanvasRenderingContext2D, state: GameState): void {
     const p = state.player, time = state.elapsed;
-    const walk = p.moving ? Math.sin(time * 19) : Math.sin(time * 3) * .2;
-    const bob = p.moving ? Math.abs(walk) * 2.2 : Math.sin(time * 2.5) * .8;
-    const direction = Math.atan2(Math.sin(p.facing) * .72, Math.cos(p.facing));
+    const { walk, bob, direction } = playerBodyPose(state);
     ctx.save(); ctx.translate(p.x, p.y); ctx.scale(1, 1 / .72);
     ellipse(ctx, 0, 2, 23, 8, '#78eee80b', '#93f8ed98');
     for (const [index, slot] of (state.growth?.equipped ?? []).entries()) {
@@ -458,7 +460,8 @@ export class Renderer {
     line(ctx, [-4, -25, 4, -25], '#178b9a', 3); line(ctx, [0, -29, 0, -21], '#178b9a', 3);
     // Helmet cap and front visor have intentionally different lighting/height.
     const cap = ctx.createLinearGradient(-20, -67, 15, -36); cap.addColorStop(0, '#fff5d8'); cap.addColorStop(.5, '#e8ecdc'); cap.addColorStop(1, '#88b7b9');
-    ellipse(ctx, 0, -48, 22, 21, cap, '#173c50');
+    const head = PLAYER_HEAD_SHAPE;
+    ellipse(ctx, head.x, head.y, head.rx, head.ry, cap, '#173c50');
     ellipse(ctx, -2, -57, 17, 10, '#fff8df94');
     ctx.beginPath(); ctx.roundRect(-18, -51, 36, 19, 9); ctx.fillStyle = '#163e56'; ctx.fill(); ctx.strokeStyle = '#6ad1d6'; ctx.lineWidth = 1.5; ctx.stroke();
     ctx.beginPath(); ctx.roundRect(-14, -49, 27, 10, 5); ctx.fillStyle = '#50b4ca'; ctx.fill();
@@ -577,18 +580,19 @@ export class Renderer {
     ctx.restore();
   }
 
-  private drawObstacle(ctx: CanvasRenderingContext2D, obstacle: { x: number; y: number; radius: number }): void {
+  private drawObstacle(ctx: CanvasRenderingContext2D, obstacle: { x: number; y: number; radius: number }, opacity = 1): void {
     ctx.save(); ctx.translate(obstacle.x, obstacle.y); ctx.scale(1, 1 / .72);
     const r = obstacle.radius;
     const g = ctx.createLinearGradient(0, -r * 1.4, 0, 6); g.addColorStop(0, '#c37b72'); g.addColorStop(.4, '#965565'); g.addColorStop(1, '#522e48');
-    ctx.beginPath(); ctx.moveTo(-r, 0); ctx.bezierCurveTo(-r * 1.2, -r * .5, -r * .25, -r * 1.6, 3, -r * 1.38);
-    ctx.bezierCurveTo(r * .6, -r * 1.4, r * 1.1, -r * .6, r, 0); ctx.quadraticCurveTo(0, r * .35, -r, 0);
-    ctx.fillStyle = g; ctx.fill(); ctx.strokeStyle = '#cf97805e'; ctx.lineWidth = 2; ctx.stroke();
-    for (let i = 0; i < 6; i++) {
-      const x = -r * .8 + i * r * .28;
-      strokeCurve(ctx, [x, -5, x - 10, -r * .4, x + 4, -r * .9, 3 + x * .3, -r * 1.25], '#e4ae8952', 1.5);
-    }
-    ellipse(ctx, 0, -r * 1.05, r * .45, r * .2, '#ecc49b26');
+    drawRaisedBodyLayers(ctx, r, opacity, () => {
+      traceRaisedObstacle(ctx, r, 'heart');
+      ctx.fillStyle = g; ctx.fill(); ctx.strokeStyle = '#cf97805e'; ctx.lineWidth = 2; ctx.stroke();
+      for (let i = 0; i < 6; i++) {
+        const x = -r * .8 + i * r * .28;
+        strokeCurve(ctx, [x, -5, x - 10, -r * .4, x + 4, -r * .9, 3 + x * .3, -r * 1.25], '#e4ae8952', 1.5);
+      }
+      ellipse(ctx, 0, -r * 1.05, r * .45, r * .2, '#ecc49b26');
+    });
     ctx.restore();
   }
 

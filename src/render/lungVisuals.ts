@@ -2,6 +2,7 @@ import type { GameState, WorldGeometry } from '../game/types';
 import type { LungFlowState } from '../game/campaignTypes';
 import { lungFlowDirection } from '../game/organRules';
 import { CAMPAIGN_BALANCE } from '../game/organConfig';
+import { drawRaisedBodyLayers, traceRaisedObstacle } from './raisedObstacleGeometry';
 
 const TAU = Math.PI * 2;
 const hash = (n: number): number => { const value = Math.sin(n * 129.1 + 73.7) * 43158.5453; return value - Math.floor(value); };
@@ -72,15 +73,16 @@ export function drawLungEnvironment(ctx: CanvasRenderingContext2D, world: WorldG
   label(ctx, 'LUNG  ·  AIRWAY CHAMBER', 630, bottom - 19, '#bfdbd1', 11); ctx.restore();
 }
 
-export function drawLungObstacle(ctx: CanvasRenderingContext2D, obstacle: { x: number; y: number; radius: number }): void {
+export function drawLungObstacle(ctx: CanvasRenderingContext2D, obstacle: { x: number; y: number; radius: number }, opacity = 1): void {
   const r = obstacle.radius;
   ctx.save(); ctx.translate(obstacle.x, obstacle.y); ctx.scale(1, 1 / .72);
   const g = ctx.createLinearGradient(-r, -r * 1.4, r, 8); g.addColorStop(0, '#a6c3c2'); g.addColorStop(.45, '#638c9e'); g.addColorStop(1, '#304b68');
-  ctx.beginPath(); ctx.moveTo(-r, 0); ctx.bezierCurveTo(-r * 1.25, -r * .45, -r * .9, -r * 1.32, -r * .1, -r * 1.37);
-  ctx.bezierCurveTo(r * .7, -r * 1.5, r * 1.24, -r * .6, r, 0); ctx.quadraticCurveTo(0, r * .32, -r, 0);
-  ctx.fillStyle = g; ctx.fill(); ctx.strokeStyle = '#c8e0d481'; ctx.lineWidth = 2; ctx.stroke();
-  ellipse(ctx, -r * .18, -r * .74, r * .52, r * .46, '#d8ebe411', '#c9e4dd6a');
-  ctx.beginPath(); ctx.ellipse(0, -r * .64, r * .77, r * .6, -.2, -.4, 1.8); ctx.strokeStyle = '#e1eee744'; ctx.lineWidth = 1; ctx.stroke();
+  drawRaisedBodyLayers(ctx, r, opacity, () => {
+    traceRaisedObstacle(ctx, r, 'lung');
+    ctx.fillStyle = g; ctx.fill(); ctx.strokeStyle = '#c8e0d481'; ctx.lineWidth = 2; ctx.stroke();
+    ellipse(ctx, -r * .18, -r * .74, r * .52, r * .46, '#d8ebe411', '#c9e4dd6a');
+    ctx.beginPath(); ctx.ellipse(0, -r * .64, r * .77, r * .6, -.2, -.4, 1.8); ctx.strokeStyle = '#e1eee744'; ctx.lineWidth = 1; ctx.stroke();
+  });
   ctx.restore();
 }
 

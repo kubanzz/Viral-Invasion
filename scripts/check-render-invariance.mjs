@@ -10,18 +10,22 @@ import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const git = promisify(execFile);
 const args = process.argv.slice(2);
 if (args.includes('--help')) {
   console.log('Read-only Canvas2D snapshot comparison, after exclusive performance measurement.\n'
     + 'node scripts/check-render-invariance.mjs [--input artifacts/G4/performance/dense-state.json]\n'
-    + '  [--output artifacts/G4/render-invariance] [--frames 12] [--width 1366] [--height 768] [--dpr 1] [--channel chrome|msedge]\n'
+    + '  [--output artifacts/G4/render-invariance] [--frames 12] [--width 1366] [--height 768] [--dpr 1] [--channel chrome|msedge] [--revision <commit>]\n'
+    + '--revision loads src/ verbatim from that Git commit into the isolated fixture, for an explicitly derived visual comparison.\n'
     + 'Not a gameplay-input replay, browser win, performance test, or human playtest.');
   process.exit(0);
 }
 const options = { input: 'artifacts/G4/performance/dense-state.json', output: 'artifacts/G4/render-invariance',
-  frames: 12, width: 1366, height: 768, dpr: 1, channel: 'chrome' };
+  frames: 12, width: 1366, height: 768, dpr: 1, channel: 'chrome', revision: '' };
 for (let index = 0; index < args.length; index += 2) {
   const name = args[index]?.replace(/^--/, '');
   if (!args[index]?.startsWith('--') || !Object.hasOwn(options, name) || args[index + 1] === undefined) throw new Error(`Invalid option ${args[index]}. Use --help.`);
@@ -41,6 +45,13 @@ if (relativeOutput === '' || !isAbsolute(relativeOutput) && relativeOutput.split
 const sha256 = value => createHash('sha256').update(value).digest('hex');
 const fileHash = async path => sha256(await readFile(path));
 const pathLabel = path => relative(root, path).replaceAll('\\', '/');
+const revision = options.revision ? (await git('git', ['rev-parse', '--verify', `${options.revision}^{commit}`], { cwd: root })).stdout.trim() : null;
+async function sourceBytes(path) {
+  const label = pathLabel(path);
+  return revision && label.startsWith('src/')
+    ? (await git('git', ['show', `${revision}:${label}`], { cwd: root, encoding: 'buffer', maxBuffer: 8 * 1024 * 1024 })).stdout
+    : readFile(path);
+}
 const errors = [], remoteRequests = [];
 let browser;
 const report = {
@@ -53,7 +64,7 @@ const report = {
     'This verifies rendering does not change gameplay state. Shared danger/collision geometry remains covered separately by existing coreVisuals and geometry unit tests.',
     'Images are Canvas2D backing stores only, with no HUD. Visual differences between normal/low effects are permitted.',
   ],
-  options, input: { path: pathLabel(input) }, errors, remoteRequests,
+  options, sourceRevision: revision, sourceScope: revision ? 'src/ bytes from the recorded commit; current independent fixture harness. No live-game state is written.' : 'Current working-tree src/ and independent fixture harness.', input: { path: pathLabel(input) }, errors, remoteRequests,
 };
 await mkdir(output, { recursive: true });
 try {
@@ -66,9 +77,12 @@ try {
   report.input.shape = parsed === snapshot ? 'GameState' : '{state: GameState}';
   const bundle = await build({ absWorkingDir: root, entryPoints: ['tests/fixtures/renderProbe.ts'], bundle: true,
     format: 'iife', target: ['chrome110', 'edge110'], outfile: join(output, 'fixture.js'), metafile: true,
-    legalComments: 'none', minify: false });
+    legalComments: 'none', minify: false,
+    plugins: revision ? [{ name: 'recorded-src-revision', setup(build) {
+      build.onLoad({ filter: /[\\/]src[\\/].*\.[cm]?tsx?$/ }, async args => ({ contents: await sourceBytes(args.path), loader: args.path.endsWith('.tsx') ? 'tsx' : 'ts', resolveDir: dirname(args.path) }));
+    } }] : [] });
   const sourcePaths = Object.keys(bundle.metafile.inputs).sort();
-  report.sourceManifest = Object.fromEntries(await Promise.all(sourcePaths.map(async path => [path.replaceAll('\\', '/'), await fileHash(resolve(root, path))])));
+  report.sourceManifest = Object.fromEntries(await Promise.all(sourcePaths.map(async path => [path.replaceAll('\\', '/'), sha256(await sourceBytes(resolve(root, path)))])));
   report.sourceManifestSha256 = sha256(JSON.stringify(report.sourceManifest));
   report.fixtureBundleSha256 = await fileHash(join(output, 'fixture.js'));
   await writeFile(join(output, 'fixture.html'), '<!doctype html><html lang="en"><meta charset="utf-8">'
@@ -96,7 +110,7 @@ try {
   }
   report.browser = { channel: options.channel, version: await browser.version(), headless: true, offline: true };
   report.input.unchanged = await fileHash(input) === report.input.fileSha256;
-  const finalManifest = Object.fromEntries(await Promise.all(sourcePaths.map(async path => [path.replaceAll('\\', '/'), await fileHash(resolve(root, path))])));
+  const finalManifest = Object.fromEntries(await Promise.all(sourcePaths.map(async path => [path.replaceAll('\\', '/'), sha256(await sourceBytes(resolve(root, path)))])));
   report.sourceUnchanged = JSON.stringify(finalManifest) === JSON.stringify(report.sourceManifest);
   report.complete = true;
   report.pass = result.pass && report.input.unchanged && report.sourceUnchanged && !errors.length && !remoteRequests.length;
