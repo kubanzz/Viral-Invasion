@@ -1,0 +1,349 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-27T04:45:37.275Z",
+  "complete": true,
+  "pass": true,
+  "method": "Independent fixture imports the actual Renderer. One captured snapshot and two independent structuredClone states are checked after repeated real Canvas2D renders at a fixed source tick.",
+  "scope": [
+    "Technical rendering comparison derived from a read-only snapshot; no main.ts, GameSession.step(), live release state writes, or game-time advancement.",
+    "Complete JSON equality plus SHA-256 of full state, HP, damage records, and collision geometry are checked at render-call boundaries.",
+    "Not a same-input gameplay replay, browser victory, ten-minute performance measurement, visual readability acceptance, or human playtest.",
+    "This verifies rendering does not change gameplay state. Shared danger/collision geometry remains covered separately by existing coreVisuals and geometry unit tests.",
+    "Images are Canvas2D backing stores only, with no HUD. Visual differences between normal/low effects are permitted."
+  ],
+  "options": {
+    "input": "artifacts/feedback-v064/adverse-snapshots/chrome-after.json",
+    "output": "artifacts/feedback-v064/visual-comparison/current-chrome-after",
+    "frames": 2,
+    "width": 1366,
+    "height": 768,
+    "dpr": 1,
+    "channel": "chrome",
+    "revision": ""
+  },
+  "sourceRevision": null,
+  "sourceScope": "Current working-tree src/ and independent fixture harness.",
+  "input": {
+    "path": "artifacts/feedback-v064/adverse-snapshots/chrome-after.json",
+    "fileSha256": "644e525bbe7dd87dfb0b75d3270a7045f84a5f0dbb59d3597caa5bc96170e0e5",
+    "shape": "{state: GameState}",
+    "unchanged": true
+  },
+  "errors": [],
+  "remoteRequests": [],
+  "sourceManifest": {
+    "src/actors/collision.ts": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+    "src/core/rng.ts": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+    "src/game/battleConfig.ts": "937a2c91827c7184bcabf0eae13db315d52d0517d75b1696e2217f4e2c0de072",
+    "src/game/motherCore.ts": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+    "src/game/organConfig.ts": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+    "src/game/organRules.ts": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+    "src/game/protocols.ts": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+    "src/game/types.ts": "bd416eebd70e5061e6825c9f871f4414fc4523170ee76d84cbe7a34791d131af",
+    "src/render/battleVisuals.ts": "eb018bf5de39ce3ebd11cc1813b2befa8448e378c8b9f11938b8066fccc508f4",
+    "src/render/camera.ts": "ca117a766229b5770d49491559dbe016aca210876315f4069f5db42081f748e5",
+    "src/render/depthSort.ts": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+    "src/render/growthVisuals.ts": "aedcf1cc105935a4694d9b752c180894ecbb0a408fca7175394f4d3493086d77",
+    "src/render/immuneTraceCues.ts": "80558b755ae1054388a982182b430b41e5ceb98119b7ad0758b694dabdfd66d7",
+    "src/render/immuneVisuals.ts": "07a8b19251d4bb706065ce4443fe0816f1d48ced6e5f5419244f30552bc3ac2c",
+    "src/render/layers.ts": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+    "src/render/lungVisuals.ts": "20d5256b03d2c784d9b4027d996484458243b891eba4fa41d58cf98073233d2b",
+    "src/render/navigation.ts": "ab776f6e94b141663e1bd46ca23da738e7ebf679ef0bf211258fc89f833355a5",
+    "src/render/occlusion.ts": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+    "src/render/organLandscape.ts": "3ea49be35cc7e1a3a4d7ac0e4356031f7255e3ad6c941e13b666fee5946f63a2",
+    "src/render/pulsePreview.ts": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+    "src/render/raisedObstacleGeometry.ts": "373e3f145fd521367be7adc93c8461b5407cfe384866f2eb59c2a3ee645a3df6",
+    "src/render/raisedObstacleOcclusion.ts": "0486c6daed7617275f28aab6406f84783a3e3695ae1059e9a2c99634f47308f1",
+    "src/render/renderer.ts": "ebfe5a1dc2ce8d4e7ba21888a48680ca2503ac15ffe07484c957807f1b71958e",
+    "tests/fixtures/renderProbe.ts": "01ec59fb39df34ddbac9dc2c45d4fe5178c42706671b5915a2b1aacfca166ccc"
+  },
+  "sourceManifestSha256": "38149f99b34862deb978d76ded7769d624949dd3154db8ae607226d4a5e51ff5",
+  "fixtureBundleSha256": "54109d4c8270321489d55e13dded7ca6f4a83001128a1af2764335eece32fcc7",
+  "checks": {
+    "pass": true,
+    "seed": 13,
+    "tick": 475,
+    "elapsed": 7.916666666666667,
+    "phase": "playing",
+    "organ": "heart",
+    "aliveActors": 1,
+    "framesPerMode": 2,
+    "aim": {
+      "x": 1631.7359847028117,
+      "y": 1021.063844316893
+    },
+    "baseline": {
+      "fullJsonSha256": "8d43f416448928e2e2fafb52c40316e8b8ab36c19d0c930e26a27d32ec025e05",
+      "fullJsonBytes": 34202,
+      "hpSha256": "9aafe3cc227986f0baeb5335342f962f1b7ebcf331318f24ac7fcf5e1e6debd7",
+      "damageSha256": "94d4d0cabc79c993aaca052181c6d416a95e3cc8b0b33297458cb06881384f66",
+      "collisionGeometrySha256": "acc6f2a61b66ac152251dbde4ad0131ca2ab7ec2d8fb32aa960e2ae065a48fc1"
+    },
+    "observations": [
+      {
+        "frame": 0,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "8d43f416448928e2e2fafb52c40316e8b8ab36c19d0c930e26a27d32ec025e05",
+          "fullJsonBytes": 34202,
+          "hpSha256": "9aafe3cc227986f0baeb5335342f962f1b7ebcf331318f24ac7fcf5e1e6debd7",
+          "damageSha256": "94d4d0cabc79c993aaca052181c6d416a95e3cc8b0b33297458cb06881384f66",
+          "collisionGeometrySha256": "acc6f2a61b66ac152251dbde4ad0131ca2ab7ec2d8fb32aa960e2ae065a48fc1"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 0,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "8d43f416448928e2e2fafb52c40316e8b8ab36c19d0c930e26a27d32ec025e05",
+          "fullJsonBytes": 34202,
+          "hpSha256": "9aafe3cc227986f0baeb5335342f962f1b7ebcf331318f24ac7fcf5e1e6debd7",
+          "damageSha256": "94d4d0cabc79c993aaca052181c6d416a95e3cc8b0b33297458cb06881384f66",
+          "collisionGeometrySha256": "acc6f2a61b66ac152251dbde4ad0131ca2ab7ec2d8fb32aa960e2ae065a48fc1"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 0,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "8d43f416448928e2e2fafb52c40316e8b8ab36c19d0c930e26a27d32ec025e05",
+          "fullJsonBytes": 34202,
+          "hpSha256": "9aafe3cc227986f0baeb5335342f962f1b7ebcf331318f24ac7fcf5e1e6debd7",
+          "damageSha256": "94d4d0cabc79c993aaca052181c6d416a95e3cc8b0b33297458cb06881384f66",
+          "collisionGeometrySha256": "acc6f2a61b66ac152251dbde4ad0131ca2ab7ec2d8fb32aa960e2ae065a48fc1"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 1,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "8d43f416448928e2e2fafb52c40316e8b8ab36c19d0c930e26a27d32ec025e05",
+          "fullJsonBytes": 34202,
+          "hpSha256": "9aafe3cc227986f0baeb5335342f962f1b7ebcf331318f24ac7fcf5e1e6debd7",
+          "damageSha256": "94d4d0cabc79c993aaca052181c6d416a95e3cc8b0b33297458cb06881384f66",
+          "collisionGeometrySha256": "acc6f2a61b66ac152251dbde4ad0131ca2ab7ec2d8fb32aa960e2ae065a48fc1"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 1,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "8d43f416448928e2e2fafb52c40316e8b8ab36c19d0c930e26a27d32ec025e05",
+          "fullJsonBytes": 34202,
+          "hpSha256": "9aafe3cc227986f0baeb5335342f962f1b7ebcf331318f24ac7fcf5e1e6debd7",
+          "damageSha256": "94d4d0cabc79c993aaca052181c6d416a95e3cc8b0b33297458cb06881384f66",
+          "collisionGeometrySha256": "acc6f2a61b66ac152251dbde4ad0131ca2ab7ec2d8fb32aa960e2ae065a48fc1"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 1,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "8d43f416448928e2e2fafb52c40316e8b8ab36c19d0c930e26a27d32ec025e05",
+          "fullJsonBytes": 34202,
+          "hpSha256": "9aafe3cc227986f0baeb5335342f962f1b7ebcf331318f24ac7fcf5e1e6debd7",
+          "damageSha256": "94d4d0cabc79c993aaca052181c6d416a95e3cc8b0b33297458cb06881384f66",
+          "collisionGeometrySha256": "acc6f2a61b66ac152251dbde4ad0131ca2ab7ec2d8fb32aa960e2ae065a48fc1"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 2,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "8d43f416448928e2e2fafb52c40316e8b8ab36c19d0c930e26a27d32ec025e05",
+          "fullJsonBytes": 34202,
+          "hpSha256": "9aafe3cc227986f0baeb5335342f962f1b7ebcf331318f24ac7fcf5e1e6debd7",
+          "damageSha256": "94d4d0cabc79c993aaca052181c6d416a95e3cc8b0b33297458cb06881384f66",
+          "collisionGeometrySha256": "acc6f2a61b66ac152251dbde4ad0131ca2ab7ec2d8fb32aa960e2ae065a48fc1"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 2,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "8d43f416448928e2e2fafb52c40316e8b8ab36c19d0c930e26a27d32ec025e05",
+          "fullJsonBytes": 34202,
+          "hpSha256": "9aafe3cc227986f0baeb5335342f962f1b7ebcf331318f24ac7fcf5e1e6debd7",
+          "damageSha256": "94d4d0cabc79c993aaca052181c6d416a95e3cc8b0b33297458cb06881384f66",
+          "collisionGeometrySha256": "acc6f2a61b66ac152251dbde4ad0131ca2ab7ec2d8fb32aa960e2ae065a48fc1"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 2,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "8d43f416448928e2e2fafb52c40316e8b8ab36c19d0c930e26a27d32ec025e05",
+          "fullJsonBytes": 34202,
+          "hpSha256": "9aafe3cc227986f0baeb5335342f962f1b7ebcf331318f24ac7fcf5e1e6debd7",
+          "damageSha256": "94d4d0cabc79c993aaca052181c6d416a95e3cc8b0b33297458cb06881384f66",
+          "collisionGeometrySha256": "acc6f2a61b66ac152251dbde4ad0131ca2ab7ec2d8fb32aa960e2ae065a48fc1"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 3,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "8d43f416448928e2e2fafb52c40316e8b8ab36c19d0c930e26a27d32ec025e05",
+          "fullJsonBytes": 34202,
+          "hpSha256": "9aafe3cc227986f0baeb5335342f962f1b7ebcf331318f24ac7fcf5e1e6debd7",
+          "damageSha256": "94d4d0cabc79c993aaca052181c6d416a95e3cc8b0b33297458cb06881384f66",
+          "collisionGeometrySha256": "acc6f2a61b66ac152251dbde4ad0131ca2ab7ec2d8fb32aa960e2ae065a48fc1"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 3,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "8d43f416448928e2e2fafb52c40316e8b8ab36c19d0c930e26a27d32ec025e05",
+          "fullJsonBytes": 34202,
+          "hpSha256": "9aafe3cc227986f0baeb5335342f962f1b7ebcf331318f24ac7fcf5e1e6debd7",
+          "damageSha256": "94d4d0cabc79c993aaca052181c6d416a95e3cc8b0b33297458cb06881384f66",
+          "collisionGeometrySha256": "acc6f2a61b66ac152251dbde4ad0131ca2ab7ec2d8fb32aa960e2ae065a48fc1"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 3,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "8d43f416448928e2e2fafb52c40316e8b8ab36c19d0c930e26a27d32ec025e05",
+          "fullJsonBytes": 34202,
+          "hpSha256": "9aafe3cc227986f0baeb5335342f962f1b7ebcf331318f24ac7fcf5e1e6debd7",
+          "damageSha256": "94d4d0cabc79c993aaca052181c6d416a95e3cc8b0b33297458cb06881384f66",
+          "collisionGeometrySha256": "acc6f2a61b66ac152251dbde4ad0131ca2ab7ec2d8fb32aa960e2ae065a48fc1"
+        },
+        "unchanged": true
+      }
+    ],
+    "canvas": {
+      "context": "real CanvasRenderingContext2D",
+      "normal": {
+        "width": 1366,
+        "height": 768
+      },
+      "low": {
+        "width": 1366,
+        "height": 768
+      },
+      "dpr": 1
+    },
+    "rendererDiagnostics": {
+      "normal": {
+        "depthOrder": [
+          "gate",
+          "exit",
+          "fold-c",
+          "source-a",
+          "fold-a",
+          "research",
+          "fold-d",
+          "valve",
+          "player",
+          "fold-e",
+          "13:2:scan:446:beacon:cell:0",
+          "virus-3",
+          "virus-4",
+          "13:2:scan:446:beacon",
+          "13:2:scan:446:beacon:cell:1",
+          "13:2:scan:446:beacon:cell:2",
+          "source-b",
+          "terminal",
+          "tissue",
+          "fold-b"
+        ],
+        "occluded": false,
+        "foregroundOpacity": 0.94,
+        "layerOrder": [
+          "distant",
+          "terrain",
+          "contact-shadows",
+          "world-y-sorted",
+          "foreground",
+          "effects",
+          "hud"
+        ]
+      },
+      "low": {
+        "depthOrder": [
+          "gate",
+          "exit",
+          "fold-c",
+          "source-a",
+          "fold-a",
+          "research",
+          "fold-d",
+          "valve",
+          "player",
+          "fold-e",
+          "13:2:scan:446:beacon:cell:0",
+          "virus-3",
+          "virus-4",
+          "13:2:scan:446:beacon",
+          "13:2:scan:446:beacon:cell:1",
+          "13:2:scan:446:beacon:cell:2",
+          "source-b",
+          "terminal",
+          "tissue",
+          "fold-b"
+        ],
+        "occluded": false,
+        "foregroundOpacity": 0.94,
+        "layerOrder": [
+          "distant",
+          "terrain",
+          "contact-shadows",
+          "world-y-sorted",
+          "foreground",
+          "effects",
+          "hud"
+        ]
+      }
+    }
+  },
+  "images": {
+    "normal": {
+      "path": "artifacts/feedback-v064/visual-comparison/current-chrome-after/same-tick-normal.png",
+      "sha256": "dbc427de4a6ffdbcd6a9067e176b0387f67fe5c9fe2eb0b4269c9d1d0b02124c",
+      "bytes": 1079422,
+      "tick": 475,
+      "elapsed": 7.916666666666667
+    },
+    "low": {
+      "path": "artifacts/feedback-v064/visual-comparison/current-chrome-after/same-tick-low.png",
+      "sha256": "e49ce2df49209a38dff00fac0129f23a3c3d4f3a7af991dbcb1cc6145837a24c",
+      "bytes": 1079058,
+      "tick": 475,
+      "elapsed": 7.916666666666667
+    }
+  },
+  "browser": {
+    "channel": "chrome",
+    "version": "155.0.8059.85",
+    "headless": true,
+    "offline": true
+  },
+  "sourceUnchanged": true,
+  "finishedAt": "2026-10-27T04:45:39.157Z"
+}

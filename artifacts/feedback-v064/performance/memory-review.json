@@ -1,0 +1,119 @@
+{
+  "scope": "Natural V8 samples; explicit GC/restarts only after completed frame metrics. Finite observation, not a matched causal A/B, leak proof or universal device certification.",
+  "windows": {
+    "firstMinute": {
+      "count": 12,
+      "usedMedian": 6001560,
+      "allocatedMedian": 14487552
+    },
+    "warm": {
+      "count": 35,
+      "usedMedian": 8730924,
+      "allocatedMedian": 23138304
+    },
+    "late": {
+      "count": 35,
+      "usedMedian": 10789220,
+      "allocatedMedian": 36769792
+    },
+    "lastMinute": {
+      "count": 12,
+      "usedMedian": 11954858,
+      "allocatedMedian": 36769792
+    }
+  },
+  "postMeasurement": {
+    "scope": "After the finished ten-minute frame measurement only: real pause/menu/restart inputs, 1.1s settling, three explicit GCs. Not natural-GC throughput or an independent ten-minute run.",
+    "checkpoints": [
+      {
+        "name": "finished-pressure-paused",
+        "phase": "paused",
+        "tick": 37433,
+        "natural": {
+          "usedSize": 17820944,
+          "totalSize": 36769792,
+          "embedderHeapUsedSize": 4215200,
+          "backingStorageSize": 304372
+        },
+        "collected": {
+          "usedSize": 4945392,
+          "totalSize": 5836800,
+          "embedderHeapUsedSize": 2971968,
+          "backingStorageSize": 303870
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 388,
+          "jsEventListeners": 24
+        }
+      },
+      {
+        "name": "returned-menu",
+        "phase": "menu",
+        "tick": 0,
+        "natural": {
+          "usedSize": 5797916,
+          "totalSize": 8720384,
+          "embedderHeapUsedSize": 4184448,
+          "backingStorageSize": 304932
+        },
+        "collected": {
+          "usedSize": 3857220,
+          "totalSize": 4788224,
+          "embedderHeapUsedSize": 2347616,
+          "backingStorageSize": 304428
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 400,
+          "jsEventListeners": 24
+        }
+      },
+      {
+        "name": "menu-after-5-restarts",
+        "phase": "menu",
+        "tick": 0,
+        "natural": {
+          "usedSize": 4318568,
+          "totalSize": 6885376,
+          "embedderHeapUsedSize": 7851048,
+          "backingStorageSize": 304743
+        },
+        "collected": {
+          "usedSize": 3997304,
+          "totalSize": 4788224,
+          "embedderHeapUsedSize": 2399560,
+          "backingStorageSize": 304428
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 429,
+          "jsEventListeners": 24
+        }
+      },
+      {
+        "name": "menu-after-10-restarts",
+        "phase": "menu",
+        "tick": 0,
+        "natural": {
+          "usedSize": 4096348,
+          "totalSize": 7147520,
+          "embedderHeapUsedSize": 5897064,
+          "backingStorageSize": 304677
+        },
+        "collected": {
+          "usedSize": 3881084,
+          "totalSize": 4788224,
+          "embedderHeapUsedSize": 2259136,
+          "backingStorageSize": 304428
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 400,
+          "jsEventListeners": 24
+        }
+      }
+    ]
+  },
+  "acceptance": "Full memory stability remains open."
+}
