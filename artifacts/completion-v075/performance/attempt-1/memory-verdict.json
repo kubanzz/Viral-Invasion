@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "reviewedAtUtc": "2026-10-27T12:34:36Z",
+  "status": "independently-reviewed-finite-memory-observation-supported-with-explicit-deltas",
+  "method": "Run the offline analyze-memory.mjs against the completed closed attempt, then independently inspect the original report/execution/wrapper evidence, raw first/last-minute values, all minute windows and collected menu checkpoints. No new browser, simulation, forced GC, build, test or production edit. Derived outputs only are added inside this attempt directory; original inputs remain unchanged.",
+  "sources": {
+    "report": { "path": "artifacts/completion-v075/performance/attempt-1/report.json", "sha256": "a0e1650f4071f0653b56ae37c89c33d0a813cda50a766be05131b610ddca5437" },
+    "execution": { "path": "artifacts/completion-v075/performance/attempt-1/execution.json", "sha256": "c233d5fabe9cee47b7bdc2bd85ddab08e36ea14083a95d753f8e7d72ffff129a" },
+    "derivedStatistics": { "path": "artifacts/completion-v075/performance/attempt-1/memory-review.json", "sha256": "bba62b674a1366b20db1455bc57d2d0c506f861932503c64864fc7021dd48379" },
+    "analyzer": { "path": "artifacts/completion-v075/performance/analyze-memory.mjs", "sha256": "e7510a5859d358211f307bb2261fff9e275a6e1519d7b6957976ea8ccd1e8ddb" },
+    "actualMeasurementScriptSha256": "ab1b5a52cec6bc9130402ac23923f241cb08b26ad90cff3ff6cae315beed5ad2",
+    "gameBundleSha256": "971313934fc806144ceb3c2dc89eda76ce142ea1aac2bdee54ff0a52003ce342",
+    "sourceCommitRecordedByWrapper": "85dd6cc9f1a1fd8e9b967545d12923de65503f2b"
+  },
+  "recommendation": {
+    "requirement": "AC-M16-04 finite ten-minute memory observation",
+    "finiteObservedScopeSupported": true,
+    "automaticPassFromRuntimeFlag": false,
+    "suggestedRootStatement": "在记录的 Windows/i7-10700K、Chrome 155 headless、1366×768、驻心脏双生产源压力场景中，冻结 v075 已完成 600.05 active 秒自然采样；逐分钟 used 中位和低位均非持续上升，未观察到持续失控的 V8/DOM 保留。首末一分钟 used 中位仍增加 20.29%，菜单十次重开后 collected used 增加 183,708 B（3.42%），节点回到 451、监听器保持 37；不声称零增长。",
+    "neededAdditionalRuntimeForThisDeclaredScope": false,
+    "fullRequirementRowScope": "This supplies finite current-version technical evidence for the recorded headless case. It does not, by itself, close native/actual target-device presentation or unmeasured all-route/process-memory parts of the full acceptance row. Root should retain those separately stated scopes rather than relabel this completed ten-minute run as insufficient merely because indefinite stability is unprovable.",
+    "unqualifiedNoGrowthClaimSupported": false,
+    "unqualifiedAllRoutesOrAllDevicesClaimSupported": false
+  },
+  "completionAndMethodChecks": {
+    "runtimeAndExecutionStatus": "passed / exitCode 0",
+    "browserCloseSucceeded": true,
+    "bundleAndHostUnchanged": true,
+    "buildInputs": 62,
+    "measuredActiveSeconds": 600.0500000000001,
+    "measuredWallMilliseconds": 600275,
+    "preparationAndWarmupWallMillisecondsExcluded": 149442,
+    "naturalSamples": 118,
+    "naturalActiveSampleRange": [0.08333333333334281, 600.0500000000001],
+    "forcedGcInNaturalSamples": false,
+    "postMeasurementGcSeparate": true,
+    "standard": { "measuredFrameDurationMilliseconds": 299977.0000000061, "averageFps": 59.99793317487552, "p95Milliseconds": 16.79999999998836 },
+    "low": { "measuredFrameDurationMilliseconds": 300077.10000000003, "averageFps": 59.997913869468874, "p95Milliseconds": 16.79999999998836 },
+    "errors": [],
+    "remoteRequests": [],
+    "droppedObserverFrames": 0,
+    "actualAcceptedBeaconBitesDuringMeasurement": 884,
+    "observedRequestedBeaconLogs": 926,
+    "requestCounterIsNotDamageCounter": true
+  },
+  "naturalInterpretation": {
+    "firstLast60SecondUsedMedians": { "first": 15959564, "last": 19198040, "deltaBytes": 3238476, "deltaPercent": 20.291757343746987 },
+    "firstLast60SecondCapacityMedians": { "first": 71372800, "last": 74063872, "deltaBytes": 2691072, "deltaPercent": 3.770444763271162 },
+    "firstLastCapacity": { "first": 67440640, "last": 74326016, "deltaBytes": 6885376, "deltaPercent": 10.209535378074703 },
+    "usedRangeBytes": [6374140, 32702084],
+    "usedFirstLastBytes": [15363040, 15818812],
+    "completeMinuteUsedMedians": [15959564, 14866706, 20646750, 17028032, 14932218, 22796626, 18795532, 14400316, 20023588, 19545684],
+    "completeMinuteUsedMinima": [8397692, 8018560, 7421020, 7030744, 6374140, 9758620, 8924616, 7588100, 7303760, 8886112],
+    "sampledUsedDecreases": 59,
+    "rawFirstLastMinuteArithmeticIndependentlyConfirmed": true,
+    "interpretation": "The positive first/last-minute median is real and remains in the conclusion. It is not accompanied by an uninterrupted rising minute-median or sampled-floor series: standard-phase sampled minima decrease across its first five minutes; after the quality switch the next four minute minima again decrease before a higher final minute. Large and small used falls recur. This is inconsistent with a simple claim that all ongoing allocations accumulate without reclamation in this case. It does not show identical retained bytes or instrument which GC events caused each fall.",
+    "dom": { "documents": [1], "nodesRange": [326, 1026], "nodesFirstLast": [774, 536], "listenersRange": [28, 58], "listenersFirstLast": [38, 38] },
+    "populationChecks": {
+      "maxLivingActors": 24,
+      "maxCells": 3,
+      "sampledRetainedTargetArrayRange": [23, 26],
+      "sampledEventsRange": [512, 512],
+      "sampledEffectsRange": [3, 13],
+      "maxObservedRunMetricsFrameEntries": 2,
+      "runMetricsFrameEntryLimit": 256,
+      "finalRunMetricsLimited": false,
+      "observedSnapshots": 2299,
+      "finalProtocolHistoryEntries": 65,
+      "finalBattleHistoryEntries": 6,
+      "finalCampaignHistoryEntries": 3,
+      "finalBehaviorWindowBins": 134,
+      "finalRewardedKeys": 14,
+      "sceneLabelCacheCounts": "Not sampled by this archived pressure driver. The source-reviewed caps are measurement Map<=256 and placement Map<=128; do not present those as newly observed per-frame browser counters."
+    }
+  },
+  "postMeasurementInterpretation": {
+    "method": "Only after natural/frame measurement ends: actual pause/menu/start/Q actions, 1.1s settling and three forced GCs per checkpoint. Paused checkpoint can be several simulation ticks later than the terminal natural sample; it is a later retained-size observation, not an exact same-tick image or natural-GC throughput measure.",
+    "finishedPressurePaused": { "naturalUsedBytes": 29823768, "collectedUsedBytes": 6068800, "naturalCapacityBytes": 74326016, "collectedCapacityBytes": 8003584, "nodes": 403, "listeners": 37 },
+    "menuCheckpoints": [
+      { "restarts": 0, "collectedUsedBytes": 5371248, "collectedCapacityBytes": 6168576, "collectedEmbedderBytes": 2683208, "backingBytes": 395413, "nodes": 451, "listeners": 37 },
+      { "restarts": 5, "collectedUsedBytes": 5385896, "collectedCapacityBytes": 6430720, "collectedEmbedderBytes": 2810168, "backingBytes": 395407, "nodes": 422, "listeners": 37 },
+      { "restarts": 10, "collectedUsedBytes": 5554956, "collectedCapacityBytes": 6430720, "collectedEmbedderBytes": 2795024, "backingBytes": 395407, "nodes": 451, "listeners": 37 }
+    ],
+    "menuStepUsedDeltas": [
+      { "from": 0, "to": 5, "deltaBytes": 14648, "deltaPercent": 0.2727112954009943 },
+      { "from": 5, "to": 10, "deltaBytes": 169060, "deltaPercent": 3.138939184863577 }
+    ],
+    "menuTotalUsedDelta": { "deltaBytes": 183708, "deltaPercent": 3.4202107219774627 },
+    "interpretation": "Collected used rises at both recorded restart intervals and is not claimed flat. Its total rise is 183708 bytes rather than a retained copy of the 6-32MB natural occupancy envelope each restart. Collected DOM nodes return to the original menu count and listeners remain 37; embedder used decreases in the second interval and backing is constant there. Together with the bounded presentation roots reviewed in preflight, this provides no identified accumulating old HUD tree/listener or whole-run copy. The remaining byte increase has not been attributed to a retained-object dominator path, JIT, a particular cache or a leak, so those causes must not be invented.",
+    "preciseRemainingQuestion": "The 183708-byte positive collected menu delta is unclassified. It prevents an exact-zero-retention or indefinitely stable-restart claim. It is not evidence that the measured active ten-minute series had sustained uncontrolled growth, and no additional ten-minute run is required to retain the narrowly stated observation.",
+    "prePressureForcedGcBaseline": "Not present by design; there was no forced GC during preparation/warmup/natural measurement. These checkpoints demonstrate later release and matched menu differences, not an exact start-vs-end collected-live-heap comparison."
+  },
+  "coverageBoundaries": {
+    "actualRecordedDevice": "Windows 10.0.26200, Intel Core i7-10700K, 16 logical CPUs, 68,637,700,096 bytes RAM, Chrome 155.0.8059.85 headless, 1366x768.",
+    "route": "Stationary heart, two required normal open producers, legal IMMUNE_BEACON acquisition and block route; max24 living actors and max3 cells were captured in each quality mode, not asserted continuously for every frame.",
+    "lungActivated": false,
+    "travels": 0,
+    "backgroundDamage": 0,
+    "exposedCampaignTransactionIds": ["crisis-source:13:heart"],
+    "conditionalAccountingLedger": "The source-confirmed background/travel event ID bookkeeping remains run-local and can grow when a departed activated organ has an open source. This attempt did not exercise that branch; root's separate migration collection may add evidence without changing this attempt's scope.",
+    "profile": "Pressure final phase was playing and growth.ended=false; post-measurement start/Q/pause/menu cycles are unfinished restarts, not repeated actual settlements. Profile recordedRunIds intentionally grows one ID per unique completed run and is not a constant-size lifetime structure.",
+    "nativeMemory": "Runtime V8 used/capacity/embedder/backing and CDP DOM counts are not total process RSS, GPU or native canvas allocation.",
+    "excludedClaims": ["zero bytes of growth", "absence of every leak", "all-route constant memory", "repeated true-settlement memory acceptance", "all-device/native foreground acceptance", "human readability or fun acceptance"]
+  },
+  "rootUse": {
+    "safeLabel": "v075 当前版本十分钟驻心脏压力与有限 V8/DOM 内存观察已完成；正增量和范围已记录。",
+    "avoidLabel": "所有路径内存稳定／无任何内存增长／十次真实结算通过／所有设备无泄漏。",
+    "followup": "Keep root's migration/true-result evidence separately identified. Do not overwrite this report or expand its stationary-heart data into unobserved paths. The two positive deltas remain available for later focused heap-path attribution if the user asks to harden long-term restart behavior."
+  }
+}

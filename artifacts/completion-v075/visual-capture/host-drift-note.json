@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "writtenAtUtc": "2026-10-27T12:38:34.514Z",
+  "kind": "preserved-host-drift-failure",
+  "attempt": "artifacts/completion-v075/visual-capture/core-cf-attempt-1",
+  "observed": {
+    "startedAt": "2026-10-27T12:35:48.906Z",
+    "finishedAt": "2026-10-27T12:36:36.861Z",
+    "pass": false,
+    "status": "captured-awaiting-actual-image-review",
+    "browserClosed": true,
+    "sourceAndBuildUnchanged": false,
+    "actualChangedInputs": [
+      "artifacts/completion-v075/visual-capture/capture.mjs"
+    ],
+    "captured": [
+      "crystal-sweep",
+      "recovery",
+      "fission-burst",
+      "brood"
+    ],
+    "missing": [],
+    "errors": []
+  },
+  "files": [
+    {
+      "path": "artifacts/completion-v075/visual-capture/capture.mjs",
+      "lastWriteUtc": "2026-10-27T12:36:08.757Z",
+      "currentSha256": "16386a921205d97d950f877ff8bf4ae10473c3ee2fca9855399ea58b0fd80da2",
+      "attempt1ExpectedSha256": "9dd1d48308e16badd80d68da82f3563c42ce8e475bf5328f7557ab765fc6d7e8",
+      "listedInAttempt1ChangedInputs": true
+    },
+    {
+      "path": "artifacts/completion-v075/visual-capture/driver.mjs",
+      "lastWriteUtc": "2026-10-27T12:36:09.181Z",
+      "currentSha256": "e37dd80dbb5662c44e3556f096fbdc5276b6a2644f10e6f1e77f4b7c3655de1f",
+      "attempt1ExpectedSha256": "e37dd80dbb5662c44e3556f096fbdc5276b6a2644f10e6f1e77f4b7c3655de1f",
+      "listedInAttempt1ChangedInputs": false
+    },
+    {
+      "path": "artifacts/completion-v075/visual-capture/prepared.json",
+      "lastWriteUtc": "2026-10-27T12:36:09.191Z",
+      "currentSha256": "59789d273a18c29c181d900fcb4ac35400b8d1abc74affa716bd2f5e44b7ce89",
+      "attempt1ExpectedSha256": null,
+      "listedInAttempt1ChangedInputs": false
+    }
+  ],
+  "cause": "This subagent edited capture.mjs at12:36:08.757Z and re-ran static prepare at12:36:09 while root had already launched the earlier loaded module at12:35:48.906Z. The added actualViewEligible checks screen-space core presence and actual fatal DOM urgency/text. No live game state/source was injected. The already-loaded old module continued its actual run; the final host input hash guard correctly rejected frozen execution.",
+  "failureScope": "The raw native PNGs/states remain actual observations, and all4 requested CF predicates were captured. This attempt is not a passing frozen-host capture. changedInputs contains capture.mjs only: driver.mjs was regenerated with identical bytes; prepared.json mtime/hash changed but it is not itself listed as a watched input in its own manifest. Production source/build mismatches are not present in this actual changedInputs list.",
+  "preservation": "No attempt1 raw report, execution, state, image or source was edited or deleted. New captures must use a new output directory. Root requested a sequential attempt2 only after confirming this failure.",
+  "staticCheckSideNote": {
+    "checked": "capture.mjs syntax via node --check and static esbuild helper preparation",
+    "result": "Both completed with exit0 at the last preparation; no browser or test was launched by this subagent.",
+    "notValidated": "No claim that the revised actualViewEligible behavior has been executed by this subagent, or that its images are readable."
+  },
+  "freezeStatus": "No capture/driver/prepare/prepared edit has occurred by this subagent since the listed12:36:09 preparation. All active host files are now left unchanged; future edits require parent coordination after no active case.",
+  "conditionalAdvisory": "A read-only static follow-up identified a possible stale-held-key path if actualViewEligible rejects a core capture after onUpdate manually releases inputs but returns no true reset. Proposed3-line remedy was sent to parent without applying it. Existing attempt1 ran the older predicate and did not establish this path. Parent controls whether/when to repair; this note does not claim an observed attempt2 failure."
+}

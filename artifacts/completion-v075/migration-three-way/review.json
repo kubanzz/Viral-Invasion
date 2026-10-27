@@ -1,0 +1,2064 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-27T12:38:14.963Z",
+  "reviewer": "/root/spatial_review",
+  "requirement": {
+    "id": "AC-M12-02",
+    "source": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+    "line": 273,
+    "text": "固定 seed 分别选择追击、封锁、放任后，下一阶段敌人位置/器官压力确实不同，有日志和画面对照。"
+  },
+  "verdict": "proven",
+  "scope": "Current v0.7.5 seed91/campaign-1/guided/field; sequential real Chrome1366x768 DPR1 standard-effects contexts; actual stageIV next-stage branch positions/pressure, logs plus four actual original PNGs. This does not promote any other requirement or aggregate count.",
+  "release": {
+    "head": "85dd6cc9f1a1fd8e9b967545d12923de65503f2b",
+    "version": "0.7.5",
+    "gameSha256": "971313934fc806144ceb3c2dc89eda76ce142ea1aac2bdee54ff0a52003ce342",
+    "channel": "chrome",
+    "browserVersion": "155.0.8059.85"
+  },
+  "execution": {
+    "startedAt": "2026-10-27T12:33:15.179Z",
+    "finishedAt": "2026-10-27T12:35:14.021Z",
+    "exitCode": 0,
+    "status": "captured-pending-original-image-review",
+    "browserClosed": true,
+    "sourceUnchanged": true,
+    "bundleUnchanged": true,
+    "gameSha256": "971313934fc806144ceb3c2dc89eda76ce142ea1aac2bdee54ff0a52003ce342",
+    "scope": "Mechanical capture terminal only. Requirement remains pending actual original-image review; not performance/human/full-victory evidence."
+  },
+  "actualOriginalImageCount": 4,
+  "comparison": {
+    "sameStartIdentity": true,
+    "traitsIdenticalAtCapture": true,
+    "traitsByChoice": [
+      {
+        "choice": "block",
+        "beforeChoice": [
+          "CARAPACE",
+          "FISSION"
+        ],
+        "atCapture": [
+          "CARAPACE",
+          "FISSION"
+        ]
+      },
+      {
+        "choice": "pursue",
+        "beforeChoice": [
+          "CARAPACE",
+          "FISSION"
+        ],
+        "atCapture": [
+          "CARAPACE",
+          "FISSION"
+        ]
+      },
+      {
+        "choice": "ignore",
+        "beforeChoice": [
+          "CARAPACE",
+          "FISSION"
+        ],
+        "atCapture": [
+          "CARAPACE",
+          "FISSION"
+        ]
+      }
+    ],
+    "note": "Adaptive evolution after legal branch inputs may differ. Preserve actual predecision/capture traits and evolution decisions; matching every later trait, tick or pose is not a literal AC-M12-02 gate."
+  },
+  "closedSubclauses": [
+    "固定seed91、初始配置/首特性一致，三条实际输入路线分别受理一次封锁/追击/放任。",
+    "下一阶段均实际到达IV，接受真实危机源生成；封锁在心脏、追击与放任在肺部。",
+    "封锁保留心脏(1730,1020)滞留源及(1570,790)危机源，肺部未激活；追击真实clear拦截3小体，肺部仅原有源和危机源；放任额外建立(2050,1110)迁移源。",
+    "79%/76%/66%相邻snapshot与实际原图HUD可对照，封锁−4/+3、放任−10/+8有原始受理事件；图像当前总压力与特定迁移成本分开保留。",
+    "四张原始PNG均已实际打开审看，指定分支源完整可见；每张拥有真实前后snapshot、投影、HUD矩形/交叠诊断及hash。"
+  ],
+  "limitations": [
+    "单seed、单Chrome、单分辨率的有限技术验收；不扩张为全部浏览器/尺寸/密度/性能或设备证明。",
+    "三个next-stage截图的tick/实际玩家位置不同；before/after只括住截图，不声称截图精确tick。",
+    "追击与放任的危机源坐标有意相同；差异为额外迁移源、成本/压力及活动器官，不要求每个敌人坐标都不同。",
+    "部分非指定目标或标签在详情/公共图边缘裁切；无全HUD/全目标无遮挡或VIS升级结论。",
+    "不同真实路线的战斗节奏、组织/感染后续变化仍保留；特定迁移成本以receipt为准，不能把不同截图总压力差全部归因于迁移。",
+    "未跑全胜利；不作为10–15分钟节奏、复玩/乐趣/商业潜质、人类盲测验收。真实新玩家盲测仍为0/5。",
+    "原始report requirementVerdict仍为pending-original-image-review，这是采集宿主的预审状态；本独立review提供实际审图结论，未改写原始证据。"
+  ],
+  "evidenceIntegrity": {
+    "allReferencedHashesVerified": true,
+    "evidenceReferenceCount": 34,
+    "preparedInputCount": 7,
+    "preparedInputsUnchanged": true,
+    "preparedBundleHashVerified": true,
+    "terminalSourceUnchanged": true,
+    "terminalBundleUnchanged": true,
+    "pageErrorCount": 0,
+    "consoleErrorCount": 0,
+    "remoteRequestCount": 0,
+    "requestFailureCount": 0,
+    "countsOrOldArchiveModified": false
+  },
+  "cases": [
+    {
+      "choice": "block",
+      "startIdentity": {
+        "seed": 91,
+        "configId": "campaign-1",
+        "guideVariant": "guided",
+        "firstTrait": "CARAPACE",
+        "starterProtocolId": null
+      },
+      "beforeChoice": {
+        "tick": 1266,
+        "elapsed": 21.1,
+        "firstTrait": "CARAPACE",
+        "traits": [
+          "CARAPACE",
+          "FISSION"
+        ],
+        "evolutionDecisions": [
+          {
+            "kind": "warn",
+            "trait": "FISSION",
+            "warningSeconds": 8,
+            "roll": 0.2142394483089447,
+            "candidates": [
+              {
+                "trait": "FISSION",
+                "rawWeight": 1.039733046800382,
+                "probability": 0.5097815400256296
+              },
+              {
+                "trait": "MIMIC",
+                "rawWeight": 0.9998328557784145,
+                "probability": 0.49021845997437047
+              }
+            ],
+            "summary": {
+              "precisionDamage": 717,
+              "areaDamage": 130,
+              "precisionRatio": 0.846517119244392,
+              "areaRatio": 0.15348288075560804,
+              "scans": 5,
+              "isolations": 0,
+              "repaired": 25,
+              "sampleCount": 28,
+              "fromTick": 0,
+              "toTick": 786
+            }
+          }
+        ],
+        "firstCounter": {
+          "status": "resolved",
+          "guideStatus": "completed",
+          "targetId": "elite-3",
+          "warnedAt": 1.95,
+          "appliedAt": 9.95,
+          "resolvedAt": 13.083333333333334,
+          "skippedAt": null,
+          "completedAt": 12.233333333333333,
+          "counterHit": {
+            "tick": 734,
+            "at": 12.233333333333333,
+            "targetId": "elite-3",
+            "method": "pulse",
+            "damage": 34
+          }
+        }
+      },
+      "migration": {
+        "id": "migration:91:1",
+        "status": "resolved",
+        "from": "heart",
+        "to": "lung",
+        "warnedAt": 21.1,
+        "deadline": 33.1,
+        "choice": "block",
+        "resolvedAt": 27.05,
+        "blockStartedAt": null,
+        "carrierIds": [],
+        "clearedCarrierIds": [],
+        "interceptUntil": null,
+        "interceptSucceeded": true,
+        "interceptResolvedAt": 27.05
+      },
+      "clearedSourceIds": [
+        "heart:source-a",
+        "heart:source-b"
+      ],
+      "requiredSourceIds": {
+        "heart": [
+          "source-a",
+          "source-b",
+          "heart-retained-source",
+          "heart-crisis-source"
+        ],
+        "lung": [
+          "lung-source-a"
+        ]
+      },
+      "acceptedEvents": [
+        {
+          "type": "MIGRATION_WARNING",
+          "tick": 1266,
+          "data": {
+            "eventId": "migration:91:1",
+            "from": "heart",
+            "to": "lung",
+            "deadline": 33.1
+          }
+        },
+        {
+          "type": "MIGRATION_DECIDED",
+          "tick": 1623,
+          "data": {
+            "eventId": "migration:91:1",
+            "choice": "block",
+            "from": "heart",
+            "to": "lung",
+            "at": 27.05
+          }
+        },
+        {
+          "type": "ORGAN_CRISIS_STARTED",
+          "tick": 1624,
+          "data": {
+            "organId": "heart",
+            "sourceId": "heart-crisis-source",
+            "x": 1570,
+            "y": 790,
+            "targetX": 850,
+            "targetY": 1190,
+            "chargeSeconds": 8,
+            "maximumImpacts": 3,
+            "blockedByAirway": false
+          }
+        }
+      ],
+      "costReceipts": [
+        {
+          "type": "ORGAN_INTEGRITY_CHANGED",
+          "tick": 1623,
+          "data": {
+            "organId": "heart",
+            "before": 83,
+            "after": 79,
+            "reason": "migration-block-pressure"
+          }
+        },
+        {
+          "type": "INFECTION_CHANGED",
+          "tick": 1623,
+          "data": {
+            "before": 0,
+            "after": 3,
+            "reason": "migration-retained"
+          }
+        }
+      ],
+      "inputCount": 544,
+      "eventCount": 182,
+      "inputActions": {
+        "dom-click": 4,
+        "planned-input-frame": 205,
+        "key-press": 34,
+        "mouse-move": 205,
+        "mouse-down": 4,
+        "key-down": 44,
+        "key-up": 44,
+        "mouse-up": 4
+      },
+      "captures": [
+        {
+          "name": "next-stage",
+          "png": "artifacts/completion-v075/migration-three-way/attempt-1/block-next-stage.png",
+          "raw": "artifacts/completion-v075/migration-three-way/attempt-1/block-next-stage.json",
+          "ticks": [
+            1868,
+            1883
+          ]
+        }
+      ]
+    },
+    {
+      "choice": "pursue",
+      "startIdentity": {
+        "seed": 91,
+        "configId": "campaign-1",
+        "guideVariant": "guided",
+        "firstTrait": "CARAPACE",
+        "starterProtocolId": null
+      },
+      "beforeChoice": {
+        "tick": 1283,
+        "elapsed": 21.383333333333333,
+        "firstTrait": "CARAPACE",
+        "traits": [
+          "CARAPACE",
+          "FISSION"
+        ],
+        "evolutionDecisions": [
+          {
+            "kind": "warn",
+            "trait": "FISSION",
+            "warningSeconds": 8,
+            "roll": 0.2142394483089447,
+            "candidates": [
+              {
+                "trait": "FISSION",
+                "rawWeight": 1.0473766859344893,
+                "probability": 0.5084478869642932
+              },
+              {
+                "trait": "MIMIC",
+                "rawWeight": 1.0125722543352602,
+                "probability": 0.49155211303570673
+              }
+            ],
+            "summary": {
+              "precisionDamage": 643,
+              "areaDamage": 195,
+              "precisionRatio": 0.7673031026252983,
+              "areaRatio": 0.23269689737470167,
+              "scans": 5,
+              "isolations": 0,
+              "repaired": 25,
+              "sampleCount": 29,
+              "fromTick": 0,
+              "toTick": 802
+            }
+          }
+        ],
+        "firstCounter": {
+          "status": "resolved",
+          "guideStatus": "completed",
+          "targetId": "elite-3",
+          "warnedAt": 2.0833333333333335,
+          "appliedAt": 10.083333333333334,
+          "resolvedAt": 13.366666666666667,
+          "skippedAt": null,
+          "completedAt": 12.55,
+          "counterHit": {
+            "tick": 753,
+            "at": 12.55,
+            "targetId": "elite-3",
+            "method": "pulse",
+            "damage": 34
+          }
+        }
+      },
+      "migration": {
+        "id": "migration:91:1",
+        "status": "resolved",
+        "from": "heart",
+        "to": "lung",
+        "warnedAt": 21.366666666666667,
+        "deadline": 33.36666666666667,
+        "choice": "pursue",
+        "resolvedAt": 29.266666666666666,
+        "blockStartedAt": null,
+        "carrierIds": [
+          "migration-carrier-0",
+          "migration-carrier-1",
+          "migration-carrier-2"
+        ],
+        "clearedCarrierIds": [
+          "migration-carrier-0",
+          "migration-carrier-1",
+          "migration-carrier-2"
+        ],
+        "interceptUntil": 41.266666666666666,
+        "interceptSucceeded": true,
+        "interceptResolvedAt": 29.433333333333334
+      },
+      "clearedSourceIds": [
+        "heart:source-a",
+        "heart:source-b"
+      ],
+      "requiredSourceIds": {
+        "heart": [
+          "source-a",
+          "source-b"
+        ],
+        "lung": [
+          "lung-source-a",
+          "lung-crisis-source"
+        ]
+      },
+      "acceptedEvents": [
+        {
+          "type": "MIGRATION_WARNING",
+          "tick": 1282,
+          "data": {
+            "eventId": "migration:91:1",
+            "from": "heart",
+            "to": "lung",
+            "deadline": 33.36666666666667
+          }
+        },
+        {
+          "type": "MIGRATION_DECIDED",
+          "tick": 1756,
+          "data": {
+            "eventId": "migration:91:1",
+            "choice": "pursue",
+            "from": "heart",
+            "to": "lung",
+            "at": 29.266666666666666
+          }
+        },
+        {
+          "type": "ORGAN_TRAVELLED",
+          "tick": 1757,
+          "data": {
+            "from": "heart",
+            "to": "lung",
+            "eventId": "migration:91:1:pursue-travel",
+            "backgroundLoss": 0
+          }
+        },
+        {
+          "type": "MIGRATION_INTERCEPTED",
+          "tick": 1766,
+          "data": {
+            "eventId": "migration:91:1",
+            "by": "clear"
+          }
+        },
+        {
+          "type": "ORGAN_CRISIS_STARTED",
+          "tick": 1767,
+          "data": {
+            "organId": "lung",
+            "sourceId": "lung-crisis-source",
+            "x": 1210,
+            "y": 610,
+            "targetX": 1260,
+            "targetY": 1120,
+            "chargeSeconds": 8,
+            "maximumImpacts": 3,
+            "blockedByAirway": false
+          }
+        }
+      ],
+      "costReceipts": [],
+      "inputCount": 598,
+      "eventCount": 197,
+      "inputActions": {
+        "dom-click": 4,
+        "planned-input-frame": 227,
+        "key-press": 28,
+        "mouse-move": 227,
+        "mouse-down": 5,
+        "key-down": 51,
+        "key-up": 51,
+        "mouse-up": 5
+      },
+      "captures": [
+        {
+          "name": "next-stage",
+          "png": "artifacts/completion-v075/migration-three-way/attempt-1/pursue-next-stage.png",
+          "raw": "artifacts/completion-v075/migration-three-way/attempt-1/pursue-next-stage.json",
+          "ticks": [
+            2033,
+            2046
+          ]
+        }
+      ]
+    },
+    {
+      "choice": "ignore",
+      "startIdentity": {
+        "seed": 91,
+        "configId": "campaign-1",
+        "guideVariant": "guided",
+        "firstTrait": "CARAPACE",
+        "starterProtocolId": null
+      },
+      "beforeChoice": {
+        "tick": 1282,
+        "elapsed": 21.366666666666667,
+        "firstTrait": "CARAPACE",
+        "traits": [
+          "CARAPACE",
+          "FISSION"
+        ],
+        "evolutionDecisions": [
+          {
+            "kind": "warn",
+            "trait": "FISSION",
+            "warningSeconds": 8,
+            "roll": 0.2142394483089447,
+            "candidates": [
+              {
+                "trait": "FISSION",
+                "rawWeight": 1.0473766859344893,
+                "probability": 0.5084478869642932
+              },
+              {
+                "trait": "MIMIC",
+                "rawWeight": 1.0125722543352602,
+                "probability": 0.49155211303570673
+              }
+            ],
+            "summary": {
+              "precisionDamage": 643,
+              "areaDamage": 195,
+              "precisionRatio": 0.7673031026252983,
+              "areaRatio": 0.23269689737470167,
+              "scans": 5,
+              "isolations": 0,
+              "repaired": 25,
+              "sampleCount": 29,
+              "fromTick": 0,
+              "toTick": 802
+            }
+          }
+        ],
+        "firstCounter": {
+          "status": "resolved",
+          "guideStatus": "completed",
+          "targetId": "elite-3",
+          "warnedAt": 1.9666666666666666,
+          "appliedAt": 9.966666666666667,
+          "resolvedAt": 13.366666666666667,
+          "skippedAt": null,
+          "completedAt": 12.55,
+          "counterHit": {
+            "tick": 753,
+            "at": 12.55,
+            "targetId": "elite-3",
+            "method": "pulse",
+            "damage": 34
+          }
+        }
+      },
+      "migration": {
+        "id": "migration:91:1",
+        "status": "resolved",
+        "from": "heart",
+        "to": "lung",
+        "warnedAt": 21.366666666666667,
+        "deadline": 33.36666666666667,
+        "choice": "ignore",
+        "resolvedAt": 33.36666666666667,
+        "blockStartedAt": null,
+        "carrierIds": [],
+        "clearedCarrierIds": [],
+        "interceptUntil": null,
+        "interceptSucceeded": false,
+        "interceptResolvedAt": 33.36666666666667
+      },
+      "clearedSourceIds": [
+        "heart:source-a",
+        "heart:source-b"
+      ],
+      "requiredSourceIds": {
+        "heart": [
+          "source-a",
+          "source-b"
+        ],
+        "lung": [
+          "lung-source-a",
+          "lung-migrated-source",
+          "lung-crisis-source"
+        ]
+      },
+      "acceptedEvents": [
+        {
+          "type": "MIGRATION_WARNING",
+          "tick": 1282,
+          "data": {
+            "eventId": "migration:91:1",
+            "from": "heart",
+            "to": "lung",
+            "deadline": 33.36666666666667
+          }
+        },
+        {
+          "type": "MIGRATION_DECIDED",
+          "tick": 2002,
+          "data": {
+            "eventId": "migration:91:1",
+            "choice": "ignore",
+            "from": "heart",
+            "to": "lung",
+            "at": 33.36666666666667
+          }
+        },
+        {
+          "type": "ORGAN_TRAVELLED",
+          "tick": 2427,
+          "data": {
+            "from": "heart",
+            "to": "lung",
+            "eventId": "travel:91:2426",
+            "backgroundLoss": 0
+          }
+        },
+        {
+          "type": "ORGAN_CRISIS_STARTED",
+          "tick": 2428,
+          "data": {
+            "organId": "lung",
+            "sourceId": "lung-crisis-source",
+            "x": 1210,
+            "y": 610,
+            "targetX": 1260,
+            "targetY": 1120,
+            "chargeSeconds": 8,
+            "maximumImpacts": 3,
+            "blockedByAirway": false
+          }
+        }
+      ],
+      "costReceipts": [
+        {
+          "type": "ORGAN_INTEGRITY_CHANGED",
+          "tick": 2002,
+          "data": {
+            "organId": "lung",
+            "before": 76,
+            "after": 66,
+            "reason": "migration-established"
+          }
+        },
+        {
+          "type": "INFECTION_CHANGED",
+          "tick": 2002,
+          "data": {
+            "before": 0,
+            "after": 8,
+            "reason": "migration-established"
+          }
+        }
+      ],
+      "inputCount": 892,
+      "eventCount": 202,
+      "inputActions": {
+        "dom-click": 4,
+        "planned-input-frame": 314,
+        "key-press": 28,
+        "mouse-move": 314,
+        "mouse-down": 4,
+        "key-down": 112,
+        "key-up": 112,
+        "mouse-up": 4
+      },
+      "captures": [
+        {
+          "name": "next-stage",
+          "png": "artifacts/completion-v075/migration-three-way/attempt-1/ignore-next-stage.png",
+          "raw": "artifacts/completion-v075/migration-three-way/attempt-1/ignore-next-stage.json",
+          "ticks": [
+            2702,
+            2715
+          ]
+        },
+        {
+          "name": "extra-migrated-source",
+          "png": "artifacts/completion-v075/migration-three-way/attempt-1/ignore-extra-migrated-source.png",
+          "raw": "artifacts/completion-v075/migration-three-way/attempt-1/ignore-extra-migrated-source.json",
+          "ticks": [
+            2893,
+            2906
+          ]
+        }
+      ]
+    }
+  ],
+  "images": [
+    {
+      "name": "block-next-stage",
+      "png": "artifacts/completion-v075/migration-three-way/attempt-1/block-next-stage.png",
+      "raw": "artifacts/completion-v075/migration-three-way/attempt-1/block-next-stage.json",
+      "pngSha256": "653dd7299df200e1d9e40fd165c3ab9ee7b738e0789f9ec2f91a0f4c4b3d7d4e",
+      "rawSha256": "6d59b16a9c9e16d62d5627c17a5b488306e1099c097488957298a2cbfd275933",
+      "actualOriginalViewed": true,
+      "bracketValid": true,
+      "expectedVisibleTargetIds": [
+        "heart-crisis-source",
+        "heart-retained-source"
+      ],
+      "before": {
+        "tick": 1868,
+        "elapsed": 31.133333333333333,
+        "phase": "playing",
+        "stage": "IV",
+        "overlayCount": 0,
+        "crisis": {
+          "status": "charging",
+          "startedAt": 27.05,
+          "impacts": 0,
+          "chargeRemaining": 3.916666666666668
+        },
+        "pressure": {
+          "infection": 3.743166666666639,
+          "vitality": 100,
+          "criticalSince": null,
+          "organAlarm": false,
+          "crisisReason": ""
+        },
+        "organIntegrity": {
+          "heart": {
+            "activated": true,
+            "hp": 79
+          },
+          "lung": {
+            "activated": false,
+            "hp": 76
+          }
+        },
+        "sources": [
+          {
+            "id": "heart-retained-source",
+            "x": 1730,
+            "y": 1020,
+            "hp": 238
+          },
+          {
+            "id": "heart-crisis-source",
+            "x": 1570,
+            "y": 790,
+            "hp": 68
+          }
+        ],
+        "specifiedTargets": [
+          {
+            "id": "heart-retained-source",
+            "role": "source",
+            "hp": 238,
+            "x": 1730,
+            "y": 1020,
+            "screen": {
+              "x": 913.9454945017906,
+              "y": 427.0297719780923
+            },
+            "body": {
+              "left": 863.1721611684547,
+              "right": 964.7188278351264,
+              "top": 354.49643864475536,
+              "bottom": 441.5364386447597
+            }
+          },
+          {
+            "id": "heart-crisis-source",
+            "role": "source",
+            "hp": 68,
+            "x": 1570,
+            "y": 790,
+            "screen": {
+              "x": 743.2788278351239,
+              "y": 250.38977197809228
+            },
+            "body": {
+              "left": 692.5054945017881,
+              "right": 794.0521611684597,
+              "top": 177.85643864475534,
+              "bottom": 264.89643864475966
+            }
+          }
+        ],
+        "specifiedBodyHudIntersections": [
+          {
+            "id": "heart-retained-source",
+            "selectors": []
+          },
+          {
+            "id": "heart-crisis-source",
+            "selectors": []
+          }
+        ],
+        "hud": [
+          {
+            "selector": "#tissue-label",
+            "text": "79%",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1318.71875,
+              "right": 1340,
+              "top": 126,
+              "bottom": 141
+            }
+          },
+          {
+            "selector": "#infection-label",
+            "text": "4%",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1324.40625,
+              "right": 1340,
+              "top": 187.5,
+              "bottom": 202.5
+            }
+          },
+          {
+            "selector": ".organ-overview",
+            "text": "器官导航 白点为你 · 框为视野♥心脏79%◖◗肺部76%尚未激活封锁完成 · 病毒滞留心脏，出口仍可通行。",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1176,
+              "right": 1350,
+              "top": 460.015625,
+              "bottom": 690
+            }
+          }
+        ],
+        "projection": {
+          "origin": {
+            "x": -931.3878388315427,
+            "y": -356.33022802190766
+          },
+          "axes": {
+            "x": -930.321172164876,
+            "y": -355.5622280219077
+          },
+          "scale": 1.0666666666667197,
+          "yScale": 0.7199999999999381,
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "canvas": {
+            "left": 0,
+            "top": 0,
+            "width": 1366,
+            "height": 768
+          }
+        }
+      },
+      "after": {
+        "tick": 1883,
+        "elapsed": 31.383333333333333,
+        "phase": "playing",
+        "stage": "IV",
+        "overlayCount": 0,
+        "crisis": {
+          "status": "charging",
+          "startedAt": 27.05,
+          "impacts": 0,
+          "chargeRemaining": 3.666666666666668
+        },
+        "pressure": {
+          "infection": 3.7886666666666375,
+          "vitality": 100,
+          "criticalSince": null,
+          "organAlarm": false,
+          "crisisReason": ""
+        },
+        "organIntegrity": {
+          "heart": {
+            "activated": true,
+            "hp": 79
+          },
+          "lung": {
+            "activated": false,
+            "hp": 76
+          }
+        },
+        "sources": [
+          {
+            "id": "heart-retained-source",
+            "x": 1730,
+            "y": 1020,
+            "hp": 238
+          },
+          {
+            "id": "heart-crisis-source",
+            "x": 1570,
+            "y": 790,
+            "hp": 68
+          }
+        ],
+        "specifiedTargets": [
+          {
+            "id": "heart-retained-source",
+            "role": "source",
+            "hp": 238,
+            "x": 1730,
+            "y": 1020,
+            "screen": {
+              "x": 913.9454945017906,
+              "y": 427.0297719780923
+            },
+            "body": {
+              "left": 863.1721611684547,
+              "right": 964.7188278351264,
+              "top": 354.49643864475536,
+              "bottom": 441.5364386447597
+            }
+          },
+          {
+            "id": "heart-crisis-source",
+            "role": "source",
+            "hp": 68,
+            "x": 1570,
+            "y": 790,
+            "screen": {
+              "x": 743.2788278351239,
+              "y": 250.38977197809228
+            },
+            "body": {
+              "left": 692.5054945017881,
+              "right": 794.0521611684597,
+              "top": 177.85643864475534,
+              "bottom": 264.89643864475966
+            }
+          }
+        ],
+        "specifiedBodyHudIntersections": [
+          {
+            "id": "heart-retained-source",
+            "selectors": []
+          },
+          {
+            "id": "heart-crisis-source",
+            "selectors": []
+          }
+        ],
+        "hud": [
+          {
+            "selector": "#tissue-label",
+            "text": "79%",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1318.71875,
+              "right": 1340,
+              "top": 126,
+              "bottom": 141
+            }
+          },
+          {
+            "selector": "#infection-label",
+            "text": "4%",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1324.40625,
+              "right": 1340,
+              "top": 187.5,
+              "bottom": 202.5
+            }
+          },
+          {
+            "selector": ".organ-overview",
+            "text": "器官导航 白点为你 · 框为视野♥心脏79%◖◗肺部76%尚未激活封锁完成 · 病毒滞留心脏，出口仍可通行。",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1176,
+              "right": 1350,
+              "top": 460.015625,
+              "bottom": 690
+            }
+          }
+        ],
+        "projection": {
+          "origin": {
+            "x": -931.3878388315427,
+            "y": -356.33022802190766
+          },
+          "axes": {
+            "x": -930.321172164876,
+            "y": -355.5622280219077
+          },
+          "scale": 1.0666666666667197,
+          "yScale": 0.7199999999999381,
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "canvas": {
+            "left": 0,
+            "top": 0,
+            "width": 1366,
+            "height": 768
+          }
+        }
+      },
+      "observed": "实际原图为心脏 IV。画面中上部危机源与右下部滞留源本体、血条及感染源标记可辨；右侧显示心脏79%，导航显示肺部76%且尚未激活，结果文字为封锁完成。",
+      "limitations": [
+        "普通组织本体在画面左侧边缘裁切；该图不证明所有设施/目标都无遮挡。",
+        "源ID由相邻只读snapshot和投影对应，画面通用标签显示感染源。"
+      ]
+    },
+    {
+      "name": "pursue-next-stage",
+      "png": "artifacts/completion-v075/migration-three-way/attempt-1/pursue-next-stage.png",
+      "raw": "artifacts/completion-v075/migration-three-way/attempt-1/pursue-next-stage.json",
+      "pngSha256": "65018e3077f5f8da46bb4c32acca01392ee02b5354b1d036df074142c322df0e",
+      "rawSha256": "2acf2017a0b1a00b1acd1c3bf2583e4976b10d13ac1fd86a2709d5988beb82ca",
+      "actualOriginalViewed": true,
+      "bracketValid": true,
+      "expectedVisibleTargetIds": [
+        "lung-crisis-source",
+        "lung-source-a"
+      ],
+      "before": {
+        "tick": 2033,
+        "elapsed": 33.88333333333333,
+        "phase": "playing",
+        "stage": "IV",
+        "overlayCount": 0,
+        "crisis": {
+          "status": "charging",
+          "startedAt": 29.433333333333334,
+          "impacts": 0,
+          "chargeRemaining": 3.5500000000000007
+        },
+        "pressure": {
+          "infection": 0.929599999999994,
+          "vitality": 100,
+          "criticalSince": null,
+          "organAlarm": false,
+          "crisisReason": ""
+        },
+        "organIntegrity": {
+          "heart": {
+            "activated": true,
+            "hp": 83
+          },
+          "lung": {
+            "activated": true,
+            "hp": 76
+          }
+        },
+        "sources": [
+          {
+            "id": "lung-source-a",
+            "x": 1570,
+            "y": 600,
+            "hp": 238
+          },
+          {
+            "id": "lung-crisis-source",
+            "x": 1210,
+            "y": 610,
+            "hp": 68
+          }
+        ],
+        "specifiedTargets": [
+          {
+            "id": "lung-source-a",
+            "role": "source",
+            "hp": 238,
+            "x": 1570,
+            "y": 600,
+            "screen": {
+              "x": 961.3208470683231,
+              "y": 311.48099011080717
+            },
+            "body": {
+              "left": 910.5475137349873,
+              "right": 1012.094180401659,
+              "top": 238.94765677747023,
+              "bottom": 325.98765677747457
+            }
+          },
+          {
+            "id": "lung-crisis-source",
+            "role": "source",
+            "hp": 68,
+            "x": 1210,
+            "y": 610,
+            "screen": {
+              "x": 577.3208470683232,
+              "y": 319.1609901108071
+            },
+            "body": {
+              "left": 526.5475137349874,
+              "right": 628.0941804016591,
+              "top": 246.62765677747018,
+              "bottom": 333.6676567774745
+            }
+          }
+        ],
+        "specifiedBodyHudIntersections": [
+          {
+            "id": "lung-source-a",
+            "selectors": []
+          },
+          {
+            "id": "lung-crisis-source",
+            "selectors": []
+          }
+        ],
+        "hud": [
+          {
+            "selector": "#tissue-label",
+            "text": "76%",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1318.71875,
+              "right": 1340,
+              "top": 126,
+              "bottom": 141
+            }
+          },
+          {
+            "selector": "#infection-label",
+            "text": "1%",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1326.328125,
+              "right": 1340,
+              "top": 187.5,
+              "bottom": 202.5
+            }
+          },
+          {
+            "selector": ".organ-overview",
+            "text": "器官导航 白点为你 · 框为视野♥心脏83%◖◗肺部76%追击成功 · 已阻止额外感染源。",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1176,
+              "right": 1350,
+              "top": 482.40625,
+              "bottom": 690
+            }
+          }
+        ],
+        "projection": {
+          "origin": {
+            "x": -713.3458195983435,
+            "y": -149.31900988919284
+          },
+          "axes": {
+            "x": -712.2791529316768,
+            "y": -148.55100988919287
+          },
+          "scale": 1.0666666666667197,
+          "yScale": 0.7199999999999381,
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "canvas": {
+            "left": 0,
+            "top": 0,
+            "width": 1366,
+            "height": 768
+          }
+        }
+      },
+      "after": {
+        "tick": 2046,
+        "elapsed": 34.1,
+        "phase": "playing",
+        "stage": "IV",
+        "overlayCount": 0,
+        "crisis": {
+          "status": "charging",
+          "startedAt": 29.433333333333334,
+          "impacts": 0,
+          "chargeRemaining": 3.333333333333332
+        },
+        "pressure": {
+          "infection": 0.9750999999999933,
+          "vitality": 100,
+          "criticalSince": null,
+          "organAlarm": false,
+          "crisisReason": ""
+        },
+        "organIntegrity": {
+          "heart": {
+            "activated": true,
+            "hp": 83
+          },
+          "lung": {
+            "activated": true,
+            "hp": 76
+          }
+        },
+        "sources": [
+          {
+            "id": "lung-source-a",
+            "x": 1570,
+            "y": 600,
+            "hp": 238
+          },
+          {
+            "id": "lung-crisis-source",
+            "x": 1210,
+            "y": 610,
+            "hp": 68
+          }
+        ],
+        "specifiedTargets": [
+          {
+            "id": "lung-source-a",
+            "role": "source",
+            "hp": 238,
+            "x": 1570,
+            "y": 600,
+            "screen": {
+              "x": 961.3208470683231,
+              "y": 311.48099011080717
+            },
+            "body": {
+              "left": 910.5475137349873,
+              "right": 1012.094180401659,
+              "top": 238.94765677747023,
+              "bottom": 325.98765677747457
+            }
+          },
+          {
+            "id": "lung-crisis-source",
+            "role": "source",
+            "hp": 68,
+            "x": 1210,
+            "y": 610,
+            "screen": {
+              "x": 577.3208470683232,
+              "y": 319.1609901108071
+            },
+            "body": {
+              "left": 526.5475137349874,
+              "right": 628.0941804016591,
+              "top": 246.62765677747018,
+              "bottom": 333.6676567774745
+            }
+          }
+        ],
+        "specifiedBodyHudIntersections": [
+          {
+            "id": "lung-source-a",
+            "selectors": []
+          },
+          {
+            "id": "lung-crisis-source",
+            "selectors": []
+          }
+        ],
+        "hud": [
+          {
+            "selector": "#tissue-label",
+            "text": "76%",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1318.71875,
+              "right": 1340,
+              "top": 126,
+              "bottom": 141
+            }
+          },
+          {
+            "selector": "#infection-label",
+            "text": "1%",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1326.328125,
+              "right": 1340,
+              "top": 187.5,
+              "bottom": 202.5
+            }
+          },
+          {
+            "selector": ".organ-overview",
+            "text": "器官导航 白点为你 · 框为视野♥心脏83%◖◗肺部76%追击成功 · 已阻止额外感染源。",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1176,
+              "right": 1350,
+              "top": 482.40625,
+              "bottom": 690
+            }
+          }
+        ],
+        "projection": {
+          "origin": {
+            "x": -713.3458195983435,
+            "y": -149.31900988919284
+          },
+          "axes": {
+            "x": -712.2791529316768,
+            "y": -148.55100988919287
+          },
+          "scale": 1.0666666666667197,
+          "yScale": 0.7199999999999381,
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "canvas": {
+            "left": 0,
+            "top": 0,
+            "width": 1366,
+            "height": 768
+          }
+        }
+      },
+      "observed": "实际原图为肺部 IV。左侧危机源与右侧原有感染源两只本体及血条完整可见，右侧显示肺部76%，导航显示心脏83%，结果文字为追击成功并阻止额外感染源。",
+      "limitations": [
+        "图像只能直接证明当前视野中的两只源；额外源未建立由完整肺部snapshot、requiredSourceIds及真实拦截事件共同确认。",
+        "组织百分比标签在上方可读；组织本体未在当前公共视野内。"
+      ]
+    },
+    {
+      "name": "ignore-next-stage",
+      "png": "artifacts/completion-v075/migration-three-way/attempt-1/ignore-next-stage.png",
+      "raw": "artifacts/completion-v075/migration-three-way/attempt-1/ignore-next-stage.json",
+      "pngSha256": "e9cfb2ea6dde7dfcc08b8aaa5ca8319865b0e49afce7c1ebfff1c759db4a11a7",
+      "rawSha256": "fbaadcc33c2d44d21d02cc132983376f04d83dfdb88224eae7ab8696f04418f2",
+      "actualOriginalViewed": true,
+      "bracketValid": true,
+      "expectedVisibleTargetIds": [
+        "lung-crisis-source",
+        "lung-source-a"
+      ],
+      "before": {
+        "tick": 2702,
+        "elapsed": 45.03333333333333,
+        "phase": "playing",
+        "stage": "IV",
+        "overlayCount": 0,
+        "crisis": {
+          "status": "charging",
+          "startedAt": 40.45,
+          "impacts": 0,
+          "chargeRemaining": 3.4166666666666714
+        },
+        "pressure": {
+          "infection": 5.122133333333445,
+          "vitality": 100,
+          "criticalSince": null,
+          "organAlarm": false,
+          "crisisReason": ""
+        },
+        "organIntegrity": {
+          "heart": {
+            "activated": true,
+            "hp": 79
+          },
+          "lung": {
+            "activated": true,
+            "hp": 66
+          }
+        },
+        "sources": [
+          {
+            "id": "lung-source-a",
+            "x": 1570,
+            "y": 600,
+            "hp": 238
+          },
+          {
+            "id": "lung-migrated-source",
+            "x": 2050,
+            "y": 1110,
+            "hp": 238
+          },
+          {
+            "id": "lung-crisis-source",
+            "x": 1210,
+            "y": 610,
+            "hp": 68
+          }
+        ],
+        "specifiedTargets": [
+          {
+            "id": "lung-source-a",
+            "role": "source",
+            "hp": 238,
+            "x": 1570,
+            "y": 600,
+            "screen": {
+              "x": 957.3530132007346,
+              "y": 326.36983049547115
+            },
+            "body": {
+              "left": 906.5796798674041,
+              "right": 1008.1263465340651,
+              "top": 253.83649716214194,
+              "bottom": 340.876497162137
+            }
+          },
+          {
+            "id": "lung-crisis-source",
+            "role": "source",
+            "hp": 68,
+            "x": 1210,
+            "y": 610,
+            "screen": {
+              "x": 573.3530132007346,
+              "y": 334.04983049547116
+            },
+            "body": {
+              "left": 522.5796798674041,
+              "right": 624.1263465340651,
+              "top": 261.51649716214195,
+              "bottom": 348.556497162137
+            }
+          }
+        ],
+        "specifiedBodyHudIntersections": [
+          {
+            "id": "lung-source-a",
+            "selectors": []
+          },
+          {
+            "id": "lung-crisis-source",
+            "selectors": []
+          }
+        ],
+        "hud": [
+          {
+            "selector": "#tissue-label",
+            "text": "66%",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1318.46875,
+              "right": 1340,
+              "top": 126,
+              "bottom": 141
+            }
+          },
+          {
+            "selector": "#infection-label",
+            "text": "6%",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1324.609375,
+              "right": 1340,
+              "top": 187.5,
+              "bottom": 202.5
+            }
+          },
+          {
+            "selector": ".organ-overview",
+            "text": "器官导航 白点为你 · 框为视野♥心脏79%◖◗肺部66%放任迁移 · 肺部承担新增感染源风险。",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1176,
+              "right": 1350,
+              "top": 482.40625,
+              "bottom": 690
+            }
+          }
+        ],
+        "projection": {
+          "origin": {
+            "x": -717.313653465932,
+            "y": -134.43016950452886
+          },
+          "axes": {
+            "x": -716.2469867992654,
+            "y": -133.66216950452883
+          },
+          "scale": 1.066666666666606,
+          "yScale": 0.7200000000000683,
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "canvas": {
+            "left": 0,
+            "top": 0,
+            "width": 1366,
+            "height": 768
+          }
+        }
+      },
+      "after": {
+        "tick": 2715,
+        "elapsed": 45.25,
+        "phase": "playing",
+        "stage": "IV",
+        "overlayCount": 0,
+        "crisis": {
+          "status": "charging",
+          "startedAt": 40.45,
+          "impacts": 0,
+          "chargeRemaining": 3.200000000000003
+        },
+        "pressure": {
+          "infection": 5.2040333333334505,
+          "vitality": 100,
+          "criticalSince": null,
+          "organAlarm": false,
+          "crisisReason": ""
+        },
+        "organIntegrity": {
+          "heart": {
+            "activated": true,
+            "hp": 79
+          },
+          "lung": {
+            "activated": true,
+            "hp": 66
+          }
+        },
+        "sources": [
+          {
+            "id": "lung-source-a",
+            "x": 1570,
+            "y": 600,
+            "hp": 238
+          },
+          {
+            "id": "lung-migrated-source",
+            "x": 2050,
+            "y": 1110,
+            "hp": 238
+          },
+          {
+            "id": "lung-crisis-source",
+            "x": 1210,
+            "y": 610,
+            "hp": 68
+          }
+        ],
+        "specifiedTargets": [
+          {
+            "id": "lung-source-a",
+            "role": "source",
+            "hp": 238,
+            "x": 1570,
+            "y": 600,
+            "screen": {
+              "x": 957.3530132007346,
+              "y": 326.36983049547115
+            },
+            "body": {
+              "left": 906.5796798674041,
+              "right": 1008.1263465340651,
+              "top": 253.83649716214194,
+              "bottom": 340.876497162137
+            }
+          },
+          {
+            "id": "lung-crisis-source",
+            "role": "source",
+            "hp": 68,
+            "x": 1210,
+            "y": 610,
+            "screen": {
+              "x": 573.3530132007346,
+              "y": 334.04983049547116
+            },
+            "body": {
+              "left": 522.5796798674041,
+              "right": 624.1263465340651,
+              "top": 261.51649716214195,
+              "bottom": 348.556497162137
+            }
+          }
+        ],
+        "specifiedBodyHudIntersections": [
+          {
+            "id": "lung-source-a",
+            "selectors": []
+          },
+          {
+            "id": "lung-crisis-source",
+            "selectors": []
+          }
+        ],
+        "hud": [
+          {
+            "selector": "#tissue-label",
+            "text": "66%",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1318.46875,
+              "right": 1340,
+              "top": 126,
+              "bottom": 141
+            }
+          },
+          {
+            "selector": "#infection-label",
+            "text": "6%",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1324.609375,
+              "right": 1340,
+              "top": 187.5,
+              "bottom": 202.5
+            }
+          },
+          {
+            "selector": ".organ-overview",
+            "text": "器官导航 白点为你 · 框为视野♥心脏79%◖◗肺部66%放任迁移 · 肺部承担新增感染源风险。",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1176,
+              "right": 1350,
+              "top": 482.40625,
+              "bottom": 690
+            }
+          }
+        ],
+        "projection": {
+          "origin": {
+            "x": -717.313653465932,
+            "y": -134.43016950452886
+          },
+          "axes": {
+            "x": -716.2469867992654,
+            "y": -133.66216950452883
+          },
+          "scale": 1.066666666666606,
+          "yScale": 0.7200000000000683,
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "canvas": {
+            "left": 0,
+            "top": 0,
+            "width": 1366,
+            "height": 768
+          }
+        }
+      },
+      "observed": "实际原图为肺部 IV。与追击图相同世界位置的危机源/原有感染源本体及血条完整可见，右侧肺部66%、感染负荷6%，导航结果文字显示放任迁移。小地图还显示东南方新增源位置，近景另有专图。",
+      "limitations": [
+        "新增迁移源不在这张公共视图中，不能将小地图图标当作新增源本体审图；使用下一张近景及完整snapshot。",
+        "这是另一条真实路线的不同tick/玩家位置，背景呼吸相位及活动病毒姿态不同。"
+      ]
+    },
+    {
+      "name": "ignore-extra-migrated-source",
+      "png": "artifacts/completion-v075/migration-three-way/attempt-1/ignore-extra-migrated-source.png",
+      "raw": "artifacts/completion-v075/migration-three-way/attempt-1/ignore-extra-migrated-source.json",
+      "pngSha256": "492d5b60beb2ff98152cdab6af5c77760952337e29f9c8291efd228d03cb8463",
+      "rawSha256": "e3bdf1bc33159c7233fd1b91f9db9209cb31c734287ab7b48c688777109ef552",
+      "actualOriginalViewed": true,
+      "bracketValid": true,
+      "expectedVisibleTargetIds": [
+        "lung-migrated-source"
+      ],
+      "before": {
+        "tick": 2893,
+        "elapsed": 48.21666666666667,
+        "phase": "playing",
+        "stage": "IV",
+        "overlayCount": 0,
+        "crisis": {
+          "status": "charging",
+          "startedAt": 40.45,
+          "impacts": 0,
+          "chargeRemaining": 0.23333333333333428
+        },
+        "pressure": {
+          "infection": 6.451433333333511,
+          "vitality": 100,
+          "criticalSince": null,
+          "organAlarm": false,
+          "crisisReason": ""
+        },
+        "organIntegrity": {
+          "heart": {
+            "activated": true,
+            "hp": 79
+          },
+          "lung": {
+            "activated": true,
+            "hp": 65.88
+          }
+        },
+        "sources": [
+          {
+            "id": "lung-source-a",
+            "x": 1570,
+            "y": 600,
+            "hp": 238
+          },
+          {
+            "id": "lung-migrated-source",
+            "x": 2050,
+            "y": 1110,
+            "hp": 238
+          },
+          {
+            "id": "lung-crisis-source",
+            "x": 1210,
+            "y": 610,
+            "hp": 68
+          }
+        ],
+        "specifiedTargets": [
+          {
+            "id": "lung-migrated-source",
+            "role": "source",
+            "hp": 238,
+            "x": 2050,
+            "y": 1110,
+            "screen": {
+              "x": 950,
+              "y": 479.828384340847
+            },
+            "body": {
+              "left": 899.2266666666587,
+              "right": 1000.7733333333413,
+              "top": 407.2950510075023,
+              "bottom": 494.3350510075159
+            }
+          }
+        ],
+        "specifiedBodyHudIntersections": [
+          {
+            "id": "lung-migrated-source",
+            "selectors": []
+          }
+        ],
+        "hud": [
+          {
+            "selector": "#tissue-label",
+            "text": "66%",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1318.46875,
+              "right": 1340,
+              "top": 126,
+              "bottom": 141
+            }
+          },
+          {
+            "selector": "#infection-label",
+            "text": "7%",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1324.84375,
+              "right": 1340,
+              "top": 187.5,
+              "bottom": 202.5
+            }
+          },
+          {
+            "selector": ".organ-overview",
+            "text": "器官导航 白点为你 · 框为视野♥心脏79%◖◗肺部66%放任迁移 · 肺部承担新增感染源风险。",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1176,
+              "right": 1350,
+              "top": 482.40625,
+              "bottom": 690
+            }
+          }
+        ],
+        "projection": {
+          "origin": {
+            "x": -1236.6666666666667,
+            "y": -372.65161565915304
+          },
+          "axes": {
+            "x": -1235.6,
+            "y": -371.883615659153
+          },
+          "scale": 1.0666666666668334,
+          "yScale": 0.7199999999999147,
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "canvas": {
+            "left": 0,
+            "top": 0,
+            "width": 1366,
+            "height": 768
+          }
+        }
+      },
+      "after": {
+        "tick": 2906,
+        "elapsed": 48.43333333333333,
+        "phase": "playing",
+        "stage": "IV",
+        "overlayCount": 0,
+        "crisis": {
+          "status": "charging",
+          "startedAt": 40.45,
+          "impacts": 0,
+          "chargeRemaining": 0.016666666666672825
+        },
+        "pressure": {
+          "infection": 6.559333333333513,
+          "vitality": 100,
+          "criticalSince": null,
+          "organAlarm": false,
+          "crisisReason": ""
+        },
+        "organIntegrity": {
+          "heart": {
+            "activated": true,
+            "hp": 79
+          },
+          "lung": {
+            "activated": true,
+            "hp": 65.88
+          }
+        },
+        "sources": [
+          {
+            "id": "lung-source-a",
+            "x": 1570,
+            "y": 600,
+            "hp": 238
+          },
+          {
+            "id": "lung-migrated-source",
+            "x": 2050,
+            "y": 1110,
+            "hp": 238
+          },
+          {
+            "id": "lung-crisis-source",
+            "x": 1210,
+            "y": 610,
+            "hp": 68
+          }
+        ],
+        "specifiedTargets": [
+          {
+            "id": "lung-migrated-source",
+            "role": "source",
+            "hp": 238,
+            "x": 2050,
+            "y": 1110,
+            "screen": {
+              "x": 950,
+              "y": 479.828384340847
+            },
+            "body": {
+              "left": 899.2266666666587,
+              "right": 1000.7733333333413,
+              "top": 407.2950510075023,
+              "bottom": 494.3350510075159
+            }
+          }
+        ],
+        "specifiedBodyHudIntersections": [
+          {
+            "id": "lung-migrated-source",
+            "selectors": []
+          }
+        ],
+        "hud": [
+          {
+            "selector": "#tissue-label",
+            "text": "66%",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1318.46875,
+              "right": 1340,
+              "top": 126,
+              "bottom": 141
+            }
+          },
+          {
+            "selector": "#infection-label",
+            "text": "7%",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1324.84375,
+              "right": 1340,
+              "top": 187.5,
+              "bottom": 202.5
+            }
+          },
+          {
+            "selector": ".organ-overview",
+            "text": "器官导航 白点为你 · 框为视野♥心脏79%◖◗肺部66%放任迁移 · 肺部承担新增感染源风险。",
+            "visible": true,
+            "opacity": "1",
+            "rect": {
+              "left": 1176,
+              "right": 1350,
+              "top": 482.40625,
+              "bottom": 690
+            }
+          }
+        ],
+        "projection": {
+          "origin": {
+            "x": -1236.6666666666667,
+            "y": -372.65161565915304
+          },
+          "axes": {
+            "x": -1235.6,
+            "y": -371.883615659153
+          },
+          "scale": 1.0666666666668334,
+          "yScale": 0.7199999999999147,
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "canvas": {
+            "left": 0,
+            "top": 0,
+            "width": 1366,
+            "height": 768
+          }
+        }
+      },
+      "observed": "实际原图中右下方新增迁移源本体、底部感染环及上方感染源血条均完整可见。snapshot/投影将其对应为世界(2050,1110)的lung-migrated-source；肺部完整度显示66%，导航保留放任结果。",
+      "limitations": [
+        "左上危机源被左边缘/HUD局部遮挡，原有感染源靠上边缘，组织顶端标签有裁边。这张详情仅证明新增迁移源，不能证明全HUD/全目标无遮挡。",
+        "该图紧邻首次危机冲击：前后snapshot尚为0次冲击，终态稍后可能已受损，不能用终态组织值替代截图时的65.88%（HUD四舍五入显示66%）。"
+      ]
+    }
+  ],
+  "evidenceRefs": [
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+      "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/report.json",
+      "sha256": "8e812edb4b8d1bf59b8ed8fe8c146b43cfb37853b86f96d9cebd0f06f2848f79"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/execution.json",
+      "sha256": "937ed71c03dd6b99b25bbccbec6fc006f46ebdf2a673c33d9fc43b62c60df6e1"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/capture.ts",
+      "sha256": "7b7df9558b0a3e1061887c9068a50d77f71c5ff6be1c330c8f4a27bd57b8657c"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/guards.mjs",
+      "sha256": "1ac433c00b1dd1517ef6227cbe23a5fec24707dc167bc24460e6c30f7f21b13a"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/prepare.mjs",
+      "sha256": "46189485b665db94bbbca4095d5744eeaa5263433282bbc8045399727351213a"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/prepared/manifest.json",
+      "sha256": "19134a343bc92a478ad33de89a05c7fdc72e75b96ad8d579ff0aef5fafbcc3e4"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/prepared/capture.mjs",
+      "sha256": "0d1ddf397232eabe32b038675a2a4494622bd6ef06b8ce5b5f2e72c99ff30f8e"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/block-events.json",
+      "sha256": "19de335125f9a5cc26b6d1b4b5e09ec75582059b22cee744f10e0a41fd460f80"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/block-inputs.json",
+      "sha256": "8a9ccc67da5d700d345eacbab2c9ba7966e59e8f850df5db8d223664f52c6c74"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/block-start.json",
+      "sha256": "e34d485814e97805a41c48556a9f541e5e2da6ffd0536e7a7bf161379e31671f"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/block-common-migration-warning.json",
+      "sha256": "ad7218495d33845d72a16f79f8a46916b115d0cb0c3ecd9f459c049feef2c5ae"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/block-accepted-decision.json",
+      "sha256": "3b3f5a947c23982c17bcf67d7470206c4d26a2f79462ee9cca8a16af946dcb71"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/block-accepted-next-stage.json",
+      "sha256": "f3f69d9bfa944ed03db747ddc3360b8ae67eb4c7100f980e3261a93a4a5b9d4c"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/block-next-stage.png",
+      "sha256": "653dd7299df200e1d9e40fd165c3ab9ee7b738e0789f9ec2f91a0f4c4b3d7d4e"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/block-next-stage.json",
+      "sha256": "6d59b16a9c9e16d62d5627c17a5b488306e1099c097488957298a2cbfd275933"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/pursue-events.json",
+      "sha256": "8a0f71017e81b00a2f53e993692adede0f788bbb02a6483fc964618b6e62ff61"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/pursue-inputs.json",
+      "sha256": "88162216355f011c48287dac39f752456486420684dfe2b32001e11e600f1762"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/pursue-start.json",
+      "sha256": "3e5407a6cad69f7cd5d81d2062ddc7704af01697c0a38348a9fe73d6cf065762"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/pursue-common-migration-warning.json",
+      "sha256": "e3ffcc9e1958b057f27dae4d9c3c9ec6464c9c546fa941e7ea60d988f7e2ac7b"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/pursue-accepted-decision.json",
+      "sha256": "00edf556f0bd289bfc8ddd38fb19c82c2841a388f61990f81a0dce2521157257"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/pursue-accepted-next-stage.json",
+      "sha256": "fff3c4c1383284d78bd4d85f275f9027d5eba6ca2f9965378c15bad7c848b659"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/pursue-next-stage.png",
+      "sha256": "65018e3077f5f8da46bb4c32acca01392ee02b5354b1d036df074142c322df0e"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/pursue-next-stage.json",
+      "sha256": "2acf2017a0b1a00b1acd1c3bf2583e4976b10d13ac1fd86a2709d5988beb82ca"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/ignore-events.json",
+      "sha256": "6a91c1fe6eba7864a4b35054908bd8ff3987fd1bf2f6f1c3210e57e4b64e680a"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/ignore-inputs.json",
+      "sha256": "d29e57ab83a666a67b31ecae9c386db0357d01e890e6631df3224b0053ecf0b3"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/ignore-start.json",
+      "sha256": "51e72d4b21393e161f3685119531a34f2c945dbfe28281d8cce87349c4017452"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/ignore-common-migration-warning.json",
+      "sha256": "0db3ba7a011aa2f76b5cab062c3f9f71e58751247ab0d60ae9705016247a0e8a"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/ignore-accepted-decision.json",
+      "sha256": "7f4227c166f0fa7c6c21e527a389a23e4909ed1c3f191a9371a2cd950b9e7d78"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/ignore-accepted-next-stage.json",
+      "sha256": "80ca5847e012cac04623c0d7d59da98a34ff0422250f482aecd8b70a3cee94cb"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/ignore-next-stage.png",
+      "sha256": "e9cfb2ea6dde7dfcc08b8aaa5ca8319865b0e49afce7c1ebfff1c759db4a11a7"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/ignore-next-stage.json",
+      "sha256": "fbaadcc33c2d44d21d02cc132983376f04d83dfdb88224eae7ab8696f04418f2"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/ignore-extra-migrated-source.png",
+      "sha256": "492d5b60beb2ff98152cdab6af5c77760952337e29f9c8291efd228d03cb8463"
+    },
+    {
+      "path": "artifacts/completion-v075/migration-three-way/attempt-1/ignore-extra-migrated-source.json",
+      "sha256": "e3bdf1bc33159c7233fd1b91f9db9209cb31c734287ab7b48c688777109ef552"
+    }
+  ]
+}

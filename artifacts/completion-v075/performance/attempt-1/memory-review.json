@@ -1,0 +1,2373 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-27T12:33:22.612Z",
+  "status": "derived-finite-runtime-observations-memory-acceptance-not-automatically-assigned",
+  "method": "Offline arithmetic from a completed existing attempt. No browser, game state mutation, new simulation, test, forced GC or performance measurement is performed by this analyzer.",
+  "input": {
+    "reportPath": "artifacts/completion-v075/performance/attempt-1/report.json",
+    "reportSha256": "a0e1650f4071f0653b56ae37c89c33d0a813cda50a766be05131b610ddca5437",
+    "executionPath": "artifacts/completion-v075/performance/attempt-1/execution.json",
+    "executionSha256": "c233d5fabe9cee47b7bdc2bd85ddab08e36ea14083a95d753f8e7d72ffff129a",
+    "reviewScriptPath": "artifacts/completion-v075/performance/analyze-memory.mjs",
+    "reviewScriptSha256": "e7510a5859d358211f307bb2261fff9e275a6e1519d7b6957976ea8ccd1e8ddb",
+    "version": "0.7.5",
+    "releaseGameJsSha256": "971313934fc806144ceb3c2dc89eda76ce142ea1aac2bdee54ff0a52003ce342",
+    "runtimePass": true,
+    "startedAt": "2026-10-27T12:20:11.475Z",
+    "finishedAt": "2026-10-27T12:32:51.868Z",
+    "device": {
+      "os": "win32",
+      "release": "10.0.26200",
+      "cpu": "Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz",
+      "logicalCpus": 16,
+      "memoryBytes": 68637700096,
+      "browser": "155.0.8059.85",
+      "mode": "headless"
+    }
+  },
+  "timing": {
+    "activeSimulationSeconds": 600.0500000000001,
+    "measurementWallMilliseconds": 600275,
+    "preMeasurementWallMilliseconds": 149442,
+    "wallBeforePostMemoryMilliseconds": 749717,
+    "activeSampleRange": [
+      0.08333333333334281,
+      600.0500000000001
+    ],
+    "preparationAndWarmupExcluded": true,
+    "forcedGcDuringNaturalMeasurement": false
+  },
+  "natural": {
+    "samples": 118,
+    "quantileMethod": "Linear interpolation at (n-1)*q. Minima are sampled natural occupied size, not measured post-GC live-object floors.",
+    "overall": {
+      "samples": 118,
+      "usedBytes": {
+        "count": 118,
+        "min": 6374140,
+        "p10": 8158766,
+        "p25": 13769131,
+        "median": 18197260,
+        "p75": 24297224,
+        "p90": 29065067.599999998,
+        "p95": 30963067.399999995,
+        "max": 32702084,
+        "first": 15363040,
+        "last": 15818812
+      },
+      "allocatedCapacityBytes": {
+        "count": 118,
+        "min": 67440640,
+        "p10": 71634944,
+        "p25": 71897088,
+        "median": 73373696,
+        "p75": 74063872,
+        "p90": 74063872,
+        "p95": 74103193.6,
+        "max": 74326016,
+        "first": 67440640,
+        "last": 74326016
+      },
+      "embedderUsedBytes": {
+        "count": 118,
+        "min": 2539152,
+        "p10": 3280041.6,
+        "p25": 4615022,
+        "median": 6626592,
+        "p75": 8466842,
+        "p90": 10189319.2,
+        "p95": 10824679.999999996,
+        "max": 12332952,
+        "first": 9690488,
+        "last": 5286072
+      },
+      "backingStorageBytes": {
+        "count": 118,
+        "min": 394507,
+        "p10": 395114.7,
+        "p25": 395610,
+        "median": 396364,
+        "p75": 397144.5,
+        "p90": 397893.3,
+        "p95": 398142.5,
+        "max": 398905,
+        "first": 397390,
+        "last": 395349
+      },
+      "domNodes": {
+        "count": 118,
+        "min": 326,
+        "p10": 398,
+        "p25": 477.5,
+        "median": 639.5,
+        "p75": 775.5,
+        "p90": 885.8,
+        "p95": 977.9,
+        "max": 1026,
+        "first": 774,
+        "last": 536
+      },
+      "listeners": {
+        "count": 118,
+        "min": 28,
+        "p10": 29.700000000000003,
+        "p25": 34,
+        "median": 41,
+        "p75": 47,
+        "p90": 51,
+        "p95": 52.14999999999999,
+        "max": 58,
+        "first": 38,
+        "last": 38
+      },
+      "documents": [
+        1
+      ]
+    },
+    "first60Seconds": {
+      "samples": 12,
+      "usedBytes": {
+        "count": 12,
+        "min": 8397692,
+        "p10": 11713395.2,
+        "p25": 13753019,
+        "median": 15959564,
+        "p75": 20565923,
+        "p90": 31487146.400000002,
+        "p95": 32506427,
+        "max": 32702084,
+        "first": 15363040,
+        "last": 8397692
+      },
+      "allocatedCapacityBytes": {
+        "count": 12,
+        "min": 67440640,
+        "p10": 71110656,
+        "p25": 71307264,
+        "median": 71372800,
+        "p75": 71634944,
+        "p90": 71634944,
+        "p95": 71752908.8,
+        "max": 71897088,
+        "first": 67440640,
+        "last": 71897088
+      },
+      "embedderUsedBytes": {
+        "count": 12,
+        "min": 3299592,
+        "p10": 3446651.2,
+        "p25": 4374670,
+        "median": 5792360,
+        "p75": 7632236,
+        "p90": 9542024,
+        "p95": 10383801.2,
+        "max": 11231184,
+        "first": 9690488,
+        "last": 11231184
+      },
+      "backingStorageBytes": {
+        "count": 12,
+        "min": 396396,
+        "p10": 396892.5,
+        "p25": 396902.25,
+        "median": 397419.5,
+        "p75": 397896,
+        "p90": 397909.5,
+        "p95": 398138.15,
+        "max": 398417,
+        "first": 397390,
+        "last": 398417
+      },
+      "domNodes": {
+        "count": 12,
+        "min": 359,
+        "p10": 434.4,
+        "p25": 493.5,
+        "median": 609.5,
+        "p75": 715.5,
+        "p90": 770.7,
+        "p95": 853.1999999999998,
+        "max": 950,
+        "first": 774,
+        "last": 950
+      },
+      "listeners": {
+        "count": 12,
+        "min": 29,
+        "p10": 29.1,
+        "p25": 30,
+        "median": 33.5,
+        "p75": 34.5,
+        "p90": 37.8,
+        "p95": 38.9,
+        "max": 40,
+        "first": 38,
+        "last": 40
+      },
+      "documents": [
+        1
+      ]
+    },
+    "last60Seconds": {
+      "samples": 12,
+      "usedBytes": {
+        "count": 12,
+        "min": 8886112,
+        "p10": 13349072,
+        "p25": 15441740,
+        "median": 19198040,
+        "p75": 21249107,
+        "p90": 27018929.6,
+        "p95": 29471075.999999996,
+        "max": 32284084,
+        "first": 32284084,
+        "last": 15818812
+      },
+      "allocatedCapacityBytes": {
+        "count": 12,
+        "min": 73801728,
+        "p10": 74063872,
+        "p25": 74063872,
+        "median": 74063872,
+        "p75": 74326016,
+        "p90": 74326016,
+        "p95": 74326016,
+        "max": 74326016,
+        "first": 74063872,
+        "last": 74326016
+      },
+      "embedderUsedBytes": {
+        "count": 12,
+        "min": 3852456,
+        "p10": 4301856,
+        "p25": 4902618,
+        "median": 7141080,
+        "p75": 10512366,
+        "p90": 11388998.4,
+        "p95": 11607617.6,
+        "max": 11768376,
+        "first": 10605192,
+        "last": 5286072
+      },
+      "backingStorageBytes": {
+        "count": 12,
+        "min": 394904,
+        "p10": 395107.3,
+        "p25": 395289.25,
+        "median": 396353.5,
+        "p75": 396748.25,
+        "p90": 397580.3,
+        "p95": 397842.15,
+        "max": 398099,
+        "first": 398099,
+        "last": 395349
+      },
+      "domNodes": {
+        "count": 12,
+        "min": 425,
+        "p10": 437.6,
+        "p25": 501.5,
+        "median": 674,
+        "p75": 937.25,
+        "p90": 994.7,
+        "p95": 1007.15,
+        "max": 1022,
+        "first": 995,
+        "last": 536
+      },
+      "listeners": {
+        "count": 12,
+        "min": 38,
+        "p10": 41.1,
+        "p25": 42,
+        "median": 47,
+        "p75": 52.25,
+        "p90": 57.5,
+        "p95": 58,
+        "max": 58,
+        "first": 52,
+        "last": 38
+      },
+      "documents": [
+        1
+      ]
+    },
+    "windowDefinitions": "First active<60. Last active>=finalActive-60, including terminal. Minute windows are [start,start+60); a final partial window is labelled.",
+    "firstLast60MedianChanges": {
+      "usedBytes": {
+        "before": 15959564,
+        "after": 19198040,
+        "amount": 3238476,
+        "percent": 20.291757343746987
+      },
+      "allocatedCapacityBytes": {
+        "before": 71372800,
+        "after": 74063872,
+        "amount": 2691072,
+        "percent": 3.770444763271162
+      },
+      "embedderUsedBytes": {
+        "before": 5792360,
+        "after": 7141080,
+        "amount": 1348720,
+        "percent": 23.284464363402826
+      },
+      "backingStorageBytes": {
+        "before": 397419.5,
+        "after": 396353.5,
+        "amount": -1066,
+        "percent": -0.26823042150674536
+      },
+      "domNodes": {
+        "before": 609.5,
+        "after": 674,
+        "amount": 64.5,
+        "percent": 10.582444626743232
+      },
+      "listeners": {
+        "before": 33.5,
+        "after": 47,
+        "amount": 13.5,
+        "percent": 40.298507462686565
+      }
+    },
+    "firstLastCapacity": {
+      "before": 67440640,
+      "after": 74326016,
+      "amount": 6885376,
+      "percent": 10.209535378074703
+    },
+    "minuteWindows": [
+      {
+        "start": 0,
+        "end": 60,
+        "partialWindow": false,
+        "samples": 12,
+        "usedBytes": {
+          "count": 12,
+          "min": 8397692,
+          "p10": 11713395.2,
+          "p25": 13753019,
+          "median": 15959564,
+          "p75": 20565923,
+          "p90": 31487146.400000002,
+          "p95": 32506427,
+          "max": 32702084,
+          "first": 15363040,
+          "last": 8397692
+        },
+        "allocatedCapacityBytes": {
+          "count": 12,
+          "min": 67440640,
+          "p10": 71110656,
+          "p25": 71307264,
+          "median": 71372800,
+          "p75": 71634944,
+          "p90": 71634944,
+          "p95": 71752908.8,
+          "max": 71897088,
+          "first": 67440640,
+          "last": 71897088
+        },
+        "embedderUsedBytes": {
+          "count": 12,
+          "min": 3299592,
+          "p10": 3446651.2,
+          "p25": 4374670,
+          "median": 5792360,
+          "p75": 7632236,
+          "p90": 9542024,
+          "p95": 10383801.2,
+          "max": 11231184,
+          "first": 9690488,
+          "last": 11231184
+        },
+        "backingStorageBytes": {
+          "count": 12,
+          "min": 396396,
+          "p10": 396892.5,
+          "p25": 396902.25,
+          "median": 397419.5,
+          "p75": 397896,
+          "p90": 397909.5,
+          "p95": 398138.15,
+          "max": 398417,
+          "first": 397390,
+          "last": 398417
+        },
+        "domNodes": {
+          "count": 12,
+          "min": 359,
+          "p10": 434.4,
+          "p25": 493.5,
+          "median": 609.5,
+          "p75": 715.5,
+          "p90": 770.7,
+          "p95": 853.1999999999998,
+          "max": 950,
+          "first": 774,
+          "last": 950
+        },
+        "listeners": {
+          "count": 12,
+          "min": 29,
+          "p10": 29.1,
+          "p25": 30,
+          "median": 33.5,
+          "p75": 34.5,
+          "p90": 37.8,
+          "p95": 38.9,
+          "max": 40,
+          "first": 38,
+          "last": 40
+        },
+        "documents": [
+          1
+        ]
+      },
+      {
+        "start": 60,
+        "end": 120,
+        "partialWindow": false,
+        "samples": 12,
+        "usedBytes": {
+          "count": 12,
+          "min": 8018560,
+          "p10": 8315208,
+          "p25": 12653187,
+          "median": 14866706,
+          "p75": 20401894,
+          "p90": 24132172,
+          "p95": 25295943.799999997,
+          "max": 26682980,
+          "first": 8204444,
+          "last": 24161096
+        },
+        "allocatedCapacityBytes": {
+          "count": 12,
+          "min": 71372800,
+          "p10": 71372800,
+          "p25": 71569408,
+          "median": 71634944,
+          "p75": 71897088,
+          "p90": 72133017.6,
+          "p95": 72159232,
+          "max": 72159232,
+          "first": 71372800,
+          "last": 71634944
+        },
+        "embedderUsedBytes": {
+          "count": 12,
+          "min": 3234424,
+          "p10": 4093796,
+          "p25": 4453340,
+          "median": 5964144,
+          "p75": 8174004,
+          "p90": 10018768.8,
+          "p95": 10790465.2,
+          "max": 11513680,
+          "first": 8099008,
+          "last": 7273640
+        },
+        "backingStorageBytes": {
+          "count": 12,
+          "min": 396394,
+          "p10": 396456.1,
+          "p25": 396903.25,
+          "median": 397660,
+          "p75": 398395.5,
+          "p90": 398435.7,
+          "p95": 398649.25,
+          "max": 398905,
+          "first": 398905,
+          "last": 397896
+        },
+        "domNodes": {
+          "count": 12,
+          "min": 360,
+          "p10": 464,
+          "p25": 488.75,
+          "median": 622,
+          "p75": 781,
+          "p90": 870.7,
+          "p95": 923.65,
+          "max": 977,
+          "first": 787,
+          "last": 707
+        },
+        "listeners": {
+          "count": 12,
+          "min": 28,
+          "p10": 28.2,
+          "p25": 30,
+          "median": 32.5,
+          "p75": 35.5,
+          "p90": 39.7,
+          "p95": 40.9,
+          "max": 42,
+          "first": 37,
+          "last": 35
+        },
+        "documents": [
+          1
+        ]
+      },
+      {
+        "start": 120,
+        "end": 180,
+        "partialWindow": false,
+        "samples": 12,
+        "usedBytes": {
+          "count": 12,
+          "min": 7421020,
+          "p10": 8018890,
+          "p25": 13274758,
+          "median": 20646750,
+          "p75": 26697481,
+          "p90": 31650800.8,
+          "p95": 32256431.4,
+          "max": 32617348,
+          "first": 16861484,
+          "last": 18595756
+        },
+        "allocatedCapacityBytes": {
+          "count": 12,
+          "min": 71634944,
+          "p10": 71661158.4,
+          "p25": 71897088,
+          "median": 71897088,
+          "p75": 71962624,
+          "p90": 72395161.6,
+          "p95": 72657305.6,
+          "max": 72945664,
+          "first": 72421376,
+          "last": 72945664
+        },
+        "embedderUsedBytes": {
+          "count": 12,
+          "min": 2781904,
+          "p10": 3161756.8000000003,
+          "p25": 5945302,
+          "median": 7087216,
+          "p75": 9568320,
+          "p90": 10135831.2,
+          "p95": 10331335.6,
+          "max": 10509848,
+          "first": 10185280,
+          "last": 6806096
+        },
+        "backingStorageBytes": {
+          "count": 12,
+          "min": 395645,
+          "p10": 395701.3,
+          "p25": 396169,
+          "median": 397145.5,
+          "p75": 397679.25,
+          "p90": 397873.5,
+          "p95": 398117.3,
+          "max": 398389,
+          "first": 397410,
+          "last": 396163
+        },
+        "domNodes": {
+          "count": 12,
+          "min": 398,
+          "p10": 404.6,
+          "p25": 592.25,
+          "median": 713.5,
+          "p75": 815,
+          "p90": 879.8,
+          "p95": 913.6999999999999,
+          "max": 950,
+          "first": 842,
+          "last": 635
+        },
+        "listeners": {
+          "count": 12,
+          "min": 29,
+          "p10": 29.1,
+          "p25": 33,
+          "median": 34.5,
+          "p75": 39,
+          "p90": 39,
+          "p95": 40.349999999999994,
+          "max": 42,
+          "first": 42,
+          "last": 34
+        },
+        "documents": [
+          1
+        ]
+      },
+      {
+        "start": 180,
+        "end": 240,
+        "partialWindow": false,
+        "samples": 11,
+        "usedBytes": {
+          "count": 11,
+          "min": 7030744,
+          "p10": 8247612,
+          "p25": 12609132,
+          "median": 17028032,
+          "p75": 26825918,
+          "p90": 28402456,
+          "p95": 29632008,
+          "max": 30861560,
+          "first": 26028752,
+          "last": 7030744
+        },
+        "allocatedCapacityBytes": {
+          "count": 11,
+          "min": 71634944,
+          "p10": 71634944,
+          "p25": 71897088,
+          "median": 71897088,
+          "p75": 72159232,
+          "p90": 72421376,
+          "p95": 72421376,
+          "max": 72421376,
+          "first": 71897088,
+          "last": 72159232
+        },
+        "embedderUsedBytes": {
+          "count": 11,
+          "min": 2748600,
+          "p10": 3141208,
+          "p25": 4543328,
+          "median": 6701560,
+          "p75": 9567180,
+          "p90": 9997216,
+          "p95": 10805944,
+          "max": 11614672,
+          "first": 6701560,
+          "last": 2748600
+        },
+        "backingStorageBytes": {
+          "count": 11,
+          "min": 394817,
+          "p10": 395649,
+          "p25": 396147,
+          "median": 396641,
+          "p75": 396910.5,
+          "p90": 397182,
+          "p95": 397426,
+          "max": 397670,
+          "first": 396650,
+          "last": 394817
+        },
+        "domNodes": {
+          "count": 11,
+          "min": 359,
+          "p10": 398,
+          "p25": 500,
+          "median": 641,
+          "p75": 810.5,
+          "p90": 983,
+          "p95": 1004.5,
+          "max": 1026,
+          "first": 641,
+          "last": 359
+        },
+        "listeners": {
+          "count": 11,
+          "min": 28,
+          "p10": 29,
+          "p25": 29,
+          "median": 35,
+          "p75": 38.5,
+          "p90": 40,
+          "p95": 40,
+          "max": 40,
+          "first": 35,
+          "last": 29
+        },
+        "documents": [
+          1
+        ]
+      },
+      {
+        "start": 240,
+        "end": 300,
+        "partialWindow": false,
+        "samples": 12,
+        "usedBytes": {
+          "count": 12,
+          "min": 6374140,
+          "p10": 7402139.6,
+          "p25": 8880638,
+          "median": 14932218,
+          "p75": 18166229,
+          "p90": 18721114.4,
+          "p95": 18773405.8,
+          "max": 18777500,
+          "first": 18128092,
+          "last": 18770056
+        },
+        "allocatedCapacityBytes": {
+          "count": 12,
+          "min": 71897088,
+          "p10": 72683520,
+          "p25": 72683520,
+          "median": 72945664,
+          "p75": 72945664,
+          "p90": 72945664,
+          "p95": 73063628.8,
+          "max": 73207808,
+          "first": 71897088,
+          "last": 73207808
+        },
+        "embedderUsedBytes": {
+          "count": 12,
+          "min": 2935416,
+          "p10": 3246323.2,
+          "p25": 4433866,
+          "median": 6355212,
+          "p75": 6940264,
+          "p90": 8246137.600000001,
+          "p95": 8961054.799999999,
+          "max": 9750384,
+          "first": 6156584,
+          "last": 6464536
+        },
+        "backingStorageBytes": {
+          "count": 12,
+          "min": 394814,
+          "p10": 394861.7,
+          "p25": 395301.5,
+          "median": 395786,
+          "p75": 395854.25,
+          "p90": 396269.3,
+          "p95": 396314.9,
+          "max": 396316,
+          "first": 396316,
+          "last": 395264
+        },
+        "domNodes": {
+          "count": 12,
+          "min": 359,
+          "p10": 405.2,
+          "p25": 539.75,
+          "median": 621.5,
+          "p75": 682.75,
+          "p90": 712,
+          "p95": 756.1999999999999,
+          "max": 809,
+          "first": 641,
+          "last": 602
+        },
+        "listeners": {
+          "count": 12,
+          "min": 28,
+          "p10": 28.2,
+          "p25": 30,
+          "median": 34,
+          "p75": 35.25,
+          "p90": 36.9,
+          "p95": 38.8,
+          "max": 41,
+          "first": 34,
+          "last": 35
+        },
+        "documents": [
+          1
+        ]
+      },
+      {
+        "start": 300,
+        "end": 360,
+        "partialWindow": false,
+        "samples": 12,
+        "usedBytes": {
+          "count": 12,
+          "min": 9758620,
+          "p10": 14042021.200000001,
+          "p25": 18176095,
+          "median": 22796626,
+          "p75": 29648819,
+          "p90": 29800089.2,
+          "p95": 30589277.4,
+          "max": 31538276,
+          "first": 18778320,
+          "last": 29636600
+        },
+        "allocatedCapacityBytes": {
+          "count": 12,
+          "min": 73539584,
+          "p10": 73539584,
+          "p25": 73539584,
+          "median": 73670656,
+          "p75": 73801728,
+          "p90": 73801728,
+          "p95": 73919692.8,
+          "max": 74063872,
+          "first": 73539584,
+          "last": 73539584
+        },
+        "embedderUsedBytes": {
+          "count": 12,
+          "min": 4184976,
+          "p10": 6133234.4,
+          "p25": 6712130,
+          "median": 7474392,
+          "p75": 9865170,
+          "p90": 10125624,
+          "p95": 10422710.799999999,
+          "max": 10752944,
+          "first": 6443216,
+          "last": 9883560
+        },
+        "backingStorageBytes": {
+          "count": 12,
+          "min": 395551,
+          "p10": 395607.9,
+          "p25": 395967,
+          "median": 396382.5,
+          "p75": 396612.5,
+          "p90": 397077.8,
+          "p95": 397134.75,
+          "max": 397143,
+          "first": 395551,
+          "last": 396602
+        },
+        "domNodes": {
+          "count": 12,
+          "min": 464,
+          "p10": 566.9,
+          "p25": 602,
+          "median": 672.5,
+          "p75": 853.25,
+          "p90": 880.7,
+          "p95": 897.1999999999999,
+          "max": 917,
+          "first": 563,
+          "last": 878
+        },
+        "listeners": {
+          "count": 12,
+          "min": 42,
+          "p10": 46.1,
+          "p25": 47,
+          "median": 50,
+          "p75": 52,
+          "p90": 52.9,
+          "p95": 54.349999999999994,
+          "max": 56,
+          "first": 46,
+          "last": 53
+        },
+        "documents": [
+          1
+        ]
+      },
+      {
+        "start": 360,
+        "end": 420,
+        "partialWindow": false,
+        "samples": 12,
+        "usedBytes": {
+          "count": 12,
+          "min": 8924616,
+          "p10": 11022492.8,
+          "p25": 15195578,
+          "median": 18795532,
+          "p75": 23241680,
+          "p90": 24294946.4,
+          "p95": 26544611.999999996,
+          "max": 29235960,
+          "first": 18810196,
+          "last": 15244932
+        },
+        "allocatedCapacityBytes": {
+          "count": 12,
+          "min": 73539584,
+          "p10": 73539584,
+          "p25": 73539584,
+          "median": 73801728,
+          "p75": 73801728,
+          "p90": 74037657.6,
+          "p95": 74063872,
+          "max": 74063872,
+          "first": 73539584,
+          "last": 74063872
+        },
+        "embedderUsedBytes": {
+          "count": 12,
+          "min": 3015488,
+          "p10": 4049296.8000000003,
+          "p25": 4785462,
+          "median": 6447928,
+          "p75": 7092696,
+          "p90": 7881043.2,
+          "p95": 8174903.6,
+          "max": 8473624,
+          "first": 6297040,
+          "last": 4849936
+        },
+        "backingStorageBytes": {
+          "count": 12,
+          "min": 395108,
+          "p10": 395116.5,
+          "p25": 395466.75,
+          "median": 395613,
+          "p75": 396234.75,
+          "p90": 396633.3,
+          "p95": 396850.65,
+          "max": 397113,
+          "first": 395579,
+          "last": 395604
+        },
+        "domNodes": {
+          "count": 12,
+          "min": 359,
+          "p10": 464.7,
+          "p25": 490.5,
+          "median": 582.5,
+          "p75": 674,
+          "p90": 703.7,
+          "p95": 725,
+          "max": 747,
+          "first": 563,
+          "last": 497
+        },
+        "listeners": {
+          "count": 12,
+          "min": 42,
+          "p10": 42,
+          "p25": 42.75,
+          "median": 46.5,
+          "p75": 47,
+          "p90": 47,
+          "p95": 49.25,
+          "max": 52,
+          "first": 46,
+          "last": 42
+        },
+        "documents": [
+          1
+        ]
+      },
+      {
+        "start": 420,
+        "end": 480,
+        "partialWindow": false,
+        "samples": 11,
+        "usedBytes": {
+          "count": 11,
+          "min": 7588100,
+          "p10": 7592496,
+          "p25": 8019134,
+          "median": 14400316,
+          "p75": 20231002,
+          "p90": 26284572,
+          "p95": 27111284,
+          "max": 27937996,
+          "first": 20833528,
+          "last": 7592496
+        },
+        "allocatedCapacityBytes": {
+          "count": 11,
+          "min": 73801728,
+          "p10": 73801728,
+          "p25": 74063872,
+          "median": 74063872,
+          "p75": 74063872,
+          "p90": 74063872,
+          "p95": 74063872,
+          "max": 74063872,
+          "first": 74063872,
+          "last": 74063872
+        },
+        "embedderUsedBytes": {
+          "count": 11,
+          "min": 2569416,
+          "p10": 2941360,
+          "p25": 3316544,
+          "median": 4879824,
+          "p75": 8283624,
+          "p90": 8968976,
+          "p95": 9792228,
+          "max": 10615480,
+          "first": 5334856,
+          "last": 2569416
+        },
+        "backingStorageBytes": {
+          "count": 11,
+          "min": 394507,
+          "p10": 395105,
+          "p25": 395110,
+          "median": 395119,
+          "p75": 396146,
+          "p90": 396575,
+          "p95": 397091,
+          "max": 397607,
+          "first": 395119,
+          "last": 394507
+        },
+        "domNodes": {
+          "count": 11,
+          "min": 326,
+          "p10": 359,
+          "p25": 393,
+          "median": 470,
+          "p75": 721,
+          "p90": 878,
+          "p95": 884,
+          "max": 890,
+          "first": 497,
+          "last": 326
+        },
+        "listeners": {
+          "count": 11,
+          "min": 41,
+          "p10": 41,
+          "p25": 42,
+          "median": 43,
+          "p75": 47.5,
+          "p90": 49,
+          "p95": 50.5,
+          "max": 52,
+          "first": 43,
+          "last": 42
+        },
+        "documents": [
+          1
+        ]
+      },
+      {
+        "start": 480,
+        "end": 540,
+        "partialWindow": false,
+        "samples": 12,
+        "usedBytes": {
+          "count": 12,
+          "min": 7303760,
+          "p10": 13707061.6,
+          "p25": 18096565,
+          "median": 20023588,
+          "p75": 26655643,
+          "p90": 28876770.4,
+          "p95": 29791980.2,
+          "max": 30769944,
+          "first": 30769944,
+          "last": 28991828
+        },
+        "allocatedCapacityBytes": {
+          "count": 12,
+          "min": 73801728,
+          "p10": 73827942.4,
+          "p25": 74063872,
+          "median": 74063872,
+          "p75": 74063872,
+          "p90": 74299801.6,
+          "p95": 74326016,
+          "max": 74326016,
+          "first": 74326016,
+          "last": 74063872
+        },
+        "embedderUsedBytes": {
+          "count": 12,
+          "min": 2539152,
+          "p10": 4061752.8000000003,
+          "p25": 4963092,
+          "median": 6437164,
+          "p75": 8653614,
+          "p90": 10029312,
+          "p95": 11129472.799999999,
+          "max": 12332952,
+          "first": 10144808,
+          "last": 8989848
+        },
+        "backingStorageBytes": {
+          "count": 12,
+          "min": 394514,
+          "p10": 395606.1,
+          "p25": 395609.25,
+          "median": 395860,
+          "p75": 396609,
+          "p90": 396615.6,
+          "p95": 396861.25,
+          "max": 397161,
+          "first": 396110,
+          "last": 396616
+        },
+        "domNodes": {
+          "count": 12,
+          "min": 326,
+          "p10": 464.6,
+          "p25": 520.25,
+          "median": 618.5,
+          "p75": 787.25,
+          "p90": 836.3,
+          "p95": 922.6999999999998,
+          "max": 1025,
+          "first": 839,
+          "last": 812
+        },
+        "listeners": {
+          "count": 12,
+          "min": 42,
+          "p10": 42.2,
+          "p25": 44.75,
+          "median": 47,
+          "p75": 48,
+          "p90": 50.7,
+          "p95": 53.25,
+          "max": 56,
+          "first": 51,
+          "last": 48
+        },
+        "documents": [
+          1
+        ]
+      },
+      {
+        "start": 540,
+        "end": 600,
+        "partialWindow": false,
+        "samples": 11,
+        "usedBytes": {
+          "count": 11,
+          "min": 8886112,
+          "p10": 13242244,
+          "p25": 15488054,
+          "median": 19545684,
+          "p75": 22720598,
+          "p90": 27169524,
+          "p95": 29726804,
+          "max": 32284084,
+          "first": 32284084,
+          "last": 19545684
+        },
+        "allocatedCapacityBytes": {
+          "count": 11,
+          "min": 73801728,
+          "p10": 74063872,
+          "p25": 74063872,
+          "median": 74063872,
+          "p75": 74194944,
+          "p90": 74326016,
+          "p95": 74326016,
+          "max": 74326016,
+          "first": 74063872,
+          "last": 74326016
+        },
+        "embedderUsedBytes": {
+          "count": 11,
+          "min": 3852456,
+          "p10": 4256200,
+          "p25": 4839332,
+          "median": 7759360,
+          "p75": 10543308,
+          "p90": 11476088,
+          "p95": 11622232,
+          "max": 11768376,
+          "first": 10605192,
+          "last": 4965904
+        },
+        "backingStorageBytes": {
+          "count": 11,
+          "min": 394904,
+          "p10": 395107,
+          "p25": 395592,
+          "median": 396602,
+          "p75": 396870.5,
+          "p90": 397632,
+          "p95": 397865.5,
+          "max": 398099,
+          "first": 398099,
+          "last": 394904
+        },
+        "domNodes": {
+          "count": 11,
+          "min": 425,
+          "p10": 431,
+          "p25": 500,
+          "median": 707,
+          "p75": 955.5,
+          "p90": 995,
+          "p95": 1008.5,
+          "max": 1022,
+          "first": 995,
+          "last": 497
+        },
+        "listeners": {
+          "count": 11,
+          "min": 41,
+          "p10": 42,
+          "p25": 42.5,
+          "median": 47,
+          "p75": 52.5,
+          "p90": 58,
+          "p95": 58,
+          "max": 58,
+          "first": 52,
+          "last": 43
+        },
+        "documents": [
+          1
+        ]
+      },
+      {
+        "start": 600,
+        "end": 600.0500000000001,
+        "partialWindow": true,
+        "samples": 1,
+        "usedBytes": {
+          "count": 1,
+          "min": 15818812,
+          "p10": 15818812,
+          "p25": 15818812,
+          "median": 15818812,
+          "p75": 15818812,
+          "p90": 15818812,
+          "p95": 15818812,
+          "max": 15818812,
+          "first": 15818812,
+          "last": 15818812
+        },
+        "allocatedCapacityBytes": {
+          "count": 1,
+          "min": 74326016,
+          "p10": 74326016,
+          "p25": 74326016,
+          "median": 74326016,
+          "p75": 74326016,
+          "p90": 74326016,
+          "p95": 74326016,
+          "max": 74326016,
+          "first": 74326016,
+          "last": 74326016
+        },
+        "embedderUsedBytes": {
+          "count": 1,
+          "min": 5286072,
+          "p10": 5286072,
+          "p25": 5286072,
+          "median": 5286072,
+          "p75": 5286072,
+          "p90": 5286072,
+          "p95": 5286072,
+          "max": 5286072,
+          "first": 5286072,
+          "last": 5286072
+        },
+        "backingStorageBytes": {
+          "count": 1,
+          "min": 395349,
+          "p10": 395349,
+          "p25": 395349,
+          "median": 395349,
+          "p75": 395349,
+          "p90": 395349,
+          "p95": 395349,
+          "max": 395349,
+          "first": 395349,
+          "last": 395349
+        },
+        "domNodes": {
+          "count": 1,
+          "min": 536,
+          "p10": 536,
+          "p25": 536,
+          "median": 536,
+          "p75": 536,
+          "p90": 536,
+          "p95": 536,
+          "max": 536,
+          "first": 536,
+          "last": 536
+        },
+        "listeners": {
+          "count": 1,
+          "min": 38,
+          "p10": 38,
+          "p25": 38,
+          "median": 38,
+          "p75": 38,
+          "p90": 38,
+          "p95": 38,
+          "max": 38,
+          "first": 38,
+          "last": 38
+        },
+        "documents": [
+          1
+        ]
+      }
+    ],
+    "byQuality": {
+      "standard": {
+        "samples": 59,
+        "usedBytes": {
+          "count": 59,
+          "min": 6374140,
+          "p10": 8007375.2,
+          "p25": 12423376,
+          "median": 16325060,
+          "p75": 23226056,
+          "p90": 28493521.6,
+          "p95": 31999656.799999997,
+          "max": 32702084,
+          "first": 15363040,
+          "last": 18770056
+        },
+        "allocatedCapacityBytes": {
+          "count": 59,
+          "min": 67440640,
+          "p10": 71372800,
+          "p25": 71634944,
+          "median": 71897088,
+          "p75": 72290304,
+          "p90": 72945664,
+          "p95": 72945664,
+          "max": 73207808,
+          "first": 67440640,
+          "last": 73207808
+        },
+        "embedderUsedBytes": {
+          "count": 59,
+          "min": 2748600,
+          "p10": 3217670.4,
+          "p25": 4459360,
+          "median": 6654368,
+          "p75": 8306668,
+          "p90": 10034828.8,
+          "p95": 10581981.599999996,
+          "max": 11614672,
+          "first": 9690488,
+          "last": 6464536
+        },
+        "backingStorageBytes": {
+          "count": 59,
+          "min": 394814,
+          "p10": 395582.2,
+          "p25": 396147,
+          "median": 396897,
+          "p75": 397674.5,
+          "p90": 398005.8,
+          "p95": 398399,
+          "max": 398905,
+          "first": 397390,
+          "last": 395264
+        },
+        "domNodes": {
+          "count": 59,
+          "min": 359,
+          "p10": 398,
+          "p25": 483.5,
+          "median": 641,
+          "p75": 776.5,
+          "p90": 880.8,
+          "p95": 952.6999999999998,
+          "max": 1026,
+          "first": 774,
+          "last": 602
+        },
+        "listeners": {
+          "count": 59,
+          "min": 28,
+          "p10": 29,
+          "p25": 30,
+          "median": 34,
+          "p75": 37,
+          "p90": 40,
+          "p95": 40.099999999999994,
+          "max": 42,
+          "first": 38,
+          "last": 35
+        },
+        "documents": [
+          1
+        ]
+      },
+      "low": {
+        "samples": 59,
+        "usedBytes": {
+          "count": 59,
+          "min": 7303760,
+          "p10": 8881809.6,
+          "p25": 14723352,
+          "median": 19156252,
+          "p75": 25748648,
+          "p90": 29316088,
+          "p95": 29908535.999999996,
+          "max": 32284084,
+          "first": 18778320,
+          "last": 15818812
+        },
+        "allocatedCapacityBytes": {
+          "count": 59,
+          "min": 73539584,
+          "p10": 73539584,
+          "p25": 73801728,
+          "median": 74063872,
+          "p75": 74063872,
+          "p90": 74116300.8,
+          "p95": 74326016,
+          "max": 74326016,
+          "first": 73539584,
+          "last": 74326016
+        },
+        "embedderUsedBytes": {
+          "count": 59,
+          "min": 2539152,
+          "p10": 3724030.4,
+          "p25": 4770440,
+          "median": 6598816,
+          "p75": 8530448,
+          "p90": 10506177.6,
+          "p95": 10825258.399999997,
+          "max": 12332952,
+          "first": 6443216,
+          "last": 5286072
+        },
+        "backingStorageBytes": {
+          "count": 59,
+          "min": 394507,
+          "p10": 395107.8,
+          "p25": 395565,
+          "median": 396105,
+          "p75": 396608.5,
+          "p90": 397117.6,
+          "p95": 397205.6,
+          "max": 398099,
+          "first": 395551,
+          "last": 395349
+        },
+        "domNodes": {
+          "count": 59,
+          "min": 326,
+          "p10": 426.6,
+          "p25": 484,
+          "median": 605,
+          "p75": 761.5,
+          "p90": 895.4000000000001,
+          "p95": 992.3,
+          "max": 1025,
+          "first": 563,
+          "last": 536
+        },
+        "listeners": {
+          "count": 59,
+          "min": 38,
+          "p10": 42,
+          "p25": 42.5,
+          "median": 47,
+          "p75": 49.5,
+          "p90": 52.2,
+          "p95": 56,
+          "max": 58,
+          "first": 46,
+          "last": 38
+        },
+        "documents": [
+          1
+        ]
+      }
+    },
+    "decreases": {
+      "count": 59,
+      "largeReclamationCandidateRule": "Decrease>=max(1 MiB,10% of preceding used size). This is a sampling heuristic, not GC event instrumentation.",
+      "largeCandidateCount": 51,
+      "samples": [
+        {
+          "beforeActive": 5.099999999999994,
+          "afterActive": 10.23333333333332,
+          "beforeTick": 9173,
+          "afterTick": 9481,
+          "beforeUsedBytes": 16556088,
+          "afterUsedBytes": 13900408,
+          "dropBytes": 2655680,
+          "dropPercent": 16.040504254386665,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 15.333333333333343,
+          "afterActive": 20.433333333333337,
+          "beforeTick": 9787,
+          "afterTick": 10093,
+          "beforeUsedBytes": 32346344,
+          "afterUsedBytes": 15136496,
+          "dropBytes": 17209848,
+          "dropPercent": 53.204924797683475,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 20.433333333333337,
+          "afterActive": 25.46666666666667,
+          "beforeTick": 10093,
+          "afterTick": 10395,
+          "beforeUsedBytes": 15136496,
+          "afterUsedBytes": 11535900,
+          "dropBytes": 3600596,
+          "dropPercent": 23.787513305589354,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 35.73333333333332,
+          "afterActive": 40.849999999999994,
+          "beforeTick": 11011,
+          "afterTick": 11318,
+          "beforeUsedBytes": 32702084,
+          "afterUsedBytes": 23754368,
+          "dropBytes": 8947716,
+          "dropPercent": 27.361302111510692,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 40.849999999999994,
+          "afterActive": 45.93333333333334,
+          "beforeTick": 11318,
+          "afterTick": 11623,
+          "beforeUsedBytes": 23754368,
+          "afterUsedBytes": 19503108,
+          "dropBytes": 4251260,
+          "dropPercent": 17.89675061024566,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 45.93333333333334,
+          "afterActive": 51.08333333333334,
+          "beforeTick": 11623,
+          "afterTick": 11932,
+          "beforeUsedBytes": 19503108,
+          "afterUsedBytes": 18200820,
+          "dropBytes": 1302288,
+          "dropPercent": 6.677335735412017,
+          "candidateLargeReclamation": false
+        },
+        {
+          "beforeActive": 51.08333333333334,
+          "afterActive": 56.19999999999999,
+          "beforeTick": 11932,
+          "afterTick": 12239,
+          "beforeUsedBytes": 18200820,
+          "afterUsedBytes": 8397692,
+          "dropBytes": 9803128,
+          "dropPercent": 53.860913958821634,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 56.19999999999999,
+          "afterActive": 61.366666666666674,
+          "beforeTick": 12239,
+          "afterTick": 12549,
+          "beforeUsedBytes": 8397692,
+          "afterUsedBytes": 8204444,
+          "dropBytes": 193248,
+          "dropPercent": 2.301203711686497,
+          "candidateLargeReclamation": false
+        },
+        {
+          "beforeActive": 61.366666666666674,
+          "afterActive": 66.51666666666665,
+          "beforeTick": 12549,
+          "afterTick": 12858,
+          "beforeUsedBytes": 8204444,
+          "afterUsedBytes": 8018560,
+          "dropBytes": 185884,
+          "dropPercent": 2.265650176904127,
+          "candidateLargeReclamation": false
+        },
+        {
+          "beforeActive": 71.66666666666666,
+          "afterActive": 76.93333333333334,
+          "beforeTick": 13167,
+          "afterTick": 13483,
+          "beforeUsedBytes": 13766888,
+          "afterUsedBytes": 9312084,
+          "dropBytes": 4454804,
+          "dropPercent": 32.35883084107316,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 87.23333333333332,
+          "afterActive": 92.33333333333334,
+          "beforeTick": 14101,
+          "afterTick": 14407,
+          "beforeUsedBytes": 23871856,
+          "afterUsedBytes": 19245240,
+          "dropBytes": 4626616,
+          "dropPercent": 19.381048545199,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 92.33333333333334,
+          "afterActive": 97.43333333333334,
+          "beforeTick": 14407,
+          "afterTick": 14713,
+          "beforeUsedBytes": 19245240,
+          "afterUsedBytes": 14795748,
+          "dropBytes": 4449492,
+          "dropPercent": 23.119961091677734,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 102.65,
+          "afterActive": 107.75,
+          "beforeTick": 15026,
+          "afterTick": 15332,
+          "beforeUsedBytes": 26682980,
+          "afterUsedBytes": 16325060,
+          "dropBytes": 10357920,
+          "dropPercent": 38.81845281149257,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 107.75,
+          "afterActive": 112.83333333333334,
+          "beforeTick": 15332,
+          "afterTick": 15637,
+          "beforeUsedBytes": 16325060,
+          "afterUsedBytes": 13875480,
+          "dropBytes": 2449580,
+          "dropPercent": 15.0050290779942,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 117.88333333333335,
+          "afterActive": 122.93333333333331,
+          "beforeTick": 15940,
+          "afterTick": 16243,
+          "beforeUsedBytes": 24161096,
+          "afterUsedBytes": 16861484,
+          "dropBytes": 7299612,
+          "dropPercent": 30.212255271863498,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 128.04999999999998,
+          "afterActive": 133.1,
+          "beforeTick": 16550,
+          "afterTick": 16853,
+          "beforeUsedBytes": 31961136,
+          "afterUsedBytes": 7962636,
+          "dropBytes": 23998500,
+          "dropPercent": 75.08650506039585,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 148.26666666666668,
+          "afterActive": 153.28333333333333,
+          "beforeTick": 17763,
+          "afterTick": 18064,
+          "beforeUsedBytes": 28857784,
+          "afterUsedBytes": 25513224,
+          "dropBytes": 3344560,
+          "dropPercent": 11.58980190578736,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 153.28333333333333,
+          "afterActive": 158.33333333333334,
+          "beforeTick": 18064,
+          "afterTick": 18367,
+          "beforeUsedBytes": 25513224,
+          "afterUsedBytes": 14857952,
+          "dropBytes": 10655272,
+          "dropPercent": 41.76372221715295,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 168.51666666666668,
+          "afterActive": 173.61666666666665,
+          "beforeTick": 18978,
+          "afterTick": 19284,
+          "beforeUsedBytes": 32617348,
+          "afterUsedBytes": 7421020,
+          "dropBytes": 25196328,
+          "dropPercent": 77.24824225439787,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 183.76666666666668,
+          "afterActive": 188.96666666666667,
+          "beforeTick": 19893,
+          "afterTick": 20205,
+          "beforeUsedBytes": 26028752,
+          "afterUsedBytes": 17028032,
+          "dropBytes": 9000720,
+          "dropPercent": 34.57991378149824,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 188.96666666666667,
+          "afterActive": 194.15,
+          "beforeTick": 20205,
+          "afterTick": 20516,
+          "beforeUsedBytes": 17028032,
+          "afterUsedBytes": 8247612,
+          "dropBytes": 8780420,
+          "dropPercent": 51.564502580215965,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 199.24999999999997,
+          "afterActive": 204.3166666666667,
+          "beforeTick": 20822,
+          "afterTick": 21126,
+          "beforeUsedBytes": 13775860,
+          "afterUsedBytes": 11442404,
+          "dropBytes": 2333456,
+          "dropPercent": 16.938731955754484,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 214.54999999999998,
+          "afterActive": 219.78333333333333,
+          "beforeTick": 21740,
+          "afterTick": 22054,
+          "beforeUsedBytes": 30861560,
+          "afterUsedBytes": 28402456,
+          "dropBytes": 2459104,
+          "dropPercent": 7.96817788860965,
+          "candidateLargeReclamation": false
+        },
+        {
+          "beforeActive": 219.78333333333333,
+          "afterActive": 224.85,
+          "beforeTick": 22054,
+          "afterTick": 22358,
+          "beforeUsedBytes": 28402456,
+          "afterUsedBytes": 18520496,
+          "dropBytes": 9881960,
+          "dropPercent": 34.792624975811954,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 224.85,
+          "afterActive": 230.04999999999998,
+          "beforeTick": 22358,
+          "afterTick": 22670,
+          "beforeUsedBytes": 18520496,
+          "afterUsedBytes": 15520524,
+          "dropBytes": 2999972,
+          "dropPercent": 16.19811910005002,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 230.04999999999998,
+          "afterActive": 235.24999999999997,
+          "beforeTick": 22670,
+          "afterTick": 22982,
+          "beforeUsedBytes": 15520524,
+          "afterUsedBytes": 7030744,
+          "dropBytes": 8489780,
+          "dropPercent": 54.700343880142185,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 240.36666666666665,
+          "afterActive": 245.53333333333333,
+          "beforeTick": 23289,
+          "afterTick": 23599,
+          "beforeUsedBytes": 18128092,
+          "afterUsedBytes": 14108508,
+          "dropBytes": 4019584,
+          "dropPercent": 22.17323257185588,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 250.6,
+          "afterActive": 255.88333333333335,
+          "beforeTick": 23903,
+          "afterTick": 24220,
+          "beforeUsedBytes": 18280640,
+          "afterUsedBytes": 7744208,
+          "dropBytes": 10536432,
+          "dropPercent": 57.637106797136205,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 271.1833333333333,
+          "afterActive": 276.26666666666665,
+          "beforeTick": 25138,
+          "afterTick": 25443,
+          "beforeUsedBytes": 18777500,
+          "afterUsedBytes": 15755928,
+          "dropBytes": 3021572,
+          "dropPercent": 16.09144987351884,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 276.26666666666665,
+          "afterActive": 281.3166666666666,
+          "beforeTick": 25443,
+          "afterTick": 25746,
+          "beforeUsedBytes": 15755928,
+          "afterUsedBytes": 7364132,
+          "dropBytes": 8391796,
+          "dropPercent": 53.26119794403732,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 286.33333333333337,
+          "afterActive": 291.45000000000005,
+          "beforeTick": 26047,
+          "afterTick": 26354,
+          "beforeUsedBytes": 17838012,
+          "afterUsedBytes": 6374140,
+          "dropBytes": 11463872,
+          "dropPercent": 64.26653373705545,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 301.75,
+          "afterActive": 307.04999999999995,
+          "beforeTick": 26972,
+          "afterTick": 27290,
+          "beforeUsedBytes": 18778320,
+          "afterUsedBytes": 9758620,
+          "dropBytes": 9019700,
+          "dropPercent": 48.032518350949395,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 312.20000000000005,
+          "afterActive": 317.23333333333335,
+          "beforeTick": 27599,
+          "afterTick": 27901,
+          "beforeUsedBytes": 19759536,
+          "afterUsedBytes": 13588548,
+          "dropBytes": 6170988,
+          "dropPercent": 31.23042970239787,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 322.26666666666665,
+          "afterActive": 327.3666666666667,
+          "beforeTick": 28203,
+          "afterTick": 28509,
+          "beforeUsedBytes": 31538276,
+          "afterUsedBytes": 18193700,
+          "dropBytes": 13344576,
+          "dropPercent": 42.31231916418005,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 332.4666666666667,
+          "afterActive": 337.6333333333333,
+          "beforeTick": 28815,
+          "afterTick": 29125,
+          "beforeUsedBytes": 25833716,
+          "afterUsedBytes": 18123280,
+          "dropBytes": 7710436,
+          "dropPercent": 29.846406920320717,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 347.7833333333333,
+          "afterActive": 352.91666666666663,
+          "beforeTick": 29734,
+          "afterTick": 30042,
+          "beforeUsedBytes": 29812824,
+          "afterUsedBytes": 26335088,
+          "dropBytes": 3477736,
+          "dropPercent": 11.665235067969409,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 357.95000000000005,
+          "afterActive": 363.1166666666667,
+          "beforeTick": 30344,
+          "afterTick": 30654,
+          "beforeUsedBytes": 29636600,
+          "afterUsedBytes": 18810196,
+          "dropBytes": 10826404,
+          "dropPercent": 36.53051969524169,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 363.1166666666667,
+          "afterActive": 368.2166666666667,
+          "beforeTick": 30654,
+          "afterTick": 30960,
+          "beforeUsedBytes": 18810196,
+          "afterUsedBytes": 18780868,
+          "dropBytes": 29328,
+          "dropPercent": 0.15591544075351474,
+          "candidateLargeReclamation": false
+        },
+        {
+          "beforeActive": 378.45000000000005,
+          "afterActive": 383.75,
+          "beforeTick": 31574,
+          "afterTick": 31892,
+          "beforeUsedBytes": 24342600,
+          "afterUsedBytes": 10575268,
+          "dropBytes": 13767332,
+          "dropPercent": 56.55653874278015,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 393.98333333333335,
+          "afterActive": 399.1833333333334,
+          "beforeTick": 32506,
+          "afterTick": 32818,
+          "beforeUsedBytes": 23033552,
+          "afterUsedBytes": 16295668,
+          "dropBytes": 6737884,
+          "dropPercent": 29.252474824551594,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 409.5,
+          "afterActive": 414.65,
+          "beforeTick": 33437,
+          "afterTick": 33746,
+          "beforeUsedBytes": 29235960,
+          "afterUsedBytes": 8924616,
+          "dropBytes": 20311344,
+          "dropPercent": 69.47383975077268,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 425.1166666666667,
+          "afterActive": 430.25,
+          "beforeTick": 34374,
+          "afterTick": 34682,
+          "beforeUsedBytes": 20833528,
+          "afterUsedBytes": 8052184,
+          "dropBytes": 12781344,
+          "dropPercent": 61.34987794674046,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 435.48333333333335,
+          "afterActive": 440.70000000000005,
+          "beforeTick": 34996,
+          "afterTick": 35309,
+          "beforeUsedBytes": 27937996,
+          "afterUsedBytes": 19628476,
+          "dropBytes": 8309520,
+          "dropPercent": 29.7427202724204,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 440.70000000000005,
+          "afterActive": 445.91666666666674,
+          "beforeTick": 35309,
+          "afterTick": 35622,
+          "beforeUsedBytes": 19628476,
+          "afterUsedBytes": 7588100,
+          "dropBytes": 12040376,
+          "dropPercent": 61.34136954901644,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 461.35,
+          "afterActive": 466.6166666666667,
+          "beforeTick": 36548,
+          "afterTick": 36864,
+          "beforeUsedBytes": 26284572,
+          "afterUsedBytes": 7986084,
+          "dropBytes": 18298488,
+          "dropPercent": 69.61683834912739,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 471.8666666666667,
+          "afterActive": 476.9333333333334,
+          "beforeTick": 37179,
+          "afterTick": 37483,
+          "beforeUsedBytes": 15046388,
+          "afterUsedBytes": 7592496,
+          "dropBytes": 7453892,
+          "dropPercent": 49.53941105333718,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 482.05000000000007,
+          "afterActive": 487.1333333333333,
+          "beforeTick": 37790,
+          "afterTick": 38095,
+          "beforeUsedBytes": 30769944,
+          "afterUsedBytes": 20571300,
+          "dropBytes": 10198644,
+          "dropPercent": 33.14482470296339,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 487.1333333333333,
+          "afterActive": 492.30000000000007,
+          "beforeTick": 38095,
+          "afterTick": 38405,
+          "beforeUsedBytes": 20571300,
+          "afterUsedBytes": 19156252,
+          "dropBytes": 1415048,
+          "dropPercent": 6.878748547733979,
+          "candidateLargeReclamation": false
+        },
+        {
+          "beforeActive": 492.30000000000007,
+          "afterActive": 497.6333333333333,
+          "beforeTick": 38405,
+          "afterTick": 38725,
+          "beforeUsedBytes": 19156252,
+          "afterUsedBytes": 18980452,
+          "dropBytes": 175800,
+          "dropPercent": 0.9177160542678182,
+          "candidateLargeReclamation": false
+        },
+        {
+          "beforeActive": 497.6333333333333,
+          "afterActive": 502.83333333333337,
+          "beforeTick": 38725,
+          "afterTick": 39037,
+          "beforeUsedBytes": 18980452,
+          "afterUsedBytes": 7303760,
+          "dropBytes": 11676692,
+          "dropPercent": 61.51956760566082,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 513.3166666666667,
+          "afterActive": 518.3833333333333,
+          "beforeTick": 39666,
+          "afterTick": 39970,
+          "beforeUsedBytes": 26260440,
+          "afterUsedBytes": 19475876,
+          "dropBytes": 6784564,
+          "dropPercent": 25.83568287507749,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 518.3833333333333,
+          "afterActive": 523.4666666666667,
+          "beforeTick": 39970,
+          "afterTick": 40275,
+          "beforeUsedBytes": 19475876,
+          "afterUsedBytes": 13513968,
+          "dropBytes": 5961908,
+          "dropPercent": 30.611757848530154,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 544.0333333333333,
+          "afterActive": 549.1,
+          "beforeTick": 41509,
+          "afterTick": 41813,
+          "beforeUsedBytes": 32284084,
+          "afterUsedBytes": 18850396,
+          "dropBytes": 13433688,
+          "dropPercent": 41.610869306374006,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 549.1,
+          "afterActive": 554.2166666666667,
+          "beforeTick": 41813,
+          "afterTick": 42120,
+          "beforeUsedBytes": 18850396,
+          "afterUsedBytes": 8886112,
+          "dropBytes": 9964284,
+          "dropPercent": 52.85981260022336,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 559.3166666666667,
+          "afterActive": 564.5166666666667,
+          "beforeTick": 42426,
+          "afterTick": 42738,
+          "beforeUsedBytes": 25663580,
+          "afterUsedBytes": 16665584,
+          "dropBytes": 8997996,
+          "dropPercent": 35.0613437408187,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 574.8166666666667,
+          "afterActive": 580.0500000000001,
+          "beforeTick": 43356,
+          "afterTick": 43670,
+          "beforeUsedBytes": 27169524,
+          "afterUsedBytes": 19777616,
+          "dropBytes": 7391908,
+          "dropPercent": 27.206615765517277,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 580.0500000000001,
+          "afterActive": 585.3166666666667,
+          "beforeTick": 43670,
+          "afterTick": 43986,
+          "beforeUsedBytes": 19777616,
+          "afterUsedBytes": 14310524,
+          "dropBytes": 5467092,
+          "dropPercent": 27.642826112105727,
+          "candidateLargeReclamation": true
+        },
+        {
+          "beforeActive": 585.3166666666667,
+          "afterActive": 590.5666666666667,
+          "beforeTick": 43986,
+          "afterTick": 44301,
+          "beforeUsedBytes": 14310524,
+          "afterUsedBytes": 13242244,
+          "dropBytes": 1068280,
+          "dropPercent": 7.464995691282864,
+          "candidateLargeReclamation": false
+        },
+        {
+          "beforeActive": 595.75,
+          "afterActive": 600.0500000000001,
+          "beforeTick": 44612,
+          "afterTick": 44870,
+          "beforeUsedBytes": 19545684,
+          "afterUsedBytes": 15818812,
+          "dropBytes": 3726872,
+          "dropPercent": 19.067493365798814,
+          "candidateLargeReclamation": true
+        }
+      ]
+    }
+  },
+  "postMeasurement": {
+    "scope": "After finished natural/frame measurement only. Real paused/menu/restart actions, 1.1-second settling, three forced GCs per checkpoint. Not natural-GC throughput.",
+    "forcedGcSeparateFromNaturalThroughput": true,
+    "checkpoints": [
+      {
+        "name": "finished-pressure-paused",
+        "tick": 44887,
+        "phase": "paused",
+        "natural": {
+          "usedSize": 29823768,
+          "totalSize": 74326016,
+          "embedderHeapUsedSize": 8831288,
+          "backingStorageSize": 396356
+        },
+        "collected": {
+          "usedSize": 6068800,
+          "totalSize": 8003584,
+          "embedderHeapUsedSize": 3362120,
+          "backingStorageSize": 394756
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 403,
+          "jsEventListeners": 37
+        },
+        "forcedGc": true
+      },
+      {
+        "name": "returned-menu",
+        "tick": 0,
+        "phase": "menu",
+        "natural": {
+          "usedSize": 6363172,
+          "totalSize": 11149312,
+          "embedderHeapUsedSize": 4490104,
+          "backingStorageSize": 395796
+        },
+        "collected": {
+          "usedSize": 5371248,
+          "totalSize": 6168576,
+          "embedderHeapUsedSize": 2683208,
+          "backingStorageSize": 395413
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 451,
+          "jsEventListeners": 37
+        },
+        "forcedGc": true
+      },
+      {
+        "name": "menu-after-5-restarts",
+        "tick": 0,
+        "phase": "menu",
+        "natural": {
+          "usedSize": 6732244,
+          "totalSize": 10100736,
+          "embedderHeapUsedSize": 8581640,
+          "backingStorageSize": 395680
+        },
+        "collected": {
+          "usedSize": 5385896,
+          "totalSize": 6430720,
+          "embedderHeapUsedSize": 2810168,
+          "backingStorageSize": 395407
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 422,
+          "jsEventListeners": 37
+        },
+        "forcedGc": true
+      },
+      {
+        "name": "menu-after-10-restarts",
+        "tick": 0,
+        "phase": "menu",
+        "natural": {
+          "usedSize": 5949964,
+          "totalSize": 10362880,
+          "embedderHeapUsedSize": 9555000,
+          "backingStorageSize": 395680
+        },
+        "collected": {
+          "usedSize": 5554956,
+          "totalSize": 6430720,
+          "embedderHeapUsedSize": 2795024,
+          "backingStorageSize": 395407
+        },
+        "dom": {
+          "documents": 1,
+          "nodes": 451,
+          "jsEventListeners": 37
+        },
+        "forcedGc": true
+      }
+    ],
+    "menuStepDeltas": [
+      {
+        "from": "returned-menu",
+        "to": "menu-after-5-restarts",
+        "usedBytes": {
+          "before": 5371248,
+          "after": 5385896,
+          "amount": 14648,
+          "percent": 0.2727112954009943
+        },
+        "allocatedCapacityBytes": {
+          "before": 6168576,
+          "after": 6430720,
+          "amount": 262144,
+          "percent": 4.249667994687915
+        },
+        "embedderUsedBytes": {
+          "before": 2683208,
+          "after": 2810168,
+          "amount": 126960,
+          "percent": 4.731649577669715
+        },
+        "backingStorageBytes": {
+          "before": 395413,
+          "after": 395407,
+          "amount": -6,
+          "percent": -0.001517400793600615
+        },
+        "domNodes": {
+          "before": 451,
+          "after": 422,
+          "amount": -29,
+          "percent": -6.430155210643015
+        },
+        "listeners": {
+          "before": 37,
+          "after": 37,
+          "amount": 0,
+          "percent": 0
+        }
+      },
+      {
+        "from": "menu-after-5-restarts",
+        "to": "menu-after-10-restarts",
+        "usedBytes": {
+          "before": 5385896,
+          "after": 5554956,
+          "amount": 169060,
+          "percent": 3.138939184863577
+        },
+        "allocatedCapacityBytes": {
+          "before": 6430720,
+          "after": 6430720,
+          "amount": 0,
+          "percent": 0
+        },
+        "embedderUsedBytes": {
+          "before": 2810168,
+          "after": 2795024,
+          "amount": -15144,
+          "percent": -0.538900165399364
+        },
+        "backingStorageBytes": {
+          "before": 395407,
+          "after": 395407,
+          "amount": 0,
+          "percent": 0
+        },
+        "domNodes": {
+          "before": 422,
+          "after": 451,
+          "amount": 29,
+          "percent": 6.872037914691943
+        },
+        "listeners": {
+          "before": 37,
+          "after": 37,
+          "amount": 0,
+          "percent": 0
+        }
+      }
+    ],
+    "menuTenRestartDelta": {
+      "from": "returned-menu",
+      "to": "menu-after-10-restarts",
+      "usedBytes": {
+        "before": 5371248,
+        "after": 5554956,
+        "amount": 183708,
+        "percent": 3.4202107219774627
+      },
+      "allocatedCapacityBytes": {
+        "before": 6168576,
+        "after": 6430720,
+        "amount": 262144,
+        "percent": 4.249667994687915
+      },
+      "embedderUsedBytes": {
+        "before": 2683208,
+        "after": 2795024,
+        "amount": 111816,
+        "percent": 4.16725054487017
+      },
+      "backingStorageBytes": {
+        "before": 395413,
+        "after": 395407,
+        "amount": -6,
+        "percent": -0.001517400793600615
+      },
+      "domNodes": {
+        "before": 451,
+        "after": 451,
+        "amount": 0,
+        "percent": 0
+      },
+      "listeners": {
+        "before": 37,
+        "after": 37,
+        "amount": 0,
+        "percent": 0
+      }
+    },
+    "increaseAtBothMenuSteps": {
+      "usedBytes": true,
+      "domNodes": false,
+      "listeners": false
+    },
+    "interpretation": "Same-view collected changes are reported exactly. Both positive step deltas flag retention for source/heap-path review, not an automatic leak finding; one-time caches, profile updates and view identity must be considered. No numeric pass threshold is invented."
+  },
+  "coverage": {
+    "finalPhase": "playing",
+    "finalLungActivated": false,
+    "finalTravels": 0,
+    "finalBackgroundDamage": 0,
+    "finalExposedTransactionIds": [
+      "crisis-source:13:heart"
+    ],
+    "finalGrowthEnded": false,
+    "postMemoryMethod": "After finished natural/frame measurement only. Real paused/menu/restart actions, 1.1-second settling, three forced GCs per checkpoint. Not natural-GC throughput.",
+    "offscreenBranchEvidence": "Lung remained unactivated; this stationary-heart attempt did not exercise the activated offscreen-organ background ledger branch.",
+    "trueSettlementEvidence": "The driver performs start/Q/pause/menu restarts after unfinished pressure; it is not repeated true RUN_ENDED settlement memory evidence. Profile recordedRunIds growth must be assessed separately."
+  },
+  "finiteScopeInterpretation": [
+    "This supplies a completed current-version ten-active-minute natural V8/DOM observation on the recorded machine and method. Runtime pass is a frame/pressure/input/source result and is not a memory verdict.",
+    "Used, allocated capacity, embedder and backing sizes remain separate. A capacity expansion alone does not prove retained object growth; a lone low terminal used value alone does not prove stability.",
+    "Read every-minute medians and minima with sampled decreases and matched post-GC menu checkpoints before making the finite AC-M16-04 memory conclusion. Report every actual positive delta and deliberate accounting root.",
+    "Lung remained unactivated; this stationary-heart attempt did not exercise the activated offscreen-organ background ledger branch.",
+    "The driver performs start/Q/pause/menu restarts after unfinished pressure; it is not repeated true RUN_ENDED settlement memory evidence. Profile recordedRunIds growth must be assessed separately.",
+    "V8/DOM counters do not measure total process RSS or GPU/native canvas allocation. They support the declared finite stationary-headless software scope; no indefinite or all-device claim is assigned."
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "scope": "Preparation only; no browser, game, production release rebuild or functional capture executed.",
+  "browserStarted": false,
+  "checks": [
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit --allowJs --target ES2022 --lib ES2022,DOM,DOM.Iterable --module ESNext --moduleResolution Bundler --strict --skipLibCheck --types node,vite/client artifacts/completion-v075/migration-three-way/capture.ts tests/e2e/g0.spec.ts",
+      "exitCode": 0,
+      "output": "",
+      "note": "g0.spec supplies existing read-only window.__viral TypeScript declaration; it is not imported or executed by the host."
+    },
+    { "command": "node artifacts/completion-v075/migration-three-way/prepare.mjs", "exitCode": 0, "inputs": 7, "browserStarted": false },
+    { "command": "node --check artifacts/completion-v075/migration-three-way/guards.mjs", "exitCode": 0, "output": "" },
+    { "command": "node --check artifacts/completion-v075/migration-three-way/prepare.mjs", "exitCode": 0, "output": "" },
+    { "command": "node --check artifacts/completion-v075/migration-three-way/prepared/capture.mjs", "exitCode": 0, "output": "" },
+    { "method": "Rehash every prepared manifest input", "inputCount": 7, "mismatches": [] }
+  ],
+  "preparedManifestSha256": "19134a343bc92a478ad33de89a05c7fdc72e75b96ad8d579ff0aef5fafbcc3e4",
+  "preparedBundleSha256": "0d1ddf397232eabe32b038675a2a4494622bd6ef06b8ce5b5f2e72c99ff30f8e",
+  "releaseIdentity": {
+    "head": "85dd6cc9f1a1fd8e9b967545d12923de65503f2b",
+    "version": "0.7.5",
+    "gameSha256": "971313934fc806144ceb3c2dc89eda76ce142ea1aac2bdee54ff0a52003ce342"
+  },
+  "technicalCaptureVerdict": "not-run",
+  "requirementVerdict": "pending-browser-capture-and-original-image-review"
+}

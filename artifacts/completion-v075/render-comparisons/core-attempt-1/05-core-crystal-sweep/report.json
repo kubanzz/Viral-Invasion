@@ -1,0 +1,1003 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-27T13:00:54.206Z",
+  "complete": true,
+  "pass": true,
+  "method": "Independent fixture imports the actual Renderer. One captured snapshot and two independent structuredClone states are checked after repeated real Canvas2D renders at a fixed source tick.",
+  "scope": [
+    "Technical rendering comparison derived from a read-only snapshot; no main.ts, GameSession.step(), live release state writes, or game-time advancement.",
+    "Complete JSON equality plus SHA-256 of full state, HP, damage records, and collision geometry are checked at render-call boundaries.",
+    "Not a same-input gameplay replay, browser victory, ten-minute performance measurement, visual readability acceptance, or human playtest.",
+    "This verifies rendering does not change gameplay state. Shared danger/collision geometry remains covered separately by existing coreVisuals and geometry unit tests.",
+    "Images are Canvas2D backing stores only, with no HUD. Visual differences between normal/low effects are permitted."
+  ],
+  "options": {
+    "input": "artifacts/completion-v075/render-comparisons/prepared-complete/states/05-core-crystal-sweep.json",
+    "output": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\completion-v075\\render-comparisons\\core-attempt-1/05-core-crystal-sweep",
+    "frames": 12,
+    "width": 1366,
+    "height": 768,
+    "dpr": 1,
+    "channel": "chrome",
+    "revision": ""
+  },
+  "sourceRevision": null,
+  "sourceScope": "Current working-tree src/ and independent fixture harness.",
+  "input": {
+    "path": "artifacts/completion-v075/render-comparisons/prepared-complete/states/05-core-crystal-sweep.json",
+    "fileSha256": "6f5aa8915cd07268fcae52dd29c52320d511e8a8f95a9fe14865d5ea7b7b3c27",
+    "shape": "GameState",
+    "unchanged": true
+  },
+  "errors": [],
+  "remoteRequests": [],
+  "sourceManifest": {
+    "src/actors/collision.ts": "ec2d1277fff928b62a759441b0a222815d6e566b2ecd8ea3da2c14981dc4ecb6",
+    "src/core/rng.ts": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+    "src/game/battleConfig.ts": "668eb109c820d6e548997aec3ea9e00deca6f4d6120680870538037aa8a70f27",
+    "src/game/growth.ts": "49b6f0bb5c3e8cffe142d16a5db926795b6f8f35b5b0fbf9428d4f1bc39c5aab",
+    "src/game/immuneCells.ts": "d012b0aa59c1e55195dda9702b97fc24618fe6e2d3295fa494b7f436038e7a80",
+    "src/game/motherCore.ts": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+    "src/game/organConfig.ts": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+    "src/game/organRules.ts": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+    "src/game/preparation.ts": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+    "src/game/protocols.ts": "96a21f008718d7a401b1ddd8c7d69e28efeae0dfb5820adeea2873b282fd09ea",
+    "src/game/research.ts": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+    "src/game/types.ts": "c8d67e724f3176da9783dc2e7b9b059ede419f2bfa5e14b7e0063d3390324cbb",
+    "src/render/battleVisuals.ts": "09f97b6f095e37592628d7236f4cce781ce9af2f4fd41631b5caa80493ded253",
+    "src/render/camera.ts": "ca117a766229b5770d49491559dbe016aca210876315f4069f5db42081f748e5",
+    "src/render/depthSort.ts": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+    "src/render/encounterVisuals.ts": "62e43895e405cd1300d735f59f150781cdf07b74036d5dbcc0b6f93011e01629",
+    "src/render/growthVisuals.ts": "cb445d39d3989e76f093aa5f6191897c2a4f966f28f209ee0c8d5f1a4aa29800",
+    "src/render/immuneTraceCues.ts": "80558b755ae1054388a982182b430b41e5ceb98119b7ad0758b694dabdfd66d7",
+    "src/render/immuneVisuals.ts": "07a8b19251d4bb706065ce4443fe0816f1d48ced6e5f5419244f30552bc3ac2c",
+    "src/render/layers.ts": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+    "src/render/lungVisuals.ts": "7bc495edd2c18da89ce1b8e6934e98ade262e982b953bf732593827e18ac7b77",
+    "src/render/navigation.ts": "ab776f6e94b141663e1bd46ca23da738e7ebf679ef0bf211258fc89f833355a5",
+    "src/render/occlusion.ts": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+    "src/render/organLandscape.ts": "3ea49be35cc7e1a3a4d7ac0e4356031f7255e3ad6c941e13b666fee5946f63a2",
+    "src/render/pulsePreview.ts": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+    "src/render/raisedObstacleGeometry.ts": "373e3f145fd521367be7adc93c8461b5407cfe384866f2eb59c2a3ee645a3df6",
+    "src/render/raisedObstacleOcclusion.ts": "0486c6daed7617275f28aab6406f84783a3e3695ae1059e9a2c99634f47308f1",
+    "src/render/renderer.ts": "d48ec35df338e59e523f30cd6f89630a59992415059b3f6a2e1260baeb9ebd87",
+    "src/render/sceneLabels.ts": "0aff51690f470d01afdb9eb58292ea106d827d3acaf5678e25c872cb61fff8fc",
+    "tests/fixtures/renderProbe.ts": "01ec59fb39df34ddbac9dc2c45d4fe5178c42706671b5915a2b1aacfca166ccc"
+  },
+  "sourceManifestSha256": "24291abcafd7b01aaee0b96b1b503e703fc05e95dbba44889e233c9335d93436",
+  "fixtureBundleSha256": "135a62572874ad644516c9ca89b526331208a824ff03c991426d42b7701b42a9",
+  "checks": {
+    "pass": true,
+    "seed": 91,
+    "tick": 2691,
+    "elapsed": 44.85,
+    "phase": "playing",
+    "organ": "heart",
+    "aliveActors": 1,
+    "framesPerMode": 12,
+    "aim": {
+      "x": 1900.000022649114,
+      "y": 649.9999936953895
+    },
+    "baseline": {
+      "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+      "fullJsonBytes": 68099,
+      "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+      "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+      "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+    },
+    "observations": [
+      {
+        "frame": 0,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 0,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 0,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 1,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 1,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 1,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 2,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 2,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 2,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 3,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 3,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 3,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 4,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 4,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 4,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 5,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 5,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 5,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 6,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 6,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 6,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 7,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 7,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 7,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 8,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 8,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 8,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 9,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 9,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 9,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 10,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 10,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 10,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 11,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 11,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 11,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 12,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 12,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 12,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 13,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 13,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 13,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "be5feaf128ed2e8932e92c81519b963b724844332c999dd601cd53ec1e1f3414",
+          "fullJsonBytes": 68099,
+          "hpSha256": "1200aa080504b1e0918b331b549429641c06c4e2a7b1ad28af88adf46e7f4f9a",
+          "damageSha256": "7dda5199d10fc2f28a2d0127087af9c66998b531f61bd3850c1e003b3dd2b030",
+          "collisionGeometrySha256": "2b0c36d298e77e9c55122796f76d5ce4f87516263a2864a8b3e5852a46ec42b0"
+        },
+        "unchanged": true
+      }
+    ],
+    "canvas": {
+      "context": "real CanvasRenderingContext2D",
+      "normal": {
+        "width": 1366,
+        "height": 768
+      },
+      "low": {
+        "width": 1366,
+        "height": 768
+      },
+      "dpr": 1
+    },
+    "rendererDiagnostics": {
+      "normal": {
+        "depthOrder": [
+          "gate",
+          "exit",
+          "player",
+          "fold-c",
+          "source-a",
+          "mother-core",
+          "fold-a",
+          "research",
+          "fold-d",
+          "heart-crisis-source",
+          "valve",
+          "fold-e",
+          "heart-retained-source",
+          "source-b",
+          "terminal",
+          "tissue",
+          "fold-b"
+        ],
+        "occluded": false,
+        "foregroundOpacity": 0.94,
+        "layerOrder": [
+          "distant",
+          "terrain",
+          "contact-shadows",
+          "world-y-sorted",
+          "foreground",
+          "effects",
+          "hud"
+        ],
+        "labels": {
+          "requested": 8,
+          "placed": 5,
+          "omitted": 3,
+          "offscreen": 3,
+          "conflicted": 0,
+          "measureCacheSize": 7,
+          "placementCacheSize": 5,
+          "placements": [
+            {
+              "id": "core-danger:mother-core:mother-core:attack:3",
+              "priority": 100,
+              "essential": true,
+              "rect": {
+                "left": 806.5041028807592,
+                "right": 897.415907079978,
+                "top": 404.3527059698655,
+                "bottom": 423.3527059698655
+              },
+              "anchor": {
+                "x": 851.9600049803686,
+                "y": 418.3527059698655
+              },
+              "baseline": {
+                "x": 851.9600049803686,
+                "y": 418.3527059698655
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false
+            },
+            {
+              "id": "target:mother-core",
+              "priority": 90,
+              "essential": true,
+              "rect": {
+                "left": 982.5670005805282,
+                "right": 1101.5003339138616,
+                "top": 331.63995446759196,
+                "bottom": 357.9066211342586
+              },
+              "anchor": {
+                "x": 1042.033667247195,
+                "y": 509.22128780092527
+              },
+              "baseline": {
+                "x": 1042.033667247195,
+                "y": 344.63995446759196
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false,
+              "leader": {
+                "from": {
+                  "x": 1042.033667247195,
+                  "y": 373.12528780092526
+                },
+                "to": {
+                  "x": 1042.033667247195,
+                  "y": 357.9066211342586
+                }
+              }
+            },
+            {
+              "id": "device:exit",
+              "priority": 30,
+              "essential": false,
+              "rect": {
+                "left": 1294.624496459961,
+                "right": 1360,
+                "top": 240.92795446759195,
+                "bottom": 274.66128780092527
+              },
+              "anchor": {
+                "x": 1330.033667247195,
+                "y": 225.06128780092527
+              },
+              "baseline": {
+                "x": 1327.3122482299805,
+                "y": 254.92795446759195
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false
+            },
+            {
+              "id": "device:gate",
+              "priority": 30,
+              "essential": false,
+              "rect": {
+                "left": 112.62762578397889,
+                "right": 200.7730420437445,
+                "top": 240.92795446759195,
+                "bottom": 259.9279544675919
+              },
+              "anchor": {
+                "x": 156.7003339138617,
+                "y": 225.06128780092527
+              },
+              "baseline": {
+                "x": 156.7003339138617,
+                "y": 254.92795446759195
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false
+            },
+            {
+              "id": "device:valve",
+              "priority": 30,
+              "essential": false,
+              "rect": {
+                "left": 518.0420112616807,
+                "right": 584.691989899376,
+                "top": 728.2666666666667,
+                "bottom": 762
+              },
+              "anchor": {
+                "x": 551.3670005805284,
+                "y": 739.6212878009253
+              },
+              "baseline": {
+                "x": 551.3670005805284,
+                "y": 742.2666666666667
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false
+            }
+          ]
+        },
+        "hudRects": []
+      },
+      "low": {
+        "depthOrder": [
+          "gate",
+          "exit",
+          "player",
+          "fold-c",
+          "source-a",
+          "mother-core",
+          "fold-a",
+          "research",
+          "fold-d",
+          "heart-crisis-source",
+          "valve",
+          "fold-e",
+          "heart-retained-source",
+          "source-b",
+          "terminal",
+          "tissue",
+          "fold-b"
+        ],
+        "occluded": false,
+        "foregroundOpacity": 0.94,
+        "layerOrder": [
+          "distant",
+          "terrain",
+          "contact-shadows",
+          "world-y-sorted",
+          "foreground",
+          "effects",
+          "hud"
+        ],
+        "labels": {
+          "requested": 8,
+          "placed": 5,
+          "omitted": 3,
+          "offscreen": 3,
+          "conflicted": 0,
+          "measureCacheSize": 7,
+          "placementCacheSize": 5,
+          "placements": [
+            {
+              "id": "core-danger:mother-core:mother-core:attack:3",
+              "priority": 100,
+              "essential": true,
+              "rect": {
+                "left": 806.5041028807592,
+                "right": 897.415907079978,
+                "top": 404.3527059698655,
+                "bottom": 423.3527059698655
+              },
+              "anchor": {
+                "x": 851.9600049803686,
+                "y": 418.3527059698655
+              },
+              "baseline": {
+                "x": 851.9600049803686,
+                "y": 418.3527059698655
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false
+            },
+            {
+              "id": "target:mother-core",
+              "priority": 90,
+              "essential": true,
+              "rect": {
+                "left": 982.5670005805282,
+                "right": 1101.5003339138616,
+                "top": 331.63995446759196,
+                "bottom": 357.9066211342586
+              },
+              "anchor": {
+                "x": 1042.033667247195,
+                "y": 509.22128780092527
+              },
+              "baseline": {
+                "x": 1042.033667247195,
+                "y": 344.63995446759196
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false,
+              "leader": {
+                "from": {
+                  "x": 1042.033667247195,
+                  "y": 373.12528780092526
+                },
+                "to": {
+                  "x": 1042.033667247195,
+                  "y": 357.9066211342586
+                }
+              }
+            },
+            {
+              "id": "device:exit",
+              "priority": 30,
+              "essential": false,
+              "rect": {
+                "left": 1294.624496459961,
+                "right": 1360,
+                "top": 240.92795446759195,
+                "bottom": 274.66128780092527
+              },
+              "anchor": {
+                "x": 1330.033667247195,
+                "y": 225.06128780092527
+              },
+              "baseline": {
+                "x": 1327.3122482299805,
+                "y": 254.92795446759195
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false
+            },
+            {
+              "id": "device:gate",
+              "priority": 30,
+              "essential": false,
+              "rect": {
+                "left": 112.62762578397889,
+                "right": 200.7730420437445,
+                "top": 240.92795446759195,
+                "bottom": 259.9279544675919
+              },
+              "anchor": {
+                "x": 156.7003339138617,
+                "y": 225.06128780092527
+              },
+              "baseline": {
+                "x": 156.7003339138617,
+                "y": 254.92795446759195
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false
+            },
+            {
+              "id": "device:valve",
+              "priority": 30,
+              "essential": false,
+              "rect": {
+                "left": 518.0420112616807,
+                "right": 584.691989899376,
+                "top": 728.2666666666667,
+                "bottom": 762
+              },
+              "anchor": {
+                "x": 551.3670005805284,
+                "y": 739.6212878009253
+              },
+              "baseline": {
+                "x": 551.3670005805284,
+                "y": 742.2666666666667
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false
+            }
+          ]
+        },
+        "hudRects": []
+      }
+    }
+  },
+  "images": {
+    "normal": {
+      "path": "artifacts/completion-v075/render-comparisons/core-attempt-1/05-core-crystal-sweep/same-tick-normal.png",
+      "sha256": "dbf7006e8374a40e46b8a93344cbcbbdbfc076682687e6426447a54cea63e2ee",
+      "bytes": 1008565,
+      "tick": 2691,
+      "elapsed": 44.85
+    },
+    "low": {
+      "path": "artifacts/completion-v075/render-comparisons/core-attempt-1/05-core-crystal-sweep/same-tick-low.png",
+      "sha256": "287dbc90a2890f9e2508f42c322a25e99176c5bbb74c5cd733b7426388478811",
+      "bytes": 1007063,
+      "tick": 2691,
+      "elapsed": 44.85
+    }
+  },
+  "browser": {
+    "channel": "chrome",
+    "version": "155.0.8059.85",
+    "headless": true,
+    "offline": true
+  },
+  "sourceUnchanged": true,
+  "finishedAt": "2026-10-27T13:00:56.431Z"
+}

@@ -1,0 +1,735 @@
+{
+  "schemaVersion": 1,
+  "kind": "read-only-minimum-evidence-plan",
+  "createdAtUtc": "2026-10-27T12:23:14.268Z",
+  "baseline": {
+    "version": "0.7.5",
+    "productionCommit": "474db0d",
+    "headAtReview": "85dd6cc",
+    "gameSha256": "971313934fc806144ceb3c2dc89eda76ce142ea1aac2bdee54ff0a52003ce342",
+    "sourceMatchesExistingVerificationSummary": true
+  },
+  "method": "Read current source, original requirements and archived v075 JSON; inspect the two existing final-d pressure PNGs with view_image. No browser, game, test or build was run. Only this plan JSON and its Markdown companion are written; prior evidence is unchanged.",
+  "requirements": [
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+      "line": 297,
+      "exactText": "- `AC-M14-06`：常驻 HUD 使用克制的生物科技风格，玩家、病毒、器官危机和抗体效果层级清楚；在不同器官配色下均有足够文字/形状对比，面板不成为主要光污染源。"
+    },
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+      "line": 298,
+      "exactText": "- `AC-M14-07`：正式战斗时使用高密度病毒、粒子、前景遮挡场景验证目标/危险/弱点可读；同时提供低特效档并保证危险判定提示不消失。"
+    },
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+      "line": 317,
+      "exactText": "- `AC-M16-04`：在项目实际目标设备上进行 10 分钟压力运行，平均帧率目标 ≥50、帧时间 p95 ≤33ms（可随设备记录与性能预算共同调整），无持续内存增长/无控制台致命错误。"
+    },
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+      "line": 395,
+      "exactText": "12. `RUN-12` 风格与战斗可读性：同场景病毒三分支形态对照→心脏搏动及肺部气流对照→密集混战/低特效→玩家、危险、弱点和当前器官均能辨认。"
+    },
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+      "line": 142,
+      "exactText": "| `VIS-07` | G1–G2 | 危险、弱点、扫描与治疗至少两种非颜色信号；高光和粒子不过度盖住关键角色/预警 | 常规与密集战斗截图 |"
+    },
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+      "line": 145,
+      "exactText": "| `VIS-10` | G4 | 实时 HUD 在 1366×768 与 1920×1080 下不遮挡关键可射击区域，缩放后布局/提示可读 | 多分辨率截图 |"
+    },
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+      "line": 146,
+      "exactText": "| `VIS-11` | G4 | 普通/低特效模式下的伤害与碰撞判定一致，低特效仍显示所有致命警示；压力战斗满足 M16 帧率预算 | 同 seed 对比 + 帧率报告 |"
+    }
+  ],
+  "sourceAndEvidenceManifest": [
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md",
+      "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74",
+      "bytes": 38469
+    },
+    {
+      "path": "DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md",
+      "sha256": "046ea2cafe9349334d430c4c6c10eadd9cc945e03a4026b047b0263962f6e66b",
+      "bytes": 14882
+    },
+    {
+      "path": "src/render/renderer.ts",
+      "sha256": "d48ec35df338e59e523f30cd6f89630a59992415059b3f6a2e1260baeb9ebd87",
+      "bytes": 51297
+    },
+    {
+      "path": "src/render/battleVisuals.ts",
+      "sha256": "09f97b6f095e37592628d7236f4cce781ce9af2f4fd41631b5caa80493ded253",
+      "bytes": 28075
+    },
+    {
+      "path": "src/render/encounterVisuals.ts",
+      "sha256": "62e43895e405cd1300d735f59f150781cdf07b74036d5dbcc0b6f93011e01629",
+      "bytes": 8679
+    },
+    {
+      "path": "src/render/growthVisuals.ts",
+      "sha256": "cb445d39d3989e76f093aa5f6191897c2a4f966f28f209ee0c8d5f1a4aa29800",
+      "bytes": 10356
+    },
+    {
+      "path": "src/render/sceneLabels.ts",
+      "sha256": "0aff51690f470d01afdb9eb58292ea106d827d3acaf5678e25c872cb61fff8fc",
+      "bytes": 14858
+    },
+    {
+      "path": "src/game/motherCore.ts",
+      "sha256": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+      "bytes": 17472
+    },
+    {
+      "path": "tests/unit/danger-readability.test.ts",
+      "sha256": "ce3b53733c4839470298f8ddb6f8d8c45beafc32f5766b555ba39c451223132f",
+      "bytes": 19956
+    },
+    {
+      "path": "tests/unit/coreVisuals.test.ts",
+      "sha256": "30dea1db4a3f0a2a3714bb43540426f90cbafdfcc51babde70153972db9e989d",
+      "bytes": 3472
+    },
+    {
+      "path": "tests/fixtures/renderProbe.ts",
+      "sha256": "01ec59fb39df34ddbac9dc2c45d4fe5178c42706671b5915a2b1aacfca166ccc",
+      "bytes": 7681
+    },
+    {
+      "path": "artifacts/readability-v075/verification-summary.json",
+      "sha256": "bf847f395d0fec0a1f92c80759ff51fbd1cf0f633076a6d0202841e9ec46439f",
+      "bytes": 31327
+    },
+    {
+      "path": "artifacts/readability-v075/remaining-review.json",
+      "sha256": "c398c33c68acd23ba9b272e0ee139de763cc648ab4edaa4cd2f2f0ed4006681f",
+      "bytes": 57403
+    },
+    {
+      "path": "artifacts/readability-v075/evidence-inventory.json",
+      "sha256": "045c0ddd7e07ac954b236dab996d9bade71fda534f3b769fc733667acd6f721d",
+      "bytes": 49918
+    },
+    {
+      "path": "artifacts/readability-v075/visual-sample-review.json",
+      "sha256": "20f6288eb31741e3e9c35fed8086c483e5ef791b1c423c76f95c6e9b1e3b2706",
+      "bytes": 30073
+    },
+    {
+      "path": "artifacts/readability-v075/render-invariance/dense/report.json",
+      "sha256": "2e3d4e9d388b897d34b8540edd5c4225fa02b02e762004d0c3b8e5a7058ad53f",
+      "bytes": 49564
+    },
+    {
+      "path": "artifacts/readability-v075/source-commit-provenance.json",
+      "sha256": "d3cbf8201350e3f36df7140997a59e983c8362bb2e23c6b0d9d27eb69cec3a2d",
+      "bytes": 21525
+    },
+    {
+      "path": "artifacts/readability-v075/perf/final-d/report.json",
+      "sha256": "c77978b46468d6cde0cc4c9db7ff2ec0937778044a2a0e5a684beb9d9266af9f",
+      "bytes": 624337
+    },
+    {
+      "path": "artifacts/readability-v075/perf/final-d/dense-standard-state.json",
+      "sha256": "98ab5019cc8194954f4a89e98b14a2ee457d62a82aa9bd9e87feaabc4fb1c0c5",
+      "bytes": 122941
+    },
+    {
+      "path": "artifacts/readability-v075/perf/final-d/dense-low-state.json",
+      "sha256": "8d99ae6aa481e890209377472bcce10c1f1cc1981f6825f81ea0f6d8478a4ed2",
+      "bytes": 123121
+    },
+    {
+      "path": "artifacts/readability-v075/perf/final-d/dense-standard-three-cells.png",
+      "sha256": "e84fa2bbb1a8ef39d7799129ad338ebe0915549fa49082920654b574cd4d5187",
+      "bytes": 576572
+    },
+    {
+      "path": "artifacts/readability-v075/perf/final-d/dense-low-three-cells.png",
+      "sha256": "12bec76c735aac259097c8fa1d37d77fd6e2aedd5095f7545ad3891de0e90ddc",
+      "bytes": 577332
+    }
+  ],
+  "alreadyEstablished": {
+    "unit": {
+      "files": 53,
+      "tests": 436,
+      "failed": 0,
+      "scope": "All current unit files except the unchanged full-system 1000-formal-session batch. Evolution director seed audit is a separate unit test, not 1000 new browser games."
+    },
+    "browser": {
+      "startTime": "2026-10-27T11:41:33.065Z",
+      "duration": 321122.37,
+      "expected": 26,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0,
+      "scope": "26 targeted allocations: 2 browsers × real growth/upgrade/hits, actual marked-cell full-run/retry, 3 HUD viewport samples, and 8 training/input/lifecycle cases. Resize/DPR and synthetic focus retain their original scope; not OS focus, actual browser zoom, human testing or performance."
+    },
+    "shortPerformance": {
+      "pass": true,
+      "activeTargetSeconds": 120,
+      "activeSimulationSeconds": 120.16666666666669,
+      "metrics": {
+        "standard": {
+          "frames": 3616,
+          "activeDurationMs": 60265.399999999994,
+          "averageFps": 60.00126108845209,
+          "p95Ms": 16.79999999998836,
+          "maxMs": 17.300000000017462
+        },
+        "low": {
+          "frames": 3593,
+          "activeDurationMs": 59882,
+          "averageFps": 60.001335960722756,
+          "p95Ms": 16.79999999998836,
+          "maxMs": 17
+        }
+      },
+      "maxActors": 24,
+      "maxCells": 3,
+      "observedRecentRequestLogCount": 220,
+      "acceptedControlDuringMeasurement": {
+        "beaconBites": 176,
+        "patrolBites": 0,
+        "chainHops": 0,
+        "ricochetHits": 0,
+        "resonanceHits": 0
+      },
+      "acceptanceTenMinuteRun": false,
+      "scope": "120 active seconds, about half per real quality UI setting; source-b and retained source keep real open production, 24 actors with three real cells captured in both modes, accepted cell hits, frame budget and natural heap/DOM samples. Targeted regression; not a ten-minute acceptance run. Memory, native-focus/zoom and human acceptance remain separate."
+    },
+    "sameTickDrawing": {
+      "report": "artifacts/readability-v075/render-invariance/dense/report.json",
+      "pass": true,
+      "input": {
+        "path": "artifacts/completion-v074/visual-density/attempt-2-final-b/capture/dense-standard-state.json",
+        "fileSha256": "641391b620765b1f92168bd5ddde3a98790a317c4b9e7e74b0e87375a7dd77cd",
+        "shape": "GameState",
+        "unchanged": true
+      },
+      "tick": 9628,
+      "aliveWorld": 24,
+      "framesPerMode": 12,
+      "scope": [
+        "Technical rendering comparison derived from a read-only snapshot; no main.ts, GameSession.step(), live release state writes, or game-time advancement.",
+        "Complete JSON equality plus SHA-256 of full state, HP, damage records, and collision geometry are checked at render-call boundaries.",
+        "Not a same-input gameplay replay, browser victory, ten-minute performance measurement, visual readability acceptance, or human playtest.",
+        "This verifies rendering does not change gameplay state. Shared danger/collision geometry remains covered separately by existing coreVisuals and geometry unit tests.",
+        "Images are Canvas2D backing stores only, with no HUD. Visual differences between normal/low effects are permitted."
+      ],
+      "activeWarningsAtSource": {
+        "ordinary": [
+          "elite-8",
+          "virus-20",
+          "virus-28",
+          "virus-33"
+        ],
+        "split": [],
+        "core": [],
+        "exposed": [],
+        "crisis": "exhausted"
+      }
+    },
+    "existingVisualReview": {
+      "path": "artifacts/readability-v075/visual-sample-review.json",
+      "images": 8,
+      "scope": "6 opening tissue/patrol HUD samples at3 sizes×2 browsers, plus2 crystal-shell/immune support samples. All listed images have core locked, no criticalSince and no organAlarm; these are real finite normal-scene observations, not dense core acceptance.",
+      "noAutomaticWholeRowPromotion": true
+    }
+  },
+  "newReadOnlyCensus": {
+    "roots": [
+      "artifacts/readability-v075/browser/final-a/output",
+      "artifacts/readability-v075/perf/final-d"
+    ],
+    "jsonFilesRead": 24,
+    "fullStateReferences": 65,
+    "counts": {
+      "ordinaryWindup": 8,
+      "pendingSplit": 4,
+      "activeMotherAttack": 0,
+      "activeMotherExposure": 0,
+      "ordinaryExposure": 12,
+      "chargingCurrentOrganCrisis": 1,
+      "infectionCritical": 0,
+      "organAlarm": 0,
+      "liveScanEffect": 38,
+      "liveHealEffect": 1
+    },
+    "scope": "References may repeat the same run and nested state; not independent gameplay runs. Only these explicitly scanned directories are claimed.",
+    "selectedReusableSources": [
+      {
+        "path": "artifacts/readability-v075/perf/final-d/dense-standard-state.json",
+        "sha256": "98ab5019cc8194954f4a89e98b14a2ee457d62a82aa9bd9e87feaabc4fb1c0c5",
+        "pointer": "",
+        "tick": 9720,
+        "elapsed": 162,
+        "phase": "playing",
+        "organ": "heart",
+        "alive": 24,
+        "ordinary": [
+          {
+            "id": "virus-24",
+            "aim": {
+              "x": 850,
+              "y": 1190
+            }
+          },
+          {
+            "id": "virus-29",
+            "aim": {
+              "x": 850,
+              "y": 1190
+            }
+          },
+          {
+            "id": "virus-32",
+            "aim": {
+              "x": 850,
+              "y": 1190
+            }
+          },
+          {
+            "id": "virus-37",
+            "aim": {
+              "x": 850,
+              "y": 1190
+            }
+          }
+        ],
+        "split": [],
+        "core": null,
+        "coreExposed": false,
+        "exposed": [],
+        "crisis": {
+          "status": "exhausted",
+          "remaining": 0
+        },
+        "criticalSince": null,
+        "organAlarm": false,
+        "effects": [
+          "danger",
+          "scan",
+          "hit"
+        ]
+      },
+      {
+        "path": "artifacts/readability-v075/perf/final-d/dense-low-state.json",
+        "sha256": "8d99ae6aa481e890209377472bcce10c1f1cc1981f6825f81ea0f6d8478a4ed2",
+        "pointer": "",
+        "tick": 13373,
+        "elapsed": 222.88333333333333,
+        "phase": "playing",
+        "organ": "heart",
+        "alive": 24,
+        "ordinary": [
+          {
+            "id": "virus-26",
+            "aim": {
+              "x": 850,
+              "y": 1190
+            }
+          },
+          {
+            "id": "virus-34",
+            "aim": {
+              "x": 850,
+              "y": 1190
+            }
+          },
+          {
+            "id": "virus-40",
+            "aim": {
+              "x": 850,
+              "y": 1190
+            }
+          },
+          {
+            "id": "virus-44",
+            "aim": {
+              "x": 850,
+              "y": 1190
+            }
+          },
+          {
+            "id": "virus-46",
+            "aim": {
+              "x": 850,
+              "y": 1190
+            }
+          }
+        ],
+        "split": [],
+        "core": null,
+        "coreExposed": false,
+        "exposed": [],
+        "crisis": {
+          "status": "exhausted",
+          "remaining": 0
+        },
+        "criticalSince": null,
+        "organAlarm": false,
+        "effects": [
+          "danger",
+          "scan"
+        ]
+      },
+      {
+        "path": "artifacts/readability-v075/browser/final-a/output/feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-chrome/immune-readability-evidence.json",
+        "sha256": "f416ba99c2b05b4219e030cea39a9f5acf5b5d78ded5bc165f8e37e6ac8825ff",
+        "pointer": "/drafts/2/after",
+        "tick": 1517,
+        "elapsed": 25.28333333333333,
+        "phase": "playing",
+        "organ": "heart",
+        "alive": 0,
+        "ordinary": [],
+        "split": [
+          {
+            "id": "elite-4",
+            "hp": 0,
+            "positions": [
+              {
+                "x": 1360.591414011201,
+                "y": 692.9524435392734
+              },
+              {
+                "x": 1414.591414011202,
+                "y": 692.9524435392734
+              }
+            ]
+          }
+        ],
+        "core": null,
+        "coreExposed": false,
+        "exposed": [],
+        "crisis": null,
+        "criticalSince": null,
+        "organAlarm": false,
+        "effects": [
+          "hit",
+          "beam",
+          "evolution"
+        ]
+      },
+      {
+        "path": "artifacts/readability-v075/perf/final-d/report.json",
+        "sha256": "c77978b46468d6cde0cc4c9db7ff2ec0937778044a2a0e5a684beb9d9266af9f",
+        "pointer": "/setupState",
+        "tick": 1653,
+        "elapsed": 27.55,
+        "phase": "playing",
+        "organ": "heart",
+        "alive": 7,
+        "ordinary": [],
+        "split": [],
+        "core": null,
+        "coreExposed": false,
+        "exposed": [],
+        "crisis": {
+          "status": "charging",
+          "remaining": 8
+        },
+        "criticalSince": null,
+        "organAlarm": false,
+        "effects": []
+      },
+      {
+        "path": "artifacts/readability-v075/perf/final-d/report.json",
+        "sha256": "c77978b46468d6cde0cc4c9db7ff2ec0937778044a2a0e5a684beb9d9266af9f",
+        "pointer": "/warmState",
+        "tick": 9353,
+        "elapsed": 155.88333333333333,
+        "phase": "playing",
+        "organ": "heart",
+        "alive": 24,
+        "ordinary": [
+          {
+            "id": "virus-18",
+            "aim": {
+              "x": 850,
+              "y": 1190
+            }
+          },
+          {
+            "id": "virus-29",
+            "aim": {
+              "x": 850,
+              "y": 1190
+            }
+          },
+          {
+            "id": "virus-32",
+            "aim": {
+              "x": 850,
+              "y": 1190
+            }
+          }
+        ],
+        "split": [],
+        "core": null,
+        "coreExposed": false,
+        "exposed": [],
+        "crisis": {
+          "status": "exhausted",
+          "remaining": 0
+        },
+        "criticalSince": null,
+        "organAlarm": false,
+        "effects": [
+          "danger",
+          "heal",
+          "hit"
+        ]
+      },
+      {
+        "path": "artifacts/readability-v075/browser/final-a/output/feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-chrome/immune-readability-evidence.json",
+        "sha256": "f416ba99c2b05b4219e030cea39a9f5acf5b5d78ded5bc165f8e37e6ac8825ff",
+        "pointer": "/drafts/1/after",
+        "tick": 775,
+        "elapsed": 12.916666666666666,
+        "phase": "playing",
+        "organ": "heart",
+        "alive": 1,
+        "ordinary": [],
+        "split": [],
+        "core": null,
+        "coreExposed": false,
+        "exposed": [
+          "elite-3"
+        ],
+        "crisis": null,
+        "criticalSince": null,
+        "organAlarm": false,
+        "effects": [
+          "pulse",
+          "burst",
+          "beam",
+          "hit",
+          "scan",
+          "evolution"
+        ]
+      }
+    ]
+  },
+  "pressurePngInspection": {
+    "actuallyViewed": [
+      "artifacts/readability-v075/perf/final-d/dense-standard-three-cells.png",
+      "artifacts/readability-v075/perf/final-d/dense-low-three-cells.png"
+    ],
+    "method": "Existing unedited native browser PNGs loaded through view_image; no new capture or pixel modification.",
+    "observations": [
+      "Player, research/terminal labels, squad title and organism vital rail can be found; both frames contain a compact cluster of circle/scan/immune effects around the right-hand tissue/enemy group.",
+      "Both images show separate elite/squad/tissue captions but do not show an active mother-core attack or a true core recovery weakness.",
+      "Many ordinary bodies overlap almost exactly; a small number of visually separated silhouettes is not equivalent to the number of live centers. Dense geometry exists, but all-threat clarity and attribution are not established by the count.",
+      "Foreground area projects along the far right/HUD edge; this is not sufficient evidence that foreground actually overlaps and challenges the central dangerous/weak point while remaining readable."
+    ],
+    "geometryDescription": [
+      {
+        "path": "artifacts/readability-v075/perf/final-d/dense-standard-state.json",
+        "tick": 9720,
+        "aliveWorld": 24,
+        "inViewGroundCenters": 18,
+        "foregroundScreenRect": {
+          "left": 1226.6666666666667,
+          "right": 1520,
+          "top": 503.04,
+          "bottom": 618.24
+        },
+        "crisis": "exhausted",
+        "core": "locked"
+      },
+      {
+        "path": "artifacts/readability-v075/perf/final-d/dense-low-state.json",
+        "tick": 13373,
+        "aliveWorld": 24,
+        "inViewGroundCenters": 19,
+        "foregroundScreenRect": {
+          "left": 1226.6666666666667,
+          "right": 1520,
+          "top": 503.04,
+          "bottom": 618.24
+        },
+        "crisis": "exhausted",
+        "core": "locked"
+      }
+    ],
+    "limits": "The2 states are different live ticks. Center18/19 and world24 are descriptive counts only; neither establishes readability or a new numeric density threshold."
+  },
+  "branchCoverage": [
+    {
+      "id": "ordinary-windup",
+      "requiredSignals": [
+        "true frozen aim and radius",
+        "outer/inner dashed boundary, center X and progress arc"
+      ],
+      "existingTechnical": "Real archived ordinary danger recorder and actual v075 dense ordinary snapshots; existing same-tick fixture has4 active windups.",
+      "remainingVisual": "Pressure frames have clustered overlap; use a representative real dense/foreground image to inspect range and X attribution under post-effects/HUD. Do not demand every ordinary enemy get a new standalone screenshot.",
+      "lowestCostNext": "Reuse current v075 dense-standard snapshot for isolated same-tick semantic comparison if needed; capture representative formal dense scene only once per real quality setting when useful."
+    },
+    {
+      "id": "pending-split",
+      "requiredSignals": [
+        "every real splitPosition, even hp0 parent",
+        "dashed landing circle/crossbar and remaining time"
+      ],
+      "existingTechnical": "Current v075 real draft2/after snapshots contain dead elite-4 with2 pending landings; recorder regression already covers hp0 mother landing behavior.",
+      "remainingVisual": "No v075 reviewed native PNG specifically identifies this brief pending-landing state.",
+      "lowestCostNext": "Use existing real source for isolated same-tick render; if the formal core route naturally kills a fission elite, save an unedited bracketed native frame. A fresh full victory is not needed just to verify the landing cue."
+    },
+    {
+      "id": "source-crisis",
+      "requiredSignals": [
+        "live same-organ accepted source ring/corners",
+        "source→tissue dashed path/two arrows, tissue ring and actual remaining charge or legitimate pause/block/exhausted text"
+      ],
+      "existingTechnical": "Current v075 perf report setupState tick1653 is genuine charging8s; prior archived heart/lung states and current guard/geometry tests remain reusable.",
+      "remainingVisual": "Final-d pressure PNGs are exhausted; the8 reviewed pictures do not prove an active charging line/countdown under actual foreground/effects. Lung/heart palette comparison can share future route samples.",
+      "lowestCostNext": "Grab the next natural formal stageIV charging cue in a visible source/tissue scene, retaining real IDs/time and screenshot bracketing; use its exact snapshot only in independent drawing for low parity."
+    },
+    {
+      "id": "core-crystal-sweep",
+      "requiredSignals": [
+        "actual wall-clipped origin/angle/range/halfAngle sector",
+        "direction chevrons and named real countdown"
+      ],
+      "existingTechnical": "Current serialized geometry/recorded production tests cover it with explicitly synthetic fixtures; no active core snapshot in65 current raw references.",
+      "remainingVisual": "Missing native formal windup picture and unmodified complete live source snapshot.",
+      "lowestCostNext": "Public-input route to a real CARAPACE core; stop shooting briefly while safely moving/repairing, capture accepted windup before resolve."
+    },
+    {
+      "id": "core-fission-burst",
+      "requiredSignals": [
+        "serialized aim/radius circle",
+        "center X, progress arc and named real countdown"
+      ],
+      "existingTechnical": "Current mechanism/geometry tests exist; no current formal windup source.",
+      "remainingVisual": "Missing native formal regular FISSION attack frame.",
+      "lowestCostNext": "Observe an actual FISSION core before lowering hp through.66; a queued brood wave can replace this attack, so do not kill it immediately."
+    },
+    {
+      "id": "core-corrosion",
+      "requiredSignals": [
+        "real aim/tissue range and source-to-aim dashed relation",
+        "actual approach/Q cooldown/Q-ready instruction and remaining time"
+      ],
+      "existingTechnical": "Current mechanism/geometry tests exist; no current formal windup source.",
+      "remainingVisual": "Missing formal corrosion instruction/warning picture plus actual scan interrupt/recovery frame.",
+      "lowestCostNext": "Public-input route with actual MIMIC core; capture windup then use real ready/in-range Q, verify CORE_CORROSION_INTERRUPTED and the true exposedUntil window. Do not alter scanReady or core state."
+    },
+    {
+      "id": "core-brood",
+      "requiredSignals": [
+        "every accepted serialized landing",
+        "dashed circles/X/progress and finite-split countdown"
+      ],
+      "existingTechnical": "Current production geometry tests exist; no current real active source.",
+      "remainingVisual": "Missing actual threshold-triggered limited brood warning; this is a spawn hazard, not an immediate-damage disk.",
+      "lowestCostNext": "On the same FISSION core route, legitimately cross a production threshold (.66 or.33), then capture its natural .9s telegraph. No need to require both threshold waves solely for presentation coverage."
+    },
+    {
+      "id": "core-weakness",
+      "requiredSignals": [
+        "actual open/cracked plates and center weak-point form",
+        "◇ real exposure countdown/phase"
+      ],
+      "existingTechnical": "Current state-backed exposure/body/label logic exists;12 ordinary-exposure references and2 actual ordinary crystal immune pictures do not substitute for core exposure.",
+      "remainingVisual": "No current raw active core recovery/exposure state or corresponding native image.",
+      "lowestCostNext": "Capture a separate recovery frame after accepted core attack resolution or real scan interrupt; do not require a single core to be in windup and recovery simultaneously."
+    },
+    {
+      "id": "scan-heal",
+      "requiredSignals": [
+        "scan expanding boundary plus dashed inner ring",
+        "healing ring plus rising medical cross"
+      ],
+      "existingTechnical": "Current raw snapshots include38 live scan references and1 live heal reference at perf warmState tick9353; drawing branches preserve essential shapes in low mode.",
+      "remainingVisual": "Existing opening scan/immune pictures show useful parts; a live heal plus dangerous crowded context has not been specifically reviewed.",
+      "lowestCostNext": "Reuse the real warmState in an isolated two-mode drawing pair; combine natural repair/Q during the representative dense formal route rather than creating a separate long run."
+    },
+    {
+      "id": "fatal-dom-warnings",
+      "requiredSignals": [
+        "actual infection100 critical countdown or organAlarm content",
+        "visible complete vital text and relevant danger/target relationship"
+      ],
+      "existingTechnical": "Current HUD collector/DOM layout regressions and source priority exist; scanned raw v075 references contain0 true criticalSince and0 organAlarm.",
+      "remainingVisual": "Normal crisis explanatory text visibility does not prove actual lethal countdown/long alarm text fits.",
+      "lowestCostNext": "Use a bounded real public-input failure/repair sequence for the actual states, at the required1366×768/1920×1080 layout sampling as needed. Keep this distinct from world warning geometry and avoid fabricating criticalSince."
+    }
+  ],
+  "minimumRecommendedCollection": [
+    {
+      "priority": 1,
+      "key": "formal-core-windups-and-recovery",
+      "purpose": [
+        "VIS-07 danger/weakness semantics in the actual production composition",
+        "VIS-11 essential warning retention",
+        "AC-M14-07/RUN-12 decisive real attack/weakness pictures"
+      ],
+      "route": "One or, if trait pairs require it, two ordinary formal routes whose actually logged core trait pairs collectively cover CARAPACE/FISSION/MIMIC. Capture all currently distinct core mechanisms when naturally eligible, plus actual recovery/interrupt exposure. Two routes is an efficient proposal, not a new design gate.",
+      "legalInputs": "Use existing public-input progression helpers as navigation only; mouse/keyboard/UI choices and legitimate movement/attack/repair/Q/E advance the live game. Read-only snapshots/events/diagnostics may select a capture. Never assign live HP/phase/traits/clock/attack/position.",
+      "captureWindows": "Bracket each unedited active-game native screenshot with complete read-only before/after states. Require the accepted attack ID/kind/organ/resolveAt to survive both brackets to attribute a windup screenshot; for exposure require same core ID and exposedUntil beyond both elapsed values. A transition screenshot may be retained honestly but does not establish a missing active phase.",
+      "outputs": "Input history/accepted event IDs, full source snapshot+SHA, unedited PNG+SHA, build/source provenance and short actual image review. New captures go to a new completion-v075 attempt directory; old artifacts remain unchanged.",
+      "efficiency": "Do not require a new complete victory after a usable warning was captured. Switch real quality settings through UI, or derive exact normal/low pure drawings from the saved snapshot; distinguish those methods."
+    },
+    {
+      "priority": 2,
+      "key": "representative-dense-foreground-low-context",
+      "purpose": [
+        "AC-M14-07 actual high-density+particles+foreground readability",
+        "VIS-07 post-effects do not cover essential actors/warnings",
+        "RUN-12 player/danger/weakness/organ identification"
+      ],
+      "route": "During the same formal routes where possible, use legitimate movement near a real foreground/raised fold and retain enough naturally active enemies/effects to challenge the visible play area. Capture ordinary/core danger or real weakness in representative normal and low contexts; record which geometry actually overlaps foreground/HUD.",
+      "acceptance": "Actual images must support finding player, dangerous extent/direction/time, true weak point and organ. Record body overlap and failure honestly. Original text specifies no enemy-count minimum, no worst-case infinity and no need for every threat×organ×viewport×quality Cartesian product.",
+      "reuse": "Current final-d pressure images can be cited for real clustered ordinary pressure and accepted cell activity. They do not close missing core/foreground/weakpoint combinations; existing same-tick fixture can quantify preservation, not replace native HUD pictures."
+    },
+    {
+      "priority": 3,
+      "key": "reuse-real-source-same-tick-pairs",
+      "purpose": [
+        "tighten all-warning semantic low parity without replaying the entire game",
+        "retain complete state invariance"
+      ],
+      "inputs": "Use the6 selected v075 sources listed above, plus the newly collected actual core sources. Feed unchanged full states only to an isolated drawing entry importing Renderer, not main/GameSession.step.",
+      "checks": "Independent normal/low Renderer, symmetric caches/fonts, identical tick/elapsed/aim, full JSON/SHA+HP/damage/collision fingerprints, actual serialized geometry/time/guards and essential shapes. Existing coverage can be cited; add only missing source branches. Reduced decorative particles are expected.",
+      "limits": "These are derived real-snapshot drawings and may omit main DOM HUD. Label them as such; not formal live screenshots, damage execution, player observation or performance. Do not use pixel-count difference as readability."
+    },
+    {
+      "priority": 4,
+      "key": "actual-fatal-hud-state",
+      "purpose": [
+        "AC-M14-06/VIS-10 hierarchy when warning text is actually critical",
+        "VIS-11 DOM lethal warning not silently omitted"
+      ],
+      "route": "Obtain actual infection critical and/or organ alarm states via bounded normal inputs, using existing lifecycle routes where possible; inspect actual long warning text and decisive area. Do not promote the normal explanatory line as equivalent.",
+      "efficiency": "Share screenshots/records with the broader HUD/native environment workstream; do not repeat all ordinary scene sampling or require both browsers for every danger variant unless a real difference warrants it."
+    }
+  ],
+  "technicalVisualHumanSeparation": {
+    "technicalCompleteness": "Use frozen current source+qualified existing units, no gameplay use of quality flags, real-snapshot state invariance and per-warning draw geometry/guards to establish presentation cannot change accepted damage/collision. New code changes or uncovered branches warrant targeted regression; do not rerun broad tests merely to collect screenshots.",
+    "actualImageInspection": "A reviewer must inspect unedited final-size actual images and say what can/cannot be distinguished; rectangles, FPS, actor counts, labels and pixel differences alone are insufficient. One image may cover several original clauses; a series may show windup and recovery at different natural times.",
+    "humanObservation": "Five new-player blind observations remain0/5 and belong to AC-M16-05/VIS-12 and related first-play clauses. Do not invent comprehension/fun/replay rates. Do not make5-player testing a new literal prerequisite for the technical screenshot subclauses of VIS-07/11.",
+    "performance": "The qualified v075120s sample supports a targeted frame-budget regression. AC-M16-04 explicitly asks a target-device10-minute run and no sustained growth; that outstanding workstream remains separate. No new requirement for10minutes per warning, per trait, all hardware, or infinite zero growth is introduced."
+  },
+  "notNewGates": [
+    "No fixed dense enemy count or mandated screenshot count in the cited original rows.",
+    "No requirement that every core attack/weakness be simultaneously active; the controller has one attack and disjoint recovery timing.",
+    "No all-type×organ×resolution×quality×browser exhaustive matrix. Cover actual distinct essential branches technically and representative native hard scenes visually.",
+    "No need to replay completed broad regression/full victories for a presentation-only missing image.",
+    "No original requirement that exact same live tick be obtained by UI quality switching; use source-captured independent drawing pairs honestly when exact-state comparison is useful.",
+    "Do not substitute viewport/DPR/CSS scaling or synthetic blur for the separate real browser zoom/native-focus clauses."
+  ],
+  "completionRule": "Keep the original rows partial until the relevant missing technical/real-image evidence is actually obtained and reviewed. This plan does not itself pass an acceptance row, declare fun/incubation value, or close user playtesting."
+}

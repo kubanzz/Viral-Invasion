@@ -1,0 +1,220 @@
+{
+  "schemaVersion": 1,
+  "reviewedAtUtc": "2026-10-27T12:18:30Z",
+  "status": "read-only-preflight-current-version-600-second-run-required-for-finite-acceptance",
+  "method": "Read existing immutable v075 short-pressure and v074 ten-minute/after-GC reports; recompute summaries from their natural samples; inspect current production/cache/UI/listener and accounting-ledger lifecycles. No browser, simulation, build, test, source/test edit or old-artifact write. Only memory-preflight.json and memory-preflight.md are written. This timestamp marks numeric/source read completion; report composition followed.",
+  "requirement": {
+    "id": "AC-M16-04",
+    "source": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md:317",
+    "verbatim": "在项目实际目标设备上进行 10 分钟压力运行，平均帧率目标 ≥50、帧时间 p95 ≤33ms（可随设备记录与性能预算共同调整），无持续内存增长/无控制台致命错误。",
+    "interpretation": "The requested duration is a finite ten-minute pressure observation on a recorded device. It is possible to support that finite claim with current-version natural trends plus separately labelled retained-size checkpoints; indefinite stability and every-device coverage are not additional implicit requirements. Headless V8/DOM evidence supports its declared software/device scope and does not measure total process/GPU allocation. A two-minute targeted regression cannot supply the ten-minute part.",
+    "separateRequirement": "AC-M03-03 asks for a 20-minute bounded infection simulation; do not substitute that simulation for the ten-minute actual browser memory observation."
+  },
+  "evidence": [
+    { "path": "artifacts/readability-v075/perf/final-d/report.json", "sha256": "c77978b46468d6cde0cc4c9db7ff2ec0937778044a2a0e5a684beb9d9266af9f" },
+    { "path": "artifacts/readability-v075/perf/final-d/pre-run.json", "role": "Records postMemory=false and frozen v075 preparation, separate from the measured active interval." },
+    { "path": "artifacts/readability-v075/perf/final-d/measurement-script.mjs", "sha256": "ab1b5a52cec6bc9130402ac23923f241cb08b26ad90cff3ff6cae315beed5ad2", "role": "Actual archived driver; VI_PERF_ACTIVE_SECONDS and VI_PERF_POST_MEMORY control duration and later collection checkpoints." },
+    { "path": "artifacts/completion-v074/performance/attempt-1/report.json", "sha256": "60c2eed53c341ce10598ac4b8fa8ee3c1a1a42aa65ef76ae994a05fc27af4e92" },
+    { "path": "artifacts/completion-v074/performance/attempt-1/memory-review.json", "sha256": "da7a5e24e35c3d666794513ffbbb949a73c69a83b73d2612e7950780cb4d3b26" },
+    { "path": "DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md", "sha256": "5a07140277dd8f098f584f13c6004c41dc6b8544f54b6252e6e8b7aa95d8bc74" }
+  ],
+  "sourceRelation": {
+    "currentV075BundleSha256": "971313934fc806144ceb3c2dc89eda76ce142ea1aac2bdee54ff0a52003ce342",
+    "v074BundleSha256": "a253faaf85e61370ec7abd71521a955c14265d67daf04f9db2e55de94b693a39",
+    "currentWorkingTreeComparedWithV075ReportBuildManifest": { "files": 62, "mismatchesObservedAtRead": 0 },
+    "consequence": "The v074 600-second run is a useful lifecycle baseline for unchanged gameplay/accounting code. It is not a current-version 600-second result for the new SceneLabels/HUD presentation allocations. Root owns final source freeze and the new runtime attempt."
+  },
+  "definitions": {
+    "v8UsedBytes": "Runtime.getHeapUsage.usedSize: occupied V8 heap at that natural instant, including not-yet-collected temporary objects; not automatically retained live bytes.",
+    "allocatedCapacityBytes": "Runtime.getHeapUsage.totalSize: V8 allocated heap capacity, not a count of live retained objects. Capacity can remain high or expand while used objects are reclaimed.",
+    "embedderAndBacking": "embedderHeapUsedSize and backingStorageSize are reported separately. None of these values is total browser RSS, native canvas pixel storage or GPU memory.",
+    "natural": "No explicit collection in setup, warmup, frame measurement or sample collection. A sampled decrease indicates reclamation/size reduction between observations, without instrumenting which GC event caused it.",
+    "forcedGc": "Only after measured natural/frame arrays have finished; real paused/menu/restart actions, settle and three explicit HeapProfiler.collectGarbage calls at each named checkpoint. These values describe later retained size, not natural-GC throughput."
+  },
+  "v075ShortRun": {
+    "duration": {
+      "activeTargetSeconds": 120,
+      "activeSimulationSeconds": 120.16666666666669,
+      "measurementWallMilliseconds": 120303,
+      "preparationAndWarmupWallMilliseconds": 157452,
+      "preparationTick": 1653,
+      "warmTick": 9353,
+      "warmElapsed": 155.88333333333333,
+      "finalTick": 16563,
+      "finalElapsed": 276.05,
+      "wallBeforeEndMilliseconds": 277755,
+      "acceptanceTenMinuteRun": false,
+      "note": "Elapsed 276.05 includes setup/warmup. It is not a 276-second pressure measurement, and total wrapper time cannot be added to the active measurement to satisfy 600 seconds."
+    },
+    "natural": {
+      "samples": 25,
+      "activeSampleRange": [0.08333333333334281, 120.16666666666669],
+      "forcedGcSamples": 0,
+      "usedBytes": { "min": 6385200, "median": 17930368, "max": 32746192, "first": 18493852, "last": 6664972 },
+      "allocatedCapacityBytes": { "min": 71372800, "median": 72491008, "max": 74326016, "first": 71372800, "last": 73015296 },
+      "embedderUsedBytes": { "min": 2057024, "median": 7438080, "max": 14837848, "first": 14837848, "last": 2057024 },
+      "backingStorageBytes": { "min": 395836, "median": 397613, "max": 398663, "first": 398390, "last": 395985 },
+      "domNodes": { "min": 326, "median": 708, "max": 1115, "first": 1115, "last": 326 },
+      "listeners": { "min": 28, "median": 41, "max": 55, "first": 45, "last": 37 },
+      "documents": [1],
+      "sampledUsedFalls": 10,
+      "thirtySecondWindowUsedMedians": [
+        { "start": 0, "samples": 6, "median": 13387058 },
+        { "start": 30, "samples": 6, "median": 23623932 },
+        { "start": 60, "samples": 6, "median": 22912680 },
+        { "start": 90, "samples": 6, "median": 21163230 }
+      ],
+      "firstAndLast60Seconds": {
+        "first": { "samples": 12, "usedMedian": 15831934, "capacityMedian": 72159232, "nodesMedian": 710.5, "listenersMedian": 34.5 },
+        "last": { "samples": 13, "usedMedian": 20828568, "capacityMedian": 72753152, "nodesMedian": 701, "listenersMedian": 48 },
+        "usedChange": { "bytes": 4996634, "percent": 31.560477702850452 },
+        "capacityChange": { "bytes": 593920, "percent": 0.8230686268944768 },
+        "method": "First window active<60; last window active>=finalActive-60, including the terminal sample. Standard and low are sequential live states, not the same allocation workload."
+      },
+      "firstLastUsedChange": { "bytes": -11828880, "percent": -63.96114773709664 },
+      "firstLastCapacityChange": { "bytes": 1642496, "percent": 2.3012912482065997 }
+    },
+    "postMeasurementGcOrRestartEvidence": "Absent; pre-run postMemory=false and no postMeasurementMemory in this report.",
+    "boundedProduction": { "maxLivingActors": 24, "maxCells": 3, "maxObservedRunMetricsFrameEntries": 2, "runMetricsFrameLimit": 256, "finalLimited": false, "lungActivated": false },
+    "judgment": "The 10 observed used-size falls, late low used size and repeated 326-node minimum contradict a simple claim that all short-run allocations are continuously retained. Conversely, the +31.56% first/last-minute used median and rising listener median must be reported; the low terminal sample alone does not establish a flat retained baseline. This report supports a 120-second current-version V8/DOM targeted regression with reclamation, not the required ten-minute current-version memory conclusion. It provides no post-GC attribution of live retained objects."
+  },
+  "v074TenMinuteBaseline": {
+    "activeSimulationSeconds": 600.2166666666667,
+    "measurementWallMilliseconds": 600365,
+    "wallBeforePostMemoryMilliseconds": 749782,
+    "naturalSamples": 118,
+    "forcedGcDuringNaturalMeasurement": false,
+    "naturalUsedBytes": { "min": 5795324, "median": 13197410, "max": 33861828, "first": 9346144, "last": 10417696 },
+    "naturalCapacityBytes": { "first": 41750528, "last": 70918144, "max": 72491008 },
+    "firstLast60SecondUsedMedians": { "before": 10844930, "after": 12492576, "changeBytes": 1647646, "changePercent": 15.192776716862165 },
+    "firstLast60SecondCapacityMedians": { "before": 41750528, "after": 70656000, "changeBytes": 28905472, "changePercent": 69.2337878936525 },
+    "minuteUsedMedians": [10844930, 15164536, 14261940, 12089550, 10928464, 16408988, 12139828, 16913892, 16581240, 13770522],
+    "sampledUsedFalls": 62,
+    "naturalDomNodes": { "min": 328, "max": 1313, "first": 681, "last": 394 },
+    "naturalListeners": { "min": 24, "max": 59, "first": 31, "last": 38 },
+    "documents": [1],
+    "afterThreeForcedGc": [
+      { "checkpoint": "finished-pressure-paused", "usedBytes": 5710424, "capacityBytes": 6430720, "nodes": 405, "listeners": 37 },
+      { "checkpoint": "returned-menu", "usedBytes": 4675096, "capacityBytes": 5644288, "nodes": 424, "listeners": 37 },
+      { "checkpoint": "menu-after-5-restarts", "usedBytes": 4780472, "capacityBytes": 5644288, "nodes": 453, "listeners": 37 },
+      { "checkpoint": "menu-after-10-restarts", "usedBytes": 4844016, "capacityBytes": 5644288, "nodes": 424, "listeners": 37 }
+    ],
+    "menuTenRestartUsedChange": { "bytes": 168920, "percent": 3.61318783614283 },
+    "judgment": "For the recorded Windows/i7-10700K/Chrome headless 1366x768 case this is an actual finite ten-minute natural V8/DOM series with non-monotonic minute medians, many sampled decreases, and later release of most natural heap capacity. The menu retained checkpoint rose 168920 bytes across ten UI restarts while listeners stayed 37 and nodes returned to 424. This supports no observed runaway V8/DOM retention within that recorded v074 case, with the measured positive deltas stated. Capacity expansion of 69.23% in itself is not a retained-object leak. It is neither a zero-byte-growth claim nor evidence for v075's new caches. The restart checkpoints are not repeated true game settlements."
+  },
+  "lifecycleReview": [
+    {
+      "component": "SceneLabels",
+      "evidence": ["src/render/sceneLabels.ts:31", "src/render/sceneLabels.ts:50-64", "src/render/sceneLabels.ts:88", "src/render/sceneLabels.ts:168-169", "src/render/sceneLabels.ts:184-188"],
+      "retained": "Font measurement Map at most 256 text/metric entries across runs; placement Map at most 128 IDs/offsets and cleared on scope or viewport change. Current frame descriptor, current labels/blocked arrays and latest placements are replaced each begin/draw.",
+      "releases": "labels.clear plus new blocked/result each frame; previous.clear on run:organ/viewport change; diagnostics clones do not enter a production history. Anchors are numeric Vec copies, not retained GameState references.",
+      "classification": "Bounded new presentation cache and per-frame temporary allocation, not source-confirmed duration-proportional retention.",
+      "existingTestsRead": "tests/unit/scene-labels.test.ts has scope reset/stability, cache bound and nonmutation coverage; this review did not execute it."
+    },
+    {
+      "component": "HUD rectangles and DOM view caches",
+      "evidence": ["src/ui/hudLayout.ts:4", "src/ui/hudLayout.ts:20-57", "src/render/renderer.ts:72", "src/ui/growthHud.ts:8-9", "src/ui/growthHud.ts:62-74", "src/ui/encounterHud.ts:59-75"],
+      "retained": "Softening timestamps, slot child refs, last feedback text and encounter child refs use container-keyed WeakMaps. Current attached containers intentionally keep their current children alive. Replaced slot signatures replace the old value. hudRects stores only a copied current numeric rectangle list.",
+      "releases": "Style Map and panel arrays are local to one readVisibleHudRects call. WeakMap does not independently root detached containers. Old slot count arrays lose their value reference when the signature changes.",
+      "classification": "No global strong list of detached HUDs was found. Approximately 20 Hz textContent/innerHTML replacements can produce garbage and temporarily elevated CDP node/listener counts until reclamation."
+    },
+    {
+      "component": "Overlay and routine HUD DOM",
+      "evidence": ["src/main.ts:211-254", "src/main.ts:256-299", "src/ui/battleHud.ts:52-56", "src/ui/campaignHud.ts:13", "src/ui/growthHud.ts:62-89"],
+      "retained": "One overlay-host subtree; updateOverlay key avoids replacing it each RAF. Actual overlay changes replace innerHTML. Campaign html helper compares strings; growth slots rebuild only on equipment signature and counters update text.",
+      "allocationChurn": "The trait-strip is still rebuilt on each HUD update, and warning content during its finite warning interval; many textContent assignments also replace text nodes. This is concrete allocation churn, but no source path retains every superseded subtree. A high natural node count is therefore not by itself a detached-tree leak.",
+      "classification": "Current subtree retained intentionally; old subtree reclamation is the item to inspect after same-view forced-GC checkpoints."
+    },
+    {
+      "component": "Renderer surfaces and growth trails",
+      "evidence": ["src/render/renderer.ts:61-79", "src/render/renderer.ts:124-137", "src/game/organConfig.ts:20-31", "src/render/growthVisuals.ts:23-43"],
+      "retained": "One main canvas, one 1440x900 background, optional one legacy small-lung background, and landscape Map keyed only by organ:width:height. Current production has heart/lung at fixed 2400x1500, so at most two production landscape keys, retained across menu/restart rather than one new image per seed.",
+      "canvasCapacityEstimate": "Each production landscape canvas is 2600x1850: 19,240,000 bytes if represented as an uncompressed four-byte pixel surface. This is a size calculation, not observed RSS/GPU residency and is not fully represented by the roughly 0.4MB Runtime backingStorageSize counter.",
+      "trailBound": "Trails clear on run/organ change or time reversal and delete expired/dead mark IDs; each trail holds at most four Vec points. The marked actor population is bounded by the existing encounter limits.",
+      "classification": "Expected one-time retained surfaces plus bounded trails. Additional dynamically introduced organ sizes would change the landscape bound; current formal game does not generate new dimensions per seed."
+    },
+    {
+      "component": "Session, bus, listeners and audio",
+      "evidence": ["src/main.ts:34-38", "src/main.ts:81-90", "src/main.ts:154", "src/main.ts:300-317", "src/input/controller.ts:14-37", "src/core/events.ts:4-24", "src/game/session.ts:50-60", "src/game/session.ts:87-125", "src/audio.ts:9-80"],
+      "retained": "Session/Renderer/Controller/Soundscape are constructed once per document, app uses one delegated click handler, one resize handler and one session bus callback; Controller registers nine fixed event listeners only in its constructor. A single production RAF chain is started and reschedules itself. These are page-lifetime roots, not allocated per restart.",
+      "reset": "start/menu replaces GameState, growth/campaign directors and associated state, clears campaignTransactions/deferred commands and removes the mother controller. BattleDirector follows the current session state. Soundscape uses one AudioContext, clears its finite cue-group Map and last-event reference on a new run, and disconnects oscillator/gain nodes on ended.",
+      "classification": "No restart-time listener-registration loop was found. Natural CDP listener variation includes objects awaiting collection and differing UI states; only matched post-GC checkpoints can attribute sustained count increases."
+    },
+    {
+      "component": "Gameplay histories and frame metrics",
+      "evidence": ["src/game/session.ts:142-144", "src/game/session.ts:179", "src/game/battle.ts:83-84", "src/game/battle.ts:281", "src/game/growth.ts:72-79", "src/game/growth.ts:434", "src/game/growth.ts:443-462", "src/game/runMetrics.ts:81", "src/game/runMetrics.ts:94-96", "src/game/evolution.ts:18-31"],
+      "retained": "Events at most 512; battle/campaign/protocol histories at most 128; chain roots at most 256; per-tick acceptedHistory clears on tick change; runMetrics frame entries reset on next event tick and cap at 256 with a fixed-field cumulative summary; behavior bins retain a 90-second tick window. Effects expire, non-source corpses are filtered after their finite display interval, cells cap at three and expire with beacon/organ changes.",
+      "classification": "These bounded histories are retained gameplay telemetry, with temporary allocations for pure reducers/snapshots. Numeric counters can increase without retaining one object per count. The accounting ledgers below are separate exceptions."
+    }
+  ],
+  "confirmedAccountingRetention": [
+    {
+      "id": "MEM-L1",
+      "component": "GameSession.campaignTransactions and CampaignState.transactionIds",
+      "source": ["src/game/session.ts:37", "src/game/session.ts:58", "src/game/session.ts:559-560", "src/game/session.ts:613", "src/game/campaign.ts:177", "src/game/campaign.ts:192-213", "src/game/campaign.ts:268-281", "src/game/campaignEncounters.ts:111-112", "src/game/organConfig.ts:9-11"],
+      "semantics": "campaignTransactions rejects applying the same accepted command eventId twice; IDs are inserted only after acceptance. It includes fixed setup/route/spawn transactions and unique per-tick background load/damage IDs. CampaignState.transactionIds separately protects accepted travel and the one-shot crisis-source transition. These ledgers preserve at-most-once gameplay effects; they are not label or DOM caches.",
+      "actualLifetime": "They belong to the current GameSession run; menu/start resets them. Pausing and a result screen retain the same run. There is no forced 10/15-minute game timeout: the stated duration is a target, so a legally prolonged run can keep them alive beyond ten minutes.",
+      "growth": "With an activated departed organ and an open source, background() emits a new infectionDelta :load ID every eligible five simulation seconds after the cumulative ten-second grace. Even once the 15-damage-per-trip budget is spent, the load event continues and campaignTransactions grows. Travelling repeatedly adds one accepted travel ID in both bookkeeping domains. This duration/action-proportional retention is source-confirmed; there is no eviction before run reset.",
+      "finiteBudget": "During 600 additional active seconds, each of the two organ schedules can emit at most about 121 eligible background batches (one can be due at the measurement boundary); each batch adds at most two host IDs. A conservative two-organ bound is 484 new background IDs, plus at most about 201 accepted travels under the three-second cooldown and a finite set of setup transactions. Only one organ is offscreen at once, so ordinary observed counts will be lower. This bounds additions within the finite test window, not total prior preparation history or an indefinitely long run.",
+      "existingCoverage": [
+        "tests/unit/campaign.test.ts:137: long-gap background executes one batch, honors grace/closure, caps damage; fixture does not exercise GameSession's private campaignTransactions or assert a ledger bound.",
+        "tests/unit/campaign.test.ts:155: 90-second three-second return trips preserve cumulative offscreen grace/damage; not a memory-retention test.",
+        "tests/unit/campaign.test.ts and full-system-seeds.test.ts cover travel/progression/results, but no direct campaignTransactions retention/eviction test was found."
+      ],
+      "currentPressureCoverage": "Both existing retained-production pressure cases stay in heart with lung unactivated; v075 finalState has lung.activated=false and one exposed crisis transaction ID. They cannot empirically characterize the offscreen-background ledger slope.",
+      "safeBoundOptions": [
+        "No immediate source change is required to describe a finite ten-minute pressure result honestly; report the conditional ledger and measured action counts separately from the presentation lifecycle.",
+        "For a future bounded implementation, split immutable one-shot run transaction keys from recurring background/travel acceptance. Use typed monotonic accepted tick/sequence watermarks per organ AND operation (damage and load are distinct) and per accepted travel, rejecting stale/duplicate operations. Fixed spawn/route/crisis keys can remain in a small run-local set. This avoids retaining every historical five-second ID.",
+        "Do not merely keep the most recent N arbitrary IDs: an old duplicate could be applied again after eviction. Watermark ordering, deferred commands, same-tick recursion, failed/unaccepted commands and reset must be specified and tested first. A wall-time expiry is unsuitable because pause and simulation tick semantics must remain unchanged."
+      ],
+      "severityForCurrentFiniteGoal": "Known small per-run accounting growth on an uncovered branch, not proof of runaway HUD/renderer retention. It limits broad all-route memory claims until measured or bounded; it does not invalidate the observed stationary-heart case."
+    },
+    {
+      "id": "MEM-L2",
+      "component": "ProfileStore.recordedRunIds",
+      "source": ["src/meta/profile.ts:157-169", "src/meta/profile.ts:187", "src/meta/profile.ts:256", "src/meta/profile.ts:340-351", "src/main.ts:83-86", "src/game/session.ts:129-133"],
+      "semantics": "One stored run ID for every unique actual result prevents awarding the same completed run twice, including after reload and after its visible record falls out of the ten most recent records. parseProfile requires stats.runs===recordedRunIds.length and the best/recent record IDs to exist in this ledger.",
+      "actualLifetime": "ProfileStore is page-lived and persists the ledger in localStorage across page reloads. It grows one string per unique true settlement; recentRuns alone is capped at ten. New menu/start/retry actions without RUN_ENDED do not append a recorded ID. Returning to menu resets gameplay, not this profile history. Thus ten UI restarts are not ten settlement-memory observations.",
+      "confirmedGrowth": "There is no cap on recordedRunIds. This is deliberate persistent progress/idempotence state, not evidence of accidentally retaining old GameState or DOM trees. With the normal 10–15 minute completed-run target its growth rate is one short ID per finished run, and it is zero during a single unfinished 600-second pressure run.",
+      "existingCoverage": [
+        "tests/unit/profile.test.ts:193: success/failure recorded once across repeated confirmation and reload.",
+        "tests/unit/profile.test.ts:204-210: fourteen completed records keep only ten visible entries while run-0 remains duplicate-protected and can remain the best record. A naive cap of ten would explicitly break this existing contract.",
+        "tests/unit/profile.test.ts:135 and :218 validate consistent ledgers and snapshot isolation; session-only/write-failed cases also preserve duplicate protection.",
+        "tests/e2e/formal-failure-lifecycle.spec.ts:53-72 covers one real failure settlement, retry/menu fresh gameplay and profile persistence on reload; it is not a repeated settlement memory soak."
+      ],
+      "safeBoundOptions": [
+        "Do not cap recordedRunIds or make it follow recentRuns under the existing schema: that loses promised permanent duplicate protection and violates stats.runs equality on the next reload.",
+        "If long-term bounded profile size becomes a product requirement, introduce a schema/API migration to host-issued monotonic run serials within a durable profile namespace and compact accepted ranges/watermarks. Keep finite migrated legacy opaque IDs or explicitly define a migration policy. Issuance, out-of-order/multi-tab results and reload consistency must be designed before replacing exact membership with a high-water mark.",
+        "Exact lifetime membership for unrestricted arbitrary opaque IDs cannot be preserved by an arbitrary fixed-size recent-ID array. Retaining the current ledger is the safe present behavior; report its intentional growth rather than claiming all profile data is constant."
+      ],
+      "severityForCurrentFiniteGoal": "Intentional persistent result history outside the unfinished pressure-run slope. It warrants a separate real-settlement delta check and long-term storage design, not a false label-cache fix or a requirement to substitute menu restarts for results."
+    }
+  ],
+  "minimumEffectiveCurrentVersionPlan": {
+    "owner": "Root; this preflight does not execute the plan.",
+    "phaseA": "Freeze the current v075 bundle, 62-file build input manifest, driver/script hashes and machine/browser/window settings. Use a new attempt directory under artifacts/completion-v075/performance; preserve all prior attempts. Existing archived driver exposes VI_PERF_ACTIVE_SECONDS=600 and VI_PERF_POST_MEMORY=1. Verify actual source/frozen path handling before reuse.",
+    "phaseB": "Enter normally with real DOM inputs, legally acquire IMMUNE_BEACON, clear the real first guardian and block migration, keep the two required producers alive with open routes, and warm to the real actor cap. Record preparation/warm start and the later measurement start independently. No state/HP/clock/equipment writes or forced collection during setup/warmup/natural measurement.",
+    "phaseC": "Measure at least 600 active simulation seconds after warmup, about 300 per actual public standard/low setting; record each settings assertion and switch boundary. Take natural V8 used/capacity/embedder/backing plus DOM documents/nodes/listeners every five seconds, retain raw frame intervals and no fatal errors/remote requests. Sample read-only label diagnostics to verify measurement cache<=256 and placement cache<=128 in the new renderer, plus actor/cell/effect/event/history/metrics populations. Do not keep all per-frame snapshots inside the page; host-side sampled evidence and drained frame segments stay outside production roots.",
+    "phaseD": "End natural/frame measurement before any explicit collection. Use the real pause action, verify tick stable, settle at least 1.1s, record pre-GC natural values and post-three-GC values. Return to the same menu and repeat; then perform ten actual start/Q/pause/menu cycles and collect matching menu checkpoints at 5 and 10. Keep quality/sound/profile/menu view equivalent and confirm the production tick stayed frozen during collection. Expected retained background surfaces may stay; this is not a requirement that all bytes equal the first page load.",
+    "phaseE": "Derive first/last60s and every-minute medians AND minima, sample falls, extrema and post-GC same-view retained deltas separately for used, capacity, embedder/backing and DOM/listeners. Show counts of transient labels/effects/events. Do not let a capacity-only increase fail the live-object claim, or a single low terminal sample erase sustained collected growth. If stable-view collected used/nodes/listeners rise across both 0→5 and 5→10 checkpoints without a known newly warmed cache/profile change, inspect a retained-object heap snapshot/dominator path before attribution; no additional blind long soak is needed merely to label the cause.",
+    "scopeCompletion": "A successful current-version 600-second run with non-runaway natural trends, bounded new label/cache populations and no repeated same-view post-GC DOM/listener accumulation can support the finite statement: on the recorded machine, Chrome headless, 1366x768, stationary-heart producer pressure and two quality settings, no sustained uncontrolled V8/DOM retention was observed over ten measured active minutes. Report all positive deltas and deliberate accounting roots. This is meaningful finite AC-M16-04 software evidence; actual native/target-device and other-route scope must remain identified rather than being implicitly generalized.",
+    "additionalTargetedChecksWithoutReplacing600Seconds": [
+      "For an all-route lifecycle conclusion, add a separately labelled legal travel/offscreen-source segment and capture activated organs, accepted background/travel counts and exposed transactionIds before/after/menu. A small source-derived ledger slope is expected under current code and should not be mislabelled a HUD leak. A future watermark fix would need focused stale/duplicate/acceptance unit cases before a new frozen runtime attempt.",
+      "For profile/result lifecycle, use a true legal result and compare persisted stats.runs/recordedRunIds/recentRuns and collected same-view menu state. One new completed run should add exactly one ID, a second confirmation/reload should add zero, and recentRuns must remain<=10. Existing real-failure evidence covers this semantic behavior. Repeated settlement-memory claims need repeated true results; the ten menu restarts do not supply them. No current finite unfinished-pressure conclusion needs to pretend those restarts were completed games.",
+      "If full native/process memory is part of the chosen actual target-device acceptance, capture process/native memory on that recorded target as a separate series. V8 capacity/backing values should not be renamed process/GPU memory. This does not impose an indefinite leak-proof standard on the finite ten-minute browser observation."
+    ]
+  },
+  "currentDecision": {
+    "supportedNow": [
+      "Current v075 source has bounded new scene-label caches and container-keyed HUD WeakMaps; no per-restart production listener-registration path or strong detached-HUD history was found.",
+      "The current v075 short report shows substantial intermittent reclamation during 120.1667 measured active seconds, while preserving the positive minute-median/listener changes and lacking post-GC checkpoints.",
+      "The older v074 completed finite 600-second case supports its declared stationary-heart V8/DOM scope with exact natural and forced-GC deltas; it is a useful comparator, not current-version acceptance."
+    ],
+    "notSupportedYet": [
+      "A current-version ten-minute memory result from final-d, because its measured active duration is 120 seconds and postMemory is false.",
+      "All-route constant memory: conditional background/travel accounting retains per-operation IDs until run reset; the stationary-heart pressure cases leave lung unactivated.",
+      "Constant-size lifetime profile: one opaque settlement ID is intentionally persisted per completed run and existing tests require older IDs to remain duplicate-protected."
+    ],
+    "nextGate": "Root's frozen-v075 600-second natural run plus separately labelled post-pressure/menu/restart GC results can close the current-version finite stationary-heart V8/DOM observation. This preflight does not mark that runtime work passed or fail it in advance."
+  }
+}

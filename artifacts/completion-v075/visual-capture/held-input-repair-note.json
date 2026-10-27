@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "writtenAtUtc": "2026-10-27T12:44:45.209Z",
+  "status": "frozen-ready-awaiting-parent-run",
+  "previousAttempt": "artifacts/completion-v075/visual-capture/core-cf-attempt-2",
+  "priorBytesArchive": "artifacts/completion-v075/visual-capture/core-cf-attempt-2/frozen-host/manifest.json",
+  "readOnlyFailureFindings": {
+    "finalPlayer": {
+      "x": 804.3254174627523,
+      "y": 1065.6111795577121,
+      "hp": 28,
+      "radius": 19,
+      "facing": -0.3625525864032024,
+      "moving": false,
+      "dashUntil": 0,
+      "dashReady": 0,
+      "hurtUntil": 78.03333333333333,
+      "actionUntil": 32.3
+    },
+    "finalTissue": {
+      "x": 850,
+      "y": 1190,
+      "hp": 79,
+      "maxHp": 100,
+      "radius": 43
+    },
+    "corePosition": {
+      "x": 1900,
+      "y": 650
+    },
+    "distanceToCore": 1171.8512889405058,
+    "distanceToTissue": 132.50941906512,
+    "missing": [
+      "crystal-sweep",
+      "fission-burst",
+      "brood",
+      "recovery"
+    ],
+    "coreDamage": "Six actual core-fission-burst PLAYER_HURT events, each12; player100→28. Core remained680HP. Tissue remained79 in late samples; no evidence of tissue collapse or ordinary-enemy damage caused this failure.",
+    "inputMismatch": "Repeated rightward navigation requests were recorded while final player.moving=false and player remained far from core. Capture preflight rejected offscreen core, but the outer release had already raised physical keys without clearing fullRun private held state.",
+    "careMismatch": "Existing g3Input condition player.hp<70 && tissue.hp<99 asked for care; the prior core override produced no tool3 actions after core activation."
+  },
+  "changes": [
+    "Moved real input release into take only after valid state/actual-view/overlay preflight passes. A rejected preflight returns false without releasing physical keys.",
+    "Removed the3 outer onUpdate take releases; actual screenshot attempts return true so fullRun clears its private held set. The manual Q path still releases and returns true.",
+    "Preserved the exact existing g3Input care condition and its waypoint movement back toward tissue even before repair range/LOS; fire is allowed only for its actual tool3 repair input during care travel, avoiding incidental core threshold damage.",
+    "Manual corrosion Q now requires a previously accepted actual corrosion screenshot, preserving the documented capture-before-interrupt order."
+  ],
+  "staticValidation": {
+    "nodeCheckExitCode": 0,
+    "hostHelperPreparationExitCode": 0,
+    "preparedInputHashesMatch": true,
+    "browserStartedByThisSubagent": false,
+    "testRun": false,
+    "productionBuildRun": false,
+    "note": "Syntax/compilation and read-time hashes only. No runtime success, screenshot readability or navigation outcome is claimed."
+  },
+  "frozenFiles": [
+    {
+      "path": "artifacts/completion-v075/visual-capture/capture.mjs",
+      "mtimeUtc": "2026-10-27T12:44:14.496Z",
+      "sha256": "bd2d24a0ae3379acdb66465fe1a39cc856fb1f269833988288e125ea65f24588"
+    },
+    {
+      "path": "artifacts/completion-v075/visual-capture/driver.mjs",
+      "mtimeUtc": "2026-10-27T12:44:14.845Z",
+      "sha256": "e37dd80dbb5662c44e3556f096fbdc5276b6a2644f10e6f1e77f4b7c3655de1f"
+    },
+    {
+      "path": "artifacts/completion-v075/visual-capture/prepare.mjs",
+      "mtimeUtc": "2026-10-27T12:30:23.173Z",
+      "sha256": "bcb554eb6c8b1afb03e8acfbe34b2baa5af5ab262a641bca5d012e35303065b0"
+    },
+    {
+      "path": "artifacts/completion-v075/visual-capture/prepared.json",
+      "mtimeUtc": "2026-10-27T12:44:14.852Z",
+      "sha256": "b5b33c59bdcf1e7bd44925ee120be77d9b79e93ac42ebbfa9747de7059744b03"
+    }
+  ],
+  "coordination": "Parent reported no active root browser before authorizing the repair. After this frozen-ready handoff, this subagent will not edit capture/driver/prepare/prepared files until parent returns with a new inactive-case authorization."
+}

@@ -1,0 +1,1583 @@
+{
+  "game": "viral-invasion",
+  "schemaVersion": 1,
+  "seed": 13,
+  "phase": "playing",
+  "tick": 1185,
+  "elapsed": 19.75,
+  "player": {
+    "x": 408.45747660529014,
+    "y": 409.62414327196063,
+    "hp": 100,
+    "radius": 19,
+    "facing": -2.291761985985621,
+    "moving": false,
+    "dashUntil": 0,
+    "dashReady": 0,
+    "hurtUntil": 0,
+    "actionUntil": 0
+  },
+  "targets": [
+    {
+      "id": "source-a",
+      "kind": "single",
+      "x": 1020,
+      "y": 650,
+      "active": true,
+      "infected": true,
+      "role": "source",
+      "hp": 238,
+      "maxHp": 238,
+      "radius": 34,
+      "hitUntil": 0,
+      "scanned": false,
+      "traits": [],
+      "facing": 0,
+      "born": 0
+    },
+    {
+      "id": "source-b",
+      "kind": "single",
+      "x": 2010,
+      "y": 1090,
+      "active": true,
+      "infected": true,
+      "role": "source",
+      "hp": 238,
+      "maxHp": 238,
+      "radius": 34,
+      "hitUntil": 0,
+      "scanned": false,
+      "traits": [],
+      "facing": 0,
+      "born": 0
+    },
+    {
+      "id": "virus-1",
+      "kind": "single",
+      "x": 878.6192252642264,
+      "y": 1101.770565207512,
+      "active": true,
+      "infected": true,
+      "role": "virus",
+      "radius": 22,
+      "hp": 68,
+      "maxHp": 68,
+      "hitUntil": 0,
+      "scanned": false,
+      "traits": [],
+      "facing": 1.884460804061929,
+      "born": 0,
+      "attackReady": 19.48333333333333,
+      "generation": 0,
+      "sourceId": "source-a",
+      "attackAt": 20.203333333333333,
+      "attackAim": {
+        "x": 850,
+        "y": 1190
+      },
+      "attackTarget": "tissue"
+    },
+    {
+      "id": "virus-2",
+      "kind": "single",
+      "x": 941.4261276338749,
+      "y": 1176.6757522513378,
+      "active": true,
+      "infected": true,
+      "role": "virus",
+      "radius": 22,
+      "hp": 68,
+      "maxHp": 68,
+      "hitUntil": 0,
+      "scanned": false,
+      "traits": [],
+      "facing": 2.996873646496928,
+      "born": 0,
+      "attackReady": 21.666666666666664,
+      "generation": 0,
+      "sourceId": "source-b"
+    },
+    {
+      "x": 872.6245228332164,
+      "y": 1100.4068895804721,
+      "id": "virus-3",
+      "role": "virus",
+      "kind": "single",
+      "radius": 22,
+      "hp": 68,
+      "maxHp": 68,
+      "hitUntil": 0,
+      "scanned": false,
+      "traits": [],
+      "facing": 1.8181502823667437,
+      "born": 8,
+      "attackReady": 20.4,
+      "generation": 0,
+      "sourceId": "source-a"
+    },
+    {
+      "x": 1424.1001080763401,
+      "y": 1106.7020479105097,
+      "id": "virus-4",
+      "role": "virus",
+      "kind": "single",
+      "radius": 22,
+      "hp": 68,
+      "maxHp": 68,
+      "hitUntil": 0,
+      "scanned": false,
+      "traits": [],
+      "facing": 2.997505071192663,
+      "born": 10,
+      "attackReady": 11.5,
+      "generation": 0,
+      "sourceId": "source-b"
+    }
+  ],
+  "tissue": {
+    "x": 850,
+    "y": 1190,
+    "hp": 29.04000000000002,
+    "maxHp": 100,
+    "radius": 43
+  },
+  "terminal": {
+    "x": 350,
+    "y": 1180
+  },
+  "tool": 3,
+  "cooldowns": {
+    "1": 0,
+    "2": 0,
+    "3": 0
+  },
+  "scanReady": 0,
+  "scanUntil": 0,
+  "effects": [
+    {
+      "id": 19,
+      "kind": "hit",
+      "from": {
+        "x": 850,
+        "y": 1190
+      },
+      "to": {
+        "x": 850,
+        "y": 1190
+      },
+      "radius": 45,
+      "born": 19.466666666666665,
+      "duration": 0.3
+    },
+    {
+      "id": 20,
+      "kind": "danger",
+      "from": {
+        "x": 878.6192252642264,
+        "y": 1101.770565207512
+      },
+      "to": {
+        "x": 850,
+        "y": 1190
+      },
+      "radius": 58,
+      "born": 19.483333333333334,
+      "duration": 0.72
+    }
+  ],
+  "events": [
+    {
+      "type": "RUN_STARTED",
+      "tick": 0,
+      "data": {
+        "seed": 13,
+        "mode": "campaign",
+        "startAtTick": 0,
+        "encounterConfig": "campaign-1",
+        "counterGuide": "adaptive",
+        "firstTraitOverride": "MIMIC"
+      }
+    },
+    {
+      "type": "CAMPAIGN_STAGE_ENTERED",
+      "tick": 1,
+      "data": {
+        "stage": "I",
+        "at": 0,
+        "targetId": ""
+      }
+    },
+    {
+      "type": "TOOL_SELECTED",
+      "tick": 2,
+      "data": {
+        "tool": 3
+      }
+    },
+    {
+      "type": "INFECTION_SPREAD",
+      "tick": 360,
+      "data": {
+        "organId": "heart",
+        "edgeId": "source-a:gate",
+        "from": "source-a",
+        "to": "gate"
+      }
+    },
+    {
+      "type": "INFECTION_SPREAD",
+      "tick": 360,
+      "data": {
+        "organId": "heart",
+        "edgeId": "source-b:valve",
+        "from": "source-b",
+        "to": "valve"
+      }
+    },
+    {
+      "type": "ATTACK_TELEGRAPHED",
+      "tick": 464,
+      "data": {
+        "actorId": "virus-1",
+        "target": "tissue",
+        "resolveAt": 8.453333333333333
+      }
+    },
+    {
+      "type": "ACTOR_SPAWNED",
+      "tick": 480,
+      "data": {
+        "id": "virus-3",
+        "role": "virus",
+        "generation": 0,
+        "sourceId": "source-a",
+        "traits": ""
+      }
+    },
+    {
+      "type": "ORGAN_INTEGRITY_CHANGED",
+      "tick": 508,
+      "data": {
+        "organId": "heart",
+        "before": 62,
+        "after": 58,
+        "reason": "enemy-attack",
+        "actorId": "virus-1"
+      }
+    },
+    {
+      "type": "ACTOR_SPAWNED",
+      "tick": 600,
+      "data": {
+        "id": "virus-4",
+        "role": "virus",
+        "generation": 0,
+        "sourceId": "source-b",
+        "traits": ""
+      }
+    },
+    {
+      "type": "ATTACK_TELEGRAPHED",
+      "tick": 641,
+      "data": {
+        "actorId": "virus-1",
+        "target": "tissue",
+        "resolveAt": 11.403333333333334
+      }
+    },
+    {
+      "type": "ORGAN_INTEGRITY_CHANGED",
+      "tick": 685,
+      "data": {
+        "organId": "heart",
+        "before": 58,
+        "after": 54,
+        "reason": "enemy-attack",
+        "actorId": "virus-1"
+      }
+    },
+    {
+      "type": "INFECTION_SPREAD",
+      "tick": 720,
+      "data": {
+        "organId": "heart",
+        "edgeId": "gate:tissue",
+        "from": "gate",
+        "to": "tissue"
+      }
+    },
+    {
+      "type": "ORGAN_INTEGRITY_CHANGED",
+      "tick": 720,
+      "data": {
+        "organId": "heart",
+        "before": 54,
+        "after": 53.88,
+        "reason": "infection"
+      }
+    },
+    {
+      "type": "ORGAN_INTEGRITY_CHANGED",
+      "tick": 780,
+      "data": {
+        "organId": "heart",
+        "before": 53.88,
+        "after": 53.760000000000005,
+        "reason": "infection"
+      }
+    },
+    {
+      "type": "ATTACK_TELEGRAPHED",
+      "tick": 817,
+      "data": {
+        "actorId": "virus-1",
+        "target": "tissue",
+        "resolveAt": 14.336666666666668
+      }
+    },
+    {
+      "type": "EVOLUTION_WARNING",
+      "tick": 840,
+      "data": {
+        "trait": "MIMIC",
+        "duration": 8,
+        "applyAt": 22
+      }
+    },
+    {
+      "type": "ORGAN_INTEGRITY_CHANGED",
+      "tick": 840,
+      "data": {
+        "organId": "heart",
+        "before": 53.760000000000005,
+        "after": 53.64000000000001,
+        "reason": "infection"
+      }
+    },
+    {
+      "type": "ORGAN_INTEGRITY_CHANGED",
+      "tick": 861,
+      "data": {
+        "organId": "heart",
+        "before": 53.64000000000001,
+        "after": 49.64000000000001,
+        "reason": "enemy-attack",
+        "actorId": "virus-1"
+      }
+    },
+    {
+      "type": "ATTACK_TELEGRAPHED",
+      "tick": 872,
+      "data": {
+        "actorId": "virus-3",
+        "target": "tissue",
+        "resolveAt": 15.253333333333334
+      }
+    },
+    {
+      "type": "ORGAN_INTEGRITY_CHANGED",
+      "tick": 900,
+      "data": {
+        "organId": "heart",
+        "before": 49.64000000000001,
+        "after": 49.52000000000001,
+        "reason": "infection"
+      }
+    },
+    {
+      "type": "ORGAN_INTEGRITY_CHANGED",
+      "tick": 916,
+      "data": {
+        "organId": "heart",
+        "before": 49.52000000000001,
+        "after": 45.52000000000001,
+        "reason": "enemy-attack",
+        "actorId": "virus-3"
+      }
+    },
+    {
+      "type": "ATTACK_TELEGRAPHED",
+      "tick": 948,
+      "data": {
+        "actorId": "virus-2",
+        "target": "tissue",
+        "resolveAt": 16.52
+      }
+    },
+    {
+      "type": "ORGAN_INTEGRITY_CHANGED",
+      "tick": 960,
+      "data": {
+        "organId": "heart",
+        "before": 45.52000000000001,
+        "after": 45.40000000000001,
+        "reason": "infection"
+      }
+    },
+    {
+      "type": "ORGAN_INTEGRITY_CHANGED",
+      "tick": 992,
+      "data": {
+        "organId": "heart",
+        "before": 45.40000000000001,
+        "after": 41.40000000000001,
+        "reason": "enemy-attack",
+        "actorId": "virus-2"
+      }
+    },
+    {
+      "type": "ATTACK_TELEGRAPHED",
+      "tick": 993,
+      "data": {
+        "actorId": "virus-1",
+        "target": "tissue",
+        "resolveAt": 17.27
+      }
+    },
+    {
+      "type": "ORGAN_INTEGRITY_CHANGED",
+      "tick": 1020,
+      "data": {
+        "organId": "heart",
+        "before": 41.40000000000001,
+        "after": 41.280000000000015,
+        "reason": "infection"
+      }
+    },
+    {
+      "type": "ORGAN_INTEGRITY_CHANGED",
+      "tick": 1037,
+      "data": {
+        "organId": "heart",
+        "before": 41.280000000000015,
+        "after": 37.280000000000015,
+        "reason": "enemy-attack",
+        "actorId": "virus-1"
+      }
+    },
+    {
+      "type": "ATTACK_TELEGRAPHED",
+      "tick": 1048,
+      "data": {
+        "actorId": "virus-3",
+        "target": "tissue",
+        "resolveAt": 18.186666666666664
+      }
+    },
+    {
+      "type": "ORGAN_INTEGRITY_CHANGED",
+      "tick": 1080,
+      "data": {
+        "organId": "heart",
+        "before": 37.280000000000015,
+        "after": 37.16000000000002,
+        "reason": "infection"
+      }
+    },
+    {
+      "type": "ORGAN_INTEGRITY_CHANGED",
+      "tick": 1092,
+      "data": {
+        "organId": "heart",
+        "before": 37.16000000000002,
+        "after": 33.16000000000002,
+        "reason": "enemy-attack",
+        "actorId": "virus-3"
+      }
+    },
+    {
+      "type": "ATTACK_TELEGRAPHED",
+      "tick": 1124,
+      "data": {
+        "actorId": "virus-2",
+        "target": "tissue",
+        "resolveAt": 19.453333333333333
+      }
+    },
+    {
+      "type": "ORGAN_INTEGRITY_CHANGED",
+      "tick": 1140,
+      "data": {
+        "organId": "heart",
+        "before": 33.16000000000002,
+        "after": 33.04000000000002,
+        "reason": "infection"
+      }
+    },
+    {
+      "type": "ORGAN_INTEGRITY_CHANGED",
+      "tick": 1168,
+      "data": {
+        "organId": "heart",
+        "before": 33.04000000000002,
+        "after": 29.04000000000002,
+        "reason": "enemy-attack",
+        "actorId": "virus-2"
+      }
+    },
+    {
+      "type": "ORGAN_ALARM",
+      "tick": 1168,
+      "data": {
+        "organId": "heart",
+        "integrity": 29.04000000000002,
+        "graceSeconds": 8
+      }
+    },
+    {
+      "type": "ATTACK_TELEGRAPHED",
+      "tick": 1169,
+      "data": {
+        "actorId": "virus-1",
+        "target": "tissue",
+        "resolveAt": 20.203333333333333
+      }
+    }
+  ],
+  "message": "心脏低于 30%！8 秒后全身稳定开始下降，前往抢修可解除。",
+  "messageUntil": 27.466666666666665,
+  "shots": 0,
+  "hits": 0,
+  "scans": 0,
+  "dashes": 0,
+  "result": null,
+  "runMetrics": {
+    "runId": "13:metrics:2",
+    "lastSequence": 35,
+    "lastTick": 1169,
+    "ended": false,
+    "frame": {
+      "tick": 1169,
+      "entries": []
+    },
+    "summary": {
+      "schemaVersion": 1,
+      "limited": false,
+      "care": {
+        "repairActions": 0,
+        "repaired": 0,
+        "organLoss": 32.95999999999998,
+        "organCost": 0,
+        "playerDamage": 0,
+        "organs": {
+          "heart": {
+            "repairActions": 0,
+            "repaired": 0,
+            "loss": 32.95999999999998,
+            "cost": 0
+          },
+          "lung": {
+            "repairActions": 0,
+            "repaired": 0,
+            "loss": 0,
+            "cost": 0
+          }
+        }
+      },
+      "control": {
+        "chainTriggers": 0,
+        "chainHops": 0,
+        "ricochetHits": 0,
+        "resonanceHits": 0,
+        "beaconBites": 0,
+        "patrolBites": 0,
+        "synergyPulseChain": 0,
+        "synergyTraceBeacon": 0,
+        "scans": 0,
+        "pulseUses": 0,
+        "crystalExposures": 0,
+        "corePulseHits": 0,
+        "airwayCloses": 0,
+        "airwayOpens": 0,
+        "crisisPulseInterrupts": 0,
+        "crisisAirwayInterrupts": 0,
+        "coreScanInterrupts": 0,
+        "diagnosedTraits": [],
+        "migrationChoice": null,
+        "migrationInterception": null,
+        "migrationMissed": false,
+        "coreMembranes": [],
+        "coreCleared": false
+      }
+    }
+  },
+  "world": {
+    "width": 2400,
+    "height": 1500,
+    "bounds": {
+      "left": 85,
+      "right": 2315,
+      "top": 145,
+      "bottom": 1415
+    },
+    "obstacles": [
+      {
+        "id": "fold-a",
+        "x": 730,
+        "y": 650,
+        "radius": 85
+      },
+      {
+        "id": "fold-b",
+        "x": 1630,
+        "y": 1190,
+        "radius": 90
+      },
+      {
+        "id": "fold-c",
+        "x": 1350,
+        "y": 540,
+        "radius": 72
+      },
+      {
+        "id": "fold-d",
+        "x": 2120,
+        "y": 720,
+        "radius": 85
+      },
+      {
+        "id": "fold-e",
+        "x": 780,
+        "y": 980,
+        "radius": 70
+      }
+    ],
+    "foreground": {
+      "x": 1110,
+      "y": 1195,
+      "width": 275,
+      "height": 150
+    }
+  },
+  "battle": {
+    "milestone": "G3",
+    "organId": "heart",
+    "graph": {
+      "nodes": [
+        {
+          "id": "source-a",
+          "kind": "source",
+          "x": 1020,
+          "y": 650,
+          "active": true,
+          "infected": true
+        },
+        {
+          "id": "source-b",
+          "kind": "source",
+          "x": 2010,
+          "y": 1090,
+          "active": true,
+          "infected": true
+        },
+        {
+          "id": "gate",
+          "kind": "gate",
+          "x": 1070,
+          "y": 280,
+          "active": true,
+          "infected": true
+        },
+        {
+          "id": "valve",
+          "kind": "valve",
+          "x": 1440,
+          "y": 950,
+          "active": true,
+          "infected": true
+        },
+        {
+          "id": "tissue",
+          "kind": "tissue",
+          "x": 850,
+          "y": 1190,
+          "active": true,
+          "infected": true
+        },
+        {
+          "id": "retest",
+          "kind": "retest",
+          "x": 350,
+          "y": 1180,
+          "active": true,
+          "infected": false
+        },
+        {
+          "id": "research",
+          "kind": "research",
+          "x": 350,
+          "y": 690,
+          "active": true,
+          "infected": false
+        },
+        {
+          "id": "exit",
+          "kind": "exit",
+          "x": 2170,
+          "y": 280,
+          "active": false,
+          "infected": false
+        }
+      ],
+      "edges": [
+        {
+          "id": "source-a:gate",
+          "from": "source-a",
+          "to": "gate",
+          "open": true,
+          "nextSpread": 24,
+          "flowDirection": {
+            "x": 0.13391789600139503,
+            "y": -0.9909924304103231
+          }
+        },
+        {
+          "id": "gate:tissue",
+          "from": "gate",
+          "to": "tissue",
+          "open": true,
+          "nextSpread": 24,
+          "flowDirection": {
+            "x": -0.23498856036532292,
+            "y": 0.971998136056563
+          }
+        },
+        {
+          "id": "source-b:valve",
+          "from": "source-b",
+          "to": "valve",
+          "open": true,
+          "nextSpread": 24,
+          "flowDirection": {
+            "x": -0.9711364222667793,
+            "y": -0.23852473529359491
+          }
+        },
+        {
+          "id": "valve:tissue",
+          "from": "valve",
+          "to": "tissue",
+          "open": true,
+          "nextSpread": 24,
+          "flowDirection": {
+            "x": -0.9262954009547514,
+            "y": 0.3767981292019328
+          }
+        }
+      ]
+    },
+    "pressure": {
+      "infection": 33.869466666666675,
+      "vitality": 100,
+      "criticalSince": null,
+      "organAlarm": true,
+      "crisisReason": ""
+    },
+    "pulse": {
+      "phase": "charge",
+      "phaseRemaining": 0.25,
+      "readyAt": 0,
+      "activeUntil": 0,
+      "origin": {
+        "x": 1440,
+        "y": 950
+      },
+      "direction": -2.6551353235865287,
+      "uses": 0,
+      "cycleIndex": 3
+    },
+    "warning": {
+      "trait": "MIMIC",
+      "startedAt": 14,
+      "applyAt": 22
+    },
+    "traits": [],
+    "defeatedTraits": [],
+    "nextEvolutionAt": 14,
+    "stage": 0,
+    "stageLabel": "Ⅰ · 建立防线",
+    "objective": "Q 诊断感染，1 精确净化首个感染源；组织受损时用 3 修复。首次清源后进入真实变异反制。",
+    "readyToRetest": false,
+    "lastAim": {
+      "x": 400.00000953674316,
+      "y": 400.0000190734863
+    },
+    "stats": {
+      "kills": 0,
+      "sourceClears": 0,
+      "eliteClears": 0,
+      "repairs": 0,
+      "pulses": 0,
+      "playerDamage": 0,
+      "tissueDamage": 32,
+      "scans": 0
+    },
+    "nextSpawnAt": {
+      "source-a": 24,
+      "source-b": 26
+    },
+    "nextActorId": 4,
+    "firstTrait": "MIMIC",
+    "recentNotice": "变异预警 · 潜伏：拟态组织，优先侵蚀组织。代价：移动速度降低 50%；每 6 秒扰动 1.2 秒。反制：Q 扫描显形 5 秒；基础射击仍有效；3 修复组织，同时伤害并显露附近潜伏体",
+    "gateChangedAt": -10,
+    "organLowSince": 19.466666666666665,
+    "eliteSpawned": 0,
+    "history": [
+      {
+        "at": 14,
+        "text": "变异预警 · 潜伏：拟态组织，优先侵蚀组织。代价：移动速度降低 50%；每 6 秒扰动 1.2 秒。反制：Q 扫描显形 5 秒；基础射击仍有效；3 修复组织，同时伤害并显露附近潜伏体"
+      }
+    ],
+    "forcedFirstTrait": "MIMIC",
+    "behaviorHistory": [],
+    "evolutionDecisions": [],
+    "encounter": {
+      "configId": "campaign-1",
+      "guideVariant": "adaptive",
+      "openingSpawned": 2,
+      "firstCounter": {
+        "status": "warning",
+        "guideStatus": "inactive",
+        "targetId": null,
+        "warnedAt": 14,
+        "appliedAt": null,
+        "resolvedAt": null,
+        "skippedAt": null,
+        "completedAt": null,
+        "counterHit": null
+      }
+    }
+  },
+  "growth": {
+    "runId": "13:2",
+    "seed": 13,
+    "lastElapsed": 19.75,
+    "xp": 0,
+    "level": 0,
+    "nextXp": 20,
+    "research": 0,
+    "preparation": {
+      "version": 1,
+      "starterProtocolId": null
+    },
+    "starterDebt": 0,
+    "carriedProtocols": [],
+    "equipped": [],
+    "draft": null,
+    "pendingLevels": [],
+    "consumedDraftIds": [],
+    "rewardedKeys": [],
+    "sourceKillCounts": {},
+    "damageTakenByOrgan": {
+      "heart": 32.95999999999998,
+      "lung": 0
+    },
+    "protectionNeeded": {
+      "heart": true,
+      "lung": false
+    },
+    "draftSerial": 0,
+    "historyHash": 2166136261,
+    "ended": false,
+    "pendingResearch": null,
+    "researchSerial": 0,
+    "beacon": null,
+    "beaconReadyAt": 0,
+    "cells": [],
+    "activations": {},
+    "marks": [],
+    "resonance": [],
+    "chainRoots": [],
+    "protocolHistory": [],
+    "pendingLogs": [],
+    "budgetTick": 1185,
+    "budgetUsed": 0,
+    "skippedCommands": 0
+  },
+  "campaign": {
+    "seed": 13,
+    "activeOrganId": "heart",
+    "arenas": {
+      "heart": {
+        "organId": "heart",
+        "activated": true,
+        "geometry": {
+          "width": 2400,
+          "height": 1500,
+          "bounds": {
+            "left": 85,
+            "right": 2315,
+            "top": 145,
+            "bottom": 1415
+          },
+          "obstacles": [
+            {
+              "id": "fold-a",
+              "x": 730,
+              "y": 650,
+              "radius": 85
+            },
+            {
+              "id": "fold-b",
+              "x": 1630,
+              "y": 1190,
+              "radius": 90
+            },
+            {
+              "id": "fold-c",
+              "x": 1350,
+              "y": 540,
+              "radius": 72
+            },
+            {
+              "id": "fold-d",
+              "x": 2120,
+              "y": 720,
+              "radius": 85
+            },
+            {
+              "id": "fold-e",
+              "x": 780,
+              "y": 980,
+              "radius": 70
+            }
+          ],
+          "foreground": {
+            "x": 1110,
+            "y": 1195,
+            "width": 275,
+            "height": 150
+          }
+        },
+        "targets": [
+          {
+            "id": "source-a",
+            "kind": "single",
+            "x": 1020,
+            "y": 650,
+            "active": true,
+            "infected": true,
+            "role": "source",
+            "hp": 238,
+            "maxHp": 238,
+            "radius": 34,
+            "hitUntil": 0,
+            "scanned": false,
+            "traits": [],
+            "facing": 0,
+            "born": 0
+          },
+          {
+            "id": "source-b",
+            "kind": "single",
+            "x": 2010,
+            "y": 1090,
+            "active": true,
+            "infected": true,
+            "role": "source",
+            "hp": 238,
+            "maxHp": 238,
+            "radius": 34,
+            "hitUntil": 0,
+            "scanned": false,
+            "traits": [],
+            "facing": 0,
+            "born": 0
+          },
+          {
+            "id": "virus-1",
+            "kind": "single",
+            "x": 878.6192252642264,
+            "y": 1101.770565207512,
+            "active": true,
+            "infected": true,
+            "role": "virus",
+            "radius": 22,
+            "hp": 68,
+            "maxHp": 68,
+            "hitUntil": 0,
+            "scanned": false,
+            "traits": [],
+            "facing": 1.884460804061929,
+            "born": 0,
+            "attackReady": 19.48333333333333,
+            "generation": 0,
+            "sourceId": "source-a",
+            "attackAt": 20.203333333333333,
+            "attackAim": {
+              "x": 850,
+              "y": 1190
+            },
+            "attackTarget": "tissue"
+          },
+          {
+            "id": "virus-2",
+            "kind": "single",
+            "x": 941.4261276338749,
+            "y": 1176.6757522513378,
+            "active": true,
+            "infected": true,
+            "role": "virus",
+            "radius": 22,
+            "hp": 68,
+            "maxHp": 68,
+            "hitUntil": 0,
+            "scanned": false,
+            "traits": [],
+            "facing": 2.996873646496928,
+            "born": 0,
+            "attackReady": 21.666666666666664,
+            "generation": 0,
+            "sourceId": "source-b"
+          },
+          {
+            "x": 872.6245228332164,
+            "y": 1100.4068895804721,
+            "id": "virus-3",
+            "role": "virus",
+            "kind": "single",
+            "radius": 22,
+            "hp": 68,
+            "maxHp": 68,
+            "hitUntil": 0,
+            "scanned": false,
+            "traits": [],
+            "facing": 1.8181502823667437,
+            "born": 8,
+            "attackReady": 20.4,
+            "generation": 0,
+            "sourceId": "source-a"
+          },
+          {
+            "x": 1424.1001080763401,
+            "y": 1106.7020479105097,
+            "id": "virus-4",
+            "role": "virus",
+            "kind": "single",
+            "radius": 22,
+            "hp": 68,
+            "maxHp": 68,
+            "hitUntil": 0,
+            "scanned": false,
+            "traits": [],
+            "facing": 2.997505071192663,
+            "born": 10,
+            "attackReady": 11.5,
+            "generation": 0,
+            "sourceId": "source-b"
+          }
+        ],
+        "tissue": {
+          "x": 850,
+          "y": 1190,
+          "hp": 29.04000000000002,
+          "maxHp": 100,
+          "radius": 43
+        },
+        "terminal": {
+          "x": 350,
+          "y": 1180
+        },
+        "graph": {
+          "nodes": [
+            {
+              "id": "source-a",
+              "kind": "source",
+              "x": 1020,
+              "y": 650,
+              "active": true,
+              "infected": true
+            },
+            {
+              "id": "source-b",
+              "kind": "source",
+              "x": 2010,
+              "y": 1090,
+              "active": true,
+              "infected": true
+            },
+            {
+              "id": "gate",
+              "kind": "gate",
+              "x": 1070,
+              "y": 280,
+              "active": true,
+              "infected": true
+            },
+            {
+              "id": "valve",
+              "kind": "valve",
+              "x": 1440,
+              "y": 950,
+              "active": true,
+              "infected": true
+            },
+            {
+              "id": "tissue",
+              "kind": "tissue",
+              "x": 850,
+              "y": 1190,
+              "active": true,
+              "infected": true
+            },
+            {
+              "id": "retest",
+              "kind": "retest",
+              "x": 350,
+              "y": 1180,
+              "active": true,
+              "infected": false
+            },
+            {
+              "id": "research",
+              "kind": "research",
+              "x": 350,
+              "y": 690,
+              "active": true,
+              "infected": false
+            },
+            {
+              "id": "exit",
+              "kind": "exit",
+              "x": 2170,
+              "y": 280,
+              "active": false,
+              "infected": false
+            }
+          ],
+          "edges": [
+            {
+              "id": "source-a:gate",
+              "from": "source-a",
+              "to": "gate",
+              "open": true,
+              "nextSpread": 24,
+              "flowDirection": {
+                "x": 0.13391789600139503,
+                "y": -0.9909924304103231
+              }
+            },
+            {
+              "id": "gate:tissue",
+              "from": "gate",
+              "to": "tissue",
+              "open": true,
+              "nextSpread": 24,
+              "flowDirection": {
+                "x": -0.23498856036532292,
+                "y": 0.971998136056563
+              }
+            },
+            {
+              "id": "source-b:valve",
+              "from": "source-b",
+              "to": "valve",
+              "open": true,
+              "nextSpread": 24,
+              "flowDirection": {
+                "x": -0.9711364222667793,
+                "y": -0.23852473529359491
+              }
+            },
+            {
+              "id": "valve:tissue",
+              "from": "valve",
+              "to": "tissue",
+              "open": true,
+              "nextSpread": 24,
+              "flowDirection": {
+                "x": -0.9262954009547514,
+                "y": 0.3767981292019328
+              }
+            }
+          ]
+        },
+        "pulse": {
+          "phase": "charge",
+          "phaseRemaining": 0.25,
+          "readyAt": 0,
+          "activeUntil": 0,
+          "origin": {
+            "x": 1440,
+            "y": 950
+          },
+          "direction": -2.6551353235865287,
+          "uses": 0,
+          "cycleIndex": 3
+        },
+        "nextSpawnAt": {
+          "source-a": 24,
+          "source-b": 26
+        },
+        "gateChangedAt": -10,
+        "organLowSince": 19.466666666666665,
+        "departedAt": null,
+        "nextBackgroundAt": 5,
+        "backgroundLoss": 0,
+        "backgroundReason": "",
+        "offscreenElapsed": 0,
+        "nextBackgroundElapsed": 10,
+        "lastPressureAt": 19.75,
+        "totalBackgroundLoss": 0
+      },
+      "lung": {
+        "organId": "lung",
+        "activated": false,
+        "geometry": {
+          "width": 2400,
+          "height": 1500,
+          "bounds": {
+            "left": 85,
+            "right": 2315,
+            "top": 145,
+            "bottom": 1415
+          },
+          "obstacles": [
+            {
+              "id": "alveolus-a",
+              "x": 850,
+              "y": 650,
+              "radius": 100
+            },
+            {
+              "id": "alveolus-b",
+              "x": 1740,
+              "y": 1090,
+              "radius": 105
+            },
+            {
+              "id": "alveolus-c",
+              "x": 1900,
+              "y": 360,
+              "radius": 78
+            },
+            {
+              "id": "alveolus-d",
+              "x": 650,
+              "y": 1330,
+              "radius": 68
+            }
+          ],
+          "foreground": {
+            "x": 1010,
+            "y": 1220,
+            "width": 285,
+            "height": 150
+          }
+        },
+        "targets": [
+          {
+            "x": 1570,
+            "y": 600,
+            "id": "lung-source-a",
+            "kind": "single",
+            "role": "source",
+            "radius": 34,
+            "hp": 238,
+            "maxHp": 238,
+            "hitUntil": 0,
+            "scanned": false,
+            "traits": [],
+            "facing": 0,
+            "born": 0
+          },
+          {
+            "x": 1522.0000000000005,
+            "y": 606.0000000000002,
+            "id": "lung-initial-0",
+            "kind": "single",
+            "role": "virus",
+            "radius": 22,
+            "hp": 68,
+            "maxHp": 68,
+            "hitUntil": 0,
+            "scanned": false,
+            "traits": [],
+            "facing": 0,
+            "born": 0,
+            "attackReady": 1.5,
+            "generation": 0,
+            "sourceId": "lung-source-a"
+          },
+          {
+            "x": 1610.9999999999995,
+            "y": 645,
+            "id": "lung-initial-1",
+            "kind": "single",
+            "role": "virus",
+            "radius": 22,
+            "hp": 68,
+            "maxHp": 68,
+            "hitUntil": 0,
+            "scanned": false,
+            "traits": [],
+            "facing": 0,
+            "born": 0,
+            "attackReady": 1.5,
+            "generation": 0,
+            "sourceId": "lung-source-a"
+          }
+        ],
+        "tissue": {
+          "x": 1260,
+          "y": 1120,
+          "hp": 76,
+          "maxHp": 100,
+          "radius": 43
+        },
+        "terminal": {
+          "x": 350,
+          "y": 650
+        },
+        "graph": {
+          "nodes": [
+            {
+              "id": "lung-source-a",
+              "kind": "source",
+              "x": 1570,
+              "y": 600,
+              "active": true,
+              "infected": true
+            },
+            {
+              "id": "airway",
+              "kind": "gate",
+              "x": 1250,
+              "y": 330,
+              "active": true,
+              "infected": false
+            },
+            {
+              "id": "tissue",
+              "kind": "tissue",
+              "x": 1260,
+              "y": 1120,
+              "hp": 76,
+              "maxHp": 100,
+              "radius": 43,
+              "active": true,
+              "infected": false
+            },
+            {
+              "id": "retest",
+              "kind": "retest",
+              "x": 350,
+              "y": 650,
+              "active": true,
+              "infected": false
+            },
+            {
+              "id": "research",
+              "kind": "research",
+              "x": 800,
+              "y": 1150,
+              "active": true,
+              "infected": false
+            },
+            {
+              "id": "exit",
+              "kind": "exit",
+              "x": 350,
+              "y": 1060,
+              "active": true,
+              "infected": false
+            }
+          ],
+          "edges": [
+            {
+              "id": "lung-source-a:airway",
+              "from": "lung-source-a",
+              "to": "airway",
+              "open": true,
+              "nextSpread": 6,
+              "flowDirection": {
+                "x": -0.7642914835078909,
+                "y": -0.6448709392097829
+              }
+            },
+            {
+              "id": "airway:tissue",
+              "from": "airway",
+              "to": "tissue",
+              "open": true,
+              "nextSpread": 6,
+              "flowDirection": {
+                "x": 0.012657213851396143,
+                "y": 0.9999198942602954
+              }
+            }
+          ]
+        },
+        "pulse": {
+          "phase": "charge",
+          "phaseRemaining": 2,
+          "readyAt": 0,
+          "activeUntil": 0,
+          "origin": {
+            "x": 1250,
+            "y": 330
+          },
+          "direction": 1.5707963267948966,
+          "uses": 0
+        },
+        "nextSpawnAt": {
+          "lung-source-a": 8
+        },
+        "gateChangedAt": -10,
+        "organLowSince": null,
+        "departedAt": null,
+        "nextBackgroundAt": 5,
+        "backgroundLoss": 0,
+        "backgroundReason": "",
+        "offscreenElapsed": 0,
+        "nextBackgroundElapsed": 10,
+        "lastPressureAt": 19.75,
+        "totalBackgroundLoss": 0,
+        "flow": {
+          "phase": "inhale",
+          "phaseRemaining": 4,
+          "airwayOpen": true,
+          "changedAt": -10,
+          "pressureUntil": 0,
+          "origin": {
+            "x": 1470,
+            "y": 800
+          },
+          "direction": {
+            "x": 0,
+            "y": 1
+          },
+          "strength": 36
+        }
+      }
+    },
+    "phase": "contain",
+    "travelReadyAt": 0,
+    "migration": {
+      "id": "migration:13:1",
+      "status": "locked",
+      "from": "heart",
+      "to": "lung",
+      "warnedAt": 0,
+      "deadline": 0,
+      "choice": null,
+      "resolvedAt": null,
+      "blockStartedAt": null,
+      "carrierIds": [],
+      "clearedCarrierIds": [],
+      "interceptUntil": null,
+      "interceptSucceeded": null,
+      "interceptResolvedAt": null
+    },
+    "core": {
+      "status": "locked",
+      "organId": "heart",
+      "actorId": "mother-core",
+      "traits": [],
+      "clearedAt": null
+    },
+    "requiredSourceIds": {
+      "heart": [
+        "source-a",
+        "source-b"
+      ],
+      "lung": [
+        "lung-source-a"
+      ]
+    },
+    "clearedSourceIds": [],
+    "clearedEliteIds": [],
+    "transactionIds": [],
+    "pendingCommands": [],
+    "history": [],
+    "progress": {
+      "sourceClears": 0,
+      "sourceTotal": 2,
+      "eliteClears": 0,
+      "coreCleared": false,
+      "organConditions": false,
+      "infectionCondition": true
+    },
+    "stats": {
+      "travels": 0,
+      "airwayUses": 0,
+      "backgroundDamage": 0,
+      "migrationChoice": null
+    },
+    "encounters": {
+      "configId": "campaign-1",
+      "stage": "I",
+      "branch": null,
+      "currentObjective": "Q 诊断感染，1 精确净化首个感染源；组织受损时用 3 修复。首次清源后进入真实变异反制。",
+      "stages": {
+        "I": {
+          "enteredAt": 0,
+          "completedAt": null,
+          "targetId": null
+        },
+        "II": {
+          "enteredAt": null,
+          "completedAt": null,
+          "targetId": null
+        },
+        "III": {
+          "enteredAt": null,
+          "completedAt": null,
+          "targetId": null
+        },
+        "IV": {
+          "enteredAt": null,
+          "completedAt": null,
+          "targetId": null
+        },
+        "V": {
+          "enteredAt": null,
+          "completedAt": null,
+          "targetId": "mother-core"
+        }
+      },
+      "crisis": {
+        "status": "locked",
+        "organId": "heart",
+        "sourceId": "heart-crisis-source",
+        "position": {
+          "x": 1570,
+          "y": 790
+        },
+        "armedAt": null,
+        "startedAt": null,
+        "clearedAt": null,
+        "chargeRemaining": 8,
+        "nextImpactAt": null,
+        "lastActiveAt": null,
+        "impacts": 0,
+        "guardsRequested": false,
+        "blockedByAirway": false,
+        "interruptions": 0,
+        "lastInterruptedAt": null,
+        "lastInterruptReason": null,
+        "acceptedEventKeys": []
+      }
+    }
+  },
+  "tacticalRecords": [
+    {
+      "key": "EVOLUTION_WARNING:MIMIC",
+      "eventType": "EVOLUTION_WARNING",
+      "firstAt": 14,
+      "at": 14,
+      "text": "变异预警 · 潜伏：拟态组织，优先侵蚀组织。代价：移动速度降低 50%；每 6 秒扰动 1.2 秒。反制：Q 扫描显形 5 秒；基础射击仍有效；3 修复组织，同时伤害并显露附近潜伏体。",
+      "count": 1
+    },
+    {
+      "key": "ORGAN_ALARM:heart",
+      "eventType": "ORGAN_ALARM",
+      "firstAt": 19.466666666666665,
+      "at": 19.466666666666665,
+      "text": "心脏低于 30%！8 秒后全身稳定开始下降，请及时抢修。",
+      "count": 1
+    }
+  ],
+  "messagePriority": 3
+}
