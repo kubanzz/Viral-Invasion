@@ -1,0 +1,15 @@
+import { build } from 'esbuild';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { join } from 'node:path';
+const outputDirectory=process.env.VI_DIST_DIR ?? 'dist';
+await mkdir(outputDirectory, { recursive: true });
+const result = await build({ entryPoints: ['src/main.ts'], bundle: true, format: 'iife', target: ['chrome110', 'edge110'], outfile: join(outputDirectory,'game.js'), minify: true, metafile: true, legalComments: 'none' });
+const css = await readFile(join(outputDirectory,'game.css'), 'utf8');
+const { version, viralInvasionStage: stage } = JSON.parse(await readFile('package.json', 'utf8'));
+const html = (await readFile('index.html', 'utf8')).replace('<!-- STYLES -->', `<style>${css}</style>`).replace('<script type="module" src="/src/main.ts"></script>', '<script src="./game.js"></script>');
+await writeFile(join(outputDirectory,'index.html'), html);
+const inputPaths=[...new Set([...Object.keys(result.metafile.inputs),'src/style.css','index.html','package.json','package-lock.json','scripts/build-offline.mjs'])].sort();
+const sourceManifest=Object.fromEntries(await Promise.all(inputPaths.map(async path=>[path.replaceAll('\\','/'),createHash('sha256').update(await readFile(path)).digest('hex')])));
+await writeFile(join(outputDirectory,'build-meta.json'), JSON.stringify({ game: 'viral-invasion', version, stage, format: 'iife', sourceManifest, ...result.metafile }, null, 2));
+console.log(`Offline release ready: ${outputDirectory}/index.html + game.js (classic IIFE, all assets local).`);
