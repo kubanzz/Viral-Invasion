@@ -44,7 +44,7 @@ export type MessagePriority = 0 | 1 | 2 | 3;
 export interface TacticalRecord {
   key: string; eventType: string; firstAt: number; at: number; text: string; count: number;
 }
-export interface Effect { id: number; kind: 'beam' | 'burst' | 'scan' | 'heal' | 'dash' | 'hit' | 'success' | 'pulse' | 'evolution' | 'danger' | 'flow' | 'chain' | 'slash'; from: Vec; to: Vec; radius: number; born: number; duration: number; angle?: number; arcHalfAngle?: number }
+export interface Effect { id: number; kind: 'beam' | 'burst' | 'scan' | 'heal' | 'dash' | 'hit' | 'success' | 'pulse' | 'evolution' | 'danger' | 'flow' | 'chain' | 'slash'; from: Vec; to: Vec; radius: number; born: number; duration: number; angle?: number; arcHalfAngle?: number; repairSucceeded?: boolean }
 export interface GameState {
   game: 'viral-invasion'; schemaVersion: 1; seed: number; phase: Phase; tick: number; elapsed: number;
   player: Player; targets: Target[]; tissue: Tissue; terminal: Vec; tool: Tool;

@@ -1,0 +1,2615 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-28T12:34:06.589Z",
+  "complete": true,
+  "pass": true,
+  "method": "Independent fixture imports and awaits the actual Renderer. One captured snapshot and two independent structuredClone states are checked after repeated browser renders at a fixed source tick. Browser screenshots capture actual canvas pixels.",
+  "scope": [
+    "Technical rendering comparison derived from a read-only snapshot; no main.ts, GameSession.step(), live release state writes, or game-time advancement.",
+    "Complete JSON equality plus SHA-256 of full state, HP, damage records, and collision geometry are checked at render-call boundaries.",
+    "Not a same-input gameplay replay, browser victory, ten-minute performance measurement, visual readability acceptance, or human playtest.",
+    "This verifies rendering does not change gameplay state. Shared danger/collision geometry remains covered separately by existing coreVisuals and geometry unit tests.",
+    "Images are browser screenshots of the actual canvas elements, with no HUD. Visual differences between normal/low effects are permitted."
+  ],
+  "options": {
+    "input": "artifacts/experience-optimization-20261028/collision-hud-performance/dense-standard-state.json",
+    "output": "artifacts/experience-optimization-20261028/collision-hud-invariance",
+    "frames": 12,
+    "width": 1366,
+    "height": 768,
+    "dpr": 1,
+    "channel": "chrome",
+    "revision": "",
+    "hud": ""
+  },
+  "sourceRevision": null,
+  "sourceScope": "Current working-tree src/ and independent fixture harness.",
+  "input": {
+    "path": "artifacts/experience-optimization-20261028/collision-hud-performance/dense-standard-state.json",
+    "fileSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+    "shape": "GameState",
+    "unchanged": true
+  },
+  "errors": [],
+  "remoteRequests": [],
+  "sourceManifest": {
+    ".art-generated/art-runtime.json": "db519e9dc335582ecdeac6b00df87fd9c94b9646b232f21424d8ec9f7558e728",
+    "node_modules/phaser/dist/phaser.esm.js": "df50bc49e7856363b625fdf4f2c4e2e577cfc1644690c026c3610c594aff372f",
+    "src/actors/collision.ts": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0",
+    "src/core/rng.ts": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+    "src/game/battleConfig.ts": "e0d9383801df927aa14e13580a729d8b597d06f0b7f2853eaceab16ebb5b4a4d",
+    "src/game/catalysis.ts": "f0e0fa75ba67be43545e3cd1f5b74c8951581fc91c4261b7ad012e186799d595",
+    "src/game/dashBlade.ts": "c7bb058f5b38bc3124fb8efd4739f661b42acee026f1ce1c008de1234dc6d771",
+    "src/game/eliteTacticCycle.ts": "862b23512773a196d997dbd9062b18a9f17188f22449ba93dee98ead13c3e8dd",
+    "src/game/endlessGrowth.ts": "9145b4121c1f2a7810fc93f47942b17613db3226ff8c36e11c21cc7e3e1ee2a6",
+    "src/game/endlessStrikeBalance.ts": "70b6fb73a94c0fac1baad402b2f41d47e9882b01b4847369aef7efd11660330b",
+    "src/game/enemyPositioning.ts": "d01aff7f39ea4d4a3c34f306947452e93de57b93106a56c103bb64c9c097a878",
+    "src/game/enemyTacticInfo.ts": "ee6f959eb75b09e298f82dd78fbad5d6bb98ae0bbb7d7cef6701a0953030c5a8",
+    "src/game/enemyTactics.ts": "c3ff2fc022dac22fc7d2ab0956e63f34dbb85526527c9e4de63833fff5314b13",
+    "src/game/growth.ts": "2c6e0407eb7b538251e95c36f76694062907898cbf4853e36f8921f655289abb",
+    "src/game/immuneCells.ts": "ef6b34db9aca712149d3854cd397364ff589f973b173a2373bfba28b82de429f",
+    "src/game/immuneFocus.ts": "78c45c7704d9c4d777e2b9440c5e0c55bb2bae66eafcbb466151a1ddfef2bc07",
+    "src/game/motherCore.ts": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+    "src/game/organConfig.ts": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19",
+    "src/game/organRules.ts": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59",
+    "src/game/preparation.ts": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+    "src/game/protocols.ts": "cb0f2903947c955e328fbc7c77ea79fd3374ea89b72dd663b2c0e2fda22b7363",
+    "src/game/research.ts": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+    "src/game/traction.ts": "2d25c43c8e2e90dd325f6e1d6d161b8db8eb587f3ae0505340d819bc96ab610f",
+    "src/game/types.ts": "8024157dae8e737e5b148c74289386ca29aa608be1579ab2025fd589b857daa3",
+    "src/render/battleVisuals.ts": "2a743e4def325ce8e0e075e5681b6a1295046256891ea5d72a3503a375b061c7",
+    "src/render/camera.ts": "29226180299535875c3217d081a2fa28f94518762d9b207303b15d8a687f3db4",
+    "src/render/canvasScene.ts": "cb783c9e10528c90ab5a30aeb5ec89248c8709524a6ca19c06522e13f0859006",
+    "src/render/catalysisVisuals.ts": "719fd36fa0eeb54e7ec92d87202480ac8ac593682aed54221d505626067baacc",
+    "src/render/combatEffects.ts": "ef4c235d33da97ef6004283c14670186daa2bd2f7efcdd5e8279a73a4fa8719a",
+    "src/render/depthSort.ts": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+    "src/render/eliteTacticCycleVisuals.ts": "973db60769fba9e70f83a1e1fff276f4011e6acebaf4f4b581671909f00c95f7",
+    "src/render/encounterVisuals.ts": "62e43895e405cd1300d735f59f150781cdf07b74036d5dbcc0b6f93011e01629",
+    "src/render/enemyTacticVisuals.ts": "d852178a80e9579fbe2fe636e5adb157094b9fd49c657c9120551ec8ec5b70e8",
+    "src/render/growthVisuals.ts": "48273c2bf04579a33fbc644354e46d90cbba960916b95cc1ff8aaecdd1692ef4",
+    "src/render/heroAnimation.ts": "04c726f2059fdf55dad2e751fe68694dd1f5b8acfddb56db310174bcce562dc7",
+    "src/render/immuneFocusVisuals.ts": "671ef27635c303f30d5d6328fe7c96a7d695174dc7821418bb4f49fae4fed787",
+    "src/render/immuneTraceCues.ts": "80558b755ae1054388a982182b430b41e5ceb98119b7ad0758b694dabdfd66d7",
+    "src/render/immuneVisuals.ts": "b03c8a2d56b253201e4f95c64fe194d1f8e8c49bc9c9b6cd73dea389e4645510",
+    "src/render/layers.ts": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+    "src/render/lungVisuals.ts": "7bc495edd2c18da89ce1b8e6934e98ade262e982b953bf732593827e18ac7b77",
+    "src/render/navigation.ts": "ab776f6e94b141663e1bd46ca23da738e7ebf679ef0bf211258fc89f833355a5",
+    "src/render/occlusion.ts": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+    "src/render/organLandscape.ts": "3ea49be35cc7e1a3a4d7ac0e4356031f7255e3ad6c941e13b666fee5946f63a2",
+    "src/render/phaserHost.ts": "251af87a36b2e7bc6849fb8ff6de973a5e1bc8bdfc30007e66785c2a900035b0",
+    "src/render/phaserRenderer.ts": "e867a060acd4b0625ba91af0a18e75a23cb542ebfc880d12e24934aec544d10d",
+    "src/render/playerPresence.ts": "309039f47bdce84ad5e276fb82d8294cbf84c6e07f6b397457ba9790330bb0ad",
+    "src/render/pulsePreview.ts": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+    "src/render/raisedObstacleGeometry.ts": "373e3f145fd521367be7adc93c8461b5407cfe384866f2eb59c2a3ee645a3df6",
+    "src/render/raisedObstacleOcclusion.ts": "40d61cef040097a38695f296ef84a312b61914c4daadfcf08a98359d8a1f0f5e",
+    "src/render/renderer.ts": "fd8ccd12117953d32463d8e147f39c0b032bc853b0225ea1cb3185400af6be45",
+    "src/render/sceneLabels.ts": "16dd719119212de9d6a2067e6710f472144478b2804ed6a4248a57a2594faba5",
+    "src/render/spriteGeometry.ts": "643f787cb6e59187523ca93f918fa7a99b8ce59ab832fe258a96e0d7f9fc3a51",
+    "src/render/toolFeedback.ts": "b29c9a7528e8a54a76b044c0646880a33f167c599d3a9c4442bc2722b21195a5",
+    "src/ui/catalysisHud.ts": "3b8738209b017b8a59022d7e07b6a28079f6ba1a07df0b42edc93153bce4797e",
+    "src/ui/eliteTacticCycleHud.ts": "36f8c5b310d0672ea52c6c17a3bf4a0e5420fcc6d698ce20ab3ab4d16a025a8e",
+    "src/ui/immuneFocusHud.ts": "95e001cbb29334aec52e12f71b2f8497421625ec13d21e47cca54b3333f8c91d",
+    "tests/fixtures/renderProbe.ts": "554e703d6fb954251b08210c2c90218d51d7591f23b28ffb9426591853a2b00d"
+  },
+  "sourceManifestSha256": "b794807f8ae9f7b19b90ef57831a5898714ec467e976c8f22f7d9ecc370fc792",
+  "fixtureBundleSha256": "51abdb9a1bb2bbccdaa5159e8974083f3d8eda5de6f57b05f4cba7cf4a66ee5e",
+  "checks": {
+    "pass": true,
+    "seed": 13,
+    "tick": 8817,
+    "elapsed": 146.95,
+    "phase": "playing",
+    "organ": "heart",
+    "aliveActors": 24,
+    "framesPerMode": 12,
+    "aim": {
+      "x": 849.9999809265137,
+      "y": 1190.0000158945718
+    },
+    "baseline": {
+      "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+      "fullJsonBytes": 125644,
+      "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+      "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+      "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+    },
+    "observations": [
+      {
+        "frame": 0,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 0,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 0,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 1,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 1,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 1,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 2,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 2,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 2,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 3,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 3,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 3,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 4,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 4,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 4,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 5,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 5,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 5,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 6,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 6,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 6,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 7,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 7,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 7,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 8,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 8,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 8,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 9,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 9,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 9,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 10,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 10,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 10,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 11,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 11,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 11,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 12,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 12,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 12,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 13,
+        "source": "original",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 13,
+        "source": "normal",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      },
+      {
+        "frame": 13,
+        "source": "low",
+        "completeJsonEqual": true,
+        "fingerprints": {
+          "fullJsonSha256": "7072484f001dd1a3a3933bfa2ade7c8a4ab02864092a8a8d32dd6b9f430d4a26",
+          "fullJsonBytes": 125644,
+          "hpSha256": "d1c3de04a6341682a3524926647215491a8adf6b056b3c37c1acbe81b2e3b866",
+          "damageSha256": "57af5829feeb7308ba4f547d263476a05e32151591b57da95c3dd85d990aa54a",
+          "collisionGeometrySha256": "360036c5c715fbe8dee943193982363613dbc4ada0b8ea4253a6e8d6f6bc34a9"
+        },
+        "unchanged": true
+      }
+    ],
+    "hudProtectionRects": [],
+    "canvas": {
+      "context": "actual browser renderer; canvas captured by the browser host",
+      "normal": {
+        "width": 1366,
+        "height": 768
+      },
+      "low": {
+        "width": 1366,
+        "height": 768
+      },
+      "dpr": 1
+    },
+    "rendererDiagnostics": {
+      "normal": {
+        "depthOrder": [
+          "gate",
+          "exit",
+          "fold-c",
+          "source-a",
+          "fold-a",
+          "research",
+          "fold-d",
+          "heart-crisis-source",
+          "valve",
+          "fold-e",
+          "heart-retained-source",
+          "virus-36",
+          "source-b",
+          "virus-37",
+          "virus-24",
+          "elite-8",
+          "virus-34",
+          "virus-31",
+          "virus-35",
+          "virus-38",
+          "virus-33",
+          "virus-13",
+          "virus-20",
+          "terminal",
+          "virus-32",
+          "tissue",
+          "fold-b",
+          "13:2:scan:8802:beacon:cell:0",
+          "13:2:scan:8802:beacon",
+          "virus-26",
+          "virus-15",
+          "virus-21",
+          "13:2:scan:8802:beacon:cell:1",
+          "13:2:scan:8802:beacon:cell:2",
+          "virus-18",
+          "virus-30",
+          "virus-29",
+          "virus-25",
+          "virus-28",
+          "virus-27",
+          "player"
+        ],
+        "occluded": false,
+        "foregroundOpacity": 0.94,
+        "layerOrder": [
+          "distant",
+          "terrain",
+          "contact-shadows",
+          "world-y-sorted",
+          "foreground",
+          "effects",
+          "hud"
+        ],
+        "labels": {
+          "requested": 25,
+          "placed": 7,
+          "omitted": 18,
+          "offscreen": 6,
+          "conflicted": 0,
+          "measureCacheSize": 8,
+          "placementCacheSize": 7,
+          "placements": [
+            {
+              "id": "target:elite-8",
+              "priority": 80,
+              "essential": true,
+              "rect": {
+                "left": 983.1407968225916,
+                "right": 1055.1407968225917,
+                "top": 315.15169365953443,
+                "bottom": 342.4183603262011
+              },
+              "anchor": {
+                "x": 1019.1407968225916,
+                "y": 448.7383603262011
+              },
+              "baseline": {
+                "x": 1019.1407968225916,
+                "y": 329.15169365953443
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false,
+              "leader": {
+                "from": {
+                  "x": 1019.1407968225916,
+                  "y": 355.23058955175384
+                },
+                "to": {
+                  "x": 1019.1407968225916,
+                  "y": 342.4183603262011
+                }
+              }
+            },
+            {
+              "id": "tissue",
+              "priority": 75,
+              "essential": true,
+              "rect": {
+                "left": 828.016550801623,
+                "right": 927.6789653524042,
+                "top": 544.0225859002772,
+                "bottom": 573.2892525669439
+              },
+              "anchor": {
+                "x": 949.3333333333334,
+                "y": 499.20000000000005
+              },
+              "baseline": {
+                "x": 877.8477580770136,
+                "y": 560.0225859002772
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false
+            },
+            {
+              "id": "target:virus-24",
+              "priority": 35,
+              "essential": false,
+              "rect": {
+                "left": 1071.5411909642182,
+                "right": 1086.5803297581635,
+                "top": 356.99899301303196,
+                "bottom": 370.99899301303196
+              },
+              "anchor": {
+                "x": 1079.060760361191,
+                "y": 446.92699301303196
+              },
+              "baseline": {
+                "x": 1079.060760361191,
+                "y": 367.99899301303196
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false,
+              "leader": {
+                "from": {
+                  "x": 1079.060760361191,
+                  "y": 386.286993013032
+                },
+                "to": {
+                  "x": 1079.060760361191,
+                  "y": 370.99899301303196
+                }
+              }
+            },
+            {
+              "id": "target:virus-31",
+              "priority": 35,
+              "essential": false,
+              "rect": {
+                "left": 1123.3481175137174,
+                "right": 1138.3872563076627,
+                "top": 359.3718405057987,
+                "bottom": 373.3718405057987
+              },
+              "anchor": {
+                "x": 1130.86768691069,
+                "y": 449.29984050579867
+              },
+              "baseline": {
+                "x": 1130.86768691069,
+                "y": 370.3718405057987
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false,
+              "leader": {
+                "from": {
+                  "x": 1130.86768691069,
+                  "y": 388.6598405057987
+                },
+                "to": {
+                  "x": 1130.86768691069,
+                  "y": 373.3718405057987
+                }
+              }
+            },
+            {
+              "id": "target:virus-33",
+              "priority": 35,
+              "essential": false,
+              "rect": {
+                "left": 1154.0707516057917,
+                "right": 1169.109890399737,
+                "top": 371.119457988066,
+                "bottom": 385.119457988066
+              },
+              "anchor": {
+                "x": 1161.5903210027643,
+                "y": 479.047457988066
+              },
+              "baseline": {
+                "x": 1161.5903210027643,
+                "y": 382.119457988066
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false
+            },
+            {
+              "id": "device:research",
+              "priority": 30,
+              "essential": false,
+              "rect": {
+                "left": 382.67501068115234,
+                "right": 449.32498931884766,
+                "top": 131.06666666666672,
+                "bottom": 164.80000000000004
+              },
+              "anchor": {
+                "x": 416,
+                "y": 115.20000000000006
+              },
+              "baseline": {
+                "x": 416,
+                "y": 145.06666666666672
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false
+            },
+            {
+              "id": "terminal",
+              "priority": 30,
+              "essential": false,
+              "rect": {
+                "left": 341.08001708984375,
+                "right": 396,
+                "top": 507.38666666666666,
+                "bottom": 541.12
+              },
+              "anchor": {
+                "x": 416,
+                "y": 491.52000000000004
+              },
+              "baseline": {
+                "x": 368.5400085449219,
+                "y": 521.3866666666667
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false,
+              "leader": {
+                "from": {
+                  "x": 416,
+                  "y": 491.52000000000004
+                },
+                "to": {
+                  "x": 396,
+                  "y": 507.38666666666666
+                }
+              }
+            }
+          ]
+        },
+        "hudRects": [],
+        "playerPresence": {
+          "active": false,
+          "potentialBodyOccluders": [],
+          "raisedOccluders": [],
+          "foreground": false,
+          "pendingRoundDangers": [],
+          "bodyBounds": {
+            "left": 395.61617901889326,
+            "right": 462.94029165639006,
+            "top": 878.7753320353474,
+            "bottom": 954.7753320353474
+          },
+          "groundAnchor": {
+            "x": 420.61617901889326,
+            "y": 1317.9548223514587
+          }
+        },
+        "phaser": {
+          "engine": "Phaser",
+          "version": "4.2.1",
+          "renderer": "webgl",
+          "ready": true,
+          "textureCount": 14,
+          "activeSprites": 33,
+          "pooledSprites": 0,
+          "rasterLayers": 8,
+          "visibleRasterLayers": 8,
+          "animations": [
+            {
+              "id": "effect:13:2:687",
+              "key": "art-scan",
+              "frame": "fx.scan.02",
+              "isPlaying": true,
+              "isPaused": false
+            },
+            {
+              "id": "effect:13:2:688",
+              "key": "art-scan",
+              "frame": "fx.scan.02",
+              "isPlaying": true,
+              "isPaused": false
+            },
+            {
+              "id": "effect:13:2:689",
+              "key": "art-heal",
+              "frame": "fx.heal.02",
+              "isPlaying": true,
+              "isPaused": false
+            }
+          ],
+          "nativeSprites": [
+            {
+              "id": "environment:back",
+              "texture": "environment:heart.full",
+              "frame": "__BASE",
+              "x": -192,
+              "y": -645.1199999999999,
+              "width": 3029.3333333333335,
+              "height": 1653.3333333333333,
+              "depth": -100,
+              "visible": true
+            },
+            {
+              "id": "environment:floor",
+              "texture": "environment:heart.floor",
+              "frame": "__BASE",
+              "x": 133.33333333333334,
+              "y": -303.3599999999999,
+              "width": 2378.6666666666665,
+              "height": 975.36,
+              "depth": -90,
+              "visible": true
+            },
+            {
+              "id": "fold-c",
+              "texture": "viral-art-0",
+              "frame": "scenery.heartTissueB",
+              "x": 1482.6666666666667,
+              "y": 6.063298011819522e-14,
+              "width": 168.8598260869565,
+              "height": 167.12347826086955,
+              "depth": 106,
+              "visible": true
+            },
+            {
+              "id": "fold-a",
+              "texture": "viral-art-0",
+              "frame": "scenery.heartTissueB",
+              "x": 821.3333333333334,
+              "y": 84.48000000000006,
+              "width": 199.34840579710144,
+              "height": 197.29855072463766,
+              "depth": 112,
+              "visible": true
+            },
+            {
+              "id": "fold-e",
+              "texture": "viral-art-0",
+              "frame": "scenery.heartTissueB",
+              "x": 874.6666666666666,
+              "y": 337.9200000000001,
+              "width": 164.16927536231884,
+              "height": 162.48115942028986,
+              "depth": 127,
+              "visible": true
+            },
+            {
+              "id": "virus-24",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1079.060760361191,
+              "y": 448.115070451605,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 142,
+              "visible": true
+            },
+            {
+              "id": "elite-8",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1019.1407968225916,
+              "y": 450.0183234793263,
+              "width": 73.14022988505747,
+              "height": 76.53333333333333,
+              "depth": 145,
+              "visible": true
+            },
+            {
+              "id": "virus-31",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1130.86768691069,
+              "y": 448.67834773920964,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 151,
+              "visible": true
+            },
+            {
+              "id": "virus-35",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1211.8816454148987,
+              "y": 450.7334767995235,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 154,
+              "visible": true
+            },
+            {
+              "id": "virus-33",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1161.5903210027643,
+              "y": 479.02038362996336,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 160,
+              "visible": true
+            },
+            {
+              "id": "virus-13",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1059.2215426307985,
+              "y": 482.3416906543207,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 163,
+              "visible": true
+            },
+            {
+              "id": "virus-20",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1110.4153517305924,
+              "y": 482.1837505761582,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 166,
+              "visible": true
+            },
+            {
+              "id": "virus-32",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1206.9897204365907,
+              "y": 497.6496183050323,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 172,
+              "visible": true
+            },
+            {
+              "id": "tissue",
+              "texture": "viral-art-0",
+              "frame": "tissue.restored",
+              "x": 949.3333333333334,
+              "y": 499.20000000000005,
+              "width": 123.51658547900719,
+              "height": 136.54372535374623,
+              "depth": 175,
+              "visible": true
+            },
+            {
+              "id": "13:2:scan:8802:beacon:cell:0",
+              "texture": "viral-art-0",
+              "frame": "immune.cell.idle",
+              "x": 928.0310888758847,
+              "y": 501.030184291137,
+              "width": 41.89090909090909,
+              "height": 43.85454545454546,
+              "depth": 181,
+              "visible": true
+            },
+            {
+              "id": "13:2:scan:8802:beacon",
+              "texture": "viral-art-1",
+              "frame": "immune.beacon",
+              "x": 920.666140562755,
+              "y": 505.3507654208577,
+              "width": 62.836363636363636,
+              "height": 65.45454545454545,
+              "depth": 184,
+              "visible": true
+            },
+            {
+              "id": "virus-26",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1147.4925082368209,
+              "y": 516.1376179039657,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 187,
+              "visible": true
+            },
+            {
+              "id": "virus-15",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1045.0518926273721,
+              "y": 517.3435474848286,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 190,
+              "visible": true
+            },
+            {
+              "id": "virus-21",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1096.173893656645,
+              "y": 517.3889398214337,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 193,
+              "visible": true
+            },
+            {
+              "id": "13:2:scan:8802:beacon:cell:1",
+              "texture": "viral-art-0",
+              "frame": "immune.cell.idle",
+              "x": 997.8794821224709,
+              "y": 524.652389240763,
+              "width": 41.89090909090909,
+              "height": 43.85454545454546,
+              "depth": 196,
+              "visible": true
+            },
+            {
+              "id": "13:2:scan:8802:beacon:cell:2",
+              "texture": "viral-art-0",
+              "frame": "immune.cell.idle",
+              "x": 941.9268547111392,
+              "y": 526.2225859002773,
+              "width": 41.89090909090909,
+              "height": 43.85454545454546,
+              "depth": 199,
+              "visible": true
+            },
+            {
+              "id": "virus-18",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1020.4204689910221,
+              "y": 549.3414703793587,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 202,
+              "visible": true
+            },
+            {
+              "id": "virus-30",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1122.9133782930412,
+              "y": 549.5746886539014,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 205,
+              "visible": true
+            },
+            {
+              "id": "virus-29",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1071.6679938982033,
+              "y": 551.7108010302151,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 208,
+              "visible": true
+            },
+            {
+              "id": "virus-25",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 962.0122986857376,
+              "y": 568.5771506549546,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 211,
+              "visible": true
+            },
+            {
+              "id": "virus-28",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1048.311350298315,
+              "y": 583.3349267682269,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 214,
+              "visible": true
+            },
+            {
+              "id": "virus-27",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 999.2579267502941,
+              "y": 596.5915767804305,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 217,
+              "visible": true
+            },
+            {
+              "id": "player",
+              "texture": "viral-art-0",
+              "frame": "hero.front_right.idle.00",
+              "x": 491.3239242868195,
+              "y": 597.4693035659203,
+              "width": 97.69777091377092,
+              "height": 102.81777777777778,
+              "depth": 220,
+              "visible": true
+            },
+            {
+              "id": "player:tool",
+              "texture": "viral-art-1",
+              "frame": "weapon.emitter.painted",
+              "x": 512.1825474894562,
+              "y": 560.9939321621666,
+              "width": 58.03636363636364,
+              "height": 42.14839757994814,
+              "depth": 219.9,
+              "visible": true
+            },
+            {
+              "id": "foreground:main",
+              "texture": "viral-art-0",
+              "frame": "scenery.heartTissueA",
+              "x": 1373.3333333333333,
+              "y": 560.64,
+              "width": 179.76774193548385,
+              "height": 178.83870967741936,
+              "depth": 9000,
+              "visible": true
+            },
+            {
+              "id": "effect:13:2:687",
+              "texture": "viral-art-0",
+              "frame": "fx.scan.02",
+              "x": 491.3239242868195,
+              "y": 597.4693035659203,
+              "width": 117.33333333333333,
+              "height": 84.48,
+              "depth": 9500,
+              "visible": true
+            },
+            {
+              "id": "effect:13:2:688",
+              "texture": "viral-art-0",
+              "frame": "fx.scan.02",
+              "x": 920.666140562755,
+              "y": 505.3507654208577,
+              "width": 117.33333333333333,
+              "height": 84.48,
+              "depth": 9500,
+              "visible": true
+            },
+            {
+              "id": "effect:13:2:689",
+              "texture": "viral-art-0",
+              "frame": "fx.heal.02",
+              "x": 949.3333129882812,
+              "y": 499.2000122070312,
+              "width": 117.33333333333333,
+              "height": 84.48,
+              "depth": 9500,
+              "visible": true
+            }
+          ],
+          "widthCSS": 1366,
+          "heightCSS": 768,
+          "dpr": 1,
+          "backingWidth": 1366,
+          "backingHeight": 768,
+          "frameLoopBound": false
+        },
+        "art": {
+          "signature": "2fb9398ae11c8ddaadd1da73d268949d3f8bccb2c4ac3ea792d05f6406ba885f",
+          "selectedAssets": 57,
+          "activeBodies": [
+            {
+              "id": "heart-crisis-source",
+              "bounds": {
+                "left": 1534.196153846154,
+                "right": 1606.1634615384614,
+                "top": 492.5479020800236,
+                "bottom": 571.3479020800236
+              }
+            },
+            {
+              "id": "heart-retained-source",
+              "bounds": {
+                "left": 1694.196153846154,
+                "right": 1766.1634615384614,
+                "top": 656.8311888165065,
+                "bottom": 735.6311888165066
+              }
+            },
+            {
+              "id": "virus-36",
+              "bounds": {
+                "left": 1590.329639393761,
+                "right": 1639.9480301983588,
+                "top": 733.9233336577522,
+                "bottom": 783.0233336577521
+              }
+            },
+            {
+              "id": "source-b",
+              "bounds": {
+                "left": 1974.196153846154,
+                "right": 2046.1634615384614,
+                "top": 708.3513263238669,
+                "bottom": 787.1513263238669
+              }
+            },
+            {
+              "id": "virus-37",
+              "bounds": {
+                "left": 1368.3509581068126,
+                "right": 1417.9693489114104,
+                "top": 756.7523003258867,
+                "bottom": 805.8523003258866
+              }
+            },
+            {
+              "id": "virus-24",
+              "bounds": {
+                "left": 947.3286582409154,
+                "right": 996.947049045513,
+                "top": 766.2142003874601,
+                "bottom": 815.31420038746
+              }
+            },
+            {
+              "id": "elite-8",
+              "bounds": {
+                "left": 883.0479452970417,
+                "right": 949.2548418487658,
+                "top": 753.2007989515236,
+                "bottom": 818.7007989515234
+              }
+            },
+            {
+              "id": "virus-34",
+              "bounds": {
+                "left": 1276.1880465336192,
+                "right": 1325.806437338217,
+                "top": 766.7648490712736,
+                "bottom": 815.8648490712735
+              }
+            },
+            {
+              "id": "virus-31",
+              "bounds": {
+                "left": 995.8976518810707,
+                "right": 1045.5160426856685,
+                "top": 766.7422728445895,
+                "bottom": 815.8422728445894
+              }
+            },
+            {
+              "id": "virus-35",
+              "bounds": {
+                "left": 1071.8482379787663,
+                "right": 1121.466628783364,
+                "top": 768.6689563386337,
+                "bottom": 817.7689563386336
+              }
+            },
+            {
+              "id": "virus-38",
+              "bounds": {
+                "left": 1902.9468903346271,
+                "right": 1952.565281139225,
+                "top": 770.8384699711526,
+                "bottom": 819.9384699711525
+              }
+            },
+            {
+              "id": "virus-33",
+              "bounds": {
+                "left": 1024.7001213423903,
+                "right": 1074.318512146988,
+                "top": 795.1879314921712,
+                "bottom": 844.2879314921711
+              }
+            },
+            {
+              "id": "virus-13",
+              "bounds": {
+                "left": 928.7293916186724,
+                "right": 978.34778242327,
+                "top": 798.3016568275061,
+                "bottom": 847.401656827506
+              }
+            },
+            {
+              "id": "virus-20",
+              "bounds": {
+                "left": 976.7235876497291,
+                "right": 1026.3419784543269,
+                "top": 798.1535880042287,
+                "bottom": 847.2535880042286
+              }
+            },
+            {
+              "id": "virus-32",
+              "bounds": {
+                "left": 1067.2620583116025,
+                "right": 1116.8804491162002,
+                "top": 812.6528390000482,
+                "bottom": 861.7528390000481
+              }
+            },
+            {
+              "id": "13:2:scan:8802:beacon:cell:0",
+              "bounds": {
+                "left": 810.0291458211419,
+                "right": 849.8246003665964,
+                "top": 820.5157977729409,
+                "bottom": 860.5157977729409
+              }
+            },
+            {
+              "id": "13:2:scan:8802:beacon",
+              "bounds": {
+                "left": 799.6472340503101,
+                "right": 846.6017795048556,
+                "top": 806.5663425820541,
+                "bottom": 864.5663425820541
+              }
+            },
+            {
+              "id": "virus-26",
+              "bounds": {
+                "left": 1011.4834218743184,
+                "right": 1061.101812678916,
+                "top": 829.9853386240483,
+                "bottom": 879.0853386240482
+              }
+            },
+            {
+              "id": "virus-15",
+              "bounds": {
+                "left": 915.4453447404603,
+                "right": 965.063735545058,
+                "top": 831.1158976061073,
+                "bottom": 880.2158976061072
+              }
+            },
+            {
+              "id": "virus-21",
+              "bounds": {
+                "left": 963.3722207054037,
+                "right": 1012.9906115100014,
+                "top": 831.1584529216746,
+                "bottom": 880.2584529216745
+              }
+            },
+            {
+              "id": "13:2:scan:8802:beacon:cell:1",
+              "bounds": {
+                "left": 875.5120144898165,
+                "right": 915.307469035271,
+                "top": 842.6616149132153,
+                "bottom": 882.6616149132153
+              }
+            },
+            {
+              "id": "13:2:scan:8802:beacon:cell:2",
+              "bounds": {
+                "left": 823.056426291693,
+                "right": 862.8518808371475,
+                "top": 844.1336742815099,
+                "bottom": 884.1336742815099
+              }
+            },
+            {
+              "id": "virus-18",
+              "bounds": {
+                "left": 892.353385081382,
+                "right": 941.9717758859797,
+                "top": 861.1139503197293,
+                "bottom": 910.2139503197292
+              }
+            },
+            {
+              "id": "virus-30",
+              "bounds": {
+                "left": 988.440487552025,
+                "right": 1038.0588783566227,
+                "top": 861.332592452113,
+                "bottom": 910.4325924521129
+              }
+            },
+            {
+              "id": "virus-29",
+              "bounds": {
+                "left": 940.3979396818645,
+                "right": 990.0163304864622,
+                "top": 863.335197804907,
+                "bottom": 912.4351978049069
+              }
+            },
+            {
+              "id": "virus-25",
+              "bounds": {
+                "left": 837.5957254201779,
+                "right": 887.2141162247756,
+                "top": 879.1474005781005,
+                "bottom": 928.2474005781004
+              }
+            },
+            {
+              "id": "virus-28",
+              "bounds": {
+                "left": 918.5010863069691,
+                "right": 968.1194771115668,
+                "top": 892.9828156842931,
+                "bottom": 942.082815684293
+              }
+            },
+            {
+              "id": "virus-27",
+              "bounds": {
+                "left": 872.5135017306997,
+                "right": 922.1318925352973,
+                "top": 905.4109250707342,
+                "bottom": 954.5109250707341
+              }
+            },
+            {
+              "id": "player",
+              "bounds": {
+                "left": 392.0790361617504,
+                "right": 475.2888140646559,
+                "top": 860.9274720930503,
+                "bottom": 950.9274720930503
+              }
+            }
+          ],
+          "heroAnimation": {
+            "enabledClips": [
+              "idle"
+            ],
+            "frame": {
+              "id": "hero.front_right.idle.00",
+              "clip": "idle",
+              "index": 0,
+              "animated": true,
+              "flipX": false
+            }
+          },
+          "weapon": {
+            "assetId": "weapon.emitter.painted",
+            "mode": "painted-static"
+          },
+          "provisional": [
+            "continuous-player-animation",
+            "mother-static-layers",
+            "missing-continuous-mother-animation",
+            "painted-lung",
+            "fission-static-poses",
+            "immune-static-poses"
+          ]
+        }
+      },
+      "low": {
+        "depthOrder": [
+          "gate",
+          "exit",
+          "fold-c",
+          "source-a",
+          "fold-a",
+          "research",
+          "fold-d",
+          "heart-crisis-source",
+          "valve",
+          "fold-e",
+          "heart-retained-source",
+          "virus-36",
+          "source-b",
+          "virus-37",
+          "virus-24",
+          "elite-8",
+          "virus-34",
+          "virus-31",
+          "virus-35",
+          "virus-38",
+          "virus-33",
+          "virus-13",
+          "virus-20",
+          "terminal",
+          "virus-32",
+          "tissue",
+          "fold-b",
+          "13:2:scan:8802:beacon:cell:0",
+          "13:2:scan:8802:beacon",
+          "virus-26",
+          "virus-15",
+          "virus-21",
+          "13:2:scan:8802:beacon:cell:1",
+          "13:2:scan:8802:beacon:cell:2",
+          "virus-18",
+          "virus-30",
+          "virus-29",
+          "virus-25",
+          "virus-28",
+          "virus-27",
+          "player"
+        ],
+        "occluded": false,
+        "foregroundOpacity": 0.94,
+        "layerOrder": [
+          "distant",
+          "terrain",
+          "contact-shadows",
+          "world-y-sorted",
+          "foreground",
+          "effects",
+          "hud"
+        ],
+        "labels": {
+          "requested": 25,
+          "placed": 7,
+          "omitted": 18,
+          "offscreen": 6,
+          "conflicted": 0,
+          "measureCacheSize": 8,
+          "placementCacheSize": 7,
+          "placements": [
+            {
+              "id": "target:elite-8",
+              "priority": 80,
+              "essential": true,
+              "rect": {
+                "left": 983.1407968225916,
+                "right": 1055.1407968225917,
+                "top": 315.15169365953443,
+                "bottom": 342.4183603262011
+              },
+              "anchor": {
+                "x": 1019.1407968225916,
+                "y": 448.7383603262011
+              },
+              "baseline": {
+                "x": 1019.1407968225916,
+                "y": 329.15169365953443
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false,
+              "leader": {
+                "from": {
+                  "x": 1019.1407968225916,
+                  "y": 355.23058955175384
+                },
+                "to": {
+                  "x": 1019.1407968225916,
+                  "y": 342.4183603262011
+                }
+              }
+            },
+            {
+              "id": "tissue",
+              "priority": 75,
+              "essential": true,
+              "rect": {
+                "left": 828.016550801623,
+                "right": 927.6789653524042,
+                "top": 544.0225859002772,
+                "bottom": 573.2892525669439
+              },
+              "anchor": {
+                "x": 949.3333333333334,
+                "y": 499.20000000000005
+              },
+              "baseline": {
+                "x": 877.8477580770136,
+                "y": 560.0225859002772
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false
+            },
+            {
+              "id": "target:virus-24",
+              "priority": 35,
+              "essential": false,
+              "rect": {
+                "left": 1071.5411909642182,
+                "right": 1086.5803297581635,
+                "top": 356.99899301303196,
+                "bottom": 370.99899301303196
+              },
+              "anchor": {
+                "x": 1079.060760361191,
+                "y": 446.92699301303196
+              },
+              "baseline": {
+                "x": 1079.060760361191,
+                "y": 367.99899301303196
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false,
+              "leader": {
+                "from": {
+                  "x": 1079.060760361191,
+                  "y": 386.286993013032
+                },
+                "to": {
+                  "x": 1079.060760361191,
+                  "y": 370.99899301303196
+                }
+              }
+            },
+            {
+              "id": "target:virus-31",
+              "priority": 35,
+              "essential": false,
+              "rect": {
+                "left": 1123.3481175137174,
+                "right": 1138.3872563076627,
+                "top": 359.3718405057987,
+                "bottom": 373.3718405057987
+              },
+              "anchor": {
+                "x": 1130.86768691069,
+                "y": 449.29984050579867
+              },
+              "baseline": {
+                "x": 1130.86768691069,
+                "y": 370.3718405057987
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false,
+              "leader": {
+                "from": {
+                  "x": 1130.86768691069,
+                  "y": 388.6598405057987
+                },
+                "to": {
+                  "x": 1130.86768691069,
+                  "y": 373.3718405057987
+                }
+              }
+            },
+            {
+              "id": "target:virus-33",
+              "priority": 35,
+              "essential": false,
+              "rect": {
+                "left": 1154.0707516057917,
+                "right": 1169.109890399737,
+                "top": 371.119457988066,
+                "bottom": 385.119457988066
+              },
+              "anchor": {
+                "x": 1161.5903210027643,
+                "y": 479.047457988066
+              },
+              "baseline": {
+                "x": 1161.5903210027643,
+                "y": 382.119457988066
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false
+            },
+            {
+              "id": "device:research",
+              "priority": 30,
+              "essential": false,
+              "rect": {
+                "left": 382.67501068115234,
+                "right": 449.32498931884766,
+                "top": 131.06666666666672,
+                "bottom": 164.80000000000004
+              },
+              "anchor": {
+                "x": 416,
+                "y": 115.20000000000006
+              },
+              "baseline": {
+                "x": 416,
+                "y": 145.06666666666672
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false
+            },
+            {
+              "id": "terminal",
+              "priority": 30,
+              "essential": false,
+              "rect": {
+                "left": 341.08001708984375,
+                "right": 396,
+                "top": 507.38666666666666,
+                "bottom": 541.12
+              },
+              "anchor": {
+                "x": 416,
+                "y": 491.52000000000004
+              },
+              "baseline": {
+                "x": 368.5400085449219,
+                "y": 521.3866666666667
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false,
+              "leader": {
+                "from": {
+                  "x": 416,
+                  "y": 491.52000000000004
+                },
+                "to": {
+                  "x": 396,
+                  "y": 507.38666666666666
+                }
+              }
+            }
+          ]
+        },
+        "hudRects": [],
+        "playerPresence": {
+          "active": false,
+          "potentialBodyOccluders": [],
+          "raisedOccluders": [],
+          "foreground": false,
+          "pendingRoundDangers": [],
+          "bodyBounds": {
+            "left": 395.61617901889326,
+            "right": 462.94029165639006,
+            "top": 878.7753320353474,
+            "bottom": 954.7753320353474
+          },
+          "groundAnchor": {
+            "x": 420.61617901889326,
+            "y": 1317.9548223514587
+          }
+        },
+        "phaser": {
+          "engine": "Phaser",
+          "version": "4.2.1",
+          "renderer": "webgl",
+          "ready": true,
+          "textureCount": 14,
+          "activeSprites": 30,
+          "pooledSprites": 0,
+          "rasterLayers": 8,
+          "visibleRasterLayers": 8,
+          "animations": [],
+          "nativeSprites": [
+            {
+              "id": "environment:back",
+              "texture": "environment:heart.full",
+              "frame": "__BASE",
+              "x": -192,
+              "y": -645.1199999999999,
+              "width": 3029.3333333333335,
+              "height": 1653.3333333333333,
+              "depth": -100,
+              "visible": true
+            },
+            {
+              "id": "environment:floor",
+              "texture": "environment:heart.floor",
+              "frame": "__BASE",
+              "x": 133.33333333333334,
+              "y": -303.3599999999999,
+              "width": 2378.6666666666665,
+              "height": 975.36,
+              "depth": -90,
+              "visible": true
+            },
+            {
+              "id": "fold-c",
+              "texture": "viral-art-0",
+              "frame": "scenery.heartTissueB",
+              "x": 1482.6666666666667,
+              "y": 6.063298011819522e-14,
+              "width": 168.8598260869565,
+              "height": 167.12347826086955,
+              "depth": 106,
+              "visible": true
+            },
+            {
+              "id": "fold-a",
+              "texture": "viral-art-0",
+              "frame": "scenery.heartTissueB",
+              "x": 821.3333333333334,
+              "y": 84.48000000000006,
+              "width": 199.34840579710144,
+              "height": 197.29855072463766,
+              "depth": 112,
+              "visible": true
+            },
+            {
+              "id": "fold-e",
+              "texture": "viral-art-0",
+              "frame": "scenery.heartTissueB",
+              "x": 874.6666666666666,
+              "y": 337.9200000000001,
+              "width": 164.16927536231884,
+              "height": 162.48115942028986,
+              "depth": 127,
+              "visible": true
+            },
+            {
+              "id": "virus-24",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1079.060760361191,
+              "y": 448.115070451605,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 142,
+              "visible": true
+            },
+            {
+              "id": "elite-8",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1019.1407968225916,
+              "y": 450.0183234793263,
+              "width": 73.14022988505747,
+              "height": 76.53333333333333,
+              "depth": 145,
+              "visible": true
+            },
+            {
+              "id": "virus-31",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1130.86768691069,
+              "y": 448.67834773920964,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 151,
+              "visible": true
+            },
+            {
+              "id": "virus-35",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1211.8816454148987,
+              "y": 450.7334767995235,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 154,
+              "visible": true
+            },
+            {
+              "id": "virus-33",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1161.5903210027643,
+              "y": 479.02038362996336,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 160,
+              "visible": true
+            },
+            {
+              "id": "virus-13",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1059.2215426307985,
+              "y": 482.3416906543207,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 163,
+              "visible": true
+            },
+            {
+              "id": "virus-20",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1110.4153517305924,
+              "y": 482.1837505761582,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 166,
+              "visible": true
+            },
+            {
+              "id": "virus-32",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1206.9897204365907,
+              "y": 497.6496183050323,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 172,
+              "visible": true
+            },
+            {
+              "id": "tissue",
+              "texture": "viral-art-0",
+              "frame": "tissue.restored",
+              "x": 949.3333333333334,
+              "y": 499.20000000000005,
+              "width": 123.51658547900719,
+              "height": 136.54372535374623,
+              "depth": 175,
+              "visible": true
+            },
+            {
+              "id": "13:2:scan:8802:beacon:cell:0",
+              "texture": "viral-art-0",
+              "frame": "immune.cell.idle",
+              "x": 928.0310888758847,
+              "y": 501.030184291137,
+              "width": 41.89090909090909,
+              "height": 43.85454545454546,
+              "depth": 181,
+              "visible": true
+            },
+            {
+              "id": "13:2:scan:8802:beacon",
+              "texture": "viral-art-1",
+              "frame": "immune.beacon",
+              "x": 920.666140562755,
+              "y": 505.3507654208577,
+              "width": 62.836363636363636,
+              "height": 65.45454545454545,
+              "depth": 184,
+              "visible": true
+            },
+            {
+              "id": "virus-26",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1147.4925082368209,
+              "y": 516.1376179039657,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 187,
+              "visible": true
+            },
+            {
+              "id": "virus-15",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1045.0518926273721,
+              "y": 517.3435474848286,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 190,
+              "visible": true
+            },
+            {
+              "id": "virus-21",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1096.173893656645,
+              "y": 517.3889398214337,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 193,
+              "visible": true
+            },
+            {
+              "id": "13:2:scan:8802:beacon:cell:1",
+              "texture": "viral-art-0",
+              "frame": "immune.cell.idle",
+              "x": 997.8794821224709,
+              "y": 524.652389240763,
+              "width": 41.89090909090909,
+              "height": 43.85454545454546,
+              "depth": 196,
+              "visible": true
+            },
+            {
+              "id": "13:2:scan:8802:beacon:cell:2",
+              "texture": "viral-art-0",
+              "frame": "immune.cell.idle",
+              "x": 941.9268547111392,
+              "y": 526.2225859002773,
+              "width": 41.89090909090909,
+              "height": 43.85454545454546,
+              "depth": 199,
+              "visible": true
+            },
+            {
+              "id": "virus-18",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1020.4204689910221,
+              "y": 549.3414703793587,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 202,
+              "visible": true
+            },
+            {
+              "id": "virus-30",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1122.9133782930412,
+              "y": 549.5746886539014,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 205,
+              "visible": true
+            },
+            {
+              "id": "virus-29",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1071.6679938982033,
+              "y": 551.7108010302151,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 208,
+              "visible": true
+            },
+            {
+              "id": "virus-25",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 962.0122986857376,
+              "y": 568.5771506549546,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 211,
+              "visible": true
+            },
+            {
+              "id": "virus-28",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 1048.311350298315,
+              "y": 583.3349267682269,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 214,
+              "visible": true
+            },
+            {
+              "id": "virus-27",
+              "texture": "viral-art-0",
+              "frame": "enemy.carapace",
+              "x": 999.2579267502941,
+              "y": 596.5915767804305,
+              "width": 53.63616858237547,
+              "height": 56.12444444444443,
+              "depth": 217,
+              "visible": true
+            },
+            {
+              "id": "player",
+              "texture": "viral-art-0",
+              "frame": "hero.front_right.idle.00",
+              "x": 491.3239242868195,
+              "y": 597.4693035659203,
+              "width": 97.69777091377092,
+              "height": 102.81777777777778,
+              "depth": 220,
+              "visible": true
+            },
+            {
+              "id": "player:tool",
+              "texture": "viral-art-1",
+              "frame": "weapon.emitter.painted",
+              "x": 512.1825474894562,
+              "y": 560.9939321621666,
+              "width": 58.03636363636364,
+              "height": 42.14839757994814,
+              "depth": 219.9,
+              "visible": true
+            },
+            {
+              "id": "foreground:main",
+              "texture": "viral-art-0",
+              "frame": "scenery.heartTissueA",
+              "x": 1373.3333333333333,
+              "y": 560.64,
+              "width": 179.76774193548385,
+              "height": 178.83870967741936,
+              "depth": 9000,
+              "visible": true
+            }
+          ],
+          "widthCSS": 1366,
+          "heightCSS": 768,
+          "dpr": 1,
+          "backingWidth": 1366,
+          "backingHeight": 768,
+          "frameLoopBound": false
+        },
+        "art": {
+          "signature": "2fb9398ae11c8ddaadd1da73d268949d3f8bccb2c4ac3ea792d05f6406ba885f",
+          "selectedAssets": 57,
+          "activeBodies": [
+            {
+              "id": "heart-crisis-source",
+              "bounds": {
+                "left": 1534.196153846154,
+                "right": 1606.1634615384614,
+                "top": 492.5479020800236,
+                "bottom": 571.3479020800236
+              }
+            },
+            {
+              "id": "heart-retained-source",
+              "bounds": {
+                "left": 1694.196153846154,
+                "right": 1766.1634615384614,
+                "top": 656.8311888165065,
+                "bottom": 735.6311888165066
+              }
+            },
+            {
+              "id": "virus-36",
+              "bounds": {
+                "left": 1590.329639393761,
+                "right": 1639.9480301983588,
+                "top": 733.9233336577522,
+                "bottom": 783.0233336577521
+              }
+            },
+            {
+              "id": "source-b",
+              "bounds": {
+                "left": 1974.196153846154,
+                "right": 2046.1634615384614,
+                "top": 708.3513263238669,
+                "bottom": 787.1513263238669
+              }
+            },
+            {
+              "id": "virus-37",
+              "bounds": {
+                "left": 1368.3509581068126,
+                "right": 1417.9693489114104,
+                "top": 756.7523003258867,
+                "bottom": 805.8523003258866
+              }
+            },
+            {
+              "id": "virus-24",
+              "bounds": {
+                "left": 947.3286582409154,
+                "right": 996.947049045513,
+                "top": 766.2142003874601,
+                "bottom": 815.31420038746
+              }
+            },
+            {
+              "id": "elite-8",
+              "bounds": {
+                "left": 883.0479452970417,
+                "right": 949.2548418487658,
+                "top": 753.2007989515236,
+                "bottom": 818.7007989515234
+              }
+            },
+            {
+              "id": "virus-34",
+              "bounds": {
+                "left": 1276.1880465336192,
+                "right": 1325.806437338217,
+                "top": 766.7648490712736,
+                "bottom": 815.8648490712735
+              }
+            },
+            {
+              "id": "virus-31",
+              "bounds": {
+                "left": 995.8976518810707,
+                "right": 1045.5160426856685,
+                "top": 766.7422728445895,
+                "bottom": 815.8422728445894
+              }
+            },
+            {
+              "id": "virus-35",
+              "bounds": {
+                "left": 1071.8482379787663,
+                "right": 1121.466628783364,
+                "top": 768.6689563386337,
+                "bottom": 817.7689563386336
+              }
+            },
+            {
+              "id": "virus-38",
+              "bounds": {
+                "left": 1902.9468903346271,
+                "right": 1952.565281139225,
+                "top": 770.8384699711526,
+                "bottom": 819.9384699711525
+              }
+            },
+            {
+              "id": "virus-33",
+              "bounds": {
+                "left": 1024.7001213423903,
+                "right": 1074.318512146988,
+                "top": 795.1879314921712,
+                "bottom": 844.2879314921711
+              }
+            },
+            {
+              "id": "virus-13",
+              "bounds": {
+                "left": 928.7293916186724,
+                "right": 978.34778242327,
+                "top": 798.3016568275061,
+                "bottom": 847.401656827506
+              }
+            },
+            {
+              "id": "virus-20",
+              "bounds": {
+                "left": 976.7235876497291,
+                "right": 1026.3419784543269,
+                "top": 798.1535880042287,
+                "bottom": 847.2535880042286
+              }
+            },
+            {
+              "id": "virus-32",
+              "bounds": {
+                "left": 1067.2620583116025,
+                "right": 1116.8804491162002,
+                "top": 812.6528390000482,
+                "bottom": 861.7528390000481
+              }
+            },
+            {
+              "id": "13:2:scan:8802:beacon:cell:0",
+              "bounds": {
+                "left": 810.0291458211419,
+                "right": 849.8246003665964,
+                "top": 820.5157977729409,
+                "bottom": 860.5157977729409
+              }
+            },
+            {
+              "id": "13:2:scan:8802:beacon",
+              "bounds": {
+                "left": 799.6472340503101,
+                "right": 846.6017795048556,
+                "top": 806.5663425820541,
+                "bottom": 864.5663425820541
+              }
+            },
+            {
+              "id": "virus-26",
+              "bounds": {
+                "left": 1011.4834218743184,
+                "right": 1061.101812678916,
+                "top": 829.9853386240483,
+                "bottom": 879.0853386240482
+              }
+            },
+            {
+              "id": "virus-15",
+              "bounds": {
+                "left": 915.4453447404603,
+                "right": 965.063735545058,
+                "top": 831.1158976061073,
+                "bottom": 880.2158976061072
+              }
+            },
+            {
+              "id": "virus-21",
+              "bounds": {
+                "left": 963.3722207054037,
+                "right": 1012.9906115100014,
+                "top": 831.1584529216746,
+                "bottom": 880.2584529216745
+              }
+            },
+            {
+              "id": "13:2:scan:8802:beacon:cell:1",
+              "bounds": {
+                "left": 875.5120144898165,
+                "right": 915.307469035271,
+                "top": 842.6616149132153,
+                "bottom": 882.6616149132153
+              }
+            },
+            {
+              "id": "13:2:scan:8802:beacon:cell:2",
+              "bounds": {
+                "left": 823.056426291693,
+                "right": 862.8518808371475,
+                "top": 844.1336742815099,
+                "bottom": 884.1336742815099
+              }
+            },
+            {
+              "id": "virus-18",
+              "bounds": {
+                "left": 892.353385081382,
+                "right": 941.9717758859797,
+                "top": 861.1139503197293,
+                "bottom": 910.2139503197292
+              }
+            },
+            {
+              "id": "virus-30",
+              "bounds": {
+                "left": 988.440487552025,
+                "right": 1038.0588783566227,
+                "top": 861.332592452113,
+                "bottom": 910.4325924521129
+              }
+            },
+            {
+              "id": "virus-29",
+              "bounds": {
+                "left": 940.3979396818645,
+                "right": 990.0163304864622,
+                "top": 863.335197804907,
+                "bottom": 912.4351978049069
+              }
+            },
+            {
+              "id": "virus-25",
+              "bounds": {
+                "left": 837.5957254201779,
+                "right": 887.2141162247756,
+                "top": 879.1474005781005,
+                "bottom": 928.2474005781004
+              }
+            },
+            {
+              "id": "virus-28",
+              "bounds": {
+                "left": 918.5010863069691,
+                "right": 968.1194771115668,
+                "top": 892.9828156842931,
+                "bottom": 942.082815684293
+              }
+            },
+            {
+              "id": "virus-27",
+              "bounds": {
+                "left": 872.5135017306997,
+                "right": 922.1318925352973,
+                "top": 905.4109250707342,
+                "bottom": 954.5109250707341
+              }
+            },
+            {
+              "id": "player",
+              "bounds": {
+                "left": 392.0790361617504,
+                "right": 475.2888140646559,
+                "top": 860.9274720930503,
+                "bottom": 950.9274720930503
+              }
+            }
+          ],
+          "heroAnimation": {
+            "enabledClips": [
+              "idle"
+            ],
+            "frame": {
+              "id": "hero.front_right.idle.00",
+              "clip": "idle",
+              "index": 0,
+              "animated": true,
+              "flipX": false
+            }
+          },
+          "weapon": {
+            "assetId": "weapon.emitter.painted",
+            "mode": "painted-static"
+          },
+          "provisional": [
+            "continuous-player-animation",
+            "mother-static-layers",
+            "missing-continuous-mother-animation",
+            "painted-lung",
+            "fission-static-poses",
+            "immune-static-poses"
+          ]
+        }
+      }
+    }
+  },
+  "images": {
+    "normal": {
+      "path": "artifacts/experience-optimization-20261028/collision-hud-invariance/same-tick-normal.png",
+      "sha256": "b7aa94cd118b9de62f9af204495dbe9f8462861d4a714e8a89fbe2faa35f0d4b",
+      "bytes": 942107,
+      "tick": 8817,
+      "elapsed": 146.95,
+      "method": "Browser canvas element PNG screenshots; no 2D context or direct drawing-buffer export.",
+      "pixels": {
+        "width": 1366,
+        "height": 768,
+        "sampled": 80700,
+        "quantizedColors": 2574,
+        "nonClearFraction": 0.9999132589838909
+      }
+    },
+    "low": {
+      "path": "artifacts/experience-optimization-20261028/collision-hud-invariance/same-tick-low.png",
+      "sha256": "f0d35204941f5ca0bda396150df9cb863a3f5eba2e76439e67c24d1f7aeefc8c",
+      "bytes": 938498,
+      "tick": 8817,
+      "elapsed": 146.95,
+      "method": "Browser canvas element PNG screenshots; no 2D context or direct drawing-buffer export.",
+      "pixels": {
+        "width": 1366,
+        "height": 768,
+        "sampled": 80700,
+        "quantizedColors": 2516,
+        "nonClearFraction": 0.9999132589838909
+      }
+    }
+  },
+  "browser": {
+    "channel": "chrome",
+    "version": "156.0.8078.48",
+    "headless": true,
+    "offline": true
+  },
+  "sourceUnchanged": true,
+  "finishedAt": "2026-10-28T12:34:10.677Z"
+}

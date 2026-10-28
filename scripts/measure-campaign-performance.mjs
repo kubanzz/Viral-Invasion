@@ -5,17 +5,20 @@ import { resolve } from 'node:path';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import os from 'node:os';
+import { classifyCaptureOverlap, summarizeFrameIntervals } from './perf-frame-analysis.mjs';
 
 // A real formal campaign pressure case, not a victory or a simulation fixture.
 // The browser host issues only DOM inputs; __viral is used only for reads.
 const folder = process.env.VI_PERF_OUTPUT ?? 'artifacts/research-v071/performance';
 const distDirectory = process.env.VI_DIST_DIR ?? 'dist';
 const seed = Number(process.env.VI_PERF_SEED ?? 13);
+const deviceScaleFactor = Number(process.env.VI_PERF_DPR ?? 1);
 const producerIds = ['source-b', 'heart-retained-source'];
 const protectedIds = new Set(producerIds);
 const metricsFrameLimit = 256;
 const hash = value => createHash('sha256').update(value).digest('hex');
 const source = await readFile(new URL(import.meta.url));
+const analysisSource = await readFile(new URL('./perf-frame-analysis.mjs', import.meta.url));
 const helper = await build({ stdin: { contents: `export { readState, aim, chooseDraftInput } from './tests/e2e/campaignDriver';
   export { waypoint } from './tests/helpers/g3Driver';
   export { normalized, distance, rayCircle, wallHit } from './src/actors/collision';`, resolveDir: process.cwd() },
@@ -28,25 +31,27 @@ const buildMetadata = JSON.parse(await readFile(resolve(distDirectory, 'build-me
 const gameHash = hash(await readFile(resolve(distDirectory, 'game.js')));
 if (process.argv.includes('--check')) {
   console.log(JSON.stringify({ checked: true, browserStarted: false, seed, entry: 'formal FISSION/adaptive', producers: producerIds,
-    version: buildMetadata.version, gameHash, measurementScriptSha256: hash(source), helperSourceFiles: Object.keys(helperManifest).length }));
+    version: buildMetadata.version, gameHash, measurementScriptSha256: hash(source), frameAnalysisSha256: hash(analysisSource), helperSourceFiles: Object.keys(helperManifest).length }));
   process.exit(0);
 }
 if (!Number.isInteger(seed) || seed < 0 || seed > 0xffffffff) throw Error('VI_PERF_SEED must be an unsigned 32-bit seed');
+if (![1, 2].includes(deviceScaleFactor)) throw Error('VI_PERF_DPR must be 1 or 2');
 await mkdir(folder, { recursive: true });
 await writeFile(`${folder}/measurement-script.mjs`, source);
+await writeFile(`${folder}/perf-frame-analysis.mjs`, analysisSource);
 await writeFile(`${folder}/driver-helper.mjs`, helper.outputFiles[0].contents);
 const report = { version: buildMetadata.version, releaseGameJsSha256: gameHash, buildSourceManifest: buildMetadata.sourceManifest,
-  measurementScriptSha256: hash(source), driverHelperSha256: hash(helper.outputFiles[0].contents), driverSourceManifest: helperManifest,
+  measurementScriptSha256: hash(source), frameAnalysisSha256: hash(analysisSource), driverHelperSha256: hash(helper.outputFiles[0].contents), driverSourceManifest: helperManifest,
   method: 'Offline local Chrome headless; normal formal entry, explicit FISSION/adaptive case; only real DOM input and read-only game snapshots. Natural Runtime.getHeapUsage/DOM counters every five seconds. No forced GC in setup, warmup, frame measurement, or natural samples. This is a retained-production pressure run, not a completed victory or a human playtest.',
   setupPlan: 'Clear source-a normally for first XP draft; equip IMMUNE_BEACON; actually clear the exact first FISSION guardian; block migration using the real heart gate; retain source-b and heart-retained-source with open production routes. Keep repairing and Q at tissue; warm to 24 before measurement.',
   cellHitCountScope: 'Lower bound of distinct recent accepted hit events observed during read-only polling, not an exact total damage counter.',
   runMetricsScope: 'Read-only cumulative summary plus maximum ephemeral frame-entry count across host snapshots; numeric counters must stay finite and nonnegative, frame entries at most 256, and the summary must never be marked limited. Polling does not inspect every simulation tick.',
   densityScope: 'Counts and duration estimates come from ~250ms read-only snapshots. Saved 24+3 snapshots prove coexistence, not uninterrupted 24 actors over every measured frame.',
-  status: 'preparing', errors: [], requests: [], setupEvents: [], samples: [], transitions: [], maxActors: 0, maxCells: 0, cellHits: 0,
+  status: 'preparing', errors: [], requests: [], setupEvents: [], samples: [], transitions: [], captureWindows: [], maxActors: 0, maxCells: 0, cellHits: 0,
   runMetrics: { frameLimit: metricsFrameLimit, maxFrameEntries: 0, observedSnapshots: 0, finalSummary: null },
   coverage: { standard: { polls: 0, actorsSum: 0, capPolls: 0, capAndThreeCellPolls: 0, estimatedCapSeconds: 0 }, low: { polls: 0, actorsSum: 0, capPolls: 0, capAndThreeCellPolls: 0, estimatedCapSeconds: 0 } } };
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
-const frames = { standard: [], low: [] }, observedHits = new Set(), observedSetupEvents = new Map();
+const frameIntervals = { standard: [], low: [] }, observedHits = new Set(), observedSetupEvents = new Map();
 let page, cdp, lastScan = -100, lastInteract = -100, pressureStartedAt = null, previousCoverage = null;
 const held = new Set();
 const save = () => writeFile(`${folder}/report.json`, JSON.stringify(report, null, 2));
@@ -144,15 +149,10 @@ async function naturalSample(name, state, activeSeconds, mode) {
 }
 async function drain() {
   const pieces = await page.evaluate(() => { const probe = window.__viCampaignPerf, pieces = probe.segments; probe.segments = { standard: [], low: [] }; return pieces; });
-  for (const mode of ['standard', 'low']) frames[mode].push(...pieces[mode]);
+  for (const mode of ['standard', 'low']) frameIntervals[mode].push(...pieces[mode]);
 }
-const summarize = intervals => {
-  const sorted = intervals.slice().sort((a, b) => a - b), total = sorted.reduce((sum, value) => sum + value, 0);
-  return { frames: sorted.length, activeDurationMs: total, averageFps: total ? sorted.length * 1000 / total : 0,
-    p95Ms: sorted[Math.max(0, Math.ceil(sorted.length * .95) - 1)] ?? null, maxMs: sorted.at(-1) ?? null };
-};
 try {
-  const context = await browser.newContext({ viewport: { width: 1366, height: 768 }, offline: true });
+  const context = await browser.newContext({ viewport: { width: 1366, height: 768 }, deviceScaleFactor, offline: true });
   page = await context.newPage(); cdp = await context.newCDPSession(page);
   page.on('pageerror', error => report.errors.push(error.message)); page.on('request', request => { if (/^https?:/i.test(request.url())) report.requests.push(request.url()); });
   report.wallStartedAt = Date.now();
@@ -199,7 +199,7 @@ try {
     Object.defineProperty(window, '__viCampaignPerf', { value: probe });
     const frame = now => {
       const eligible = probe.enabled && !document.hidden && !document.querySelector('#overlay-host .overlay');
-      if (eligible && probe.last !== null) { const frames = probe.segments[probe.mode]; if (frames.length < 1800) frames.push(now - probe.last); else probe.dropped++; }
+      if (eligible && probe.last !== null) { const frames = probe.segments[probe.mode]; if (frames.length < 1800) frames.push({ startMs: probe.last, endMs: now, durationMs: now - probe.last }); else probe.dropped++; }
       probe.last = eligible ? now : null; requestAnimationFrame(frame);
     }; requestAnimationFrame(frame);
   });
@@ -229,7 +229,14 @@ try {
     report.cellHits = observedHits.size;
     if (actors === 24 && cells === 3 && !report[`dense_${mode}`]) {
       report[`dense_${mode}`] = { tick: state.tick, activeSimulationSeconds: active, producers: producers(state) };
-      await page.screenshot({ path: `${folder}/dense-${mode}-three-cells.png` }); await writeFile(`${folder}/dense-${mode}-state.json`, JSON.stringify(state));
+      // The browser monotonic clock and rAF timestamps share a time origin.
+      // Keep the screenshot in raw measurements, recording its window so any
+      // overlapping frames can be identified separately without attributing cause.
+      const capture = { id: `dense-${mode}`, mode, startMs: await page.evaluate(() => performance.now()), endMs: null, status: 'started' };
+      report.captureWindows.push(capture);
+      try { await page.screenshot({ path: `${folder}/dense-${mode}-three-cells.png` }); capture.status = 'completed'; }
+      finally { capture.endMs = await page.evaluate(() => performance.now()); }
+      await writeFile(`${folder}/dense-${mode}-state.json`, JSON.stringify(state));
     }
     if (active >= nextSample) {
       report.samples.push(await naturalSample('five-second-natural', state, active, mode)); nextSample = active + 5;
@@ -238,9 +245,15 @@ try {
     await page.waitForTimeout(250);
   }
   await release(); await page.evaluate(() => { window.__viCampaignPerf.enabled = false; window.__viCampaignPerf.last = null; }); await drain();
-  report.metrics = Object.fromEntries(Object.entries(frames).map(([quality, values]) => [quality, summarize(values)]));
+  report.metrics = Object.fromEntries(Object.entries(frameIntervals).map(([quality, values]) => [quality, summarizeFrameIntervals(values)]));
+  const classifications = Object.fromEntries(Object.entries(frameIntervals).map(([quality, values]) =>
+    [quality, classifyCaptureOverlap(values, report.captureWindows.filter(window => window.mode === quality && Number.isFinite(window.endMs)))]));
+  report.captureInterference = { method: 'Frames with browser rAF intervals overlapping a recorded screenshot request window are marked as possibly affected; overlap alone does not prove causation. All frames remain in the primary metrics and pass gate. Other measurement overhead is not excluded.',
+    byQuality: Object.fromEntries(Object.entries(classifications).map(([quality, value]) => [quality,
+      { all: value.all, captureOverlapping: value.captureOverlapping, outsideCapture: value.outsideCapture }])) };
+  await writeFile(`${folder}/frame-capture-classification.json`, JSON.stringify(classifications));
   report.observerDroppedFrames = await page.evaluate(() => window.__viCampaignPerf.dropped);
-  report.device = { os: os.platform(), release: os.release(), cpu: os.cpus()[0]?.model, logicalCpus: os.cpus().length, memoryBytes: os.totalmem(), browser: browser.version(), mode: 'headless' };
+  report.device = { os: os.platform(), release: os.release(), cpu: os.cpus()[0]?.model, logicalCpus: os.cpus().length, memoryBytes: os.totalmem(), browser: browser.version(), mode: 'headless', deviceScaleFactor };
   report.measurementWallDurationMs = Date.now() - report.measurementWallStartedAt; report.wallDurationMs = Date.now() - report.wallStartedAt;
   report.sourceUnchanged = gameHash === hash(await readFile(resolve(distDirectory, 'game.js')));
   report.pass = report.activeSimulationSeconds >= 600 && Object.values(report.metrics).every(metric => metric.activeDurationMs >= 295000 && metric.averageFps >= 50 && metric.p95Ms <= 33)
@@ -248,7 +261,8 @@ try {
     && !report.errors.length && !report.requests.length && !report.observerDroppedFrames && report.sourceUnchanged;
   report.passScope = 'Ten active minutes, about five per real quality UI setting; source-b plus retained source retain real open production, 24 living actors with three real immune cells captured in both modes, accepted cell hits, frame budget and natural heap/DOM samples. Natural memory still requires trend review; this does not close M16 memory/native-device or playtest acceptance by itself.';
   report.status = report.pass ? 'passed' : 'failed';
-  await writeFile(`${folder}/frame-times.json`, JSON.stringify(frames));
+  await writeFile(`${folder}/frame-times.json`, JSON.stringify(Object.fromEntries(Object.entries(frameIntervals).map(([key, rows]) => [key, rows.map(row => row.durationMs)]))));
+  await writeFile(`${folder}/frame-intervals.json`, JSON.stringify(frameIntervals));
   // Optional forced-GC diagnostics are later, separately labelled, and excluded
   // from all natural sample/frame arrays above.
   if (process.env.VI_PERF_POST_MEMORY === '1') {
@@ -276,4 +290,8 @@ try {
   report.status = 'failed'; report.error = error.stack ?? String(error); process.exitCode = 1;
   if (page && !page.isClosed()) { try { report.failureState = await readState(page); await page.screenshot({ path: `${folder}/failed.png` }); } catch {} }
   console.error(report.error);
-} finally { await writeFile(`${folder}/frame-times.json`, JSON.stringify(frames)); await save(); await release().catch(() => {}); await browser.close(); }
+} finally {
+  await writeFile(`${folder}/frame-times.json`, JSON.stringify(Object.fromEntries(Object.entries(frameIntervals).map(([key, rows]) => [key, rows.map(row => row.durationMs)]))));
+  await writeFile(`${folder}/frame-intervals.json`, JSON.stringify(frameIntervals));
+  await save(); await release().catch(() => {}); await browser.close();
+}

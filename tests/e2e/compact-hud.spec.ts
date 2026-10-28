@@ -4,7 +4,7 @@ import { pathToFileURL } from 'node:url';
 
 const entry = pathToFileURL(resolve(process.env.VI_ENTRY ?? 'dist/index.html')).href;
 
-for (const size of [{ width: 684, height: 880 }, { width: 684, height: 600 }, { width: 1280, height: 720 }]) {
+for (const size of [{ width: 360, height: 640 }, { width: 480, height: 600 }, { width: 684, height: 880 }, { width: 684, height: 600 }, { width: 1280, height: 720 }]) {
   test(`battle controls stay readable at ${size.width}x${size.height}`, async ({ page, context }) => {
     await page.setViewportSize(size);
     await context.setOffline(true);
@@ -31,6 +31,25 @@ for (const size of [{ width: 684, height: 880 }, { width: 684, height: 600 }, { 
     for (const tool of [1, 2, 3]) {
       await expect(page.locator(`[data-action="tool-${tool}"]`)).toBeVisible();
       await expect(page.locator(`[data-action="tool-${tool}"] small`)).toBeVisible();
+      const textFits = await page.locator(`[data-action="tool-${tool}"] small`).evaluate(node => node.scrollWidth <= node.clientWidth + 1);
+      expect(textFits).toBe(true);
+    }
+    await expect(page.locator('#crisis-label')).toBeVisible();
+    if (size.width <= 520) {
+      const upper = await Promise.all(['.topbar', '.battle-objective', '.battle-telemetry'].map(selector => page.locator(selector).boundingBox()));
+      expect(overlap(upper[0]!, upper[1]!)).toBe(false);
+      expect(overlap(upper[0]!, upper[2]!)).toBe(false);
+      expect(overlap(upper[1]!, upper[2]!)).toBe(false);
+      // Exercise the longest actual crisis wording as a derived layout case;
+      // it does not claim the game naturally reached a fatal crisis.
+      await page.keyboard.press('Escape');
+      await page.locator('#crisis-label').evaluate(node => { node.textContent = '⚠ 感染失控：3.0 秒 · 立即净化或抢修'; (node as HTMLElement).dataset.urgency = 'fatal'; });
+      const crisisBox = await page.locator('#crisis-label').boundingBox();
+      const telemetryBox = await page.locator('.battle-telemetry').boundingBox();
+      const mapBox = await page.locator('.organ-overview').boundingBox();
+      expect(crisisBox!.x).toBeGreaterThanOrEqual(0);
+      expect(crisisBox!.x + crisisBox!.width).toBeLessThanOrEqual(size.width);
+      expect(overlap(telemetryBox!, mapBox!)).toBe(false);
     }
   });
 }

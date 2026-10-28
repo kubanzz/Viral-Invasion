@@ -59,7 +59,14 @@ export class Renderer {
       foreground:(state)=>this.foreground(state),
       actorBodies:state=>this.raisedBodies(state),
       effectOrigin:effect=>this.beamOrigins.get(this.beamKey(effect)),
-      raster:(key,source,depth,x=0,y=0,scale=1)=>{this.seenRasters.add(key);this.rasterKeys.add(key);this.host.setRasterLayer(key,source,depth,source.width*scale,source.height*scale,x,y);},
+      raster:(key,source,depth,x=0,y=0,scale=1)=>{
+        this.seenRasters.add(key);this.rasterKeys.add(key);
+        // Full-screen textures use device pixels internally; the host places
+        // every layer in CSS pixels. Entity buffers stay at their existing
+        // world-pixel resolution and continue to use the camera scale.
+        const fullScreen=key==='ground'||key==='signals';
+        this.host.setRasterLayer(key,source,depth,fullScreen?this.width:source.width*scale,fullScreen?this.height:source.height*scale,x,y);
+      },
     });
     this.camera=this.painter.camera;
     this.host=new PhaserHost(canvas,{atlases:art.atlases,images:Object.entries(art.environments).map(([id,image])=>({key:`environment:${id}`,dataUri:image.dataUri}))});
@@ -396,7 +403,7 @@ export class Renderer {
     if(organ==='heart')for(let i=0;i<5;i++)this.emit(`scenery:rim:${i}`,i%2?'scenery.heartTissueB':'scenery.heartTissueA',{x:world.bounds.left+100+i*(world.width-250)/4,y:world.bounds.top-28},116+(i%2)*25,-20,{alpha:.85});
   }
   private drawAtlasEffects(state:GameState,low:boolean):void {
-    const alive=new Set<string>();if(!low)for(const effect of state.effects){if(effect.kind!=='scan'&&effect.kind!=='heal')continue;const age=state.elapsed-effect.born;if(age<0||age>=effect.duration)continue;
+    const alive=new Set<string>();if(!low)for(const effect of state.effects){if(effect.kind!=='scan'&&(effect.kind!=='heal'||!effect.repairSucceeded))continue;const age=state.elapsed-effect.born;if(age<0||age>=effect.duration)continue;
       const first=art.assets[`fx.${effect.kind}.00`];if(!first||!this.host.scene.anims.exists(`art-${effect.kind}`))continue;const id=`effect:${state.growth?.runId??state.seed}:${effect.id}`,p=this.camera.worldToScreen(effect.kind==='scan'?effect.from:effect.to);alive.add(id);
       const s=this.host.sprite(id,{texture:first.atlas,x:p.x,y:p.y,width:110*this.camera.scale,height:110*.72*this.camera.scale,depth:9500,originX:.5,originY:.5,alpha:Math.max(0,Math.min(.65,1-age/effect.duration))});
       if(!this.effectSprites.has(id))s.play(`art-${effect.kind}`);if(state.phase!=='playing')s.anims.pause();else if(s.anims.isPaused)s.anims.resume();

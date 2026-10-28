@@ -23,6 +23,7 @@ import { drawRaisedBodyLayers, traceRaisedObstacle } from './raisedObstacleGeome
 import { SceneLabels, type SceneLabel, type LabelRect } from './sceneLabels';
 import { drawPlayerPresence, playerPresence } from './playerPresence';
 import type { ArtPresentation } from './artPresentation';
+import { crosshairStatus, type CrosshairStatus } from './crosshairStatus';
 
 const TAU = Math.PI * 2;
 const hash = (n: number): number => { const a = Math.sin(n * 127.1 + 311.7) * 43758.5453123; return a - Math.floor(a); };
@@ -75,6 +76,7 @@ export class CanvasScene {
   private readonly labels = new SceneLabels();
   private hudRects: readonly LabelRect[] = [];
   private readonly actorCanvases = new Map<string, HTMLCanvasElement>();
+  private lastCrosshair: { status: CrosshairStatus; aim: Vec } | null = null;
 
   /** UI updates this read-only presentation snapshot after its batched DOM read. */
   setHudRects(rects: readonly LabelRect[]): void { this.hudRects = rects.map(rect => ({ ...rect })); }
@@ -99,7 +101,10 @@ export class CanvasScene {
     const rect = this.canvas.getBoundingClientRect();
     this.width = Math.max(1, width ?? (rect.width || window.innerWidth));
     this.height = Math.max(1, height ?? (rect.height || window.innerHeight));
-    this.dpr = this.art ? 1 : clamp(window.devicePixelRatio || 1, 1, 2);
+    // Compatibility layers share the same CSS coordinate system as Phaser but
+    // need device pixels too, otherwise their labels and effects are stretched
+    // from a 1x texture on a high-DPI display.
+    this.dpr = clamp(window.devicePixelRatio || 1, 1, 2);
     this.canvas.width = Math.round(this.width * this.dpr); this.canvas.height = Math.round(this.height * this.dpr);
     if (this.signalCanvas) { this.signalCanvas.width = this.canvas.width; this.signalCanvas.height = this.canvas.height; }
     this.camera.resize(this.width, this.height);
@@ -107,7 +112,7 @@ export class CanvasScene {
   prepareCamera(state: GameState, options?: { deltaSeconds?: number; snap?: boolean }): void { this.camera.follow(state.player, activeWorld(state), options); }
 
   diagnostics(state: GameState) {
-    return { depthOrder: depthSort(this.entities(state)).map(entity => entity.id), occluded: isForegroundOccluded(state.player, activeWorld(state)), foregroundOpacity: foregroundOpacity(state.player, activeWorld(state)), layerOrder: LAYER_ORDER, labels: this.labels.diagnostics(), hudRects: this.hudRects.map(rect => ({ ...rect })), playerPresence: playerPresence(state) };
+    return { depthOrder: depthSort(this.entities(state)).map(entity => entity.id), occluded: isForegroundOccluded(state.player, activeWorld(state)), foregroundOpacity: foregroundOpacity(state.player, activeWorld(state)), layerOrder: LAYER_ORDER, labels: this.labels.diagnostics(), hudRects: this.hudRects.map(rect => ({ ...rect })), playerPresence: playerPresence(state), crosshair: this.lastCrosshair };
   }
 
   private entities(state: GameState): { id: string; y: number; kind: string; index?: number }[] {
@@ -123,7 +128,7 @@ export class CanvasScene {
     ];
   }
 
-  render(state: GameState, aim: Vec, opts: { lowEffects?: boolean; cameraPrepared?: boolean } = {}): void {
+  render(state: GameState, aim: Vec, opts: { lowEffects?: boolean; cameraPrepared?: boolean; authoritativeState?: GameState } = {}): void {
     if (!opts.cameraPrepared) this.prepareCamera(state);
     let ctx = this.ctx;
     this.labels.begin({ width: this.width, height: this.height, scale: this.camera.scale,
@@ -212,7 +217,7 @@ export class CanvasScene {
       this.drawTissueMarker(ctx, state);
     }
     if (!this.art) drawPlayerPresence(ctx, state, playerPresence(state, raisedActorBodies));
-    this.drawCrosshair(ctx, state, aim);
+    this.drawCrosshair(ctx, state, aim, opts.authoritativeState ?? state);
     ctx.restore();
     this.labels.draw(ctx);
     if (this.art) this.art.raster('signals', this.signalCanvas!, 10000);
@@ -771,6 +776,24 @@ export class CanvasScene {
       ctx.save(); ctx.globalAlpha = 1 - progress;
       if (effect.kind === 'beam') {
         const origin = this.art?.effectOrigin?.(effect, state) ?? effect.from;
+        // An elevated, forward muzzle can project past a nearby hit or wall.
+        // Show the real endpoint without drawing a backwards beam.
+        const dx = effect.to.x - effect.from.x, dy = (effect.to.y - effect.from.y) * .72;
+        // No direction means there is no surface to mark. The shot's own
+        // muzzle flash and any independently accepted target hit still render.
+        if (dx * dx + dy * dy <= 1e-12) { ctx.restore(); continue; }
+        if ((origin.x - effect.to.x) * dx + (origin.y - effect.to.y) * .72 * dy >= 0) {
+          const scale = Math.max(.01, this.camera.scale);
+          const radius = (7 + progress * 2) / scale;
+          ctx.save(); ctx.translate(effect.to.x, effect.to.y); ctx.scale(1, 1 / .72);
+          ctx.lineWidth = 4 / scale;
+          ellipse(ctx, 0, 0, radius, radius, '#00000000', '#42303a');
+          ctx.lineWidth = 2 / scale;
+          ellipse(ctx, 0, 0, radius, radius, '#00000000', '#ffe4a4');
+          ctx.restore();
+          ctx.restore();
+          continue;
+        }
         // A beam belongs to the shot that created it, not whichever tool is selected now.
         line(ctx, [origin.x, origin.y, effect.to.x, effect.to.y], '#8bece455', 6);
         line(ctx, [origin.x, origin.y, effect.to.x, effect.to.y], '#e8fff1', 1.6);
@@ -787,10 +810,14 @@ export class CanvasScene {
         }
         if (!low) this.sparks(ctx, effect, progress, '#bcffe7', 13);
       } else if (effect.kind === 'heal') {
-        ctx.lineWidth = 2; ellipse(ctx, effect.to.x, effect.to.y, 44 + progress * 17, 44 + progress * 17, '#a8f7bd0e', '#b0ffc9');
-        const y = effect.to.y - progress * 38;
-        line(ctx, [effect.to.x - 8, y, effect.to.x + 8, y], '#d8ffcf', 3); line(ctx, [effect.to.x, y - 11, effect.to.x, y + 11], '#d8ffcf', 3);
-        if (!low) this.sparks(ctx, effect, progress, '#a2f9c3', 8);
+        ctx.lineWidth = effect.repairSucceeded ? 2 : 1.5;
+        const radius = effect.repairSucceeded ? 44 + progress * 17 : 10 + progress * 12;
+        ellipse(ctx, effect.to.x, effect.to.y, radius, radius, '#a8f7bd0e', effect.repairSucceeded ? '#b0ffc9' : '#8bd8c8');
+        if (effect.repairSucceeded) {
+          const y = effect.to.y - progress * 38;
+          line(ctx, [effect.to.x - 8, y, effect.to.x + 8, y], '#d8ffcf', 3); line(ctx, [effect.to.x, y - 11, effect.to.x, y + 11], '#d8ffcf', 3);
+          if (!low) this.sparks(ctx, effect, progress, '#a2f9c3', 8);
+        }
       } else if (effect.kind === 'hit') {
         this.sparks(ctx, effect, progress, '#ffe4a4', low ? 4 : 9);
       } else if (effect.kind === 'dash') {
@@ -832,10 +859,11 @@ export class CanvasScene {
     line(ctx, [-5, 0, 0, 0, 5, -5], '#d5fff3', 2); line(ctx, [0, 0, 5, 5], '#d5fff3', 2); ctx.restore();
   }
 
-  private drawCrosshair(ctx: CanvasRenderingContext2D, state: GameState, aim: Vec): void {
-    if (state.phase !== 'playing') return;
-    const distance = Math.hypot(aim.x - state.player.x, aim.y - state.player.y);
-    const color = distance <= BALANCE.range ? state.tool === 3 ? '#b5f7c2' : '#b2f8eb' : '#ddb58a';
+  private drawCrosshair(ctx: CanvasRenderingContext2D, state: GameState, aim: Vec, authoritativeState: GameState): void {
+    if (state.phase !== 'playing') { this.lastCrosshair = null; return; }
+    const status = crosshairStatus(authoritativeState, aim);
+    this.lastCrosshair = { status, aim: { ...aim } };
+    const color = status === 'in-range' ? state.tool === 3 ? '#b5f7c2' : '#b2f8eb' : '#ddb58a';
     ctx.save(); ctx.translate(aim.x, aim.y); ctx.scale(1, 1 / .72);
     ctx.lineWidth = 1.3; ctx.strokeStyle = color;
     ctx.beginPath(); ctx.arc(0, 0, 9, .15, 1.4); ctx.arc(0, 0, 9, 1.7, 2.95); ctx.arc(0, 0, 9, 3.3, 4.55); ctx.arc(0, 0, 9, 4.85, 6.1); ctx.stroke();

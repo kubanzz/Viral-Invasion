@@ -33,6 +33,16 @@ afterEach(async () => {
 });
 
 describe('curated offline art pipeline', () => {
+  it('pins every selected workspace original to its currently chosen bytes', async () => {
+    const root = resolve('asserts');
+    const selection = JSON.parse(await readFile(join(root, 'art-selection.json'), 'utf8'));
+    for (const asset of [...selection.sprites, ...selection.environments]) {
+      expect(asset.expectedSha256, `${asset.id} must explicitly pin its selected source`).toMatch(/^[a-f0-9]{64}$/);
+      const bytes = await readFile(join(root, asset.source));
+      expect(createHash('sha256').update(bytes).digest('hex'), `${asset.id} source changed without review`).toBe(asset.expectedSha256);
+    }
+  });
+
   it('uses workspace assets by default even when a legacy source environment variable is set', async () => {
     const f = await fixture();
     const localOriginal = await sharp({ create: { width: 48, height: 64, channels: 4, background: '#92e4b8ff' } }).png().toBuffer();

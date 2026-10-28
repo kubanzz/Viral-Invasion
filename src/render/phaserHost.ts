@@ -235,6 +235,8 @@ export class PhaserHost {
       textureCount: this.currentScene && !this.destroyed ? this.currentScene.textures.getTextureKeys().length : 0,
       activeSprites: this.sprites.size, pooledSprites: this.spareSprites.length, rasterLayers: this.layers.size,
       visibleRasterLayers: [...this.layers.values()].filter(layer => layer.image.visible).length,
+      rasterDimensions: [...this.layers].map(([id, layer]) => ({ id, width: layer.texture.width, height: layer.texture.height,
+        displayWidth: layer.image.displayWidth, displayHeight: layer.image.displayHeight, x: layer.image.x, y: layer.image.y })),
       animations: [...this.sprites].flatMap(([id, sprite]) => sprite.anims.currentAnim ? [{
         id, key: sprite.anims.currentAnim.key, frame: sprite.frame.name,
         isPlaying: sprite.anims.isPlaying, isPaused: sprite.anims.isPaused,

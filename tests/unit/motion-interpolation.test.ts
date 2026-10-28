@@ -6,6 +6,7 @@ import { Camera } from '../../src/render/camera';
 import { HEART_WORLD, LUNG_WORLD } from '../../src/game/organConfig';
 import { isLegalPosition } from '../../src/actors/collision';
 import { WORLD } from '../../src/game/types';
+import type { ImmuneCellState } from '../../src/game/immuneCells';
 
 const input = { moveX: 1, moveY: 0, aim: { x: 700, y: 440 }, fire: false };
 
@@ -28,22 +29,56 @@ describe('presentation motion', () => {
     expect(Math.max(...increments) - Math.min(...increments)).toBeLessThan(1e-6);
   });
 
-  it('snaps after pause, teleport, restart or a changed organ, without modifying state', () => {
+  it('holds the displayed body through pause and snaps on teleport, restart or a changed organ', () => {
     const session = new GameSession(3); session.start();
     const motion = new MotionInterpolation();
     motion.step(session.state, () => session.step(input));
     const before = session.snapshot();
-    expect(motion.present(session.state, .5).player.x).toBeLessThan(session.state.player.x);
+    const last = motion.present(session.state, .5).player.x;
+    expect(last).toBeLessThan(session.state.player.x);
     expect(session.snapshot()).toEqual(before);
     session.pause();
-    expect(motion.present(session.state, .5)).toBe(session.state);
+    const paused = motion.present(session.state, .5);
+    expect(paused.player.x).toBe(last);
+    expect(paused.phase).toBe('paused');
+    expect(paused.player.moving).toBe(false);
     session.resume();
+    motion.reset(true);
+    expect(motion.present(session.state, 0).player.x).toBe(last);
+    motion.step(session.state, () => session.step(input));
+    expect(motion.present(session.state, 0).player.x).toBe(last);
     motion.step(session.state, () => { session.state.player.x += 100; session.state.tick++; });
     expect(motion.present(session.state, .5)).toBe(session.state);
     motion.step(session.state, () => { session.state.tick++; session.state.world = LUNG_WORLD; });
     expect(motion.present(session.state, .5)).toBe(session.state);
     session.restart();
     expect(motion.present(session.state, .5)).toBe(session.state);
+  });
+
+  it('holds only positions for surviving actors, rejects teleports and uses current state fields', () => {
+    const session = new GameSession(3, { campaign: true, milestone: 'G3' }); session.start();
+    const state = session.state, motion = new MotionInterpolation();
+    const target = state.targets.find(t => t.role === 'virus')!;
+    Object.assign(target, { x: state.player.x, y: state.player.y });
+    const cell: ImmuneCellState = { id: 'paused-cell', beaconId: 'test', organId: 'heart', born: 0, until: 10,
+      radius: 15, facing: 0, damage: 1, interval: 1, updatedAt: 0, attackReadyAt: 0, attackUntil: 0,
+      targetId: null, activity: 'seeking', navigationAt: 0, waypoint: null, x: state.player.x, y: state.player.y };
+    state.growth!.cells = [cell];
+    motion.step(state, () => { target.x += 4; cell.x += 4; state.player.x += 4; state.tick++; });
+    const shown = motion.present(state, .5), before = session.snapshot();
+    session.pause(); target.hp -= 1; cell.attackUntil = 3;
+    const paused = motion.present(state, .5);
+    expect(paused.targets.find(t => t.id === target.id)!.x).toBe(shown.targets.find(t => t.id === target.id)!.x);
+    expect(paused.targets.find(t => t.id === target.id)!.hp).toBe(target.hp);
+    expect(paused.growth!.cells![0].x).toBe(shown.growth!.cells![0].x);
+    expect(paused.growth!.cells![0].attackUntil).toBe(3);
+    expect(paused.player.x).toBe(shown.player.x);
+    expect(state.player.x).toBe(before.player.x);
+    target.x += 100;
+    state.growth!.cells = [{ ...cell, id: 'new-cell' }];
+    const changed = motion.present(state, .5);
+    expect(changed.targets.find(t => t.id === target.id)!.x).toBe(target.x);
+    expect(changed.growth!.cells![0].x).toBe(cell.x);
   });
 
   it('preserves the full combat state for the same seed and fixed input sequence', () => {
@@ -75,6 +110,52 @@ describe('presentation motion', () => {
       expect(rendered).toEqual(session.state.player);
     }
     expect(session.snapshot()).toEqual(before);
+  });
+
+  it('keeps active enemies and immune cells out of folds without changing off-organ cells or simulation', () => {
+    const session = new GameSession(3, { campaign: true, milestone: 'G3' }); session.start();
+    const state = session.state, world = HEART_WORLD, obstacle = world.obstacles[0];
+    const target = state.targets.find(item => item.role === 'virus')!;
+    const around = (radius: number, angle: number) => ({ x: obstacle.x + (obstacle.radius + radius) * Math.cos(angle),
+      y: obstacle.y + (obstacle.radius + radius) * Math.sin(angle) });
+    Object.assign(target, around(target.radius, -.06));
+    const cell: ImmuneCellState = { id: 'test-cell', beaconId: 'test', organId: 'heart', born: 0, until: 10,
+      radius: 15, facing: 0, damage: 1, interval: 1, updatedAt: 0, attackReadyAt: 0, attackUntil: 0,
+      targetId: null, activity: 'seeking', navigationAt: 0, waypoint: null, ...around(15, -.06) };
+    const offOrgan: ImmuneCellState = { ...cell, id: 'other-organ', organId: 'lung', x: 4, y: 4 };
+    state.growth!.cells = [cell, offOrgan];
+    const motion = new MotionInterpolation();
+    motion.step(state, () => {
+      Object.assign(target, around(target.radius, .06)); Object.assign(cell, around(cell.radius, .06));
+      offOrgan.x = 10; state.tick++;
+    });
+    const before = session.snapshot();
+    for (const fraction of [.1, .25, .5, .75, .9]) {
+      const rendered = motion.present(state, fraction);
+      expect(isLegalPosition(rendered.targets.find(item => item.id === target.id)!, target.radius, world)).toBe(true);
+      expect(rendered.targets.find(item => item.id === target.id)).toEqual(target);
+      expect(isLegalPosition(rendered.growth!.cells![0], cell.radius, world)).toBe(true);
+      expect(rendered.growth!.cells![0]).toEqual(cell);
+      expect(rendered.growth!.cells![1]).toEqual(offOrgan);
+    }
+    expect(session.snapshot()).toEqual(before);
+  });
+
+  it('still interpolates legal enemy and immune movement and snaps newly appearing bodies', () => {
+    const session = new GameSession(3, { campaign: true, milestone: 'G3' }); session.start();
+    const state = session.state, target = state.targets.find(item => item.role === 'virus')!;
+    const start = { x: state.player.x, y: state.player.y };
+    Object.assign(target, start);
+    const cell: ImmuneCellState = { id: 'test-cell', beaconId: 'test', organId: 'heart', born: 0, until: 10,
+      radius: 15, facing: 0, damage: 1, interval: 1, updatedAt: 0, attackReadyAt: 0, attackUntil: 0,
+      targetId: null, activity: 'seeking', navigationAt: 0, waypoint: null, ...start };
+    state.growth!.cells = [cell];
+    const motion = new MotionInterpolation();
+    motion.step(state, () => { target.x += 4; cell.x += 4; state.growth!.cells!.push({ ...cell, id: 'new-cell' }); state.tick++; });
+    const shown = motion.present(state, .5);
+    expect(shown.targets.find(item => item.id === target.id)!.x).toBeCloseTo(start.x + 2);
+    expect(shown.growth!.cells![0].x).toBeCloseTo(start.x + 2);
+    expect(shown.growth!.cells![1]).toEqual(state.growth!.cells![1]);
   });
 
   it('smooths camera movement without losing the pointer inverse and snaps on reset', () => {

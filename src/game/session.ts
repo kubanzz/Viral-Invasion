@@ -207,8 +207,10 @@ export class GameSession {
     this.state.messagePriority = priority;
   }
 
-  effect(kind: Effect['kind'], from: Vec, to: Vec, radius: number, duration: number): void {
-    this.state.effects.push({ id: ++this.effectId, kind, from: { x: from.x, y: from.y }, to: { x: to.x, y: to.y }, radius, born: this.state.elapsed, duration });
+  effect(kind: Effect['kind'], from: Vec, to: Vec, radius: number, duration: number): Effect {
+    const effect: Effect = { id: ++this.effectId, kind, from: { x: from.x, y: from.y }, to: { x: to.x, y: to.y }, radius, born: this.state.elapsed, duration };
+    this.state.effects.push(effect);
+    return effect;
   }
 
   step(input: InputFrame, dt: number = BALANCE.step): void {
@@ -440,7 +442,9 @@ export class GameSession {
     if (aimDistance > range) { this.message('目标超出工具射程，请靠近。'); this.emit('TOOL_REJECTED', { tool, reason: 'range' }); return; }
     if (wall !== null && wall < aimDistance - 1) { this.message('组织褶皱挡住工具，请绕到另一侧。'); this.emit('TOOL_REJECTED', { tool, reason: 'blocked' }); return; }
     this.emit('TOOL_FIRED', { tool, x: aim.x, y: aim.y });
-    this.effect('heal', state.player, aim, 35, .55);
+    // The cast is visible even if it misses, but the success marker belongs to
+    // this exact attempt and is set only after actual integrity increases.
+    const repairEffect = this.effect('heal', state.player, aim, 35, .55);
     if (distance(aim, state.tissue) > state.tissue.radius + 12) {
       this.message('修复注射仅作用于带十字标记的受损组织，不能净化靶标。');
       return;
@@ -448,6 +452,7 @@ export class GameSession {
     const before = state.tissue.hp;
     state.tissue.hp = clamp(state.tissue.hp + BALANCE.repair, 0, state.tissue.maxHp);
     const amount = state.tissue.hp - before;
+    if (amount > 0) repairEffect.repairSucceeded = true;
     this.emit('ORGAN_INTEGRITY_CHANGED', { organId: state.battle?.organId ?? 'heart', before, after: state.tissue.hp, reason: 'repair' });
     if (amount > 0) this.message(state.tissue.hp === state.tissue.maxHp
       ? state.endless ? '组织已修复，继续清除本波敌群。' : '组织修复完成！清空靶标后返回复测台，按 E。'

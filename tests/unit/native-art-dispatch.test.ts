@@ -22,12 +22,13 @@ interface TestHost {
 const mocked = vi.hoisted(() => ({
   runtime: { inputSignature: 'isolated-native-dispatch', atlases: [], environments: {}, assets: {} as Record<string, FixtureAsset> },
   entities: [] as SceneEntity[], scenes: [] as TestScene[], hosts: [] as TestHost[],
+  animationKeys: new Set<string>(),
 }));
 
 vi.mock('../../.art-generated/art-runtime.json', () => ({ default: mocked.runtime }));
 vi.mock('../../src/render/phaserHost', () => ({ PhaserHost: class {
   readonly ready = Promise.resolve(); readonly isReady = true;
-  readonly scene = { anims: { exists: () => false, create: vi.fn() } };
+  readonly scene = { anims: { exists: (key: string) => mocked.animationKeys.has(key), create: vi.fn() } };
   sprites: TestHost['sprites'] = []; rasters: TestHost['rasters'] = [];
   constructor() { mocked.hosts.push(this); }
   resize() {} startFrameLoop() {} destroy() {} endFrame() {} removeRasterLayer() {}
@@ -36,7 +37,7 @@ vi.mock('../../src/render/phaserHost', () => ({ PhaserHost: class {
     this.sprites = []; this.rasters = [];
     for (const scene of mocked.scenes) { scene.ctx.paints.length = 0; scene.ctx.rotations.length = 0; scene.fallbacks.length = 0; scene.annotations.length = 0; }
   }
-  sprite(id: string, config: HostedSprite) { this.sprites.push({ id, config: { ...config } }); return {}; }
+  sprite(id: string, config: HostedSprite) { this.sprites.push({ id, config: { ...config } }); return { play() {}, anims: { isPaused: false, pause() {}, resume() {} } }; }
   setRasterLayer(key: string, source: HTMLCanvasElement, depth: number) {
     this.rasters.push({ key, depth, paints: structuredClone((source.getContext('2d') as RecordedContext).paints) });
   }
@@ -165,6 +166,7 @@ const heroInput = (changes: Partial<InputFrame> = {}): InputFrame => ({ moveX: 0
 
 beforeEach(() => {
   mocked.entities.length = 0; mocked.hosts.length = 0; mocked.scenes.length = 0;
+  mocked.animationKeys.clear();
   for (const key of Object.keys(mocked.runtime.assets)) delete mocked.runtime.assets[key];
   for (const id of ['hero.idle', 'hero.walk', 'enemy.basic', 'enemy.fission.parent', 'enemy.fission.child', 'source.infection', 'immune.cell.idle', 'immune.beacon', 'scenery.heartTissueA', 'scenery.heartTissueB']) mocked.runtime.assets[id] = asset(id);
   mocked.runtime.assets['immune.cell.bite'] = asset('immune.cell.bite', 60, 900);
@@ -174,6 +176,22 @@ beforeEach(() => {
 afterEach(() => { vi.unstubAllGlobals(); });
 
 describe('actual Renderer native art dispatch through an isolated host', () => {
+  it('uses the repair animation only for an actual successful repair, never for a miss or full-health cast', async () => {
+    mocked.runtime.assets['fx.heal.00'] = asset('fx.heal.00'); mocked.animationKeys.add('art-heal');
+    const { renderer, host } = await setup();
+    for (const [where, hp, succeeds] of [['empty', 25, false], ['tissue', 100, false], ['tissue', 25, true]] as const) {
+      const game = new GameSession(31); game.start();
+      game.state.player.x = 650; game.state.player.y = 600; game.state.tissue.hp = hp;
+      const aim = where === 'tissue' ? { ...game.state.tissue } : { x: 650, y: 500 };
+      game.step(heroInput({ tool: 3, fire: true, aim }));
+      const effect = game.state.effects.find(e => e.kind === 'heal')!;
+      expect(Boolean(effect?.repairSucceeded)).toBe(succeeds);
+      for (const lowEffects of [false, true]) {
+        renderer.render(game.state, aim, { lowEffects });
+        expect(host.sprites.some(sprite => sprite.id.startsWith('effect:'))).toBe(succeeds && !lowEffects);
+      }
+    }
+  });
   it('fades only overlapping tissue in front of the current player body while retaining its real state annotation', async () => {
     for (const id of ['tissue.unstable', 'tissue.restored']) mocked.runtime.assets[id] = asset(id);
     Object.assign(mocked.runtime.assets, fixtureHeroAnimationAssets());

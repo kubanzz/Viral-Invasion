@@ -22,6 +22,7 @@ import { startingPlanOverlay } from './ui/startingPlanHud';
 import './ui/startingPlan.css';
 import { preparationForPlan, type StartingPlanId } from './game/preparation';
 import { readVisibleHudRects } from './ui/hudLayout';
+import { CameraFollowPolicy } from './render/cameraFollowPolicy';
 import { endlessHudMarkup, updateEndlessHud, endlessOverlay, endlessMenuEntry } from './ui/endlessHud';
 import { EndlessProfileStore } from './meta/endlessProfile';
 import { endlessCombatStats } from './game/endlessGrowth';
@@ -359,32 +360,39 @@ function updateCommonHud() {
 }
 let lastHud = 0;
 let lastFrame: number | undefined;
-let lastCameraScope = '';
+const cameraFollowPolicy = new CameraFollowPolicy();
 let lastClockRevision = clock.revision;
 function frame(now: number) {
   // Input is projected through the same camera that produced the last visible frame.
   const aim = renderer.camera.screenToWorld(input.pointer);
-  clock.advance(now, dt => motion.step(session.state, () => {
-    session.step(input.frame(aim), dt);
-    renderer.witnessSimulation(session.state);
-  }), session.state.phase === 'playing');
-  if (clock.discontinuity || clock.revision !== lastClockRevision) motion.reset();
-  if (resetClockAfterStep) { clock.reset(); motion.reset(); resetClockAfterStep = false; }
+  const stepPositions: { x: number; y: number }[] = [];
+  clock.advance(now, dt => {
+    stepPositions.push({ x: session.state.player.x, y: session.state.player.y });
+    motion.step(session.state, () => {
+      session.step(input.frame(aim), dt);
+      renderer.witnessSimulation(session.state);
+    });
+    stepPositions.push({ x: session.state.player.x, y: session.state.player.y });
+  }, session.state.phase === 'playing');
+  if (clock.discontinuity) motion.reset();
+  else if (clock.revision !== lastClockRevision) motion.reset(session.state.phase === 'paused' || motion.holdingPause);
+  if (resetClockAfterStep) { clock.reset(); motion.reset(session.state.phase === 'paused'); resetClockAfterStep = false; }
   lastClockRevision = clock.revision;
   if (migrationGuidePending && session.state.phase === 'playing' && !session.state.growth?.draft && !session.state.growth?.pendingResearch) {
     migrationGuidePending = false; migrationGuideSeen = true; migrationGuide = true; session.pause(); input.clear(); clock.reset();
   }
   presentedState = motion.present(session.state, clock.alpha);
-  const cameraScope = `${session.state.seed}:${session.state.runMetrics?.runId ?? session.state.growth?.runId ?? ''}:${session.state.battle?.organId ?? 'training'}:${session.state.phase}`;
+  const cameraScope = `${session.state.seed}:${session.state.runMetrics?.runId ?? session.state.growth?.runId ?? ''}:${session.state.battle?.organId ?? 'training'}`;
   const dt = lastFrame === undefined ? 0 : Math.max(0, (now - lastFrame) / 1000);
-  renderer.prepareCamera(presentedState, { deltaSeconds: dt, snap: presentedState === session.state || cameraScope !== lastCameraScope || dt > .25 });
-  lastCameraScope = cameraScope; lastFrame = now;
+  const cameraDecision = cameraFollowPolicy.next(cameraScope, session.state.phase, session.state.player, dt, clock.discontinuity, stepPositions);
+  if (!cameraDecision.hold) renderer.prepareCamera(presentedState, { deltaSeconds: dt, snap: cameraDecision.snap });
+  lastFrame = now;
   renderer.render(presentedState, renderer.camera.screenToWorld(input.pointer), { lowEffects, cameraPrepared: true, authoritativeState: session.state });
   sound.update(session.state);
   updateOverlay();
   if (now-lastHud > 50) { updateHud(); lastHud=now; }
 }
-window.addEventListener('resize', () => { motion.reset(); presentedState = session.state; renderer.resize(); renderer.prepareCamera(session.state); refreshHudRects(); clock.reset(); });
+window.addEventListener('resize', () => { motion.reset(); cameraFollowPolicy.reset(); presentedState = session.state; renderer.resize(); renderer.prepareCamera(session.state); refreshHudRects(); clock.reset(); });
 renderer.prepareCamera(session.state); updateOverlay(); updateHud();
 renderer.ready.then(() => {
   app.inert = false; app.removeAttribute('aria-busy');

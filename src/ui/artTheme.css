@@ -424,6 +424,69 @@ body.dual-organ #app .organ-overview-title { font-size: 11px; }
   body.dual-organ #app .growth-panel p { display: none; }
 }
 
+/* A narrow window needs explicit widths: the normal center message and dock
+   otherwise wrap to a single character or extend beyond the viewport. */
+@media (max-width: 520px) {
+  body.dual-organ #app .topbar { inset: 8px 8px auto; gap: 4px; }
+  body.dual-organ #app .brand { gap: 4px; min-width: 0; }
+  body.dual-organ #app .brand-icon { width: 22px; height: 26px; font-size: 17px; flex: none; }
+  body.dual-organ #app .brand strong { font-size: 14px; white-space: nowrap; }
+  body.dual-organ #app .status-chip { display: none; }
+  body.dual-organ #app .top-actions { gap: 3px; flex: none; }
+  body.dual-organ #app .top-actions button.small { padding: 5px 6px; font-size: 10px; white-space: nowrap; }
+  body.dual-organ #app .battle-objective { left: 8px; top: 48px; width: 44vw; padding: 7px 8px; }
+  body.dual-organ #app .battle-telemetry { right: 8px; top: 48px; width: 44vw; }
+  body.dual-organ #app .battle-telemetry .readout { padding: 6px 8px; margin-bottom: 4px; }
+  body.dual-organ #app .pulse-readout { padding: 6px 8px; }
+  body.dual-organ #app .growth-panel { left: 8px; bottom: 145px; width: 128px; padding: 6px; }
+  body.dual-organ #app .organ-overview { right: 8px; bottom: 125px; width: 128px; padding: 6px; }
+  body.dual-organ #app .organ-overview #tactical-map { max-height: 65px; }
+  body.dual-organ #app .message { bottom: 84px; width: max-content; max-width: calc(100vw - 32px); padding: 5px 8px; font-size: 10px; line-height: 1.4; }
+  body.dual-organ #app .dock-wrap { bottom: 8px; width: calc(100vw - 16px); max-width: none; gap: 3px; }
+  body.dual-organ #app .tool-dock { flex: 1; min-width: 0; }
+  body.dual-organ #app .tool { flex: 1 1 0; width: auto; min-width: 0; padding: 6px 3px; }
+  body.dual-organ #app .tool kbd { float: none; display: inline-block; margin: 0 3px 0 0; }
+  body.dual-organ #app .tool strong { display: inline; font-size: 9px; white-space: nowrap; }
+  body.dual-organ #app .tool small { font-size: 8px; line-height: 1.25; white-space: nowrap; letter-spacing: -.2px; }
+  body.dual-organ #app .tool .art-icon, body.dual-organ #app .ability .art-icon { display: none; }
+  body.dual-organ #app .ability { flex: none; min-width: 43px; padding: 6px 3px; }
+}
+
+/* Training uses its own objective and telemetry panels, without the campaign
+   class. Keep those panels, controls, and their wording inside narrow windows. */
+@media (max-width: 640px) {
+  #app:not(.campaign) .topbar { inset: 8px 8px auto; gap: 4px; }
+  #app:not(.campaign) .brand { gap: 4px; min-width: 0; }
+  #app:not(.campaign) .brand-icon { width: 22px; height: 26px; font-size: 17px; flex: none; }
+  #app:not(.campaign) .brand strong { font-size: 14px; white-space: nowrap; }
+  #app:not(.campaign) .brand small, #app:not(.campaign) .status-chip { display: none; }
+  #app:not(.campaign) .top-actions { gap: 3px; flex: none; }
+  #app:not(.campaign) .top-actions button.small { padding: 5px 6px; font-size: 10px; white-space: nowrap; }
+  #app:not(.campaign) .top-actions button kbd { display: none; }
+  #app:not(.campaign) .objective { left: 8px; top: 48px; width: min(210px, calc(50vw - 12px)); padding: 7px 8px; }
+  #app:not(.campaign) .objective .eyebrow { font-size: 8px; margin-bottom: 6px; letter-spacing: 1px; }
+  #app:not(.campaign) .objective h2 { font-size: 13px; line-height: 1.3; margin-bottom: 6px; }
+  #app:not(.campaign) .objective li { gap: 5px; font-size: 10px; line-height: 1.35; margin: 5px 0; }
+  #app:not(.campaign) .objective li span:first-child { width: 16px; height: 16px; flex: none; }
+  #app:not(.campaign) .objective li span:last-child { min-width: 0; overflow-wrap: anywhere; }
+  #app:not(.campaign) .telemetry { right: 8px; top: 48px; width: min(160px, calc(50vw - 12px)); }
+  #app:not(.campaign) .telemetry .readout { padding: 6px 8px; margin-bottom: 4px; }
+  #app:not(.campaign) .telemetry .readout p { margin: 5px 0 0; font-size: 9px; line-height: 1.4; overflow-wrap: anywhere; }
+  #app:not(.campaign) .telemetry .meter { margin: 5px 0 3px; }
+  #app:not(.campaign) .dock-wrap { bottom: 8px; width: calc(100vw - 16px); gap: 3px; }
+  #app:not(.campaign) .tool-dock { flex: 1; min-width: 0; gap: 2px; padding: 4px; }
+  #app:not(.campaign) .tool { flex: 1 1 0; width: auto; min-width: 0; padding: 6px 3px; }
+  #app:not(.campaign) .tool kbd { float: none; display: inline-block; margin: 0 3px 0 0; }
+  #app:not(.campaign) .tool strong { display: inline; font-size: 9px; white-space: nowrap; }
+  #app:not(.campaign) .tool small { display: block; font-size: 8px; line-height: 1.25; white-space: normal; overflow-wrap: anywhere; }
+  #app:not(.campaign) .tool .art-icon, #app:not(.campaign) .ability .art-icon { display: none; }
+  #app:not(.campaign) .ability { flex: none; min-width: 43px; padding: 6px 3px; }
+  #app:not(.campaign) .ability-key { margin-bottom: 3px; }
+  #app:not(.campaign) .message { bottom: 84px; width: max-content; max-width: calc(100vw - 32px); padding: 5px 8px; font-size: 10px; line-height: 1.4; }
+  #app:not(.campaign) .micro-footer { left: 8px; bottom: 0; }
+  #app:not(.campaign) .run-time { right: 8px; bottom: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   #app button, #app .meter i, #app .hud, #app .message, #app .growth-panel { transition: none; }
 }
