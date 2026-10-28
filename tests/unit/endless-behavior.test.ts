@@ -162,7 +162,8 @@ describe('endless behavior from actual session inputs', () => {
   it('records upgraded tool-2 nova through its real basic area attack path', () => {
     const { session, observed } = fixture({ nova: 2, power: 1 }, [target('nova-body', 800, 500)]);
     step(session, { tool: 2, aim: { x: 800, y: 500 }, fire: true });
-    const damage = 65 * 1.18 * 1.3;
+    for (let tick = 0; tick < 18; tick++) step(session, { tool: 1 });
+    const damage = 80 * 1.18 * 1.3;
     expect(observed.events.find(next => next.type === 'TARGET_HIT')?.data).toMatchObject({ cause: 'basic', tool: 2 });
     expect(totals(observed, session.state.tick).areaDamage).toBeCloseTo(damage);
     expect(totals(observed, session.state.tick).precisionDamage).toBe(0);
@@ -178,14 +179,14 @@ describe('endless behavior from actual session inputs', () => {
     expect(summary).toMatchObject({ precisionDamage: 0, scans: 1 });
   });
 
-  it('retains dash attribution when the player switches to repair tool before the late hit', () => {
-    const { session, observed } = fixture({ dash: 1, power: 1 }, [target('dash-body', 620, 500)]);
+  it('retains dash attribution when the player switches to repair before the delayed return slash', () => {
+    const { session, observed } = fixture({ dash: 6, power: 1 }, [target('dash-body', 620, 500)]);
     step(session, { dash: true, moveX: 1, tool: 1 });
-    throughTick(session, 12, { tool: 3 });
+    throughTick(session, 35, { tool: 3 });
     const hits = observed.events.filter(next => next.type === 'TARGET_HIT');
-    expect(hits).toHaveLength(1); expect(hits[0].tick).toBeGreaterThan(1);
-    expect(hits[0].data).toMatchObject({ cause: 'ability', ability: 'dash', tool: 3 });
-    expect(totals(observed, session.state.tick).areaDamage).toBeCloseTo(40 * 1.18);
+    expect(hits).toHaveLength(2); expect(hits[1].tick).toBeGreaterThan(1);
+    expect(hits[1].data).toMatchObject({ cause: 'ability', ability: 'dash', tool: 3 });
+    expect(totals(observed, session.state.tick).areaDamage).toBeCloseTo(55 * 6 * 1.18 * 1.65);
     expect(totals(observed, session.state.tick).precisionDamage).toBe(0);
   });
 

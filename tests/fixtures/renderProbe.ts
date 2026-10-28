@@ -92,11 +92,10 @@ async function run(snapshot: GameState, options: ProbeOptions) {
   const normalCanvas = document.querySelector<HTMLCanvasElement>('#normal')!;
   const lowCanvas = document.querySelector<HTMLCanvasElement>('#low')!;
   const normalRenderer = new Renderer(normalCanvas), lowRenderer = new Renderer(lowCanvas);
+  // Old recorded Canvas revisions have no asynchronous boot; current Phaser textures do.
+  await Promise.all([normalRenderer, lowRenderer].map(renderer =>
+    (renderer as Renderer & { ready?: Promise<void> }).ready));
   normalRenderer.setHudRects(options.hudRects ?? []); lowRenderer.setHudRects(options.hudRects ?? []);
-  const normalContext = normalCanvas.getContext('2d'), lowContext = lowCanvas.getContext('2d');
-  if (!(normalContext instanceof CanvasRenderingContext2D) || !(lowContext instanceof CanvasRenderingContext2D)) {
-    throw new Error('Actual browser CanvasRenderingContext2D is required.');
-  }
   const states = { original: snapshot, normal: structuredClone(snapshot), low: structuredClone(snapshot) };
   const sourceJson = encode(snapshot);
   const baseline = await fingerprints(snapshot);
@@ -117,18 +116,19 @@ async function run(snapshot: GameState, options: ProbeOptions) {
     lowRenderer.render(states.low, aim, { lowEffects: true });
     await observe(frame);
   }
-  // Export the actual backing stores; this captures Canvas2D output without HUD or DOM overlays.
-  const png = { normal: normalCanvas.toDataURL('image/png'), low: lowCanvas.toDataURL('image/png') };
+  // Phaser submits changed sprites/textures on its next render. The browser host captures
+  // the composed canvas pixels, including WebGL without preserveDrawingBuffer.
+  await nextFrame(); await nextFrame();
   await observe(options.frames + 1);
   return {
     pass: observations.every(observation => observation.unchanged),
     seed: snapshot.seed, tick: snapshot.tick, elapsed: snapshot.elapsed, phase: snapshot.phase,
     organ: snapshot.battle?.organId ?? 'training', aliveActors: snapshot.targets.filter(target => target.hp > 0).length,
     framesPerMode: options.frames, aim, baseline, observations, hudProtectionRects: options.hudRects ?? [],
-    canvas: { context: 'real CanvasRenderingContext2D', normal: { width: normalCanvas.width, height: normalCanvas.height },
+    canvas: { context: 'actual browser renderer; canvas captured by the browser host', normal: { width: normalCanvas.width, height: normalCanvas.height },
       low: { width: lowCanvas.width, height: lowCanvas.height }, dpr: devicePixelRatio },
     rendererDiagnostics: { normal: normalRenderer.diagnostics(states.normal), low: lowRenderer.diagnostics(states.low) },
-    png,
+    capture: { normal: '#normal', low: '#low', method: 'Browser canvas element PNG screenshots; no 2D context or direct drawing-buffer export.' },
   };
 }
 

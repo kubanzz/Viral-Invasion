@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-28T05:26:13.561Z",
+  "complete": false,
+  "pass": false,
+  "technicalPass": false,
+  "nativeComplete": false,
+  "scope": [
+    "DERIVED ART COMPOSITIONS: actual current Renderer and embedded art, using detached clones of a serialized GameSession state.",
+    "No GameSession.step(), simulation progression, live main.ts instance, damage/kill acceptance, gameplay input replay or player release state writes.",
+    "A small inspection world, actor positions and selected state fields are explicitly derived and recorded. They are not naturally reached gameplay states.",
+    "Actual browser screenshots and native sprite IDs/frames establish selected presentation. Full before/after JSON and independent SHA-256 checks establish state invariance.",
+    "Technical pass does not accept visual style, readability, continuous animation, organic state transitions, collision reachability, gameplay completion or performance.",
+    "Missing native assets or rejected layer registration stay visible as fallback/missing results. Only --require categories impose completeness gates; optional fallbacks never count as native verification."
+  ],
+  "options": {
+    "build": ".tools/art-batch09-preview03",
+    "output": "artifacts/chatgpt-art-generation-20261028/native-preview03",
+    "input": "",
+    "require": "fission,immune,bite,beacon",
+    "channel": "chrome",
+    "width": 1920,
+    "height": 1080,
+    "dpr": 1,
+    "effects": "both"
+  },
+  "requiredCategories": [
+    "fission",
+    "immune",
+    "bite",
+    "beacon"
+  ],
+  "build": {
+    "directory": ".tools/art-batch09-preview03",
+    "version": "0.8.10",
+    "stage": "G4",
+    "metadataSha256": "cc4e14f404e028b23510d2c7a030a897971e594b83130daff764395612d92b5a",
+    "gameJsSha256": "84e6e5974f05e46a74788c65b2391f06821e523f0fbe361884db9ea0b36ef735",
+    "artSignature": "57cb87662d6f2ef8e7a744b2a7c3f4bbb30b8f211c8b5159f91ecb3303d35905"
+  },
+  "cases": [],
+  "errors": [],
+  "remoteRequests": [],
+  "productionSourceComparison": {
+    "checked": 155,
+    "mismatches": [
+      "src/ui/endlessHud.ts"
+    ],
+    "method": "Every frozen-build sourceManifest entry is independently rehashed from the current workspace, including main, renderer, original selected art, selection and pipeline."
+  },
+  "error": "Frozen build does not match current production sources (1 mismatches).",
+  "finishedAt": "2026-10-28T05:26:13.708Z"
+}

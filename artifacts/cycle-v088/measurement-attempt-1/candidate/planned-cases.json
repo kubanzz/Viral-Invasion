@@ -1,0 +1,170 @@
+{
+  "version": "candidate",
+  "schemaVersion": 1,
+  "scope": "Fixed public-input Node GameSession cadence comparison; not browser, frame performance, human difficulty/fun or retention acceptance.",
+  "seeds": [
+    7,
+    71,
+    19
+  ],
+  "strategies": [
+    "shooting",
+    "area",
+    "immune"
+  ],
+  "goalWaves": 35,
+  "simulationSeconds": 900,
+  "simulationSecondsPerWave": 120,
+  "baselineCases": 9,
+  "candidateCases": 9,
+  "predeterminedReplay": {
+    "version": "candidate",
+    "seed": 71,
+    "strategy": "immune"
+  },
+  "negativeCases": {
+    "seed": 71,
+    "strategy": "noncounter",
+    "simulationSeconds": 180,
+    "policy": "No movement, fire, Q, dash, E or repair; public idle step only. No extra time if no natural defeat."
+  },
+  "totalCases": 21,
+  "retries": 0,
+  "baselineArchive": "releases/Viral-Invasion-SourceCandidate-v0.8.7.zip",
+  "baselineArchiveSha256": "4ffb9e500354574cf6436ba8ddec2196d01470b0bcef58febb429a23f1794560",
+  "baselineManifest": "artifacts/reproduction-v087/attempt-1/frozen-inputs.json",
+  "previousStrategy": "artifacts/late-loop-v079/attempt-2/measurement-script.mjs",
+  "policyChanges": [
+    "Reuse the recorded v079 three-strategy navigation, frozen danger avoidance, repair, Q, dash, E and public protocol selection. Both versions use exactly the same executed policy.",
+    "Remove the immune-only fire withholding clause: active cells never make this driver stop ordinary firing to manufacture cell contribution.",
+    "Filter catalysis and unknown growth IDs before applying the unchanged per-strategy priorities. The optional primer conversion is outside this cadence matrix.",
+    "Run 35 rather than 30 cleared waves, with 900 total and 120 per-wave simulation-second budgets."
+  ],
+  "combatUpgradePriorities": {
+    "shooting": [
+      "multishot",
+      "pierce",
+      "power",
+      "haste",
+      "nova",
+      "immune",
+      "scan",
+      "vitality",
+      "dash"
+    ],
+    "area": [
+      "nova",
+      "haste",
+      "power",
+      "multishot",
+      "pierce",
+      "immune",
+      "scan",
+      "vitality",
+      "dash"
+    ],
+    "immune": [
+      "immune",
+      "scan",
+      "vitality",
+      "power",
+      "haste",
+      "nova",
+      "multishot",
+      "pierce",
+      "dash"
+    ]
+  },
+  "primaryCycleWindows": [
+    "step1->step2:pressure-to-release",
+    "step3->step4:pressure-to-release",
+    "step4->step5:release-to-elite",
+    "step5->next-step1:next-generation-pressure"
+  ],
+  "cycleLabels": {
+    "1": "pressure",
+    "2": "release",
+    "3": "pressure",
+    "4": "release",
+    "5": "elite"
+  },
+  "cycleLabelBoundary": "Labels refer to the planned v088 wave recipe, not a claim that v087 has this cadence or that every human finds these waves hard/easy.",
+  "measurements": [
+    "Per wave actual accepted damage by basic tool/protocol/ability; DPS over total combat and combat with living actors; no raw/planned damage is counted.",
+    "Combat clear duration, final scheduled birth to clear, per-role birth-to-death and first-positive-hit-to-death median/p75, peak population/HP backlog, per-two-second maximum real kills, and empty scheduled/fission waits.",
+    "Real attack commitments/resolutions/interruption, concurrent commitments, and public-step seconds inside already frozen player/tissue danger footprints; no damage is required to count a dodgeable threat.",
+    "Every accepted combat choice records actual ranks, projected stats before/after, offered identity/cap, actual rank delta and supply receipts. Milestone <=2 versus ordinary1 is separately checked for each version.",
+    "Positive accepted immuneCellId TARGET_HIT receipts, real contact and LOS at receipt, same-tick bite-log join, unique targets/kills, target distance at accepted Q and at hit, and long-range accepted commands (>=360 world units). Commands are denominators, never damage.",
+    "Every actual defeat retains the game's exact reason, terminal HP/tissue/infection and recent damage/cast receipts. Budget stops/errors remain distinct from game defeat."
+  ],
+  "technicalAcceptance": [
+    "No state injection: only start, step, chooseDraft (including its offered replacement), chooseCombatUpgrade, cancelResearch and resume. All sources and policies are frozen before their version's first case and unchanged afterward.",
+    "No hidden duplicate births/clears or accepted upgrade IDs; completed public-step live/reserved population <=24, fission parents <=4, total commitments <=3 and each heavy commitment <=1. Every accepted cell hit must be an actual positive HP-loss receipt with a real cell/contact/LOS and matching bite log.",
+    "Every accepted growth choice changes at least one real projected combat stat and reaches its offered actual next rank. Baseline ordinary/milestone delta1; candidate ordinary delta1 and every fifth wave min(2, remaining cap).",
+    "The predetermined candidate71 immune replay must have identical raw JSON bytes. Failure to clear is not masked or replaced."
+  ],
+  "cycleEvidenceCriteria": [
+    "Report all within-generation pressure1->release2 and pressure3->release4 pairs. A measured release contrast requires at least three comparable ordinary bodies in both waves and either >=15% shorter median engaged TTK or >=15% shorter active-combat seconds per real kill; retain both values and composition differences. This is a predeclared observable proxy, not a human fun score.",
+    "Report renewed challenge at release4->elite5 and prior elite5->next pressure1 as separate window classes using raw danger-footprint seconds, actual commitments and HP backlog. A renewal observation requires a greater nonzero commitment count or greater nonzero danger-footprint duration; HP growth alone is not renewal evidence. Wave5->6 is next-generation pressure, never a release label.",
+    "Candidate cycle support is reported per run: at least two complete measured release contrasts and at least two renewal observations across different five-wave generations beyond wave5. Missing, failed or counter-dominated cases remain missing rather than averaged away.",
+    "Immune improvement requires positive accepted distant-target contribution, not a Q count. Compare exact contribution, time-to-first-bite, command success denominators and ordinary firing input under the same fixed policy; zero or non-improvement remains visible.",
+    "Do not force use of2/Q, a minimum damage taken, enemy survival until a companion action, fixed run length, or a win. Natural failures need causal receipts; if none occur, failure-explanation runtime coverage is unobserved."
+  ],
+  "executingCases": [
+    {
+      "seed": 7,
+      "strategy": "shooting",
+      "replay": false
+    },
+    {
+      "seed": 7,
+      "strategy": "area",
+      "replay": false
+    },
+    {
+      "seed": 7,
+      "strategy": "immune",
+      "replay": false
+    },
+    {
+      "seed": 71,
+      "strategy": "shooting",
+      "replay": false
+    },
+    {
+      "seed": 71,
+      "strategy": "area",
+      "replay": false
+    },
+    {
+      "seed": 71,
+      "strategy": "immune",
+      "replay": false
+    },
+    {
+      "seed": 19,
+      "strategy": "shooting",
+      "replay": false
+    },
+    {
+      "seed": 19,
+      "strategy": "area",
+      "replay": false
+    },
+    {
+      "seed": 19,
+      "strategy": "immune",
+      "replay": false
+    },
+    {
+      "seed": 71,
+      "strategy": "noncounter",
+      "replay": false
+    },
+    {
+      "seed": 71,
+      "strategy": "immune",
+      "replay": true
+    }
+  ]
+}

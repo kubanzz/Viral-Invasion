@@ -1,6 +1,7 @@
 import './style.css';
 import { GameSession } from './game/session';
 import { FixedClock } from './core/clock';
+import { MotionInterpolation } from './render/motionInterpolation';
 import { Controller, BINDINGS } from './input/controller';
 import { Renderer } from './render/renderer';
 import { BALANCE, type Tool } from './game/types';
@@ -26,9 +27,12 @@ import { EndlessProfileStore } from './meta/endlessProfile';
 import { endlessCombatStats } from './game/endlessGrowth';
 import type { EndlessUpgradeId } from './game/endlessGrowthTypes';
 import './ui/endless.css';
+import './ui/artTheme.css';
+import { artIconMarkup, installArtIcons } from './ui/artIcons';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
 const app = document.querySelector<HTMLDivElement>('#app')!;
+installArtIcons(document);
 const params = new URL(location.href).searchParams;
 const seedText = params.get('seed');
 const seedParam = seedText !== null && seedText.trim() !== '' ? Number(seedText) : NaN;
@@ -41,7 +45,11 @@ const profile = new ProfileStore();
 const endlessProfile = new EndlessProfileStore();
 const session = new GameSession(initialSeed, { campaign: !trainingFixture, ...newRunOptions(profile.data, firstTrait), milestone });
 const clock = new FixedClock();
+const motion = new MotionInterpolation();
 const renderer = new Renderer(canvas);
+let presentedState = session.state;
+app.inert = true;
+app.setAttribute('aria-busy', 'true');
 const sound = new Soundscape();
 sound.enabled = profile.data.settings.sound;
 let lowEffects = profile.data.settings.lowEffects;
@@ -70,7 +78,7 @@ app.innerHTML = `
     <section class="objective"><div class="eyebrow">TRAINING / 心脏训练场</div><h2 id="objective-title">建立你的第一道防线</h2><ol><li id="step-targets"><span>1</span><span>净化两类靶标 <b id="target-count">0 / 4</b></span></li><li id="step-tissue"><span>2</span><span>修复组织至完整</span></li><li id="step-terminal"><span>3</span><span>靠近复测终端，按 E</span></li></ol></section>
     <aside class="telemetry"><div class="readout"><label>战士耐久 <b id="hp-label">100 / 100</b></label><div class="meter"><i id="hp-meter"></i></div><p>训练靶不会攻击 · 自由练习</p></div><div class="readout"><label>心脏组织 <b id="tissue-label">25%</b></label><div class="meter"><i id="tissue-meter"></i></div><p>使用 3 修复组织节点<br>净化工具不能修复组织</p></div></aside>
     <div class="message" id="message">WASD 移动 · 点击靶标底部的瞄准环</div>
-    <div class="dock-wrap"><div class="ability"><kbd>Space</kbd>冲刺<em id="dash-ready">就绪</em></div><div class="tool-dock">${([[1,'精确净化','单点 · 快速冷却'],[2,'范围裂解','群体 · 94 范围'],[3,'组织修复','治疗 · +25 完整度']] as const).map(([id,title,subtitle])=>`<button class="tool" data-action="tool-${id}" aria-label="${id} ${title}"><kbd>${id}</kbd><strong>${title}</strong><small>${subtitle}</small><i class="charge" id="charge-${id}"></i></button>`).join('')}</div><div class="ability"><kbd>Q</kbd>扫描<em id="scan-ready">就绪</em></div></div>
+    <div class="dock-wrap"><div class="ability"><div class="ability-key">${artIconMarkup('dash')}<kbd>Space</kbd></div><span class="ability-name">冲刺</span><em id="dash-ready">就绪</em></div><div class="tool-dock">${([[1,'精确净化','单点 · 快速冷却'],[2,'牵引裂解','聚拢 · 延迟爆发'],[3,'组织修复','治疗 · +25 完整度']] as const).map(([id,title,subtitle])=>`<button class="tool" data-action="tool-${id}" aria-label="${id} ${title}"><kbd>${id}</kbd><strong>${id===3?artIconMarkup('heal'):''}${title}</strong><small>${subtitle}</small><i class="charge" id="charge-${id}"></i></button>`).join('')}</div><div class="ability"><div class="ability-key">${artIconMarkup('scan')}<kbd>Q</kbd></div><span class="ability-name">扫描</span><em id="scan-ready">就绪</em></div></div>
     <div class="micro-footer">G0 · 基础训练 / 架空生物幻想</div><div class="run-time" id="run-time"></div>
   </main><div id="overlay-host"></div>`;
 if (!trainingFixture) {
@@ -82,8 +90,9 @@ if (!trainingFixture) {
   document.querySelector('.battle-objective')!.insertAdjacentHTML('beforeend', encounterHudMarkup);
   if (session.state.growth) document.querySelector('#hud')!.insertAdjacentHTML('beforeend', growthHudMarkup);
   document.querySelector('#hud')!.insertAdjacentHTML('beforeend', endlessHudMarkup());
-  if (session.state.campaign) document.querySelector('.tool[data-action="tool-2"] small')!.textContent = '群体 · 击退打断';
+  if (session.state.campaign) document.querySelector('.tool[data-action="tool-2"] small')!.textContent = '聚拢 · 延迟爆发';
   document.querySelector('.micro-footer')!.textContent = `${milestone === 'G3' ? 'G4' : milestone} · ${milestone === 'G3' ? '器官联防' : '心脏防线'} / 架空生物幻想`;
+  document.querySelector('.dock-wrap .ability:last-child .ability-name')!.textContent = '扫描 / 召集';
 }
 const input = new Controller(canvas, () => togglePause(), () => {
   if (session.state.phase === 'playing') session.pause();
@@ -272,7 +281,7 @@ function updateOverlay() {
     return;
   }
   if (help) {
-    host.innerHTML = `<div class="overlay"><section class="modal" role="dialog" aria-modal="true" aria-label="操作指南"><div class="eyebrow">FIELD MANUAL / 操作指南</div><h2>小小战士，深入心脏。</h2><p>这是可自由练习的基础训练场。先清除单体与簇群靶，再将组织修复至 100%，靠近下方的复测终端按 E。</p><div class="help-grid">${BINDINGS.map(([key,label])=>`<div><kbd>${key}</kbd>${label}</div>`).join('')}</div><p>点击靶标的底部瞄准环。范围裂解显示真实半径；组织修复只作用于组织。遮挡你的前景会淡化，组织隆起则需要绕行。</p><div class="switches"><button data-action="effects">特效：${lowEffects?'低':'标准'}</button>${state.phase === 'paused'?`<button data-action="practice-hit">受击演练 · 耐久 −${BALANCE.trainingHitDamage}，保底 1</button>`:''}</div><div class="actions"><button class="primary" data-action="close-help">返回${resumeAfterHelp?'训练':'上一级'}</button></div></section></div>`;
+    host.innerHTML = `<div class="overlay"><section class="modal" role="dialog" aria-modal="true" aria-label="操作指南"><div class="eyebrow">FIELD MANUAL / 操作指南</div><h2>小小战士，深入心脏。</h2><p>这是可自由练习的基础训练场。先清除单体与簇群靶，再将组织修复至 100%，靠近下方的复测终端按 E。</p><div class="help-grid">${BINDINGS.map(([key,label])=>`<div><kbd>${key}</kbd>${label}</div>`).join('')}</div><p>点击靶标的底部瞄准环。牵引裂解显示真实半径；组织修复只作用于组织。遮挡你的前景会淡化，组织隆起则需要绕行。</p><div class="switches"><button data-action="effects">特效：${lowEffects?'低':'标准'}</button>${state.phase === 'paused'?`<button data-action="practice-hit">受击演练 · 耐久 −${BALANCE.trainingHitDamage}，保底 1</button>`:''}</div><div class="actions"><button class="primary" data-action="close-help">返回${resumeAfterHelp?'训练':'上一级'}</button></div></section></div>`;
   } else if (state.phase === 'menu') {
     host.innerHTML = `<div class="overlay intro"><section class="intro-card"><div class="eyebrow">A MICROSCOPIC FANTASY · 01</div><h1>Viral<br><span>Invasion</span></h1><h2>病 毒 入 侵</h2><p class="lead">成为巨人体内的微型战士。<br>在有生命的心脏腔室里，练习净化、扫描与修复，为即将到来的进化对抗做准备。</p><div class="mission"><span><b>01</b> 净化靶标</span><span><b>02</b> 修复组织</span><span><b>03</b> 主动复测</span></div><div class="actions"><button class="primary" data-action="start">进入心脏训练场　↗</button><button class="quiet" data-action="help">操作指南</button></div><p class="intro-footnote">G0 可玩切片 · 键鼠操作 · 完全离线<br>WASD 移动 / 鼠标瞄准 / 左键行动</p></section><div class="intro-art-label"><strong>The living chamber.</strong><small>心脏腔室 / 基础训练</small></div></div>`;
   } else if (state.phase === 'paused') {
@@ -317,7 +326,7 @@ function updateHud() {
   refreshHudRects();
 }
 function refreshHudRects() {
-  const point = renderer.camera.worldToScreen(session.state.player), scale = renderer.camera.scale;
+  const point = renderer.camera.worldToScreen(presentedState.player), scale = renderer.camera.scale;
   renderer.setHudRects(readVisibleHudRects(canvas, {
     active: session.state.phase === 'playing', now: performance.now(),
     player: { left: point.x - 27 * scale, right: point.x + 27 * scale, top: point.y - 68 * scale, bottom: point.y + 10 * scale },
@@ -328,6 +337,7 @@ function updateCommonHud() {
   const combat = s.endlessGrowth ? endlessCombatStats(s.endlessGrowth) : undefined;
   document.querySelector('.status-chip')!.textContent = s.endless ? `连续挑战 / ${s.endless.wave}` : s.battle?.organId === 'lung' ? 'LUNG / 02' : 'HEART / 01';
   el('dash-ready').textContent = s.player.dashReady > s.elapsed ? `${(s.player.dashReady-s.elapsed).toFixed(1)}s`:'就绪';
+  el('dash-ready').previousElementSibling!.textContent = combat?.dashDamage ? '冲刺挥斩' : '冲刺';
   el('scan-ready').textContent = s.scanReady > s.elapsed ? `${(s.scanReady-s.elapsed).toFixed(1)}s`:'就绪';
   el('run-time').textContent = `SEED ${s.seed}　 /　${formatTime(s.elapsed)}`;
   document.querySelectorAll<HTMLButtonElement>('.tool').forEach((button,index)=>{
@@ -337,36 +347,59 @@ function updateCommonHud() {
     if (tool === 1) button.querySelector('small')!.textContent = combat ? `${combat.shotRays} 束 · 贯穿 +${combat.pierceCount}` : '单点 · 快速冷却';
     if (tool === 2) {
       const catalytic = (combat?.catalysisDamage ?? 0) > 0;
-      button.querySelector('strong')!.textContent = catalytic ? '催化裂解' : '范围裂解';
-      button.querySelector('small')!.textContent = catalytic ? '直伤≤8 · 1/细胞引爆' : combat ? `范围 ${combat.areaRadius} · 击退` : s.campaign ? '群体 · 击退打断' : '群体 · 94 范围';
+      button.querySelector('strong')!.textContent = catalytic ? '催化牵引' : '牵引裂解';
+      button.setAttribute('aria-label', `2 ${catalytic ? '催化牵引' : '牵引裂解'}`);
+      button.querySelector('small')!.textContent = catalytic ? '直伤≤8 · 1/细胞引爆' : combat ? `聚拢 ${combat.areaGatherRadius} · ${combat.areaGuideDuration ? '可按住导流' : '延迟爆发'}` : '聚拢 · 延迟爆发';
+      if (s.traction) button.querySelector('small')!.textContent = s.traction.stage === 'guiding' ? '拖动鼠标 · 松手引爆' : s.traction.stage === 'aiming' ? '按住导流 / 轻点快放' : '聚拢中 · 即将爆发';
     }
   });
-  document.querySelector('.micro-footer')!.textContent = s.endless ? 'v0.8.11 · 连续进化挑战 / 架空生物幻想' : `${milestone === 'G3' ? 'G4' : milestone} · ${s.battle ? '器官联防' : '基础训练'} / 架空生物幻想`;
+  document.querySelector('.micro-footer')!.textContent = s.endless ? 'v0.9.0 · 连续进化挑战 / 微观绘本' : `v0.9.0 · ${s.battle ? '器官联防' : '基础训练'} / 微观绘本`;
   document.querySelectorAll<HTMLButtonElement>('[data-action="sound"]').forEach(button => { button.textContent = `声音 ${sound.enabled?'开':'关'}`; });
   document.querySelector<HTMLButtonElement>('[data-action="pause"]')!.hidden = s.phase === 'menu' || s.phase === 'result';
 }
 let lastHud = 0;
+let lastFrame: number | undefined;
+let lastCameraScope = '';
+let lastClockRevision = clock.revision;
 function frame(now: number) {
-  renderer.prepareCamera(session.state);
+  // Input is projected through the same camera that produced the last visible frame.
   const aim = renderer.camera.screenToWorld(input.pointer);
-  clock.advance(now, dt => session.step(input.frame(aim), dt), session.state.phase === 'playing');
-  if (resetClockAfterStep) { clock.reset(); resetClockAfterStep = false; }
+  clock.advance(now, dt => motion.step(session.state, () => {
+    session.step(input.frame(aim), dt);
+    renderer.witnessSimulation(session.state);
+  }), session.state.phase === 'playing');
+  if (clock.discontinuity || clock.revision !== lastClockRevision) motion.reset();
+  if (resetClockAfterStep) { clock.reset(); motion.reset(); resetClockAfterStep = false; }
+  lastClockRevision = clock.revision;
   if (migrationGuidePending && session.state.phase === 'playing' && !session.state.growth?.draft && !session.state.growth?.pendingResearch) {
     migrationGuidePending = false; migrationGuideSeen = true; migrationGuide = true; session.pause(); input.clear(); clock.reset();
   }
-  renderer.prepareCamera(session.state);
-  renderer.render(session.state, renderer.camera.screenToWorld(input.pointer), { lowEffects });
+  presentedState = motion.present(session.state, clock.alpha);
+  const cameraScope = `${session.state.seed}:${session.state.runMetrics?.runId ?? session.state.growth?.runId ?? ''}:${session.state.battle?.organId ?? 'training'}:${session.state.phase}`;
+  const dt = lastFrame === undefined ? 0 : Math.max(0, (now - lastFrame) / 1000);
+  renderer.prepareCamera(presentedState, { deltaSeconds: dt, snap: presentedState === session.state || cameraScope !== lastCameraScope || dt > .25 });
+  lastCameraScope = cameraScope; lastFrame = now;
+  renderer.render(presentedState, renderer.camera.screenToWorld(input.pointer), { lowEffects, cameraPrepared: true, authoritativeState: session.state });
   sound.update(session.state);
   updateOverlay();
   if (now-lastHud > 50) { updateHud(); lastHud=now; }
-  requestAnimationFrame(frame);
 }
-window.addEventListener('resize', () => { renderer.resize(); renderer.prepareCamera(session.state); refreshHudRects(); clock.reset(); });
-renderer.resize(); renderer.prepareCamera(session.state); updateOverlay(); updateHud(); requestAnimationFrame(frame);
+window.addEventListener('resize', () => { motion.reset(); presentedState = session.state; renderer.resize(); renderer.prepareCamera(session.state); refreshHudRects(); clock.reset(); });
+renderer.prepareCamera(session.state); updateOverlay(); updateHud();
+renderer.ready.then(() => {
+  app.inert = false; app.removeAttribute('aria-busy');
+  renderer.prepareCamera(session.state); refreshHudRects(); clock.reset(); renderer.startFrameLoop(frame);
+}).catch(error => {
+  app.inert = false; app.removeAttribute('aria-busy');
+  const host = document.querySelector<HTMLElement>('#overlay-host')!;
+  host.innerHTML = '<div class="overlay"><section class="modal"><h2>画面暂未加载完成</h2><p class="art-load-error"></p><button class="primary" id="retry-art">重新加载</button></section></div>';
+  host.querySelector('.art-load-error')!.textContent = error instanceof Error ? error.message : String(error);
+  host.querySelector('#retry-art')!.addEventListener('click', () => location.reload());
+});
 
 // Read-only diagnostics for browser regression. Inputs always use the real DOM.
 Object.defineProperty(window, '__viral', { value: Object.freeze({
-  version: '0.8.11-G4', snapshot: () => session.snapshot(),
+  version: '0.9.0-G4', snapshot: () => session.snapshot(),
   toScreen: (point: { x: number; y: number }) => renderer.camera.worldToScreen(point),
   toWorld: (point: { x: number; y: number }) => renderer.camera.screenToWorld(point),
   diagnostics: () => renderer.diagnostics(session.state),

@@ -186,6 +186,7 @@ describe('real session continuous challenge loop', () => {
     expect(children).toHaveLength(2); expect(children.every(child => child.generation === 1 && child.sourceId === parent.sourceId)).toBe(true);
     expect(s.endless!.phase).toBe('combat'); expect(s.endless!.pendingChildren).toBe(0);
     session.step({ ...idle({ x: parent.x, y: parent.y }), tool: 2, fire: true });
+    for (let tick = 0; tick < 18 && s.phase === 'playing'; tick++) session.step(idle());
     expect(children.every(child => child.hp === 0 && child.splitAt === undefined)).toBe(true);
     expect(s.endless!.clearedWaves).toBe(10); expect(s.endless!.kills).toBe(3); expect(s.phase).toBe('paused');
     expect(s.events.filter(event => event.type === 'ENDLESS_WAVE_CLEARED')).toHaveLength(1);

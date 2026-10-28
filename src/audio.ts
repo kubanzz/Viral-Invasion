@@ -29,7 +29,14 @@ export class Soundscape {
     const index = this.lastEvent ? state.events.indexOf(this.lastEvent) : -1;
     for (const event of state.events.slice(index + 1)) {
       const type = event.type;
-      if (/SHOT|TOOL_USED|TARGET_HIT/.test(type)) this.cue('hit', event.tick, 4, () => this.tone(520, .045, .025, 270));
+      if (type === 'TOOL_FIRED') this.cue('fire', event.tick, 4, () => {
+        // One short, distinguishable launch cue per accepted action. Impact and
+        // successful repair have separate, rate-limited cues below.
+        if (event.data.tool === 1) this.tone(820, .06, .022, 390);
+        else if (event.data.tool === 2) this.tone(230, .09, .018, 430);
+        else if (event.data.tool === 3) this.tone(560, .09, .018, 830);
+      });
+      if (type === 'TARGET_HIT') this.cue('hit', event.tick, 4, () => this.tone(520, .045, .025, 270));
       if (/CLEARED|DESTROYED/.test(type)) this.cue('clear', event.tick, 10, () => { this.tone(660, .13, .045, 990); this.tone(990, .18, .02, 1320); });
       if (/SCAN/.test(type)) this.cue('scan', event.tick, 12, () => this.tone(180, .25, .025, 720));
       if (type === 'ORGAN_INTEGRITY_CHANGED') {
@@ -40,12 +47,21 @@ export class Soundscape {
           else if (after < before) this.cue('organ-damage', event.tick, 20, () => this.tone(250, .14, .025, 130));
         }
       }
-      if (type === 'PROTOCOL_EQUIPPED') this.cue('evolution', event.tick, 18, () => {
+      if (type === 'PROTOCOL_EQUIPPED' || type === 'COMBAT_UPGRADE_COMMITTED') this.cue('evolution', event.tick, 18, () => {
         this.tone(660, .07, .025, 720);
         this.tone(880, .07, .025, 990, .07);
         this.tone(1100, .12, .025, 1320, .14);
       });
+      if (type === 'COMBAT_ABILITY_TRIGGERED' && event.data.ability === 'dash') this.cue('blade', event.tick, 10, () => {
+        this.tone(1350, .14, .035, 180);
+        if (Number(event.data.hits) > 0) this.tone(110, .1, .03, 60, .025);
+      });
+      if (type === 'TRACTION_STARTED') this.cue('traction', event.tick, 12, () => this.tone(160, .25, .025, 420));
+      if (type === 'VIRAL_CAPSULE_RELEASED') this.cue('capsule', event.tick, 18, () => {
+        this.tone(350, .08, .025, 490); this.tone(350, .08, .025, 490, .1);
+      });
       if (type === 'PLAYER_HURT') this.cue('player-hurt', event.tick, 6, () => this.tone(210, .2, .035, 90));
+      if (type === 'PLAYER_DASHED') this.cue('dash', event.tick, 10, () => this.tone(480, .12, .018, 180));
       if (type === 'RUN_ENDED') this.cue('result', event.tick, 60, () => this.tone(440, .65, .04, 880));
     }
     this.lastEvent = state.events.at(-1);

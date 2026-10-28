@@ -4,16 +4,33 @@ import{GameSession}from'../../src/game/session';
 import{g3Input}from'../helpers/g3Driver';
 import{type TraitId}from'../../src/game/battleTypes';
 import{type ProtocolId,type DraftIntent}from'../../src/game/growthTypes';
+import{distance,normalized,wallHit}from'../../src/actors/collision';
+import{activeWorld}from'../../src/game/types';
+import{TRACTION_BALANCE}from'../../src/game/traction';
 
 const counters:Record<TraitId,readonly ProtocolId[]>={CARAPACE:['PULSE_BREAK'],FISSION:['PURIFY_CHAIN','IMMUNE_BEACON'],MIMIC:['EXPOSE_TRACE','IMMUNE_BEACON']};
 const runs:unknown[]=[];
 describe('formal campaign with deliberately unhelpful current-threat drafts',()=>{
   it.each<TraitId>(['CARAPACE','FISSION','MIMIC'])('can win the full %s case through base counters and legal noncounter picks',firstTrait=>{
     const game=new GameSession(91,{campaign:true,milestone:'G3',counterGuide:'adaptive',firstTrait});game.start();
-    const choices:unknown[]=[];
+    const choices:unknown[]=[];let acceptedTool2=0;
     for(let action=0;action<300*60&&game.state.phase!=='result';action++){
       const state=game.state,growth=state.growth!,battle=state.battle!,draft=growth.draft;
-      if(!draft){game.step(g3Input(state,'pursue'));continue;}
+      if(!draft){
+        const input=g3Input(state,'pursue');
+        // Tool 2 is an edge-triggered cast: an out-of-range press does not
+        // automatically retry while held. Approach with tool 1, then tap and
+        // release tool 2 on a human-scale cadence at a legal, visible point.
+        if(input.tool===2&&input.fire){
+          const gap=distance(state.player,input.aim),direction=normalized(input.aim.x-state.player.x,input.aim.y-state.player.y);
+          const wall=wallHit(state.player,direction,gap,activeWorld(state));
+          if(gap>TRACTION_BALANCE.range||(wall!==null&&wall<gap-1))input.tool=1;
+          else if(state.tick%12!==0)input.fire=false;
+        }
+        game.step(input);
+        acceptedTool2+=game.state.events.filter(event=>event.tick===game.state.tick&&event.type==='TOOL_FIRED'&&event.data.tool===2).length;
+        continue;
+      }
       const known=[...new Set([firstTrait,...battle.traits,...battle.warning?[battle.warning.trait]:[]])];
       const excluded=[...new Set(known.flatMap(trait=>counters[trait]))];
       const option=draft.options.find(candidate=>!excluded.includes(candidate.protocolId));
@@ -33,8 +50,9 @@ describe('formal campaign with deliberately unhelpful current-threat drafts',()=
     const final=game.snapshot();expect(final.result).toMatchObject({success:true});expect(final.campaign!.core.status).toBe('cleared');expect(final.campaign!.stats.migrationChoice).toBe('pursue');
     expect(final.battle!.encounter!.configId).toBe('campaign-1');expect(final.battle!.stats.sourceClears).toBeGreaterThanOrEqual(4);expect(final.battle!.stats.eliteClears).toBe(2);
     expect(final.battle!.pressure.infection).toBeLessThan(35);expect(Object.values(final.campaign!.arenas).filter(arena=>arena.activated).every(arena=>arena.tissue.hp>=50)).toBe(true);
+    expect(acceptedTool2).toBeGreaterThan(0);
     expect(choices.length).toBeGreaterThanOrEqual(2);expect(choices.some(choice=>(choice as{selected:unknown}).selected!==null)).toBe(true);
-    runs.push({seed:91,firstTrait,result:final.result,elapsed:final.elapsed,actualTraits:final.battle!.traits,core:final.campaign!.core.status,progress:final.campaign!.progress,choices});
+    runs.push({seed:91,firstTrait,result:final.result,elapsed:final.elapsed,actualTraits:final.battle!.traits,core:final.campaign!.core.status,progress:final.campaign!.progress,acceptedTool2,choices});
     const path=resolve(process.env.VI_FORMAL_NONCOUNTER_REPORT??'artifacts/unit-generated/formal-noncounter-unit-first.json');mkdirSync(dirname(path),{recursive:true});
     writeFileSync(path,JSON.stringify({complete:runs.length===3,method:'Full formal TypeScript campaign through public InputFrame/DraftIntent only. Every choice avoids first/current/warned threat counters; no future outcomes are read. Discard is used only when no valid noncounter candidate exists.',scope:'Three explicit first-trait cases, not1000 adversarial cases or real browsers. Earlier equipment can incidentally counter a later unknown trait; this fact is retained, never called a future-proof noncounter build.',runs},null,2));
   });

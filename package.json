@@ -1,6 +1,6 @@
 {
   "name": "viral-invasion",
-  "version": "0.8.11",
+  "version": "0.9.0",
   "viralInvasionStage": "G4",
   "private": true,
   "type": "module",
@@ -11,7 +11,13 @@
     "build": "npm run typecheck && node scripts/build-offline.mjs",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "test:all": "npm test && npm run build && npm run test:e2e"
+    "test:all": "npm test && npm run build && npm run test:e2e",
+    "art:sync": "node scripts/art-sync.mjs",
+    "art:check": "node scripts/art-sync.mjs --check",
+    "predev": "node scripts/art-sync.mjs",
+    "prebuild": "node scripts/art-sync.mjs",
+    "pretypecheck": "node scripts/art-sync.mjs",
+    "pretest": "node scripts/art-sync.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",
@@ -20,5 +26,9 @@
     "typescript": "^5.9.3",
     "vite": "^8.3.5",
     "vitest": "^5.0.5"
+  },
+  "dependencies": {
+    "phaser": "4.2.1",
+    "sharp": "0.35.5"
   }
 }

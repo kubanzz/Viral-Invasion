@@ -44,7 +44,9 @@ describe('committed melee attacks respect real cover', () => {
   it.each(['campaign', 'endless'] as const)('still hurts the same %s movement inside the committed circle when no cover blocks it', mode => {
     const f = fixture(false, mode); f.advance(1); const deadline = f.enemy.attackAt!;
     f.advance(19, 1); while (f.s.elapsed <= deadline + .01) f.advance(1);
-    expect(f.s.player.hp).toBe(93);
+    const damage = mode === 'endless' ? 10 : 7;
+    expect(f.s.player.hp).toBe(100 - damage);
     expect(f.events.filter(event => event.type === 'PLAYER_HURT')).toHaveLength(1);
+    expect(f.events.find(event => event.type === 'PLAYER_HURT')?.data.damage).toBe(damage);
   });
 });

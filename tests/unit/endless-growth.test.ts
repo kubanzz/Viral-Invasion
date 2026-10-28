@@ -87,12 +87,12 @@ describe('continuous endless upgrades', () => {
 
   it('projects distinct attack, movement, Q, immune and capacity changes with explicit bounded mechanics', () => {
     const growth = createEndlessGrowth(1), base = endlessCombatStats(growth);
-    expect(base).toMatchObject({ damageMultiplier: 1, shotRays: 1, pierceCount: 0, areaRadius: 94, primaryCooldown: .18,
-      areaCooldown: 1.2, dashDamage: 0, scanDamage: 0, maxHp: 100, cellDamageMultiplier: 1, scanCooldown: 3, cellDurationBonus: 0, cellCooldownMultiplier: 1, catalysisDamage: 0 });
+    expect(base).toMatchObject({ damageMultiplier: 1, shotRays: 1, pierceCount: 0, areaRadius: 96, areaGatherRadius: 130, areaGuideDuration: 0, primaryCooldown: .18,
+      areaCooldown: 2, dashDamage: 0, scanDamage: 0, maxHp: 100, cellDamageMultiplier: 1, scanCooldown: 3, cellDurationBonus: 0, cellCooldownMultiplier: 1, catalysisDamage: 0 });
     growth.ranks = { power: 2, multishot: 2, pierce: 3, nova: 6, dash: 1, scan: 1, vitality: 3, haste: 7, immune: 2 };
     const upgraded = endlessCombatStats(growth);
-    expect(upgraded).toMatchObject({ shotRays: 5, pierceCount: 3, areaRadius: 178, areaCooldown: .6, primaryCooldown: .1,
-      dashDamage: 40, scanDamage: 30, maxHp: 160, cellDurationBonus: 2.5 });
+    expect(upgraded).toMatchObject({ shotRays: 5, pierceCount: 3, areaRadius: 180, areaGatherRadius: 214, areaGuideDuration: .85, areaCooldown: 2, primaryCooldown: .1,
+      dashDamage: 55, scanDamage: 30, maxHp: 160, cellDurationBonus: 2.5 });
     expect(upgraded.damageMultiplier).toBeCloseTo(1.36);
     expect(upgraded.areaDamageMultiplier).toBeCloseTo(1.9);
     expect(upgraded.cellDamageMultiplier).toBeCloseTo(1.4);
@@ -126,7 +126,7 @@ describe('continuous endless upgrades', () => {
     const stats = endlessCombatStats(growth);
     expect(Object.values(stats).every(Number.isFinite)).toBe(true);
     expect(stats.primaryCooldown).toBeGreaterThanOrEqual(.1);
-    expect(stats.areaCooldown).toBeGreaterThanOrEqual(.6);
+    expect(stats.areaCooldown).toBeGreaterThanOrEqual(2);
     expect(stats.scanCooldown).toBeGreaterThanOrEqual(1.5);
     expect(stats.cellCooldownMultiplier).toBeGreaterThanOrEqual(.5);
     expect(stats.cellDurationBonus).toBeLessThanOrEqual(8);

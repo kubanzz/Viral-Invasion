@@ -55,7 +55,10 @@ describe('formal research pause and transaction ownership', () => {
     const session = start(); collectSamples(session);
     const credits = session.state.growth!.research, serial = session.state.growth!.draftSerial;
     const first = request(session), before = session.snapshot();
-    expect(first.offer.directions).toEqual(['general']);
+    // Sample acquisition uses real Q input; this deterministic route has
+    // already diagnosed CARAPACE before reaching the research node.
+    expect(before.growth!.rewardedKeys).toContain('diagnose:CARAPACE');
+    expect(first.offer.directions).toEqual(['general', 'CARAPACE']);
     expect(before.growth!.research).toBe(credits); expect(before.growth!.draftSerial).toBe(serial);
     session.resume(); session.step({ ...idle(first.node), fire: true, scan: true, interact: true });
     expect(session.snapshot()).toEqual(before);

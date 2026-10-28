@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "version": "0.8.1",
+  "gameJsSha256": "4d245ac6bf8d766538cad1602515f1475e24c42db2277fc010eca66e1cff4a4d",
+  "buildMetaSha256": "877508bd655e3ebad920bbf1ee90e7a797d04d771f27d4ef3c02b9a2ba129543",
+  "reviewers": ["root", "theme_polish"],
+  "reviewKind": "AI inspection of saved actual-renderer PNGs; not a human player acceptance test",
+  "browserReports": ["clean-browser-1366/report.json", "clean-browser-1920/report.json"],
+  "derivedReport": "readability-clean-body/report.json",
+  "inspected": {
+    "occlusion": ["behind-left-shot.png", "behind-right-shot.png", "front-left-shot.png", "front-right-shot.png"],
+    "danger": ["thin-ray-normal.png", "thin-ray-low.png", "crystal-charge-normal.png", "crystal-charge-low.png", "fission-burst-normal.png", "fission-burst-low.png", "mimic-corrosion-normal.png", "mimic-corrosion-low.png"],
+    "silhouettes": "silhouettes-64px-alpha.png",
+    "liveHudExample": "clean-browser-1366/chrome-dpr1/campaign-playing.png"
+  },
+  "findings": [
+    "The combat body is empty-handed in both mirrored firing cases. Only the independent tool remains; no second baked gun was visible.",
+    "Raised obstacles fade behind the player and retain full opacity in front, as supported by native Sprite alpha and actual texture-alpha intersection measurements.",
+    "All eight danger images retain visible boundaries, progress cues and essential captions in the inspected normal/low examples.",
+    "The five actual-alpha silhouettes are distinct as technical shapes; no new-player recognition rate is inferred."
+  ],
+  "limitations": [
+    "The four occlusion and eight danger images use artificially positioned clones of a recorded real state. They are not naturally observed gameplay scenarios and have no production DOM HUD.",
+    "The mimic-corrosion derived case places the hero on the tissue node; the tissue covers much of the torso while the head, tool and foot ring remain visible. This is a recorded boundary, not proof that every actor stays unobscured.",
+    "Complete multi-direction continuous animation, missing mother/immune/FISSION artwork, human recognition and commercial incubation outcomes are not established by these images."
+  ],
+  "passForInspectedTechnicalScope": true
+}

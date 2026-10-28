@@ -71,14 +71,27 @@ export class GrowthVisuals {
     ctx.restore();
   }
 
-  drawBeacon(ctx: CanvasRenderingContext2D, state: GameState, growth: GrowthState | undefined, labels?: SceneLabelSink): void {
+  /** Squad information only; suitable above either a native PNG or the fallback body. */
+  drawBeaconLabel(ctx: CanvasRenderingContext2D, state: GameState, growth: GrowthState | undefined, labels?: SceneLabelSink): void {
     const beacon = growth?.beacon;
     if (!beacon || beacon.organId !== state.battle?.organId || beacon.until <= state.elapsed) return;
     const count = (growth?.cells ?? []).filter(cell => cell.beaconId === beacon.id && cell.organId === state.battle?.organId && cell.until > state.elapsed).length;
     if (labels) {
       labels.add({ id: `squad:${beacon.id}`, anchor: beacon, offset: { x: 0, y: -59 }, priority: 60,
         lines: [{ text: `${beacon.mode === 'patrol' ? '✚ 免疫侦巡' : '✚ 灯塔小队'} ×${count} · ${(beacon.until - state.elapsed).toFixed(1)}s`, color: '#c3efd5', size: 11 }] });
-    } else drawImmuneSquadLabel(ctx, beacon, count, beacon.mode === 'patrol');
+    } else {
+      drawImmuneSquadLabel(ctx, beacon, count, beacon.mode === 'patrol');
+      if (beacon.mode !== 'patrol') {
+        ctx.save(); ctx.translate(beacon.x, beacon.y); ctx.scale(1, 1 / .72);
+        label(ctx, `✚ 灯塔 ${(beacon.until - state.elapsed).toFixed(1)}s`, 0, 24, '#c3efd5', 10); ctx.restore();
+      }
+    }
+  }
+
+  drawBeacon(ctx: CanvasRenderingContext2D, state: GameState, growth: GrowthState | undefined, labels?: SceneLabelSink): void {
+    const beacon = growth?.beacon;
+    if (!beacon || beacon.organId !== state.battle?.organId || beacon.until <= state.elapsed) return;
+    this.drawBeaconLabel(ctx, state, growth, labels);
     if (beacon.mode === 'patrol') return;
     ctx.save(); ctx.translate(beacon.x, beacon.y); ctx.scale(1, 1 / .72);
     ctx.beginPath(); ctx.ellipse(0, 2, 22, 8, 0, 0, TAU); ctx.fillStyle = '#284f4e'; ctx.fill(); ctx.strokeStyle = '#9bd8bc'; ctx.lineWidth = 1.5; ctx.stroke();
@@ -87,7 +100,6 @@ export class GrowthVisuals {
     const y = -38 + Math.sin(state.elapsed * 3) * 1.5;
     ctx.beginPath(); ctx.roundRect(-10, y - 10, 20, 20, 6); ctx.fillStyle = '#e3f3d6'; ctx.fill(); ctx.strokeStyle = '#4f9a89'; ctx.stroke();
     line(ctx, { x: -5, y }, { x: 5, y }, '#428e7d', 3); line(ctx, { x: 0, y: y - 5 }, { x: 0, y: y + 5 }, '#428e7d', 3);
-    if (!labels) label(ctx, `✚ 灯塔 ${(beacon.until - state.elapsed).toFixed(1)}s`, 0, 24, '#c3efd5', 10);
     ctx.restore();
   }
 

@@ -43,7 +43,7 @@ export interface EnemySpacingOptions {
  * This returns positions only, leaving application and combat order to host.
  */
 export function planEnemySpacing(targets: readonly Target[], world: WorldGeometry, options: EnemySpacingOptions): ReadonlyMap<string, Vec> {
-  const live = targets.filter(target => target.hp > 0).slice().sort(byId);
+  const live = targets.filter(target => target.hp > 0 && target.role !== 'capsule').slice().sort(byId);
   const fixed = (target: Target) => target.role === 'source' || target.role === 'core'
     || target.attackAt !== undefined || target.charge !== undefined || target.recoverUntil !== undefined || !!options.isMigrating?.(target);
   const result = new Map<string, Vec>();
@@ -95,7 +95,7 @@ export function planEnemySpacing(targets: readonly Target[], world: WorldGeometr
  * the exact existing static-collision trajectory is returned.
  */
 export function moveEnemyThroughCrowd(target: Target, delta: Vec, targets: readonly Target[], world: WorldGeometry): Vec {
-  const live = targets.filter(other => other.hp > 0 && other.id !== target.id).slice().sort(byId);
+  const live = targets.filter(other => other.hp > 0 && other.role !== 'capsule' && other.id !== target.id).slice().sort(byId);
   const allowed = (point: Vec) => live.every(other => {
     const minimum = Math.min(target.radius + other.radius + ENEMY_CROWD.gap, distance(target, other));
     return distance(point, other) >= minimum - EPSILON;

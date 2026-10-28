@@ -1,0 +1,69 @@
+{
+  "version": "0.9.0",
+  "work": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\combat-v090-release-2",
+  "startedAt": "2026-10-28T07:02:03.540Z",
+  "status": "running",
+  "commands": [
+    {
+      "label": "01-install",
+      "command": [
+        "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+        "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\node_modules\\npm\\bin\\npm-cli.js",
+        "ci",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\combat-v090-release-2",
+      "startedAt": "2026-10-28T07:02:03.564Z",
+      "status": "passed",
+      "exitCode": 0,
+      "finishedAt": "2026-10-28T07:02:26.936Z",
+      "log": "01-install.log",
+      "logSha256": "d665390e1e84b16b8b346e00ad50d24b4a6dead4f9ee939398bfcfb1e6736ccd"
+    },
+    {
+      "label": "02-build",
+      "command": [
+        "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+        "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\node_modules\\npm\\bin\\npm-cli.js",
+        "run",
+        "build"
+      ],
+      "cwd": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\combat-v090-release-2",
+      "startedAt": "2026-10-28T07:02:26.947Z",
+      "status": "passed",
+      "exitCode": 0,
+      "finishedAt": "2026-10-28T07:02:48.276Z",
+      "log": "02-build.log",
+      "logSha256": "2a654e612cd0b87e469bf8c788f87729a7c355cb32d2f0e5e123631ba633394b"
+    },
+    {
+      "label": "03-rules",
+      "command": [
+        "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+        "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\node_modules\\npm\\bin\\npm-cli.js",
+        "test",
+        "--",
+        "--exclude",
+        "tests/unit/full-system-seeds.test.ts",
+        "--maxWorkers=2",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\combat-v090\\release-attempt-2\\unit.json"
+      ],
+      "cwd": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\combat-v090-release-2",
+      "startedAt": "2026-10-28T07:02:48.300Z",
+      "status": "running"
+    }
+  ],
+  "mainDistBefore": "27a37e8a83be3b077037991e05826970629cfca01d83ce07dee5cd30e6e8b4ae",
+  "scope": "Independent dependency install and frozen source build/nonbatch rules for landing blade/traction/capsule and fixed challenge strikes; frozen old art/rendering. No new1000 campaign batch, performance, or human acceptance.",
+  "dependencies": {
+    "esbuild": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\combat-v090-release-2\\node_modules\\esbuild\\lib\\main.js",
+    "vitest": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\combat-v090-release-2\\node_modules\\vitest\\index.cjs",
+    "phaser": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\combat-v090-release-2\\node_modules\\phaser\\dist\\phaser.js",
+    "sharp": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\combat-v090-release-2\\node_modules\\sharp\\dist\\index.cjs"
+  },
+  "gameSha256": "eb331aae62b7d6f3bfb7fa8ab153583bdd94e4bad0ac8bde21842f1fc79a6d18",
+  "buildInputs": 150
+}

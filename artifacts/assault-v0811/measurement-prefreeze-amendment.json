@@ -1,0 +1,73 @@
+{
+  "at": "2026-10-28T05:38:44.172Z",
+  "preparedOnly": true,
+  "gameCompilation": false,
+  "simulationRuns": 0,
+  "authorization": "Coordinator confirmed exact fixed19+3 once, overall release frozen; no strategy/seed/budget change.",
+  "sourceOriginSha256": "2bce4e511b780321737181e4f577848be8410b83c1a3b3eac6af15f106effa7e",
+  "sourceCount": 51,
+  "frozenSourceReceiptSha256": "a05dc21d40ff5615fdbf3e2c2a9839ac4c98dd645ff2a1c76bb9c3bd66aa5da1",
+  "previousPreparationBindings": {
+    "plan.json": {
+      "bytes": 6138,
+      "sha256": "b49f2442987d807293413c04920946c1e3f2947e4b19ce20d557a94a7924a34a"
+    },
+    "measure.mjs": {
+      "bytes": 13891,
+      "sha256": "8a37f77e0cdded71fee5214f887e332a1329db2d25e713b81bd29cc2b4218233"
+    },
+    "assault-observer.mjs": {
+      "bytes": 15339,
+      "sha256": "6f5994ac6d2e0933fca6557eea70e6bafe3fbf8c87d634ff69c1521503ab94ed"
+    },
+    "guard-source-route.mjs": {
+      "bytes": 4373,
+      "sha256": "53731eb231783edcec29a9222b48c253cd09fddd631eb0ac8a3161b14d8c1d75"
+    },
+    "prepare.mjs": {
+      "bytes": 2686,
+      "sha256": "5e1d82c2f333d058ae624d07bbf7f1f410d3507e80be3100e4486e5f0aa60446"
+    },
+    "analyze.mjs": {
+      "bytes": 9041,
+      "sha256": "1bec02487378f09ebc88a87a3658fc4b6b447b10efe219e71be9687ffb142fc6"
+    }
+  },
+  "bindings": {
+    "plan.json": {
+      "bytes": 6138,
+      "sha256": "b49f2442987d807293413c04920946c1e3f2947e4b19ce20d557a94a7924a34a"
+    },
+    "measure.mjs": {
+      "bytes": 13891,
+      "sha256": "8a37f77e0cdded71fee5214f887e332a1329db2d25e713b81bd29cc2b4218233"
+    },
+    "assault-observer.mjs": {
+      "bytes": 15783,
+      "sha256": "e6c3ef7588add48909b570fad2721e3d4f47dc0e6461d084ac1119897033fb18"
+    },
+    "guard-source-route.mjs": {
+      "bytes": 4453,
+      "sha256": "2891dc723094d5a7dc2a92b287d2e0af376d0c0a4470ecb51d92e8e16be449be"
+    },
+    "analyze.mjs": {
+      "bytes": 9041,
+      "sha256": "1bec02487378f09ebc88a87a3658fc4b6b447b10efe219e71be9687ffb142fc6"
+    },
+    "freeze-input.mjs": {
+      "bytes": 3978,
+      "sha256": "cb5e7a0debeaa18cdbba4cfca10c1f6a41f9552ab3cc0f37d33e059688e04add"
+    }
+  },
+  "observationBoundaryAmendment": "Before all compilation/runs, final gameplay API renamed guard event until to plannedUntil. Record plan separately; actual guard expiry is read only from live state beacon.until, including host existing growth bonus after public step. No event planned damage is promoted to actual damage.",
+  "changedPreparedFiles": [
+    "assault-observer.mjs: actual beacon state at event and completed public step, no equality with plannedUntil.",
+    "guard-source-route.mjs: record plannedUntil separately; route always checks actual state beacon.until."
+  ],
+  "unchanged": [
+    "Registered plan",
+    "Exact original shared26-wave policy",
+    "New route decisions",
+    "Seeds,groups,budgets,failed-case stop rule"
+  ]
+}

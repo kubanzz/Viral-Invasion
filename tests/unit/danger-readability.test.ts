@@ -6,7 +6,7 @@ import { MotherCoreController } from '../../src/game/motherCore';
 import type { MotherCoreAttack } from '../../src/game/motherCoreTypes';
 import { activeWorld, type GameState, type Vec } from '../../src/game/types';
 import { drawEncounterDangers, drawEncounterGround, drawEncounterSignals } from '../../src/render/encounterVisuals';
-import { Renderer } from '../../src/render/renderer';
+import { CanvasScene as Renderer } from '../../src/render/canvasScene';
 import { Camera } from '../../src/render/camera';
 import type { SceneLabelSink } from '../../src/render/sceneLabels';
 

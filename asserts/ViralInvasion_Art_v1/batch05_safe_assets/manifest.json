@@ -1,0 +1,53 @@
+{
+  "release": "batch05 - original safe procedural art + retained selected hand-painted medic",
+  "camera": "3/4 hand-drawn illusion; logical collision world XY",
+  "statuses": {
+    "heart_valve": [
+      "props/heart_valve_closed_registered.png",
+      "props/heart_valve_open_registered.png"
+    ],
+    "lung_gate": [
+      "lung/airway_gate_closed.png",
+      "lung/airway_gate_open.png"
+    ],
+    "tissue": [
+      "tissue/tissue_node_unstable.png",
+      "tissue/tissue_node_restored.png"
+    ]
+  },
+  "layerRecommendations": {
+    "player": "entities / feetY order",
+    "infection_source": "entities",
+    "tissue_nodes": "entities/props",
+    "heart_valve": "entities/props",
+    "lung_floor": "terrain ground",
+    "lung_far_wall": "far scenery overlay / rear decoration, transparent",
+    "alveoli": "foreground edge or scenery props",
+    "lung_gate": "entities/props"
+  },
+  "notes": [
+    "Status pairs share exactly the same 800x800 silhouette and anchor; only the interior visuals change.",
+    "Graphics generated for fantasy game (no literal wounds or anatomical trauma).",
+    "All standalone object exports have RGBA transparency; only lung floor is opaque.",
+    "Procedural assets are game-ready functional prototypes, not painted master assets.",
+    "Selected hero is an existing hand-painted visual reference and may not contain animation sequences."
+  ],
+  "availableSpriteAnimationPrototypes": {
+    "idle_breathe": {
+      "frames": 4,
+      "directory": "player/idle_frames",
+      "fps": 4,
+      "note": "programmatically transformed static sprite, not hand drawn animation"
+    },
+    "move_bob": {
+      "frames": 4,
+      "directory": "player/move_placeholders",
+      "fps": 8,
+      "note": "temporary bob/tilt only, legs do not alternate; needs bespoke walking art"
+    }
+  },
+  "availableVFX": [
+    "fx/scan_pulse_frames/",
+    "fx/heal_pulse_frames/"
+  ]
+}

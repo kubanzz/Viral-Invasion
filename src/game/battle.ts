@@ -1,6 +1,6 @@
 import { clamp, distance, moveWithCollision, normalized, wallHit } from '../actors/collision';
 import { SeedRng } from '../core/rng';
-import { activeWorld, BALANCE, type Effect, type GameEvent, type GameState, type InputFrame, type MessagePriority, type Target, type Vec } from './types';
+import { activeWorld, BALANCE, type Effect, type GameEvent, type GameState, type InputFrame, type MessagePriority, type Target, type Tool, type Vec } from './types';
 import type { BattleState, CampaignOptions, TraitId } from './battleTypes';
 import { BATTLE_BALANCE as B, TRAITS } from './battleConfig';
 import { recordBehavior, chooseEvolution } from './evolution';
@@ -10,11 +10,13 @@ import { acceptedFirstCounter } from './counterLesson';
 import { ENEMY_CROWD, moveEnemyThroughCrowd, planEnemySpacing } from '../actors/enemyCrowd';
 import { endlessCombatStats } from './endlessGrowth';
 import { endlessPacing } from './endlessPacing';
+import { endlessStrikeDamage } from './endlessStrikeBalance';
 import { EnemyNavigator } from '../actors/enemyNavigation';
 import { enemyAttackPlan, enemyAttackHits, enemyRayEnd, segmentDistance } from './enemyTactics';
 import { standoffMotion } from './enemyPositioning';
 import { updateEnemyFacing } from './enemyFacing';
 import { activeEliteTacticCycle, commitEliteTactic, finishEliteTactic, prepareEliteTactic } from './eliteTacticCycle';
+import { advanceViralCapsuleCarrier, advanceViralCapsules, releaseViralCapsule, terminateViralCapsule, type ViralCapsuleHost } from './viralCapsules';
 
 export interface BattleHost {
   state: GameState;
@@ -161,11 +163,11 @@ export class BattleDirector {
     this.host.message(`诊断 ${count} 个感染体。◇ 晶壳绕后/冲流；⋈ 裂殖用 2；◌ 潜伏用 Q/组织修复。`, 6);
   }
 
-  modifiedDamage(target: Target, damage: number): number {
+  modifiedDamage(target: Target, damage: number, tool: Tool = this.s.tool): number {
     if (target.traits?.includes('CARAPACE') && (target.exposedUntil ?? 0) <= this.s.elapsed) {
       const incoming = Math.atan2(this.s.player.y - target.y, this.s.player.x - target.x);
       const frontal = Math.cos(incoming - (target.facing ?? 0)) > .2;
-      if (frontal && this.s.tool === 1) {
+      if (frontal && tool === 1) {
         this.host.emit('CARAPACE_RESISTED', { id: target.id, raw: damage, actual: damage * B.carapaceResistance });
         return damage * B.carapaceResistance;
       }
@@ -175,6 +177,7 @@ export class BattleDirector {
 
   cleared(target: Target): void {
     const { s, b } = this;
+    if (target.role === 'capsule') { terminateViralCapsule(this.capsuleHost(), target); return; }
     target.deadAt = s.elapsed;
     target.attackAt = undefined;
     target.attackAim = undefined;
@@ -189,6 +192,10 @@ export class BattleDirector {
     if (fission) {
       target.splitAt = s.elapsed + B.fissionDelay;
       target.splitPositions = [-1, 1].map(offset => moveWithCollision({ x: target.x, y: target.y }, { x: offset * 27, y: 10 }, 14, activeWorld(s)));
+    }
+    if (target.viralCapsuleCarrier?.stock === 1) {
+      releaseViralCapsule(this.capsuleHost(), target, 'death');
+      if (this.s !== s || s.phase !== 'playing') return;
     }
     if (target.role === 'source') {
       const node = b.graph.nodes.find(n => n.id === target.id);
@@ -289,7 +296,7 @@ export class BattleDirector {
     let pushed = 0; let exposed = 0; let coreHit = false;
     const advanced: GameEvent['data'][] = [];
     const exposedTargetIds: string[] = [];
-    for (const target of s.targets) if (target.hp > 0 && target.role !== 'source') {
+    for (const target of s.targets) if (target.hp > 0 && target.role !== 'source' && target.role !== 'capsule') {
       const length = distance(p.origin, target);
       const direction = normalized(target.x - p.origin.x, target.y - p.origin.y);
       if (length > B.pulseRange + target.radius || (length > target.radius && direction.x * Math.cos(p.direction) + direction.y * Math.sin(p.direction) < Math.cos(B.pulseHalfAngle))) continue;
@@ -330,11 +337,20 @@ export class BattleDirector {
   afterInput(): void {
     const state = this.s;
     if (!this.s.endless) { this.evolution(); this.spread(); }
+    advanceViralCapsules(this.capsuleHost());
+    if (this.s !== state || state.phase !== 'playing') return;
     this.enemies();
     if (this.s !== state || state.phase !== 'playing') return;
     if (!this.s.endless) { this.pressure(); this.objectives(); }
     // Dead sources remain as inert landmarks. Other corpses have a short bounded lifetime.
     this.s.targets = this.s.targets.filter(t => t.hp > 0 || t.role === 'source' || !!state.endless && t.splitAt !== undefined || this.s.elapsed - (t.deadAt ?? this.s.elapsed) < 1.5);
+  }
+
+  private capsuleHost(): ViralCapsuleHost {
+    const director = this;
+    return { get state() { return director.s; }, emit: (type, data) => this.host.emit(type, data),
+      damagePlayer: (target, amount) => this.damagePlayer(target, amount, 'viral-capsule'),
+      damageTissue: (target, amount) => this.damageTissue(target, amount) };
   }
 
   private aliveCount(): number { return this.s.targets.filter(t => t.hp > 0).length; }
@@ -532,6 +548,7 @@ export class BattleDirector {
     for (const target of s.targets) if (target.recoverUntil !== undefined && target.recoverUntil <= s.elapsed) target.recoverUntil = undefined;
     const wave = s.endless?.wave ?? 1;
     const pace = s.endless ? endlessPacing(wave) : undefined;
+    const strike = s.endless ? endlessStrikeDamage(wave) : undefined;
     const speed = (target: Target) => B.enemySpeed * (pace?.speedMultiplier ?? 1) * (target.traits?.includes('CARAPACE') ? B.carapaceSpeed : 1)
       * (target.traits?.includes('MIMIC') ? B.mimicSpeed : 1) * (this.host.slowFactor?.(target.id) ?? 1);
     const spacing = planEnemySpacing(s.targets, activeWorld(s), {
@@ -564,7 +581,11 @@ export class BattleDirector {
         }
         continue;
       }
-      if (target.role === 'source' || target.role === 'core' || this.host.isMigratingActor?.(target.id)) continue;
+      if (target.role === 'source' || target.role === 'core' || target.role === 'capsule' || this.host.isMigratingActor?.(target.id)) continue;
+      if (advanceViralCapsuleCarrier(this.capsuleHost(), target)) {
+        if (this.s !== s || s.phase !== 'playing') return;
+        continue;
+      }
       if (target.charge) { this.advanceCharge(target); continue; }
       if (target.recoverUntil !== undefined) continue;
       prepareEliteTactic(s, target);
@@ -594,7 +615,7 @@ export class BattleDirector {
         // A mixed cohort may combine known threats, but it must not stack two
         // copies of the same heavy footprint/channel before one has resolved.
         if (s.elapsed >= (target.attackReady ?? 0) && !sameHeavyTactic
-          && s.targets.filter(actor => actor.hp > 0 && (actor.attackAt !== undefined || actor.charge !== undefined)).length < 3) {
+          && s.targets.filter(actor => actor.hp > 0 && (actor.role === 'capsule' || actor.attackAt !== undefined || actor.charge !== undefined)).length < 3) {
           target.attackPlan = plan; target.attackAt = s.elapsed + plan.windup;
           target.attackWindup = plan.windup; target.attackAim = { ...plan.aim }; target.attackRadius = plan.radius;
           target.attackTarget = plan.kind === 'mimic-corrosion' ? 'tissue' : 'player';
@@ -617,12 +638,12 @@ export class BattleDirector {
         const attackingTissue = target.attackTarget === 'tissue';
         if (attackingTissue) {
           if (distance(target, s.tissue) <= B.attackRadius + s.tissue.radius && this.canStrikeBody(target, s.tissue)) {
-            this.damageTissue(target, B.tissueDamage + (s.endless ? Math.floor((wave - 1) / 8) : 0));
+            this.damageTissue(target, strike?.tissue ?? B.tissueDamage);
           }
         } else if (distance(s.player, aim) <= radius + s.player.radius && this.canStrikeBody(target, s.player)) {
           // The frozen warning remains valid, but a legal move behind a fold
           // must block the strike at resolution just as it blocks ranged tools.
-          this.damagePlayer(target, B.playerDamage + (s.endless ? Math.floor((wave - 1) / 4) + (target.role === 'elite' ? 5 : 0) : 0), 'enemy-attack');
+          this.damagePlayer(target, strike ? target.role === 'elite' ? strike.elitePlayer : strike.player : B.playerDamage, 'enemy-attack');
         }
         target.attackAt = undefined; target.attackAim = undefined; target.attackTarget = undefined;
         target.attackReady = s.elapsed + (s.endless ? Math.max(1.1, B.attackInterval - (wave - 1) * .025) : B.attackInterval);
@@ -649,7 +670,7 @@ export class BattleDirector {
       } else if (s.elapsed >= (target.attackReady ?? 0)) {
         // Reserve a slot before committing a new aim. Accepted telegraphs are
         // never retargeted or cancelled to make room for another attacker.
-        if (s.endless && s.targets.filter(actor => actor.hp > 0 && (actor.attackAt !== undefined || actor.charge !== undefined)).length >= 3) continue;
+        if (s.endless && s.targets.filter(actor => actor.hp > 0 && (actor.role === 'capsule' || actor.attackAt !== undefined || actor.charge !== undefined)).length >= 3) continue;
         const line = normalized(goal.x - target.x, goal.y - target.y);
         const block = wallHit(target, line, distance(target, goal), activeWorld(s));
         if (block !== null && block < distance(target, goal) - 20) continue;

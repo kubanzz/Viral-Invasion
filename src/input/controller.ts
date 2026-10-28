@@ -1,7 +1,7 @@
 import type { InputFrame, Tool, Vec } from '../game/types';
 export const BINDINGS = [
   ['W A S D', '八向移动'], ['鼠标 / 左键', '瞄准 / 使用工具'], ['Space', '冲刺 · 1.5秒冷却'],
-  ['Q', '扫描 · 3秒冷却'], ['1', '精确净化'], ['2', '范围裂解'], ['3', '组织修复'], ['E', '靠近终端复测'], ['Esc', '暂停 / 继续'],
+  ['Q', '扫描 · 3秒冷却'], ['1', '精确净化'], ['2', '牵引裂解'], ['3', '组织修复'], ['E', '靠近终端复测'], ['Esc', '暂停 / 继续'],
 ];
 export class Controller {
   private keys = new Set<string>();

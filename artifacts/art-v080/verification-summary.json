@@ -1,0 +1,283 @@
+{
+  "schemaVersion": 1,
+  "completedAt": "2026-10-27T17:13:10.195Z",
+  "version": "0.8.0",
+  "stage": "G4",
+  "technicalChecksPassed": true,
+  "humanPlaytestAccepted": false,
+  "build": {
+    "baseCommit": "f93b905ccd053c4ee5b9db1f146dc7d5687164bb",
+    "currentHead": "f93b905ccd053c4ee5b9db1f146dc7d5687164bb",
+    "gameJsBytes": 10810317,
+    "gameJsSha256": "14042cfb8de0d80536cbcb7dcdca586e0d64c4da3e4e5fb47ca66b8ac98e3693",
+    "metadataSha256": "0889d1eb9a5cbdc137ef390f24f90936ea170dd9f4f797c31e8afe5573db4246",
+    "artSignature": "dc90cf0c10ab0db405c64959626de2162a675925dfc55aa45b3300b045465750",
+    "engine": {
+      "name": "Phaser",
+      "version": "4.2.1"
+    },
+    "sourceManifestCount": 128,
+    "sourceManifestMatchesCurrentDisk": true,
+    "sourceManifestMismatches": []
+  },
+  "checks": {
+    "unit": {
+      "files": 76,
+      "tests": 613,
+      "passed": 613,
+      "excluded": "full-system-seeds.test.ts; prior 1000-session run is not reassigned to final gameplay baseline",
+      "report": {
+        "path": "artifacts/support-mix-v080/unit-integrated-main.json",
+        "sha256": "9cf947b7fc4d652481d058e83e13461f7b477724ad931c6dd1eb85927897502e"
+      }
+    },
+    "offlineArt": {
+      "pass": true,
+      "cases": 4,
+      "channels": [
+        "chrome",
+        "msedge"
+      ],
+      "dpr": [
+        1,
+        2
+      ],
+      "report": {
+        "path": "artifacts/art-v080/integrated-smoke/report.json",
+        "sha256": "75c69e3fa286bc97caa10b96e0d6d48c657ce82bb9a345d98a9cc9c1beb4c3f8"
+      }
+    },
+    "fiveNaturalWaves": {
+      "passed": 2,
+      "failed": 0,
+      "flaky": 0,
+      "report": {
+        "path": "artifacts/art-v080/integrated-gameplay/report.json",
+        "sha256": "ade915a53f7073797095f419a0ac2bccbd6c9c25416eb2c6528b1cbd4017ce8e"
+      }
+    },
+    "pressure": {
+      "pass": true,
+      "activeSimulationSeconds": 600.2333333333333,
+      "metrics": {
+        "standard": {
+          "frames": 18004,
+          "activeDurationMs": 300060.4000000076,
+          "averageFps": 60.00125308104483,
+          "p95Ms": 16.79999999998836,
+          "maxMs": 17.10000000000582
+        },
+        "low": {
+          "frames": 18009,
+          "activeDurationMs": 300143.80000000005,
+          "averageFps": 60.00123940591143,
+          "p95Ms": 16.79999999998836,
+          "maxMs": 17.5
+        }
+      },
+      "device": {
+        "os": "win32",
+        "release": "10.0.26200",
+        "cpu": "Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz",
+        "logicalCpus": 16,
+        "memoryBytes": 68637700096,
+        "browser": "155.0.8059.85",
+        "mode": "headless"
+      },
+      "maxActors": 24,
+      "maxCells": 3,
+      "observedDistinctRecentCellHitsLowerBound": 940,
+      "coverage": {
+        "standard": {
+          "polls": 911,
+          "actorsSum": 21055,
+          "capPolls": 406,
+          "capAndThreeCellPolls": 137,
+          "estimatedCapSeconds": 124.36666666666676
+        },
+        "low": {
+          "polls": 912,
+          "actorsSum": 21167,
+          "capPolls": 495,
+          "capAndThreeCellPolls": 165,
+          "estimatedCapSeconds": 153.8666666666664
+        }
+      },
+      "densityScope": "Counts and duration estimates come from ~250ms read-only snapshots. Saved 24+3 snapshots prove coexistence, not uninterrupted 24 actors over every measured frame.",
+      "naturalSamples": 116,
+      "forcedGcDuringNaturalMeasurement": false,
+      "errors": [],
+      "remoteRequests": [],
+      "sourceUnchanged": true,
+      "report": {
+        "path": "artifacts/art-v080/performance/report.json",
+        "sha256": "5898c7fb3ddc9512f1df021f56b59ce71599326b7796a465442f18236bce2791"
+      },
+      "frameTimes": {
+        "path": "artifacts/art-v080/performance/frame-times.json",
+        "sha256": "68868cddf76b3c2943b48f9f1bb0ad61e35ece2b44f39cfaafb8f14b32477728"
+      }
+    },
+    "memory": {
+      "verdict": "Finite-window observations only; no full native-memory or indefinite no-leak verdict",
+      "naturalUsedBytes": {
+        "count": 116,
+        "missing": 0,
+        "min": 10948408,
+        "median": 24509468,
+        "max": 38389676,
+        "first": 34285988,
+        "last": 27782160
+      },
+      "laterMinuteSampledMinimumChange": {
+        "before": 16699872,
+        "after": 11413072,
+        "bytesOrCount": -5286800,
+        "percent": -31.65772767599656
+      },
+      "fullMinuteUsedMedianSlopeBytesPerMinute": -175285.12727272726,
+      "postForcedGcMenuTenRestartDelta": {
+        "from": "returned-menu",
+        "to": "menu-after-10-restarts",
+        "bothMenuPhase": true,
+        "collected": {
+          "usedBytes": {
+            "before": 8873056,
+            "after": 8885464,
+            "bytesOrCount": 12408,
+            "percent": 0.13983908137173934
+          },
+          "allocatedCapacityBytes": {
+            "before": 9592832,
+            "after": 9592832,
+            "bytesOrCount": 0,
+            "percent": 0
+          },
+          "embedderUsedBytes": {
+            "before": 2783472,
+            "after": 2712552,
+            "bytesOrCount": -70920,
+            "percent": -2.5478970149511113
+          },
+          "backingStorageBytes": {
+            "before": 25511517,
+            "after": 25511511,
+            "bytesOrCount": -6,
+            "percent": -0.000023518789572568342
+          }
+        },
+        "dom": {
+          "documents": {
+            "before": 1,
+            "after": 1,
+            "bytesOrCount": 0,
+            "percent": 0
+          },
+          "nodes": {
+            "before": 523,
+            "after": 524,
+            "bytesOrCount": 1,
+            "percent": 0.19120458891013384
+          },
+          "listeners": {
+            "before": 71,
+            "after": 71,
+            "bytesOrCount": 0,
+            "percent": 0
+          }
+        }
+      },
+      "unmeasured": [
+        "browser/process RSS",
+        "native Canvas/WebGL surfaces",
+        "GPU/VRAM",
+        "Phaser texture/pool counters during pressure"
+      ],
+      "report": {
+        "path": "artifacts/art-v080/performance/memory-review.json",
+        "sha256": "4358c3c1e1cb16c40572abc489983dca5f060081a4b88bef9b27cd29bdcc600c"
+      },
+      "plot": {
+        "path": "artifacts/art-v080/performance/heap-trend.svg",
+        "sha256": "c61fe3f02b12cbf6a22603c51d82c295d26f8f02f810d89ab0696564121b814a"
+      }
+    },
+    "renderingStateInvariance": {
+      "pass": true,
+      "input": {
+        "path": "artifacts/art-v080/performance/dense-standard-state.json",
+        "sha256": "f0f979661eef8bd7922dd4119ab776c616272be7a8c802f05d29e433f7bc61b0"
+      },
+      "tick": 7909,
+      "aliveActors": 24,
+      "framesPerMode": 12,
+      "scope": "Repeated actual Renderer calls on independent clones, fixed tick, full JSON/HP/damage/collision hashes unchanged; no simulation advance",
+      "report": {
+        "path": "artifacts/art-v080/render-invariance/report.json",
+        "sha256": "9988104396c592aa9484d8f35a5bcaf4aefcaa7e808875d2676925d6e0596c49"
+      }
+    },
+    "extractedRelease": {
+      "campaign": {
+        "pass": true,
+        "report": {
+          "path": "artifacts/art-v080/release-smoke-campaign/report.json",
+          "sha256": "580181fe21b48c5dff610e96c9ff5718607c71eb19be71d37203ac88a93b0165"
+        }
+      },
+      "endless": {
+        "pass": true,
+        "report": {
+          "path": "artifacts/art-v080/release-smoke-endless/report.json",
+          "sha256": "0d4f1662c8a97619f181ca09e11551cce438a816c8809c60eda9c6e0160c0503"
+        }
+      },
+      "scope": "Chrome/Edge offline file entry from independently extracted ZIP"
+    }
+  },
+  "earlierArtEvidence": {
+    "gameJsSha256": "5bb07b5184974dce29bcbb6ab695d8c530a85c13d807afdd286aab5b7fba5f82",
+    "projection": {
+      "cases": 6,
+      "report": {
+        "path": "artifacts/art-v080/projection-final/report.json",
+        "sha256": "f2a982cbf0edf456b87a5c2c4318c4eec760cfe32fd71f2e1f07dc8078e680b0"
+      }
+    },
+    "fullCampaign": {
+      "cases": 1,
+      "channel": "chrome",
+      "report": {
+        "path": "artifacts/art-v080/campaign-final/report.json",
+        "sha256": "9b4dae5ed97951121a1c9857dee78422747dda3bcdba7ebb8719f99f5e28ded1"
+      }
+    },
+    "scope": "Earlier art build, before final gameplay integration; identities retained separately"
+  },
+  "release": {
+    "zip": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-G4-v0.8.0.zip",
+    "bytes": 7240908,
+    "sha256": "e46edeef4356d39bcc2f49ed56c585bd6e0604fd5623c9937d262400de9346b1",
+    "fileCount": 5,
+    "gameJsMatchesTestedBuild": true,
+    "sourceValidation": {
+      "count": 128,
+      "pass": true
+    },
+    "report": {
+      "path": "artifacts/releases/v0.8.0/release-package.json",
+      "sha256": "1088a2cafa273c5b7b2ac47536bb0c81208e9b5cd1933ee5368ff7203d06a100"
+    }
+  },
+  "limitations": [
+    "Continuous multi-direction character animations, single-body fission, mother core and immune squad final art remain incomplete; procedural representations retained.",
+    "Desktop local headless browser measurements do not establish low-end/mobile performance.",
+    "Five-player blind playtest and retention/commercial potential remain unmeasured.",
+    "Earlier failures/interrupted driver attempts remain preserved; they are not counted as final passes."
+  ],
+  "worktree": {
+    "committedByThisArtTask": false,
+    "preservedPreexistingDocumentationChanges": true,
+    "gameplayCoordinationThread": "01a1783b-e10d-7cf1-9945-e0397cdc8b65"
+  }
+}

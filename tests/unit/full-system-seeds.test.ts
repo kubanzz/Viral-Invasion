@@ -6,7 +6,8 @@ import { GameSession } from '../../src/game/session';
 import { BALANCE, activeWorld, type GameState, type InputFrame } from '../../src/game/types';
 import { BATTLE_BALANCE } from '../../src/game/battleConfig';
 import type { MigrationChoice } from '../../src/game/campaignTypes';
-import { distance, normalized } from '../../src/actors/collision';
+import { distance, normalized, wallHit } from '../../src/actors/collision';
+import { TRACTION_BALANCE } from '../../src/game/traction';
 import { g3Input, waypoint } from '../helpers/g3Driver';
 import { IMMUNE_CELL_BALANCE } from '../../src/game/immuneCells';
 import type { CounterGuideVariant } from '../../src/game/encounterTypes';
@@ -109,6 +110,15 @@ function validate(state: GameState): { alive: number; stored: number } {
 /** A test-side strategy adds the explicit post-core rescue decision missing from the shared fast driver. */
 function legalInput(state: GameState, choice: MigrationChoice): InputFrame {
   const input = g3Input(state, choice), campaign = state.campaign!;
+  // Tool 2 is edge-triggered. A rejected or completed cast cannot be retried
+  // by holding fire; use real short presses when the destination is legal.
+  if (input.tool === 2 && input.fire) {
+    const gap = distance(state.player, input.aim);
+    const direction = normalized(input.aim.x - state.player.x, input.aim.y - state.player.y);
+    const wall = wallHit(state.player, direction, gap, activeWorld(state));
+    if (gap > TRACTION_BALANCE.range || (wall !== null && wall < gap - 1)) input.tool = 1;
+    else if (state.tick % 12 !== 0) input.fire = false;
+  }
   const current = state.battle!.organId, other = campaign.arenas[current === 'heart' ? 'lung' : 'heart'];
   if (campaign.core.status === 'cleared' && state.tissue.hp >= 65 && other.activated && other.tissue.hp < 50) {
     const exit = state.battle!.graph.nodes.find(node => node.kind === 'exit')!;
@@ -248,7 +258,8 @@ describe('G4 complete-session seed coverage', () => {
     }
     expect(new Set(runs.filter(run => run.traits.length === 2).map(run => run.traits.join('>'))).size).toBe(6);
     console.info('FULL_SESSION_SEEDS_COMPLETE', JSON.stringify({ seeds: runs.length, wins: runs.filter(run => run.outcome === 'win').length, losses: runs.filter(run => run.outcome === 'loss').length, exits: runs.filter(run => run.outcome === 'exit').length, replayEqual: replay.equal, preparedReplayEqual: preparedReplay.equal }));
-  // The expanded campaign and real cell navigation require a larger batch
-  // runner budget; the per-seed action cap and every gameplay invariant stay fixed.
-  }, 900_000);
+  // The prior 1,000-seed run took over 900 seconds on this workstation. The
+  // wall-clock budget accommodates that workload without altering any per-seed
+  // action cap, coverage or gameplay invariant.
+  }, 1_800_000);
 });

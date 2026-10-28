@@ -20,7 +20,11 @@ import { createEndlessGrowth, offerEndlessUpgrade, chooseEndlessUpgrade, endless
 import type { EndlessUpgradeId, PendingCatalysisBatch } from './endlessGrowthTypes';
 import { IMMUNE_CELL_BALANCE, summonImmuneCells } from './immuneCells';
 import { activeCatalysisBatch, activeCatalysisTargets, CATALYSIS_BALANCE, catalysisBurstTargets, makeCatalysisBatch } from './catalysis';
-import { activeEliteTacticCycle, finishEliteTactic } from './eliteTacticCycle';
+import { advanceTraction, beginTraction, TRACTION_BALANCE, tractionBlastTargets, tractionMoveMultiplier } from './traction';
+import type { TractionCast } from './tractionTypes';
+import type { EndlessCombatStats } from './endlessGrowthTypes';
+import { DASH_BLADE_BALANCE, dashBladeHits, dashBladeProfile } from './dashBlade';
+import { dashTrailVisible } from './dashTrail';
 
 // Exporting the clock here is convenient for hosts, while it remains independently testable.
 export { FixedClock };
@@ -49,10 +53,12 @@ export class GameSession {
   private metricsSerial = 0;
   private metricsSequence = 0;
   private endlessDirector: EndlessDirector | undefined;
-  private endlessDashHits = new Set<string>();
   private catalysisSerial = 0;
   private acceptedBiteTick = -1;
   private acceptedBiteCells = new Set<string>();
+  private tractionSerial = 0;
+  private tractionFireHeld = false;
+  private tractionAwaitRelease = false;
 
   constructor(seed = 130026, private options: CampaignOptions = {}) {
     this.options = { ...options, ...(options.mode === 'endless' ? { campaign: true, milestone: 'G3' } : {}) };
@@ -73,8 +79,8 @@ export class GameSession {
 
   private resetCampaign(): void {
     this.campaignTransactions.clear(); this.deferredCampaign = []; this.motherController = undefined;
-    this.endlessDashHits.clear();
     this.catalysisSerial = 0; this.acceptedBiteTick = -1; this.acceptedBiteCells.clear();
+    this.tractionSerial = 0; this.tractionAwaitRelease = this.tractionFireHeld; this.tractionFireHeld = false;
     this.endlessDirector = this.state.endless ? new EndlessDirector(this) : undefined;
     this.campaignController = !this.state.endless && this.state.battle?.milestone === 'G3' ? new CampaignDirector(this.state.seed, this.state) : undefined;
     if (this.campaignController) this.state.campaign = this.campaignController.state;
@@ -131,8 +137,12 @@ export class GameSession {
 
   pause(): void {
     if (this.state.phase !== 'playing') return;
+    const state = this.state;
     this.state.phase = 'paused';
     this.state.player.moving = false;
+    this.tractionAwaitRelease = true;
+    this.clearTraction('paused');
+    if (this.state !== state || state.phase !== 'paused') return;
     this.emit('RUN_PAUSED', {});
   }
 
@@ -159,6 +169,8 @@ export class GameSession {
     this.state.phase = 'result';
     this.state.player.moving = false;
     if (this.state.endlessGrowth) this.state.endlessGrowth.draft = null;
+    this.clearTraction('run-ended');
+    if (this.state !== state) return;
     this.clearCatalysis('run-ended');
     if (this.state !== state) return;
     this.emit('RUN_ENDED', { success, reason, seed: this.state.seed, durationSimMs: Math.round(this.state.elapsed * 1000) });
@@ -217,10 +229,19 @@ export class GameSession {
     if (this.campaignController) this.applyCampaignCommands(this.campaignController.beforeInput(state));
     if (this.state !== state || state.phase !== 'playing') return;
     if (this.checkFailure()) return;
+    if (state.traction && state.traction.organId !== (state.battle?.organId ?? 'heart')) this.clearTraction('organ-changed');
+    if (this.state !== state || state.phase !== 'playing') return;
     if (input.tool && input.tool !== state.tool) {
       state.tool = input.tool;
       this.emit('TOOL_SELECTED', { tool: input.tool });
     }
+    if (this.state !== state || state.phase !== 'playing') return;
+    // Entering tool2 with an already-held trigger is one tool2 press. Staying on
+    // tool2 never repeats; a pause lock still requires a real trigger release.
+    const tool2Down = input.fire && state.tool === 2;
+    const tool2Pressed = tool2Down && !this.tractionFireHeld && !this.tractionAwaitRelease;
+    this.tractionFireHeld = tool2Down;
+    if (!input.fire) this.tractionAwaitRelease = false;
     const direction = normalized(input.aim.x - state.player.x, input.aim.y - state.player.y);
     if (direction.x || direction.y) state.player.facing = Math.atan2(direction.y, direction.x);
     const move = normalized(input.moveX, input.moveY);
@@ -231,20 +252,35 @@ export class GameSession {
         state.player.dashUntil = state.elapsed + BALANCE.dashDuration;
         state.player.dashReady = state.elapsed + BALANCE.dashCooldown;
         state.dashes++;
-        this.endlessDashHits.clear();
-        this.effect('dash', state.player, state.player, 25, .3);
         this.emit('PLAYER_DASHED', { x: state.player.x, y: state.player.y });
       } else this.message('冲刺正在充能。', 1);
     }
     const dashing = state.elapsed < state.player.dashUntil;
     const velocity = dashing ? this.dashDirection : move;
-    const speed = dashing ? BALANCE.dashSpeed : BALANCE.speed;
+    const speed = (dashing ? BALANCE.dashSpeed : BALANCE.speed) * tractionMoveMultiplier(state);
     const before = { x: state.player.x, y: state.player.y };
     const desired = { x: velocity.x * speed * dt, y: velocity.y * speed * dt };
     const after = moveWithCollision(state.player, desired, state.player.radius, activeWorld(state));
     state.player.x = after.x;
     state.player.y = after.y;
-    if (dashing && state.endlessGrowth) this.endlessDashAttack(before, after);
+    // Skip a chord that intersects a fold; movement itself remains untouched.
+    if (dashing && dashTrailVisible(before, after, activeWorld(state))) this.effect('dash', before, after, 25, .18);
+    if (dashing && state.endlessGrowth) this.endlessDashAttack();
+    if (state.bladeOpening && state.elapsed + 1e-9 >= state.bladeOpening.at) {
+      const opening = state.bladeOpening;
+      delete state.bladeOpening;
+      this.bladeSweep(state.player, opening.direction, opening.radius, opening.halfAngle, opening.damage, 'opening');
+      if (this.state !== state || state.phase !== 'playing') return;
+      if (opening.returnSlash) state.bladeFollow = { at: state.elapsed + DASH_BLADE_BALANCE.returnDelay,
+        direction: opening.direction, radius: opening.radius, halfAngle: opening.halfAngle,
+        damage: opening.damage * DASH_BLADE_BALANCE.returnDamageFactor };
+    }
+    if (state.bladeFollow && state.elapsed + 1e-9 >= state.bladeFollow.at) {
+      const follow = state.bladeFollow;
+      delete state.bladeFollow;
+      this.bladeSweep(state.player, follow.direction, follow.radius, follow.halfAngle, follow.damage, 'return');
+      if (this.state !== state || state.phase !== 'playing') return;
+    }
     // Dash chooses its travel direction from the pre-move aim, but the muzzle
     // must face from the actual post-collision position used by the shot below.
     const finalAim = normalized(input.aim.x - after.x, input.aim.y - after.y);
@@ -266,10 +302,12 @@ export class GameSession {
       this.scan();
       if (this.state !== state || state.phase !== 'playing') return;
     }
-    if (input.fire) {
+    if (input.fire && (state.tool !== 2 || tool2Pressed)) {
       this.fire(input.aim);
       if (this.state !== state || state.phase !== 'playing') return;
     }
+    this.advanceTool2(input);
+    if (this.state !== state || state.phase !== 'playing') return;
     if (input.interact) {
       this.interact();
       if (this.state !== state || state.phase !== 'playing') return;
@@ -350,8 +388,9 @@ export class GameSession {
     const state = this.state;
     const tool = state.tool;
     const combat = state.endlessGrowth ? endlessCombatStats(state.endlessGrowth) : undefined;
+    if (tool === 2) { this.startTool2(aim, combat); return; }
     if (state.elapsed + 1e-9 < state.cooldowns[tool]) return;
-    const cooldown = (tool === 1 ? combat?.primaryCooldown : tool === 2 ? combat?.areaCooldown : undefined) ?? BALANCE.cooldowns[tool];
+    const cooldown = (tool === 1 ? combat?.primaryCooldown : undefined) ?? BALANCE.cooldowns[tool];
     state.cooldowns[tool] = state.elapsed + cooldown;
     state.player.actionUntil = state.elapsed + .15;
     const direction = normalized(aim.x - state.player.x, aim.y - state.player.y);
@@ -401,74 +440,6 @@ export class GameSession {
     if (aimDistance > range) { this.message('目标超出工具射程，请靠近。'); this.emit('TOOL_REJECTED', { tool, reason: 'range' }); return; }
     if (wall !== null && wall < aimDistance - 1) { this.message('组织褶皱挡住工具，请绕到另一侧。'); this.emit('TOOL_REJECTED', { tool, reason: 'blocked' }); return; }
     this.emit('TOOL_FIRED', { tool, x: aim.x, y: aim.y });
-    if (tool === 2) {
-      state.shots++;
-      const radius = combat?.areaRadius ?? BALANCE.areaRadius;
-      const catalyst = !!state.endless && !!combat && combat.catalysisDamage > 0;
-      const fullDamage = BALANCE.damage[2] * (combat?.damageMultiplier ?? 1) * (combat?.areaDamageMultiplier ?? 1);
-      const primerIds: string[] = [];
-      let armed = false;
-      this.effect(catalyst ? 'scan' : 'burst', aim, aim, radius, .55);
-      let count = 0;
-      for (const target of state.targets) {
-        if (target.hp > 0 && distance(aim, target) <= radius + target.radius) {
-          const toTarget = normalized(target.x - aim.x, target.y - aim.y);
-          const targetDistance = distance(aim, target);
-          const localWall = wallHit(aim, toTarget, targetDistance, activeWorld(state));
-          if (localWall !== null && localWall < targetDistance - target.radius) continue;
-          const actual = this.damage(target, catalyst ? Math.min(CATALYSIS_BALANCE.directDamageCap, fullDamage) : fullDamage,
-            { cause: 'basic', basicTool: 2 });
-          if (this.state !== state || state.phase !== 'playing') return;
-          if (catalyst && actual > 0 && target.hp > 0) primerIds.push(target.id);
-          if (!catalyst && (state.campaign || state.endless) && target.hp > 0 && target.role !== 'source' && target.role !== 'core') {
-            const direction = normalized(target.x - aim.x, target.y - aim.y);
-            const fallback = normalized(target.x - state.player.x, target.y - state.player.y);
-            const moved = moveWithCollision(target, { x: (direction.x || direction.y ? direction.x : fallback.x) * 85, y: (direction.x || direction.y ? direction.y : fallback.y) * 85 }, target.radius, activeWorld(state));
-            const pushed = distance(target, moved); target.x = moved.x; target.y = moved.y;
-            if (pushed > 1) {
-              const cycle = activeEliteTacticCycle(state, target);
-              const interruptedTactic = target.attackPlan?.kind ?? (target.charge ? 'crystal-charge' : undefined);
-              const exposure = target.attackPlan?.recoveryExposure ?? target.charge?.recoveryExposure ?? 0;
-              const retainedRecovery = cycle ? target.recoverUntil : undefined;
-              target.attackAt = undefined; target.attackAim = undefined; target.attackTarget = undefined;
-              target.attackPlan = undefined; target.attackWindup = undefined;
-              target.charge = undefined; target.recoverUntil = undefined;
-              target.attackReady = Math.max(target.attackReady ?? 0, state.elapsed + .45);
-              if (cycle) {
-                target.recoverUntil = Math.max(retainedRecovery ?? 0, interruptedTactic ? state.elapsed + Math.max(.45, exposure) : 0) || undefined;
-                if (target.recoverUntil) target.exposedUntil = Math.max(target.exposedUntil ?? 0, target.recoverUntil);
-                target.attackReady = Math.max(target.attackReady, target.recoverUntil ?? 0);
-              }
-              const completed = cycle && interruptedTactic ? finishEliteTactic(state, target, interruptedTactic, 'area-interrupted') : undefined;
-              this.emit('AREA_DISPLACED', { targetId: target.id, distance: pushed });
-              if (this.state !== state || state.phase !== 'playing') return;
-              if (completed) {
-                this.emit('ELITE_TACTIC_ADVANCED', completed);
-                if (this.state !== state || state.phase !== 'playing') return;
-              }
-            }
-          }
-          if (!catalyst || actual > 0) count++;
-        }
-      }
-      if (catalyst && this.state === state && state.phase === 'playing') {
-        const batch = makeCatalysisBatch(state, `${state.growth?.runId ?? state.seed}:catalysis:${this.catalysisSerial + 1}`, primerIds, aim, combat!.catalysisDamage);
-        if (batch) {
-          const previous = state.endlessGrowth!.pendingCatalysis;
-          this.catalysisSerial++; state.endlessGrowth!.pendingCatalysis = batch;
-          this.emit('CATALYSIS_ARMED', { batchId: batch.id, organId: batch.organId, targets: batch.targetIds.join(','),
-            count: batch.targetIds.length, until: batch.until, damage: batch.damage,
-            ...(previous ? { replacedBatchId: previous.id } : {}) });
-          if (this.state !== state || state.phase !== 'playing') return;
-          armed = true;
-          this.message('催化已铺设 · 4 秒内用 1 或真实细胞引爆，整批一次。', 3, 2);
-        }
-      }
-      if (catalyst && !armed) this.message(count ? `催化直伤命中 ${count} 体，本次没有可铺设的存活目标。` : '本次没有铺设新的催化标记。', 3, 2);
-      else if (!armed && count) this.message(`范围裂解命中 ${count} 个${state.endless ? '感染体' : '靶标'}。`);
-      else if (!armed && distance(aim, state.tissue) < state.tissue.radius + BALANCE.areaRadius) this.message('范围裂解不能修复组织，请按 3。');
-      return;
-    }
     this.effect('heal', state.player, aim, 35, .55);
     if (distance(aim, state.tissue) > state.tissue.radius + 12) {
       this.message('修复注射仅作用于带十字标记的受损组织，不能净化靶标。');
@@ -486,12 +457,99 @@ export class GameSession {
     this.battleDirector?.repairMimics(aim, (target, damage) => this.damage(target, damage));
   }
 
+  private startTool2(aim: Vec, combat?: EndlessCombatStats): void {
+    const state = this.state;
+    if (state.traction || state.elapsed + 1e-9 < state.cooldowns[2]) return;
+    const gap = distance(state.player, aim);
+    if (!Number.isFinite(gap) || gap > TRACTION_BALANCE.range) {
+      this.message(`牵引裂解射程 ${TRACTION_BALANCE.range}，请靠近落点。`);
+      this.emit('TOOL_REJECTED', { tool: 2, reason: 'range' }); return;
+    }
+    const wall = wallHit(state.player, normalized(aim.x - state.player.x, aim.y - state.player.y), gap, activeWorld(state));
+    if (wall !== null && wall < gap - 1) {
+      this.message('组织褶皱挡住牵引落点，请绕到另一侧。');
+      this.emit('TOOL_REJECTED', { tool: 2, reason: 'blocked' }); return;
+    }
+    state.cooldowns[2] = state.elapsed + (combat?.areaCooldown ?? TRACTION_BALANCE.cooldown);
+    state.player.actionUntil = state.elapsed + .15;
+    state.shots++;
+    const cast = beginTraction(state, `${state.growth?.runId ?? state.seed}:traction:${++this.tractionSerial}`, aim, combat);
+    this.emit('TOOL_FIRED', { tool: 2, x: aim.x, y: aim.y, castId: cast.id });
+    if (this.state !== state || state.phase !== 'playing' || this.state.traction !== cast) return;
+    this.emit('TRACTION_STARTED', { castId: cast.id, organId: cast.organId, x: cast.center.x, y: cast.center.y,
+      radius: cast.radius, gatherRadius: cast.gatherRadius, resolveAt: cast.resolveAt,
+      guideUnlocked: cast.guideUnlocked, catalyst: cast.catalysisDamageSnapshot > 0, damage: cast.damageSnapshot });
+  }
+
+  private clearTraction(reason: string): void {
+    const cast = this.state.traction;
+    if (!cast) return;
+    delete this.state.traction;
+    this.emit('TRACTION_CANCELLED', { castId: cast.id, organId: cast.organId, reason });
+  }
+
+  private advanceTool2(input: InputFrame): void {
+    const state = this.state, cast = state.traction;
+    if (!cast) return;
+    const update = advanceTraction(state, input.fire && state.tool === 2, input.aim, BALANCE.step);
+    if (update.guidingStarted) this.emit('TRACTION_GUIDING_STARTED', { castId: cast.id, until: cast.guideUntil });
+    if (this.state !== state || state.phase !== 'playing' || state.traction !== cast) return;
+    for (const moved of update.moved) {
+      this.emit('TRACTION_DISPLACED', { castId: cast.id, ...moved });
+      if (this.state !== state || state.phase !== 'playing' || state.traction !== cast) return;
+    }
+    if (update.released) this.emit('TRACTION_RELEASED', { castId: cast.id, x: cast.center.x, y: cast.center.y, resolveAt: cast.resolveAt });
+    if (this.state !== state || state.phase !== 'playing' || state.traction !== cast) return;
+    if (update.ready) this.resolveTool2(cast);
+  }
+
+  private resolveTool2(cast: TractionCast): void {
+    const state = this.state;
+    if (state.traction !== cast || state.phase !== 'playing' || cast.organId !== (state.battle?.organId ?? 'heart')) return;
+    // Claim the single blast before any recursive protocol or host callback.
+    delete state.traction;
+    const current = () => this.state === state && state.phase === 'playing'
+      && cast.organId === (state.battle?.organId ?? 'heart') && state.player.hp > 0 && state.tissue.hp > 0;
+    const catalyst = cast.catalysisDamageSnapshot > 0, primerIds: string[] = [];
+    this.effect(catalyst ? 'scan' : 'burst', cast.center, cast.center, cast.radius, .55);
+    let hits = 0, damage = 0, armed = false;
+    for (const target of tractionBlastTargets(state, cast)) {
+      if (!current()) return;
+      const actual = this.damage(target, catalyst ? Math.min(CATALYSIS_BALANCE.directDamageCap, cast.damageSnapshot) : cast.damageSnapshot,
+        { cause: 'basic', basicTool: 2, rootId: `${cast.id}:${target.id}` });
+      if (!current()) return;
+      if (actual > 0) { hits++; damage += actual; }
+      if (catalyst && actual > 0 && target.hp > 0 && target.role !== 'capsule') primerIds.push(target.id);
+    }
+    if (catalyst && current()) {
+      const batch = makeCatalysisBatch(state, `${state.growth?.runId ?? state.seed}:catalysis:${this.catalysisSerial + 1}`,
+        primerIds, cast.center, cast.catalysisDamageSnapshot);
+      if (batch) {
+        const previous = state.endlessGrowth!.pendingCatalysis;
+        this.catalysisSerial++; state.endlessGrowth!.pendingCatalysis = batch;
+        this.emit('CATALYSIS_ARMED', { batchId: batch.id, organId: batch.organId, targets: batch.targetIds.join(','),
+          count: batch.targetIds.length, until: batch.until, damage: batch.damage,
+          ...(previous ? { replacedBatchId: previous.id } : {}) });
+        if (!current()) return;
+        armed = true;
+        this.message('催化已铺设 · 4 秒内用 1 或真实细胞引爆，整批一次。', 3, 2);
+      }
+    }
+    if (!current()) return;
+    this.emit('TRACTION_RESOLVED', { castId: cast.id, organId: cast.organId, x: cast.center.x, y: cast.center.y,
+      radius: cast.radius, hits, damage, catalyst, armed });
+    if (!current()) return;
+    if (catalyst && !armed) this.message(hits ? `催化直伤命中 ${hits} 体，本次没有可铺设的存活目标。` : '本次没有铺设新的催化标记。', 3, 2);
+    else if (!armed && hits) this.message(`牵引裂解命中 ${hits} 个${state.endless ? '感染体' : '靶标'}。`);
+    else if (!armed && distance(cast.center, state.tissue) < state.tissue.radius + cast.radius) this.message('牵引裂解不能修复组织，请按 3。');
+  }
+
   private damage(target: Target, amount: number, origin: DamageOrigin = { cause: 'basic' }): number {
     const state = this.state;
     if (target.hp <= 0) return 0;
     const immuneCellId = this.verifiedImmuneBite(target, origin);
     const wasPulseExposed = origin.wasPulseExposed ?? (target.exposedUntil ?? 0) > state.elapsed;
-    if (this.battleDirector && origin.cause === 'basic') amount = this.battleDirector.modifiedDamage(target, amount);
+    if (this.battleDirector && origin.cause === 'basic') amount = this.battleDirector.modifiedDamage(target, amount, origin.basicTool ?? state.tool);
     const rawDamage = amount;
     const coreContext = target.role === 'core' ? this.coreContext() : undefined;
     if (coreContext && this.motherController) {
@@ -508,10 +566,10 @@ export class GameSession {
     target.hitUntil = state.elapsed + .18;
     if (origin.cause === 'basic') state.hits++;
     this.effect('hit', target, target, target.radius, .3);
-    this.emit('TARGET_HIT', { id: target.id, organId: state.battle?.organId ?? 'heart', damage: beforeHp - target.hp, rawDamage, remainingHp: target.hp, tool: state.tool, cause: origin.cause,
+    this.emit('TARGET_HIT', { id: target.id, organId: state.battle?.organId ?? 'heart', damage: beforeHp - target.hp, rawDamage, remainingHp: target.hp, tool: origin.basicTool ?? state.tool, cause: origin.cause,
       ...(origin.rootId ? { rootId: origin.rootId } : {}), ...(origin.protocolId ? { protocolId: origin.protocolId } : {}),
       ...(origin.ability ? { ability: origin.ability } : {}), ...(immuneCellId && actual > 0 ? { immuneCellId } : {}),
-      ...(state.endlessGrowth?.ranks.catalysis && origin.basicTool ? { basicTool: origin.basicTool } : {}) });
+      ...(origin.basicTool ? { basicTool: origin.basicTool } : {}) });
     if (this.state !== state || state.phase !== 'playing') return actual;
     if (claimed) {
       if (!this.currentCatalysisTransaction(claimed)) return actual;
@@ -525,10 +583,10 @@ export class GameSession {
       if (this.battleDirector) this.battleDirector.cleared(target);
       else this.message(state.targets.every(t => t.hp === 0) ? '全部靶标已净化！按 3 修复十字标记组织，再到复测台按 E。' : '训练靶已净化。继续处理其他靶标。');
       if (this.state !== state || state.phase !== 'playing') return actual;
-      if (this.growthController && origin.ability !== 'catalysis') this.applyGrowthCommands(this.growthController.onKill(growthContext(state), target, { ...origin, wasPulseExposed }));
+      if (this.growthController && target.role !== 'capsule' && origin.ability !== 'catalysis') this.applyGrowthCommands(this.growthController.onKill({ ...growthContext(state), tool: origin.basicTool ?? state.tool }, target, { ...origin, wasPulseExposed }));
       if (coreContext && this.motherController) this.applyCoreCommands(this.motherController.notifyCleared(coreContext));
-    } else if (this.growthController && origin.cause === 'basic' && (state.tool === 1 || state.tool === 2)) {
-      this.applyGrowthCommands(this.growthController.onHit(growthContext(state), target, { ...origin, wasPulseExposed }));
+    } else if (this.growthController && target.role !== 'capsule' && origin.cause === 'basic' && ((origin.basicTool ?? state.tool) === 1 || (origin.basicTool ?? state.tool) === 2)) {
+      this.applyGrowthCommands(this.growthController.onHit({ ...growthContext(state), tool: origin.basicTool ?? state.tool }, target, { ...origin, wasPulseExposed }));
     }
     if (claimed) this.detonateCatalysis(claimed);
     return actual;
@@ -559,6 +617,7 @@ export class GameSession {
   }
 
   private claimCatalysis(target: Target, origin: DamageOrigin, actual: number, immuneCellId?: string): ClaimedCatalysis | undefined {
+    if (target.role === 'capsule') return;
     const state = this.state, batch = activeCatalysisBatch(state);
     const precision = origin.cause === 'basic' && origin.basicTool === 1;
     if (!batch || state.phase !== 'playing' || !Number.isFinite(actual) || actual <= 0 || !batch.targetIds.includes(target.id)
@@ -680,29 +739,42 @@ export class GameSession {
     this.emit('COMBAT_ABILITY_TRIGGERED', { ability, hits, radius, damage: amount });
   }
 
-  private endlessDashAttack(from: Vec, to: Vec): void {
+  private endlessDashAttack(): void {
     const state = this.state, combat = endlessCombatStats(state.endlessGrowth!);
-    if (combat.dashDamage <= 0) return;
-    const dx = to.x - from.x, dy = to.y - from.y, squared = dx * dx + dy * dy;
+    if (combat.dashDamage <= 0 || state.bladeDashSerial === state.dashes) return;
+    state.bladeDashSerial = state.dashes;
+    const profile = dashBladeProfile(state.endlessGrowth!.ranks.dash ?? 0);
+    const direction = normalized(this.dashDirection.x, this.dashDirection.y);
+    const damage = combat.dashDamage * combat.damageMultiplier;
+    // Commit once, then cut at the actual landing point, including wall clipping.
+    state.bladeOpening = { at: state.player.dashUntil, direction, radius: profile.radius,
+      halfAngle: profile.halfAngle, damage, returnSlash: profile.returnSlash };
+  }
+
+  private bladeSweep(center: Vec, direction: Vec, radius: number, halfAngle: number, damage: number, stage: 'opening' | 'return'): void {
+    const state = this.state, anchor = { x: center.x, y: center.y };
+    this.effect('slash', anchor, { x: anchor.x + direction.x * radius, y: anchor.y + direction.y * radius }, radius, DASH_BLADE_BALANCE.effectSeconds);
+    state.effects.at(-1)!.arcHalfAngle = halfAngle;
+    state.player.actionUntil = Math.max(state.player.actionUntil, state.elapsed + DASH_BLADE_BALANCE.effectSeconds);
+    let hits = 0;
     for (const target of [...state.targets]) {
-      if (target.hp <= 0 || this.endlessDashHits.has(target.id)) continue;
-      const t = clamp(((target.x - from.x) * dx + (target.y - from.y) * dy) / (squared || 1), 0, 1);
-      const closest = { x: from.x + dx * t, y: from.y + dy * t };
-      const gap = distance(closest, target);
-      if (gap > 64 + target.radius) continue;
-      const wall = wallHit(closest, normalized(target.x - closest.x, target.y - closest.y), gap, activeWorld(state));
-      if (wall !== null && wall < gap - target.radius) continue;
-      this.endlessDashHits.add(target.id);
-      this.damage(target, combat.dashDamage * combat.damageMultiplier, { cause: 'ability', ability: 'dash', rootId: `endless:dash:${state.dashes}` });
-      this.effect('chain', closest, target, 12, .22);
-      this.emit('COMBAT_ABILITY_HIT', { ability: 'dash', id: target.id, damage: combat.dashDamage * combat.damageMultiplier });
+      if (!dashBladeHits(anchor, direction, target, radius, halfAngle, activeWorld(state))) continue;
+      const actual = this.damage(target, damage, { cause: 'ability', ability: 'dash', rootId: `endless:dash:${state.dashes}:${stage}` });
+      if (this.state !== state || state.phase !== 'playing') return;
+      if (actual > 0) { hits++; this.emit('COMBAT_ABILITY_HIT', { ability: 'dash', id: target.id, damage: actual, stage }); }
+      if (this.state !== state || state.phase !== 'playing') return;
     }
+    this.emit('COMBAT_ABILITY_TRIGGERED', { ability: 'dash', stage, hits, radius, arcDegrees: halfAngle * 360 / Math.PI, damage });
   }
 
   /** A clear reward is accepted by the wave director exactly once. */
   completeWave(wave: number): void {
     const state = this.state;
     if (!state.endless || !state.endlessGrowth || state.phase !== 'playing') return;
+    this.clearTraction('wave-cleared');
+    if (this.state !== state || state.phase !== 'playing') return;
+    delete state.bladeOpening;
+    delete state.bladeFollow;
     this.clearCatalysis('wave-cleared');
     if (this.state !== state || state.phase !== 'playing') return;
     offerEndlessUpgrade(state.endlessGrowth, wave);
@@ -902,6 +974,9 @@ export class GameSession {
       if (eventId && this.campaignTransactions.has(eventId)) continue;
       if (command.kind === 'travel') {
         if (!director.applyTravel(command, state)) continue;
+        this.clearTraction('organ-changed');
+        if (this.state !== state || state.phase !== 'playing') return;
+        this.tractionAwaitRelease = true;
         this.dashDirection = { x: 1, y: 0 };
         this.emit('INPUT_RESET_REQUESTED', { reason: 'organ-travel' });
       } else if (command.kind === 'retest') {

@@ -1,0 +1,18 @@
+.encounter-hud[hidden],.encounter-hud [hidden]{display:none!important}
+.battle-objective .encounter-hud{margin-top:7px;padding-top:6px;border-top:1px solid #c0dbc330;color:#c8ddd0;font-size:10px;line-height:1.45}
+.encounter-heading{display:flex;justify-content:space-between;align-items:center;gap:5px;margin-bottom:3px;min-height:18px}
+.encounter-heading strong{font-size:10px;font-weight:500;color:#c7ebd0}
+.encounter-heading .encounter-skip{flex-shrink:0;padding:3px 5px;border:1px solid #74908566;border-radius:4px;background:#20372b60;font-size:9px;line-height:1.2;color:#c6dac9;pointer-events:auto}
+.encounter-heading .encounter-skip:focus-visible{outline:2px solid #bcebd1;outline-offset:2px}
+.encounter-line,.encounter-detail{display:block;overflow-wrap:anywhere}
+.encounter-detail{margin-top:2px;font-size:9px;color:#b2c5b6}
+.encounter-hud[data-kind=crisis]{border-color:#e6b78666;color:#f0d2af}
+.encounter-hud[data-kind=crisis] .encounter-heading strong{color:#f2d0a4}
+.encounter-hud[data-kind=feedback] .encounter-heading strong{color:#d5eac4}
+.battle-objective:has(.encounter-hud:not([hidden])) .interaction-hint{display:none}
+.encounter-help{border-top:1px solid #b3c9b52e;margin-top:18px;padding-top:2px}
+.encounter-help ol,.encounter-help ul{padding-left:21px;font-size:12px;line-height:1.8;color:#d0c6bf}
+.encounter-help li{margin:8px 0}
+.encounter-help-record{padding:9px 11px;border-left:2px solid #92bda5;background:#a9d3b508}
+@media(max-width:800px){.battle-objective .encounter-hud{font-size:9px;margin-top:4px;padding-top:4px}.encounter-heading strong{font-size:9px}.encounter-heading .encounter-skip{font-size:8px;padding:3px 4px}.encounter-detail{display:none}.encounter-heading{gap:3px}.battle-objective:has(.encounter-hud:not([hidden])) .battle-progress{display:none}}
+@media(max-height:650px){.battle-objective .encounter-hud{margin-top:4px;padding-top:4px;line-height:1.35}.encounter-detail{display:none}.encounter-heading{margin-bottom:2px;min-height:16px}.battle-objective:has(.encounter-hud:not([hidden])) .battle-progress{display:none}.encounter-help{margin-top:12px}.encounter-help ol,.encounter-help ul{font-size:11px}}

@@ -19,15 +19,16 @@ function fixture() {
 }
 
 describe('catalysis choice and preparation presentation', () => {
-  it('identifies a deliberate tool conversion and removes the old knockback promise from the active summary', () => {
+  it('identifies the tool conversion while retaining the actual pull and guidance in the active summary', () => {
     const base = createEndlessGrowth(7); expect(catalysisToolCopy(endlessCombatStats(base))).toBeNull();
     base.ranks = { immune: 1, catalysis: 1 };
     const copy = catalysisToolCopy(endlessCombatStats(base))!;
-    expect(copy.short).toContain('直伤≤8'); expect(copy.detail).toContain('无击退');
+    expect(copy.short).toContain('直伤≤8'); expect(copy.detail).toContain('保留牵引与导流');
+    expect(copy.detail).not.toContain('无击退');
     expect(copy.detail).toContain('整批一次'); expect(copy.detail).toContain('不叠加');
     const state = fixture(); state.phase = 'paused';
     const html = endlessOverlay(state, false, false)!;
-    expect(html).toContain('<dt>催化裂解</dt>'); expect(html).toContain('低伤铺标，无击退');
+    expect(html).toContain('<dt>催化牵引</dt>'); expect(html).toContain('普通爆发改为低伤铺标');
   });
 
   it('shows preparation, hides dead/expired batches, and keeps the same deadline through pause', () => {

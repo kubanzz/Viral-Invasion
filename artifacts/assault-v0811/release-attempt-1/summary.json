@@ -1,0 +1,84 @@
+{
+  "version": "0.8.11",
+  "work": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\assault-v0811-release",
+  "startedAt": "2026-10-28T05:37:23.308Z",
+  "status": "passed",
+  "commands": [
+    {
+      "label": "01-install",
+      "command": [
+        "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+        "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\node_modules\\npm\\bin\\npm-cli.js",
+        "ci",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "cwd": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\assault-v0811-release",
+      "startedAt": "2026-10-28T05:37:23.336Z",
+      "status": "passed",
+      "exitCode": 0,
+      "finishedAt": "2026-10-28T05:37:44.194Z",
+      "log": "01-install.log",
+      "logSha256": "7990b40733f8c2ee7003020284ec35ffa216a460c29f6b081071f2888150da93"
+    },
+    {
+      "label": "02-build",
+      "command": [
+        "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+        "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\node_modules\\npm\\bin\\npm-cli.js",
+        "run",
+        "build"
+      ],
+      "cwd": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\assault-v0811-release",
+      "startedAt": "2026-10-28T05:37:44.205Z",
+      "status": "passed",
+      "exitCode": 0,
+      "finishedAt": "2026-10-28T05:38:00.860Z",
+      "log": "02-build.log",
+      "logSha256": "34db6dfcaa22236af320faff2f3238acce174e8e174531ce7380c13dbaa3ed74"
+    },
+    {
+      "label": "03-rules",
+      "command": [
+        "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+        "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\node_modules\\npm\\bin\\npm-cli.js",
+        "test",
+        "--",
+        "--exclude",
+        "tests/unit/full-system-seeds.test.ts",
+        "--maxWorkers=2",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\assault-v0811\\release-attempt-1\\unit.json"
+      ],
+      "cwd": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\assault-v0811-release",
+      "startedAt": "2026-10-28T05:38:00.885Z",
+      "status": "passed",
+      "exitCode": 0,
+      "finishedAt": "2026-10-28T05:39:08.450Z",
+      "log": "03-rules.log",
+      "logSha256": "c90c5ecca86f098948346c939126b3c4d1160b99ca3811ca036297057d4ed111"
+    }
+  ],
+  "mainDistBefore": "27a37e8a83be3b077037991e05826970629cfca01d83ce07dee5cd30e6e8b4ae",
+  "scope": "Independent dependency install and frozen source build/nonbatch rules for optional finite-source gameplay; frozen old art/rendering. No new1000 campaign batch, performance, or human acceptance.",
+  "dependencies": {
+    "esbuild": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\assault-v0811-release\\node_modules\\esbuild\\lib\\main.js",
+    "vitest": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\assault-v0811-release\\node_modules\\vitest\\index.cjs",
+    "phaser": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\assault-v0811-release\\node_modules\\phaser\\dist\\phaser.js",
+    "sharp": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\assault-v0811-release\\node_modules\\sharp\\dist\\index.cjs"
+  },
+  "gameSha256": "f6e9050f7c4fda63c1ce91d27654176538925b956723077e61ecc6838fc9ba2d",
+  "buildInputs": 145,
+  "tests": {
+    "success": true,
+    "files": 106,
+    "passed": 990,
+    "failed": 0,
+    "pending": 0
+  },
+  "mainDistUnchanged": true,
+  "sourceMatches": true,
+  "pass": true,
+  "finishedAt": "2026-10-28T05:39:08.606Z"
+}

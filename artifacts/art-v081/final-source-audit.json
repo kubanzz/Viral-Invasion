@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-27T18:26:46.228Z",
+  "finishedAt": "2026-10-27T18:26:48.455Z",
+  "method": "Read-only full-byte SHA256 comparison of external artwork, local snapshot and every recorded production source. Only this new audit JSON is written; no automatic sync, build, browser, simulation, dependency installation or test run.",
+  "expected": {
+    "version": "0.8.1",
+    "stage": "G4",
+    "rawFiles": 126,
+    "rawBytes": 65697295,
+    "productionSourceCount": 128,
+    "gameJsShortAnchor": {
+      "prefix": "4d245a",
+      "suffix": "cff4a4d"
+    },
+    "buildMetaShortAnchor": {
+      "prefix": "877508",
+      "suffix": "29543"
+    }
+  },
+  "artwork": {
+    "externalRoot": "D:/project/xsj/Viral-Invasion/asserts",
+    "localRoot": "asserts/",
+    "external": {
+      "files": 126,
+      "bytes": 65697295,
+      "inventorySha256": "e06f458bce4a56b46648877628eb81635d357a0be999b43b00a9b23b87adcfb0"
+    },
+    "local": {
+      "files": 126,
+      "bytes": 65697295,
+      "inventorySha256": "e06f458bce4a56b46648877628eb81635d357a0be999b43b00a9b23b87adcfb0"
+    },
+    "identical": true,
+    "newExternal": [],
+    "changed": [],
+    "onlyLocal": [],
+    "unknownCandidates": [],
+    "selectedMissing": [],
+    "selectedEntries": 43,
+    "selectedSources": 41,
+    "spriteIds": 40,
+    "environmentCount": 4,
+    "artInputSignature": "7bb5d2faed7840ef20860cc929c7b27d994a58e9fdbf9cfa9f54714bcddcae53",
+    "selectionSha256": "0bdccf6766f4549ade774e1808a8294a7976578803d7f9428c5ba4eee1eaa037",
+    "selectionMatchesRuntime": true,
+    "buildArtSignatureMatchesRuntime": true,
+    "externalUnchangedDuringAudit": true,
+    "localUnchangedDuringAudit": true
+  },
+  "checks": [
+    {
+      "command": [
+        "node",
+        "scripts/art-sync.mjs",
+        "--check"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 648,
+      "stdout": "Art verified: 1 atlas(es), 40 sprite IDs, 4 environments. Source: external; +0/~0, 0 unreviewed candidate(s).",
+      "stderr": "",
+      "error": null
+    },
+    {
+      "command": [
+        "node",
+        "scripts/start-local.mjs",
+        "--check"
+      ],
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 806,
+      "stdout": "{\"current\":true,\"needsBuild\":false,\"sourceCount\":128,\"reasons\":[],\"checked\":true,\"rebuilt\":false,\"opened\":false}",
+      "stderr": "",
+      "error": null
+    }
+  ],
+  "production": {
+    "version": "0.8.1",
+    "stage": "G4",
+    "gameJsSha256": "4d245ac6bf8d766538cad1602515f1475e24c42db2277fc010eca66e1cff4a4d",
+    "buildMetaSha256": "877508bd655e3ebad920bbf1ee90e7a797d04d771f27d4ef3c02b9a2ba129543",
+    "sourceManifestSha256": "f87e1802e6b4c13f9ffeb6a27f35b9df2f97aec4987461b290891c114d088f2b",
+    "sourceCount": 128,
+    "sourceMismatches": [],
+    "sourceMissing": [],
+    "gameAnchorMatches": true,
+    "metaAnchorMatches": true,
+    "gameUnchangedDuringAudit": true,
+    "metaUnchangedDuringAudit": true
+  },
+  "noGeneratedOutputChanges": {
+    "artRuntimeUnchanged": true,
+    "syncReportUnchanged": true
+  },
+  "pass": true
+}

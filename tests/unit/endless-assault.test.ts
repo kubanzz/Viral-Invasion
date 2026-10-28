@@ -3,6 +3,7 @@ import { distance, isLegalPosition, normalized, rayCircle, wallHit } from '../..
 import { BATTLE_BALANCE } from '../../src/game/battleConfig';
 import { EndlessDirector } from '../../src/game/endless';
 import { endlessPacing } from '../../src/game/endlessPacing';
+import { endlessStrikeDamage } from '../../src/game/endlessStrikeBalance';
 import { endlessAssaultSlots } from '../../src/game/endlessAssault';
 import type { EndlessHost } from '../../src/game/endlessTypes';
 import { GameSession } from '../../src/game/session';
@@ -152,19 +153,23 @@ describe('finite pressure-wave tissue assault', () => {
     for (let frame = 0; frame < 40; frame++) f.session.step(idle);
     expect(f.state.tissue.hp).toBe(100);
     for (let frame = 0; frame < 5; frame++) f.session.step(idle);
-    expect(f.state.tissue.hp).toBe(100 - BATTLE_BALANCE.tissueDamage);
+    expect(f.state.tissue.hp).toBe(100 - endlessStrikeDamage(f.e.wave).tissue);
     const hits = f.state.events.filter(event => event.type === 'ORGAN_INTEGRITY_CHANGED' && event.data.reason === 'enemy-attack');
     expect(hits).toHaveLength(1); expect(hits[0].data.actorId).toBe(f.target.id);
   });
 
-  it('allows the basic area tool to damage, push and cancel the actual tissue windup', () => {
+  it('delays area damage and preserves a committed tissue warning instead of granting a universal interrupt', () => {
     const f = combatFixture(); Object.assign(f.target, { x: 1275, attackReady: 0 }); Object.assign(f.state.player, { x: 1650 });
     f.session.step(idle); expect(f.target.attackTarget).toBe('tissue');
+    const deadline = f.target.attackAt;
     f.session.step({ ...idle, aim: { x: 1250, y: 900 }, fire: true, tool: 2 });
-    expect(f.target.hp).toBe(200 - BALANCE.damage[2]); expect(f.target.x).toBeGreaterThan(1275);
-    expect(f.target.attackAt).toBeUndefined(); expect(f.target.attackTarget).toBeUndefined();
-    for (let frame = 0; frame < 45; frame++) f.session.step(idle);
-    expect(f.state.tissue.hp).toBe(100);
+    expect(f.target.hp).toBe(200); expect(f.target.x).toBe(1275);
+    expect(f.target.attackAt).toBe(deadline); expect(f.target.attackTarget).toBe('tissue');
+    for (let frame = 0; frame < 18; frame++) f.session.step(idle);
+    expect(f.target.hp).toBe(200 - BALANCE.damage[2]);
+    expect(f.target.attackAt).toBe(deadline);
+    for (let frame = 0; frame < 27; frame++) f.session.step(idle);
+    expect(f.state.tissue.hp).toBe(100 - endlessStrikeDamage(f.e.wave).tissue);
   });
 
   it('allows ordinary precision damage to kill a committed attacker before it harms tissue', () => {

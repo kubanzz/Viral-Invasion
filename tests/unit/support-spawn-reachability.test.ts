@@ -125,7 +125,11 @@ describe('corrosion admission reachability without permanent finite-queue stalls
       const target = live.find(target => target.id === targetId);
       if (target && !visible(target, s.tissue, s.tissue.radius, f)) {
         blockedTicks++;
-        expect(target.attackPlan).toBeUndefined(); expect(target.attackAt).toBeUndefined();
+        expect(target.attackPlan).toBeUndefined();
+        // The first elite may warn its independent, wall-blocked capsule while
+        // navigating. The original tissue-corrosion plan still requires LOS.
+        if (target.viralCapsuleCarrier?.castUntil !== undefined) expect(target.attackAt).toBe(target.viralCapsuleCarrier.castUntil);
+        else expect(target.attackAt).toBeUndefined();
       }
       if (target && s.tick % 60 === 0) paths.push({ at: s.elapsed, position: point(target), tissueVisible: visible(target, s.tissue, s.tissue.radius, f) });
     }

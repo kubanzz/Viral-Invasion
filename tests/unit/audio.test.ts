@@ -40,6 +40,17 @@ const event = (type: string, tick: number, data: GameEvent['data'] = {}): GameEv
 const state = (events: GameEvent[], tick = Math.max(0, ...events.map(item => item.tick)), seed = 91): GameState => ({ seed, tick, events } as GameState);
 
 describe('event-driven sound feedback', () => {
+  it('plays distinct accepted tool launch cues, bounds bursts and keeps impact independent', () => {
+    const { sound, scheduled } = audioFixture();
+    const events = [event('TOOL_FIRED', 10, { tool: 1 }), event('TOOL_FIRED', 10, { tool: 1 }),
+      event('TARGET_HIT', 10), event('TARGET_HIT', 10), event('TOOL_FIRED', 30, { tool: 2 }),
+      event('TOOL_FIRED', 50, { tool: 3 })];
+    sound.update(state(events));
+    expect(scheduled.map(tone => tone.from)).toEqual([820, 520, 230, 560]);
+    sound.update(state(events)); expect(scheduled).toHaveLength(4);
+    sound.update(state([...events, event('TOOL_REJECTED', 70, { tool: 3 })]));
+    expect(scheduled).toHaveLength(4);
+  });
   it('distinguishes actual repair, enemy/infection damage and protocol pressure; full-health repair remains silent', () => {
     const { sound, scheduled } = audioFixture();
     sound.update(state([

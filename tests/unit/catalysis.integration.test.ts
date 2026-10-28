@@ -8,7 +8,7 @@ import type { DamageOrigin, GrowthCommand } from '../../src/game/growthTypes';
 import { advanceImmuneCells, IMMUNE_CELL_BALANCE, summonImmuneCells } from '../../src/game/immuneCells';
 import { growthContext } from '../../src/game/growth';
 import { GameSession } from '../../src/game/session';
-import type { GameEvent, InputFrame, Target, WorldGeometry } from '../../src/game/types';
+import { BALANCE, type GameEvent, type InputFrame, type Target, type WorldGeometry } from '../../src/game/types';
 
 const world: WorldGeometry = { width: 2400, height: 1500, bounds: { left: 30, right: 2370, top: 30, bottom: 1470 },
   obstacles: [], foreground: { x: 0, y: 0, width: 0, height: 0 } };
@@ -35,7 +35,11 @@ function through(session: GameSession, tick: number) {
   while (session.state.tick < tick && session.state.phase === 'playing') step(session);
   expect(session.state.tick).toBe(tick);
 }
-function prime(session: GameSession, aim = { x: 800, y: 500 }) { step(session, { fire: true, tool: 2, aim }); }
+function prime(session: GameSession, aim = { x: 800, y: 500 }) {
+  step(session); // Every cast requires a new press; held fire does not repeat tool 2.
+  step(session, { fire: true, tool: 2, aim });
+  for (let tick = 0; tick < 80 && session.state.traction && session.state.phase === 'playing'; tick++) step(session);
+}
 const blastHits = (events: GameEvent[]) => events.filter(event => event.type === 'TARGET_HIT' && event.data.ability === 'catalysis');
 const ofType = (events: GameEvent[], type: string) => events.filter(event => event.type === type);
 // Narrow internal access is used only for rejected/forged-source adversarial inputs.
@@ -52,8 +56,8 @@ describe('real catalysis primer attacks and finite batch lifecycle', () => {
     const f = fixture(targets, { catalysis: 1, nova: 1, power: 2 }, [{ id: 'local-cover', x: 850, y: 500, radius: 10 }]);
     const positions = targets.map(target => ({ id: target.id, x: target.x, y: target.y }));
     prime(f.session);
-    expect(f.state.endlessGrowth!.pendingCatalysis).toMatchObject({ organId: 'heart', createdAt: 1 / 60,
-      until: 1 / 60 + 4, targetIds: ['center', 'a', 'b'], damage: endlessCombatStats(f.state.endlessGrowth!).catalysisDamage });
+    expect(f.state.endlessGrowth!.pendingCatalysis).toMatchObject({ organId: 'heart', createdAt: f.state.elapsed,
+      until: f.state.elapsed + 4, targetIds: ['center', 'a', 'b'], damage: endlessCombatStats(f.state.endlessGrowth!).catalysisDamage });
     for (const target of targets) {
       expect({ id: target.id, x: target.x, y: target.y }).toEqual(positions.find(previous => previous.id === target.id));
       expect(target.hp).toBe(target.id === 'blocked' ? 1000 : target.id === 'dies' ? 0 : 992);
@@ -68,17 +72,20 @@ describe('real catalysis primer attacks and finite batch lifecycle', () => {
     expect(f.state).toEqual(before);
   });
 
-  it('keeps the original growing tool-2 damage and displacement when the card is absent', () => {
-    const f = fixture([actor('a', 800, 500, { role: 'virus' })], { nova: 2, power: 1 });
+  it('keeps the full delayed blast without the card and the same inward collection after conversion', () => {
+    const f = fixture([actor('a', 800, 600, { role: 'virus', recoverUntil: 0 })], { nova: 2, power: 1 });
     prime(f.session);
-    expect(f.targets[0].hp).toBeCloseTo(1000 - 65 * 1.18 * 1.3);
-    expect(ofType(f.events, 'AREA_DISPLACED')[0].data.distance).toBeCloseTo(85);
-    expect(distance(f.targets[0], { x: 800, y: 500 })).toBeGreaterThan(80);
+    expect(f.targets[0].hp).toBeCloseTo(1000 - BALANCE.damage[2] * 1.18 * 1.3);
+    expect(Number(ofType(f.events, 'TRACTION_DISPLACED')[0].data.distance)).toBeGreaterThan(0);
+    expect(distance(f.targets[0], { x: 800, y: 500 })).toBeLessThan(100);
+    expect(ofType(f.events, 'AREA_DISPLACED')).toEqual([]);
     expect(f.state.endlessGrowth!.pendingCatalysis).toBeUndefined();
     expect(ofType(f.events, 'CATALYSIS_ARMED')).toEqual([]);
-    expect(ofType(f.events, 'TARGET_HIT')[0].data).not.toHaveProperty('basicTool');
-    const converted = fixture([actor('converted', 800, 500, { role: 'virus' })]); prime(converted.session);
-    expect(converted.targets[0].hp).toBe(992); expect(converted.targets[0].x).toBe(800);
+    expect(ofType(f.events, 'TARGET_HIT')[0].data.basicTool).toBe(2);
+    const converted = fixture([actor('converted', 800, 600, { role: 'virus', recoverUntil: 0 })]); prime(converted.session);
+    expect(converted.targets[0].hp).toBe(992);
+    expect(ofType(converted.events, 'TRACTION_DISPLACED')).toHaveLength(1);
+    expect(distance(converted.targets[0], { x: 800, y: 500 })).toBeLessThan(100);
     expect(ofType(converted.events, 'AREA_DISPLACED')).toEqual([]);
   });
 
@@ -86,21 +93,19 @@ describe('real catalysis primer attacks and finite batch lifecycle', () => {
     const f = fixture([actor('a'), actor('next', 900, 700)]);
     prime(f.session); const previous = structuredClone(f.state.endlessGrowth!.pendingCatalysis!);
     f.state.endlessGrowth!.ranks.power = 2;
-    through(f.session, 70); prime(f.session, { x: 900, y: 700 });
+    through(f.session, 140); prime(f.session, { x: 850, y: 650 });
     const next = f.state.endlessGrowth!.pendingCatalysis!;
     expect(next.id).not.toBe(previous.id); expect(next.targetIds).toEqual(['next']);
     expect(next.until).toBe(f.state.elapsed + 4);
-    expect(next.damage).toBeCloseTo(65 * 1.36 * 1.15 * 1.25);
-    expect(previous.damage).toBeCloseTo(65 * 1.15 * 1.25);
+    expect(next.damage).toBeCloseTo(BALANCE.damage[2] * 1.36 * 1.15 * 1.25);
+    expect(previous.damage).toBeCloseTo(BALANCE.damage[2] * 1.15 * 1.25);
     expect(ofType(f.events, 'CATALYSIS_ARMED')[1].data.replacedBatchId).toBe(previous.id);
   });
 
-  it('does not refresh the batch on cooldown rejection, empty ground or range rejection', () => {
+  it.each(['cooldown', 'empty', 'range'] as const)('does not refresh the batch after a %s attempt', kind => {
     const f = fixture(); prime(f.session); const pending = structuredClone(f.state.endlessGrowth!.pendingCatalysis);
-    prime(f.session); expect(f.state.endlessGrowth!.pendingCatalysis).toEqual(pending);
-    through(f.session, 70); prime(f.session, { x: 500, y: 700 });
-    expect(f.state.endlessGrowth!.pendingCatalysis).toEqual(pending);
-    through(f.session, 140); prime(f.session, { x: 2000, y: 500 });
+    if (kind !== 'cooldown') through(f.session, 140);
+    prime(f.session, kind === 'empty' ? { x: 500, y: 700 } : kind === 'range' ? { x: 2000, y: 500 } : { x: 800, y: 500 });
     expect(f.state.endlessGrowth!.pendingCatalysis).toEqual(pending);
     expect(ofType(f.events, 'CATALYSIS_ARMED')).toHaveLength(1);
   });
@@ -321,7 +326,7 @@ describe('actual immune-cell provenance and catalyst exclusion rules', () => {
 
   it('also accepts the real single baseline patrol without inventing an equipped-lamp bite', () => {
     const f = fixture(); prime(f.session);
-    step(f.session, { tool: 3, scan: true }); through(f.session, 35);
+    step(f.session, { tool: 3, scan: true }); through(f.session, 55);
     expect(f.state.growth!.beacon!.mode).toBe('patrol'); expect(f.state.growth!.cells).toHaveLength(1);
     expect(ofType(f.events, 'CATALYSIS_CONSUMED')).toHaveLength(1);
     expect(ofType(f.events, 'CATALYSIS_CONSUMED')[0].data.trigger).toBe('immune-cell');
@@ -334,10 +339,10 @@ describe('actual immune-cell provenance and catalyst exclusion rules', () => {
     f.state.growth!.beacon = { id: 'squad', organId: 'heart', x: 800, y: 500, born: 0, until: 6,
       radius: 190, damage: 24, interval: .8, nextAttackAt: 0, tuning: 'balanced', mode: 'protocol' };
     f.state.growth!.cells = summonImmuneCells(f.state.growth!.beacon, growthContext(f.state))
-      .map(cell => ({ ...cell, x: 800, y: 470, attackReadyAt: 0 }));
+      .map(cell => ({ ...cell, x: 800, y: 470, attackReadyAt: 20 / 60 }));
     prime(f.session);
     const armed = ofType(f.events, 'CATALYSIS_ARMED')[0], consumed = ofType(f.events, 'CATALYSIS_CONSUMED')[0];
-    expect(armed.tick).toBe(1); expect(consumed.tick).toBe(armed.tick);
+    expect(armed.tick).toBe(20); expect(consumed.tick).toBe(armed.tick);
     expect(f.events.indexOf(armed)).toBeLessThan(f.events.indexOf(consumed));
     expect(consumed.data.trigger).toBe('immune-cell'); expect(ofType(f.events, 'CATALYSIS_DETONATED')).toHaveLength(1);
   });
@@ -386,17 +391,23 @@ describe('actual immune-cell provenance and catalyst exclusion rules', () => {
 
   it('consumes a real bite proof once even if that bite preceded the current batch', () => {
     const f = fixture();
+    f.state.growth!.equipped = [{ id: 'IMMUNE_BEACON', tuning: 'balanced' }];
     const origin = { id: 'squad', organId: 'heart' as const, x: 800, y: 500, born: 0, until: 6,
       radius: 190, damage: 24, interval: .8, nextAttackAt: 0, tuning: 'balanced' as const, mode: 'protocol' as const };
     f.state.growth!.beacon = origin;
-    f.state.tick = 1; f.state.elapsed = 1 / 60;
     const cells = summonImmuneCells(origin, { ...growthContext(f.state), tick: 0, elapsed: 0 }, 1)
       .map(cell => ({ ...cell, x: 800, y: 470, attackReadyAt: 0 }));
-    const advanced = advanceImmuneCells(cells, origin, growthContext(f.state)); f.state.growth!.cells = advanced.cells;
-    const commands = advanced.commands.filter(command => command.kind === 'damage');
-    internals(f.session).applyGrowthCommands(commands);
-    expect(ofType(f.events, 'TARGET_HIT')[0].data.immuneCellId).toBe(advanced.cells[0].id);
-    f.state.tool = 2; internals(f.session).fire({ x: 800, y: 500 });
+    let commands: GrowthCommand[] = [];
+    f.session.bus.on('event', event => {
+      if (event.type !== 'TARGET_HIT' || event.data.basicTool !== 2) return;
+      // A real bite is accepted during the primer receipt, just before its batch is armed.
+      const advanced = advanceImmuneCells(cells, origin, growthContext(f.state));
+      f.state.growth!.cells = advanced.cells;
+      commands = advanced.commands.filter(command => command.kind === 'damage');
+      internals(f.session).applyGrowthCommands(commands);
+    });
+    prime(f.session);
+    expect(ofType(f.events, 'TARGET_HIT').some(event => event.data.immuneCellId === cells[0].id)).toBe(true);
     expect(f.state.endlessGrowth!.pendingCatalysis).toBeDefined();
     internals(f.session).applyGrowthCommands(commands);
     expect(f.state.endlessGrowth!.pendingCatalysis).toBeDefined();

@@ -1,0 +1,17 @@
+{
+  "scope": "Instrumented Chrome headless sparse live campaign, same local device; 7 seconds per case, DPR 1. Not a dense, 10-minute, GPU-time, foreground-play or human-feel measurement. Application sources were under active development, so the before/after samples are directional rather than a controlled whole-build comparison.",
+  "device": "Intel Core i7-10700K, Chrome 155.0.8059.85",
+  "baseline": [
+    {"size":"1366x768","quality":"standard","fps":59.86,"p95Ms":16.8,"frames":420,"largeCanvasDrawImageCalls":840},
+    {"size":"1366x768","quality":"low","fps":60.00,"p95Ms":16.8,"frames":420,"largeCanvasDrawImageCalls":840},
+    {"size":"1920x1080","quality":"standard","fps":60.00,"p95Ms":16.7,"frames":420,"largeCanvasDrawImageCalls":840},
+    {"size":"1920x1080","quality":"low","fps":60.00,"p95Ms":16.8,"frames":421,"largeCanvasDrawImageCalls":842}
+  ],
+  "candidate": [
+    {"size":"1366x768","quality":"standard","fps":60.00,"p95Ms":16.8,"frames":421,"largeCanvasDrawImageCalls":0},
+    {"size":"1366x768","quality":"low","fps":60.00,"p95Ms":16.8,"frames":421,"largeCanvasDrawImageCalls":0},
+    {"size":"1920x1080","quality":"standard","fps":60.00,"p95Ms":16.8,"frames":421,"largeCanvasDrawImageCalls":0},
+    {"size":"1920x1080","quality":"low","fps":60.00,"p95Ms":16.8,"frames":421,"largeCanvasDrawImageCalls":0}
+  ],
+  "interpretation": "Two full-screen CPU copies per frame were removed; both dynamically changing canvas textures are still refreshed and uploaded to WebGL. A frame-rate improvement or GPU gain is not demonstrated by these refresh-limited sparse cases."
+}

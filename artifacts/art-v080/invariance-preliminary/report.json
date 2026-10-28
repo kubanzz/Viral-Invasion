@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-27T16:28:51.370Z",
+  "complete": false,
+  "pass": false,
+  "method": "Independent fixture imports and awaits the actual Renderer. One captured snapshot and two independent structuredClone states are checked after repeated browser renders at a fixed source tick. Browser screenshots capture actual canvas pixels.",
+  "scope": [
+    "Technical rendering comparison derived from a read-only snapshot; no main.ts, GameSession.step(), live release state writes, or game-time advancement.",
+    "Complete JSON equality plus SHA-256 of full state, HP, damage records, and collision geometry are checked at render-call boundaries.",
+    "Not a same-input gameplay replay, browser victory, ten-minute performance measurement, visual readability acceptance, or human playtest.",
+    "This verifies rendering does not change gameplay state. Shared danger/collision geometry remains covered separately by existing coreVisuals and geometry unit tests.",
+    "Images are browser screenshots of the actual canvas elements, with no HUD. Visual differences between normal/low effects are permitted."
+  ],
+  "options": {
+    "input": "artifacts/completion-v075/performance/attempt-1/dense-state.json",
+    "output": "artifacts/art-v080/invariance-preliminary",
+    "frames": 4,
+    "width": 1366,
+    "height": 768,
+    "dpr": 1,
+    "channel": "chrome",
+    "revision": "",
+    "hud": ""
+  },
+  "sourceRevision": null,
+  "sourceScope": "Current working-tree src/ and independent fixture harness.",
+  "input": {
+    "path": "artifacts/completion-v075/performance/attempt-1/dense-state.json"
+  },
+  "errors": [],
+  "remoteRequests": [],
+  "error": "Error: ENOENT: no such file or directory, open 'D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\completion-v075\\performance\\attempt-1\\dense-state.json'\n    at async open (node:internal/fs/promises:697:25)\n    at async readFile (node:internal/fs/promises:1348:14)\n    at async file:///D:/Workspace/Projects/xsj/Viral-Invasion/scripts/check-render-invariance.mjs:73:15",
+  "finishedAt": "2026-10-27T16:28:51.372Z"
+}

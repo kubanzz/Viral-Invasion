@@ -172,7 +172,7 @@ describe('continuous challenge UI contracts', () => {
     expect(nodes.get('endless-hp')!.textContent).toBe('112 / 140');
     expect(nodes.get('endless-hp-meter')!.style.width).toBe('80%');
     expect(nodes.get('endless-ability-0')!.textContent).toContain('3 束 × 40.1伤害');
-    expect(nodes.get('endless-ability-2')!.textContent).toContain('冲刺斩 47.2伤害');
+    expect(nodes.get('endless-ability-2')!.textContent).toContain('弧刃斩 64.9伤害');
     expect(nodes.get('endless-remaining')!.textContent).toBe('6');
     expect(nodes.get('endless-spawn-plan')!.textContent).toContain('待分裂 2');
     expect(nodes.get('endless-critical')!.textContent).toContain('12s');

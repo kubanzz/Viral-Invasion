@@ -2,6 +2,8 @@ import { SeedRng } from '../core/rng';
 import type { EndlessCombatStats, EndlessGrowthState, EndlessUpgradeId, EndlessUpgradeOption } from './endlessGrowthTypes';
 import { BALANCE } from './types';
 import { IMMUNE_GUARD_BALANCE } from './immuneFocus';
+import { TRACTION_BALANCE } from './traction';
+import { DASH_BLADE_BALANCE, dashBladeProfile } from './dashBlade';
 
 export type * from './endlessGrowthTypes';
 
@@ -47,11 +49,13 @@ export function endlessCombatStats(growth: EndlessGrowthState): EndlessCombatSta
     damageMultiplier,
     shotRays: 1 + multishot * 2,
     pierceCount: pierce,
-    areaRadius: 94 + nova * 14,
+    areaRadius: BALANCE.areaRadius + nova * 14,
+    areaGatherRadius: TRACTION_BALANCE.gatherRadius + nova * 14,
+    areaGuideDuration: nova >= TRACTION_BALANCE.guideMinimumRank ? TRACTION_BALANCE.guideDuration : 0,
     areaDamageMultiplier,
     primaryCooldown: haste === 0 ? BALANCE.cooldowns[1] : Math.max(PRIMARY_MIN_TICKS, PRIMARY_BASE_TICKS - haste) * BALANCE.step,
-    areaCooldown: Math.max(.6, Number((1.2 - nova * .1).toFixed(6))),
-    dashDamage: dash * 40,
+    areaCooldown: TRACTION_BALANCE.cooldown,
+    dashDamage: dash * DASH_BLADE_BALANCE.damagePerRank,
     scanDamage: scan * 30,
     maxHp: 100 + vitality * 20,
     cellDamageMultiplier: 1 + immune * .2,
@@ -77,15 +81,15 @@ function optionFor(growth: EndlessGrowthState, id: EndlessUpgradeId, wave: numbe
     power: `基础净化伤害倍率 ×${display(before.damageMultiplier)} → ×${display(after.damageMultiplier)}；强化现有攻击。`,
     multishot: `精准净化 ${change(before.shotRays, after.shotRays)} 束；向左右同时发射更多抗体。`,
     pierce: `每束精准射线额外贯穿 ${change(before.pierceCount, after.pierceCount)} 个敌体，遵循组织碰撞。`,
-    nova: `范围裂解半径 ${change(before.areaRadius, after.areaRadius)}，伤害倍率 ${change(before.areaDamageMultiplier, after.areaDamageMultiplier)}，冷却 ${change(before.areaCooldown, after.areaCooldown)} 秒。`,
-    dash: `Space 沿实际冲刺路径斩击周围敌人，基础伤害 ${change(before.dashDamage, after.dashDamage)}，判定半径 64。`,
+    nova: `牵引圈 ${change(before.areaGatherRadius, after.areaGatherRadius)}，爆心 ${change(before.areaRadius, after.areaRadius)}，伤害倍率 ${change(before.areaDamageMultiplier, after.areaDamageMultiplier)}；射程 ${TRACTION_BALANCE.range}，聚拢后 ${TRACTION_BALANCE.fuse} 秒爆发，冷却 ${after.areaCooldown} 秒。${after.areaGuideDuration > 0 ? `${before.areaGuideDuration === 0 ? '新操作：' : ''}导流已解锁：2 左键轻点快放，按住超过 ${TRACTION_BALANCE.guideThreshold} 秒可拖动落点，最长 ${after.areaGuideDuration} 秒自动松开；导流移动速度 75%，每体整次位移仍最多 ${TRACTION_BALANCE.displacementBudget}。` : 'Ⅲ阶解锁按住左键拖动落点的导流操作。'}`,
+    dash: `Space 冲刺抵达实际落点时近身挥斩，基础伤害 ${change(before.dashDamage, after.dashDamage)}，半径 ${change(dashBladeProfile(currentRank).radius, dashBladeProfile(nextRank).radius)}；${nextRank >= DASH_BLADE_BALANCE.circularRank ? `${currentRank < DASH_BLADE_BALANCE.circularRank ? '新操作效果：' : ''}Ⅲ阶圆周回旋，覆盖身后。` : '基础为前方 216° 扇斩，Ⅲ阶变为圆周回旋。'}${nextRank >= DASH_BLADE_BALANCE.returnRank ? `${currentRank < DASH_BLADE_BALANCE.returnRank ? '新操作效果：' : ''}Ⅵ阶在 ${DASH_BLADE_BALANCE.returnDelay} 秒后，于真实当前位置追加 ${DASH_BLADE_BALANCE.returnDamageFactor * 100}% 伤害回斩。` : 'Ⅵ阶追加延迟回斩。'}斩击遵循障碍遮挡。`,
     scan: `Q 扫描同时引爆身边 260 范围，基础伤害 ${change(before.scanDamage, after.scanDamage)}；扫描显形继续生效。`,
     vitality: `最大耐久 ${change(before.maxHp, after.maxHp)}；本次补给按新的耐久上限结算。`,
     haste: `精准净化间隔约 ${change(beforeShotTicks * BALANCE.step, afterShotTicks * BALANCE.step)} 秒；射速约 ${change(1 / (beforeShotTicks * BALANCE.step), 1 / (afterShotTicks * BALANCE.step))} 发/秒；整组扇射共用一次间隔。`,
     immune: `免疫细胞伤害倍率 ${change(before.cellDamageMultiplier, after.cellDamageMultiplier)}，额外寿命 ${change(before.cellDurationBonus, after.cellDurationBonus)} 秒；Q 冷却 ${change(before.scanCooldown, after.scanCooldown)} 秒，小队独立冷却倍率 ${change(before.cellCooldownMultiplier, after.cellCooldownMultiplier)}。${nextRank >= IMMUNE_GUARD_BALANCE.minimumRank
       ? `${currentRank < IMMUNE_GUARD_BALANCE.minimumRank ? '新操作：' : ''}组织驻防已解锁：${IMMUNE_GUARD_BALANCE.commandRange} 范围内 Q 瞄准十字组织，小队守备 ${IMMUNE_GUARD_BALANCE.radius} 范围并优先拦截袭击者；你可离开，细胞仍须真实到达和接触。Q 指敌或空地改令，不续命、不重置咬击。`
       : `${IMMUNE_GUARD_BALANCE.minimumRank} 阶解锁新操作：Q 点组织驻防，优先拦截袭击组织者。`}`,
-    catalysis: `改变工具 2：直伤 ${change(areaDamage, Math.min(CATALYSIS_UPGRADE_BALANCE.primerDamageCap, areaDamage))}，取消击退。最多 ${CATALYSIS_UPGRADE_BALANCE.maxTargets} 个实际受击存活目标铺标 ${CATALYSIS_UPGRADE_BALANCE.duration} 秒；随后用 1 正伤命中或真实细胞接触咬击，整批引爆一次。爆发半径 ${CATALYSIS_UPGRADE_BALANCE.radius}、最多 ${CATALYSIS_UPGRADE_BALANCE.maxTargets} 体，每体伤害 ${display(after.catalysisDamage)}（原工具 2 完整成长伤害 ×${CATALYSIS_UPGRADE_BALANCE.damageMultiplier}，按本次铺标捕获）。再次 2 的有效铺标覆盖旧批，不叠加。`,
+    catalysis: `转换工具 2 的爆发：保留牵引与已解锁导流，取消普通爆发，直伤 ${change(areaDamage, Math.min(CATALYSIS_UPGRADE_BALANCE.primerDamageCap, areaDamage))}。最多 ${CATALYSIS_UPGRADE_BALANCE.maxTargets} 个实际受击存活目标铺标 ${CATALYSIS_UPGRADE_BALANCE.duration} 秒；随后用 1 正伤命中或真实细胞接触咬击，整批引爆一次。爆发半径 ${CATALYSIS_UPGRADE_BALANCE.radius}、最多 ${CATALYSIS_UPGRADE_BALANCE.maxTargets} 体，每体伤害 ${display(after.catalysisDamage)}（原工具 2 完整成长伤害 ×${CATALYSIS_UPGRADE_BALANCE.damageMultiplier}，按施法捕获）。再次 2 的有效铺标覆盖旧批，不叠加。`,
   };
   return { id, title: ENDLESS_UPGRADES[id].title, description: description[id], currentRank, nextRank };
 }

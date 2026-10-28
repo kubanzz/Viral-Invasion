@@ -6,6 +6,7 @@
  */
 import { build } from 'esbuild';
 import { chromium } from '@playwright/test';
+import sharp from 'sharp';
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
@@ -17,7 +18,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const git = promisify(execFile);
 const args = process.argv.slice(2);
 if (args.includes('--help')) {
-  console.log('Read-only Canvas2D snapshot comparison, after exclusive performance measurement.\n'
+  console.log('Read-only browser renderer snapshot comparison, after exclusive performance measurement.\n'
     + 'node scripts/check-render-invariance.mjs [--input artifacts/G4/performance/dense-state.json]\n'
     + '  [--output artifacts/G4/render-invariance] [--frames 12] [--width 1366] [--height 768] [--dpr 1] [--channel chrome|msedge] [--revision <commit>] [--hud <sidecar>]\n'
     + '--revision loads src/ verbatim from that Git commit into the isolated fixture, for an explicitly derived visual comparison.\n'
@@ -57,13 +58,13 @@ const errors = [], remoteRequests = [];
 let browser;
 const report = {
   schemaVersion: 1, startedAt: new Date().toISOString(), complete: false, pass: false,
-  method: 'Independent fixture imports the actual Renderer. One captured snapshot and two independent structuredClone states are checked after repeated real Canvas2D renders at a fixed source tick.',
+  method: 'Independent fixture imports and awaits the actual Renderer. One captured snapshot and two independent structuredClone states are checked after repeated browser renders at a fixed source tick. Browser screenshots capture actual canvas pixels.',
   scope: [
     'Technical rendering comparison derived from a read-only snapshot; no main.ts, GameSession.step(), live release state writes, or game-time advancement.',
     'Complete JSON equality plus SHA-256 of full state, HP, damage records, and collision geometry are checked at render-call boundaries.',
     'Not a same-input gameplay replay, browser victory, ten-minute performance measurement, visual readability acceptance, or human playtest.',
     'This verifies rendering does not change gameplay state. Shared danger/collision geometry remains covered separately by existing coreVisuals and geometry unit tests.',
-    'Images are Canvas2D backing stores only, with no HUD. Visual differences between normal/low effects are permitted.',
+    'Images are browser screenshots of the actual canvas elements, with no HUD. Visual differences between normal/low effects are permitted.',
   ],
   options, sourceRevision: revision, sourceScope: revision ? 'src/ bytes from the recorded commit; current independent fixture harness. No live-game state is written.' : 'Current working-tree src/ and independent fixture harness.', input: { path: pathLabel(input) }, errors, remoteRequests,
 };
@@ -109,15 +110,23 @@ try {
   await page.goto(pathToFileURL(join(output, 'fixture.html')).href);
   await page.waitForFunction(() => typeof window.__renderProbe?.run === 'function');
   const result = await page.evaluate(({ snapshot, frames, hudRects }) => window.__renderProbe.run(snapshot, { frames, hudRects }), { snapshot, frames: options.frames, hudRects });
-  const { png, ...checks } = result;
+  const { capture, ...checks } = result;
   report.checks = checks;
   report.images = {};
   for (const mode of ['normal', 'low']) {
-    if (!png[mode].startsWith('data:image/png;base64,')) throw new Error(`Invalid ${mode} Canvas2D PNG export.`);
-    const bytes = Buffer.from(png[mode].slice('data:image/png;base64,'.length), 'base64');
     const filename = `same-tick-${mode}.png`;
-    await writeFile(join(output, filename), bytes);
-    report.images[mode] = { path: pathLabel(join(output, filename)), sha256: sha256(bytes), bytes: bytes.length, tick: result.tick, elapsed: result.elapsed };
+    const bytes = await page.locator(capture[mode]).screenshot({ path: join(output, filename) });
+    const { data, info } = await sharp(bytes).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+    const colors = new Set(); let sampled = 0, nonClear = 0;
+    for (let pixel = 0; pixel < info.width * info.height; pixel += 13) {
+      const index = pixel * info.channels, r = data[index], g = data[index + 1], b = data[index + 2];
+      sampled++; if (Math.abs(r - 18) + Math.abs(g - 13) + Math.abs(b - 27) > 24) nonClear++;
+      colors.add((r >> 3) * 1024 + (g >> 3) * 32 + (b >> 3));
+    }
+    const pixels = { width: info.width, height: info.height, sampled, quantizedColors: colors.size, nonClearFraction: nonClear / sampled };
+    if (colors.size < 32 || nonClear / sampled < .1) throw Error(`${mode} renderer canvas has no meaningful painted pixels.`);
+    report.images[mode] = { path: pathLabel(join(output, filename)), sha256: sha256(bytes), bytes: bytes.length, tick: result.tick, elapsed: result.elapsed,
+      method: capture.method, pixels };
   }
   report.browser = { channel: options.channel, version: await browser.version(), headless: true, offline: true };
   report.input.unchanged = await fileHash(input) === report.input.fileSha256;

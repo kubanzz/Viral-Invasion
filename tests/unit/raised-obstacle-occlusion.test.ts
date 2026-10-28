@@ -3,7 +3,7 @@ import { GameSession } from '../../src/game/session';
 import type { GameState, Target } from '../../src/game/types';
 import type { ImmuneCellState } from '../../src/game/immuneCells';
 import { immuneCellBody } from '../../src/render/immuneVisuals';
-import { Renderer } from '../../src/render/renderer';
+import { CanvasScene as Renderer } from '../../src/render/canvasScene';
 import { drawLungObstacle } from '../../src/render/lungVisuals';
 import { boundsOverlap, drawRaisedBodyLayers, localUpperSilhouette, raisedObstacleCurves, upperSilhouetteOverlapsBounds } from '../../src/render/raisedObstacleGeometry';
 import { getRaisedActorBodies, getRaisedObstacleOcclusion, PLAYER_HEAD_SHAPE, playerBodyPose, projectedRaisedObstacle, RAISED_OBSTACLE_FADED_OPACITY, SPRITE_Y_SCALE } from '../../src/render/raisedObstacleOcclusion';

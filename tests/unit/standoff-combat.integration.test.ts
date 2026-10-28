@@ -45,10 +45,11 @@ describe('a counterable ranged support in real fixed updates', () => {
 
   it('leaves standing precision fire out of reach, with a real warned hit instead of an invisible damage rule', () => {
     const f = fixture(); f.advance(180, () => ({ fire: true, tool: 1 }));
-    expect(f.target.hp).toBe(68); expect(f.s.player.hp).toBe(93);
+    expect(f.target.hp).toBe(68); expect(f.s.player.hp).toBe(90);
     const commits = f.events.filter(event => event.type === 'ENEMY_TACTIC_COMMITTED');
     expect(commits).toHaveLength(1); expect(commits[0].tick / 60).toBeGreaterThanOrEqual(1.5);
     expect(f.events.filter(event => event.type === 'PLAYER_HURT')).toHaveLength(1);
+    expect(f.events.find(event => event.type === 'PLAYER_HURT')?.data.damage).toBe(10);
     expect(f.events.find(event => event.type === 'PLAYER_HURT')?.data.reason).toBe('thin-ray');
   });
 

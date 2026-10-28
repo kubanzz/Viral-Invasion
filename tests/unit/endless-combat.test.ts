@@ -80,25 +80,28 @@ describe('endless upgrades through real session input', () => {
     expect(actors.map(actor => actor.hp)).toEqual([966, 966, 1000]);
   });
 
-  it('expands the actual nova hit radius and damage, keeps local cover and enforces its upgraded cooldown', () => {
+  it('expands the delayed nova hit radius and damage, keeps local cover and enforces a fresh press after cooldown', () => {
     const aim = { x: 800, y: 500 };
-    const edge = target('edge', 800, 632), outside = target('outside', 667, 500), covered = target('covered', 900, 500);
+    const edge = target('edge', 800, 632), outside = target('outside', 665, 500), covered = target('covered', 900, 500);
     const session = fixture({ nova: 2, power: 1 }, [edge, outside, covered], [{ id: 'cover', x: 850, y: 500, radius: 15 }]);
     step(session, { fire: true, tool: 2, aim });
-    const damage = 65 * 1.18 * 1.3;
+    expect(edge.hp).toBe(1000); expect(session.state.cooldowns[2] - session.state.elapsed).toBeCloseTo(2);
+    throughTick(session, 19);
+    const damage = BALANCE.damage[2] * 1.18 * 1.3;
     expect(edge.hp).toBeCloseTo(1000 - damage);
     expect(outside.hp).toBe(1000);
     expect(covered.hp).toBe(1000);
-    expect(session.state.effects.find(effect => effect.kind === 'burst')?.radius).toBe(122);
-    expect(session.state.cooldowns[2] - session.state.elapsed).toBeCloseTo(1);
-    throughTick(session, 60, { fire: true, tool: 2, aim });
+    expect(session.state.effects.find(effect => effect.kind === 'burst')?.radius).toBe(124);
+    throughTick(session, 120, { fire: true, tool: 2, aim });
     expect(session.state.shots).toBe(1);
+    step(session, { fire: false, tool: 2, aim });
     step(session, { fire: true, tool: 2, aim });
     expect(session.state.shots).toBe(2);
+    throughTick(session, 140);
     expect(edge.hp).toBeCloseTo(1000 - 2 * damage);
   });
 
-  it('hits late along actual dash travel and damages each body once during the same dash', () => {
+  it('sweeps a wide fan once at the actual landing point without repeating it along travel', () => {
     const near = target('near', 620, 500), late = target('late', 703, 500), flank = target('flank', 600, 585);
     const session = fixture({ dash: 1, power: 1 }, [near, late, flank]);
     step(session, { dash: true, moveX: 1 });
@@ -106,13 +109,13 @@ describe('endless upgrades through real session input', () => {
     expect(late.hp).toBe(1000);
     throughTick(session, 12);
     expect(session.state.player.x).toBeCloseTo(630);
-    expect(near.hp).toBeCloseTo(1000 - 40 * 1.18);
-    expect(late.hp).toBeCloseTo(1000 - 40 * 1.18);
-    expect(flank.hp).toBe(1000);
+    expect(near.hp).toBeCloseTo(1000 - 55 * 1.18);
+    expect(late.hp).toBeCloseTo(1000 - 55 * 1.18);
+    expect(flank.hp).toBeCloseTo(1000 - 55 * 1.18);
     expect(hits(session, near.id)).toHaveLength(1);
     expect(hits(session, late.id)).toHaveLength(1);
-    expect(hits(session, late.id)[0].tick).toBeGreaterThan(1);
-    expect(hits(session, late.id)[0].data.cause).toBe('ability');
+    expect(hits(session, flank.id)).toHaveLength(1);
+    expect(hits(session, near.id)[0].data.cause).toBe('ability');
   });
 
   it('stops dash movement at cover and does not slash the body on its other side', () => {
@@ -122,7 +125,7 @@ describe('endless upgrades through real session input', () => {
     step(session, { dash: true, moveX: 1 });
     throughTick(session, 12);
     expect(session.state.player.x).toBeCloseTo(fold.x - fold.radius - session.state.player.radius);
-    expect(open.hp).toBe(960);
+    expect(open.hp).toBe(945);
     expect(blocked.hp).toBe(1000);
     expect(distance(session.state.player, blocked)).toBeLessThan(64 + blocked.radius);
     expect(hits(session, open.id)).toHaveLength(1);

@@ -88,6 +88,11 @@ test('five natural waves expose support and elite tells, redirect the same squad
       } else if (visible && redirected && state.scanReady <= state.elapsed) {
         await aim(page, visible); await page.keyboard.press('KeyQ');
       }
+      // Keep the first wave alive until this same squad is redirected. Choosing
+      // a wave upgrade legitimately refreshes deployment and would summon a new squad.
+      if (!redirected && deployedAt >= 0) {
+        await page.mouse.up(); await movement.release(); await page.waitForTimeout(75); continue;
+      }
       if (special) { // Allow one naturally spawned support and elite to show their complete public tell.
         await page.mouse.up(); await movement.release(); await page.waitForTimeout(75); continue;
       }

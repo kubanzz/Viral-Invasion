@@ -114,13 +114,15 @@ describe('accepted special attack transactions in the real session', () => {
     expect(f.events.some(event => event.type === 'ORGAN_INTEGRITY_CHANGED' && event.data.reason === 'enemy-attack')).toBe(false);
   });
 
-  it('cancels a real charge when tool2 actually displaces its body, without stale follow-up damage', () => {
+  it('preserves a real committed charge through tool2 and resolves its original path once', () => {
     const f = fixture('crystal-charge'); f.until(() => !!f.target.charge);
+    const charge = structuredClone(f.target.charge);
     f.advance(1, { tool: 2, fire: true, aim: { x: f.target.x, y: f.target.y } });
-    expect(f.events.filter(event => event.type === 'AREA_DISPLACED')).toHaveLength(1);
-    expect(f.target.charge).toBeUndefined(); expect(f.target.attackPlan).toBeUndefined();
-    expect(f.target.attackAt).toBeUndefined(); f.advance(20);
-    expect(f.s.player.hp).toBe(100);
-    expect(f.events.filter(event => event.type === 'ENEMY_CHARGE_ENDED')).toHaveLength(0);
+    expect(f.events.filter(event => event.type === 'TRACTION_DISPLACED')).toHaveLength(0);
+    expect(f.target.charge).toBeDefined(); expect(f.target.charge?.from).toEqual(charge!.from);
+    expect(f.target.charge?.to).toEqual(charge!.to);
+    f.until(() => !f.target.charge);
+    expect(f.events.filter(event => event.type === 'ENEMY_CHARGE_ENDED')).toHaveLength(1);
+    expect(f.events.filter(event => event.type === 'PLAYER_HURT')).toHaveLength(1);
   });
 });

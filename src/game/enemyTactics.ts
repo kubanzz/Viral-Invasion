@@ -2,6 +2,7 @@ import { clamp, distance, moveWithCollision, normalized, rayCircle, wallHit } fr
 import { activeWorld, type GameState, type Target, type Vec, type WorldGeometry } from './types';
 import type { EnemyAttackPlan, EnemyTactic } from './enemyTacticsTypes';
 import { STANDOFF_BALANCE } from './enemyPositioning';
+import { endlessStrikeDamage } from './endlessStrikeBalance';
 export type { EnemyAttackPlan, EnemyCharge, EnemyTactic } from './enemyTacticsTypes';
 
 const point = (position: Vec): Vec => ({ x: position.x, y: position.y });
@@ -44,6 +45,7 @@ export function enemyAttackPlan(target: Target, state: GameState): EnemyAttackPl
   const tactic = (target as Target & { tactic?: EnemyTactic }).tactic;
   if (!tactic || tactic === 'melee' || target.hp <= 0) return;
   const world = activeWorld(state), wave = state.endless?.wave ?? 1;
+  const strike = state.endless ? endlessStrikeDamage(wave) : undefined;
   const goal = tactic === 'mimic-corrosion' ? state.tissue : state.player;
   const range = tactic === 'thin-ray' ? target.tacticPosture === 'standoff' ? STANDOFF_BALANCE.attackRange : 530 : tactic === 'mimic-corrosion' ? 650 : 500;
   if (distance(target, goal) > range + 1e-7 || !clearLine(target, goal, goal.radius, world)) return;
@@ -52,8 +54,9 @@ export function enemyAttackPlan(target: Target, state: GameState): EnemyAttackPl
     windup: tactic === 'thin-ray' ? 1.05 : tactic === 'mimic-corrosion' ? 1.8 : tactic === 'fission-burst' ? 1.25 : 1.2,
     interval: tactic === 'thin-ray' ? 3.2 : tactic === 'mimic-corrosion' ? 5.2 : 3.8,
     radius: tactic === 'thin-ray' ? 18 : tactic === 'fission-burst' ? 62 : tactic === 'mimic-corrosion' ? state.tissue.radius + 10 : 34,
-    landings: [], playerDamage: tactic === 'mimic-corrosion' ? 0 : 7 + Math.floor((wave - 1) / 4) + (target.role === 'elite' ? 5 : 0),
-    tissueDamage: tactic === 'mimic-corrosion' ? 6 + Math.floor((wave - 1) / 8) : 0,
+    landings: [], playerDamage: tactic === 'mimic-corrosion' ? 0 : strike
+      ? target.role === 'elite' ? strike.eliteSpecialPlayer : strike.specialPlayer : 7 + (target.role === 'elite' ? 5 : 0),
+    tissueDamage: tactic === 'mimic-corrosion' ? strike?.corrosionTissue ?? 6 : 0,
     recoveryExposure: tactic === 'thin-ray' ? 0 : tactic === 'crystal-charge' ? 2 : 1.5,
   };
   // Center LOS alone can skim a fold that clips the real thick lane short of

@@ -158,8 +158,16 @@ describe('versioned first-counter encounter', () => {
     expect(s.state.battle!.warning).toBeNull();
     target.hp = 65;
     if (s.state.growth?.draft) s.discardDraft(s.state.growth.draft.id);
+    // Earlier fixture XP may queue multiple legal modals. A modal now correctly
+    // cancels a pending cast, so settle those existing rewards before casting.
+    for (let tick = 0; tick < 10; tick++) {
+      if (s.state.growth?.draft) s.discardDraft(s.state.growth.draft.id);
+      else if (s.state.phase === 'playing') s.step(idle());
+    }
+    frontalPose(s);
     expect(s.state.phase).toBe('playing');
     s.step({ ...idle(target), tool: 2, fire: true });
+    for (let tick = 0; tick < 18 && s.state.phase === 'playing'; tick++) s.step(idle());
     expect(target.hp).toBe(0);
     const first = s.state.battle!.encounter!.firstCounter;
     expect(first.status).toBe('resolved'); expect(first.counterHit).toBeNull(); expect(first.guideStatus).toBe('active');

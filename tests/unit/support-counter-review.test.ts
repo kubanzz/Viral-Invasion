@@ -41,19 +41,20 @@ afterAll(() => {
 });
 
 describe('independent support counter review', () => {
-  it('actual area displacement cancels an active charge and releases its heavy slot', () => {
+  it('a delayed area cast preserves the moving charge and its heavy slot until actual completion', () => {
     const first = actor('pushed-charge', 'crystal-charge', 680, 700), next = actor('waiting-charge', 'crystal-charge', 1520, 700);
     const f = fixture([first, next]); startCharge(f, first);
     expect(next.attackAt).toBeUndefined(); const oldEndsAt = first.charge!.endsAt;
     f.step({ tool: 2, fire: true, aim: { x: first.x, y: first.y } });
-    expect(first.hp).toBe(3); expect(first.charge).toBeUndefined(); expect(first.attackAt).toBeUndefined();
-    expect(next.attackPlan?.kind).toBe('crystal-charge');
-    const displaced = f.events.filter(event => event.type === 'AREA_DISPLACED' && event.data.targetId === first.id);
-    expect(displaced).toHaveLength(1); expect(displaced[0].data.distance).toBeGreaterThan(1);
+    expect(first.hp).toBe(68); expect(first.charge).toBeDefined();
+    expect(next.attackPlan).toBeUndefined();
+    const displaced = f.events.filter(event => event.type === 'TRACTION_DISPLACED' && event.data.targetId === first.id);
+    expect(displaced).toHaveLength(0);
     while (f.s.elapsed <= oldEndsAt + .05) f.step();
-    expect(f.events.some(event => event.type === 'ENEMY_CHARGE_ENDED' && event.data.actorId === first.id)).toBe(false);
-    evidence.push({ name: 'real-area-displacement-during-charge', oldEndsAt, remainingHp: first.hp, displacement: displaced[0],
-      limitation: 'Base tool2 leaves 3HP on a 68HP support; interruption depends on actual displacement or a kill. Zero displacement at walls is not asserted.' });
+    expect(f.events.filter(event => event.type === 'ENEMY_CHARGE_ENDED' && event.data.actorId === first.id)).toHaveLength(1);
+    expect(next.attackPlan?.kind).toBe('crystal-charge');
+    evidence.push({ name: 'traction-preserves-committed-charge', oldEndsAt, remainingHp: first.hp, displacement: displaced,
+      limitation: 'Delayed tool2 uses the actual later blast position and never relocates/cancels a frozen charge. A moving body may escape the blast.' });
   });
 
   it('two real shots kill an active charge and release its heavy slot without stale completion', () => {

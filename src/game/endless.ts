@@ -12,6 +12,7 @@ import { recordEndlessBehavior } from './endlessBehavior';
 import { createEliteTacticCycle } from './eliteTacticCycle';
 import { endlessPacing } from './endlessPacing';
 import { endlessAssaultPosition, endlessAssaultSlots } from './endlessAssault';
+import { makeViralCapsuleCarrier, viralCapsulePlan } from './viralCapsules';
 import { ENDLESS_SOURCE_BALANCE, isEndlessSourceId, planEndlessSource, sourceQuotaPosition, sourceQuotaRemaining } from './endlessSource';
 import { activeWorld, type GameEvent, type GameState, type Target, type Vec } from './types';
 export type { EndlessHost, EndlessState } from './endlessTypes';
@@ -182,8 +183,10 @@ export class EndlessDirector {
       this.state.battle!.stage = wave - 1;
       this.state.battle!.stageLabel = `第 ${wave} 波 · ${e.title}`;
       const assaultSlots = endlessAssaultSlots(wave, e.batchSchedule.flatMap(batch => batch.roles), e.source);
+      const capsulePlan = viralCapsulePlan(wave, e.batchSchedule.flatMap(batch => batch.roles), e.source);
       this.host.emit('ENDLESS_WAVE_WARNING', { wave, title: e.title, duration: e.warningSeconds, traits: plan.traits.join('+'), elite: e.eliteWave, formation: e.formation, supports: e.supportRemaining,
         assaultSlots: assaultSlots.join(','), ...(assaultSlots.length ? { assaultObjective: 'tissue' } : {}),
+        ...(capsulePlan ? { capsuleCarrierSlot: capsulePlan.slot, capsuleObjective: capsulePlan.objective, capsuleFork: capsulePlan.fork } : {}),
         ...(announcedCycle ? { dualElite: true, eliteTactics: announcedCycle.tactics.join('>') } : {}) });
       if (this.state !== state || this.e !== e || !this.active() || this.e.phase !== 'warning') return;
       if (e.source) {
@@ -204,8 +207,9 @@ export class EndlessDirector {
       const adaptiveHint = decision?.kind === 'warn' ? `适应换代 · ${TRAITS[decision.main].name}：${TRAITS[decision.main].ability}；代价：${TRAITS[decision.main].cost}；反制：${TRAITS[decision.main].counter}。` : '';
       const duetHint = announcedCycle ? `首只精英依次轮换主招 → 伴招，每招仍有前摇与恢复窗口。${announcedTraits.map(trait => `${TRAITS[trait].name}：${TRAITS[trait].ability}；代价：${TRAITS[trait].cost}；基础反制：${TRAITS[trait].counter}`).join('。')}。${announcedCycle.tactics.map(tactic => `${ENEMY_TACTIC_INFO[tactic].name}：${ENEMY_TACTIC_INFO[tactic].counter}`).join('；')}` : '';
       const sourceHint = e.source ? `远侧有限感染源：提前净化可截断最多 ${e.source.quotaSlots.length} 个尚未入场普通体。也可先守住组织，配额耗尽后自动枯竭。` : '';
-      const assaultHint = assaultSlots.length ? `组织袭击分队 ${assaultSlots.length} 体：直奔中央组织，可拦截、2 击退或 Q 部署小队防守。` : '';
-      this.host.message(`第 ${wave} 波 · ${e.title}，${e.warningSeconds} 秒后到达。${assaultHint}${sourceHint}${duetHint || adaptiveHint || supportHint || (wave === 3 ? '新敌：远距点射停在射程外。接近射杀或朝它 Q 部署细胞；窄线锁定后侧移可躲开。' : counter || '移动拉线，2 范围裂解，Q 召集免疫援助。')}`, e.warningSeconds, 2);
+      const assaultHint = assaultSlots.length ? `组织袭击分队 ${assaultSlots.length} 体：直奔中央组织，可拦截、2 聚拢或 Q 部署小队防守。` : '';
+      const capsuleHint = capsulePlan ? `离体弹囊${capsulePlan.fork ? ' · 分叉型' : ''}：携带者施法或死亡会释放同一枚有限弹囊，预警后沿固定方向飞行；可用基础工具或实际细胞击落，侧移或借褶皱躲避。` : '';
+      this.host.message(`第 ${wave} 波 · ${e.title}，${e.warningSeconds} 秒后到达。${capsuleHint}${assaultHint}${sourceHint}${duetHint || adaptiveHint || supportHint || (wave === 3 ? '新敌：远距点射停在射程外。接近射杀或朝它 Q 部署细胞；窄线锁定后侧移可躲开。' : counter || '移动拉线，2 牵引裂解，Q 召集免疫援助。')}`, e.warningSeconds, 2);
       return;
     }
     const evolution = e.evolution;
@@ -225,8 +229,10 @@ export class EndlessDirector {
     }
     e.phase = 'combat'; e.phaseStartedAt = now; e.phaseUntil = 0; e.nextSpawnAt = now;
     const assaultSlots = endlessAssaultSlots(e.wave, e.batchSchedule.flatMap(batch => batch.roles), e.source);
+    const capsulePlan = viralCapsulePlan(e.wave, e.batchSchedule.flatMap(batch => batch.roles), e.source);
     this.host.emit('ENDLESS_WAVE_STARTED', { wave: e.wave, title: e.title, budget: e.totalToSpawn, traits: e.traits.join('+'),
-      assaultSlots: assaultSlots.join(','), ...(assaultSlots.length ? { assaultObjective: 'tissue' } : {}) });
+      assaultSlots: assaultSlots.join(','), ...(assaultSlots.length ? { assaultObjective: 'tissue' } : {}),
+      ...(capsulePlan ? { capsuleCarrierSlot: capsulePlan.slot, capsuleObjective: capsulePlan.objective, capsuleFork: capsulePlan.fork } : {}) });
     if (this.state !== state || this.e !== e || !this.active() || e.phase !== 'combat') return;
     this.host.message(`第 ${e.wave} 波 · ${e.title}。清场获得成长；注意多方向来袭。`, 3, 1);
   }
@@ -271,7 +277,7 @@ export class EndlessDirector {
       evolution.history = recordEndlessBehavior(evolution.history, event, this.state.tick);
     }
     const id = String(event.data.id ?? ''), target = this.state.targets.find(item => item.id === id);
-    if (!target || !this.current(target)) return;
+    if (!target || !this.current(target) || target.role === 'capsule') return;
     if (event.type === 'ACTOR_SPAWNED') {
       if (!this.e.spawnedIds.includes(id)) this.e.spawnedIds.push(id);
       return;
@@ -349,11 +355,14 @@ export class EndlessDirector {
       const hp = Math.round(elite ? 170 * pacing.eliteHealthMultiplier : 68 * pacing.healthMultiplier * (sourceBody ? ENDLESS_SOURCE_BALANCE.healthInOrdinaryBodies : 1));
       const serial = ++this.state.battle!.nextActorId;
       const id = sourceBody ? e.source!.id : `${elite ? 'elite' : 'virus'}-${serial}`;
+      const capsulePlan = viralCapsulePlan(e.wave, e.batchSchedule.flatMap(batch => batch.roles), e.source);
+      const carrier = capsulePlan?.slot === ordinal ? makeViralCapsuleCarrier(id, e.wave, capsulePlan.objective, capsulePlan.fork) : undefined;
       const target: Target & { tactic: EnemyTactic } = { ...position, id, kind: traits.includes('FISSION') ? 'cluster' : 'single', role: sourceBody ? 'source' : elite ? 'elite' : 'virus', radius,
         hp, maxHp: hp, hitUntil: 0, scanned: false, traits, generation: 0, sourceId: sourceId(e.wave), born: now,
         facing: Math.atan2(this.state.player.y - position.y, this.state.player.x - position.x), tactic, ...(eliteCycle ? { eliteCycle } : {}),
         ...(standoff ? { tacticPosture: 'standoff' as const } : {}),
         ...(assault ? { assaultObjective: 'tissue' as const } : {}),
+        ...(carrier ? { viralCapsuleCarrier: carrier } : {}),
         attackReady: now + (wantsStandoff ? ENDLESS_BALANCE.spawnGrace : support ? .2 : elite ? .35 : ENDLESS_BALANCE.spawnGrace) };
       this.state.targets.push(target);
       e.spawnedIds.push(id); e.spawnSerial++; e.remainingToSpawn--; e.batchMemberIndex++;
@@ -380,6 +389,7 @@ export class EndlessDirector {
       this.host.effect('evolution', position, position, radius + 16, .7);
       this.host.emit('ACTOR_SPAWNED', { id, role: target.role!, generation: 0, sourceId: target.sourceId!, traits: traits.join('+'), wave: e.wave, slot: ordinal, tactic, posture: standoff ? 'standoff' : 'pursuit', formation: e.formation,
         ...(assault ? { assaultObjective: 'tissue', assaultFallback: !assaultPosition } : {}),
+        ...(carrier ? { capsuleCarrier: true, capsuleObjective: carrier.objective, capsuleFork: carrier.fork, capsuleStock: carrier.stock } : {}),
         ...(eliteCycle ? { dualElite: true, eliteTactics: eliteCycle.tactics.join('>') } : {}) });
       if (this.state !== state || this.e !== e || !this.active()) return;
       if (quotaBirth) {

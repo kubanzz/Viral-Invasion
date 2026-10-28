@@ -39,6 +39,7 @@ describe('immune planning reserves the actual projected host damage', () => {
     state.endlessGrowth!.ranks.catalysis = 1; state.endlessGrowth!.ranks.nova = 1;
     for (const cell of state.growth!.cells!) cell.attackReadyAt = 100;
     session.step(input({ fire: true, tool: 2 }));
+    for (let tick = 0; tick < 18; tick++) session.step(input());
     expect(state.endlessGrowth!.pendingCatalysis).toBeDefined(); expect(weak.hp).toBe(22); expect(next.hp).toBe(92);
     state.growth!.cells = state.growth!.cells!.map(cell => ({ ...cell, x: 550, y: 500, attackReadyAt: 0, attackUntil: 0, waypoint: null }));
     const oldClocks = state.growth!.cells!.map(cell => ({ id: cell.id, ready: cell.attackReadyAt, until: cell.attackUntil }));

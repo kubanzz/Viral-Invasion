@@ -65,6 +65,10 @@ export interface EndlessCombatStats {
   pierceCount: number;
   /** World-space radius of tool 2. */
   areaRadius: number;
+  /** Collection radius, separate from the smaller delayed blast. */
+  areaGatherRadius: number;
+  /** Maximum held guidance time; zero until nova rank III. */
+  areaGuideDuration: number;
   /** Extra multiplier for tool 2, applied with damageMultiplier once. */
   areaDamageMultiplier: number;
   /** Tool 1 seconds between triggers, shared by all rays in one trigger. */

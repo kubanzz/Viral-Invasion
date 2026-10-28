@@ -61,20 +61,20 @@ describe('catalysis as an optional combat-growth branch', () => {
     expect(growth.draft!.options.some(option => option.id === 'catalysis')).toBe(false);
   });
 
-  it('explains its loss of instant control, full one-batch interaction and captured damage on the offered card', () => {
+  it('explains the normal-blast conversion, retained collection and captured one-batch damage', () => {
     const growth = eligible(71, 'nova'); growth.ranks.power = 2;
     const { option } = offeredCatalysis(growth);
     const damage = BALANCE.damage[2] * 1.36 * 1.15 * 1.25;
     expect(option.title).toBe('催化裂解');
     expect(option).toMatchObject({ currentRank: 0, nextRank: 1 });
-    expect(option.description).toContain('101.66 → 8');
-    expect(option.description).toContain('取消击退');
+    expect(option.description).toContain(`${Number((BALANCE.damage[2] * 1.36 * 1.15).toFixed(3))} → 8`);
+    expect(option.description).toContain('保留牵引与已解锁导流，取消普通爆发');
     expect(option.description).toContain('存活目标铺标 4 秒');
     expect(option.description).toContain('1 正伤命中或真实细胞接触咬击');
     expect(option.description).toContain('整批引爆一次');
     expect(option.description).toContain('半径 110、最多 3 体');
     expect(option.description).toContain(String(Number(damage.toFixed(3))));
-    expect(option.description).toContain('按本次铺标捕获');
+    expect(option.description).toContain('按施法捕获');
     expect(option.description).toContain('有效铺标覆盖旧批，不叠加');
   });
 
@@ -107,7 +107,7 @@ describe('catalysis as an optional combat-growth branch', () => {
     const withCard = { ...growth, ranks: { ...growth.ranks, catalysis: 1 } };
     const after = endlessCombatStats(withCard);
     expect(before.catalysisDamage).toBe(0);
-    expect(after.catalysisDamage).toBeCloseTo(65 * 1.54 * 1.3 * 1.25);
+    expect(after.catalysisDamage).toBeCloseTo(BALANCE.damage[2] * 1.54 * 1.3 * 1.25);
     const { catalysisDamage: _beforeCatalysis, ...oldBefore } = before;
     const { catalysisDamage: _afterCatalysis, ...oldAfter } = after;
     expect(oldAfter).toEqual(oldBefore);

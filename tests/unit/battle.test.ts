@@ -156,7 +156,9 @@ describe('G1 battle rules', () => {
         const alive = state.targets.filter(t => t.hp > 0).sort((a, b) => (a.role === 'source' ? -2 : a.role === 'elite' ? -1 : 0) - (b.role === 'source' ? -2 : b.role === 'elite' ? -1 : 0) || distance(a, state.player) - distance(b, state.player));
         const heal = state.tissue.hp < 70;
         const target = alive[0];
-        const tool = heal ? 3 : state.elapsed >= state.cooldowns[2] ? 2 : 1;
+        // Keep sustained fire across tool switches; only choose tool2 when its
+        // shorter placement range can reach the target.
+        const tool = heal ? 3 : target && distance(state.player, target) <= 420 && state.elapsed >= state.cooldowns[2] ? 2 : 1;
         s.step({ moveX: move.x, moveY: move.y, aim: heal ? state.tissue : target ?? state.terminal, tool, fire: heal || !!target, scan: tick % 200 === 0, interact: battle.readyToRetest && distance(state.player, state.terminal) < 90 });
       }
       expect(s.state.result, trait).toMatchObject({ success: true });

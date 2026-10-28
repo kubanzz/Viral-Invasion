@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "batch": "11",
+  "title": "Facilities — dedicated research, retest terminal and organ-travel exit art",
+  "source": {
+    "provider": "ChatGPT web",
+    "project": "Viral-Invasion",
+    "conversationTitle": "游戏玩法设计要点",
+    "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+  },
+  "notes": [
+    "Planned IDs are production targets only. assets remains empty until actual original files have been generated, downloaded and inspected.",
+    "Preserve original bytes and later revisions as separate versioned records with actual source hashes; do not invent undelivered assets.",
+    "Use cream-white, medical-blue and mint painted material consistent with the existing medical robot and immune beacon.",
+    "All facilities use a true-alpha1024-square source canvas and common ground anchor512,850. State pairs and overlays retain the base source scale/canvas; no independent per-state cropping or recentering.",
+    "Actual terminal entity is distinct from research and exit device nodes. Do not draw a duplicate terminal for graph retest.",
+    "No runtime selection, renderer integration, visual approval or gameplay change is implied by this empty manifest.",
+    "Bounds of later downloaded records use half-open pixel coordinates [left,top,right,bottom)."
+  ],
+  "registrationContract": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "sourceAnchor": [
+      512,
+      850
+    ],
+    "pivotSource": [
+      0.5,
+      0.830078125
+    ],
+    "minimumSafeMarginFraction": 0.1,
+    "statePairsAndOverlaysShareScale": true
+  },
+  "productionStrategy": {
+    "mode": "one-object-or-overlay-per-message",
+    "order": [
+      "facility.research.base",
+      "facility.terminal.base",
+      "facility.terminal.screen.waiting",
+      "facility.terminal.screen.ready",
+      "facility.exit.closed",
+      "facility.exit.open"
+    ],
+    "plannedAssets": [
+      {
+        "id": "facility.research.base",
+        "kind": "single-body",
+        "purpose": "Low research table with three tubes and sample slot",
+        "runtimeState": "Device graph research; sample sufficiency remains growth.research >= GROWTH_BALANCE.researchCost. Existing UI expresses research choices."
+      },
+      {
+        "id": "facility.terminal.base",
+        "kind": "single-body",
+        "purpose": "Shared standing retest terminal with blank dark-teal screen interior",
+        "runtimeState": "Actual entity.kind === terminal, shared across training/heart/lung; do not add a second body for graph retest."
+      },
+      {
+        "id": "facility.terminal.screen.waiting",
+        "kind": "registered-overlay",
+        "purpose": "Screen content only, soft-blue waveform and small amber indicator",
+        "runtimeState": "Existing training condition or battle.readyToRetest === false; all pixels outside the existing screen remain transparent."
+      },
+      {
+        "id": "facility.terminal.screen.ready",
+        "kind": "registered-overlay",
+        "purpose": "Same registered screen, mint waveform and small ready dot; no text claiming success",
+        "runtimeState": "Actual retest readiness; may be reused for matching-organ campaign.core.status === ready, with program text distinguishing start-diagnosis and complete-retest."
+      },
+      {
+        "id": "facility.exit.closed",
+        "kind": "state-pair-closed",
+        "purpose": "Dedicated organ-travel arch with soft leaves closed",
+        "runtimeState": "Device graph exit, inactive node or travel locked. Distinct from isolation gates and airway valves."
+      },
+      {
+        "id": "facility.exit.open",
+        "kind": "state-pair-open",
+        "purpose": "Same organ-travel arch with retracted leaves and genuinely transparent center",
+        "runtimeState": "Actual open node; travelReadyAt > elapsed cooldown remains program driven, no fabricated third art state."
+      }
+    ],
+    "defaultSelection": false,
+    "defaultVisualApproval": false
+  },
+  "assets": []
+}

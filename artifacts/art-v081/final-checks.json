@@ -1,0 +1,25 @@
+{
+  "recordedAt": "2026-10-27T18:51:33.663Z",
+  "pass": true,
+  "scope": "Final read-only workspace/art freshness and whitespace checks before v0.8.1 packaging; no rebuild/open requested.",
+  "checks": [
+    {
+      "command": "node scripts/art-sync.mjs --check",
+      "status": "fulfilled",
+      "exitCode": 0,
+      "output": "Art verified: 1 atlas(es), 40 sprite IDs, 4 environments. Source: external; +0/~0, 0 unreviewed candidate(s).\n"
+    },
+    {
+      "command": "node scripts/start-local.mjs --check",
+      "status": "fulfilled",
+      "exitCode": 0,
+      "output": "{\"current\":true,\"needsBuild\":false,\"sourceCount\":128,\"reasons\":[],\"checked\":true,\"rebuilt\":false,\"opened\":false}\n"
+    },
+    {
+      "command": "git diff --check",
+      "status": "fulfilled",
+      "exitCode": 0,
+      "output": "warning: in the working copy of '.gitignore', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'DesignDoc_v1.3/ViralInvasion_Acceptance_Traceability_v1.3.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'DesignDoc_v1.3/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'DesignDoc_v1.3/ViralInvasion_Codex_Development_Acceptance_v1.3.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'DesignDoc_v1.3/ViralInvasion_Codex_StartHere_v1.3.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'DesignDoc_v1.3/ViralInvasion_GDD_v1.3.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'DesignDoc_v1.3/ViralInvasion_README_v1.3.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'Docs/ViralInvasion_Acceptance_Traceability_v1.3.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'Docs/ViralInvasion_ArtDirection_VisualAcceptance_v1.3.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'Docs/ViralInvasion_Codex_Development_Acceptance_v1.3.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'Docs/ViralInvasion_Codex_StartHere_v1.3.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'Docs/ViralInvasion_GDD_v1.3.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'Docs/ViralInvasion_ImplementationPlan.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'Docs/ViralInvasion_Pacing_v0.8.1.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'Docs/ViralInvasion_README_v1.3.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'README.md', LF will be replaced by CRLF the next time Git touches it\nwarning: in the working copy of 'src/render/renderer.ts', CRLF will be replaced by LF the next time Git touches it\n"
+    }
+  ]
+}

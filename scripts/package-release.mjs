@@ -4,28 +4,43 @@ import { pipeline } from 'node:stream/promises';
 import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
 import { resolve, dirname, join } from 'node:path';
+import { syncArt } from './art-sync.mjs';
 
 // Reuse the ZIP writer/reader already bundled in the pinned Playwright install.
 // This needs no PowerShell policy change, extra dependency, or external service.
 const require = createRequire(import.meta.url);
 const { yazl, yauzl } = require(join(dirname(require.resolve('playwright-core')), 'lib/utilsBundle.js'));
 const root = resolve(import.meta.dirname, '..');
-const { version } = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'));
+const { version, viralInvasionStage: stage } = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'));
 if (!/^\d+\.\d+\.\d+$/.test(version)) throw Error('Expected a numeric release version.');
-const releaseFolder = join(root, `releases/Viral-Invasion-G4-v${version}`), zipPath = `${releaseFolder}.zip`;
+if (!/^[A-Za-z0-9-]+$/.test(stage)) throw Error('Expected a safe release stage.');
+const releaseFolder = join(root, `releases/Viral-Invasion-${stage}-v${version}`), zipPath = `${releaseFolder}.zip`;
 const verifiedFolder = join(root, `.tools/release-v${version}-verified`);
 for (const path of [releaseFolder, zipPath, verifiedFolder]) {
   if (await stat(path).catch(error => { if (error.code === 'ENOENT') return null; throw error; })) throw Error(`Preserve existing output: ${path}`);
 }
 const metadata = JSON.parse(await readFile(join(root, 'dist/build-meta.json'), 'utf8'));
-if (metadata.version !== version) throw Error('Build and package versions differ.');
+if (metadata.version !== version || metadata.stage !== stage) throw Error('Build and package versions/stages differ.');
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
+const { runtime: artRuntime } = await syncArt({ checkOnly: true });
+if (metadata.art?.inputSignature !== artRuntime.inputSignature || metadata.art?.selectionSha256 !== artRuntime.selectionSha256) throw Error('The build contains stale artwork; rebuild before packaging.');
+const { version: engineVersion } = JSON.parse(await readFile(join(root, 'node_modules/phaser/package.json'), 'utf8'));
+if (metadata.engine?.name !== 'Phaser' || metadata.engine?.version !== engineVersion) throw Error('The build engine does not match the installed engine.');
+for (const [path, expectedHash] of Object.entries(metadata.sourceManifest ?? {})) {
+  const absolute = resolve(root, path);
+  if (!absolute.startsWith(root + '\\') && !absolute.startsWith(root + '/')) throw Error(`Build source escapes the project: ${path}`);
+  if (sha(await readFile(absolute)) !== expectedHash) throw Error(`Build source changed before packaging: ${path}`);
+}
+for (const [path, expectedHash] of Object.entries(artRuntime.sourceManifest)) if (metadata.sourceManifest[`asserts/${path}`] !== expectedHash) throw Error(`The build did not attest the selected artwork: ${path}`);
 const expected = new Map(await Promise.all(['index.html', 'game.js', 'build-meta.json'].map(async name => [name, await readFile(join(root, 'dist', name))])));
 expected.set('Open-Game.cmd', Buffer.from('@echo off\r\nstart "" "%~dp0index.html"\r\n', 'ascii'));
 expected.set('README.txt', Buffer.from(`Viral Invasion / 病毒入侵 v${version}
 
 完整解压后双击 Open-Game.cmd，或用 Chrome / Edge 打开 index.html。无需网络或服务器。
 WASD 移动；鼠标瞄准；左键使用工具；1 精确净化 / 2 范围裂解 / 3 组织修复；Q 扫描与免疫召集；E 交互；Space 冲刺；Esc 暂停。
+
+本包内置白蓝医疗机器人、病毒、器官地面、组织与设施图集，图片随 game.js 完整打包，断网启动无需读取外部美术目录。
+Phaser ${engineVersion} 负责资产图集与表现。当前动作素材包含配准后的关键姿态，连续逐帧动作、部分裂殖与设施手绘仍待后续美术更新。
 
 心脏与肺部均为2400×1500，设施分区，跟随镜头和小地图支持路线选择。
 主菜单“连续进化挑战”：在宽阔心脏战场分批清除敌群，每波三选一战斗进化并补给，持续进入下一波；正面双潮、交叉夹击、聚群与侧翼支援交替，每5波精英来袭。
@@ -74,8 +89,8 @@ const files = await new Promise((resolveFiles, reject) => {
   });
 });
 const bytes = await readFile(zipPath);
-const report = { version, zip: zipPath, bytes: bytes.length, sha256: sha(bytes), verifiedFolder, files, staticPass: true, method: 'Node.js ZIP writer and independent reader from installed pinned Playwright utilsBundle; exact decoded byte comparison of all five entries.' };
-const reportPath = resolve(root, process.env.VI_PACKAGE_REPORT ?? 'artifacts/release-package.json');
+const report = { version, stage, zip: zipPath, bytes: bytes.length, sha256: sha(bytes), verifiedFolder, files, engine: metadata.engine, art: metadata.art, sourceValidation: { count: Object.keys(metadata.sourceManifest).length, pass: true }, staticPass: true, method: `Node.js ZIP writer and independent reader from installed pinned Playwright utilsBundle; exact decoded byte comparison of all ${expected.size} entries; current source and selected-art hashes verified before packaging.` };
+const reportPath = resolve(root, process.env.VI_PACKAGE_REPORT ?? `artifacts/releases/v${version}/release-package.json`);
 await mkdir(dirname(reportPath), { recursive: true });
 await writeFile(reportPath, JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report));

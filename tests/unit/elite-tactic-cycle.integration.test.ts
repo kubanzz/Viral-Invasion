@@ -79,14 +79,19 @@ describe('one accepted elite commitment alternates only after completion', () =>
     f.advance(20); expect(f.target.tactic).toBe('mimic-corrosion'); expect(f.target.attackAt).toBeUndefined();
   });
 
-  it.each(['CARAPACE', 'FISSION', 'MIMIC'] as const)('a real tool2 displacement interrupts %s once and retains its full recovery', first => {
+  it.each(['CARAPACE', 'FISSION', 'MIMIC'] as const)('tool2 damages %s after its fuse while preserving the frozen commitment and full natural recovery', first => {
     const second = first === 'MIMIC' ? 'FISSION' : 'MIMIC'; const f = fixture([first, second]); f.step();
-    const recovery = f.target.attackPlan!.recoveryExposure;
-    f.step({ tool: 2, fire: true }); const deadline = f.target.recoverUntil!;
-    expect(ofType(f.events, 'AREA_DISPLACED')).toHaveLength(1); expect(f.target.hp).toBe(139);
-    expect(deadline - f.s.elapsed).toBeCloseTo(recovery); expect(f.target.eliteCycle?.index).toBe(1);
-    expect(f.target.tactic).toBe(tacticFor[first]); expect(f.target.attackPlan).toBeUndefined();
-    f.advance(74); f.step({ tool: 2, fire: true });
+    const recovery = f.target.attackPlan!.recoveryExposure, plan = structuredClone(f.target.attackPlan);
+    f.step({ tool: 2, fire: true }); expect(f.target.hp).toBe(204);
+    f.advance(18);
+    expect(ofType(f.events, 'TRACTION_DISPLACED')).toHaveLength(0); expect(f.target.hp).toBe(124);
+    expect(f.target.attackPlan).toEqual(plan); expect(f.target.eliteCycle?.index).toBe(0);
+    expect(ofType(f.events, 'ELITE_TACTIC_ADVANCED')).toHaveLength(0);
+    f.until(() => ofType(f.events, 'ELITE_TACTIC_ADVANCED').length === 1);
+    const deadline = f.target.recoverUntil!;
+    expect(deadline - f.s.elapsed).toBeCloseTo(recovery);
+    expect(f.target.tactic).toBe(tacticFor[first]);
+    f.step({ tool: 2, fire: true });
     expect(f.target.recoverUntil).toBe(deadline); expect(f.target.eliteCycle?.index).toBe(1);
     expect(ofType(f.events, 'ELITE_TACTIC_ADVANCED')).toHaveLength(1);
   });
@@ -127,11 +132,17 @@ describe('one accepted elite commitment alternates only after completion', () =>
     expect(f.target.eliteCycle?.committedTick).toBeUndefined(); expect(ofType(f.events, 'ELITE_TACTIC_COMMITTED')).toHaveLength(0);
   });
 
-  it('a real tool2 push interrupts an already moving charge and retains two recovery seconds', () => {
-    const f = fixture(['CARAPACE', 'MIMIC']); f.until(() => !!f.target.charge); f.step({ tool: 2, fire: true });
-    expect(f.target.charge).toBeUndefined(); expect(f.target.recoverUntil! - f.s.elapsed).toBeCloseTo(2);
+  it('does not shift an already moving charge or consume its tactic with a traction cast', () => {
+    const f = fixture(['CARAPACE', 'MIMIC']); f.until(() => !!f.target.charge);
+    const charge = structuredClone(f.target.charge); f.step({ tool: 2, fire: true });
+    expect(f.target.charge).toBeDefined(); expect(f.target.charge?.from).toEqual(charge!.from);
+    expect(f.target.charge?.to).toEqual(charge!.to);
+    expect(ofType(f.events, 'TRACTION_DISPLACED')).toHaveLength(0);
+    expect(f.target.eliteCycle?.index).toBe(0);
+    f.until(() => ofType(f.events, 'ELITE_TACTIC_ADVANCED').length === 1);
+    expect(f.target.recoverUntil! - f.s.elapsed).toBeCloseTo(2);
     expect(f.target.eliteCycle?.index).toBe(1); expect(f.target.tactic).toBe('crystal-charge');
-    expect(ofType(f.events, 'ELITE_TACTIC_ADVANCED').map(e => e.data.reason)).toEqual(['area-interrupted']);
+    expect(ofType(f.events, 'ELITE_TACTIC_ADVANCED').every(e => e.data.reason !== 'area-interrupted')).toBe(true);
   });
 
   it('retains the existing total concurrency limit without skipping the waiting elite action', () => {
@@ -170,6 +181,7 @@ describe('cycle callbacks cannot replay accepted actions or contaminate a fresh 
       if (action === 'pause') f.session.pause(); else f.session.restart(); atCallback = f.session.snapshot();
     } });
     f.step(method === 'scan' ? { scan: true } : method === 'area' ? { tool: 2, fire: true } : { interact: true });
+    if (method === 'area') f.until(() => !!atCallback); // Traction permits the frozen tactic to finish naturally.
     expect(atCallback).toBeDefined(); expect(f.session.snapshot()).toEqual(atCallback);
     expect(f.target.eliteCycle?.index).toBe(1); expect(f.target.recoverUntil! - f.s.elapsed).toBeGreaterThanOrEqual(1.5);
     if (method === 'pulse') expect(f.target.exposedUntil! - f.s.elapsed).toBeCloseTo(BATTLE_BALANCE.pulseExpose);
@@ -194,6 +206,7 @@ describe('cycle callbacks cannot replay accepted actions or contaminate a fresh 
 
   it('clears a dead commitment without advancing, then consumes each promised child before its spawn pause', () => {
     const f = fixture(); f.target.hp = 65; f.step(); f.step({ tool: 2, fire: true });
+    f.advance(18);
     expect(f.target.hp).toBe(0); expect(f.target.eliteCycle?.index).toBe(0); expect(f.target.eliteCycle?.committedTick).toBeUndefined();
     // Twenty-two live neighbors plus the two reserved children use exactly the existing budget24.
     for (let i = 0; i < 22; i++) f.s.targets.push({ id: `neighbor-${i}`, x: 1800 + i % 5 * 80, y: 150 + Math.floor(i / 5) * 80,
@@ -214,7 +227,7 @@ describe('cycle callbacks cannot replay accepted actions or contaminate a fresh 
     f.session.bus.on('event', e => { if (e.type === 'ELITE_CLEARED' && !atCallback) {
       if (action === 'pause') f.session.pause(); else f.session.restart(); atCallback = f.session.snapshot();
     } });
-    f.step({ tool: 2, fire: true }); expect(f.session.snapshot()).toEqual(atCallback);
+    f.step({ tool: 2, fire: true }); f.until(() => !!atCallback); expect(f.session.snapshot()).toEqual(atCallback);
     if (action === 'pause') { expect(f.target.splitPositions).toHaveLength(2); f.session.resume(); f.advance(60); expect(f.s.targets.filter(t => t.generation === 1)).toHaveLength(2); }
     else expect(f.session.state.events.some(e => e.type === 'FISSION_WARNING')).toBe(false);
   });

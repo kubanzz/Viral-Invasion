@@ -483,7 +483,7 @@ export class GrowthController {
   }
   onHit(context:GrowthContext,target:Target,origin:DamageOrigin={cause:'basic'}):GrowthCommand[] {
     this.observeTime(context.elapsed);
-    if(this.state.ended||!context.active||origin.cause!=='basic'||target.hp<=0||context.tool===3)return[];
+    if(this.state.ended||!context.active||target.role==='capsule'||origin.cause!=='basic'||target.hp<=0||context.tool===3)return[];
     const ricochet=this.ricochetOnHit(context,target,origin);
     const slot=this.equipped('PULSE_BREAK');if(!slot||context.rhythm!=='surge')return ricochet;
     const config=getPulseConfig(slot.tuning,protocolRank(slot));if(distance(context.player,context.deviceOrigin)>config.deviceRange)return ricochet;
@@ -506,7 +506,7 @@ export class GrowthController {
     this.state.chainCharge=Math.min(period,(this.state.chainCharge??0)+1);
     if(this.state.chainCharge<period)return[];
     const config=getChainConfig(slot.tuning,rank);
-    const next=stableNearest(target,context.targets.filter(candidate=>candidate.hp>0&&candidate.id!==target.id&&distance(target,candidate)<=config.range&&unobstructed(target,candidate,context.geometry)))[0];
+    const next=stableNearest(target,context.targets.filter(candidate=>candidate.role!=='capsule'&&candidate.hp>0&&candidate.id!==target.id&&distance(target,candidate)<=config.range&&unobstructed(target,candidate,context.geometry)))[0];
     if(!next)return[];
     // Each accepted fold is its own transaction, even when several rays share
     // a source and tick. The command budget bounds this tick-local ordinal.
@@ -524,7 +524,7 @@ export class GrowthController {
   }
   onKill(context:GrowthContext,target:Target,origin:DamageOrigin={cause:'basic'}):GrowthCommand[] {
     this.observeTime(context.elapsed);
-    if(this.state.ended||!context.active||origin.ability==='catalysis'||origin.cause==='protocol'&&!(origin.protocolId==='PULSE_BREAK'&&origin.allowChain))return[];
+    if(this.state.ended||!context.active||target.role==='capsule'||origin.ability==='catalysis'||origin.cause==='protocol'&&!(origin.protocolId==='PULSE_BREAK'&&origin.allowChain))return[];
     const slot=this.equipped('PURIFY_CHAIN');if(!slot)return[];
     const rootId=origin.rootId??`${this.state.runId}:hit:${context.tick}:${target.id}`;
     if(this.state.chainRoots.includes(rootId))return[];
@@ -533,7 +533,7 @@ export class GrowthController {
     const visited=new Set([target.id]),commands:GrowthCommand[]=[];
     let from:Vec=target,actual=0;
     for(let hop=1;hop<=hops;hop++) {
-      const next=stableNearest(from,context.targets.filter(t=>t.hp>0&&!visited.has(t.id)&&distance(from,t)<=config.range&&unobstructed(from,t,context.geometry)))[0];
+      const next=stableNearest(from,context.targets.filter(t=>t.role!=='capsule'&&t.hp>0&&!visited.has(t.id)&&distance(from,t)<=config.range&&unobstructed(from,t,context.geometry)))[0];
       if(!next)break;
       visited.add(next.id);actual++;
       const base={protocolId:'PURIFY_CHAIN' as const,rootId,organId:context.organId};

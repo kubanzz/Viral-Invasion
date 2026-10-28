@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "status": "prepared only; coordinator authorized exact23 cases, overall candidate freeze and start authorization pending",
+  "scope": "Frozen v0.8.11 versus v0.9.0 public-input mechanical comparison. Latest real-player report remains:27 waves without meaningful threat. Script lifecycle/clear proxies do not overturn that observation or prove fun.",
+  "output": "artifacts/combat-v090/measurement-attempt-1",
+  "baselineRoot": ".tools/assault-v0811-release",
+  "candidateRoot": ".tools/combat-v090-release",
+  "seeds": [7, 71, 19],
+  "strategies": ["shooting", "area", "immune"],
+  "goalWaves": 35,
+  "simulationSeconds": 900,
+  "simulationSecondsPerWave": 120,
+  "mainCases": {"baseline":9,"candidate":9},
+  "predeterminedReplay": {"version":"candidate","seed":71,"strategy":"immune","policy":"common-original"},
+  "candidateSeparateProbes": [
+    {"seed":71,"strategy":"area","policy":"capsule-counter"},
+    {"seed":71,"strategy":"area","policy":"host-only"},
+    {"seed":71,"strategy":"area","policy":"short-guide"},
+    {"seed":71,"strategy":"blade","policy":"blade-priority"}
+  ],
+  "totalMainIncludingReplay":19,
+  "totalSeparateProbes":4,
+  "totalFixedCases":23,
+  "retries":0,
+  "reuse": {
+    "executedOriginalDriver":"artifacts/cycle-v088/measurement-attempt-1/candidate/public-input-driver.mjs",
+    "originalCycleObserver":"artifacts/cycle-v088/measurement-attempt-1/candidate/observer.mjs",
+    "originalSourceObserver":"artifacts/source-v0810/measurement-attempt-1/source-observer.mjs",
+    "originalAssaultObserver":"artifacts/assault-v0811/measurement-attempt-1/candidate/assault-observer.mjs"
+  },
+  "mainPublicPolicy": [
+    "Retain the original complete three-strategy source and priorities. Original35-wave target,900 total/120 per-wave budgets, navigation distances240/260/320, target ranking, repair,Q,danger dodge,dash,E and normal fire remain unchanged.",
+    "Exactly one public input eligibility change, identically applied to both versions: an original tool2 choice also requires target center distance<=420 and a legal center line of sight (wall===null or wall>=gap-1). If ineligible, original normal tool1/fire continues. Tool1 range and selection remain unchanged.",
+    "No artificial fire-release frame. Product input is being fixed to tool2 own down=(fire&&tool2), allowing held1->2 switching. Normal cooldown frames return to1 and make an ordinary short click. Pause/input-reset release behavior remains normal public input.",
+    "Main policy naturally includes any live capsule in its original target ranking. Do not prioritize it artificially or extend its warning/lifetime. Classic frozen attack avoidance remains the original policy; new deliberate capsule counters are separate probes.",
+    "Short clicks can observe delayed blast and gathering, but do not claim novaIII hold guidance. Original low dash priority and defensive trigger do not guaranteeIII/VI or return-sweep coverage. Missing ranks/triggers remain missing."
+  ],
+  "combatUpgradePriorities": {
+    "shooting":["multishot","pierce","power","haste","nova","immune","scan","vitality","dash"],
+    "area":["nova","haste","power","multishot","pierce","immune","scan","vitality","dash"],
+    "immune":["immune","scan","vitality","power","haste","nova","multishot","pierce","dash"]
+  },
+  "probePolicies": {
+    "capsule-counter": [
+      "Original area upgrades/protocol choices, repair and classic danger overrides. Select actual live capsules before host enemies, ordered by whether the published current straight flight segment can intersect the current player/tissue circle before expiry/range/cover, then player distance/id. Warning is not future damage.",
+      "Use public tool1 and normal continuous firing to intercept selected capsules, preserve Q/dash/E rules, and move to original shooting range320 with normal collision navigation. If current public capsule trajectory threatens the player within.5 seconds, choose a legal point outside those swept footprints; public dash only if collision time<=.32 and ready.",
+      "Never wait for a carrier cast, flight, split, companion bite or injury. Immediate warning interception is reported as early counter success only, never effective threat pressure."
+    ],
+    "host-only": [
+      "Original area policy on a shallow read-only target view omitting role=capsule from intentional target ranking, density and danger choices. Actual world/entities/cells remain untouched.",
+      "Normal fire,spread,pierce,scan,dash,E and autonomous cells can incidentally intercept capsules and those hits are retained. Do not suppress them or force player/tissue damage."
+    ],
+    "short-guide": [
+      "Original area upgrades/protocols and420/LOS policy. On an actual TRACTION_STARTED with actual guideUnlocked, keep tool2 held until cast.startedAt+.4 seconds, then return to original tool1/fire; use the original current aim to guide within normal public limits.",
+      "Repair or existing classic danger overrides can end a hold early. Do not keep enemies alive for gathering, hold beyond a vanished cast, force minimum damage or retry missing novaIII."
+    ],
+    "blade-priority": [
+      "Separate candidate build with priorities dash,vitality,power,haste,scan,immune,nova,multishot,pierce; original shooting protocol policy and normal fire. It is never mixed with the main three builds.",
+      "Preserve repair and classic danger avoidance. When public dash is ready and dash rank>0, approach the nearest visible non-source live enemy to distance<=190, then dash toward it using real movement/aim. Keep ordinary fire; do not preserve enemies for a return slash.",
+      "Record actual opening footprint at the actual post-move position, circularIII coverage and delayedVI return at actual later position. If ranks or positive hits are absent, report no coverage."
+    ]
+  },
+  "lifecycleExtensionsBeforeAnyRun": [
+    "Classic ACTOR_SPAWNED remains finite ordinary/elite/source birth authority. Capsule RELEASED and BRANCH_CREATED explicitly register interceptable finite bodies; no synthetic ACTOR_SPAWNED, ordinary spawnSerial,quota or XP credit is invented.",
+    "TARGET_CLEARED may be emitted for an intercepted capsule. Preserve duplicate-clear validation but store that receipt separately from classic enemy kill/reward and classic kills-per-time denominators.",
+    "VIRAL_CAPSULE_TERMINATED authorizes capsule removal for one exact explicit reason (intercepted,wall,range,expired,split,hit-player,hit-tissue,evaded). Source-cutoff preservation requires this receipt for disappeared capsules; existing live/classic clear and promised-fission checks remain.",
+    "Every live capsule, warning or flying, counts toward body/reserved24 and attack commitment3. Snapshot actual state each completed public step;<=4 capsule bodies and<=2 live capsule transactions are additional assertions. Preserve heavy attack caps and exact finite-source budget law.",
+    "A split consumes the parent and explicitly creates at most2 named children, each independently terminal. No hidden pending split/shot debt is accepted; wave clear cannot discard living capsule obligations."
+  ],
+  "measurementAuthority": [
+    "Positive accepted TARGET_HIT HP loss is outgoing damage authority. Physical cell roots must match event tick and real contact/LOS. Planned TRACTION_STARTED/ability damage, releases,warnings,shots and capsule health never substitute for accepted loss.",
+    "Carrier warned/interrupted/death release, detached warning, actual state phase=flying with positive travel, real split/child birth, early-warning interception, in-flight interception,wall/range/expiry/evade and actual collision are separate outcomes.",
+    "VIRAL_CAPSULE_HIT must join the exact positive PLAYER_HURT or ORGAN_INTEGRITY_CHANGED actorId/tick receipt. Event target is actual collided player/tissue; objective is launch intent. A player may physically block a tissue-directed shot.",
+    "Record capsule selection/aim and real TOOL_SELECTED/TOOL_FIRED transitions, time from actual public warning/body birth to selection/positive hit/interception. Auto early kills do not establish useful threat, decision depth or human understanding.",
+    "TRACTION_DISPLACED is movement only. Record before/after center gap, whether a body entered actual blast radius, then actual delayed accepted blast hits/damage on those same IDs. Call this gather-associated contribution, not a counterfactual causal estimate.",
+    "Blade stages join accepted dash roots and actual slash effect footprint/center/direction/arc/cover. Actual COMBAT_ABILITY_HIT and triggered stage logs are cross-checks; planned triggered damage alone is never damage.",
+    "Compare pressure/release/elite windows with classic bodies,actual commitments,frozen danger,clearing,empty waits and capsule flight obligations separated. The old coarse cycle proxy already passedv0811 and cannot alone establish improvement."
+  ],
+  "technicalAcceptance": [
+    "Only start,step,chooseDraft,chooseCombatUpgrade,cancelResearch,resume mutate the game; no HP/position/rank/time/enemy injection and no private session invocation.",
+    "Freeze complete source,policy,observer and parsed-input manifests before first run. Both main versions share identical public policy bytes. No game compiler or simulation runs before coordinator final freeze/start.",
+    "Retain every fixed natural defeat,budget stop,unobserved mechanic and technical failure. On instrumentation/accounting failure save raw/report and stop for diagnosis; never silently relax assertions or replace a seed.",
+    "Predetermined candidate71immune full raw replay must be byte-identical. Separate4 probes keep distinct policy identities and are never inserted into the main9 pairs."
+  ],
+  "experienceBoundary":"Latest real user27-wave no-threat feedback remains valid human evidence. No minimum damage,enemy lifespan,split rate or win is imposed. Five-new-player standard blind test remains0/5."
+}

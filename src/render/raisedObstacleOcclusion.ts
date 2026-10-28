@@ -2,12 +2,13 @@ import { activeWorld, type GameState, type Target, type Vec } from '../game/type
 import type { TraitId } from '../game/battleTypes';
 import { traceVirusOutline } from './battleVisuals';
 import { immuneCellBody, IMMUNE_BODY_LIFT } from './immuneVisuals';
+import type { ImmuneCellState } from '../game/immuneCells';
 import { boundsOf, boundsOverlap, localUpperSilhouette, RAISED_OBSTACLE_FADED_OPACITY, SPRITE_Y_SCALE, upperSilhouetteOverlapsBounds,
   type ObstacleOrgan, type RaisedObstacle, type VisualBounds } from './raisedObstacleGeometry';
 export { RAISED_OBSTACLE_FADED_OPACITY, SPRITE_Y_SCALE } from './raisedObstacleGeometry';
 export type { VisualBounds } from './raisedObstacleGeometry';
 
-export interface RaisedActorBody { id: string; kind: 'player' | 'target' | 'immune'; groundY: number; bodyBounds: VisualBounds }
+export interface RaisedActorBody { id: string; kind: 'player' | 'target' | 'immune' | 'beacon'; groundY: number; bodyBounds: VisualBounds }
 export const PLAYER_HEAD_SHAPE = { x: 0, y: -48, rx: 22, ry: 21 } as const;
 export function playerBodyPose(state: GameState) {
   const p = state.player, time = state.elapsed;
@@ -84,24 +85,38 @@ export function targetVisualBounds(target: Target, state: GameState): VisualBoun
   return result;
 }
 
+/** Procedural fallback body only; excludes shadow, bite arc, lifetime bar and labels. */
+export function immuneVisualBounds(cell: ImmuneCellState, elapsed: number): VisualBounds {
+  const body = immuneCellBody(cell, elapsed), cos = Math.cos(body.rotation), sin = Math.sin(body.rotation);
+  return boundsOf(body.outline.map(p => ({ x: cell.x + p.x * cos - p.y * sin,
+    y: cell.y * SPRITE_Y_SCALE + IMMUNE_BODY_LIFT + p.x * sin + p.y * cos })), 1);
+}
+
 /** Compute each nearby actor once per rendered frame, rather than per obstacle. */
-export function getRaisedActorBodies(state: GameState): RaisedActorBody[] {
+export function getRaisedActorBodies(state: GameState, art?: { player?: VisualBounds; targets?: ReadonlyMap<string, VisualBounds>; immune?: ReadonlyMap<string, VisualBounds>; beacon?: VisualBounds }): RaisedActorBody[] {
   const organ = state.battle?.organId === 'lung' ? 'lung' : 'heart';
   const obstacles = activeWorld(state).obstacles.map(obstacle => ({ obstacle, ...projectedRaisedObstacle(obstacle, organ) }));
   const relevant = (groundY: number, bounds: VisualBounds) => obstacles.some(shape => groundY <= shape.obstacle.y && boundsOverlap(bounds, shape.upperBounds));
   const result: RaisedActorBody[] = [];
-  if (state.player.hp > 0) { const bodyBounds = playerVisualBounds(state); if (relevant(state.player.y, bodyBounds)) result.push({ id: 'player', kind: 'player', groundY: state.player.y, bodyBounds }); }
-  for (const target of state.targets) if (target.hp > 0) { const bodyBounds = targetVisualBounds(target, state); if (relevant(target.y, bodyBounds)) result.push({ id: target.id, kind: 'target', groundY: target.y, bodyBounds }); }
+  if (state.player.hp > 0) { const bodyBounds = art?.player ?? playerVisualBounds(state); if (relevant(state.player.y, bodyBounds)) result.push({ id: 'player', kind: 'player', groundY: state.player.y, bodyBounds }); }
+  for (const target of state.targets) if (target.hp > 0 || art?.targets?.has(target.id)) { const bodyBounds = art?.targets?.get(target.id) ?? targetVisualBounds(target, state); if (relevant(target.y, bodyBounds)) result.push({ id: target.id, kind: 'target', groundY: target.y, bodyBounds }); }
   for (const cell of state.growth?.cells ?? []) {
     if (cell.organId !== state.battle?.organId || cell.until <= state.elapsed || cell.born >= state.elapsed) continue;
+    const nativeBounds = art?.immune?.get(cell.id);
+    if (nativeBounds) {
+      if (relevant(cell.y, nativeBounds)) result.push({ id: cell.id, kind: 'immune', groundY: cell.y, bodyBounds: nativeBounds });
+      continue;
+    }
     const extent = Math.hypot(cell.radius + 3, (cell.radius + 3) * .88) * 1.12 + 1;
     const broad = { left: cell.x - extent, right: cell.x + extent, top: cell.y * SPRITE_Y_SCALE + IMMUNE_BODY_LIFT - extent, bottom: cell.y * SPRITE_Y_SCALE + IMMUNE_BODY_LIFT + extent };
     if (!relevant(cell.y, broad)) continue;
     const body = immuneCellBody(cell, state.elapsed); if (body.alpha <= 0) continue;
-    const cos = Math.cos(body.rotation), sin = Math.sin(body.rotation);
-    const bodyBounds = boundsOf(body.outline.map(p => ({ x: cell.x + p.x * cos - p.y * sin, y: cell.y * SPRITE_Y_SCALE + IMMUNE_BODY_LIFT + p.x * sin + p.y * cos })), 1);
+    const bodyBounds = immuneVisualBounds(cell, state.elapsed);
     result.push({ id: cell.id, kind: 'immune', groundY: cell.y, bodyBounds });
   }
+  const beacon = state.growth?.beacon;
+  if (art?.beacon && beacon && beacon.mode !== 'patrol' && beacon.organId === state.battle?.organId && beacon.until > state.elapsed
+    && relevant(beacon.y, art.beacon)) result.push({ id: beacon.id, kind: 'beacon', groundY: beacon.y, bodyBounds: art.beacon });
   return result;
 }
 

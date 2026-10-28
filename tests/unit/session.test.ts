@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { GameSession } from '../../src/game/session';
 import { BALANCE, type InputFrame, type Tool, type Vec } from '../../src/game/types';
 import { distance } from '../../src/actors/collision';
+import { dashTrailVisible } from '../../src/game/dashTrail';
 
 const idle = (aim: Vec = { x: 700, y: 440 }): InputFrame => ({ moveX: 0, moveY: 0, aim, fire: false });
 function wait(session: GameSession, seconds: number) {
@@ -106,6 +107,31 @@ describe('training session', () => {
     wait(axis, BALANCE.dashCooldown);
     axis.step({ ...idle(), dash: true });
     expect(axis.state.dashes).toBe(2);
+  });
+
+  it('leaves dash segments only along the collision-resolved path', () => {
+    const session = new GameSession(); session.start();
+    const start = { x: session.state.player.x, y: session.state.player.y };
+    session.step({ ...idle(), moveX: 1, dash: true });
+    const first = session.state.effects.filter(effect => effect.kind === 'dash');
+    expect(first).toHaveLength(1);
+    expect(first[0].from).toEqual(start);
+    expect(first[0].to).toEqual({ x: session.state.player.x, y: session.state.player.y });
+    const previous = { ...first[0].to };
+    session.step({ ...idle(), moveX: 1 });
+    const segments = session.state.effects.filter(effect => effect.kind === 'dash');
+    expect(segments.at(-1)!.from).toEqual(previous);
+    expect(segments.at(-1)!.to).toEqual({ x: session.state.player.x, y: session.state.player.y });
+
+    const blocked = new GameSession(); blocked.start();
+    Object.assign(blocked.state.player, { x: 1135 - blocked.state.player.radius, y: 400 });
+    blocked.step({ ...idle(), moveX: 1, dash: true });
+    expect(blocked.state.effects.filter(effect => effect.kind === 'dash')).toHaveLength(0);
+    const world = { width: 200, height: 200, bounds: { left: 0, right: 200, top: 0, bottom: 200 },
+      obstacles: [{ id: 'fold', x: 100, y: 100, radius: 20 }], foreground: { x: 0, y: 0, width: 0, height: 0 } };
+    expect(dashTrailVisible({ x: 70, y: 100 }, { x: 130, y: 100 }, world)).toBe(false);
+    expect(dashTrailVisible({ x: 70, y: 124 }, { x: 130, y: 124 }, world)).toBe(true);
+    expect(dashTrailVisible({ x: 70, y: 122 }, { x: 130, y: 122 }, world)).toBe(false);
   });
 
   it.each([
@@ -225,6 +251,7 @@ describe('training session', () => {
     // Move clear of the fold, bringing the entire cluster within range.
     approach(session, { x: 570, y: 500 });
     fire(session, 2, { x: 840, y: 430 });
+    wait(session, .30);
     expect(session.state.targets.every(target => target.hp === 0)).toBe(true);
     for (let i = 0; i < 3; i++) { fire(session, 3, session.state.tissue); wait(session, .72); }
     expect(session.state.tissue.hp).toBe(100);

@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src blob: data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>角色序列 · 本地检视</title>
+  <style>
+    :root { color-scheme: dark; font: 14px/1.6 system-ui, "Microsoft YaHei", sans-serif; color: #dce7eb; background: #111a23; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { max-width: 1250px; margin: 0 auto; padding: 26px 24px 40px; }
+    h1 { margin: 0; font-size: 23px; font-weight: 650; letter-spacing: .02em; }
+    p { margin: 7px 0; }
+    .intro, .hint { color: #a8bcc6; }
+    .intro { max-width: 890px; }
+    .top { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; margin-bottom: 20px; }
+    .local { display: inline-block; border: 1px solid #36554f; border-radius: 24px; color: #b9e9d0; padding: 5px 12px; font-size: 12px; white-space: nowrap; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 18px; }
+    .panel { background: #192530; border: 1px solid #2d414f; border-radius: 12px; padding: 18px; }
+    .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .control { display: grid; gap: 5px; margin: 16px 0; }
+    .control > span { color: #bfd0d8; font-size: 12px; }
+    input, select, button { font: inherit; }
+    input[type="file"] { max-width: 100%; color: #c4d6df; font-size: 12px; }
+    input[type="file"]::file-selector-button, button, select { background: #233b49; color: #e1f0f6; border: 1px solid #46606e; border-radius: 6px; padding: 7px 10px; }
+    button { cursor: pointer; }
+    button:hover:not(:disabled), input[type="file"]::file-selector-button:hover { background: #2d5161; }
+    button:disabled { opacity: .4; cursor: default; }
+    button.primary { background: #2e7165; border-color: #59998b; }
+    button.primary:hover:not(:disabled) { background: #398878; }
+    select { min-width: 110px; }
+    input[type="number"] { width: 80px; background: #0f1b24; border: 1px solid #46606e; border-radius: 5px; padding: 5px 7px; color: #e1f0f6; }
+    input[type="range"] { accent-color: #8ad4bd; width: 100%; }
+    input[type="checkbox"] { accent-color: #8ad4bd; }
+    label.check { display: flex; gap: 8px; align-items: center; margin: 11px 0; }
+    .stage { min-height: 400px; height: 510px; overflow: auto; border: 1px solid #314754; border-radius: 8px; background: #0f1820; margin: 16px 0 12px; position: relative; }
+    .stage.light { background: #e7e6df; }
+    .canvas-wrap { padding: 24px; display: grid; place-items: center; width: max-content; min-width: 100%; min-height: 100%; }
+    canvas { display: block; flex-shrink: 0; outline: 1px solid #72969e80; }
+    #empty { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: #9cb3bf; pointer-events: none; padding: 30px; }
+    #frame-name { font-family: ui-monospace, Consolas, monospace; font-size: 12px; overflow-wrap: anywhere; min-height: 22px; }
+    .readout { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 16px; color: #a8c4cf; font-size: 12px; }
+    #status { border-left: 3px solid #6fae99; padding: 9px 12px; background: #162e2d; margin: 14px 0; white-space: pre-line; overflow-wrap: anywhere; }
+    #status.error { border-color: #e1a289; background: #342922; color: #f5d4bf; }
+    #frame-list { list-style: none; padding: 0; margin: 12px 0 0; max-height: 280px; overflow: auto; }
+    #frame-list li + li { margin-top: 5px; }
+    .frame-button { display: block; width: 100%; text-align: left; font: 12px/1.5 ui-monospace, Consolas, monospace; overflow-wrap: anywhere; }
+    .frame-button[aria-current="true"] { border-color: #8ad4bd; background: #234d49; }
+    .frame-button.extra { opacity: .65; }
+    .key { display: inline-block; padding: 0 6px; border: 1px solid #47606d; border-radius: 4px; font: 11px/1.7 ui-monospace, Consolas, monospace; color: #d5e7ee; }
+    details { margin-top: 18px; color: #aabfc9; font-size: 12px; }
+    summary { cursor: pointer; color: #cadce5; }
+    .footnote { margin-top: 20px; color: #91aab7; font-size: 12px; }
+    @media (max-width: 850px) { .layout { grid-template-columns: 1fr; } .stage { height: 400px; } main { padding: 20px 14px; } }
+    @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="top">
+      <div><h1>角色序列 · 本地检视</h1><p class="intro">在固定源画布上检查步态、足点和首尾衔接。选择一组已经切好的透明 PNG，按文件名自然排序。</p></div>
+      <span class="local">文件留在本机 · 无网络请求</span>
+    </div>
+    <div class="layout">
+      <section class="panel" aria-label="序列播放器">
+        <div class="controls">
+          <button id="play" class="primary" type="button" disabled>播放</button>
+          <button id="play-once" type="button" disabled>播放一次动作</button>
+          <button id="previous" type="button" disabled>← 上一帧</button>
+          <button id="next" type="button" disabled>下一帧 →</button>
+          <label>帧组 <select id="loop-size"><option value="2">前 2 帧</option><option value="4" selected>前 4 帧</option><option value="8">前 8 帧</option></select></label>
+          <label>速度 <input id="fps" type="number" min="1" max="30" step="0.5" value="6" aria-label="每秒帧数"> fps</label>
+          <label>单次总时长 <input id="action-duration" type="number" min="0.05" max="2" step="0.01" value="0.15" aria-label="动作总时长（秒）"> 秒</label>
+        </div>
+        <div class="stage" id="stage">
+          <div class="canvas-wrap"><canvas id="preview" width="126" height="126" aria-label="完整1024源画布的序列预览"></canvas></div>
+          <div id="empty">选择本地 PNG 开始<br>每帧须为 1024 × 1024，足点约定 (512, 850)</div>
+        </div>
+        <div id="frame-name">尚未载入图片</div>
+        <div class="readout"><span id="frame-counter">0 / 0</span><span id="scale-readout">基准身体 700 → 86 CSS px · 完整画布 126 CSS px</span></div>
+        <input id="scrubber" type="range" min="0" max="0" value="0" step="1" disabled aria-label="选择当前帧">
+        <p class="hint"><span class="key">Space</span> 播放 / 暂停　<span class="key">←</span> <span class="key">→</span> 逐帧</p>
+        <p class="hint">单次动作按所选帧组与总时长播放，结束停留末帧；可设 0.15 秒检查受击、0.16 秒检查冲刺。此处仅作资产审查，不证明游戏时钟或实际事件窗口。</p>
+      </section>
+      <aside class="panel" aria-label="本地文件与检查选项">
+        <label class="control"><span>多选同一动作组的 PNG</span><input id="files" type="file" accept="image/png,.png" multiple></label>
+        <div id="status" role="status" aria-live="polite">尚未载入。此页面不修改图片，也不生成或自动批准动画帧。</div>
+        <label class="control"><span>显示放大（保留统一源比例）</span><select id="zoom"><option value="0.5">0.5× · 43 px 基准</option><option value="1" selected>1× · 86 px 基准</option><option value="2">2× · 172 px 基准</option><option value="4">4× · 344 px 基准</option><option value="8">8× · 688 px 基准</option></select></label>
+        <label class="control"><span>背景</span><select id="background"><option value="checker" selected>棋盘透明网格</option><option value="light">浅色</option><option value="dark">深色</option></select></label>
+        <label class="check"><input id="anchor" type="checkbox" checked>显示源足点 (512, 850)</label>
+        <label class="check"><input id="onion" type="checkbox">叠加前一帧，检查滑脚</label>
+        <label class="control"><span>前一帧透明度 <output id="onion-value">20%</output></span><input id="onion-alpha" type="range" min="0.05" max="0.5" step="0.05" value="0.2" aria-label="前一帧透明度"></label>
+        <label class="check"><input id="nearest" type="checkbox">放大使用像素取样</label>
+        <ol id="frame-list" aria-label="按自然顺序载入的图片"></ol>
+      </aside>
+    </div>
+    <details>
+      <summary>检查方法与边界</summary>
+      <p>每张图片按完整 1024 × 1024 源画布绘制，统一比例为 86 / 700，再乘显示放大倍数。没有按透明边界裁切、独立拉高或自动居中。十字始终位于源坐标 (512, 850)，不追随图像轮廓。</p>
+      <p>播放仅使用当前选定的前 2、前 4 或前 8 帧；不补复制帧、不插值。循环使用 fps 设置；单次动作按帧数 / 总时长展示已有帧，结束停留末帧，再点按钮可重播。单步与时间轴可检查所有已载入图片。不足所选帧数时仍可单步，连续播放禁用。前帧叠图在循环范围内将首帧与末帧叠合，以检查循环接点。</p>
+      <p>待机检查两只脚各自接地点、头盔、眼睛、天线、甲片与手脚数量；行走检查左右交替承重和手臂反相。请先以 1× 实际大小连续看三轮，再放大检查。文件数量齐全或文件名不同不证明动作连续。</p>
+      <p>本页通过文件选择器读取本地文件，在内存中解码；没有上传、保存、改图、逐帧缩放修正或审批功能。1254 等非 1024 方图会明确报错，需先在页面外完成整组统一的工程配准。</p>
+    </details>
+    <p class="footnote">这是一件独立检视工具，不连接游戏运行时。当前设置与图片只保留在页面内存，关闭页面即清空。</p>
+  </main>
+  <script>
+  'use strict';
+  (() => {
+    const SOURCE = 1024, BODY_REFERENCE = 700, BODY_SCREEN = 86;
+    const byId = id => document.getElementById(id);
+    const ui = Object.fromEntries(['files', 'play', 'play-once', 'previous', 'next', 'loop-size', 'fps', 'action-duration', 'stage', 'preview', 'empty', 'frame-name', 'frame-counter', 'scale-readout', 'scrubber', 'status', 'zoom', 'background', 'anchor', 'onion', 'onion-alpha', 'onion-value', 'nearest', 'frame-list'].map(id => [id, byId(id)]));
+    const ctx = ui.preview.getContext('2d');
+    const collator = new Intl.Collator('zh-CN', { numeric: true, sensitivity: 'base' });
+    let frames = [], index = 0, playing = false, raf = 0, lastTime = 0, accumulator = 0, loadSerial = 0, loadErrors = [];
+    let playbackMode = 'loop', actionStart = 0, actionDurationMs = 0;
+    let listButtons = [];
+    const loopSize = () => Number(ui['loop-size'].value);
+    const canPlay = () => frames.length >= loopSize();
+    const fps = () => Number(ui.fps.value);
+    function validFps() { return Number.isFinite(fps()) && fps() >= 1 && fps() <= 30; }
+    const actionDuration = () => Number(ui['action-duration'].value);
+    function validActionDuration() { return Number.isFinite(actionDuration()) && actionDuration() >= .05 && actionDuration() <= 2; }
+    function stop() {
+      playing = false; cancelAnimationFrame(raf); raf = 0; lastTime = 0; accumulator = 0;
+      ui.play.textContent = '播放'; ui.play.setAttribute('aria-pressed', 'false');
+    }
+    function status() {
+      const notes = [...loadErrors];
+      if (!frames.length) notes.push('尚未载入有效的 1024 × 1024 PNG。');
+      else {
+        notes.push(`已载入 ${frames.length} 帧，按文件名自然排序。`);
+        if (!canPlay()) notes.push(`所选 ${loopSize()} 帧组尚缺 ${loopSize() - frames.length} 帧；可逐帧检查，暂不能播放。`);
+        else if (frames.length > loopSize()) notes.push(`播放仅使用前 ${loopSize()} 帧，其余 ${frames.length - loopSize()} 帧仍可单步查看。`);
+        else notes.push(`完整画布固定，${loopSize()} 帧可循环或单次播放；是否连续仍需人工检查。`);
+      }
+      if (!validFps()) notes.push('速度须为 1–30 fps，支持 0.5 的步进。');
+      if (!validActionDuration()) notes.push('单次动作总时长须为 0.05–2 秒。');
+      ui.status.textContent = notes.join('\n');
+      ui.status.classList.toggle('error', !!loadErrors.length || !!frames.length && !canPlay() || !validFps() || !validActionDuration());
+      ui.play.disabled = !canPlay() || !validFps();
+      ui['play-once'].disabled = !canPlay() || !validActionDuration();
+      ui.previous.disabled = ui.next.disabled = ui.scrubber.disabled = !frames.length;
+      ui.scrubber.max = String(Math.max(0, frames.length - 1));
+    }
+    function updateList() {
+      for (const [n, button] of listButtons.entries()) {
+        button.setAttribute('aria-current', String(n === index));
+        button.classList.toggle('extra', n >= loopSize());
+      }
+    }
+    function previousIndex() {
+      return index < loopSize() && canPlay() ? (index + loopSize() - 1) % loopSize() : (index + frames.length - 1) % frames.length;
+    }
+    function draw() {
+      const cssSize = SOURCE * BODY_SCREEN / BODY_REFERENCE * Number(ui.zoom.value);
+      const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+      const pixels = Math.max(1, Math.round(cssSize * dpr));
+      if (ui.preview.width !== pixels || ui.preview.height !== pixels) { ui.preview.width = pixels; ui.preview.height = pixels; }
+      ui.preview.style.width = `${cssSize}px`; ui.preview.style.height = `${cssSize}px`;
+      ctx.setTransform(pixels / SOURCE, 0, 0, pixels / SOURCE, 0, 0);
+      ctx.clearRect(0, 0, SOURCE, SOURCE);
+      const background = ui.background.value;
+      ui.stage.classList.toggle('light', background === 'light');
+      if (background === 'checker') {
+        for (let y = 0; y < SOURCE; y += 64) for (let x = 0; x < SOURCE; x += 64) {
+          ctx.fillStyle = (x / 64 + y / 64) % 2 ? '#34434b' : '#27353e'; ctx.fillRect(x, y, 64, 64);
+        }
+      } else { ctx.fillStyle = background === 'light' ? '#eee9dc' : '#10202c'; ctx.fillRect(0, 0, SOURCE, SOURCE); }
+      ctx.imageSmoothingEnabled = !ui.nearest.checked;
+      ctx.imageSmoothingQuality = 'high';
+      if (frames.length) {
+        if (ui.onion.checked && frames.length > 1) {
+          ctx.globalAlpha = Number(ui['onion-alpha'].value);
+          ctx.drawImage(frames[previousIndex()].image, 0, 0, SOURCE, SOURCE);
+        }
+        ctx.globalAlpha = 1; ctx.drawImage(frames[index].image, 0, 0, SOURCE, SOURCE);
+      }
+      if (ui.anchor.checked) {
+        const unitsPerCssPixel = SOURCE / cssSize;
+        const arm = 7 * unitsPerCssPixel;
+        ctx.lineWidth = 3 * unitsPerCssPixel; ctx.strokeStyle = '#10202cdd';
+        ctx.beginPath(); ctx.moveTo(512 - arm, 850); ctx.lineTo(512 + arm, 850); ctx.moveTo(512, 850 - arm); ctx.lineTo(512, 850 + arm); ctx.stroke();
+        ctx.lineWidth = unitsPerCssPixel; ctx.strokeStyle = '#f4cf72'; ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      ui.empty.hidden = !!frames.length;
+      // Author CSS sets display:grid; use inline display to override it when hidden.
+      ui.empty.style.display = frames.length ? 'none' : 'grid';
+      ui['frame-name'].textContent = frames.length ? frames[index].name : '尚未载入图片';
+      ui['frame-counter'].textContent = frames.length ? `${index + 1} / ${frames.length} · ${playbackMode === 'once' ? '单次动作' : '循环前'} ${loopSize()} 帧${ui.onion.checked ? ` · 前帧 ${previousIndex() + 1}` : ''}` : '0 / 0';
+      ui['scale-readout'].textContent = `基准身体 ${BODY_REFERENCE} → ${(BODY_SCREEN * Number(ui.zoom.value)).toFixed(0)} CSS px · 完整画布 ${cssSize.toFixed(1)} CSS px`;
+      ui.scrubber.value = String(index); updateList();
+    }
+    function tick(time) {
+      if (!playing) return;
+      if (playbackMode === 'once') {
+        const elapsed = Math.max(0, time - actionStart);
+        const next = Math.min(loopSize() - 1, Math.floor(elapsed / actionDurationMs * loopSize()));
+        if (next !== index) { index = next; draw(); }
+        if (elapsed >= actionDurationMs) { stop(); draw(); return; }
+        raf = requestAnimationFrame(tick); return;
+      }
+      if (!lastTime) lastTime = time;
+      accumulator += time - lastTime; lastTime = time;
+      const duration = 1000 / fps();
+      if (accumulator >= duration) {
+        const steps = Math.floor(accumulator / duration); accumulator -= steps * duration;
+        index = (index + steps) % loopSize(); draw();
+      }
+      raf = requestAnimationFrame(tick);
+    }
+    function start() {
+      if (!canPlay() || !validFps()) { status(); return; }
+      if (index >= loopSize()) index = 0;
+      playbackMode = 'loop';
+      playing = true; lastTime = 0; accumulator = 0;
+      ui.play.textContent = '暂停'; ui.play.setAttribute('aria-pressed', 'true'); draw(); raf = requestAnimationFrame(tick);
+    }
+    function startOnce() {
+      stop();
+      if (!canPlay() || !validActionDuration()) { status(); return; }
+      playbackMode = 'once'; index = 0; actionDurationMs = actionDuration() * 1000;
+      actionStart = performance.now(); playing = true;
+      ui.play.textContent = '暂停'; ui.play.setAttribute('aria-pressed', 'true'); draw(); raf = requestAnimationFrame(tick);
+    }
+    function step(delta) { stop(); if (frames.length) { index = (index + delta + frames.length) % frames.length; draw(); } }
+    async function decode(file) {
+      const signature = new Uint8Array(await file.slice(0, 8).arrayBuffer());
+      const png = [137, 80, 78, 71, 13, 10, 26, 10];
+      if (signature.length !== 8 || png.some((byte, i) => signature[i] !== byte)) throw new Error('文件内容不是 PNG');
+      const image = await createImageBitmap(file);
+      if (image.width !== SOURCE || image.height !== SOURCE) { const size = `${image.width} × ${image.height}`; image.close(); throw new Error(`尺寸为 ${size}，需要完整 1024 × 1024 画布；未自动裁切或缩放修正`); }
+      return { name: file.name, image };
+    }
+    ui.files.addEventListener('change', async () => {
+      stop(); const serial = ++loadSerial;
+      const selected = [...ui.files.files].sort((a, b) => collator.compare(a.name, b.name));
+      for (const frame of frames) frame.image.close(); frames = []; index = 0; loadErrors = []; listButtons = []; ui['frame-list'].replaceChildren();
+      ui.status.textContent = '正在本地解码 PNG…'; draw();
+      const results = await Promise.allSettled(selected.map(file => decode(file)));
+      if (serial !== loadSerial) { for (const result of results) if (result.status === 'fulfilled') result.value.image.close(); return; }
+      for (const [n, result] of results.entries()) {
+        if (result.status === 'fulfilled') frames.push(result.value);
+        else loadErrors.push(`${selected[n].name}：${result.reason instanceof Error ? result.reason.message : String(result.reason)}`);
+      }
+      if (frames.length === 8) ui['loop-size'].value = '8';
+      else if (frames.length === 4) ui['loop-size'].value = '4';
+      else if (frames.length === 2) ui['loop-size'].value = '2';
+      const names = frames.map(frame => frame.name.toLocaleLowerCase());
+      if (new Set(names).size !== names.length) loadErrors.push('存在同名文件，请确认它们来自同一动作组，当前仍按自然顺序显示。');
+      for (const [n, frame] of frames.entries()) {
+        const item = document.createElement('li'), button = document.createElement('button'); button.type = 'button'; button.className = 'frame-button';
+        button.textContent = `${String(n).padStart(2, '0')} · ${frame.name}`; button.addEventListener('click', () => { stop(); index = n; draw(); });
+        item.append(button); ui['frame-list'].append(item); listButtons.push(button);
+      }
+      status(); draw();
+    });
+    ui.play.addEventListener('click', () => { if (playing) stop(); else start(); });
+    ui['play-once'].addEventListener('click', startOnce);
+    ui.previous.addEventListener('click', () => step(-1)); ui.next.addEventListener('click', () => step(1));
+    ui.scrubber.addEventListener('input', () => { stop(); index = Number(ui.scrubber.value); draw(); });
+    ui['loop-size'].addEventListener('change', () => { stop(); status(); draw(); });
+    ui.fps.addEventListener('input', () => { if (playbackMode === 'loop') { if (!validFps()) stop(); lastTime = 0; accumulator = 0; } status(); });
+    ui['action-duration'].addEventListener('input', () => { if (playing && playbackMode === 'once') stop(); status(); draw(); });
+    for (const id of ['zoom', 'background', 'anchor', 'onion', 'nearest']) ui[id].addEventListener('change', draw);
+    ui['onion-alpha'].addEventListener('input', () => { ui['onion-value'].textContent = `${Math.round(Number(ui['onion-alpha'].value) * 100)}%`; draw(); });
+    document.addEventListener('keydown', event => {
+      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLButtonElement) return;
+      if (event.code === 'Space') { event.preventDefault(); if (playing) stop(); else start(); }
+      else if (event.code === 'ArrowLeft') { event.preventDefault(); step(-1); }
+      else if (event.code === 'ArrowRight') { event.preventDefault(); step(1); }
+    });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); });
+    window.addEventListener('resize', draw);
+    window.addEventListener('beforeunload', () => { stop(); ++loadSerial; for (const frame of frames) frame.image.close(); });
+    status(); draw();
+  })();
+  </script>
+</body>
+</html>

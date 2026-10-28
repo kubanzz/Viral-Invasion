@@ -89,7 +89,12 @@ export function drawBattleTarget(ctx: CanvasRenderingContext2D, target: Target, 
     }
     ctx.globalAlpha = .32;
     ellipse(ctx, 0, 0, r * .6, 5, '#a2e9ba21', '#a2e9ba44');
-    if (source) { ctx.globalAlpha = .75; label(ctx, '✓ 感染源已净化', 0, 25, '#b8dcc2', 10); }
+    if (source) {
+      ctx.globalAlpha = .94;
+      ctx.fillStyle = '#fff8e8'; ctx.strokeStyle = '#317e78'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.roundRect(-49, 11, 98, 21, 5); ctx.fill(); ctx.stroke();
+      label(ctx, '✓ 感染源已净化', 0, 25, '#24574f', 10);
+    }
     ctx.restore(); return;
   }
 
@@ -190,7 +195,7 @@ function drawMotherCore(ctx: CanvasRenderingContext2D, target: Target, state: Ga
   ctx.save(); ctx.translate(target.x, target.y); ctx.scale(1, 1 / .72);
   if (target.hp <= 0) {
     ellipse(ctx, 0, 0, r, 12, '#9cddbd14', '#b1e7ca66');
-    label(ctx, '✓ 母巢核心已清除', 0, -15, '#d4efd4', 12); ctx.restore(); return;
+    drawMotherCoreLocalAccents(ctx, target, state, combat, false); ctx.restore(); return;
   }
   // Rooted ribs, a hanging central lantern and two smaller brood chambers give
   // the mother a different construction from any enlarged ordinary virus.
@@ -201,7 +206,7 @@ function drawMotherCore(ctx: CanvasRenderingContext2D, target: Target, state: Ga
     ctx.strokeStyle = '#754a69'; ctx.lineWidth = 3; ctx.stroke();
     ellipse(ctx, sign * r * 1.3, 4, r * .22, 6, '#80536d', '#d5b4af');
   }
-  const lift = combat.phase === 'windup' ? -3 : combat.phase === 'recovery' ? 3 : Math.sin(time * 2.8) * 1.4;
+  const lift = motherCoreLift(combat, time);
   ctx.save(); ctx.translate(0, -r * .96 + lift); ctx.globalAlpha = hidden ? .68 : 1;
   if (combat.traits.includes('MIMIC')) {
     const mantle = ctx.createLinearGradient(0, -r * 1.3, 0, r);
@@ -244,21 +249,72 @@ function drawMotherCore(ctx: CanvasRenderingContext2D, target: Target, state: Ga
     ctx.beginPath(); ctx.moveTo(x, -r * .91); ctx.bezierCurveTo(x * 1.9, -r * .35, x * 1.6, r * .45, sign * r * .12, r * .78);
     ctx.strokeStyle = '#e3b5ba'; ctx.lineWidth = 4; ctx.stroke();
   }
-  if (active === 'MIMIC' && disturbed) {
-    ctx.setLineDash([5, 4]); ellipse(ctx, 0, -r * .17, r * 1.18, r * 1.31, '#00000000', '#d1efe1'); ctx.setLineDash([]);
-  }
   ctx.restore();
+  drawMotherCoreLocalAccents(ctx, target, state, combat, false);
+  ctx.restore();
+}
+
+export function motherCoreLift(combat: MotherCoreState, time: number): number {
+  return combat.phase === 'windup' ? -3 : combat.phase === 'recovery' ? 3 : Math.sin(time * 2.8) * 1.4;
+}
+
+/** Status cues for a separately rendered mother body; no body, core or trait attachment is painted here. */
+export interface MotherCoreAccentGeometry { coreOffset: Vec; bodyBounds: { left: number; right: number; top: number; bottom: number } }
+export function drawMotherCoreAccents(ctx: CanvasRenderingContext2D, target: Target, state: GameState, combat: MotherCoreState,
+  geometry?: MotherCoreAccentGeometry): void {
+  ctx.save(); ctx.translate(target.x, target.y); ctx.scale(1, 1 / .72);
+  drawMotherCoreLocalAccents(ctx, target, state, combat, true, geometry);
+  ctx.restore();
+}
+
+/** The procedural fallback already conveys hits/exposure in its painted core. */
+function motherCoreCaption(ctx: CanvasRenderingContext2D, value: string, x: number, y: number, width: number, size: number, color: string): void {
+  ctx.save(); ctx.beginPath(); ctx.roundRect(x - width / 2, y - size - 4, width, size + 10, 4);
+  ctx.fillStyle = '#fff9e9ed'; ctx.fill(); ctx.strokeStyle = '#5e8b7d80'; ctx.lineWidth = 1; ctx.stroke();
+  label(ctx, value, x, y, color, size); ctx.restore();
+}
+
+function drawMotherCoreLocalAccents(ctx: CanvasRenderingContext2D, target: Target, state: GameState, combat: MotherCoreState, spriteFeedback: boolean,
+  geometry?: MotherCoreAccentGeometry): void {
+  if (target.hp <= 0) {
+    if (geometry) motherCoreCaption(ctx, '✓ 母巢核心已清除', (geometry.bodyBounds.left + geometry.bodyBounds.right) / 2,
+      geometry.bodyBounds.top - 8, 130, 12, '#24574f');
+    else label(ctx, '✓ 母巢核心已清除', 0, -15, '#d4efd4', 12);
+    return;
+  }
+  const r = target.radius, time = state.elapsed, active = combat.activeTrait;
+  const exposed = Math.max(combat.exposedUntil, target.exposedUntil ?? 0) > time;
+  const bodyY = -r * .96 + motherCoreLift(combat, time);
+  if (active === 'MIMIC' && (motherCoreDisturbed(combat, time) || spriteFeedback && exposed)) {
+    ctx.save(); if (!geometry) ctx.translate(0, bodyY);
+    // The old fallback drew this cue in its fully visible body layer.
+    if (!spriteFeedback) ctx.globalAlpha = 1;
+    ctx.lineWidth = 4; ctx.setLineDash([5, 4]);
+    if (geometry) {
+      const b = geometry.bodyBounds;
+      ellipse(ctx, (b.left + b.right) / 2, (b.top + b.bottom) / 2, (b.right - b.left) / 2 + 4, (b.bottom - b.top) / 2 + 4, '#00000000', '#376b688f');
+    } else ellipse(ctx, 0, -r * .17, r * 1.18, r * 1.31, '#00000000', '#d1efe1');
+    ctx.restore();
+  }
   if (active === 'CARAPACE') {
     ctx.save(); ctx.scale(1, .72); ctx.beginPath();
     const half = Math.acos(.2);
     ctx.arc(0, 0, r + 9, combat.facing - half, combat.facing + half);
-    ctx.strokeStyle = exposed ? '#efdac577' : '#e2d0e3'; ctx.lineWidth = exposed ? 1 : 3;
+    ctx.strokeStyle = geometry ? exposed ? '#79645d99' : '#64536a' : exposed ? '#efdac577' : '#e2d0e3'; ctx.lineWidth = exposed ? 1 : 3;
     if (exposed) ctx.setLineDash([5, 10]); ctx.stroke(); ctx.restore();
   }
-  ellipse(ctx, 0, 2, 14, 5, '#ffd99d18', exposed ? '#fff1ba' : '#e7bea4');
+  if (spriteFeedback) {
+    const coreX = geometry?.coreOffset.x ?? 0, coreY = geometry?.coreOffset.y ?? bodyY - r * .14;
+    if (target.hitUntil > time) {
+      line(ctx, [coreX - 7, coreY, coreX + 7, coreY], geometry ? '#245d65' : '#fff4b7', 2.5);
+      line(ctx, [coreX, coreY - 7, coreX, coreY + 7], geometry ? '#245d65' : '#fff4b7', 2.5);
+    } else if (exposed) label(ctx, '◇', coreX, coreY + 4, geometry ? '#6d3e4f' : '#fff5ce', 14);
+  }
+  ctx.lineWidth = 3;
+  ellipse(ctx, 0, 2, 14, 5, '#ffd99d18', geometry ? exposed ? '#496f66' : '#8a5b60' : exposed ? '#fff1ba' : '#e7bea4');
   const traitText = combat.traits.map(trait => `${TRAIT_SYMBOL[trait]}${TRAIT_NAME[trait]}`).join(' / ');
-  label(ctx, traitText, 0, 28, '#e7ccb8', 10);
-  ctx.restore();
+  if (geometry) motherCoreCaption(ctx, traitText, 0, 28, combat.traits.length > 1 ? 106 : 58, 10, '#5e3f4b');
+  else label(ctx, traitText, 0, 28, '#e7ccb8', 10);
 }
 
 /** Every warning is read directly from the serialized attack used for damage. */

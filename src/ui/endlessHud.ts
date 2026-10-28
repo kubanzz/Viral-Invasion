@@ -6,6 +6,9 @@ import { endlessPacing } from '../game/endlessPacing';
 import { sourceQuotaRemaining } from '../game/endlessSource';
 import { endlessAssaultSlots } from '../game/endlessAssault';
 import { IMMUNE_GUARD_BALANCE } from '../game/immuneFocus';
+import { dashBladeProfile } from '../game/dashBlade';
+import { TRACTION_BALANCE } from '../game/traction';
+import { viralCapsulePlan } from '../game/viralCapsules';
 import { endlessEvolutionWarningMarkup, endlessTraitCopy, endlessUpcomingTraits, updateEndlessEvolutionWarning } from './endlessEvolutionWarning';
 import { catalysisToolCopy } from './catalysisHud';
 import { eliteCycleCounter, eliteCycleForecast, eliteCycleStatus } from './eliteTacticCycleHud';
@@ -28,13 +31,14 @@ export function endlessRemaining(state: GameState): number {
 }
 function abilityLines(state: GameState): string[] {
   const s = statsFor(state);
+  const blade = dashBladeProfile(state.endlessGrowth?.ranks.dash ?? 0);
   const guard = state.growth?.beacon?.guard && state.growth.beacon.until > state.elapsed;
   const guardUnlocked = (state.endlessGrowth?.ranks.immune ?? 0) >= IMMUNE_GUARD_BALANCE.minimumRank;
   return [
     `1 · ${s.shotRays} 束 × ${number(BALANCE.damage[1] * s.damageMultiplier)}伤害 · 贯穿 +${s.pierceCount} · ${number(s.primaryCooldown, 3)}s`,
     s.catalysisDamage > 0 ? `2 · 催化直伤≤8 · 1/细胞引爆 ${number(s.catalysisDamage)} · ${number(s.areaCooldown, 2)}s`
-      : `2 · 半径 ${number(s.areaRadius)} · ${number(BALANCE.damage[2] * s.damageMultiplier * s.areaDamageMultiplier)}伤害 · ${number(s.areaCooldown, 2)}s`,
-    `Space · ${s.dashDamage ? `冲刺斩 ${number(s.dashDamage * s.damageMultiplier)}伤害` : '冲刺斩未解锁'}　Q · ${s.scanDamage ? `${number(s.scanDamage * s.damageMultiplier)}爆发` : '免疫小队'}`,
+      : `2 · 聚拢${number(s.areaGatherRadius)}→爆心${number(s.areaRadius)} · ${number(BALANCE.damage[2] * s.damageMultiplier * s.areaDamageMultiplier)}伤害 · ${number(s.areaCooldown, 2)}s${s.areaGuideDuration ? ' · 可按住导流' : ''}`,
+    `Space · ${s.dashDamage ? `${blade.halfAngle === Math.PI ? '回旋斩' : '弧刃斩'} ${number(s.dashDamage * s.damageMultiplier)}伤害${blade.returnSlash ? '＋回斩' : ''}` : '挥斩未解锁'}　Q · ${s.scanDamage ? `${number(s.scanDamage * s.damageMultiplier)}爆发` : '免疫小队'}`,
     `细胞伤害 ×${number(s.cellDamageMultiplier * s.damageMultiplier, 2)} · Q ${number(s.scanCooldown, 2)}s · 已记录咬击 ${state.runMetrics?.summary.control.beaconBites ?? 0}次${guard ? ' · 正在驻防组织' : guardUnlocked ? ' · Q点＋组织可驻防' : ''}`,
   ];
 }
@@ -68,9 +72,9 @@ function assaultCopy(state: GameState): string {
   const pending = slots.filter(slot => slot >= e.batchIndex * 3 + e.batchMemberIndex).length;
   if (!alive && !pending) return '';
   return e.phase === 'warning' ? `▲ ${slots.length}体将袭击＋组织 · 拦截或部署细胞`
-    : `▲ 袭击组织 ${alive}体${pending ? ` · ${pending}体待生` : ''} · 2击退 / Q部署`;
+    : `▲ 袭击组织 ${alive}体${pending ? ` · ${pending}体待生` : ''} · 2聚拢 / Q部署`;
 }
-function threatCopy(state: GameState, upcoming = false): string {
+function baseThreatCopy(state: GameState, upcoming = false): string {
   if (upcoming && state.endless?.eliteWave) {
     const traits = endlessUpcomingTraits(state);
     const tactic: EnemyTactic = traits[0] === 'CARAPACE' ? 'crystal-charge' : traits[0] === 'FISSION' ? 'fission-burst' : 'mimic-corrosion';
@@ -85,7 +89,14 @@ function threatCopy(state: GameState, upcoming = false): string {
   if (cycleStatus) return `${cycleStatus} · ${eliteCycleCounter(state, active!)}`;
   if (active?.tactic) return tacticCopy(active.tactic);
   if (upcoming && (state.endless?.supportRemaining ?? 0) > 0) return tacticCopy('thin-ray');
-  return '1 按住净化 · 2 清群打断 · Q 召集或指挥小队。';
+  return '1 持续净化 · 2 聚拢爆破 · Q 召集或指挥小队。';
+}
+function threatCopy(state: GameState, upcoming = false): string {
+  const capsules = state.targets.filter(target => target.hp > 0 && target.viralCapsule);
+  const announced = upcoming && state.endless && viralCapsulePlan(state.endless.wave, state.endless.batchSchedule.flatMap(batch => batch.roles), state.endless.source);
+  const prefix = capsules.length ? `离体弹囊 ${capsules.length}枚 · 1/2/挥斩击落，侧移/借墙。`
+    : announced ? announced.fork ? '分叉母囊 · 先击落阻分叉；宿主死亡仍会释放。' : '携带弹囊 · 宿主死亡仍会释放，可击落/躲避。' : '';
+  return prefix + baseThreatCopy(state, upcoming);
 }
 function phaseCopy(state: GameState): { title: string; detail: string; alert: boolean } {
   const endless = state.endless!;
@@ -134,6 +145,10 @@ function drawMap(state: GameState): void {
   ctx.fillStyle = '#425456';
   for (const obstacle of world.obstacles) { const p = point(obstacle); ctx.beginPath(); ctx.ellipse(p.x, p.y, obstacle.radius * sx, obstacle.radius * sy, 0, 0, Math.PI * 2); ctx.fill(); }
   for (const target of state.targets) if (target.hp > 0 && target.id !== state.endless?.source?.id) {
+    if (target.viralCapsule) {
+      const p = point(target); ctx.fillStyle = '#ffb4d4'; ctx.strokeStyle = '#59233c'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(p.x, p.y - 4); ctx.lineTo(p.x + 4, p.y); ctx.lineTo(p.x, p.y + 4); ctx.lineTo(p.x - 4, p.y); ctx.closePath(); ctx.fill(); ctx.stroke(); continue;
+    }
     if (target.assaultObjective === 'tissue') {
       const p = point(target), to = point(state.tissue), angle = Math.atan2(to.y - p.y, to.x - p.x);
       ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(angle); ctx.fillStyle = '#ffbb63'; ctx.strokeStyle = '#412723'; ctx.lineWidth = 1;
@@ -176,11 +191,13 @@ export function updateEndlessHud(state: GameState): void {
   const phaseNode = document.getElementById('endless-phase'); if (phaseNode) phaseNode.dataset.alert = String(phase.alert);
   const traitText = endlessTraitCopy(state);
   const assaultHint = assaultCopy(state);
+  const capsules = state.targets.filter(target => target.hp > 0 && target.viralCapsule).length;
+  const announcedCapsule = e.phase === 'warning' && viralCapsulePlan(e.wave, e.batchSchedule.flatMap(batch => batch.roles), e.source);
   // This row stays visible at compact heights where the longer objective hides.
   const compactThreat = assaultHint
     ? `${assaultHint}${e.phase === 'warning' && e.wave >= 16 ? `；混编：${mixedSupportCopy(state)}` : ''}`
     : e.phase === 'warning' && e.wave >= 16 ? `${traitText}；混编：${mixedSupportCopy(state)}` : traitText;
-  text('endless-traits', `${compactThreat}${e.source ? `；${sourceCopy(state, true)}` : ''}`);
+  text('endless-traits', `${capsules ? `◆ 离体弹囊${capsules}枚 · 2/挥斩击落；` : announcedCapsule ? `◆ ${announcedCapsule.fork ? '分叉母囊' : '死亡释放弹囊'}；` : ''}${compactThreat}${e.source ? `；${sourceCopy(state, true)}` : ''}`);
   updateEndlessEvolutionWarning(state);
   text('endless-score', String(e.score)); text('endless-combo', `连击 ${e.combo} · 最高 ${e.bestCombo}`);
   text('endless-hp', `${Math.ceil(state.player.hp)} / ${stats.maxHp}`); meter('endless-hp-meter', state.player.hp / stats.maxHp);
@@ -210,7 +227,7 @@ function buildSummary(state: GameState): string {
   const stats = statsFor(state), growth = state.endlessGrowth;
   return `<div class="endless-build-summary"><h3>本局战斗进化 · Lv.${growth?.level ?? 0}</h3><p>${ENDLESS_UPGRADE_IDS.filter(id => growth?.ranks[id]).map(id => `${ENDLESS_UPGRADES[id].title} ${growth!.ranks[id]}阶`).join(' · ') || '尚未获得战斗进化'}</p>
     <dl><dt>精确净化</dt><dd>${stats.shotRays}束 × ${number(BALANCE.damage[1] * stats.damageMultiplier)}伤害 · 每束额外贯穿${stats.pierceCount}体 · 间隔${number(stats.primaryCooldown, 3)}s</dd>
-    <dt>${stats.catalysisDamage > 0 ? '催化裂解' : '范围裂解'}</dt><dd>${catalysisToolCopy(stats)?.detail ?? `半径${number(stats.areaRadius)} · ${number(BALANCE.damage[2] * stats.damageMultiplier * stats.areaDamageMultiplier)}伤害`} · 冷却${number(stats.areaCooldown, 2)}s</dd>
+    <dt>${stats.catalysisDamage > 0 ? '催化牵引' : '牵引裂解'}</dt><dd>${catalysisToolCopy(stats)?.detail ?? `聚拢${number(stats.areaGatherRadius)}→爆心${number(stats.areaRadius)} · ${number(BALANCE.damage[2] * stats.damageMultiplier * stats.areaDamageMultiplier)}伤害`} · 射程${TRACTION_BALANCE.range} · 延迟${TRACTION_BALANCE.fuse}s · 冷却${number(stats.areaCooldown, 2)}s</dd>
     <dt>冲刺 / Q爆发</dt><dd>${number(stats.dashDamage * stats.damageMultiplier)} / ${number(stats.scanDamage * stats.damageMultiplier)}伤害（0表示未解锁）</dd>
     <dt>免疫与耐久</dt><dd>细胞伤害×${number(stats.cellDamageMultiplier * stats.damageMultiplier, 2)} · 寿命+${number(stats.cellDurationBonus, 2)}s · 小队冷却×${number(stats.cellCooldownMultiplier, 2)} · Q ${number(stats.scanCooldown, 2)}s · 最大耐久${stats.maxHp}</dd></dl>
     ${growth?.lastChoice ? `<p class="endless-latest">最近获得 · ${escape(growth.lastChoice.title)}：${escape(growth.lastChoice.description)}</p>` : ''}</div>`;
@@ -227,15 +244,18 @@ export function endlessOverlay(state: GameState, help: boolean, lowEffects: bool
   const e = state.endless;
   if (help) return modal(`<div class="eyebrow">ENDLESS / 连续挑战手册</div><h2>越打越强，选择你的清场方式。</h2><div class="endless-help-scroll">
     <p>在大地图自由移动，用右下导航找回＋组织与◇阀门。敌群从周围分批来袭，清完活体、待入场敌人和待分裂小体才算清波；没有等倒计时自动胜利。</p>
-    <div class="help-grid"><div><kbd>WASD</kbd>移动</div><div><kbd>鼠标</kbd>瞄准 · 按住左键连续行动</div><div><kbd>1</kbd>精确净化 · 扇射/贯穿可改变射击</div><div><kbd>2</kbd>范围裂解 · 击退打断</div><div><kbd>3</kbd>瞄准＋组织抢修，也能恢复少量耐久</div><div><kbd>Q</kbd>扫描显形 · 召集或指挥免疫小队</div><div><kbd>Space</kbd>冲刺脱围，升级后沿路径造成伤害</div><div><kbd>E</kbd>靠近◇阀门，朝鼠标发动冲流</div></div>
+    <div class="help-grid"><div><kbd>WASD</kbd>移动</div><div><kbd>鼠标</kbd>瞄准 · 1按住连射；2轻点布置</div><div><kbd>1</kbd>精确净化 · 远距即时持续火力</div><div><kbd>2</kbd>牵引裂解 · 聚拢后延迟爆破</div><div><kbd>3</kbd>瞄准＋组织抢修，也能恢复少量耐久</div><div><kbd>Q</kbd>扫描显形 · 召集或指挥免疫小队</div><div><kbd>Space</kbd>冲刺挥斩 · Ⅲ回旋 / Ⅵ追加回斩</div><div><kbd>E</kbd>靠近◇阀门，朝鼠标发动冲流</div></div>
+    <p><strong>2布点，1追击，细胞收网。</strong>2射程${TRACTION_BALANCE.range}，将游走体向鼠标落点收拢，${TRACTION_BALANCE.fuse}秒后爆发，冷却${TRACTION_BALANCE.cooldown}秒。已经锁定的招式和冲锋不受牵引，仍要躲避前摇。新星Ⅲ后，轻点仍可快速释放；按住左键可短时拖动落点，松开或到时爆发。导流时移动降至75%，每体整次位移有上限。按住1连射时切2可直接开一次，保持2按住不会反复施放。</p>
+    <p><strong>挥刀清场。</strong>冲刺斩Ⅰ即在实际落点解锁宽弧刃，伤害只按实际扇面与遮挡判定；Ⅲ变为圆周回旋，Ⅵ在短延迟后从你移动后的实际位置追加回斩。它可切开近身弹囊；墙后的敌人仍安全。</p>
+    <p><strong>病毒的离体攻击。</strong>第5波精英首次携带弹囊；第6波起压力分队可向组织释放，第15波后出现途中分叉的母囊。携带者施法或死亡只消费同一份库存；杀宿主不会消除已经离体的弹囊。预警后沿锁定方向飞行，可用1射落、2爆破、挥斩或真实细胞接触拦截；也可侧移、借墙。先击落母囊可阻止分叉。弹囊击落不提供病毒击杀分或经验，收割波不新增携带者。</p>
     <p><strong>顶住压力，再进化收割。</strong>每5波为一轮：第1、3波是压力关，第2、4波是更密集但单体更脆的收割关，第5波迎战精英。新一轮敌体更强，上一轮取得的成长仍然保留；波次与难度固定，不因你的输出临时追平。</p>
     <p><strong>远侧增援源 · 可选截断路线。</strong>第6、11、16……波会预告地图上的□增援源，最多关联6体有限普通增援。你可以先处理近敌或抢修，再外出提前拆源；基础工具与实际细胞咬击都可清除，尚未出生的关联普通体才会被截断，已出生敌体与裂殖小体仍要处理。截断的增援不计击杀分或连击；保留敌群可争取真实击杀分，整波进化照常获得。配额用完后源会枯竭，不必再跑过去补刀，也不会额外发放击杀或经验。</p>
-    <p><strong>压力波要保护组织。</strong>第6波起，压力波中有2只普通体以＋组织为目标，小地图用橙色▲指出它们。它们占原来的有限普通槽，不会因为你外出而消失；仍可射杀、用2击退或用细胞拦截。收割波不新增这类分队。免疫军团达到${IMMUNE_GUARD_BALANCE.minimumRank}阶且装备免疫灯塔后，在${IMMUNE_GUARD_BALANCE.commandRange}范围内Q瞄准＋组织可驻防：细胞实际行走到组织周围${IMMUNE_GUARD_BALANCE.radius}范围，优先吞噬组织袭击者，你可以外出处理□源。它们仍有原寿命和咬击冷却；再次Q指敌或空地可转回进攻。</p>
+    <p><strong>压力波要保护组织。</strong>第6波起，压力波中有2只普通体以＋组织为目标，小地图用橙色▲指出它们。它们占原来的有限普通槽，不会因为你外出而消失；仍可射杀、用2聚拢或用细胞拦截。收割波不新增这类分队。免疫军团达到${IMMUNE_GUARD_BALANCE.minimumRank}阶且装备免疫灯塔后，在${IMMUNE_GUARD_BALANCE.commandRange}范围内Q瞄准＋组织可驻防：细胞实际行走到组织周围${IMMUNE_GUARD_BALANCE.radius}范围，优先吞噬组织袭击者，你可以外出处理□源。它们仍有原寿命和咬击冷却；再次Q指敌或空地可转回进攻。</p>
     <p><strong>每次清波三选一。</strong>战斗进化会立即改变真实攻击：更多射线、贯穿、扩大裂解、冲刺斩、Q爆发、免疫军团、耐久与射速；选项会写明本次前后数值。每5波精英突破时，所选成长最多连升两阶，受路线阶数上限限制。战斗进化可持续获得，已达到机制上限的项目会退出选池，数值成长仍会继续。左下原协议与这些强化同时生效。</p>
-    <p><strong>催化裂解 · 可选改造。</strong>第6次成长起，已有新星Ⅰ或免疫军团Ⅰ可抽到这一分支。选后2直伤降为最多8并失去击退，用来铺设最多3体、4秒的催化标记；随后用1命中任一标记体，或指挥真实细胞接触咬击，整批兑现一次110半径爆发，最多伤及3体。选择爆心与衔接时机，有效再铺会覆盖旧批；不用这张卡可保留原范围清群。</p>
+    <p><strong>催化裂解 · 可选改造。</strong>第6次成长起，已有新星Ⅰ或免疫军团Ⅰ可抽到。选后保留2的牵引和导流，普通爆发转换为最多8直伤及最多3体、4秒的催化标记；随后用1命中任一标记体，或让真实细胞接触咬击，整批兑现一次110半径爆发，最多伤及3体。有效再铺会覆盖旧批；不用这张卡可保留原牵引爆破。</p>
     <p><strong>Q 不只是扫描。</strong>Q 就绪时，准星对准敌体可下达短时围猎指令，小队从原位短时加速集结；指空地则区域部署。细胞会实际移动并吞噬，必须赶到接触范围才咬击；指定目标结束后恢复自动选敌。小队仍在且召集冷却中时，Q 就绪后再按 Q 改指挥点；不续命、不重置咬击冷却、不额外耗组织。免疫军团强化伤害、持续和召集效率。</p>
     <p><strong>读编队，换打法。</strong>正面双潮、交叉夹击、聚群猎场与侧翼点射会改变接敌方向与节奏。第16波起三名支援混用已见过的招式，第30波起四名，分批入场。轻型支援随轮次成长，无精英被动特性；精英仍有其变异。重型招式同类最多一体起手，总并发最多三体。</p>
-    <p><strong>第20波起，病毒也会换代。</strong>每5波参考近期有效行动，轻度调整下一代变异倾向。提前8秒读进化预警，查看两项变异的能力、代价与基础反制。该波第一只精英兼具本代两项变异，按“主招→恢复→伴招→恢复”交替；第30波起的第二只精英仍单招。看清当前前摇，侧闪冲锋、离开双圈、Q打断侵蚀，利用恢复窗口清除。成功用2推开其正在施展的招式也会打断并留下恢复；催化改造后的2没有击退。</p>
+    <p><strong>第20波起，病毒也会换代。</strong>每5波参考近期有效行动，轻度调整下一代变异倾向。提前8秒读进化预警，查看两项变异的能力、代价与基础反制。该波第一只精英兼具本代两项变异，按“主招→恢复→伴招→恢复”交替；第30波起的第二只精英仍单招。看清前摇，侧闪冲锋、离开双圈、Q打断侵蚀，利用恢复窗口清除。牵引不搬动已经锁定的攻击；击杀施法者后仍要处理已离体弹囊。</p>
     <p>${specialTactics.map(tactic => `<strong>${escape(ENEMY_TACTIC_INFO[tactic].name)}</strong> · ${escape(ENEMY_TACTIC_INFO[tactic].counter)}${tactic === 'crystal-charge' ? '让开路线后反打。' : ''}`).join('<br>')}</p>
     <p><strong>每5波协议联动重配。</strong>清除精英波后，除战斗进化外再获一次免费协议草案。优先补齐显影围猎或共振连锁的伙伴；最多三槽，进阶至Ⅲ后仍可调校。免样本、可放弃，不会抵消本波战斗成长。</p>
     <p>连击需要连续净化维持；清波与升级后继续下一波。Esc、失焦与手册暂停模拟；暂停里可主动撤离并结算。死亡也记录本局成绩。战绩独立保存，下一局从基础能力重新构筑，最高通关只计完全清除的波次。</p>${buildSummary(state)}</div>

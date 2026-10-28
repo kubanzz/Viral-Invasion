@@ -1,0 +1,429 @@
+/* The painted world stays bright; interface contrast comes from ink on warm paper.
+   Layout and HUD exclusion rectangles continue to use the existing UI contracts. */
+:root {
+  --art-ink: #253d46;
+  --art-muted: #5d7175;
+  --art-teal: #247e87;
+  --art-teal-dark: #185c69;
+  --art-paper: #fffaf1;
+  --art-panel: rgba(255, 250, 241, .94);
+  --art-soft: #e7f3ed;
+  --art-border: rgba(77, 119, 121, .36);
+  --art-shadow: 0 4px 16px rgba(52, 69, 70, .1), inset 0 1px rgba(255, 255, 255, .75);
+  --art-danger: #a54542;
+  --mint: #247e87;
+  --dim: #5d7175;
+  --line: rgba(77, 119, 121, .24);
+  color: var(--art-ink);
+  background: #f4c7ad;
+}
+
+body[data-organ="lung"], #app[data-organ="lung"] {
+  --art-paper: #f6fff9;
+  --art-panel: rgba(247, 255, 250, .94);
+  --art-soft: #e5f4f2;
+  --art-teal: #247a87;
+  --art-border: rgba(69, 119, 131, .36);
+}
+
+#app { color: var(--art-ink); }
+#app button {
+  color: var(--art-ink);
+  background: rgba(255, 252, 245, .94);
+  border-color: var(--art-border);
+  box-shadow: inset 0 1px rgba(255, 255, 255, .6);
+  transition: background .15s, border-color .15s, box-shadow .15s;
+}
+#app button:hover {
+  background: #e7f4ed;
+  border-color: var(--art-teal);
+  box-shadow: 0 2px 9px rgba(45, 103, 103, .1);
+}
+#app button:active { transform: none; background: #d5e9df; }
+#app button.primary {
+  color: #fffdf7;
+  background: var(--art-teal);
+  border-color: var(--art-teal-dark);
+  box-shadow: 0 3px 0 rgba(24, 92, 105, .18), inset 0 1px rgba(255, 255, 255, .2);
+}
+#app button.primary:hover { background: var(--art-teal-dark); }
+#app button.quiet { color: var(--art-muted); background: transparent; }
+#app button.quiet:hover { color: var(--art-teal-dark); background: #e8f1e7; }
+#app button.active { color: var(--art-teal-dark); background: #dbeee5; border-color: var(--art-teal); }
+#app :is(button, input, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--art-teal-dark);
+  outline-offset: 3px;
+}
+#app kbd {
+  color: #36555d;
+  background: #f6faf4;
+  border-color: #88aaa8;
+  box-shadow: 0 1px rgba(77, 119, 121, .12);
+}
+
+#app .brand-icon { background: #e9f7ef; color: var(--art-teal-dark); }
+#app .brand strong { color: #234f5c; text-shadow: 0 1px 5px #fff9eb; font-weight: 600; }
+#app .brand small { color: #47656b; text-shadow: 0 1px 4px #fff9eb; letter-spacing: 2px; }
+#app .status-chip { color: #215d65; text-shadow: 0 1px 4px #fff9eb; }
+#app .top-actions button { background: rgba(255, 250, 241, .94); }
+#app .eyebrow { color: #637b7b; letter-spacing: 1.8px; }
+
+#app :is(.objective, .telemetry .readout, .pulse-readout, .growth-panel,
+  .organ-overview, .evolution-card, .migration-card, .mother-core-panel,
+  .endless-wave-panel, .endless-vitals, .endless-build-panel, .endless-navigation) {
+  color: var(--art-ink);
+  background: var(--art-panel);
+  border: 1px solid var(--art-border);
+  border-radius: 12px;
+  box-shadow: var(--art-shadow);
+  text-shadow: none;
+}
+#app .objective { border-left: 3px solid #d28e70; }
+#app[data-organ="lung"] .objective { border-left-color: #6dabae; }
+#app .objective h2 { color: #294d56; font-weight: 650; }
+#app .objective li { color: var(--art-muted); }
+#app .objective li.current { color: #255a63; font-weight: 600; }
+#app .objective li.done { color: #35745b; }
+#app .objective li span:first-child { color: #42696c; border-color: #89aaa3; }
+#app :is(.battle-objective p, .battle-objective .interaction-hint,
+  .battle-progress, .readout label, .readout p, .vitality,
+  .pulse-readout, .pulse-readout small, .growth-panel p, .xp-label,
+  .organ-map-node small, .organ-overview > p, .organ-map-label) { color: var(--art-muted); }
+#app :is(.readout b, .vitality b, .pulse-readout b, .growth-heading,
+  .organ-overview-title, .organ-map-label b, .organ-map-label strong) { color: #2c535b; }
+#app :is(.growth-heading b, .organ-map-symbol, .organ-map-node.current .organ-map-symbol,
+  .organ-map-node.current .organ-map-label b::after) { color: var(--art-teal-dark); }
+#app .meter { background: #d9e4d8; }
+#app .meter i { background: #459b8b; }
+#app .growth-panel .meter { background: #e4e5ce; }
+#app .growth-panel .meter i { background: #8f9c5d; }
+#app .pressure .meter i { background: #d68a63; }
+#app .organ-map-node.at-risk .meter i { background: #bd7650; }
+#app .organ-map-node.at-risk .organ-map-label strong::before { color: #a75936; }
+#app .crisis-hint { color: #815c48; }
+#app .pressure #crisis-label[data-urgency="fatal"],
+#app .pressure #crisis-label[data-urgency="organ"] {
+  color: #963c32; border-left-color: #c35d42;
+}
+.crisis #app .pressure { background: #fff0e2; border-color: #c87854; }
+.crisis #app .pressure .meter i { background: #be664e; }
+
+#app .protocol-slot { background: #f6faf2; border-color: #a8beb0; color: #3e5f59; }
+#app .protocol-slot span { color: #327c70; }
+#app .protocol-slot small { color: #5c7669; }
+#app .protocol-slot.empty { background: #fffaf280; border-color: #bcc6b5; color: #7a8375; }
+#app .protocol-slot.empty span { color: #7a8375; }
+#app .growth-panel .growth-details-entry { color: #306758; background: #e8f0e1; border-color: #b2c6af; }
+#app .trait-strip span { color: #6b5c4f; background: #fff1dd; border-color: #d2b795; }
+#app .organ-overview #migration-outcome, #app .organ-map-node small.organ-risk { color: #805b40; }
+#app #tactical-map, #app .endless-navigation canvas { background: #e9f1e6; border-color: #b0c8bb; }
+#app .organ-overview.hud-obscured { background: transparent; border-color: transparent; box-shadow: none; }
+#app .organ-overview.hud-obscured #organ-map,
+#app .organ-overview.hud-obscured #migration-outcome { background: var(--art-panel); }
+
+#app .tool-dock {
+  background: rgba(255, 250, 241, .97);
+  border-color: #779f9c;
+  box-shadow: 0 5px 18px rgba(55, 79, 76, .15), inset 0 1px #fff;
+  border-radius: 13px;
+}
+#app .tool { background: transparent; border-color: transparent; box-shadow: none; }
+#app .tool:hover { background: #edf4e7; box-shadow: none; }
+#app .tool.selected { background: #dfefe4; border-color: #5d9c94; }
+#app .tool strong { color: #2a5056; font-weight: 600; }
+#app .tool small { color: #61756d; }
+#app .tool .charge { background: #3d9388; height: 3px; }
+#app .ability { color: #496b6a; background: var(--art-panel); border-color: #9db7aa; box-shadow: var(--art-shadow); }
+#app .ability em { color: #277867; }
+#app .art-icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+  pointer-events: none;
+}
+#app .art-icon[data-art-icon="dash"] {
+  background-size: var(--vi-icon-dash-size);
+  background-position: var(--vi-icon-dash-position);
+}
+#app .art-icon[data-art-icon="scan"] {
+  background-size: var(--vi-icon-scan-size);
+  background-position: var(--vi-icon-scan-position);
+}
+#app .art-icon[data-art-icon="heal"] {
+  background-size: var(--vi-icon-heal-size);
+  background-position: var(--vi-icon-heal-position);
+}
+#app .ability-key { display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 6px; }
+#app .ability-key kbd { margin: 0; }
+#app .ability-name { display: block; }
+body.dual-organ #app .ability { min-width: 76px; }
+body.dual-organ #app .ability-key { margin-bottom: 3px; }
+body.dual-organ #app .ability-key .art-icon { width: 16px; height: 16px; }
+#app .tool[data-action="tool-3"] .art-icon { width: 16px; height: 16px; margin-right: 4px; }
+#app .protocol-slot[data-protocol="PURIFY_CHAIN"] > span:first-child {
+  position: relative;
+  color: transparent;
+}
+#app .protocol-slot[data-protocol="PURIFY_CHAIN"] > span:first-child::before,
+#app .growth-detail-card[data-protocol="PURIFY_CHAIN"] h3::before {
+  content: "";
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background-size: var(--vi-icon-chain-size);
+  background-position: var(--vi-icon-chain-position);
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+#app .protocol-slot[data-protocol="PURIFY_CHAIN"] > span:first-child::before {
+  position: absolute; inset: 50% auto auto 50%; margin: -9px 0 0 -9px;
+}
+#app .growth-detail-card[data-protocol="PURIFY_CHAIN"] h3::before { vertical-align: -3px; margin-right: 6px; }
+#app .message {
+  color: #635840;
+  background: rgba(255, 249, 231, .97);
+  border-color: #c4ad7d;
+  box-shadow: 0 2px 10px rgba(83, 73, 42, .08);
+}
+#app .micro-footer, #app .run-time { color: #4d686a; text-shadow: 0 1px 4px #fff9ec; }
+#app .evolution-feedback { color: #2d6052; background: #f0fae9f5; border-color: #7ea77a; box-shadow: var(--art-shadow); }
+#app .evolution-feedback span { color: #526f58; }
+#app .evolution-card { background: #fff2ddf5; border-color: #c29761; }
+#app .evolution-card :is(p, span) { color: #765d43; }
+#app .warning-title, #app .warning-title b { color: #954c31; }
+#app .evolution-card .counter { color: #356e57; }
+#app .campaign-card-title, #app .campaign-card-title b { color: #7a5634; }
+#app .migration-card :is(p, small), #app .mother-core-panel :is(p, small) { color: #5e736c; }
+#app .migration-choices button strong { color: #3b6c58; }
+#app .migration-choices button:disabled strong { color: #6b7a6c; }
+#app .mother-core-phase { color: #7b5b42; }
+#app .mother-core-traits span { color: #6b5447; background: #f4e5cf; border-color: #cbb99a; }
+#app .mother-core-health { background: #ded5c8; }
+#app .mother-core-health i { background: #cb7969; }
+#app .encounter-hud { color: #3e6255; border-color: #94b3a0; }
+#app .encounter-heading strong { color: #306958; }
+#app .encounter-detail { color: #607669; }
+#app .encounter-hud[data-kind="crisis"],
+#app .encounter-hud[data-kind="crisis"] .encounter-heading strong { color: #995036; }
+#app .encounter-hud[data-kind="feedback"] .encounter-heading strong { color: #4b7653; }
+
+/* Challenge uses the same paper surfaces; danger remains a distinct warm signal. */
+#app .endless-hud { color: var(--art-ink); }
+#app :is(.endless-wave-heading > strong, .endless-score b, .endless-build-panel > strong,
+  .endless-navigation > strong, .endless-navigation #endless-tissue-route) { color: #276c61; }
+#app :is(.endless-wave-heading > span, .endless-count small, .endless-wave-panel p,
+  .endless-vitals p, .endless-build-panel p, .endless-navigation p) { color: #5c7168; }
+#app .endless-wave-panel h3 { color: #36574f; }
+#app .endless-wave-panel h3[data-alert="true"],
+#app .endless-wave-panel #endless-traits,
+#app .endless-vitals #endless-critical { color: #9b5637; }
+#app .endless-build-panel .endless-latest { color: #7d5d3d; border-color: #afbea4; }
+
+/* Paused screens may be richer, but keep the live battlefield unobscured. */
+#app .overlay { background: rgba(44, 70, 69, .3); backdrop-filter: blur(3px); }
+#app .overlay.intro {
+  background: linear-gradient(90deg, #fff9ecfa 0%, #fff6e9eb 29%, #fff6e99c 44%, #fff6e908 76%);
+  backdrop-filter: none;
+}
+#app .intro-card { width: min(460px, 46vw); padding-block: 24px; }
+#app .intro-card .eyebrow { color: #3f7c76; margin-bottom: 18px; }
+#app .intro-card h1 { color: #244d59; font-size: 67px; font-weight: 600; letter-spacing: -3px; }
+#app .intro-card h1 span { color: #2f8d8e; }
+#app .intro-card h2 { color: #8a654d; font-size: 17px; letter-spacing: 5px; margin-bottom: 18px; }
+#app .intro-card .lead { color: #586c68; font-size: 13px; line-height: 1.75; margin-bottom: 20px; }
+#app .intro-card .mission { color: #526a60; border-color: #a7b9a169; margin-block: 16px 20px; }
+#app .mission b { color: #3e8270; }
+#app[data-phase="menu"] .hud { visibility: hidden; }
+#app[data-phase="menu"] .topbar .brand { visibility: hidden; }
+#app[data-phase="menu"] .top-actions { color: var(--art-ink); }
+#app .intro-card .actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 9px;
+}
+#app .intro-card .actions > button {
+  min-width: 0;
+  padding: 11px 14px;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: normal;
+}
+#app .intro-card .actions > .endless-menu-entry {
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: none;
+  margin: 0 0 3px;
+}
+#app .intro-card .endless-menu-entry > button {
+  width: 100%;
+  padding: 13px 18px;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.5;
+}
+#app .intro-card .endless-menu-entry > p { max-width: none; }
+#app .intro-footnote, #app .endless-storage { color: #6b7a6b; }
+#app .endless-menu-entry > p { color: #516c62; }
+#app .endless-storage.is-temporary { color: #945a34; }
+#app .intro-art-label { bottom: 5%; color: #7a4f3f; text-shadow: 0 1px 7px #fff6e9; }
+#app .intro-art-label strong { font-size: 27px; }
+#app .intro-art-label small { color: #815f49; letter-spacing: 2px; }
+
+#app :is(.modal, .profile-dialog.modal, .starting-plan-dialog.modal) {
+  color: var(--art-ink);
+  background: linear-gradient(135deg, #fffdf6, #f3f6e9);
+  border-color: #91aba0;
+  box-shadow: 0 18px 65px rgba(37, 66, 65, .23), inset 0 1px #fff;
+}
+#app .modal h2 { color: #2c5962; font-weight: 600; }
+#app .modal :is(p, li, dd, small), #app .modal .seed { color: #5c706b; }
+#app .modal span { color: #5c706b; }
+#app .modal strong { color: #365f53; }
+#app .modal :is(h3, h4) { color: #365e57; }
+#app .modal :is(dt, time) { color: #477c69; }
+#app .modal :is(.eyebrow, .high-contrast) { color: #4e8274; }
+#app .help-grid div { color: #456258; background: #e9f0e3; }
+#app .stats div { border-color: #b0beaa; }
+#app .stats strong { color: #327d70; }
+#app .result-seal { color: #388c72; }
+#app .campaign-organ-results > div { background: #edf3e5; border-color: #b4c8a8; }
+#app .trait-history article { background: #e9f0e3; border-left-color: #7caa87; }
+#app .event-history small { color: #718174; }
+#app details, #app summary { color: #496f63; }
+#app .encounter-help li { color: #5c706b; }
+#app .encounter-help-record { background: #e7f0df; border-color: #8aab80; }
+
+#app :is(.draft-choice, .research-direction, .endless-upgrade) {
+  background: linear-gradient(145deg, #f9fcf3, #e7f1e4);
+  border-color: #a4bc9e;
+  border-radius: 12px;
+}
+#app :is(.draft-choice, .research-direction, .endless-upgrade):hover {
+  background: linear-gradient(145deg, #fffef3, #dcefdc);
+  border-color: #4c9480;
+}
+#app :is(.protocol-symbol, .research-direction-kind, .research-direction-commit,
+  .draft-choice > strong, .endless-upgrade > b, .endless-upgrade > span) { color: #327a62; }
+#app :is(.draft-choice h3, .research-direction h3, .endless-upgrade > strong) { color: #2e6255; }
+#app .draft-tags span { color: #54715d; background: #edf4e3; border-color: #b5c9aa; }
+#app .draft-choice p b { color: #3e7258; }
+#app .draft-change { color: #365c46 !important; background: #dfedd9; border-left-color: #7da16e; }
+#app .draft-action { color: #3f6e53 !important; }
+#app .draft-current, #app .research-flow { color: #73806f; }
+#app .research-flow [aria-current] { color: #2f795d; }
+#app .research-pair { border-color: #aebfa3; }
+#app .research-pair dd { color: #416650; }
+#app .research-draft-context { background: #e9f0dd; border-left-color: #8aab6c; }
+#app .research-draft-context strong { color: #3d6c4c; }
+#app .research-draft-context span { color: #59735b; }
+#app :is(.growth-detail-card, .growth-detail-patrol, .endless-build-summary) {
+  background: #edf4e7; border-color: #b1c6a6;
+}
+#app :is(.growth-detail-count strong, .endless-best, .endless-help-scroll strong) { color: #327654; }
+#app .endless-build-summary .endless-latest { color: #7d5d3d; border-color: #b7c5a8; }
+
+/* Archive and loadout surfaces share the visual language without changing their scroll regions. */
+#app :is(.profile-dialog-header, .profile-dialog-footer, .starting-plan-header, .starting-plan-footer) {
+  background: #f5f7eb; border-color: #c0cdb7;
+}
+#app :is(.profile-scroll, .starting-plan-scroll, .growth-details-scroll, .research-direction-scroll) {
+  scrollbar-color: #91ac98 #edf3e6;
+}
+#app .profile-scroll::-webkit-scrollbar-track { background: #edf3e6; }
+#app .profile-scroll::-webkit-scrollbar-thumb { background: #91ac98; }
+#app :is(.profile-totals, .profile-storage, .profile-trait, .profile-protocol,
+  .profile-achievement, .profile-best, .profile-run, .profile-paths > article,
+  .profile-empty-state, .starting-plan-card, .profile-prepare-next) {
+  background: #f5f8ee; border-color: #b7c8ae;
+}
+#app :is(.profile-totals strong, .profile-menu-icon, .profile-menu-arrow,
+  .profile-card-symbol, .profile-protocol-symbol, .profile-achievement > span,
+  .profile-best > strong, .profile-run-won, .profile-empty-state > span,
+  .starting-plan-kind, .starting-plan-card h3 > span) { color: #398066; }
+#app :is(.profile-storage strong, .profile-storage small, .profile-section-heading > span,
+  .profile-card-state, .profile-run-facts, .profile-run-seed, .profile-path-note,
+  .profile-path-empty, .starting-plan-locked) { color: #6a7b68; }
+#app :is(.profile-counter, .profile-path-chip) { background: #edf3e4; border-color: #c3ceb8; color: #5d765a; }
+#app .profile-undiscovered { background: #f8f8ee; border-color: #c1c8b6; }
+#app .profile-undiscovered .profile-card-symbol { color: #9aa591; }
+#app :is(.profile-storage-warning, .profile-run-ended) { color: #94603d; }
+#app .profile-storage-warning { background: #fff0d8; border-color: #d0b486; }
+#app .profile-menu-button { background: #f8fbefc9; }
+#app .profile-menu-button strong { color: #365f53; }
+#app .profile-menu-button small, #app .profile-prepare-next span { color: #6b7c67; }
+#app .profile-storage-compact strong, #app .profile-storage-compact small { color: #6b7c67; }
+#app .starting-plan-card.selected { background: #e5f1de; border-color: #76a06d; }
+#app .starting-plan-tradeoff { background: #fff1d9; border-color: #d7bc8b; }
+#app .starting-plan-tradeoff strong { color: #89643d; }
+
+/* A little more reading room in the large desktop view, without moving HUD regions. */
+#app.dual-organ .battle-objective .eyebrow { letter-spacing: .8px; }
+#app.dual-organ .battle-objective h2 { font-size: 15px; }
+#app.dual-organ .battle-objective p { font-size: 11px; line-height: 1.55; }
+#app.dual-organ .battle-progress { font-size: 10px; }
+#app.dual-organ .readout label { font-size: 11px; }
+#app.dual-organ .readout b { font-size: 12px; }
+#app.dual-organ .growth-heading { font-size: 11px; }
+#app.dual-organ .xp-label { font-size: 10px; }
+body.dual-organ #app .growth-panel p { font-size: 10px; }
+#app.dual-organ .encounter-heading strong { font-size: 11px; }
+#app.dual-organ .encounter-detail { font-size: 10px; }
+body.dual-organ #app .organ-overview-title { font-size: 11px; }
+#app.dual-organ .organ-map-label { font-size: 11px; }
+
+@media (max-width: 1100px) {
+  #app .intro-card { width: min(420px, 49vw); }
+  #app .intro-card h1 { font-size: 61px; }
+  #app .intro-art-label { right: 4%; }
+  #app .intro-art-label strong { font-size: 23px; }
+}
+
+@media (max-height: 700px) {
+  #app .intro-card { padding-block: 15px; }
+  #app .intro-card h1 { font-size: 51px; margin-bottom: 13px; }
+  #app .intro-card h2 { font-size: 15px; margin-bottom: 13px; }
+  #app .intro-card .eyebrow { margin-bottom: 10px; font-size: 9px; }
+  #app .intro-card .lead { font-size: 12px; line-height: 1.65; margin-block: 10px 14px; }
+  #app .intro-card .mission { padding-block: 11px; margin-block: 12px 16px; }
+  #app .endless-menu-entry { margin-bottom: 5px; }
+  #app .endless-menu-entry > p { margin-block: 6px; font-size: 10px; }
+  #app .intro-footnote { margin-top: 11px; }
+  #app .profile-menu { margin-top: 12px; }
+  #app .modal { border-radius: 15px; }
+}
+
+@media (max-height: 650px) {
+  #app .intro-card .actions { gap: 7px; }
+  #app .intro-card .actions > button { padding: 9px 12px; }
+  #app .intro-card .endless-menu-entry > button { padding: 11px 15px; font-size: 13px; }
+  #app.dual-organ .battle-objective h2 { font-size: 14px; }
+  #app.dual-organ .battle-objective p { font-size: 10px; line-height: 1.45; }
+  #app.dual-organ .readout label { font-size: 10px; }
+  #app.dual-organ .readout b { font-size: 11px; }
+  #app.dual-organ .growth-heading { font-size: 10px; }
+  #app.dual-organ .organ-map-label { font-size: 10px; }
+}
+
+/* Keep the battlefield and the three independent HUD regions readable in a
+   narrow desktop window. Critical health and crisis text remain visible. */
+@media (max-width: 800px) {
+  body.dual-organ #app .dock-wrap { bottom: 12px; gap: 4px; max-width: calc(100vw - 24px); }
+  body.dual-organ #app .tool-dock { gap: 2px; padding: 4px; }
+  body.dual-organ #app .tool { width: clamp(78px, 15vw, 105px); padding: 8px 6px; }
+  body.dual-organ #app .tool kbd { margin-right: 5px; }
+  body.dual-organ #app .tool small { display: block; font-size: 9px; line-height: 1.25; }
+  body.dual-organ #app .ability { min-width: 52px; padding: 7px 5px; }
+  body.dual-organ #app .growth-panel { left: 12px; bottom: 102px; width: 150px; padding: 8px; }
+  body.dual-organ #app .organ-overview { right: 12px; bottom: 102px; width: 150px; padding: 8px; }
+  body.dual-organ #app .organ-overview #tactical-map { max-height: 88px; }
+  body.dual-organ #app .message { bottom: 100px; max-width: calc(100vw - 350px); padding: 6px 9px; }
+  body.dual-organ #app .growth-panel p { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #app button, #app .meter i, #app .hud, #app .message, #app .growth-panel { transition: none; }
+}

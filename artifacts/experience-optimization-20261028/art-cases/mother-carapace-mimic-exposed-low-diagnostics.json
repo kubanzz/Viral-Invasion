@@ -1,0 +1,1405 @@
+{
+  "id": "mother-carapace-mimic-exposed",
+  "title": "Mother CARAPACE + MIMIC / exposed",
+  "scope": "DERIVED ART COMPOSITION: an explicitly modified clone of a serialized GameSession state. No simulation step, damage, spawn acceptance or gameplay input replay is performed. These images prove presentation at the supplied state only; they do not establish natural reachability, action timing, animation quality or game performance.",
+  "sourceKind": "Actual GameSession.start().snapshot() at tick 0, serialized and detached; the fixture never calls step(). This is an initial-state source, not a captured natural battle.",
+  "notes": [
+    "The actual MotherCoreController constructor supplies the serialized combat shape. Trait/membrane/exposure/defeat values are explicitly derived for state presentation; no boss transition or kill is executed.",
+    "A single membrane layer expresses present/absent. Remaining count 2 versus 1 remains serialized information, not two invented membrane images."
+  ],
+  "lowEffects": true,
+  "derivedFields": [
+    {
+      "path": "phase",
+      "before": "playing",
+      "after": "paused"
+    },
+    {
+      "path": "tick",
+      "before": 0,
+      "after": 600
+    },
+    {
+      "path": "elapsed",
+      "before": 0,
+      "after": 10
+    },
+    {
+      "path": "player.x",
+      "before": 450,
+      "after": 170
+    },
+    {
+      "path": "player.y",
+      "before": 1070,
+      "after": 650
+    },
+    {
+      "path": "targets.0.id",
+      "before": "source-a",
+      "after": "probe:mother"
+    },
+    {
+      "path": "targets.0.x",
+      "before": 1020,
+      "after": 650
+    },
+    {
+      "path": "targets.0.y",
+      "before": 650,
+      "after": 550
+    },
+    {
+      "path": "targets.0.active",
+      "before": true
+    },
+    {
+      "path": "targets.0.infected",
+      "before": true
+    },
+    {
+      "path": "targets.0.role",
+      "before": "source",
+      "after": "core"
+    },
+    {
+      "path": "targets.0.hp",
+      "before": 238,
+      "after": 680
+    },
+    {
+      "path": "targets.0.maxHp",
+      "before": 238,
+      "after": 680
+    },
+    {
+      "path": "targets.0.radius",
+      "before": 34,
+      "after": 52
+    },
+    {
+      "path": "targets.0.scanned",
+      "before": false,
+      "after": true
+    },
+    {
+      "path": "targets.0.traits.0",
+      "after": "CARAPACE"
+    },
+    {
+      "path": "targets.0.traits.1",
+      "after": "MIMIC"
+    },
+    {
+      "path": "targets.0.born",
+      "before": 0
+    },
+    {
+      "path": "targets.0.generation",
+      "after": 0
+    },
+    {
+      "path": "targets.0.exposedUntil",
+      "after": 11
+    },
+    {
+      "path": "targets.1",
+      "before": {
+        "id": "source-b",
+        "kind": "single",
+        "x": 2010,
+        "y": 1090,
+        "active": true,
+        "infected": true,
+        "role": "source",
+        "hp": 238,
+        "maxHp": 238,
+        "radius": 34,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 0,
+        "born": 0
+      }
+    },
+    {
+      "path": "targets.2",
+      "before": {
+        "id": "virus-1",
+        "kind": "single",
+        "x": 965.0000000000002,
+        "y": 664.0000000000002,
+        "active": true,
+        "infected": true,
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 0,
+        "born": 0,
+        "attackReady": 1,
+        "generation": 0,
+        "sourceId": "source-a"
+      }
+    },
+    {
+      "path": "targets.3",
+      "before": {
+        "id": "virus-2",
+        "kind": "single",
+        "x": 2039.0000000000002,
+        "y": 1089.0000000000002,
+        "active": true,
+        "infected": true,
+        "role": "virus",
+        "radius": 22,
+        "hp": 68,
+        "maxHp": 68,
+        "hitUntil": 0,
+        "scanned": false,
+        "traits": [],
+        "facing": 0,
+        "born": 0,
+        "attackReady": 1.3,
+        "generation": 0,
+        "sourceId": "source-b"
+      }
+    },
+    {
+      "path": "tissue.x",
+      "before": 850,
+      "after": 1050
+    },
+    {
+      "path": "tissue.y",
+      "before": 1190,
+      "after": 650
+    },
+    {
+      "path": "tissue.hp",
+      "before": 62,
+      "after": 100
+    },
+    {
+      "path": "terminal.x",
+      "before": 350,
+      "after": 1050
+    },
+    {
+      "path": "terminal.y",
+      "before": 1180,
+      "after": 710
+    },
+    {
+      "path": "events.0",
+      "before": {
+        "type": "RUN_STARTED",
+        "tick": 0,
+        "data": {
+          "seed": 71,
+          "mode": "campaign",
+          "startAtTick": 0,
+          "encounterConfig": "campaign-1",
+          "counterGuide": "guided",
+          "firstTraitOverride": ""
+        }
+      }
+    },
+    {
+      "path": "message",
+      "before": "感染正在沿血管传播。Q 诊断，1 精准净化，2 清群，3 修复；靠近装置按 E。",
+      "after": ""
+    },
+    {
+      "path": "messageUntil",
+      "before": 10,
+      "after": 0
+    },
+    {
+      "path": "world.width",
+      "before": 2400,
+      "after": 1200
+    },
+    {
+      "path": "world.height",
+      "before": 1500,
+      "after": 800
+    },
+    {
+      "path": "world.bounds.left",
+      "before": 85,
+      "after": 65
+    },
+    {
+      "path": "world.bounds.right",
+      "before": 2315,
+      "after": 1135
+    },
+    {
+      "path": "world.bounds.top",
+      "before": 145,
+      "after": 110
+    },
+    {
+      "path": "world.bounds.bottom",
+      "before": 1415,
+      "after": 735
+    },
+    {
+      "path": "world.obstacles.0",
+      "before": {
+        "id": "fold-a",
+        "x": 730,
+        "y": 650,
+        "radius": 85
+      }
+    },
+    {
+      "path": "world.obstacles.1",
+      "before": {
+        "id": "fold-b",
+        "x": 1630,
+        "y": 1190,
+        "radius": 90
+      }
+    },
+    {
+      "path": "world.obstacles.2",
+      "before": {
+        "id": "fold-c",
+        "x": 1350,
+        "y": 540,
+        "radius": 72
+      }
+    },
+    {
+      "path": "world.obstacles.3",
+      "before": {
+        "id": "fold-d",
+        "x": 2120,
+        "y": 720,
+        "radius": 85
+      }
+    },
+    {
+      "path": "world.obstacles.4",
+      "before": {
+        "id": "fold-e",
+        "x": 780,
+        "y": 980,
+        "radius": 70
+      }
+    },
+    {
+      "path": "world.foreground.x",
+      "before": 1110,
+      "after": 2000
+    },
+    {
+      "path": "world.foreground.y",
+      "before": 1195,
+      "after": 2000
+    },
+    {
+      "path": "world.foreground.width",
+      "before": 275,
+      "after": 10
+    },
+    {
+      "path": "world.foreground.height",
+      "before": 150,
+      "after": 10
+    },
+    {
+      "path": "battle.graph.nodes.0",
+      "before": {
+        "id": "source-a",
+        "kind": "source",
+        "x": 1020,
+        "y": 650,
+        "active": true,
+        "infected": true
+      }
+    },
+    {
+      "path": "battle.graph.nodes.1",
+      "before": {
+        "id": "source-b",
+        "kind": "source",
+        "x": 2010,
+        "y": 1090,
+        "active": true,
+        "infected": true
+      }
+    },
+    {
+      "path": "battle.graph.nodes.2",
+      "before": {
+        "id": "gate",
+        "kind": "gate",
+        "x": 1070,
+        "y": 280,
+        "active": true,
+        "infected": false
+      }
+    },
+    {
+      "path": "battle.graph.nodes.3",
+      "before": {
+        "id": "valve",
+        "kind": "valve",
+        "x": 1440,
+        "y": 950,
+        "active": true,
+        "infected": false
+      }
+    },
+    {
+      "path": "battle.graph.nodes.4",
+      "before": {
+        "id": "tissue",
+        "kind": "tissue",
+        "x": 850,
+        "y": 1190,
+        "active": true,
+        "infected": false
+      }
+    },
+    {
+      "path": "battle.graph.nodes.5",
+      "before": {
+        "id": "retest",
+        "kind": "retest",
+        "x": 350,
+        "y": 1180,
+        "active": true,
+        "infected": false
+      }
+    },
+    {
+      "path": "battle.graph.nodes.6",
+      "before": {
+        "id": "research",
+        "kind": "research",
+        "x": 350,
+        "y": 690,
+        "active": true,
+        "infected": false
+      }
+    },
+    {
+      "path": "battle.graph.nodes.7",
+      "before": {
+        "id": "exit",
+        "kind": "exit",
+        "x": 2170,
+        "y": 280,
+        "active": false,
+        "infected": false
+      }
+    },
+    {
+      "path": "battle.graph.edges.0",
+      "before": {
+        "id": "source-a:gate",
+        "from": "source-a",
+        "to": "gate",
+        "open": true,
+        "nextSpread": 6,
+        "flowDirection": {
+          "x": 0.13391789600139503,
+          "y": -0.9909924304103231
+        }
+      }
+    },
+    {
+      "path": "battle.graph.edges.1",
+      "before": {
+        "id": "gate:tissue",
+        "from": "gate",
+        "to": "tissue",
+        "open": true,
+        "nextSpread": 6,
+        "flowDirection": {
+          "x": -0.23498856036532292,
+          "y": 0.971998136056563
+        }
+      }
+    },
+    {
+      "path": "battle.graph.edges.2",
+      "before": {
+        "id": "source-b:valve",
+        "from": "source-b",
+        "to": "valve",
+        "open": true,
+        "nextSpread": 6,
+        "flowDirection": {
+          "x": -0.9711364222667793,
+          "y": -0.23852473529359491
+        }
+      }
+    },
+    {
+      "path": "battle.graph.edges.3",
+      "before": {
+        "id": "valve:tissue",
+        "from": "valve",
+        "to": "tissue",
+        "open": true,
+        "nextSpread": 6,
+        "flowDirection": {
+          "x": -0.9262954009547514,
+          "y": 0.3767981292019328
+        }
+      }
+    },
+    {
+      "path": "battle.lastAim.x",
+      "before": 1020,
+      "after": 650
+    },
+    {
+      "path": "battle.lastAim.y",
+      "before": 650,
+      "after": 500
+    },
+    {
+      "path": "growth.runId",
+      "before": "71:2",
+      "after": "derived-art-probe-28"
+    },
+    {
+      "path": "campaign.core.combat",
+      "after": {
+        "schemaVersion": 1,
+        "coreId": "probe:mother",
+        "organId": "heart",
+        "traits": [
+          "CARAPACE",
+          "MIMIC"
+        ],
+        "activeTrait": "MIMIC",
+        "phase": "recovery",
+        "phaseIndex": 0,
+        "phaseStartedAt": 9.5,
+        "facing": 0.4,
+        "nextActionAt": 11,
+        "attack": null,
+        "exposedUntil": 11,
+        "revealedUntil": 11,
+        "broodQueued": [],
+        "broodReleased": [],
+        "attackSerial": 0,
+        "attacksResolved": 0,
+        "scanInterrupts": 0,
+        "cleared": false,
+        "clearedAt": null,
+        "lastTick": 599,
+        "introduced": false,
+        "lastScanTick": -1,
+        "lastPulseTick": -1,
+        "seenTraits": [
+          "CARAPACE"
+        ],
+        "membrane": {
+          "total": 2,
+          "remaining": 1,
+          "floorRatio": 0.5,
+          "thresholdReached": false
+        }
+      }
+    }
+  ],
+  "coverage": [
+    {
+      "category": "mother",
+      "status": "native-verified",
+      "nativeVerified": true,
+      "expected": [
+        {
+          "actorId": "probe:mother",
+          "assetId": "mother.base",
+          "category": "mother",
+          "acceptableAssetIds": [
+            "mother.base"
+          ],
+          "actual": {
+            "id": "probe:mother",
+            "texture": "viral-art-0",
+            "frame": "mother.base",
+            "x": 1016.2222222222223,
+            "y": 617.32,
+            "width": 172.21404444444437,
+            "height": 182.02980116959063,
+            "depth": 100,
+            "visible": true,
+            "alpha": 1,
+            "flipX": false,
+            "flipY": false,
+            "rotation": 0,
+            "originX": 0.5015625,
+            "originY": 0.9230769230769231
+          },
+          "nativeMatch": true
+        },
+        {
+          "actorId": "probe:mother:mother.carapace",
+          "assetId": "mother.carapace",
+          "category": "mother",
+          "acceptableAssetIds": [
+            "mother.carapace"
+          ],
+          "actual": {
+            "id": "probe:mother:mother.carapace",
+            "texture": "viral-art-0",
+            "frame": "mother.carapace",
+            "x": 1016.2222222222223,
+            "y": 617.32,
+            "width": 120.7467425185185,
+            "height": 163.5392904075935,
+            "depth": 100.1,
+            "visible": true,
+            "alpha": 1,
+            "flipX": false,
+            "flipY": false,
+            "rotation": 0,
+            "originX": 0.5,
+            "originY": 0.9383457782057824
+          },
+          "nativeMatch": true
+        },
+        {
+          "actorId": "probe:mother:mother.mimic",
+          "assetId": "mother.mimic",
+          "category": "mother",
+          "acceptableAssetIds": [
+            "mother.mimic"
+          ],
+          "actual": {
+            "id": "probe:mother:mother.mimic",
+            "texture": "viral-art-0",
+            "frame": "mother.mimic",
+            "x": 1016.2222222222223,
+            "y": 617.32,
+            "width": 157.66930014814812,
+            "height": 172.80509319371725,
+            "depth": 100.2,
+            "visible": true,
+            "alpha": 1,
+            "flipX": false,
+            "flipY": false,
+            "rotation": 0,
+            "originX": 0.5,
+            "originY": 0.9254251700680272
+          },
+          "nativeMatch": true
+        },
+        {
+          "actorId": "probe:mother:mother.core.exposed",
+          "assetId": "mother.core.exposed",
+          "category": "mother",
+          "acceptableAssetIds": [
+            "mother.core.exposed"
+          ],
+          "actual": {
+            "id": "probe:mother:mother.core.exposed",
+            "texture": "viral-art-0",
+            "frame": "mother.core.exposed",
+            "x": 1016.2222222222223,
+            "y": 617.32,
+            "width": 33.679359999999996,
+            "height": 96.30191999999998,
+            "depth": 100.3,
+            "visible": true,
+            "alpha": 1,
+            "flipX": false,
+            "flipY": false,
+            "rotation": 0,
+            "originX": 0.5008680555555556,
+            "originY": 0.9690346083788707
+          },
+          "nativeMatch": true
+        }
+      ],
+      "absentNativeIds": [],
+      "missingAssets": [],
+      "invalidRegistration": [],
+      "unexpectedDeviceIds": [],
+      "unexpectedMotherSprites": [],
+      "unexpectedCellIds": [],
+      "missingLabels": []
+    }
+  ],
+  "state": {
+    "beforeSha256": "d33eed2e8f7dc17bc15493671fa05714b5a911d50aab25e474377f73ddd5d261",
+    "afterSha256": "d33eed2e8f7dc17bc15493671fa05714b5a911d50aab25e474377f73ddd5d261",
+    "completeJsonEqual": true,
+    "sourceBeforeSha256": "dd645583cc98a62da6fc7565129968198173da5703c29af9f3ee207826008db3",
+    "sourceAfterSha256": "dd645583cc98a62da6fc7565129968198173da5703c29af9f3ee207826008db3",
+    "sourceUnchanged": true,
+    "independentStateEquality": true,
+    "stateFiles": {
+      "before": {
+        "path": "artifacts/experience-optimization-20261028/art-cases/mother-carapace-mimic-exposed-low-state-before.json",
+        "sha256": "d33eed2e8f7dc17bc15493671fa05714b5a911d50aab25e474377f73ddd5d261",
+        "bytes": 11682
+      },
+      "after": {
+        "path": "artifacts/experience-optimization-20261028/art-cases/mother-carapace-mimic-exposed-low-state-after.json",
+        "sha256": "d33eed2e8f7dc17bc15493671fa05714b5a911d50aab25e474377f73ddd5d261",
+        "bytes": 11682
+      }
+    }
+  },
+  "sourceIdentities": [
+    {
+      "id": "mother.base",
+      "atlas": "viral-art-0",
+      "frame": "mother.base",
+      "source": "ViralInvasion_Art_v1/batch09_runtime_completion/boss/mother_base_v1.png",
+      "sourceSha256": "bbcf51d356c11dbf81f567339e4b6669628eee11ff6b46a443089e96aaf561ad",
+      "sourceSize": {
+        "width": 1024,
+        "height": 1024
+      },
+      "sourceBounds": {
+        "x": 168,
+        "y": 150,
+        "width": 688,
+        "height": 700
+      },
+      "visibleBounds": {
+        "x": 11,
+        "y": 8,
+        "width": 299,
+        "height": 304
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9230769230769231
+      }
+    },
+    {
+      "id": "mother.carapace",
+      "atlas": "viral-art-0",
+      "frame": "mother.carapace",
+      "source": "ViralInvasion_Art_v1/batch09_runtime_completion/boss/mother_carapace_registered_v1.png",
+      "sourceSha256": "b0baca984c1d39303b506400ba181207f59492b01603fad7c6e6499279d7e641",
+      "sourceSize": {
+        "width": 1024,
+        "height": 1024
+      },
+      "sourceBounds": {
+        "x": 270,
+        "y": 210,
+        "width": 484,
+        "height": 401
+      },
+      "visibleBounds": {
+        "x": 8,
+        "y": 8,
+        "width": 240,
+        "height": 199
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9394812680115274
+      }
+    },
+    {
+      "id": "mother.mimic",
+      "atlas": "viral-art-0",
+      "frame": "mother.mimic",
+      "source": "ViralInvasion_Art_v1/batch09_runtime_completion/boss/mother_mimic_registered_v1.png",
+      "sourceSha256": "7f8e9d444c7db5ab0877e41b77482e46e5f396d4badfe80ed9e345cafd19e8e1",
+      "sourceSize": {
+        "width": 1024,
+        "height": 1024
+      },
+      "sourceBounds": {
+        "x": 196,
+        "y": 190,
+        "width": 632,
+        "height": 504
+      },
+      "visibleBounds": {
+        "x": 8,
+        "y": 9,
+        "width": 240,
+        "height": 191
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.925
+      }
+    },
+    {
+      "id": "mother.core.exposed",
+      "atlas": "viral-art-0",
+      "frame": "mother.core.exposed",
+      "source": "ViralInvasion_Art_v1/batch09_runtime_completion/boss/mother_core_registered_v3.png",
+      "sourceSha256": "1029546dd53b4ecf693afce343589f9d7c4f3bf57a35fb1a247bed077a20baf2",
+      "sourceSize": {
+        "width": 1024,
+        "height": 1024
+      },
+      "sourceBounds": {
+        "x": 459,
+        "y": 460,
+        "width": 108,
+        "height": 126
+      },
+      "visibleBounds": {
+        "x": 17,
+        "y": 8,
+        "width": 96,
+        "height": 112
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.9699453551912568
+      }
+    }
+  ],
+  "diagnostics": {
+    "depthOrder": [
+      "probe:mother",
+      "player",
+      "tissue",
+      "terminal"
+    ],
+    "occluded": false,
+    "foregroundOpacity": 0.94,
+    "layerOrder": [
+      "distant",
+      "terrain",
+      "contact-shadows",
+      "world-y-sorted",
+      "foreground",
+      "effects",
+      "hud"
+    ],
+    "labels": {
+      "requested": 4,
+      "placed": 4,
+      "omitted": 0,
+      "offscreen": 0,
+      "conflicted": 0,
+      "measureCacheSize": 5,
+      "placementCacheSize": 4,
+      "placements": [
+        {
+          "id": "target:probe:mother",
+          "priority": 90,
+          "essential": true,
+          "rect": {
+            "left": 953.7511111111112,
+            "right": 1078.6933333333334,
+            "top": 395.3610666666668,
+            "bottom": 422.85884444444457
+          },
+          "anchor": {
+            "x": 1016.2222222222223,
+            "y": 613.9466666666667
+          },
+          "baseline": {
+            "x": 1016.2222222222223,
+            "y": 409.3610666666668
+          },
+          "compact": false,
+          "fallback": false,
+          "conflicted": false,
+          "leader": {
+            "from": {
+              "x": 1016.2222222222223,
+              "y": 438.3564444444445
+            },
+            "to": {
+              "x": 1016.2222222222223,
+              "y": 422.85884444444457
+            }
+          }
+        },
+        {
+          "id": "weakness:probe:mother",
+          "priority": 90,
+          "essential": true,
+          "rect": {
+            "left": 986.0115670098199,
+            "right": 1046.4328774346245,
+            "top": 648.808888888889,
+            "bottom": 667.808888888889
+          },
+          "anchor": {
+            "x": 1016.2222222222223,
+            "y": 613.9466666666667
+          },
+          "baseline": {
+            "x": 1016.2222222222223,
+            "y": 662.808888888889
+          },
+          "compact": false,
+          "fallback": false,
+          "conflicted": false,
+          "leader": {
+            "from": {
+              "x": 1016.2222222222223,
+              "y": 631.44
+            },
+            "to": {
+              "x": 1016.2222222222223,
+              "y": 648.808888888889
+            }
+          }
+        },
+        {
+          "id": "tissue",
+          "priority": 75,
+          "essential": true,
+          "rect": {
+            "left": 1413.6981964111328,
+            "right": 1518.3018035888672,
+            "top": 718.2622222222224,
+            "bottom": 747.7600000000001
+          },
+          "anchor": {
+            "x": 1466,
+            "y": 694.9066666666668
+          },
+          "baseline": {
+            "x": 1466,
+            "y": 734.2622222222224
+          },
+          "compact": false,
+          "fallback": false,
+          "conflicted": false
+        },
+        {
+          "id": "terminal",
+          "priority": 30,
+          "essential": false,
+          "rect": {
+            "left": 1437.280029296875,
+            "right": 1494.719970703125,
+            "top": 760.9671111111112,
+            "bottom": 795.3360000000001
+          },
+          "anchor": {
+            "x": 1466,
+            "y": 743.4826666666668
+          },
+          "baseline": {
+            "x": 1466,
+            "y": 774.9671111111112
+          },
+          "compact": false,
+          "fallback": false,
+          "conflicted": false
+        }
+      ]
+    },
+    "hudRects": [],
+    "playerPresence": {
+      "active": false,
+      "potentialBodyOccluders": [],
+      "raisedOccluders": [],
+      "foreground": false,
+      "pendingRoundDangers": [],
+      "bodyBounds": {
+        "left": 145,
+        "right": 212,
+        "top": 398.1058814000782,
+        "bottom": 474.1058814000782
+      },
+      "groundAnchor": {
+        "x": 170,
+        "y": 650
+      }
+    },
+    "phaser": {
+      "engine": "Phaser",
+      "version": "4.2.1",
+      "renderer": "webgl",
+      "ready": true,
+      "textureCount": 9,
+      "activeSprites": 14,
+      "pooledSprites": 0,
+      "rasterLayers": 3,
+      "visibleRasterLayers": 3,
+      "animations": [],
+      "nativeSprites": [
+        {
+          "id": "environment:back",
+          "texture": "environment:heart.full",
+          "frame": "__BASE",
+          "x": 37.95555555555566,
+          "y": -74.21333333333327,
+          "width": 1844.0888888888887,
+          "height": 1176.168888888889,
+          "depth": -100,
+          "visible": true
+        },
+        {
+          "id": "environment:floor",
+          "texture": "environment:heart.floor",
+          "frame": "__BASE",
+          "x": 358.42222222222233,
+          "y": 257.72266666666667,
+          "width": 1203.1555555555556,
+          "height": 505.99999999999994,
+          "depth": -90,
+          "visible": true
+        },
+        {
+          "id": "probe:mother",
+          "texture": "viral-art-0",
+          "frame": "mother.base",
+          "x": 1016.2222222222223,
+          "y": 617.32,
+          "width": 172.21404444444437,
+          "height": 182.02980116959063,
+          "depth": 100,
+          "visible": true
+        },
+        {
+          "id": "probe:mother:mother.carapace",
+          "texture": "viral-art-0",
+          "frame": "mother.carapace",
+          "x": 1016.2222222222223,
+          "y": 617.32,
+          "width": 120.7467425185185,
+          "height": 163.5392904075935,
+          "depth": 100.1,
+          "visible": true
+        },
+        {
+          "id": "probe:mother:mother.mimic",
+          "texture": "viral-art-0",
+          "frame": "mother.mimic",
+          "x": 1016.2222222222223,
+          "y": 617.32,
+          "width": 157.66930014814812,
+          "height": 172.80509319371725,
+          "depth": 100.2,
+          "visible": true
+        },
+        {
+          "id": "probe:mother:mother.core.exposed",
+          "texture": "viral-art-0",
+          "frame": "mother.core.exposed",
+          "x": 1016.2222222222223,
+          "y": 617.32,
+          "width": 33.679359999999996,
+          "height": 96.30191999999998,
+          "depth": 100.3,
+          "visible": true
+        },
+        {
+          "id": "player",
+          "texture": "viral-art-0",
+          "frame": "hero.clean",
+          "x": 476.48888888888894,
+          "y": 694.9066666666668,
+          "width": 103.14903703703703,
+          "height": 106.77537037037035,
+          "depth": 103,
+          "visible": true
+        },
+        {
+          "id": "player:tool",
+          "texture": "viral-art-0",
+          "frame": "weapon.emitter.painted",
+          "x": 498.9777777777778,
+          "y": 661.1733333333334,
+          "width": 61.18,
+          "height": 44.43143578219533,
+          "depth": 103.2,
+          "visible": true
+        },
+        {
+          "id": "tissue",
+          "texture": "viral-art-0",
+          "frame": "tissue.restored",
+          "x": 1466,
+          "y": 694.9066666666668,
+          "width": 130.20706719245342,
+          "height": 143.93984381040747,
+          "depth": 106,
+          "visible": true
+        },
+        {
+          "id": "scenery:rim:0",
+          "texture": "viral-art-0",
+          "frame": "scenery.heartTissueA",
+          "x": 470.86666666666673,
+          "y": 235.0538666666667,
+          "width": 162.83406451612902,
+          "height": 161.99254480286737,
+          "depth": -20,
+          "visible": true
+        },
+        {
+          "id": "scenery:rim:1",
+          "texture": "viral-art-0",
+          "frame": "scenery.heartTissueB",
+          "x": 737.9222222222222,
+          "y": 235.0538666666667,
+          "width": 195.7925502645503,
+          "height": 193.77925925925925,
+          "depth": -20,
+          "visible": true
+        },
+        {
+          "id": "scenery:rim:2",
+          "texture": "viral-art-0",
+          "frame": "scenery.heartTissueA",
+          "x": 1004.9777777777778,
+          "y": 235.0538666666667,
+          "width": 162.83406451612902,
+          "height": 161.99254480286737,
+          "depth": -20,
+          "visible": true
+        },
+        {
+          "id": "scenery:rim:3",
+          "texture": "viral-art-0",
+          "frame": "scenery.heartTissueB",
+          "x": 1272.0333333333333,
+          "y": 235.0538666666667,
+          "width": 195.7925502645503,
+          "height": 193.77925925925925,
+          "depth": -20,
+          "visible": true
+        },
+        {
+          "id": "scenery:rim:4",
+          "texture": "viral-art-0",
+          "frame": "scenery.heartTissueA",
+          "x": 1539.088888888889,
+          "y": 235.0538666666667,
+          "width": 162.83406451612902,
+          "height": 161.99254480286737,
+          "depth": -20,
+          "visible": true
+        }
+      ],
+      "widthCSS": 1920,
+      "heightCSS": 1012,
+      "dpr": 1,
+      "backingWidth": 1920,
+      "backingHeight": 1012,
+      "frameLoopBound": false
+    },
+    "art": {
+      "signature": "4b9dd5f6ec4e854e6df0fba22d61cda3842fa4a0ff3dea8f9fb017e5f0873f35",
+      "selectedAssets": 53,
+      "activeBodies": [
+        {
+          "id": "probe:mother",
+          "bounds": {
+            "left": 576.448,
+            "right": 723.552,
+            "top": 251.4,
+            "bottom": 401
+          }
+        },
+        {
+          "id": "player",
+          "bounds": {
+            "left": 140.76666666666665,
+            "right": 225.13636363636363,
+            "top": 381.43333333333334,
+            "bottom": 471.43333333333334
+          }
+        }
+      ],
+      "heroAnimation": {
+        "enabledClips": [],
+        "frame": {
+          "id": "hero.idle",
+          "clip": null,
+          "index": 0,
+          "animated": false,
+          "flipX": false
+        }
+      },
+      "weapon": {
+        "assetId": "weapon.emitter.painted",
+        "mode": "painted-static"
+      },
+      "provisional": [
+        "continuous-player-animation",
+        "mother-static-layers",
+        "missing-continuous-mother-animation",
+        "painted-lung",
+        "fission-static-poses",
+        "immune-static-poses"
+      ]
+    }
+  },
+  "nativeSprites": [
+    {
+      "id": "environment:back",
+      "texture": "environment:heart.full",
+      "frame": "__BASE",
+      "x": 37.95555555555566,
+      "y": -74.21333333333327,
+      "width": 1844.0888888888887,
+      "height": 1176.168888888889,
+      "depth": -100,
+      "visible": true,
+      "alpha": 1,
+      "flipX": false,
+      "flipY": false,
+      "rotation": 0,
+      "originX": 0,
+      "originY": 0
+    },
+    {
+      "id": "environment:floor",
+      "texture": "environment:heart.floor",
+      "frame": "__BASE",
+      "x": 358.42222222222233,
+      "y": 257.72266666666667,
+      "width": 1203.1555555555556,
+      "height": 505.99999999999994,
+      "depth": -90,
+      "visible": true,
+      "alpha": 1,
+      "flipX": false,
+      "flipY": false,
+      "rotation": 0,
+      "originX": 0,
+      "originY": 0
+    },
+    {
+      "id": "probe:mother",
+      "texture": "viral-art-0",
+      "frame": "mother.base",
+      "x": 1016.2222222222223,
+      "y": 617.32,
+      "width": 172.21404444444437,
+      "height": 182.02980116959063,
+      "depth": 100,
+      "visible": true,
+      "alpha": 1,
+      "flipX": false,
+      "flipY": false,
+      "rotation": 0,
+      "originX": 0.5015625,
+      "originY": 0.9230769230769231
+    },
+    {
+      "id": "probe:mother:mother.carapace",
+      "texture": "viral-art-0",
+      "frame": "mother.carapace",
+      "x": 1016.2222222222223,
+      "y": 617.32,
+      "width": 120.7467425185185,
+      "height": 163.5392904075935,
+      "depth": 100.1,
+      "visible": true,
+      "alpha": 1,
+      "flipX": false,
+      "flipY": false,
+      "rotation": 0,
+      "originX": 0.5,
+      "originY": 0.9383457782057824
+    },
+    {
+      "id": "probe:mother:mother.mimic",
+      "texture": "viral-art-0",
+      "frame": "mother.mimic",
+      "x": 1016.2222222222223,
+      "y": 617.32,
+      "width": 157.66930014814812,
+      "height": 172.80509319371725,
+      "depth": 100.2,
+      "visible": true,
+      "alpha": 1,
+      "flipX": false,
+      "flipY": false,
+      "rotation": 0,
+      "originX": 0.5,
+      "originY": 0.9254251700680272
+    },
+    {
+      "id": "probe:mother:mother.core.exposed",
+      "texture": "viral-art-0",
+      "frame": "mother.core.exposed",
+      "x": 1016.2222222222223,
+      "y": 617.32,
+      "width": 33.679359999999996,
+      "height": 96.30191999999998,
+      "depth": 100.3,
+      "visible": true,
+      "alpha": 1,
+      "flipX": false,
+      "flipY": false,
+      "rotation": 0,
+      "originX": 0.5008680555555556,
+      "originY": 0.9690346083788707
+    },
+    {
+      "id": "player",
+      "texture": "viral-art-0",
+      "frame": "hero.clean",
+      "x": 476.48888888888894,
+      "y": 694.9066666666668,
+      "width": 103.14903703703703,
+      "height": 106.77537037037035,
+      "depth": 103,
+      "visible": true,
+      "alpha": 1,
+      "flipX": false,
+      "flipY": false,
+      "rotation": 0,
+      "originX": 0.5,
+      "originY": 0.9207547169811321
+    },
+    {
+      "id": "player:tool",
+      "texture": "viral-art-0",
+      "frame": "weapon.emitter.painted",
+      "x": 498.9777777777778,
+      "y": 661.1733333333334,
+      "width": 61.18,
+      "height": 44.43143578219533,
+      "depth": 103.2,
+      "visible": true,
+      "alpha": 1,
+      "flipX": false,
+      "flipY": false,
+      "rotation": 0,
+      "originX": 0.3609022556390977,
+      "originY": 0.917098445595855
+    },
+    {
+      "id": "tissue",
+      "texture": "viral-art-0",
+      "frame": "tissue.restored",
+      "x": 1466,
+      "y": 694.9066666666668,
+      "width": 130.20706719245342,
+      "height": 143.93984381040747,
+      "depth": 106,
+      "visible": true,
+      "alpha": 1,
+      "flipX": false,
+      "flipY": false,
+      "rotation": 0,
+      "originX": 0.5,
+      "originY": 0.833922261484099
+    },
+    {
+      "id": "scenery:rim:0",
+      "texture": "viral-art-0",
+      "frame": "scenery.heartTissueA",
+      "x": 470.86666666666673,
+      "y": 235.0538666666667,
+      "width": 162.83406451612902,
+      "height": 161.99254480286737,
+      "depth": -20,
+      "visible": true,
+      "alpha": 0.85,
+      "flipX": false,
+      "flipY": false,
+      "rotation": 0,
+      "originX": 0.49612403100775193,
+      "originY": 0.9194805194805195
+    },
+    {
+      "id": "scenery:rim:1",
+      "texture": "viral-art-0",
+      "frame": "scenery.heartTissueB",
+      "x": 737.9222222222222,
+      "y": 235.0538666666667,
+      "width": 195.7925502645503,
+      "height": 193.77925925925925,
+      "depth": -20,
+      "visible": true,
+      "alpha": 0.85,
+      "flipX": false,
+      "flipY": false,
+      "rotation": 0,
+      "originX": 0.493573264781491,
+      "originY": 0.9194805194805195
+    },
+    {
+      "id": "scenery:rim:2",
+      "texture": "viral-art-0",
+      "frame": "scenery.heartTissueA",
+      "x": 1004.9777777777778,
+      "y": 235.0538666666667,
+      "width": 162.83406451612902,
+      "height": 161.99254480286737,
+      "depth": -20,
+      "visible": true,
+      "alpha": 0.85,
+      "flipX": false,
+      "flipY": false,
+      "rotation": 0,
+      "originX": 0.49612403100775193,
+      "originY": 0.9194805194805195
+    },
+    {
+      "id": "scenery:rim:3",
+      "texture": "viral-art-0",
+      "frame": "scenery.heartTissueB",
+      "x": 1272.0333333333333,
+      "y": 235.0538666666667,
+      "width": 195.7925502645503,
+      "height": 193.77925925925925,
+      "depth": -20,
+      "visible": true,
+      "alpha": 0.85,
+      "flipX": false,
+      "flipY": false,
+      "rotation": 0,
+      "originX": 0.493573264781491,
+      "originY": 0.9194805194805195
+    },
+    {
+      "id": "scenery:rim:4",
+      "texture": "viral-art-0",
+      "frame": "scenery.heartTissueA",
+      "x": 1539.088888888889,
+      "y": 235.0538666666667,
+      "width": 162.83406451612902,
+      "height": 161.99254480286737,
+      "depth": -20,
+      "visible": true,
+      "alpha": 0.85,
+      "flipX": false,
+      "flipY": false,
+      "rotation": 0,
+      "originX": 0.49612403100775193,
+      "originY": 0.9194805194805195
+    }
+  ],
+  "screenshots": {
+    "canvas": {
+      "path": "artifacts/experience-optimization-20261028/art-cases/mother-carapace-mimic-exposed-low-canvas.png",
+      "sha256": "f772528fb0d5edb7f97cec2d510c9030c642c0d8737a29278a6526e2eeb4974b",
+      "bytes": 2170581
+    },
+    "labelledPage": {
+      "path": "artifacts/experience-optimization-20261028/art-cases/mother-carapace-mimic-exposed-low.png",
+      "sha256": "11ab8f51e1ec65a7c708bc37acb65f3940d96d16419df2bcfede2df840e12844",
+      "bytes": 2180590
+    },
+    "meaningful": true,
+    "pixels": {
+      "width": 1920,
+      "height": 1012,
+      "samples": 114297,
+      "quantizedColors": 1939,
+      "nonClearFraction": 0.9604101594967497
+    },
+    "method": "Actual installed-browser canvas-element and labelled-page screenshots. WebGL canvas is never acquired as 2D or exported with toDataURL/getImageData."
+  }
+}

@@ -1,0 +1,2775 @@
+{
+  "schemaVersion": 1,
+  "batch": "10",
+  "title": "Hero sequences — generate and review one complete action group at a time",
+  "source": {
+    "provider": "ChatGPT web",
+    "project": "Viral-Invasion",
+    "conversationTitle": "游戏玩法设计要点",
+    "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+  },
+  "notes": [
+    "Planned groups are production targets. Records below identify actual downloaded draft files; their presence does not establish group or animation approval.",
+    "Generate the entire action group first. Use single-frame generation or repair only after a group attempt fails its review.",
+    "New coherent hero groups belong to this batch; all older batch09 candidates, rejected poses and originals remain preserved.",
+    "Keep actual downloaded originals and later derived extraction/registration files as distinct versioned records with source hashes. Never invent undelivered frame records.",
+    "Review identity, shared logical canvas, fixed ground anchor, source-to-world scale, foot contacts, local motion, loop continuity and complete group count before any animation approval.",
+    "No runtime selection or renderer change is implied by this manifest. Individual frames or a numbered sprite sheet alone do not prove a complete animation.",
+    "Bounds use half-open pixel coordinates [left,top,right,bottom)."
+  ],
+  "productionStrategy": {
+    "mode": "group-first",
+    "singleFramePolicy": "Only repair specific failed frames after a complete-group attempt has failed review.",
+    "plannedGroups": [
+      {
+        "group": "hero.front_right.idle",
+        "frameCount": 4
+      },
+      {
+        "group": "hero.front_right.walk",
+        "frameCount": 8
+      },
+      {
+        "group": "hero.front_right.hurt",
+        "frameCount": 2
+      },
+      {
+        "group": "hero.front_right.dash",
+        "frameCount": 4
+      }
+    ],
+    "defaultAnimationApproval": false
+  },
+  "assets": [
+    {
+      "groupDraft": {
+        "group": "hero.front_right.idle",
+        "attempt": "initial-v2",
+        "requestedFrameCount": 4,
+        "layout": "2x2",
+        "approved": false,
+        "fileRole": "original-generated-group-sheet"
+      },
+      "candidateFlags": [
+        "whole-group-initial-draft",
+        "layout-and-offset-review-failed",
+        "requires-registration",
+        "requires-loop-review",
+        "blue-alpha-edge-artifacts",
+        "not-approved-animation"
+      ],
+      "animationApproved": false,
+      "sourceInspection": {
+        "path": "artifacts/chatgpt-art-generation-20261028/idle-group-initial-v2-inspection.json",
+        "independentlyMatchedSha256": true
+      },
+      "id": "hero.front_right.idle.group.initial.v2.rawsheet",
+      "path": "raw/idle_group_initial_v2_sheet.png",
+      "originalFileName": "medic_idle_sheet_raw.png",
+      "sha256": "e4ae1f5051c73887254b4edc06319ceed0f1c0fe0b095190689b40a6b1e1f0a0",
+      "bytes": 1425422,
+      "canvas": {
+        "width": 1254,
+        "height": 1254,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 156,
+          "top": 18,
+          "right": 1104,
+          "bottom": 1239,
+          "width": 948,
+          "height": 1221
+        },
+        "paddingPixels": {
+          "left": 156,
+          "top": 18,
+          "right": 150,
+          "bottom": 15
+        },
+        "transparentPixels": 897721,
+        "opaquePixels": 1294,
+        "nonzeroPixelsBelowThreshold": 42376,
+        "visiblePixels": 632419,
+        "transparentFraction": 0.570881949690814,
+        "meanAlpha": 99.96740064965952,
+        "meanVisibleAlpha": 248.43451098085288,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "draft-group-layout-rejected-requires-registration-and-loop-review",
+      "delivery": "generated-and-downloaded",
+      "animation": {
+        "isSequence": false,
+        "frameCount": 1,
+        "fullAnimationClaimed": false
+      },
+      "review": {
+        "visual": "pending",
+        "visualNote": "Root inspected the complete group sheet: matching robot identity and four standing poses with small shoulder/arm differences, but oversized layout, unequal cell offsets and some blue-alpha edge artifacts fail current review. Registration and loop review are still required; no group or frame approved.",
+        "runtime": "pending"
+      },
+      "intendedUse": "Preserved complete downloaded group-draft source. The four visible poses are not an approved continuous idle animation.",
+      "importedAt": "2026-10-28T07:40:25.809Z"
+    },
+    {
+      "groupDraft": {
+        "group": "hero.front_right.idle",
+        "attempt": "initial-v2",
+        "requestedFrameCount": 4,
+        "layout": "2x2",
+        "approved": false,
+        "fileRole": "downloaded-2048-group-sheet"
+      },
+      "candidateFlags": [
+        "whole-group-initial-draft",
+        "layout-and-offset-review-failed",
+        "requires-registration",
+        "requires-loop-review",
+        "blue-alpha-edge-artifacts",
+        "not-approved-animation"
+      ],
+      "animationApproved": false,
+      "sourceInspection": {
+        "path": "artifacts/chatgpt-art-generation-20261028/idle-group-initial-v2-inspection.json",
+        "independentlyMatchedSha256": true
+      },
+      "id": "hero.front_right.idle.group.initial.v2.sheet2048",
+      "path": "drafts/idle_group_initial_v2_sheet_2048.png",
+      "originalFileName": "medic_idle_sheet_2048.png",
+      "sha256": "c7074276f1053b02122be48d11abdfd14fb4e5ee4c88f2f47f2553baf25958a9",
+      "bytes": 3062950,
+      "canvas": {
+        "width": 2048,
+        "height": 2048,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 255,
+          "top": 30,
+          "right": 1803,
+          "bottom": 2024,
+          "width": 1548,
+          "height": 1994
+        },
+        "paddingPixels": {
+          "left": 255,
+          "top": 30,
+          "right": 245,
+          "bottom": 24
+        },
+        "transparentPixels": 2393790,
+        "opaquePixels": 5608,
+        "nonzeroPixelsBelowThreshold": 112289,
+        "visiblePixels": 1688225,
+        "transparentFraction": 0.5707240104675293,
+        "meanAlpha": 99.97457695007324,
+        "meanVisibleAlpha": 248.24200980319566,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "draft-group-layout-rejected-requires-registration-and-loop-review",
+      "delivery": "generated-and-downloaded",
+      "animation": {
+        "isSequence": false,
+        "frameCount": 1,
+        "fullAnimationClaimed": false
+      },
+      "review": {
+        "visual": "pending",
+        "visualNote": "Root inspected the complete group sheet: matching robot identity and four standing poses with small shoulder/arm differences, but oversized layout, unequal cell offsets and some blue-alpha edge artifacts fail current review. Registration and loop review are still required; no group or frame approved.",
+        "runtime": "pending"
+      },
+      "intendedUse": "Preserved complete downloaded group-draft source. The four visible poses are not an approved continuous idle animation.",
+      "importedAt": "2026-10-28T07:40:26.037Z"
+    },
+    {
+      "groupDraft": {
+        "group": "hero.front_right.idle",
+        "attempt": "initial-v2",
+        "requestedFrameCount": 4,
+        "layout": "2x2",
+        "approved": false,
+        "fileRole": "unregistered-equal-quadrant-frame"
+      },
+      "candidateFlags": [
+        "whole-group-initial-draft",
+        "layout-and-offset-review-failed",
+        "requires-registration",
+        "requires-loop-review",
+        "blue-alpha-edge-artifacts",
+        "not-approved-animation"
+      ],
+      "animationApproved": false,
+      "sourceInspection": {
+        "path": "artifacts/chatgpt-art-generation-20261028/idle-group-initial-v2-inspection.json",
+        "independentlyMatchedSha256": true
+      },
+      "derivedFromSha256": "c7074276f1053b02122be48d11abdfd14fb4e5ee4c88f2f47f2553baf25958a9",
+      "quadrantExtraction": {
+        "index": 0,
+        "column": 0,
+        "row": 0,
+        "rectangle": [
+          0,
+          0,
+          1024,
+          1024
+        ],
+        "pixelEqualsSourceSheetQuadrant": true,
+        "verification": "Independent fullRGBA equality on all1024 rows; no pixels altered."
+      },
+      "id": "hero.front_right.idle.group.initial.v2.00",
+      "path": "drafts/idle_initial_v2/00.png",
+      "originalFileName": "00.png",
+      "sha256": "b464fd289f97c945f1426c07cd15f5d2e6efc92ac9627cec1addf56537ea3b85",
+      "bytes": 772123,
+      "canvas": {
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 255,
+          "top": 31,
+          "right": 865,
+          "bottom": 1021,
+          "width": 610,
+          "height": 990
+        },
+        "paddingPixels": {
+          "left": 255,
+          "top": 31,
+          "right": 159,
+          "bottom": 3
+        },
+        "transparentPixels": 595826,
+        "opaquePixels": 1446,
+        "nonzeroPixelsBelowThreshold": 28043,
+        "visiblePixels": 424707,
+        "transparentFraction": 0.5682239532470703,
+        "meanAlpha": 100.60894870758057,
+        "meanVisibleAlpha": 248.25679586161755,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "draft-group-layout-rejected-requires-registration-and-loop-review",
+      "delivery": "generated-and-downloaded",
+      "animation": {
+        "isSequence": false,
+        "frameCount": 1,
+        "fullAnimationClaimed": false
+      },
+      "review": {
+        "visual": "pending",
+        "visualNote": "Root inspected the complete group sheet: matching robot identity and four standing poses with small shoulder/arm differences, but oversized layout, unequal cell offsets and some blue-alpha edge artifacts fail current review. Registration and loop review are still required; no group or frame approved.",
+        "runtime": "pending"
+      },
+      "intendedUse": "Preserved unregistered frame from the downloaded2048sheet quadrant. Candidate reference only; not selected or animation-approved.",
+      "importedAt": "2026-10-28T07:40:26.100Z"
+    },
+    {
+      "groupDraft": {
+        "group": "hero.front_right.idle",
+        "attempt": "initial-v2",
+        "requestedFrameCount": 4,
+        "layout": "2x2",
+        "approved": false,
+        "fileRole": "unregistered-equal-quadrant-frame"
+      },
+      "candidateFlags": [
+        "whole-group-initial-draft",
+        "layout-and-offset-review-failed",
+        "requires-registration",
+        "requires-loop-review",
+        "blue-alpha-edge-artifacts",
+        "not-approved-animation"
+      ],
+      "animationApproved": false,
+      "sourceInspection": {
+        "path": "artifacts/chatgpt-art-generation-20261028/idle-group-initial-v2-inspection.json",
+        "independentlyMatchedSha256": true
+      },
+      "derivedFromSha256": "c7074276f1053b02122be48d11abdfd14fb4e5ee4c88f2f47f2553baf25958a9",
+      "quadrantExtraction": {
+        "index": 1,
+        "column": 1,
+        "row": 0,
+        "rectangle": [
+          1024,
+          0,
+          1024,
+          1024
+        ],
+        "pixelEqualsSourceSheetQuadrant": true,
+        "verification": "Independent fullRGBA equality on all1024 rows; no pixels altered."
+      },
+      "id": "hero.front_right.idle.group.initial.v2.01",
+      "path": "drafts/idle_initial_v2/01.png",
+      "originalFileName": "01.png",
+      "sha256": "bbe272a9b2dce70a73ab160356b15e5f52be25c8a7119f54a041c014f8797724",
+      "bytes": 785818,
+      "canvas": {
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 139,
+          "top": 30,
+          "right": 779,
+          "bottom": 1021,
+          "width": 640,
+          "height": 991
+        },
+        "paddingPixels": {
+          "left": 139,
+          "top": 30,
+          "right": 245,
+          "bottom": 3
+        },
+        "transparentPixels": 588191,
+        "opaquePixels": 1491,
+        "nonzeroPixelsBelowThreshold": 28723,
+        "visiblePixels": 431662,
+        "transparentFraction": 0.5609426498413086,
+        "meanAlpha": 102.1775255203247,
+        "meanVisibleAlpha": 248.06708026187155,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "draft-group-layout-rejected-requires-registration-and-loop-review",
+      "delivery": "generated-and-downloaded",
+      "animation": {
+        "isSequence": false,
+        "frameCount": 1,
+        "fullAnimationClaimed": false
+      },
+      "review": {
+        "visual": "pending",
+        "visualNote": "Root inspected the complete group sheet: matching robot identity and four standing poses with small shoulder/arm differences, but oversized layout, unequal cell offsets and some blue-alpha edge artifacts fail current review. Registration and loop review are still required; no group or frame approved.",
+        "runtime": "pending"
+      },
+      "intendedUse": "Preserved unregistered frame from the downloaded2048sheet quadrant. Candidate reference only; not selected or animation-approved.",
+      "importedAt": "2026-10-28T07:40:26.163Z"
+    },
+    {
+      "groupDraft": {
+        "group": "hero.front_right.idle",
+        "attempt": "initial-v2",
+        "requestedFrameCount": 4,
+        "layout": "2x2",
+        "approved": false,
+        "fileRole": "unregistered-equal-quadrant-frame"
+      },
+      "candidateFlags": [
+        "whole-group-initial-draft",
+        "layout-and-offset-review-failed",
+        "requires-registration",
+        "requires-loop-review",
+        "blue-alpha-edge-artifacts",
+        "not-approved-animation"
+      ],
+      "animationApproved": false,
+      "sourceInspection": {
+        "path": "artifacts/chatgpt-art-generation-20261028/idle-group-initial-v2-inspection.json",
+        "independentlyMatchedSha256": true
+      },
+      "derivedFromSha256": "c7074276f1053b02122be48d11abdfd14fb4e5ee4c88f2f47f2553baf25958a9",
+      "quadrantExtraction": {
+        "index": 2,
+        "column": 0,
+        "row": 1,
+        "rectangle": [
+          0,
+          1024,
+          1024,
+          1024
+        ],
+        "pixelEqualsSourceSheetQuadrant": true,
+        "verification": "Independent fullRGBA equality on all1024 rows; no pixels altered."
+      },
+      "id": "hero.front_right.idle.group.initial.v2.02",
+      "path": "drafts/idle_initial_v2/02.png",
+      "originalFileName": "02.png",
+      "sha256": "0e5d2a63742d30f87e9660069df97f21d7e6436f37e50361c960868de5b0e290",
+      "bytes": 768352,
+      "canvas": {
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 263,
+          "top": 15,
+          "right": 866,
+          "bottom": 1000,
+          "width": 603,
+          "height": 985
+        },
+        "paddingPixels": {
+          "left": 263,
+          "top": 15,
+          "right": 158,
+          "bottom": 24
+        },
+        "transparentPixels": 596398,
+        "opaquePixels": 1383,
+        "nonzeroPixelsBelowThreshold": 29624,
+        "visiblePixels": 422554,
+        "transparentFraction": 0.5687694549560547,
+        "meanAlpha": 100.04580688476562,
+        "meanVisibleAlpha": 248.1195965486068,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "draft-group-layout-rejected-requires-registration-and-loop-review",
+      "delivery": "generated-and-downloaded",
+      "animation": {
+        "isSequence": false,
+        "frameCount": 1,
+        "fullAnimationClaimed": false
+      },
+      "review": {
+        "visual": "pending",
+        "visualNote": "Root inspected the complete group sheet: matching robot identity and four standing poses with small shoulder/arm differences, but oversized layout, unequal cell offsets and some blue-alpha edge artifacts fail current review. Registration and loop review are still required; no group or frame approved.",
+        "runtime": "pending"
+      },
+      "intendedUse": "Preserved unregistered frame from the downloaded2048sheet quadrant. Candidate reference only; not selected or animation-approved.",
+      "importedAt": "2026-10-28T07:40:26.225Z"
+    },
+    {
+      "groupDraft": {
+        "group": "hero.front_right.idle",
+        "attempt": "initial-v2",
+        "requestedFrameCount": 4,
+        "layout": "2x2",
+        "approved": false,
+        "fileRole": "unregistered-equal-quadrant-frame"
+      },
+      "candidateFlags": [
+        "whole-group-initial-draft",
+        "layout-and-offset-review-failed",
+        "requires-registration",
+        "requires-loop-review",
+        "blue-alpha-edge-artifacts",
+        "not-approved-animation"
+      ],
+      "animationApproved": false,
+      "sourceInspection": {
+        "path": "artifacts/chatgpt-art-generation-20261028/idle-group-initial-v2-inspection.json",
+        "independentlyMatchedSha256": true
+      },
+      "derivedFromSha256": "c7074276f1053b02122be48d11abdfd14fb4e5ee4c88f2f47f2553baf25958a9",
+      "quadrantExtraction": {
+        "index": 3,
+        "column": 1,
+        "row": 1,
+        "rectangle": [
+          1024,
+          1024,
+          1024,
+          1024
+        ],
+        "pixelEqualsSourceSheetQuadrant": true,
+        "verification": "Independent fullRGBA equality on all1024 rows; no pixels altered."
+      },
+      "id": "hero.front_right.idle.group.initial.v2.03",
+      "path": "drafts/idle_initial_v2/03.png",
+      "originalFileName": "03.png",
+      "sha256": "fb48685eb1483e63d9665d05b21e2049aceea99c9aa26ea4da119c9b6af42676",
+      "bytes": 740411,
+      "canvas": {
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 177,
+          "top": 25,
+          "right": 766,
+          "bottom": 1000,
+          "width": 589,
+          "height": 975
+        },
+        "paddingPixels": {
+          "left": 177,
+          "top": 25,
+          "right": 258,
+          "bottom": 24
+        },
+        "transparentPixels": 613375,
+        "opaquePixels": 1288,
+        "nonzeroPixelsBelowThreshold": 25899,
+        "visiblePixels": 409302,
+        "transparentFraction": 0.5849599838256836,
+        "meanAlpha": 97.06602668762207,
+        "meanVisibleAlpha": 248.5375297457623,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "draft-group-layout-rejected-requires-registration-and-loop-review",
+      "delivery": "generated-and-downloaded",
+      "animation": {
+        "isSequence": false,
+        "frameCount": 1,
+        "fullAnimationClaimed": false
+      },
+      "review": {
+        "visual": "pending",
+        "visualNote": "Root inspected the complete group sheet: matching robot identity and four standing poses with small shoulder/arm differences, but oversized layout, unequal cell offsets and some blue-alpha edge artifacts fail current review. Registration and loop review are still required; no group or frame approved.",
+        "runtime": "pending"
+      },
+      "intendedUse": "Preserved unregistered frame from the downloaded2048sheet quadrant. Candidate reference only; not selected or animation-approved.",
+      "importedAt": "2026-10-28T07:40:26.304Z"
+    },
+    {
+      "id": "hero.front_right.idle.00",
+      "path": "idle/v1/00.png",
+      "originalFileName": "medic_idle_group_registered_00.png",
+      "sha256": "bb21e8e1910d08b9de38e1e31a64ffa1f9ce0eaf9b8b0b8bb7a9b66c967a617f",
+      "bytes": 461565,
+      "canvas": {
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 296,
+          "top": 150,
+          "right": 727,
+          "bottom": 850,
+          "width": 431,
+          "height": 700
+        },
+        "paddingPixels": {
+          "left": 296,
+          "top": 150,
+          "right": 297,
+          "bottom": 174
+        },
+        "transparentPixels": 822066,
+        "opaquePixels": 770,
+        "nonzeroPixelsBelowThreshold": 14240,
+        "visiblePixels": 212270,
+        "transparentFraction": 0.7839832305908203,
+        "meanAlpha": 50.29524803161621,
+        "meanVisibleAlpha": 248.30086210957742,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "complete-group-candidate-animation-unapproved",
+      "delivery": "generated-as-group-registered-and-downloaded",
+      "animation": {
+        "group": "hero.front_right.idle",
+        "index": 0,
+        "fps": 6,
+        "frameCount": 4,
+        "approved": false,
+        "fullAnimationClaimed": false,
+        "deliveredFrameCount": 1,
+        "fpsStatus": "Provisional; final rhythm requires runtime review."
+      },
+      "flags": [
+        "whole-group-generated",
+        "loop-review-pending",
+        "registered-common-scale",
+        "animation-unapproved"
+      ],
+      "derivedFromSha256": "b464fd289f97c945f1426c07cd15f5d2e6efc92ac9627cec1addf56537ea3b85",
+      "sourceDraftPath": "drafts/idle_initial_v2/00.png",
+      "registration": {
+        "canvas": [
+          1024,
+          1024
+        ],
+        "sourceCellCanvas": [
+          1024,
+          1024
+        ],
+        "sourceAnchor": [
+          512,
+          850
+        ],
+        "scale": 0.7070707070707071,
+        "scaleExpression": "700/990",
+        "referenceSourceFrame": "hero.front_right.idle.group.initial.v2.00",
+        "targetHorizontalCenter": 512,
+        "bottom": 850,
+        "visibleHeight": 700,
+        "sourceAlphaBounds": {
+          "left": 255,
+          "top": 31,
+          "right": 865,
+          "bottom": 1021,
+          "width": 610,
+          "height": 990
+        },
+        "translationPolicy": "Per-cell translation corrects generator layout offsets; all four frames retain one common scale. No per-frame visible-height normalization.",
+        "pixelMutationDuringIntake": false
+      },
+      "review": {
+        "visual": "preliminary-root-group-review-independent-review-pending",
+        "visualNote": "Root inspected two original files, an86px loop and all four consecutive overlays including03-to00. Local shoulder/chest/elbow/arm changes are visible and feet broadly connect, but independent visual review and quality-session runtime acceptance remain pending.",
+        "runtime": "pending-quality-session-acceptance",
+        "groupContinuity": "pending-independent-review",
+        "animationApproval": "not-approved"
+      },
+      "intendedUse": "One frame in the complete four-frame registered idle candidate. Preserve genuine visible heights700/701/696/689 under the same source scale; do not activate runtime animation until group and runtime reviews approve.",
+      "importedAt": "2026-10-28T07:52:45.480Z"
+    },
+    {
+      "id": "hero.front_right.idle.01",
+      "path": "idle/v1/01.png",
+      "originalFileName": "medic_idle_group_registered_01.png",
+      "sha256": "5405eb50cb3cfbc7c45d31e5641af7b942427b75746344eeccbe6dc84fb87e5b",
+      "bytes": 470713,
+      "canvas": {
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 286,
+          "top": 149,
+          "right": 739,
+          "bottom": 850,
+          "width": 453,
+          "height": 701
+        },
+        "paddingPixels": {
+          "left": 286,
+          "top": 149,
+          "right": 285,
+          "bottom": 174
+        },
+        "transparentPixels": 818175,
+        "opaquePixels": 747,
+        "nonzeroPixelsBelowThreshold": 14668,
+        "visiblePixels": 215733,
+        "transparentFraction": 0.7802724838256836,
+        "meanAlpha": 51.07963466644287,
+        "meanVisibleAlpha": 248.12534475485901,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "complete-group-candidate-animation-unapproved",
+      "delivery": "generated-as-group-registered-and-downloaded",
+      "animation": {
+        "group": "hero.front_right.idle",
+        "index": 1,
+        "fps": 6,
+        "frameCount": 4,
+        "approved": false,
+        "fullAnimationClaimed": false,
+        "deliveredFrameCount": 1,
+        "fpsStatus": "Provisional; final rhythm requires runtime review."
+      },
+      "flags": [
+        "whole-group-generated",
+        "loop-review-pending",
+        "registered-common-scale",
+        "animation-unapproved"
+      ],
+      "derivedFromSha256": "bbe272a9b2dce70a73ab160356b15e5f52be25c8a7119f54a041c014f8797724",
+      "sourceDraftPath": "drafts/idle_initial_v2/01.png",
+      "registration": {
+        "canvas": [
+          1024,
+          1024
+        ],
+        "sourceCellCanvas": [
+          1024,
+          1024
+        ],
+        "sourceAnchor": [
+          512,
+          850
+        ],
+        "scale": 0.7070707070707071,
+        "scaleExpression": "700/990",
+        "referenceSourceFrame": "hero.front_right.idle.group.initial.v2.00",
+        "targetHorizontalCenter": 512,
+        "bottom": 850,
+        "visibleHeight": 701,
+        "sourceAlphaBounds": {
+          "left": 139,
+          "top": 30,
+          "right": 779,
+          "bottom": 1021,
+          "width": 640,
+          "height": 991
+        },
+        "translationPolicy": "Per-cell translation corrects generator layout offsets; all four frames retain one common scale. No per-frame visible-height normalization.",
+        "pixelMutationDuringIntake": false
+      },
+      "review": {
+        "visual": "preliminary-root-group-review-independent-review-pending",
+        "visualNote": "Root inspected two original files, an86px loop and all four consecutive overlays including03-to00. Local shoulder/chest/elbow/arm changes are visible and feet broadly connect, but independent visual review and quality-session runtime acceptance remain pending.",
+        "runtime": "pending-quality-session-acceptance",
+        "groupContinuity": "pending-independent-review",
+        "animationApproval": "not-approved"
+      },
+      "intendedUse": "One frame in the complete four-frame registered idle candidate. Preserve genuine visible heights700/701/696/689 under the same source scale; do not activate runtime animation until group and runtime reviews approve.",
+      "importedAt": "2026-10-28T07:52:45.508Z"
+    },
+    {
+      "id": "hero.front_right.idle.02",
+      "path": "idle/v1/02.png",
+      "originalFileName": "medic_idle_group_registered_02.png",
+      "sha256": "a8d9ae6ca45a244acda052ab350f0c3ecc008cb30275edc6d6e73fb4522a6524",
+      "bytes": 459931,
+      "canvas": {
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 298,
+          "top": 154,
+          "right": 725,
+          "bottom": 850,
+          "width": 427,
+          "height": 696
+        },
+        "paddingPixels": {
+          "left": 298,
+          "top": 154,
+          "right": 299,
+          "bottom": 174
+        },
+        "transparentPixels": 822342,
+        "opaquePixels": 749,
+        "nonzeroPixelsBelowThreshold": 15080,
+        "visiblePixels": 211154,
+        "transparentFraction": 0.7842464447021484,
+        "meanAlpha": 50.01353359222412,
+        "meanVisibleAlpha": 248.207066880097,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "complete-group-candidate-animation-unapproved",
+      "delivery": "generated-as-group-registered-and-downloaded",
+      "animation": {
+        "group": "hero.front_right.idle",
+        "index": 2,
+        "fps": 6,
+        "frameCount": 4,
+        "approved": false,
+        "fullAnimationClaimed": false,
+        "deliveredFrameCount": 1,
+        "fpsStatus": "Provisional; final rhythm requires runtime review."
+      },
+      "flags": [
+        "whole-group-generated",
+        "loop-review-pending",
+        "registered-common-scale",
+        "animation-unapproved"
+      ],
+      "derivedFromSha256": "0e5d2a63742d30f87e9660069df97f21d7e6436f37e50361c960868de5b0e290",
+      "sourceDraftPath": "drafts/idle_initial_v2/02.png",
+      "registration": {
+        "canvas": [
+          1024,
+          1024
+        ],
+        "sourceCellCanvas": [
+          1024,
+          1024
+        ],
+        "sourceAnchor": [
+          512,
+          850
+        ],
+        "scale": 0.7070707070707071,
+        "scaleExpression": "700/990",
+        "referenceSourceFrame": "hero.front_right.idle.group.initial.v2.00",
+        "targetHorizontalCenter": 512,
+        "bottom": 850,
+        "visibleHeight": 696,
+        "sourceAlphaBounds": {
+          "left": 263,
+          "top": 15,
+          "right": 866,
+          "bottom": 1000,
+          "width": 603,
+          "height": 985
+        },
+        "translationPolicy": "Per-cell translation corrects generator layout offsets; all four frames retain one common scale. No per-frame visible-height normalization.",
+        "pixelMutationDuringIntake": false
+      },
+      "review": {
+        "visual": "preliminary-root-group-review-independent-review-pending",
+        "visualNote": "Root inspected two original files, an86px loop and all four consecutive overlays including03-to00. Local shoulder/chest/elbow/arm changes are visible and feet broadly connect, but independent visual review and quality-session runtime acceptance remain pending.",
+        "runtime": "pending-quality-session-acceptance",
+        "groupContinuity": "pending-independent-review",
+        "animationApproval": "not-approved"
+      },
+      "intendedUse": "One frame in the complete four-frame registered idle candidate. Preserve genuine visible heights700/701/696/689 under the same source scale; do not activate runtime animation until group and runtime reviews approve.",
+      "importedAt": "2026-10-28T07:52:45.537Z"
+    },
+    {
+      "id": "hero.front_right.idle.03",
+      "path": "idle/v1/03.png",
+      "originalFileName": "medic_idle_group_registered_03.png",
+      "sha256": "637fff588c09bcf94cff969aa8bbd1f7bfc61590862972fcfbd9a0c84f397e83",
+      "bytes": 443848,
+      "canvas": {
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 303,
+          "top": 161,
+          "right": 720,
+          "bottom": 850,
+          "width": 417,
+          "height": 689
+        },
+        "paddingPixels": {
+          "left": 303,
+          "top": 161,
+          "right": 304,
+          "bottom": 174
+        },
+        "transparentPixels": 830842,
+        "opaquePixels": 674,
+        "nonzeroPixelsBelowThreshold": 13119,
+        "visiblePixels": 204615,
+        "transparentFraction": 0.7923526763916016,
+        "meanAlpha": 48.5240364074707,
+        "meanVisibleAlpha": 248.52918407741367,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "complete-group-candidate-animation-unapproved",
+      "delivery": "generated-as-group-registered-and-downloaded",
+      "animation": {
+        "group": "hero.front_right.idle",
+        "index": 3,
+        "fps": 6,
+        "frameCount": 4,
+        "approved": false,
+        "fullAnimationClaimed": false,
+        "deliveredFrameCount": 1,
+        "fpsStatus": "Provisional; final rhythm requires runtime review."
+      },
+      "flags": [
+        "whole-group-generated",
+        "loop-review-pending",
+        "registered-common-scale",
+        "animation-unapproved"
+      ],
+      "derivedFromSha256": "fb48685eb1483e63d9665d05b21e2049aceea99c9aa26ea4da119c9b6af42676",
+      "sourceDraftPath": "drafts/idle_initial_v2/03.png",
+      "registration": {
+        "canvas": [
+          1024,
+          1024
+        ],
+        "sourceCellCanvas": [
+          1024,
+          1024
+        ],
+        "sourceAnchor": [
+          512,
+          850
+        ],
+        "scale": 0.7070707070707071,
+        "scaleExpression": "700/990",
+        "referenceSourceFrame": "hero.front_right.idle.group.initial.v2.00",
+        "targetHorizontalCenter": 512,
+        "bottom": 850,
+        "visibleHeight": 689,
+        "sourceAlphaBounds": {
+          "left": 177,
+          "top": 25,
+          "right": 766,
+          "bottom": 1000,
+          "width": 589,
+          "height": 975
+        },
+        "translationPolicy": "Per-cell translation corrects generator layout offsets; all four frames retain one common scale. No per-frame visible-height normalization.",
+        "pixelMutationDuringIntake": false
+      },
+      "review": {
+        "visual": "preliminary-root-group-review-independent-review-pending",
+        "visualNote": "Root inspected two original files, an86px loop and all four consecutive overlays including03-to00. Local shoulder/chest/elbow/arm changes are visible and feet broadly connect, but independent visual review and quality-session runtime acceptance remain pending.",
+        "runtime": "pending-quality-session-acceptance",
+        "groupContinuity": "pending-independent-review",
+        "animationApproval": "not-approved"
+      },
+      "intendedUse": "One frame in the complete four-frame registered idle candidate. Preserve genuine visible heights700/701/696/689 under the same source scale; do not activate runtime animation until group and runtime reviews approve.",
+      "importedAt": "2026-10-28T07:52:45.572Z"
+    },
+    {
+      "groupDraft": {
+        "group": "hero.front_right.walk",
+        "attempt": "initial-v1",
+        "plannedFrameCount": 8,
+        "sheetLayout": {
+          "columns": 4,
+          "rows": 2,
+          "order": "row-major"
+        },
+        "approved": false
+      },
+      "frameReview": {
+        "status": "pending",
+        "suspectIndices": [
+          4
+        ],
+        "suspectedIssue": "Possible duplicate near-side arm/hand in lower-left frame04; confirm by isolated frame inspection."
+      },
+      "candidateFlags": [
+        "whole-group-generated",
+        "raw-original-sheet",
+        "requires-frame-anatomy-review",
+        "requires-phase-and-loop-review",
+        "animation-unapproved"
+      ],
+      "animationApproved": false,
+      "id": "hero.front_right.walk.group.initial.v1.rawsheet",
+      "path": "raw/walk_group_initial_v1_sheet.png",
+      "originalFileName": "蓝白医疗机器人八帧行走循环精灵图.png",
+      "sha256": "5c26f7ab55e98fc90ab58a11189afce4f5ded08d27d5542f8942943fd379ca3c",
+      "bytes": 1490846,
+      "canvas": {
+        "width": 1774,
+        "height": 887,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 84,
+          "top": 15,
+          "right": 1707,
+          "bottom": 873,
+          "width": 1623,
+          "height": 858
+        },
+        "paddingPixels": {
+          "left": 84,
+          "top": 15,
+          "right": 67,
+          "bottom": 14
+        },
+        "transparentPixels": 921222,
+        "opaquePixels": 1262,
+        "nonzeroPixelsBelowThreshold": 68894,
+        "visiblePixels": 583422,
+        "transparentFraction": 0.5854462999940262,
+        "meanAlpha": 91.46110993188599,
+        "meanVisibleAlpha": 246.45155822029338,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "candidate-requires-frame-review",
+      "delivery": "generated-and-downloaded",
+      "animation": {
+        "isSequence": false,
+        "frameCount": 1,
+        "fullAnimationClaimed": false
+      },
+      "review": {
+        "visual": "pending",
+        "visualNote": "Root inspected a4x2 sheet with the same blue-white medical robot. The lower-left frame04 may duplicate the near-side arm/hand; phase order and continuous walking remain unassessed. Requires individual-frame and full-loop review before registration/approval.",
+        "runtime": "pending"
+      },
+      "intendedUse": "Preserve the complete generated eight-frame walking sheet as original bytes. A planned8-frame layout does not establish correct anatomy, phase progression or an approved continuous animation.",
+      "importedAt": "2026-10-28T08:02:01.772Z"
+    },
+    {
+      "id": "hero.front_right.walk.draft.v1.00",
+      "path": "walk/draft_v1/00.png",
+      "originalFileName": "medic_walk_group_registered_00.png",
+      "sha256": "6988737188abf2eed4ade0bf065244e5d4ede68523c730da3f75f997b2a4259c",
+      "bytes": 414426,
+      "canvas": {
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 286,
+          "top": 146,
+          "right": 738,
+          "bottom": 850,
+          "width": 452,
+          "height": 704
+        },
+        "paddingPixels": {
+          "left": 286,
+          "top": 146,
+          "right": 286,
+          "bottom": 174
+        },
+        "transparentPixels": 834121,
+        "opaquePixels": 747,
+        "nonzeroPixelsBelowThreshold": 20698,
+        "visiblePixels": 193757,
+        "transparentFraction": 0.7954797744750977,
+        "meanAlpha": 45.56265449523926,
+        "meanVisibleAlpha": 246.3625469015313,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "unapproved-walk-draft-needs-frame-repair",
+      "delivery": "generated-as-group-split-registered-and-downloaded",
+      "animation": {
+        "group": "hero.front_right.walk",
+        "index": 0,
+        "fps": 12,
+        "frameCount": 8,
+        "approved": false,
+        "fullAnimationClaimed": false,
+        "deliveredFrameCount": 1,
+        "fpsStatus": "Provisional draft only; not runtime-approved."
+      },
+      "flags": [
+        "whole-group-generated",
+        "registered-common-scale",
+        "walk-frame-repair-required",
+        "phase-review-failed",
+        "reverse-foot-phases-insufficient",
+        "loop-review-pending",
+        "animation-unapproved"
+      ],
+      "derivedFromSha256": "5c26f7ab55e98fc90ab58a11189afce4f5ded08d27d5542f8942943fd379ca3c",
+      "sourceSheetPath": "raw/walk_group_initial_v1_sheet.png",
+      "registration": {
+        "canvas": [
+          1024,
+          1024
+        ],
+        "sourceSheetCanvas": [
+          1774,
+          887
+        ],
+        "sourceSheetCutEdges": {
+          "x": [
+            0,
+            444,
+            887,
+            1331,
+            1774
+          ],
+          "y": [
+            0,
+            449,
+            887
+          ]
+        },
+        "sourceCutRectangle": [
+          0,
+          0,
+          444,
+          449
+        ],
+        "sourceCutOrder": "row-major",
+        "cutPolicy": "Cuts follow safe transparent row gap; source frames are not stretched.",
+        "scale": 1.6317016317016317,
+        "scaleExpression": "700/429",
+        "sourceAnchor": [
+          512,
+          850
+        ],
+        "targetHorizontalCenter": 512,
+        "bottom": 850,
+        "visibleHeight": 704,
+        "translationPolicy": "Translate each extracted source cell to horizontal center512 and visible bottom850 while retaining one common scale for all8 frames.",
+        "pixelMutationDuringIntake": false
+      },
+      "review": {
+        "visual": "root-group-review-frame-repair-required",
+        "visualNote": "Root inspected frames00 and04. Frame04 retains duplicated/multiple-limb or arm-chain confusion. The overall group lacks sufficiently distinct phases and reverse-foot poses; no frame or loop is approved.",
+        "specificFrameIssue": "Group phase and reverse-foot progression require repair and review.",
+        "runtime": "not-selected",
+        "animationApproval": "not-approved"
+      },
+      "intendedUse": "Preserved registered walking draft and repair reference only. This draft ID deliberately does not occupy a final canonical walking frame ID.",
+      "importedAt": "2026-10-28T08:15:51.868Z"
+    },
+    {
+      "id": "hero.front_right.walk.draft.v1.01",
+      "path": "walk/draft_v1/01.png",
+      "originalFileName": "medic_walk_group_registered_01.png",
+      "sha256": "a305c8669a20298ef09f30ff72cef1068d2220286b8580573fd56eb8040b181b",
+      "bytes": 404865,
+      "canvas": {
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 294,
+          "top": 147,
+          "right": 730,
+          "bottom": 850,
+          "width": 436,
+          "height": 703
+        },
+        "paddingPixels": {
+          "left": 294,
+          "top": 147,
+          "right": 294,
+          "bottom": 174
+        },
+        "transparentPixels": 837811,
+        "opaquePixels": 672,
+        "nonzeroPixelsBelowThreshold": 20127,
+        "visiblePixels": 190638,
+        "transparentFraction": 0.7989988327026367,
+        "meanAlpha": 44.89410591125488,
+        "meanVisibleAlpha": 246.72624030885763,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "unapproved-walk-draft-needs-frame-repair",
+      "delivery": "generated-as-group-split-registered-and-downloaded",
+      "animation": {
+        "group": "hero.front_right.walk",
+        "index": 1,
+        "fps": 12,
+        "frameCount": 8,
+        "approved": false,
+        "fullAnimationClaimed": false,
+        "deliveredFrameCount": 1,
+        "fpsStatus": "Provisional draft only; not runtime-approved."
+      },
+      "flags": [
+        "whole-group-generated",
+        "registered-common-scale",
+        "walk-frame-repair-required",
+        "phase-review-failed",
+        "reverse-foot-phases-insufficient",
+        "loop-review-pending",
+        "animation-unapproved"
+      ],
+      "derivedFromSha256": "5c26f7ab55e98fc90ab58a11189afce4f5ded08d27d5542f8942943fd379ca3c",
+      "sourceSheetPath": "raw/walk_group_initial_v1_sheet.png",
+      "registration": {
+        "canvas": [
+          1024,
+          1024
+        ],
+        "sourceSheetCanvas": [
+          1774,
+          887
+        ],
+        "sourceSheetCutEdges": {
+          "x": [
+            0,
+            444,
+            887,
+            1331,
+            1774
+          ],
+          "y": [
+            0,
+            449,
+            887
+          ]
+        },
+        "sourceCutRectangle": [
+          444,
+          0,
+          443,
+          449
+        ],
+        "sourceCutOrder": "row-major",
+        "cutPolicy": "Cuts follow safe transparent row gap; source frames are not stretched.",
+        "scale": 1.6317016317016317,
+        "scaleExpression": "700/429",
+        "sourceAnchor": [
+          512,
+          850
+        ],
+        "targetHorizontalCenter": 512,
+        "bottom": 850,
+        "visibleHeight": 703,
+        "translationPolicy": "Translate each extracted source cell to horizontal center512 and visible bottom850 while retaining one common scale for all8 frames.",
+        "pixelMutationDuringIntake": false
+      },
+      "review": {
+        "visual": "root-group-review-frame-repair-required",
+        "visualNote": "Root inspected frames00 and04. Frame04 retains duplicated/multiple-limb or arm-chain confusion. The overall group lacks sufficiently distinct phases and reverse-foot poses; no frame or loop is approved.",
+        "specificFrameIssue": "Group phase and reverse-foot progression require repair and review.",
+        "runtime": "not-selected",
+        "animationApproval": "not-approved"
+      },
+      "intendedUse": "Preserved registered walking draft and repair reference only. This draft ID deliberately does not occupy a final canonical walking frame ID.",
+      "importedAt": "2026-10-28T08:15:51.897Z"
+    },
+    {
+      "id": "hero.front_right.walk.draft.v1.02",
+      "path": "walk/draft_v1/02.png",
+      "originalFileName": "medic_walk_group_registered_02.png",
+      "sha256": "e4cb67f87a438e372f07b26083497d2a965dc80f0659030c8bd00783410acfb4",
+      "bytes": 430114,
+      "canvas": {
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 277,
+          "top": 151,
+          "right": 748,
+          "bottom": 850,
+          "width": 471,
+          "height": 699
+        },
+        "paddingPixels": {
+          "left": 277,
+          "top": 151,
+          "right": 276,
+          "bottom": 174
+        },
+        "transparentPixels": 823846,
+        "opaquePixels": 765,
+        "nonzeroPixelsBelowThreshold": 24183,
+        "visiblePixels": 200547,
+        "transparentFraction": 0.7856807708740234,
+        "meanAlpha": 47.017991065979004,
+        "meanVisibleAlpha": 245.5990914847891,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "unapproved-walk-draft-needs-frame-repair",
+      "delivery": "generated-as-group-split-registered-and-downloaded",
+      "animation": {
+        "group": "hero.front_right.walk",
+        "index": 2,
+        "fps": 12,
+        "frameCount": 8,
+        "approved": false,
+        "fullAnimationClaimed": false,
+        "deliveredFrameCount": 1,
+        "fpsStatus": "Provisional draft only; not runtime-approved."
+      },
+      "flags": [
+        "whole-group-generated",
+        "registered-common-scale",
+        "walk-frame-repair-required",
+        "phase-review-failed",
+        "reverse-foot-phases-insufficient",
+        "loop-review-pending",
+        "animation-unapproved"
+      ],
+      "derivedFromSha256": "5c26f7ab55e98fc90ab58a11189afce4f5ded08d27d5542f8942943fd379ca3c",
+      "sourceSheetPath": "raw/walk_group_initial_v1_sheet.png",
+      "registration": {
+        "canvas": [
+          1024,
+          1024
+        ],
+        "sourceSheetCanvas": [
+          1774,
+          887
+        ],
+        "sourceSheetCutEdges": {
+          "x": [
+            0,
+            444,
+            887,
+            1331,
+            1774
+          ],
+          "y": [
+            0,
+            449,
+            887
+          ]
+        },
+        "sourceCutRectangle": [
+          887,
+          0,
+          444,
+          449
+        ],
+        "sourceCutOrder": "row-major",
+        "cutPolicy": "Cuts follow safe transparent row gap; source frames are not stretched.",
+        "scale": 1.6317016317016317,
+        "scaleExpression": "700/429",
+        "sourceAnchor": [
+          512,
+          850
+        ],
+        "targetHorizontalCenter": 512,
+        "bottom": 850,
+        "visibleHeight": 699,
+        "translationPolicy": "Translate each extracted source cell to horizontal center512 and visible bottom850 while retaining one common scale for all8 frames.",
+        "pixelMutationDuringIntake": false
+      },
+      "review": {
+        "visual": "root-group-review-frame-repair-required",
+        "visualNote": "Root inspected frames00 and04. Frame04 retains duplicated/multiple-limb or arm-chain confusion. The overall group lacks sufficiently distinct phases and reverse-foot poses; no frame or loop is approved.",
+        "specificFrameIssue": "Group phase and reverse-foot progression require repair and review.",
+        "runtime": "not-selected",
+        "animationApproval": "not-approved"
+      },
+      "intendedUse": "Preserved registered walking draft and repair reference only. This draft ID deliberately does not occupy a final canonical walking frame ID.",
+      "importedAt": "2026-10-28T08:15:51.921Z"
+    },
+    {
+      "id": "hero.front_right.walk.draft.v1.03",
+      "path": "walk/draft_v1/03.png",
+      "originalFileName": "medic_walk_group_registered_03.png",
+      "sha256": "87ac3dd4ee70ebbc067d5e350b3b90aaf06ab2d9842e8948dbb59bfed70b4c03",
+      "bytes": 420577,
+      "canvas": {
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 279,
+          "top": 143,
+          "right": 745,
+          "bottom": 850,
+          "width": 466,
+          "height": 707
+        },
+        "paddingPixels": {
+          "left": 279,
+          "top": 143,
+          "right": 279,
+          "bottom": 174
+        },
+        "transparentPixels": 828882,
+        "opaquePixels": 827,
+        "nonzeroPixelsBelowThreshold": 24634,
+        "visiblePixels": 195060,
+        "transparentFraction": 0.7904834747314453,
+        "meanAlpha": 45.80288600921631,
+        "meanVisibleAlpha": 245.96664103352813,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "unapproved-walk-draft-needs-frame-repair",
+      "delivery": "generated-as-group-split-registered-and-downloaded",
+      "animation": {
+        "group": "hero.front_right.walk",
+        "index": 3,
+        "fps": 12,
+        "frameCount": 8,
+        "approved": false,
+        "fullAnimationClaimed": false,
+        "deliveredFrameCount": 1,
+        "fpsStatus": "Provisional draft only; not runtime-approved."
+      },
+      "flags": [
+        "whole-group-generated",
+        "registered-common-scale",
+        "walk-frame-repair-required",
+        "phase-review-failed",
+        "reverse-foot-phases-insufficient",
+        "loop-review-pending",
+        "animation-unapproved"
+      ],
+      "derivedFromSha256": "5c26f7ab55e98fc90ab58a11189afce4f5ded08d27d5542f8942943fd379ca3c",
+      "sourceSheetPath": "raw/walk_group_initial_v1_sheet.png",
+      "registration": {
+        "canvas": [
+          1024,
+          1024
+        ],
+        "sourceSheetCanvas": [
+          1774,
+          887
+        ],
+        "sourceSheetCutEdges": {
+          "x": [
+            0,
+            444,
+            887,
+            1331,
+            1774
+          ],
+          "y": [
+            0,
+            449,
+            887
+          ]
+        },
+        "sourceCutRectangle": [
+          1331,
+          0,
+          443,
+          449
+        ],
+        "sourceCutOrder": "row-major",
+        "cutPolicy": "Cuts follow safe transparent row gap; source frames are not stretched.",
+        "scale": 1.6317016317016317,
+        "scaleExpression": "700/429",
+        "sourceAnchor": [
+          512,
+          850
+        ],
+        "targetHorizontalCenter": 512,
+        "bottom": 850,
+        "visibleHeight": 707,
+        "translationPolicy": "Translate each extracted source cell to horizontal center512 and visible bottom850 while retaining one common scale for all8 frames.",
+        "pixelMutationDuringIntake": false
+      },
+      "review": {
+        "visual": "root-group-review-frame-repair-required",
+        "visualNote": "Root inspected frames00 and04. Frame04 retains duplicated/multiple-limb or arm-chain confusion. The overall group lacks sufficiently distinct phases and reverse-foot poses; no frame or loop is approved.",
+        "specificFrameIssue": "Group phase and reverse-foot progression require repair and review.",
+        "runtime": "not-selected",
+        "animationApproval": "not-approved"
+      },
+      "intendedUse": "Preserved registered walking draft and repair reference only. This draft ID deliberately does not occupy a final canonical walking frame ID.",
+      "importedAt": "2026-10-28T08:15:51.948Z"
+    },
+    {
+      "id": "hero.front_right.walk.draft.v1.04",
+      "path": "walk/draft_v1/04.png",
+      "originalFileName": "medic_walk_group_registered_04.png",
+      "sha256": "0543ff8abaa9fc664e364bcbc1cfb9072641c4eebc8eef955e7aaa9707ebeafd",
+      "bytes": 410139,
+      "canvas": {
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 279,
+          "top": 164,
+          "right": 746,
+          "bottom": 850,
+          "width": 467,
+          "height": 686
+        },
+        "paddingPixels": {
+          "left": 279,
+          "top": 164,
+          "right": 278,
+          "bottom": 174
+        },
+        "transparentPixels": 833688,
+        "opaquePixels": 620,
+        "nonzeroPixelsBelowThreshold": 23931,
+        "visiblePixels": 190957,
+        "transparentFraction": 0.7950668334960938,
+        "meanAlpha": 44.82235813140869,
+        "meanVisibleAlpha": 245.88989667830978,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "unapproved-walk-draft-needs-frame-repair",
+      "delivery": "generated-as-group-split-registered-and-downloaded",
+      "animation": {
+        "group": "hero.front_right.walk",
+        "index": 4,
+        "fps": 12,
+        "frameCount": 8,
+        "approved": false,
+        "fullAnimationClaimed": false,
+        "deliveredFrameCount": 1,
+        "fpsStatus": "Provisional draft only; not runtime-approved."
+      },
+      "flags": [
+        "whole-group-generated",
+        "registered-common-scale",
+        "walk-frame-repair-required",
+        "phase-review-failed",
+        "reverse-foot-phases-insufficient",
+        "loop-review-pending",
+        "animation-unapproved"
+      ],
+      "derivedFromSha256": "5c26f7ab55e98fc90ab58a11189afce4f5ded08d27d5542f8942943fd379ca3c",
+      "sourceSheetPath": "raw/walk_group_initial_v1_sheet.png",
+      "registration": {
+        "canvas": [
+          1024,
+          1024
+        ],
+        "sourceSheetCanvas": [
+          1774,
+          887
+        ],
+        "sourceSheetCutEdges": {
+          "x": [
+            0,
+            444,
+            887,
+            1331,
+            1774
+          ],
+          "y": [
+            0,
+            449,
+            887
+          ]
+        },
+        "sourceCutRectangle": [
+          0,
+          449,
+          444,
+          438
+        ],
+        "sourceCutOrder": "row-major",
+        "cutPolicy": "Cuts follow safe transparent row gap; source frames are not stretched.",
+        "scale": 1.6317016317016317,
+        "scaleExpression": "700/429",
+        "sourceAnchor": [
+          512,
+          850
+        ],
+        "targetHorizontalCenter": 512,
+        "bottom": 850,
+        "visibleHeight": 686,
+        "translationPolicy": "Translate each extracted source cell to horizontal center512 and visible bottom850 while retaining one common scale for all8 frames.",
+        "pixelMutationDuringIntake": false
+      },
+      "review": {
+        "visual": "root-group-review-frame-repair-required",
+        "visualNote": "Root inspected frames00 and04. Frame04 retains duplicated/multiple-limb or arm-chain confusion. The overall group lacks sufficiently distinct phases and reverse-foot poses; no frame or loop is approved.",
+        "specificFrameIssue": "Retained multiple-limb/arm-chain defect; must repair before approval.",
+        "runtime": "not-selected",
+        "animationApproval": "not-approved"
+      },
+      "intendedUse": "Preserved registered walking draft and repair reference only. This draft ID deliberately does not occupy a final canonical walking frame ID.",
+      "importedAt": "2026-10-28T08:15:51.972Z"
+    },
+    {
+      "id": "hero.front_right.walk.draft.v1.05",
+      "path": "walk/draft_v1/05.png",
+      "originalFileName": "medic_walk_group_registered_05.png",
+      "sha256": "252a12441caef94b9bcd65d4106e4c1df5e008ec39051d05d35683b8e3ba7946",
+      "bytes": 409642,
+      "canvas": {
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 284,
+          "top": 162,
+          "right": 740,
+          "bottom": 850,
+          "width": 456,
+          "height": 688
+        },
+        "paddingPixels": {
+          "left": 284,
+          "top": 162,
+          "right": 284,
+          "bottom": 174
+        },
+        "transparentPixels": 831835,
+        "opaquePixels": 850,
+        "nonzeroPixelsBelowThreshold": 22541,
+        "visiblePixels": 194200,
+        "transparentFraction": 0.793299674987793,
+        "meanAlpha": 45.72181701660156,
+        "meanVisibleAlpha": 246.65927394438722,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "unapproved-walk-draft-needs-frame-repair",
+      "delivery": "generated-as-group-split-registered-and-downloaded",
+      "animation": {
+        "group": "hero.front_right.walk",
+        "index": 5,
+        "fps": 12,
+        "frameCount": 8,
+        "approved": false,
+        "fullAnimationClaimed": false,
+        "deliveredFrameCount": 1,
+        "fpsStatus": "Provisional draft only; not runtime-approved."
+      },
+      "flags": [
+        "whole-group-generated",
+        "registered-common-scale",
+        "walk-frame-repair-required",
+        "phase-review-failed",
+        "reverse-foot-phases-insufficient",
+        "loop-review-pending",
+        "animation-unapproved"
+      ],
+      "derivedFromSha256": "5c26f7ab55e98fc90ab58a11189afce4f5ded08d27d5542f8942943fd379ca3c",
+      "sourceSheetPath": "raw/walk_group_initial_v1_sheet.png",
+      "registration": {
+        "canvas": [
+          1024,
+          1024
+        ],
+        "sourceSheetCanvas": [
+          1774,
+          887
+        ],
+        "sourceSheetCutEdges": {
+          "x": [
+            0,
+            444,
+            887,
+            1331,
+            1774
+          ],
+          "y": [
+            0,
+            449,
+            887
+          ]
+        },
+        "sourceCutRectangle": [
+          444,
+          449,
+          443,
+          438
+        ],
+        "sourceCutOrder": "row-major",
+        "cutPolicy": "Cuts follow safe transparent row gap; source frames are not stretched.",
+        "scale": 1.6317016317016317,
+        "scaleExpression": "700/429",
+        "sourceAnchor": [
+          512,
+          850
+        ],
+        "targetHorizontalCenter": 512,
+        "bottom": 850,
+        "visibleHeight": 688,
+        "translationPolicy": "Translate each extracted source cell to horizontal center512 and visible bottom850 while retaining one common scale for all8 frames.",
+        "pixelMutationDuringIntake": false
+      },
+      "review": {
+        "visual": "root-group-review-frame-repair-required",
+        "visualNote": "Root inspected frames00 and04. Frame04 retains duplicated/multiple-limb or arm-chain confusion. The overall group lacks sufficiently distinct phases and reverse-foot poses; no frame or loop is approved.",
+        "specificFrameIssue": "Group phase and reverse-foot progression require repair and review.",
+        "runtime": "not-selected",
+        "animationApproval": "not-approved"
+      },
+      "intendedUse": "Preserved registered walking draft and repair reference only. This draft ID deliberately does not occupy a final canonical walking frame ID.",
+      "importedAt": "2026-10-28T08:15:51.999Z"
+    },
+    {
+      "id": "hero.front_right.walk.draft.v1.06",
+      "path": "walk/draft_v1/06.png",
+      "originalFileName": "medic_walk_group_registered_06.png",
+      "sha256": "507361e6b428215b2ec86e651290ed6da217995c5a1bfd81b57bfcb528be6ec2",
+      "bytes": 414972,
+      "canvas": {
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 284,
+          "top": 166,
+          "right": 739,
+          "bottom": 850,
+          "width": 455,
+          "height": 684
+        },
+        "paddingPixels": {
+          "left": 284,
+          "top": 166,
+          "right": 285,
+          "bottom": 174
+        },
+        "transparentPixels": 830280,
+        "opaquePixels": 613,
+        "nonzeroPixelsBelowThreshold": 23014,
+        "visiblePixels": 195282,
+        "transparentFraction": 0.7918167114257812,
+        "meanAlpha": 45.91817283630371,
+        "meanVisibleAlpha": 246.32775678249916,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "unapproved-walk-draft-needs-frame-repair",
+      "delivery": "generated-as-group-split-registered-and-downloaded",
+      "animation": {
+        "group": "hero.front_right.walk",
+        "index": 6,
+        "fps": 12,
+        "frameCount": 8,
+        "approved": false,
+        "fullAnimationClaimed": false,
+        "deliveredFrameCount": 1,
+        "fpsStatus": "Provisional draft only; not runtime-approved."
+      },
+      "flags": [
+        "whole-group-generated",
+        "registered-common-scale",
+        "walk-frame-repair-required",
+        "phase-review-failed",
+        "reverse-foot-phases-insufficient",
+        "loop-review-pending",
+        "animation-unapproved"
+      ],
+      "derivedFromSha256": "5c26f7ab55e98fc90ab58a11189afce4f5ded08d27d5542f8942943fd379ca3c",
+      "sourceSheetPath": "raw/walk_group_initial_v1_sheet.png",
+      "registration": {
+        "canvas": [
+          1024,
+          1024
+        ],
+        "sourceSheetCanvas": [
+          1774,
+          887
+        ],
+        "sourceSheetCutEdges": {
+          "x": [
+            0,
+            444,
+            887,
+            1331,
+            1774
+          ],
+          "y": [
+            0,
+            449,
+            887
+          ]
+        },
+        "sourceCutRectangle": [
+          887,
+          449,
+          444,
+          438
+        ],
+        "sourceCutOrder": "row-major",
+        "cutPolicy": "Cuts follow safe transparent row gap; source frames are not stretched.",
+        "scale": 1.6317016317016317,
+        "scaleExpression": "700/429",
+        "sourceAnchor": [
+          512,
+          850
+        ],
+        "targetHorizontalCenter": 512,
+        "bottom": 850,
+        "visibleHeight": 684,
+        "translationPolicy": "Translate each extracted source cell to horizontal center512 and visible bottom850 while retaining one common scale for all8 frames.",
+        "pixelMutationDuringIntake": false
+      },
+      "review": {
+        "visual": "root-group-review-frame-repair-required",
+        "visualNote": "Root inspected frames00 and04. Frame04 retains duplicated/multiple-limb or arm-chain confusion. The overall group lacks sufficiently distinct phases and reverse-foot poses; no frame or loop is approved.",
+        "specificFrameIssue": "Group phase and reverse-foot progression require repair and review.",
+        "runtime": "not-selected",
+        "animationApproval": "not-approved"
+      },
+      "intendedUse": "Preserved registered walking draft and repair reference only. This draft ID deliberately does not occupy a final canonical walking frame ID.",
+      "importedAt": "2026-10-28T08:15:52.027Z"
+    },
+    {
+      "id": "hero.front_right.walk.draft.v1.07",
+      "path": "walk/draft_v1/07.png",
+      "originalFileName": "medic_walk_group_registered_07.png",
+      "sha256": "34c1cd59cdea012fe64f72f872473afe439922275a968d9327be60a183ee13b5",
+      "bytes": 408626,
+      "canvas": {
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 283,
+          "top": 162,
+          "right": 742,
+          "bottom": 850,
+          "width": 459,
+          "height": 688
+        },
+        "paddingPixels": {
+          "left": 283,
+          "top": 162,
+          "right": 282,
+          "bottom": 174
+        },
+        "transparentPixels": 831445,
+        "opaquePixels": 700,
+        "nonzeroPixelsBelowThreshold": 22134,
+        "visiblePixels": 194997,
+        "transparentFraction": 0.7929277420043945,
+        "meanAlpha": 45.8056755065918,
+        "meanVisibleAlpha": 246.09227834274373,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "unapproved-walk-draft-needs-frame-repair",
+      "delivery": "generated-as-group-split-registered-and-downloaded",
+      "animation": {
+        "group": "hero.front_right.walk",
+        "index": 7,
+        "fps": 12,
+        "frameCount": 8,
+        "approved": false,
+        "fullAnimationClaimed": false,
+        "deliveredFrameCount": 1,
+        "fpsStatus": "Provisional draft only; not runtime-approved."
+      },
+      "flags": [
+        "whole-group-generated",
+        "registered-common-scale",
+        "walk-frame-repair-required",
+        "phase-review-failed",
+        "reverse-foot-phases-insufficient",
+        "loop-review-pending",
+        "animation-unapproved"
+      ],
+      "derivedFromSha256": "5c26f7ab55e98fc90ab58a11189afce4f5ded08d27d5542f8942943fd379ca3c",
+      "sourceSheetPath": "raw/walk_group_initial_v1_sheet.png",
+      "registration": {
+        "canvas": [
+          1024,
+          1024
+        ],
+        "sourceSheetCanvas": [
+          1774,
+          887
+        ],
+        "sourceSheetCutEdges": {
+          "x": [
+            0,
+            444,
+            887,
+            1331,
+            1774
+          ],
+          "y": [
+            0,
+            449,
+            887
+          ]
+        },
+        "sourceCutRectangle": [
+          1331,
+          449,
+          443,
+          438
+        ],
+        "sourceCutOrder": "row-major",
+        "cutPolicy": "Cuts follow safe transparent row gap; source frames are not stretched.",
+        "scale": 1.6317016317016317,
+        "scaleExpression": "700/429",
+        "sourceAnchor": [
+          512,
+          850
+        ],
+        "targetHorizontalCenter": 512,
+        "bottom": 850,
+        "visibleHeight": 688,
+        "translationPolicy": "Translate each extracted source cell to horizontal center512 and visible bottom850 while retaining one common scale for all8 frames.",
+        "pixelMutationDuringIntake": false
+      },
+      "review": {
+        "visual": "root-group-review-frame-repair-required",
+        "visualNote": "Root inspected frames00 and04. Frame04 retains duplicated/multiple-limb or arm-chain confusion. The overall group lacks sufficiently distinct phases and reverse-foot poses; no frame or loop is approved.",
+        "specificFrameIssue": "Group phase and reverse-foot progression require repair and review.",
+        "runtime": "not-selected",
+        "animationApproval": "not-approved"
+      },
+      "intendedUse": "Preserved registered walking draft and repair reference only. This draft ID deliberately does not occupy a final canonical walking frame ID.",
+      "importedAt": "2026-10-28T08:15:52.071Z"
+    },
+    {
+      "registrationRequired": true,
+      "repair": {
+        "targetGroup": "hero.front_right.walk",
+        "targetIndex": 4,
+        "revision": 2,
+        "limbChain": "Root inspected repaired two-arm/two-leg anatomy.",
+        "contactPhase": "Unapproved: possible lack of actual leg swap relative to00; independent review pending."
+      },
+      "candidateFlags": [
+        "single-frame-repair-after-group-failure",
+        "raw-original",
+        "requires-registration",
+        "contact-phase-unapproved",
+        "animation-unapproved"
+      ],
+      "animationApproved": false,
+      "id": "hero.front_right.walk.04.repair.raw.v2",
+      "path": "raw/walk_04_repair_v2.png",
+      "originalFileName": "蓝白医疗机器人行走帧.png",
+      "sha256": "247ef71231d6df0aedde293fc1ae0aa1a1dba5b8fdaec01fc54796db21d5d39b",
+      "bytes": 635064,
+      "canvas": {
+        "width": 1254,
+        "height": 1254,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 361,
+          "top": 188,
+          "right": 925,
+          "bottom": 1059,
+          "width": 564,
+          "height": 871
+        },
+        "paddingPixels": {
+          "left": 361,
+          "top": 188,
+          "right": 329,
+          "bottom": 195
+        },
+        "transparentPixels": 1256832,
+        "opaquePixels": 633,
+        "nonzeroPixelsBelowThreshold": 10627,
+        "visiblePixels": 305057,
+        "transparentFraction": 0.7992491014399854,
+        "meanAlpha": 48.524687825115926,
+        "meanVisibleAlpha": 250.06584998869064,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "limb-chain-repaired-contact-phase-unapproved",
+      "delivery": "generated-and-downloaded",
+      "animation": {
+        "isSequence": false,
+        "frameCount": 1,
+        "fullAnimationClaimed": false
+      },
+      "review": {
+        "visual": "pending",
+        "visualNote": "Root inspected exactly two arms and two legs and considers the prior limb-chain defect corrected. It remains uncertain whether this is a true opposite-leg contact phase relative to00; independent phase review is pending. Raw canvas is unregistered.",
+        "runtime": "pending"
+      },
+      "intendedUse": "Preserve original walk04 anatomy repair for review and possible later registration. Correct limb count alone does not approve opposite-foot phase or a walking animation.",
+      "importedAt": "2026-10-28T08:26:19.452Z"
+    },
+    {
+      "revision": 3,
+      "derivedFromId": "hero.front_right.walk.04.repair.raw.v2",
+      "targetPose": "Opposite contact phase to hero.front_right.walk draft00",
+      "registration": {
+        "status": "not-registered"
+      },
+      "candidateFlags": [
+        "single-frame-repair",
+        "contact-phase-review-pending",
+        "animation-unapproved"
+      ],
+      "id": "hero.front_right.walk.04.repair.raw.v3",
+      "path": "raw/walk_04_repair_v3.png",
+      "originalFileName": "透明背景蓝白医疗机器人行走精灵.png",
+      "sha256": "e2ee56e9a95a91363506425781161d57cc14bc11266519f249952ba3ef8e8928",
+      "bytes": 651760,
+      "canvas": {
+        "width": 1254,
+        "height": 1254,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 327,
+          "top": 184,
+          "right": 926,
+          "bottom": 1076,
+          "width": 599,
+          "height": 892
+        },
+        "paddingPixels": {
+          "left": 327,
+          "top": 184,
+          "right": 328,
+          "bottom": 178
+        },
+        "transparentPixels": 1244386,
+        "opaquePixels": 921,
+        "nonzeroPixelsBelowThreshold": 8252,
+        "visiblePixels": 319878,
+        "transparentFraction": 0.7913343965975544,
+        "meanAlpha": 50.9384921997614,
+        "meanVisibleAlpha": 250.35640775545676,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "limb-chain-valid-contact-phase-review",
+      "delivery": "generated-and-downloaded",
+      "animation": {
+        "isSequence": false,
+        "frameCount": 1,
+        "fullAnimationClaimed": false
+      },
+      "review": {
+        "visual": "pending",
+        "visualNote": "Root inspected the original and found two arms and two legs. Whether this is the opposite contact phase to frame00 is not proven and remains under independent visual review. No animation or runtime approval.",
+        "runtime": "pending"
+      },
+      "intendedUse": "Preserved raw revisionv3 for targeted walk04 repair. Keep existing scale/canvas pending registration; not runtime selected.",
+      "importedAt": "2026-10-28T09:11:35.381Z"
+    },
+    {
+      "groupPlan": {
+        "group": "hero.front_right.hurt",
+        "frameCount": 2,
+        "layout": "2x1-horizontal",
+        "order": [
+          "00-contracted-hurt",
+          "01-relaxing-recovery"
+        ],
+        "approved": false
+      },
+      "registration": {
+        "status": "not-registered"
+      },
+      "candidateFlags": [
+        "whole-group-generated",
+        "registration-review-pending",
+        "animation-unapproved"
+      ],
+      "id": "hero.front_right.hurt.group.initial.v1.rawsheet",
+      "path": "raw/hurt_group_initial_v1_sheet.png",
+      "originalFileName": "医疗机器人受击双帧动画.png",
+      "sha256": "e213a636b0b179e23b66b6afb0391afb20206a718fc2c549d7b477645e7cfc75",
+      "bytes": 940985,
+      "canvas": {
+        "width": 1774,
+        "height": 887,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 269,
+          "top": 114,
+          "right": 1537,
+          "bottom": 821,
+          "width": 1268,
+          "height": 707
+        },
+        "paddingPixels": {
+          "left": 269,
+          "top": 114,
+          "right": 237,
+          "bottom": 66
+        },
+        "transparentPixels": 1107395,
+        "opaquePixels": 915,
+        "nonzeroPixelsBelowThreshold": 27885,
+        "visiblePixels": 438258,
+        "transparentFraction": 0.7037612056397748,
+        "meanAlpha": 69.56342268187994,
+        "meanVisibleAlpha": 249.65721104919933,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "complete-two-pose-group-requires-registration-review",
+      "delivery": "generated-and-downloaded",
+      "animation": {
+        "isSequence": false,
+        "frameCount": 1,
+        "fullAnimationClaimed": false
+      },
+      "review": {
+        "visual": "pending",
+        "visualNote": "Root inspected both generated poses: matching identity, two arms/hands and two legs per pose, feet standing, no baked effects or ground shadow. Local chest/shoulder/arm contraction differs from relaxing recovery; not a whole-image translation. Registration and actual0.15s action review remain pending; no animation approval.",
+        "runtime": "pending"
+      },
+      "intendedUse": "Preserved raw whole hurt2 group for source-canvas registration and actual hurt-action timing review.",
+      "importedAt": "2026-10-28T09:17:51.084Z"
+    },
+    {
+      "derivedFromId": "hero.front_right.hurt.group.initial.v1.rawsheet",
+      "sourceFrameIndex": 0,
+      "registration": {
+        "canvas": [
+          1024,
+          1024
+        ],
+        "sourceAnchor": [
+          512,
+          850
+        ],
+        "commonScale": 0.9900990099009901,
+        "reference": "Neutral raw frame01 height707",
+        "independentHeightNormalization": false,
+        "visibleHeights": [
+          698,
+          701
+        ]
+      },
+      "candidateFlags": [
+        "whole-group-generated",
+        "common-scale-registration",
+        "game-action-review-pending"
+      ],
+      "id": "hero.front_right.hurt.00",
+      "path": "hurt/v1/00.png",
+      "originalFileName": "medic_hurt_group_registered_00.png",
+      "sha256": "fe082c80b75e25de1f68d5a54cb80eaf749c53b40127226aaef6891e094e7a69",
+      "bytes": 448134,
+      "canvas": {
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 301,
+          "top": 152,
+          "right": 723,
+          "bottom": 850,
+          "width": 422,
+          "height": 698
+        },
+        "paddingPixels": {
+          "left": 301,
+          "top": 152,
+          "right": 301,
+          "bottom": 174
+        },
+        "transparentPixels": 827322,
+        "opaquePixels": 652,
+        "nonzeroPixelsBelowThreshold": 13783,
+        "visiblePixels": 207471,
+        "transparentFraction": 0.7889957427978516,
+        "meanAlpha": 49.39646244049072,
+        "meanVisibleAlpha": 249.53957902550235,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "complete-group-candidate-pending-game-review",
+      "delivery": "generated-and-downloaded",
+      "animation": {
+        "group": "hero.front_right.hurt",
+        "index": 0,
+        "fps": 13.333333333333334,
+        "frameCount": 2,
+        "approved": false,
+        "fullAnimationClaimed": false,
+        "deliveredFrameCount": 1,
+        "fpsStatus": "Provisional candidate only; actual action normalized to0.15s, game-to-idle review pending."
+      },
+      "review": {
+        "visual": "pending",
+        "visualNote": "Root and pose_guide inspected the two-pose group: identity and two-arm/two-leg structure consistent; contracted protective reaction moves into relaxed recovery. Slight head-width and shoe/knee redraw differences need actual0.15s action-to-idle game review. This is a complete candidate group, not approved animation.",
+        "runtime": "pending"
+      },
+      "intendedUse": "Registered hurt reaction candidate group, to be reviewed on actual accepted positive damage and0.15s feedback timing before runtime selection.",
+      "importedAt": "2026-10-28T09:26:17.888Z"
+    },
+    {
+      "derivedFromId": "hero.front_right.hurt.group.initial.v1.rawsheet",
+      "sourceFrameIndex": 1,
+      "registration": {
+        "canvas": [
+          1024,
+          1024
+        ],
+        "sourceAnchor": [
+          512,
+          850
+        ],
+        "commonScale": 0.9900990099009901,
+        "reference": "Neutral raw frame01 height707",
+        "independentHeightNormalization": false,
+        "visibleHeights": [
+          698,
+          701
+        ]
+      },
+      "candidateFlags": [
+        "whole-group-generated",
+        "common-scale-registration",
+        "game-action-review-pending"
+      ],
+      "id": "hero.front_right.hurt.01",
+      "path": "hurt/v1/01.png",
+      "originalFileName": "medic_hurt_group_registered_01.png",
+      "sha256": "75ced32b2ebf0281f643be235c07bd2a89d71c2a779fb8d9788b514678eead9c",
+      "bytes": 474385,
+      "canvas": {
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 292,
+          "top": 149,
+          "right": 732,
+          "bottom": 850,
+          "width": 440,
+          "height": 701
+        },
+        "paddingPixels": {
+          "left": 292,
+          "top": 149,
+          "right": 292,
+          "bottom": 174
+        },
+        "transparentPixels": 812527,
+        "opaquePixels": 822,
+        "nonzeroPixelsBelowThreshold": 13746,
+        "visiblePixels": 222303,
+        "transparentFraction": 0.7748861312866211,
+        "meanAlpha": 52.8981351852417,
+        "meanVisibleAlpha": 249.40408811397057,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "complete-group-candidate-pending-game-review",
+      "delivery": "generated-and-downloaded",
+      "animation": {
+        "group": "hero.front_right.hurt",
+        "index": 1,
+        "fps": 13.333333333333334,
+        "frameCount": 2,
+        "approved": false,
+        "fullAnimationClaimed": false,
+        "deliveredFrameCount": 1,
+        "fpsStatus": "Provisional candidate only; actual action normalized to0.15s, game-to-idle review pending."
+      },
+      "review": {
+        "visual": "pending",
+        "visualNote": "Root and pose_guide inspected the two-pose group: identity and two-arm/two-leg structure consistent; contracted protective reaction moves into relaxed recovery. Slight head-width and shoe/knee redraw differences need actual0.15s action-to-idle game review. This is a complete candidate group, not approved animation.",
+        "runtime": "pending"
+      },
+      "intendedUse": "Registered hurt reaction candidate group, to be reviewed on actual accepted positive damage and0.15s feedback timing before runtime selection.",
+      "importedAt": "2026-10-28T09:26:17.948Z"
+    },
+    {
+      "revision": 4,
+      "derivedFromId": "hero.front_right.walk.04.repair.raw.v3",
+      "targetPose": "Opposite contact phase to frame00",
+      "guidedRevision": true,
+      "registration": {
+        "status": "not-registered"
+      },
+      "candidateFlags": [
+        "guided-single-frame-repair",
+        "opposite-contact-failed",
+        "animation-unapproved"
+      ],
+      "id": "hero.front_right.walk.04.repair.raw.v4",
+      "path": "raw/walk_04_repair_v4_guided.png",
+      "originalFileName": "透明背景的机器人行走帧04.png",
+      "sha256": "1ffeef9d3f4cd57833a0a4e961cad0a4d2f21827b5cb565c3af56e0b0ab55b97",
+      "bytes": 673759,
+      "canvas": {
+        "width": 1254,
+        "height": 1254,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 336,
+          "top": 175,
+          "right": 948,
+          "bottom": 1074,
+          "width": 612,
+          "height": 899
+        },
+        "paddingPixels": {
+          "left": 336,
+          "top": 175,
+          "right": 306,
+          "bottom": 180
+        },
+        "transparentPixels": 1233913,
+        "opaquePixels": 717,
+        "nonzeroPixelsBelowThreshold": 8798,
+        "visiblePixels": 329805,
+        "transparentFraction": 0.7846743689730343,
+        "meanAlpha": 52.480653297009376,
+        "meanVisibleAlpha": 250.16943951729053,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "guided-hip-chain-still-not-opposite",
+      "delivery": "generated-and-downloaded",
+      "animation": {
+        "isSequence": false,
+        "frameCount": 1,
+        "fullAnimationClaimed": false
+      },
+      "review": {
+        "visual": "pending",
+        "visualNote": "Root inspected the generated original after guided revision: identity and two-arm/two-leg structure retained, but the visible near-side hip still connects toward the right-front large boot, matching frame00 leading side. Opposite-contact requirement failed. No registration, runtime selection or animation approval.",
+        "runtime": "pending"
+      },
+      "intendedUse": "Preserve failed guided walk04 revisionv4 as source history for further targeted hip-leg phase correction.",
+      "importedAt": "2026-10-28T09:54:53.194Z"
+    },
+    {
+      "revision": 5,
+      "derivedFromId": "hero.front_right.walk.04.repair.raw.v4",
+      "targetPose": "Opposite contact phase to frame00",
+      "productionMethod": "Legless upper-body reference plus bone guide, lower-body rebuild",
+      "registration": {
+        "status": "not-registered"
+      },
+      "failedRequirements": [
+        "opposite-contact",
+        "consistent-leg-proportion",
+        "stable-armor-detail",
+        "minimum10-percent-bottom-margin"
+      ],
+      "candidateFlags": [
+        "single-frame-repair",
+        "pose-and-proportion-rejected",
+        "animation-unapproved"
+      ],
+      "id": "hero.front_right.walk.04.repair.raw.v5",
+      "path": "raw/walk_04_repair_v5_upperbody_rebuild.png",
+      "originalFileName": "赛博医疗机器人反向行走姿态.png",
+      "sha256": "030f0ce506e40dc9e667f8083961e4d32971d594de398ff0876914f07b11106a",
+      "bytes": 843721,
+      "canvas": {
+        "width": 1254,
+        "height": 1254,
+        "format": "png",
+        "colorSpace": "srgb",
+        "channels": 4,
+        "hasAlpha": true,
+        "bitsPerChannel": 8
+      },
+      "alpha": {
+        "threshold": 8,
+        "boundsConvention": "half-open",
+        "bounds": {
+          "left": 297,
+          "top": 171,
+          "right": 1019,
+          "bottom": 1197,
+          "width": 722,
+          "height": 1026
+        },
+        "paddingPixels": {
+          "left": 297,
+          "top": 171,
+          "right": 235,
+          "bottom": 57
+        },
+        "transparentPixels": 1120992,
+        "opaquePixels": 1206,
+        "nonzeroPixelsBelowThreshold": 11262,
+        "visiblePixels": 440262,
+        "transparentFraction": 0.7128652427065925,
+        "meanAlpha": 70.18333485954992,
+        "meanVisibleAlpha": 250.6190495659403,
+        "touchesCanvasEdge": false
+      },
+      "source": {
+        "provider": "ChatGPT web",
+        "project": "Viral-Invasion",
+        "conversationTitle": "游戏玩法设计要点",
+        "conversationUrl": "https://chatgpt.com/g/g-p-6adf6537a9c481919bf0bf5da4ac3fc8-viral-invasion/c/6ad9949d-bbd0-83ea-a8c1-2614cf20a041"
+      },
+      "status": "opposite-contact-and-proportion-failed",
+      "delivery": "generated-and-downloaded",
+      "animation": {
+        "isSequence": false,
+        "frameCount": 1,
+        "fullAnimationClaimed": false
+      },
+      "review": {
+        "visual": "pending",
+        "visualNote": "Root inspected the generated original using legless upper-body reference and bone guide. The visible near-side hip still leads into the front boot rather than the opposite contact. Leg proportions lengthened, blue circular armor details drifted, and bottom padding57px is below10% of1254. Rejected for contact phase, proportion and safe-margin requirements; no registration or animation approval.",
+        "runtime": "pending"
+      },
+      "intendedUse": "Preserve failed walk04 revisionv5 as raw source history. Not a usable runtime frame; further motion-production approach remains under discussion.",
+      "importedAt": "2026-10-28T10:51:18.671Z"
+    }
+  ],
+  "groupCandidates": [
+    {
+      "group": "hero.front_right.idle",
+      "version": "v1",
+      "status": "complete-group-candidate-animation-unapproved",
+      "frameIds": [
+        "hero.front_right.idle.00",
+        "hero.front_right.idle.01",
+        "hero.front_right.idle.02",
+        "hero.front_right.idle.03"
+      ],
+      "frameCount": 4,
+      "filesPresent": 4,
+      "sourceAttempt": "initial-v2",
+      "sourceSheetSha256": "c7074276f1053b02122be48d11abdfd14fb4e5ee4c88f2f47f2553baf25958a9",
+      "commonScale": 0.7070707070707071,
+      "scaleExpression": "700/990",
+      "canonicalCanvas": [
+        1024,
+        1024
+      ],
+      "sourceAnchor": [
+        512,
+        850
+      ],
+      "visibleHeights": [
+        700,
+        701,
+        696,
+        689
+      ],
+      "fps": 6,
+      "fpsStatus": "Provisional; final rhythm requires runtime review.",
+      "approved": false,
+      "runtimeSelected": false,
+      "flags": [
+        "whole-group-generated",
+        "loop-review-pending"
+      ],
+      "inspectionPath": "artifacts/chatgpt-art-generation-20261028/idle-group-registered-v1-inspection.json",
+      "review": "Preliminary root content/loop/overlay review only; independent visual review and runtime acceptance pending."
+    },
+    {
+      "group": "hero.front_right.walk",
+      "version": "draft_v1",
+      "status": "unapproved-walk-draft-needs-frame-repair",
+      "frameIds": [
+        "hero.front_right.walk.draft.v1.00",
+        "hero.front_right.walk.draft.v1.01",
+        "hero.front_right.walk.draft.v1.02",
+        "hero.front_right.walk.draft.v1.03",
+        "hero.front_right.walk.draft.v1.04",
+        "hero.front_right.walk.draft.v1.05",
+        "hero.front_right.walk.draft.v1.06",
+        "hero.front_right.walk.draft.v1.07"
+      ],
+      "frameCount": 8,
+      "filesPresent": 8,
+      "sourceAttempt": "initial-v1",
+      "sourceSheetSha256": "5c26f7ab55e98fc90ab58a11189afce4f5ded08d27d5542f8942943fd379ca3c",
+      "sourceSheetCutEdges": {
+        "x": [
+          0,
+          444,
+          887,
+          1331,
+          1774
+        ],
+        "y": [
+          0,
+          449,
+          887
+        ]
+      },
+      "sourceCutOrder": "row-major",
+      "commonScale": 1.6317016317016317,
+      "scaleExpression": "700/429",
+      "canonicalCanvas": [
+        1024,
+        1024
+      ],
+      "sourceAnchor": [
+        512,
+        850
+      ],
+      "visibleHeights": [
+        704,
+        703,
+        699,
+        707,
+        686,
+        688,
+        684,
+        688
+      ],
+      "fps": 12,
+      "fpsStatus": "Provisional unapproved draft rhythm.",
+      "approved": false,
+      "runtimeSelected": false,
+      "canonicalFrameIdsOccupied": false,
+      "flags": [
+        "whole-group-generated",
+        "frame-repair-required",
+        "loop-review-pending"
+      ],
+      "inspectionPath": "artifacts/chatgpt-art-generation-20261028/walk-group-registered-v1-inspection.json",
+      "review": "Frame04 limb/arm-chain defect and insufficient overall phase/reverse-foot progression remain. No animation approval."
+    }
+  ]
+}

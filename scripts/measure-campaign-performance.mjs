@@ -9,6 +9,7 @@ import os from 'node:os';
 // A real formal campaign pressure case, not a victory or a simulation fixture.
 // The browser host issues only DOM inputs; __viral is used only for reads.
 const folder = process.env.VI_PERF_OUTPUT ?? 'artifacts/research-v071/performance';
+const distDirectory = process.env.VI_DIST_DIR ?? 'dist';
 const seed = Number(process.env.VI_PERF_SEED ?? 13);
 const producerIds = ['source-b', 'heart-retained-source'];
 const protectedIds = new Set(producerIds);
@@ -23,8 +24,8 @@ const helperManifest = {};
 for (const name of Object.keys(helper.metafile.inputs).filter(name => name !== '<stdin>').sort()) helperManifest[name] = hash(await readFile(name));
 const helpers = await import(`data:text/javascript;base64,${Buffer.from(helper.outputFiles[0].contents).toString('base64')}`);
 const { readState, aim, chooseDraftInput, waypoint, normalized, distance, rayCircle, wallHit } = helpers;
-const buildMetadata = JSON.parse(await readFile('dist/build-meta.json', 'utf8'));
-const gameHash = hash(await readFile('dist/game.js'));
+const buildMetadata = JSON.parse(await readFile(resolve(distDirectory, 'build-meta.json'), 'utf8'));
+const gameHash = hash(await readFile(resolve(distDirectory, 'game.js')));
 if (process.argv.includes('--check')) {
   console.log(JSON.stringify({ checked: true, browserStarted: false, seed, entry: 'formal FISSION/adaptive', producers: producerIds,
     version: buildMetadata.version, gameHash, measurementScriptSha256: hash(source), helperSourceFiles: Object.keys(helperManifest).length }));
@@ -155,7 +156,7 @@ try {
   page = await context.newPage(); cdp = await context.newCDPSession(page);
   page.on('pageerror', error => report.errors.push(error.message)); page.on('request', request => { if (/^https?:/i.test(request.url())) report.requests.push(request.url()); });
   report.wallStartedAt = Date.now();
-  await page.goto(`${pathToFileURL(resolve('dist/index.html')).href}?seed=${seed}&trait=FISSION`); await page.locator('[data-action="start"]').click();
+  await page.goto(`${pathToFileURL(resolve(distDirectory, 'index.html')).href}?seed=${seed}&trait=FISSION`); await page.locator('[data-action="start"]').click();
   const setupDeadline = Date.now() + 180000;
   for (;;) {
     if (Date.now() > setupDeadline) throw Error('Formal source-clear/guardian/block setup exceeded 180 wall seconds');
@@ -241,7 +242,7 @@ try {
   report.observerDroppedFrames = await page.evaluate(() => window.__viCampaignPerf.dropped);
   report.device = { os: os.platform(), release: os.release(), cpu: os.cpus()[0]?.model, logicalCpus: os.cpus().length, memoryBytes: os.totalmem(), browser: browser.version(), mode: 'headless' };
   report.measurementWallDurationMs = Date.now() - report.measurementWallStartedAt; report.wallDurationMs = Date.now() - report.wallStartedAt;
-  report.sourceUnchanged = gameHash === hash(await readFile('dist/game.js'));
+  report.sourceUnchanged = gameHash === hash(await readFile(resolve(distDirectory, 'game.js')));
   report.pass = report.activeSimulationSeconds >= 600 && Object.values(report.metrics).every(metric => metric.activeDurationMs >= 295000 && metric.averageFps >= 50 && metric.p95Ms <= 33)
     && report.maxActors === 24 && report.maxCells === 3 && !!report.dense_standard && !!report.dense_low && report.cellHits > 0
     && !report.errors.length && !report.requests.length && !report.observerDroppedFrames && report.sourceUnchanged;
