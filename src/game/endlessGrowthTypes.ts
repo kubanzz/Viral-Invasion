@@ -14,6 +14,8 @@ export interface EndlessUpgradeOption {
 export interface EndlessUpgradeDraft {
   id: string;
   wave: number;
+  /** Earned by clearing an elite wave; the selected route gains up to two ranks. */
+  breakthrough?: boolean;
   options: [EndlessUpgradeOption, EndlessUpgradeOption, EndlessUpgradeOption];
 }
 

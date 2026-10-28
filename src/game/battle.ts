@@ -9,6 +9,7 @@ import { ENCOUNTER_CONFIGS } from './encounterConfig';
 import { acceptedFirstCounter } from './counterLesson';
 import { ENEMY_CROWD, moveEnemyThroughCrowd, planEnemySpacing } from '../actors/enemyCrowd';
 import { endlessCombatStats } from './endlessGrowth';
+import { endlessPacing } from './endlessPacing';
 import { EnemyNavigator } from '../actors/enemyNavigation';
 import { enemyAttackPlan, enemyAttackHits, enemyRayEnd, segmentDistance } from './enemyTactics';
 import { standoffMotion } from './enemyPositioning';
@@ -526,7 +527,8 @@ export class BattleDirector {
     this.navigator.prune(s.targets);
     for (const target of s.targets) if (target.recoverUntil !== undefined && target.recoverUntil <= s.elapsed) target.recoverUntil = undefined;
     const wave = s.endless?.wave ?? 1;
-    const speed = (target: Target) => B.enemySpeed * (s.endless ? 1 + Math.min(.9, (wave - 1) * .035) : 1) * (target.traits?.includes('CARAPACE') ? B.carapaceSpeed : 1)
+    const pace = s.endless ? endlessPacing(wave) : undefined;
+    const speed = (target: Target) => B.enemySpeed * (pace?.speedMultiplier ?? 1) * (target.traits?.includes('CARAPACE') ? B.carapaceSpeed : 1)
       * (target.traits?.includes('MIMIC') ? B.mimicSpeed : 1) * (this.host.slowFactor?.(target.id) ?? 1);
     const spacing = planEnemySpacing(s.targets, activeWorld(s), {
       maxStep: target => speed(target) * BALANCE.step * ENEMY_CROWD.separationSpeedFactor,

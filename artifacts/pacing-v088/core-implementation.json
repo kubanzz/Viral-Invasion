@@ -1,0 +1,71 @@
+{
+  "at": "2026-10-28T03:16:35.249Z",
+  "scope": "Fixed wave-only pacing implementation and targeted rule verification. No browser, production build, long-run simulation or human difficulty claim.",
+  "interface": [
+    "cycle",
+    "step",
+    "role",
+    "label",
+    "healthMultiplier",
+    "eliteHealthMultiplier",
+    "speedMultiplier",
+    "spawnIntervalMultiplier",
+    "budgetBonus"
+  ],
+  "roles": [
+    "pressure",
+    "release",
+    "pressure",
+    "release",
+    "elite"
+  ],
+  "ordinaryHp": "round(68 * 1.35^(cycle-1) * [1,.58,1.16,.68,.82][step-1]); only extreme numeric representation saturates",
+  "eliteHp": "round(170 * 1.45^(cycle-1)); only extreme numeric representation saturates",
+  "finiteBudgets": {
+    "waveBirths": 48,
+    "simultaneousReservedPopulation": 24,
+    "fissionParents": 4
+  },
+  "tests": {
+    "initialNew": "artifacts/pacing-v088/core-attempt-1/tests.json",
+    "initialNeighborConflicts": "artifacts/pacing-v088/core-neighbors-attempt-1/tests.json",
+    "final": "artifacts/pacing-v088/core-neighbors-attempt-2/tests.json",
+    "passed": 123,
+    "failed": 0
+  },
+  "changesToOldTests": "Authorized updates only to obsolete fixed68/204/28 HP-budget assumptions and fixed schedule/drain limits; population, split reservation, grace, warning, callback, counters and unique cycle assertions retained.",
+  "files": [
+    {
+      "path": "src/game/endlessPacing.ts",
+      "sha256": "c0d9376d4225c2a6606956f05c51283e5587ab86741f3d615d9d653b5627c090"
+    },
+    {
+      "path": "src/game/endless.ts",
+      "sha256": "53f31cbbc65d6745607e2b55f6a1046bb80d7fcaf00ba32f61cac34299d81c14"
+    },
+    {
+      "path": "src/game/battle.ts",
+      "sha256": "8fccc7d57121b8c271218a5af85cecb02027552684a99b415bd0daec975585d8"
+    },
+    {
+      "path": "tests/unit/endless-pacing.test.ts",
+      "sha256": "822bc3bf89c9d7b3010717712f3dc2000f98d0f4f96260c02ba341bb17495db1"
+    },
+    {
+      "path": "tests/unit/endless-director.test.ts",
+      "sha256": "5cfec823d411f0a058c61bbe32642369b5bee77ada223c186f97954e53c8042e"
+    },
+    {
+      "path": "tests/unit/endless-formations.test.ts",
+      "sha256": "f708959c171fb2ab4fb28ca096d4151e2701b116c6280c3886d2a6972e84c69f"
+    },
+    {
+      "path": "tests/unit/endless-dual-elite.test.ts",
+      "sha256": "a79dd95097bd115743e6898ff509791492bbeea122fb6534f8ebbd5dc08170cb"
+    },
+    {
+      "path": "tests/unit/endless-adaptation.integration.test.ts",
+      "sha256": "a6615b2075921e47000dc39e6d065092d7d40d9c2fc99f22a45a855245e04153"
+    }
+  ]
+}

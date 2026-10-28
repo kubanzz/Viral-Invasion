@@ -5,6 +5,10 @@ import { WORLD, type Target, type Vec, type WorldGeometry } from './types';
 import { activeImmuneFocusTarget } from './immuneFocus';
 
 export const IMMUNE_CELL_BALANCE = { maximum: 3, radius: 15, speed: 190, biteReach: 9, attackPose: .24, navigationInterval: .35 } as const;
+export const ENDLESS_IMMUNE_CELL_BALANCE = {
+  pursuitSpeed: 300, rallySpeed: 520, rallySeconds: .9, navigationInterval: .12,
+  focusedFirstBiteDelay: .1, focusedFirstBiteStagger: .04, targetRetentionDistance: 35,
+} as const;
 
 /** Real, bounded simulation entities; rendering never updates their position or hits. */
 export interface ImmuneCellState extends Vec {
@@ -13,6 +17,8 @@ export interface ImmuneCellState extends Vec {
   updatedAt: number; attackReadyAt: number; attackUntil: number;
   targetId: string | null; activity: 'seeking' | 'biting' | 'returning' | 'guarding';
   navigationAt: number; waypoint: Vec | null;
+  /** A challenge Q grants bounded travel speed, never movement or a free bite. */
+  rallyUntil?: number;
 }
 
 type CellBeacon = BeaconState;
@@ -58,13 +64,28 @@ function nextWaypoint(from: Vec, to: Vec, geometry: WorldGeometry, radius: numbe
 
 export function summonImmuneCells(beacon: CellBeacon, context: GrowthContext, count = 3): ImmuneCellState[] {
   const total = Math.max(1, Math.min(IMMUNE_CELL_BALANCE.maximum, Math.floor(count)));
+  const focus = context.endless && beacon.mode === 'protocol' ? activeImmuneFocusTarget(beacon, context) : undefined;
   return Array.from({ length: total }, (_, index) => {
     const angle = -Math.PI / 2 + index / total * Math.PI * 2;
     const position = moveWithCollision(beacon, { x: Math.cos(angle) * 30, y: Math.sin(angle) * 30 }, IMMUNE_CELL_BALANCE.radius, context.geometry);
     return { ...position, id: `${beacon.id}:cell:${index}`, beaconId: beacon.id, organId: beacon.organId, born: context.elapsed,
       until: beacon.until, radius: IMMUNE_CELL_BALANCE.radius, facing: angle, damage: beacon.damage / total, interval: beacon.interval,
-      updatedAt: context.elapsed, attackReadyAt: context.elapsed + .25 + index * .08, attackUntil: 0, targetId: null,
-      activity: 'seeking', navigationAt: 0, waypoint: null };
+      updatedAt: context.elapsed, attackReadyAt: context.elapsed + (focus
+        ? ENDLESS_IMMUNE_CELL_BALANCE.focusedFirstBiteDelay + index * ENDLESS_IMMUNE_CELL_BALANCE.focusedFirstBiteStagger
+        : .25 + index * .08), attackUntil: 0, targetId: null,
+      activity: 'seeking', navigationAt: 0, waypoint: null,
+      ...(focus ? { rallyUntil: Math.min(context.elapsed + ENDLESS_IMMUNE_CELL_BALANCE.rallySeconds, beacon.focus!.until, beacon.until) } : {}) };
+  });
+}
+
+/** Redirect existing bodies; Q cannot restore lifespan or reset a bite cooldown. */
+export function redirectImmuneCells(cells: readonly ImmuneCellState[], beacon: CellBeacon, context: GrowthContext): ImmuneCellState[] {
+  const focus = context.endless && beacon.mode === 'protocol' ? activeImmuneFocusTarget(beacon, context) : undefined;
+  return cells.map(cell => {
+    const redirected = { ...cell, waypoint: null, navigationAt: 0 };
+    if (focus) redirected.rallyUntil = Math.min(context.elapsed + ENDLESS_IMMUNE_CELL_BALANCE.rallySeconds, beacon.focus!.until, cell.until);
+    else delete redirected.rallyUntil;
+    return redirected;
   });
 }
 
@@ -72,9 +93,19 @@ function chooseTarget(cell: ImmuneCellState, beacon: CellBeacon, context: Growth
   const priority = (target: Target) => traceIds.has(target.id) ? 0 : (target.generation ?? 0) > 0 ? 1 : target.role === 'virus' ? 2 : target.role === 'elite' ? 3 : target.role === 'source' ? 4 : 5;
   // The mother core remains the player's objective; temporary cells clear its defenders.
   // Reserve planned damage so later cells never celebrate biting an already-cleared body.
-  return context.targets.filter(target => target.role !== 'core' && (remainingHp.get(target.id) ?? target.hp) > 0 && distance(beacon, target) <= beacon.radius + target.radius)
-    .sort((a, b) => priority(a) - priority(b) || (assigned.get(a.id) ?? 0) - (assigned.get(b.id) ?? 0)
-      || distance(cell, a) - distance(cell, b) || stableId(a, b))[0];
+  const candidates = context.targets.filter(target => target.role !== 'core' && (remainingHp.get(target.id) ?? target.hp) > 0 && distance(beacon, target) <= beacon.radius + target.radius);
+  if (context.endless && beacon.mode === 'protocol') {
+    // Keep the equipped trace's explicit priority. Within the same trace tier,
+    // finish an enemy already in real reach before chasing distant offspring,
+    // and do not abandon nearby progress merely to spread the squad out.
+    const approachDistance = (target: Target) => distance(cell, target)
+      - (target.id === cell.targetId ? ENDLESS_IMMUNE_CELL_BALANCE.targetRetentionDistance : 0);
+    return candidates.sort((a, b) => Number(traceIds.has(b.id)) - Number(traceIds.has(a.id))
+      || Number(contact(cell, cell.radius, b, context.geometry)) - Number(contact(cell, cell.radius, a, context.geometry))
+      || approachDistance(a) - approachDistance(b) || (assigned.get(a.id) ?? 0) - (assigned.get(b.id) ?? 0) || stableId(a, b))[0];
+  }
+  return candidates.sort((a, b) => priority(a) - priority(b) || (assigned.get(a.id) ?? 0) - (assigned.get(b.id) ?? 0)
+    || distance(cell, a) - distance(cell, b) || stableId(a, b))[0];
 }
 
 function validPosition(position: Vec, radius: number, geometry: WorldGeometry = WORLD): boolean {
@@ -114,8 +145,8 @@ function contactPosition(cell: ImmuneCellState, target: Target, index: number, c
 
 /** Soft separation shares the normal movement budget and only moves this cell. */
 function moveCell(cell: ImmuneCellState, waypoint: Vec, squad: readonly ImmuneCellState[], index: number,
-  delta: number, geometry?: WorldGeometry): void {
-  const limit = IMMUNE_CELL_BALANCE.speed * delta;
+  delta: number, geometry?: WorldGeometry, speed: number = IMMUNE_CELL_BALANCE.speed): void {
+  const limit = speed * delta;
   if (limit <= 0) return;
   const toward = normalized(waypoint.x - cell.x, waypoint.y - cell.y), travel = Math.min(limit, distance(cell, waypoint));
   const approach = { x: toward.x * travel, y: toward.y * travel };
@@ -154,6 +185,7 @@ export function advanceImmuneCells(cells: readonly ImmuneCellState[], beacon: Ce
   const remainingHp = new Map(context.targets.map(target => [target.id, target.hp]));
   const traced = new Set(beacon.mode === 'patrol' ? [] : traceIds);
   const focus = activeImmuneFocusTarget(beacon, context);
+  const challengeSquad = !!context.endless && beacon.mode === 'protocol';
   for (const cell of active) {
     const delta = Math.max(0, Math.min(1 / 60, context.elapsed - cell.updatedAt));
     cell.updatedAt = context.elapsed;
@@ -170,6 +202,8 @@ export function advanceImmuneCells(cells: readonly ImmuneCellState[], beacon: Ce
     const canFocus = !!focus && !!focusSeat && (contact(cell, cell.radius, focus, context.geometry)
       || !!cachedRoute || !!focusRoute && distance(cell, focusRoute) > 1e-7);
     const target = canFocus ? focus : chooseTarget(cell, beacon, context, traced, assigned, remainingHp);
+    const speed = challengeSquad && target ? canFocus && (cell.rallyUntil ?? 0) > context.elapsed
+      ? ENDLESS_IMMUNE_CELL_BALANCE.rallySpeed : ENDLESS_IMMUNE_CELL_BALANCE.pursuitSpeed : IMMUNE_CELL_BALANCE.speed;
     if (target) assigned.set(target.id, (assigned.get(target.id) ?? 0) + 1);
     cell.targetId = target?.id ?? null;
     const orbit = index / Math.max(1, active.length) * Math.PI * 2;
@@ -185,12 +219,12 @@ export function advanceImmuneCells(cells: readonly ImmuneCellState[], beacon: Ce
       if (!cell.waypoint || previousTarget !== cell.targetId || context.elapsed >= cell.navigationAt || distance(cell, cell.waypoint) < 10) {
         cell.waypoint = canFocus && focusRoute ? focusRoute
           : context.geometry ? nextWaypoint(cell, destination, context.geometry, cell.radius) : point(destination);
-        cell.navigationAt = context.elapsed + IMMUNE_CELL_BALANCE.navigationInterval;
+        cell.navigationAt = context.elapsed + (challengeSquad ? ENDLESS_IMMUNE_CELL_BALANCE.navigationInterval : IMMUNE_CELL_BALANCE.navigationInterval);
       }
-      moveCell(cell, cell.waypoint, active, index, delta, context.geometry);
+      moveCell(cell, cell.waypoint, active, index, delta, context.geometry, speed);
       cell.activity = target ? 'seeking' : 'returning';
     } else {
-      moveCell(cell, point(cell), active, index, delta, context.geometry);
+      moveCell(cell, point(cell), active, index, delta, context.geometry, speed);
       cell.activity = context.elapsed < cell.attackUntil ? 'biting' : 'guarding';
     }
     // Later cells never push an already-settled cell. Contact, LOS and event

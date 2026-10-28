@@ -6,6 +6,7 @@ import { TRAITS } from '../../src/game/battleConfig';
 import type { TraitId } from '../../src/game/battleTypes';
 import { ENDLESS_BALANCE, EndlessDirector } from '../../src/game/endless';
 import { ENDLESS_EVOLUTION_TACTICS } from '../../src/game/endlessEvolution';
+import { endlessPacing } from '../../src/game/endlessPacing';
 import type { EndlessHost } from '../../src/game/endlessTypes';
 import { ENEMY_TACTIC_INFO } from '../../src/game/enemyTacticInfo';
 import { createEliteTacticCycle } from '../../src/game/eliteTacticCycle';
@@ -64,7 +65,7 @@ describe('announced current-generation dual elite births', () => {
     expect(elite).toBeDefined(); expect(elite.traits).toEqual(pair);
     expect(elite.eliteCycle).toEqual({ tactics: pair.map(trait => ENDLESS_EVOLUTION_TACTICS[trait]), index: 0 });
     expect(elite.tactic).toBe(ENDLESS_EVOLUTION_TACTICS[main]);
-    expect(elite.hp).toBe(204); expect(elite.maxHp).toBe(204); expect(elite.radius).toBe(30);
+    expect(elite.hp).toBe(Math.round(170 * endlessPacing(20).eliteHealthMultiplier)); expect(elite.maxHp).toBe(elite.hp); expect(elite.radius).toBe(30);
     expect(elite.generation).toBe(0); expect(elite.attackReady! - elite.born!).toBeCloseTo(.35);
     expect(distance(elite, f.state.player)).toBeGreaterThanOrEqual(380);
     expect(distance(elite, f.state.player)).toBeLessThanOrEqual(480);
@@ -73,7 +74,7 @@ describe('announced current-generation dual elite births', () => {
     expect(f.events.some(event => event.type === 'ATTACK_TELEGRAPHED' || event.type === 'ELITE_TACTIC_COMMITTED')).toBe(false);
     for (const other of f.state.targets.filter(target => target !== elite)) {
       expect(other.eliteCycle).toBeUndefined(); expect(other.traits!.length).toBeLessThanOrEqual(1);
-      expect(other.hp).toBe(68); expect(other.radius).toBe(22);
+      expect(other.hp).toBe(Math.round(68 * endlessPacing(20).healthMultiplier)); expect(other.radius).toBe(22);
       expect(other.attackReady! - other.born!).toBeCloseTo(other.tactic === 'thin-ray' ? ENDLESS_BALANCE.spawnGrace : 1.5);
     }
     observations.push({ pair, elite: structuredClone(elite), born, reservation: reservation(f.state) });
@@ -85,16 +86,16 @@ describe('announced current-generation dual elite births', () => {
     expect(!!elite?.eliteCycle).toBe(shouldCycle);
     if (elite) {
       expect(elite.traits!.length).toBe(shouldCycle ? 2 : 1);
-      expect(elite.hp).toBe(Math.min(204, 136 + Math.floor(wave / 10) * 34));
+      expect(elite.hp).toBe(Math.round(170 * endlessPacing(wave).eliteHealthMultiplier));
       expect(elite.attackReady! - elite.born!).toBeCloseTo(.35);
     }
-    expect(f.e.totalToSpawn).toBe(Math.min(28, 6 + wave * 2));
+    expect(f.e.totalToSpawn).toBe(Math.min(ENDLESS_BALANCE.maximumWaveBudget, 6 + wave * 2 + endlessPacing(wave).budgetBonus));
     expect(f.e.batchSchedule.flatMap(batch => batch.roles).filter(role => role === 'elite')).toHaveLength(wave % 5 === 0 ? wave >= 30 ? 2 : 1 : 0);
     if (wave === 30) {
       f.advance(f.e.nextSpawnAt - f.state.elapsed);
       const elites = f.state.targets.filter(target => target.role === 'elite');
       expect(elites).toHaveLength(2); expect(elites[0].eliteCycle).toBeDefined(); expect(elites[1].eliteCycle).toBeUndefined();
-      expect(elites[1].traits).toEqual(['CARAPACE']); expect(elites[1].hp).toBe(204);
+      expect(elites[1].traits).toEqual(['CARAPACE']); expect(elites[1].hp).toBe(Math.round(170 * endlessPacing(wave).eliteHealthMultiplier));
       expect(elites[1].attackReady! - elites[1].born!).toBeCloseTo(.35);
     }
   });
@@ -124,7 +125,7 @@ describe('announced current-generation dual elite births', () => {
     const f = fixture(); f.state.targets = Array.from({ length: 4 }, (_, index) => resident(`parent-${index}`, index, true));
     f.enter(['MIMIC', 'FISSION']);
     const queue = { remaining: f.e.remainingToSpawn, member: f.e.batchMemberIndex, serial: f.e.spawnSerial, elites: f.e.eliteRemaining };
-    expect(f.state.targets).toHaveLength(4); expect(queue).toEqual({ remaining: 28, member: 0, serial: 0, elites: 1 });
+    expect(f.state.targets).toHaveLength(4); expect(queue).toEqual({ remaining: f.e.totalToSpawn, member: 0, serial: 0, elites: 1 });
     expect(f.events.filter(event => event.type === 'ACTOR_SPAWNED')).toEqual([]); expect(f.e.nextSpawnAt - f.state.elapsed).toBeCloseTo(.25);
     f.advance(.25); expect(f.state.targets).toHaveLength(4); expect(f.e.remainingToSpawn).toBe(queue.remaining);
     f.state.targets[0].hp = 0; // Explicit released reservation; actual death/split is covered below.
@@ -137,11 +138,11 @@ describe('announced current-generation dual elite births', () => {
   it('reserves two population places for FISSION in either position and retries without demoting or skipping its elite', () => {
     for (const pair of [['FISSION', 'MIMIC'], ['MIMIC', 'FISSION']] as [TraitId, TraitId][]) {
       const f = fixture(); f.state.targets = Array.from({ length: 23 }, (_, index) => resident(`resident-${index}`, index));
-      f.enter(pair); expect(f.state.targets).toHaveLength(23); expect(f.e.remainingToSpawn).toBe(28); expect(f.e.batchMemberIndex).toBe(0);
+      f.enter(pair); expect(f.state.targets).toHaveLength(23); expect(f.e.remainingToSpawn).toBe(f.e.totalToSpawn); expect(f.e.batchMemberIndex).toBe(0);
       f.state.targets[0].hp = 0; f.advance(.25);
       const elite = f.state.targets.find(target => target.role === 'elite')!;
       expect(elite.traits).toEqual(pair); expect(elite.eliteCycle).toBeDefined();
-      expect(f.e.remainingToSpawn).toBe(27); expect(f.e.batchMemberIndex).toBe(1); expect(reservation(f.state)).toBe(24);
+      expect(f.e.remainingToSpawn).toBe(f.e.totalToSpawn - 1); expect(f.e.batchMemberIndex).toBe(1); expect(reservation(f.state)).toBe(24);
       expect(f.events.filter(event => event.type === 'ACTOR_SPAWNED')).toHaveLength(1);
     }
   });
@@ -153,7 +154,7 @@ describe('announced current-generation dual elite births', () => {
     f.e.totalToSpawn = 28; f.e.remainingToSpawn = 25; f.e.nextSpawnAt = f.state.elapsed;
     f.director.afterInput();
     const born = f.state.targets.find(target => target.sourceId === 'endless:wave:20')!;
-    expect(born).toBeDefined(); expect(born.traits).toEqual([]); expect(born.eliteCycle).toBeUndefined(); expect(born.hp).toBe(68);
+    expect(born).toBeDefined(); expect(born.traits).toEqual([]); expect(born.eliteCycle).toBeUndefined(); expect(born.hp).toBe(Math.round(68 * endlessPacing(20).healthMultiplier));
   });
 
   it('counts pending real child places before admitting the FISSION duet and resumes only after two places are free', () => {
@@ -163,11 +164,11 @@ describe('announced current-generation dual elite births', () => {
     f.state.targets = [pending, ...Array.from({ length: 22 }, (_, index) => resident(`resident-${index}`, index + 1))];
     f.enter(['FISSION', 'CARAPACE']);
     expect(f.e.pendingChildren).toBe(2); expect(reservation(f.state)).toBe(24);
-    expect(f.e.remainingToSpawn).toBe(28); expect(f.e.batchMemberIndex).toBe(0);
+    expect(f.e.remainingToSpawn).toBe(f.e.totalToSpawn); expect(f.e.batchMemberIndex).toBe(0);
     f.state.targets[1].hp = 0; f.advance(.25);
-    expect(f.e.remainingToSpawn).toBe(28); expect(reservation(f.state)).toBe(23);
+    expect(f.e.remainingToSpawn).toBe(f.e.totalToSpawn); expect(reservation(f.state)).toBe(23);
     f.state.targets[2].hp = 0; f.advance(.25);
-    expect(f.e.remainingToSpawn).toBe(27); expect(f.e.pendingChildren).toBe(2); expect(reservation(f.state)).toBe(24);
+    expect(f.e.remainingToSpawn).toBe(f.e.totalToSpawn - 1); expect(f.e.pendingChildren).toBe(2); expect(reservation(f.state)).toBe(24);
     const elite = f.state.targets.find(target => target.role === 'elite')!;
     expect(elite.traits).toEqual(['FISSION', 'CARAPACE']); expect(elite.eliteCycle).toBeDefined();
   });
@@ -178,16 +179,16 @@ describe('announced current-generation dual elite births', () => {
     expect(a.e).toEqual(b.e); expect(a.state.targets).toEqual(b.state.targets);
   });
 
-  it('retains finite wave births and exactly one dual elite while draining the unchanged wave30 queue', () => {
+  it('retains finite wave births and exactly one dual elite while draining the announced wave30 queue', () => {
     const f = fixture(30); f.enter(['CARAPACE', 'MIMIC']);
-    for (let batch = 0; batch < 15 && f.e.remainingToSpawn > 0; batch++) {
+    for (let batch = 0; batch < f.e.batchSchedule.length + 1 && f.e.remainingToSpawn > 0; batch++) {
       f.state.targets = []; f.advance(Math.max(0, f.e.nextSpawnAt - f.state.elapsed));
     }
     expect(f.e.remainingToSpawn).toBe(0);
     const births = f.events.filter(event => event.type === 'ACTOR_SPAWNED');
-    expect(births).toHaveLength(28); expect(births.filter(event => event.data.role === 'elite')).toHaveLength(2);
+    expect(births).toHaveLength(f.e.totalToSpawn); expect(births.filter(event => event.data.role === 'elite')).toHaveLength(2);
     expect(births.filter(event => event.data.dualElite === true)).toHaveLength(1);
-    expect(new Set(births.map(event => event.data.id)).size).toBe(28);
+    expect(new Set(births.map(event => event.data.id)).size).toBe(f.e.totalToSpawn);
   });
 
   it('does not continue an old batch or outer clear after its birth callback restarts or pauses the session', () => {

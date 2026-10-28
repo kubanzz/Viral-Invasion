@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { distance } from '../../src/actors/collision';
 import { endlessCombatStats, offerEndlessUpgrade } from '../../src/game/endlessGrowth';
 import type { EndlessGrowthState } from '../../src/game/endlessGrowthTypes';
-import { IMMUNE_CELL_BALANCE } from '../../src/game/immuneCells';
+import { ENDLESS_IMMUNE_CELL_BALANCE, IMMUNE_CELL_BALANCE } from '../../src/game/immuneCells';
 import { BEACON_CONFIG } from '../../src/game/protocols';
 import { GameSession } from '../../src/game/session';
 import { BALANCE, type InputFrame, type Target, type WorldGeometry } from '../../src/game/types';
@@ -157,6 +157,7 @@ describe('endless upgrades through real session input', () => {
     step(session, { scan: true, aim: { x: 720, y: 500 } });
     const initial = structuredClone(session.state.growth!.cells!);
     expect(initial).toHaveLength(3);
+    expect(session.state.growth!.beacon!.focus).toBeUndefined();
     expect(victim.hp).toBe(1000);
     throughTick(session, 12);
     expect(victim.hp).toBe(1000);
@@ -166,7 +167,7 @@ describe('endless upgrades through real session input', () => {
       const before = structuredClone(session.state.growth!.cells!);
       step(session);
       for (const cell of session.state.growth!.cells!) {
-        expect(distance(cell, before.find(other => other.id === cell.id)!)).toBeLessThanOrEqual(IMMUNE_CELL_BALANCE.speed * BALANCE.step + 1e-7);
+        expect(distance(cell, before.find(other => other.id === cell.id)!)).toBeLessThanOrEqual(ENDLESS_IMMUNE_CELL_BALANCE.pursuitSpeed * BALANCE.step + 1e-7);
       }
       for (const event of session.state.events.filter(event => event.tick === session.state.tick && event.type === 'PROTOCOL_BEACON_HIT')) {
         const cell = session.state.growth!.cells!.find(cell => cell.id === event.data.cellId)!;

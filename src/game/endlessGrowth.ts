@@ -63,8 +63,11 @@ export function endlessCombatStats(growth: EndlessGrowthState): EndlessCombatSta
 }
 
 const display = (value: number): string => Number.isInteger(value) ? String(value) : String(Number(value.toFixed(3)));
-function optionFor(growth: EndlessGrowthState, id: EndlessUpgradeId): EndlessUpgradeOption {
-  const currentRank = rank(growth, id), nextRank = currentRank + 1;
+export const isEndlessBreakthrough = (wave: number): boolean => Number.isSafeInteger(wave) && wave >= 5 && wave % 5 === 0;
+
+function optionFor(growth: EndlessGrowthState, id: EndlessUpgradeId, wave: number): EndlessUpgradeOption {
+  const currentRank = rank(growth, id);
+  const nextRank = Math.min(currentRank + (isEndlessBreakthrough(wave) ? 2 : 1), ENDLESS_UPGRADES[id].maxRank ?? MAX_COUNT);
   const before = endlessCombatStats(growth), after = endlessCombatStats({ ...growth, ranks: { ...growth.ranks, [id]: nextRank } });
   const beforeShotTicks = Math.ceil(before.primaryCooldown / BALANCE.step - 1e-9), afterShotTicks = Math.ceil(after.primaryCooldown / BALANCE.step - 1e-9);
   const change = (a: number, b: number) => `${display(a)} → ${display(b)}`;
@@ -120,7 +123,8 @@ export function offerEndlessUpgrade(growth: EndlessGrowthState, wave: number): v
     selected = [...guaranteed, ...shuffled(pool.filter(id => !guaranteed.includes(id)), rng)].slice(0, 3);
   }
   growth.draft = { id: `endless:${growth.seed}:wave:${wave}:level:${growth.level + 1}`, wave,
-    options: shuffled(selected, rng).map(id => optionFor(growth, id)) as [EndlessUpgradeOption, EndlessUpgradeOption, EndlessUpgradeOption] };
+    ...(isEndlessBreakthrough(wave) ? { breakthrough: true } : {}),
+    options: shuffled(selected, rng).map(id => optionFor(growth, id, wave)) as [EndlessUpgradeOption, EndlessUpgradeOption, EndlessUpgradeOption] };
   growth.offeredThroughWave = wave;
 }
 
@@ -128,11 +132,13 @@ export function offerEndlessUpgrade(growth: EndlessGrowthState, wave: number): v
 export function chooseEndlessUpgrade(growth: EndlessGrowthState, draftId: string, upgradeId: EndlessUpgradeId): boolean {
   const draft = growth.draft;
   if (!draft || draft.id !== draftId || !knownId(upgradeId) || count(growth.level) >= MAX_COUNT) return false;
+  if (draft.wave !== growth.offeredThroughWave || draft.id !== `endless:${growth.seed}:wave:${draft.wave}:level:${growth.level + 1}`) return false;
   const option = draft.options.find(item => item.id === upgradeId);
-  if (!option || option.currentRank !== rank(growth, upgradeId) || option.nextRank !== option.currentRank + 1 || !available(growth, upgradeId)) return false;
+  if (!option || option.currentRank !== rank(growth, upgradeId) || !available(growth, upgradeId)) return false;
   // Descriptions are regenerated from the actual parameters at commit time;
   // mutable display text is never the authority for the applied upgrade.
-  const actual = optionFor(growth, upgradeId);
+  const actual = optionFor(growth, upgradeId, draft.wave);
+  if (option.nextRank !== actual.nextRank) return false;
   growth.ranks[upgradeId] = actual.nextRank;
   growth.level++;
   growth.lastChoice = { upgradeId, title: actual.title, description: actual.description };

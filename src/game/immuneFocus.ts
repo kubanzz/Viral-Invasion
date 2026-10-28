@@ -10,7 +10,12 @@ function inSquadRegion(target: Target, beacon: BeaconState, context: GrowthConte
     && !!target.id && Number.isFinite(target.x) && Number.isFinite(target.y)
     && Number.isFinite(target.radius) && target.radius > 0
     && isLegalPosition(target, target.radius, context.geometry)
-    && distance(beacon, target) <= beacon.radius + target.radius + 1e-7;
+    // A deliberate challenge command may pursue a distant support from the
+    // existing squad position. This changes neither the deployment anchor nor
+    // collision/route checks, and ordinary automatic acquisition stays local.
+    && (context.endless && beacon.mode === 'protocol'
+      ? distance(context.player, target) <= IMMUNE_FOCUS_BALANCE.range + 1e-7
+      : distance(beacon, target) <= beacon.radius + target.radius + 1e-7);
 }
 
 function activeBeacon(beacon: BeaconState | null | undefined, context: GrowthContext): beacon is BeaconState {

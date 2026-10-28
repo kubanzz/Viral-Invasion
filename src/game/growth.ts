@@ -4,7 +4,7 @@ import type { OrganId } from './battleTypes';
 import { activeWorld, type GameEvent, type GameState, type Target, type Vec, type WorldGeometry } from './types';
 import { GROWTH_BALANCE as B, makeDraftOption, PROTOCOL_IDS, PROTOCOLS, TUNINGS, getBeaconConfig, getChainConfig, getPulseConfig, getTraceConfig, PATROL_CONFIG, protocolRank, PROTOCOL_ACTIONS, chainRicochetPeriod } from './protocols';
 import type { DamageOrigin, DraftIntent, DraftOption, DraftResolution, EquippedProtocol, GrowthCommand, GrowthContext, GrowthState, GrowthHistoryEntry, ProtocolDraft, ProtocolId, ProtocolRank, ResearchResult, ResearchDirectionId, ResearchConfirmIntent, ResearchRequestIntent, ResearchRequestResult, ResearchConfirmResult, ResearchCancelResult } from './growthTypes';
-import { advanceImmuneCells, summonImmuneCells } from './immuneCells';
+import { advanceImmuneCells, redirectImmuneCells, summonImmuneCells, ENDLESS_IMMUNE_CELL_BALANCE } from './immuneCells';
 import { IMMUNE_FOCUS_BALANCE, selectImmuneFocusTarget } from './immuneFocus';
 import { availableResearchDirections, RESEARCH_DIRECTIONS } from './research';
 import { parsePreparation, preparationForPlan, type RunPreparation } from './preparation';
@@ -440,7 +440,8 @@ export class GrowthController {
       if(beacon)commands.push({...base,kind:'organCost',amount:config.tissueCost});
       commands.push({...base,kind:'effect',effect:'scan',from:point(position),to:point(position),radius:config.radius,duration:.6},
         {kind:'log',type:beacon?'PROTOCOL_BEACON_CREATED':'IMMUNE_PATROL_CREATED',data:{...(beacon?{protocolId:'IMMUNE_BEACON'}:{}),rootId,x:position.x,y:position.y,duration:config.duration,cost:config.tissueCost,cooldown:config.cooldown,cells:beacon?3:1,
-          ...(this.state.beacon.focus?{focusTargetId:this.state.beacon.focus.targetId,focusUntil:this.state.beacon.focus.until}:{})}});
+          ...(this.state.beacon.focus?{focusTargetId:this.state.beacon.focus.targetId,focusUntil:this.state.beacon.focus.until}:{}),
+          ...(context.endless&&beacon&&this.state.beacon.focus?{rallyUntil:this.state.cells[0]?.rallyUntil??context.elapsed,rallySpeed:ENDLESS_IMMUNE_CELL_BALANCE.rallySpeed}:{})}});
       this.remember(beacon?'PROTOCOL_BEACON_CREATED':'IMMUNE_PATROL_CREATED',beacon?`三只免疫细胞出击，组织承压 −${config.tissueCost}。`:'Q 召来一只免疫侦巡细胞，短时协助清理。',context.elapsed);
     }else if(this.state.beacon&&this.state.beacon.until>context.elapsed&&this.state.beacon.organId===context.organId
       &&this.state.beacon.mode!=='patrol'&&this.state.cells?.some(cell=>cell.beaconId===this.state.beacon!.id&&cell.until>context.elapsed)) {
@@ -451,12 +452,13 @@ export class GrowthController {
       const focus=selectImmuneFocusTarget(context,this.state.beacon);
       if(focus)this.state.beacon.focus={targetId:focus.id,until:Math.min(context.elapsed+IMMUNE_FOCUS_BALANCE.duration,old.until)};
       else delete this.state.beacon.focus;
-      this.state.cells=this.state.cells.map(cell=>({...cell,waypoint:null,navigationAt:0}));
+      this.state.cells=redirectImmuneCells(this.state.cells,this.state.beacon,context);
       const base={protocolId:'IMMUNE_BEACON' as const,rootId,organId:context.organId};
       commands.push({...base,kind:'effect',effect:'scan',from:point(position),to:point(position),radius:old.radius,duration:.6},
         {kind:'log',type:'IMMUNE_SQUAD_REDIRECTED',data:{protocolId:'IMMUNE_BEACON',rootId,beaconId:old.id,
           fromX:old.x,fromY:old.y,x:position.x,y:position.y,cells:this.state.cells.length,until:old.until,readyAt:this.state.beaconReadyAt,cost:0,
-          ...(this.state.beacon.focus?{focusTargetId:this.state.beacon.focus.targetId,focusUntil:this.state.beacon.focus.until}:{})}});
+          ...(this.state.beacon.focus?{focusTargetId:this.state.beacon.focus.targetId,focusUntil:this.state.beacon.focus.until}:{}),
+          ...(context.endless&&this.state.beacon.focus?{rallyUntil:this.state.cells[0]?.rallyUntil??context.elapsed,rallySpeed:ENDLESS_IMMUNE_CELL_BALANCE.rallySpeed}:{})}});
       this.remember('IMMUNE_SQUAD_REDIRECTED','免疫小队转向新战线；保持原剩余寿命与吞噬冷却，不消耗组织。',context.elapsed);
     }
     const accepted=this.budget(context,commands);

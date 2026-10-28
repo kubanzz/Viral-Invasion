@@ -10,6 +10,7 @@ import { clipChargeEnd } from './enemyTactics';
 import { chooseEndlessEvolution } from './endlessEvolution';
 import { recordEndlessBehavior } from './endlessBehavior';
 import { createEliteTacticCycle } from './eliteTacticCycle';
+import { endlessPacing } from './endlessPacing';
 import { activeWorld, type GameEvent, type GameState, type Target, type Vec } from './types';
 export type { EndlessHost, EndlessState } from './endlessTypes';
 
@@ -18,7 +19,7 @@ export const ENDLESS_BALANCE = {
   batchSize: 3, batchInterval: 2, minimumBatchInterval: 1.2,
   minimumSpawnDistance: 340, spawnRingInner: 420, spawnRingOuter: 600,
   spawnGrace: 1.5, maximumActors: BATTLE_BALANCE.maxActors,
-  maximumWaveBudget: 28, maximumFissionParents: 4,
+  maximumWaveBudget: 48, maximumFissionParents: 4,
   comboSeconds: 3, maximumComboMultiplier: 4,
 } as const;
 
@@ -42,6 +43,7 @@ export function endlessSupportTactics(seed: number, wave: number): EnemyTactic[]
 }
 
 function wavePlan(seed: number, wave: number, inheritedTraits?: readonly TraitId[]): Pick<EndlessState, 'traits' | 'title' | 'eliteWave' | 'eliteRemaining' | 'warningSeconds' | 'totalToSpawn' | 'formation' | 'formationLabel' | 'batchSchedule' | 'supportRemaining'> {
+  const pacing = endlessPacing(wave);
   const eliteWave = wave % 5 === 0;
   const generation = Math.floor(wave / 5);
   const offset = new SeedRng((seed ^ 0x454e444c) >>> 0).int(0, 2);
@@ -50,20 +52,21 @@ function wavePlan(seed: number, wave: number, inheritedTraits?: readonly TraitId
   const formation = traits[0] === 'FISSION' && wave % 2 === 1 ? 'fission-pack' : FORMATIONS[(wave - 1) % FORMATIONS.length];
   const formationLabel = `${FORMATION_LABELS[formation]}${wave >= 16 ? ' · 混编支援' : ''}`;
   const cycle = eliteWave && wave >= 20 ? createEliteTacticCycle(traits) : undefined;
-  const title = cycle ? `精英围猎 · 主招 ${ENEMY_TACTIC_INFO[cycle.tactics[0]].name} → 伴招 ${ENEMY_TACTIC_INFO[cycle.tactics[1]].name}`
+  const encounterTitle = cycle ? `精英围猎 · 主招 ${ENEMY_TACTIC_INFO[cycle.tactics[0]].name} → 伴招 ${ENEMY_TACTIC_INFO[cycle.tactics[1]].name}`
     : eliteWave ? `精英围猎 · ${TRAITS[traits[0]].name}` : traits.length ? `${TRAITS[traits[0]].name} · ${formationLabel}` : formationLabel;
+  const title = `${pacing.label} · ${encounterTitle}`;
   const eliteRemaining = eliteWave ? Math.min(2, 1 + Math.floor((wave - 5) / 25)) : 0;
-  const totalToSpawn = Math.min(ENDLESS_BALANCE.maximumWaveBudget, 6 + wave * 2);
+  const totalToSpawn = Math.min(ENDLESS_BALANCE.maximumWaveBudget, 6 + wave * 2 + pacing.budgetBonus);
   const supportRemaining = endlessSupportTactics(seed, wave).length;
   const roles: EndlessSpawnRole[] = Array.from({ length: totalToSpawn }, () => 'ordinary');
   for (let elite = 0; elite < eliteRemaining; elite++) roles[elite * 3] = 'elite';
   for (let support = 0; support < supportRemaining; support++) roles[support * (wave >= 16 ? 6 : 3) + 2] = 'support';
   const rotation = new SeedRng((seed ^ Math.imul(wave, 0x45d9f3b)) >>> 0).int(0, 7);
-  const pairInterval = Math.max(2.6, 4.2 - (wave - 1) * .035);
+  const pairInterval = Math.max(.9, Math.max(2.6, 4.2 - (wave - 1) * .035) * pacing.spawnIntervalMultiplier);
   const batchSchedule: EndlessBatch[] = [];
   for (let batch = 0; batch * 3 < totalToSpawn; batch++) {
     const pair = Math.floor(batch / 2), second = batch % 2;
-    const gap = formation === 'front' ? .45 : formation === 'cross' ? .7 : formation === 'fission-pack' ? .55 : .6;
+    const gap = Math.max(.14, (formation === 'front' ? .45 : formation === 'cross' ? .7 : formation === 'fission-pack' ? .55 : .6) * pacing.spawnIntervalMultiplier);
     const sector = (rotation + (formation === 'cross' ? second * 4 + pair * 2 : formation === 'mixed' ? APPROACH_ORDER[batch % 8] : formation === 'fission-pack' ? pair % 2 : 0)) % 8;
     batchSchedule.push({ at: pair * pairInterval + second * gap, sector, spread: formation === 'fission-pack' ? .13 : .18,
       roles: roles.slice(batch * 3, batch * 3 + 3) });
@@ -295,7 +298,8 @@ export class EndlessDirector {
       const playerDistance = distance(position, this.state.player);
       const standoff = wantsStandoff && playerDistance >= STANDOFF_BALANCE.inner - 1e-7
         && playerDistance <= STANDOFF_BALANCE.outer + 1e-7;
-      const hp = elite ? Math.min(204, 136 + Math.floor(e.wave / 10) * 34) : 68;
+      const pacing = endlessPacing(e.wave);
+      const hp = Math.round(elite ? 170 * pacing.eliteHealthMultiplier : 68 * pacing.healthMultiplier);
       const id = `${elite ? 'elite' : 'virus'}-${++this.state.battle!.nextActorId}`;
       const target: Target & { tactic: EnemyTactic } = { ...position, id, kind: traits.includes('FISSION') ? 'cluster' : 'single', role: elite ? 'elite' : 'virus', radius,
         hp, maxHp: hp, hitUntil: 0, scanned: false, traits, generation: 0, sourceId: sourceId(e.wave), born: now,

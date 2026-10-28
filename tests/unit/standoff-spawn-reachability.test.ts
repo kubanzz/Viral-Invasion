@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { distance, isLegalPosition, normalized, wallHit } from '../../src/actors/collision';
 import { ENDLESS_BALANCE, EndlessDirector } from '../../src/game/endless';
+import { endlessPacing } from '../../src/game/endlessPacing';
 import type { EndlessBatch } from '../../src/game/endlessTypes';
 import { enemyAttackPlan } from '../../src/game/enemyTactics';
 import { HEART_WORLD, LUNG_WORLD } from '../../src/game/organConfig';
@@ -46,7 +47,7 @@ describe('bounded complete search for a finite ranged support birth', () => {
     expect(f.e.batchIndex).toBe(1); expect(f.e.batchMemberIndex).toBe(0);
     expect(f.state.targets).toHaveLength(1);
     const support = f.state.targets[0]; assertSafe(support, f.state);
-    expect(support.tacticPosture).toBe('standoff'); expect(support.hp).toBe(68);
+    expect(support.tacticPosture).toBe('standoff'); expect(support.hp).toBe(Math.round(68 * endlessPacing(f.e.wave).healthMultiplier));
     expect(distance(support, f.state.player)).toBeGreaterThanOrEqual(560 - 1e-7);
     expect(distance(support, f.state.player)).toBeLessThanOrEqual(600 + 1e-7);
     expect(support.attackReady! - support.born!).toBeCloseTo(1.5);

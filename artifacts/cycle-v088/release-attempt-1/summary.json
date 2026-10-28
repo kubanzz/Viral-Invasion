@@ -1,0 +1,63 @@
+{
+  "version": "0.8.8",
+  "work": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\cycle-v088-release",
+  "at": "2026-10-28T03:22:57.034Z",
+  "status": "passed",
+  "commands": [
+    {
+      "label": "01-build",
+      "args": [
+        "run",
+        "build"
+      ],
+      "cwd": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\cycle-v088-release",
+      "startedAt": "2026-10-28T03:22:57.061Z",
+      "status": "passed",
+      "exitCode": 0,
+      "finishedAt": "2026-10-28T03:23:08.589Z",
+      "log": "01-build.log",
+      "logSha256": "b2a25398641e7dce49067f10fb60465da62c462135183771dd0aa43af5b8d79c"
+    },
+    {
+      "label": "02-nonbatch-tests",
+      "args": [
+        "test",
+        "--",
+        "--exclude",
+        "tests/unit/full-system-seeds.test.ts",
+        "--maxWorkers=2",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\cycle-v088\\release-attempt-1\\unit.json"
+      ],
+      "cwd": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\cycle-v088-release",
+      "startedAt": "2026-10-28T03:23:08.611Z",
+      "status": "passed",
+      "exitCode": 0,
+      "finishedAt": "2026-10-28T03:23:58.721Z",
+      "log": "02-nonbatch-tests.log",
+      "logSha256": "8577323ac325b367cb2d1e884236248290d954e0e4d2f1b2fca9ae0a8b0aa7cd"
+    }
+  ],
+  "scope": "Frozen gameplay and UI over the verified v0.8.7 art/rendering snapshot; no current production build or in-flight artwork changed. Full nonbatch regression is new; the 1000-session campaign batch is not rerun or relabeled.",
+  "mainDistBefore": "27a37e8a83be3b077037991e05826970629cfca01d83ce07dee5cd30e6e8b4ae",
+  "dependencies": {
+    "phaser": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\cycle-v088-release\\node_modules\\phaser\\dist\\phaser.js",
+    "esbuild": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\cycle-v088-release\\node_modules\\esbuild\\lib\\main.js",
+    "sharp": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\cycle-v088-release\\node_modules\\sharp\\dist\\index.cjs",
+    "vitest": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\cycle-v088-release\\node_modules\\vitest\\index.cjs"
+  },
+  "gameSha256": "e38a94ebfdb4c15a6940b94f2394a7888024bccb8da2510a0e26071220ab96bc",
+  "buildInputs": 143,
+  "tests": {
+    "success": true,
+    "files": 100,
+    "passed": 947,
+    "failed": 0,
+    "pending": 0
+  },
+  "mainDistUnchanged": true,
+  "sourceMatches": true,
+  "pass": true,
+  "finishedAt": "2026-10-28T03:23:58.882Z"
+}

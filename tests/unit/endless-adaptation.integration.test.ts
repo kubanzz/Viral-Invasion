@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { EndlessDirector } from '../../src/game/endless';
 import { ENDLESS_EVOLUTION_TACTICS } from '../../src/game/endlessEvolution';
+import { endlessPacing } from '../../src/game/endlessPacing';
 import { GameSession } from '../../src/game/session';
 import type { TraitId } from '../../src/game/battleTypes';
 import type { GameEvent, InputFrame } from '../../src/game/types';
@@ -37,11 +38,11 @@ describe('announced endless generations in the actual session', () => {
     const elite = f.s.targets.find(target => target.role === 'elite')!;
     expect(elite).toBeDefined(); expect(elite.traits).toEqual(pending.decision.traits);
     expect(elite.eliteCycle?.tactics).toEqual(pending.decision.traits.map(trait => ENDLESS_EVOLUTION_TACTICS[trait]));
-    expect(elite.tactic).toBe(ENDLESS_EVOLUTION_TACTICS[pending.decision.main]); expect(elite.maxHp).toBe(204);
+    expect(elite.tactic).toBe(ENDLESS_EVOLUTION_TACTICS[pending.decision.main]); expect(elite.maxHp).toBe(Math.round(170 * endlessPacing(20).eliteHealthMultiplier));
     for (const target of f.s.targets) {
       expect(target.traits!.every(trait => f.e.traits.includes(trait))).toBe(true);
       expect(target.traits!.length).toBeLessThanOrEqual(target === elite ? 2 : 1);
-      if (target.tactic === 'thin-ray') { expect(target.traits).toEqual([]); expect(target.maxHp).toBe(68); }
+      if (target.tactic === 'thin-ray') { expect(target.traits).toEqual([]); expect(target.maxHp).toBe(Math.round(68 * endlessPacing(20).healthMultiplier)); }
     }
   });
 

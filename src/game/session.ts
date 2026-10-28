@@ -672,11 +672,13 @@ export class GameSession {
     this.growthController?.rewardEndlessWave(wave, state.elapsed);
     this.growthController?.rewardEndlessMilestone(wave, growthContext(state));
     this.effect('success', state.player, state.player, 110, .8);
-    this.message(`第 ${wave} 波清除！选择一次实战进化；确认后恢复耐久和组织。`, 5, 2);
+    this.message(`第 ${wave} 波清除！${state.endlessGrowth.draft?.breakthrough ? '精英突破：所选成长最多连升两阶' : '选择一次实战进化'}；确认后恢复耐久和组织。`, 5, 2);
   }
 
   chooseCombatUpgrade(draftId: string, upgradeId: EndlessUpgradeId, runId: string): boolean {
     const state = this.state, growth = state.endlessGrowth;
+    const previousRank = growth?.ranks[upgradeId] ?? 0;
+    const breakthrough = !!growth?.draft?.breakthrough;
     if (state.phase !== 'paused' || !state.endless || !growth || !state.growth || state.growth.runId !== runId || state.growth?.draft || state.growth?.pendingResearch
       || !chooseEndlessUpgrade(growth, draftId, upgradeId)) return false;
     const stats = endlessCombatStats(growth);
@@ -688,9 +690,10 @@ export class GameSession {
     if (state.growth) state.growth.beaconReadyAt = state.elapsed;
     this.effect('evolution', state.player, state.player, 75, 1);
     this.emit('COMBAT_UPGRADE_COMMITTED', { draftId, upgradeId, level: growth.level, wave: state.endless.clearedWaves,
+      previousRank, rank: growth.ranks[upgradeId] ?? previousRank, rankGain: (growth.ranks[upgradeId] ?? previousRank) - previousRank, breakthrough,
       healed: state.player.hp - before, organRepaired: state.tissue.hp - organBefore });
     this.emit('ORGAN_INTEGRITY_CHANGED', { organId: 'heart', before: organBefore, after: state.tissue.hp, reason: 'wave-supply' });
-    this.message(`${growth.lastChoice?.title ?? '实战进化'}已生效 · 耐久 +${Math.round(state.player.hp - before)} / 组织 +${Math.round(state.tissue.hp - organBefore)}`, 5, 2);
+    this.message(`${breakthrough ? '精英突破 · ' : ''}${growth.lastChoice?.title ?? '实战进化'} ${previousRank}→${growth.ranks[upgradeId]}阶 · 耐久 +${Math.round(state.player.hp - before)} / 组织 +${Math.round(state.tissue.hp - organBefore)}`, 5, 2);
     this.draftPauseId = null;
     this.resume();
     this.emit('INPUT_RESET_REQUESTED', { reason: 'combat-upgrade-committed' });

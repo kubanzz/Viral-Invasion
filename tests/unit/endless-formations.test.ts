@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { distance } from '../../src/actors/collision';
 import { initializeBattle } from '../../src/game/battle';
 import { EndlessDirector, ENDLESS_BALANCE, initializeEndless } from '../../src/game/endless';
+import { endlessPacing } from '../../src/game/endlessPacing';
 import { clipChargeEnd, enemyAttackHits, enemyAttackPlan, enemyRayEnd, segmentDistance } from '../../src/game/enemyTactics';
 import { ENEMY_TACTIC_INFO } from '../../src/game/enemyTacticInfo';
 import type { EnemyTactic } from '../../src/game/enemyTacticsTypes';
@@ -43,7 +44,7 @@ function fixture(seed = 71, world = openWorld) {
 
 /** Director-only arrival fixture; real damage/attack acceptance is tested separately. */
 function spawnRemaining(f: ReturnType<typeof fixture>): void {
-  for (let batch = 0; batch < 12 && f.state.endless!.remainingToSpawn > 0; batch++) {
+  for (let batch = 0; batch < f.state.endless!.batchSchedule.length + 1 && f.state.endless!.remainingToSpawn > 0; batch++) {
     for (const target of f.state.targets) target.hp = 0;
     f.advance(Math.max(0, f.state.endless!.nextSpawnAt - f.state.elapsed));
   }
@@ -57,15 +58,16 @@ function actor(tactic: EnemyTactic, state: GameState, patch: Partial<Target> = {
 }
 
 describe('real finite challenge formations', () => {
-  it('spawns a coherent front cohort and its second three-body pulse at0/.45 seconds, then leaves a real breather', () => {
+  it('spawns coherent front cohorts at their announced pressure cadence, then leaves a real breather', () => {
     const f = fixture(); f.enter(1); const s = f.state;
     expect(s.endless!.formation).toBe('front'); expect(s.targets).toHaveLength(3);
-    expect(s.endless!.batchSchedule[0].at).toBe(0); expect(s.endless!.batchSchedule[1].at).toBe(.45);
+    const secondAt = s.endless!.batchSchedule[1].at;
+    expect(s.endless!.batchSchedule[0].at).toBe(0); expect(secondAt).toBeCloseTo(.45 * endlessPacing(1).spawnIntervalMultiplier);
     expect(s.endless!.batchSchedule[0].sector).toBe(s.endless!.batchSchedule[1].sector);
     const angles = s.targets.map(target => Math.atan2(target.y - s.player.y, target.x - s.player.x));
     const spread = Math.max(...angles.map(angle => Math.abs(Math.atan2(Math.sin(angle - angles[1]), Math.cos(angle - angles[1])))));
     expect(spread).toBeLessThan(.3);
-    f.advance(.44); expect(s.targets).toHaveLength(3); f.advance(.01); expect(s.targets).toHaveLength(6);
+    f.advance(secondAt - .01); expect(s.targets).toHaveLength(3); f.advance(.01); expect(s.targets).toHaveLength(6);
     expect(s.endless!.nextSpawnAt - s.elapsed).toBeGreaterThan(3);
     for (const target of s.targets) { expect(target.maxHp).toBe(68); expect(target.tactic).toBe('melee'); }
   });
@@ -87,7 +89,7 @@ describe('real finite challenge formations', () => {
     const s = f.state, support = s.targets.find(target => target.tactic === 'thin-ray')!;
     expect(s.targets).toHaveLength(3); expect(support).toBeDefined(); expect(support.traits).toEqual([]);
     expect(distance(s.player, support)).toBeGreaterThanOrEqual(560); expect(distance(s.player, support)).toBeLessThanOrEqual(600);
-    expect(support.tacticPosture).toBe('standoff'); expect(support.maxHp).toBe(68);
+    expect(support.tacticPosture).toBe('standoff'); expect(support.maxHp).toBe(Math.round(68 * endlessPacing(3).healthMultiplier));
     expect(support.attackReady! - s.elapsed).toBeCloseTo(ENDLESS_BALANCE.spawnGrace);
     expect(s.endless!.batchSchedule.flatMap(batch => batch.roles).filter(role => role === 'support')).toHaveLength(1);
     expect(s.endless!.batchSchedule.every(batch => batch.roles.some(role => role !== 'support'))).toBe(true);
@@ -120,17 +122,17 @@ describe('real finite challenge formations', () => {
     expect(f.state.endless!.batchMemberIndex).toBe(0);
   });
 
-  it('keeps every wave schedule finite, caps support roles and elite HP, and presents all three real elite tactics', () => {
+  it('keeps every wave schedule finite, caps support roles, uses announced elite HP, and presents all three real elite tactics', () => {
     const f = fixture(17), tactics = new Set<string>();
     for (let wave = 1; wave <= 35; wave++) {
       f.enter(wave); const s = f.state, e = s.endless!;
       expect(e.batchSchedule.flatMap(batch => batch.roles)).toHaveLength(e.totalToSpawn);
-      expect(e.batchSchedule.length).toBeLessThanOrEqual(10); expect(e.totalToSpawn).toBeLessThanOrEqual(28);
+      expect(e.batchSchedule.length).toBeLessThanOrEqual(Math.ceil(ENDLESS_BALANCE.maximumWaveBudget / 3)); expect(e.totalToSpawn).toBeLessThanOrEqual(ENDLESS_BALANCE.maximumWaveBudget);
       expect(e.batchSchedule.flatMap(batch => batch.roles).filter(role => role === 'support').length).toBe(wave < 3 ? 0 : wave < 6 ? 1 : wave < 16 ? 2 : wave < 30 ? 3 : 4);
       if (wave % 5 === 0) {
         expect(e.warningSeconds).toBe(8);
         const elite = s.targets.find(target => target.role === 'elite')!;
-        expect(elite).toBeDefined(); expect(elite.maxHp).toBeLessThanOrEqual(204);
+        expect(elite).toBeDefined(); expect(elite.maxHp).toBe(Math.round(170 * endlessPacing(wave).eliteHealthMultiplier));
         expect(distance(elite, s.player)).toBeGreaterThanOrEqual(380); expect(distance(elite, s.player)).toBeLessThanOrEqual(480);
         expect(elite.attackReady! - s.elapsed).toBeCloseTo(.35); tactics.add(elite.tactic!);
         expect(enemyAttackPlan(elite, s)?.windup).toBeGreaterThanOrEqual(1.2);
@@ -150,7 +152,7 @@ describe('real finite challenge formations', () => {
     const supports = f.state.targets.filter(target => target.role === 'virus' && target.tactic !== 'melee');
     for (const support of supports) {
       expect(warning).toContain(ENEMY_TACTIC_INFO[support.tactic!].name);
-      expect(support.traits).toEqual([]); expect(support.kind).toBe('single'); expect(support.maxHp).toBe(68);
+      expect(support.traits).toEqual([]); expect(support.kind).toBe('single'); expect(support.maxHp).toBe(Math.round(68 * endlessPacing(16).healthMultiplier));
     }
   });
 
@@ -160,26 +162,27 @@ describe('real finite challenge formations', () => {
       const slots = e.batchSchedule.flatMap((batch, batchIndex) => batch.roles.flatMap((role, member) => role === 'support' ? [batchIndex * 3 + member] : []));
       expect(slots).toEqual(wave < 30 ? [2, 8, 14] : [2, 8, 14, 20]);
       expect(e.batchSchedule.every(batch => batch.roles.filter(role => role === 'support').length <= 1)).toBe(true);
-      expect(e.batchSchedule.flatMap(batch => batch.roles)).toHaveLength(28);
+      expect(e.batchSchedule.flatMap(batch => batch.roles)).toHaveLength(e.totalToSpawn);
       spawnRemaining(f);
       const arrivals = s.targets.filter(target => target.sourceId === `endless:wave:${wave}`);
       const supports = arrivals.filter(target => target.role === 'virus' && target.tactic !== 'melee');
-      expect(arrivals).toHaveLength(28); expect(supports).toHaveLength(wave < 30 ? 3 : 4); expect(e.supportRemaining).toBe(0);
+      expect(arrivals).toHaveLength(e.totalToSpawn); expect(supports).toHaveLength(wave < 30 ? 3 : 4); expect(e.supportRemaining).toBe(0);
       expect(supports[0].tactic).toBe('thin-ray'); if (wave >= 30) expect(supports[3].tactic).toBe('thin-ray');
       const mixed = supports.filter(target => target.tactic !== 'thin-ray').map(target => target.tactic!);
       expect(mixed).toHaveLength(2); expect(new Set(mixed).size).toBe(2);
       expect(supports.filter(target => target.tacticPosture === 'standoff')).toHaveLength(1);
       for (const support of supports) {
         expect(['thin-ray', 'crystal-charge', 'fission-burst', 'mimic-corrosion']).toContain(support.tactic);
-        expect(support.maxHp).toBe(68); expect(support.traits).toEqual([]); expect(support.generation).toBe(0);
+        expect(support.maxHp).toBe(Math.round(68 * endlessPacing(wave).healthMultiplier)); expect(support.traits).toEqual([]); expect(support.generation).toBe(0);
         const remote = support.tacticPosture === 'standoff';
         expect(support.attackReady! - support.born!).toBeCloseTo(remote ? ENDLESS_BALANCE.spawnGrace : .2);
         expect(distance(s.player, support)).toBeGreaterThanOrEqual(remote ? 560 : 380);
         expect(distance(s.player, support)).toBeLessThanOrEqual(remote ? 600 : 500);
       }
-      for (const elite of arrivals.filter(target => target.role === 'elite')) expect(elite.maxHp).toBeLessThanOrEqual(204);
-      expect(supports[1].born! - supports[0].born!).toBeGreaterThanOrEqual(2.6 - 1e-7);
-      expect(supports[2].born! - supports[1].born!).toBeGreaterThanOrEqual(2.6 - 1e-7);
+      for (const elite of arrivals.filter(target => target.role === 'elite')) expect(elite.maxHp).toBe(Math.round(170 * endlessPacing(wave).eliteHealthMultiplier));
+      const scheduledSupports = e.batchSchedule.flatMap(batch => batch.roles.filter(role => role === 'support').map(() => batch.at));
+      expect(supports[1].born! - supports[0].born!).toBeCloseTo(scheduledSupports[1] - scheduledSupports[0]);
+      expect(supports[2].born! - supports[1].born!).toBeCloseTo(scheduledSupports[2] - scheduledSupports[1]);
     }
   });
 

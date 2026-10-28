@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { distance } from '../../src/actors/collision';
 import { initializeBattle } from '../../src/game/battle';
 import { ENDLESS_BALANCE as E, EndlessDirector, initializeEndless } from '../../src/game/endless';
+import { endlessPacing } from '../../src/game/endlessPacing';
 import type { EndlessGameState, EndlessHost } from '../../src/game/endlessTypes';
 import { GameSession } from '../../src/game/session';
 import type { GameEvent, Target } from '../../src/game/types';
@@ -137,9 +138,9 @@ describe('continuous endless wave director', () => {
     f.advance(E.intermissionSeconds); f.advance(E.warningSeconds); f.advance(.7);
     for (const target of f.state.targets) f.clear(target);
     f.director.afterInput(); expect(f.state.endless!.nextSpawnAt - f.state.elapsed).toBeCloseTo(.5);
-    const serial = f.state.endless!.batchSerial; f.advance(100);
+    const serial = f.state.endless!.batchSerial, remaining = f.state.endless!.remainingToSpawn; f.advance(100);
     expect(f.state.endless!.batchSerial).toBe(serial + 1);
-    expect(f.state.endless!.remainingToSpawn).toBe(1);
+    expect(f.state.endless!.remainingToSpawn).toBe(remaining - 3);
     expect(f.state.endless!.nextSpawnAt).toBeGreaterThan(f.state.elapsed);
   });
 
@@ -210,7 +211,7 @@ describe('continuous endless wave director', () => {
     f.clear(f.state.targets[2]); expect(f.state.endless!.combo).toBe(1);
   });
 
-  it('warns eight seconds on every fifth-wave elite, rotates traits, keeps per-body trait/HP bounded and continues beyond a fixed finale', () => {
+  it('warns eight seconds on every fifth-wave elite, rotates traits, uses the fixed stage HP curve and continues beyond a fixed finale', () => {
     const f = fixture(); f.advance(3);
     const eliteTraits: string[] = [];
     for (let wave = 1; wave <= 31; wave++) {
@@ -225,11 +226,11 @@ describe('continuous endless wave director', () => {
         const elites = f.state.targets.filter(target => target.hp > 0 && target.role === 'elite');
         expect(elites.length).toBe(wave >= 30 ? 2 : 1); eliteTraits.push(elites[0].traits![0]);
         for (const [index, elite] of elites.entries()) {
-          expect(elite.hp).toBeLessThanOrEqual(204);
+          expect(elite.hp).toBe(Math.round(170 * endlessPacing(wave).eliteHealthMultiplier));
           expect(elite.traits!.length).toBe(wave >= 20 && index === 0 ? 2 : 1);
         }
       }
-      for (const target of f.state.targets.filter(target => target.hp > 0 && target.role === 'virus')) expect(target.maxHp).toBe(68);
+      for (const target of f.state.targets.filter(target => target.hp > 0 && target.role === 'virus')) expect(target.maxHp).toBe(Math.round(68 * endlessPacing(wave).healthMultiplier));
       f.finishWave();
       // Mimic the host's bounded corpse cleanup rather than retaining test corpses forever.
       f.state.targets = [];
