@@ -22,6 +22,8 @@ export interface Target extends Vec {
   attackAt?: number; attackReady?: number; attackAim?: Vec; generation?: number; sourceId?: string;
   splitAt?: number; splitPositions?: Vec[];
   attackTarget?: 'player' | 'tissue';
+  /** A finite pressure-wave ordinary body pursues tissue instead of the player. */
+  assaultObjective?: 'tissue';
   attackRadius?: number;
   tactic?: EnemyTactic;
   eliteCycle?: EliteTacticCycle;

@@ -5,14 +5,17 @@ import { activeWorld, type GameEvent, type GameState, type Target, type Vec, typ
 import { GROWTH_BALANCE as B, makeDraftOption, PROTOCOL_IDS, PROTOCOLS, TUNINGS, getBeaconConfig, getChainConfig, getPulseConfig, getTraceConfig, PATROL_CONFIG, protocolRank, PROTOCOL_ACTIONS, chainRicochetPeriod } from './protocols';
 import type { DamageOrigin, DraftIntent, DraftOption, DraftResolution, EquippedProtocol, GrowthCommand, GrowthContext, GrowthState, GrowthHistoryEntry, ProtocolDraft, ProtocolId, ProtocolRank, ResearchResult, ResearchDirectionId, ResearchConfirmIntent, ResearchRequestIntent, ResearchRequestResult, ResearchConfirmResult, ResearchCancelResult } from './growthTypes';
 import { advanceImmuneCells, redirectImmuneCells, summonImmuneCells, ENDLESS_IMMUNE_CELL_BALANCE } from './immuneCells';
-import { IMMUNE_FOCUS_BALANCE, selectImmuneFocusTarget } from './immuneFocus';
+import { IMMUNE_FOCUS_BALANCE, IMMUNE_GUARD_BALANCE, isImmuneGuardCommand, selectImmuneFocusTarget } from './immuneFocus';
+import { endlessCombatStats } from './endlessGrowth';
 import { availableResearchDirections, RESEARCH_DIRECTIONS } from './research';
 import { parsePreparation, preparationForPlan, type RunPreparation } from './preparation';
 
 export type { GrowthCommand, GrowthContext, GrowthState, DamageOrigin, DraftIntent, DraftResolution } from './growthTypes';
 
 export function growthContext(state: GameState): GrowthContext {
+  const combat = state.endlessGrowth ? endlessCombatStats(state.endlessGrowth) : undefined;
   return { endless: !!state.endless, tick: state.tick, elapsed: state.elapsed, active: state.phase === 'playing', organId: state.battle?.organId ?? 'heart',
+    ...(combat ? { immuneRank: state.endlessGrowth!.ranks.immune ?? 0, cellDamageMultiplier: combat.damageMultiplier * combat.cellDamageMultiplier } : {}),
     rhythm: state.battle?.pulse.phase ?? 'rest', deviceOrigin: state.battle?.pulse.origin ?? state.terminal,
     player: state.player, aim: state.battle?.lastAim ?? state.player, tissue: state.tissue, targets: state.targets, tool: state.tool, geometry: activeWorld(state), rhythmCycle: state.battle?.pulse.cycleIndex,
     acceptedMetrics: state.runMetrics, acceptedEvents: state.events };
@@ -169,6 +172,7 @@ export class GrowthController {
     this.observeTime(elapsed);
     if(event.type==='RUN_ENDED') { s.ended=true;s.draft=null;s.pendingResearch=null;s.pendingLevels=[];s.nextMilestoneWave=null;s.beacon=null;s.cells=[];s.marks=[];s.resonance=[];this.acceptedHistory.clear();return; }
     if(s.ended)return;
+    if(event.type==='ENDLESS_WAVE_CLEARED'&&s.beacon?.guard){s.beacon=null;s.cells=[];}
     this.recordAcceptedEffect(event, context, elapsed);
     // Continuous challenges reward completed waves. Per-actor reward ledgers
     // belong to the finite campaign and must not grow with an endless run.
@@ -417,6 +421,7 @@ export class GrowthController {
     if(this.state.ended||!context.active)return[];
     const previous={marks:this.state.marks.map(mark=>({...mark})),beacon:this.state.beacon,cells:this.state.cells,readyAt:this.state.beaconReadyAt,history:this.state.protocolHistory.slice()};
     const commands:GrowthCommand[]=[],trace=this.equipped('EXPOSE_TRACE'),beacon=this.equipped('IMMUNE_BEACON');
+    const guard = !!beacon && isImmuneGuardCommand(context);
     const rootId=`${this.state.runId}:scan:${context.tick}`;
     if(trace) {
       const config=getTraceConfig(trace.tuning,protocolRank(trace));let count=0;
@@ -430,9 +435,10 @@ export class GrowthController {
     if(!beacon||context.elapsed+1e-9>=this.state.beaconReadyAt) {
       const config=beacon?getBeaconConfig(beacon.tuning,protocolRank(beacon)):{...PATROL_CONFIG,tissueCost:0};
       const position=beaconPosition(context);
-      this.state.beacon={...point(position),id:`${rootId}:beacon`,organId:context.organId,born:context.elapsed,until:context.elapsed+config.duration,
+      this.state.beacon={...point(guard ? context.tissue : position),id:`${rootId}:beacon`,organId:context.organId,born:context.elapsed,until:context.elapsed+config.duration,
         radius:config.radius,damage:config.damage,interval:config.interval,nextAttackAt:context.elapsed+.1,tuning:beacon?.tuning??'balanced',mode:beacon?'protocol':'patrol'};
-      const focus=selectImmuneFocusTarget(context,this.state.beacon);
+      if(guard) { this.state.beacon.guard={kind:'tissue',radius:IMMUNE_GUARD_BALANCE.radius}; this.state.beacon.deploymentOrigin=point(position); }
+      const focus=guard?undefined:selectImmuneFocusTarget(context,this.state.beacon);
       if(focus)this.state.beacon.focus={targetId:focus.id,until:Math.min(context.elapsed+IMMUNE_FOCUS_BALANCE.duration,this.state.beacon.until)};
       this.state.cells=summonImmuneCells(this.state.beacon,context,beacon?3:1);
       this.state.beaconReadyAt=context.elapsed+config.cooldown;
@@ -441,15 +447,21 @@ export class GrowthController {
       commands.push({...base,kind:'effect',effect:'scan',from:point(position),to:point(position),radius:config.radius,duration:.6},
         {kind:'log',type:beacon?'PROTOCOL_BEACON_CREATED':'IMMUNE_PATROL_CREATED',data:{...(beacon?{protocolId:'IMMUNE_BEACON'}:{}),rootId,x:position.x,y:position.y,duration:config.duration,cost:config.tissueCost,cooldown:config.cooldown,cells:beacon?3:1,
           ...(this.state.beacon.focus?{focusTargetId:this.state.beacon.focus.targetId,focusUntil:this.state.beacon.focus.until}:{}),
+          ...(guard?{guard:true,guardX:this.state.beacon.x,guardY:this.state.beacon.y,guardRadius:IMMUNE_GUARD_BALANCE.radius}:{}),
           ...(context.endless&&beacon&&this.state.beacon.focus?{rallyUntil:this.state.cells[0]?.rallyUntil??context.elapsed,rallySpeed:ENDLESS_IMMUNE_CELL_BALANCE.rallySpeed}:{})}});
+      // The host may add the existing combat-growth lifetime after creation.
+      // This is the controller's order snapshot; read beacon.until for expiry.
+      if(guard)commands.push({kind:'log',type:'IMMUNE_GUARD_ASSIGNED',data:{rootId,beaconId:this.state.beacon.id,organId:context.organId,
+        x:this.state.beacon.x,y:this.state.beacon.y,radius:IMMUNE_GUARD_BALANCE.radius,plannedUntil:this.state.beacon.until,newSquad:true}});
       this.remember(beacon?'PROTOCOL_BEACON_CREATED':'IMMUNE_PATROL_CREATED',beacon?`三只免疫细胞出击，组织承压 −${config.tissueCost}。`:'Q 召来一只免疫侦巡细胞，短时协助清理。',context.elapsed);
     }else if(this.state.beacon&&this.state.beacon.until>context.elapsed&&this.state.beacon.organId===context.organId
       &&this.state.beacon.mode!=='patrol'&&this.state.cells?.some(cell=>cell.beaconId===this.state.beacon!.id&&cell.until>context.elapsed)) {
       const old=this.state.beacon,position=beaconPosition(context);
       // Repoint the zone, never the bodies. Preserve every unit's independent
       // bite clock and lifetime; normal fixed updates perform the actual travel.
-      this.state.beacon={...old,...position};
-      const focus=selectImmuneFocusTarget(context,this.state.beacon);
+      this.state.beacon={...old,...point(guard ? context.tissue : position)};
+      if(guard)this.state.beacon.guard={kind:'tissue',radius:IMMUNE_GUARD_BALANCE.radius};else delete this.state.beacon.guard;
+      const focus=guard?undefined:selectImmuneFocusTarget(context,this.state.beacon);
       if(focus)this.state.beacon.focus={targetId:focus.id,until:Math.min(context.elapsed+IMMUNE_FOCUS_BALANCE.duration,old.until)};
       else delete this.state.beacon.focus;
       this.state.cells=redirectImmuneCells(this.state.cells,this.state.beacon,context);
@@ -458,7 +470,10 @@ export class GrowthController {
         {kind:'log',type:'IMMUNE_SQUAD_REDIRECTED',data:{protocolId:'IMMUNE_BEACON',rootId,beaconId:old.id,
           fromX:old.x,fromY:old.y,x:position.x,y:position.y,cells:this.state.cells.length,until:old.until,readyAt:this.state.beaconReadyAt,cost:0,
           ...(this.state.beacon.focus?{focusTargetId:this.state.beacon.focus.targetId,focusUntil:this.state.beacon.focus.until}:{}),
+          ...(guard?{guard:true,guardX:this.state.beacon.x,guardY:this.state.beacon.y,guardRadius:IMMUNE_GUARD_BALANCE.radius}:{}),
           ...(context.endless&&this.state.beacon.focus?{rallyUntil:this.state.cells[0]?.rallyUntil??context.elapsed,rallySpeed:ENDLESS_IMMUNE_CELL_BALANCE.rallySpeed}:{})}});
+      if(guard)commands.push({kind:'log',type:'IMMUNE_GUARD_ASSIGNED',data:{rootId,beaconId:old.id,organId:context.organId,
+        x:this.state.beacon.x,y:this.state.beacon.y,radius:IMMUNE_GUARD_BALANCE.radius,plannedUntil:old.until,newSquad:false}});
       this.remember('IMMUNE_SQUAD_REDIRECTED','免疫小队转向新战线；保持原剩余寿命与吞噬冷却，不消耗组织。',context.elapsed);
     }
     const accepted=this.budget(context,commands);
@@ -547,6 +562,7 @@ export class GrowthController {
     if(!this.equipped('EXPOSE_TRACE'))s.marks=[];
     if(!this.equipped('IMMUNE_BEACON')&&s.beacon?.mode!=='patrol')s.beacon=null;
     if(s.beacon&&(s.beacon.until<=context.elapsed||s.beacon.organId!==context.organId))s.beacon=null;
+    if(s.beacon?.guard&&context.tissue.hp<=0)s.beacon=null;
     const traced=this.equipped('EXPOSE_TRACE')?s.marks.filter(mark=>mark.organId===context.organId&&mark.until>context.elapsed).map(mark=>mark.targetId):[];
     const advanced=advanceImmuneCells(s.cells??[],s.beacon,context,s.beacon?.mode==='patrol'?[]:traced);
     const cellCommands=this.budget(context,advanced.commands);

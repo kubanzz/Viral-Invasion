@@ -334,13 +334,15 @@ export class GameSession {
     }
     if (combat && combat.scanDamage > 0) this.endlessRadialAttack(state.player, 260, combat.scanDamage * combat.damageMultiplier, 'scan');
     if (state.endless) {
+      const guarded = state.events.some(event => event.tick === state.tick && event.type === 'IMMUNE_GUARD_ASSIGNED');
       const focused = state.events.some(event => event.tick === state.tick && ['PROTOCOL_BEACON_CREATED', 'IMMUNE_PATROL_CREATED', 'IMMUNE_SQUAD_REDIRECTED'].includes(event.type) && typeof event.data.focusTargetId === 'string');
       const redirected = state.events.some(event => event.tick === state.tick && event.type === 'IMMUNE_SQUAD_REDIRECTED');
       const interrupted = state.events.some(event => event.tick === state.tick && event.type === 'ENDLESS_CORROSION_INTERRUPTED');
-      this.message(focused ? `${interrupted ? '侵蚀已被扫描打断！' : ''}围猎指令已下达；细胞优先追击指定目标，仍需实际赶到咬击。`
+      this.message(guarded ? '组织驻防指令已受理；细胞正在真实行走，抵达后优先拦截袭击者。你可离开；Q 指敌或空地改令。'
+        : focused ? `${interrupted ? '侵蚀已被扫描打断！' : ''}围猎指令已下达；细胞优先追击指定目标，仍需实际赶到咬击。`
         : interrupted ? '侵蚀已被扫描打断！抓住破绽净化精英。'
         : redirected ? '免疫小队正在转向新战线；保留原持续时间，继续移动接敌。'
-          : 'Q 显影并召集免疫小队：指敌围猎，指空地部署。', 3);
+          : 'Q 显影并召集免疫小队：指敌围猎，指空地部署。', 3, guarded || focused || redirected ? 1 : 0);
     }
   }
 
@@ -606,22 +608,57 @@ export class GameSession {
 
   private applyGrowthCommands(commands: readonly GrowthCommand[]): void {
     const commandState = this.state;
+    const plannedBites = new Map(commands.flatMap(command => command.kind === 'damage' && command.protocolId === 'IMMUNE_BEACON' && command.immuneCellId
+      ? [[command.rootId, command] as const] : []));
+    const acceptedBites = new Map<string, { targetId: string; damage: number }>();
     for (const command of commands) {
       if (this.state !== commandState || commandState.phase === 'result') return;
       const state = this.state;
-      if (command.kind === 'log') { this.emit(command.type, command.data); continue; }
+      if (command.kind === 'log') {
+        const rootId = typeof command.data.rootId === 'string' ? command.data.rootId : '';
+        const planned = plannedBites.get(rootId);
+        if (planned && ['PROTOCOL_BEACON_HIT', 'IMMUNE_PATROL_HIT', 'PROTOCOL_SYNERGY'].includes(command.type)) {
+          const accepted = acceptedBites.get(rootId);
+          if (!accepted || accepted.targetId !== command.data.targetId) continue;
+          this.emit(command.type, ['PROTOCOL_BEACON_HIT', 'IMMUNE_PATROL_HIT'].includes(command.type)
+            ? { ...command.data, damage: accepted.damage } : command.data);
+        } else this.emit(command.type, command.data);
+        continue;
+      }
       if (!state.battle || command.organId !== state.battle.organId || state.phase === 'result') continue;
       if (command.kind === 'damage') {
         const target = state.targets.find(t => t.id === command.targetId && t.hp > 0);
         const multiplier = state.endlessGrowth ? endlessCombatStats(state.endlessGrowth) : undefined;
-        if (target) this.damage(target, command.amount * (multiplier?.damageMultiplier ?? 1)
+        const actual = target ? this.damage(target, command.amount * (multiplier?.damageMultiplier ?? 1)
           * (command.protocolId === 'IMMUNE_BEACON' ? multiplier?.cellDamageMultiplier ?? 1 : 1),
           { cause: 'protocol', rootId: command.rootId, protocolId: command.protocolId, allowChain: command.allowChain,
-            ...(command.immuneCellId ? { immuneCellId: command.immuneCellId } : {}) });
+            ...(command.immuneCellId ? { immuneCellId: command.immuneCellId } : {}) }) : 0;
+        if (plannedBites.has(command.rootId)) {
+          if (actual > 0) acceptedBites.set(command.rootId, { targetId: command.targetId, damage: actual });
+          else if (this.state === commandState && state.phase === 'playing' && command.biteClock) {
+            const cell = state.growth?.cells?.find(unit => unit.id === command.immuneCellId);
+            let clockRefunded = false;
+            // Only return the clock consumed by this exact rejected bite. A
+            // callback may have replaced the squad or otherwise changed it.
+            if (cell && command.rootId === `${cell.id}:bite:${state.tick}` && cell.targetId === command.targetId
+              && cell.updatedAt === state.elapsed && cell.attackReadyAt === state.elapsed + cell.interval
+              && cell.attackUntil === state.elapsed + IMMUNE_CELL_BALANCE.attackPose && cell.activity === 'biting') {
+              cell.attackReadyAt = command.biteClock.attackReadyAt;
+              cell.attackUntil = command.biteClock.attackUntil;
+              cell.activity = command.biteClock.activity;
+              clockRefunded = true;
+            }
+            this.emit('IMMUNE_BITE_REJECTED', { rootId: command.rootId, cellId: command.immuneCellId!, targetId: command.targetId,
+              reason: target ? 'no-positive-damage' : 'target-already-cleared', clockRefunded });
+          }
+        }
       } else if (command.kind === 'expose') {
         const target = state.targets.find(t => t.id === command.targetId && t.hp > 0);
         if (target) { target.exposedUntil = Math.max(target.exposedUntil ?? 0, command.until); target.revealedUntil = Math.max(target.revealedUntil ?? 0, command.revealUntil); }
-      } else if (command.kind === 'effect') this.effect(command.effect, command.from, command.to, command.radius, command.duration);
+      } else if (command.kind === 'effect') {
+        // Physical bite hits already render through damage() after acceptance.
+        if (!plannedBites.has(command.rootId)) this.effect(command.effect, command.from, command.to, command.radius, command.duration);
+      }
       else if (command.kind === 'organCost') {
         const before = state.tissue.hp; state.tissue.hp = Math.max(0, before - command.amount);
         this.emit('ORGAN_INTEGRITY_CHANGED', { organId: state.battle.organId, before, after: state.tissue.hp, reason: 'protocol-pressure', protocolId: command.protocolId });

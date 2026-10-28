@@ -569,7 +569,8 @@ export class BattleDirector {
       if (target.recoverUntil !== undefined) continue;
       prepareEliteTactic(s, target);
       const mimic = target.tactic === 'mimic-corrosion' || (!target.tactic || target.tactic === 'melee') && target.traits?.includes('MIMIC');
-      const goal = mimic || !s.endless && distance(target, s.player) > 270 ? s.tissue : s.player;
+      const assault = !!s.endless && target.role === 'virus' && target.tactic === 'melee' && target.assaultObjective === 'tissue';
+      const goal = assault || mimic || !s.endless && distance(target, s.player) > 270 ? s.tissue : s.player;
       const dir = normalized(goal.x - target.x, goal.y - target.y);
       if (target.attackPlan && target.attackAt !== undefined) {
         if (s.elapsed + 1e-9 >= target.attackAt) this.resolveTactic(target);

@@ -2,7 +2,7 @@ import { distance, moveWithCollision, normalized, wallHit } from '../actors/coll
 import type { OrganId } from './battleTypes';
 import type { BeaconState, GrowthCommand, GrowthContext } from './growthTypes';
 import { WORLD, type Target, type Vec, type WorldGeometry } from './types';
-import { activeImmuneFocusTarget } from './immuneFocus';
+import { activeImmuneFocusTarget, activeImmuneGuard } from './immuneFocus';
 
 export const IMMUNE_CELL_BALANCE = { maximum: 3, radius: 15, speed: 190, biteReach: 9, attackPose: .24, navigationInterval: .35 } as const;
 export const ENDLESS_IMMUNE_CELL_BALANCE = {
@@ -67,7 +67,7 @@ export function summonImmuneCells(beacon: CellBeacon, context: GrowthContext, co
   const focus = context.endless && beacon.mode === 'protocol' ? activeImmuneFocusTarget(beacon, context) : undefined;
   return Array.from({ length: total }, (_, index) => {
     const angle = -Math.PI / 2 + index / total * Math.PI * 2;
-    const position = moveWithCollision(beacon, { x: Math.cos(angle) * 30, y: Math.sin(angle) * 30 }, IMMUNE_CELL_BALANCE.radius, context.geometry);
+    const position = moveWithCollision(beacon.deploymentOrigin ?? beacon, { x: Math.cos(angle) * 30, y: Math.sin(angle) * 30 }, IMMUNE_CELL_BALANCE.radius, context.geometry);
     return { ...position, id: `${beacon.id}:cell:${index}`, beaconId: beacon.id, organId: beacon.organId, born: context.elapsed,
       until: beacon.until, radius: IMMUNE_CELL_BALANCE.radius, facing: angle, damage: beacon.damage / total, interval: beacon.interval,
       updatedAt: context.elapsed, attackReadyAt: context.elapsed + (focus
@@ -93,14 +93,18 @@ function chooseTarget(cell: ImmuneCellState, beacon: CellBeacon, context: Growth
   const priority = (target: Target) => traceIds.has(target.id) ? 0 : (target.generation ?? 0) > 0 ? 1 : target.role === 'virus' ? 2 : target.role === 'elite' ? 3 : target.role === 'source' ? 4 : 5;
   // The mother core remains the player's objective; temporary cells clear its defenders.
   // Reserve planned damage so later cells never celebrate biting an already-cleared body.
-  const candidates = context.targets.filter(target => target.role !== 'core' && (remainingHp.get(target.id) ?? target.hp) > 0 && distance(beacon, target) <= beacon.radius + target.radius);
+  const guarding = activeImmuneGuard(beacon, context);
+  const candidates = context.targets.filter(target => target.role !== 'core' && (remainingHp.get(target.id) ?? target.hp) > 0
+    && distance(beacon, target) <= (guarding ? beacon.guard!.radius : beacon.radius) + target.radius);
   if (context.endless && beacon.mode === 'protocol') {
     // Keep the equipped trace's explicit priority. Within the same trace tier,
     // finish an enemy already in real reach before chasing distant offspring,
     // and do not abandon nearby progress merely to spread the squad out.
     const approachDistance = (target: Target) => distance(cell, target)
       - (target.id === cell.targetId ? ENDLESS_IMMUNE_CELL_BALANCE.targetRetentionDistance : 0);
-    return candidates.sort((a, b) => Number(traceIds.has(b.id)) - Number(traceIds.has(a.id))
+    const assault = (target: Target) => target.assaultObjective === 'tissue';
+    return candidates.sort((a, b) => (guarding ? Number(assault(b)) - Number(assault(a)) : 0)
+      || Number(traceIds.has(b.id)) - Number(traceIds.has(a.id))
       || Number(contact(cell, cell.radius, b, context.geometry)) - Number(contact(cell, cell.radius, a, context.geometry))
       || approachDistance(a) - approachDistance(b) || (assigned.get(a.id) ?? 0) - (assigned.get(b.id) ?? 0) || stableId(a, b))[0];
   }
@@ -186,6 +190,7 @@ export function advanceImmuneCells(cells: readonly ImmuneCellState[], beacon: Ce
   const traced = new Set(beacon.mode === 'patrol' ? [] : traceIds);
   const focus = activeImmuneFocusTarget(beacon, context);
   const challengeSquad = !!context.endless && beacon.mode === 'protocol';
+  const damageMultiplier = context.endless && Number.isFinite(context.cellDamageMultiplier) && context.cellDamageMultiplier! > 0 ? context.cellDamageMultiplier! : 1;
   for (const cell of active) {
     const delta = Math.max(0, Math.min(1 / 60, context.elapsed - cell.updatedAt));
     cell.updatedAt = context.elapsed;
@@ -232,14 +237,16 @@ export function advanceImmuneCells(cells: readonly ImmuneCellState[], beacon: Ce
     const canBite = !!target && contact(cell, cell.radius, target, context.geometry);
     if (target) cell.facing = Math.atan2(target.y - cell.y, target.x - cell.x);
     if (!canBite || !target || context.elapsed + 1e-9 < cell.attackReadyAt || delta === 0) continue;
+    const biteClock = { attackReadyAt: cell.attackReadyAt, attackUntil: cell.attackUntil, activity: cell.activity };
     cell.attackReadyAt = context.elapsed + cell.interval;
     cell.attackUntil = context.elapsed + IMMUNE_CELL_BALANCE.attackPose;
     cell.activity = 'biting';
-    const amount = Math.min(cell.damage, remainingHp.get(target.id) ?? target.hp);
-    remainingHp.set(target.id, Math.max(0, (remainingHp.get(target.id) ?? target.hp) - amount));
+    const remaining = remainingHp.get(target.id) ?? target.hp;
+    const amount = Math.min(cell.damage, remaining / damageMultiplier);
+    remainingHp.set(target.id, Math.max(0, remaining - amount * damageMultiplier));
     const rootId = `${cell.id}:bite:${context.tick}`, base = { protocolId: 'IMMUNE_BEACON' as const, rootId, organId: context.organId };
     commands.push({ ...base, kind: 'effect', effect: 'hit', from: point(cell), to: point(target), radius: target.radius + 4, duration: .2 },
-      { ...base, kind: 'damage', targetId: target.id, amount, cause: 'protocol', hop: 0, immuneCellId: cell.id },
+      { ...base, kind: 'damage', targetId: target.id, amount, cause: 'protocol', hop: 0, immuneCellId: cell.id, biteClock },
       { kind: 'log', type: beacon.mode === 'patrol' ? 'IMMUNE_PATROL_HIT' : 'PROTOCOL_BEACON_HIT', data: {
         protocolId: beacon.mode === 'patrol' ? 'BASE_PATROL' : 'IMMUNE_BEACON', rootId, cellId: cell.id, targetId: target.id,
         damage: amount, prioritizedTrace: traced.has(target.id), x: cell.x, y: cell.y,

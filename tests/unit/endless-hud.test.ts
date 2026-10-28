@@ -19,6 +19,38 @@ function mountHud() {
 afterEach(() => vi.unstubAllGlobals());
 
 describe('continuous challenge UI contracts', () => {
+  it('distinguishes announced, living and resolved tissue assault from other enemies', () => {
+    const state = session().state, nodes = mountHud(), e = state.endless!;
+    Object.assign(e, { wave: 6, phase: 'warning', batchIndex: 0, batchMemberIndex: 0,
+      batchSchedule: [{ at: 0, sector: 0, spread: .18, roles: ['ordinary', 'ordinary', 'support'] },
+        { at: .5, sector: 4, spread: .18, roles: ['ordinary', 'ordinary', 'ordinary'] }] });
+    updateEndlessHud(state);
+    expect(nodes.get('endless-traits')!.textContent).toContain('▲ 2体将袭击＋组织');
+    const raider = { id: 'marked-raider', x: 900, y: 900, radius: 22, hp: 50, maxHp: 50,
+      kind: 'single' as const, role: 'virus' as const, hitUntil: 0, scanned: false, assaultObjective: 'tissue' as const };
+    state.targets = [raider, { ...raider, id: 'ordinary', assaultObjective: undefined }];
+    Object.assign(e, { phase: 'combat', batchIndex: 2, batchMemberIndex: 0 });
+    updateEndlessHud(state);
+    expect(nodes.get('endless-traits')!.textContent).toContain('袭击组织 1体');
+    expect(nodes.get('endless-traits')!.textContent).not.toContain('待生');
+    raider.hp = 0; updateEndlessHud(state);
+    expect(nodes.get('endless-traits')!.textContent).not.toContain('袭击组织');
+  });
+
+  it('shows an actual guard order and its remaining original lifetime without mutating it', () => {
+    const game = session(), state = game.state, nodes = mountHud();
+    state.endlessGrowth!.ranks.immune = 3;
+    game.step({ moveX: 0, moveY: 0, fire: false, scan: true, aim: state.tissue });
+    expect(state.growth!.beacon!.guard?.kind).toBe('tissue');
+    const before = structuredClone(state); updateEndlessHud(state);
+    expect(nodes.get('endless-ability-3')!.textContent).toContain('正在驻防组织');
+    expect(nodes.get('endless-tissue-route')!.textContent).toContain('细胞驻防 3只');
+    expect(state).toEqual(before);
+    state.elapsed = state.growth!.beacon!.until; updateEndlessHud(state);
+    expect(nodes.get('endless-ability-3')!.textContent).not.toContain('正在驻防');
+    expect(nodes.get('endless-tissue-route')!.textContent).not.toContain('细胞驻防');
+  });
+
   it('shows the real finite source quota and stops advertising an exhausted source as a required target', () => {
     const state = session().state, nodes = mountHud();
     state.endless!.wave = 6;

@@ -36,6 +36,10 @@ export interface BeaconState extends Vec {
   mode?: 'patrol' | 'protocol';
   /** A short command, bounded by this squad's original lifetime. */
   focus?: { targetId: string; until: number };
+  /** Challenge command: guard the tissue anchor inside this finite region. */
+  guard?: { kind: 'tissue'; radius: number };
+  /** Physical birth anchor; a remote guard command never moves this past deployment reach. */
+  deploymentOrigin?: Vec;
 }
 export interface GrowthHistoryEntry { at: number; type: string; text: string }
 export interface GrowthState {
@@ -63,6 +67,9 @@ export interface GrowthState {
 }
 export interface GrowthContext {
   endless?: boolean;
+  immuneRank?: number;
+  /** Exact host power × immune projection; command damage stays in base units. */
+  cellDamageMultiplier?: number;
   tick: number; elapsed: number; organId: OrganId; active: boolean; rhythm: 'charge' | 'surge' | 'rest';
   player: Vec; aim: Vec; tissue: GameState['tissue']; deviceOrigin: Vec;
   targets: readonly Target[]; tool: Tool;
@@ -79,7 +86,8 @@ export interface DamageOrigin {
 }
 interface ProtocolCommandBase { protocolId: ProtocolId; rootId: string; organId: OrganId }
 export type GrowthCommand =
-  | (ProtocolCommandBase & { kind: 'damage'; targetId: string; amount: number; cause: 'protocol'; hop: number; allowChain?: boolean; immuneCellId?: string })
+  | (ProtocolCommandBase & { kind: 'damage'; targetId: string; amount: number; cause: 'protocol'; hop: number; allowChain?: boolean; immuneCellId?: string;
+      biteClock?: Pick<import('./immuneCells').ImmuneCellState, 'attackReadyAt' | 'attackUntil' | 'activity'> })
   | (ProtocolCommandBase & { kind: 'expose'; targetId: string; until: number; revealUntil: number })
   | (ProtocolCommandBase & { kind: 'effect'; effect: Effect['kind']; from: Vec; to: Vec; radius: number; duration: number })
   | (ProtocolCommandBase & { kind: 'organCost'; amount: number })

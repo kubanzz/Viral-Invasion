@@ -11,6 +11,7 @@ import { chooseEndlessEvolution } from './endlessEvolution';
 import { recordEndlessBehavior } from './endlessBehavior';
 import { createEliteTacticCycle } from './eliteTacticCycle';
 import { endlessPacing } from './endlessPacing';
+import { endlessAssaultPosition, endlessAssaultSlots } from './endlessAssault';
 import { ENDLESS_SOURCE_BALANCE, isEndlessSourceId, planEndlessSource, sourceQuotaPosition, sourceQuotaRemaining } from './endlessSource';
 import { activeWorld, type GameEvent, type GameState, type Target, type Vec } from './types';
 export type { EndlessHost, EndlessState } from './endlessTypes';
@@ -180,7 +181,9 @@ export class EndlessDirector {
       this.state.battle!.traits = [...e.traits];
       this.state.battle!.stage = wave - 1;
       this.state.battle!.stageLabel = `第 ${wave} 波 · ${e.title}`;
+      const assaultSlots = endlessAssaultSlots(wave, e.batchSchedule.flatMap(batch => batch.roles), e.source);
       this.host.emit('ENDLESS_WAVE_WARNING', { wave, title: e.title, duration: e.warningSeconds, traits: plan.traits.join('+'), elite: e.eliteWave, formation: e.formation, supports: e.supportRemaining,
+        assaultSlots: assaultSlots.join(','), ...(assaultSlots.length ? { assaultObjective: 'tissue' } : {}),
         ...(announcedCycle ? { dualElite: true, eliteTactics: announcedCycle.tactics.join('>') } : {}) });
       if (this.state !== state || this.e !== e || !this.active() || this.e.phase !== 'warning') return;
       if (e.source) {
@@ -201,7 +204,8 @@ export class EndlessDirector {
       const adaptiveHint = decision?.kind === 'warn' ? `适应换代 · ${TRAITS[decision.main].name}：${TRAITS[decision.main].ability}；代价：${TRAITS[decision.main].cost}；反制：${TRAITS[decision.main].counter}。` : '';
       const duetHint = announcedCycle ? `首只精英依次轮换主招 → 伴招，每招仍有前摇与恢复窗口。${announcedTraits.map(trait => `${TRAITS[trait].name}：${TRAITS[trait].ability}；代价：${TRAITS[trait].cost}；基础反制：${TRAITS[trait].counter}`).join('。')}。${announcedCycle.tactics.map(tactic => `${ENEMY_TACTIC_INFO[tactic].name}：${ENEMY_TACTIC_INFO[tactic].counter}`).join('；')}` : '';
       const sourceHint = e.source ? `远侧有限感染源：提前净化可截断最多 ${e.source.quotaSlots.length} 个尚未入场普通体。也可先守住组织，配额耗尽后自动枯竭。` : '';
-      this.host.message(`第 ${wave} 波 · ${e.title}，${e.warningSeconds} 秒后到达。${sourceHint}${duetHint || adaptiveHint || supportHint || (wave === 3 ? '新敌：远距点射停在射程外。接近射杀或朝它 Q 部署细胞；窄线锁定后侧移可躲开。' : counter || '移动拉线，2 范围裂解，Q 召集免疫援助。')}`, e.warningSeconds, 2);
+      const assaultHint = assaultSlots.length ? `组织袭击分队 ${assaultSlots.length} 体：直奔中央组织，可拦截、2 击退或 Q 部署小队防守。` : '';
+      this.host.message(`第 ${wave} 波 · ${e.title}，${e.warningSeconds} 秒后到达。${assaultHint}${sourceHint}${duetHint || adaptiveHint || supportHint || (wave === 3 ? '新敌：远距点射停在射程外。接近射杀或朝它 Q 部署细胞；窄线锁定后侧移可躲开。' : counter || '移动拉线，2 范围裂解，Q 召集免疫援助。')}`, e.warningSeconds, 2);
       return;
     }
     const evolution = e.evolution;
@@ -220,7 +224,9 @@ export class EndlessDirector {
       learned.recentPrimaries = [...learned.recentPrimaries, e.traits[0]].slice(-3);
     }
     e.phase = 'combat'; e.phaseStartedAt = now; e.phaseUntil = 0; e.nextSpawnAt = now;
-    this.host.emit('ENDLESS_WAVE_STARTED', { wave: e.wave, title: e.title, budget: e.totalToSpawn, traits: e.traits.join('+') });
+    const assaultSlots = endlessAssaultSlots(e.wave, e.batchSchedule.flatMap(batch => batch.roles), e.source);
+    this.host.emit('ENDLESS_WAVE_STARTED', { wave: e.wave, title: e.title, budget: e.totalToSpawn, traits: e.traits.join('+'),
+      assaultSlots: assaultSlots.join(','), ...(assaultSlots.length ? { assaultObjective: 'tissue' } : {}) });
     if (this.state !== state || this.e !== e || !this.active() || e.phase !== 'combat') return;
     this.host.message(`第 ${e.wave} 波 · ${e.title}。清场获得成长；注意多方向来袭。`, 3, 1);
   }
@@ -327,9 +333,11 @@ export class EndlessDirector {
       // existing support slot, never adds HP, births or population reservations.
       const wantsStandoff = support && tactic === 'thin-ray' && e.supportRemaining === supportList.length;
       const quotaBirth = !!e.source?.quotaSlots.includes(ordinal);
+      const assault = role === 'ordinary' && endlessAssaultSlots(e.wave, e.batchSchedule.flatMap(batch => batch.roles), e.source).includes(ordinal);
       const radius = sourceBody ? ENDLESS_SOURCE_BALANCE.radius : elite ? 30 : 22;
       const sourcePosition = quotaBirth ? sourceQuotaPosition(state, e.source!, ordinal, radius) : undefined;
-      const position = sourceBody ? e.source?.position : sourcePosition
+      const assaultPosition = assault ? endlessAssaultPosition(state, ordinal, radius) : undefined;
+      const position = sourceBody ? e.source?.position : sourcePosition ?? assaultPosition
         ?? this.spawnPosition(ordinal, radius, role, tactic, batch, e.batchMemberIndex, wantsStandoff);
       if (!position) break;
       // A genuinely unavailable outer ring falls back to the same finite
@@ -345,6 +353,7 @@ export class EndlessDirector {
         hp, maxHp: hp, hitUntil: 0, scanned: false, traits, generation: 0, sourceId: sourceId(e.wave), born: now,
         facing: Math.atan2(this.state.player.y - position.y, this.state.player.x - position.x), tactic, ...(eliteCycle ? { eliteCycle } : {}),
         ...(standoff ? { tacticPosture: 'standoff' as const } : {}),
+        ...(assault ? { assaultObjective: 'tissue' as const } : {}),
         attackReady: now + (wantsStandoff ? ENDLESS_BALANCE.spawnGrace : support ? .2 : elite ? .35 : ENDLESS_BALANCE.spawnGrace) };
       this.state.targets.push(target);
       e.spawnedIds.push(id); e.spawnSerial++; e.remainingToSpawn--; e.batchMemberIndex++;
@@ -370,6 +379,7 @@ export class EndlessDirector {
       directions.add(DIRECTIONS[(Math.round(angle / (Math.PI / 4)) + 8) % 8]);
       this.host.effect('evolution', position, position, radius + 16, .7);
       this.host.emit('ACTOR_SPAWNED', { id, role: target.role!, generation: 0, sourceId: target.sourceId!, traits: traits.join('+'), wave: e.wave, slot: ordinal, tactic, posture: standoff ? 'standoff' : 'pursuit', formation: e.formation,
+        ...(assault ? { assaultObjective: 'tissue', assaultFallback: !assaultPosition } : {}),
         ...(eliteCycle ? { dualElite: true, eliteTactics: eliteCycle.tactics.join('>') } : {}) });
       if (this.state !== state || this.e !== e || !this.active()) return;
       if (quotaBirth) {
