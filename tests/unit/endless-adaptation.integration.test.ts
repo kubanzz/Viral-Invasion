@@ -66,7 +66,7 @@ describe('announced endless generations in the actual session', () => {
       Object.assign(f.e, { wave: wave - 1, phase: 'intermission', phaseUntil: f.s.elapsed }); f.s.targets = [];
       f.e.evolution!.history = [{ tick: f.s.tick, precisionDamage: wave * 1000, areaDamage: 0, scans: wave, isolations: 0, repaired: 0 }];
       director.beforeInput();
-      expect(f.e.wave).toBe(wave); expect(f.e.evolution!.pending).toBeUndefined(); expect(f.e.warningSeconds).toBe(2);
+      expect(f.e.wave).toBe(wave); expect(f.e.evolution!.pending).toBeUndefined(); expect(f.e.warningSeconds).toBe(f.e.source ? 8 : 2);
       expect(f.e.traits).toEqual(committed.traits); expect(f.e.evolution!.current).toEqual(committed);
     }
     expect(f.events.filter(event => event.type === 'ENDLESS_EVOLUTION_WARNING')).toHaveLength(1);

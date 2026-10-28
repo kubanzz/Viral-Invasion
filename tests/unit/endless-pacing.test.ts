@@ -103,7 +103,7 @@ describe('pacing reaches actual births and combat without bypassing rules', () =
 
   it('uses the announced wave curve for real pressure and release motion', () => {
     function travel(wave: number) {
-      const f = fixture(wave), s = f.state, target = s.targets[0];
+      const f = fixture(wave), s = f.state, target = s.targets.find(actor => actor.role === 'virus')!;
       s.targets = [target]; Object.assign(target, { x: s.player.x - 400, y: s.player.y, traits: [], tactic: 'melee', attackReady: Infinity });
       Object.assign(s.endless!, { remainingToSpawn: 1, nextSpawnAt: Infinity });
       const x = target.x;
@@ -124,7 +124,7 @@ describe('pacing reaches actual births and combat without bypassing rules', () =
   });
 
   it('keeps a full reserved population blocked without extra births or a catch-up batch', () => {
-    const f = fixture(101), base = f.state.targets[0];
+    const f = fixture(101), base = f.state.targets.find(actor => actor.role === 'virus')!;
     f.state.targets = Array.from({ length: 20 }, (_, index): Target => ({ ...base, id: `reserved-${index}`,
       x: 80 + index * 65, y: 80, traits: index < 4 ? ['FISSION'] : [], generation: 0 }));
     const remaining = f.state.endless!.remainingToSpawn, before = structuredClone(f.state.targets);

@@ -11,6 +11,7 @@ import { chooseEndlessEvolution } from './endlessEvolution';
 import { recordEndlessBehavior } from './endlessBehavior';
 import { createEliteTacticCycle } from './eliteTacticCycle';
 import { endlessPacing } from './endlessPacing';
+import { ENDLESS_SOURCE_BALANCE, isEndlessSourceId, planEndlessSource, sourceQuotaPosition, sourceQuotaRemaining } from './endlessSource';
 import { activeWorld, type GameEvent, type GameState, type Target, type Vec } from './types';
 export type { EndlessHost, EndlessState } from './endlessTypes';
 
@@ -42,7 +43,8 @@ export function endlessSupportTactics(seed: number, wave: number): EnemyTactic[]
   return tactics;
 }
 
-function wavePlan(seed: number, wave: number, inheritedTraits?: readonly TraitId[]): Pick<EndlessState, 'traits' | 'title' | 'eliteWave' | 'eliteRemaining' | 'warningSeconds' | 'totalToSpawn' | 'formation' | 'formationLabel' | 'batchSchedule' | 'supportRemaining'> {
+function wavePlan(state: GameState, wave: number, inheritedTraits?: readonly TraitId[]): Pick<EndlessState, 'traits' | 'title' | 'eliteWave' | 'eliteRemaining' | 'warningSeconds' | 'totalToSpawn' | 'formation' | 'formationLabel' | 'batchSchedule' | 'supportRemaining' | 'source'> {
+  const seed = state.seed;
   const pacing = endlessPacing(wave);
   const eliteWave = wave % 5 === 0;
   const generation = Math.floor(wave / 5);
@@ -61,6 +63,8 @@ function wavePlan(seed: number, wave: number, inheritedTraits?: readonly TraitId
   const roles: EndlessSpawnRole[] = Array.from({ length: totalToSpawn }, () => 'ordinary');
   for (let elite = 0; elite < eliteRemaining; elite++) roles[elite * 3] = 'elite';
   for (let support = 0; support < supportRemaining; support++) roles[support * (wave >= 16 ? 6 : 3) + 2] = 'support';
+  const source = planEndlessSource(state, wave, roles);
+  if (source) roles[source.slot] = 'source';
   const rotation = new SeedRng((seed ^ Math.imul(wave, 0x45d9f3b)) >>> 0).int(0, 7);
   const pairInterval = Math.max(.9, Math.max(2.6, 4.2 - (wave - 1) * .035) * pacing.spawnIntervalMultiplier);
   const batchSchedule: EndlessBatch[] = [];
@@ -71,8 +75,8 @@ function wavePlan(seed: number, wave: number, inheritedTraits?: readonly TraitId
     batchSchedule.push({ at: pair * pairInterval + second * gap, sector, spread: formation === 'fission-pack' ? .13 : .18,
       roles: roles.slice(batch * 3, batch * 3 + 3) });
   }
-  return { traits, title, eliteWave, eliteRemaining, formation, formationLabel, batchSchedule, supportRemaining,
-    warningSeconds: eliteWave || wave === 3 || wave === 16 ? ENDLESS_BALANCE.traitWarningSeconds : ENDLESS_BALANCE.warningSeconds, totalToSpawn };
+  return { traits, title, eliteWave, eliteRemaining, formation, formationLabel, batchSchedule, supportRemaining, ...(source ? { source } : {}),
+    warningSeconds: source ? ENDLESS_SOURCE_BALANCE.warningSeconds : eliteWave || wave === 3 || wave === 16 ? ENDLESS_BALANCE.traitWarningSeconds : ENDLESS_BALANCE.warningSeconds, totalToSpawn };
 }
 
 /** Called after initializeBattle; retains its large world and existing tool rules. */
@@ -102,10 +106,10 @@ export function initializeEndless(state: GameState): void {
       battle.pulse.origin = { x: node.x, y: node.y };
     }
   }
-  const plan = wavePlan(state.seed, 1);
+  const plan = wavePlan(state, 1);
   (state as EndlessGameState).endless = {
     schemaVersion: 1, wave: 1, clearedWaves: 0, phase: 'warning', phaseUntil: state.elapsed + plan.warningSeconds,
-    phaseStartedAt: state.elapsed, ...plan, remainingToSpawn: plan.totalToSpawn,
+    phaseStartedAt: state.elapsed, ...plan, remainingToSpawn: plan.totalToSpawn, canceledToSpawn: 0,
     spawnedIds: [], creditedKillIds: [], kills: 0, score: 0, combo: 0, bestCombo: 0, lastKillAt: -1000,
     nextSpawnAt: state.elapsed + plan.warningSeconds, batchSerial: 0, spawnSerial: 0, pendingChildren: 0, directions: [], batchIndex: 0, batchMemberIndex: 0,
     evolution: { history: [], recentPrimaries: [] },
@@ -156,11 +160,17 @@ export class EndlessDirector {
         history: evolution.history, previousTraits, recentPrimaries: evolution.recentPrimaries,
         counterAvailable: { CARAPACE: true, FISSION: true, MIMIC: true } }) : undefined;
       const inherited = decision?.kind === 'warn' ? decision.traits : wave >= 20 && previousTraits.length ? previousTraits : undefined;
-      const plan = wavePlan(this.state.seed, wave, inherited);
+      // Each wave owns at most one source body/node, including its inert corpse.
+      this.state.targets = this.state.targets.filter(target => !(target.role === 'source' && isEndlessSourceId(target.id)));
+      this.state.battle!.graph.nodes = this.state.battle!.graph.nodes.filter(node => !isEndlessSourceId(node.id));
+      for (const id of Object.keys(this.state.battle!.nextSpawnAt)) if (isEndlessSourceId(id)) delete this.state.battle!.nextSpawnAt[id];
+      delete e.source;
+      const plan = wavePlan(this.state, wave, inherited);
       const announcedCycle = plan.eliteWave && wave >= 20 ? createEliteTacticCycle(plan.traits) : undefined;
       Object.assign(e, plan, { wave, phase: 'warning', phaseUntil: now + plan.warningSeconds, phaseStartedAt: now,
-        remainingToSpawn: plan.totalToSpawn, spawnedIds: [], creditedKillIds: [], nextSpawnAt: now + plan.warningSeconds,
+        remainingToSpawn: plan.totalToSpawn, canceledToSpawn: 0, spawnedIds: [], creditedKillIds: [], nextSpawnAt: now + plan.warningSeconds,
         spawnSerial: 0, batchSerial: 0, pendingChildren: 0, directions: [], batchIndex: 0, batchMemberIndex: 0 });
+      e.source = plan.source;
       if (decision?.kind === 'warn') {
         // Announce one immutable future generation. The active set stays old
         // until the real warning expires, before the first new body is born.
@@ -173,6 +183,13 @@ export class EndlessDirector {
       this.host.emit('ENDLESS_WAVE_WARNING', { wave, title: e.title, duration: e.warningSeconds, traits: plan.traits.join('+'), elite: e.eliteWave, formation: e.formation, supports: e.supportRemaining,
         ...(announcedCycle ? { dualElite: true, eliteTactics: announcedCycle.tactics.join('>') } : {}) });
       if (this.state !== state || this.e !== e || !this.active() || this.e.phase !== 'warning') return;
+      if (e.source) {
+        this.host.emit('ENDLESS_SOURCE_ANNOUNCED', { id: e.source.id, wave, x: e.source.position.x, y: e.source.position.y,
+          duration: e.warningSeconds, quota: e.source.quotaSlots.length, quotaSlots: e.source.quotaSlots.join(','),
+          firstQuotaAt: e.batchSchedule[Math.floor(e.source.quotaSlots[0] / 3)].at,
+          lastQuotaAt: e.batchSchedule[Math.floor(e.source.quotaSlots.at(-1)! / 3)].at });
+        if (this.state !== state || this.e !== e || !this.active() || this.e.phase !== 'warning') return;
+      }
       if (decision?.kind === 'warn') this.host.emit('ENDLESS_EVOLUTION_WARNING', { wave, generation: decision.generation, trait: decision.main,
         traits: decision.traits.join('+'), duration: e.warningSeconds, applyAt: e.phaseUntil, roll: decision.roll,
         candidates: JSON.stringify(decision.candidates), summary: JSON.stringify(decision.summary) });
@@ -183,7 +200,8 @@ export class EndlessDirector {
       const supportHint = wave >= 16 ? `混编支援：${endlessSupportTactics(this.state.seed, wave).map(tactic => ENEMY_TACTIC_INFO[tactic].name).join(' / ')}。远距点射可接近射杀或 Q 部署细胞；射线侧移、冲锋侧闪，双圈离圈，侵蚀用 Q 打断。` : '';
       const adaptiveHint = decision?.kind === 'warn' ? `适应换代 · ${TRAITS[decision.main].name}：${TRAITS[decision.main].ability}；代价：${TRAITS[decision.main].cost}；反制：${TRAITS[decision.main].counter}。` : '';
       const duetHint = announcedCycle ? `首只精英依次轮换主招 → 伴招，每招仍有前摇与恢复窗口。${announcedTraits.map(trait => `${TRAITS[trait].name}：${TRAITS[trait].ability}；代价：${TRAITS[trait].cost}；基础反制：${TRAITS[trait].counter}`).join('。')}。${announcedCycle.tactics.map(tactic => `${ENEMY_TACTIC_INFO[tactic].name}：${ENEMY_TACTIC_INFO[tactic].counter}`).join('；')}` : '';
-      this.host.message(`第 ${wave} 波 · ${e.title}，${e.warningSeconds} 秒后到达。${duetHint || adaptiveHint || supportHint || (wave === 3 ? '新敌：远距点射停在射程外。接近射杀或朝它 Q 部署细胞；窄线锁定后侧移可躲开。' : counter || '移动拉线，2 范围裂解，Q 召集免疫援助。')}`, e.warningSeconds, 2);
+      const sourceHint = e.source ? `远侧有限感染源：提前净化可截断最多 ${e.source.quotaSlots.length} 个尚未入场普通体。也可先守住组织，配额耗尽后自动枯竭。` : '';
+      this.host.message(`第 ${wave} 波 · ${e.title}，${e.warningSeconds} 秒后到达。${sourceHint}${duetHint || adaptiveHint || supportHint || (wave === 3 ? '新敌：远距点射停在射程外。接近射杀或朝它 Q 部署细胞；窄线锁定后侧移可躲开。' : counter || '移动拉线，2 范围裂解，Q 召集免疫援助。')}`, e.warningSeconds, 2);
       return;
     }
     const evolution = e.evolution;
@@ -215,7 +233,9 @@ export class EndlessDirector {
     // schedule. Min preserves an earlier deadline and never resets this short
     // countdown on later ticks. Pending fission keeps its real warning window;
     // the finite queue may overlap it, with spawnBatch reserving every child.
-    if (e.remainingToSpawn > 0 && !this.state.targets.some(target => target.hp > 0)
+    // A stationary optional source is not an attacker, but still counts toward
+    // population and the independent wave-clear obligations below.
+    if (e.remainingToSpawn > 0 && !this.state.targets.some(target => target.hp > 0 && target.role !== 'source')
       && e.nextSpawnAt > now + .5 + 1e-9) {
       const previousSpawnAt = e.nextSpawnAt;
       e.nextSpawnAt = now + .5;
@@ -258,6 +278,20 @@ export class EndlessDirector {
     e.bestCombo = Math.max(e.bestCombo, e.combo); e.lastKillAt = this.state.elapsed;
     const multiplier = Math.min(ENDLESS_BALANCE.maximumComboMultiplier, 1 + Math.floor(e.combo / 5));
     e.score = safeAdd(e.score, (target.role === 'elite' ? 80 : (target.generation ?? 0) > 0 ? 6 : 10) * multiplier);
+    if (e.source?.id === id && e.source.status === 'active') {
+      const state = this.state, source = e.source;
+      source.status = 'destroyed';
+      source.canceledSlots = source.quotaSlots.filter(slot => !source.bornQuotaSlots.includes(slot));
+      e.remainingToSpawn -= source.canceledSlots.length;
+      e.canceledToSpawn += source.canceledSlots.length;
+      const node = this.state.battle!.graph.nodes.find(node => node.id === id);
+      if (node) { node.active = false; node.infected = false; }
+      // Commit the finite queue transaction before any synchronous callback.
+      this.host.emit('ENDLESS_SOURCE_CUT_OFF', { id, wave: e.wave, canceled: source.canceledSlots.length,
+        canceledSlots: source.canceledSlots.join(','), remainingQuota: sourceQuotaRemaining(source) });
+      if (this.state !== state || this.e !== e || !this.active()) return;
+      this.host.message(`有限感染源已净化：截断 ${source.canceledSlots.length} 个尚未入场普通体；已入场敌群与裂殖仍需处理。`, 5, 2);
+    }
   }
 
   private spawnBatch(): void {
@@ -270,14 +304,15 @@ export class EndlessDirector {
     const supportList = endlessSupportTactics(this.state.seed, e.wave);
     let spawned = 0;
     while (e.batchMemberIndex < batch.roles.length && e.remainingToSpawn > 0) {
+      const ordinal = e.batchIndex * 3 + e.batchMemberIndex;
+      if (e.source?.canceledSlots.includes(ordinal)) { e.batchMemberIndex++; continue; }
       const population = this.population();
-      const role = batch.roles[e.batchMemberIndex], elite = role === 'elite', support = role === 'support';
-      const ordinal = e.totalToSpawn - e.remainingToSpawn;
+      const role = batch.roles[e.batchMemberIndex], elite = role === 'elite', support = role === 'support', sourceBody = role === 'source';
       const eliteCycle = elite && e.eliteWave && e.wave >= 20 && ordinal === 0 ? createEliteTacticCycle(e.traits) : undefined;
       let traits: TraitId[] = [];
       // Mixed cohorts retain a fast baseline: never stack every discovered trait on every body.
       if (eliteCycle) traits = [...e.traits];
-      else if (!support && e.traits.length && (elite || ordinal % 3 !== 2)) traits = [e.traits[ordinal % e.traits.length]];
+      else if (!support && !sourceBody && e.traits.length && (elite || ordinal % 3 !== 2)) traits = [e.traits[ordinal % e.traits.length]];
       if (traits.includes('FISSION') && population.parents >= ENDLESS_BALANCE.maximumFissionParents) {
         // The announced duet keeps its finite queue slot and real child
         // reservation. Only ordinary legacy cohorts may shed this trait.
@@ -291,7 +326,11 @@ export class EndlessDirector {
       // Only the first scheduled thin ray uses this posture. It replaces an
       // existing support slot, never adds HP, births or population reservations.
       const wantsStandoff = support && tactic === 'thin-ray' && e.supportRemaining === supportList.length;
-      const radius = elite ? 30 : 22, position = this.spawnPosition(e.spawnSerial, radius, role, tactic, batch, e.batchMemberIndex, wantsStandoff);
+      const quotaBirth = !!e.source?.quotaSlots.includes(ordinal);
+      const radius = sourceBody ? ENDLESS_SOURCE_BALANCE.radius : elite ? 30 : 22;
+      const sourcePosition = quotaBirth ? sourceQuotaPosition(state, e.source!, ordinal, radius) : undefined;
+      const position = sourceBody ? e.source?.position : sourcePosition
+        ?? this.spawnPosition(ordinal, radius, role, tactic, batch, e.batchMemberIndex, wantsStandoff);
       if (!position) break;
       // A genuinely unavailable outer ring falls back to the same finite
       // support slot at a safe nearer point, with its full original grace.
@@ -299,22 +338,49 @@ export class EndlessDirector {
       const standoff = wantsStandoff && playerDistance >= STANDOFF_BALANCE.inner - 1e-7
         && playerDistance <= STANDOFF_BALANCE.outer + 1e-7;
       const pacing = endlessPacing(e.wave);
-      const hp = Math.round(elite ? 170 * pacing.eliteHealthMultiplier : 68 * pacing.healthMultiplier);
-      const id = `${elite ? 'elite' : 'virus'}-${++this.state.battle!.nextActorId}`;
-      const target: Target & { tactic: EnemyTactic } = { ...position, id, kind: traits.includes('FISSION') ? 'cluster' : 'single', role: elite ? 'elite' : 'virus', radius,
+      const hp = Math.round(elite ? 170 * pacing.eliteHealthMultiplier : 68 * pacing.healthMultiplier * (sourceBody ? ENDLESS_SOURCE_BALANCE.healthInOrdinaryBodies : 1));
+      const serial = ++this.state.battle!.nextActorId;
+      const id = sourceBody ? e.source!.id : `${elite ? 'elite' : 'virus'}-${serial}`;
+      const target: Target & { tactic: EnemyTactic } = { ...position, id, kind: traits.includes('FISSION') ? 'cluster' : 'single', role: sourceBody ? 'source' : elite ? 'elite' : 'virus', radius,
         hp, maxHp: hp, hitUntil: 0, scanned: false, traits, generation: 0, sourceId: sourceId(e.wave), born: now,
         facing: Math.atan2(this.state.player.y - position.y, this.state.player.x - position.x), tactic, ...(eliteCycle ? { eliteCycle } : {}),
         ...(standoff ? { tacticPosture: 'standoff' as const } : {}),
         attackReady: now + (wantsStandoff ? ENDLESS_BALANCE.spawnGrace : support ? .2 : elite ? .35 : ENDLESS_BALANCE.spawnGrace) };
       this.state.targets.push(target);
       e.spawnedIds.push(id); e.spawnSerial++; e.remainingToSpawn--; e.batchMemberIndex++;
+      if (sourceBody) {
+        e.source!.bornAt = now;
+        this.state.battle!.graph.nodes.push({ id, kind: 'source', ...position, active: true, infected: true });
+      }
+      let exhausted = false;
+      if (quotaBirth) {
+        const source = e.source!;
+        source.bornQuotaSlots.push(ordinal);
+        if (!sourcePosition) source.fallbackBirths++;
+        if (sourceQuotaRemaining(source) === 0 && source.status === 'active') {
+          source.status = 'exhausted'; exhausted = true;
+          const body = state.targets.find(actor => actor.id === source.id);
+          if (body) { body.hp = 0; body.deadAt = now; }
+          const node = state.battle!.graph.nodes.find(node => node.id === source.id);
+          if (node) { node.active = false; node.infected = false; }
+        }
+      }
       if (elite) e.eliteRemaining--; if (support) e.supportRemaining--;
       const angle = Math.atan2(position.y - this.state.player.y, position.x - this.state.player.x);
       directions.add(DIRECTIONS[(Math.round(angle / (Math.PI / 4)) + 8) % 8]);
       this.host.effect('evolution', position, position, radius + 16, .7);
-      this.host.emit('ACTOR_SPAWNED', { id, role: target.role!, generation: 0, sourceId: target.sourceId!, traits: traits.join('+'), wave: e.wave, tactic, posture: standoff ? 'standoff' : 'pursuit', formation: e.formation,
+      this.host.emit('ACTOR_SPAWNED', { id, role: target.role!, generation: 0, sourceId: target.sourceId!, traits: traits.join('+'), wave: e.wave, slot: ordinal, tactic, posture: standoff ? 'standoff' : 'pursuit', formation: e.formation,
         ...(eliteCycle ? { dualElite: true, eliteTactics: eliteCycle.tactics.join('>') } : {}) });
       if (this.state !== state || this.e !== e || !this.active()) return;
+      if (quotaBirth) {
+        this.host.emit('ENDLESS_SOURCE_QUOTA_BORN', { id: e.source!.id, actorId: id, wave: e.wave, slot: ordinal,
+          remainingQuota: sourceQuotaRemaining(e.source!), fallback: !sourcePosition });
+        if (this.state !== state || this.e !== e || !this.active()) return;
+      }
+      if (exhausted) {
+        this.host.emit('ENDLESS_SOURCE_EXHAUSTED', { id: e.source!.id, wave: e.wave, bornQuota: e.source!.bornQuotaSlots.length });
+        if (this.state !== state || this.e !== e || !this.active()) return;
+      }
       spawned++;
     }
     if (e.batchMemberIndex >= batch.roles.length) {

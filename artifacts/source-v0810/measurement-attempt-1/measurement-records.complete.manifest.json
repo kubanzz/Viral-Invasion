@@ -1,0 +1,690 @@
+{
+  "schemaVersion": 1,
+  "createdAtUtc": "2026-10-28T05:06:47.236636+00:00",
+  "newRawCases": 13,
+  "independentCases": 12,
+  "predeterminedReplayCases": 1,
+  "fullFrozenCandidateInputs": 50,
+  "scope": "v0.8.10 fixed13 source-route simulation, all50 source inputs, original unchanged public driver and source/cycle observers, runtime bundle, original v089 binding references and complete new derived comparisons/contribution.",
+  "priorEvidence": "Original v089 fixed13 and late2 are retained unchanged, referenced only; no additional baseline or late long run is included.",
+  "limits": [
+    "The old v089 source blocked fast-clear pursuit, so prior rush time advantage had a scheduling regression component. New comparison lists every paired old/new case and direct source-alive pursuit receipts.",
+    "54.748 seconds of accepted simulated schedule reductions need not equal57.467 seconds of feedback-driven simulated elapsed change. Neither number is a wall-clock performance measurement.",
+    "Score/bestCombo was posthoc for original v089 and prospectively listed for this v0810 matrix. The original time/player-loss/organ-loss objective set remains separate.",
+    "SOURCE_EXHAUSTED unspent HP is neither damage nor clear/XP. Original per-step budget/population/geometry/duplicate checks are retained; old last-snapshot next-wave stamp limitation is disclosed.",
+    "This is a1..16 fixed matrix with free warning prepositioning still possible. No new late26/all35/browser/GPU/human-fun qualification is inferred."
+  ],
+  "manifestRule": "All payload entries hashed; embedded archive-manifest.json is these exact bytes and is separately hashed in external index.",
+  "files": [
+    {
+      "path": "cycle-observer-v088.mjs",
+      "bytes": 22536,
+      "sha256": "4f981bb33ec8ef83065eeb32e260b492cfe82a81358765643fefa93c4aa90178"
+    },
+    {
+      "path": "derived/actual-cell-contribution.json",
+      "bytes": 50929,
+      "sha256": "08ab93b6d743c13e921068e32a8ee3f30eff246e385d3f1db00b964a78cafcca"
+    },
+    {
+      "path": "derived/actual-cell-contribution.md",
+      "bytes": 552,
+      "sha256": "838781e08c8cc6cd20a75d87012e4ddad1dafc238247790abe5279481d4ca28c"
+    },
+    {
+      "path": "derived/analysis-script.mjs",
+      "bytes": 13995,
+      "sha256": "002dddc8d3a5b25ec13c8811546aa8cd4bc7bc72b04a68513b6f7072aafa79f4"
+    },
+    {
+      "path": "derived/comparison.json",
+      "bytes": 485961,
+      "sha256": "f1f3edf07293de6e73d49bfafd0229ed69fd3331bc28b8ce9669f145bb06ce00"
+    },
+    {
+      "path": "derived/comparison.md",
+      "bytes": 2747,
+      "sha256": "29e1248cbf52031ae8414ac256784d564f33e1c4207eff84cfa65738493e09b6"
+    },
+    {
+      "path": "entry.ts",
+      "bytes": 381,
+      "sha256": "b91e7368d624f23ab846ab4f745a7cae6a0ef5d2dbf64595cf7db22b05129d0e"
+    },
+    {
+      "path": "frozen-candidate/origin.json",
+      "bytes": 8068,
+      "sha256": "98f6f34f662340a069a440b5c643f401a11c229b73c1ea56d641cac531a0ee11"
+    },
+    {
+      "path": "frozen-candidate/src/actors/collision.ts",
+      "bytes": 5520,
+      "sha256": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0"
+    },
+    {
+      "path": "frozen-candidate/src/actors/enemyCrowd.ts",
+      "bytes": 5866,
+      "sha256": "0058ef0430088c57ad39a2bb1e48708bf1feb18c9910e018f60277c60ce4ca97"
+    },
+    {
+      "path": "frozen-candidate/src/actors/enemyNavigation.ts",
+      "bytes": 6781,
+      "sha256": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd"
+    },
+    {
+      "path": "frozen-candidate/src/core/clock.ts",
+      "bytes": 1156,
+      "sha256": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12"
+    },
+    {
+      "path": "frozen-candidate/src/core/events.ts",
+      "bytes": 887,
+      "sha256": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc"
+    },
+    {
+      "path": "frozen-candidate/src/core/rng.ts",
+      "bytes": 680,
+      "sha256": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4"
+    },
+    {
+      "path": "frozen-candidate/src/game/battle.ts",
+      "bytes": 48857,
+      "sha256": "c7b6c160f9c31814535f17921dda37c7973f52045b6b001ff90de757ee3ad4c9"
+    },
+    {
+      "path": "frozen-candidate/src/game/battleConfig.ts",
+      "bytes": 1703,
+      "sha256": "f39249306407ab27ef6bd2b66eebed67dbcad8d2b03a6b251f3e202a0715a84f"
+    },
+    {
+      "path": "frozen-candidate/src/game/battleTypes.ts",
+      "bytes": 2503,
+      "sha256": "61e53c07f518248f3d42a8d7662ac115284707bac38a0b6d343bfed466299779"
+    },
+    {
+      "path": "frozen-candidate/src/game/campaign.ts",
+      "bytes": 29358,
+      "sha256": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3"
+    },
+    {
+      "path": "frozen-candidate/src/game/campaignEncounters.ts",
+      "bytes": 15407,
+      "sha256": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93"
+    },
+    {
+      "path": "frozen-candidate/src/game/campaignTypes.ts",
+      "bytes": 5081,
+      "sha256": "ff301247b34797b7731bc5e0e0b792eef99bbf75eefd4955d2876a4e7c2788dd"
+    },
+    {
+      "path": "frozen-candidate/src/game/catalysis.ts",
+      "bytes": 3448,
+      "sha256": "f0e0fa75ba67be43545e3cd1f5b74c8951581fc91c4261b7ad012e186799d595"
+    },
+    {
+      "path": "frozen-candidate/src/game/counterLesson.ts",
+      "bytes": 1173,
+      "sha256": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d"
+    },
+    {
+      "path": "frozen-candidate/src/game/eliteTacticCycle.ts",
+      "bytes": 3607,
+      "sha256": "862b23512773a196d997dbd9062b18a9f17188f22449ba93dee98ead13c3e8dd"
+    },
+    {
+      "path": "frozen-candidate/src/game/encounterConfig.ts",
+      "bytes": 384,
+      "sha256": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da"
+    },
+    {
+      "path": "frozen-candidate/src/game/encounterTypes.ts",
+      "bytes": 715,
+      "sha256": "7d5027852136cd4504fa10439903f342a7f9d78adb6ada65adf6105bb7c54c10"
+    },
+    {
+      "path": "frozen-candidate/src/game/endless.ts",
+      "bytes": 33760,
+      "sha256": "9f7a5b3b9dfa0aedb44fe3e374f147dc226d5f2f685999b42391edf170c28ef8"
+    },
+    {
+      "path": "frozen-candidate/src/game/endlessBehavior.ts",
+      "bytes": 1940,
+      "sha256": "d62d6a04490b82a537df74c348b41696faedae515184838907df29d510f4b697"
+    },
+    {
+      "path": "frozen-candidate/src/game/endlessEvolution.ts",
+      "bytes": 4487,
+      "sha256": "b3ad9b394634da947bf9aa7ff32d9b9ccb7774909771c524a078d490bba1db4f"
+    },
+    {
+      "path": "frozen-candidate/src/game/endlessEvolutionTypes.ts",
+      "bytes": 1261,
+      "sha256": "ecf865880c14578cc375adb064e99b0d796cd86ebafe5e1c7342d6d7291707ea"
+    },
+    {
+      "path": "frozen-candidate/src/game/endlessGrowth.ts",
+      "bytes": 11120,
+      "sha256": "c04b87903cb5240bef180a2d309c8deb1f01280f08f9b3701f3926dbb05f09d3"
+    },
+    {
+      "path": "frozen-candidate/src/game/endlessGrowthTypes.ts",
+      "bytes": 3288,
+      "sha256": "bb86f9fc83dad969f72522de6dddf8112c7921a55a110a52186eb59d7764b1f6"
+    },
+    {
+      "path": "frozen-candidate/src/game/endlessPacing.ts",
+      "bytes": 2360,
+      "sha256": "c0d9376d4225c2a6606956f05c51283e5587ab86741f3d615d9d653b5627c090"
+    },
+    {
+      "path": "frozen-candidate/src/game/endlessSource.ts",
+      "bytes": 4049,
+      "sha256": "5a3cbfea571f371707a64c0526e1ebd2e36ac2da404051b37e4692203a51c6fe"
+    },
+    {
+      "path": "frozen-candidate/src/game/endlessTypes.ts",
+      "bytes": 2802,
+      "sha256": "12c2335e17fb91b1eaa5fa015d1d9c73f4ad09f6d25390c7934f9e9edc03347d"
+    },
+    {
+      "path": "frozen-candidate/src/game/enemyFacing.ts",
+      "bytes": 1216,
+      "sha256": "f2f97826b5fbae1d19bfcd718eac2c216800187c86003d11bcfc9c8c63cec24d"
+    },
+    {
+      "path": "frozen-candidate/src/game/enemyPositioning.ts",
+      "bytes": 3649,
+      "sha256": "d01aff7f39ea4d4a3c34f306947452e93de57b93106a56c103bb64c9c097a878"
+    },
+    {
+      "path": "frozen-candidate/src/game/enemyTacticInfo.ts",
+      "bytes": 785,
+      "sha256": "befeaea914373092dd6ac306b8f5fd709218576504a7c4e123fbb961d7500ff6"
+    },
+    {
+      "path": "frozen-candidate/src/game/enemyTactics.ts",
+      "bytes": 7163,
+      "sha256": "c3c52f6f9ec170bce7cf262fe87418930028ab0de1fbb276163e689b97ca805b"
+    },
+    {
+      "path": "frozen-candidate/src/game/enemyTacticsTypes.ts",
+      "bytes": 1203,
+      "sha256": "7ea109e6d6861aa638eacc6f6cf9716d269efed945248a6f9661171f912dd8ae"
+    },
+    {
+      "path": "frozen-candidate/src/game/evolution.ts",
+      "bytes": 8002,
+      "sha256": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501"
+    },
+    {
+      "path": "frozen-candidate/src/game/evolutionTypes.ts",
+      "bytes": 1479,
+      "sha256": "dbd661c484a7d442f1e23d939f1c67e7699e14259213d729e292e74b04fd90fa"
+    },
+    {
+      "path": "frozen-candidate/src/game/growth.ts",
+      "bytes": 45016,
+      "sha256": "808fbf4cbfbcb54acb35e6f08a1942ad397f5ad16454cd97419df106fa642771"
+    },
+    {
+      "path": "frozen-candidate/src/game/growthTypes.ts",
+      "bytes": 6545,
+      "sha256": "d6551d256364cfb28e379417f3dd1e7d4b7fcfc89bea180b58ce87ee4affce8e"
+    },
+    {
+      "path": "frozen-candidate/src/game/immuneCells.ts",
+      "bytes": 18760,
+      "sha256": "733c082bffcdab11b03dda155e2e8fa42869763ad5b7b434d251141a1f0e608b"
+    },
+    {
+      "path": "frozen-candidate/src/game/immuneFocus.ts",
+      "bytes": 2762,
+      "sha256": "8c28078cae1bef57903e175365e168c59e14eeb5a4ce51a4946fc65c1ac89b64"
+    },
+    {
+      "path": "frozen-candidate/src/game/motherCore.ts",
+      "bytes": 17472,
+      "sha256": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da"
+    },
+    {
+      "path": "frozen-candidate/src/game/motherCoreTypes.ts",
+      "bytes": 2655,
+      "sha256": "8b3b2442074429be623bae033eaab9b1ba61fc95d138dc33025f905c6db97e00"
+    },
+    {
+      "path": "frozen-candidate/src/game/organConfig.ts",
+      "bytes": 6689,
+      "sha256": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19"
+    },
+    {
+      "path": "frozen-candidate/src/game/organRules.ts",
+      "bytes": 2894,
+      "sha256": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59"
+    },
+    {
+      "path": "frozen-candidate/src/game/preparation.ts",
+      "bytes": 1484,
+      "sha256": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e"
+    },
+    {
+      "path": "frozen-candidate/src/game/protocols.ts",
+      "bytes": 8531,
+      "sha256": "cb0f2903947c955e328fbc7c77ea79fd3374ea89b72dd663b2c0e2fda22b7363"
+    },
+    {
+      "path": "frozen-candidate/src/game/research.ts",
+      "bytes": 1415,
+      "sha256": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0"
+    },
+    {
+      "path": "frozen-candidate/src/game/runMetrics.ts",
+      "bytes": 19735,
+      "sha256": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4"
+    },
+    {
+      "path": "frozen-candidate/src/game/session.ts",
+      "bytes": 62629,
+      "sha256": "a7c59c0cf45f1fec98ceb00c3c45000f4ee08d9046d7fc676ccd72efa4244da4"
+    },
+    {
+      "path": "frozen-candidate/src/game/tacticalFeedback.ts",
+      "bytes": 8923,
+      "sha256": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc"
+    },
+    {
+      "path": "frozen-candidate/src/game/types.ts",
+      "bytes": 4253,
+      "sha256": "37647ca373d35c141453b25aeb22e9ed13ffa03b7c2209d119ae7ea997d99264"
+    },
+    {
+      "path": "frozen-candidate/tests/helpers/failureDriver.ts",
+      "bytes": 1229,
+      "sha256": "f65ff26bf2764d2801ec81a8037b44c5cddebac9709dcb6eb716dbf600bb8a4f"
+    },
+    {
+      "path": "frozen-candidate/tests/helpers/g3Driver.ts",
+      "bytes": 6883,
+      "sha256": "2dcaa812ae1aa99d5ada5c6e3f4d6e431047483f0e0dd399ed36328b446e6f3b"
+    },
+    {
+      "path": "frozen-origin.json",
+      "bytes": 8068,
+      "sha256": "98f6f34f662340a069a440b5c643f401a11c229b73c1ea56d641cac531a0ee11"
+    },
+    {
+      "path": "frozen-source/src/actors/collision.ts",
+      "bytes": 5520,
+      "sha256": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0"
+    },
+    {
+      "path": "frozen-source/src/actors/enemyCrowd.ts",
+      "bytes": 5866,
+      "sha256": "0058ef0430088c57ad39a2bb1e48708bf1feb18c9910e018f60277c60ce4ca97"
+    },
+    {
+      "path": "frozen-source/src/actors/enemyNavigation.ts",
+      "bytes": 6781,
+      "sha256": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd"
+    },
+    {
+      "path": "frozen-source/src/core/clock.ts",
+      "bytes": 1156,
+      "sha256": "b057baf4e0753346781d17e01a25c3ff72245c181445a456f6bf88030ef17f12"
+    },
+    {
+      "path": "frozen-source/src/core/events.ts",
+      "bytes": 887,
+      "sha256": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc"
+    },
+    {
+      "path": "frozen-source/src/core/rng.ts",
+      "bytes": 680,
+      "sha256": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4"
+    },
+    {
+      "path": "frozen-source/src/game/battle.ts",
+      "bytes": 48857,
+      "sha256": "c7b6c160f9c31814535f17921dda37c7973f52045b6b001ff90de757ee3ad4c9"
+    },
+    {
+      "path": "frozen-source/src/game/battleConfig.ts",
+      "bytes": 1703,
+      "sha256": "f39249306407ab27ef6bd2b66eebed67dbcad8d2b03a6b251f3e202a0715a84f"
+    },
+    {
+      "path": "frozen-source/src/game/campaign.ts",
+      "bytes": 29358,
+      "sha256": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3"
+    },
+    {
+      "path": "frozen-source/src/game/campaignEncounters.ts",
+      "bytes": 15407,
+      "sha256": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93"
+    },
+    {
+      "path": "frozen-source/src/game/catalysis.ts",
+      "bytes": 3448,
+      "sha256": "f0e0fa75ba67be43545e3cd1f5b74c8951581fc91c4261b7ad012e186799d595"
+    },
+    {
+      "path": "frozen-source/src/game/counterLesson.ts",
+      "bytes": 1173,
+      "sha256": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d"
+    },
+    {
+      "path": "frozen-source/src/game/eliteTacticCycle.ts",
+      "bytes": 3607,
+      "sha256": "862b23512773a196d997dbd9062b18a9f17188f22449ba93dee98ead13c3e8dd"
+    },
+    {
+      "path": "frozen-source/src/game/encounterConfig.ts",
+      "bytes": 384,
+      "sha256": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da"
+    },
+    {
+      "path": "frozen-source/src/game/endless.ts",
+      "bytes": 33760,
+      "sha256": "9f7a5b3b9dfa0aedb44fe3e374f147dc226d5f2f685999b42391edf170c28ef8"
+    },
+    {
+      "path": "frozen-source/src/game/endlessBehavior.ts",
+      "bytes": 1940,
+      "sha256": "d62d6a04490b82a537df74c348b41696faedae515184838907df29d510f4b697"
+    },
+    {
+      "path": "frozen-source/src/game/endlessEvolution.ts",
+      "bytes": 4487,
+      "sha256": "b3ad9b394634da947bf9aa7ff32d9b9ccb7774909771c524a078d490bba1db4f"
+    },
+    {
+      "path": "frozen-source/src/game/endlessGrowth.ts",
+      "bytes": 11120,
+      "sha256": "c04b87903cb5240bef180a2d309c8deb1f01280f08f9b3701f3926dbb05f09d3"
+    },
+    {
+      "path": "frozen-source/src/game/endlessPacing.ts",
+      "bytes": 2360,
+      "sha256": "c0d9376d4225c2a6606956f05c51283e5587ab86741f3d615d9d653b5627c090"
+    },
+    {
+      "path": "frozen-source/src/game/endlessSource.ts",
+      "bytes": 4049,
+      "sha256": "5a3cbfea571f371707a64c0526e1ebd2e36ac2da404051b37e4692203a51c6fe"
+    },
+    {
+      "path": "frozen-source/src/game/enemyFacing.ts",
+      "bytes": 1216,
+      "sha256": "f2f97826b5fbae1d19bfcd718eac2c216800187c86003d11bcfc9c8c63cec24d"
+    },
+    {
+      "path": "frozen-source/src/game/enemyPositioning.ts",
+      "bytes": 3649,
+      "sha256": "d01aff7f39ea4d4a3c34f306947452e93de57b93106a56c103bb64c9c097a878"
+    },
+    {
+      "path": "frozen-source/src/game/enemyTacticInfo.ts",
+      "bytes": 785,
+      "sha256": "befeaea914373092dd6ac306b8f5fd709218576504a7c4e123fbb961d7500ff6"
+    },
+    {
+      "path": "frozen-source/src/game/enemyTactics.ts",
+      "bytes": 7163,
+      "sha256": "c3c52f6f9ec170bce7cf262fe87418930028ab0de1fbb276163e689b97ca805b"
+    },
+    {
+      "path": "frozen-source/src/game/evolution.ts",
+      "bytes": 8002,
+      "sha256": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501"
+    },
+    {
+      "path": "frozen-source/src/game/growth.ts",
+      "bytes": 45016,
+      "sha256": "808fbf4cbfbcb54acb35e6f08a1942ad397f5ad16454cd97419df106fa642771"
+    },
+    {
+      "path": "frozen-source/src/game/immuneCells.ts",
+      "bytes": 18760,
+      "sha256": "733c082bffcdab11b03dda155e2e8fa42869763ad5b7b434d251141a1f0e608b"
+    },
+    {
+      "path": "frozen-source/src/game/immuneFocus.ts",
+      "bytes": 2762,
+      "sha256": "8c28078cae1bef57903e175365e168c59e14eeb5a4ce51a4946fc65c1ac89b64"
+    },
+    {
+      "path": "frozen-source/src/game/motherCore.ts",
+      "bytes": 17472,
+      "sha256": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da"
+    },
+    {
+      "path": "frozen-source/src/game/organConfig.ts",
+      "bytes": 6689,
+      "sha256": "504aa84ad7e361e69b9d7c9ca8e476d841883472a736ae9eafa45db20a8bec19"
+    },
+    {
+      "path": "frozen-source/src/game/organRules.ts",
+      "bytes": 2894,
+      "sha256": "5725ba69a04e9e55cdb83174a7ba943d17457652be849cb47b26e85a396e8f59"
+    },
+    {
+      "path": "frozen-source/src/game/preparation.ts",
+      "bytes": 1484,
+      "sha256": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e"
+    },
+    {
+      "path": "frozen-source/src/game/protocols.ts",
+      "bytes": 8531,
+      "sha256": "cb0f2903947c955e328fbc7c77ea79fd3374ea89b72dd663b2c0e2fda22b7363"
+    },
+    {
+      "path": "frozen-source/src/game/research.ts",
+      "bytes": 1415,
+      "sha256": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0"
+    },
+    {
+      "path": "frozen-source/src/game/runMetrics.ts",
+      "bytes": 19735,
+      "sha256": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4"
+    },
+    {
+      "path": "frozen-source/src/game/session.ts",
+      "bytes": 62629,
+      "sha256": "a7c59c0cf45f1fec98ceb00c3c45000f4ee08d9046d7fc676ccd72efa4244da4"
+    },
+    {
+      "path": "frozen-source/src/game/tacticalFeedback.ts",
+      "bytes": 8923,
+      "sha256": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc"
+    },
+    {
+      "path": "frozen-source/src/game/types.ts",
+      "bytes": 4253,
+      "sha256": "37647ca373d35c141453b25aeb22e9ed13ffa03b7c2209d119ae7ea997d99264"
+    },
+    {
+      "path": "frozen-source/tests/helpers/g3Driver.ts",
+      "bytes": 6883,
+      "sha256": "2dcaa812ae1aa99d5ada5c6e3f4d6e431047483f0e0dd399ed36328b446e6f3b"
+    },
+    {
+      "path": "measurement-script.mjs",
+      "bytes": 13261,
+      "sha256": "0bfdbd03be35fc51ce1038c47347b669ac83a02002fe9687ecb4eca1fd21033d"
+    },
+    {
+      "path": "metafile.json",
+      "bytes": 22903,
+      "sha256": "fd1598a5567f9e9926d08162f1d897fe724bfcb869e60b9a907fdb1c94111093"
+    },
+    {
+      "path": "plan.json",
+      "bytes": 8787,
+      "sha256": "1166be9eeebaea90cbd0e0329e60c2fc388c7be4a3a78e48e6e94b60f273bad0"
+    },
+    {
+      "path": "planned-cases.json",
+      "bytes": 10019,
+      "sha256": "ef4758f7ea3d79ccde5757b8ed99b61036720b22ae1937847e3e57d5116340ee"
+    },
+    {
+      "path": "previous-v088-driver.mjs",
+      "bytes": 21447,
+      "sha256": "c15845854f82bcd1ef74ec3c3cbd6bcc96561618720c8bc67f4cbc3e927d744d"
+    },
+    {
+      "path": "public-input-driver.mjs",
+      "bytes": 22478,
+      "sha256": "2e8d24434ff42086e3229d14b0635e0334becb165375427d3e462520cedbd89d"
+    },
+    {
+      "path": "reference-v089/derived/comparison.json",
+      "bytes": 300934,
+      "sha256": "9a40d4b95252981d51b910098ec9d07490f5dfbcef4e1ef7d549e858c8378d3f"
+    },
+    {
+      "path": "reference-v089/measurement-records.complete.index.json",
+      "bytes": 1724,
+      "sha256": "043a64ec9f0496526ea09e5ed629c461a7b5a1d5e33561b76e7a041822bc7bb1"
+    },
+    {
+      "path": "reference-v089/report.json",
+      "bytes": 20872,
+      "sha256": "6d93a74534f86ab25ae22dabf7d0727466562a662f66d16b9e78db4836edc369"
+    },
+    {
+      "path": "reference-v089/strategy-compatibility.json",
+      "bytes": 1365,
+      "sha256": "fead1d26b54ee95526253da9f5e6556d381d873c35811644ed1d2a9036c8c079"
+    },
+    {
+      "path": "report.json",
+      "bytes": 20866,
+      "sha256": "b31b22780facb2e0ea372734bf9a53adcdc3c123250c481f9d5ecde9b2e48853"
+    },
+    {
+      "path": "seed-19-immune-near.json",
+      "bytes": 3785502,
+      "sha256": "8a89111ca231e61f04f5c9e2772b4e11b0fd021ba212ccb409a69f9ea04723da"
+    },
+    {
+      "path": "seed-19-immune-rush.json",
+      "bytes": 3772368,
+      "sha256": "54299beb8375f61d13bdd0145ea05216bc373537f66b2d5ef156550d4204ff7b"
+    },
+    {
+      "path": "seed-19-shooting-near.json",
+      "bytes": 3556438,
+      "sha256": "7b369a8cabd91de292815e506cdb8d16cd056ec6c64f8ffdb0e6152d8314d22c"
+    },
+    {
+      "path": "seed-19-shooting-rush.json",
+      "bytes": 3577614,
+      "sha256": "5664155c4f141e55f8de6148b6dbac9b3758d5a8c58714c751c6ec446c3eb65e"
+    },
+    {
+      "path": "seed-7-immune-near.json",
+      "bytes": 3220016,
+      "sha256": "f49e7397a5f57173fcc30facef3ff175945652f17183c57f80c4eb6a8adaa745"
+    },
+    {
+      "path": "seed-7-immune-rush.json",
+      "bytes": 3083819,
+      "sha256": "5145e37793d163e16f625d7beffa35bf3eee88602d5e4ee6d6988b2007261ade"
+    },
+    {
+      "path": "seed-7-shooting-near.json",
+      "bytes": 2796703,
+      "sha256": "9d2940471cd07ac0ca09d127c731ac49b954748ce3e26bbfc5794e792471d6f2"
+    },
+    {
+      "path": "seed-7-shooting-rush.json",
+      "bytes": 2748806,
+      "sha256": "2c888418d346e4cdaf1e4ba53325d74976e15fc8fd3f11fbd1d791c606ef94ab"
+    },
+    {
+      "path": "seed-71-immune-near.json",
+      "bytes": 3984560,
+      "sha256": "c292b553eea899de721a9476bb894f6e917d9bf21ca29c00b9efe02f49bec666"
+    },
+    {
+      "path": "seed-71-immune-rush-replay-1.json",
+      "bytes": 3849369,
+      "sha256": "25ec72552526adc69339f6adcc5e8a96f6286e4ed01c8313b5f38d938cf27b59"
+    },
+    {
+      "path": "seed-71-immune-rush.json",
+      "bytes": 3849369,
+      "sha256": "25ec72552526adc69339f6adcc5e8a96f6286e4ed01c8313b5f38d938cf27b59"
+    },
+    {
+      "path": "seed-71-shooting-near.json",
+      "bytes": 3463216,
+      "sha256": "48f452046f980df466ca0a6639a9a12b5aae5352e544a1c322c1d698b6a58701"
+    },
+    {
+      "path": "seed-71-shooting-rush.json",
+      "bytes": 3374686,
+      "sha256": "b6a7d0f87084e68eaecea7290d36cb9c30cd964ab25e5967c4c349cb4e1389dc"
+    },
+    {
+      "path": "simulation-bundle.mjs",
+      "bytes": 376922,
+      "sha256": "b74f8b72727b52ec69a1aa52b00d5047ca77d027f5eaf6df295bd5fc98e6ffb1"
+    },
+    {
+      "path": "source-fingerprints.after.json",
+      "bytes": 5781,
+      "sha256": "1125f88141e832525cb7b0c81395361d4914dddfcc1edc2c6ffac3524cad4494"
+    },
+    {
+      "path": "source-fingerprints.before.json",
+      "bytes": 5781,
+      "sha256": "1125f88141e832525cb7b0c81395361d4914dddfcc1edc2c6ffac3524cad4494"
+    },
+    {
+      "path": "source-observer.mjs",
+      "bytes": 16920,
+      "sha256": "1cbecfb3d80eec761e172919ea15c7f935f1bbb3f15d6413e9265a1a16a300c7"
+    },
+    {
+      "path": "strategy-compatibility.json",
+      "bytes": 1365,
+      "sha256": "fead1d26b54ee95526253da9f5e6556d381d873c35811644ed1d2a9036c8c079"
+    },
+    {
+      "path": "tools/analyze.mjs",
+      "bytes": 13995,
+      "sha256": "002dddc8d3a5b25ec13c8811546aa8cd4bc7bc72b04a68513b6f7072aafa79f4"
+    },
+    {
+      "path": "tools/archive-complete.py",
+      "bytes": 4873,
+      "sha256": "9bb6b351b10052d4a336fd938ef0472445e243ce819f8c891705c50a6b340338"
+    },
+    {
+      "path": "tools/immune-addendum.mjs",
+      "bytes": 5468,
+      "sha256": "a13668a16ebca21a1235004c32fa56ad10a4307b1bbd8dc3b39aefd2212ae7db"
+    },
+    {
+      "path": "tools/measure.mjs",
+      "bytes": 13261,
+      "sha256": "0bfdbd03be35fc51ce1038c47347b669ac83a02002fe9687ecb4eca1fd21033d"
+    },
+    {
+      "path": "tools/plan.json",
+      "bytes": 8787,
+      "sha256": "1166be9eeebaea90cbd0e0329e60c2fc388c7be4a3a78e48e6e94b60f273bad0"
+    },
+    {
+      "path": "tools/preparation.json",
+      "bytes": 515,
+      "sha256": "3ec418fc944f46938f0d570ed4500d62a860a0cfb6c4a02ddb7a16a8962038e7"
+    },
+    {
+      "path": "tools/source-observer.mjs",
+      "bytes": 16920,
+      "sha256": "1cbecfb3d80eec761e172919ea15c7f935f1bbb3f15d6413e9265a1a16a300c7"
+    }
+  ]
+}

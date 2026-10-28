@@ -19,6 +19,39 @@ function mountHud() {
 afterEach(() => vi.unstubAllGlobals());
 
 describe('continuous challenge UI contracts', () => {
+  it('shows the real finite source quota and stops advertising an exhausted source as a required target', () => {
+    const state = session().state, nodes = mountHud();
+    state.endless!.wave = 6;
+    state.endless!.source = { id: 'wave-six-source', slot: 0, position: { x: 1900, y: 420 }, status: 'active', bornAt: null,
+      quotaSlots: [12, 13, 14, 15, 16, 17], bornQuotaSlots: [], canceledSlots: [], fallbackBirths: 0 };
+    const original = structuredClone(state);
+    updateEndlessHud(state);
+    expect(nodes.get('endless-objective')!.textContent).toContain('远侧源待开启');
+    expect(nodes.get('endless-traits')!.textContent).toContain('6体待生');
+    expect(state).toEqual(original);
+    state.endless!.source.bornAt = state.elapsed;
+    state.endless!.source.bornQuotaSlots = [12, 13];
+    updateEndlessHud(state);
+    expect(nodes.get('endless-objective')!.textContent).toContain('可截断4体待生增援');
+    state.endless!.source.status = 'exhausted';
+    state.endless!.source.bornQuotaSlots = [...state.endless!.source.quotaSlots];
+    updateEndlessHud(state);
+    expect(nodes.get('endless-objective')!.textContent).toContain('无需再拆');
+    expect(nodes.get('endless-objective')!.textContent).not.toContain('可截断');
+  });
+
+  it('distinguishes canceled source births from actual kills and pending bodies', () => {
+    const state = session().state, nodes = mountHud();
+    state.endless!.source = { id: 'cut-source', slot: 0, position: { x: 1900, y: 420 }, status: 'destroyed', bornAt: 2,
+      quotaSlots: [12, 13, 14, 15, 16, 17], bornQuotaSlots: [12, 13], canceledSlots: [14, 15, 16, 17], fallbackBirths: 0 };
+    state.endless!.canceledToSpawn = 4; state.endless!.remainingToSpawn = 3; state.endless!.kills = 2;
+    updateEndlessHud(state);
+    expect(nodes.get('endless-traits')!.textContent).toContain('源已截断4体');
+    expect(nodes.get('endless-spawn-plan')!.textContent).toContain('待入场 3');
+    expect(nodes.get('endless-spawn-plan')!.textContent).toContain('已截断 4');
+    expect(state.endless!.kills).toBe(2);
+  });
+
   it('mounts one independent, labelled HUD and accessible minimap', () => {
     const markup = endlessHudMarkup();
     expect(markup).toContain('id="endless-hud"'); expect(markup).toContain('id="endless-minimap"');

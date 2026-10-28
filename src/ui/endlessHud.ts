@@ -3,6 +3,7 @@ import { createEndlessGrowth, endlessCombatStats, ENDLESS_UPGRADES, ENDLESS_UPGR
 import { ENEMY_TACTIC_INFO } from '../game/enemyTacticInfo';
 import { endlessSupportTactics } from '../game/endless';
 import { endlessPacing } from '../game/endlessPacing';
+import { sourceQuotaRemaining } from '../game/endlessSource';
 import { endlessEvolutionWarningMarkup, endlessTraitCopy, endlessUpcomingTraits, updateEndlessEvolutionWarning } from './endlessEvolutionWarning';
 import { catalysisToolCopy } from './catalysisHud';
 import { eliteCycleCounter, eliteCycleForecast, eliteCycleStatus } from './eliteTacticCycleHud';
@@ -44,6 +45,17 @@ function mixedSupportCopy(state: GameState): string {
   const tactics = endlessSupportTactics(state.seed, e.wave);
   return [...new Set(tactics)].map(tactic => `${ENEMY_TACTIC_INFO[tactic].name}${tactics.filter(item => item === tactic).length > 1 ? '×2' : ''}`).join(' / ');
 }
+function sourceCopy(state: GameState, compact = false): string {
+  const source = state.endless?.source;
+  if (!source) return '';
+  if (source.status === 'destroyed') return compact ? `□ 源已截断${source.canceledSlots.length}体` : `□ 源已击破 · 已截断${source.canceledSlots.length}体待生增援`;
+  if (source.status === 'exhausted') return '□ 源已枯竭 · 无需再拆，清除现存敌群即可';
+  const dx = source.position.x - state.player.x, dy = source.position.y - state.player.y;
+  const direction = `${dy < -80 ? '北' : dy > 80 ? '南' : ''}${dx < -80 ? '西' : dx > 80 ? '东' : ''}` || '附近';
+  const route = `${direction}侧${Math.round(Math.hypot(dx, dy))}m`;
+  return compact ? `□ 源${route} · ${sourceQuotaRemaining(source)}体待生`
+    : `□ ${source.bornAt === null ? '远侧源待开启' : '活跃增援源'} · ${route} · 可截断${sourceQuotaRemaining(source)}体待生增援 · 截断不计击杀分`;
+}
 function threatCopy(state: GameState, upcoming = false): string {
   if (upcoming && state.endless?.eliteWave) {
     const traits = endlessUpcomingTraits(state);
@@ -65,15 +77,16 @@ function phaseCopy(state: GameState): { title: string; detail: string; alert: bo
   const endless = state.endless!;
   const pacing = endlessPacing(endless.wave);
   const cycle = `第${pacing.cycle}轮 · ${pacing.label}`;
+  const sourceHint = sourceCopy(state);
   const seconds = Math.max(0, endless.phaseUntil - state.elapsed);
   if (endless.phase === 'warning') return { title: `${endless.eliteWave ? '精英来袭' : '下一波来袭'} · ${number(seconds)}s`,
-    detail: `${cycle} · ${endless.formationLabel} · ${threatCopy(state, true)}`, alert: pacing.role !== 'release' };
+    detail: `${sourceHint || `${cycle} · ${endless.formationLabel}`} · ${threatCopy(state, true)}`, alert: pacing.role !== 'release' };
   if (endless.phase === 'intermission') return { title: `第 ${endless.clearedWaves} 波清除`,
     detail: state.growth?.draft?.source === 'endless' ? '精英波联动重配 · 免样本、可放弃，战斗进化照常获得。'
       : state.endlessGrowth?.draft?.breakthrough ? '精英突破：所选路线最多连升两阶。另有免费协议重配。'
         : state.endlessGrowth?.draft ? '选择战斗进化；每5波另有协议重配。选择期间暂停。' : `补给整备 · ${number(seconds)}s 后继续；3 抢修组织。`, alert: false };
   return { title: `${cycle} · ${endless.formationLabel}`,
-    detail: threatCopy(state), alert: endless.eliteWave || state.targets.some(target => target.hp > 0 && !!(target.attackPlan || target.charge)) };
+    detail: `${sourceHint}${sourceHint ? '。' : ''}${threatCopy(state)}`, alert: endless.eliteWave || state.targets.some(target => target.hp > 0 && !!(target.attackPlan || target.charge)) };
 }
 
 export function endlessHudMarkup(): string {
@@ -85,7 +98,7 @@ export function endlessHudMarkup(): string {
     <section class="endless-vitals" aria-label="救援体和组织状态"><div><span>救援体耐久</span><b id="endless-hp"></b></div><div class="meter"><i id="endless-hp-meter"></i></div>
       <div><span>组织完整度</span><b id="endless-tissue"></b></div><div class="meter"><i id="endless-tissue-meter"></i></div><p id="endless-pressure"></p><p id="endless-critical" role="status"></p></section>
     <section class="endless-build-panel"><strong id="endless-level">战斗进化 Lv.0</strong><div id="endless-abilities">${Array.from({ length: 4 }, (_, i) => `<p id="endless-ability-${i}"></p>`).join('')}</div><p id="endless-latest" class="endless-latest"></p></section>
-    <section class="endless-navigation"><strong>战场导航</strong><canvas id="endless-minimap" width="220" height="130" role="img" aria-label="连续挑战小地图：三角为你，加号为组织，菱形为阀门，圆点为敌群"></canvas><p>△ 你　＋ 组织　◇ 阀门　● 敌群</p><p id="endless-tissue-route"></p></section>
+    <section class="endless-navigation"><strong>战场导航</strong><canvas id="endless-minimap" width="220" height="130" role="img" aria-label="连续挑战小地图：三角为你，加号为组织，菱形为阀门，方框为增援源，圆点为敌群"></canvas><p>△ 你　＋ 组织　◇ 阀门　□ 增援源</p><p id="endless-tissue-route"></p></section>
   </div>`;
 }
 
@@ -105,9 +118,14 @@ function drawMap(state: GameState): void {
   ctx.strokeRect(pad + world.bounds.left * sx, pad + world.bounds.top * sy, (world.bounds.right - world.bounds.left) * sx, (world.bounds.bottom - world.bounds.top) * sy);
   ctx.fillStyle = '#425456';
   for (const obstacle of world.obstacles) { const p = point(obstacle); ctx.beginPath(); ctx.ellipse(p.x, p.y, obstacle.radius * sx, obstacle.radius * sy, 0, 0, Math.PI * 2); ctx.fill(); }
-  for (const target of state.targets) if (target.hp > 0) {
+  for (const target of state.targets) if (target.hp > 0 && target.id !== state.endless?.source?.id) {
     const p = point(target); ctx.fillStyle = target.role === 'elite' || target.role === 'core' ? '#ffd09b' : '#ef8f85';
     ctx.beginPath(); ctx.arc(p.x, p.y, target.role === 'elite' || target.role === 'core' ? 3.5 : 2, 0, Math.PI * 2); ctx.fill();
+  }
+  const source = state.endless?.source;
+  if (source && source.status === 'active') {
+    const p = point(source.position); ctx.strokeStyle = '#ffd09b'; ctx.lineWidth = 2;
+    ctx.strokeRect(p.x - 4, p.y - 4, 8, 8);
   }
   const tissue = point(state.tissue); ctx.strokeStyle = '#b9f7cd'; ctx.lineWidth = 2.5;
   ctx.beginPath(); ctx.moveTo(tissue.x - 4, tissue.y); ctx.lineTo(tissue.x + 4, tissue.y); ctx.moveTo(tissue.x, tissue.y - 4); ctx.lineTo(tissue.x, tissue.y + 4); ctx.stroke();
@@ -124,12 +142,12 @@ export function updateEndlessHud(state: GameState): void {
   const e = state.endless, stats = statsFor(state), phase = phaseCopy(state), alive = state.targets.filter(target => target.hp > 0).length;
   text('endless-wave', `第 ${e.wave} 波${e.eliteWave ? ' · 精英' : ''}`); text('endless-cleared', `已清 ${e.clearedWaves} 波`);
   text('endless-remaining', String(endlessRemaining(state)));
-  text('endless-spawn-plan', `场上 ${alive} · 待入场 ${e.remainingToSpawn}${e.pendingChildren ? ` · 待分裂 ${e.pendingChildren}` : ''}`);
+  text('endless-spawn-plan', `场上 ${alive} · 待入场 ${e.remainingToSpawn}${e.pendingChildren ? ` · 待分裂 ${e.pendingChildren}` : ''}${e.canceledToSpawn ? ` · 已截断 ${e.canceledToSpawn}` : ''}`);
   text('endless-phase', phase.title); text('endless-objective', phase.detail);
   const phaseNode = document.getElementById('endless-phase'); if (phaseNode) phaseNode.dataset.alert = String(phase.alert);
   const traitText = endlessTraitCopy(state);
   // This row stays visible at compact heights where the longer objective hides.
-  text('endless-traits', e.phase === 'warning' && e.wave >= 16 ? `${traitText}；混编：${mixedSupportCopy(state)}` : traitText);
+  text('endless-traits', `${e.phase === 'warning' && e.wave >= 16 ? `${traitText}；混编：${mixedSupportCopy(state)}` : traitText}${e.source ? `；${sourceCopy(state, true)}` : ''}`);
   updateEndlessEvolutionWarning(state);
   text('endless-score', String(e.score)); text('endless-combo', `连击 ${e.combo} · 最高 ${e.bestCombo}`);
   text('endless-hp', `${Math.ceil(state.player.hp)} / ${stats.maxHp}`); meter('endless-hp-meter', state.player.hp / stats.maxHp);
@@ -175,6 +193,7 @@ export function endlessOverlay(state: GameState, help: boolean, lowEffects: bool
     <p>在大地图自由移动，用右下导航找回＋组织与◇阀门。敌群从周围分批来袭，清完活体、待入场敌人和待分裂小体才算清波；没有等倒计时自动胜利。</p>
     <div class="help-grid"><div><kbd>WASD</kbd>移动</div><div><kbd>鼠标</kbd>瞄准 · 按住左键连续行动</div><div><kbd>1</kbd>精确净化 · 扇射/贯穿可改变射击</div><div><kbd>2</kbd>范围裂解 · 击退打断</div><div><kbd>3</kbd>瞄准＋组织抢修，也能恢复少量耐久</div><div><kbd>Q</kbd>扫描显形 · 召集或指挥免疫小队</div><div><kbd>Space</kbd>冲刺脱围，升级后沿路径造成伤害</div><div><kbd>E</kbd>靠近◇阀门，朝鼠标发动冲流</div></div>
     <p><strong>顶住压力，再进化收割。</strong>每5波为一轮：第1、3波是压力关，第2、4波是更密集但单体更脆的收割关，第5波迎战精英。新一轮敌体更强，上一轮取得的成长仍然保留；波次与难度固定，不因你的输出临时追平。</p>
+    <p><strong>远侧增援源 · 可选截断路线。</strong>第6、11、16……波会预告地图上的□增援源，最多关联6体有限普通增援。你可以先处理近敌或抢修，再外出提前拆源；基础工具与实际细胞咬击都可清除，尚未出生的关联普通体才会被截断，已出生敌体与裂殖小体仍要处理。截断的增援不计击杀分或连击；保留敌群可争取真实击杀分，整波进化照常获得。配额用完后源会枯竭，不必再跑过去补刀，也不会额外发放击杀或经验。</p>
     <p><strong>每次清波三选一。</strong>战斗进化会立即改变真实攻击：更多射线、贯穿、扩大裂解、冲刺斩、Q爆发、免疫军团、耐久与射速；选项会写明本次前后数值。每5波精英突破时，所选成长最多连升两阶，受路线阶数上限限制。战斗进化可持续获得，已达到机制上限的项目会退出选池，数值成长仍会继续。左下原协议与这些强化同时生效。</p>
     <p><strong>催化裂解 · 可选改造。</strong>第6次成长起，已有新星Ⅰ或免疫军团Ⅰ可抽到这一分支。选后2直伤降为最多8并失去击退，用来铺设最多3体、4秒的催化标记；随后用1命中任一标记体，或指挥真实细胞接触咬击，整批兑现一次110半径爆发，最多伤及3体。选择爆心与衔接时机，有效再铺会覆盖旧批；不用这张卡可保留原范围清群。</p>
     <p><strong>Q 不只是扫描。</strong>Q 就绪时，准星对准敌体可下达短时围猎指令，小队从原位短时加速集结；指空地则区域部署。细胞会实际移动并吞噬，必须赶到接触范围才咬击；指定目标结束后恢复自动选敌。小队仍在且召集冷却中时，Q 就绪后再按 Q 改指挥点；不续命、不重置咬击冷却、不额外耗组织。免疫军团强化伤害、持续和召集效率。</p>

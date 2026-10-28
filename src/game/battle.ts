@@ -191,9 +191,13 @@ export class BattleDirector {
       target.splitPositions = [-1, 1].map(offset => moveWithCollision({ x: target.x, y: target.y }, { x: offset * 27, y: 10 }, 14, activeWorld(s)));
     }
     if (target.role === 'source') {
-      const node = b.graph.nodes.find(n => n.id === target.id)!;
-      node.active = false; node.infected = false;
+      const node = b.graph.nodes.find(n => n.id === target.id);
+      if (node) { node.active = false; node.infected = false; }
       b.stats.sourceClears++;
+      if (s.endless) {
+        // The finite queue owner announces its accepted cancellation count.
+        return;
+      }
       b.pressure.infection = Math.max(0, b.pressure.infection - B.sourceRelief);
       this.host.emit('INFECTION_SOURCE_CLEARED', { organId: b.organId, nodeId: target.id, actor: 'player' });
       if (this.s !== s || s.phase !== 'playing') return;

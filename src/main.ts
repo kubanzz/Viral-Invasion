@@ -341,7 +341,7 @@ function updateCommonHud() {
       button.querySelector('small')!.textContent = catalytic ? '直伤≤8 · 1/细胞引爆' : combat ? `范围 ${combat.areaRadius} · 击退` : s.campaign ? '群体 · 击退打断' : '群体 · 94 范围';
     }
   });
-  document.querySelector('.micro-footer')!.textContent = s.endless ? 'v0.8.8 · 连续进化挑战 / 架空生物幻想' : `${milestone === 'G3' ? 'G4' : milestone} · ${s.battle ? '器官联防' : '基础训练'} / 架空生物幻想`;
+  document.querySelector('.micro-footer')!.textContent = s.endless ? 'v0.8.10 · 连续进化挑战 / 架空生物幻想' : `${milestone === 'G3' ? 'G4' : milestone} · ${s.battle ? '器官联防' : '基础训练'} / 架空生物幻想`;
   document.querySelectorAll<HTMLButtonElement>('[data-action="sound"]').forEach(button => { button.textContent = `声音 ${sound.enabled?'开':'关'}`; });
   document.querySelector<HTMLButtonElement>('[data-action="pause"]')!.hidden = s.phase === 'menu' || s.phase === 'result';
 }
@@ -366,7 +366,7 @@ renderer.resize(); renderer.prepareCamera(session.state); updateOverlay(); updat
 
 // Read-only diagnostics for browser regression. Inputs always use the real DOM.
 Object.defineProperty(window, '__viral', { value: Object.freeze({
-  version: '0.8.8-G4', snapshot: () => session.snapshot(),
+  version: '0.8.10-G4', snapshot: () => session.snapshot(),
   toScreen: (point: { x: number; y: number }) => renderer.camera.worldToScreen(point),
   toWorld: (point: { x: number; y: number }) => renderer.camera.screenToWorld(point),
   diagnostics: () => renderer.diagnostics(session.state),

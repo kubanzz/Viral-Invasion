@@ -1,0 +1,43 @@
+{
+  "scope": "Final static source scoring-copy change; simulation and the first947+source rules remain frozen. Rebuild and targeted UI check only.",
+  "commands": [
+    {
+      "label": "01-build",
+      "args": [
+        "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\node_modules\\npm\\bin\\npm-cli.js",
+        "run",
+        "build"
+      ],
+      "cwd": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\source-v089-release",
+      "startedAt": "2026-10-28T04:32:17.024Z",
+      "exitCode": 0,
+      "finishedAt": "2026-10-28T04:32:25.275Z",
+      "log": "01-build.log"
+    },
+    {
+      "label": "02-ui-rules",
+      "args": [
+        "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\source-v089-release\\node_modules\\vitest\\vitest.mjs",
+        "run",
+        "tests/unit/endless-hud.test.ts",
+        "--maxWorkers=2",
+        "--reporter=default",
+        "--reporter=json",
+        "--outputFile=D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\source-v089\\final-ui-attempt-1\\unit.json"
+      ],
+      "cwd": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\source-v089-release",
+      "startedAt": "2026-10-28T04:32:25.276Z",
+      "exitCode": 0,
+      "finishedAt": "2026-10-28T04:32:26.355Z",
+      "log": "02-ui-rules.log"
+    }
+  ],
+  "tests": {
+    "files": 1,
+    "passed": 17,
+    "failed": 0,
+    "success": true
+  },
+  "gameSha256": "5ad3ca80c97ce4da4a55096feab72d6c5e572dbcfc4754a4ef2e5c8342bc279e",
+  "pass": true
+}

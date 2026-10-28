@@ -1,5 +1,5 @@
 import type { TraitId } from './battleTypes';
-import type { Effect, GameEvent, GameState, MessagePriority } from './types';
+import type { Effect, GameEvent, GameState, MessagePriority, Vec } from './types';
 import type { BehaviorBin } from './evolutionTypes';
 import type { EndlessEvolutionDecision } from './endlessEvolutionTypes';
 
@@ -13,7 +13,18 @@ export interface EndlessAdaptationState {
 }
 
 export type EndlessFormation = 'front' | 'cross' | 'fission-pack' | 'mixed';
-export type EndlessSpawnRole = 'ordinary' | 'support' | 'elite';
+export type EndlessSpawnRole = 'ordinary' | 'support' | 'elite' | 'source';
+export interface EndlessSourcePlan {
+  id: string;
+  slot: 0;
+  position: Vec;
+  status: 'active' | 'destroyed' | 'exhausted';
+  bornAt: number | null;
+  quotaSlots: number[];
+  bornQuotaSlots: number[];
+  canceledSlots: number[];
+  fallbackBirths: number;
+}
 export interface EndlessBatch {
   /** Seconds after this wave actually enters combat, not a wall-clock deadline. */
   at: number;
@@ -31,6 +42,8 @@ export interface EndlessState {
   phaseUntil: number;
   phaseStartedAt: number;
   remainingToSpawn: number;
+  /** Explicitly canceled future ordinary slots; not kills or births. */
+  canceledToSpawn: number;
   totalToSpawn: number;
   spawnedIds: string[];
   creditedKillIds: string[];
@@ -56,6 +69,7 @@ export interface EndlessState {
   batchMemberIndex: number;
   supportRemaining: number;
   evolution?: EndlessAdaptationState;
+  source?: EndlessSourcePlan;
 }
 
 export interface EndlessHost {
