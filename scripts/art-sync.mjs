@@ -5,13 +5,29 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const SCRIPT_PATH = fileURLToPath(import.meta.url);
 const DEFAULT_WORKSPACE = resolve(dirname(SCRIPT_PATH), '..');
-const PIPELINE_VERSION = 1;
+const PIPELINE_VERSION = 2;
 const MAX_ATLAS_SIZE = 2048;
 const ATLAS_GUTTER = 4;
 const MAX_GENERATED_BYTES = 20 * 1024 * 1024;
 const sha256 = value => createHash('sha256').update(value).digest('hex');
 const slash = value => value.split(sep).join('/');
 const samePath = (a, b) => resolve(a).toLowerCase() === resolve(b).toLowerCase();
+
+// Bake the painted surfaces once, using Sharp's colour operations. Original
+// artwork, registration geometry and alpha remain authoritative. Signals and
+// icons retain their original colours so danger/ability cues stay distinct.
+export function artToneFor(id, kind = 'sprite') {
+  if (/^(fx|icon)\./.test(id)) return null;
+  if (kind === 'environment') return id.startsWith('heart.')
+    ? { name: 'warm-matte', saturation: .70, brightness: .99, contrast: .94, lift: 7 }
+    : { name: 'cool-matte', saturation: .78, brightness: 1, contrast: .95, lift: 5 };
+  if (id.startsWith('scenery.')) return { name: 'painted-scenery', saturation: .76, brightness: 1, contrast: .96, lift: 4 };
+  return { name: 'painted-actor', saturation: .88, brightness: 1, contrast: .98, lift: 2 };
+}
+
+export function finishArtImage(image, tone) {
+  return tone ? image.modulate({ saturation: tone.saturation, brightness: tone.brightness }).linear(tone.contrast, tone.lift) : image;
+}
 
 function within(root, path) {
   const absolute = resolve(root, path);
@@ -102,10 +118,11 @@ async function renderSprite(sharp, bytes, spec) {
   const bottom = Math.ceil(Math.max(spec.size * (1 - targetPivot[1]), height - anchorY + margin));
   const outputWidth = left + right, outputHeight = top + bottom;
   const offsetX = Math.round(left - anchorX), offsetY = Math.round(top - anchorY);
-  const content = await sharp(bytes).extract({ left: crop.x, top: crop.y, width: crop.width, height: crop.height }).resize(width, height, { kernel: 'lanczos3' }).ensureAlpha().png({ compressionLevel: 9, adaptiveFiltering: false }).toBuffer();
+  const tone = artToneFor(spec.id);
+  const content = await finishArtImage(sharp(bytes).extract({ left: crop.x, top: crop.y, width: crop.width, height: crop.height }).resize(width, height, { kernel: 'lanczos3' }).ensureAlpha(), tone).png({ compressionLevel: 9, adaptiveFiltering: false }).toBuffer();
   const output = await sharp({ create: { width: outputWidth, height: outputHeight, channels: 4, background: '#00000000' } }).composite([{ input: content, left: offsetX, top: offsetY }]).png({ compressionLevel: 9, adaptiveFiltering: false }).toBuffer();
   return {
-    spec, bytes: output, width: outputWidth, height: outputHeight,
+    spec, bytes: output, width: outputWidth, height: outputHeight, tone,
     pivot: { x: left / outputWidth, y: top / outputHeight },
     visibleBounds: { x: offsetX + (bounds.x - crop.x) * width / crop.width, y: offsetY + (bounds.y - crop.y) * height / crop.height, width: bounds.width * width / crop.width, height: bounds.height * height / crop.height },
     sourceSize: { width: info.width, height: info.height }, sourceBounds: bounds,
@@ -202,7 +219,7 @@ export async function syncArt(options = {}) {
     for (const sprite of page.sprites) {
       const { spec } = sprite;
       frames[spec.id] = { frame: { x: sprite.x, y: sprite.y, w: sprite.width, h: sprite.height }, rotated: false, trimmed: false, spriteSourceSize: { x: 0, y: 0, w: sprite.width, h: sprite.height }, sourceSize: { w: sprite.width, h: sprite.height } };
-      const descriptor = { atlas: key, frame: spec.id, width: sprite.width, height: sprite.height, pivot: sprite.pivot, visibleBounds: sprite.visibleBounds, source: spec.source, sourceSha256: local.get(spec.source).sha256, sourceSize: sprite.sourceSize, sourceBounds: sprite.sourceBounds, touchesSourceEdge: sprite.touchesSourceEdge, status: spec.status ?? 'prototype', flags: spec.flags ?? [], ...(spec.animation ? { animation: spec.animation } : {}) };
+      const descriptor = { atlas: key, frame: spec.id, width: sprite.width, height: sprite.height, pivot: sprite.pivot, visibleBounds: sprite.visibleBounds, source: spec.source, sourceSha256: local.get(spec.source).sha256, sourceSize: sprite.sourceSize, sourceBounds: sprite.sourceBounds, touchesSourceEdge: sprite.touchesSourceEdge, status: spec.status ?? 'prototype', flags: spec.flags ?? [], tone: sprite.tone, ...(spec.animation ? { animation: spec.animation } : {}) };
       if (spec.sourceMuzzle) descriptor.sourceMuzzle = { ...spec.sourceMuzzle };
       assets[spec.id] = descriptor;
       for (const alias of spec.aliases ?? []) assets[alias] = { ...descriptor, aliasOf: spec.id };
@@ -217,8 +234,9 @@ export async function syncArt(options = {}) {
     let image = sharp(local.get(spec.source).bytes);
     const metadata = await image.metadata();
     if (spec.crop) image = image.extract(spec.crop);
-    const { data: png, info } = await image.resize({ width: spec.size, withoutEnlargement: true, kernel: 'lanczos3' }).png({ compressionLevel: 9, adaptiveFiltering: false }).toBuffer({ resolveWithObject: true });
-    environments[spec.id] = { dataUri: `data:image/png;base64,${png.toString('base64')}`, width: info.width, height: info.height, source: spec.source, sourceSha256: local.get(spec.source).sha256, sourceSize: { width: metadata.width, height: metadata.height }, crop: spec.crop ?? null, status: spec.status ?? 'prototype', flags: spec.flags ?? [], bytes: png.length, sha256: sha256(png) };
+    const tone = artToneFor(spec.id, 'environment');
+    const { data: png, info } = await finishArtImage(image.resize({ width: spec.size, withoutEnlargement: true, kernel: 'lanczos3' }), tone).png({ compressionLevel: 9, adaptiveFiltering: false }).toBuffer({ resolveWithObject: true });
+    environments[spec.id] = { dataUri: `data:image/png;base64,${png.toString('base64')}`, width: info.width, height: info.height, source: spec.source, sourceSha256: local.get(spec.source).sha256, sourceSize: { width: metadata.width, height: metadata.height }, crop: spec.crop ?? null, status: spec.status ?? 'prototype', flags: spec.flags ?? [], tone, bytes: png.length, sha256: sha256(png) };
     await writeChanged(join(outputDirectory, `${spec.id}.png`), png);
   }
   const runtime = { schemaVersion: 1, pipelineVersion: PIPELINE_VERSION, inputSignature, selectionSha256, pipelineSha256, candidateSignature, sourceManifest, atlases, assets, environments, report: { unknownCandidates, missing, pending, selectedAssetCount: required.length, selectedSourceCount: Object.keys(sourceManifest).length } };

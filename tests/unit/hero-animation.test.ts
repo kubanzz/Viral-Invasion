@@ -118,12 +118,26 @@ describe('simulation-timed hero frame selection', () => {
     expect(selectWithoutMutation(animation, game.state).clip).toBe('idle');
   });
 
-  it('falls back to the old clean idle/walk body when the requested action group is unavailable', () => {
+  it('uses the reviewed shared-canvas idle body for joint motion when a walk group is unavailable', () => {
     const assets = fixtureHeroAnimationAssets(); delete assets['hero.front_right.walk.07']; delete assets['hero.front_right.dash.03'];
     const animation = new HeroAnimationController(approvedHeroAnimationClips(assets)), game = session();
-    game.step(input({ moveX: 1 })); expect(selectWithoutMutation(animation, game.state)).toMatchObject({ id: 'hero.walk', animated: false, clip: null });
-    game.step(input({ moveX: 1, dash: true })); expect(selectWithoutMutation(animation, game.state)).toMatchObject({ id: 'hero.walk', animated: false });
-    game.step(input()); expect(selectWithoutMutation(animation, game.state)).toMatchObject({ id: 'hero.idle', animated: false });
+    game.step(input({ moveX: 1 })); expect(selectWithoutMutation(animation, game.state)).toMatchObject({ id: 'hero.front_right.idle.00', animated: false, clip: null, gait: { amount: 0 } });
+    game.step(input({ moveX: 1, dash: true })); expect(selectWithoutMutation(animation, game.state)).toMatchObject({ id: 'hero.front_right.idle.00', animated: false });
+    game.step(input()); expect(selectWithoutMutation(animation, game.state)).toMatchObject({ id: 'hero.front_right.idle.00', animated: false });
+  });
+
+  it('eases a distance-driven joint gait, caps dash cadence, freezes it on pause, and previews shots without changing it', () => {
+    const assets=fixtureHeroAnimationAssets(); delete assets['hero.front_right.walk.07']; delete assets['hero.front_right.dash.03'];
+    const animation=controller(assets), game=session(); let frame=animation.select(game.state);
+    for(let i=0;i<12;i++){game.step(input({moveX:1}));frame=selectWithoutMutation(animation,game.state);}
+    expect(frame.gait!.amount).toBeGreaterThan(.9); expect(frame.gait!.phase).toBeGreaterThan(2);
+    const phase=frame.gait!.phase;
+    game.step(input({moveX:1,dash:true}));frame=animation.select(game.state);
+    expect(frame.gait!.phase-phase).toBeLessThanOrEqual(BALANCE.speed*BALANCE.step/88*Math.PI*2+1e-8);
+    const beforePreview=animation.select(game.state), future=game.snapshot(); future.elapsed+=.01;future.tick++;
+    animation.preview(future);expect(animation.select(game.state)).toEqual(beforePreview);
+    game.pause();expect(animation.select(game.state)).toBeDefined();const paused=animation.select(game.state);
+    expect(animation.select({...game.snapshot(),visualTime:game.state.elapsed+.5})).toBe(paused);
   });
 
   it('handles snapshot copies and time rollback without mutating serialized state or using a wall clock', () => {

@@ -8,6 +8,17 @@ const sample = (tick: number, events: GameEvent[], tool: 1 | 2 | 3 = 1) => ({
 } as Pick<GameState, 'events' | 'elapsed' | 'tick' | 'tool'>);
 
 describe('tool presentation feedback', () => {
+  it('fades between simulation ticks while showing an accepted shot immediately', () => {
+    const state = sample(63, [fired(60, 1)]), before = structuredClone(state);
+    const first = toolFeedback({ ...state, visualTime: 1.035 })!.strength;
+    const next = toolFeedback({ ...state, visualTime: 1.04 })!.strength;
+    expect(first).toBeGreaterThan(next);
+    expect(first - next).toBeCloseTo(.005 / .12);
+    expect(toolFeedback({ ...sample(60, [fired(60, 1)]), visualTime: .99 })!.strength).toBe(1);
+    expect(toolFeedback({ ...sample(59, [fired(60, 1)]), visualTime: 1 })).toBeUndefined();
+    expect(state).toEqual(before);
+  });
+
   it('follows accepted simulation events, fades, and does not flash on rejected uses or tool switch', () => {
     const event = fired(60, 1);
     expect(toolFeedback(sample(60, [event]))).toEqual({ strength: 1, tool: 1 });

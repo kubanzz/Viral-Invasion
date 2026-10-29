@@ -11,6 +11,37 @@ import type { ImmuneCellState } from '../../src/game/immuneCells';
 const input = { moveX: 1, moveY: 0, aim: { x: 700, y: 440 }, fire: false };
 
 describe('presentation motion', () => {
+  it('advances visual time between ticks and holds it during pause without changing simulation time', () => {
+    const session = new GameSession(12); session.start();
+    const clock = new FixedClock(), motion = new MotionInterpolation();
+    const times: number[] = [];
+    for (let frame = 0; frame <= 24; frame++) {
+      clock.advance(frame * 1000 / 144, dt => motion.step(session.state, () => session.step(input, dt)));
+      const before = session.snapshot(), shown = motion.present(session.state, clock.alpha);
+      times.push(shown.visualTime ?? shown.elapsed);
+      expect(shown.elapsed).toBe(session.state.elapsed);
+      expect(session.snapshot()).toEqual(before);
+      expect(session.state.visualTime).toBeUndefined();
+    }
+    const increments = times.slice(4).map((time, index, values) => index ? time - values[index - 1] : 0).slice(1);
+    for (const increment of increments) expect(increment).toBeCloseTo(1 / 144, 8);
+    session.pause();
+    expect(motion.present(session.state, 1).visualTime).toBe(times.at(-1));
+  });
+
+  it('turns free actor poses through the shortest arc but keeps locked attack facing exact', () => {
+    const session = new GameSession(3, { campaign: true, milestone: 'G3' }); session.start();
+    const target = session.state.targets.find(t => t.role === 'virus')!;
+    const motion = new MotionInterpolation();
+    target.facing = Math.PI - .1;
+    motion.step(session.state, () => { target.facing = -Math.PI + .1; session.state.tick++; });
+    const shown = motion.present(session.state, .5);
+    expect(shown.targets.find(t => t.id === target.id)!.facing).toBeCloseTo(Math.PI);
+    expect(target.facing).toBe(-Math.PI + .1);
+    target.attackAt = session.state.elapsed + 1;
+    expect(motion.present(session.state, .25).targets.find(t => t.id === target.id)!.facing).toBe(target.facing);
+  });
+
   it.each([60, 120, 144])('smooths %i Hz frames without changing simulation', rate => {
     const session = new GameSession(12); session.start();
     const reference = new GameSession(12); reference.start();

@@ -25,9 +25,9 @@ export function installArtIcons(document: Document): void {
     if (!atlas || !frame || !atlas.dataUri.startsWith('data:image/')) continue;
     let atlasRule = atlasRules.get(atlas.key);
     if (!atlasRule) { atlasRule = { dataUri: atlas.dataUri, selectors: [] }; atlasRules.set(atlas.key, atlasRule); }
+    atlasRule.selectors.push(`#app .art-icon[data-art-icon="${name}"]`);
     if (name === 'chain') atlasRule.selectors.push('#app .protocol-slot[data-protocol="PURIFY_CHAIN"] > span:first-child::before',
       '#app .growth-detail-card[data-protocol="PURIFY_CHAIN"] h3::before');
-    else atlasRule.selectors.push(`#app .art-icon[data-art-icon="${name}"]`);
     const size = atlas.data.meta.size;
     const x = size.w === frame.w ? 0 : frame.x / (size.w - frame.w) * 100;
     const y = size.h === frame.h ? 0 : frame.y / (size.h - frame.h) * 100;

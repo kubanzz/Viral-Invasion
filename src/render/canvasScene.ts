@@ -76,6 +76,7 @@ export class CanvasScene {
   private readonly labels = new SceneLabels();
   private hudRects: readonly LabelRect[] = [];
   private readonly actorCanvases = new Map<string, HTMLCanvasElement>();
+  private materialPattern: CanvasPattern | undefined;
   private lastCrosshair: { status: CrosshairStatus; aim: Vec } | null = null;
 
   /** UI updates this read-only presentation snapshot after its batched DOM read. */
@@ -157,6 +158,7 @@ export class CanvasScene {
       }
       ctx.drawImage(this.landscapes.get(key)!, -100, -200);
     }
+    if (this.art) this.drawSurfaceFinish(ctx, state);
     this.drawAtmosphere(ctx, state, Boolean(opts.lowEffects));
     this.drawGroundSignals(ctx, state, aim);
     drawEncounterGround(ctx, state, Boolean(opts.lowEffects), this.labels);
@@ -350,9 +352,33 @@ export class CanvasScene {
     }
     // Subtle living material breathing is visual; it never moves a collider.
     const glow = ctx.createRadialGradient(650, 90, 0, 650, 90, 400);
-    glow.addColorStop(0, `rgba(247,135,90,${.07 + Math.sin(time * 1.5) * .015})`); glow.addColorStop(1, '#f69a6000');
+    glow.addColorStop(0, `rgba(237,183,145,${.035 + Math.sin(time * 1.5) * .006})`); glow.addColorStop(1, '#edb79100');
     ctx.fillStyle = glow; ctx.fillRect(250, -110, 800, 500);
     if (state.battle) this.drawHeartRhythm(ctx, state, low);
+  }
+
+  /** Quiet world-anchored texture; never grades actors, warnings or HUD text. */
+  private drawSurfaceFinish(ctx: CanvasRenderingContext2D, state: GameState): void {
+    if (!this.materialPattern) {
+      const tile = document.createElement('canvas'); tile.width = tile.height = 96;
+      const grain = tile.getContext('2d')!;
+      // A small deterministic tile is made once. No pixel reads, frame-sized
+      // canvas copies or time-varying noise are needed while moving the camera.
+      for (let i = 0; i < 160; i++) {
+        grain.fillStyle = i % 3 ? 'rgba(71,66,62,.018)' : 'rgba(255,251,236,.025)';
+        grain.fillRect(Math.floor(hash(i * 3) * 96), Math.floor(hash(i * 3 + 1) * 96), 1, 1 + (i % 3 === 0 ? 1 : 0));
+      }
+      this.materialPattern = ctx.createPattern(tile, 'repeat') ?? undefined;
+    }
+    const world = activeWorld(state), lung = state.battle?.organId === 'lung';
+    ctx.save();
+    if (this.materialPattern) { ctx.fillStyle = this.materialPattern; ctx.fillRect(-220, -300, world.width + 440, world.height + 660); }
+    const light = ctx.createLinearGradient(0, world.bounds.top - 180, world.width * .6, world.bounds.bottom + 100);
+    light.addColorStop(0, lung ? 'rgba(244,247,227,.09)' : 'rgba(255,244,221,.08)');
+    light.addColorStop(.55, 'rgba(255,247,231,0)');
+    light.addColorStop(1, lung ? 'rgba(48,78,79,.035)' : 'rgba(93,70,75,.035)');
+    ctx.fillStyle = light; ctx.fillRect(-220, -300, world.width + 440, world.height + 660);
+    ctx.restore();
   }
 
   private drawGroundSignals(ctx: CanvasRenderingContext2D, state: GameState, aim: Vec): void {

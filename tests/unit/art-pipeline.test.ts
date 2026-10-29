@@ -8,7 +8,7 @@ import sharp from 'sharp';
 
 // A computed URL lets the build-only .mjs implementation stay outside game TypeScript.
 const pipelineUrl = pathToFileURL(resolve('scripts/art-sync.mjs')).href;
-const { syncArt, packShelves } = await import(pipelineUrl);
+const { syncArt, packShelves, artToneFor, finishArtImage } = await import(pipelineUrl);
 const temporaryRoots: string[] = [];
 
 async function fixture() {
@@ -33,6 +33,35 @@ afterEach(async () => {
 });
 
 describe('curated offline art pipeline', () => {
+  it('softens painted colour and highlights without changing alpha, dimensions, icons or effects', async () => {
+    const pixels = Buffer.from([250, 86, 59, 255, 255, 255, 255, 180, 42, 74, 91, 8, 0, 0, 0, 0]);
+    const image = () => sharp(pixels, { raw: { width: 4, height: 1, channels: 4 } });
+    const original = await image().raw().toBuffer();
+    for (const tone of [artToneFor('heart.floor', 'environment'), artToneFor('lung.wall', 'environment'), artToneFor('hero.clean')]) {
+      const { data, info } = await finishArtImage(image(), tone).raw().toBuffer({ resolveWithObject: true });
+      expect([info.width, info.height, info.channels]).toEqual([4, 1, 4]);
+      expect([data[3], data[7], data[11], data[15]]).toEqual([255, 180, 8, 0]);
+      expect(Math.max(...data.subarray(0, 3)) - Math.min(...data.subarray(0, 3))).toBeLessThan(250 - 59);
+      expect(Math.max(...data.subarray(4, 7))).toBeLessThan(255);
+      expect(Math.min(...data.subarray(8, 11))).toBeGreaterThanOrEqual(35);
+    }
+    for (const id of ['fx.heal.00', 'fx.scan.00', 'icon.chain', 'icon.dash']) {
+      expect(artToneFor(id)).toBeNull();
+      expect(await finishArtImage(image(), artToneFor(id)).raw().toBuffer()).toEqual(original);
+    }
+  });
+
+  it('preserves every 8-bit alpha value through colour grading and encoded PNG round trips', async () => {
+    const rgba = Buffer.from(Array.from({ length: 256 }, (_, alpha) => [216, 106, 72, alpha]).flat());
+    for (const id of ['heart.floor', 'lung.wall', 'hero.clean', 'scenery.alveoli']) {
+      const tone = artToneFor(id, id.endsWith('.floor') || id === 'lung.wall' ? 'environment' : 'sprite');
+      const png = await finishArtImage(sharp(rgba, { raw: { width: 256, height: 1, channels: 4 } }), tone).png().toBuffer();
+      const result = await sharp(png).ensureAlpha().raw().toBuffer();
+      const actualAlpha = Buffer.from(Array.from({ length: 256 }, (_, i) => result[i * 4 + 3]));
+      expect(actualAlpha).toEqual(Buffer.from(Array.from({ length: 256 }, (_, i) => i)));
+    }
+  });
+
   it('pins every selected workspace original to its currently chosen bytes', async () => {
     const root = resolve('asserts');
     const selection = JSON.parse(await readFile(join(root, 'art-selection.json'), 'utf8'));

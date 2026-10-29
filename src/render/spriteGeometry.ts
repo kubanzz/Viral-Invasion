@@ -64,7 +64,7 @@ export function registeredSpriteBodyBounds(layout: RegisteredSpriteLayout, point
 }
 
 /** A +X authored tool rotates at its inspected grip, with upright art on both aim half-planes. */
-export function aimedPaintedTool(asset: SourceRegisteredSpriteAsset, point: Vec, facing: number, lift = 0): AimedPaintedTool | undefined {
+export function aimedPaintedTool(asset: SourceRegisteredSpriteAsset, point: Vec, facing: number, lift = 0, heldGrip?: Vec): AimedPaintedTool | undefined {
   const source = asset.sourceBounds, canvas = asset.sourceSize, v = asset.visibleBounds;
   if (!source || !canvas || typeof source.x !== 'number' || typeof source.y !== 'number' || typeof source.width !== 'number'
     || ![canvas.width, canvas.height, source.width, source.height, facing, lift].every(Number.isFinite)
@@ -77,7 +77,7 @@ export function aimedPaintedTool(asset: SourceRegisteredSpriteAsset, point: Vec,
   const sourceScale = 36 / source.width;
   const layout = sourceRegisteredSpriteLayout(asset, canvas, sourceGrip, sourceScale); if (!layout) return;
   const angle = Math.atan2(Math.sin(facing) * SPRITE_Y_SCALE, Math.cos(facing)), cos = Math.cos(angle), sin = Math.sin(angle), flipY = Math.cos(facing) < 0;
-  const grip = { x: point.x + cos * 20, y: point.y * SPRITE_Y_SCALE - 30 + lift + sin * 20 }, b = layout.bounds;
+  const grip = heldGrip ?? { x: point.x + cos * 20, y: point.y * SPRITE_Y_SCALE - 30 + lift + sin * 20 }, b = layout.bounds;
   const corners = [b.left, b.right].flatMap(x => [b.top, b.bottom].map(rawY => {
     const y = flipY ? -rawY : rawY;
     return { x: grip.x + x * cos - y * sin, y: grip.y + x * sin + y * cos };

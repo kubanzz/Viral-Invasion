@@ -1,22 +1,32 @@
 import { activeWorld, type GameState, type Vec, type WorldGeometry } from '../game/types';
 import { isLegalPosition } from '../actors/collision';
 
+interface ActorPose extends Vec { facing?: number }
 interface Positions {
   scope: string;
   tick: number;
+  time: number;
   phase: GameState['phase'];
   player: Vec;
-  targets: Map<string, Vec>;
-  cells: Map<string, Vec>;
+  targets: Map<string, ActorPose>;
+  cells: Map<string, ActorPose>;
 }
 
 const point = (v: Vec): Vec => ({ x: v.x, y: v.y });
+const pose = (v: ActorPose): ActorPose => ({ ...point(v), facing: v.facing });
 const scope = (s: GameState): string => `${s.seed}:${s.runMetrics?.runId ?? s.growth?.runId ?? ''}:${s.battle?.organId ?? 'training'}:${s.world?.width ?? 1200}:${s.world?.height ?? 800}`;
 const sample = (s: GameState): Positions => ({
-  scope: scope(s), tick: s.tick, phase: s.phase, player: point(s.player),
-  targets: new Map(s.targets.map(t => [t.id, point(t)])),
-  cells: new Map((s.growth?.cells ?? []).map(c => [`${c.organId}:${c.id}`, point(c)])),
+  scope: scope(s), tick: s.tick, time: s.visualTime ?? s.elapsed, phase: s.phase, player: point(s.player),
+  targets: new Map(s.targets.map(t => [t.id, pose(t)])),
+  cells: new Map((s.growth?.cells ?? []).map(c => [`${c.organId}:${c.id}`, pose(c)])),
 });
+
+function blendFacing<T extends ActorPose>(current: T, previous: ActorPose | undefined, alpha: number): T {
+  if (!Number.isFinite(current.facing) || !Number.isFinite(previous?.facing)
+    || Math.hypot(current.x - previous!.x, current.y - previous!.y) > MAX_STEP_DISTANCE) return current;
+  const delta = Math.atan2(Math.sin(current.facing! - previous!.facing!), Math.cos(current.facing! - previous!.facing!));
+  return delta === 0 ? current : { ...current, facing: previous!.facing! + delta * alpha };
+}
 
 // Never interpolate teleports, organ transfers or unusually large corrections.
 const MAX_STEP_DISTANCE = 40;
@@ -32,7 +42,7 @@ function blendLegal<T extends Vec & { radius: number }>(current: T, previous: Ve
   return interpolated === current || isLegalPosition(interpolated, current.radius, world) ? interpolated : current;
 }
 
-/** Presentation snapshots contain positions only. GameSession is never mutated. */
+/** Continuous render poses and time; GameSession is never mutated. */
 export class MotionInterpolation {
   private previous: Positions | undefined;
   private current: Positions | undefined;
@@ -89,16 +99,23 @@ export class MotionInterpolation {
     const visiblePlayer = blendLegal(state.player, prev.player, t, world);
     const shown: GameState = {
       ...state,
+      visualTime: prev.time + (current.time - prev.time) * t,
       player: visiblePlayer,
-      targets: state.targets.map(target => blendLegal(target, prev.targets.get(target.id), t, world)),
+      targets: state.targets.map(target => {
+        const previous = prev.targets.get(target.id), body = blendLegal(target, previous, t, world);
+        // A locked attack pose must still match its authoritative danger shape.
+        return (target.attackAt ?? 0) > state.elapsed || target.attackPlan || target.charge || (target.recoverUntil ?? 0) > state.elapsed
+          ? body : blendFacing(body, previous, t);
+      }),
       growth: state.growth?.cells ? { ...state.growth, cells: state.growth.cells.map(cell => cell.organId === organ
-        ? blendLegal(cell, prev.cells.get(`${cell.organId}:${cell.id}`), t, world) : cell) } : state.growth,
+        ? (cell.attackUntil > state.elapsed ? blendLegal(cell, prev.cells.get(`${cell.organId}:${cell.id}`), t, world)
+          : blendFacing(blendLegal(cell, prev.cells.get(`${cell.organId}:${cell.id}`), t, world), prev.cells.get(`${cell.organId}:${cell.id}`), t)) : cell) } : state.growth,
     };
     this.lastPresented = sample(shown);
     return shown;
   }
 
-  /** Carry only safe positions into the latest state, never old HP/events/phase. */
+  /** Carry safe render poses/time into the latest state, never old HP/events/phase. */
   private mergePositions(state: GameState, held: Positions | undefined): GameState {
     if (!held || held.scope !== scope(state) || state.tick < held.tick || state.tick - held.tick > 1) return state;
     const world = activeWorld(state), organ = state.battle?.organId ?? 'heart';
@@ -106,9 +123,9 @@ export class MotionInterpolation {
       if (!old || Math.hypot(current.x - old.x, current.y - old.y) > MAX_STEP_DISTANCE || !isLegalPosition(old, current.radius, world)) return current;
       return { ...current, x: old.x, y: old.y };
     };
-    return { ...state, player: use(state.player, held.player),
-      targets: state.targets.map(target => use(target, held.targets.get(target.id))),
+    return { ...state, visualTime: held.time, player: use(state.player, held.player),
+      targets: state.targets.map(target => blendFacing(use(target, held.targets.get(target.id)), held.targets.get(target.id), 0)),
       growth: state.growth?.cells ? { ...state.growth, cells: state.growth.cells.map(cell => cell.organId === organ
-        ? use(cell, held.cells.get(`${cell.organId}:${cell.id}`)) : cell) } : state.growth };
+        ? blendFacing(use(cell, held.cells.get(`${cell.organId}:${cell.id}`)), held.cells.get(`${cell.organId}:${cell.id}`), 0) : cell) } : state.growth };
   }
 }

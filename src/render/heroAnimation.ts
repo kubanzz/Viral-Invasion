@@ -1,5 +1,6 @@
 import { BALANCE, type GameState } from '../game/types';
 import { heroArtPose, sourceRegisteredSpriteLayout, type RegisteredSpriteLayout, type SourceRegisteredSpriteAsset } from './spriteGeometry';
+import type { HeroGait } from './heroRig';
 
 export type HeroClip = 'idle' | 'walk' | 'hurt' | 'dash';
 const CLIP_COUNTS: Record<HeroClip, number> = { idle: 4, walk: 8, hurt: 2, dash: 4 };
@@ -16,6 +17,8 @@ export type HeroAnimationClips = Partial<Record<HeroClip, ApprovedHeroClip>>;
 export interface HeroFramePresentation {
   id: string; clip: HeroClip | null; index: number; animated: boolean; flipX: boolean; lift: number;
   layout?: RegisteredSpriteLayout;
+  /** Joint motion over approved idle artwork when no reviewed walk group exists. */
+  gait?: HeroGait;
 }
 
 function rawMetadata(asset: HeroAnimationAsset): Record<string, unknown> | undefined {
@@ -76,9 +79,19 @@ export class HeroAnimationController {
   private loop: 'idle' | 'walk' | undefined;
   private enteredAt = 0;
   private last: HeroFramePresentation | undefined;
+  private gait: HeroGait = { phase: 0, amount: 0, lean: 0 };
+  private gaitSample: { x: number; y: number; time: number } | undefined;
   constructor(readonly clips: HeroAnimationClips) {}
 
-  reset(): void { this.run = ''; this.lastElapsed = -1; this.lastTick = -1; this.loop = undefined; this.enteredAt = 0; this.last = undefined; }
+  reset(): void { this.run = ''; this.lastElapsed = -1; this.lastTick = -1; this.loop = undefined; this.enteredAt = 0; this.last = undefined;
+    this.gait = { phase: 0, amount: 0, lean: 0 }; this.gaitSample = undefined; }
+
+  /** Observing a shot between rendered frames must not advance the displayed gait. */
+  preview(state: GameState): HeroFramePresentation {
+    const saved = { run: this.run, lastElapsed: this.lastElapsed, lastTick: this.lastTick, loop: this.loop,
+      enteredAt: this.enteredAt, last: this.last, gait: this.gait, gaitSample: this.gaitSample };
+    const frame = this.select(state); Object.assign(this, saved); return frame;
+  }
 
   select(state: GameState): HeroFramePresentation {
     const run = `${state.seed}:${state.runMetrics?.runId ?? state.growth?.runId ?? ''}`;
@@ -87,19 +100,39 @@ export class HeroAnimationController {
     // pause() clears moving in GameSession. Preserve the actual last displayed
     // clip as well as its index, rather than changing a paused walk into idle.
     if (state.phase !== 'playing' && this.last) return this.last;
+    const time = state.visualTime ?? state.elapsed;
     const request = requestedHeroAnimation(state), clip = this.clips[request.clip];
     if (request.clip === 'idle' || request.clip === 'walk') {
-      if (this.loop !== request.clip) { this.loop = request.clip; this.enteredAt = state.elapsed; }
+      if (this.loop !== request.clip) { this.loop = request.clip; this.enteredAt = time; }
     } else this.loop = undefined;
     if (!clip || state.phase === 'menu') {
-      this.last = { ...heroArtPose(state), clip: null, index: 0, animated: false,
-        lift: state.player.moving ? -Math.abs(Math.sin(state.elapsed * 16)) * 1.5 : 0 };
+      const reference = this.clips.idle?.frames[0];
+      this.last = reference && !this.clips.walk ? { id: reference.id, layout: reference.layout, clip: null, index: 0,
+        animated: false, flipX: Math.cos(state.player.facing) < 0, lift: 0 }
+        : { ...heroArtPose(state), clip: null, index: 0, animated: false,
+          lift: state.player.moving ? -Math.abs(Math.sin(time * 16)) * 1.5 : 0 };
     } else {
       const index = request.duration !== undefined
         ? Math.min(clip.frames.length - 1, Math.floor((request.age! / request.duration) * clip.frames.length + EPSILON))
-        : Math.floor(Math.max(0, state.elapsed - this.enteredAt) * clip.fps + EPSILON) % clip.frames.length;
+        : Math.floor(Math.max(0, time - this.enteredAt) * clip.fps + EPSILON) % clip.frames.length;
       const frame = clip.frames[index];
       this.last = { id: frame.id, clip: request.clip, index, animated: true, flipX: Math.cos(state.player.facing) < 0, lift: 0, layout: frame.layout };
+    }
+    if (!this.clips.walk && this.last.layout && state.phase !== 'menu') {
+      const p = state.player, previous = this.gaitSample, dt = previous ? time - previous.time : 0;
+      if (previous && dt > 0 && dt < .2) {
+        const dx = p.x - previous.x, distance = Math.hypot(dx, p.y - previous.y);
+        if (distance < 40) {
+          const moving = p.moving && distance > .001;
+          const target = moving ? Math.min(1, distance / dt / BALANCE.speed) : 0;
+          const approach = 1 - Math.exp(-dt / (moving ? .055 : .1));
+          this.gait = { phase: this.gait.phase + (moving ? Math.min(distance, dt * BALANCE.speed) / 88 * Math.PI * 2 : 0),
+            amount: this.gait.amount + (target - this.gait.amount) * approach,
+            lean: this.gait.lean + ((moving ? Math.max(-1, Math.min(1, dx / dt / BALANCE.speed)) : 0) - this.gait.lean) * approach };
+        } else this.gait = { phase: 0, amount: 0, lean: 0 };
+      }
+      this.gaitSample = { x: p.x, y: p.y, time };
+      this.last = { ...this.last, gait: { ...this.gait } };
     }
     return this.last;
   }

@@ -47,6 +47,8 @@ export interface TacticalRecord {
 export interface Effect { id: number; kind: 'beam' | 'burst' | 'scan' | 'heal' | 'dash' | 'hit' | 'success' | 'pulse' | 'evolution' | 'danger' | 'flow' | 'chain' | 'slash'; from: Vec; to: Vec; radius: number; born: number; duration: number; angle?: number; arcHalfAngle?: number; repairSucceeded?: boolean }
 export interface GameState {
   game: 'viral-invasion'; schemaVersion: 1; seed: number; phase: Phase; tick: number; elapsed: number;
+  /** Render snapshots only: continuous time between fixed simulation steps. */
+  visualTime?: number;
   player: Player; targets: Target[]; tissue: Tissue; terminal: Vec; tool: Tool;
   cooldowns: Record<Tool, number>; scanReady: number; scanUntil: number;
   effects: Effect[]; events: GameEvent[]; message: string; messageUntil: number;

@@ -115,7 +115,7 @@ for(const [index,choice]of (['block','pursue','ignore'] as MigrationChoice[]).en
   const draft=s.growth!.draft!,current=s.growth!.equipped.find(p=>p.id===primary);
   const option=draft.options.find(o=>o.protocolId===primary&&(!current||(o.rank??1)>protocolRank(current)))??draft.options.find(o=>o.kind==='equip')??draft.options[0];
   drafts.push({elapsed:s.elapsed,equipped:s.growth!.equipped,options:draft.options,selected:option});
-  await expect(page.locator('.draft-change').first()).toBeVisible();await expect(page.locator('.draft-action').first()).toBeVisible();
+  await expect(page.locator('.choice-summary').first()).toBeVisible();await expect(page.locator('.draft-action').first()).toBeVisible();
   await page.screenshot({path:info.outputPath(`draft-${draft.serial}.png`)});
   await page.locator(`[data-action="draft-option"][data-option="${option.id}"]`).click();
   if((await readState(page)).growth?.draft?.status==='replacing')await page.locator('[data-action="draft-replace"]').last().click();

@@ -1,50 +1,50 @@
-/* The painted world stays bright; interface contrast comes from ink on warm paper.
+/* Matte painted surfaces; interface contrast comes from ink on warm paper.
    Layout and HUD exclusion rectangles continue to use the existing UI contracts. */
 :root {
-  --art-ink: #253d46;
-  --art-muted: #5d7175;
-  --art-teal: #247e87;
-  --art-teal-dark: #185c69;
-  --art-paper: #fffaf1;
-  --art-panel: rgba(255, 250, 241, .94);
-  --art-soft: #e7f3ed;
-  --art-border: rgba(77, 119, 121, .36);
-  --art-shadow: 0 4px 16px rgba(52, 69, 70, .1), inset 0 1px rgba(255, 255, 255, .75);
+  --art-ink: #314448;
+  --art-muted: #63716e;
+  --art-teal: #397d79;
+  --art-teal-dark: #285d5b;
+  --art-paper: #f6f1e7;
+  --art-panel: rgba(248, 244, 234, .95);
+  --art-soft: #e7ece3;
+  --art-border: rgba(96, 118, 111, .28);
+  --art-shadow: 0 3px 13px rgba(62, 67, 61, .075);
   --art-danger: #a54542;
   --mint: #247e87;
   --dim: #5d7175;
   --line: rgba(77, 119, 121, .24);
   color: var(--art-ink);
-  background: #f4c7ad;
+  background: #d9b7a4;
 }
 
 body[data-organ="lung"], #app[data-organ="lung"] {
-  --art-paper: #f6fff9;
-  --art-panel: rgba(247, 255, 250, .94);
-  --art-soft: #e5f4f2;
-  --art-teal: #247a87;
-  --art-border: rgba(69, 119, 131, .36);
+  --art-paper: #eef3ec;
+  --art-panel: rgba(241, 246, 238, .95);
+  --art-soft: #e3ece7;
+  --art-teal: #417d80;
+  --art-border: rgba(89, 120, 119, .28);
 }
 
 #app { color: var(--art-ink); }
 #app button {
   color: var(--art-ink);
-  background: rgba(255, 252, 245, .94);
+  background: var(--art-panel);
   border-color: var(--art-border);
-  box-shadow: inset 0 1px rgba(255, 255, 255, .6);
+  box-shadow: none;
   transition: background .15s, border-color .15s, box-shadow .15s;
 }
 #app button:hover {
-  background: #e7f4ed;
+  background: #e5eee6;
   border-color: var(--art-teal);
-  box-shadow: 0 2px 9px rgba(45, 103, 103, .1);
+  box-shadow: 0 2px 7px rgba(59, 83, 74, .07);
 }
 #app button:active { transform: none; background: #d5e9df; }
 #app button.primary {
   color: #fffdf7;
   background: var(--art-teal);
   border-color: var(--art-teal-dark);
-  box-shadow: 0 3px 0 rgba(24, 92, 105, .18), inset 0 1px rgba(255, 255, 255, .2);
+  box-shadow: 0 2px 5px rgba(43, 77, 69, .13);
 }
 #app button.primary:hover { background: var(--art-teal-dark); }
 #app button.quiet { color: var(--art-muted); background: transparent; }
@@ -56,16 +56,16 @@ body[data-organ="lung"], #app[data-organ="lung"] {
 }
 #app kbd {
   color: #36555d;
-  background: #f6faf4;
-  border-color: #88aaa8;
-  box-shadow: 0 1px rgba(77, 119, 121, .12);
+  background: #eef1e8;
+  border-color: #a4b6aa;
+  box-shadow: none;
 }
 
 #app .brand-icon { background: #e9f7ef; color: var(--art-teal-dark); }
 #app .brand strong { color: #234f5c; text-shadow: 0 1px 5px #fff9eb; font-weight: 600; }
 #app .brand small { color: #47656b; text-shadow: 0 1px 4px #fff9eb; letter-spacing: 2px; }
 #app .status-chip { color: #215d65; text-shadow: 0 1px 4px #fff9eb; }
-#app .top-actions button { background: rgba(255, 250, 241, .94); }
+#app .top-actions button { background: var(--art-panel); }
 #app .eyebrow { color: #637b7b; letter-spacing: 1.8px; }
 
 #app :is(.objective, .telemetry .readout, .pulse-readout, .growth-panel,
@@ -122,9 +122,9 @@ body[data-organ="lung"], #app[data-organ="lung"] {
 #app .organ-overview.hud-obscured #migration-outcome { background: var(--art-panel); }
 
 #app .tool-dock {
-  background: rgba(255, 250, 241, .97);
-  border-color: #779f9c;
-  box-shadow: 0 5px 18px rgba(55, 79, 76, .15), inset 0 1px #fff;
+  background: var(--art-panel);
+  border-color: #9aae9e;
+  box-shadow: var(--art-shadow);
   border-radius: 13px;
 }
 #app .tool { background: transparent; border-color: transparent; box-shadow: none; }
@@ -223,7 +223,7 @@ body.dual-organ #app .ability-key .art-icon { width: 16px; height: 16px; }
 #app .endless-build-panel .endless-latest { color: #7d5d3d; border-color: #afbea4; }
 
 /* Paused screens may be richer, but keep the live battlefield unobscured. */
-#app .overlay { background: rgba(44, 70, 69, .3); backdrop-filter: blur(3px); }
+#app .overlay { background: rgba(44, 58, 53, .26); backdrop-filter: blur(3px); }
 #app .overlay.intro {
   background: linear-gradient(90deg, #fff9ecfa 0%, #fff6e9eb 29%, #fff6e99c 44%, #fff6e908 76%);
   backdrop-filter: none;
@@ -275,9 +275,9 @@ body.dual-organ #app .ability-key .art-icon { width: 16px; height: 16px; }
 
 #app :is(.modal, .profile-dialog.modal, .starting-plan-dialog.modal) {
   color: var(--art-ink);
-  background: linear-gradient(135deg, #fffdf6, #f3f6e9);
-  border-color: #91aba0;
-  box-shadow: 0 18px 65px rgba(37, 66, 65, .23), inset 0 1px #fff;
+  background: var(--art-paper);
+  border-color: #a2b3a3;
+  box-shadow: 0 18px 65px rgba(44, 57, 49, .19);
 }
 #app .modal h2 { color: #2c5962; font-weight: 600; }
 #app .modal :is(p, li, dd, small), #app .modal .seed { color: #5c706b; }

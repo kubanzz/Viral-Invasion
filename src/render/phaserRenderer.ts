@@ -17,6 +17,7 @@ import { motherCoreDisturbed } from '../game/motherCore';
 import type { MotherCoreState } from '../game/motherCoreTypes';
 import { drawMotherCoreAccents, motherCoreLift, type MotherCoreAccentGeometry } from './battleVisuals';
 import { toolFeedback } from './toolFeedback';
+import { createHeroRig, type HeroRig } from './heroRig';
 
 interface Asset extends HeroAnimationAsset { atlas:string; frame:string; flags:string[]; status:string }
 interface RuntimeArt {inputSignature:string; atlases:{key:string;dataUri:string;data:object}[];assets:Record<string,Asset>;environments:Record<string,{dataUri:string;width:number;height:number}>}
@@ -24,6 +25,7 @@ interface MotherArtComposition {
   combat:MotherCoreState; layers:{id:string;layout:RegisteredSpriteLayout}[];
   alpha:number;lift:number;bounds:VisualBounds;geometry:MotherCoreAccentGeometry;
 }
+interface HeroPresentation { frame:HeroFramePresentation; bounds:VisualBounds; tool?:AimedPaintedTool; rig?:HeroRig }
 const art = artRuntime as unknown as RuntimeArt;
 const TAU = Math.PI * 2;
 function ring(ctx:CanvasRenderingContext2D,p:Vec,r:number,color:string,width=1.5) {ctx.beginPath();ctx.ellipse(p.x,p.y,r,r,0,0,TAU);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke();}
@@ -39,7 +41,7 @@ export class Renderer {
   private readonly bodies=new Map<string,VisualBounds>();
   private readonly effectSprites=new Set<string>();
   private readonly heroAnimation=new HeroAnimationController(approvedHeroAnimationClips(art.assets));
-  private heroPresentation:{frame:HeroFramePresentation;bounds:VisualBounds;tool?:AimedPaintedTool}|undefined;
+  private heroPresentation:HeroPresentation|undefined;
   private readonly beamOrigins=new Map<string,Vec>();
   private readonly witnessedBeamOrigins=new Map<string,Vec>();
   private beamRun='';
@@ -81,7 +83,7 @@ export class Renderer {
       if(event.tick===state.tick&&event.type==='TOOL_FIRED'&&event.data.tool===1){fired=true;break;}}
     if(!fired)return;
     this.syncBeamState(state);
-    const tool=this.prepareHeroPresentation(state).tool;
+    const tool=this.prepareHeroPresentation(state,true).tool;
     for(const [key,origin] of this.birthBeamOrigins(state,state,tool))this.witnessedBeamOrigins.set(key,origin);
   }
   resize():void {const r=this.canvas.getBoundingClientRect();this.width=Math.max(1,this.canvas.id==='game'?innerWidth:r.width||innerWidth);this.height=Math.max(1,this.canvas.id==='game'?innerHeight:r.height||innerHeight);this.painter.resize(this.width,this.height);this.host.resize(this.width,this.height);}
@@ -92,7 +94,7 @@ export class Renderer {
     const frame=this.heroPresentation?.frame;
     return {...this.painter.diagnostics(state),phaser:this.host.diagnostics(),art:{signature:art.inputSignature,selectedAssets:Object.keys(art.assets).length,
       activeBodies:[...this.bodies].map(([id,bounds])=>({id,bounds})),
-      heroAnimation:{enabledClips:Object.keys(this.heroAnimation.clips),frame:frame?{id:frame.id,clip:frame.clip,index:frame.index,animated:frame.animated,flipX:frame.flipX}:null},
+      heroAnimation:{enabledClips:Object.keys(this.heroAnimation.clips),frame:frame?{id:frame.id,clip:frame.clip,index:frame.index,animated:frame.animated,flipX:frame.flipX,articulated:!!this.heroPresentation?.rig,gait:frame.gait}:null},
       weapon:{assetId:this.heroPresentation?.tool?'weapon.emitter.painted':null,mode:this.heroPresentation?.tool?'painted-static':'procedural-fallback'},
       provisional:[...(heroComplete?['additional-player-directions']:['continuous-player-animation']),
         ...(this.motherArtLayersReady()?['mother-static-layers','missing-continuous-mother-animation']:['mother-core']),
@@ -133,30 +135,36 @@ export class Renderer {
     this.host.sprite(id,{texture:a.atlas,frame:a.frame,x:screen.x,y:screen.y+(options.lift??0)*this.camera.scale,width:w*this.camera.scale,height:h*this.camera.scale,depth,alpha:options.alpha,flipX:options.flipX,originX:options.flipX?1-a.pivot.x:a.pivot.x,originY:a.pivot.y});return true;
   }
   private bounds(id:string,p:Vec,height:number,flipX=false,lift=0):VisualBounds {const b=spriteBodyBounds(art.assets[id],p,height,flipX);return {...b,top:b.top+lift,bottom:b.bottom+lift};}
-  private prepareHeroPresentation(state:GameState):{frame:HeroFramePresentation;bounds:VisualBounds;tool?:AimedPaintedTool} {
-    const frame=this.heroAnimation.select(state);
-    const body=frame.layout?registeredSpriteBodyBounds(frame.layout,state.player,frame.flipX,frame.lift)
+  private prepareHeroPresentation(state:GameState,preview=false):HeroPresentation {
+    const frame=preview?this.heroAnimation.preview(state):this.heroAnimation.select(state);
+    let body=frame.layout?registeredSpriteBodyBounds(frame.layout,state.player,frame.flipX,frame.lift)
       :this.bounds(frame.id,state.player,86,frame.flipX,frame.lift);
     // The old weapon.emitter is a prototype and never enables replacement.
     const painted=art.assets['weapon.emitter.painted'];
     const recoil=(toolFeedback(state)?.strength??0)*4;
     const toolPoint={x:state.player.x-Math.cos(state.player.facing)*recoil,y:state.player.y-Math.sin(state.player.facing)*recoil};
-    const tool=painted&&!painted.aliasOf?aimedPaintedTool(painted,toolPoint,state.player.facing,frame.lift):undefined;
+    const angle=Math.atan2(Math.sin(state.player.facing)*.72,Math.cos(state.player.facing));
+    const heldGrip=frame.gait?{x:toolPoint.x+Math.cos(angle)*21,
+      y:toolPoint.y*.72-19+frame.lift+Math.sin(angle)*3}:undefined;
+    const tool=painted&&!painted.aliasOf?aimedPaintedTool(painted,toolPoint,state.player.facing,frame.lift,heldGrip):undefined;
+    const rig=frame.gait&&frame.layout?createHeroRig(art.assets[frame.id],frame.layout,state.player,frame.flipX,frame.lift,frame.gait,tool):undefined;
+    if(rig)body=rig.bounds;
     const bounds=tool?{left:Math.min(body.left,tool.bounds.left),right:Math.max(body.right,tool.bounds.right),
       top:Math.min(body.top,tool.bounds.top),bottom:Math.max(body.bottom,tool.bounds.bottom)}:body;
-    return {frame,bounds,tool};
+    return {frame,bounds,tool,rig};
   }
-  private playerPresentation(state:GameState):{frame:HeroFramePresentation;bounds:VisualBounds;tool?:AimedPaintedTool} {
+  private playerPresentation(state:GameState):HeroPresentation {
     return this.heroPresentation??=this.prepareHeroPresentation(state);
   }
   private emitHero(state:GameState,depth:number):VisualBounds {
-    const {frame,bounds}=this.playerPresentation(state),p=state.player;
+    const {frame,bounds,rig}=this.playerPresentation(state),p=state.player;
     if(!frame.layout){this.emit('player',frame.id,p,86,depth,{flipX:frame.flipX,lift:frame.lift});return bounds;}
     const a=art.assets[frame.id],layout=frame.layout,point=this.camera.worldToScreen(p),scale=this.camera.scale;
     if(point.x+(bounds.right-p.x)*scale>=0&&point.x+(bounds.left-p.x)*scale<=this.width
       &&point.y+(bounds.bottom-p.y*.72)*scale>=0&&point.y+(bounds.top-p.y*.72)*scale<=this.height)
-      this.host.sprite('player',{texture:a.atlas,frame:a.frame,x:point.x,y:point.y+frame.lift*scale,width:layout.width*scale,height:layout.height*scale,
-        originX:frame.flipX?1-layout.originX:layout.originX,originY:layout.originY,flipX:frame.flipX,depth});
+      this.host.sprite('player',{texture:a.atlas,frame:a.frame,x:point.x,y:point.y+(rig?0:frame.lift)*scale,width:layout.width*scale,height:layout.height*scale,
+        originX:frame.flipX?1-layout.originX:layout.originX,originY:layout.originY,flipX:frame.flipX,depth,
+        mesh:rig?{indices:rig.mesh.indices,vertices:rig.mesh.vertices.map((n,i)=>i%4<2?n*scale:n)}:undefined});
     return bounds;
   }
   private emitPaintedTool(state:GameState,tool:AimedPaintedTool,depth:number):void {
@@ -164,7 +172,7 @@ export class Renderer {
     this.host.sprite('player:tool',{texture:a.atlas,frame:a.frame,x:origin.x+(tool.grip.x-state.player.x)*scale,
       y:origin.y+(tool.grip.y-state.player.y*.72)*scale,width:tool.layout.width*scale,height:tool.layout.height*scale,
       originX:tool.layout.originX,originY:tool.flipY?1-tool.layout.originY:tool.layout.originY,flipY:tool.flipY,
-      rotation:tool.angle,depth:depth+(Math.sin(tool.angle)<0?-.1:.2)});
+      rotation:tool.angle,depth:depth+(this.heroPresentation?.rig ? .2 : Math.sin(tool.angle)<0?-.1:.2)});
   }
   private beamKey(effect:Effect):string {return JSON.stringify([effect.id,effect.kind,effect.born,effect.duration,effect.radius,effect.from.x,effect.from.y,effect.to.x,effect.to.y]);}
   private syncBeamState(state:GameState):void {
@@ -220,7 +228,15 @@ export class Renderer {
     const id=t.role==='source'?'source.infection':t.traits?.includes('FISSION')?((t.generation??0)>0?'enemy.fission.child':'enemy.fission.parent'):t.traits?.includes('CARAPACE')?'enemy.carapace':t.traits?.includes('MIMIC')?'enemy.mimic':'enemy.basic';
     return art.assets[id]?id:undefined;
   }
-  private targetLift(t:Target,state:GameState):number {return (t.attackAt??0)>state.elapsed?-2:Math.sin(state.elapsed*4+t.x)*1.2;}
+  private targetLift(t:Target,state:GameState):number {
+    if(t.role==='source')return 0;
+    // The body identity sets its phase. World X in this expression made a
+    // walking virus vibrate faster each time it moved horizontally.
+    let hash=2166136261;for(let i=0;i<t.id.length;i++)hash=Math.imul(hash^t.id.charCodeAt(i),16777619);
+    const phase=(hash>>>0)/4294967296*TAU,time=state.visualTime??state.elapsed;
+    const windup=(t.attackAt??0)>state.elapsed;
+    return windup?-2:Math.sin(time*4+phase)*1.2;
+  }
   private motherArtLayersReady():boolean {
     return ['mother.base','mother.core.exposed','mother.membrane','mother.carapace','mother.fission','mother.mimic','mother.purified']
       .every(id=>!!art.assets[id]&&!!sourceRegisteredSpriteLayout(art.assets[id],{width:1024,height:1024},{x:512,y:850},1));
@@ -312,8 +328,10 @@ export class Renderer {
       let muzzle:{x:number;y:number}|undefined;
       if(tool){
         this.emitPaintedTool(state,tool,depth);
-        ctx.strokeStyle='#24758b';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,-30+presentation.frame.lift);
-        ctx.lineTo(tool.grip.x-p.x,tool.grip.y-p.y*.72);ctx.stroke();
+        // Mesh skinning moves the real glove to the grip; no chest-to-tool
+        // tether is drawn over the character.
+        if(!presentation.rig){ctx.strokeStyle='#24758b';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,-30+presentation.frame.lift);
+          ctx.lineTo(tool.grip.x-p.x,tool.grip.y-p.y*.72);ctx.stroke();}
         const point=paintedToolMuzzle(art.assets['weapon.emitter.painted'],tool);
         if(point)muzzle={x:point.x-p.x,y:point.y-p.y*.72};
       }else{
@@ -375,8 +393,8 @@ export class Renderer {
       const tissue=state.tissue,id=tissue.hp>=tissue.maxHp?'tissue.restored':'tissue.unstable';if(!art.assets[id])return false;
       const frame=this.playerPresentation(state).frame;
       // Protect the current body frame, not the independent tool's wider reach.
-      const playerBody=frame.layout?registeredSpriteBodyBounds(frame.layout,state.player,frame.flipX,frame.lift)
-        :this.bounds(frame.id,state.player,86,frame.flipX,frame.lift);
+      const playerBody=this.playerPresentation(state).rig?.bounds??(frame.layout?registeredSpriteBodyBounds(frame.layout,state.player,frame.flipX,frame.lift)
+        :this.bounds(frame.id,state.player,86,frame.flipX,frame.lift));
       const covered=state.player.y<=tissue.y&&boundsOverlap(playerBody,this.bounds(id,tissue,65));
       this.emit('tissue',id,tissue,65,depth,{alpha:covered?.28:1});this.painter.annotateArtEntity(ctx,entity,state,52,76);return true;
     }

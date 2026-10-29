@@ -176,6 +176,16 @@ beforeEach(() => {
 afterEach(() => { vi.unstubAllGlobals(); });
 
 describe('actual Renderer native art dispatch through an isolated host', () => {
+  it('keeps virus bob phase tied to identity and smooth presentation time, independent of horizontal movement',async()=>{
+    const sample=state(),actor=target('stable-virus',{traits:[],x:500,y:400});sample.targets=[actor];sample.visualTime=.9;
+    mocked.entities.push({id:actor.id,kind:'target',index:0,y:actor.y});const {renderer,host}=await setup();
+    const lift=()=>host.sprites.find(item=>item.id===actor.id)!.config.y-renderer.camera.worldToScreen(actor).y;
+    renderer.render(sample,sample.player);const before=lift();
+    actor.x+=123;renderer.render(sample,sample.player);expect(lift()).toBeCloseTo(before,10);
+    sample.visualTime+=.001;renderer.render(sample,sample.player);expect(Math.abs(lift()-before)).toBeLessThanOrEqual(.00481);
+    actor.role='source';renderer.render(sample,sample.player);expect(lift()).toBeCloseTo(0,10);
+  });
+
   it('uses the repair animation only for an actual successful repair, never for a miss or full-health cast', async () => {
     mocked.runtime.assets['fx.heal.00'] = asset('fx.heal.00'); mocked.animationKeys.add('art-heal');
     const { renderer, host } = await setup();
@@ -556,19 +566,51 @@ describe('actual Renderer native art dispatch through an isolated host', () => {
     }
   });
 
-  it('keeps missing or unreviewed hero groups on the existing static fallback and retains its matching live bob bounds', async () => {
+  it('keeps unreviewed walk groups disabled and skins the approved body with bounds shared by both occlusion paths', async () => {
     const assets = fixtureHeroAnimationAssets(); assets['hero.front_right.walk.03'].animation.approved = false;
     Object.assign(mocked.runtime.assets, assets); const sample = state(); sample.player.moving = true;
+    sample.world={width:1200,height:800,bounds:{left:0,top:0,right:1200,bottom:800},obstacles:[{id:'fold',x:sample.player.x,y:sample.player.y+30,radius:70}],foreground:{x:sample.player.x-10,y:sample.player.y,width:20,height:100}};
     mocked.entities.push({ id: 'player', kind: 'player', y: sample.player.y });
-    const { renderer, host } = await setup(), before = JSON.stringify(sample); renderer.render(sample, sample.player);
+    const { renderer, host, scene } = await setup(), before = JSON.stringify(sample); renderer.render(sample, sample.player);
     const sprite = host.sprites[0].config;
-    expect(sprite.frame).toBe('hero.walk'); expect(visibleHeight(sprite, mocked.runtime.assets['hero.walk'])).toBeCloseTo(86);
-    const lift = -Math.abs(Math.sin(sample.elapsed * 16)) * 1.5;
-    expect(sprite.y).toBeCloseTo(renderer.camera.worldToScreen(sample.player).y + lift);
+    expect(sprite.frame).toBe('hero.front_right.idle.00'); expect(sprite.mesh).toBeDefined();
+    expect(visibleHeight(sprite,mocked.runtime.assets[String(sprite.frame)])).toBeCloseTo(86);
+    expect(sprite.y).toBeCloseTo(renderer.camera.worldToScreen(sample.player).y);
+    const bounds=renderer.diagnostics(sample).art.activeBodies.find(item=>item.id==='player')!.bounds;
+    expect(scene.bridge.actorBodies(sample).find(item=>item.id==='player')!.bodyBounds).toEqual(bounds);
+    const source=mocked.runtime.assets[String(sprite.frame)],v=source.visibleBounds,offset=renderer.camera.worldToScreen({x:0,y:0}),vertices=sprite.mesh!.vertices;
+    for(let i=0;i<vertices.length;i+=4){
+      const ax=vertices[i+2]*source.width,ay=vertices[i+3]*source.height;
+      if(ax<v.x||ax>v.x+v.width||ay<v.y||ay>v.y+v.height)continue;
+      expect(bounds.left+offset.x).toBeLessThanOrEqual(sprite.x+vertices[i]);expect(bounds.right+offset.x).toBeGreaterThanOrEqual(sprite.x+vertices[i]);
+      expect(bounds.top+offset.y).toBeLessThanOrEqual(sprite.y+vertices[i+1]);expect(bounds.bottom+offset.y).toBeGreaterThanOrEqual(sprite.y+vertices[i+1]);
+    }
     expect(renderer.diagnostics(sample).art.heroAnimation.frame).toMatchObject({ animated: false, clip: null });
     expect(renderer.diagnostics(sample).art.heroAnimation.enabledClips).not.toContain('walk');
     expect(renderer.diagnostics(sample).art.provisional).toContain('continuous-player-animation');
     expect(JSON.stringify(sample)).toBe(before);
+  });
+
+  it('holds the rig tool continuously across vertical aim, shares its true muzzle with all tools/effect settings, and freezes its mesh on pause', async () => {
+    const assets=fixtureHeroAnimationAssets();delete assets['hero.front_right.walk.07'];Object.assign(mocked.runtime.assets,assets);
+    const source=fixturePaintedToolAsset();mocked.runtime.assets['weapon.emitter.painted']=source;
+    const sample=state();mocked.entities.push({id:'player',kind:'player',y:sample.player.y});
+    const {renderer,host,scene}=await setup();let previousX:number|undefined;
+    for(const facing of [Math.PI/2-.00001,Math.PI/2+.00001]){
+      sample.player.facing=facing;renderer.render(sample,sample.player);
+      const tool=host.sprites.find(item=>item.id==='player:tool')!.config;
+      if(previousX!==undefined)expect(Math.abs(tool.x-previousX)).toBeLessThan(.01);previousX=tool.x;
+      expect(host.sprites.find(item=>item.id==='player')!.config.mesh).toBeDefined();
+    }
+    for(const tool of [1,2,3] as const)for(const lowEffects of [false,true]){
+      sample.tool=tool;sample.player.facing=Math.PI/4;renderer.render(sample,sample.player,{lowEffects});
+      expect(host.sprites.filter(item=>item.id==='player:tool')).toHaveLength(1);
+      expect(host.sprites.find(item=>item.id==='player')!.config.mesh).toBeDefined();
+      expect(scene.ctx.paints.some(paint=>paint.color==='#24758b'&&paint.path.join(',')==='moveTo,lineTo')).toBe(false);
+    }
+    const mesh=structuredClone(host.sprites.find(item=>item.id==='player')!.config.mesh);
+    sample.phase='paused';sample.player.moving=false;renderer.render(sample,sample.player);
+    expect(host.sprites.find(item=>item.id==='player')!.config.mesh).toEqual(mesh);
   });
 
   it('freezes the actual paused native frame and resets it after a real same-seed restart', async () => {

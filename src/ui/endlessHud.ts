@@ -15,6 +15,7 @@ import { eliteCycleCounter, eliteCycleForecast, eliteCycleStatus } from './elite
 import type { EnemyTactic } from '../game/enemyTacticsTypes';
 import { activeWorld, BALANCE, type GameState } from '../game/types';
 import type { EndlessProfileData, EndlessProfileSnapshot, EndlessRunRecord } from '../meta/endlessProfile';
+import { choiceIconMarkup, endlessChoiceCopy } from './upgradeChoices';
 
 export type EndlessRecordView = EndlessProfileSnapshot | EndlessProfileData | EndlessRunRecord;
 const escape = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]!));
@@ -268,9 +269,12 @@ export function endlessOverlay(state: GameState, help: boolean, lowEffects: bool
       <div class="actions"><button class="primary" data-action="retry">同种子再战</button><button data-action="new">换个种子再战</button><button data-action="menu">主菜单</button></div>`, '连续挑战结算');
   }
   const draft = state.endlessGrowth?.draft;
-  if (draft) return modal(`<div class="eyebrow">WAVE ${draft.wave} CLEAR / ${draft.breakthrough ? '精英突破' : '战斗进化'}</div><h2>${draft.breakthrough ? '赢下精英，突破你的构筑。' : '这次怎样变强？'}</h2><p>第 ${draft.wave} 波已清除 · ${draft.breakthrough ? '所选路线最多连升两阶，受各路线阶数上限限制。' : '选 1 项立即生效，之后继续下一波。'}选择期间战场暂停。</p>
-    <div class="endless-upgrade-grid">${draft.options.map(option => `<button class="endless-upgrade" data-action="endless-upgrade" data-run="${escape(state.growth?.runId ?? '')}" data-draft="${escape(draft.id)}" data-upgrade="${escape(option.id)}"><span>${option.currentRank ? `${option.currentRank}阶 → ${option.nextRank}阶` : option.id === 'catalysis' ? '改造工具2 · 有取舍' : ENDLESS_UPGRADES[option.id].newMechanic ? '解锁新机制' : '强化已有能力'}</span><strong>${escape(option.title)}</strong><p>${escape(option.description)}</p><b>选择这项　↗</b></button>`).join('')}</div>
-    <div class="actions"><button data-action="help">查看操作与构筑</button></div>`, '清波战斗进化三选一', 'endless-draft');
+  if (draft) return modal(`<div class="eyebrow">第 ${draft.wave} 波已清除 · ${draft.breakthrough ? '精英突破' : '战斗进化'}</div><h2>选一项，让自己更强。</h2><p>${draft.breakthrough ? '本次所选能力最多提升两阶。' : '选 1 项立即生效，继续下一波。'}选择期间战场暂停。</p>
+    <div class="endless-upgrade-grid">${draft.options.map(option => {
+      const copy=endlessChoiceCopy(option,state.endlessGrowth!);
+      return `<article class="upgrade-card"><button class="endless-upgrade choice-select" data-action="endless-upgrade" data-run="${escape(state.growth?.runId ?? '')}" data-draft="${escape(draft.id)}" data-upgrade="${escape(option.id)}">${choiceIconMarkup(option.id)}<span class="choice-kind">${option.currentRank ? `${option.currentRank}阶 → ${option.nextRank}阶` : option.id === 'catalysis' ? '改造工具2 · 有取舍' : ENDLESS_UPGRADES[option.id].newMechanic ? '新能力' : '能力强化'}</span><strong>${escape(option.title)}</strong><p class="choice-summary">${escape(copy.summary)}</p>${copy.change?`<p class="choice-change">${escape(copy.change)}</p>`:''}<p class="choice-action">${escape(copy.action)}</p>${copy.caution?`<p class="choice-caution">${escape(copy.caution)}</p>`:''}<b class="choice-commit">选择这项 ↗</b></button><details class="upgrade-details"><summary aria-label="${escape(option.title)}的数值与限制">查看数值与限制</summary><p>${escape(option.description)}</p></details></article>`;
+    }).join('')}</div>
+    <div class="actions"><button data-action="help">查看操作与构筑</button></div>`, '清波战斗进化三选一', 'endless-draft choice-overlay');
   if (state.phase === 'paused') return modal(`<div class="eyebrow">ENDLESS / 暂停</div><h2>下一波，继续变强。</h2><p>模拟、危区前摇与波次计时已暂停。已清 ${e.clearedWaves} 波，当前第 ${e.wave} 波，得分 ${e.score}。</p>${buildSummary(state)}
     <div class="actions"><button class="primary" data-action="continue">继续挑战</button><button data-action="endless-extract">主动撤离并结算</button><button data-action="help">操作与成长说明</button>${effects(lowEffects)}<button class="quiet" data-action="menu">返回菜单</button></div>`, '连续挑战已暂停');
   return null;

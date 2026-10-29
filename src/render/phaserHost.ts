@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import type { SpriteMesh } from './heroRig';
 
 /** Built by the art pipeline. Runtime loading never reads JSON or PNG via XHR. */
 export interface PhaserArtData {
@@ -22,6 +23,8 @@ export interface HostedSprite {
   rotation?: number;
   tint?: number;
   visible?: boolean;
+  /** Optional local display-pixel geometry, with UVs relative to this frame. */
+  mesh?: SpriteMesh;
 }
 
 interface RasterLayer {
@@ -30,6 +33,8 @@ interface RasterLayer {
   /** Full-screen layers have their own stable producer canvas. */
   sharedSource?: HTMLCanvasElement;
 }
+// Mesh2D exposes tint in Phaser's implementation; 4.2.1's generated typings omit it.
+type TintedMesh = Phaser.GameObjects.Mesh2D & { tint: number };
 
 /** Owns presentation and its sole browser loop; it never owns or advances game rules. */
 export class PhaserHost {
@@ -44,6 +49,7 @@ export class PhaserHost {
   private frameCallback?: (now: number) => void;
   private readonly layers = new Map<string, RasterLayer>();
   private readonly sprites = new Map<string, Phaser.GameObjects.Sprite>();
+  private readonly meshes = new Map<string, TintedMesh>();
   private readonly spareSprites: Phaser.GameObjects.Sprite[] = [];
   private readonly seenSprites = new Set<string>();
   private cssWidth = 1;
@@ -216,6 +222,25 @@ export class PhaserHost {
       .setAlpha(config.alpha ?? 1).setFlip(config.flipX ?? false, config.flipY ?? false)
       .setRotation(config.rotation ?? 0).setVisible(config.visible ?? true);
     if (config.tint === undefined) sprite.clearTint(); else sprite.setTint(config.tint);
+    if (config.mesh) {
+      let mesh = this.meshes.get(id);
+      const frame = sprite.frame, vertices = config.mesh.vertices;
+      if (!mesh) {
+        mesh = scene.add.mesh2d(config.x, config.y, config.texture, [], []) as TintedMesh;
+        mesh.indicesOrdered = [...config.mesh.indices]; mesh.setUseOrderedIndices(true);
+        this.meshes.set(id, mesh);
+      }
+      mesh.setTexture(config.texture, config.frame).setPosition(config.x, config.y).setOrigin(0)
+        .setDepth(config.depth).setAlpha(config.alpha ?? 1).setVisible(config.visible ?? true);
+      const output = mesh.vertices; output.length = vertices.length;
+      for (let i = 0; i < vertices.length; i += 4) {
+        output[i] = vertices[i]; output[i + 1] = vertices[i + 1];
+        output[i + 2] = frame.u0 + vertices[i + 2] * (frame.u1 - frame.u0);
+        output[i + 3] = frame.v0 + vertices[i + 3] * (frame.v1 - frame.v0);
+      }
+      mesh.tint = config.tint ?? 0xffffff;
+      sprite.setVisible(false);
+    } else this.meshes.get(id)?.setVisible(false);
     return sprite;
   }
 
@@ -223,6 +248,7 @@ export class PhaserHost {
     for (const [id, sprite] of this.sprites) {
       if (this.seenSprites.has(id)) continue;
       this.sprites.delete(id);
+      this.meshes.get(id)?.destroy(); this.meshes.delete(id);
       sprite.anims.stop();
       sprite.setActive(false).setVisible(false);
       if (this.spareSprites.length < 128) this.spareSprites.push(sprite); else sprite.destroy();
@@ -234,6 +260,7 @@ export class PhaserHost {
       engine: 'Phaser', version: Phaser.VERSION, renderer: 'webgl', ready: this.booted && !this.destroyed,
       textureCount: this.currentScene && !this.destroyed ? this.currentScene.textures.getTextureKeys().length : 0,
       activeSprites: this.sprites.size, pooledSprites: this.spareSprites.length, rasterLayers: this.layers.size,
+      articulatedMeshes: [...this.meshes.values()].filter(mesh => mesh.visible).length,
       visibleRasterLayers: [...this.layers.values()].filter(layer => layer.image.visible).length,
       rasterDimensions: [...this.layers].map(([id, layer]) => ({ id, width: layer.texture.width, height: layer.texture.height,
         displayWidth: layer.image.displayWidth, displayHeight: layer.image.displayHeight, x: layer.image.x, y: layer.image.y })),
@@ -243,7 +270,8 @@ export class PhaserHost {
       }] : []),
       nativeSprites: [...this.sprites].map(([id, sprite]) => ({
         id, texture: sprite.texture.key, frame: sprite.frame.name, x: sprite.x, y: sprite.y,
-        width: sprite.displayWidth, height: sprite.displayHeight, depth: sprite.depth, visible: sprite.visible,
+        width: sprite.displayWidth, height: sprite.displayHeight, depth: sprite.depth, visible: !!this.meshes.get(id)?.visible || sprite.visible,
+        articulated: this.meshes.get(id)?.visible ?? false,
       })),
       widthCSS: this.cssWidth, heightCSS: this.cssHeight, dpr: this.dpr,
       backingWidth: this.canvas.width, backingHeight: this.canvas.height,
@@ -259,6 +287,7 @@ export class PhaserHost {
     this.canvas.removeEventListener('webglcontextcreationerror', this.creationError);
     if (!this.booted) this.rejectReady(new Error('Phaser presentation was destroyed before it became ready.'));
     this.sprites.clear();
+    this.meshes.clear();
     this.spareSprites.length = 0;
     this.layers.clear();
     // Preserve the visible canvas and existing native Controller event listeners.

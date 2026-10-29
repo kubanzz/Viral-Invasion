@@ -15,7 +15,7 @@ async function presentation(page: Page) {
   });
 }
 
-test('offline production atlas plays the selected idle sequence and preserves movement and pause fallback', async ({ page, context }) => {
+test('offline production atlas plays reviewed idle frames, articulated movement, and a frozen pause', async ({ page, context }) => {
   await context.setOffline(true);
   const errors: string[] = [], remote: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
@@ -54,7 +54,8 @@ test('offline production atlas plays the selected idle sequence and preserves mo
   try {
     await expect.poll(async () => {
       const p = await presentation(page);
-      return p.moving && p.animation.frame?.id === 'hero.walk' && p.animation.frame.animated === false && p.playerSprite?.frame === 'hero.walk';
+      return p.moving && p.animation.frame?.id === 'hero.front_right.idle.00' && p.animation.frame.animated === false
+        && p.animation.frame.articulated && p.playerSprite?.frame === 'hero.front_right.idle.00' && p.playerSprite.articulated;
     }).toBe(true);
   } finally { await page.keyboard.up('KeyD'); }
   await expect.poll(async () => (await presentation(page)).animation.frame?.clip).toBe('idle');
