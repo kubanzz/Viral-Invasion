@@ -37,16 +37,19 @@ describe('continuous challenge UI contracts', () => {
     expect(nodes.get('endless-traits')!.textContent).not.toContain('袭击组织');
   });
 
-  it('shows an actual guard order and its remaining original lifetime without mutating it', () => {
+  it('shows a permanent guard order and stops advertising units killed in combat without mutating it', () => {
     const game = session(), state = game.state, nodes = mountHud();
     state.endlessGrowth!.ranks.immune = 3;
     game.step({ moveX: 0, moveY: 0, fire: false, scan: true, aim: state.tissue });
     expect(state.growth!.beacon!.guard?.kind).toBe('tissue');
     const before = structuredClone(state); updateEndlessHud(state);
     expect(nodes.get('endless-ability-3')!.textContent).toContain('正在驻防组织');
-    expect(nodes.get('endless-tissue-route')!.textContent).toContain('细胞驻防 3只');
+    expect(nodes.get('endless-tissue-route')!.textContent).toContain('细胞驻防 5只');
+    expect(nodes.get('endless-tissue-route')!.textContent).toContain('持续驻防，可被击杀');
+    expect(nodes.get('endless-tissue-route')!.textContent).not.toContain('Infinity');
     expect(state).toEqual(before);
-    state.elapsed = state.growth!.beacon!.until; updateEndlessHud(state);
+    for (const cell of state.growth!.cells!) cell.hp = 0;
+    updateEndlessHud(state);
     expect(nodes.get('endless-ability-3')!.textContent).not.toContain('正在驻防');
     expect(nodes.get('endless-tissue-route')!.textContent).not.toContain('细胞驻防');
   });
@@ -127,7 +130,7 @@ describe('continuous challenge UI contracts', () => {
     for (const info of Object.entries(ENEMY_TACTIC_INFO).filter(([id]) => id !== 'melee').map(([, info]) => info)) {
       expect(help).toContain(info.name); expect(help).toContain(info.counter);
     }
-    for (const copy of ['让开路线后反打', '两个固定落点', '每5波协议联动重配', '免样本、可放弃', '不会抵消本波战斗成长', '不续命、不重置咬击冷却、不额外耗组织']) expect(help).toContain(copy);
+    for (const copy of ['让开路线后反打', '两个固定落点', '每5波协议联动重配', '免样本、可放弃', '不会抵消本波战斗成长', '不重置咬击冷却、不额外耗组织', '最多部署两个军团', '需要2研究样本夺回']) expect(help).toContain(copy);
     expect(help).not.toContain('data-action="endless-upgrade"');
     expect(endlessOverlay(state, false, false)).toContain('data-action="endless-upgrade"');
     expect(state).toEqual(before);

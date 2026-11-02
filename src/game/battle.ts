@@ -1,6 +1,6 @@
 import { clamp, distance, moveWithCollision, normalized, wallHit } from '../actors/collision';
 import { SeedRng } from '../core/rng';
-import { activeWorld, BALANCE, type Effect, type GameEvent, type GameState, type InputFrame, type MessagePriority, type Target, type Tool, type Vec } from './types';
+import { activeWorld, BALANCE, isDiagnosticTarget, type Effect, type GameEvent, type GameState, type InputFrame, type MessagePriority, type Target, type Tool, type Vec } from './types';
 import type { BattleState, CampaignOptions, TraitId } from './battleTypes';
 import { BATTLE_BALANCE as B, TRAITS } from './battleConfig';
 import { recordBehavior, chooseEvolution } from './evolution';
@@ -17,6 +17,8 @@ import { standoffMotion } from './enemyPositioning';
 import { updateEnemyFacing } from './enemyFacing';
 import { activeEliteTacticCycle, commitEliteTactic, finishEliteTactic, prepareEliteTactic } from './eliteTacticCycle';
 import { advanceViralCapsuleCarrier, advanceViralCapsules, releaseViralCapsule, terminateViralCapsule, type ViralCapsuleHost } from './viralCapsules';
+import type { ImmuneCellState } from './immuneCells';
+import { eventModifier, isHostEventLightVirus } from './hostEvents';
 
 export interface BattleHost {
   state: GameState;
@@ -112,7 +114,7 @@ export class BattleDirector {
     }
     if (this.b.milestone === 'G1') return;
     const data = event.data;
-    const kind = event.type === 'TARGET_HIT' && data.cause !== 'protocol' ? data.tool === 1 ? 'precisionDamage' : data.tool === 2 ? 'areaDamage' : undefined
+    const kind = event.type === 'TARGET_HIT' && data.cause !== 'protocol' && data.ability !== 'host-event' && data.eventTarget !== true ? data.tool === 1 ? 'precisionDamage' : data.tool === 2 ? 'areaDamage' : undefined
       : event.type === 'SCAN_COMPLETED' ? 'scan'
       : event.type === 'ROUTE_CHANGED' && data.open === false ? 'isolate'
       : event.type === 'ORGAN_INTEGRITY_CHANGED' && data.reason === 'repair' && Number(data.after) > Number(data.before) ? 'repair' : undefined;
@@ -144,6 +146,7 @@ export class BattleDirector {
     let count = 0;
     for (const target of state.targets) if (target.hp > 0 && distance(state.player, target) <= BALANCE.scanRadius) {
       target.revealedUntil = state.elapsed + B.scanReveal;
+      if (!isDiagnosticTarget(target)) continue;
       if (target.attackPlan?.kind === 'mimic-corrosion' && target.attackAt !== undefined) {
         this.recoverEnemy(target, 2);
         target.attackReady = state.elapsed + 2;
@@ -175,13 +178,14 @@ export class BattleDirector {
     return damage;
   }
 
-  cleared(target: Target): void {
+  cleared(target: Target, suppressRewards = false): void {
     const { s, b } = this;
     if (target.role === 'capsule') { terminateViralCapsule(this.capsuleHost(), target); return; }
     target.deadAt = s.elapsed;
     target.attackAt = undefined;
     target.attackAim = undefined;
     target.attackTarget = undefined;
+    target.immuneAttackTargetId = undefined;
     target.attackPlan = undefined; target.attackWindup = undefined;
     target.charge = undefined; target.recoverUntil = undefined;
     if (target.eliteCycle) delete target.eliteCycle.committedTick;
@@ -206,7 +210,7 @@ export class BattleDirector {
         return;
       }
       b.pressure.infection = Math.max(0, b.pressure.infection - B.sourceRelief);
-      this.host.emit('INFECTION_SOURCE_CLEARED', { organId: b.organId, nodeId: target.id, actor: 'player' });
+      this.host.emit('INFECTION_SOURCE_CLEARED', { organId: b.organId, nodeId: target.id, actor: 'player', suppressRewards });
       if (this.s !== s || s.phase !== 'playing') return;
       this.notice(`感染源已净化${s.campaign ? `（本局累计 ${b.stats.sourceClears}）` : `（${b.stats.sourceClears}/2）`}，停止增殖，感染负荷 -${B.sourceRelief}。`);
     } else {
@@ -221,7 +225,7 @@ export class BattleDirector {
           if (this.s !== s || s.phase !== 'playing') return;
         }
         for (const trait of target.traits ?? []) if (!b.defeatedTraits.includes(trait)) b.defeatedTraits.push(trait);
-        this.host.emit('ELITE_CLEARED', { id: target.id, organId: b.organId, trait: target.traits?.join('+') ?? '' });
+        this.host.emit('ELITE_CLEARED', { id: target.id, organId: b.organId, trait: target.traits?.join('+') ?? '', suppressRewards });
         if (this.s !== s || s.phase !== 'playing') return;
         this.notice(s.endless ? '变异精英已清除！继续清场领取本波进化。' : `变异精英已清除（${b.stats.eliteClears}/2）。保持组织，继续诊断。`);
       }
@@ -284,7 +288,8 @@ export class BattleDirector {
   pulse(): void {
     const { s, b } = this;
     if (s.elapsed < b.pulse.readyAt) { this.host.message(`冲流充能还需 ${Math.ceil(b.pulse.readyAt - s.elapsed)} 秒。`); return; }
-    b.pulse.readyAt = s.elapsed + B.pulseCooldown;
+    const cooldown = B.pulseCooldown * eventModifier(s, 'pulseCooldown');
+    b.pulse.readyAt = s.elapsed + cooldown;
     b.pulse.activeUntil = s.elapsed + .6;
     b.pulse.uses++; b.stats.pulses++;
     const before = s.tissue.hp;
@@ -296,13 +301,13 @@ export class BattleDirector {
     let pushed = 0; let exposed = 0; let coreHit = false;
     const advanced: GameEvent['data'][] = [];
     const exposedTargetIds: string[] = [];
-    for (const target of s.targets) if (target.hp > 0 && target.role !== 'source' && target.role !== 'capsule') {
+    for (const target of s.targets) if (target.hp > 0 && target.role !== 'source' && target.role !== 'capsule' && target.role !== 'event') {
       const length = distance(p.origin, target);
       const direction = normalized(target.x - p.origin.x, target.y - p.origin.y);
       if (length > B.pulseRange + target.radius || (length > target.radius && direction.x * Math.cos(p.direction) + direction.y * Math.sin(p.direction) < Math.cos(B.pulseHalfAngle))) continue;
       const block = wallHit(p.origin, direction, length, activeWorld(s));
       if (block !== null && block < length - target.radius) continue;
-      const push = target.role === 'core' ? 0 : B.pulsePush;
+      const push = target.role === 'core' ? 0 : B.pulsePush * eventModifier(s, 'pulseStrength');
       const pos = moveWithCollision(target, { x: direction.x * push, y: direction.y * push }, target.radius, activeWorld(s));
       if (target.role === 'core') coreHit = true;
       if (target.role !== 'core' && distance(target, pos) > 1e-6) pushed++;
@@ -313,6 +318,7 @@ export class BattleDirector {
       const retainedRecovery = cycle ? target.recoverUntil : undefined;
       target.attackAt = undefined; target.attackAim = undefined;
       target.attackTarget = undefined;
+      target.immuneAttackTargetId = undefined;
       target.attackPlan = undefined; target.attackWindup = undefined; target.charge = undefined; target.recoverUntil = undefined;
       target.attackReady = s.elapsed + 1.3;
       if (cycle) {
@@ -327,7 +333,7 @@ export class BattleDirector {
     }
     this.host.emit('PULSE_TRIGGERED', { organId: b.organId, direction: p.direction, range: B.pulseRange, halfAngle: B.pulseHalfAngle, pushed, exposed, exposedTargetIds: exposedTargetIds.join(','), coreHit, tissueCost: B.pulseCost });
     if (this.s !== s || s.phase !== 'playing') return;
-    this.notice(`定向冲流：推开 ${pushed} 体，破壳 ${exposed} 体；组织承压 -${B.pulseCost}，冷却 ${B.pulseCooldown} 秒。`, 4);
+    this.notice(`定向冲流：推开 ${pushed} 体，破壳 ${exposed} 体；组织承压 -${B.pulseCost}，冷却 ${cooldown.toFixed(1)} 秒。`, 4);
     for (const completed of advanced) {
       this.host.emit('ELITE_TACTIC_ADVANCED', completed);
       if (this.s !== s || s.phase !== 'playing') return;
@@ -353,7 +359,7 @@ export class BattleDirector {
       damageTissue: (target, amount) => this.damageTissue(target, amount) };
   }
 
-  private aliveCount(): number { return this.s.targets.filter(t => t.hp > 0).length; }
+  private aliveCount(): number { return this.s.targets.filter(t => t.hp > 0 && t.role !== 'event').length; }
   private spawn(position: Vec, role: 'virus' | 'elite', traits = this.b.traits, generation = 0, sourceId?: string, accepted?: () => void): Target | undefined {
     if (this.aliveCount() >= B.maxActors) return;
     const encounter = this.b.encounter, opening = role === 'virus' && encounter?.configId === 'campaign-1' && encounter.firstCounter.status !== 'resolved';
@@ -395,7 +401,7 @@ export class BattleDirector {
     const trait = b.warning.trait;
     if (!b.traits.includes(trait)) {
       b.traits.push(trait);
-      for (const target of s.targets) if (target.hp > 0 && target.role !== 'source') {
+      for (const target of s.targets) if (target.hp > 0 && target.role !== 'source' && target.role !== 'event') {
         target.traits = [trait];
         target.kind = trait === 'FISSION' ? 'cluster' : 'single';
       }
@@ -437,8 +443,8 @@ export class BattleDirector {
       this.spawn(moveWithCollision(source, { x: -45, y: 45 }, 22, activeWorld(s)), 'virus', b.traits.length ? [b.traits.at(-1)!] : [], 0, source.id);
     }
     // Clearing both origins allows the remaining local tissue infection to recover.
-    if (!b.graph.nodes.some(n => n.kind === 'source' && n.active) && !s.targets.some(t => t.hp > 0 && distance(t, s.tissue) < 120)) {
-      for (const node of b.graph.nodes) if (node.kind !== 'source') node.infected = false;
+    if (!b.graph.nodes.some(n => n.kind === 'source' && n.active) && !s.targets.some(t => t.hp > 0 && t.role !== 'event' && distance(t, s.tissue) < 120)) {
+      for (const node of b.graph.nodes) if (node.kind !== 'source' && node.kind !== 'healing') node.infected = false;
     }
   }
 
@@ -446,6 +452,32 @@ export class BattleDirector {
     const length = distance(origin, body);
     const block = wallHit(origin, normalized(body.x - origin.x, body.y - origin.y), length, activeWorld(this.s));
     return block === null || block >= length - body.radius;
+  }
+
+  private livingImmuneCells(): ImmuneCellState[] {
+    const { s, b } = this;
+    return (s.growth?.cells ?? []).filter(cell => cell.organId === b.organId && (cell.hp ?? 1) > 0 && cell.until > s.elapsed);
+  }
+
+  /** Antibody scent redirects pursuit, while an accepted warning keeps its original body and aim. */
+  private immuneGoal(target: Target, originalGoal: Vec): ImmuneCellState | undefined {
+    const cells = this.livingImmuneCells().sort((a, b) => distance(target, a) - distance(target, b) || a.id.localeCompare(b.id));
+    return cells.find(cell => (cell.antibodyUntil ?? 0) > this.s.elapsed && distance(target, cell) <= B.antibodyAggroRadius)
+      ?? cells.find(cell => distance(target, cell) <= B.immuneAggroRadius && distance(target, cell) <= distance(target, originalGoal) + 20);
+  }
+
+  private damageImmune(target: Target, cell: ImmuneCellState, amount: number, reason: string): boolean {
+    const { s } = this;
+    if (cell.organId !== this.b.organId || (cell.hp ?? 1) <= 0 || cell.until <= s.elapsed || amount <= 0) return false;
+    const before = cell.hp ?? cell.maxHp ?? 60;
+    cell.hp = Math.max(0, before - amount);
+    cell.hurtUntil = s.elapsed + .3;
+    this.host.effect('hit', cell, cell, cell.radius + 4, .25);
+    this.host.emit('IMMUNE_CELL_HURT', { actorId: target.id, cellId: cell.id, beaconId: cell.beaconId,
+      damage: before - cell.hp, remainingHp: cell.hp, reason });
+    if (this.s !== s || s.phase !== 'playing') return true;
+    if (cell.hp <= 0) this.host.emit('IMMUNE_CELL_DIED', { actorId: target.id, cellId: cell.id, beaconId: cell.beaconId, reason });
+    return true;
   }
 
   private damagePlayer(target: Target, amount: number, reason: string, accepted?: () => void): boolean {
@@ -473,6 +505,7 @@ export class BattleDirector {
 
   private recoverEnemy(target: Target, exposure: number): void {
     target.attackAt = undefined; target.attackAim = undefined; target.attackTarget = undefined;
+    target.immuneAttackTargetId = undefined;
     target.attackPlan = undefined; target.attackWindup = undefined; target.charge = undefined;
     if (exposure > 0) {
       target.recoverUntil = this.s.elapsed + exposure;
@@ -497,6 +530,12 @@ export class BattleDirector {
     if (!charge.hitTissue && charge.tissueDamage > 0 && segmentDistance(s.tissue, from, to) <= charge.radius + s.tissue.radius) {
       const gap = distance(to, s.tissue), block = wallHit(to, normalized(s.tissue.x - to.x, s.tissue.y - to.y), gap, activeWorld(s));
       if (block === null || block >= gap - s.tissue.radius) this.damageTissue(target, charge.tissueDamage, () => { charge.hitTissue = true; });
+      if (this.s !== s || s.phase !== 'playing') return;
+    }
+    for (const cell of this.livingImmuneCells()) {
+      if (charge.hitImmuneIds?.includes(cell.id) || segmentDistance(cell, from, to) > charge.radius + cell.radius || !this.canStrikeBody(to, cell)) continue;
+      charge.hitImmuneIds = [...(charge.hitImmuneIds ?? []), cell.id];
+      this.damageImmune(target, cell, Math.max(charge.playerDamage, charge.tissueDamage), 'crystal-charge');
       if (this.s !== s || s.phase !== 'playing') return;
     }
     if (remaining <= travel + .1 || s.elapsed + 1e-9 >= charge.endsAt || distance(from, to) < travel * .5) {
@@ -532,6 +571,11 @@ export class BattleDirector {
     const hitTissue = plan.tissueDamage > 0 && enemyAttackHits(plan, s.tissue, s.tissue.radius, activeWorld(s))
       && this.damageTissue(target, plan.tissueDamage);
     if (this.s !== s || s.phase !== 'playing') return;
+    for (const cell of this.livingImmuneCells()) {
+      if (!enemyAttackHits(plan, cell, cell.radius, activeWorld(s))) continue;
+      this.damageImmune(target, cell, Math.max(plan.playerDamage, plan.tissueDamage), plan.kind);
+      if (this.s !== s || s.phase !== 'playing') return;
+    }
     for (const center of plan.landings) this.host.effect('burst', center, center, plan.radius, .32);
     if (plan.kind === 'thin-ray') this.host.effect('beam', plan.origin, enemyRayEnd(plan, activeWorld(s)), 0, .2);
     this.host.emit('ENEMY_TACTIC_RESOLVED', { actorId: target.id, tactic: plan.kind, hitPlayer, hitTissue });
@@ -550,8 +594,9 @@ export class BattleDirector {
     const pace = s.endless ? endlessPacing(wave) : undefined;
     const strike = s.endless ? endlessStrikeDamage(wave) : undefined;
     const speed = (target: Target) => B.enemySpeed * (pace?.speedMultiplier ?? 1) * (target.traits?.includes('CARAPACE') ? B.carapaceSpeed : 1)
-      * (target.traits?.includes('MIMIC') ? B.mimicSpeed : 1) * (this.host.slowFactor?.(target.id) ?? 1);
-    const spacing = planEnemySpacing(s.targets, activeWorld(s), {
+      * (target.traits?.includes('MIMIC') ? B.mimicSpeed : 1) * (this.host.slowFactor?.(target.id) ?? 1)
+      * (isHostEventLightVirus(target) ? eventModifier(s, 'lightVirusMove') : 1);
+    const spacing = planEnemySpacing(s.targets.filter(target => target.role !== 'event'), activeWorld(s), {
       maxStep: target => speed(target) * BALANCE.step * ENEMY_CROWD.separationSpeedFactor,
       isMigrating: target => !!this.host.isMigratingActor?.(target.id),
     });
@@ -581,7 +626,7 @@ export class BattleDirector {
         }
         continue;
       }
-      if (target.role === 'source' || target.role === 'core' || target.role === 'capsule' || this.host.isMigratingActor?.(target.id)) continue;
+      if (target.role === 'source' || target.role === 'core' || target.role === 'capsule' || target.role === 'event' || this.host.isMigratingActor?.(target.id)) continue;
       if (advanceViralCapsuleCarrier(this.capsuleHost(), target)) {
         if (this.s !== s || s.phase !== 'playing') return;
         continue;
@@ -591,7 +636,17 @@ export class BattleDirector {
       prepareEliteTactic(s, target);
       const mimic = target.tactic === 'mimic-corrosion' || (!target.tactic || target.tactic === 'melee') && target.traits?.includes('MIMIC');
       const assault = !!s.endless && target.role === 'virus' && target.tactic === 'melee' && target.assaultObjective === 'tissue';
-      const goal = assault || mimic || !s.endless && distance(target, s.player) > 270 ? s.tissue : s.player;
+      const originalGoal = assault || mimic || !s.endless && distance(target, s.player) > 270 ? s.tissue : s.player;
+      const immune = this.immuneGoal(target, originalGoal);
+      // One of three ordinary bodies pressures a nearby aid point. The others
+      // keep their existing objectives, and antibody scent always takes priority.
+      const raider = originalGoal === s.tissue && !mimic && target.role === 'virus' && (!target.tactic || target.tactic === 'melee')
+        && [...target.id].reduce((sum, letter) => sum + letter.charCodeAt(0), 0) % 3 === 0;
+      const aidPoint = !immune && raider ? this.b.graph.nodes.filter(node => node.kind === 'healing' && node.active
+        && (node.infection ?? 0) < 100 && distance(target, node) <= 480)
+        .sort((a, b) => distance(target, a) - distance(target, b) || a.id.localeCompare(b.id))[0] : undefined;
+      const occupationGoal = aidPoint ? { ...aidPoint, radius: 36 } : undefined;
+      const goal = immune ?? occupationGoal ?? originalGoal;
       const dir = normalized(goal.x - target.x, goal.y - target.y);
       if (target.attackPlan && target.attackAt !== undefined) {
         if (s.elapsed + 1e-9 >= target.attackAt) this.resolveTactic(target);
@@ -599,7 +654,7 @@ export class BattleDirector {
       }
       // A posture spends the same one-tick movement budget as pursuit. Compute
       // the warning after movement, then leave its real origin frozen.
-      const postureMotion = standoffMotion(target, s.player, activeWorld(s));
+      const postureMotion = immune ? undefined : standoffMotion(target, s.player, activeWorld(s));
       let postureMoved = false;
       if (postureMotion && !spacing.has(target.id) && (postureMotion.x || postureMotion.y)) {
         const slow = this.host.slowFactor?.(target.id) ?? 1;
@@ -608,7 +663,7 @@ export class BattleDirector {
       }
       updateEnemyFacing(target, Math.atan2(goal.y - target.y, goal.x - target.x), BALANCE.step);
       const special = !!s.endless && !!target.tactic && target.tactic !== 'melee';
-      const plan = special ? enemyAttackPlan(target, s) : undefined;
+      const plan = special ? enemyAttackPlan(target, s, immune) : undefined;
       if (special && plan) {
         const sameHeavyTactic = plan.kind !== 'thin-ray' && s.targets.some(actor => actor.hp > 0 && actor.id !== target.id
           && (actor.attackPlan?.kind === plan.kind && actor.attackAt !== undefined || plan.kind === 'crystal-charge' && !!actor.charge));
@@ -618,7 +673,8 @@ export class BattleDirector {
           && s.targets.filter(actor => actor.hp > 0 && (actor.role === 'capsule' || actor.attackAt !== undefined || actor.charge !== undefined)).length < 3) {
           target.attackPlan = plan; target.attackAt = s.elapsed + plan.windup;
           target.attackWindup = plan.windup; target.attackAim = { ...plan.aim }; target.attackRadius = plan.radius;
-          target.attackTarget = plan.kind === 'mimic-corrosion' ? 'tissue' : 'player';
+          target.attackTarget = immune ? 'immune' : plan.kind === 'mimic-corrosion' ? 'tissue' : 'player';
+          target.immuneAttackTargetId = immune?.id;
           const committed = commitEliteTactic(s, target);
           this.host.emit('ATTACK_TELEGRAPHED', { actorId: target.id, target: target.attackTarget, tactic: plan.kind, resolveAt: target.attackAt });
           if (this.s !== s || s.phase !== 'playing') return;
@@ -636,7 +692,13 @@ export class BattleDirector {
         const aim = target.attackAim!;
         const radius = target.attackRadius ?? B.attackRadius;
         const attackingTissue = target.attackTarget === 'tissue';
-        if (attackingTissue) {
+        if (target.attackTarget === 'immune') {
+          const victim = this.livingImmuneCells().find(cell => cell.id === target.immuneAttackTargetId);
+          if (victim && distance(victim, aim) <= radius + victim.radius
+            && distance(target, victim) <= B.attackRadius + victim.radius && this.canStrikeBody(target, victim)) {
+            this.damageImmune(target, victim, strike ? target.role === 'elite' ? strike.elitePlayer : strike.player : B.playerDamage, 'enemy-attack');
+          }
+        } else if (attackingTissue) {
           if (distance(target, s.tissue) <= B.attackRadius + s.tissue.radius && this.canStrikeBody(target, s.tissue)) {
             this.damageTissue(target, strike?.tissue ?? B.tissueDamage);
           }
@@ -646,13 +708,15 @@ export class BattleDirector {
           this.damagePlayer(target, strike ? target.role === 'elite' ? strike.elitePlayer : strike.player : B.playerDamage, 'enemy-attack');
         }
         target.attackAt = undefined; target.attackAim = undefined; target.attackTarget = undefined;
+        target.immuneAttackTargetId = undefined;
         target.attackReady = s.elapsed + (s.endless ? Math.max(1.1, B.attackInterval - (wave - 1) * .025) : B.attackInterval);
       }
       const eliteBlast = !!s.endless && target.role === 'elite' && goal === s.player;
-      const reach = eliteBlast ? 250 : B.attackRadius + (goal === s.tissue ? s.tissue.radius : s.player.radius) - 8;
+      const reach = eliteBlast ? 250 : B.attackRadius + goal.radius - 8;
       const block = wallHit(target, dir, distance(target, goal), activeWorld(s));
       const lineClear = block === null || block >= distance(target, goal) - 20;
-      if (special || distance(target, goal) > reach || !lineClear) {
+      if (occupationGoal && distance(target, occupationGoal) <= 105) continue;
+      if (special || occupationGoal || distance(target, goal) > reach || !lineClear) {
         // Relaxation already used this body's movement budget. Do not cancel
         // it with an immediate pursuit step back into the same exact stack.
         if (spacing.has(target.id) || postureMoved) continue;
@@ -678,9 +742,11 @@ export class BattleDirector {
         target.attackWindup = eliteBlast ? 1.1 : B.attackWindup;
         if (s.endless) target.attackRadius = eliteBlast ? 105 : B.attackRadius;
         target.attackAim = { x: goal.x, y: goal.y };
-        target.attackTarget = goal === s.tissue ? 'tissue' : 'player';
+        target.attackTarget = immune ? 'immune' : goal === s.tissue ? 'tissue' : 'player';
+        target.immuneAttackTargetId = immune?.id;
         this.host.effect('danger', target, target.attackAim, target.attackRadius ?? B.attackRadius, eliteBlast ? 1.1 : B.attackWindup);
-        this.host.emit('ATTACK_TELEGRAPHED', { actorId: target.id, target: goal === s.tissue ? 'tissue' : 'player', resolveAt: target.attackAt });
+        this.host.emit('ATTACK_TELEGRAPHED', { actorId: target.id, target: target.attackTarget, resolveAt: target.attackAt,
+          ...(immune ? { cellId: immune.id } : {}) });
       }
     }
   }

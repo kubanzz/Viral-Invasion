@@ -1,0 +1,49 @@
+#app.challenge-home-active > .topbar,
+#app.challenge-home-active .micro-footer,
+#app.challenge-home-active .run-time { visibility: hidden; }
+
+#app .challenge-home {
+  justify-content: flex-start;
+  padding: 40px clamp(28px, 8vw, 140px);
+  overflow: auto;
+  background: linear-gradient(90deg, #f6f1e7fa 0%, #f6f1e7ee 32%, #f6f1e78c 57%, #f6f1e712 100%);
+  backdrop-filter: none;
+}
+#app .challenge-home-card { width: min(420px, 100%); margin-block: auto; padding-block: 20px; }
+#app .challenge-home-eyebrow { margin: 0 0 24px; color: #547a72; font-size: 10px; letter-spacing: 3px; }
+#app .challenge-home-card h1 { margin: 0 0 34px; color: #294f54; font-size: clamp(40px, 4.6vw, 64px); font-weight: 650; line-height: 1.15; letter-spacing: 5px; }
+#app .challenge-home-card h1 span { display: block; margin-top: 13px; color: #648078; font-family: Georgia, "Times New Roman", serif; font-size: 20px; font-weight: 400; letter-spacing: 1px; }
+#app .challenge-home-lead { margin: 0 0 10px; color: #385d59; font-size: 21px; line-height: 1.5; }
+#app .challenge-home-description { margin: 0 0 32px; color: #66776e; font-size: 13px; line-height: 1.7; }
+#app .challenge-home-start { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 58px; padding: 16px 24px; border-radius: 12px; font-size: 17px; letter-spacing: 2px; }
+#app .challenge-home-start > span:last-child { font-size: 23px; font-weight: 400; }
+#app .challenge-home-rules { margin: 12px 0 0; color: #64766c; font-size: 11px; text-align: center; }
+#app .challenge-home-record { margin: 25px 0 0; color: #486d62; font-size: 12px; font-variant-numeric: tabular-nums; }
+#app .challenge-home-record span { padding-inline: 10px; color: #9aa99b; }
+#app .challenge-home-storage { margin: 16px 0 0; color: #8c5937; font-size: 11px; line-height: 1.6; }
+#app .challenge-home-controls { margin: 34px 0 0; color: #758376; font-size: 11px; }
+body.touch-mode #app #overlay-host > .challenge-home {
+  padding: max(16px, calc(var(--mobile-top) + 8px)) max(24px, calc(var(--mobile-right) + 16px)) max(16px, calc(var(--mobile-bottom) + 8px)) max(24px, calc(var(--mobile-left) + 16px));
+}
+
+@media (max-width: 700px), (max-height: 520px) {
+  #app .challenge-home { padding: 24px 6vw; }
+  #app .challenge-home-card { width: min(360px, 100%); padding-block: 8px; }
+  #app .challenge-home-eyebrow { margin-bottom: 14px; font-size: 9px; }
+  #app .challenge-home-card h1 { margin-bottom: 19px; font-size: 40px; }
+  #app .challenge-home-card h1 span { margin-top: 7px; font-size: 17px; }
+  #app .challenge-home-lead { font-size: 17px; margin-bottom: 5px; }
+  #app .challenge-home-description { margin-bottom: 18px; font-size: 12px; }
+  #app .challenge-home-start { min-height: 50px; padding: 11px 20px; font-size: 16px; }
+  #app .challenge-home-rules { margin-top: 8px; font-size: 10px; }
+  #app .challenge-home-record { margin-top: 14px; font-size: 11px; }
+  #app .challenge-home-controls { margin-top: 18px; font-size: 10px; }
+}
+@media (max-height: 360px) {
+  #app .challenge-home-card { padding-block: 0; }
+  #app .challenge-home-eyebrow { margin-bottom: 9px; }
+  #app .challenge-home-card h1 { margin-bottom: 12px; font-size: 34px; }
+  #app .challenge-home-card h1 span { margin-top: 4px; font-size: 14px; }
+  #app .challenge-home-description { margin-bottom: 12px; }
+  #app .challenge-home-controls { margin-top: 12px; }
+}

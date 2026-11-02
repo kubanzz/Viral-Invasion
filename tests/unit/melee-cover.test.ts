@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { GameSession } from '../../src/game/session';
+import { BATTLE_BALANCE } from '../../src/game/battleConfig';
 import { distance, isLegalPosition, normalized, wallHit } from '../../src/actors/collision';
 import type { GameEvent, Target, WorldGeometry } from '../../src/game/types';
 
@@ -44,7 +45,7 @@ describe('committed melee attacks respect real cover', () => {
   it.each(['campaign', 'endless'] as const)('still hurts the same %s movement inside the committed circle when no cover blocks it', mode => {
     const f = fixture(false, mode); f.advance(1); const deadline = f.enemy.attackAt!;
     f.advance(19, 1); while (f.s.elapsed <= deadline + .01) f.advance(1);
-    const damage = mode === 'endless' ? 10 : 7;
+    const damage = mode === 'endless' ? 10 : BATTLE_BALANCE.playerDamage;
     expect(f.s.player.hp).toBe(100 - damage);
     expect(f.events.filter(event => event.type === 'PLAYER_HURT')).toHaveLength(1);
     expect(f.events.find(event => event.type === 'PLAYER_HURT')?.data.damage).toBe(damage);

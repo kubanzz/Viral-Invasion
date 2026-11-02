@@ -1,0 +1,665 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\node_modules\\playwright\\cli.js",
+      "test",
+      "--config=playwright.mobile.config.ts",
+      "--grep",
+      "skill (2|3|scan) previews",
+      "--output=artifacts/mobile-moba-20261101/browser-precision",
+      "--reporter=list,json"
+    ],
+    "configFile": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\playwright.mobile.config.ts",
+    "rootDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/mobile",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/mobile-moba-20261101/browser-precision",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile-chrome",
+        "name": "mobile-chrome",
+        "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/mobile",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/mobile-moba-20261101/browser-precision",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile-edge",
+        "name": "mobile-edge",
+        "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/mobile",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      },
+      {
+        "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/mobile-moba-20261101/browser-precision",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile-webkit",
+        "name": "mobile-webkit",
+        "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/mobile",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\mobile-moba-20261101\\browser-precision",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "mobile-chrome",
+        "testDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\mobile",
+        "snapshotDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\mobile",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 45000,
+        "use": {
+          "headless": true,
+          "viewport": {
+            "width": 844,
+            "height": 390
+          },
+          "hasTouch": true,
+          "deviceScaleFactor": 1,
+          "screenshot": "only-on-failure",
+          "trace": "retain-on-failure",
+          "browserName": "chromium",
+          "channel": "chrome"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "mobile-chrome"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\mobile-moba-20261101\\browser-precision",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "mobile-edge",
+        "testDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\mobile",
+        "snapshotDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\mobile",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 45000,
+        "use": {
+          "headless": true,
+          "viewport": {
+            "width": 844,
+            "height": 390
+          },
+          "hasTouch": true,
+          "deviceScaleFactor": 1,
+          "screenshot": "only-on-failure",
+          "trace": "retain-on-failure",
+          "browserName": "chromium",
+          "channel": "msedge"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "mobile-edge"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\mobile-moba-20261101\\browser-precision",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "mobile-webkit",
+        "testDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\mobile",
+        "snapshotDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\mobile",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 45000,
+        "use": {
+          "headless": true,
+          "viewport": {
+            "width": 844,
+            "height": 390
+          },
+          "hasTouch": true,
+          "deviceScaleFactor": 1,
+          "screenshot": "only-on-failure",
+          "trace": "retain-on-failure",
+          "browserName": "webkit"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "mobile-webkit"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "offline-touch.spec.ts",
+      "file": "offline-touch.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "skill 2 previews without consumption, uses range 420, and casts once on release",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-chrome",
+              "projectName": "mobile-chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3724,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-01T00:01:24.244Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "native-wheel-range-geometry",
+                      "contentType": "application/json",
+                      "body": "ewogICJtZXRob2QiOiAiQ2hyb21pdW0gQ0RQIHRydXN0ZWQgdG91Y2ggY29udGFjdDsgbm90IHBoeXNpY2FsIGlQaG9uZSBpbnB1dCIsCiAgImtpbmQiOiAyLAogICJyYW5nZSI6IDQyMCwKICAib3JpZ2luIjogewogICAgIngiOiA2NzIsCiAgICAieSI6IDMzNAogIH0sCiAgIndoZWVsUmFkaXVzIjogNjQsCiAgInJlcXVlc3RlZCI6IHsKICAgICJ4IjogNzM4LAogICAgInkiOiAzMzQKICB9LAogICJhY3R1YWwiOiB7CiAgICAidHlwZSI6ICJwb2ludGVybW92ZSIsCiAgICAicG9pbnRlclR5cGUiOiAidG91Y2giLAogICAgInRydXN0ZWQiOiB0cnVlLAogICAgImlkIjogMywKICAgICJjb250cm9sIjogIjIiLAogICAgIngiOiA3MzgsCiAgICAieSI6IDMzNAogIH0sCiAgImFjdHVhbFRyYXZlbCI6IDY2LAogICJ3b3JsZERpc3RhbmNlIjogNDIwLAogICJyZWFzb24iOiAiVHdvIENTUyBwaXhlbHMgb2Ygb3ZlcnRyYXZlbCBndWFyYW50ZWUgZnVsbCB3aGVlbCBzYXR1cmF0aW9uIGFmdGVyIFdlYktpdCBpbnRlZ2VyIGV2ZW50IHJvdW5kaW5nOyByYW5nZSBhc3NlcnRpb24gcmVtYWlucyB1bmNoYW5nZWQgYW5kIHRyYXZlbCBzdGF5cyBiZWxvdyB0aGUgcmFkaXVzKzggZnJlZXplIGVkZ2UuIgp9"
+                    },
+                    {
+                      "name": "release-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJraW5kIjogMiwKICAicmFuZ2UiOiA0MjAsCiAgImJlZm9yZSI6IHsKICAgICJ0b29sIjogMSwKICAgICJzaG90cyI6IDAsCiAgICAic2NhbnMiOiAwLAogICAgImNvb2xkb3ducyI6IHsKICAgICAgIjEiOiAwLAogICAgICAiMiI6IDAsCiAgICAgICIzIjogMAogICAgfSwKICAgICJzY2FuUmVhZHkiOiAwLAogICAgInRpc3N1ZSI6IDI1LAogICAgInJlY2VpcHRzIjogW10KICB9LAogICJwcmV2aWV3IjogewogICAgImFpbSI6IHsKICAgICAgIngiOiA3NTAsCiAgICAgICJ5IjogNDQwCiAgICB9LAogICAgInRvb2wiOiAyLAogICAgInByZXZpZXciOiB7CiAgICAgICJraW5kIjogMiwKICAgICAgImFpbSI6IHsKICAgICAgICAieCI6IDc1MCwKICAgICAgICAieSI6IDQ0MAogICAgICB9LAogICAgICAicmFuZ2UiOiA0MjAsCiAgICAgICJjYW5jZWxsZWQiOiBmYWxzZSwKICAgICAgInBoYXNlIjogInByZXZpZXciCiAgICB9CiAgfSwKICAiYWZ0ZXIiOiB7CiAgICAidG9vbCI6IDIsCiAgICAic2hvdHMiOiAxLAogICAgInNjYW5zIjogMCwKICAgICJjb29sZG93bnMiOiB7CiAgICAgICIxIjogMCwKICAgICAgIjIiOiAyLjc2NjY2NjY2NjY2NjY2NjYsCiAgICAgICIzIjogMAogICAgfSwKICAgICJzY2FuUmVhZHkiOiAwLAogICAgInRpc3N1ZSI6IDI1LAogICAgInRyYWN0aW9uSWQiOiAiNDE6dHJhY3Rpb246MSIsCiAgICAicmVjZWlwdHMiOiBbCiAgICAgIHsKICAgICAgICAidHlwZSI6ICJUT09MX1NFTEVDVEVEIiwKICAgICAgICAidGljayI6IDQ2LAogICAgICAgICJkYXRhIjogewogICAgICAgICAgInRvb2wiOiAyCiAgICAgICAgfQogICAgICB9LAogICAgICB7CiAgICAgICAgInR5cGUiOiAiVE9PTF9GSVJFRCIsCiAgICAgICAgInRpY2siOiA0NiwKICAgICAgICAiZGF0YSI6IHsKICAgICAgICAgICJ0b29sIjogMiwKICAgICAgICAgICJ4IjogNzUwLAogICAgICAgICAgInkiOiA0NDAsCiAgICAgICAgICAiY2FzdElkIjogIjQxOnRyYWN0aW9uOjEiCiAgICAgICAgfQogICAgICB9LAogICAgICB7CiAgICAgICAgInR5cGUiOiAiVFJBQ1RJT05fU1RBUlRFRCIsCiAgICAgICAgInRpY2siOiA0NiwKICAgICAgICAiZGF0YSI6IHsKICAgICAgICAgICJjYXN0SWQiOiAiNDE6dHJhY3Rpb246MSIsCiAgICAgICAgICAib3JnYW5JZCI6ICJoZWFydCIsCiAgICAgICAgICAieCI6IDc1MCwKICAgICAgICAgICJ5IjogNDQwLAogICAgICAgICAgInJhZGl1cyI6IDk2LAogICAgICAgICAgImdhdGhlclJhZGl1cyI6IDEzMCwKICAgICAgICAgICJyZXNvbHZlQXQiOiAxLjA2NjY2NjY2NjY2NjY2NjcsCiAgICAgICAgICAiZ3VpZGVVbmxvY2tlZCI6IGZhbHNlLAogICAgICAgICAgImNhdGFseXN0IjogZmFsc2UsCiAgICAgICAgICAiZGFtYWdlIjogODAKICAgICAgICB9CiAgICAgIH0KICAgIF0KICB9Cn0="
+                    },
+                    {
+                      "name": "browser-input-evidence",
+                      "contentType": "application/json",
+                      "body": "ewogICJtZXRob2QiOiAiQ2hyb21pdW0gQ0RQIHRydXN0ZWQgdG91Y2ggY29udGFjdDsgbm90IHBoeXNpY2FsIGlQaG9uZSBpbnB1dCIsCiAgInBoeXNpY2FsSVBob25lVG91Y2giOiBmYWxzZSwKICAiZXZlbnRzIjogWwogICAgewogICAgICAidHlwZSI6ICJwb2ludGVyZG93biIsCiAgICAgICJwb2ludGVyVHlwZSI6ICJ0b3VjaCIsCiAgICAgICJ0cnVzdGVkIjogdHJ1ZSwKICAgICAgImlkIjogMywKICAgICAgImNvbnRyb2wiOiAiMiIsCiAgICAgICJ4IjogNjcyLAogICAgICAieSI6IDMzNAogICAgfSwKICAgIHsKICAgICAgInR5cGUiOiAicG9pbnRlcm1vdmUiLAogICAgICAicG9pbnRlclR5cGUiOiAidG91Y2giLAogICAgICAidHJ1c3RlZCI6IHRydWUsCiAgICAgICJpZCI6IDMsCiAgICAgICJjb250cm9sIjogIjIiLAogICAgICAieCI6IDczOCwKICAgICAgInkiOiAzMzQKICAgIH0sCiAgICB7CiAgICAgICJ0eXBlIjogInBvaW50ZXJ1cCIsCiAgICAgICJwb2ludGVyVHlwZSI6ICJ0b3VjaCIsCiAgICAgICJ0cnVzdGVkIjogdHJ1ZSwKICAgICAgImlkIjogMywKICAgICAgImNvbnRyb2wiOiAiMiIsCiAgICAgICJ4IjogNzM4LAogICAgICAieSI6IDMzNAogICAgfQogIF0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7fe1ed93b1173cb11f62-c37c91314ca142f6d251",
+          "file": "offline-touch.spec.ts",
+          "line": 191,
+          "column": 42
+        },
+        {
+          "title": "skill 3 previews without consumption, uses range 530, and casts once on release",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-chrome",
+              "projectName": "mobile-chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2793,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-01T00:01:28.444Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "native-wheel-range-geometry",
+                      "contentType": "application/json",
+                      "body": "ewogICJtZXRob2QiOiAiQ2hyb21pdW0gQ0RQIHRydXN0ZWQgdG91Y2ggY29udGFjdDsgbm90IHBoeXNpY2FsIGlQaG9uZSBpbnB1dCIsCiAgImtpbmQiOiAzLAogICJyYW5nZSI6IDUzMCwKICAib3JpZ2luIjogewogICAgIngiOiA3MDQuODEyNSwKICAgICJ5IjogMjU0LjgxMjUKICB9LAogICJ3aGVlbFJhZGl1cyI6IDY0LAogICJyZXF1ZXN0ZWQiOiB7CiAgICAieCI6IDc3MC44MTI1LAogICAgInkiOiAyNTQuODEyNQogIH0sCiAgImFjdHVhbCI6IHsKICAgICJ0eXBlIjogInBvaW50ZXJtb3ZlIiwKICAgICJwb2ludGVyVHlwZSI6ICJ0b3VjaCIsCiAgICAidHJ1c3RlZCI6IHRydWUsCiAgICAiaWQiOiAzLAogICAgImNvbnRyb2wiOiAiMyIsCiAgICAieCI6IDc3MC44MTI1LAogICAgInkiOiAyNTQuODEyNQogIH0sCiAgImFjdHVhbFRyYXZlbCI6IDY2LAogICJ3b3JsZERpc3RhbmNlIjogNTMwLAogICJyZWFzb24iOiAiVHdvIENTUyBwaXhlbHMgb2Ygb3ZlcnRyYXZlbCBndWFyYW50ZWUgZnVsbCB3aGVlbCBzYXR1cmF0aW9uIGFmdGVyIFdlYktpdCBpbnRlZ2VyIGV2ZW50IHJvdW5kaW5nOyByYW5nZSBhc3NlcnRpb24gcmVtYWlucyB1bmNoYW5nZWQgYW5kIHRyYXZlbCBzdGF5cyBiZWxvdyB0aGUgcmFkaXVzKzggZnJlZXplIGVkZ2UuIgp9"
+                    },
+                    {
+                      "name": "release-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJraW5kIjogMywKICAicmFuZ2UiOiA1MzAsCiAgImJlZm9yZSI6IHsKICAgICJ0b29sIjogMSwKICAgICJzaG90cyI6IDAsCiAgICAic2NhbnMiOiAwLAogICAgImNvb2xkb3ducyI6IHsKICAgICAgIjEiOiAwLAogICAgICAiMiI6IDAsCiAgICAgICIzIjogMAogICAgfSwKICAgICJzY2FuUmVhZHkiOiAwLAogICAgInRpc3N1ZSI6IDI1LAogICAgInJlY2VpcHRzIjogW10KICB9LAogICJwcmV2aWV3IjogewogICAgImFpbSI6IHsKICAgICAgIngiOiA4NjAsCiAgICAgICJ5IjogNDQwCiAgICB9LAogICAgInRvb2wiOiAzLAogICAgInByZXZpZXciOiB7CiAgICAgICJraW5kIjogMywKICAgICAgImFpbSI6IHsKICAgICAgICAieCI6IDg2MCwKICAgICAgICAieSI6IDQ0MAogICAgICB9LAogICAgICAicmFuZ2UiOiA1MzAsCiAgICAgICJjYW5jZWxsZWQiOiBmYWxzZSwKICAgICAgInBoYXNlIjogInByZXZpZXciCiAgICB9CiAgfSwKICAiYWZ0ZXIiOiB7CiAgICAidG9vbCI6IDMsCiAgICAic2hvdHMiOiAwLAogICAgInNjYW5zIjogMCwKICAgICJjb29sZG93bnMiOiB7CiAgICAgICIxIjogMCwKICAgICAgIjIiOiAwLAogICAgICAiMyI6IDEuMjMzMzMzMzMzMzMzMzMzNAogICAgfSwKICAgICJzY2FuUmVhZHkiOiAwLAogICAgInRpc3N1ZSI6IDI1LAogICAgInJlY2VpcHRzIjogWwogICAgICB7CiAgICAgICAgInR5cGUiOiAiVE9PTF9TRUxFQ1RFRCIsCiAgICAgICAgInRpY2siOiAzMiwKICAgICAgICAiZGF0YSI6IHsKICAgICAgICAgICJ0b29sIjogMwogICAgICAgIH0KICAgICAgfSwKICAgICAgewogICAgICAgICJ0eXBlIjogIlRPT0xfRklSRUQiLAogICAgICAgICJ0aWNrIjogMzIsCiAgICAgICAgImRhdGEiOiB7CiAgICAgICAgICAidG9vbCI6IDMsCiAgICAgICAgICAieCI6IDg2MCwKICAgICAgICAgICJ5IjogNDQwCiAgICAgICAgfQogICAgICB9CiAgICBdCiAgfQp9"
+                    },
+                    {
+                      "name": "browser-input-evidence",
+                      "contentType": "application/json",
+                      "body": "ewogICJtZXRob2QiOiAiQ2hyb21pdW0gQ0RQIHRydXN0ZWQgdG91Y2ggY29udGFjdDsgbm90IHBoeXNpY2FsIGlQaG9uZSBpbnB1dCIsCiAgInBoeXNpY2FsSVBob25lVG91Y2giOiBmYWxzZSwKICAiZXZlbnRzIjogWwogICAgewogICAgICAidHlwZSI6ICJwb2ludGVyZG93biIsCiAgICAgICJwb2ludGVyVHlwZSI6ICJ0b3VjaCIsCiAgICAgICJ0cnVzdGVkIjogdHJ1ZSwKICAgICAgImlkIjogMywKICAgICAgImNvbnRyb2wiOiAiMyIsCiAgICAgICJ4IjogNzA0LjgxMjUsCiAgICAgICJ5IjogMjU0LjgxMjUKICAgIH0sCiAgICB7CiAgICAgICJ0eXBlIjogInBvaW50ZXJtb3ZlIiwKICAgICAgInBvaW50ZXJUeXBlIjogInRvdWNoIiwKICAgICAgInRydXN0ZWQiOiB0cnVlLAogICAgICAiaWQiOiAzLAogICAgICAiY29udHJvbCI6ICIzIiwKICAgICAgIngiOiA3NzAuODEyNSwKICAgICAgInkiOiAyNTQuODEyNQogICAgfSwKICAgIHsKICAgICAgInR5cGUiOiAicG9pbnRlcnVwIiwKICAgICAgInBvaW50ZXJUeXBlIjogInRvdWNoIiwKICAgICAgInRydXN0ZWQiOiB0cnVlLAogICAgICAiaWQiOiAzLAogICAgICAiY29udHJvbCI6ICIzIiwKICAgICAgIngiOiA3NzAuODEyNSwKICAgICAgInkiOiAyNTQuODEyNQogICAgfQogIF0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7fe1ed93b1173cb11f62-e7c0ab94cab9e1143f8e",
+          "file": "offline-touch.spec.ts",
+          "line": 191,
+          "column": 42
+        },
+        {
+          "title": "skill scan previews without consumption, uses range 650, and casts once on release",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-chrome",
+              "projectName": "mobile-chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2823,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-01T00:01:31.249Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "native-wheel-range-geometry",
+                      "contentType": "application/json",
+                      "body": "ewogICJtZXRob2QiOiAiQ2hyb21pdW0gQ0RQIHRydXN0ZWQgdG91Y2ggY29udGFjdDsgbm90IHBoeXNpY2FsIGlQaG9uZSBpbnB1dCIsCiAgImtpbmQiOiAic2NhbiIsCiAgInJhbmdlIjogNjUwLAogICJvcmlnaW4iOiB7CiAgICAieCI6IDc4NCwKICAgICJ5IjogMjIyCiAgfSwKICAid2hlZWxSYWRpdXMiOiA2NCwKICAicmVxdWVzdGVkIjogewogICAgIngiOiA3MTgsCiAgICAieSI6IDIyMgogIH0sCiAgImFjdHVhbCI6IHsKICAgICJ0eXBlIjogInBvaW50ZXJtb3ZlIiwKICAgICJwb2ludGVyVHlwZSI6ICJ0b3VjaCIsCiAgICAidHJ1c3RlZCI6IHRydWUsCiAgICAiaWQiOiAzLAogICAgImNvbnRyb2wiOiAic2NhbiIsCiAgICAieCI6IDcxOCwKICAgICJ5IjogMjIyCiAgfSwKICAiYWN0dWFsVHJhdmVsIjogNjYsCiAgIndvcmxkRGlzdGFuY2UiOiA2NTAsCiAgInJlYXNvbiI6ICJUd28gQ1NTIHBpeGVscyBvZiBvdmVydHJhdmVsIGd1YXJhbnRlZSBmdWxsIHdoZWVsIHNhdHVyYXRpb24gYWZ0ZXIgV2ViS2l0IGludGVnZXIgZXZlbnQgcm91bmRpbmc7IHJhbmdlIGFzc2VydGlvbiByZW1haW5zIHVuY2hhbmdlZCBhbmQgdHJhdmVsIHN0YXlzIGJlbG93IHRoZSByYWRpdXMrOCBmcmVlemUgZWRnZS4iCn0="
+                    },
+                    {
+                      "name": "release-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJraW5kIjogInNjYW4iLAogICJyYW5nZSI6IDY1MCwKICAiYmVmb3JlIjogewogICAgInRvb2wiOiAxLAogICAgInNob3RzIjogMCwKICAgICJzY2FucyI6IDAsCiAgICAiY29vbGRvd25zIjogewogICAgICAiMSI6IDAsCiAgICAgICIyIjogMCwKICAgICAgIjMiOiAwCiAgICB9LAogICAgInNjYW5SZWFkeSI6IDAsCiAgICAidGlzc3VlIjogMjUsCiAgICAicmVjZWlwdHMiOiBbXQogIH0sCiAgInByZXZpZXciOiB7CiAgICAiYWltIjogewogICAgICAieCI6IC0zMjAsCiAgICAgICJ5IjogNDQwCiAgICB9LAogICAgInRvb2wiOiAxLAogICAgInByZXZpZXciOiB7CiAgICAgICJraW5kIjogInNjYW4iLAogICAgICAiYWltIjogewogICAgICAgICJ4IjogLTMyMCwKICAgICAgICAieSI6IDQ0MAogICAgICB9LAogICAgICAicmFuZ2UiOiA2NTAsCiAgICAgICJjYW5jZWxsZWQiOiBmYWxzZSwKICAgICAgInBoYXNlIjogInByZXZpZXciCiAgICB9CiAgfSwKICAiYWZ0ZXIiOiB7CiAgICAidG9vbCI6IDEsCiAgICAic2hvdHMiOiAwLAogICAgInNjYW5zIjogMSwKICAgICJjb29sZG93bnMiOiB7CiAgICAgICIxIjogMCwKICAgICAgIjIiOiAwLAogICAgICAiMyI6IDAKICAgIH0sCiAgICAic2NhblJlYWR5IjogMy42MTY2NjY2NjY2NjY2NjY3LAogICAgInRpc3N1ZSI6IDI1LAogICAgInJlY2VpcHRzIjogWwogICAgICB7CiAgICAgICAgInR5cGUiOiAiU0NBTl9DT01QTEVURUQiLAogICAgICAgICJ0aWNrIjogMzcsCiAgICAgICAgImRhdGEiOiB7CiAgICAgICAgICAiZm91bmQiOiA0LAogICAgICAgICAgInJhZGl1cyI6IDY1MAogICAgICAgIH0KICAgICAgfQogICAgXQogIH0KfQ=="
+                    },
+                    {
+                      "name": "browser-input-evidence",
+                      "contentType": "application/json",
+                      "body": "ewogICJtZXRob2QiOiAiQ2hyb21pdW0gQ0RQIHRydXN0ZWQgdG91Y2ggY29udGFjdDsgbm90IHBoeXNpY2FsIGlQaG9uZSBpbnB1dCIsCiAgInBoeXNpY2FsSVBob25lVG91Y2giOiBmYWxzZSwKICAiZXZlbnRzIjogWwogICAgewogICAgICAidHlwZSI6ICJwb2ludGVyZG93biIsCiAgICAgICJwb2ludGVyVHlwZSI6ICJ0b3VjaCIsCiAgICAgICJ0cnVzdGVkIjogdHJ1ZSwKICAgICAgImlkIjogMywKICAgICAgImNvbnRyb2wiOiAic2NhbiIsCiAgICAgICJ4IjogNzg0LAogICAgICAieSI6IDIyMgogICAgfSwKICAgIHsKICAgICAgInR5cGUiOiAicG9pbnRlcm1vdmUiLAogICAgICAicG9pbnRlclR5cGUiOiAidG91Y2giLAogICAgICAidHJ1c3RlZCI6IHRydWUsCiAgICAgICJpZCI6IDMsCiAgICAgICJjb250cm9sIjogInNjYW4iLAogICAgICAieCI6IDcxOCwKICAgICAgInkiOiAyMjIKICAgIH0sCiAgICB7CiAgICAgICJ0eXBlIjogInBvaW50ZXJ1cCIsCiAgICAgICJwb2ludGVyVHlwZSI6ICJ0b3VjaCIsCiAgICAgICJ0cnVzdGVkIjogdHJ1ZSwKICAgICAgImlkIjogMywKICAgICAgImNvbnRyb2wiOiAic2NhbiIsCiAgICAgICJ4IjogNzE4LAogICAgICAieSI6IDIyMgogICAgfQogIF0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7fe1ed93b1173cb11f62-207617ee98f336543d2b",
+          "file": "offline-touch.spec.ts",
+          "line": 191,
+          "column": 42
+        },
+        {
+          "title": "skill 2 previews without consumption, uses range 420, and casts once on release",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-edge",
+              "projectName": "mobile-edge",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3760,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-01T00:01:34.993Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "native-wheel-range-geometry",
+                      "contentType": "application/json",
+                      "body": "ewogICJtZXRob2QiOiAiQ2hyb21pdW0gQ0RQIHRydXN0ZWQgdG91Y2ggY29udGFjdDsgbm90IHBoeXNpY2FsIGlQaG9uZSBpbnB1dCIsCiAgImtpbmQiOiAyLAogICJyYW5nZSI6IDQyMCwKICAib3JpZ2luIjogewogICAgIngiOiA2NzIsCiAgICAieSI6IDMzNAogIH0sCiAgIndoZWVsUmFkaXVzIjogNjQsCiAgInJlcXVlc3RlZCI6IHsKICAgICJ4IjogNzM4LAogICAgInkiOiAzMzQKICB9LAogICJhY3R1YWwiOiB7CiAgICAidHlwZSI6ICJwb2ludGVybW92ZSIsCiAgICAicG9pbnRlclR5cGUiOiAidG91Y2giLAogICAgInRydXN0ZWQiOiB0cnVlLAogICAgImlkIjogMywKICAgICJjb250cm9sIjogIjIiLAogICAgIngiOiA3MzgsCiAgICAieSI6IDMzNAogIH0sCiAgImFjdHVhbFRyYXZlbCI6IDY2LAogICJ3b3JsZERpc3RhbmNlIjogNDIwLAogICJyZWFzb24iOiAiVHdvIENTUyBwaXhlbHMgb2Ygb3ZlcnRyYXZlbCBndWFyYW50ZWUgZnVsbCB3aGVlbCBzYXR1cmF0aW9uIGFmdGVyIFdlYktpdCBpbnRlZ2VyIGV2ZW50IHJvdW5kaW5nOyByYW5nZSBhc3NlcnRpb24gcmVtYWlucyB1bmNoYW5nZWQgYW5kIHRyYXZlbCBzdGF5cyBiZWxvdyB0aGUgcmFkaXVzKzggZnJlZXplIGVkZ2UuIgp9"
+                    },
+                    {
+                      "name": "release-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJraW5kIjogMiwKICAicmFuZ2UiOiA0MjAsCiAgImJlZm9yZSI6IHsKICAgICJ0b29sIjogMSwKICAgICJzaG90cyI6IDAsCiAgICAic2NhbnMiOiAwLAogICAgImNvb2xkb3ducyI6IHsKICAgICAgIjEiOiAwLAogICAgICAiMiI6IDAsCiAgICAgICIzIjogMAogICAgfSwKICAgICJzY2FuUmVhZHkiOiAwLAogICAgInRpc3N1ZSI6IDI1LAogICAgInJlY2VpcHRzIjogW10KICB9LAogICJwcmV2aWV3IjogewogICAgImFpbSI6IHsKICAgICAgIngiOiA3NTAsCiAgICAgICJ5IjogNDQwCiAgICB9LAogICAgInRvb2wiOiAyLAogICAgInByZXZpZXciOiB7CiAgICAgICJraW5kIjogMiwKICAgICAgImFpbSI6IHsKICAgICAgICAieCI6IDc1MCwKICAgICAgICAieSI6IDQ0MAogICAgICB9LAogICAgICAicmFuZ2UiOiA0MjAsCiAgICAgICJjYW5jZWxsZWQiOiBmYWxzZSwKICAgICAgInBoYXNlIjogInByZXZpZXciCiAgICB9CiAgfSwKICAiYWZ0ZXIiOiB7CiAgICAidG9vbCI6IDIsCiAgICAic2hvdHMiOiAxLAogICAgInNjYW5zIjogMCwKICAgICJjb29sZG93bnMiOiB7CiAgICAgICIxIjogMCwKICAgICAgIjIiOiAyLjcxNjY2NjY2NjY2NjY2NywKICAgICAgIjMiOiAwCiAgICB9LAogICAgInNjYW5SZWFkeSI6IDAsCiAgICAidGlzc3VlIjogMjUsCiAgICAidHJhY3Rpb25JZCI6ICI0MTp0cmFjdGlvbjoxIiwKICAgICJyZWNlaXB0cyI6IFsKICAgICAgewogICAgICAgICJ0eXBlIjogIlRPT0xfU0VMRUNURUQiLAogICAgICAgICJ0aWNrIjogNDMsCiAgICAgICAgImRhdGEiOiB7CiAgICAgICAgICAidG9vbCI6IDIKICAgICAgICB9CiAgICAgIH0sCiAgICAgIHsKICAgICAgICAidHlwZSI6ICJUT09MX0ZJUkVEIiwKICAgICAgICAidGljayI6IDQzLAogICAgICAgICJkYXRhIjogewogICAgICAgICAgInRvb2wiOiAyLAogICAgICAgICAgIngiOiA3NTAsCiAgICAgICAgICAieSI6IDQ0MCwKICAgICAgICAgICJjYXN0SWQiOiAiNDE6dHJhY3Rpb246MSIKICAgICAgICB9CiAgICAgIH0sCiAgICAgIHsKICAgICAgICAidHlwZSI6ICJUUkFDVElPTl9TVEFSVEVEIiwKICAgICAgICAidGljayI6IDQzLAogICAgICAgICJkYXRhIjogewogICAgICAgICAgImNhc3RJZCI6ICI0MTp0cmFjdGlvbjoxIiwKICAgICAgICAgICJvcmdhbklkIjogImhlYXJ0IiwKICAgICAgICAgICJ4IjogNzUwLAogICAgICAgICAgInkiOiA0NDAsCiAgICAgICAgICAicmFkaXVzIjogOTYsCiAgICAgICAgICAiZ2F0aGVyUmFkaXVzIjogMTMwLAogICAgICAgICAgInJlc29sdmVBdCI6IDEuMDE2NjY2NjY2NjY2NjY2NiwKICAgICAgICAgICJndWlkZVVubG9ja2VkIjogZmFsc2UsCiAgICAgICAgICAiY2F0YWx5c3QiOiBmYWxzZSwKICAgICAgICAgICJkYW1hZ2UiOiA4MAogICAgICAgIH0KICAgICAgfQogICAgXQogIH0KfQ=="
+                    },
+                    {
+                      "name": "browser-input-evidence",
+                      "contentType": "application/json",
+                      "body": "ewogICJtZXRob2QiOiAiQ2hyb21pdW0gQ0RQIHRydXN0ZWQgdG91Y2ggY29udGFjdDsgbm90IHBoeXNpY2FsIGlQaG9uZSBpbnB1dCIsCiAgInBoeXNpY2FsSVBob25lVG91Y2giOiBmYWxzZSwKICAiZXZlbnRzIjogWwogICAgewogICAgICAidHlwZSI6ICJwb2ludGVyZG93biIsCiAgICAgICJwb2ludGVyVHlwZSI6ICJ0b3VjaCIsCiAgICAgICJ0cnVzdGVkIjogdHJ1ZSwKICAgICAgImlkIjogMywKICAgICAgImNvbnRyb2wiOiAiMiIsCiAgICAgICJ4IjogNjcyLAogICAgICAieSI6IDMzNAogICAgfSwKICAgIHsKICAgICAgInR5cGUiOiAicG9pbnRlcm1vdmUiLAogICAgICAicG9pbnRlclR5cGUiOiAidG91Y2giLAogICAgICAidHJ1c3RlZCI6IHRydWUsCiAgICAgICJpZCI6IDMsCiAgICAgICJjb250cm9sIjogIjIiLAogICAgICAieCI6IDczOCwKICAgICAgInkiOiAzMzQKICAgIH0sCiAgICB7CiAgICAgICJ0eXBlIjogInBvaW50ZXJ1cCIsCiAgICAgICJwb2ludGVyVHlwZSI6ICJ0b3VjaCIsCiAgICAgICJ0cnVzdGVkIjogdHJ1ZSwKICAgICAgImlkIjogMywKICAgICAgImNvbnRyb2wiOiAiMiIsCiAgICAgICJ4IjogNzM4LAogICAgICAieSI6IDMzNAogICAgfQogIF0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7fe1ed93b1173cb11f62-f805b41e5015bec78014",
+          "file": "offline-touch.spec.ts",
+          "line": 191,
+          "column": 42
+        },
+        {
+          "title": "skill 3 previews without consumption, uses range 530, and casts once on release",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-edge",
+              "projectName": "mobile-edge",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2702,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-01T00:01:39.279Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "native-wheel-range-geometry",
+                      "contentType": "application/json",
+                      "body": "ewogICJtZXRob2QiOiAiQ2hyb21pdW0gQ0RQIHRydXN0ZWQgdG91Y2ggY29udGFjdDsgbm90IHBoeXNpY2FsIGlQaG9uZSBpbnB1dCIsCiAgImtpbmQiOiAzLAogICJyYW5nZSI6IDUzMCwKICAib3JpZ2luIjogewogICAgIngiOiA3MDQuODEyNSwKICAgICJ5IjogMjU0LjgxMjUKICB9LAogICJ3aGVlbFJhZGl1cyI6IDY0LAogICJyZXF1ZXN0ZWQiOiB7CiAgICAieCI6IDc3MC44MTI1LAogICAgInkiOiAyNTQuODEyNQogIH0sCiAgImFjdHVhbCI6IHsKICAgICJ0eXBlIjogInBvaW50ZXJtb3ZlIiwKICAgICJwb2ludGVyVHlwZSI6ICJ0b3VjaCIsCiAgICAidHJ1c3RlZCI6IHRydWUsCiAgICAiaWQiOiAzLAogICAgImNvbnRyb2wiOiAiMyIsCiAgICAieCI6IDc3MC44MTI1LAogICAgInkiOiAyNTQuODEyNQogIH0sCiAgImFjdHVhbFRyYXZlbCI6IDY2LAogICJ3b3JsZERpc3RhbmNlIjogNTMwLAogICJyZWFzb24iOiAiVHdvIENTUyBwaXhlbHMgb2Ygb3ZlcnRyYXZlbCBndWFyYW50ZWUgZnVsbCB3aGVlbCBzYXR1cmF0aW9uIGFmdGVyIFdlYktpdCBpbnRlZ2VyIGV2ZW50IHJvdW5kaW5nOyByYW5nZSBhc3NlcnRpb24gcmVtYWlucyB1bmNoYW5nZWQgYW5kIHRyYXZlbCBzdGF5cyBiZWxvdyB0aGUgcmFkaXVzKzggZnJlZXplIGVkZ2UuIgp9"
+                    },
+                    {
+                      "name": "release-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJraW5kIjogMywKICAicmFuZ2UiOiA1MzAsCiAgImJlZm9yZSI6IHsKICAgICJ0b29sIjogMSwKICAgICJzaG90cyI6IDAsCiAgICAic2NhbnMiOiAwLAogICAgImNvb2xkb3ducyI6IHsKICAgICAgIjEiOiAwLAogICAgICAiMiI6IDAsCiAgICAgICIzIjogMAogICAgfSwKICAgICJzY2FuUmVhZHkiOiAwLAogICAgInRpc3N1ZSI6IDI1LAogICAgInJlY2VpcHRzIjogW10KICB9LAogICJwcmV2aWV3IjogewogICAgImFpbSI6IHsKICAgICAgIngiOiA4NjAsCiAgICAgICJ5IjogNDQwCiAgICB9LAogICAgInRvb2wiOiAzLAogICAgInByZXZpZXciOiB7CiAgICAgICJraW5kIjogMywKICAgICAgImFpbSI6IHsKICAgICAgICAieCI6IDg2MCwKICAgICAgICAieSI6IDQ0MAogICAgICB9LAogICAgICAicmFuZ2UiOiA1MzAsCiAgICAgICJjYW5jZWxsZWQiOiBmYWxzZSwKICAgICAgInBoYXNlIjogInByZXZpZXciCiAgICB9CiAgfSwKICAiYWZ0ZXIiOiB7CiAgICAidG9vbCI6IDMsCiAgICAic2hvdHMiOiAwLAogICAgInNjYW5zIjogMCwKICAgICJjb29sZG93bnMiOiB7CiAgICAgICIxIjogMCwKICAgICAgIjIiOiAwLAogICAgICAiMyI6IDEuMjgzMzMzMzMzMzMzMzMzMgogICAgfSwKICAgICJzY2FuUmVhZHkiOiAwLAogICAgInRpc3N1ZSI6IDI1LAogICAgInJlY2VpcHRzIjogWwogICAgICB7CiAgICAgICAgInR5cGUiOiAiVE9PTF9TRUxFQ1RFRCIsCiAgICAgICAgInRpY2siOiAzNSwKICAgICAgICAiZGF0YSI6IHsKICAgICAgICAgICJ0b29sIjogMwogICAgICAgIH0KICAgICAgfSwKICAgICAgewogICAgICAgICJ0eXBlIjogIlRPT0xfRklSRUQiLAogICAgICAgICJ0aWNrIjogMzUsCiAgICAgICAgImRhdGEiOiB7CiAgICAgICAgICAidG9vbCI6IDMsCiAgICAgICAgICAieCI6IDg2MCwKICAgICAgICAgICJ5IjogNDQwCiAgICAgICAgfQogICAgICB9CiAgICBdCiAgfQp9"
+                    },
+                    {
+                      "name": "browser-input-evidence",
+                      "contentType": "application/json",
+                      "body": "ewogICJtZXRob2QiOiAiQ2hyb21pdW0gQ0RQIHRydXN0ZWQgdG91Y2ggY29udGFjdDsgbm90IHBoeXNpY2FsIGlQaG9uZSBpbnB1dCIsCiAgInBoeXNpY2FsSVBob25lVG91Y2giOiBmYWxzZSwKICAiZXZlbnRzIjogWwogICAgewogICAgICAidHlwZSI6ICJwb2ludGVyZG93biIsCiAgICAgICJwb2ludGVyVHlwZSI6ICJ0b3VjaCIsCiAgICAgICJ0cnVzdGVkIjogdHJ1ZSwKICAgICAgImlkIjogMywKICAgICAgImNvbnRyb2wiOiAiMyIsCiAgICAgICJ4IjogNzA0LjgxMjUsCiAgICAgICJ5IjogMjU0LjgxMjUKICAgIH0sCiAgICB7CiAgICAgICJ0eXBlIjogInBvaW50ZXJtb3ZlIiwKICAgICAgInBvaW50ZXJUeXBlIjogInRvdWNoIiwKICAgICAgInRydXN0ZWQiOiB0cnVlLAogICAgICAiaWQiOiAzLAogICAgICAiY29udHJvbCI6ICIzIiwKICAgICAgIngiOiA3NzAuODEyNSwKICAgICAgInkiOiAyNTQuODEyNQogICAgfSwKICAgIHsKICAgICAgInR5cGUiOiAicG9pbnRlcnVwIiwKICAgICAgInBvaW50ZXJUeXBlIjogInRvdWNoIiwKICAgICAgInRydXN0ZWQiOiB0cnVlLAogICAgICAiaWQiOiAzLAogICAgICAiY29udHJvbCI6ICIzIiwKICAgICAgIngiOiA3NzAuODEyNSwKICAgICAgInkiOiAyNTQuODEyNQogICAgfQogIF0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7fe1ed93b1173cb11f62-0aaa1da5f7cde67cf2e0",
+          "file": "offline-touch.spec.ts",
+          "line": 191,
+          "column": 42
+        },
+        {
+          "title": "skill scan previews without consumption, uses range 650, and casts once on release",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-edge",
+              "projectName": "mobile-edge",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2661,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-01T00:01:41.996Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "native-wheel-range-geometry",
+                      "contentType": "application/json",
+                      "body": "ewogICJtZXRob2QiOiAiQ2hyb21pdW0gQ0RQIHRydXN0ZWQgdG91Y2ggY29udGFjdDsgbm90IHBoeXNpY2FsIGlQaG9uZSBpbnB1dCIsCiAgImtpbmQiOiAic2NhbiIsCiAgInJhbmdlIjogNjUwLAogICJvcmlnaW4iOiB7CiAgICAieCI6IDc4NCwKICAgICJ5IjogMjIyCiAgfSwKICAid2hlZWxSYWRpdXMiOiA2NCwKICAicmVxdWVzdGVkIjogewogICAgIngiOiA3MTgsCiAgICAieSI6IDIyMgogIH0sCiAgImFjdHVhbCI6IHsKICAgICJ0eXBlIjogInBvaW50ZXJtb3ZlIiwKICAgICJwb2ludGVyVHlwZSI6ICJ0b3VjaCIsCiAgICAidHJ1c3RlZCI6IHRydWUsCiAgICAiaWQiOiAzLAogICAgImNvbnRyb2wiOiAic2NhbiIsCiAgICAieCI6IDcxOCwKICAgICJ5IjogMjIyCiAgfSwKICAiYWN0dWFsVHJhdmVsIjogNjYsCiAgIndvcmxkRGlzdGFuY2UiOiA2NTAsCiAgInJlYXNvbiI6ICJUd28gQ1NTIHBpeGVscyBvZiBvdmVydHJhdmVsIGd1YXJhbnRlZSBmdWxsIHdoZWVsIHNhdHVyYXRpb24gYWZ0ZXIgV2ViS2l0IGludGVnZXIgZXZlbnQgcm91bmRpbmc7IHJhbmdlIGFzc2VydGlvbiByZW1haW5zIHVuY2hhbmdlZCBhbmQgdHJhdmVsIHN0YXlzIGJlbG93IHRoZSByYWRpdXMrOCBmcmVlemUgZWRnZS4iCn0="
+                    },
+                    {
+                      "name": "release-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJraW5kIjogInNjYW4iLAogICJyYW5nZSI6IDY1MCwKICAiYmVmb3JlIjogewogICAgInRvb2wiOiAxLAogICAgInNob3RzIjogMCwKICAgICJzY2FucyI6IDAsCiAgICAiY29vbGRvd25zIjogewogICAgICAiMSI6IDAsCiAgICAgICIyIjogMCwKICAgICAgIjMiOiAwCiAgICB9LAogICAgInNjYW5SZWFkeSI6IDAsCiAgICAidGlzc3VlIjogMjUsCiAgICAicmVjZWlwdHMiOiBbXQogIH0sCiAgInByZXZpZXciOiB7CiAgICAiYWltIjogewogICAgICAieCI6IC0zMjAsCiAgICAgICJ5IjogNDQwCiAgICB9LAogICAgInRvb2wiOiAxLAogICAgInByZXZpZXciOiB7CiAgICAgICJraW5kIjogInNjYW4iLAogICAgICAiYWltIjogewogICAgICAgICJ4IjogLTMyMCwKICAgICAgICAieSI6IDQ0MAogICAgICB9LAogICAgICAicmFuZ2UiOiA2NTAsCiAgICAgICJjYW5jZWxsZWQiOiBmYWxzZSwKICAgICAgInBoYXNlIjogInByZXZpZXciCiAgICB9CiAgfSwKICAiYWZ0ZXIiOiB7CiAgICAidG9vbCI6IDEsCiAgICAic2hvdHMiOiAwLAogICAgInNjYW5zIjogMSwKICAgICJjb29sZG93bnMiOiB7CiAgICAgICIxIjogMCwKICAgICAgIjIiOiAwLAogICAgICAiMyI6IDAKICAgIH0sCiAgICAic2NhblJlYWR5IjogMy41MTY2NjY2NjY2NjY2NjY2LAogICAgInRpc3N1ZSI6IDI1LAogICAgInJlY2VpcHRzIjogWwogICAgICB7CiAgICAgICAgInR5cGUiOiAiU0NBTl9DT01QTEVURUQiLAogICAgICAgICJ0aWNrIjogMzEsCiAgICAgICAgImRhdGEiOiB7CiAgICAgICAgICAiZm91bmQiOiA0LAogICAgICAgICAgInJhZGl1cyI6IDY1MAogICAgICAgIH0KICAgICAgfQogICAgXQogIH0KfQ=="
+                    },
+                    {
+                      "name": "browser-input-evidence",
+                      "contentType": "application/json",
+                      "body": "ewogICJtZXRob2QiOiAiQ2hyb21pdW0gQ0RQIHRydXN0ZWQgdG91Y2ggY29udGFjdDsgbm90IHBoeXNpY2FsIGlQaG9uZSBpbnB1dCIsCiAgInBoeXNpY2FsSVBob25lVG91Y2giOiBmYWxzZSwKICAiZXZlbnRzIjogWwogICAgewogICAgICAidHlwZSI6ICJwb2ludGVyZG93biIsCiAgICAgICJwb2ludGVyVHlwZSI6ICJ0b3VjaCIsCiAgICAgICJ0cnVzdGVkIjogdHJ1ZSwKICAgICAgImlkIjogMywKICAgICAgImNvbnRyb2wiOiAic2NhbiIsCiAgICAgICJ4IjogNzg0LAogICAgICAieSI6IDIyMgogICAgfSwKICAgIHsKICAgICAgInR5cGUiOiAicG9pbnRlcm1vdmUiLAogICAgICAicG9pbnRlclR5cGUiOiAidG91Y2giLAogICAgICAidHJ1c3RlZCI6IHRydWUsCiAgICAgICJpZCI6IDMsCiAgICAgICJjb250cm9sIjogInNjYW4iLAogICAgICAieCI6IDcxOCwKICAgICAgInkiOiAyMjIKICAgIH0sCiAgICB7CiAgICAgICJ0eXBlIjogInBvaW50ZXJ1cCIsCiAgICAgICJwb2ludGVyVHlwZSI6ICJ0b3VjaCIsCiAgICAgICJ0cnVzdGVkIjogdHJ1ZSwKICAgICAgImlkIjogMywKICAgICAgImNvbnRyb2wiOiAic2NhbiIsCiAgICAgICJ4IjogNzE4LAogICAgICAieSI6IDIyMgogICAgfQogIF0KfQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7fe1ed93b1173cb11f62-d2ccc0963e70a03fa5a5",
+          "file": "offline-touch.spec.ts",
+          "line": 191,
+          "column": 42
+        },
+        {
+          "title": "skill 2 previews without consumption, uses range 420, and casts once on release",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-webkit",
+              "projectName": "mobile-webkit",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3657,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-01T00:01:45.652Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "native-wheel-range-geometry",
+                      "contentType": "application/json",
+                      "body": "ewogICJtZXRob2QiOiAiV2ViS2l0IHRydXN0ZWQgbW91c2UgZHJhZyBvbiB0b3VjaCBjb250cm9sczsgbm90IG11bHRpLXRvdWNoIG9yIHBoeXNpY2FsIGlQaG9uZSBpbnB1dCIsCiAgImtpbmQiOiAyLAogICJyYW5nZSI6IDQyMCwKICAib3JpZ2luIjogewogICAgIngiOiA2NzIsCiAgICAieSI6IDMzNAogIH0sCiAgIndoZWVsUmFkaXVzIjogNjQsCiAgInJlcXVlc3RlZCI6IHsKICAgICJ4IjogNzM4LAogICAgInkiOiAzMzQKICB9LAogICJhY3R1YWwiOiB7CiAgICAidHlwZSI6ICJwb2ludGVybW92ZSIsCiAgICAicG9pbnRlclR5cGUiOiAibW91c2UiLAogICAgInRydXN0ZWQiOiB0cnVlLAogICAgImlkIjogMSwKICAgICJjb250cm9sIjogIjIiLAogICAgIngiOiA3MzgsCiAgICAieSI6IDMzNAogIH0sCiAgImFjdHVhbFRyYXZlbCI6IDY2LAogICJ3b3JsZERpc3RhbmNlIjogNDIwLAogICJyZWFzb24iOiAiVHdvIENTUyBwaXhlbHMgb2Ygb3ZlcnRyYXZlbCBndWFyYW50ZWUgZnVsbCB3aGVlbCBzYXR1cmF0aW9uIGFmdGVyIFdlYktpdCBpbnRlZ2VyIGV2ZW50IHJvdW5kaW5nOyByYW5nZSBhc3NlcnRpb24gcmVtYWlucyB1bmNoYW5nZWQgYW5kIHRyYXZlbCBzdGF5cyBiZWxvdyB0aGUgcmFkaXVzKzggZnJlZXplIGVkZ2UuIgp9"
+                    },
+                    {
+                      "name": "release-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJraW5kIjogMiwKICAicmFuZ2UiOiA0MjAsCiAgImJlZm9yZSI6IHsKICAgICJ0b29sIjogMSwKICAgICJzaG90cyI6IDAsCiAgICAic2NhbnMiOiAwLAogICAgImNvb2xkb3ducyI6IHsKICAgICAgIjEiOiAwLAogICAgICAiMiI6IDAsCiAgICAgICIzIjogMAogICAgfSwKICAgICJzY2FuUmVhZHkiOiAwLAogICAgInRpc3N1ZSI6IDI1LAogICAgInJlY2VpcHRzIjogW10KICB9LAogICJwcmV2aWV3IjogewogICAgImFpbSI6IHsKICAgICAgIngiOiA3NTAsCiAgICAgICJ5IjogNDQwCiAgICB9LAogICAgInRvb2wiOiAyLAogICAgInByZXZpZXciOiB7CiAgICAgICJraW5kIjogMiwKICAgICAgImFpbSI6IHsKICAgICAgICAieCI6IDc1MCwKICAgICAgICAieSI6IDQ0MAogICAgICB9LAogICAgICAicmFuZ2UiOiA0MjAsCiAgICAgICJjYW5jZWxsZWQiOiBmYWxzZSwKICAgICAgInBoYXNlIjogInByZXZpZXciCiAgICB9CiAgfSwKICAiYWZ0ZXIiOiB7CiAgICAidG9vbCI6IDIsCiAgICAic2hvdHMiOiAxLAogICAgInNjYW5zIjogMCwKICAgICJjb29sZG93bnMiOiB7CiAgICAgICIxIjogMCwKICAgICAgIjIiOiAzLAogICAgICAiMyI6IDAKICAgIH0sCiAgICAic2NhblJlYWR5IjogMCwKICAgICJ0aXNzdWUiOiAyNSwKICAgICJ0cmFjdGlvbklkIjogIjQxOnRyYWN0aW9uOjEiLAogICAgInJlY2VpcHRzIjogWwogICAgICB7CiAgICAgICAgInR5cGUiOiAiVE9PTF9TRUxFQ1RFRCIsCiAgICAgICAgInRpY2siOiA2MCwKICAgICAgICAiZGF0YSI6IHsKICAgICAgICAgICJ0b29sIjogMgogICAgICAgIH0KICAgICAgfSwKICAgICAgewogICAgICAgICJ0eXBlIjogIlRPT0xfRklSRUQiLAogICAgICAgICJ0aWNrIjogNjAsCiAgICAgICAgImRhdGEiOiB7CiAgICAgICAgICAidG9vbCI6IDIsCiAgICAgICAgICAieCI6IDc1MCwKICAgICAgICAgICJ5IjogNDQwLAogICAgICAgICAgImNhc3RJZCI6ICI0MTp0cmFjdGlvbjoxIgogICAgICAgIH0KICAgICAgfSwKICAgICAgewogICAgICAgICJ0eXBlIjogIlRSQUNUSU9OX1NUQVJURUQiLAogICAgICAgICJ0aWNrIjogNjAsCiAgICAgICAgImRhdGEiOiB7CiAgICAgICAgICAiY2FzdElkIjogIjQxOnRyYWN0aW9uOjEiLAogICAgICAgICAgIm9yZ2FuSWQiOiAiaGVhcnQiLAogICAgICAgICAgIngiOiA3NTAsCiAgICAgICAgICAieSI6IDQ0MCwKICAgICAgICAgICJyYWRpdXMiOiA5NiwKICAgICAgICAgICJnYXRoZXJSYWRpdXMiOiAxMzAsCiAgICAgICAgICAicmVzb2x2ZUF0IjogMS4zLAogICAgICAgICAgImd1aWRlVW5sb2NrZWQiOiBmYWxzZSwKICAgICAgICAgICJjYXRhbHlzdCI6IGZhbHNlLAogICAgICAgICAgImRhbWFnZSI6IDgwCiAgICAgICAgfQogICAgICB9CiAgICBdCiAgfQp9"
+                    },
+                    {
+                      "name": "browser-input-evidence",
+                      "contentType": "application/json",
+                      "body": "ewogICJtZXRob2QiOiAiV2ViS2l0IHRydXN0ZWQgbW91c2UgZHJhZyBvbiB0b3VjaCBjb250cm9sczsgbm90IG11bHRpLXRvdWNoIG9yIHBoeXNpY2FsIGlQaG9uZSBpbnB1dCIsCiAgInBoeXNpY2FsSVBob25lVG91Y2giOiBmYWxzZSwKICAiZXZlbnRzIjogWwogICAgewogICAgICAidHlwZSI6ICJwb2ludGVybW92ZSIsCiAgICAgICJwb2ludGVyVHlwZSI6ICJtb3VzZSIsCiAgICAgICJ0cnVzdGVkIjogdHJ1ZSwKICAgICAgImlkIjogMSwKICAgICAgImNvbnRyb2wiOiAiMiIsCiAgICAgICJ4IjogNjcyLAogICAgICAieSI6IDMzNAogICAgfSwKICAgIHsKICAgICAgInR5cGUiOiAicG9pbnRlcmRvd24iLAogICAgICAicG9pbnRlclR5cGUiOiAibW91c2UiLAogICAgICAidHJ1c3RlZCI6IHRydWUsCiAgICAgICJpZCI6IDEsCiAgICAgICJjb250cm9sIjogIjIiLAogICAgICAieCI6IDY3MiwKICAgICAgInkiOiAzMzQKICAgIH0sCiAgICB7CiAgICAgICJ0eXBlIjogInBvaW50ZXJtb3ZlIiwKICAgICAgInBvaW50ZXJUeXBlIjogIm1vdXNlIiwKICAgICAgInRydXN0ZWQiOiB0cnVlLAogICAgICAiaWQiOiAxLAogICAgICAiY29udHJvbCI6ICIyIiwKICAgICAgIngiOiA3MzgsCiAgICAgICJ5IjogMzM0CiAgICB9LAogICAgewogICAgICAidHlwZSI6ICJwb2ludGVydXAiLAogICAgICAicG9pbnRlclR5cGUiOiAibW91c2UiLAogICAgICAidHJ1c3RlZCI6IHRydWUsCiAgICAgICJpZCI6IDEsCiAgICAgICJjb250cm9sIjogIjIiLAogICAgICAieCI6IDczOCwKICAgICAgInkiOiAzMzQKICAgIH0KICBdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7fe1ed93b1173cb11f62-666eb60820c142ee4a99",
+          "file": "offline-touch.spec.ts",
+          "line": 191,
+          "column": 42
+        },
+        {
+          "title": "skill 3 previews without consumption, uses range 530, and casts once on release",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-webkit",
+              "projectName": "mobile-webkit",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3602,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-01T00:01:49.417Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "native-wheel-range-geometry",
+                      "contentType": "application/json",
+                      "body": "ewogICJtZXRob2QiOiAiV2ViS2l0IHRydXN0ZWQgbW91c2UgZHJhZyBvbiB0b3VjaCBjb250cm9sczsgbm90IG11bHRpLXRvdWNoIG9yIHBoeXNpY2FsIGlQaG9uZSBpbnB1dCIsCiAgImtpbmQiOiAzLAogICJyYW5nZSI6IDUzMCwKICAib3JpZ2luIjogewogICAgIngiOiA3MDQuODEyNSwKICAgICJ5IjogMjU0LjgxMjUKICB9LAogICJ3aGVlbFJhZGl1cyI6IDY0LAogICJyZXF1ZXN0ZWQiOiB7CiAgICAieCI6IDc3MC44MTI1LAogICAgInkiOiAyNTQuODEyNQogIH0sCiAgImFjdHVhbCI6IHsKICAgICJ0eXBlIjogInBvaW50ZXJtb3ZlIiwKICAgICJwb2ludGVyVHlwZSI6ICJtb3VzZSIsCiAgICAidHJ1c3RlZCI6IHRydWUsCiAgICAiaWQiOiAxLAogICAgImNvbnRyb2wiOiAiMyIsCiAgICAieCI6IDc3MCwKICAgICJ5IjogMjU0CiAgfSwKICAiYWN0dWFsVHJhdmVsIjogNjUuMTkyNTYzMzIyMDUzODQsCiAgIndvcmxkRGlzdGFuY2UiOiA1MjkuOTk5OTk5OTk5OTk5OSwKICAicmVhc29uIjogIlR3byBDU1MgcGl4ZWxzIG9mIG92ZXJ0cmF2ZWwgZ3VhcmFudGVlIGZ1bGwgd2hlZWwgc2F0dXJhdGlvbiBhZnRlciBXZWJLaXQgaW50ZWdlciBldmVudCByb3VuZGluZzsgcmFuZ2UgYXNzZXJ0aW9uIHJlbWFpbnMgdW5jaGFuZ2VkIGFuZCB0cmF2ZWwgc3RheXMgYmVsb3cgdGhlIHJhZGl1cys4IGZyZWV6ZSBlZGdlLiIKfQ=="
+                    },
+                    {
+                      "name": "release-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJraW5kIjogMywKICAicmFuZ2UiOiA1MzAsCiAgImJlZm9yZSI6IHsKICAgICJ0b29sIjogMSwKICAgICJzaG90cyI6IDAsCiAgICAic2NhbnMiOiAwLAogICAgImNvb2xkb3ducyI6IHsKICAgICAgIjEiOiAwLAogICAgICAiMiI6IDAsCiAgICAgICIzIjogMAogICAgfSwKICAgICJzY2FuUmVhZHkiOiAwLAogICAgInRpc3N1ZSI6IDI1LAogICAgInJlY2VpcHRzIjogW10KICB9LAogICJwcmV2aWV3IjogewogICAgImFpbSI6IHsKICAgICAgIngiOiA4NTkuOTIwNjAzNDk3NTgzNCwKICAgICAgInkiOiA0MzAuODI2NDUxNjgxMjI1MzYKICAgIH0sCiAgICAidG9vbCI6IDMsCiAgICAicHJldmlldyI6IHsKICAgICAgImtpbmQiOiAzLAogICAgICAiYWltIjogewogICAgICAgICJ4IjogODU5LjkyMDYwMzQ5NzU4MzQsCiAgICAgICAgInkiOiA0MzAuODI2NDUxNjgxMjI1MzYKICAgICAgfSwKICAgICAgInJhbmdlIjogNTMwLAogICAgICAiY2FuY2VsbGVkIjogZmFsc2UsCiAgICAgICJwaGFzZSI6ICJwcmV2aWV3IgogICAgfQogIH0sCiAgImFmdGVyIjogewogICAgInRvb2wiOiAzLAogICAgInNob3RzIjogMCwKICAgICJzY2FucyI6IDAsCiAgICAiY29vbGRvd25zIjogewogICAgICAiMSI6IDAsCiAgICAgICIyIjogMCwKICAgICAgIjMiOiAxLjg2NjY2NjY2NjY2NjY2NjcKICAgIH0sCiAgICAic2NhblJlYWR5IjogMCwKICAgICJ0aXNzdWUiOiAyNSwKICAgICJyZWNlaXB0cyI6IFsKICAgICAgewogICAgICAgICJ0eXBlIjogIlRPT0xfU0VMRUNURUQiLAogICAgICAgICJ0aWNrIjogNzAsCiAgICAgICAgImRhdGEiOiB7CiAgICAgICAgICAidG9vbCI6IDMKICAgICAgICB9CiAgICAgIH0sCiAgICAgIHsKICAgICAgICAidHlwZSI6ICJUT09MX0ZJUkVEIiwKICAgICAgICAidGljayI6IDcwLAogICAgICAgICJkYXRhIjogewogICAgICAgICAgInRvb2wiOiAzLAogICAgICAgICAgIngiOiA4NTkuOTIwNjAzNDk3NTgzNCwKICAgICAgICAgICJ5IjogNDMwLjgyNjQ1MTY4MTIyNTM2CiAgICAgICAgfQogICAgICB9CiAgICBdCiAgfQp9"
+                    },
+                    {
+                      "name": "browser-input-evidence",
+                      "contentType": "application/json",
+                      "body": "ewogICJtZXRob2QiOiAiV2ViS2l0IHRydXN0ZWQgbW91c2UgZHJhZyBvbiB0b3VjaCBjb250cm9sczsgbm90IG11bHRpLXRvdWNoIG9yIHBoeXNpY2FsIGlQaG9uZSBpbnB1dCIsCiAgInBoeXNpY2FsSVBob25lVG91Y2giOiBmYWxzZSwKICAiZXZlbnRzIjogWwogICAgewogICAgICAidHlwZSI6ICJwb2ludGVybW92ZSIsCiAgICAgICJwb2ludGVyVHlwZSI6ICJtb3VzZSIsCiAgICAgICJ0cnVzdGVkIjogdHJ1ZSwKICAgICAgImlkIjogMSwKICAgICAgImNvbnRyb2wiOiAiMyIsCiAgICAgICJ4IjogNzA0LAogICAgICAieSI6IDI1NAogICAgfSwKICAgIHsKICAgICAgInR5cGUiOiAicG9pbnRlcmRvd24iLAogICAgICAicG9pbnRlclR5cGUiOiAibW91c2UiLAogICAgICAidHJ1c3RlZCI6IHRydWUsCiAgICAgICJpZCI6IDEsCiAgICAgICJjb250cm9sIjogIjMiLAogICAgICAieCI6IDcwNCwKICAgICAgInkiOiAyNTQKICAgIH0sCiAgICB7CiAgICAgICJ0eXBlIjogInBvaW50ZXJtb3ZlIiwKICAgICAgInBvaW50ZXJUeXBlIjogIm1vdXNlIiwKICAgICAgInRydXN0ZWQiOiB0cnVlLAogICAgICAiaWQiOiAxLAogICAgICAiY29udHJvbCI6ICIzIiwKICAgICAgIngiOiA3NzAsCiAgICAgICJ5IjogMjU0CiAgICB9LAogICAgewogICAgICAidHlwZSI6ICJwb2ludGVydXAiLAogICAgICAicG9pbnRlclR5cGUiOiAibW91c2UiLAogICAgICAidHJ1c3RlZCI6IHRydWUsCiAgICAgICJpZCI6IDEsCiAgICAgICJjb250cm9sIjogIjMiLAogICAgICAieCI6IDc3MCwKICAgICAgInkiOiAyNTQKICAgIH0KICBdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7fe1ed93b1173cb11f62-92166a4835d477193ec2",
+          "file": "offline-touch.spec.ts",
+          "line": 191,
+          "column": 42
+        },
+        {
+          "title": "skill scan previews without consumption, uses range 650, and casts once on release",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-webkit",
+              "projectName": "mobile-webkit",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3463,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-01T00:01:53.031Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "native-wheel-range-geometry",
+                      "contentType": "application/json",
+                      "body": "ewogICJtZXRob2QiOiAiV2ViS2l0IHRydXN0ZWQgbW91c2UgZHJhZyBvbiB0b3VjaCBjb250cm9sczsgbm90IG11bHRpLXRvdWNoIG9yIHBoeXNpY2FsIGlQaG9uZSBpbnB1dCIsCiAgImtpbmQiOiAic2NhbiIsCiAgInJhbmdlIjogNjUwLAogICJvcmlnaW4iOiB7CiAgICAieCI6IDc4NCwKICAgICJ5IjogMjIyCiAgfSwKICAid2hlZWxSYWRpdXMiOiA2NCwKICAicmVxdWVzdGVkIjogewogICAgIngiOiA3MTgsCiAgICAieSI6IDIyMgogIH0sCiAgImFjdHVhbCI6IHsKICAgICJ0eXBlIjogInBvaW50ZXJtb3ZlIiwKICAgICJwb2ludGVyVHlwZSI6ICJtb3VzZSIsCiAgICAidHJ1c3RlZCI6IHRydWUsCiAgICAiaWQiOiAxLAogICAgImNvbnRyb2wiOiAic2NhbiIsCiAgICAieCI6IDcxOCwKICAgICJ5IjogMjIyCiAgfSwKICAiYWN0dWFsVHJhdmVsIjogNjYsCiAgIndvcmxkRGlzdGFuY2UiOiA2NTAsCiAgInJlYXNvbiI6ICJUd28gQ1NTIHBpeGVscyBvZiBvdmVydHJhdmVsIGd1YXJhbnRlZSBmdWxsIHdoZWVsIHNhdHVyYXRpb24gYWZ0ZXIgV2ViS2l0IGludGVnZXIgZXZlbnQgcm91bmRpbmc7IHJhbmdlIGFzc2VydGlvbiByZW1haW5zIHVuY2hhbmdlZCBhbmQgdHJhdmVsIHN0YXlzIGJlbG93IHRoZSByYWRpdXMrOCBmcmVlemUgZWRnZS4iCn0="
+                    },
+                    {
+                      "name": "release-receipt",
+                      "contentType": "application/json",
+                      "body": "ewogICJraW5kIjogInNjYW4iLAogICJyYW5nZSI6IDY1MCwKICAiYmVmb3JlIjogewogICAgInRvb2wiOiAxLAogICAgInNob3RzIjogMCwKICAgICJzY2FucyI6IDAsCiAgICAiY29vbGRvd25zIjogewogICAgICAiMSI6IDAsCiAgICAgICIyIjogMCwKICAgICAgIjMiOiAwCiAgICB9LAogICAgInNjYW5SZWFkeSI6IDAsCiAgICAidGlzc3VlIjogMjUsCiAgICAicmVjZWlwdHMiOiBbXQogIH0sCiAgInByZXZpZXciOiB7CiAgICAiYWltIjogewogICAgICAieCI6IC0zMjAsCiAgICAgICJ5IjogNDQwCiAgICB9LAogICAgInRvb2wiOiAxLAogICAgInByZXZpZXciOiB7CiAgICAgICJraW5kIjogInNjYW4iLAogICAgICAiYWltIjogewogICAgICAgICJ4IjogLTMyMCwKICAgICAgICAieSI6IDQ0MAogICAgICB9LAogICAgICAicmFuZ2UiOiA2NTAsCiAgICAgICJjYW5jZWxsZWQiOiBmYWxzZSwKICAgICAgInBoYXNlIjogInByZXZpZXciCiAgICB9CiAgfSwKICAiYWZ0ZXIiOiB7CiAgICAidG9vbCI6IDEsCiAgICAic2hvdHMiOiAwLAogICAgInNjYW5zIjogMSwKICAgICJjb29sZG93bnMiOiB7CiAgICAgICIxIjogMCwKICAgICAgIjIiOiAwLAogICAgICAiMyI6IDAKICAgIH0sCiAgICAic2NhblJlYWR5IjogNC4xMTY2NjY2NjY2NjY2NjcsCiAgICAidGlzc3VlIjogMjUsCiAgICAicmVjZWlwdHMiOiBbCiAgICAgIHsKICAgICAgICAidHlwZSI6ICJTQ0FOX0NPTVBMRVRFRCIsCiAgICAgICAgInRpY2siOiA2NywKICAgICAgICAiZGF0YSI6IHsKICAgICAgICAgICJmb3VuZCI6IDQsCiAgICAgICAgICAicmFkaXVzIjogNjUwCiAgICAgICAgfQogICAgICB9CiAgICBdCiAgfQp9"
+                    },
+                    {
+                      "name": "browser-input-evidence",
+                      "contentType": "application/json",
+                      "body": "ewogICJtZXRob2QiOiAiV2ViS2l0IHRydXN0ZWQgbW91c2UgZHJhZyBvbiB0b3VjaCBjb250cm9sczsgbm90IG11bHRpLXRvdWNoIG9yIHBoeXNpY2FsIGlQaG9uZSBpbnB1dCIsCiAgInBoeXNpY2FsSVBob25lVG91Y2giOiBmYWxzZSwKICAiZXZlbnRzIjogWwogICAgewogICAgICAidHlwZSI6ICJwb2ludGVybW92ZSIsCiAgICAgICJwb2ludGVyVHlwZSI6ICJtb3VzZSIsCiAgICAgICJ0cnVzdGVkIjogdHJ1ZSwKICAgICAgImlkIjogMSwKICAgICAgImNvbnRyb2wiOiAic2NhbiIsCiAgICAgICJ4IjogNzg0LAogICAgICAieSI6IDIyMgogICAgfSwKICAgIHsKICAgICAgInR5cGUiOiAicG9pbnRlcmRvd24iLAogICAgICAicG9pbnRlclR5cGUiOiAibW91c2UiLAogICAgICAidHJ1c3RlZCI6IHRydWUsCiAgICAgICJpZCI6IDEsCiAgICAgICJjb250cm9sIjogInNjYW4iLAogICAgICAieCI6IDc4NCwKICAgICAgInkiOiAyMjIKICAgIH0sCiAgICB7CiAgICAgICJ0eXBlIjogInBvaW50ZXJtb3ZlIiwKICAgICAgInBvaW50ZXJUeXBlIjogIm1vdXNlIiwKICAgICAgInRydXN0ZWQiOiB0cnVlLAogICAgICAiaWQiOiAxLAogICAgICAiY29udHJvbCI6ICJzY2FuIiwKICAgICAgIngiOiA3MTgsCiAgICAgICJ5IjogMjIyCiAgICB9LAogICAgewogICAgICAidHlwZSI6ICJwb2ludGVydXAiLAogICAgICAicG9pbnRlclR5cGUiOiAibW91c2UiLAogICAgICAidHJ1c3RlZCI6IHRydWUsCiAgICAgICJpZCI6IDEsCiAgICAgICJjb250cm9sIjogInNjYW4iLAogICAgICAieCI6IDcxOCwKICAgICAgInkiOiAyMjIKICAgIH0KICBdCn0="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "7fe1ed93b1173cb11f62-464a3512f531b1b2cb60",
+          "file": "offline-touch.spec.ts",
+          "line": 191,
+          "column": 42
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-01T00:01:23.640Z",
+    "duration": 33038.845,
+    "expected": 9,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

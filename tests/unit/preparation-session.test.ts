@@ -12,7 +12,14 @@ function storage(): ProfileStorage & { raw: Map<string, string> } {
 }
 function nextLevel(session: GameSession, level: number) {
   for (let tick = 0; tick < 6000; tick++) {
-    if (session.state.growth!.level >= level) return;
+    if (session.state.growth!.level >= level) {
+      // A real immune bite is applied after the growth planner returns. Its
+      // reward is immediate; queued logs/draft enter the next fixed update.
+      if (session.state.phase === 'playing' && (session.state.growth!.pendingLogs.length || session.state.growth!.pendingLevels.length)) {
+        session.step({ moveX: 0, moveY: 0, aim: session.state.player, fire: false });
+      }
+      return;
+    }
     if (session.state.phase !== 'playing') throw Error('Progress stopped before the requested XP threshold');
     session.step(g3Input(session.state, 'block'));
   }

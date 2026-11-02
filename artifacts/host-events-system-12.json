@@ -1,0 +1,3092 @@
+{
+  "schemaVersion": 1,
+  "complete": true,
+  "expectedSeeds": 12,
+  "completedSeeds": 12,
+  "startedAt": "2026-10-31T08:36:12.097Z",
+  "updatedAt": "2026-10-31T08:36:46.063Z",
+  "method": "GameSession.start -> fixed-step public InputFrame and DraftIntent -> win/loss/public menu exit; no state or clock injection.",
+  "strategy": "Formal campaign-1 only. Migration rotates pursue/block/ignore; 500 odd seeds start field/empty and discard all protocols. The 500 even seeds rotate field and all four rank-I starter plans by their every-second-seed index (100 each), then choose legal deterministic drafts. Preparations enter through GameSession.start options; archive unlock/eligibility is separately verified in real-browser qualification. Guided/adaptive alternate in independent two-seed blocks (500 each), crossing both build policies, all preparation plans and all migration routes. Guided first counters use actual valve pulse then basic precision hit. The actual stage IV source is prioritized; post-core rescue revisits unhealthy activated organs.",
+  "limits": {
+    "maximumActionsPerSeed": 18000,
+    "maxActivePerOrgan": 24,
+    "maxMainTraits": 2,
+    "maxImmuneLegions": 2,
+    "maxCellsPerLegion": 20
+  },
+  "coverageScope": "Bounded smoke of seeds 1 through 12; no full 1000-seed or all-six-trait-sequence coverage claim.",
+  "simulationSourceSha256": "aa0a66bc0b5558620978557116dbbc810fb1d028fcd744f29fa5686143d40ea5",
+  "simulationSourceManifest": {
+    "src/actors/collision.ts": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0",
+    "src/actors/enemyCrowd.ts": "821f9e4fe997fc519724afac4bf2c041a552d22083308c6f7a36470f71c16597",
+    "src/actors/enemyNavigation.ts": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd",
+    "src/core/clock.ts": "2e65d1623f903f438f01ac80640ff5ef06cf400d32a888e27471d0326b3a46bd",
+    "src/core/events.ts": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+    "src/core/rng.ts": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+    "src/game/battle.ts": "9cbfef251944551fbd2d8a930e5835c9ccd67017b2d2ffe1f2531cf08fdcfaa1",
+    "src/game/battleConfig.ts": "3365d6963f8edf43abdef1259483d3d21787a738abe1ccd81e2ebd6b1fdc609d",
+    "src/game/battleTypes.ts": "7e54256fde4ab8104a583485689ae37fee68f1cc88437cdbf816c82f29c834eb",
+    "src/game/campaign.ts": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+    "src/game/campaignEncounters.ts": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+    "src/game/campaignTypes.ts": "ff301247b34797b7731bc5e0e0b792eef99bbf75eefd4955d2876a4e7c2788dd",
+    "src/game/catalysis.ts": "f7d4a5b0710ff3eac65809a7762effe910b79f63ab7a74735128d6e6b6288113",
+    "src/game/counterLesson.ts": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+    "src/game/dashBlade.ts": "c7bb058f5b38bc3124fb8efd4739f661b42acee026f1ce1c008de1234dc6d771",
+    "src/game/dashTrail.ts": "2e0f6b4d4ab8321a1718aae30a56a4ea1b1cfd9c5f94b982653f7bc911b0d287",
+    "src/game/eliteTacticCycle.ts": "862b23512773a196d997dbd9062b18a9f17188f22449ba93dee98ead13c3e8dd",
+    "src/game/encounterConfig.ts": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+    "src/game/encounterTypes.ts": "7d5027852136cd4504fa10439903f342a7f9d78adb6ada65adf6105bb7c54c10",
+    "src/game/endless.ts": "f5b88e3f486109fdfbdbdc54e6e3050446d8b6c1e51572d8e7c7ba82185a207e",
+    "src/game/endlessAssault.ts": "e60f8e6cec6e4b963614c467062efc05a89b0eacb1825b71dd0f3fba1503417a",
+    "src/game/endlessBehavior.ts": "d62d6a04490b82a537df74c348b41696faedae515184838907df29d510f4b697",
+    "src/game/endlessEvolution.ts": "b3ad9b394634da947bf9aa7ff32d9b9ccb7774909771c524a078d490bba1db4f",
+    "src/game/endlessEvolutionTypes.ts": "ecf865880c14578cc375adb064e99b0d796cd86ebafe5e1c7342d6d7291707ea",
+    "src/game/endlessGrowth.ts": "dfdaddb62947ca92a0834db45f503398c12acbd9be6146f978e3969d8affd2ea",
+    "src/game/endlessGrowthTypes.ts": "d99d7f2b6929f4a126f79caa3fb73558bc1ea53f08a0f8186b6f5f17a641030d",
+    "src/game/endlessPacing.ts": "c0d9376d4225c2a6606956f05c51283e5587ab86741f3d615d9d653b5627c090",
+    "src/game/endlessSource.ts": "5a3cbfea571f371707a64c0526e1ebd2e36ac2da404051b37e4692203a51c6fe",
+    "src/game/endlessStrikeBalance.ts": "70b6fb73a94c0fac1baad402b2f41d47e9882b01b4847369aef7efd11660330b",
+    "src/game/endlessTypes.ts": "12c2335e17fb91b1eaa5fa015d1d9c73f4ad09f6d25390c7934f9e9edc03347d",
+    "src/game/enemyFacing.ts": "f2f97826b5fbae1d19bfcd718eac2c216800187c86003d11bcfc9c8c63cec24d",
+    "src/game/enemyPositioning.ts": "d01aff7f39ea4d4a3c34f306947452e93de57b93106a56c103bb64c9c097a878",
+    "src/game/enemyTacticInfo.ts": "ee6f959eb75b09e298f82dd78fbad5d6bb98ae0bbb7d7cef6701a0953030c5a8",
+    "src/game/enemyTactics.ts": "d0a393a0803ae53a84a59fceb9d74e0fe88cbdda50d79cfe4115f08ef68abfe6",
+    "src/game/enemyTacticsTypes.ts": "95b9a88927593ea0cb66dae8c6c08be30a56105386be4d0dcd43317e77c1f0a5",
+    "src/game/evolution.ts": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+    "src/game/evolutionTypes.ts": "dbd661c484a7d442f1e23d939f1c67e7699e14259213d729e292e74b04fd90fa",
+    "src/game/growth.ts": "11d6cc6d460d1fb55c49b2b826d75cc1df9959f7a6593cfa5f2931b8e619bcb7",
+    "src/game/growthTypes.ts": "6dc55998296b2fc0570edac7fd8140973c08c4ccbdc7b632a0fff79687e314e0",
+    "src/game/healingPoints.ts": "7f614e4e33dc3fb5e73e66e4722966561a933f6d79173842779f17711519bc88",
+    "src/game/hostEventTypes.ts": "bc0282bbace902b4a80ae4a3dadb314024d0f8f546115923461ec198ea8b93b5",
+    "src/game/hostEvents.ts": "a329cd53380659c4e1c47b5329d7c0059642c261ede83b8eb7d117e970a2bf08",
+    "src/game/immuneCells.ts": "d8dce8d621fbb83a3a6ef32c7b3631dddec072f12178c8c61eeb77badd010e2d",
+    "src/game/immuneFocus.ts": "86fb88a44122ca02176930e1bd2e593b4a1805390d7bdd66274cd2cff0c3ee1c",
+    "src/game/immuneLegions.ts": "399fc580b5afe53b5b22ad7b4b7d5c874271cc7af8feb666773cdcb1d2b83ee0",
+    "src/game/motherCore.ts": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+    "src/game/motherCoreTypes.ts": "8b3b2442074429be623bae033eaab9b1ba61fc95d138dc33025f905c6db97e00",
+    "src/game/organConfig.ts": "f7984fa67337966b8342bf6dd2f5d8a1efc7b4baec5eb8ae03e032927a745bfc",
+    "src/game/organRules.ts": "7e6b4951b1c76ce6e0eb0964f41eedff20bb3cc71e14d8421c878b0aa53515f0",
+    "src/game/preparation.ts": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+    "src/game/protocols.ts": "4e407a74e0b87b7bbba93c48c881cb729a0770f24a027cbc8d59f7f512449260",
+    "src/game/research.ts": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+    "src/game/runMetrics.ts": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+    "src/game/session.ts": "5dcebfadddea8690f4376731548c74c3cc63e802f1b552103403898c880098f4",
+    "src/game/tacticalFeedback.ts": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+    "src/game/traction.ts": "47d93d1f9c6bb8b17e5d71ff4f6e6ae0fd76154626a34e303c6cdbbeafd0fb1e",
+    "src/game/tractionTypes.ts": "267adafc7fd1fbe24ff73723a8f4254cf5775a7fccd712a468dadb5106e01a20",
+    "src/game/types.ts": "a74cc5430b0601a5196873ef60623d0c16646afff19e18bd29e88008f476ce6a",
+    "src/game/viralCapsules.ts": "c26f97cbad06ca1d9c7792872363ed512cf6d2531707e19b6a1afca2a6ad1741",
+    "src/game/viralCapsulesTypes.ts": "a4de7153998bb949aadd8afa87adc0036fab73c71f6f22740bd957e17d7b8269",
+    "tests/helpers/g3Driver.ts": "6116219f9d159476c9e1f9286c681d6960251b263f132ac04e679bcb36e1ddde",
+    "tests/unit/full-system-seeds.test.ts": "35634ed40fdb2eefa39178f54b833944f12bf7bab67d5ba6334ddd86192c12c8"
+  },
+  "simulationSourceUnchanged": true,
+  "outcomes": {
+    "wins": 12,
+    "losses": 0,
+    "publicMenuExits": 0,
+    "invariantFailures": 0
+  },
+  "traitSequences": {
+    "CARAPACE>FISSION": 2,
+    "CARAPACE>MIMIC": 4,
+    "FISSION>CARAPACE": 3,
+    "FISSION>MIMIC": 1,
+    "MIMIC>CARAPACE": 2
+  },
+  "modeCoverage": {
+    "base": {
+      "total": 6,
+      "wins": 6
+    },
+    "protocols": {
+      "total": 6,
+      "wins": 6
+    }
+  },
+  "preparationCoverage": {
+    "field": {
+      "total": 8,
+      "base": 6,
+      "protocols": 2,
+      "wins": 8,
+      "initiallyPrepaid": 0,
+      "remainingStarterDebt": 0
+    },
+    "PULSE_BREAK": {
+      "total": 1,
+      "base": 0,
+      "protocols": 1,
+      "wins": 1,
+      "initiallyPrepaid": 1,
+      "remainingStarterDebt": 0
+    },
+    "PURIFY_CHAIN": {
+      "total": 1,
+      "base": 0,
+      "protocols": 1,
+      "wins": 1,
+      "initiallyPrepaid": 1,
+      "remainingStarterDebt": 0
+    },
+    "IMMUNE_BEACON": {
+      "total": 1,
+      "base": 0,
+      "protocols": 1,
+      "wins": 1,
+      "initiallyPrepaid": 1,
+      "remainingStarterDebt": 0
+    },
+    "EXPOSE_TRACE": {
+      "total": 1,
+      "base": 0,
+      "protocols": 1,
+      "wins": 1,
+      "initiallyPrepaid": 1,
+      "remainingStarterDebt": 0
+    }
+  },
+  "variantCoverage": {
+    "guided": {
+      "total": 6,
+      "wins": 6,
+      "actualCounterHits": 6
+    },
+    "adaptive": {
+      "total": 6,
+      "wins": 6,
+      "actualCounterHits": 0
+    }
+  },
+  "metricAttribution": "Per-step invariants require existing, finite, complete accepted-action metrics. Final metric summaries come from the host reducer: actual positive HP loss matched to protocol/root/target logs, actual repair deltas, and accepted environment outcomes. Event counts remain diagnostic telemetry; their planned damage and activation intent are not treated as actual hits.",
+  "limitations": [
+    "Headless deterministic simulation is not a real browser or human playtest.",
+    "A driver loss/exit is not proof that a seed is impossible.",
+    "Configured base counters and real input availability are checked; these runs do not separately execute every counter on every trait.",
+    "Five preparations are fixed public start configurations; these 1000 simulations do not claim 1000 archive unlocks. Archive discovery, eligibility and reuse are separately qualified in the browser.",
+    "No frame-rate or 10-minute device-performance claim is made."
+  ],
+  "replay": {
+    "seed": 91,
+    "preparation": "field",
+    "equal": true,
+    "first": "f3f4fa669d29892358db50109828d224f1214cfde758629147cd4732c38ed9ab",
+    "second": "f3f4fa669d29892358db50109828d224f1214cfde758629147cd4732c38ed9ab"
+  },
+  "preparedReplay": {
+    "seed": 4,
+    "preparation": "PULSE_BREAK",
+    "equal": true,
+    "first": "240c49da88ab432fc7279d513c345c05b5084fd4f32a2226e607be2f34501c21",
+    "second": "240c49da88ab432fc7279d513c345c05b5084fd4f32a2226e607be2f34501c21"
+  },
+  "runs": [
+    {
+      "seed": 1,
+      "choice": "pursue",
+      "mode": "base",
+      "outcome": "win",
+      "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。",
+      "tick": 2880,
+      "elapsed": 48,
+      "peakActive": 6,
+      "peakStored": 8,
+      "traits": [
+        "CARAPACE",
+        "FISSION"
+      ],
+      "protocolRoute": [],
+      "equipped": [],
+      "drafts": 4,
+      "organs": [
+        {
+          "id": "heart",
+          "activated": true,
+          "integrity": 83
+        },
+        {
+          "id": "lung",
+          "activated": true,
+          "integrity": 84.5
+        }
+      ],
+      "infection": 0,
+      "vitality": 100,
+      "playerHp": 100,
+      "travels": 1,
+      "core": "cleared",
+      "demonstratedCoreTraits": [
+        "CARAPACE",
+        "FISSION"
+      ],
+      "sourceClears": 4,
+      "sourceTotal": 4,
+      "baseCountersAvailable": true,
+      "configId": "campaign-1",
+      "guideVariant": "guided",
+      "stages": {
+        "configId": "campaign-1",
+        "stage": "V",
+        "branch": "pursue",
+        "currentObjective": "母巢已净化。将所有激活器官恢复至 ≥50%、感染降至 <35%，再到复测终端主动按 E。",
+        "stages": {
+          "I": {
+            "enteredAt": 0,
+            "completedAt": 1.7166666666666666,
+            "targetId": "source-a"
+          },
+          "II": {
+            "enteredAt": 1.7166666666666666,
+            "completedAt": 13.383333333333333,
+            "targetId": "elite-3"
+          },
+          "III": {
+            "enteredAt": 13.383333333333333,
+            "completedAt": 28.916666666666668,
+            "targetId": "migration:1:1"
+          },
+          "IV": {
+            "enteredAt": 28.916666666666668,
+            "completedAt": 30.099999999999998,
+            "targetId": "lung-crisis-source"
+          },
+          "V": {
+            "enteredAt": 30.099999999999998,
+            "completedAt": 48,
+            "targetId": "mother-core"
+          }
+        },
+        "crisis": {
+          "status": "cleared",
+          "organId": "lung",
+          "sourceId": "lung-crisis-source",
+          "position": {
+            "x": 1210,
+            "y": 610
+          },
+          "armedAt": 28.916666666666668,
+          "startedAt": 28.916666666666668,
+          "clearedAt": 30.099999999999998,
+          "chargeRemaining": 6.833333333333336,
+          "nextImpactAt": null,
+          "lastActiveAt": null,
+          "impacts": 0,
+          "guardsRequested": false,
+          "blockedByAirway": false,
+          "interruptions": 0,
+          "lastInterruptedAt": null,
+          "lastInterruptReason": null,
+          "acceptedEventKeys": []
+        }
+      },
+      "preparation": "field",
+      "initialEquipped": [],
+      "initialStarterDebt": 0,
+      "starterDebt": 0,
+      "metrics": {
+        "schemaVersion": 1,
+        "limited": false,
+        "care": {
+          "repairActions": 2,
+          "repaired": 50,
+          "organLoss": 20.5,
+          "organCost": 7,
+          "playerDamage": 0,
+          "organs": {
+            "heart": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 4,
+              "cost": 4
+            },
+            "lung": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 16.5,
+              "cost": 3
+            }
+          }
+        },
+        "control": {
+          "chainTriggers": 0,
+          "chainHops": 0,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 0,
+          "patrolBites": 10,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 16,
+          "pulseUses": 1,
+          "crystalExposures": 1,
+          "corePulseHits": 0,
+          "airwayCloses": 1,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [
+            "CARAPACE",
+            "FISSION"
+          ],
+          "migrationChoice": "pursue",
+          "migrationInterception": "clear",
+          "migrationMissed": false,
+          "coreMembranes": [
+            "CARAPACE",
+            "FISSION"
+          ],
+          "coreCleared": true
+        }
+      },
+      "firstCounter": {
+        "status": "resolved",
+        "guideStatus": "completed",
+        "targetId": "elite-3",
+        "warnedAt": 1.7166666666666666,
+        "appliedAt": 9.716666666666667,
+        "resolvedAt": 13.383333333333333,
+        "skippedAt": null,
+        "completedAt": 12.466666666666667,
+        "counterHit": {
+          "tick": 748,
+          "at": 12.466666666666667,
+          "targetId": "elite-3",
+          "method": "pulse",
+          "damage": 34
+        }
+      },
+      "events": {
+        "TOOL_SELECTED": 27,
+        "SCAN_COMPLETED": 16,
+        "BATTLE_DIAGNOSED": 16,
+        "IMMUNE_PATROL_CREATED": 4,
+        "TOOL_FIRED": 150,
+        "ORGAN_INTEGRITY_CHANGED": 7,
+        "PRESSURE_RELIEVED": 2,
+        "GROWTH_REWARD": 14,
+        "CAMPAIGN_STAGE_ENTERED": 5,
+        "TARGET_HIT": 79,
+        "TRACTION_STARTED": 7,
+        "TRACTION_DISPLACED": 5,
+        "TARGET_CLEARED": 21,
+        "INFECTION_SOURCE_CLEARED": 4,
+        "TRACTION_RESOLVED": 6,
+        "EVOLUTION_WARNING": 2,
+        "GROWTH_LEVEL_GAINED": 4,
+        "PROTOCOL_DRAFT_OPENED": 4,
+        "CAMPAIGN_STAGE_COMPLETED": 5,
+        "RUN_PAUSED": 4,
+        "INPUT_RESET_REQUESTED": 5,
+        "RUN_RESUMED": 4,
+        "PROTOCOL_DRAFT_DISCARDED": 4,
+        "IMMUNE_SQUAD_REDIRECTED": 12,
+        "ACTOR_SPAWNED": 14,
+        "EVOLUTION_APPLIED": 2,
+        "IMMUNE_PATROL_HIT": 10,
+        "ATTACK_TELEGRAPHED": 6,
+        "IMMUNE_CELL_HURT": 2,
+        "PULSE_TRIGGERED": 1,
+        "COUNTER_GUIDE_COMPLETED": 1,
+        "TRACTION_CANCELLED": 1,
+        "FIRST_COUNTER_RESOLVED": 1,
+        "ELITE_CLEARED": 2,
+        "EVOLUTION_ROLLED": 1,
+        "MIGRATION_WARNING": 1,
+        "FISSION_WARNING": 2,
+        "FISSION_SPAWNED": 2,
+        "MIGRATION_DECIDED": 1,
+        "ORGAN_TRAVELLED": 1,
+        "MIGRATION_INTERCEPTED": 1,
+        "ORGAN_CRISIS_ARMED": 1,
+        "ORGAN_CRISIS_STARTED": 1,
+        "INFECTION_SPREAD": 1,
+        "ORGAN_CRISIS_CLEARED": 1,
+        "LUNG_PHASE_CHANGED": 5,
+        "CORE_LOCATED": 1,
+        "ROUTE_CHANGED": 1,
+        "AIRWAY_CHANGED": 1,
+        "TOOL_REJECTED": 1,
+        "CORE_AWAKEN_REQUESTED": 1,
+        "CORE_COMBAT_STARTED": 1,
+        "CORE_PHASE_CHANGED": 2,
+        "CORE_ATTACK_TELEGRAPHED": 2,
+        "PLAYER_DASHED": 1,
+        "CORE_MEMBRANE_BROKEN": 2,
+        "CORE_ATTACK_RESOLVED": 2,
+        "CORE_SCAN_REVEALED": 1,
+        "CORE_BROOD_RELEASED": 1,
+        "CORE_MEMBRANES_OPENED": 1,
+        "CORE_CLEARED": 1,
+        "CAMPAIGN_CORE_CLEARED": 1,
+        "RETEST_COMPLETED": 1,
+        "RUN_ENDED": 1
+      },
+      "finalStateSha256": "46f384b7fff18e1d77afc6634ed47a5849d4e6423933c4412d67ffd857632f1e"
+    },
+    {
+      "seed": 2,
+      "choice": "block",
+      "mode": "protocols",
+      "outcome": "win",
+      "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。",
+      "tick": 2778,
+      "elapsed": 46.3,
+      "peakActive": 4,
+      "peakStored": 5,
+      "traits": [
+        "CARAPACE",
+        "MIMIC"
+      ],
+      "protocolRoute": [
+        "PURIFY_CHAIN:equip:balanced",
+        "EXPOSE_TRACE:equip:balanced",
+        "EXPOSE_TRACE:retune:balanced",
+        "EXPOSE_TRACE:retune:balanced"
+      ],
+      "equipped": [
+        "PURIFY_CHAIN:balanced",
+        "EXPOSE_TRACE:balanced"
+      ],
+      "drafts": 4,
+      "organs": [
+        {
+          "id": "heart",
+          "activated": true,
+          "integrity": 67
+        },
+        {
+          "id": "lung",
+          "activated": false,
+          "integrity": 76
+        }
+      ],
+      "infection": 0,
+      "vitality": 100,
+      "playerHp": 100,
+      "travels": 0,
+      "core": "cleared",
+      "demonstratedCoreTraits": [
+        "CARAPACE",
+        "MIMIC"
+      ],
+      "sourceClears": 4,
+      "sourceTotal": 4,
+      "baseCountersAvailable": true,
+      "configId": "campaign-1",
+      "guideVariant": "guided",
+      "stages": {
+        "configId": "campaign-1",
+        "stage": "V",
+        "branch": "block",
+        "currentObjective": "母巢已净化。将所有激活器官恢复至 ≥50%、感染降至 <35%，再到复测终端主动按 E。",
+        "stages": {
+          "I": {
+            "enteredAt": 0,
+            "completedAt": 1.7166666666666666,
+            "targetId": "source-a"
+          },
+          "II": {
+            "enteredAt": 1.7166666666666666,
+            "completedAt": 11.866666666666667,
+            "targetId": "elite-3"
+          },
+          "III": {
+            "enteredAt": 11.866666666666667,
+            "completedAt": 25.3,
+            "targetId": "migration:2:1"
+          },
+          "IV": {
+            "enteredAt": 25.3,
+            "completedAt": 26.833333333333332,
+            "targetId": "heart-crisis-source"
+          },
+          "V": {
+            "enteredAt": 26.833333333333332,
+            "completedAt": 46.3,
+            "targetId": "mother-core"
+          }
+        },
+        "crisis": {
+          "status": "cleared",
+          "organId": "heart",
+          "sourceId": "heart-crisis-source",
+          "position": {
+            "x": 1570,
+            "y": 790
+          },
+          "armedAt": 25.3,
+          "startedAt": 25.3,
+          "clearedAt": 26.833333333333332,
+          "chargeRemaining": 6.483333333333334,
+          "nextImpactAt": null,
+          "lastActiveAt": null,
+          "impacts": 0,
+          "guardsRequested": false,
+          "blockedByAirway": false,
+          "interruptions": 0,
+          "lastInterruptedAt": null,
+          "lastInterruptReason": null,
+          "acceptedEventKeys": []
+        }
+      },
+      "preparation": "field",
+      "initialEquipped": [],
+      "initialStarterDebt": 0,
+      "starterDebt": 0,
+      "metrics": {
+        "schemaVersion": 1,
+        "limited": false,
+        "care": {
+          "repairActions": 1,
+          "repaired": 25,
+          "organLoss": 20,
+          "organCost": 8,
+          "playerDamage": 0,
+          "organs": {
+            "heart": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 20,
+              "cost": 8
+            },
+            "lung": {
+              "repairActions": 0,
+              "repaired": 0,
+              "loss": 0,
+              "cost": 0
+            }
+          }
+        },
+        "control": {
+          "chainTriggers": 0,
+          "chainHops": 0,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 0,
+          "patrolBites": 4,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 15,
+          "pulseUses": 1,
+          "crystalExposures": 1,
+          "corePulseHits": 0,
+          "airwayCloses": 0,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [
+            "MIMIC",
+            "CARAPACE"
+          ],
+          "migrationChoice": "block",
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [
+            "CARAPACE",
+            "MIMIC"
+          ],
+          "coreCleared": true
+        }
+      },
+      "firstCounter": {
+        "status": "resolved",
+        "guideStatus": "completed",
+        "targetId": "elite-3",
+        "warnedAt": 1.7166666666666666,
+        "appliedAt": 9.716666666666667,
+        "resolvedAt": 11.866666666666667,
+        "skippedAt": null,
+        "completedAt": 11.316666666666666,
+        "counterHit": {
+          "tick": 679,
+          "at": 11.316666666666666,
+          "targetId": "elite-3",
+          "method": "rear",
+          "damage": 34
+        }
+      },
+      "events": {
+        "TOOL_SELECTED": 25,
+        "SCAN_COMPLETED": 15,
+        "BATTLE_DIAGNOSED": 15,
+        "IMMUNE_PATROL_CREATED": 2,
+        "TOOL_FIRED": 144,
+        "ORGAN_INTEGRITY_CHANGED": 4,
+        "PRESSURE_RELIEVED": 1,
+        "CAMPAIGN_STAGE_ENTERED": 5,
+        "TARGET_HIT": 58,
+        "TRACTION_STARTED": 7,
+        "TRACTION_DISPLACED": 1,
+        "TARGET_CLEARED": 9,
+        "INFECTION_SOURCE_CLEARED": 4,
+        "TRACTION_RESOLVED": 6,
+        "EVOLUTION_WARNING": 2,
+        "GROWTH_REWARD": 11,
+        "GROWTH_LEVEL_GAINED": 4,
+        "PROTOCOL_DRAFT_OPENED": 4,
+        "CAMPAIGN_STAGE_COMPLETED": 5,
+        "RUN_PAUSED": 4,
+        "INPUT_RESET_REQUESTED": 4,
+        "RUN_RESUMED": 4,
+        "PROTOCOL_EQUIPPED": 4,
+        "PROTOCOL_DRAFT_COMMITTED": 4,
+        "ATTACK_TELEGRAPHED": 3,
+        "IMMUNE_PATROL_HIT": 4,
+        "PLAYER_DASHED": 2,
+        "IMMUNE_SQUAD_REDIRECTED": 13,
+        "ACTOR_SPAWNED": 5,
+        "EVOLUTION_APPLIED": 2,
+        "PULSE_TRIGGERED": 1,
+        "COUNTER_GUIDE_COMPLETED": 1,
+        "FIRST_COUNTER_RESOLVED": 1,
+        "ELITE_CLEARED": 2,
+        "EVOLUTION_ROLLED": 1,
+        "PROTOCOL_TRACE_APPLIED": 11,
+        "MIGRATION_WARNING": 1,
+        "MIGRATION_BLOCK_STARTED": 1,
+        "MIGRATION_DECIDED": 1,
+        "ROUTE_CHANGED": 1,
+        "INFECTION_CHANGED": 1,
+        "ORGAN_CRISIS_ARMED": 1,
+        "ORGAN_CRISIS_STARTED": 1,
+        "ORGAN_CRISIS_CLEARED": 1,
+        "TRACTION_CANCELLED": 1,
+        "CORE_LOCATED": 1,
+        "CORE_AWAKEN_REQUESTED": 1,
+        "CORE_COMBAT_STARTED": 1,
+        "CORE_PHASE_CHANGED": 2,
+        "CORE_ATTACK_TELEGRAPHED": 2,
+        "CORE_MEMBRANE_BROKEN": 2,
+        "CORE_ATTACK_RESOLVED": 2,
+        "CORE_SCAN_REVEALED": 2,
+        "CORE_MEMBRANES_OPENED": 1,
+        "CORE_CLEARED": 1,
+        "CAMPAIGN_CORE_CLEARED": 1,
+        "RETEST_COMPLETED": 1,
+        "RUN_ENDED": 1
+      },
+      "finalStateSha256": "b92a29107de12a1176bd9faebc93e4c576bac717930e78bb8a7537d3a859e0d2"
+    },
+    {
+      "seed": 3,
+      "choice": "ignore",
+      "mode": "base",
+      "outcome": "win",
+      "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。",
+      "tick": 3918,
+      "elapsed": 65.3,
+      "peakActive": 7,
+      "peakStored": 7,
+      "traits": [
+        "FISSION",
+        "CARAPACE"
+      ],
+      "protocolRoute": [],
+      "equipped": [],
+      "drafts": 4,
+      "organs": [
+        {
+          "id": "heart",
+          "activated": true,
+          "integrity": 87
+        },
+        {
+          "id": "lung",
+          "activated": true,
+          "integrity": 83.5
+        }
+      ],
+      "infection": 0,
+      "vitality": 100,
+      "playerHp": 100,
+      "travels": 1,
+      "core": "cleared",
+      "demonstratedCoreTraits": [
+        "FISSION",
+        "CARAPACE"
+      ],
+      "sourceClears": 5,
+      "sourceTotal": 5,
+      "baseCountersAvailable": true,
+      "configId": "campaign-1",
+      "guideVariant": "adaptive",
+      "stages": {
+        "configId": "campaign-1",
+        "stage": "V",
+        "branch": "ignore",
+        "currentObjective": "母巢已净化。将所有激活器官恢复至 ≥50%、感染降至 <35%，再到复测终端主动按 E。",
+        "stages": {
+          "I": {
+            "enteredAt": 0,
+            "completedAt": 1.7166666666666666,
+            "targetId": "source-a"
+          },
+          "II": {
+            "enteredAt": 1.7166666666666666,
+            "completedAt": 12.4,
+            "targetId": "elite-3"
+          },
+          "III": {
+            "enteredAt": 12.4,
+            "completedAt": 32.4,
+            "targetId": "migration:3:1"
+          },
+          "IV": {
+            "enteredAt": 32.4,
+            "completedAt": 41.1,
+            "targetId": "lung-crisis-source"
+          },
+          "V": {
+            "enteredAt": 41.1,
+            "completedAt": 65.3,
+            "targetId": "mother-core"
+          }
+        },
+        "crisis": {
+          "status": "cleared",
+          "organId": "lung",
+          "sourceId": "lung-crisis-source",
+          "position": {
+            "x": 1210,
+            "y": 610
+          },
+          "armedAt": 32.4,
+          "startedAt": 39.45,
+          "clearedAt": 41.1,
+          "chargeRemaining": 6.366666666666667,
+          "nextImpactAt": null,
+          "lastActiveAt": null,
+          "impacts": 0,
+          "guardsRequested": false,
+          "blockedByAirway": false,
+          "interruptions": 0,
+          "lastInterruptedAt": null,
+          "lastInterruptReason": null,
+          "acceptedEventKeys": []
+        }
+      },
+      "preparation": "field",
+      "initialEquipped": [],
+      "initialStarterDebt": 0,
+      "starterDebt": 0,
+      "metrics": {
+        "schemaVersion": 1,
+        "limited": false,
+        "care": {
+          "repairActions": 2,
+          "repaired": 50,
+          "organLoss": 17.5,
+          "organCost": 3,
+          "playerDamage": 0,
+          "organs": {
+            "heart": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 0,
+              "cost": 0
+            },
+            "lung": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 17.5,
+              "cost": 3
+            }
+          }
+        },
+        "control": {
+          "chainTriggers": 0,
+          "chainHops": 0,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 0,
+          "patrolBites": 8,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 21,
+          "pulseUses": 0,
+          "crystalExposures": 0,
+          "corePulseHits": 0,
+          "airwayCloses": 1,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [
+            "CARAPACE",
+            "FISSION"
+          ],
+          "migrationChoice": "ignore",
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [
+            "FISSION",
+            "CARAPACE"
+          ],
+          "coreCleared": true
+        }
+      },
+      "firstCounter": {
+        "status": "resolved",
+        "guideStatus": "inactive",
+        "targetId": "elite-3",
+        "warnedAt": 1.7166666666666666,
+        "appliedAt": 9.716666666666667,
+        "resolvedAt": 12.4,
+        "skippedAt": null,
+        "completedAt": null,
+        "counterHit": null
+      },
+      "events": {
+        "TOOL_SELECTED": 27,
+        "SCAN_COMPLETED": 21,
+        "BATTLE_DIAGNOSED": 21,
+        "IMMUNE_PATROL_CREATED": 4,
+        "TOOL_FIRED": 203,
+        "ORGAN_INTEGRITY_CHANGED": 5,
+        "PRESSURE_RELIEVED": 2,
+        "CAMPAIGN_STAGE_ENTERED": 5,
+        "TARGET_HIT": 96,
+        "TRACTION_STARTED": 7,
+        "TRACTION_DISPLACED": 1,
+        "TARGET_CLEARED": 16,
+        "INFECTION_SOURCE_CLEARED": 5,
+        "TRACTION_RESOLVED": 7,
+        "EVOLUTION_ROLLED": 2,
+        "EVOLUTION_WARNING": 2,
+        "GROWTH_REWARD": 16,
+        "GROWTH_LEVEL_GAINED": 4,
+        "PROTOCOL_DRAFT_OPENED": 4,
+        "CAMPAIGN_STAGE_COMPLETED": 5,
+        "RUN_PAUSED": 4,
+        "INPUT_RESET_REQUESTED": 5,
+        "RUN_RESUMED": 4,
+        "PROTOCOL_DRAFT_DISCARDED": 4,
+        "ATTACK_TELEGRAPHED": 8,
+        "IMMUNE_PATROL_HIT": 8,
+        "IMMUNE_CELL_HURT": 6,
+        "IMMUNE_SQUAD_REDIRECTED": 17,
+        "ACTOR_SPAWNED": 9,
+        "EVOLUTION_APPLIED": 2,
+        "FIRST_COUNTER_RESOLVED": 1,
+        "ELITE_CLEARED": 2,
+        "FISSION_WARNING": 1,
+        "FISSION_SPAWNED": 1,
+        "MIGRATION_WARNING": 1,
+        "CARAPACE_RESISTED": 27,
+        "MIGRATION_DECIDED": 1,
+        "INFECTION_CHANGED": 1,
+        "ORGAN_CRISIS_ARMED": 1,
+        "LUNG_PHASE_CHANGED": 8,
+        "ORGAN_TRAVELLED": 1,
+        "ORGAN_CRISIS_STARTED": 1,
+        "INFECTION_SPREAD": 1,
+        "ORGAN_CRISIS_CLEARED": 1,
+        "ROUTE_CHANGED": 1,
+        "AIRWAY_CHANGED": 1,
+        "CORE_LOCATED": 1,
+        "CORE_AWAKEN_REQUESTED": 1,
+        "CORE_COMBAT_STARTED": 1,
+        "CORE_PHASE_CHANGED": 2,
+        "CORE_ATTACK_TELEGRAPHED": 2,
+        "PLAYER_DASHED": 2,
+        "CORE_MEMBRANE_BROKEN": 2,
+        "CORE_ATTACK_RESOLVED": 2,
+        "CORE_SCAN_REVEALED": 2,
+        "CORE_MEMBRANES_OPENED": 1,
+        "CORE_CLEARED": 1,
+        "CAMPAIGN_CORE_CLEARED": 1,
+        "RETEST_COMPLETED": 1,
+        "RUN_ENDED": 1
+      },
+      "finalStateSha256": "ed4d95edf58b72f8dff92db5710fe41cbf6994caa5584b17b54ccc0768b680ed"
+    },
+    {
+      "seed": 4,
+      "choice": "pursue",
+      "mode": "protocols",
+      "outcome": "win",
+      "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。",
+      "tick": 2848,
+      "elapsed": 47.46666666666667,
+      "peakActive": 6,
+      "peakStored": 8,
+      "traits": [
+        "FISSION",
+        "CARAPACE"
+      ],
+      "protocolRoute": [
+        "PURIFY_CHAIN:equip:balanced",
+        "PURIFY_CHAIN:retune:balanced",
+        "IMMUNE_BEACON:equip:balanced"
+      ],
+      "equipped": [
+        "PULSE_BREAK:balanced",
+        "PURIFY_CHAIN:balanced",
+        "IMMUNE_BEACON:balanced"
+      ],
+      "drafts": 3,
+      "organs": [
+        {
+          "id": "heart",
+          "activated": true,
+          "integrity": 87
+        },
+        {
+          "id": "lung",
+          "activated": true,
+          "integrity": 70
+        }
+      ],
+      "infection": 0,
+      "vitality": 100,
+      "playerHp": 100,
+      "travels": 1,
+      "core": "cleared",
+      "demonstratedCoreTraits": [
+        "FISSION",
+        "CARAPACE"
+      ],
+      "sourceClears": 4,
+      "sourceTotal": 4,
+      "baseCountersAvailable": true,
+      "configId": "campaign-1",
+      "guideVariant": "adaptive",
+      "stages": {
+        "configId": "campaign-1",
+        "stage": "V",
+        "branch": "pursue",
+        "currentObjective": "母巢已净化。将所有激活器官恢复至 ≥50%、感染降至 <35%，再到复测终端主动按 E。",
+        "stages": {
+          "I": {
+            "enteredAt": 0,
+            "completedAt": 1.7166666666666666,
+            "targetId": "source-a"
+          },
+          "II": {
+            "enteredAt": 1.7166666666666666,
+            "completedAt": 12.4,
+            "targetId": "elite-3"
+          },
+          "III": {
+            "enteredAt": 12.4,
+            "completedAt": 27.816666666666666,
+            "targetId": "migration:4:1"
+          },
+          "IV": {
+            "enteredAt": 27.816666666666666,
+            "completedAt": 29.099999999999998,
+            "targetId": "lung-crisis-source"
+          },
+          "V": {
+            "enteredAt": 29.099999999999998,
+            "completedAt": 47.46666666666667,
+            "targetId": "mother-core"
+          }
+        },
+        "crisis": {
+          "status": "cleared",
+          "organId": "lung",
+          "sourceId": "lung-crisis-source",
+          "position": {
+            "x": 1210,
+            "y": 610
+          },
+          "armedAt": 27.816666666666666,
+          "startedAt": 27.816666666666666,
+          "clearedAt": 29.099999999999998,
+          "chargeRemaining": 6.733333333333334,
+          "nextImpactAt": null,
+          "lastActiveAt": null,
+          "impacts": 0,
+          "guardsRequested": false,
+          "blockedByAirway": false,
+          "interruptions": 0,
+          "lastInterruptedAt": null,
+          "lastInterruptReason": null,
+          "acceptedEventKeys": []
+        }
+      },
+      "preparation": "PULSE_BREAK",
+      "initialEquipped": [
+        "PULSE_BREAK:balanced"
+      ],
+      "initialStarterDebt": 1,
+      "starterDebt": 0,
+      "metrics": {
+        "schemaVersion": 1,
+        "limited": false,
+        "care": {
+          "repairActions": 1,
+          "repaired": 25,
+          "organLoss": 6,
+          "organCost": 6,
+          "playerDamage": 0,
+          "organs": {
+            "heart": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 0,
+              "cost": 0
+            },
+            "lung": {
+              "repairActions": 0,
+              "repaired": 0,
+              "loss": 6,
+              "cost": 6
+            }
+          }
+        },
+        "control": {
+          "chainTriggers": 3,
+          "chainHops": 4,
+          "ricochetHits": 3,
+          "resonanceHits": 0,
+          "beaconBites": 2,
+          "patrolBites": 3,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 15,
+          "pulseUses": 0,
+          "crystalExposures": 0,
+          "corePulseHits": 0,
+          "airwayCloses": 1,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [
+            "CARAPACE"
+          ],
+          "migrationChoice": "pursue",
+          "migrationInterception": "clear",
+          "migrationMissed": false,
+          "coreMembranes": [
+            "FISSION",
+            "CARAPACE"
+          ],
+          "coreCleared": true
+        }
+      },
+      "firstCounter": {
+        "status": "resolved",
+        "guideStatus": "inactive",
+        "targetId": "elite-3",
+        "warnedAt": 1.7166666666666666,
+        "appliedAt": 9.716666666666667,
+        "resolvedAt": 12.4,
+        "skippedAt": null,
+        "completedAt": null,
+        "counterHit": null
+      },
+      "events": {
+        "TOOL_SELECTED": 25,
+        "SCAN_COMPLETED": 15,
+        "BATTLE_DIAGNOSED": 15,
+        "IMMUNE_PATROL_CREATED": 3,
+        "TOOL_FIRED": 151,
+        "ORGAN_INTEGRITY_CHANGED": 3,
+        "PRESSURE_RELIEVED": 1,
+        "CAMPAIGN_STAGE_ENTERED": 5,
+        "TARGET_HIT": 81,
+        "TRACTION_STARTED": 7,
+        "TRACTION_DISPLACED": 3,
+        "TARGET_CLEARED": 17,
+        "INFECTION_SOURCE_CLEARED": 4,
+        "TRACTION_RESOLVED": 7,
+        "EVOLUTION_ROLLED": 2,
+        "EVOLUTION_WARNING": 2,
+        "GROWTH_REWARD": 13,
+        "GROWTH_LEVEL_GAINED": 4,
+        "PREPARATION_REPAID": 1,
+        "CAMPAIGN_STAGE_COMPLETED": 5,
+        "ATTACK_TELEGRAPHED": 4,
+        "IMMUNE_PATROL_HIT": 3,
+        "IMMUNE_CELL_HURT": 2,
+        "IMMUNE_SQUAD_REDIRECTED": 11,
+        "ACTOR_SPAWNED": 10,
+        "EVOLUTION_APPLIED": 2,
+        "FIRST_COUNTER_RESOLVED": 1,
+        "ELITE_CLEARED": 2,
+        "FISSION_WARNING": 1,
+        "PROTOCOL_DRAFT_OPENED": 3,
+        "RUN_PAUSED": 3,
+        "INPUT_RESET_REQUESTED": 4,
+        "RUN_RESUMED": 3,
+        "PROTOCOL_EQUIPPED": 3,
+        "PROTOCOL_DRAFT_COMMITTED": 3,
+        "FISSION_SPAWNED": 1,
+        "PROTOCOL_CHAIN_HIT": 4,
+        "MIGRATION_WARNING": 1,
+        "CARAPACE_RESISTED": 16,
+        "MIGRATION_DECIDED": 1,
+        "LUNG_PHASE_CHANGED": 7,
+        "ORGAN_TRAVELLED": 1,
+        "MIGRATION_INTERCEPTED": 1,
+        "ORGAN_CRISIS_ARMED": 1,
+        "ORGAN_CRISIS_STARTED": 1,
+        "INFECTION_SPREAD": 1,
+        "ORGAN_CRISIS_CLEARED": 1,
+        "PROTOCOL_RICOCHET_HIT": 3,
+        "CORE_LOCATED": 1,
+        "PROTOCOL_BEACON_CREATED": 1,
+        "IMMUNE_LEGION_REINFORCED": 1,
+        "ROUTE_CHANGED": 1,
+        "AIRWAY_CHANGED": 1,
+        "PROTOCOL_BEACON_HIT": 2,
+        "CORE_AWAKEN_REQUESTED": 1,
+        "CORE_COMBAT_STARTED": 1,
+        "CORE_PHASE_CHANGED": 2,
+        "CORE_ATTACK_TELEGRAPHED": 2,
+        "PLAYER_DASHED": 2,
+        "CORE_MEMBRANE_BROKEN": 2,
+        "CORE_ATTACK_RESOLVED": 2,
+        "CORE_SCAN_REVEALED": 1,
+        "CORE_MEMBRANES_OPENED": 1,
+        "CORE_CLEARED": 1,
+        "CAMPAIGN_CORE_CLEARED": 1,
+        "RETEST_COMPLETED": 1,
+        "RUN_ENDED": 1
+      },
+      "finalStateSha256": "240c49da88ab432fc7279d513c345c05b5084fd4f32a2226e607be2f34501c21"
+    },
+    {
+      "seed": 5,
+      "choice": "block",
+      "mode": "base",
+      "outcome": "win",
+      "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。",
+      "tick": 2849,
+      "elapsed": 47.483333333333334,
+      "peakActive": 4,
+      "peakStored": 5,
+      "traits": [
+        "CARAPACE",
+        "MIMIC"
+      ],
+      "protocolRoute": [],
+      "equipped": [],
+      "drafts": 4,
+      "organs": [
+        {
+          "id": "heart",
+          "activated": true,
+          "integrity": 79
+        },
+        {
+          "id": "lung",
+          "activated": false,
+          "integrity": 76
+        }
+      ],
+      "infection": 0,
+      "vitality": 100,
+      "playerHp": 100,
+      "travels": 0,
+      "core": "cleared",
+      "demonstratedCoreTraits": [
+        "CARAPACE",
+        "MIMIC"
+      ],
+      "sourceClears": 4,
+      "sourceTotal": 4,
+      "baseCountersAvailable": true,
+      "configId": "campaign-1",
+      "guideVariant": "guided",
+      "stages": {
+        "configId": "campaign-1",
+        "stage": "V",
+        "branch": "block",
+        "currentObjective": "母巢已净化。将所有激活器官恢复至 ≥50%、感染降至 <35%，再到复测终端主动按 E。",
+        "stages": {
+          "I": {
+            "enteredAt": 0,
+            "completedAt": 1.7166666666666666,
+            "targetId": "source-a"
+          },
+          "II": {
+            "enteredAt": 1.7166666666666666,
+            "completedAt": 13.383333333333333,
+            "targetId": "elite-3"
+          },
+          "III": {
+            "enteredAt": 13.383333333333333,
+            "completedAt": 26.833333333333332,
+            "targetId": "migration:5:1"
+          },
+          "IV": {
+            "enteredAt": 26.833333333333332,
+            "completedAt": 28.233333333333334,
+            "targetId": "heart-crisis-source"
+          },
+          "V": {
+            "enteredAt": 28.233333333333334,
+            "completedAt": 47.483333333333334,
+            "targetId": "mother-core"
+          }
+        },
+        "crisis": {
+          "status": "cleared",
+          "organId": "heart",
+          "sourceId": "heart-crisis-source",
+          "position": {
+            "x": 1570,
+            "y": 790
+          },
+          "armedAt": 26.833333333333332,
+          "startedAt": 26.833333333333332,
+          "clearedAt": 28.233333333333334,
+          "chargeRemaining": 6.616666666666667,
+          "nextImpactAt": null,
+          "lastActiveAt": null,
+          "impacts": 0,
+          "guardsRequested": false,
+          "blockedByAirway": false,
+          "interruptions": 0,
+          "lastInterruptedAt": null,
+          "lastInterruptReason": null,
+          "acceptedEventKeys": []
+        }
+      },
+      "preparation": "field",
+      "initialEquipped": [],
+      "initialStarterDebt": 0,
+      "starterDebt": 0,
+      "metrics": {
+        "schemaVersion": 1,
+        "limited": false,
+        "care": {
+          "repairActions": 1,
+          "repaired": 25,
+          "organLoss": 8,
+          "organCost": 8,
+          "playerDamage": 0,
+          "organs": {
+            "heart": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 8,
+              "cost": 8
+            },
+            "lung": {
+              "repairActions": 0,
+              "repaired": 0,
+              "loss": 0,
+              "cost": 0
+            }
+          }
+        },
+        "control": {
+          "chainTriggers": 0,
+          "chainHops": 0,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 0,
+          "patrolBites": 10,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 15,
+          "pulseUses": 1,
+          "crystalExposures": 1,
+          "corePulseHits": 0,
+          "airwayCloses": 0,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 1,
+          "diagnosedTraits": [
+            "CARAPACE",
+            "MIMIC"
+          ],
+          "migrationChoice": "block",
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [
+            "CARAPACE",
+            "MIMIC"
+          ],
+          "coreCleared": true
+        }
+      },
+      "firstCounter": {
+        "status": "resolved",
+        "guideStatus": "completed",
+        "targetId": "elite-3",
+        "warnedAt": 1.7166666666666666,
+        "appliedAt": 9.716666666666667,
+        "resolvedAt": 13.383333333333333,
+        "skippedAt": null,
+        "completedAt": 12.466666666666667,
+        "counterHit": {
+          "tick": 748,
+          "at": 12.466666666666667,
+          "targetId": "elite-3",
+          "method": "pulse",
+          "damage": 34
+        }
+      },
+      "events": {
+        "TOOL_SELECTED": 25,
+        "SCAN_COMPLETED": 15,
+        "BATTLE_DIAGNOSED": 15,
+        "IMMUNE_PATROL_CREATED": 2,
+        "TOOL_FIRED": 141,
+        "ORGAN_INTEGRITY_CHANGED": 3,
+        "PRESSURE_RELIEVED": 1,
+        "CAMPAIGN_STAGE_ENTERED": 5,
+        "TARGET_HIT": 63,
+        "TRACTION_STARTED": 7,
+        "TRACTION_DISPLACED": 1,
+        "TARGET_CLEARED": 9,
+        "INFECTION_SOURCE_CLEARED": 4,
+        "TRACTION_RESOLVED": 6,
+        "EVOLUTION_WARNING": 2,
+        "GROWTH_REWARD": 11,
+        "GROWTH_LEVEL_GAINED": 4,
+        "PROTOCOL_DRAFT_OPENED": 4,
+        "CAMPAIGN_STAGE_COMPLETED": 5,
+        "RUN_PAUSED": 4,
+        "INPUT_RESET_REQUESTED": 4,
+        "RUN_RESUMED": 4,
+        "PROTOCOL_DRAFT_DISCARDED": 4,
+        "IMMUNE_SQUAD_REDIRECTED": 13,
+        "ACTOR_SPAWNED": 5,
+        "EVOLUTION_APPLIED": 2,
+        "IMMUNE_PATROL_HIT": 10,
+        "ATTACK_TELEGRAPHED": 3,
+        "IMMUNE_CELL_HURT": 3,
+        "PULSE_TRIGGERED": 1,
+        "COUNTER_GUIDE_COMPLETED": 1,
+        "TRACTION_CANCELLED": 1,
+        "FIRST_COUNTER_RESOLVED": 1,
+        "ELITE_CLEARED": 2,
+        "EVOLUTION_ROLLED": 1,
+        "MIGRATION_WARNING": 1,
+        "MIGRATION_BLOCK_STARTED": 1,
+        "MIGRATION_DECIDED": 1,
+        "ROUTE_CHANGED": 1,
+        "INFECTION_CHANGED": 1,
+        "ORGAN_CRISIS_ARMED": 1,
+        "ORGAN_CRISIS_STARTED": 1,
+        "ORGAN_CRISIS_CLEARED": 1,
+        "CORE_LOCATED": 1,
+        "CORE_AWAKEN_REQUESTED": 1,
+        "CORE_COMBAT_STARTED": 1,
+        "CORE_PHASE_CHANGED": 2,
+        "CORE_ATTACK_TELEGRAPHED": 2,
+        "PLAYER_DASHED": 1,
+        "CORE_MEMBRANE_BROKEN": 2,
+        "CORE_ATTACK_RESOLVED": 1,
+        "CORE_SCAN_REVEALED": 2,
+        "CORE_MEMBRANES_OPENED": 1,
+        "CORE_CORROSION_INTERRUPTED": 1,
+        "CORE_CLEARED": 1,
+        "CAMPAIGN_CORE_CLEARED": 1,
+        "RETEST_COMPLETED": 1,
+        "RUN_ENDED": 1
+      },
+      "finalStateSha256": "9dc5bf5f895b64753936645ee8f7acab798c3f1f61cc2fc462df5a1e5d59a539"
+    },
+    {
+      "seed": 6,
+      "choice": "ignore",
+      "mode": "protocols",
+      "outcome": "win",
+      "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。",
+      "tick": 3926,
+      "elapsed": 65.43333333333334,
+      "peakActive": 7,
+      "peakStored": 9,
+      "traits": [
+        "CARAPACE",
+        "FISSION"
+      ],
+      "protocolRoute": [
+        "IMMUNE_BEACON:equip:balanced",
+        "EXPOSE_TRACE:equip:balanced",
+        "PULSE_BREAK:equip:balanced"
+      ],
+      "equipped": [
+        "PURIFY_CHAIN:balanced",
+        "IMMUNE_BEACON:balanced",
+        "PULSE_BREAK:balanced"
+      ],
+      "drafts": 3,
+      "organs": [
+        {
+          "id": "heart",
+          "activated": true,
+          "integrity": 83
+        },
+        {
+          "id": "lung",
+          "activated": true,
+          "integrity": 82
+        }
+      ],
+      "infection": 0,
+      "vitality": 100,
+      "playerHp": 100,
+      "travels": 1,
+      "core": "cleared",
+      "demonstratedCoreTraits": [
+        "CARAPACE",
+        "FISSION"
+      ],
+      "sourceClears": 5,
+      "sourceTotal": 5,
+      "baseCountersAvailable": true,
+      "configId": "campaign-1",
+      "guideVariant": "guided",
+      "stages": {
+        "configId": "campaign-1",
+        "stage": "V",
+        "branch": "ignore",
+        "currentObjective": "母巢已净化。将所有激活器官恢复至 ≥50%、感染降至 <35%，再到复测终端主动按 E。",
+        "stages": {
+          "I": {
+            "enteredAt": 0,
+            "completedAt": 1.7166666666666666,
+            "targetId": "source-a"
+          },
+          "II": {
+            "enteredAt": 1.7166666666666666,
+            "completedAt": 13.383333333333333,
+            "targetId": "elite-3"
+          },
+          "III": {
+            "enteredAt": 13.383333333333333,
+            "completedAt": 33.38333333333333,
+            "targetId": "migration:6:1"
+          },
+          "IV": {
+            "enteredAt": 33.38333333333333,
+            "completedAt": 42.083333333333336,
+            "targetId": "lung-crisis-source"
+          },
+          "V": {
+            "enteredAt": 42.083333333333336,
+            "completedAt": 65.43333333333334,
+            "targetId": "mother-core"
+          }
+        },
+        "crisis": {
+          "status": "cleared",
+          "organId": "lung",
+          "sourceId": "lung-crisis-source",
+          "position": {
+            "x": 1210,
+            "y": 610
+          },
+          "armedAt": 33.38333333333333,
+          "startedAt": 40.43333333333333,
+          "clearedAt": 42.083333333333336,
+          "chargeRemaining": 6.366666666666667,
+          "nextImpactAt": null,
+          "lastActiveAt": null,
+          "impacts": 0,
+          "guardsRequested": false,
+          "blockedByAirway": false,
+          "interruptions": 0,
+          "lastInterruptedAt": null,
+          "lastInterruptReason": null,
+          "acceptedEventKeys": []
+        }
+      },
+      "preparation": "PURIFY_CHAIN",
+      "initialEquipped": [
+        "PURIFY_CHAIN:balanced"
+      ],
+      "initialStarterDebt": 1,
+      "starterDebt": 0,
+      "metrics": {
+        "schemaVersion": 1,
+        "limited": false,
+        "care": {
+          "repairActions": 2,
+          "repaired": 50,
+          "organLoss": 23,
+          "organCost": 13,
+          "playerDamage": 0,
+          "organs": {
+            "heart": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 4,
+              "cost": 4
+            },
+            "lung": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 19,
+              "cost": 9
+            }
+          }
+        },
+        "control": {
+          "chainTriggers": 6,
+          "chainHops": 7,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 5,
+          "patrolBites": 5,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 21,
+          "pulseUses": 1,
+          "crystalExposures": 1,
+          "corePulseHits": 0,
+          "airwayCloses": 1,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [
+            "CARAPACE",
+            "FISSION"
+          ],
+          "migrationChoice": "ignore",
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [
+            "CARAPACE",
+            "FISSION"
+          ],
+          "coreCleared": true
+        }
+      },
+      "firstCounter": {
+        "status": "resolved",
+        "guideStatus": "completed",
+        "targetId": "elite-3",
+        "warnedAt": 1.7166666666666666,
+        "appliedAt": 9.716666666666667,
+        "resolvedAt": 13.383333333333333,
+        "skippedAt": null,
+        "completedAt": 12.466666666666667,
+        "counterHit": {
+          "tick": 748,
+          "at": 12.466666666666667,
+          "targetId": "elite-3",
+          "method": "pulse",
+          "damage": 34
+        }
+      },
+      "events": {
+        "TOOL_SELECTED": 31,
+        "SCAN_COMPLETED": 21,
+        "BATTLE_DIAGNOSED": 21,
+        "IMMUNE_PATROL_CREATED": 2,
+        "TOOL_FIRED": 157,
+        "ORGAN_INTEGRITY_CHANGED": 7,
+        "PRESSURE_RELIEVED": 2,
+        "GROWTH_REWARD": 16,
+        "CAMPAIGN_STAGE_ENTERED": 5,
+        "TARGET_HIT": 88,
+        "TRACTION_STARTED": 8,
+        "TRACTION_DISPLACED": 4,
+        "TARGET_CLEARED": 22,
+        "INFECTION_SOURCE_CLEARED": 5,
+        "PROTOCOL_CHAIN_HIT": 7,
+        "TRACTION_RESOLVED": 7,
+        "EVOLUTION_WARNING": 2,
+        "GROWTH_LEVEL_GAINED": 4,
+        "PREPARATION_REPAID": 1,
+        "CAMPAIGN_STAGE_COMPLETED": 5,
+        "ATTACK_TELEGRAPHED": 5,
+        "IMMUNE_PATROL_HIT": 5,
+        "IMMUNE_CELL_HURT": 2,
+        "IMMUNE_SQUAD_REDIRECTED": 17,
+        "ACTOR_SPAWNED": 15,
+        "EVOLUTION_APPLIED": 2,
+        "PULSE_TRIGGERED": 1,
+        "COUNTER_GUIDE_COMPLETED": 1,
+        "PROTOCOL_DRAFT_OPENED": 3,
+        "TRACTION_CANCELLED": 1,
+        "RUN_PAUSED": 3,
+        "INPUT_RESET_REQUESTED": 4,
+        "RUN_RESUMED": 3,
+        "PROTOCOL_EQUIPPED": 3,
+        "PROTOCOL_DRAFT_COMMITTED": 3,
+        "IMMUNE_LEGION_REINFORCED": 2,
+        "PROTOCOL_BEACON_HIT": 5,
+        "FIRST_COUNTER_RESOLVED": 1,
+        "ELITE_CLEARED": 2,
+        "EVOLUTION_ROLLED": 1,
+        "MIGRATION_WARNING": 1,
+        "FISSION_WARNING": 3,
+        "FISSION_SPAWNED": 3,
+        "PROTOCOL_TRACE_APPLIED": 7,
+        "MIGRATION_DECIDED": 1,
+        "INFECTION_CHANGED": 1,
+        "ORGAN_CRISIS_ARMED": 1,
+        "LUNG_PHASE_CHANGED": 8,
+        "ORGAN_TRAVELLED": 1,
+        "ORGAN_CRISIS_STARTED": 1,
+        "INFECTION_SPREAD": 1,
+        "PROTOCOL_BEACON_CREATED": 2,
+        "ORGAN_CRISIS_CLEARED": 1,
+        "ROUTE_CHANGED": 1,
+        "AIRWAY_CHANGED": 1,
+        "CORE_LOCATED": 1,
+        "CORE_AWAKEN_REQUESTED": 1,
+        "CORE_COMBAT_STARTED": 1,
+        "CORE_PHASE_CHANGED": 2,
+        "CORE_ATTACK_TELEGRAPHED": 2,
+        "PLAYER_DASHED": 1,
+        "CORE_MEMBRANE_BROKEN": 2,
+        "CORE_ATTACK_RESOLVED": 2,
+        "CORE_SCAN_REVEALED": 2,
+        "CORE_BROOD_RELEASED": 1,
+        "CORE_MEMBRANES_OPENED": 1,
+        "CORE_CLEARED": 1,
+        "CAMPAIGN_CORE_CLEARED": 1,
+        "RETEST_COMPLETED": 1,
+        "RUN_ENDED": 1
+      },
+      "finalStateSha256": "9746bd3e5135b7abc270023ba54dacdf600375c8ed30450035ae4946fb97367f"
+    },
+    {
+      "seed": 7,
+      "choice": "pursue",
+      "mode": "base",
+      "outcome": "win",
+      "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。",
+      "tick": 2884,
+      "elapsed": 48.06666666666666,
+      "peakActive": 6,
+      "peakStored": 8,
+      "traits": [
+        "MIMIC",
+        "CARAPACE"
+      ],
+      "protocolRoute": [],
+      "equipped": [],
+      "drafts": 4,
+      "organs": [
+        {
+          "id": "heart",
+          "activated": true,
+          "integrity": 87
+        },
+        {
+          "id": "lung",
+          "activated": true,
+          "integrity": 72.5
+        }
+      ],
+      "infection": 0,
+      "vitality": 100,
+      "playerHp": 100,
+      "travels": 1,
+      "core": "cleared",
+      "demonstratedCoreTraits": [
+        "MIMIC",
+        "CARAPACE"
+      ],
+      "sourceClears": 4,
+      "sourceTotal": 4,
+      "baseCountersAvailable": true,
+      "configId": "campaign-1",
+      "guideVariant": "adaptive",
+      "stages": {
+        "configId": "campaign-1",
+        "stage": "V",
+        "branch": "pursue",
+        "currentObjective": "母巢已净化。将所有激活器官恢复至 ≥50%、感染降至 <35%，再到复测终端主动按 E。",
+        "stages": {
+          "I": {
+            "enteredAt": 0,
+            "completedAt": 1.7166666666666666,
+            "targetId": "source-a"
+          },
+          "II": {
+            "enteredAt": 1.7166666666666666,
+            "completedAt": 12.516666666666666,
+            "targetId": "elite-3"
+          },
+          "III": {
+            "enteredAt": 12.516666666666666,
+            "completedAt": 27.916666666666668,
+            "targetId": "migration:7:1"
+          },
+          "IV": {
+            "enteredAt": 27.916666666666668,
+            "completedAt": 29.099999999999998,
+            "targetId": "lung-crisis-source"
+          },
+          "V": {
+            "enteredAt": 29.099999999999998,
+            "completedAt": 48.06666666666666,
+            "targetId": "mother-core"
+          }
+        },
+        "crisis": {
+          "status": "cleared",
+          "organId": "lung",
+          "sourceId": "lung-crisis-source",
+          "position": {
+            "x": 1210,
+            "y": 610
+          },
+          "armedAt": 27.916666666666668,
+          "startedAt": 27.916666666666668,
+          "clearedAt": 29.099999999999998,
+          "chargeRemaining": 6.833333333333336,
+          "nextImpactAt": null,
+          "lastActiveAt": null,
+          "impacts": 0,
+          "guardsRequested": false,
+          "blockedByAirway": false,
+          "interruptions": 0,
+          "lastInterruptedAt": null,
+          "lastInterruptReason": null,
+          "acceptedEventKeys": []
+        }
+      },
+      "preparation": "field",
+      "initialEquipped": [],
+      "initialStarterDebt": 0,
+      "starterDebt": 0,
+      "metrics": {
+        "schemaVersion": 1,
+        "limited": false,
+        "care": {
+          "repairActions": 2,
+          "repaired": 50,
+          "organLoss": 28.5,
+          "organCost": 3,
+          "playerDamage": 0,
+          "organs": {
+            "heart": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 0,
+              "cost": 0
+            },
+            "lung": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 28.5,
+              "cost": 3
+            }
+          }
+        },
+        "control": {
+          "chainTriggers": 0,
+          "chainHops": 0,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 0,
+          "patrolBites": 2,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 16,
+          "pulseUses": 0,
+          "crystalExposures": 0,
+          "corePulseHits": 0,
+          "airwayCloses": 1,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [
+            "CARAPACE"
+          ],
+          "migrationChoice": "pursue",
+          "migrationInterception": "clear",
+          "migrationMissed": false,
+          "coreMembranes": [
+            "MIMIC",
+            "CARAPACE"
+          ],
+          "coreCleared": true
+        }
+      },
+      "firstCounter": {
+        "status": "resolved",
+        "guideStatus": "inactive",
+        "targetId": "elite-3",
+        "warnedAt": 1.7166666666666666,
+        "appliedAt": 9.716666666666667,
+        "resolvedAt": 12.516666666666666,
+        "skippedAt": null,
+        "completedAt": null,
+        "counterHit": null
+      },
+      "events": {
+        "TOOL_SELECTED": 25,
+        "SCAN_COMPLETED": 16,
+        "BATTLE_DIAGNOSED": 16,
+        "IMMUNE_PATROL_CREATED": 4,
+        "TOOL_FIRED": 171,
+        "ORGAN_INTEGRITY_CHANGED": 7,
+        "PRESSURE_RELIEVED": 2,
+        "GROWTH_REWARD": 13,
+        "CAMPAIGN_STAGE_ENTERED": 5,
+        "TARGET_HIT": 76,
+        "TARGET_CLEARED": 15,
+        "TRACTION_STARTED": 8,
+        "INFECTION_SOURCE_CLEARED": 4,
+        "TRACTION_RESOLVED": 8,
+        "EVOLUTION_ROLLED": 2,
+        "EVOLUTION_WARNING": 2,
+        "GROWTH_LEVEL_GAINED": 4,
+        "PROTOCOL_DRAFT_OPENED": 4,
+        "CAMPAIGN_STAGE_COMPLETED": 5,
+        "RUN_PAUSED": 4,
+        "INPUT_RESET_REQUESTED": 5,
+        "RUN_RESUMED": 4,
+        "PROTOCOL_DRAFT_DISCARDED": 4,
+        "IMMUNE_SQUAD_REDIRECTED": 12,
+        "ACTOR_SPAWNED": 8,
+        "EVOLUTION_APPLIED": 2,
+        "FIRST_COUNTER_RESOLVED": 1,
+        "ELITE_CLEARED": 2,
+        "MIGRATION_WARNING": 1,
+        "CARAPACE_RESISTED": 14,
+        "ATTACK_TELEGRAPHED": 5,
+        "IMMUNE_PATROL_HIT": 2,
+        "MIGRATION_DECIDED": 1,
+        "LUNG_PHASE_CHANGED": 7,
+        "ORGAN_TRAVELLED": 1,
+        "TRACTION_DISPLACED": 2,
+        "MIGRATION_INTERCEPTED": 1,
+        "ORGAN_CRISIS_ARMED": 1,
+        "ORGAN_CRISIS_STARTED": 1,
+        "INFECTION_SPREAD": 1,
+        "ORGAN_CRISIS_CLEARED": 1,
+        "CORE_LOCATED": 1,
+        "ROUTE_CHANGED": 1,
+        "AIRWAY_CHANGED": 1,
+        "CORE_AWAKEN_REQUESTED": 1,
+        "CORE_COMBAT_STARTED": 1,
+        "CORE_PHASE_CHANGED": 2,
+        "CORE_ATTACK_TELEGRAPHED": 2,
+        "CORE_MEMBRANE_BROKEN": 2,
+        "CORE_ATTACK_RESOLVED": 2,
+        "CORE_SCAN_REVEALED": 1,
+        "PLAYER_DASHED": 1,
+        "CORE_MEMBRANES_OPENED": 1,
+        "CORE_CLEARED": 1,
+        "CAMPAIGN_CORE_CLEARED": 1,
+        "RETEST_COMPLETED": 1,
+        "RUN_ENDED": 1
+      },
+      "finalStateSha256": "85f302727af576f6947cc66b28eb7282ac96f87c9f586a40552516fb5922edc5"
+    },
+    {
+      "seed": 8,
+      "choice": "block",
+      "mode": "protocols",
+      "outcome": "win",
+      "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。",
+      "tick": 2790,
+      "elapsed": 46.5,
+      "peakActive": 4,
+      "peakStored": 5,
+      "traits": [
+        "FISSION",
+        "MIMIC"
+      ],
+      "protocolRoute": [
+        "IMMUNE_BEACON:retune:balanced",
+        "PULSE_BREAK:equip:balanced",
+        "PULSE_BREAK:retune:balanced"
+      ],
+      "equipped": [
+        "IMMUNE_BEACON:balanced",
+        "PULSE_BREAK:balanced"
+      ],
+      "drafts": 3,
+      "organs": [
+        {
+          "id": "heart",
+          "activated": true,
+          "integrity": 65
+        },
+        {
+          "id": "lung",
+          "activated": false,
+          "integrity": 76
+        }
+      ],
+      "infection": 0,
+      "vitality": 100,
+      "playerHp": 100,
+      "travels": 0,
+      "core": "cleared",
+      "demonstratedCoreTraits": [
+        "FISSION",
+        "MIMIC"
+      ],
+      "sourceClears": 4,
+      "sourceTotal": 4,
+      "baseCountersAvailable": true,
+      "configId": "campaign-1",
+      "guideVariant": "adaptive",
+      "stages": {
+        "configId": "campaign-1",
+        "stage": "V",
+        "branch": "block",
+        "currentObjective": "母巢已净化。将所有激活器官恢复至 ≥50%、感染降至 <35%，再到复测终端主动按 E。",
+        "stages": {
+          "I": {
+            "enteredAt": 0,
+            "completedAt": 1.7166666666666666,
+            "targetId": "source-a"
+          },
+          "II": {
+            "enteredAt": 1.7166666666666666,
+            "completedAt": 12.4,
+            "targetId": "elite-3"
+          },
+          "III": {
+            "enteredAt": 12.4,
+            "completedAt": 25.833333333333332,
+            "targetId": "migration:8:1"
+          },
+          "IV": {
+            "enteredAt": 25.833333333333332,
+            "completedAt": 27.233333333333334,
+            "targetId": "heart-crisis-source"
+          },
+          "V": {
+            "enteredAt": 27.233333333333334,
+            "completedAt": 46.5,
+            "targetId": "mother-core"
+          }
+        },
+        "crisis": {
+          "status": "cleared",
+          "organId": "heart",
+          "sourceId": "heart-crisis-source",
+          "position": {
+            "x": 1570,
+            "y": 790
+          },
+          "armedAt": 25.833333333333332,
+          "startedAt": 25.833333333333332,
+          "clearedAt": 27.233333333333334,
+          "chargeRemaining": 6.616666666666667,
+          "nextImpactAt": null,
+          "lastActiveAt": null,
+          "impacts": 0,
+          "guardsRequested": false,
+          "blockedByAirway": false,
+          "interruptions": 0,
+          "lastInterruptedAt": null,
+          "lastInterruptReason": null,
+          "acceptedEventKeys": []
+        }
+      },
+      "preparation": "IMMUNE_BEACON",
+      "initialEquipped": [
+        "IMMUNE_BEACON:balanced"
+      ],
+      "initialStarterDebt": 1,
+      "starterDebt": 0,
+      "metrics": {
+        "schemaVersion": 1,
+        "limited": false,
+        "care": {
+          "repairActions": 1,
+          "repaired": 25,
+          "organLoss": 22,
+          "organCost": 10,
+          "playerDamage": 0,
+          "organs": {
+            "heart": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 22,
+              "cost": 10
+            },
+            "lung": {
+              "repairActions": 0,
+              "repaired": 0,
+              "loss": 0,
+              "cost": 0
+            }
+          }
+        },
+        "control": {
+          "chainTriggers": 0,
+          "chainHops": 0,
+          "ricochetHits": 0,
+          "resonanceHits": 1,
+          "beaconBites": 8,
+          "patrolBites": 0,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 15,
+          "pulseUses": 0,
+          "crystalExposures": 0,
+          "corePulseHits": 0,
+          "airwayCloses": 0,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [
+            "MIMIC",
+            "FISSION"
+          ],
+          "migrationChoice": "block",
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [
+            "FISSION",
+            "MIMIC"
+          ],
+          "coreCleared": true
+        }
+      },
+      "firstCounter": {
+        "status": "resolved",
+        "guideStatus": "inactive",
+        "targetId": "elite-3",
+        "warnedAt": 1.7166666666666666,
+        "appliedAt": 9.716666666666667,
+        "resolvedAt": 12.4,
+        "skippedAt": null,
+        "completedAt": null,
+        "counterHit": null
+      },
+      "events": {
+        "TOOL_SELECTED": 25,
+        "SCAN_COMPLETED": 15,
+        "BATTLE_DIAGNOSED": 15,
+        "ORGAN_INTEGRITY_CHANGED": 5,
+        "PROTOCOL_BEACON_CREATED": 2,
+        "TOOL_FIRED": 155,
+        "PRESSURE_RELIEVED": 1,
+        "CAMPAIGN_STAGE_ENTERED": 5,
+        "TARGET_HIT": 63,
+        "TRACTION_STARTED": 7,
+        "TRACTION_DISPLACED": 1,
+        "TARGET_CLEARED": 11,
+        "INFECTION_SOURCE_CLEARED": 4,
+        "TRACTION_RESOLVED": 6,
+        "EVOLUTION_ROLLED": 2,
+        "EVOLUTION_WARNING": 2,
+        "GROWTH_REWARD": 11,
+        "GROWTH_LEVEL_GAINED": 4,
+        "PREPARATION_REPAID": 1,
+        "CAMPAIGN_STAGE_COMPLETED": 5,
+        "IMMUNE_SQUAD_REDIRECTED": 13,
+        "ACTOR_SPAWNED": 7,
+        "EVOLUTION_APPLIED": 2,
+        "FIRST_COUNTER_RESOLVED": 1,
+        "ELITE_CLEARED": 2,
+        "FISSION_WARNING": 1,
+        "PROTOCOL_DRAFT_OPENED": 3,
+        "RUN_PAUSED": 3,
+        "INPUT_RESET_REQUESTED": 3,
+        "RUN_RESUMED": 3,
+        "PROTOCOL_EQUIPPED": 3,
+        "PROTOCOL_DRAFT_COMMITTED": 3,
+        "IMMUNE_LEGION_REINFORCED": 1,
+        "FISSION_SPAWNED": 1,
+        "MIGRATION_WARNING": 1,
+        "MIGRATION_BLOCK_STARTED": 1,
+        "MIGRATION_DECIDED": 1,
+        "ROUTE_CHANGED": 1,
+        "INFECTION_CHANGED": 1,
+        "ORGAN_CRISIS_ARMED": 1,
+        "ORGAN_CRISIS_STARTED": 1,
+        "ATTACK_TELEGRAPHED": 2,
+        "PROTOCOL_BEACON_HIT": 8,
+        "ORGAN_CRISIS_CLEARED": 1,
+        "TRACTION_CANCELLED": 1,
+        "CORE_LOCATED": 1,
+        "CORE_AWAKEN_REQUESTED": 1,
+        "CORE_COMBAT_STARTED": 1,
+        "CORE_PHASE_CHANGED": 2,
+        "CORE_ATTACK_TELEGRAPHED": 2,
+        "PLAYER_DASHED": 1,
+        "CORE_MEMBRANE_BROKEN": 2,
+        "CORE_ATTACK_RESOLVED": 2,
+        "CORE_SCAN_REVEALED": 2,
+        "PROTOCOL_RESONANCE_HIT": 1,
+        "CORE_MEMBRANES_OPENED": 1,
+        "CORE_CLEARED": 1,
+        "CAMPAIGN_CORE_CLEARED": 1,
+        "RETEST_COMPLETED": 1,
+        "RUN_ENDED": 1
+      },
+      "finalStateSha256": "add1983841e26c6225d9e2a62461309eca771e56f5c402a0083a77424f90e3ec"
+    },
+    {
+      "seed": 9,
+      "choice": "ignore",
+      "mode": "base",
+      "outcome": "win",
+      "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。",
+      "tick": 3957,
+      "elapsed": 65.95,
+      "peakActive": 7,
+      "peakStored": 7,
+      "traits": [
+        "CARAPACE",
+        "MIMIC"
+      ],
+      "protocolRoute": [],
+      "equipped": [],
+      "drafts": 4,
+      "organs": [
+        {
+          "id": "heart",
+          "activated": true,
+          "integrity": 83
+        },
+        {
+          "id": "lung",
+          "activated": true,
+          "integrity": 76
+        }
+      ],
+      "infection": 0,
+      "vitality": 100,
+      "playerHp": 100,
+      "travels": 1,
+      "core": "cleared",
+      "demonstratedCoreTraits": [
+        "CARAPACE",
+        "MIMIC"
+      ],
+      "sourceClears": 5,
+      "sourceTotal": 5,
+      "baseCountersAvailable": true,
+      "configId": "campaign-1",
+      "guideVariant": "guided",
+      "stages": {
+        "configId": "campaign-1",
+        "stage": "V",
+        "branch": "ignore",
+        "currentObjective": "母巢已净化。将所有激活器官恢复至 ≥50%、感染降至 <35%，再到复测终端主动按 E。",
+        "stages": {
+          "I": {
+            "enteredAt": 0,
+            "completedAt": 1.7166666666666666,
+            "targetId": "source-a"
+          },
+          "II": {
+            "enteredAt": 1.7166666666666666,
+            "completedAt": 12.533333333333333,
+            "targetId": "elite-3"
+          },
+          "III": {
+            "enteredAt": 12.533333333333333,
+            "completedAt": 32.53333333333333,
+            "targetId": "migration:9:1"
+          },
+          "IV": {
+            "enteredAt": 32.53333333333333,
+            "completedAt": 41.233333333333334,
+            "targetId": "lung-crisis-source"
+          },
+          "V": {
+            "enteredAt": 41.233333333333334,
+            "completedAt": 65.95,
+            "targetId": "mother-core"
+          }
+        },
+        "crisis": {
+          "status": "cleared",
+          "organId": "lung",
+          "sourceId": "lung-crisis-source",
+          "position": {
+            "x": 1210,
+            "y": 610
+          },
+          "armedAt": 32.53333333333333,
+          "startedAt": 39.583333333333336,
+          "clearedAt": 41.233333333333334,
+          "chargeRemaining": 6.366666666666667,
+          "nextImpactAt": null,
+          "lastActiveAt": null,
+          "impacts": 0,
+          "guardsRequested": false,
+          "blockedByAirway": false,
+          "interruptions": 0,
+          "lastInterruptedAt": null,
+          "lastInterruptReason": null,
+          "acceptedEventKeys": []
+        }
+      },
+      "preparation": "field",
+      "initialEquipped": [],
+      "initialStarterDebt": 0,
+      "starterDebt": 0,
+      "metrics": {
+        "schemaVersion": 1,
+        "limited": false,
+        "care": {
+          "repairActions": 2,
+          "repaired": 50,
+          "organLoss": 29,
+          "organCost": 7,
+          "playerDamage": 0,
+          "organs": {
+            "heart": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 4,
+              "cost": 4
+            },
+            "lung": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 25,
+              "cost": 3
+            }
+          }
+        },
+        "control": {
+          "chainTriggers": 0,
+          "chainHops": 0,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 0,
+          "patrolBites": 3,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 21,
+          "pulseUses": 1,
+          "crystalExposures": 1,
+          "corePulseHits": 0,
+          "airwayCloses": 1,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [
+            "MIMIC",
+            "CARAPACE"
+          ],
+          "migrationChoice": "ignore",
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [
+            "CARAPACE",
+            "MIMIC"
+          ],
+          "coreCleared": true
+        }
+      },
+      "firstCounter": {
+        "status": "resolved",
+        "guideStatus": "completed",
+        "targetId": "elite-3",
+        "warnedAt": 1.7166666666666666,
+        "appliedAt": 9.716666666666667,
+        "resolvedAt": 12.533333333333333,
+        "skippedAt": null,
+        "completedAt": 11.8,
+        "counterHit": {
+          "tick": 708,
+          "at": 11.8,
+          "targetId": "elite-3",
+          "method": "pulse",
+          "damage": 34
+        }
+      },
+      "events": {
+        "TOOL_SELECTED": 29,
+        "SCAN_COMPLETED": 21,
+        "BATTLE_DIAGNOSED": 21,
+        "IMMUNE_PATROL_CREATED": 4,
+        "TOOL_FIRED": 167,
+        "ORGAN_INTEGRITY_CHANGED": 6,
+        "PRESSURE_RELIEVED": 2,
+        "CAMPAIGN_STAGE_ENTERED": 5,
+        "TARGET_HIT": 73,
+        "TRACTION_STARTED": 7,
+        "TARGET_CLEARED": 14,
+        "INFECTION_SOURCE_CLEARED": 5,
+        "TRACTION_RESOLVED": 7,
+        "EVOLUTION_WARNING": 2,
+        "GROWTH_REWARD": 16,
+        "GROWTH_LEVEL_GAINED": 4,
+        "PROTOCOL_DRAFT_OPENED": 4,
+        "CAMPAIGN_STAGE_COMPLETED": 5,
+        "RUN_PAUSED": 4,
+        "INPUT_RESET_REQUESTED": 5,
+        "RUN_RESUMED": 4,
+        "PROTOCOL_DRAFT_DISCARDED": 4,
+        "HEALING_POINT_CONTESTED": 2,
+        "ATTACK_TELEGRAPHED": 3,
+        "IMMUNE_SQUAD_REDIRECTED": 17,
+        "ACTOR_SPAWNED": 7,
+        "EVOLUTION_APPLIED": 2,
+        "PULSE_TRIGGERED": 1,
+        "COUNTER_GUIDE_COMPLETED": 1,
+        "FIRST_COUNTER_RESOLVED": 1,
+        "ELITE_CLEARED": 2,
+        "EVOLUTION_ROLLED": 1,
+        "MIGRATION_WARNING": 1,
+        "MIGRATION_DECIDED": 1,
+        "INFECTION_CHANGED": 1,
+        "ORGAN_CRISIS_ARMED": 1,
+        "LUNG_PHASE_CHANGED": 8,
+        "ORGAN_TRAVELLED": 1,
+        "ORGAN_CRISIS_STARTED": 1,
+        "INFECTION_SPREAD": 1,
+        "ORGAN_CRISIS_CLEARED": 1,
+        "ROUTE_CHANGED": 1,
+        "AIRWAY_CHANGED": 1,
+        "IMMUNE_PATROL_HIT": 3,
+        "IMMUNE_CELL_HURT": 1,
+        "CORE_LOCATED": 1,
+        "CORE_AWAKEN_REQUESTED": 1,
+        "CORE_COMBAT_STARTED": 1,
+        "CORE_PHASE_CHANGED": 2,
+        "CORE_ATTACK_TELEGRAPHED": 2,
+        "PLAYER_DASHED": 1,
+        "CORE_MEMBRANE_BROKEN": 2,
+        "CORE_ATTACK_RESOLVED": 2,
+        "CORE_SCAN_REVEALED": 2,
+        "CORE_MEMBRANES_OPENED": 1,
+        "CORE_CLEARED": 1,
+        "CAMPAIGN_CORE_CLEARED": 1,
+        "RETEST_COMPLETED": 1,
+        "RUN_ENDED": 1
+      },
+      "finalStateSha256": "8c1d69972501fdc60e2c6e36f56b2f2f90adc7ab33d36fbcf185f174e53ffd9f"
+    },
+    {
+      "seed": 10,
+      "choice": "pursue",
+      "mode": "protocols",
+      "outcome": "win",
+      "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。",
+      "tick": 2852,
+      "elapsed": 47.53333333333333,
+      "peakActive": 6,
+      "peakStored": 8,
+      "traits": [
+        "CARAPACE",
+        "MIMIC"
+      ],
+      "protocolRoute": [
+        "PURIFY_CHAIN:equip:balanced",
+        "PULSE_BREAK:equip:balanced",
+        "PURIFY_CHAIN:retune:balanced"
+      ],
+      "equipped": [
+        "EXPOSE_TRACE:balanced",
+        "PURIFY_CHAIN:balanced",
+        "PULSE_BREAK:balanced"
+      ],
+      "drafts": 3,
+      "organs": [
+        {
+          "id": "heart",
+          "activated": true,
+          "integrity": 83
+        },
+        {
+          "id": "lung",
+          "activated": true,
+          "integrity": 73
+        }
+      ],
+      "infection": 0,
+      "vitality": 100,
+      "playerHp": 100,
+      "travels": 1,
+      "core": "cleared",
+      "demonstratedCoreTraits": [
+        "CARAPACE",
+        "MIMIC"
+      ],
+      "sourceClears": 4,
+      "sourceTotal": 4,
+      "baseCountersAvailable": true,
+      "configId": "campaign-1",
+      "guideVariant": "guided",
+      "stages": {
+        "configId": "campaign-1",
+        "stage": "V",
+        "branch": "pursue",
+        "currentObjective": "母巢已净化。将所有激活器官恢复至 ≥50%、感染降至 <35%，再到复测终端主动按 E。",
+        "stages": {
+          "I": {
+            "enteredAt": 0,
+            "completedAt": 1.7166666666666666,
+            "targetId": "source-a"
+          },
+          "II": {
+            "enteredAt": 1.7166666666666666,
+            "completedAt": 13.383333333333333,
+            "targetId": "elite-3"
+          },
+          "III": {
+            "enteredAt": 13.383333333333333,
+            "completedAt": 28.916666666666668,
+            "targetId": "migration:10:1"
+          },
+          "IV": {
+            "enteredAt": 28.916666666666668,
+            "completedAt": 30.099999999999998,
+            "targetId": "lung-crisis-source"
+          },
+          "V": {
+            "enteredAt": 30.099999999999998,
+            "completedAt": 47.53333333333333,
+            "targetId": "mother-core"
+          }
+        },
+        "crisis": {
+          "status": "cleared",
+          "organId": "lung",
+          "sourceId": "lung-crisis-source",
+          "position": {
+            "x": 1210,
+            "y": 610
+          },
+          "armedAt": 28.916666666666668,
+          "startedAt": 28.916666666666668,
+          "clearedAt": 30.099999999999998,
+          "chargeRemaining": 6.833333333333336,
+          "nextImpactAt": null,
+          "lastActiveAt": null,
+          "impacts": 0,
+          "guardsRequested": false,
+          "blockedByAirway": false,
+          "interruptions": 0,
+          "lastInterruptedAt": null,
+          "lastInterruptReason": null,
+          "acceptedEventKeys": []
+        }
+      },
+      "preparation": "EXPOSE_TRACE",
+      "initialEquipped": [
+        "EXPOSE_TRACE:balanced"
+      ],
+      "initialStarterDebt": 1,
+      "starterDebt": 0,
+      "metrics": {
+        "schemaVersion": 1,
+        "limited": false,
+        "care": {
+          "repairActions": 1,
+          "repaired": 25,
+          "organLoss": 7,
+          "organCost": 7,
+          "playerDamage": 0,
+          "organs": {
+            "heart": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 4,
+              "cost": 4
+            },
+            "lung": {
+              "repairActions": 0,
+              "repaired": 0,
+              "loss": 3,
+              "cost": 3
+            }
+          }
+        },
+        "control": {
+          "chainTriggers": 3,
+          "chainHops": 4,
+          "ricochetHits": 2,
+          "resonanceHits": 1,
+          "beaconBites": 0,
+          "patrolBites": 5,
+          "synergyPulseChain": 1,
+          "synergyTraceBeacon": 0,
+          "scans": 16,
+          "pulseUses": 1,
+          "crystalExposures": 1,
+          "corePulseHits": 0,
+          "airwayCloses": 1,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 1,
+          "diagnosedTraits": [
+            "CARAPACE",
+            "MIMIC"
+          ],
+          "migrationChoice": "pursue",
+          "migrationInterception": "clear",
+          "migrationMissed": false,
+          "coreMembranes": [
+            "CARAPACE",
+            "MIMIC"
+          ],
+          "coreCleared": true
+        }
+      },
+      "firstCounter": {
+        "status": "resolved",
+        "guideStatus": "completed",
+        "targetId": "elite-3",
+        "warnedAt": 1.7166666666666666,
+        "appliedAt": 9.716666666666667,
+        "resolvedAt": 13.383333333333333,
+        "skippedAt": null,
+        "completedAt": 12.466666666666667,
+        "counterHit": {
+          "tick": 748,
+          "at": 12.466666666666667,
+          "targetId": "elite-3",
+          "method": "pulse",
+          "damage": 34
+        }
+      },
+      "events": {
+        "TOOL_SELECTED": 27,
+        "SCAN_COMPLETED": 16,
+        "BATTLE_DIAGNOSED": 16,
+        "PROTOCOL_TRACE_APPLIED": 16,
+        "IMMUNE_PATROL_CREATED": 4,
+        "TOOL_FIRED": 124,
+        "ORGAN_INTEGRITY_CHANGED": 3,
+        "PRESSURE_RELIEVED": 1,
+        "CAMPAIGN_STAGE_ENTERED": 5,
+        "TARGET_HIT": 71,
+        "TRACTION_STARTED": 7,
+        "TRACTION_DISPLACED": 3,
+        "TARGET_CLEARED": 15,
+        "INFECTION_SOURCE_CLEARED": 4,
+        "TRACTION_RESOLVED": 6,
+        "EVOLUTION_WARNING": 2,
+        "GROWTH_REWARD": 14,
+        "GROWTH_LEVEL_GAINED": 4,
+        "PREPARATION_REPAID": 1,
+        "CAMPAIGN_STAGE_COMPLETED": 5,
+        "IMMUNE_SQUAD_REDIRECTED": 12,
+        "ACTOR_SPAWNED": 8,
+        "EVOLUTION_APPLIED": 2,
+        "IMMUNE_PATROL_HIT": 5,
+        "ATTACK_TELEGRAPHED": 1,
+        "IMMUNE_CELL_HURT": 1,
+        "PULSE_TRIGGERED": 1,
+        "COUNTER_GUIDE_COMPLETED": 1,
+        "PROTOCOL_DRAFT_OPENED": 3,
+        "TRACTION_CANCELLED": 1,
+        "RUN_PAUSED": 3,
+        "INPUT_RESET_REQUESTED": 4,
+        "RUN_RESUMED": 3,
+        "PROTOCOL_EQUIPPED": 3,
+        "PROTOCOL_DRAFT_COMMITTED": 3,
+        "FIRST_COUNTER_RESOLVED": 1,
+        "ELITE_CLEARED": 2,
+        "EVOLUTION_ROLLED": 1,
+        "MIGRATION_WARNING": 1,
+        "MIGRATION_DECIDED": 1,
+        "ORGAN_TRAVELLED": 1,
+        "PROTOCOL_CHAIN_HIT": 4,
+        "MIGRATION_INTERCEPTED": 1,
+        "ORGAN_CRISIS_ARMED": 1,
+        "ORGAN_CRISIS_STARTED": 1,
+        "INFECTION_SPREAD": 1,
+        "ORGAN_CRISIS_CLEARED": 1,
+        "PROTOCOL_RICOCHET_HIT": 2,
+        "LUNG_PHASE_CHANGED": 5,
+        "PROTOCOL_RESONANCE_HIT": 1,
+        "PROTOCOL_SYNERGY": 1,
+        "CORE_LOCATED": 1,
+        "ROUTE_CHANGED": 1,
+        "AIRWAY_CHANGED": 1,
+        "TOOL_REJECTED": 1,
+        "CORE_AWAKEN_REQUESTED": 1,
+        "CORE_COMBAT_STARTED": 1,
+        "CORE_PHASE_CHANGED": 2,
+        "CORE_ATTACK_TELEGRAPHED": 2,
+        "PLAYER_DASHED": 1,
+        "CORE_MEMBRANE_BROKEN": 2,
+        "CORE_ATTACK_RESOLVED": 1,
+        "CORE_MEMBRANES_OPENED": 1,
+        "CORE_CORROSION_INTERRUPTED": 1,
+        "CORE_SCAN_REVEALED": 1,
+        "CORE_CLEARED": 1,
+        "CAMPAIGN_CORE_CLEARED": 1,
+        "RETEST_COMPLETED": 1,
+        "RUN_ENDED": 1
+      },
+      "finalStateSha256": "7eeffe6bfbcfaefc389085d37f184a5a86505fbf17d06c56a63b896477646c73"
+    },
+    {
+      "seed": 11,
+      "choice": "block",
+      "mode": "base",
+      "outcome": "win",
+      "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。",
+      "tick": 2783,
+      "elapsed": 46.38333333333333,
+      "peakActive": 4,
+      "peakStored": 5,
+      "traits": [
+        "MIMIC",
+        "CARAPACE"
+      ],
+      "protocolRoute": [],
+      "equipped": [],
+      "drafts": 4,
+      "organs": [
+        {
+          "id": "heart",
+          "activated": true,
+          "integrity": 71
+        },
+        {
+          "id": "lung",
+          "activated": false,
+          "integrity": 76
+        }
+      ],
+      "infection": 0,
+      "vitality": 100,
+      "playerHp": 100,
+      "travels": 0,
+      "core": "cleared",
+      "demonstratedCoreTraits": [
+        "MIMIC",
+        "CARAPACE"
+      ],
+      "sourceClears": 4,
+      "sourceTotal": 4,
+      "baseCountersAvailable": true,
+      "configId": "campaign-1",
+      "guideVariant": "adaptive",
+      "stages": {
+        "configId": "campaign-1",
+        "stage": "V",
+        "branch": "block",
+        "currentObjective": "母巢已净化。将所有激活器官恢复至 ≥50%、感染降至 <35%，再到复测终端主动按 E。",
+        "stages": {
+          "I": {
+            "enteredAt": 0,
+            "completedAt": 1.7166666666666666,
+            "targetId": "source-a"
+          },
+          "II": {
+            "enteredAt": 1.7166666666666666,
+            "completedAt": 11.716666666666667,
+            "targetId": "elite-3"
+          },
+          "III": {
+            "enteredAt": 11.716666666666667,
+            "completedAt": 25.15,
+            "targetId": "migration:11:1"
+          },
+          "IV": {
+            "enteredAt": 25.15,
+            "completedAt": 26.916666666666668,
+            "targetId": "heart-crisis-source"
+          },
+          "V": {
+            "enteredAt": 26.916666666666668,
+            "completedAt": 46.38333333333333,
+            "targetId": "mother-core"
+          }
+        },
+        "crisis": {
+          "status": "cleared",
+          "organId": "heart",
+          "sourceId": "heart-crisis-source",
+          "position": {
+            "x": 1570,
+            "y": 790
+          },
+          "armedAt": 25.15,
+          "startedAt": 25.15,
+          "clearedAt": 26.916666666666668,
+          "chargeRemaining": 6.25,
+          "nextImpactAt": null,
+          "lastActiveAt": null,
+          "impacts": 0,
+          "guardsRequested": false,
+          "blockedByAirway": false,
+          "interruptions": 0,
+          "lastInterruptedAt": null,
+          "lastInterruptReason": null,
+          "acceptedEventKeys": []
+        }
+      },
+      "preparation": "field",
+      "initialEquipped": [],
+      "initialStarterDebt": 0,
+      "starterDebt": 0,
+      "metrics": {
+        "schemaVersion": 1,
+        "limited": false,
+        "care": {
+          "repairActions": 1,
+          "repaired": 25,
+          "organLoss": 16,
+          "organCost": 4,
+          "playerDamage": 0,
+          "organs": {
+            "heart": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 16,
+              "cost": 4
+            },
+            "lung": {
+              "repairActions": 0,
+              "repaired": 0,
+              "loss": 0,
+              "cost": 0
+            }
+          }
+        },
+        "control": {
+          "chainTriggers": 0,
+          "chainHops": 0,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 0,
+          "patrolBites": 3,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 15,
+          "pulseUses": 0,
+          "crystalExposures": 0,
+          "corePulseHits": 0,
+          "airwayCloses": 0,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [
+            "CARAPACE",
+            "MIMIC"
+          ],
+          "migrationChoice": "block",
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [
+            "MIMIC",
+            "CARAPACE"
+          ],
+          "coreCleared": true
+        }
+      },
+      "firstCounter": {
+        "status": "resolved",
+        "guideStatus": "inactive",
+        "targetId": "elite-3",
+        "warnedAt": 1.7166666666666666,
+        "appliedAt": 9.716666666666667,
+        "resolvedAt": 11.716666666666667,
+        "skippedAt": null,
+        "completedAt": null,
+        "counterHit": null
+      },
+      "events": {
+        "TOOL_SELECTED": 23,
+        "SCAN_COMPLETED": 15,
+        "BATTLE_DIAGNOSED": 15,
+        "IMMUNE_PATROL_CREATED": 2,
+        "TOOL_FIRED": 152,
+        "ORGAN_INTEGRITY_CHANGED": 3,
+        "PRESSURE_RELIEVED": 1,
+        "CAMPAIGN_STAGE_ENTERED": 5,
+        "TARGET_HIT": 61,
+        "TRACTION_STARTED": 7,
+        "TRACTION_DISPLACED": 1,
+        "TARGET_CLEARED": 9,
+        "INFECTION_SOURCE_CLEARED": 4,
+        "TRACTION_RESOLVED": 7,
+        "EVOLUTION_ROLLED": 2,
+        "EVOLUTION_WARNING": 2,
+        "GROWTH_REWARD": 11,
+        "GROWTH_LEVEL_GAINED": 4,
+        "PROTOCOL_DRAFT_OPENED": 4,
+        "CAMPAIGN_STAGE_COMPLETED": 5,
+        "RUN_PAUSED": 4,
+        "INPUT_RESET_REQUESTED": 4,
+        "RUN_RESUMED": 4,
+        "PROTOCOL_DRAFT_DISCARDED": 4,
+        "ATTACK_TELEGRAPHED": 2,
+        "IMMUNE_PATROL_HIT": 3,
+        "PLAYER_DASHED": 2,
+        "IMMUNE_SQUAD_REDIRECTED": 13,
+        "ACTOR_SPAWNED": 5,
+        "EVOLUTION_APPLIED": 2,
+        "FIRST_COUNTER_RESOLVED": 1,
+        "ELITE_CLEARED": 2,
+        "MIGRATION_WARNING": 1,
+        "MIGRATION_BLOCK_STARTED": 1,
+        "MIGRATION_DECIDED": 1,
+        "ROUTE_CHANGED": 1,
+        "INFECTION_CHANGED": 1,
+        "ORGAN_CRISIS_ARMED": 1,
+        "ORGAN_CRISIS_STARTED": 1,
+        "CARAPACE_RESISTED": 10,
+        "ORGAN_CRISIS_CLEARED": 1,
+        "IMMUNE_CELL_HURT": 1,
+        "CORE_LOCATED": 1,
+        "CORE_AWAKEN_REQUESTED": 1,
+        "CORE_COMBAT_STARTED": 1,
+        "CORE_PHASE_CHANGED": 2,
+        "CORE_ATTACK_TELEGRAPHED": 2,
+        "CORE_MEMBRANE_BROKEN": 2,
+        "CORE_ATTACK_RESOLVED": 2,
+        "CORE_SCAN_REVEALED": 2,
+        "CORE_MEMBRANES_OPENED": 1,
+        "CORE_CLEARED": 1,
+        "CAMPAIGN_CORE_CLEARED": 1,
+        "RETEST_COMPLETED": 1,
+        "RUN_ENDED": 1
+      },
+      "finalStateSha256": "76b007e10fba46248a7da60d9ca27811caf7403c899a6f3cec8f9c13d55c65d8"
+    },
+    {
+      "seed": 12,
+      "choice": "ignore",
+      "mode": "protocols",
+      "outcome": "win",
+      "reason": "母巢已清除，所有激活器官完整度 ≥50%，感染负荷 <35%，主动复测通过。",
+      "tick": 3906,
+      "elapsed": 65.1,
+      "peakActive": 7,
+      "peakStored": 7,
+      "traits": [
+        "FISSION",
+        "CARAPACE"
+      ],
+      "protocolRoute": [
+        "IMMUNE_BEACON:equip:balanced",
+        "PURIFY_CHAIN:equip:balanced",
+        "PURIFY_CHAIN:retune:balanced",
+        "PURIFY_CHAIN:retune:balanced"
+      ],
+      "equipped": [
+        "IMMUNE_BEACON:balanced",
+        "PURIFY_CHAIN:balanced"
+      ],
+      "drafts": 4,
+      "organs": [
+        {
+          "id": "heart",
+          "activated": true,
+          "integrity": 84
+        },
+        {
+          "id": "lung",
+          "activated": true,
+          "integrity": 82
+        }
+      ],
+      "infection": 0,
+      "vitality": 100,
+      "playerHp": 100,
+      "travels": 1,
+      "core": "cleared",
+      "demonstratedCoreTraits": [
+        "FISSION",
+        "CARAPACE"
+      ],
+      "sourceClears": 5,
+      "sourceTotal": 5,
+      "baseCountersAvailable": true,
+      "configId": "campaign-1",
+      "guideVariant": "adaptive",
+      "stages": {
+        "configId": "campaign-1",
+        "stage": "V",
+        "branch": "ignore",
+        "currentObjective": "母巢已净化。将所有激活器官恢复至 ≥50%、感染降至 <35%，再到复测终端主动按 E。",
+        "stages": {
+          "I": {
+            "enteredAt": 0,
+            "completedAt": 1.7166666666666666,
+            "targetId": "source-a"
+          },
+          "II": {
+            "enteredAt": 1.7166666666666666,
+            "completedAt": 12.4,
+            "targetId": "elite-3"
+          },
+          "III": {
+            "enteredAt": 12.4,
+            "completedAt": 32.4,
+            "targetId": "migration:12:1"
+          },
+          "IV": {
+            "enteredAt": 32.4,
+            "completedAt": 41.1,
+            "targetId": "lung-crisis-source"
+          },
+          "V": {
+            "enteredAt": 41.1,
+            "completedAt": 65.1,
+            "targetId": "mother-core"
+          }
+        },
+        "crisis": {
+          "status": "cleared",
+          "organId": "lung",
+          "sourceId": "lung-crisis-source",
+          "position": {
+            "x": 1210,
+            "y": 610
+          },
+          "armedAt": 32.4,
+          "startedAt": 39.45,
+          "clearedAt": 41.1,
+          "chargeRemaining": 6.366666666666667,
+          "nextImpactAt": null,
+          "lastActiveAt": null,
+          "impacts": 0,
+          "guardsRequested": false,
+          "blockedByAirway": false,
+          "interruptions": 0,
+          "lastInterruptedAt": null,
+          "lastInterruptReason": null,
+          "acceptedEventKeys": []
+        }
+      },
+      "preparation": "field",
+      "initialEquipped": [],
+      "initialStarterDebt": 0,
+      "starterDebt": 0,
+      "metrics": {
+        "schemaVersion": 1,
+        "limited": false,
+        "care": {
+          "repairActions": 2,
+          "repaired": 50,
+          "organLoss": 22,
+          "organCost": 12,
+          "playerDamage": 0,
+          "organs": {
+            "heart": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 3,
+              "cost": 3
+            },
+            "lung": {
+              "repairActions": 1,
+              "repaired": 25,
+              "loss": 19,
+              "cost": 9
+            }
+          }
+        },
+        "control": {
+          "chainTriggers": 1,
+          "chainHops": 1,
+          "ricochetHits": 3,
+          "resonanceHits": 0,
+          "beaconBites": 7,
+          "patrolBites": 0,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 21,
+          "pulseUses": 0,
+          "crystalExposures": 0,
+          "corePulseHits": 0,
+          "airwayCloses": 1,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [
+            "CARAPACE",
+            "FISSION"
+          ],
+          "migrationChoice": "ignore",
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [
+            "FISSION",
+            "CARAPACE"
+          ],
+          "coreCleared": true
+        }
+      },
+      "firstCounter": {
+        "status": "resolved",
+        "guideStatus": "inactive",
+        "targetId": "elite-3",
+        "warnedAt": 1.7166666666666666,
+        "appliedAt": 9.716666666666667,
+        "resolvedAt": 12.4,
+        "skippedAt": null,
+        "completedAt": null,
+        "counterHit": null
+      },
+      "events": {
+        "TOOL_SELECTED": 29,
+        "SCAN_COMPLETED": 21,
+        "BATTLE_DIAGNOSED": 21,
+        "IMMUNE_PATROL_CREATED": 1,
+        "TOOL_FIRED": 178,
+        "ORGAN_INTEGRITY_CHANGED": 7,
+        "PRESSURE_RELIEVED": 2,
+        "GROWTH_REWARD": 16,
+        "CAMPAIGN_STAGE_ENTERED": 5,
+        "TARGET_HIT": 90,
+        "TRACTION_STARTED": 7,
+        "TRACTION_DISPLACED": 1,
+        "TARGET_CLEARED": 16,
+        "INFECTION_SOURCE_CLEARED": 5,
+        "TRACTION_RESOLVED": 7,
+        "EVOLUTION_ROLLED": 2,
+        "EVOLUTION_WARNING": 2,
+        "GROWTH_LEVEL_GAINED": 4,
+        "PROTOCOL_DRAFT_OPENED": 4,
+        "CAMPAIGN_STAGE_COMPLETED": 5,
+        "RUN_PAUSED": 4,
+        "INPUT_RESET_REQUESTED": 5,
+        "RUN_RESUMED": 4,
+        "PROTOCOL_EQUIPPED": 4,
+        "PROTOCOL_DRAFT_COMMITTED": 4,
+        "IMMUNE_LEGION_REINFORCED": 1,
+        "PROTOCOL_BEACON_CREATED": 3,
+        "IMMUNE_SQUAD_REDIRECTED": 17,
+        "ACTOR_SPAWNED": 9,
+        "EVOLUTION_APPLIED": 2,
+        "FIRST_COUNTER_RESOLVED": 1,
+        "ELITE_CLEARED": 2,
+        "FISSION_WARNING": 1,
+        "FISSION_SPAWNED": 1,
+        "PROTOCOL_CHAIN_HIT": 1,
+        "MIGRATION_WARNING": 1,
+        "CARAPACE_RESISTED": 23,
+        "ATTACK_TELEGRAPHED": 4,
+        "PROTOCOL_BEACON_HIT": 7,
+        "IMMUNE_CELL_HURT": 2,
+        "MIGRATION_DECIDED": 1,
+        "INFECTION_CHANGED": 1,
+        "ORGAN_CRISIS_ARMED": 1,
+        "LUNG_PHASE_CHANGED": 8,
+        "ORGAN_TRAVELLED": 1,
+        "ORGAN_CRISIS_STARTED": 1,
+        "INFECTION_SPREAD": 1,
+        "ORGAN_CRISIS_CLEARED": 1,
+        "PROTOCOL_RICOCHET_HIT": 3,
+        "ROUTE_CHANGED": 1,
+        "AIRWAY_CHANGED": 1,
+        "CORE_LOCATED": 1,
+        "CORE_AWAKEN_REQUESTED": 1,
+        "CORE_COMBAT_STARTED": 1,
+        "CORE_PHASE_CHANGED": 2,
+        "CORE_ATTACK_TELEGRAPHED": 2,
+        "PLAYER_DASHED": 2,
+        "CORE_MEMBRANE_BROKEN": 2,
+        "CORE_ATTACK_RESOLVED": 2,
+        "CORE_SCAN_REVEALED": 2,
+        "CORE_MEMBRANES_OPENED": 1,
+        "CORE_CLEARED": 1,
+        "CAMPAIGN_CORE_CLEARED": 1,
+        "RETEST_COMPLETED": 1,
+        "RUN_ENDED": 1
+      },
+      "finalStateSha256": "8b9337a24bec5fc0ad89ab8dfbc327c33067506ca74eb44b8103054ea7f3ccc0"
+    }
+  ]
+}

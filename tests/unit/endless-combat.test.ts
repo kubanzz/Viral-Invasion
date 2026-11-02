@@ -159,14 +159,14 @@ describe('endless upgrades through real session input', () => {
     const session = fixture({ immune: 2, power: 1 }, [victim]);
     step(session, { scan: true, aim: { x: 720, y: 500 } });
     const initial = structuredClone(session.state.growth!.cells!);
-    expect(initial).toHaveLength(3);
+    expect(initial).toHaveLength(5);
     expect(session.state.growth!.beacon!.focus).toBeUndefined();
     expect(victim.hp).toBe(1000);
     throughTick(session, 12);
     expect(victim.hp).toBe(1000);
     expect(session.state.growth!.cells!.some((cell, index) => distance(cell, initial[index]) > 20)).toBe(true);
     const biteTimes = new Map<string, number[]>();
-    for (let tick = session.state.tick + 1; tick <= 120; tick++) {
+    for (let tick = session.state.tick + 1; tick <= 180; tick++) {
       const before = structuredClone(session.state.growth!.cells!);
       step(session);
       for (const cell of session.state.growth!.cells!) {
@@ -181,21 +181,21 @@ describe('endless upgrades through real session input', () => {
     }
     const actualHits = hits(session, victim.id);
     expect(actualHits.length).toBeGreaterThanOrEqual(3);
-    const biteDamage = BEACON_CONFIG.balanced.damage / 3 * 1.18 * 1.4;
+    const biteDamage = BEACON_CONFIG.balanced.damage / 5 * 1.18 * 1.4;
     for (const event of actualHits) {
       expect(event.data.damage).toBeCloseTo(biteDamage);
       expect(event.data.cause).toBe('protocol');
       expect(event.data.protocolId).toBe('IMMUNE_BEACON');
     }
     expect(victim.hp).toBeCloseTo(1000 - biteDamage * actualHits.length);
-    expect(biteTimes.size).toBe(3);
+    expect(biteTimes.size).toBe(5);
     for (const times of biteTimes.values()) for (let index = 1; index < times.length; index++) {
       expect(times[index] - times[index - 1]).toBeGreaterThanOrEqual(BEACON_CONFIG.balanced.interval - 1e-7);
     }
     expect(new Set([...biteTimes.values()].map(times => times[0])).size).toBeGreaterThan(1);
   });
 
-  it('extends real cell lifetime and applies the squad cooldown independently from the faster Q cooldown', () => {
+  it('keeps legions alive and applies deployment cooldown independently from faster Q commands, with a two-legion cap', () => {
     const victim = target('immune-target', 850, 500, { radius: 22 });
     const session = fixture({ immune: 2 }, [victim]);
     const stats = endlessCombatStats(session.state.endlessGrowth!);
@@ -203,7 +203,7 @@ describe('endless upgrades through real session input', () => {
     const growth = session.state.growth!, beacon = growth.beacon!;
     const createdAt = session.state.elapsed, until = beacon.until, squadReadyAt = growth.beaconReadyAt;
     const originalId = beacon.id;
-    expect(until - createdAt).toBeCloseTo(BEACON_CONFIG.balanced.duration + stats.cellDurationBonus);
+    expect(until).toBe(Infinity);
     expect(growth.cells!.every(cell => cell.until === until)).toBe(true);
     expect(squadReadyAt - createdAt).toBeCloseTo(BEACON_CONFIG.balanced.cooldown * stats.cellCooldownMultiplier);
     expect(session.state.scanReady - createdAt).toBeCloseTo(stats.scanCooldown);
@@ -213,14 +213,18 @@ describe('endless upgrades through real session input', () => {
     expect(growth.beacon!.id).toBe(originalId);
     expect(growth.beaconReadyAt).toBe(squadReadyAt);
     throughTick(session, Math.ceil((createdAt + BEACON_CONFIG.balanced.duration + .1) / BALANCE.step));
-    expect(growth.cells).toHaveLength(3);
-    throughTick(session, Math.ceil(until / BALANCE.step));
-    expect(growth.cells).toEqual([]);
+    expect(growth.cells).toHaveLength(5);
     throughTick(session, Math.ceil(squadReadyAt / BALANCE.step));
     step(session, { scan: true, aim: { x: 720, y: 500 } });
     expect(session.state.scans).toBe(3);
     expect(growth.beacon!.id).not.toBe(originalId);
-    expect(growth.cells).toHaveLength(3);
+    expect(growth.cells).toHaveLength(10);
+    expect(growth.beacons).toHaveLength(2);
+    expect(growth.cells!.filter(cell => cell.beaconId === originalId)).toHaveLength(5);
+    throughTick(session, Math.ceil(session.state.scanReady / BALANCE.step));
+    const survivors=growth.cells!.map(cell=>cell.id).sort();
+    step(session, { scan: true, aim: { x: 720, y: 500 } });
+    expect(growth.beacons).toHaveLength(2);expect(growth.cells!.map(cell=>cell.id).sort()).toEqual(survivors);
   });
 
   it.each([[134, 138], [158, 160]])('repairs nearby player HP %i to %i using the upgraded maximum', (before, after) => {

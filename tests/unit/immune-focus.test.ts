@@ -194,8 +194,8 @@ describe('focus commands through accepted Q transactions', () => {
       const commands = controller.onScan(ctx), origin = controller.state.beacon!;
       expect(origin.focus).toEqual({ targetId: victim.id, until: 1 + IMMUNE_FOCUS_BALANCE.duration });
       expect(controller.state.cells).toHaveLength(equipped ? 3 : 1);
-      expect(origin).toMatchObject(equipped ? { damage: 24, interval: .8, until: 7, mode: 'protocol' }
-        : { damage: 12, interval: 1.2, until: 4.5, mode: 'patrol' });
+      expect(origin).toMatchObject(equipped ? { damage: 24, interval: .8, until: Infinity, mode: 'protocol' }
+        : { damage: 12, interval: 1.2, until: Infinity, mode: 'patrol' });
       expect(commands.filter(command => command.kind === 'organCost')).toHaveLength(equipped ? 1 : 0);
       expect(commands.some(command => command.kind === 'log' && command.data.focusTargetId === victim.id)).toBe(true);
     }
@@ -219,17 +219,18 @@ describe('focus commands through accepted Q transactions', () => {
     expect(controller.state.beaconReadyAt).toBe(previous.beaconReadyAt);
   });
 
-  it('caps a late focus at the original squad expiry and never revives expired units during summon cooldown', () => {
+  it('bounds late focus independently while permanent bodies remain alive during summon cooldown', () => {
     const controller = new GrowthController(71), victim = actor('selected', 700, 500);
     controller.state.equipped = [{ id: 'IMMUNE_BEACON', tuning: 'balanced' }];
     controller.onScan(context());
     controller.onScan(context({ elapsed: 5.9, tick: 354, targets: [victim] }));
-    expect(controller.state.beacon!.focus).toEqual({ targetId: victim.id, until: 6 });
+    expect(controller.state.beacon!.focus).toEqual({ targetId: victim.id, until: 8.9 });
     controller.afterInput(context({ elapsed: 6.1, tick: 366, targets: [victim] }));
-    expect(controller.state.cells).toEqual([]);
+    expect(controller.state.cells).toHaveLength(3);
     const commands = controller.onScan(context({ elapsed: 7, tick: 420, targets: [victim] }));
-    expect(controller.state.cells).toEqual([]);
-    expect(commands.some(command => command.kind === 'log' && ['PROTOCOL_BEACON_CREATED', 'IMMUNE_SQUAD_REDIRECTED'].includes(command.type))).toBe(false);
+    expect(controller.state.cells).toHaveLength(3);
+    expect(commands.some(command => command.kind === 'log' && command.type === 'PROTOCOL_BEACON_CREATED')).toBe(false);
+    expect(commands.some(command => command.kind === 'log' && command.type === 'IMMUNE_SQUAD_REDIRECTED')).toBe(true);
   });
 
   it('rolls back focus, navigation and marks if the shared command budget rejects an otherwise legal command', () => {
@@ -262,7 +263,7 @@ describe('focus commands through accepted Q transactions', () => {
     while (state.tick < 180) session.step(input());
     const previous = structuredClone(state.growth!.cells!), tissue = state.tissue.hp;
     session.step(input({ scan: true, aim: next }));
-    expect(state.growth!.beacon).toMatchObject({ id, until, focus: { targetId: next.id, until } });
+    expect(state.growth!.beacon).toMatchObject({ id, until, focus: { targetId: next.id, until: state.elapsed + IMMUNE_FOCUS_BALANCE.duration } });
     expect(state.growth!.beaconReadyAt).toBe(ready); expect(state.tissue.hp).toBe(tissue);
     for (const cell of state.growth!.cells!) {
       const before = previous.find(unit => unit.id === cell.id)!;

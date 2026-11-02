@@ -24,6 +24,7 @@ describe('readable upgrade choices', () => {
     }
     expect(html.match(/<details class="upgrade-details">/g)).toHaveLength(3);
     expect(buttons[0]).toContain('消耗 3 组织完整度');
+    expect(html).not.toContain('id="antibody-use"');
     expect(game.state).toEqual(before);
   });
 

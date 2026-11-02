@@ -8,7 +8,8 @@ import { syncArt } from './art-sync.mjs';
 const { runtime: artRuntime, runtimePath } = await syncArt();
 const outputDirectory = process.env.VI_DIST_DIR ?? 'dist';
 await mkdir(outputDirectory, { recursive: true });
-const result = await build({ entryPoints: ['src/main.ts'], bundle: true, format: 'iife', target: ['chrome110', 'edge110'], outfile: join(outputDirectory, 'game.js'), minify: true, metafile: true, legalComments: 'none' });
+const browserTargets = ['chrome110', 'edge110', 'safari17.6'];
+const result = await build({ entryPoints: ['src/main.ts'], bundle: true, format: 'iife', target: browserTargets, outfile: join(outputDirectory, 'game.js'), minify: true, metafile: true, legalComments: 'none' });
 // Keep the notices with the offline JavaScript, including the emitter bundled by Phaser.
 const noticePaths = ['node_modules/phaser/LICENSE.md', 'node_modules/eventemitter3/LICENSE'];
 const notices = await Promise.all(noticePaths.map(async path => `${path}\n${await readFile(path, 'utf8')}`));
@@ -19,6 +20,7 @@ const inputPaths = [...new Set([
   ...Object.keys(artRuntime.sourceManifest).map(path => `asserts/${path}`),
   'asserts/art-selection.json', 'scripts/art-sync.mjs', 'src/style.css',
   'index.html', 'package.json', 'package-lock.json', 'scripts/build-offline.mjs', 'scripts/package-release.mjs',
+  'scripts/package-mobile.mjs', 'Docs/ViralInvasion_Mobile_Playtest.md',
   'node_modules/phaser/package.json',
   ...noticePaths,
 ])].sort();
@@ -46,5 +48,6 @@ const art = {
   unreviewedCandidateCount: artRuntime.report.unknownCandidates.length,
   embedding: 'PNG data URIs in classic game.js; no external asset paths or image fetches',
 };
-await writeFile(join(outputDirectory, 'build-meta.json'), JSON.stringify({ game: 'viral-invasion', version, stage, format: 'iife', engine: { name: 'Phaser', version: engineVersion }, art, sourceManifest, ...result.metafile }, null, 2));
+const outputManifest = Object.fromEntries(await Promise.all(['index.html', 'game.js', 'game.css'].map(async name => [name, hash(await readFile(join(outputDirectory, name)))])));
+await writeFile(join(outputDirectory, 'build-meta.json'), JSON.stringify({ game: 'viral-invasion', version, stage, format: 'iife', browserTargets, engine: { name: 'Phaser', version: engineVersion }, art, sourceManifest, outputManifest, ...result.metafile }, null, 2));
 console.log(`Offline release ready: ${outputDirectory}/index.html + game.js (classic IIFE; Phaser ${engineVersion}; ${art.spriteIdCount} sprite IDs and ${art.environmentCount} environments embedded locally).`);

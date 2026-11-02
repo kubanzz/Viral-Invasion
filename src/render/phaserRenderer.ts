@@ -1,9 +1,10 @@
+import { immuneLegions } from '../game/immuneLegions';
 import artRuntime from '../../.art-generated/art-runtime.json';
 import { activeWorld, BALANCE, type Effect, type GameState, type Target, type Vec } from '../game/types';
 import { CanvasScene } from './canvasScene';
 import { PhaserHost } from './phaserHost';
 import type { SceneEntity } from './artPresentation';
-import type { Camera } from './camera';
+import type { Camera, CameraFollowOptions } from './camera';
 import { foregroundOpacity } from './occlusion';
 import { getRaisedActorBodies, immuneVisualBounds, targetVisualBounds, type VisualBounds } from './raisedObstacleOcclusion';
 import { boundsOverlap } from './raisedObstacleGeometry';
@@ -86,8 +87,15 @@ export class Renderer {
     const tool=this.prepareHeroPresentation(state,true).tool;
     for(const [key,origin] of this.birthBeamOrigins(state,state,tool))this.witnessedBeamOrigins.set(key,origin);
   }
-  resize():void {const r=this.canvas.getBoundingClientRect();this.width=Math.max(1,this.canvas.id==='game'?innerWidth:r.width||innerWidth);this.height=Math.max(1,this.canvas.id==='game'?innerHeight:r.height||innerHeight);this.painter.resize(this.width,this.height);this.host.resize(this.width,this.height);}
-  prepareCamera(state:GameState,options?:{deltaSeconds?:number;snap?:boolean}):void {this.painter.prepareCamera(state,options);}
+  resize():void {
+    // Phaser writes pixel sizes inline. Release those before measuring the
+    // fullscreen surface so its viewport/dvh CSS can reflect the new window.
+    if(this.canvas.id==='game'){this.canvas.style.removeProperty('width');this.canvas.style.removeProperty('height');}
+    const r=this.canvas.getBoundingClientRect();
+    this.width=Math.max(1,r.width||innerWidth);this.height=Math.max(1,r.height||innerHeight);
+    this.painter.resize(this.width,this.height);this.host.resize(this.width,this.height);
+  }
+  prepareCamera(state:GameState,options?:CameraFollowOptions):void {this.painter.prepareCamera(state,options);}
   setHudRects(rects:Parameters<CanvasScene['setHudRects']>[0]):void {this.painter.setHudRects(rects);}
   diagnostics(state:GameState) {
     const heroComplete=(['idle','walk','hurt','dash'] as const).every(clip=>!!this.heroAnimation.clips[clip]);
@@ -102,7 +110,7 @@ export class Renderer {
         'painted-lung',...(art.assets['enemy.fission.parent']&&art.assets['enemy.fission.child']?['fission-static-poses']:['fission-single-body']),
         ...(art.assets['immune.cell.idle']?['immune-static-poses']:['immune-squad'])]}};
   }
-  render(state:GameState,aim:Vec,opts:{lowEffects?:boolean;cameraPrepared?:boolean;authoritativeState?:GameState}={}):void {
+  render(state:GameState,aim:Vec,opts:{lowEffects?:boolean;cameraPrepared?:boolean;authoritativeState?:GameState;aimRange?:number;aimCancelled?:boolean}={}):void {
     if(!this.host.isReady)return;
     this.lowEffects=!!opts.lowEffects;
     this.host.beginFrame();this.seenRasters.clear();this.bodies.clear();
@@ -224,7 +232,7 @@ export class Renderer {
   }
   private targetHeight(t:Target):number {return t.radius*(t.role==='source'?2.2:2.05);}
   private targetAsset(t:Target):string|undefined {
-    if(t.hp<=0||t.role==='core')return undefined;
+    if(t.hp<=0||t.role==='core'||t.role==='event')return undefined;
     const id=t.role==='source'?'source.infection':t.traits?.includes('FISSION')?((t.generation??0)>0?'enemy.fission.child':'enemy.fission.parent'):t.traits?.includes('CARAPACE')?'enemy.carapace':t.traits?.includes('MIMIC')?'enemy.mimic':'enemy.basic';
     return art.assets[id]?id:undefined;
   }
@@ -300,8 +308,7 @@ export class Renderer {
   private immuneBounds(cell:ImmuneCellState,state:GameState):VisualBounds {
     const pose=this.immunePose(cell,state);return pose?this.bounds(pose.id,cell,pose.height,pose.flipX):immuneVisualBounds(cell,state.elapsed);
   }
-  private beaconBounds(state:GameState):VisualBounds|undefined {
-    const beacon=state.growth?.beacon;
+  private beaconBounds(state:GameState, beacon=state.growth?.beacon):VisualBounds|undefined {
     return art.assets['immune.beacon']&&beacon&&beacon.mode!=='patrol'&&beacon.organId===state.battle?.organId&&beacon.until>state.elapsed
       ?this.bounds('immune.beacon',beacon,54):undefined;
   }
@@ -309,7 +316,7 @@ export class Renderer {
     return getRaisedActorBodies(state,{player:this.playerPresentation(state).bounds,
       targets:new Map(state.targets.flatMap(t=>{const body=this.artTargetBounds(t,state);return body?[[t.id,body] as const]:[];})),
       immune:new Map((state.growth?.cells??[]).flatMap(cell=>this.immunePose(cell,state)?[[cell.id,this.immuneBounds(cell,state)] as const]:[])),
-      beacon:this.beaconBounds(state)});
+      beacons:new Map(immuneLegions(state.growth).flatMap(beacon=>{const bounds=this.beaconBounds(state,beacon);return bounds?[[beacon.id,bounds] as const]:[];}))});
   }
   private drawImmuneShadow(cell:ImmuneCellState,state:GameState):void {
     const buffer=this.immuneShadow;if(buffer.width!==96||buffer.height!==64){buffer.width=96;buffer.height=64;}
@@ -382,10 +389,10 @@ export class Renderer {
       drawImmuneCellAccents(ctx,cell,state.elapsed,this.lowEffects,'overlay');return true;
     }
     if(entity.kind==='beacon'){
-      const beacon=state.growth?.beacon;
+      const beacon=immuneLegions(state.growth).find(beacon=>beacon.id===entity.id);
       if(!beacon||beacon.id!==entity.id||beacon.organId!==state.battle?.organId||beacon.until<=state.elapsed)return true;
       if(beacon.mode==='patrol'){this.painter.annotateArtEntity(ctx,entity,state,0,0);return true;}
-      const body=this.beaconBounds(state);if(!body)return false;
+      const body=this.beaconBounds(state,beacon);if(!body)return false;
       this.emit(beacon.id,'immune.beacon',beacon,54,depth);this.bodies.set(beacon.id,body);
       this.painter.annotateArtEntity(ctx,entity,state,Math.max(24,beacon.x-body.left,body.right-beacon.x),Math.max(59,beacon.y*.72-body.top+5));return true;
     }
@@ -406,8 +413,8 @@ export class Renderer {
     if(entity.kind==='obstacle'){
       const o=activeWorld(state).obstacles.find(o=>o.id===entity.id)!,id=state.battle?.organId==='lung'?'scenery.alveoli':'scenery.heartTissueB',a=art.assets[id];
       const height=o.radius*2.08*a.visibleBounds.height/a.visibleBounds.width,body=this.bounds(id,o,height);
-      const beacon=state.growth?.beacon,beaconBody=this.beaconBounds(state);
-      const actors=[{y:state.player.y,bounds:this.playerPresentation(state).bounds},...state.targets.flatMap(t=>{const native=this.artTargetBounds(t,state);return t.hp>0||native?[{y:t.y,bounds:native??targetVisualBounds(t,state)}]:[];}),...(state.growth?.cells??[]).filter(cell=>cell.organId===state.battle?.organId&&immuneCellBody(cell,state.elapsed).alpha>0).map(cell=>({y:cell.y,bounds:this.immuneBounds(cell,state)})),...(beacon&&beaconBody?[{y:beacon.y,bounds:beaconBody}]:[])];
+      const legionBodies=immuneLegions(state.growth).flatMap(beacon=>{const bounds=this.beaconBounds(state,beacon);return bounds?[{y:beacon.y,bounds}]:[];});
+      const actors=[{y:state.player.y,bounds:this.playerPresentation(state).bounds},...state.targets.flatMap(t=>{const native=this.artTargetBounds(t,state);return t.hp>0||native?[{y:t.y,bounds:native??targetVisualBounds(t,state)}]:[];}),...(state.growth?.cells??[]).filter(cell=>cell.organId===state.battle?.organId&&immuneCellBody(cell,state.elapsed).alpha>0).map(cell=>({y:cell.y,bounds:this.immuneBounds(cell,state)})),...legionBodies];
       const opacity=actors.some(a=>a.y<=o.y&&boundsOverlap(a.bounds,body))?.22:1;
       this.emit(o.id,id,o,height,depth,{alpha:opacity});ring(ctx,o,o.radius,'#986e7455',1);return true;
     }

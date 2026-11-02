@@ -35,7 +35,7 @@ function inSquadRegion(target: Target, beacon: BeaconState, context: GrowthConte
 
 function activeBeacon(beacon: BeaconState | null | undefined, context: GrowthContext): beacon is BeaconState {
   return !!beacon && beacon.organId === context.organId && Number.isFinite(context.elapsed)
-    && Number.isFinite(beacon.until) && beacon.until > context.elapsed
+    && !Number.isNaN(beacon.until) && beacon.until > context.elapsed
     && Number.isFinite(beacon.radius) && beacon.radius >= 0
     && Number.isFinite(beacon.x) && Number.isFinite(beacon.y);
 }

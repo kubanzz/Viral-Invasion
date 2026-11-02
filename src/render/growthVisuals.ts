@@ -1,3 +1,4 @@
+import { immuneLegions } from '../game/immuneLegions';
 import type { GrowthState } from '../game/growthTypes';
 import type { GameState, Vec } from '../game/types';
 import { acceptedProtocolHit } from '../game/growth';
@@ -60,38 +61,40 @@ export class GrowthVisuals {
         ctx.restore();
       }
     }
-    const beacon = growth.beacon;
-    if (!beacon || beacon.organId !== state.battle.organId || beacon.until <= state.elapsed) return;
+    for (const beacon of immuneLegions(growth)) {
+    if (beacon.organId !== state.battle.organId || beacon.until <= state.elapsed) continue;
     ctx.save(); ctx.lineWidth = 1.5; ctx.setLineDash([5, 9]);
     ellipse(ctx, beacon, beacon.radius, '#9df4dc04', '#a6e9ce66'); ctx.setLineDash([]);
-    const remaining = Math.max(0, Math.min(1, (beacon.until - state.elapsed) / (beacon.until - beacon.born)));
+    const remaining = Number.isFinite(beacon.until) ? Math.max(0, Math.min(1, (beacon.until - state.elapsed) / (beacon.until - beacon.born))) : 1;
     ellipse(ctx, beacon, 28, '#a4f3d412', '#a8e9cf77');
     ctx.beginPath(); ctx.arc(beacon.x, beacon.y, 33, -Math.PI / 2, -Math.PI / 2 + TAU * remaining);
     ctx.strokeStyle = '#b7f4d8'; ctx.lineWidth = 3; ctx.stroke();
     ctx.restore();
+    }
   }
 
   /** Squad information only; suitable above either a native PNG or the fallback body. */
-  drawBeaconLabel(ctx: CanvasRenderingContext2D, state: GameState, growth: GrowthState | undefined, labels?: SceneLabelSink): void {
-    const beacon = growth?.beacon;
+  drawBeaconLabel(ctx: CanvasRenderingContext2D, state: GameState, growth: GrowthState | undefined, labels?: SceneLabelSink, beaconId?: string): void {
+    const beacon = beaconId ? immuneLegions(growth).find(item => item.id === beaconId) : growth?.beacon;
     if (!beacon || beacon.organId !== state.battle?.organId || beacon.until <= state.elapsed) return;
-    const count = (growth?.cells ?? []).filter(cell => cell.beaconId === beacon.id && cell.organId === state.battle?.organId && cell.until > state.elapsed).length;
+    const count = (growth?.cells ?? []).filter(cell => cell.beaconId === beacon.id && cell.organId === state.battle?.organId && cell.until > state.elapsed && (cell.hp ?? 1) > 0).length;
+    const duration = Number.isFinite(beacon.until) ? `${(beacon.until - state.elapsed).toFixed(1)}s` : '常驻';
     if (labels) {
       labels.add({ id: `squad:${beacon.id}`, anchor: beacon, offset: { x: 0, y: -59 }, priority: 60,
-        lines: [{ text: `${beacon.mode === 'patrol' ? '✚ 免疫侦巡' : '✚ 灯塔小队'} ×${count} · ${(beacon.until - state.elapsed).toFixed(1)}s`, color: '#c3efd5', size: 11 }] });
+        lines: [{ text: `${beacon.mode === 'patrol' ? '✚ 免疫侦巡' : '✚ 免疫军团'} ×${count} · ${duration}`, color: '#c3efd5', size: 11 }] });
     } else {
       drawImmuneSquadLabel(ctx, beacon, count, beacon.mode === 'patrol');
       if (beacon.mode !== 'patrol') {
         ctx.save(); ctx.translate(beacon.x, beacon.y); ctx.scale(1, 1 / .72);
-        label(ctx, `✚ 灯塔 ${(beacon.until - state.elapsed).toFixed(1)}s`, 0, 24, '#c3efd5', 10); ctx.restore();
+        label(ctx, `✚ 军团 ${duration}`, 0, 24, '#c3efd5', 10); ctx.restore();
       }
     }
   }
 
-  drawBeacon(ctx: CanvasRenderingContext2D, state: GameState, growth: GrowthState | undefined, labels?: SceneLabelSink): void {
-    const beacon = growth?.beacon;
+  drawBeacon(ctx: CanvasRenderingContext2D, state: GameState, growth: GrowthState | undefined, labels?: SceneLabelSink, beaconId?: string): void {
+    const beacon = beaconId ? immuneLegions(growth).find(item => item.id === beaconId) : growth?.beacon;
     if (!beacon || beacon.organId !== state.battle?.organId || beacon.until <= state.elapsed) return;
-    this.drawBeaconLabel(ctx, state, growth, labels);
+    this.drawBeaconLabel(ctx, state, growth, labels, beaconId);
     if (beacon.mode === 'patrol') return;
     ctx.save(); ctx.translate(beacon.x, beacon.y); ctx.scale(1, 1 / .72);
     ctx.beginPath(); ctx.ellipse(0, 2, 22, 8, 0, 0, TAU); ctx.fillStyle = '#284f4e'; ctx.fill(); ctx.strokeStyle = '#9bd8bc'; ctx.lineWidth = 1.5; ctx.stroke();

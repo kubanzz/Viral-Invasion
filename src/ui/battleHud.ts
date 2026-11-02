@@ -1,6 +1,6 @@
 import type { GameState } from '../game/types';
 import { TRAITS, BATTLE_BALANCE } from '../game/battleConfig';
-import { campaignHudMarkup, campaignOverlay, updateCampaignHud } from './campaignHud';
+import { campaignHudMarkup, campaignOverlay, healingPointInteractionHint, updateCampaignHud } from './campaignHud';
 import { tacticalHistoryMarkup } from './tacticalHistory';
 
 const escape = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]!));
@@ -44,8 +44,8 @@ export function updateBattleHud(state: GameState): void {
   document.body.classList.toggle('crisis', pressure.criticalSince !== null || pressure.organAlarm);
   get('pulse-phase').textContent = `${({ charge: '△ 蓄力', surge: '≋ 冲流', rest: '◡ 舒缓' } as const)[pulse.phase]} ${pulse.phaseRemaining.toFixed(1)}s`;
   get('pulse-ready').textContent = pulse.readyAt > state.elapsed ? `冲流冷却 ${(pulse.readyAt - state.elapsed).toFixed(1)}s` : 'E 冲流就绪';
-  const nearby = battle.graph.nodes.filter(node => node.kind !== 'source' && node.kind !== 'tissue' && Math.hypot(node.x - state.player.x, node.y - state.player.y) <= 110).sort((a,b) => Math.hypot(a.x-state.player.x,a.y-state.player.y)-Math.hypot(b.x-state.player.x,b.y-state.player.y))[0];
-  get('interaction-hint').textContent = nearby ? `E · ${({ valve: '朝瞄准方向发动冲流', gate: '开关隔离闸', retest: '复测当前器官', exit: '前往另一器官', research: '查看抗体研究' } as Record<string,string>)[nearby.kind] ?? '使用装置'}` : '靠近装置按 E · Q 扫描诊断';
+  const nearby = battle.graph.nodes.filter(node => !['source', 'tissue', 'healing'].includes(node.kind) && Math.hypot(node.x - state.player.x, node.y - state.player.y) <= 110).sort((a,b) => Math.hypot(a.x-state.player.x,a.y-state.player.y)-Math.hypot(b.x-state.player.x,b.y-state.player.y))[0];
+  get('interaction-hint').textContent = healingPointInteractionHint(state) ?? (nearby ? `E · ${({ valve: '朝瞄准方向发动冲流', gate: '开关隔离闸', retest: '复测当前器官', exit: '前往另一器官', research: '查看抗体研究' } as Record<string,string>)[nearby.kind] ?? '使用装置'}` : '靠近装置按 E · Q 扫描诊断');
   const warning = battle.warning;
   const card = get('evolution-card');
   card.hidden = !warning;

@@ -4,6 +4,7 @@ import { type Target, type Vec, type WorldGeometry } from './types';
 import { BATTLE_BALANCE } from './battleConfig';
 import type { OrganId } from './battleTypes';
 import type { OrganArena, OrganDefinition } from './campaignTypes';
+import { createHealingPointNodes } from './healingPoints';
 
 export const CAMPAIGN_BALANCE = {
   migrationWarning: 12, blockDuration: 2, interceptDuration: 12, travelCooldown: 3,
@@ -92,6 +93,7 @@ export function createOrganArena(id:OrganId,seed:number):OrganArena {
     {id:'retest',kind:'retest',...config.terminal,active:true,infected:false},
     {id:'research',kind:'research',...config.research,active:true,infected:false},
     {id:'exit',kind:'exit',...config.exit,active:true,infected:false},
+    ...createHealingPointNodes(id),
   ];
   const edges=[[sourceId,deviceId],[deviceId,'tissue']].map(([from,to])=>{
     const a=nodes.find(n=>n.id===from)!,b=nodes.find(n=>n.id===to)!;

@@ -4,9 +4,8 @@
       "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
       "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\node_modules\\@playwright\\test\\cli.js",
       "test",
-      "tests/e2e/feedback-v062-immune-readability.spec.ts",
-      "--project=chrome",
-      "--project=edge"
+      "tests/e2e/host-events.spec.ts",
+      "--list"
     ],
     "configFile": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\playwright.config.ts",
     "rootDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
@@ -19,18 +18,14 @@
     "grep": {},
     "grepInvert": null,
     "maxFailures": 0,
-    "metadata": {
-      "actualWorkers": 1
-    },
+    "metadata": {},
     "preserveOutput": "always",
     "projects": [
       {
         "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/e2e-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {
-          "actualWorkers": 1
-        },
+        "metadata": {},
         "id": "chrome",
         "name": "chrome",
         "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
@@ -44,9 +39,7 @@
         "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/e2e-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {
-          "actualWorkers": 1
-        },
+        "metadata": {},
         "id": "edge",
         "name": "edge",
         "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
@@ -64,9 +57,7 @@
         "outputDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\e2e-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {
-          "actualWorkers": 1
-        },
+        "metadata": {},
         "name": "chrome",
         "testDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
         "snapshotDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
@@ -103,9 +94,7 @@
         "outputDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\e2e-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {
-          "actualWorkers": 1
-        },
+        "metadata": {},
         "name": "edge",
         "testDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
         "snapshotDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
@@ -171,112 +160,169 @@
   },
   "suites": [
     {
-      "title": "feedback-v062-immune-readability.spec.ts",
-      "file": "feedback-v062-immune-readability.spec.ts",
+      "title": "host-events.spec.ts",
+      "file": "host-events.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [
         {
-          "title": "Feedback 0.6.2: real marked-cell cooperation has readable live spacing and a clean full-run retry",
-          "ok": false,
-          "tags": [],
-          "tests": [
-            {
-              "timeout": 230000,
-              "annotations": [],
-              "expectedStatus": "passed",
-              "projectId": "chrome",
-              "projectName": "chrome",
-              "results": [
-                {
-                  "workerIndex": 0,
-                  "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 37916,
-                  "error": {
-                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
-                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\feedback-v062-immune-readability.spec.ts:168:35",
-                    "location": {
-                      "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\feedback-v062-immune-readability.spec.ts",
-                      "column": 35,
-                      "line": 168
-                    },
-                    "snippet": "  166 |\n  167 |     final = await readState(page);\n> 168 |     expect(final.result?.success).toBe(true);\n      |                                   ^\n  169 |     expect(final.campaign!.migration.choice).toBe('ignore');\n  170 |     expect(pair.every(id => final!.growth!.equipped.some(slot => slot.id === id))).toBe(true);\n  171 |     expect(final.growth!.activations?.IMMUNE_BEACON ?? 0).toBeGreaterThan(0);"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\feedback-v062-immune-readability.spec.ts",
-                        "column": 35,
-                        "line": 168
-                      },
-                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  166 |\n  167 |     final = await readState(page);\n> 168 |     expect(final.result?.success).toBe(true);\n      |                                   ^\n  169 |     expect(final.campaign!.migration.choice).toBe('ignore');\n  170 |     expect(pair.every(id => final!.growth!.equipped.some(slot => slot.id === id))).toBe(true);\n  171 |     expect(final.growth!.activations?.IMMUNE_BEACON ?? 0).toBeGreaterThan(0);\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\feedback-v062-immune-readability.spec.ts:168:35"
-                    }
-                  ],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-28T07:36:06.164Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\e2e-results\\feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-chrome\\test-failed-1.png"
-                    },
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\e2e-results\\feedback-v062-immune-reada-8a1be--and-a-clean-full-run-retry-chrome\\error-context.md"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\feedback-v062-immune-readability.spec.ts",
-                    "column": 35,
-                    "line": 168
-                  }
-                }
-              ],
-              "status": "unexpected"
-            }
-          ],
-          "id": "865ac07c9d2920f9b6e7-4b9c84f77967a2f0931a",
-          "file": "feedback-v062-immune-readability.spec.ts",
-          "line": 58,
-          "column": 1
-        },
-        {
-          "title": "Feedback 0.6.2: real marked-cell cooperation has readable live spacing and a clean full-run retry",
+          "title": "medication card uses a passive side rail, freezes on Escape and restarts cleanly through real input",
           "ok": true,
           "tags": [],
           "tests": [
             {
-              "timeout": 230000,
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "a18346524ba4f6e007b8-bae619cd2739d621e769",
+          "file": "host-events.spec.ts",
+          "line": 25,
+          "column": 1
+        },
+        {
+          "title": "explicit lung smoke can be cleared with ordinary precision shots and ends when all three targets are destroyed",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "a18346524ba4f6e007b8-fffa1d74edb197ed7cbe",
+          "file": "host-events.spec.ts",
+          "line": 54,
+          "column": 1
+        },
+        {
+          "title": "exercise reveals its eight-second warning and applies current heart movement/pulse modifiers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "a18346524ba4f6e007b8-0dd42d053235b8e83b27",
+          "file": "host-events.spec.ts",
+          "line": 85,
+          "column": 1
+        },
+        {
+          "title": "compact event card keeps its full description visible and missing alcohol tissues are explicitly reported",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "a18346524ba4f6e007b8-92ace9fdcf285e538dc1",
+          "file": "host-events.spec.ts",
+          "line": 98,
+          "column": 1
+        },
+        {
+          "title": "medication card uses a passive side rail, freezes on Escape and restarts cleanly through real input",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
               "annotations": [],
               "expectedStatus": "passed",
               "projectId": "edge",
               "projectName": "edge",
-              "results": [
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 90830,
-                  "errors": [],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-10-28T07:36:45.763Z",
-                  "annotations": [],
-                  "attachments": []
-                }
-              ],
-              "status": "expected"
+              "results": [],
+              "status": "skipped"
             }
           ],
-          "id": "865ac07c9d2920f9b6e7-4d743400e0bb6e137963",
-          "file": "feedback-v062-immune-readability.spec.ts",
-          "line": 58,
+          "id": "a18346524ba4f6e007b8-9ca04e30ea1bdd87e931",
+          "file": "host-events.spec.ts",
+          "line": 25,
+          "column": 1
+        },
+        {
+          "title": "explicit lung smoke can be cleared with ordinary precision shots and ends when all three targets are destroyed",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "edge",
+              "projectName": "edge",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "a18346524ba4f6e007b8-b9eed545095d8ed84e69",
+          "file": "host-events.spec.ts",
+          "line": 54,
+          "column": 1
+        },
+        {
+          "title": "exercise reveals its eight-second warning and applies current heart movement/pulse modifiers",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "edge",
+              "projectName": "edge",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "a18346524ba4f6e007b8-96bdd0992ddad3088682",
+          "file": "host-events.spec.ts",
+          "line": 85,
+          "column": 1
+        },
+        {
+          "title": "compact event card keeps its full description visible and missing alcohol tissues are explicitly reported",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "edge",
+              "projectName": "edge",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "a18346524ba4f6e007b8-566bb7dcd5b359e00b6a",
+          "file": "host-events.spec.ts",
+          "line": 98,
           "column": 1
         }
       ]
@@ -284,11 +330,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-28T07:36:05.264Z",
-    "duration": 132607.899,
-    "expected": 1,
-    "skipped": 0,
-    "unexpected": 1,
+    "startTime": "2026-10-31T11:34:21.931Z",
+    "duration": 202.58499999999998,
+    "expected": 0,
+    "skipped": 8,
+    "unexpected": 0,
     "flaky": 0
   }
 }

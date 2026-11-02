@@ -111,11 +111,11 @@ describe('G3 independent session boundaries', () => {
       attackAim: { x: s.tissue.x, y: s.tissue.y }, attackTarget: 'tissue', attackReady: 100 };
     s.targets = [enemy];
     game.step({ ...idle(), interact: true });
-    expect(s.tissue.hp).toBe(46); expect(s.result).toBeNull();
+    expect(s.tissue.hp).toBe(45.5); expect(s.result).toBeNull();
     expect(s.events.some(event => event.type === 'RETEST_COMPLETED')).toBe(false);
     expect(s.events.some(event => event.type === 'ORGAN_INTEGRITY_CHANGED' && event.data.reason === 'enemy-attack')).toBe(true);
     game.step({ ...idle(s.tissue), tool: 3, fire: true, interact: true });
-    expect(s.tissue.hp).toBe(71); expect(s.result?.success).toBe(true);
+    expect(s.tissue.hp).toBe(70.5); expect(s.result?.success).toBe(true);
     expect(s.events.filter(event => event.type === 'RETEST_COMPLETED')).toHaveLength(1);
   });
 

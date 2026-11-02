@@ -6,9 +6,10 @@ export type CrosshairStatus = 'in-range' | 'out-of-range' | 'blocked';
 
 /** Geometry feedback only. Cooldowns and whether a repair has a valid tissue
  * target remain separate; the authoritative session decides every action. */
-export function crosshairStatus(state: GameState, aim: Vec): CrosshairStatus {
+export function crosshairStatus(state: GameState, aim: Vec, presentationRange?: number): CrosshairStatus {
   const gap = distance(state.player, aim);
-  const range = state.tool === 2 ? TRACTION_BALANCE.range : BALANCE.range;
+  const range = presentationRange !== undefined && Number.isFinite(presentationRange) && presentationRange > 0
+    ? presentationRange : state.tool === 2 ? TRACTION_BALANCE.range : BALANCE.range;
   if (!Number.isFinite(gap) || gap > range) return 'out-of-range';
   // Precision fires a ray and can hit a target before a fold, so a fold behind
   // that target must not imply the entire shot will be rejected. Tool 2 and 3

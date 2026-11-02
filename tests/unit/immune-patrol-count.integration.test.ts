@@ -21,7 +21,7 @@ describe('actual endless patrol and squad admission', () => {
     expect(f.state.growth!.beacon!.mode).toBe('patrol');
     expect(f.state.growth!.cells).toHaveLength(1);
     expect(f.state.growth!.beacon!.focus?.targetId).toBe('focus-fixture');
-    expect(f.state.growth!.beacon!.until - f.state.elapsed).toBeCloseTo(6);
+    expect(f.state.growth!.beacon!.until).toBe(Infinity);
     expect(f.state.events.some(e => e.type === 'ORGAN_INTEGRITY_CHANGED' && e.data.reason === 'protocol-pressure')).toBe(false);
     const id = f.state.growth!.cells![0].id;
     f.session.step(f.input);

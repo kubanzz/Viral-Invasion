@@ -4,6 +4,7 @@ import { BALANCE } from '../game/types';
 import { TRAITS, BATTLE_BALANCE } from '../game/battleConfig';
 import { CAMPAIGN_BALANCE } from '../game/organConfig';
 import { tacticalHistoryMarkup } from './tacticalHistory';
+import { healingPoints, HEALING_POINT_BALANCE } from '../game/healingPoints';
 
 const escape = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]!));
 const time = (seconds: number) => `${Math.floor(seconds / 60).toString().padStart(2, '0')}:${Math.floor(seconds % 60).toString().padStart(2, '0')}`;
@@ -13,7 +14,7 @@ const set = (id: string, value: string) => { get(id).textContent = value; };
 const html = (id: string, value: string) => { const element = get(id); if (element.innerHTML !== value) element.innerHTML = value; };
 
 export const campaignHudMarkup = `
-  <aside class="organ-overview" id="organ-overview" aria-label="器官状态图" hidden><div class="organ-overview-title">器官导航 <small>白点为你 · 框为视野</small></div><canvas id="tactical-map" width="196" height="120" aria-label="当前器官小地图：感染源、研究、抢修及出口"></canvas><div id="organ-map"></div><p id="migration-outcome"></p></aside>
+  <aside class="organ-overview" id="organ-overview" aria-label="器官状态图" hidden><div class="organ-overview-title">器官导航 <small>白点为你 · ＋治疗</small></div><canvas id="tactical-map" width="196" height="120" aria-label="当前器官小地图：感染源、研究、抢修、出口和两个治疗点，红色加号为已占领"></canvas><div id="organ-map"></div><p id="migration-outcome"></p></aside>
   <section class="migration-card" id="migration-card" aria-label="迁移抉择" role="status" hidden>
     <div class="campaign-card-title"><strong id="migration-title">△ 病毒向肺部迁移</strong><b id="migration-countdown"></b></div>
     <p id="migration-summary"></p>
@@ -32,6 +33,15 @@ export const campaignHudMarkup = `
     <div class="mother-core-traits" id="mother-core-traits"></div>
     <p id="mother-core-membrane"></p>
   </section>`;
+
+export function healingPointInteractionHint(state: GameState): string | null {
+  const nearby = healingPoints(state).filter(node => node.active && Math.hypot(node.x - state.player.x, node.y - state.player.y) <= HEALING_POINT_BALANCE.treatmentRange)
+    .sort((a, b) => Math.hypot(a.x - state.player.x, a.y - state.player.y) - Math.hypot(b.x - state.player.x, b.y - state.player.y))[0];
+  if (!nearby) return null;
+  if (nearby.infection >= 100) return `3 + 左键 · 夺回治疗点，消耗 2 研究样本（已有 ${state.growth?.research ?? 0}）`;
+  if (nearby.healReadyAt > state.elapsed) return `治疗点恢复中 ${(nearby.healReadyAt - state.elapsed).toFixed(1)} 秒 · 感染 ${Math.ceil(nearby.infection)}%`;
+  return `3 + 左键 · ${nearby.infection > 0 ? `快速净化（感染 ${Math.ceil(nearby.infection)}%） / ` : ''}免费治疗耐久 +25`;
+}
 
 export function arenaSummary(state: GameState, id: OrganId): string {
   const c = state.campaign!, arena = c.arenas[id], current = c.activeOrganId === id;
@@ -73,7 +83,9 @@ export function updateCampaignHud(state: GameState): void {
     set('pulse-explanation', `肺门 E 开关气道；关闭消耗 ${CAMPAIGN_BALANCE.closeAirwayCost} 完整度，开启消耗 ${CAMPAIGN_BALANCE.openAirwayCost}。出口仍可通行。`);
   } else set('pulse-explanation', `阀门附近 E · 朝鼠标冲流；击退 / 破壳，消耗 ${BATTLE_BALANCE.pulseCost} 组织完整度。`);
 
-  const nearby = b.graph.nodes.filter(node => !['source', 'tissue'].includes(node.kind) && Math.hypot(node.x - state.player.x, node.y - state.player.y) <= BALANCE.interactionRange).sort((a, b) => Math.hypot(a.x - state.player.x, a.y - state.player.y) - Math.hypot(b.x - state.player.x, b.y - state.player.y))[0];
+  const nearby = b.graph.nodes.filter(node => !['source', 'tissue', 'healing'].includes(node.kind) && Math.hypot(node.x - state.player.x, node.y - state.player.y) <= BALANCE.interactionRange).sort((a, b) => Math.hypot(a.x - state.player.x, a.y - state.player.y) - Math.hypot(b.x - state.player.x, b.y - state.player.y))[0];
+  const healingHint = healingPointInteractionHint(state);
+  if (healingHint) set('interaction-hint', healingHint);
   if (nearby?.kind === 'exit') set('interaction-hint', !nearby.active ? '器官出口在第二次变异后开放' : state.elapsed < c.travelReadyAt ? `通行冷却 ${(c.travelReadyAt - state.elapsed).toFixed(1)}s` : `E · ${c.migration.choice ? '前往' : '追击至'}${current === 'heart' ? '肺部' : '心脏'}`);
   if (nearby?.kind === 'retest') set('interaction-hint', c.core.status === 'ready' ? `E · ${c.core.organId === current ? '启动母巢诊断' : `母巢位于${organName(c.core.organId)}`}` : b.readyToRetest ? 'E · 完成最终复测' : 'E · 查看最终复测条件');
   if (nearby?.id === 'gate' && ['warning', 'blocking'].includes(c.migration.status)) set('interaction-hint', 'E · 在隔离闸旁停留 2 秒封锁，战斗继续');
@@ -150,7 +162,7 @@ export function campaignOverlay(state: GameState, help: boolean, resumeAfterHelp
     const unique = messages.filter((item, index, items) => items.findIndex(other => other.at === item.at && other.text === item.text) === index).slice(0, 90);
     return modal(`<div class="eyebrow">CASE RECORD / 本局战术记录</div><h2>每次转向，都留下了后果。</h2>${organResults(state)}<p>${escape(migrationOutcome(state))}<br>本局变异：${b.traits.map(id => `${TRAITS[id].symbol} ${TRAITS[id].name}`).join(' → ') || '尚未发生'}。母巢位于${organName(c.core.organId)}。</p><div class="trait-history">${b.traits.map(id => { const trait = TRAITS[id]; return `<article><h3>${trait.symbol} ${trait.name}</h3><p>${escape(trait.ability)}<br>代价：${escape(trait.cost)}<br>反制：${escape(trait.counter)}</p></article>`; }).join('')}</div>${tacticalHistoryMarkup(state)}<h3>近期行动</h3><ol class="event-history">${unique.map(item => `<li><time>${time(item.at)}</time><span>${escape(item.text)}</span></li>`).join('')}</ol><div class="actions"><button class="primary" data-action="close-history">返回战场</button></div>`, '战术记录');
   }
-  if (help) return modal(`<div class="eyebrow">FIELD MANUAL / 作战手册</div><h2>让变化，成为你的突破口。</h2><p>清除主要感染源和两次变异精英，处理跨器官迁移，再到母巢所在器官的复测台按 E 唤醒核心。最终胜利需要：<b>母巢清除、所有激活器官完整度 ≥50%、感染负荷 &lt;35%</b>，最后主动复测。</p><div class="help-grid"><div><kbd>WASD</kbd>二维自由移动</div><div><kbd>鼠标</kbd>瞄准 · 左键行动</div><div><kbd>Space</kbd>冲刺脱离危险</div><div><kbd>Q</kbd>扫描召集免疫细胞 · 打断侵蚀</div><div><kbd>1 / 2</kbd>精准净化 / 击退控场</div><div><kbd>3</kbd>瞄准十字组织抢修</div><div><kbd>E</kbd>附近装置 / 出口 / 复测</div><div><kbd>Esc</kbd>暂停 · 研究选择也暂停</div></div><h3>心跳与呼吸，会改变战术。</h3><p>心脏阀门 E 朝鼠标发动冲流，击退并暴露晶壳，消耗 ${BATTLE_BALANCE.pulseCost} 完整度。肺部吸气聚拢、呼气分散；气道 E 关闭会同时停止气流和传播，消耗 ${CAMPAIGN_BALANCE.closeAirwayCost} 完整度，重新开启消耗 ${CAMPAIGN_BALANCE.openAirwayCost}。玩家出口始终独立。</p><h3>12 秒迁移，三种真实后果。</h3><p>追击：前往器官出口（见小地图） E，在肺部清除迁移小体或关闭气道。封锁：在隔离闸（见小地图）按 E，留在范围内 ${CAMPAIGN_BALANCE.blockDuration} 秒；战斗继续，离开会取消。封锁后心脏新增滞留感染源，肺部不激活。若提前关闭心脏隔离闸，迁移发生时会自动封锁并承担相同后果；想追击时请保持闸门开放。不响应或主动放任：肺部新增感染源并受损，仍可前往挽回。通道开放后可双向返回，旅行冷却 ${CAMPAIGN_BALANCE.travelCooldown} 秒。</p><p>离场器官若仍有开放感染源，会在缓冲期后低频受损；单次离场损伤有上限。器官图会显示残留风险与实际损伤，请安排回救。</p><h3>双特性母巢，要先读懂再击穿。</h3><p>母巢交替使用本局两种特性：晶壳扇区横扫、裂殖定点爆发、潜伏组织侵蚀。Q 可打断侵蚀；攻势结束有真实破绽。核膜存在时核心耐久最低保持 50%；避开两种特性的攻击，或扫描打断侵蚀，即可逐层破膜，再清除核心。裂殖母巢只会在有限阈值释放脆弱小体。</p><p>普通晶壳可绕后/冲流破壳；裂殖小体用 2 清理；潜伏体有周期扰动，Q 可显形，基础射击仍有效。感染达 100% 后有 ${BATTLE_BALANCE.crisisDuration} 秒可挽回；器官濒危先警报再影响全身稳定，抢修能够恢复。</p>${effects}<div class="actions"><button class="primary" data-action="close-help">返回${resumeAfterHelp ? '战场' : '上一级'}</button><button data-action="history">战术记录</button></div>`, '操作指南');
+  if (help) return modal(`<div class="eyebrow">FIELD MANUAL / 作战手册</div><h2>让变化，成为你的突破口。</h2><p>清除主要感染源和两次变异精英，处理跨器官迁移，再到母巢所在器官的复测台按 E 唤醒核心。最终胜利需要：<b>母巢清除、所有激活器官完整度 ≥50%、感染负荷 &lt;35%</b>，最后主动复测。</p><div class="help-grid"><div><kbd>WASD</kbd>二维自由移动</div><div><kbd>鼠标</kbd>瞄准 · 左键行动</div><div><kbd>Space</kbd>冲刺脱离危险</div><div><kbd>Q</kbd>扫描召集免疫细胞 · 打断侵蚀</div><div><kbd>1 / 2</kbd>精准净化 / 击退控场</div><div><kbd>3</kbd>瞄准十字组织抢修</div><div><kbd>E</kbd>附近装置 / 出口 / 复测</div><div><kbd>Esc</kbd>暂停 · 研究选择也暂停</div></div><h3>保护两处治疗点，保住补给。</h3><p>地图上的两个＋治疗点可恢复救援体耐久。病毒靠近持续感染，单体约12秒占领；占满前靠近150范围内，用3瞄准治疗点点击可免费清除感染并恢复25耐久，每处4秒冷却。占满后需消耗2研究样本才能夺回，样本不足不会扣费。原十字组织仍负责修复器官完整度。</p><h3>心跳与呼吸，会改变战术。</h3><p>心脏阀门 E 朝鼠标发动冲流，击退并暴露晶壳，消耗 ${BATTLE_BALANCE.pulseCost} 完整度。肺部吸气聚拢、呼气分散；气道 E 关闭会同时停止气流和传播，消耗 ${CAMPAIGN_BALANCE.closeAirwayCost} 完整度，重新开启消耗 ${CAMPAIGN_BALANCE.openAirwayCost}。玩家出口始终独立。</p><h3>12 秒迁移，三种真实后果。</h3><p>追击：前往器官出口（见小地图） E，在肺部清除迁移小体或关闭气道。封锁：在隔离闸（见小地图）按 E，留在范围内 ${CAMPAIGN_BALANCE.blockDuration} 秒；战斗继续，离开会取消。封锁后心脏新增滞留感染源，肺部不激活。若提前关闭心脏隔离闸，迁移发生时会自动封锁并承担相同后果；想追击时请保持闸门开放。不响应或主动放任：肺部新增感染源并受损，仍可前往挽回。通道开放后可双向返回，旅行冷却 ${CAMPAIGN_BALANCE.travelCooldown} 秒。</p><p>离场器官若仍有开放感染源，会在缓冲期后低频受损；单次离场损伤有上限。器官图会显示残留风险与实际损伤，请安排回救。</p><h3>双特性母巢，要先读懂再击穿。</h3><p>母巢交替使用本局两种特性：晶壳扇区横扫、裂殖定点爆发、潜伏组织侵蚀。Q 可打断侵蚀；攻势结束有真实破绽。核膜存在时核心耐久最低保持 50%；避开两种特性的攻击，或扫描打断侵蚀，即可逐层破膜，再清除核心。裂殖母巢只会在有限阈值释放脆弱小体。</p><p>普通晶壳可绕后/冲流破壳；裂殖小体用 2 清理；潜伏体有周期扰动，Q 可显形，基础射击仍有效。感染达 100% 后有 ${BATTLE_BALANCE.crisisDuration} 秒可挽回；器官濒危先警报再影响全身稳定，抢修能够恢复。</p>${effects}<div class="actions"><button class="primary" data-action="close-help">返回${resumeAfterHelp ? '战场' : '上一级'}</button><button data-action="history">战术记录</button></div>`, '操作指南');
   if (state.phase === 'menu') return `<div class="overlay intro"><section class="intro-card"><div class="eyebrow">A MICROSCOPIC FANTASY · HEART & LUNG</div><h1>Viral<br><span>Invasion</span></h1><h2>病 毒 入 侵</h2><p class="lead">深入巨人的心肺。<br>病毒会进化、伪装、跨器官迁移。借心跳破壳，趁呼吸聚拢敌群，在净化与抢修间，找到属于你的抗体联动。</p><div class="mission"><span><b>01</b> 诊断变异</span><span><b>02</b> 迁移抉择</span><span><b>03</b> 击穿母巢</span></div><div class="actions"><button class="primary" data-action="start">进入心脏防线　↗</button><button class="quiet" data-action="help">作战手册</button></div><p class="intro-footnote">双器官完整局 · 键鼠操作 · 完全离线<br>WASD 移动 / 鼠标瞄准 / 左键行动</p></section><div class="intro-art-label"><strong>Adapt. Protect. Turn the tide.</strong><small>病毒在改变，你也有下一种打法。</small></div></div>`;
   if (state.phase === 'paused') return modal(`<div class="eyebrow">VIRAL INVASION / 病毒入侵</div><h2>让心跳，等你片刻。</h2><p>战斗、器官气流、传播和迁移倒数都已暂停。</p>${organResults(state)}<div class="seed">SEED ${state.seed} · ${time(state.elapsed)} · 当前${organName(c.activeOrganId)}</div><div class="actions"><button class="primary" data-action="continue">继续战斗</button><button data-action="retry">同种子重试</button><button data-action="history">战术记录</button><button data-action="help">作战手册</button><button class="quiet" data-action="menu">返回主菜单</button></div>${effects}`, '战斗已暂停');
   if (state.phase === 'result') {

@@ -1,6 +1,7 @@
 import { distance, moveWithCollision, normalized, rayCircle, wallHit } from '../../src/actors/collision';
 import { activeWorld, type GameState, type InputFrame, type Target, type Vec, type WorldGeometry } from '../../src/game/types';
 import type { MigrationChoice } from '../../src/game/campaignTypes';
+import { HEALING_POINT_BALANCE, healingPoints } from '../../src/game/healingPoints';
 
 // Positions derive from the active organ, so the strategy actually travels to
 // the repair site after a layout change instead of firing across the old room.
@@ -38,6 +39,30 @@ export function waypoint(s: GameState, target: Vec): Vec {
   return best>=0?nodes[best]:target;
 }
 
+/** Public controls react to the same frozen warning circles visible to a player. */
+function supportedInput(s: GameState, input: InputFrame): InputFrame {
+  const cells = (s.growth?.cells ?? []).filter(cell => cell.organId === s.battle!.organId && (cell.hp ?? 1) > 0 && cell.until > s.elapsed);
+  const engaged = cells.some(cell => s.targets.some(target => target.hp > 0 && target.role !== 'source' && target.role !== 'core' && distance(cell, target) < 180));
+  const antibody = (s.growth?.antibodyCharges ?? 0) > 0 && cells.length > 0 && engaged
+    && !cells.some(cell => (cell.antibodyUntil ?? 0) > s.elapsed) && s.player.hp < 80;
+  const warning = s.targets.find(target => target.hp > 0 && target.attackAt !== undefined && target.attackTarget === 'player' && target.attackAim
+    && target.attackAt - s.elapsed <= .45 && distance(s.player, target.attackAim) < (target.attackRadius ?? 58) + s.player.radius + 12);
+  const coreAttack = s.campaign?.core.combat?.attack;
+  const coreDanger = coreAttack && (coreAttack.kind === 'crystal-sweep' || coreAttack.kind === 'fission-burst')
+    && coreAttack.resolveAt - s.elapsed <= .12 && coreAttack.resolveAt > s.elapsed;
+  if (warning || coreDanger) {
+    const origin = warning ?? coreAttack!.origin, aim = warning?.attackAim ?? coreAttack!.aim;
+    const away = distance(s.player, aim) > 1 ? normalized(s.player.x - aim.x, s.player.y - aim.y)
+      : normalized(-(s.player.y - origin.y), s.player.x - origin.x);
+    const escape = { x: s.player.x + (away.x || 0) * 200, y: s.player.y + (away.y || (!away.x ? 1 : 0)) * 200 };
+    const until = warning?.attackAt ?? coreAttack!.resolveAt;
+    const dash = s.player.dashReady <= s.elapsed && until! - s.elapsed <= .12;
+    return { ...input, moveX: escape.x - s.player.x, moveY: escape.y - s.player.y, antibody,
+      ...(dash ? { dash: true, aim: escape, fire: false } : {}) };
+  }
+  return { ...input, antibody };
+}
+
 export function g3Input(s: GameState, choice: MigrationChoice): InputFrame {
   const b=s.battle!,c=s.campaign!,m=c.migration,live=s.targets.filter(t=>t.hp>0);
   const encounter=c.encounters,lesson=b.encounter?.firstCounter;
@@ -45,6 +70,17 @@ export function g3Input(s: GameState, choice: MigrationChoice): InputFrame {
   const targets=live.slice().sort((a,d)=>rank(a)-rank(d)||distance(a,s.player)-distance(d,s.player));
   const target=targets[0];
   const healing=s.tissue.hp<65 || (s.player.hp<70&&s.tissue.hp<99);
+  // New aid points replace futile full-integrity repair spam as the real HP
+  // recovery route. Walk there, then use the ordinary tool3 treatment input.
+  const aid = s.player.hp < 65 && s.tissue.hp >= 40 ? healingPoints(s)
+    .filter(node => (node.infection < 100 || (s.growth?.research ?? 0) >= HEALING_POINT_BALANCE.reclaimCost)
+      && node.healReadyAt <= s.elapsed)
+    .sort((a, b) => distance(s.player, a) - distance(s.player, b))[0] : undefined;
+  if (aid) {
+    const next = waypoint(s, aid), close = distance(s.player, aid) <= HEALING_POINT_BALANCE.treatmentRange - 10;
+    return supportedInput(s, { moveX: close ? 0 : next.x - s.player.x, moveY: close ? 0 : next.y - s.player.y,
+      aim: close ? aid : target ?? aid, fire: close || !!target, tool: close ? 3 : 1, scan: s.tick % 190 === 0 });
+  }
   // The formal guided encounter is an actual combat task. Reach the visible
   // valve, aim its real pulse at the guardian, then land a basic precision hit
   // during that accepted exposure. No pose, HP or lesson field is written.
@@ -53,8 +89,8 @@ export function g3Input(s: GameState, choice: MigrationChoice): InputFrame {
     const valve=b.graph.nodes.find(node=>node.kind==='valve')!,next=waypoint(s,valve);
     const move=distance(s.player,valve)>18?normalized(next.x-s.player.x,next.y-s.player.y):{x:0,y:0};
     const exposed=(guardian.exposedUntil??0)>s.elapsed;
-    return{moveX:move.x,moveY:move.y,aim:guardian,tool:1,fire:exposed,scan:s.tick%190===0,
-      interact:!exposed&&distance(s.player,valve)<85&&b.pulse.readyAt<=s.elapsed};
+    return supportedInput(s,{moveX:move.x,moveY:move.y,aim:guardian,tool:1,fire:exposed,scan:s.tick%190===0,
+      interact:!exposed&&distance(s.player,valve)<85&&b.pulse.readyAt<=s.elapsed});
   }
   let destination:Vec=carePosition(s, !healing);
   let interaction:Vec|undefined;
@@ -73,8 +109,8 @@ export function g3Input(s: GameState, choice: MigrationChoice): InputFrame {
   const repairLine=normalized(s.tissue.x-s.player.x,s.tissue.y-s.player.y),repairDistance=distance(s.player,s.tissue);
   const repairWall=wallHit(s.player,repairLine,repairDistance,activeWorld(s));
   const canRepair=healing&&repairDistance<=530&&(repairWall===null||repairWall>=repairDistance-s.tissue.radius);
-  return {moveX:move.x,moveY:move.y,aim:canRepair?s.tissue:target??destination,tool:canRepair?3:s.cooldowns[2]<=s.elapsed?2:1,
-    fire:canRepair||!!target,scan:s.tick%190===0,interact:!!interaction&&distance(s.player,interaction)<85};
+  return supportedInput(s,{moveX:move.x,moveY:move.y,aim:canRepair?s.tissue:target??destination,tool:canRepair?3:s.cooldowns[2]<=s.elapsed?2:1,
+    fire:canRepair||!!target,scan:s.tick%190===0,interact:!!interaction&&distance(s.player,interaction)<85});
 }
 
 /** Keeps a real source producing pressure; only clears its mobile defenders. */

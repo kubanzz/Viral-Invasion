@@ -2,7 +2,8 @@ import './style.css';
 import { GameSession } from './game/session';
 import { FixedClock } from './core/clock';
 import { MotionInterpolation } from './render/motionInterpolation';
-import { Controller, BINDINGS } from './input/controller';
+import { Controller, BINDINGS, type SkillPresentation } from './input/controller';
+import { TouchControls } from './input/touchControls';
 import { Renderer } from './render/renderer';
 import { BALANCE, type Tool } from './game/types';
 import { Soundscape } from './audio';
@@ -14,7 +15,7 @@ import './ui/research.css';
 import { ProfileStore } from './meta/profile';
 import type { RunEncounterRecord } from './meta/profile';
 import { newRunOptions, replayRunOptions } from './meta/runOptions';
-import { profileOverlay, profileMenuMarkup, profileResultMarkup } from './ui/profileHud';
+import { profileOverlay, profileResultMarkup } from './ui/profileHud';
 import './ui/profile.css';
 import { encounterHudMarkup, updateEncounterHud, encounterHelpMarkup } from './ui/encounterHud';
 import './ui/encounter.css';
@@ -30,11 +31,30 @@ import type { EndlessUpgradeId } from './game/endlessGrowthTypes';
 import './ui/endless.css';
 import './ui/artTheme.css';
 import { artIconMarkup, installArtIcons } from './ui/artIcons';
+import { hostEventHudMarkup, updateHostEventHud } from './ui/hostEventHud';
+import { HOST_EVENT_IDS } from './game/hostEvents';
+import './ui/hostEventHud.css';
+import { mobileHudMarkup, mobileDetailsMarkup, setMobileDetailsOpen, updateMobileHud } from './ui/mobileHud';
+import './ui/mobile.css';
+import { mainMenuOverlay } from './ui/mainMenu';
+import './ui/mainMenu.css';
+import { touchCopy } from './ui/touchCopy';
+import { resolveTouchLayout } from './ui/responsiveLayout';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
 const app = document.querySelector<HTMLDivElement>('#app')!;
 installArtIcons(document);
 const params = new URL(location.href).searchParams;
+const coarsePointer = matchMedia('(pointer: coarse)');
+const readTouchLayout = () => resolveTouchLayout({ width: innerWidth, height: innerHeight,
+  coarsePointer: coarsePointer.matches, maxTouchPoints: navigator.maxTouchPoints, forceTouch: params.get('mobile') === '1' });
+let touchMode = readTouchLayout();
+document.body.classList.toggle('touch-mode', touchMode);
+let portraitBlocked = touchMode && innerHeight > innerWidth;
+let mobileDetailsOpen = false;
+let resumeAfterMobileDetails = false;
+let mobileAimViewport: { left: number; right: number; top: number; bottom: number } | undefined;
+let mobilePreviewHeaderBottom = 80;
 const seedText = params.get('seed');
 const seedParam = seedText !== null && seedText.trim() !== '' ? Number(seedText) : NaN;
 const initialSeed = Number.isInteger(seedParam) && seedParam >= 0 && seedParam <= 0xffffffff ? seedParam : 130026;
@@ -42,6 +62,10 @@ const initialSeed = Number.isInteger(seedParam) && seedParam >= 0 && seedParam <
 const trainingFixture = params.get('scenario') === 'training';
 const firstTrait = ['CARAPACE', 'FISSION', 'MIMIC'].includes(params.get('trait') ?? '') ? params.get('trait') as TraitId : undefined;
 const milestone = params.get('fixture') === 'G1' ? 'G1' : params.get('fixture') === 'G2' ? 'G2' : 'G3';
+// Explicit development fixture only; it still runs dependency, organ and placement checks.
+const hostEventParam = params.get('hostEvent')?.trim().toUpperCase();
+const debugHostEventId = HOST_EVENT_IDS.find(id => id === hostEventParam);
+let hostEventDebugReport = '';
 const profile = new ProfileStore();
 const endlessProfile = new EndlessProfileStore();
 const session = new GameSession(initialSeed, { campaign: !trainingFixture, ...newRunOptions(profile.data, firstTrait), milestone });
@@ -81,7 +105,8 @@ app.innerHTML = `
     <div class="message" id="message">WASD 移动 · 点击靶标底部的瞄准环</div>
     <div class="dock-wrap"><div class="ability"><div class="ability-key">${artIconMarkup('dash')}<kbd>Space</kbd></div><span class="ability-name">冲刺</span><em id="dash-ready">就绪</em></div><div class="tool-dock">${([[1,'精确净化','单点 · 快速冷却'],[2,'牵引裂解','聚拢 · 延迟爆发'],[3,'组织修复','治疗 · +25 完整度']] as const).map(([id,title,subtitle])=>`<button class="tool" data-action="tool-${id}" aria-label="${id} ${title}"><kbd>${id}</kbd><strong>${id===3?artIconMarkup('heal'):''}${title}</strong><small>${subtitle}</small><i class="charge" id="charge-${id}"></i></button>`).join('')}</div><div class="ability"><div class="ability-key">${artIconMarkup('scan')}<kbd>Q</kbd></div><span class="ability-name">扫描</span><em id="scan-ready">就绪</em></div></div>
     <div class="micro-footer">G0 · 基础训练 / 架空生物幻想</div><div class="run-time" id="run-time"></div>
-  </main><div id="overlay-host"></div>`;
+    ${hostEventHudMarkup}
+  </main>${mobileHudMarkup}<div id="overlay-host"></div>`;
 if (!trainingFixture) {
   app.classList.add('campaign');
   canvas.setAttribute('aria-label', '病毒入侵战场：WASD移动，鼠标瞄准，1精准净化，2范围控场，3抢修，Q召集免疫细胞，E交互');
@@ -95,12 +120,49 @@ if (!trainingFixture) {
   document.querySelector('.micro-footer')!.textContent = `${milestone === 'G3' ? 'G4' : milestone} · ${milestone === 'G3' ? '器官联防' : '心脏防线'} / 架空生物幻想`;
   document.querySelector('.dock-wrap .ability:last-child .ability-name')!.textContent = '扫描 / 召集';
 }
+const touchToolLabels = ['净化', '裂解', '修复'] as const;
+const desktopToolTitles = [...document.querySelectorAll('.tool strong')].map(title => title.innerHTML);
+const desktopCanvasLabel = canvas.getAttribute('aria-label') ?? '';
+const adaptedTouchText = new Map<Text, { original: string; adapted: string }>();
+function applyControlLayout(): void {
+  document.body.classList.toggle('touch-mode', touchMode);
+  document.documentElement.dataset.layout = touchMode ? 'mobile' : 'desktop';
+  document.querySelectorAll<HTMLElement>('.tool strong').forEach((title, index) => {
+    if (touchMode) title.textContent = touchToolLabels[index];
+    else title.innerHTML = desktopToolTitles[index];
+  });
+  canvas.setAttribute('aria-label', touchMode
+    ? '病毒入侵战场：左杆移动，右下大盘按住攻击；技能拖动瞄准、松手施放，拖至取消区撤销。点击战场可精确选点。'
+    : desktopCanvasLabel);
+}
+applyControlLayout();
 const input = new Controller(canvas, () => togglePause(), () => {
   if (session.state.phase === 'playing') session.pause();
   clock.reset();
-}, () => session.state.phase === 'playing' && !help && !history && !growthDetails && !profileOpen && !migrationGuide);
+}, canAcceptGameInput);
+const touchControls = new TouchControls({ root: document.querySelector<HTMLElement>('#mobile-controls')!, canvas, input,
+  // A release commits the point the player just saw, including motion interpolation.
+  getState: () => presentedState, screenToWorld: point => renderer.camera.screenToWorld(point), canAccept: canAcceptGameInput, enabled: () => touchMode });
+function canAcceptGameInput(): boolean {
+  return session.state.phase === 'playing' && !help && !history && !growthDetails && !profileOpen && !startingPlanOpen
+    && !migrationGuide && !mobileDetailsOpen && !portraitBlocked
+    && !session.state.growth?.draft && !session.state.growth?.pendingResearch && !session.state.endlessGrowth?.draft;
+}
+function syncTouchOrientation(): void {
+  const next = touchMode && innerHeight > innerWidth;
+  if (next !== portraitBlocked) { input.clear(); if (session.state.phase === 'playing') session.pause(); clock.reset(); }
+  portraitBlocked = next;
+  document.body.classList.toggle('touch-portrait', next);
+  if (next && session.state.phase === 'playing') { input.clear(); session.pause(); clock.reset(); }
+}
+function closeMobileDetails(): void {
+  setMobileDetailsOpen(false); mobileDetailsOpen = false;
+  if (resumeAfterMobileDetails && !portraitBlocked) session.resume();
+  resumeAfterMobileDetails = false; input.clear(); clock.reset(); overlayKey = '';
+}
 session.bus.on('event', event => {
   if (event.type === 'INPUT_RESET_REQUESTED') { input.clear(); resetClockAfterStep = true; }
+  if (event.type === 'RUN_PAUSED' || event.type === 'RUN_ENDED') input.clear();
   if (event.type === 'RUN_ENDED' && session.state.campaign && runId) profile.recordRun(session.state, runId);
   if (event.type === 'RUN_ENDED' && session.state.endless && runId) endlessProfile.recordRun(session.state, runId);
   if (event.type === 'MIGRATION_WARNING' && !migrationGuideSeen) migrationGuidePending = true;
@@ -110,6 +172,7 @@ session.bus.on('event', event => {
 const el = (id: string) => document.getElementById(id)!;
 const formatTime = (seconds: number) => `${Math.floor(seconds/60).toString().padStart(2,'0')}:${Math.floor(seconds%60).toString().padStart(2,'0')}`;
 function togglePause() {
+  if (mobileDetailsOpen) { closeMobileDetails(); return; }
   if (startingPlanOpen) { startingPlanOpen = false; input.clear(); clock.reset(); return; }
   input.clear(); clock.reset();
   if (growthDetails) { closeGrowthDetails(); return; }
@@ -120,9 +183,10 @@ function togglePause() {
   const research = session.state.growth?.pendingResearch;
   if (research) { session.cancelResearch({ runId: research.runId, requestId: research.id }); return; }
   if (session.state.phase === 'playing') session.pause();
-  else if (session.state.phase === 'paused') session.resume();
+  else if (session.state.phase === 'paused' && !portraitBlocked) session.resume();
 }
 function start(newSeed?: number, replay?: RunEncounterRecord | null, preserveCurrent = false, mode: 'campaign' | 'endless' = session.state.endless ? 'endless' : 'campaign') {
+  setMobileDetailsOpen(false); mobileDetailsOpen = false; resumeAfterMobileDetails = false;
   input.clear(); clock.reset(); help = false; history = false; resumeAfterHelp = false; resumeAfterHistory = false;
   growthDetails = false; resumeAfterGrowthDetails = false;
   profileOpen = false; startingPlanOpen = false; migrationGuide = false; migrationGuidePending = false;
@@ -133,7 +197,13 @@ function start(newSeed?: number, replay?: RunEncounterRecord | null, preserveCur
   // not silently borrow the newly selected menu preference.
   if (replay === null) options.preparation = preparationForPlan('field');
   sound.unlock(); session.start(newSeed ?? session.state.seed, preserveCurrent ? { mode } : { ...options, mode });
+  hostEventDebugReport = '';
+  if (debugHostEventId) {
+    const result = session.debugHostEvent(debugHostEventId, params.get('hostEventOrgan') === 'lung' ? 'lung' : undefined);
+    if (!result.ok) hostEventDebugReport = result.reason ?? '当前场景未满足此卡条件。';
+  } else if (hostEventParam) hostEventDebugReport = `未知卡牌 ${hostEventParam}。可用 ID：${HOST_EVENT_IDS.join(' / ')}。`;
   document.body.classList.toggle('endless-mode', !!session.state.endless);
+  syncTouchOrientation();
 }
 function showHelp() {
   if (profileOpen || startingPlanOpen || migrationGuide || history || help || growthDetails) return;
@@ -164,10 +234,36 @@ function closeMigrationGuide() {
   profile.acknowledgeMigrationGuide();
   session.resume(); input.clear(); clock.reset();
 }
+let handledTouchButton: HTMLButtonElement | undefined;
+let handledTouchAt = 0;
+app.addEventListener('pointerdown', event => {
+  if (!touchMode || event.pointerType !== 'touch') return;
+  const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-action]');
+  if (!button || button.disabled) return;
+  const action = button.dataset.action!;
+  if (!action.startsWith('tool-') && action !== 'pause' && action !== 'mobile-details' && action !== 'mobile-map') return;
+  // Secondary fingers do not consistently synthesize a click while a stick is
+  // held. Activate these battle controls from their real pointerdown instead.
+  event.preventDefault(); handledTouchButton = button; handledTouchAt = performance.now(); button.click();
+});
 app.addEventListener('click', event => {
   const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-action]');
   if (!button) return;
+  if (event.isTrusted && (event as PointerEvent).pointerType !== 'mouse'
+    && handledTouchButton === button && performance.now() - handledTouchAt < 800) return;
   const action = button.dataset.action!;
+  if (action === 'mobile-details' || action === 'mobile-map') {
+    if (!touchMode || !canAcceptGameInput()) return;
+    resumeAfterMobileDetails = true; mobileDetailsOpen = true; session.pause(); input.clear(); clock.reset(); updateOverlay(); return;
+  }
+  if (action === 'mobile-close-details') { closeMobileDetails(); updateOverlay(); return; }
+  if (mobileDetailsOpen && ['help', 'history', 'growth-details'].includes(action)) {
+    const resume = resumeAfterMobileDetails;
+    setMobileDetailsOpen(false); mobileDetailsOpen = false; resumeAfterMobileDetails = false; overlayKey = '';
+    // The destination dialog records whether it should return to active play.
+    // No simulation can advance between this resume and its synchronous pause.
+    if (resume && !portraitBlocked) session.resume();
+  }
   if (action === 'starting-plan') {
     if (!['menu', 'result'].includes(session.state.phase)) return;
     startingPlanOpen = true; profileOpen = false; help = false; history = false;
@@ -179,6 +275,7 @@ app.addEventListener('click', event => {
     if (profile.selectStartingPlan(button.dataset.plan as StartingPlanId)) { startingPlanOpen = false; startingPlanSelection = profile.data.startingPlan; }
     input.clear(); clock.reset(); return;
   }
+  if (action === 'antibody') { input.queueAction('antibody'); button.blur(); return; }
   if (action === 'growth-details') { showGrowthDetails(button); return; }
   if (action === 'close-growth-details') { closeGrowthDetails(); return; }
   if (action === 'profile') { resumeAfterProfile = session.state.phase === 'playing'; session.pause(); profileOpen = true; input.clear(); clock.reset(); button.blur(); return; }
@@ -229,7 +326,7 @@ app.addEventListener('click', event => {
   if (action === 'retry') start(undefined, undefined, true);
   if (action === 'new') start((session.state.seed + 2654435761) >>> 0);
   if (action === 'pause' || action === 'continue') togglePause();
-  if (action === 'menu') { input.clear(); clock.reset(); help = false; history = false; growthDetails = false; resumeAfterGrowthDetails = false; profileOpen = false; startingPlanOpen = false; migrationGuide = false; migrationGuidePending = false; session.menu(); document.body.classList.remove('crisis'); }
+  if (action === 'menu') { setMobileDetailsOpen(false); mobileDetailsOpen = false; resumeAfterMobileDetails = false; input.clear(); clock.reset(); help = false; history = false; growthDetails = false; resumeAfterGrowthDetails = false; profileOpen = false; startingPlanOpen = false; migrationGuide = false; migrationGuidePending = false; session.menu(); document.body.classList.remove('crisis'); }
   if (action === 'help') showHelp();
   if (action === 'close-help') { help = false; input.clear(); clock.reset(); if (resumeAfterHelp) session.resume(); resumeAfterHelp = false; }
   if (action === 'practice-hit') { help = false; input.clear(); clock.reset(); session.resume(); input.queuePracticeHit(); resumeAfterHelp = false; }
@@ -242,15 +339,20 @@ app.addEventListener('click', event => {
 function updateOverlay() {
   const state = session.state;
   const draft = state.growth?.draft;
-  const key = `${!!state.endless}:${state.endlessGrowth?.draft?.id}:${state.phase}:${help}:${lowEffects}:${history}:${growthDetails}:${profileOpen}:${startingPlanOpen}:${startingPlanSelection}:${migrationGuide}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}:${state.growth?.pendingResearch?.id}:${state.battle?.encounter?.firstCounter.guideStatus}`;
+  const key = `${touchMode}:${!!state.endless}:${state.endlessGrowth?.draft?.id}:${state.phase}:${help}:${lowEffects}:${history}:${growthDetails}:${profileOpen}:${startingPlanOpen}:${startingPlanSelection}:${migrationGuide}:${mobileDetailsOpen}:${portraitBlocked}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}:${state.growth?.pendingResearch?.id}:${state.battle?.encounter?.firstCounter.guideStatus}`;
   if (key === overlayKey) return;
   overlayKey = key;
+  const challengeHome = state.phase === 'menu' && !trainingFixture && milestone === 'G3' && !help && !history;
+  app.classList.toggle('challenge-home-active', challengeHome);
   el('hud').hidden = state.phase === 'menu' || state.phase === 'result';
   // Keep keyboard navigation inside the visible overlay as well as mouse input.
-  const modalActive = profileOpen || migrationGuide || help || history || growthDetails || state.phase !== 'playing';
+  const modalActive = profileOpen || migrationGuide || help || history || growthDetails || mobileDetailsOpen || state.phase !== 'playing';
   document.querySelector<HTMLElement>('.topbar')!.inert = modalActive;
   el('hud').inert = modalActive;
   const host = el('overlay-host');
+  setMobileDetailsOpen(false);
+  if (challengeHome) { host.innerHTML = mainMenuOverlay({ data: endlessProfile.data, status: endlessProfile.status }, touchMode); return; }
+  if (mobileDetailsOpen) { host.innerHTML = mobileDetailsMarkup; setMobileDetailsOpen(true); return; }
   if (growthDetails) {
     host.innerHTML = growthDetailsOverlay(state, growthDetailsReturnLabel);
     host.querySelector<HTMLButtonElement>('[data-action="close-growth-details"]')?.focus({ preventScroll: true });
@@ -271,13 +373,7 @@ function updateOverlay() {
     if (state.growth && history) host.querySelector('h2')?.insertAdjacentHTML('afterend', growthHistoryMarkup(state));
     if (state.growth && (help || history || state.phase === 'paused' || state.phase === 'result') && !host.querySelector('[data-action="growth-details"]')) host.querySelector('.actions')?.insertAdjacentHTML('beforeend', growthDetailsEntryMarkup);
     if (state.campaign) host.querySelector('.switches')?.insertAdjacentHTML('beforeend', `<button data-action="sound">声音 ${sound.enabled?'开':'关'}</button>`);
-    if (state.campaign && state.phase === 'menu' && !help && !history) host.querySelector('.intro-card')?.insertAdjacentHTML('beforeend', profileMenuMarkup(profile.data, profile.status));
-    if (state.campaign && state.phase === 'menu' && !help && !history) host.querySelector('.actions')?.insertAdjacentHTML('afterbegin', endlessMenuEntry({ data: endlessProfile.data, status: endlessProfile.status }));
     if (state.campaign && state.phase === 'result' && !help && !history) host.querySelector('.actions')?.insertAdjacentHTML('afterbegin', endlessMenuEntry({ data: endlessProfile.data, status: endlessProfile.status }));
-    if (state.campaign && state.phase === 'menu' && !help && !history) {
-      const footnote = host.querySelector('.intro-footnote');
-      if (footnote) footnote.textContent = '心肺探索战场 · 协议进阶 · 免疫细胞协同 · 完全离线';
-    }
     if (state.campaign && state.phase === 'result' && !help && !history) host.querySelector('.modal')?.insertAdjacentHTML('beforeend', profileResultMarkup(state, profile.data, profile.status));
     return;
   }
@@ -293,6 +389,7 @@ function updateOverlay() {
 }
 function updateHud() {
   const s = session.state;
+  updateHostEventHud(s, hostEventDebugReport);
   document.body.classList.toggle('endless-mode', !!s.endless);
   if (s.endless) {
     document.body.classList.remove('dual-organ');
@@ -333,8 +430,24 @@ function refreshHudRects() {
     player: { left: point.x - 27 * scale, right: point.x + 27 * scale, top: point.y - 68 * scale, bottom: point.y + 10 * scale },
   }));
 }
+function refreshMobileAimViewport(): void {
+  if (!touchMode) return;
+  const move = document.querySelector<HTMLElement>('[data-stick="move"]')?.getBoundingClientRect();
+  const dash = document.querySelector<HTMLElement>('[data-touch-action="dash"]')?.getBoundingClientRect();
+  const rect = canvas.getBoundingClientRect();
+  if (!move?.width || !dash?.width) { mobileAimViewport = undefined; return; }
+  mobilePreviewHeaderBottom = Math.max(...['.mobile-readouts', '.mobile-map', '.mobile-top-actions']
+    .map(selector => document.querySelector<HTMLElement>(selector)?.getBoundingClientRect().bottom ?? rect.top)) - rect.top + 8;
+  mobileAimViewport = { left: move.right - rect.left + 12, right: dash.left - rect.left - 10,
+    top: Math.max(mobilePreviewHeaderBottom, Math.min(80, rect.height * .3)), bottom: move.bottom - rect.top - 10 };
+}
 function updateCommonHud() {
   const s = session.state;
+  if (touchMode) el('message').textContent = touchCopy(el('message').textContent ?? '');
+  if (touchMode && mobileDetailsOpen) adaptTouchText(el('mobile-details-content'));
+  updateMobileHud(s, { blocked: !canAcceptGameInput(), portrait: portraitBlocked });
+  if (touchMode && !mobileAimViewport) refreshMobileAimViewport();
+  touchControls.update();
   const combat = s.endlessGrowth ? endlessCombatStats(s.endlessGrowth) : undefined;
   document.querySelector('.status-chip')!.textContent = s.endless ? `连续挑战 / ${s.endless.wave}` : s.battle?.organId === 'lung' ? 'LUNG / 02' : 'HEART / 01';
   el('dash-ready').textContent = s.player.dashReady > s.elapsed ? `${(s.player.dashReady-s.elapsed).toFixed(1)}s`:'就绪';
@@ -353,6 +466,7 @@ function updateCommonHud() {
       button.querySelector('small')!.textContent = catalytic ? '直伤≤8 · 1/细胞引爆' : combat ? `聚拢 ${combat.areaGatherRadius} · ${combat.areaGuideDuration ? '可按住导流' : '延迟爆发'}` : '聚拢 · 延迟爆发';
       if (s.traction) button.querySelector('small')!.textContent = s.traction.stage === 'guiding' ? '拖动鼠标 · 松手引爆' : s.traction.stage === 'aiming' ? '按住导流 / 轻点快放' : '聚拢中 · 即将爆发';
     }
+    if (touchMode) button.querySelector('strong')!.textContent = tool === 2 && (combat?.catalysisDamage ?? 0) > 0 ? '催化' : touchToolLabels[index];
   });
   document.querySelector('.micro-footer')!.textContent = s.endless ? 'v0.9.0 · 连续进化挑战 / 微观绘本' : `v0.9.0 · ${s.battle ? '器官联防' : '基础训练'} / 微观绘本`;
   document.querySelectorAll<HTMLButtonElement>('[data-action="sound"]').forEach(button => { button.textContent = `声音 ${sound.enabled?'开':'关'}`; });
@@ -360,16 +474,17 @@ function updateCommonHud() {
 }
 let lastHud = 0;
 let lastFrame: number | undefined;
+let lastTouchPreviewActive = false;
 const cameraFollowPolicy = new CameraFollowPolicy();
 let lastClockRevision = clock.revision;
 function frame(now: number) {
+  syncTouchOrientation();
   // Input is projected through the same camera that produced the last visible frame.
-  const aim = renderer.camera.screenToWorld(input.pointer);
   const stepPositions: { x: number; y: number }[] = [];
   clock.advance(now, dt => {
     stepPositions.push({ x: session.state.player.x, y: session.state.player.y });
     motion.step(session.state, () => {
-      session.step(input.frame(aim), dt);
+      session.step(input.frame(input.getAim(session.state, point => renderer.camera.screenToWorld(point))), dt);
       renderer.witnessSimulation(session.state);
     });
     stepPositions.push({ x: session.state.player.x, y: session.state.player.y });
@@ -385,14 +500,109 @@ function frame(now: number) {
   const cameraScope = `${session.state.seed}:${session.state.runMetrics?.runId ?? session.state.growth?.runId ?? ''}:${session.state.battle?.organId ?? 'training'}`;
   const dt = lastFrame === undefined ? 0 : Math.max(0, (now - lastFrame) / 1000);
   const cameraDecision = cameraFollowPolicy.next(cameraScope, session.state.phase, session.state.player, dt, clock.discontinuity, stepPositions);
-  if (!cameraDecision.hold) renderer.prepareCamera(presentedState, { deltaSeconds: dt, snap: cameraDecision.snap });
+  const framing = touchMode ? input.resolvePreview(presentedState, point => renderer.camera.screenToWorld(point)) : undefined;
+  if (!cameraDecision.hold) renderer.prepareCamera(presentedState, { deltaSeconds: dt, snap: cameraDecision.snap,
+    ...(framing && !framing.cancelled ? { aim: framing.aim, viewport: mobileAimViewport } : {}) });
   lastFrame = now;
-  renderer.render(presentedState, renderer.camera.screenToWorld(input.pointer), { lowEffects, cameraPrepared: true, authoritativeState: session.state });
+  const touchPresentation = input.getPresentation(presentedState, point => renderer.camera.screenToWorld(point));
+  updateTouchSkillPreview(touchPresentation.preview);
+  // The preview label follows every displayed frame; include its current box,
+  // and newly shown cancel/guide areas, before placing world labels this frame.
+  if (touchMode && (touchPresentation.preview || lastTouchPreviewActive)) refreshHudRects();
+  lastTouchPreviewActive = !!touchPresentation.preview;
+  // A skill wheel can preview another tool without selecting or firing it in
+  // the simulation. The authoritative input changes only on a real commit.
+  renderer.render(touchPresentation.preview ? { ...presentedState, tool: touchPresentation.tool } : presentedState,
+    touchPresentation.aim, { lowEffects, cameraPrepared: true,
+      authoritativeState: touchPresentation.preview ? { ...session.state, tool: touchPresentation.tool } : session.state,
+      aimRange: touchPresentation.preview?.range, aimCancelled: touchPresentation.preview?.cancelled });
   sound.update(session.state);
   updateOverlay();
+  decorateTouchOverlay();
   if (now-lastHud > 50) { updateHud(); lastHud=now; }
 }
-window.addEventListener('resize', () => { motion.reset(); cameraFollowPolicy.reset(); presentedState = session.state; renderer.resize(); renderer.prepareCamera(session.state); refreshHudRects(); clock.reset(); });
+function syncControlLayout(): boolean {
+  const next = readTouchLayout();
+  if (next === touchMode) return false;
+  input.clear(); if (session.state.phase === 'playing') session.pause();
+  // Return the real map/status panels before the desktop HUD becomes visible.
+  setMobileDetailsOpen(false); mobileDetailsOpen = false; resumeAfterMobileDetails = false;
+  for (const [node, record] of adaptedTouchText) if (node.nodeValue === record.adapted) node.nodeValue = record.original;
+  adaptedTouchText.clear();
+  touchMode = next; applyControlLayout();
+  mobileAimViewport = undefined; lastTouchPreviewActive = false;
+  handledTouchButton = undefined; handledTouchAt = 0;
+  overlayKey = ''; delete el('overlay-host').dataset.touchDecorated;
+  updateTouchSkillPreview(undefined);
+  return true;
+}
+function resizeViewport(): void {
+  const changed = syncControlLayout();
+  syncTouchOrientation(); motion.reset(); cameraFollowPolicy.reset(); presentedState = session.state;
+  renderer.resize();
+  if (changed) { updateOverlay(); decorateTouchOverlay(); updateHud(); }
+  refreshMobileAimViewport(); renderer.prepareCamera(session.state); refreshHudRects(); clock.reset();
+}
+window.addEventListener('resize', resizeViewport);
+window.visualViewport?.addEventListener('resize', resizeViewport);
+coarsePointer.addEventListener('change', resizeViewport);
+window.addEventListener('orientationchange', () => {
+  if (!touchMode) return;
+  input.clear(); if (session.state.phase === 'playing') session.pause();
+  resizeViewport();
+});
+window.addEventListener('pagehide', () => { input.clear(); if (session.state.phase === 'playing') session.pause(); clock.reset(); });
+function decorateTouchOverlay(): void {
+  if (!touchMode) return;
+  const host = el('overlay-host');
+  if (!host.firstElementChild || host.dataset.touchDecorated === overlayKey) return;
+  host.dataset.touchDecorated = overlayKey;
+  if (help) {
+    const grid = host.querySelector('.help-grid');
+    if (grid) grid.innerHTML = '<div>左摇杆移动，右下大圆盘按住净化、拖动瞄准</div><div>裂解 / 修复 / 免疫：按下预览，拖动瞄准，松手施放</div><div>拖入 × 区域再松手，取消这次技能</div><div>点战场保留精确落点，再轻点技能也可施放</div><div>解锁导流后，裂解瞄准时拖入 ✓ 圈确认，再拖动引导，松手引爆</div><div>右侧小键冲刺 / 抗体；靠近装置点击交互，治疗点用修复</div>';
+  }
+  adaptTouchText(host);
+  host.querySelectorAll('.intro-footnote').forEach(node => { node.textContent = '触屏 v3 候选 · 待 iPhone 复测 · 左杆移动 / 右侧技能轮盘 · 完全离线'; });
+}
+function updateTouchSkillPreview(preview: SkillPresentation | undefined): void {
+  const host = document.getElementById('mobile-skill-preview');
+  if (!host) return;
+  host.hidden = !touchMode || !preview || session.state.phase !== 'playing';
+  if (!preview || host.hidden) return;
+  if (!host.firstElementChild) host.innerHTML = '<div class="mobile-preview-range"></div><div class="mobile-preview-ray"></div><div class="mobile-preview-target"></div><span class="mobile-preview-label"></span>';
+  host.dataset.kind = String(preview.kind); host.dataset.cancelled = String(preview.cancelled);
+  const origin = renderer.camera.worldToScreen(presentedState.player), aim = renderer.camera.worldToScreen(preview.aim), scale = renderer.camera.scale;
+  const position = (selector: string, point: { x: number; y: number }, radius: number) => {
+    const element = host.querySelector<HTMLElement>(selector)!;
+    element.style.left = `${point.x}px`; element.style.top = `${point.y}px`;
+    element.style.width = `${radius * scale * 2}px`; element.style.height = `${radius * scale * .72 * 2}px`;
+  };
+  position('.mobile-preview-range', origin, preview.range);
+  position('.mobile-preview-target', aim, preview.kind === 2 ? session.state.traction?.radius ?? BALANCE.areaRadius : 30);
+  const dx = aim.x - origin.x, dy = aim.y - origin.y, ray = host.querySelector<HTMLElement>('.mobile-preview-ray')!;
+  ray.style.left = `${origin.x}px`; ray.style.top = `${origin.y}px`; ray.style.width = `${Math.hypot(dx, dy)}px`; ray.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
+  const label = host.querySelector<HTMLElement>('.mobile-preview-label')!;
+  label.textContent = preview.cancelled ? '松手取消' : preview.phase === 'guiding' ? '导流中 · 松手引爆' : `松手${preview.kind === 2 ? '裂解' : preview.kind === 3 ? '修复' : '指挥'} · 拖至 × 取消`;
+  label.style.left = `${Math.max(90, Math.min(innerWidth - 150, aim.x))}px`;
+  const labelHeight = label.offsetHeight;
+  const labelY = aim.y - 24 - labelHeight >= mobilePreviewHeaderBottom ? aim.y - 24 : aim.y + labelHeight + 20;
+  label.style.top = `${Math.max(mobilePreviewHeaderBottom + labelHeight, Math.min(innerHeight - 8, labelY))}px`;
+}
+function adaptTouchText(root: HTMLElement): void {
+  for (const node of adaptedTouchText.keys()) if (!node.isConnected) adaptedTouchText.delete(node);
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+    if (node.parentElement?.closest('script,style,code')) continue;
+    if (node.nodeValue) {
+      const text = node as Text, previous = adaptedTouchText.get(text);
+      if (previous && text.nodeValue === previous.adapted) continue;
+      const original = text.nodeValue!, adapted = touchCopy(original);
+      if (adapted !== original) { adaptedTouchText.set(text, { original, adapted }); text.nodeValue = adapted; }
+    }
+  }
+}
+syncTouchOrientation();
 renderer.prepareCamera(session.state); updateOverlay(); updateHud();
 renderer.ready.then(() => {
   app.inert = false; app.removeAttribute('aria-busy');
@@ -410,5 +620,5 @@ Object.defineProperty(window, '__viral', { value: Object.freeze({
   version: '0.9.0-G4', snapshot: () => session.snapshot(),
   toScreen: (point: { x: number; y: number }) => renderer.camera.worldToScreen(point),
   toWorld: (point: { x: number; y: number }) => renderer.camera.screenToWorld(point),
-  diagnostics: () => renderer.diagnostics(session.state),
+  diagnostics: () => ({ ...renderer.diagnostics(session.state), touch: input.getPresentation(presentedState, point => renderer.camera.screenToWorld(point)) }),
 }), writable: false });

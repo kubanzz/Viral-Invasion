@@ -16,6 +16,8 @@ import type { EnemyTactic } from '../game/enemyTacticsTypes';
 import { activeWorld, BALANCE, type GameState } from '../game/types';
 import type { EndlessProfileData, EndlessProfileSnapshot, EndlessRunRecord } from '../meta/endlessProfile';
 import { choiceIconMarkup, endlessChoiceCopy } from './upgradeChoices';
+import { healingPoints } from '../game/healingPoints';
+import { healingPointInteractionHint } from './campaignHud';
 
 export type EndlessRecordView = EndlessProfileSnapshot | EndlessProfileData | EndlessRunRecord;
 const escape = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]!));
@@ -33,7 +35,7 @@ export function endlessRemaining(state: GameState): number {
 function abilityLines(state: GameState): string[] {
   const s = statsFor(state);
   const blade = dashBladeProfile(state.endlessGrowth?.ranks.dash ?? 0);
-  const guard = state.growth?.beacon?.guard && state.growth.beacon.until > state.elapsed;
+  const guard = activeGuardBeacons(state).length > 0;
   const guardUnlocked = (state.endlessGrowth?.ranks.immune ?? 0) >= IMMUNE_GUARD_BALANCE.minimumRank;
   return [
     `1 · ${s.shotRays} 束 × ${number(BALANCE.damage[1] * s.damageMultiplier)}伤害 · 贯穿 +${s.pierceCount} · ${number(s.primaryCooldown, 3)}s`,
@@ -44,6 +46,11 @@ function abilityLines(state: GameState): string[] {
   ];
 }
 const specialTactics = ['thin-ray', 'crystal-charge', 'fission-burst', 'mimic-corrosion'] as const;
+function activeGuardBeacons(state: GameState) {
+  return (state.growth?.beacons ?? (state.growth?.beacon ? [state.growth.beacon] : []))
+    .filter(beacon => beacon.guard && beacon.organId === state.battle?.organId && beacon.until > state.elapsed
+      && state.growth?.cells?.some(cell => cell.beaconId === beacon.id && cell.until > state.elapsed && (cell.hp ?? 1) > 0));
+}
 function tacticCopy(tactic: EnemyTactic): string {
   const info = ENEMY_TACTIC_INFO[tactic];
   return `${info.name}：${info.counter}${tactic === 'crystal-charge' ? '让开路线后反打。' : ''}`;
@@ -125,7 +132,7 @@ export function endlessHudMarkup(): string {
     <section class="endless-vitals" aria-label="救援体和组织状态"><div><span>救援体耐久</span><b id="endless-hp"></b></div><div class="meter"><i id="endless-hp-meter"></i></div>
       <div><span>组织完整度</span><b id="endless-tissue"></b></div><div class="meter"><i id="endless-tissue-meter"></i></div><p id="endless-pressure"></p><p id="endless-critical" role="status"></p></section>
     <section class="endless-build-panel"><strong id="endless-level">战斗进化 Lv.0</strong><div id="endless-abilities">${Array.from({ length: 4 }, (_, i) => `<p id="endless-ability-${i}"></p>`).join('')}</div><p id="endless-latest" class="endless-latest"></p></section>
-    <section class="endless-navigation"><strong>战场导航</strong><canvas id="endless-minimap" width="220" height="130" role="img" aria-label="连续挑战小地图：白三角为你，橙三角为组织袭击者，加号为组织，菱形为阀门，方框为增援源，圆点为敌群"></canvas><p>△ 你　▲ 袭击者　＋ 组织　□ 源</p><p id="endless-tissue-route"></p></section>
+    <section class="endless-navigation"><strong>战场导航</strong><canvas id="endless-minimap" width="220" height="130" role="img" aria-label="连续挑战小地图：白三角为你，橙三角为组织袭击者，加号为组织和治疗点，红色加号为已占领，菱形为阀门，方框为增援源，圆点为敌群"></canvas><p>△ 你　▲ 袭击者　＋ 治疗　□ 源</p><p id="endless-tissue-route"></p></section>
   </div>`;
 }
 
@@ -166,11 +173,15 @@ function drawMap(state: GameState): void {
   }
   const tissue = point(state.tissue); ctx.strokeStyle = '#b9f7cd'; ctx.lineWidth = 2.5;
   ctx.beginPath(); ctx.moveTo(tissue.x - 4, tissue.y); ctx.lineTo(tissue.x + 4, tissue.y); ctx.moveTo(tissue.x, tissue.y - 4); ctx.lineTo(tissue.x, tissue.y + 4); ctx.stroke();
-  const beacon = state.growth?.beacon;
-  if (beacon?.guard && beacon.until > state.elapsed) {
+  for (const node of healingPoints(state)) {
+    const p = point(node); ctx.strokeStyle = node.infection >= 100 ? '#f47f78' : node.infection > 0 ? '#e9bd61' : '#88ddcc'; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(p.x - 4, p.y); ctx.lineTo(p.x + 4, p.y); ctx.moveTo(p.x, p.y - 4); ctx.lineTo(p.x, p.y + 4); ctx.stroke();
+    if (node.infection > 0) { ctx.beginPath(); ctx.arc(p.x, p.y, 6, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * node.infection / 100); ctx.lineWidth = 1; ctx.stroke(); }
+  }
+  for (const beacon of activeGuardBeacons(state)) {
     const anchor = point(beacon); ctx.strokeStyle = '#8bf0dc'; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
-    ctx.beginPath(); ctx.ellipse(anchor.x, anchor.y, beacon.guard.radius * sx, beacon.guard.radius * sy, 0, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
-    for (const cell of state.growth?.cells ?? []) if (cell.beaconId === beacon.id && cell.until > state.elapsed) {
+    ctx.beginPath(); ctx.ellipse(anchor.x, anchor.y, beacon.guard!.radius * sx, beacon.guard!.radius * sy, 0, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
+    for (const cell of state.growth?.cells ?? []) if (cell.beaconId === beacon.id && cell.until > state.elapsed && (cell.hp ?? 1) > 0) {
       const p = point(cell); ctx.fillStyle = '#8bf0dc'; ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI * 2); ctx.fill();
     }
   }
@@ -213,10 +224,10 @@ export function updateEndlessHud(state: GameState): void {
   text('endless-latest', latest ? `最近获得 · ${latest.title}：${latest.description}` : '清除第 1 波即可三选一：扇射、免疫与更多机制。');
   const latestNode = document.getElementById('endless-latest'); if (latestNode) latestNode.title = latest?.description ?? '';
   const dx = state.tissue.x - state.player.x, dy = state.tissue.y - state.player.y;
-  const beacon = state.growth?.beacon;
-  const guard = beacon?.guard && beacon.until > state.elapsed
-    ? `细胞驻防 ${state.growth?.cells?.filter(cell => cell.beaconId === beacon.id && cell.until > state.elapsed).length ?? 0}只 · ${number(beacon.until - state.elapsed)}s；` : '';
-  text('endless-tissue-route', guard + (Math.hypot(dx, dy) < 100 ? '已在组织附近 · 3 瞄准十字节点抢修' : `组织在${dy < -60 ? '北' : dy > 60 ? '南' : ''}${dx < -60 ? '西' : dx > 60 ? '东' : ''}侧 · ${Math.round(Math.hypot(dx, dy))}m`));
+  const guards = activeGuardBeacons(state), guardIds = new Set(guards.map(beacon => beacon.id));
+  const guardCount = state.growth?.cells?.filter(cell => guardIds.has(cell.beaconId) && cell.until > state.elapsed && (cell.hp ?? 1) > 0).length ?? 0;
+  const guard = guards.length ? `细胞驻防 ${guardCount}只 · ${guards.some(beacon => !Number.isFinite(beacon.until)) ? '持续驻防，可被击杀' : `${number(Math.max(...guards.map(beacon => beacon.until)) - state.elapsed)}s`}；` : '';
+  text('endless-tissue-route', healingPointInteractionHint(state) ?? (guard + (Math.hypot(dx, dy) < 100 ? '已在组织附近 · 3 瞄准十字节点抢修' : `组织在${dy < -60 ? '北' : dy > 60 ? '南' : ''}${dx < -60 ? '西' : dx > 60 ? '东' : ''}侧 · ${Math.round(Math.hypot(dx, dy))}m`)));
   drawMap(state);
 }
 
@@ -230,7 +241,7 @@ function buildSummary(state: GameState): string {
     <dl><dt>精确净化</dt><dd>${stats.shotRays}束 × ${number(BALANCE.damage[1] * stats.damageMultiplier)}伤害 · 每束额外贯穿${stats.pierceCount}体 · 间隔${number(stats.primaryCooldown, 3)}s</dd>
     <dt>${stats.catalysisDamage > 0 ? '催化牵引' : '牵引裂解'}</dt><dd>${catalysisToolCopy(stats)?.detail ?? `聚拢${number(stats.areaGatherRadius)}→爆心${number(stats.areaRadius)} · ${number(BALANCE.damage[2] * stats.damageMultiplier * stats.areaDamageMultiplier)}伤害`} · 射程${TRACTION_BALANCE.range} · 延迟${TRACTION_BALANCE.fuse}s · 冷却${number(stats.areaCooldown, 2)}s</dd>
     <dt>冲刺 / Q爆发</dt><dd>${number(stats.dashDamage * stats.damageMultiplier)} / ${number(stats.scanDamage * stats.damageMultiplier)}伤害（0表示未解锁）</dd>
-    <dt>免疫与耐久</dt><dd>细胞伤害×${number(stats.cellDamageMultiplier * stats.damageMultiplier, 2)} · 寿命+${number(stats.cellDurationBonus, 2)}s · 小队冷却×${number(stats.cellCooldownMultiplier, 2)} · Q ${number(stats.scanCooldown, 2)}s · 最大耐久${stats.maxHp}</dd></dl>
+    <dt>免疫与耐久</dt><dd>细胞伤害×${number(stats.cellDamageMultiplier * stats.damageMultiplier, 2)} · 军团持续存在，可被击杀 · 最多2团 · 小队冷却×${number(stats.cellCooldownMultiplier, 2)} · Q ${number(stats.scanCooldown, 2)}s · 最大耐久${stats.maxHp}</dd></dl>
     ${growth?.lastChoice ? `<p class="endless-latest">最近获得 · ${escape(growth.lastChoice.title)}：${escape(growth.lastChoice.description)}</p>` : ''}</div>`;
 }
 
@@ -251,10 +262,10 @@ export function endlessOverlay(state: GameState, help: boolean, lowEffects: bool
     <p><strong>病毒的离体攻击。</strong>第5波精英首次携带弹囊；第6波起压力分队可向组织释放，第15波后出现途中分叉的母囊。携带者施法或死亡只消费同一份库存；杀宿主不会消除已经离体的弹囊。预警后沿锁定方向飞行，可用1射落、2爆破、挥斩或真实细胞接触拦截；也可侧移、借墙。先击落母囊可阻止分叉。弹囊击落不提供病毒击杀分或经验，收割波不新增携带者。</p>
     <p><strong>顶住压力，再进化收割。</strong>每5波为一轮：第1、3波是压力关，第2、4波是更密集但单体更脆的收割关，第5波迎战精英。新一轮敌体更强，上一轮取得的成长仍然保留；波次与难度固定，不因你的输出临时追平。</p>
     <p><strong>远侧增援源 · 可选截断路线。</strong>第6、11、16……波会预告地图上的□增援源，最多关联6体有限普通增援。你可以先处理近敌或抢修，再外出提前拆源；基础工具与实际细胞咬击都可清除，尚未出生的关联普通体才会被截断，已出生敌体与裂殖小体仍要处理。截断的增援不计击杀分或连击；保留敌群可争取真实击杀分，整波进化照常获得。配额用完后源会枯竭，不必再跑过去补刀，也不会额外发放击杀或经验。</p>
-    <p><strong>压力波要保护组织。</strong>第6波起，压力波中有2只普通体以＋组织为目标，小地图用橙色▲指出它们。它们占原来的有限普通槽，不会因为你外出而消失；仍可射杀、用2聚拢或用细胞拦截。收割波不新增这类分队。免疫军团达到${IMMUNE_GUARD_BALANCE.minimumRank}阶且装备免疫灯塔后，在${IMMUNE_GUARD_BALANCE.commandRange}范围内Q瞄准＋组织可驻防：细胞实际行走到组织周围${IMMUNE_GUARD_BALANCE.radius}范围，优先吞噬组织袭击者，你可以外出处理□源。它们仍有原寿命和咬击冷却；再次Q指敌或空地可转回进攻。</p>
-    <p><strong>每次清波三选一。</strong>战斗进化会立即改变真实攻击：更多射线、贯穿、扩大裂解、冲刺斩、Q爆发、免疫军团、耐久与射速；选项会写明本次前后数值。每5波精英突破时，所选成长最多连升两阶，受路线阶数上限限制。战斗进化可持续获得，已达到机制上限的项目会退出选池，数值成长仍会继续。左下原协议与这些强化同时生效。</p>
+    <p><strong>压力波要保护组织。</strong>第6波起，压力波中有2只普通体以＋组织为目标，小地图用橙色▲指出它们。它们占原来的有限普通槽，不会因为你外出而消失；仍可射杀、用2聚拢或用细胞拦截。收割波不新增这类分队。免疫军团达到${IMMUNE_GUARD_BALANCE.minimumRank}阶且装备免疫灯塔后，在${IMMUNE_GUARD_BALANCE.commandRange}范围内Q瞄准＋组织可驻防：细胞实际行走到组织周围${IMMUNE_GUARD_BALANCE.radius}范围，优先吞噬组织袭击者，你可以外出处理□源。它们会持续驻防，具有生命值，可被病毒击杀；再次Q指敌或空地可转回进攻。</p>
+    <p><strong>治疗点争夺。</strong>地图新增两处＋治疗点。病毒靠近约12秒可占领，围攻会加快感染；占满前靠近150范围内，用3瞄准治疗点点击即可免费清除感染并恢复25耐久，设施冷却4秒。占满后需要2研究样本夺回；原有十字组织仍用于器官抢修。</p><p><strong>每次清波三选一。</strong>战斗进化会立即改变真实攻击：更多射线、贯穿、扩大裂解、冲刺斩、Q爆发、免疫军团、耐久与射速；选项会写明本次前后数值。每5波精英突破时，所选成长最多连升两阶，受路线阶数上限限制。战斗进化可持续获得，已达到机制上限的项目会退出选池，数值成长仍会继续。左下原协议与这些强化同时生效。</p>
     <p><strong>催化裂解 · 可选改造。</strong>第6次成长起，已有新星Ⅰ或免疫军团Ⅰ可抽到。选后保留2的牵引和导流，普通爆发转换为最多8直伤及最多3体、4秒的催化标记；随后用1命中任一标记体，或让真实细胞接触咬击，整批兑现一次110半径爆发，最多伤及3体。有效再铺会覆盖旧批；不用这张卡可保留原牵引爆破。</p>
-    <p><strong>Q 不只是扫描。</strong>Q 就绪时，准星对准敌体可下达短时围猎指令，小队从原位短时加速集结；指空地则区域部署。细胞会实际移动并吞噬，必须赶到接触范围才咬击；指定目标结束后恢复自动选敌。小队仍在且召集冷却中时，Q 就绪后再按 Q 改指挥点；不续命、不重置咬击冷却、不额外耗组织。免疫军团强化伤害、持续和召集效率。</p>
+    <p><strong>Q 不只是扫描。</strong>Q 就绪时，准星对准敌体可下达短时围猎指令，小队从原位短时加速集结；指空地则区域部署。细胞会实际移动并吞噬，必须赶到接触范围才咬击；指定目标结束后恢复自动选敌。小队仍在且召集冷却中时，Q 就绪后再按 Q 改指挥点；不重置咬击冷却、不额外耗组织。最多部署两个军团，细胞持续存在但可被击杀；免疫军团强化数量、伤害和召集效率。</p>
     <p><strong>读编队，换打法。</strong>正面双潮、交叉夹击、聚群猎场与侧翼点射会改变接敌方向与节奏。第16波起三名支援混用已见过的招式，第30波起四名，分批入场。轻型支援随轮次成长，无精英被动特性；精英仍有其变异。重型招式同类最多一体起手，总并发最多三体。</p>
     <p><strong>第20波起，病毒也会换代。</strong>每5波参考近期有效行动，轻度调整下一代变异倾向。提前8秒读进化预警，查看两项变异的能力、代价与基础反制。该波第一只精英兼具本代两项变异，按“主招→恢复→伴招→恢复”交替；第30波起的第二只精英仍单招。看清前摇，侧闪冲锋、离开双圈、Q打断侵蚀，利用恢复窗口清除。牵引不搬动已经锁定的攻击；击杀施法者后仍要处理已离体弹囊。</p>
     <p>${specialTactics.map(tactic => `<strong>${escape(ENEMY_TACTIC_INFO[tactic].name)}</strong> · ${escape(ENEMY_TACTIC_INFO[tactic].counter)}${tactic === 'crystal-charge' ? '让开路线后反打。' : ''}`).join('<br>')}</p>

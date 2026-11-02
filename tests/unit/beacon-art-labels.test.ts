@@ -26,12 +26,26 @@ function fixture() {
 }
 
 describe('native beacon body-free information', () => {
+  it('labels both permanent legions at their own anchors and excludes dead members', () => {
+    const f = fixture(), growth = f.state.growth!, visuals = new GrowthVisuals();
+    const first = { ...growth.beacon!, until: Infinity }, second = { ...first, id: 'other', x: 800 };
+    growth.beacons = [first, second]; growth.beacon = second;
+    growth.cells!.find(cell => cell.id === 'two')!.hp = 0;
+    const before = structuredClone(f.state);
+    visuals.drawBeaconLabel(f.ctx, f.state, growth, f.sink, first.id);
+    visuals.drawBeaconLabel(f.ctx, f.state, growth, f.sink, second.id);
+    expect(f.labels.map(item => ({ anchor: item.anchor, text: item.lines[0].text }))).toEqual([
+      { anchor: first, text: '✚ 免疫军团 ×1 · 常驻' }, { anchor: second, text: '✚ 免疫军团 ×1 · 常驻' },
+    ]);
+    expect(f.calls).toEqual([]); expect(f.state).toEqual(before);
+  });
+
   it('reports real active squad membership and remaining lifetime without issuing body drawing operations', () => {
     const f = fixture(), before = JSON.stringify(f.state), visuals = new GrowthVisuals();
     visuals.drawBeaconLabel(f.ctx, f.state, f.state.growth, f.sink);
     expect(f.labels).toHaveLength(1);
     expect(f.labels[0]).toMatchObject({ id: 'squad:beacon', anchor: { x: 420, y: 400 }, offset: { x: 0, y: -59 },
-      lines: [{ text: '✚ 灯塔小队 ×2 · 4.0s' }] });
+      lines: [{ text: '✚ 免疫军团 ×2 · 4.0s' }] });
     expect(f.calls).toEqual([]); expect(f.ctx.globalAlpha).toBe(1); expect(JSON.stringify(f.state)).toBe(before);
   });
 

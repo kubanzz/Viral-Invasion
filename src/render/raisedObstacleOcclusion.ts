@@ -1,3 +1,4 @@
+import { immuneLegions } from '../game/immuneLegions';
 import { activeWorld, type GameState, type Target, type Vec } from '../game/types';
 import type { TraitId } from '../game/battleTypes';
 import { traceVirusOutline } from './battleVisuals';
@@ -93,7 +94,7 @@ export function immuneVisualBounds(cell: ImmuneCellState, elapsed: number): Visu
 }
 
 /** Compute each nearby actor once per rendered frame, rather than per obstacle. */
-export function getRaisedActorBodies(state: GameState, art?: { player?: VisualBounds; targets?: ReadonlyMap<string, VisualBounds>; immune?: ReadonlyMap<string, VisualBounds>; beacon?: VisualBounds }): RaisedActorBody[] {
+export function getRaisedActorBodies(state: GameState, art?: { player?: VisualBounds; targets?: ReadonlyMap<string, VisualBounds>; immune?: ReadonlyMap<string, VisualBounds>; beacon?: VisualBounds; beacons?: ReadonlyMap<string, VisualBounds> }): RaisedActorBody[] {
   const organ = state.battle?.organId === 'lung' ? 'lung' : 'heart';
   const obstacles = activeWorld(state).obstacles.map(obstacle => ({ obstacle, ...projectedRaisedObstacle(obstacle, organ) }));
   const relevant = (groundY: number, bounds: VisualBounds) => obstacles.some(shape => groundY <= shape.obstacle.y && boundsOverlap(bounds, shape.upperBounds));
@@ -101,7 +102,7 @@ export function getRaisedActorBodies(state: GameState, art?: { player?: VisualBo
   if (state.player.hp > 0) { const bodyBounds = art?.player ?? playerVisualBounds(state); if (relevant(state.player.y, bodyBounds)) result.push({ id: 'player', kind: 'player', groundY: state.player.y, bodyBounds }); }
   for (const target of state.targets) if (target.hp > 0 || art?.targets?.has(target.id)) { const bodyBounds = art?.targets?.get(target.id) ?? targetVisualBounds(target, state); if (relevant(target.y, bodyBounds)) result.push({ id: target.id, kind: 'target', groundY: target.y, bodyBounds }); }
   for (const cell of state.growth?.cells ?? []) {
-    if (cell.organId !== state.battle?.organId || cell.until <= state.elapsed || cell.born >= state.elapsed) continue;
+    if (cell.organId !== state.battle?.organId || cell.until <= state.elapsed || cell.born >= state.elapsed || (cell.hp ?? 1) <= 0) continue;
     const nativeBounds = art?.immune?.get(cell.id);
     if (nativeBounds) {
       if (relevant(cell.y, nativeBounds)) result.push({ id: cell.id, kind: 'immune', groundY: cell.y, bodyBounds: nativeBounds });
@@ -114,9 +115,11 @@ export function getRaisedActorBodies(state: GameState, art?: { player?: VisualBo
     const bodyBounds = immuneVisualBounds(cell, state.elapsed);
     result.push({ id: cell.id, kind: 'immune', groundY: cell.y, bodyBounds });
   }
-  const beacon = state.growth?.beacon;
-  if (art?.beacon && beacon && beacon.mode !== 'patrol' && beacon.organId === state.battle?.organId && beacon.until > state.elapsed
-    && relevant(beacon.y, art.beacon)) result.push({ id: beacon.id, kind: 'beacon', groundY: beacon.y, bodyBounds: art.beacon });
+  for (const beacon of immuneLegions(state.growth)) {
+    const bounds = art?.beacons?.get(beacon.id) ?? (beacon.id === state.growth?.beacon?.id ? art?.beacon : undefined);
+    if (bounds && beacon.mode !== 'patrol' && beacon.organId === state.battle?.organId && beacon.until > state.elapsed
+      && relevant(beacon.y, bounds)) result.push({ id: beacon.id, kind: 'beacon', groundY: beacon.y, bodyBounds: bounds });
+  }
   return result;
 }
 

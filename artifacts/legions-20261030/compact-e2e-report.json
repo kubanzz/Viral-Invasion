@@ -1,0 +1,351 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/e2e/compact-hud.spec.ts",
+      "--project=chrome",
+      "--workers=1"
+    ],
+    "configFile": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\playwright.config.ts",
+    "rootDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/legions-20261030/compact-e2e-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chrome",
+        "name": "chrome",
+        "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/legions-20261030/compact-e2e-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "edge",
+        "name": "edge",
+        "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\legions-20261030\\compact-e2e-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "chrome",
+        "testDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
+        "snapshotDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 90000,
+        "use": {
+          "browserName": "chromium",
+          "headless": true,
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "deviceScaleFactor": 1,
+          "actionTimeout": 8000,
+          "screenshot": "only-on-failure",
+          "video": "off",
+          "trace": "off",
+          "channel": "chrome"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "chrome"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/legions-20261030/compact-e2e-report.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "artifacts/legions-20261030/compact-e2e-html",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "compact-hud.spec.ts",
+      "file": "compact-hud.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "battle controls stay readable at 360x640",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1924,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-29T16:30:31.776Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c919f46921c25e29d585-c08a686927f8e1c8f4a3",
+          "file": "compact-hud.spec.ts",
+          "line": 8,
+          "column": 3
+        },
+        {
+          "title": "battle controls stay readable at 480x600",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 1277,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\compact-hud.spec.ts:52:47",
+                    "location": {
+                      "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\compact-hud.spec.ts",
+                      "column": 47,
+                      "line": 52
+                    },
+                    "snippet": "  50 |       expect(crisisBox!.x).toBeGreaterThanOrEqual(0);\n  51 |       expect(crisisBox!.x + crisisBox!.width).toBeLessThanOrEqual(size.width);\n> 52 |       expect(overlap(telemetryBox!, mapBox!)).toBe(false);\n     |                                               ^\n  53 |     }\n  54 |   });\n  55 | }"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\compact-hud.spec.ts",
+                        "column": 47,
+                        "line": 52
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m\n\n  50 |       expect(crisisBox!.x).toBeGreaterThanOrEqual(0);\n  51 |       expect(crisisBox!.x + crisisBox!.width).toBeLessThanOrEqual(size.width);\n> 52 |       expect(overlap(telemetryBox!, mapBox!)).toBe(false);\n     |                                               ^\n  53 |     }\n  54 |   });\n  55 | }\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\compact-hud.spec.ts:52:47"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-29T16:30:34.130Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\legions-20261030\\compact-e2e-output\\compact-hud-battle-controls-stay-readable-at-480x600-chrome\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\legions-20261030\\compact-e2e-output\\compact-hud-battle-controls-stay-readable-at-480x600-chrome\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\compact-hud.spec.ts",
+                    "column": 47,
+                    "line": 52
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "c919f46921c25e29d585-62bc51947ce550171638",
+          "file": "compact-hud.spec.ts",
+          "line": 8,
+          "column": 3
+        },
+        {
+          "title": "battle controls stay readable at 684x880",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1991,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-29T16:30:36.186Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c919f46921c25e29d585-a4305c50e247b3121d1f",
+          "file": "compact-hud.spec.ts",
+          "line": 8,
+          "column": 3
+        },
+        {
+          "title": "battle controls stay readable at 684x600",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1129,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-29T16:30:38.615Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c919f46921c25e29d585-1b2e20362f0d7274741c",
+          "file": "compact-hud.spec.ts",
+          "line": 8,
+          "column": 3
+        },
+        {
+          "title": "battle controls stay readable at 1280x720",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1390,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-29T16:30:39.758Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c919f46921c25e29d585-ee4839313149651ccf86",
+          "file": "compact-hud.spec.ts",
+          "line": 8,
+          "column": 3
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-29T16:30:31.206Z",
+    "duration": 10292.445,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

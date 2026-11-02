@@ -1,0 +1,471 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/e2e/camera-pause-continuity.spec.ts",
+      "tests/e2e/dynamic-raster-refresh.spec.ts",
+      "tests/e2e/slow-frame-camera.spec.ts",
+      "--project=chrome",
+      "--project=edge"
+    ],
+    "configFile": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\playwright.config.ts",
+    "rootDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/mobile-moba-20261101/desktop-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chrome",
+        "name": "chrome",
+        "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/mobile-moba-20261101/desktop-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "edge",
+        "name": "edge",
+        "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\mobile-moba-20261101\\desktop-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "chrome",
+        "testDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
+        "snapshotDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 90000,
+        "use": {
+          "browserName": "chromium",
+          "headless": true,
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "deviceScaleFactor": 1,
+          "actionTimeout": 8000,
+          "screenshot": "only-on-failure",
+          "video": "off",
+          "trace": "off",
+          "channel": "chrome"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "chrome"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\mobile-moba-20261101\\desktop-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "edge",
+        "testDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
+        "snapshotDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 90000,
+        "use": {
+          "browserName": "chromium",
+          "headless": true,
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "deviceScaleFactor": 1,
+          "actionTimeout": 8000,
+          "screenshot": "only-on-failure",
+          "video": "off",
+          "trace": "off",
+          "channel": "msedge"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "edge"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/mobile-moba-20261101/desktop-report.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "artifacts/mobile-moba-20261101/desktop-html",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "camera-pause-continuity.spec.ts",
+      "file": "camera-pause-continuity.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "moving camera holds its displayed view on pause and resumes smoothly",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3263,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T23:41:12.096Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "db3352b7e500be5fe9ea-8dce44acbff03874be3e",
+          "file": "camera-pause-continuity.spec.ts",
+          "line": 8,
+          "column": 1
+        },
+        {
+          "title": "moving camera holds its displayed view on pause and resumes smoothly",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "edge",
+              "projectName": "edge",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3158,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T23:41:32.630Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "db3352b7e500be5fe9ea-7c0daaad068df60ab778",
+          "file": "camera-pause-continuity.spec.ts",
+          "line": 8,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "dynamic-raster-refresh.spec.ts",
+      "file": "dynamic-raster-refresh.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "world aim marker is repainted at its projected position after movement and resize",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 8649,
+                  "error": {
+                    "message": "Error: after-resize: cyan marker pixels added near 900,506\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m8\u001b[39m\nReceived:   \u001b[31m0\u001b[39m",
+                    "stack": "Error: after-resize: cyan marker pixels added near 900,506\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m8\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n    at inspect (D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\dynamic-raster-refresh.spec.ts:54:83)\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\dynamic-raster-refresh.spec.ts:66:19",
+                    "location": {
+                      "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\dynamic-raster-refresh.spec.ts",
+                      "column": 83,
+                      "line": 54
+                    },
+                    "snippet": "  52 |     }\n  53 |     // This is the rendered canvas, not a DOM marker or a simulation-only assertion.\n> 54 |     expect(added, `${name}: cyan marker pixels added near ${centerX},${centerY}`).toBeGreaterThan(8);\n     |                                                                                   ^\n  55 |     expect(Math.hypot(after.screen.x - before.screen.x, after.screen.y - before.screen.y)).toBeLessThan(1);\n  56 |     observations.push({ name, anchor, before, after, cyan, controlCyan, added, pixels: { width: pixels.width, height: pixels.height } });\n  57 |     return screen;"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\dynamic-raster-refresh.spec.ts",
+                        "column": 83,
+                        "line": 54
+                      },
+                      "message": "Error: after-resize: cyan marker pixels added near 900,506\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m8\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n\n  52 |     }\n  53 |     // This is the rendered canvas, not a DOM marker or a simulation-only assertion.\n> 54 |     expect(added, `${name}: cyan marker pixels added near ${centerX},${centerY}`).toBeGreaterThan(8);\n     |                                                                                   ^\n  55 |     expect(Math.hypot(after.screen.x - before.screen.x, after.screen.y - before.screen.y)).toBeLessThan(1);\n  56 |     observations.push({ name, anchor, before, after, cyan, controlCyan, added, pixels: { width: pixels.width, height: pixels.height } });\n  57 |     return screen;\n    at inspect (D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\dynamic-raster-refresh.spec.ts:54:83)\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\dynamic-raster-refresh.spec.ts:66:19"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T23:41:15.896Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\mobile-moba-20261101\\desktop-results\\dynamic-raster-refresh-wor-74bc2-n-after-movement-and-resize-chrome\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\mobile-moba-20261101\\desktop-results\\dynamic-raster-refresh-wor-74bc2-n-after-movement-and-resize-chrome\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\dynamic-raster-refresh.spec.ts",
+                    "column": 83,
+                    "line": 54
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e2b482d90ca277201c7b-11f19fa4f52643627161",
+          "file": "dynamic-raster-refresh.spec.ts",
+          "line": 10,
+          "column": 1
+        },
+        {
+          "title": "world aim marker is repainted at its projected position after movement and resize",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "edge",
+              "projectName": "edge",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 8846,
+                  "error": {
+                    "message": "Error: after-resize: cyan marker pixels added near 905,506\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m8\u001b[39m\nReceived:   \u001b[31m0\u001b[39m",
+                    "stack": "Error: after-resize: cyan marker pixels added near 905,506\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m8\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n    at inspect (D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\dynamic-raster-refresh.spec.ts:54:83)\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\dynamic-raster-refresh.spec.ts:66:19",
+                    "location": {
+                      "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\dynamic-raster-refresh.spec.ts",
+                      "column": 83,
+                      "line": 54
+                    },
+                    "snippet": "  52 |     }\n  53 |     // This is the rendered canvas, not a DOM marker or a simulation-only assertion.\n> 54 |     expect(added, `${name}: cyan marker pixels added near ${centerX},${centerY}`).toBeGreaterThan(8);\n     |                                                                                   ^\n  55 |     expect(Math.hypot(after.screen.x - before.screen.x, after.screen.y - before.screen.y)).toBeLessThan(1);\n  56 |     observations.push({ name, anchor, before, after, cyan, controlCyan, added, pixels: { width: pixels.width, height: pixels.height } });\n  57 |     return screen;"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\dynamic-raster-refresh.spec.ts",
+                        "column": 83,
+                        "line": 54
+                      },
+                      "message": "Error: after-resize: cyan marker pixels added near 905,506\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeGreaterThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: > \u001b[32m8\u001b[39m\nReceived:   \u001b[31m0\u001b[39m\n\n  52 |     }\n  53 |     // This is the rendered canvas, not a DOM marker or a simulation-only assertion.\n> 54 |     expect(added, `${name}: cyan marker pixels added near ${centerX},${centerY}`).toBeGreaterThan(8);\n     |                                                                                   ^\n  55 |     expect(Math.hypot(after.screen.x - before.screen.x, after.screen.y - before.screen.y)).toBeLessThan(1);\n  56 |     observations.push({ name, anchor, before, after, cyan, controlCyan, added, pixels: { width: pixels.width, height: pixels.height } });\n  57 |     return screen;\n    at inspect (D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\dynamic-raster-refresh.spec.ts:54:83)\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\dynamic-raster-refresh.spec.ts:66:19"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T23:41:36.563Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\mobile-moba-20261101\\desktop-results\\dynamic-raster-refresh-wor-74bc2-n-after-movement-and-resize-edge\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\mobile-moba-20261101\\desktop-results\\dynamic-raster-refresh-wor-74bc2-n-after-movement-and-resize-edge\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\dynamic-raster-refresh.spec.ts",
+                    "column": 83,
+                    "line": 54
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "e2b482d90ca277201c7b-758f8c5a5bbadc67e15a",
+          "file": "dynamic-raster-refresh.spec.ts",
+          "line": 10,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "slow-frame-camera.spec.ts",
+      "file": "slow-frame-camera.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "camera follows real dash steps and pointer input at controlled low frame rate",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5583,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T23:41:25.463Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c235d14f41a057e2b4b1-705b0e0fe8cf697786e2",
+          "file": "slow-frame-camera.spec.ts",
+          "line": 9,
+          "column": 1
+        },
+        {
+          "title": "camera follows real dash steps and pointer input at controlled low frame rate",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "edge",
+              "projectName": "edge",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5782,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T23:41:46.552Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "c235d14f41a057e2b4b1-edce1e312600242439c0",
+          "file": "slow-frame-camera.spec.ts",
+          "line": 9,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-31T23:41:11.431Z",
+    "duration": 41892.588,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

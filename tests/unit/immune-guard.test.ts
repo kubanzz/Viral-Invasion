@@ -41,12 +41,12 @@ describe('immune III tissue guard is a real Q operation', () => {
     expect(patrol.state.cells).toHaveLength(1);
   });
 
-  it('accepts a 650 guard order but births the same three units only at the wall-clipped 420 deployment point', () => {
+  it('accepts a 650 guard order but births five upgraded units only at the wall-clipped 420 deployment point', () => {
     const controller = new GrowthController(71); controller.state.equipped = [{ id: 'IMMUNE_BEACON', tuning: 'balanced' }];
     const context = ctx({ player: { x: 500, y: 100 } }); controller.onScan(context);
     const origin = controller.state.beacon!;
     expect(origin).toMatchObject({ x: 500, y: 750, guard: { kind: 'tissue', radius: 300 }, deploymentOrigin: { x: 500, y: 520 } });
-    expect(controller.state.cells).toHaveLength(3);
+    expect(controller.state.cells).toHaveLength(5);
     for (const cell of controller.state.cells!) {
       expect(distance(cell, context.player)).toBeLessThanOrEqual(GROWTH_BALANCE.beaconPlacementRange + 30);
       expect(distance(cell, context.tissue)).toBeGreaterThan(150);
@@ -66,7 +66,8 @@ describe('immune III tissue guard is a real Q operation', () => {
     expect(state.message).toContain('组织驻防指令已受理');
     const assigned = state.events.find(event => event.type === 'IMMUNE_GUARD_ASSIGNED')!;
     expect(assigned.data).not.toHaveProperty('until');
-    expect(Number(assigned.data.plannedUntil)).toBeLessThan(state.growth!.beacon!.until);
+    expect(Number(assigned.data.plannedUntil)).toBe(Infinity);
+    expect(state.growth!.beacon!.until).toBe(Infinity);
     expect(state.growth!.cells!.every(cell => cell.targetId === assault.id)).toBe(true);
     const until = state.growth!.beacon!.until, ready = state.growth!.beaconReadyAt, identities = state.growth!.cells!.map(cell => cell.id);
     let remoteHits = 0;
@@ -139,7 +140,7 @@ describe('immune III tissue guard is a real Q operation', () => {
     expect(state.events.filter(event => event.type === 'ORGAN_INTEGRITY_CHANGED' && event.data.reason === 'protocol-pressure')).toHaveLength(1);
   });
 
-  it('rolls back rejected guard orders and clears them on wave clear, tissue loss, expiry and organ change', () => {
+  it('rolls back rejected guard orders and keeps bodies across wave clear, tissue loss, time and organ change until run end', () => {
     const controller = new GrowthController(71); controller.state.equipped = [{ id: 'IMMUNE_BEACON', tuning: 'balanced' }];
     controller.onScan(ctx({ aim: { x: 700, y: 500 } })); const before = structuredClone(controller.state);
     const context = ctx({ tick: 180, elapsed: 3 }); controller.state.budgetTick = context.tick; controller.state.budgetUsed = GROWTH_BALANCE.commandBudget;
@@ -149,7 +150,13 @@ describe('immune III tissue guard is a real Q operation', () => {
       const ready = own.state.beaconReadyAt;
       if (reason === 'wave' || reason === 'ended') own.recordEvent({ type: reason === 'wave' ? 'ENDLESS_WAVE_CLEARED' : 'RUN_ENDED', tick: 2, data: {} }, ctx({ tick: 2, elapsed: 2 / 60 }));
       else own.afterInput(ctx({ tick: 1200, elapsed: reason === 'expiry' ? 20 : 1, organId: reason === 'organ' ? 'lung' : 'heart', tissue: { ...context.tissue, hp: reason === 'tissue' ? 0 : 100 } }));
-      expect(own.state.beacon).toBeNull(); expect(own.state.cells).toEqual([]); expect(own.state.beaconReadyAt).toBe(ready);
+      expect(own.state.beaconReadyAt).toBe(ready);
+      if(reason==='ended') { expect(own.state.beacon).toBeNull();expect(own.state.cells).toEqual([]);expect(own.state.beacons).toEqual([]); }
+      else {
+        expect(own.state.cells).toHaveLength(5);expect(own.state.beacons).toHaveLength(1);
+        if(reason==='organ')expect(own.state.beacon).toBeNull();
+        else { expect(own.state.beacon?.until).toBe(Infinity);if(reason==='tissue')expect(own.state.beacon?.guard).toBeUndefined(); }
+      }
     }
   });
 

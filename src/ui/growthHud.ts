@@ -5,14 +5,15 @@ import { availableResearchDirections, RESEARCH_DIRECTIONS } from '../game/resear
 import { immuneFocusStatusMarkup, updateImmuneFocusHud } from './immuneFocusHud';
 import { catalysisStatusMarkup, updateCatalysisHud } from './catalysisHud';
 import { choiceIconMarkup, protocolChoiceCopy, PROTOCOL_CHOICE_NAMES } from './upgradeChoices';
+import { legionHudMarkup, updateLegionHud } from './legionHud';
 
 const escape = (value: string) => value.replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 // Container-keyed caches let detached HUDs and their children be collected.
 const slotViews = new WeakMap<HTMLElement, { signature: string; counts: (HTMLElement | null)[] }>();
 const feedbackViews = new WeakMap<HTMLElement, { title: string; hint: string }>();
 export const growthDetailsEntryMarkup = `<button class="growth-details-entry" data-action="growth-details">当前配装详情</button>`;
-export const growthHudMarkup = `<aside class="growth-panel"><div class="growth-heading"><span>我的进化 · 抗体构筑</span><b id="growth-research">样本 0</b></div><div class="xp-label" id="growth-xp"></div><div class="meter"><i id="xp-meter"></i></div><div id="protocol-slots" class="protocol-slots"></div>${immuneFocusStatusMarkup}${catalysisStatusMarkup}${growthDetailsEntryMarkup}<p id="research-hint">Q 诊断 → 研究台 E 选方向 · Q 指敌围猎</p></aside><div id="evolution-feedback" class="evolution-feedback" role="status" hidden></div>`;
-export const growthHelpMarkup = `<p><b>我的进化：</b>经验来自清源、精英、首次诊断与保护组织；达标时三选一。四种协议是四条不同的规则路线，每次显示三个候选，可装备 ${GROWTH_BALANCE.slots} 种。重复选择已有协议先升至Ⅱ/Ⅲ阶，实际提高效果；Ⅲ阶后才改变校准取向。</p><p><b>诊断 → 定向研究：</b>Q 实际诊断过的变异会开放对应研究方向。靠近研究台按 E，先选择方向；确认时才消耗 ${GROWTH_BALANCE.researchCost} 样本并生成三选一草案，选方向前取消免费。定向候选保证包含相关主协议与联动伙伴，仍可自由选择任意候选；通用研究保持随机。草案生成后放弃不退样本，研究与经验共用同一套配装，研究和草案期间暂停。</p><p><b>免疫协同：</b>没有协议时，Q 也能召来一只短时侦巡细胞协助清理。装备免疫灯塔后，Q 变为三只免疫细胞小队，在标记区移动、追击并接触吞噬；小队会带来组织承压。Q 就绪时，准星对准敌体可下达短时围猎指令；对准空地则部署区域。指定目标结束后，小队恢复自动选敌；未指定围猎时优先显影体。</p><p><b>组合打法：</b>共振裂解需要靠近装置、配合冲流相位命中；与连锁净化搭配，破绽清除可增加一跳，总计最多 3 跳。槽位下方会显示使用提示和实际命中／显影施加记录，草案同时展示前后变化与代价。</p>`;
+export const growthHudMarkup = `<aside class="growth-panel"><div class="growth-heading"><span>我的进化 · 抗体构筑</span><b id="growth-research">样本 0</b></div><div class="xp-label" id="growth-xp"></div><div class="meter"><i id="xp-meter"></i></div><div id="protocol-slots" class="protocol-slots"></div>${immuneFocusStatusMarkup}${catalysisStatusMarkup}${legionHudMarkup}${growthDetailsEntryMarkup}<p id="research-hint">Q 诊断 → 研究台 E 选方向 · Q 指敌围猎</p></aside><div id="evolution-feedback" class="evolution-feedback" role="status" hidden></div>`;
+export const growthHelpMarkup = `<p><b>我的进化：</b>经验来自清源、精英、首次诊断与保护组织；达标时三选一。四种协议是四条不同的规则路线，每次显示三个候选，可装备 ${GROWTH_BALANCE.slots} 种。重复选择已有协议先升至Ⅱ/Ⅲ阶，实际提高效果；Ⅲ阶后才改变校准取向。</p><p><b>诊断 → 定向研究：</b>Q 实际诊断过的变异会开放对应研究方向。靠近研究台按 E，先选择方向；确认时才消耗 ${GROWTH_BALANCE.researchCost} 样本并生成三选一草案，选方向前取消免费。定向候选保证包含相关主协议与联动伙伴，仍可自由选择任意候选；通用研究保持随机。草案生成后放弃不退样本，研究与经验共用同一套配装，研究和草案期间暂停。</p><p><b>免疫军团：</b>Q 部署常驻军团，最多两支，有生命、会被击杀。未装备灯塔时每支1体；灯塔Ⅰ/Ⅱ/Ⅲ阶为3/4/5体。满编后Q指挥准星附近的军团，细胞仍须实际移动和接触咬击。R或点击“注射抗体”消耗1支，使存活成员各裂变一次、当前生命扣三分之一，8秒移速+40%、攻击+50%并吸引附近病毒；每局2支，强化期间不能重复注射。</p><p><b>治疗点争夺：</b>心脏和肺部各新增两处治疗点。靠近后用3点击，快速净化未满的感染并恢复25耐久，每处冷却4秒。病毒贴近时逐步占领；完全占领后需要2份研究样本才能夺回治疗点。</p><p><b>组合打法：</b>共振裂解需要靠近装置、配合冲流相位命中；与连锁净化搭配，破绽清除可增加一跳，总计最多 3 跳。槽位下方会显示使用提示和实际命中／显影施加记录，草案同时展示前后变化与代价。</p>`;
 function preparationCopy(state: GameState): string {
   const growth=state.growth;
   if(!growth?.preparation?.starterProtocolId)return '';
@@ -46,7 +47,7 @@ export function growthDetailsOverlay(state: GameState, returnLabel: string): str
     const info=PROTOCOLS[slot.id],rank=protocolRank(slot),description=describeProtocol(slot.id,slot.tuning,rank),record=protocolRecord(state,slot.id);
     return `<article class="growth-detail-card" data-protocol="${slot.id}" data-rank="${rank}" data-tuning="${slot.tuning}"><h3>${info.symbol} ${escape(info.name)} ${RANK_NAMES[rank]} <small>${escape(TUNING_NAMES[slot.tuning])}</small></h3><p class="growth-detail-count"><strong>${escape(record.summary)}</strong><br>${escape(record.definition)}</p><dl><dt>触发条件</dt><dd>${escape(info.trigger)}</dd><dt>当前效果</dt><dd class="growth-detail-effect">${escape(description.effect)}</dd><dt>代价与限制</dt><dd class="growth-detail-cost">${escape(description.cost)}</dd><dt>现在这样用</dt><dd class="growth-detail-action">${escape(protocolAction(slot.id,rank))}</dd></dl></article>`;
   }).join('');
-  return `<div class="overlay"><section class="modal growth-details" role="dialog" aria-modal="true" aria-label="当前配装详情"><div class="growth-details-header"><div><div class="eyebrow">MY EVOLUTION / 我的进化</div><h2>当前配装详情</h2></div><button data-action="close-growth-details">${escape(returnLabel)} <kbd>Esc</kbd></button></div><p class="growth-details-summary">${growth.equipped.length} / ${GROWTH_BALANCE.slots} 槽 · 进化 Lv.${growth.level} · 经验 ${growth.xp} · 样本 ${growth.research}<br>模拟已暂停；命中仅计实际正伤害，显影单独记录标记施加。重复选择已有协议可进阶至Ⅲ阶。${preparationCopy(state)?`<br>${preparationCopy(state)}`:''}</p><div class="growth-details-scroll" tabindex="0" role="region" aria-label="配装效果与使用说明"><div class="growth-details-grid">${slots}</div><article class="growth-detail-patrol"><h3>Q · ${hasBeacon?'免疫小队已接管召集':'基础免疫侦巡随时可用'}</h3><p>${hasBeacon?'当前装备免疫灯塔，Q 召集三只免疫细胞；持续、伤害、冷却与组织代价见上方协议。':'未装备免疫灯塔时，Q 召来一只免疫细胞，不占协议槽、不消耗组织完整度。'}</p><p>基础侦巡：持续 ${PATROL_CONFIG.duration} 秒，活动范围 ${PATROL_CONFIG.radius}，每 ${PATROL_CONFIG.interval} 秒 ${PATROL_CONFIG.damage} 伤害，冷却 ${PATROL_CONFIG.cooldown} 秒。Q 就绪时，准星对准敌体可短时优先围猎；指向空地则部署区域。围猎受活动范围、路线与原寿命限制，细胞仍须实际赶到并接触咬击。</p></article></div></section></div>`;
+  return `<div class="overlay"><section class="modal growth-details" role="dialog" aria-modal="true" aria-label="当前配装详情"><div class="growth-details-header"><div><div class="eyebrow">MY EVOLUTION / 我的进化</div><h2>当前配装详情</h2></div><button data-action="close-growth-details">${escape(returnLabel)} <kbd>Esc</kbd></button></div><p class="growth-details-summary">${growth.equipped.length} / ${GROWTH_BALANCE.slots} 槽 · 进化 Lv.${growth.level} · 经验 ${growth.xp} · 样本 ${growth.research}<br>模拟已暂停；命中仅计实际正伤害，显影单独记录标记施加。重复选择已有协议可进阶至Ⅲ阶。${preparationCopy(state)?`<br>${preparationCopy(state)}`:''}</p><div class="growth-details-scroll" tabindex="0" role="region" aria-label="配装效果与使用说明"><div class="growth-details-grid">${slots}</div><article class="growth-detail-patrol"><h3>Q · ${hasBeacon?'免疫小队已接管召集':'基础免疫侦巡随时可用'}</h3><p>${hasBeacon?'当前装备免疫灯塔，Q 部署常驻军团；数量、伤害、冷却与组织代价见上方协议。':'未装备免疫灯塔时，Q 召来一只免疫细胞，不占协议槽、不消耗组织完整度。'}</p><p>基础侦巡：常驻且可被击杀，活动范围 ${PATROL_CONFIG.radius}，每 ${PATROL_CONFIG.interval} 秒 ${PATROL_CONFIG.damage} 伤害，冷却 ${PATROL_CONFIG.cooldown} 秒。Q 就绪时，准星对准敌体可短时优先围猎；指向空地则部署区域。最多部署两支军团；围猎受活动范围与路线限制，细胞仍须实际赶到并接触咬击。R 注射抗体可裂变与短时强攻，但会损失当前生命的三分之一。</p></article></div></section></div>`;
 }
 
 /** Campaign Q has a player scan clock and a separate squad summon clock. */
@@ -55,23 +56,28 @@ export function campaignImmuneResearchHint(state: GameState): string {
   const diagnosed=availableResearchDirections(growth.rewardedKeys).length-1;
   const research=`E研究（${diagnosed?`可定向 ${diagnosed} 类`:'诊断后可定向'}）`;
   const qWait=Math.max(0,state.scanReady-state.elapsed),q=qWait>0?`Q${Math.ceil(qWait)}s后`:'Q';
-  const hasBeacon=growth.equipped.some(slot=>slot.id==='IMMUNE_BEACON'),beacon=growth.beacon;
+  const hasBeacon=growth.equipped.some(slot=>slot.id==='IMMUNE_BEACON');
   const organ=state.battle?.organId??'heart';
-  const count=growth.cells?.filter(cell=>cell.beaconId===beacon?.id&&cell.organId===organ&&cell.until>state.elapsed).length??0;
-  const active=!!beacon&&beacon.organId===organ&&beacon.until>state.elapsed&&count>0;
-  const remaining=active?(beacon!.until-state.elapsed).toFixed(1):'';
-  if(!hasBeacon){
-    const patrol=active&&beacon?.mode==='patrol'?`侦巡${count}体·${remaining}s · `:'';
-    return `${patrol}${q}${patrol?'再':''}召集1体侦巡 · ${research}`;
-  }
+  const alive=(growth.cells??[]).filter(cell=>cell.until>state.elapsed&&(cell.hp??1)>0);
+  const count=alive.filter(cell=>cell.organId===organ).length;
+  const squads=new Set(alive.map(cell=>cell.beaconId)).size;
   const summonWait=Math.max(0,growth.beaconReadyAt-state.elapsed);
-  if(summonWait<=1e-9)return `${q}${active?'重新':''}召集3体小队 · ${research}`;
-  if(active&&beacon?.mode!=='patrol')return `小队${count}体·${remaining}s · ${qWait>0?`Q冷却${Math.ceil(qWait)}s`:'Q重指挥'}，不续命 · ${research}`;
-  const diagnostic=qWait>0?`Q诊断${Math.ceil(qWait)}s`:'Q可诊断';
-  return `3体小队召集还需${Math.ceil(Math.max(summonWait,qWait))}s · ${diagnostic} · ${research}`;
+  const action=squads>=2?'指挥军团':summonWait>0?`指挥 · 部署${Math.ceil(summonWait)}s后`:hasBeacon?'部署军团':'部署1体侦巡';
+  return `军团${squads}/2 · 本区${count}体常驻 · ${q}${action} · ${research}`;
+}
+
+export function endlessImmuneHint(state: GameState): string {
+  const growth=state.growth;if(!growth)return '';
+  const alive=(growth.cells??[]).filter(cell=>cell.until>state.elapsed&&(cell.hp??1)>0);
+  const count=alive.filter(cell=>cell.organId===state.battle?.organId).length;
+  const squads=new Set(alive.map(cell=>cell.beaconId)).size;
+  const qWait=Math.max(0,state.scanReady-state.elapsed),summonWait=Math.max(0,growth.beaconReadyAt-state.elapsed);
+  const action=squads>=2?'指挥军团':summonWait>0?`指挥 · 部署${Math.ceil(summonWait)}s后`:'部署 / 指挥';
+  return `军团${squads}/2 · 本区${count}体常驻 · Q${qWait>0?`${Math.ceil(qWait)}s后`:''}${action}`;
 }
 
 export function updateGrowthHud(state: GameState): void {
+  updateLegionHud(state);
   updateCatalysisHud(state);
   updateImmuneFocusHud(state);
   const growth=state.growth;if(!growth)return;
@@ -108,13 +114,7 @@ export function updateGrowthHud(state: GameState): void {
     if(counter.textContent!==text)counter.textContent=text;
   }
   if(!state.endless)document.getElementById('research-hint')!.textContent=campaignImmuneResearchHint(state);
-  else{
-    const beacon=growth.beacon,hasBeacon=growth.equipped.some(slot=>slot.id==='IMMUNE_BEACON');
-    document.getElementById('research-hint')!.textContent=beacon&&beacon.until>state.elapsed?`${beacon.mode==='patrol'?'免疫侦巡':'免疫小队'} ${growth.cells?.length??0} 体 · ${Math.max(0,beacon.until-state.elapsed).toFixed(1)}s`
-      :hasBeacon&&growth.beaconReadyAt>state.elapsed?`小队再召集 ${Math.ceil(growth.beaconReadyAt-state.elapsed)}s`:'朝敌群按 Q · 部署免疫小队';
-    if(hasBeacon&&beacon&&beacon.mode!=='patrol'&&beacon.until>state.elapsed&&growth.beaconReadyAt>state.elapsed)
-      document.getElementById('research-hint')!.textContent=`小队 ${growth.cells?.length??0} 体 · ${Math.max(0,beacon.until-state.elapsed).toFixed(1)}s · Q 指挥转向，不续命`;
-  }
+  else document.getElementById('research-hint')!.textContent=endlessImmuneHint(state);
   const feedback=document.getElementById('evolution-feedback');
   if(feedback){
     const evolution=growth.lastEvolution;feedback.hidden=!evolution||state.elapsed>=evolution.until;

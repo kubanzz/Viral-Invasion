@@ -87,10 +87,10 @@ describe('accepted Q immune squad redirection', () => {
     expect(state.events.filter(event => event.type === 'IMMUNE_SQUAD_REDIRECTED')).toHaveLength(1);
     expect(state.events.filter(event => event.type === 'PROTOCOL_BEACON_CREATED')).toHaveLength(1);
     while (state.tick < 362) session.step(input());
-    expect(state.growth!.cells).toEqual([]);
+    expect(state.growth!.cells).toHaveLength(3);
     session.step(input({ scan: true, aim: next }));
-    expect(state.growth!.beacon).toBeNull();
-    expect(state.events.filter(event => event.type === 'IMMUNE_SQUAD_REDIRECTED')).toHaveLength(1);
+    expect(state.growth!.beacon!.id).toBe(beaconId);
+    expect(state.events.filter(event => event.type === 'IMMUNE_SQUAD_REDIRECTED')).toHaveLength(2);
     expect(state.events.filter(event => event.type === 'ORGAN_INTEGRITY_CHANGED' && event.data.reason === 'protocol-pressure')).toHaveLength(1);
   });
 });

@@ -14,6 +14,7 @@ export interface SceneLabelSink {
 export interface SceneLabelFrame {
   width: number; height: number; project: (point: Vec) => Vec; scale: number;
   blocked?: readonly LabelRect[]; scope: string;
+  text?: (value: string) => string;
 }
 export interface SceneLabelPlacement {
   id: string; priority: number; essential: boolean; rect: LabelRect; anchor: Vec;
@@ -65,7 +66,7 @@ export class SceneLabels implements SceneLabelSink {
     if (!this.frame || !label.id || !Number.isFinite(label.anchor.x) || !Number.isFinite(label.anchor.y) || !Number.isFinite(label.priority)) return;
     if (!label.lines.some(line => line.text) && !label.bar) return;
     this.labels.set(label.id, { ...label, anchor: { ...label.anchor }, offset: label.offset ? { ...label.offset } : undefined,
-      lines: label.lines.map(line => ({ ...line })), bar: label.bar ? { ...label.bar } : undefined });
+      lines: label.lines.map(line => ({ ...line, text: this.frame!.text?.(line.text) ?? line.text })), bar: label.bar ? { ...label.bar } : undefined });
   }
   reserveScreen(rect: LabelRect): void { if (finiteRect(rect)) this.blocked.push({ ...rect }); }
   reserveWorld(rect: LabelRect): void {

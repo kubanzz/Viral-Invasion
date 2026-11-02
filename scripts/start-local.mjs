@@ -41,10 +41,11 @@ export async function checkWorkspaceBuild({ workspaceRoot = DEFAULT_WORKSPACE, a
   return { current: reasons.length === 0, needsBuild: reasons.length > 0, sourceCount: manifest && typeof manifest === 'object' ? Object.keys(manifest).length : 0, reasons };
 }
 
-function runCommand(command, args, options = {}) {
+function runCommand(command, args, { waitForExit = true, ...options } = {}) {
   return new Promise((done, reject) => {
     const child = spawn(command, args, { windowsHide: true, ...options });
     child.once('error', reject);
+    if (!waitForExit) child.once('spawn', () => { child.unref(); done(); });
     child.once('exit', (code, signal) => code === 0 ? done() : reject(new Error(`Command failed (${signal ?? code}): ${command}`)));
   });
 }
@@ -55,11 +56,32 @@ async function buildOffline({ workspaceRoot }) {
   delete environment.VI_DIST_DIR;
   await runCommand(process.execPath, [join(workspaceRoot, 'scripts', 'build-offline.mjs')], { cwd: workspaceRoot, env: environment, stdio: 'inherit' });
 }
-async function openBuild({ entryPath, workspaceRoot }) {
+/** Prefer supported browsers: a fresh Windows account may associate HTML with IE. */
+export async function findWindowsBrowser({ environment = process.env, exists = populatedFile } = {}) {
+  const candidates = [
+    [environment.ProgramFiles, 'Google', 'Chrome', 'Application', 'chrome.exe'],
+    [environment['ProgramFiles(x86)'], 'Google', 'Chrome', 'Application', 'chrome.exe'],
+    [environment.LOCALAPPDATA, 'Google', 'Chrome', 'Application', 'chrome.exe'],
+    [environment['ProgramFiles(x86)'], 'Microsoft', 'Edge', 'Application', 'msedge.exe'],
+    [environment.ProgramFiles, 'Microsoft', 'Edge', 'Application', 'msedge.exe'],
+    [environment.LOCALAPPDATA, 'Microsoft', 'Edge', 'Application', 'msedge.exe'],
+  ];
+  for (const [base, ...parts] of candidates) if (base) {
+    const browser = join(base, ...parts);
+    if (await exists(browser)) return browser;
+  }
+}
+
+export async function openBuild({ entryPath, workspaceRoot, platform = process.platform, environment = process.env, exists = populatedFile, run = runCommand }) {
   const url = pathToFileURL(entryPath).href;
-  if (process.platform === 'win32') await runCommand('rundll32.exe', ['url.dll,FileProtocolHandler', url], { cwd: workspaceRoot, stdio: 'ignore' });
-  else if (process.platform === 'darwin') await runCommand('open', [url], { cwd: workspaceRoot, stdio: 'ignore' });
-  else await runCommand('xdg-open', [url], { cwd: workspaceRoot, stdio: 'ignore' });
+  if (platform === 'win32') {
+    const browser = await findWindowsBrowser({ environment, exists });
+    if (!browser) throw new Error('Microsoft Edge or Google Chrome was not found. Open dist/index.html with a supported browser.');
+    await run(browser, ['--new-window', url], { cwd: workspaceRoot, stdio: 'ignore', detached: true, waitForExit: false });
+    return browser;
+  }
+  else if (platform === 'darwin') await run('open', [url], { cwd: workspaceRoot, stdio: 'ignore' });
+  else await run('xdg-open', [url], { cwd: workspaceRoot, stdio: 'ignore' });
 }
 
 /** Dependencies are injectable so verification never needs a browser or real build. */
@@ -78,8 +100,8 @@ export async function launchWorkspace({ workspaceRoot = DEFAULT_WORKSPACE, check
     if (!after.current) throw new Error(`Build completed without matching current sources: ${after.reasons.slice(0, 5).map(reason => `${reason.code}: ${reason.path}`).join('; ')}`);
     rebuilt = true;
   }
-  if (!noOpen) await open({ entryPath: join(root, 'dist', 'index.html'), workspaceRoot: root });
-  return { ...after, checked: false, rebuilt, opened: !noOpen, reasonsBeforeBuild: before.reasons };
+  const openedWith = noOpen ? undefined : await open({ entryPath: join(root, 'dist', 'index.html'), workspaceRoot: root });
+  return { ...after, checked: false, rebuilt, opened: !noOpen, ...(openedWith ? { openedWith } : {}), reasonsBeforeBuild: before.reasons };
 }
 
 async function main() {

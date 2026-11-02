@@ -9,14 +9,18 @@ import type { MigrationChoice } from '../../src/game/campaignTypes';
 import { distance, normalized, wallHit } from '../../src/actors/collision';
 import { TRACTION_BALANCE } from '../../src/game/traction';
 import { g3Input, waypoint } from '../helpers/g3Driver';
-import { IMMUNE_CELL_BALANCE } from '../../src/game/immuneCells';
+import { ANTIBODY_BALANCE, IMMUNE_CELL_BALANCE } from '../../src/game/immuneCells';
 import type { CounterGuideVariant } from '../../src/game/encounterTypes';
 import { preparationForPlan, startingPlanId, type StartingPlanId } from '../../src/game/preparation';
 import { PROTOCOL_IDS } from '../../src/game/protocols';
 import { parseRunMetricsSummary, RUN_METRICS_FRAME_LIMIT, summarizeRunMetrics, type RunMetricsSummary } from '../../src/game/runMetrics';
 
 const REPORT = resolve(process.env.VI_SYSTEM_REPORT ?? 'artifacts/unit-generated/full-system-seeds.json');
-const SEED_COUNT = 1000;
+const configuredSeedCount = process.env.VI_SYSTEM_SEED_COUNT;
+if (configuredSeedCount !== undefined && (!/^[1-9]\d*$/.test(configuredSeedCount) || Number(configuredSeedCount) > 1000)) {
+  throw new Error('VI_SYSTEM_SEED_COUNT must be a positive integer from 1 through 1000.');
+}
+const SEED_COUNT = configuredSeedCount === undefined ? 1000 : Number(configuredSeedCount);
 const MAX_STEPS = 300 * 60;
 const choices: MigrationChoice[] = ['pursue', 'block', 'ignore'];
 const startingPlans: readonly StartingPlanId[] = ['field', ...PROTOCOL_IDS];
@@ -77,13 +81,24 @@ function validate(state: GameState): { alive: number; stored: number } {
   guard(growth.starterDebt === 0 || growth.starterDebt === 1, 'invalid starter choice debt');
   if (growth.draft) guard(new Set(growth.draft.options.map(option => option.protocolId)).size === 3, 'draft lacks three distinct protocols');
   const cells=growth.cells??[];
-  guard(cells.length<=IMMUNE_CELL_BALANCE.maximum&&new Set(cells.map(cell=>cell.id)).size===cells.length,'invalid immune cell population');
+  const beacons=growth.beacons??(growth.beacon?[growth.beacon]:[]);
+  guard(beacons.length<=IMMUNE_CELL_BALANCE.maximumLegions&&new Set(beacons.map(beacon=>beacon.id)).size===beacons.length,'invalid immune legion population');
+  guard(cells.length<=IMMUNE_CELL_BALANCE.maximum*IMMUNE_CELL_BALANCE.maximumLegions&&new Set(cells.map(cell=>cell.id)).size===cells.length,'invalid immune cell population');
+  for(const beacon of beacons){
+    guard(cells.filter(cell=>cell.beaconId===beacon.id).length<=IMMUNE_CELL_BALANCE.maximum,`immune legion exceeds body cap ${beacon.id}`);
+    guard(beacon.until===Infinity||Number.isFinite(beacon.until)&&beacon.until>=0,'invalid immune legion lifetime');
+  }
+  finiteRange(growth.antibodyCharges??0,0,ANTIBODY_BALANCE.charges,'antibodyCharges');
+  guard(Number.isInteger(growth.antibodyCharges??0),'fractional antibody charge');
   for(const cell of cells){
     const geometry=campaign.arenas[cell.organId].geometry;
-    guard(cell.organId===battle.organId,'immune cell leaked across organs');
+    guard(beacons.some(beacon=>beacon.id===cell.beaconId&&beacon.organId===cell.organId),'immune cell has no matching retained legion');
     finiteRange(cell.x,geometry.bounds.left+cell.radius,geometry.bounds.right-cell.radius,`${cell.id}.x`);
     finiteRange(cell.y,geometry.bounds.top+cell.radius,geometry.bounds.bottom-cell.radius,`${cell.id}.y`);
-    guard(Number.isFinite(cell.damage)&&cell.damage>0&&Number.isFinite(cell.until),'invalid immune cell values');
+    guard(Number.isFinite(cell.damage)&&cell.damage>0&&(cell.until===Infinity||Number.isFinite(cell.until)&&cell.until>=0),'invalid immune cell values');
+    guard(Number.isFinite(cell.maxHp)&&cell.maxHp!>0,'invalid immune cell maximum HP');
+    finiteRange(cell.hp!,0,cell.maxHp!,`${cell.id}.hp`);
+    guard(cell.antibodyUntil===undefined||Number.isFinite(cell.antibodyUntil)&&cell.antibodyUntil>=0,'invalid antibody duration');
   }
   let alive = 0, stored = 0;
   for (const arena of Object.values(campaign.arenas)) {
@@ -201,7 +216,7 @@ function execute(seed: number, choice: MigrationChoice, mode: Mode): { summary: 
 }
 
 describe('G4 complete-session seed coverage', () => {
-  it('runs 1000 complete seeded sessions with bounded states, legal build/base inputs and reproducible endings', () => {
+  it(`runs ${SEED_COUNT} complete seeded sessions with bounded states, legal build/base inputs and reproducible endings`, () => {
     mkdirSync(dirname(REPORT), { recursive: true });
     const startedAt = new Date().toISOString(), manifest = simulationManifest(), runs: Summary[] = [];
     let firstFailure: GameState | undefined;
@@ -210,7 +225,9 @@ describe('G4 complete-session seed coverage', () => {
       writeFileSync(REPORT, JSON.stringify({ schemaVersion: 1, complete, expectedSeeds: SEED_COUNT, completedSeeds: runs.length, startedAt, updatedAt: new Date().toISOString(),
         method: 'GameSession.start -> fixed-step public InputFrame and DraftIntent -> win/loss/public menu exit; no state or clock injection.',
         strategy: 'Formal campaign-1 only. Migration rotates pursue/block/ignore; 500 odd seeds start field/empty and discard all protocols. The 500 even seeds rotate field and all four rank-I starter plans by their every-second-seed index (100 each), then choose legal deterministic drafts. Preparations enter through GameSession.start options; archive unlock/eligibility is separately verified in real-browser qualification. Guided/adaptive alternate in independent two-seed blocks (500 each), crossing both build policies, all preparation plans and all migration routes. Guided first counters use actual valve pulse then basic precision hit. The actual stage IV source is prioritized; post-core rescue revisits unhealthy activated organs.',
-        limits: { maximumActionsPerSeed: MAX_STEPS, maxActivePerOrgan: BATTLE_BALANCE.maxActors, maxMainTraits: 2 },
+        limits: { maximumActionsPerSeed: MAX_STEPS, maxActivePerOrgan: BATTLE_BALANCE.maxActors, maxMainTraits: 2,
+          maxImmuneLegions: IMMUNE_CELL_BALANCE.maximumLegions, maxCellsPerLegion: IMMUNE_CELL_BALANCE.maximum },
+        coverageScope: SEED_COUNT===1000?'Full 1000-seed qualification.':`Bounded smoke of seeds 1 through ${SEED_COUNT}; no full 1000-seed or all-six-trait-sequence coverage claim.`,
         simulationSourceSha256: fingerprint(manifest), simulationSourceManifest: manifest, simulationSourceUnchanged: fingerprint(simulationManifest()) === fingerprint(manifest),
         outcomes: { wins: count('win'), losses: count('loss'), publicMenuExits: count('exit'), invariantFailures: count('invariant-failure') },
         traitSequences: Object.fromEntries([...new Set(runs.map(run => run.traits.join('>')))].sort().map(key => [key, runs.filter(run => run.traits.join('>') === key).length])),
@@ -239,24 +256,37 @@ describe('G4 complete-session seed coverage', () => {
     expect(firstFailure, `Counterexample is saved in ${REPORT}`).toBeUndefined();
     expect(runs).toHaveLength(SEED_COUNT); expect(replay.equal).toBe(true); expect(preparedReplay.equal).toBe(true);
     expect(preparedReplay.preparation).not.toBe('field');
-    expect(runs.filter(run => run.mode === 'base')).toHaveLength(500);
+    const schedule=Array.from({length:SEED_COUNT},(_,index)=>{
+      const seed=index+1,mode:Mode=seed%2?'base':'protocols';
+      return{mode,choice:choices[index%choices.length],preparation:mode==='base'?'field':startingPlans[Math.floor(index/2)%startingPlans.length],
+        guideVariant:Math.floor(index/2)%2===0?'guided':'adaptive'};
+    });
+    expect(runs.filter(run => run.mode === 'base')).toHaveLength(schedule.filter(run=>run.mode==='base').length);
     expect(runs.filter(run => run.mode === 'base').every(run => run.preparation === 'field' && run.initialEquipped.length === 0 && run.equipped.length === 0 && run.starterDebt === 0)).toBe(true);
     expect(runs.every(run => run.metrics && !run.metrics.limited)).toBe(true);
     for (const preparation of startingPlans) {
-      expect(runs.filter(run => run.mode === 'protocols' && run.preparation === preparation)).toHaveLength(100);
+      expect(runs.filter(run => run.mode === 'protocols' && run.preparation === preparation))
+        .toHaveLength(schedule.filter(run=>run.mode==='protocols'&&run.preparation===preparation).length);
       for (const variant of ['guided', 'adaptive'] as const) {
-        expect(runs.filter(run => run.mode === 'protocols' && run.preparation === preparation && run.guideVariant === variant)).toHaveLength(50);
-        for (const choice of choices) expect(runs.some(run => run.mode === 'protocols' && run.preparation === preparation && run.guideVariant === variant && run.choice === choice)).toBe(true);
+        expect(runs.filter(run => run.mode === 'protocols' && run.preparation === preparation && run.guideVariant === variant))
+          .toHaveLength(schedule.filter(run=>run.mode==='protocols'&&run.preparation===preparation&&run.guideVariant===variant).length);
+        for (const choice of choices) if(schedule.some(run=>run.mode==='protocols'&&run.preparation===preparation&&run.guideVariant===variant&&run.choice===choice)) {
+          expect(runs.some(run => run.mode === 'protocols' && run.preparation === preparation && run.guideVariant === variant && run.choice === choice)).toBe(true);
+        }
       }
     }
     expect(runs.every(run => run.baseCountersAvailable)).toBe(true);
     expect(fingerprint(simulationManifest())).toBe(fingerprint(manifest));
-    for (const choice of choices) for (const mode of ['base', 'protocols'] as const) expect(runs.some(run => run.choice === choice && run.mode === mode && run.outcome === 'win')).toBe(true);
-    for (const variant of ['guided', 'adaptive'] as const) {
-      expect(runs.filter(run => run.guideVariant === variant)).toHaveLength(500);
-      for (const choice of choices) for (const mode of ['base', 'protocols'] as const) expect(runs.some(run => run.guideVariant === variant && run.choice === choice && run.mode === mode && run.outcome === 'win')).toBe(true);
+    for (const choice of choices) for (const mode of ['base', 'protocols'] as const) if(schedule.some(run=>run.choice===choice&&run.mode===mode)) {
+      expect(runs.some(run => run.choice === choice && run.mode === mode && run.outcome === 'win')).toBe(true);
     }
-    expect(new Set(runs.filter(run => run.traits.length === 2).map(run => run.traits.join('>'))).size).toBe(6);
+    for (const variant of ['guided', 'adaptive'] as const) {
+      expect(runs.filter(run => run.guideVariant === variant)).toHaveLength(schedule.filter(run=>run.guideVariant===variant).length);
+      for (const choice of choices) for (const mode of ['base', 'protocols'] as const) if(schedule.some(run=>run.guideVariant===variant&&run.choice===choice&&run.mode===mode)) {
+        expect(runs.some(run => run.guideVariant === variant && run.choice === choice && run.mode === mode && run.outcome === 'win')).toBe(true);
+      }
+    }
+    if(SEED_COUNT===1000)expect(new Set(runs.filter(run => run.traits.length === 2).map(run => run.traits.join('>'))).size).toBe(6);
     console.info('FULL_SESSION_SEEDS_COMPLETE', JSON.stringify({ seeds: runs.length, wins: runs.filter(run => run.outcome === 'win').length, losses: runs.filter(run => run.outcome === 'loss').length, exits: runs.filter(run => run.outcome === 'exit').length, replayEqual: replay.equal, preparedReplayEqual: preparedReplay.equal }));
   // The prior 1,000-seed run took over 900 seconds on this workstation. The
   // wall-clock budget accommodates that workload without altering any per-seed

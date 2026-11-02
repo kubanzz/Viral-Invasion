@@ -45,8 +45,8 @@ export function drawNavigationMap(canvas: HTMLCanvasElement, state: GameState, v
   ctx.font = '9px "Microsoft YaHei",sans-serif'; ctx.textAlign = 'center';
   for (const node of state.battle.graph.nodes) {
     if (node.kind === 'source' && !node.active) continue;
-    const v = p(node), label = node.kind === 'source' ? '源' : node.kind === 'tissue' ? '✚' : node.kind === 'research' ? '研' : node.kind === 'exit' ? '出' : node.kind === 'retest' ? '测' : node.id === 'gate' ? '闸' : '流';
-    ctx.fillStyle = node.kind === 'source' ? '#f1aa8a' : node.kind === 'exit' ? '#e0d4ae' : '#a6ddca'; ctx.fillText(label, v.x, v.y + 3);
+    const v = p(node), label = node.kind === 'source' ? '源' : node.kind === 'tissue' ? '✚' : node.kind === 'healing' ? '+' : node.kind === 'research' ? '研' : node.kind === 'exit' ? '出' : node.kind === 'retest' ? '测' : node.id === 'gate' ? '闸' : '流';
+    ctx.fillStyle = node.kind === 'healing' ? (node.infection ?? 0) >= 100 ? '#ed8f9c' : (node.infection ?? 0) > 0 ? '#e9c18a' : '#b9edcd' : node.kind === 'source' ? '#f1aa8a' : node.kind === 'exit' ? '#e0d4ae' : '#a6ddca'; ctx.fillText(label, v.x, v.y + 3);
   }
   ctx.beginPath(); ctx.arc(player.x, player.y, 3.5, 0, Math.PI * 2); ctx.fillStyle = '#f4fff1'; ctx.fill(); ctx.strokeStyle = '#203c36'; ctx.stroke();
   ctx.fillStyle = '#c5c6b4'; ctx.font = '9px "Microsoft YaHei",sans-serif'; ctx.fillText(goal ? `${goal.label} · ${Math.round(distance(state.player, goal.point))}m` : '白点为你 · 阴影框为当前视野', w / 2, h - 5);

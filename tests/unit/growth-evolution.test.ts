@@ -72,7 +72,7 @@ describe('playtest-driven evolution and visible immune support',()=>{
       expect(getTraceConfig(tuning,rank).factor).toBeLessThan(getTraceConfig(tuning,(rank-1) as ProtocolRank).factor);
       expect(describeProtocol('PULSE_BREAK',tuning,rank).effect).toContain(String(getPulseConfig(tuning,rank).bonusDamage));
       expect(describeProtocol('PURIFY_CHAIN',tuning,rank).effect).toContain(String(getChainConfig(tuning,rank).damage));
-      expect(describeProtocol('IMMUNE_BEACON',tuning,rank).effect).toContain(String(getBeaconConfig(tuning,rank).duration));
+      expect(describeProtocol('IMMUNE_BEACON',tuning,rank).effect).toContain(`${rank+2} 只常驻`);
       expect(describeProtocol('EXPOSE_TRACE',tuning,rank).effect).toContain(String(getTraceConfig(tuning,rank).factor));
     }
     const target=actor('durable'),ctx=context([target]),low=new GrowthController(1),high=new GrowthController(1);
@@ -96,7 +96,7 @@ describe('playtest-driven evolution and visible immune support',()=>{
     }
   });
 
-  it('baseline Q creates one real short-lived helper without a slot or tissue cost, and its actual bites do damage',()=>{
+  it('baseline Q creates one persistent helper without a slot or tissue cost, and its actual bites do damage',()=>{
     const c=new GrowthController(11),ctx=context([actor('small',720,400)]);
     const created=c.onScan(ctx);
     expect(c.state.equipped).toEqual([]);expect(c.state.cells).toHaveLength(1);expect(c.state.beacon?.mode).toBe('patrol');
@@ -106,16 +106,18 @@ describe('playtest-driven evolution and visible immune support',()=>{
     expect(commands.some(c=>c.kind==='log'&&c.type==='IMMUNE_PATROL_HIT')).toBe(true);
     expect(commands.some(c=>c.kind==='log'&&c.type==='PROTOCOL_BEACON_HIT')).toBe(false);
     const cells=structuredClone(c.state.cells);c.afterInput({...ctx,tick:120,elapsed:2,active:false});expect(c.state.cells).toEqual(cells);
-    c.afterInput({...ctx,tick:121,elapsed:2.1,organId:'lung'});expect(c.state.cells).toEqual([]);expect(c.state.beacon).toBeNull();
+    c.afterInput({...ctx,tick:121,elapsed:2.1,organId:'lung'});expect(c.state.cells).toEqual(cells);expect(c.state.beacon).toBeNull();
+    c.afterInput({...ctx,tick:60000,elapsed:1000});expect(c.state.cells).toHaveLength(1);expect(c.state.beacon?.until).toBe(Infinity);
   });
 
-  it('a real acquired beacon changes the next Q from one patrol to a three-cell squad and pays exactly one cost',()=>{
+  it('an acquired beacon reinforces the patrol and deploys a second three-cell legion for exactly one cost',()=>{
     const c=new GrowthController(12),ctx=context([actor('target')]);c.onScan(ctx);expect(c.state.cells).toHaveLength(1);
     c.recordEvent({type:'INFECTION_SOURCE_CLEARED',tick:60,data:{nodeId:'source',organId:'heart'}},ctx);c.afterInput(ctx);
     const draft=c.state.draft!,option=draft.options.find(o=>o.protocolId==='IMMUNE_BEACON')!;
     expect(c.chooseDraft({runId:c.state.runId,draftId:draft.id,optionId:option.id}).kind).toBe('committed');
     const changed=c.onScan({...ctx,tick:61,elapsed:1.1});
-    expect(c.state.cells).toHaveLength(3);expect(c.state.beacon?.mode).toBe('protocol');expect(c.state.equipped).toHaveLength(1);
+    c.afterInput({...ctx,tick:61,elapsed:1.1});
+    expect(c.state.cells).toHaveLength(6);expect(c.state.beacons).toHaveLength(2);expect(c.state.beacon?.mode).toBe('protocol');expect(c.state.equipped).toHaveLength(1);
     expect(changed.filter(c=>c.kind==='organCost')).toEqual([expect.objectContaining({amount:3})]);
     expect(c.onScan({...ctx,tick:62,elapsed:1.2}).some(c=>c.kind==='organCost')).toBe(false);
     expect(protocolRank(c.state.equipped[0])).toBe(1);

@@ -37,6 +37,7 @@ export interface EnemyCharge {
   radius: number;
   hitPlayer: boolean;
   hitTissue: boolean;
+  hitImmuneIds?: string[];
   playerDamage: number;
   tissueDamage: number;
   recoveryExposure: number;

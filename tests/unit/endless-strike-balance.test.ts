@@ -80,9 +80,9 @@ describe('public wave-only continuous strike strength', () => {
       && event.data.before === 93 && event.data.after === 100)).toBe(true);
   });
 
-  it('preserves the existing campaign7/4 damage rather than applying the challenge curve globally', () => {
-    expect(BATTLE_BALANCE.playerDamage).toBe(7); expect(BATTLE_BALANCE.tissueDamage).toBe(4);
-    const player = fixture('melee', 'player', 1, false, false); player.step(); player.untilResolve(); expect(player.state.player.hp).toBe(93);
-    const tissue = fixture('melee', 'tissue', 1, false, false); tissue.step(); tissue.untilResolve(); expect(tissue.state.tissue.hp).toBe(96);
+  it('uses the stronger campaign8/4.5 damage independently from the challenge curve', () => {
+    expect(BATTLE_BALANCE.playerDamage).toBe(8); expect(BATTLE_BALANCE.tissueDamage).toBe(4.5);
+    const player = fixture('melee', 'player', 1, false, false); player.step(); player.untilResolve(); expect(player.state.player.hp).toBe(92);
+    const tissue = fixture('melee', 'tissue', 1, false, false); tissue.step(); tissue.untilResolve(); expect(tissue.state.tissue.hp).toBe(95.5);
   });
 });

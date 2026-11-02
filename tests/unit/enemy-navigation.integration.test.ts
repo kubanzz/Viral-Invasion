@@ -4,6 +4,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { GameSession } from '../../src/game/session';
+import { BATTLE_BALANCE } from '../../src/game/battleConfig';
 import { HEART_WORLD, LUNG_WORLD } from '../../src/game/organConfig';
 import { distance, isLegalPosition, normalized, wallHit } from '../../src/actors/collision';
 import type { GameEvent, Target, Vec, WorldGeometry } from '../../src/game/types';
@@ -110,7 +111,7 @@ describe('actual battle navigation integration fixtures', () => {
     expect(report.actualSeconds).toBe(30); expect(report.phase).toBe('playing'); expect(report.invalidBodyTicks).toBe(0);
     expect(report.attackCount).toBeGreaterThan(0); expect(report.hurtCount).toBeGreaterThan(0);
     expect(report.firstAttackAt).toBeLessThan(15); expect(report.changedCommittedPoses).toBe(0);
-    expect(report.maximumStep).toBeLessThanOrEqual(64 / 60 + 1e-7);
+    expect(report.maximumStep).toBeLessThanOrEqual(BATTLE_BALANCE.enemySpeed / 60 + 1e-7);
   });
 
   it('moves a thin ray around an obstructed sightline and commits and resolves a real attack', () => {
@@ -131,7 +132,7 @@ describe('actual battle navigation integration fixtures', () => {
     expect(report.final).toHaveLength(24); expect(report.final.map(target => target.id).sort()).toEqual(targets.map(target => target.id).sort());
     expect(report.final.every(target => target.hp === 68)).toBe(true);
     expect(report.minimumBodyGap!).toBeGreaterThanOrEqual(4 - 1e-6);
-    expect(report.maximumStep).toBeLessThanOrEqual(64 / 60 * 1.25 + 1e-7);
+    expect(report.maximumStep).toBeLessThanOrEqual(BATTLE_BALANCE.enemySpeed / 60 * 1.25 + 1e-7);
     expect(report.attackCount).toBeGreaterThan(0); expect(report.changedCommittedPoses).toBe(0);
   });
 

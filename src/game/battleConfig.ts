@@ -10,8 +10,9 @@ export const TRAITS: Record<TraitId, TraitInfo> = {
 export const BATTLE_BALANCE = {
   maxActors: 24, spreadInterval: 6, spawnInterval: 8,
   warningDuration: 8, firstWarningAt: 14, secondWarningDelay: 10,
-  enemySpeed: 64, attackWindup: .72, attackInterval: 2.2, attackRadius: 58,
-  playerDamage: 7, tissueDamage: 4,
+  enemySpeed: 70, attackWindup: .72, attackInterval: 2.2, attackRadius: 58,
+  playerDamage: 8, tissueDamage: 4.5,
+  immuneAggroRadius: 180, antibodyAggroRadius: 500,
   ordinaryHp: 68, sourceHp: 238, eliteHp: 238, childHp: 22,
   fissionDelay: .8,
   pulseRange: 470, pulseHalfAngle: .64, pulsePush: 145, pulseCooldown: 8,

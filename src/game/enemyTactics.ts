@@ -41,12 +41,12 @@ export function enemyRayEnd(plan: EnemyAttackPlan, world: WorldGeometry): Vec {
 }
 
 /** Checks reach and geometry only; cooldown, concurrency, commitment and state mutation belong to the host. */
-export function enemyAttackPlan(target: Target, state: GameState): EnemyAttackPlan | undefined {
+export function enemyAttackPlan(target: Target, state: GameState, commandedGoal?: Vec & { radius: number }): EnemyAttackPlan | undefined {
   const tactic = (target as Target & { tactic?: EnemyTactic }).tactic;
   if (!tactic || tactic === 'melee' || target.hp <= 0) return;
   const world = activeWorld(state), wave = state.endless?.wave ?? 1;
   const strike = state.endless ? endlessStrikeDamage(wave) : undefined;
-  const goal = tactic === 'mimic-corrosion' ? state.tissue : state.player;
+  const goal = commandedGoal ?? (tactic === 'mimic-corrosion' ? state.tissue : state.player);
   const range = tactic === 'thin-ray' ? target.tacticPosture === 'standoff' ? STANDOFF_BALANCE.attackRange : 530 : tactic === 'mimic-corrosion' ? 650 : 500;
   if (distance(target, goal) > range + 1e-7 || !clearLine(target, goal, goal.radius, world)) return;
   const plan: EnemyAttackPlan = {
@@ -61,7 +61,7 @@ export function enemyAttackPlan(target: Target, state: GameState): EnemyAttackPl
   };
   // Center LOS alone can skim a fold that clips the real thick lane short of
   // the body. Keep navigating until the same geometry used to resolve can hit.
-  if (tactic === 'thin-ray' && !enemyAttackHits(plan, state.player, state.player.radius, world)) return;
+  if (tactic === 'thin-ray' && !enemyAttackHits(plan, goal, goal.radius, world)) return;
   if (tactic === 'crystal-charge') {
     plan.chargeEnd = clipChargeEnd(target, goal, Math.min(550, distance(target, goal) + 90), target.radius, world);
     if (distance(target, plan.chargeEnd) < 30) {

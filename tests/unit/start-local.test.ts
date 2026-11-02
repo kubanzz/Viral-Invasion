@@ -6,7 +6,7 @@ import { basename, join, resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const starterUrl = pathToFileURL(resolve('scripts/start-local.mjs')).href;
-const { checkWorkspaceBuild, launchWorkspace } = await import(starterUrl);
+const { checkWorkspaceBuild, launchWorkspace, findWindowsBrowser, openBuild } = await import(starterUrl);
 const temporaryRoots: string[] = [];
 const sha = (value: Buffer) => createHash('sha256').update(value).digest('hex');
 
@@ -36,6 +36,27 @@ afterEach(async () => {
 });
 
 describe('source-workspace launcher', () => {
+  it('opens the installed supported browser directly instead of the Windows HTML association', async () => {
+    const f = await fixture(), environment = { ProgramFiles: join(f.root, 'programs'), LOCALAPPDATA: join(f.root, 'local') };
+    const chrome = join(environment.ProgramFiles, 'Google', 'Chrome', 'Application', 'chrome.exe');
+    const exists = async (path: string) => path === chrome;
+    expect(await findWindowsBrowser({ environment, exists })).toBe(chrome);
+    const calls: unknown[] = [];
+    await openBuild({ workspaceRoot: f.root, entryPath: join(f.root, 'dist/index.html'), platform: 'win32', environment, exists,
+      run: async (command: string, args: string[], options: object) => { calls.push({ command, args, options }); },
+    });
+    expect(calls).toEqual([{ command: chrome, args: ['--new-window', pathToFileURL(join(f.root, 'dist/index.html')).href],
+      options: { cwd: f.root, stdio: 'ignore', detached: true, waitForExit: false } }]);
+  });
+
+  it('reports a missing supported browser without invoking the legacy HTML association', async () => {
+    const f = await fixture(); let opened = false;
+    await expect(openBuild({ workspaceRoot: f.root, entryPath: join(f.root, 'dist/index.html'), platform: 'win32',
+      environment: {}, exists: async () => false, run: async () => { opened = true; },
+    })).rejects.toThrow('Microsoft Edge or Google Chrome');
+    expect(opened).toBe(false);
+  });
+
   it('reads a matching build and detects changed source hashes and missing output files', async () => {
     const f = await fixture();
     expect(await checkWorkspaceBuild({ workspaceRoot: f.root })).toMatchObject({ current: true, needsBuild: false, sourceCount: 3 });

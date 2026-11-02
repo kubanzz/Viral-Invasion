@@ -81,12 +81,12 @@ describe('G2 protocol effects and bounded synergies',()=>{
     expect(damage(next)).toHaveLength(2);
   });
 
-  it('a beacon damages ordinary enemies, pays tissue cost once, has its own cooldown and expires',()=>{
+  it('a beacon damages ordinary enemies, pays tissue cost once, has its own cooldown and stays alive',()=>{
     const c=controller(['IMMUNE_BEACON']),t=actor('ordinary',730,420),ctx=context([t]);
     ctx.player={x:600,y:400};ctx.aim={x:700,y:400};
     const created=c.onScan(ctx);
     expect(created.filter(command=>command.kind==='organCost')).toEqual([expect.objectContaining({amount:BEACON_CONFIG.balanced.tissueCost})]);
-    expect(c.state.beacon).toMatchObject({y:400,radius:190,until:8.2});expect(c.state.beacon!.x).toBeCloseTo(700);
+    expect(c.state.beacon).toMatchObject({y:400,radius:190,until:Infinity});expect(c.state.beacon!.x).toBeCloseTo(700);
     const ready=c.state.beaconReadyAt;expect(c.onScan({...ctx,tick:133,elapsed:2.22}).filter(command=>command.kind==='organCost')).toHaveLength(0);
     expect(c.state.beaconReadyAt).toBe(ready);
     expect(c.state.cells).toHaveLength(3);
@@ -95,7 +95,7 @@ describe('G2 protocol effects and bounded synergies',()=>{
     expect(damage(fired).every(hit=>hit.targetId===t.id&&hit.amount===8&&hit.protocolId==='IMMUNE_BEACON')).toBe(true);
     expect(damage(fired).reduce((total,hit)=>total+hit.amount,0)).toBe(BEACON_CONFIG.balanced.damage);
     expect(damage(c.afterInput({...ctx,tick:175,elapsed:2.91}))).toHaveLength(0);
-    c.afterInput({...ctx,tick:600,elapsed:10});expect(c.state.beacon).toBeNull();
+    c.afterInput({...ctx,tick:600,elapsed:10});expect(c.state.beacon?.until).toBe(Infinity);expect(c.state.cells).toHaveLength(3);
   });
 
   it('trace controls ordinary enemies without direct damage and naturally expires',()=>{
@@ -119,7 +119,7 @@ describe('G2 protocol effects and bounded synergies',()=>{
     expect(damage(advanceCells(plain,{...ctx,targets:[near,far]},1.1))[0].targetId).toBe('new-unmarked');
   });
 
-  it('removing beacon or trace atomically cancels their future temporary effects',()=>{
+  it('removing trace cancels its marks while removing the beacon keeps deployed veteran bodies alive',()=>{
     for(const removed of['IMMUNE_BEACON','EXPOSE_TRACE'] as const){
       const c=controller(['PULSE_BREAK','EXPOSE_TRACE','IMMUNE_BEACON']),ctx=context([actor('ordinary')]);
       c.onScan(ctx);expect(c.state.beacon).not.toBeNull();expect(c.state.marks).toHaveLength(1);
@@ -127,7 +127,10 @@ describe('G2 protocol effects and bounded synergies',()=>{
       c.chooseDraft({runId:c.state.runId,draftId:draft.id,optionId:option.id});const slotIndex=c.state.equipped.findIndex(slot=>slot.id===removed);
       const result=c.chooseDraft({runId:c.state.runId,draftId:draft.id,optionId:option.id,slotIndex,expectedPreviousProtocolId:removed});
       expect(result.kind).toBe('committed');
-      if(removed==='IMMUNE_BEACON'){expect(c.state.beacon).toBeNull();expect(damage(c.afterInput({...ctx,tick:145,elapsed:2.42}))).toHaveLength(0);}
+      if(removed==='IMMUNE_BEACON'){
+        expect(c.state.beacon?.until).toBe(Infinity);expect(c.state.cells).toHaveLength(3);
+        expect(damage(advanceCells(c,ctx,.7)).length).toBeGreaterThan(0);
+      }
       else {expect(c.state.marks).toEqual([]);expect(c.slowFactor('ordinary','heart',ctx.elapsed)).toBe(1);}
     }
   });
@@ -143,7 +146,8 @@ describe('G2 protocol effects and bounded synergies',()=>{
     for(const tuning of['balanced','focused','extended'] as const){
       expect(describeProtocol('PULSE_BREAK',tuning).effect).toContain(String(PULSE_CONFIG[tuning].bonusDamage));
       expect(describeProtocol('PURIFY_CHAIN',tuning).effect).toContain(String(CHAIN_CONFIG[tuning].range));
-      expect(describeProtocol('IMMUNE_BEACON',tuning).effect).toContain(String(BEACON_CONFIG[tuning].duration));
+      expect(describeProtocol('IMMUNE_BEACON',tuning).effect).toContain(`活动范围 ${BEACON_CONFIG[tuning].radius}`);
+      expect(describeProtocol('IMMUNE_BEACON',tuning).effect).toContain('3 只常驻');
       expect(describeProtocol('IMMUNE_BEACON',tuning).cost).toContain(String(BEACON_CONFIG[tuning].tissueCost));
       expect(describeProtocol('EXPOSE_TRACE',tuning).effect).toContain(String(TRACE_CONFIG[tuning].factor));
     }

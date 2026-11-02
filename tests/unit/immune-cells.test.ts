@@ -185,7 +185,7 @@ describe('visible temporary immune-cell combat', () => {
     expect(bitten).toEqual(new Set(['a', 'b']));
     const reversed = advance([...initial].reverse(), origin, { ...context([...targets].reverse()) }, 180);
     expect(reversed.cells).toEqual(cells);
-    expect(summonImmuneCells(origin, ctx, 100)).toHaveLength(3);
+    expect(summonImmuneCells(origin, ctx, 100)).toHaveLength(IMMUNE_CELL_BALANCE.maximum);
   });
 
   it('surrounds the same target without tripling the total damage or changing per-cell cooldowns', () => {

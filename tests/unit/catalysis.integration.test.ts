@@ -397,6 +397,9 @@ describe('actual immune-cell provenance and catalyst exclusion rules', () => {
     f.state.growth!.beacon = origin;
     const cells = summonImmuneCells(origin, { ...growthContext(f.state), tick: 0, elapsed: 0 }, 1)
       .map(cell => ({ ...cell, x: 800, y: 470, attackReadyAt: 0 }));
+    // A persistent legion must register its living bodies before the host ticks.
+    f.state.growth!.beacons = [origin];
+    f.state.growth!.cells = cells;
     let commands: GrowthCommand[] = [];
     f.session.bus.on('event', event => {
       if (event.type !== 'TARGET_HIT' || event.data.basicTool !== 2) return;

@@ -34,6 +34,9 @@ export interface BeaconState extends Vec {
   id: string; organId: OrganId; born: number; until: number; radius: number;
   damage: number; interval: number; nextAttackAt: number; tuning: Tuning;
   mode?: 'patrol' | 'protocol';
+  /** Normal bodies granted by the strongest accepted rank; casualties stay dead. */
+  cellCount?: number;
+  rank?: ProtocolRank;
   /** A short command, bounded by this squad's original lifetime. */
   focus?: { targetId: string; until: number };
   /** Challenge command: guard the tissue anchor inside this finite region. */
@@ -55,6 +58,10 @@ export interface GrowthState {
   draftSerial: number; historyHash: number; ended: boolean;
   pendingResearch?: ResearchOffer | null; researchSerial?: number;
   beacon: BeaconState | null; beaconReadyAt: number; marks: TraceMark[];
+  /** Two persistent deployed legions; beacon is the currently selected order. */
+  beacons?: BeaconState[];
+  antibodyCharges?: number;
+  antibodySerial?: number;
   cells?: import('./immuneCells').ImmuneCellState[];
   activations?: Partial<Record<ProtocolId, number>>;
   lastEvolution?: { protocolId: ProtocolId; rank: ProtocolRank; until: number; title: string; hint: string };
@@ -66,6 +73,7 @@ export interface GrowthState {
   budgetTick: number; budgetUsed: number; skippedCommands: number;
 }
 export interface GrowthContext {
+  hostEvents?: import('./hostEventTypes').HostEventState;
   endless?: boolean;
   immuneRank?: number;
   /** Exact host power × immune projection; command damage stays in base units. */
@@ -80,7 +88,7 @@ export interface GrowthContext {
   acceptedEvents?: readonly GameEvent[];
 }
 export interface DamageOrigin {
-  cause: 'basic' | 'protocol' | 'ability'; ability?: 'nova' | 'scan' | 'dash' | 'catalysis';
+  cause: 'basic' | 'protocol' | 'ability'; ability?: 'nova' | 'scan' | 'dash' | 'catalysis' | 'host-event';
   basicTool?: Tool; immuneCellId?: string;
   rootId?: string; wasPulseExposed?: boolean; protocolId?: ProtocolId; allowChain?: boolean;
 }

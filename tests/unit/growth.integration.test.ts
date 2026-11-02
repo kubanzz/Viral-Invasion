@@ -34,7 +34,9 @@ describe('G2 shared-session protocol integration',()=>{
     for(const s of[marked,plain]){Object.assign(s.state.player,{x:500,y:430});s.state.targets=[structuredClone(template)];}
     marked.state.growth!.equipped=[{id:'IMMUNE_BEACON',tuning:'balanced'},{id:'EXPOSE_TRACE',tuning:'balanced'}];
     const before=marked.state.tissue.hp;
-    const input={moveX:0,moveY:0,aim:position,fire:false,scan:true};
+    // Deploy beside the player so the virus still has distance to travel;
+    // deploying directly on it now correctly selects a nearby immune victim.
+    const input={moveX:0,moveY:0,aim:marked.state.player,fire:false,scan:true};
     marked.step(input);plain.step(input);
     expect(marked.state.tissue.hp).toBe(before-3);
     expect(marked.state.growth!.beacon).not.toBeNull();expect(marked.state.growth!.marks).toHaveLength(1);
@@ -44,7 +46,7 @@ describe('G2 shared-session protocol integration',()=>{
     expect(marked.state.tissue.hp).toBe(hpAfter);expect(marked.state.events.filter(event=>event.type==='PROTOCOL_BEACON_CREATED')).toHaveLength(1);
   });
 
-  it('atomic replacement immediately restores trace speed or cancels the old beacons scheduled attack',()=>{
+  it('atomic replacement immediately restores trace speed while existing immune veterans keep attacking',()=>{
     for(const removed of['IMMUNE_BEACON','EXPOSE_TRACE'] as const){
       const s=session(),position={x:650,y:430},target=actor('fixture-mimic',position.x,position.y);target.hp=68;target.traits=['MIMIC'];
       // Mechanism setup only; acquisition and full runs have separate legal-input tests.
@@ -60,11 +62,15 @@ describe('G2 shared-session protocol integration',()=>{
       const slotIndex=s.state.growth!.equipped.findIndex(slot=>slot.id===removed);
       expect(s.chooseDraft({...intent,slotIndex,expectedPreviousProtocolId:removed}).kind).toBe('committed');
       if(removed==='IMMUNE_BEACON'){
-        expect(s.state.growth!.beacon).toBeNull();
-        for(let i=0;i<15;i++)s.step({moveX:0,moveY:0,aim:target,fire:false});
-        expect(s.state.events.filter(event=>event.type==='PROTOCOL_BEACON_HIT')).toHaveLength(0);
+        const beaconId=s.state.growth!.beacon!.id;
+        expect(s.state.growth!.cells).toHaveLength(3);
+        for(let i=0;i<60;i++)s.step({moveX:0,moveY:0,aim:target,fire:false});
+        expect(s.state.growth!.beacon!.id).toBe(beaconId);
+        expect(s.state.events.filter(event=>event.type==='PROTOCOL_BEACON_HIT').length).toBeGreaterThan(0);
       }else{
         expect(s.state.growth!.marks).toEqual([]);expect(s.slowFactor(target.id)).toBe(1);
+        // Preserve the speed check away from newly valid immune melee range.
+        target.x=800;target.y=430;
         const before={x:target.x,y:target.y};s.step({moveX:0,moveY:0,aim:target,fire:false});
         expect(distance(target,before)).toBeCloseTo(BATTLE_BALANCE.enemySpeed*BATTLE_BALANCE.mimicSpeed/60);
       }

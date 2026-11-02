@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { GameSession } from '../../src/game/session';
 import { BALANCE, type GameEvent, type InputFrame, type Target, type Vec, type WorldGeometry } from '../../src/game/types';
 import { endlessStrikeDamage } from '../../src/game/endlessStrikeBalance';
+import { BATTLE_BALANCE } from '../../src/game/battleConfig';
 
 const world: WorldGeometry = { width: 1800, height: 1300, bounds: { left: 30, right: 1770, top: 30, bottom: 1270 },
   obstacles: [], foreground: { x: 0, y: 0, width: 0, height: 0 } };
@@ -27,8 +28,8 @@ describe('independent review of melee cover and shared damage guards', () => {
     const deadline = playerAttacker.attackAt!;
     expect(tissueAttacker.attackAt).toBe(deadline);
     while (f.state.elapsed + 1e-9 < deadline) f.step();
-    const playerDamage = mode === 'endless' ? endlessStrikeDamage(f.state.endless!.wave).player : 7;
-    const tissueDamage = mode === 'endless' ? endlessStrikeDamage(f.state.endless!.wave).tissue : 4;
+    const playerDamage = mode === 'endless' ? endlessStrikeDamage(f.state.endless!.wave).player : BATTLE_BALANCE.playerDamage;
+    const tissueDamage = mode === 'endless' ? endlessStrikeDamage(f.state.endless!.wave).tissue : BATTLE_BALANCE.tissueDamage;
     const playerHits = f.events.filter(event => event.type === 'PLAYER_HURT');
     const tissueHits = f.events.filter(event => event.type === 'ORGAN_INTEGRITY_CHANGED' && event.data.reason === 'enemy-attack');
     expect(playerHits).toHaveLength(1); expect(tissueHits).toHaveLength(1);

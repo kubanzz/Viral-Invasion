@@ -1,5 +1,20 @@
 import type { Vec, WorldGeometry } from '../game/types';
 
+export interface CameraViewport { left: number; top: number; right: number; bottom: number }
+/** Offsets from the player's ground anchor in projected world units. Upright
+ * sprite Y offsets are not compressed by yScale. */
+export interface CameraPlayerFrame { left: number; top: number; right: number; bottom: number }
+// The 86-unit registered hero, native rig padding and independently aimed
+// 36-unit emitter all fit this envelope; an asset-geometry regression checks it.
+export const CAMERA_PLAYER_FRAME: Readonly<CameraPlayerFrame> = Object.freeze({ left: -64, top: -104, right: 64, bottom: 28 });
+export interface CameraFollowOptions {
+  deltaSeconds?: number;
+  snap?: boolean;
+  aim?: Vec;
+  viewport?: CameraViewport;
+  playerFrame?: Readonly<CameraPlayerFrame>;
+}
+
 /** Visual projection only: simulation and collision always use the XY plane. */
 export class Camera {
   width = 1440;
@@ -10,6 +25,7 @@ export class Camera {
   panX = 0;
   panY = 0;
   private followScope = '';
+  private framingScale: number | undefined;
   readonly yScale = .72;
   constructor(width = 1440, height = 900) { this.resize(width, height); }
   resize(width: number, height: number): void {
@@ -20,23 +36,81 @@ export class Camera {
     this.offsetY = (this.height - 900 * this.scale) / 2;
     this.panX = 0; this.panY = 0;
     this.followScope = '';
+    this.framingScale = undefined;
   }
   /** Large arenas keep combat readable instead of shrinking the whole organ. */
-  follow(point: Vec, world: WorldGeometry, options: { deltaSeconds?: number; snap?: boolean } = {}): void {
+  follow(point: Vec, world: WorldGeometry, options: CameraFollowOptions = {}): void {
     if (world.width <= 1200 && world.height <= 800) { this.resize(this.width, this.height); return; }
-    this.scale = Math.min(this.width / 1152, this.height / 720);
-    this.offsetX = 0; this.offsetY = 0;
-    const clamp = (n: number, min: number, max: number) => min > max ? (min + max) / 2 : Math.max(min, Math.min(max, n));
-    const left = -120, right = this.width / this.scale - 120;
-    const top = -150 / this.yScale, bottom = (this.height / this.scale - 150) / this.yScale;
-    const targetX = clamp(this.width / this.scale * .5 - 120 - point.x, right - world.width - 40, left + 40);
-    const targetY = clamp((this.height / this.scale * .5 - 150) / this.yScale - point.y, bottom - world.height - 40, top + 80);
     const key = `${world.width}:${world.height}`;
     const dt = options.deltaSeconds;
     const snap = options.snap || this.followScope !== key || dt === undefined || !Number.isFinite(dt);
     const blend = snap ? 1 : 1 - Math.exp(-Math.max(0, Math.min(.1, dt)) / .09);
+    const baseScale = Math.min(this.width / 1152, this.height / 720);
+    const aim = options.aim && Number.isFinite(options.aim.x) && Number.isFinite(options.aim.y) ? options.aim : undefined;
+    const requested = options.viewport;
+    const viewport = requested && [requested.left, requested.top, requested.right, requested.bottom].every(Number.isFinite)
+      ? { left: Math.max(0, requested.left), top: Math.max(0, requested.top), right: Math.min(this.width, requested.right), bottom: Math.min(this.height, requested.bottom) }
+      : { left: 0, top: 0, right: this.width, bottom: this.height };
+    if (viewport.right - viewport.left <= 40 || viewport.bottom - viewport.top <= 40) {
+      viewport.left = 0; viewport.top = 0; viewport.right = this.width; viewport.bottom = this.height;
+    }
+    const suppliedFrame = options.playerFrame;
+    const frame = suppliedFrame && [suppliedFrame.left, suppliedFrame.top, suppliedFrame.right, suppliedFrame.bottom].every(Number.isFinite)
+      && suppliedFrame.left < suppliedFrame.right && suppliedFrame.top < suppliedFrame.bottom ? suppliedFrame : CAMERA_PLAYER_FRAME;
+    const body = { left: point.x + frame.left, right: point.x + frame.right,
+      top: point.y * this.yScale + frame.top, bottom: point.y * this.yScale + frame.bottom };
+    const framed = aim ? { left: Math.min(body.left, aim.x), right: Math.max(body.right, aim.x),
+      top: Math.min(body.top, aim.y * this.yScale), bottom: Math.max(body.bottom, aim.y * this.yScale) } : body;
+    let targetScale = baseScale;
+    if (aim) {
+      const fitX = (viewport.right - viewport.left - 40) / (framed.right - framed.left);
+      const fitY = (viewport.bottom - viewport.top - 40) / (framed.bottom - framed.top);
+      // A downward 650-unit preview includes the entire upright body above its
+      // foot. The former .72 floor could not fit that union on short phones.
+      // Keep a bounded readable floor for impossible, out-of-range points and
+      // a small fit allowance so eased zoom reaches the safe interval promptly.
+      targetScale = Math.max(baseScale * .5, Math.min(baseScale, Math.min(fitX, fitY) * .98));
+      this.framingScale ??= this.scale;
+    }
+    if (this.framingScale !== undefined) {
+      this.framingScale += (targetScale - this.framingScale) * blend;
+      this.scale = this.framingScale;
+      if (!aim && Math.abs(this.scale - baseScale) <= baseScale * 1e-6) {
+        this.scale = baseScale; this.framingScale = undefined;
+      }
+    } else this.scale = baseScale;
+    this.offsetX = 0; this.offsetY = 0;
+    const clamp = (n: number, min: number, max: number) => min > max ? (min + max) / 2 : Math.max(min, Math.min(max, n));
+    const focus = aim ? { x: (framed.left + framed.right) / 2, y: (framed.top + framed.bottom) / 2 / this.yScale } : point;
+    // Keep the default arithmetic unchanged for cameras which never opt in.
+    const left = requested ? viewport.left / this.scale - 120 : -120;
+    const right = (requested ? viewport.right : this.width) / this.scale - 120;
+    const top = requested ? (viewport.top / this.scale - 150) / this.yScale : -150 / this.yScale;
+    const bottom = ((requested ? viewport.bottom : this.height) / this.scale - 150) / this.yScale;
+    const anchorX = requested ? (viewport.left + viewport.right) * .5 / this.scale : this.width / this.scale * .5;
+    const anchorY = requested ? (viewport.top + viewport.bottom) * .5 / this.scale : this.height / this.scale * .5;
+    let targetX = clamp(anchorX - 120 - focus.x, right - world.width - 40, left + 40);
+    let targetY = clamp((anchorY - 150) / this.yScale - focus.y, bottom - world.height - 40, top + 80);
+    const constrainFrame = (x: number, y: number): Vec => {
+      // Use the current eased scale, not its eventual target. Until the whole
+      // pair fits, protect the complete hero rather than just its ground point.
+      const fitsX = (framed.right - framed.left) * this.scale <= viewport.right - viewport.left - 40 + 1e-8;
+      const fitsY = (framed.bottom - framed.top) * this.scale <= viewport.bottom - viewport.top - 40 + 1e-8;
+      const xFrame = fitsX ? framed : body, yFrame = fitsY ? framed : body;
+      return { x: clamp(x, (viewport.left + 20) / this.scale - 120 - xFrame.left, (viewport.right - 20) / this.scale - 120 - xFrame.right),
+        y: clamp(y, ((viewport.top + 20) / this.scale - 150 - yFrame.top) / this.yScale,
+          ((viewport.bottom - 20) / this.scale - 150 - yFrame.bottom) / this.yScale) };
+    };
+    if (aim) {
+      const target = constrainFrame(targetX, targetY); targetX = target.x; targetY = target.y;
+    }
     this.panX += (targetX - this.panX) * blend;
     this.panY += (targetY - this.panY) * blend;
+    if (aim) {
+      // A prior non-preview camera may already have the head under a status
+      // bar. Do not preserve that invalid pose for several smoothing frames.
+      const next = constrainFrame(this.panX, this.panY); this.panX = next.x; this.panY = next.y;
+    }
     this.followScope = key;
   }
   worldToScreen(point: Vec): Vec {

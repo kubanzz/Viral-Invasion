@@ -102,7 +102,7 @@ describe('optional finite source through actual tool and squad input', () => {
     expect(state.scans).toBe(1); expect(state.growth!.cells!.map(cell => cell.id)).toEqual(initialIds);
   });
 
-  it('cuts off a positive quota with a plausible wave-six immune build through the unchanged live queue', () => {
+  it('cuts off a positive quota with a plausible wave-six immune build and one real antibody injection through the unchanged live queue', () => {
     const { session, source } = fixture(), state = session.state, e = state.endless!;
     // Four ordinary ranks fit the five earned clears before this wave. This
     // isolates a legal build; it does not claim those choices were drafted here.
@@ -114,7 +114,10 @@ describe('optional finite source through actual tool and squad input', () => {
     expect(source.hp).toBe(sourceHp); expect(state.growth!.beacon!.focus?.targetId).toBe(source.id);
     let checkedContact = 0;
     while (e.source!.status === 'active' && state.phase === 'playing' && state.tick - started < 600) {
-      session.step(idle({ scan: true, aim: source }));
+      // Commit the consumable while the deployed bodies are approaching the
+      // source. No source, quota, HP, damage or spawn clock is changed here.
+      const antibody = state.growth!.antibodyCharges === 2 && state.growth!.cells!.some(cell => distance(cell, source) < 260);
+      session.step(idle({ scan: true, antibody, aim: source }));
       for (const event of state.events.filter(event => event.tick === state.tick && event.type === 'PROTOCOL_BEACON_HIT' && event.data.targetId === source.id)) {
         const cell = state.growth!.cells!.find(unit => unit.id === event.data.cellId)!;
         const gap = distance(cell, source), blocked = wallHit(cell, normalized(source.x - cell.x, source.y - cell.y), gap, world);
@@ -124,6 +127,8 @@ describe('optional finite source through actual tool and squad input', () => {
     }
     expect(state.phase).toBe('playing'); expect(e.source!.status).toBe('destroyed'); expect(source.hp).toBe(0);
     expect(checkedContact).toBeGreaterThan(0); expect(state.shots).toBe(0);
+    expect(state.growth!.antibodyCharges).toBe(1);
+    expect(state.events.filter(event => event.type === 'ANTIBODY_INJECTED')).toHaveLength(1);
     expect(e.source!.quotaSlots).toEqual(originalSlots);
     expect(e.source!.canceledSlots.length).toBeGreaterThan(0);
     expect(e.source!.canceledSlots.every(slot => originalSlots.includes(slot) && !e.source!.bornQuotaSlots.includes(slot))).toBe(true);

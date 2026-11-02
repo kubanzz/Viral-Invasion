@@ -133,6 +133,7 @@ export class EndlessDirector {
   private population(): { reserved: number; parents: number; pending: number } {
     let reserved = 0, parents = 0, pending = 0;
     for (const target of this.state.targets) {
+      if (target.role === 'event') continue;
       if (target.hp > 0) {
         const parent = target.role !== 'source' && target.role !== 'core' && target.traits?.includes('FISSION') && (target.generation ?? 0) === 0;
         reserved += parent ? 2 : 1;
@@ -247,7 +248,7 @@ export class EndlessDirector {
     // the finite queue may overlap it, with spawnBatch reserving every child.
     // A stationary optional source is not an attacker, but still counts toward
     // population and the independent wave-clear obligations below.
-    if (e.remainingToSpawn > 0 && !this.state.targets.some(target => target.hp > 0 && target.role !== 'source')
+    if (e.remainingToSpawn > 0 && !this.state.targets.some(target => target.hp > 0 && target.role !== 'source' && target.role !== 'event')
       && e.nextSpawnAt > now + .5 + 1e-9) {
       const previousSpawnAt = e.nextSpawnAt;
       e.nextSpawnAt = now + .5;
@@ -258,7 +259,7 @@ export class EndlessDirector {
     if (this.state !== state || this.e !== e || !this.active() || e.phase !== 'combat') return;
     this.population();
     // Pending fission is a real unresolved enemy promise, even after every parent died.
-    if (e.remainingToSpawn > 0 || e.pendingChildren > 0 || this.state.targets.some(target => target.hp > 0)) return;
+    if (e.remainingToSpawn > 0 || e.pendingChildren > 0 || this.state.targets.some(target => target.hp > 0 && target.role !== 'event')) return;
     if (e.clearedWaves >= e.wave) return;
     e.clearedWaves = e.wave;
     e.score = safeAdd(e.score, 50 + Math.min(100000, e.wave * 10));
@@ -272,7 +273,7 @@ export class EndlessDirector {
     if (!this.active() || event.tick !== this.state.tick) return;
     // Utility events have no enemy ID. Observe their accepted result before the
     // per-actor score gate; ability provenance never comes from a held tool.
-    if (event.type === 'TARGET_HIT' || event.type === 'SCAN_COMPLETED' || event.type === 'ORGAN_INTEGRITY_CHANGED') {
+    if (event.type === 'TARGET_HIT' && event.data.ability !== 'host-event' && event.data.eventTarget !== true || event.type === 'SCAN_COMPLETED' || event.type === 'ORGAN_INTEGRITY_CHANGED') {
       const evolution = this.e.evolution ??= { history: [], recentPrimaries: [] };
       evolution.history = recordEndlessBehavior(evolution.history, event, this.state.tick);
     }

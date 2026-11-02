@@ -8,9 +8,12 @@ export type TraitId = 'CARAPACE' | 'FISSION' | 'MIMIC';
 export type OrganId = 'heart' | 'lung';
 export interface OrganNode extends Vec {
   id: string;
-  kind: 'source' | 'tissue' | 'valve' | 'gate' | 'retest' | 'exit' | 'research';
+  kind: 'source' | 'tissue' | 'valve' | 'gate' | 'retest' | 'exit' | 'research' | 'healing';
   active: boolean;
   infected: boolean;
+  /** Local healing-facility capture progress and its independent treatment cooldown. */
+  infection?: number;
+  healReadyAt?: number;
 }
 export interface OrganEdge {
   id: string; from: string; to: string; open: boolean; nextSpread: number; flowDirection: Vec;

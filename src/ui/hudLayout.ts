@@ -1,6 +1,6 @@
 import type { LabelRect } from '../render/sceneLabels';
 
-const hudPanels = '.topbar .brand,.top-actions,.objective,.telemetry,.growth-panel,.organ-overview,.dock-wrap,.evolution-card,.migration-card,.mother-core-panel,.evolution-feedback,.trait-strip,.message,.run-time,.endless-wave-panel,.endless-vitals,.endless-build-panel,.endless-navigation';
+const hudPanels = '.topbar .brand,.top-actions,.objective,.telemetry,.growth-panel,.organ-overview,.dock-wrap,.evolution-card,.migration-card,.mother-core-panel,.evolution-feedback,.trait-strip,.message,.run-time,.endless-wave-panel,.endless-vitals,.endless-build-panel,.endless-navigation,.host-event-card,.mobile-readouts,.mobile-top-actions,.mobile-objective,.mobile-warning-strip,.mobile-notice,.mobile-map,.mobile-stick,.mobile-skill,.mobile-aux,.mobile-cancel,.mobile-guide,.mobile-preview-label';
 const softenedUntil = new WeakMap<HTMLElement, number>();
 
 export interface HudReadOptions {

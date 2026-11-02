@@ -20,7 +20,7 @@ export function advanceLungFlow(flow:LungFlowState,game:GameState):CampaignComma
   if(!flow.airwayOpen)return commands;
   for(const target of game.targets){
     const bounds = activeWorld(game).bounds;
-    if(target.hp<=0||target.role==='source'||target.role==='core'||target.x<bounds.left||target.x>bounds.right||target.y<bounds.top||target.y>bounds.bottom)continue;
+    if(target.hp<=0||target.role==='source'||target.role==='core'||target.role==='event'||target.x<bounds.left||target.x>bounds.right||target.y<bounds.top||target.y>bounds.bottom)continue;
     const mass=target.traits?.includes('CARAPACE') ? .35 : (target.generation??0)>0 ? 1.45 : target.role==='elite' ? .6 : 1;
     const direction=lungFlowDirection(flow,target);
     commands.push({kind:'moveActor',organId:'lung',targetId:target.id,delta:{x:direction.x*flow.strength*mass*BALANCE.step,y:direction.y*flow.strength*mass*BALANCE.step}});

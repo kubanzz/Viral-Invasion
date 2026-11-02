@@ -6,7 +6,7 @@ const font = '"Microsoft YaHei", "Segoe UI", sans-serif';
 export const IMMUNE_BODY_LIFT = -13;
 /** The very same local vertices are used for drawing and occlusion bounds. */
 export function immuneCellBody(cell: ImmuneCellState, elapsed: number) {
-  const alpha = cell.until <= elapsed ? 0 : Math.max(0, Math.min(1, (elapsed - cell.born) / .2, (cell.until - elapsed) / .35));
+  const alpha = cell.until <= elapsed || (cell.hp ?? 1) <= 0 ? 0 : Math.max(0, Math.min(1, (elapsed - cell.born) / .2, (cell.until - elapsed) / .35));
   const crawling = cell.activity === 'seeking' || cell.activity === 'returning', biting = elapsed < cell.attackUntil;
   const pulse = Math.sin(elapsed * (crawling ? 13 : 4) + cell.born * 3), radius = cell.radius + (biting ? 3 : 0);
   const outline = Array.from({ length: 37 }, (_, index) => {
@@ -60,10 +60,14 @@ function drawActivity(ctx: CanvasRenderingContext2D, cell: ImmuneCellState, elap
 }
 
 function drawLifetime(ctx: CanvasRenderingContext2D, cell: ImmuneCellState, elapsed: number): void {
-  // A tiny lifetime bar makes the temporary nature visible without a label wall.
-  const remaining = Math.max(0, Math.min(1, (cell.until - elapsed) / (cell.until - cell.born)));
+  const remaining = Math.max(0, Math.min(1, cell.hp !== undefined ? cell.hp / (cell.maxHp ?? 60) : Number.isFinite(cell.until) ? (cell.until - elapsed) / (cell.until - cell.born) : 1));
   stroke(ctx, { x: -10, y: 8 }, { x: 10, y: 8 }, '#193f3e', 3);
-  stroke(ctx, { x: -10, y: 8 }, { x: -10 + remaining * 20, y: 8 }, '#c7efb5', 2);
+  stroke(ctx, { x: -10, y: 8 }, { x: -10 + remaining * 20, y: 8 }, remaining < .35 ? '#ed9b8b' : '#c7efb5', 2);
+  if ((cell.antibodyUntil ?? 0) > elapsed) {
+    ctx.beginPath(); ctx.ellipse(0, -7, cell.radius + 7, cell.radius * .65 + 5, 0, 0, TAU);
+    ctx.strokeStyle = '#efc56c'; ctx.lineWidth = 2; ctx.stroke();
+    stroke(ctx, { x: -10, y: 12 }, { x: -10 + Math.min(1, (cell.antibodyUntil! - elapsed) / 8) * 20, y: 12 }, '#efc56c', 2);
+  }
 }
 
 /**

@@ -86,8 +86,8 @@ function optionFor(growth: EndlessGrowthState, id: EndlessUpgradeId, wave: numbe
     scan: `Q 扫描同时引爆身边 260 范围，基础伤害 ${change(before.scanDamage, after.scanDamage)}；扫描显形继续生效。`,
     vitality: `最大耐久 ${change(before.maxHp, after.maxHp)}；本次补给按新的耐久上限结算。`,
     haste: `精准净化间隔约 ${change(beforeShotTicks * BALANCE.step, afterShotTicks * BALANCE.step)} 秒；射速约 ${change(1 / (beforeShotTicks * BALANCE.step), 1 / (afterShotTicks * BALANCE.step))} 发/秒；整组扇射共用一次间隔。`,
-    immune: `免疫细胞伤害倍率 ${change(before.cellDamageMultiplier, after.cellDamageMultiplier)}，额外寿命 ${change(before.cellDurationBonus, after.cellDurationBonus)} 秒；Q 冷却 ${change(before.scanCooldown, after.scanCooldown)} 秒，小队独立冷却倍率 ${change(before.cellCooldownMultiplier, after.cellCooldownMultiplier)}。${nextRank >= IMMUNE_GUARD_BALANCE.minimumRank
-      ? `${currentRank < IMMUNE_GUARD_BALANCE.minimumRank ? '新操作：' : ''}组织驻防已解锁：${IMMUNE_GUARD_BALANCE.commandRange} 范围内 Q 瞄准十字组织，小队守备 ${IMMUNE_GUARD_BALANCE.radius} 范围并优先拦截袭击者；你可离开，细胞仍须真实到达和接触。Q 指敌或空地改令，不续命、不重置咬击。`
+    immune: `免疫细胞伤害倍率 ${change(before.cellDamageMultiplier, after.cellDamageMultiplier)}，每团成员 ${Math.min(5, 3 + currentRank)} → ${Math.min(5, 3 + nextRank)} 体，常驻且有生命；Q 冷却 ${change(before.scanCooldown, after.scanCooldown)} 秒，小队独立冷却倍率 ${change(before.cellCooldownMultiplier, after.cellCooldownMultiplier)}。${nextRank >= IMMUNE_GUARD_BALANCE.minimumRank
+      ? `${currentRank < IMMUNE_GUARD_BALANCE.minimumRank ? '新操作：' : ''}组织驻防已解锁：${IMMUNE_GUARD_BALANCE.commandRange} 范围内 Q 瞄准十字组织，小队守备 ${IMMUNE_GUARD_BALANCE.radius} 范围并优先拦截袭击者；你可离开，细胞仍须真实到达和接触。Q 指敌或空地改令，保留当前生命与咬击冷却。`
       : `${IMMUNE_GUARD_BALANCE.minimumRank} 阶解锁新操作：Q 点组织驻防，优先拦截袭击组织者。`}`,
     catalysis: `转换工具 2 的爆发：保留牵引与已解锁导流，取消普通爆发，直伤 ${change(areaDamage, Math.min(CATALYSIS_UPGRADE_BALANCE.primerDamageCap, areaDamage))}。最多 ${CATALYSIS_UPGRADE_BALANCE.maxTargets} 个实际受击存活目标铺标 ${CATALYSIS_UPGRADE_BALANCE.duration} 秒；随后用 1 正伤命中或真实细胞接触咬击，整批引爆一次。爆发半径 ${CATALYSIS_UPGRADE_BALANCE.radius}、最多 ${CATALYSIS_UPGRADE_BALANCE.maxTargets} 体，每体伤害 ${display(after.catalysisDamage)}（原工具 2 完整成长伤害 ×${CATALYSIS_UPGRADE_BALANCE.damageMultiplier}，按施法捕获）。再次 2 的有效铺标覆盖旧批，不叠加。`,
   };

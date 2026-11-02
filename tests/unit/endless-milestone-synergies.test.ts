@@ -99,7 +99,7 @@ describe('milestone-selected synergy receipts through actual session combat', ()
       const events = session.state.events;
       const bites = events.filter(event => event.type === 'TARGET_HIT' && event.data.protocolId === 'IMMUNE_BEACON');
       expect(bites.length).toBeGreaterThan(0);
-      const expected = 8 * endlessCombatStats(session.state.endlessGrowth!).cellDamageMultiplier;
+      const expected = (24 / 5) * endlessCombatStats(session.state.endlessGrowth!).cellDamageMultiplier;
       for (const hit of bites) expect(hit.data.damage).toBeCloseTo(expected);
       if (trace) {
         expect(bites.every(hit => hit.data.id === marked.id)).toBe(true);

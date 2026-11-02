@@ -11,7 +11,7 @@ export const CATALYSIS_BALANCE = {
   damageMultiplier: CATALYSIS_UPGRADE_BALANCE.damageMultiplier,
 } as const;
 
-const usable = (target: Target): boolean => target.role !== 'core' && Number.isFinite(target.hp) && target.hp > 0
+const usable = (target: Target): boolean => target.role !== 'core' && target.role !== 'event' && Number.isFinite(target.hp) && target.hp > 0
   && Number.isFinite(target.x) && Number.isFinite(target.y) && Number.isFinite(target.radius) && target.radius > 0;
 const nearest = (center: Vec) => (a: Target, b: Target) => distance(center, a) - distance(center, b) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
 

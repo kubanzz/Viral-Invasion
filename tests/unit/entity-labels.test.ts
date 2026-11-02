@@ -26,7 +26,7 @@ describe('shared entity information pass', () => {
     const before = JSON.stringify(state), labels: SceneLabel[] = [], drawn = canvas();
     new GrowthVisuals().drawBeacon(drawn.ctx, state, growth, { add: label => labels.push(label) });
     expect(labels).toHaveLength(1);
-    expect(labels[0].lines[0].text).toBe('✚ 灯塔小队 ×1 · 8.0s');
+    expect(labels[0].lines[0].text).toBe('✚ 免疫军团 ×1 · 8.0s');
     expect(labels[0].anchor).toMatchObject({ x: 500, y: 500 });
     expect(drawn.text).toEqual([]);
     expect(drawn.shapes).toContain('roundRect'); // The actual beacon remains at its body anchor.

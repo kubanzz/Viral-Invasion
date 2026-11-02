@@ -36,7 +36,7 @@ export function protocolChoiceCopy(option: Pick<DraftOption, 'protocolId' | 'tun
   const copy: Record<ProtocolId, ChoiceCopy> = {
     PULSE_BREAK: { summary: '配合装置冲流，命中时追加破壳伤害。', action: '靠近装置，切到 1 / 2，左键攻击', caution: '只在装置冲流时触发' },
     PURIFY_CHAIN: { summary: rank > 1 ? '持续命中会折射，清除敌人还会连锁。' : '清除一个敌人，电弧继续攻击附近敌人。', action: '切到 1 / 2，左键攻击密集敌群', caution: '附近需要有其他敌人' },
-    IMMUNE_BEACON: { summary: '召集三只免疫细胞，追击并吞噬敌人。', action: 'Q 对准敌人，召集小队围猎', caution: `每次召集消耗 ${getBeaconConfig(option.tuning, rank).tissueCost} 组织完整度` },
+    IMMUNE_BEACON: { summary: `部署 ${rank + 2} 体常驻军团，追击并吞噬敌人。`, action: 'Q 部署或指挥 · R 消耗抗体裂变', caution: `最多两支军团；部署消耗 ${getBeaconConfig(option.tuning, rank).tissueCost} 组织完整度` },
     EXPOSE_TRACE: { summary: '扫描让敌人显形、减速，更容易追击。', action: '按 Q 扫描敌群', caution: '辅助能力，不直接造成伤害' },
   };
   const result = { ...copy[option.protocolId] };
@@ -44,7 +44,7 @@ export function protocolChoiceCopy(option: Pick<DraftOption, 'protocolId' | 'tun
     const before = protocolRank(current), tuning = option.tuning;
     if (option.protocolId === 'PULSE_BREAK') result.change = `追加伤害 ${arrow(getPulseConfig(tuning, before).bonusDamage, getPulseConfig(tuning, rank).bonusDamage)}`;
     if (option.protocolId === 'PURIFY_CHAIN') result.change = `连锁伤害 ${arrow(getChainConfig(tuning, before).damage, getChainConfig(tuning, rank).damage)}`;
-    if (option.protocolId === 'IMMUNE_BEACON') result.change = `小队持续 ${arrow(getBeaconConfig(tuning, before).duration, getBeaconConfig(tuning, rank).duration, ' 秒')}`;
+    if (option.protocolId === 'IMMUNE_BEACON') result.change = `军团成员 ${before + 2} → ${rank + 2} 体 · 攻击增强`;
     if (option.protocolId === 'EXPOSE_TRACE') result.change = `减速持续 ${arrow(getTraceConfig(tuning, before).slowDuration, getTraceConfig(tuning, rank).slowDuration, ' 秒')}`;
   } else if (current) result.change = `${TUNING_NAMES[current.tuning]} → ${TUNING_NAMES[option.tuning]} · 阶数不变`;
   return result;
@@ -62,7 +62,7 @@ export function endlessChoiceCopy(option: EndlessUpgradeOption, growth: EndlessG
     scan: { summary: '扫描时引爆身边敌人，缓解近身压力。', action: '按 Q 扫描并引爆', change: `爆发伤害 ${arrow(before.scanDamage, after.scanDamage)}`, caution: '' },
     vitality: { summary: '提高最大耐久，让你更能扛住攻击。', action: '立即提高耐久上限', change: `最大耐久 ${arrow(before.maxHp, after.maxHp)}`, caution: '' },
     haste: { summary: '提高精准净化射速，持续压制敌人。', action: '切到 1，按住左键射击', caution: '' },
-    immune: { summary: '免疫细胞更强、停留更久，召集更快。', action: option.nextRank >= 3 ? '装备灯塔后，Q 点组织可驻防' : '按 Q 召集或指挥细胞', change: `额外停留 ${arrow(before.cellDurationBonus, after.cellDurationBonus, ' 秒')}`, caution: '细胞需要接近敌人才能吞噬' },
+    immune: { summary: '增加军团成员并强化攻击，召集更快。', action: option.nextRank >= 3 ? '装备灯塔后，Q 点组织驻防 · R 注射抗体' : '按 Q 部署或指挥军团', change: `军团成员 ${Math.min(5, 3 + (growth.ranks.immune ?? 0))} → ${Math.min(5, 3 + option.nextRank)} 体；攻击 ×${number(after.cellDamageMultiplier)}`, caution: '常驻但会被击杀，最多两支军团' },
     catalysis: { summary: '用 2 铺设标记，再用 1 或细胞引爆。', action: '切到 2 左键铺标，再切 1 左键命中', caution: '取舍：替换 2 的普通爆破，直接伤害降低' },
   };
   return copies[option.id];

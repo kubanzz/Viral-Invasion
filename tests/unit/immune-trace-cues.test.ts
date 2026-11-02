@@ -5,7 +5,7 @@ import { dirname } from 'node:path';
 import { GameSession } from '../../src/game/session';
 import { growthContext } from '../../src/game/growth';
 import { summonImmuneCells } from '../../src/game/immuneCells';
-import type { GameState } from '../../src/game/types';
+import type { GameState, InputFrame } from '../../src/game/types';
 import { GrowthVisuals } from '../../src/render/growthVisuals';
 import { IMMUNE_TRACE_CUE_TICKS, selectImmuneTraceCues } from '../../src/render/immuneTraceCues';
 
@@ -97,6 +97,7 @@ describe('actual-cell trace-hit feedback', () => {
   it('does not invent a cue for expired cells/beacons, dead or absent targets, malformed origins or unmarked/zero-damage hits', () => {
     const changes: Array<(state: GameState) => void> = [
       state => { state.growth!.cells![0].until = state.elapsed; },
+      state => { state.growth!.cells![0].hp = 0; },
       state => { state.growth!.beacon!.until = state.elapsed; },
       state => { state.growth!.cells = []; },
       state => { state.targets[0].hp = 0; },
@@ -116,6 +117,51 @@ describe('actual-cell trace-hit feedback', () => {
     state.events = [latest, old, structuredClone(latest)];
     const cues = selectImmuneTraceCues(state);
     expect(cues).toHaveLength(1); expect(cues[0].from.x).toBe(426); expect(cues[0].progress).toBe(1 / IMMUNE_TRACE_CUE_TICKS);
+  });
+
+  it('acknowledges accepted trace bites from both real deployed legions while retaining body, death and organ proof', () => {
+    const game = new GameSession(771, { campaign: true, milestone: 'G2' }); game.start();
+    const state = game.state;
+    state.world = { width: 2400, height: 1500, bounds: { left: 30, right: 2370, top: 30, bottom: 1470 }, obstacles: [], foreground: { x: 0, y: 0, width: 0, height: 0 } };
+    Object.assign(state.player, { x: 500, y: 500 });
+    state.growth!.equipped = [{ id: 'IMMUNE_BEACON', tuning: 'balanced' }, { id: 'EXPOSE_TRACE', tuning: 'balanced' }];
+    state.targets = state.targets.filter(target => target.role === 'source');
+    state.targets.forEach((target, index) => {
+      Object.assign(target, { x: 700 + index * 320, y: 500, hp: 10000, maxHp: 10000, traits: [] });
+      state.battle!.nextSpawnAt[target.id] = 1000;
+    });
+    const input = (extra: Partial<InputFrame> = {}): InputFrame => ({ moveX: 0, moveY: 0, fire: false, aim: { x: 700, y: 500 }, ...extra });
+    game.step(input({ scan: true }));
+    const firstId = state.growth!.beacon!.id;
+    while (state.tick < 722) game.step(input());
+    game.step(input({ scan: true, aim: { x: 1020, y: 500 } }));
+    const secondId = state.growth!.beacon!.id;
+    expect(secondId).not.toBe(firstId);
+    let cues = selectImmuneTraceCues(state);
+    const represented = () => new Set(cues.map(cue => state.growth!.cells!.find(cell => cell.id === cue.cellId)!.beaconId));
+    for (let tick = 0; tick < 90 && represented().size < 2; tick++) { game.step(input()); cues = selectImmuneTraceCues(state); }
+    expect(represented()).toEqual(new Set([firstId, secondId]));
+    for (const cue of cues) expect(state.events.some(event => event.type === 'PROTOCOL_BEACON_HIT'
+      && event.data.cellId === cue.cellId && event.data.prioritizedTrace === true && Number(event.data.damage) > 0)).toBe(true);
+    const live = game.snapshot(), before = structuredClone(live); freeze(live);
+    expect(selectImmuneTraceCues(live)).toEqual(cues); expect(live).toEqual(before);
+    const withoutAlias = structuredClone(live); withoutAlias.growth!.beacon = null;
+    expect(selectImmuneTraceCues(withoutAlias)).toEqual(cues);
+
+    const killed = structuredClone(live), killedCell = killed.growth!.cells!.find(cell => cell.id === cues[0].cellId)!;
+    killedCell.hp = 0;
+    expect(selectImmuneTraceCues(killed)).toHaveLength(cues.length - 1);
+    expect(selectImmuneTraceCues(killed).some(cue => cue.cellId === killedCell.id)).toBe(false);
+    const departed = structuredClone(live); departed.battle!.organId = 'lung';
+    expect(selectImmuneTraceCues(departed)).toEqual([]);
+
+    const recycled = structuredClone(live), recycledCell = recycled.growth!.cells!.find(cell => cell.id === cues[0].cellId)!;
+    recycledCell.born = recycled.elapsed + .1;
+    expect(selectImmuneTraceCues(recycled).some(cue => cue.cellId === recycledCell.id)).toBe(false);
+    expect(selectImmuneTraceCues(recycled)).toHaveLength(cues.length - 1);
+    const laterBeacon = structuredClone(live);
+    laterBeacon.growth!.beacons!.find(beacon => beacon.id === firstId)!.born = laterBeacon.elapsed + .1;
+    expect(selectImmuneTraceCues(laterBeacon).every(cue => laterBeacon.growth!.cells!.find(cell => cell.id === cue.cellId)!.beaconId === secondId)).toBe(true);
   });
 
   it('draws a short cell-to-target line plus shape cue without changing gameplay or depending on a quality toggle', () => {

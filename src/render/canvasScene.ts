@@ -1,8 +1,9 @@
+import { immuneLegions } from '../game/immuneLegions';
 import { activeWorld, BALANCE, WORLD, type Effect, type GameState, type Target, type Vec, type WorldGeometry } from '../game/types';
 import { endlessCombatStats } from '../game/endlessGrowth';
 import { drawEnemyTacticDangers } from './enemyTacticVisuals';
 import { drawCombatEffects } from './combatEffects';
-import { Camera } from './camera';
+import { Camera, type CameraFollowOptions } from './camera';
 import { depthSort } from './depthSort';
 import { foregroundOpacity, isForegroundOccluded } from './occlusion';
 import { LAYER_ORDER } from './layers';
@@ -21,9 +22,11 @@ import { drawImmuneCell, immuneCellBody, IMMUNE_BODY_LIFT } from './immuneVisual
 import { getRaisedActorBodies, getRaisedObstacleOcclusion, PLAYER_HEAD_SHAPE, playerBodyPose } from './raisedObstacleOcclusion';
 import { drawRaisedBodyLayers, traceRaisedObstacle } from './raisedObstacleGeometry';
 import { SceneLabels, type SceneLabel, type LabelRect } from './sceneLabels';
+import { touchCopy } from '../ui/touchCopy';
 import { drawPlayerPresence, playerPresence } from './playerPresence';
 import type { ArtPresentation } from './artPresentation';
 import { crosshairStatus, type CrosshairStatus } from './crosshairStatus';
+import { drawHostEventGround, drawHostEventLabels, drawHostEventTarget } from './hostEventVisuals';
 
 const TAU = Math.PI * 2;
 const hash = (n: number): number => { const a = Math.sin(n * 127.1 + 311.7) * 43758.5453123; return a - Math.floor(a); };
@@ -110,7 +113,7 @@ export class CanvasScene {
     if (this.signalCanvas) { this.signalCanvas.width = this.canvas.width; this.signalCanvas.height = this.canvas.height; }
     this.camera.resize(this.width, this.height);
   }
-  prepareCamera(state: GameState, options?: { deltaSeconds?: number; snap?: boolean }): void { this.camera.follow(state.player, activeWorld(state), options); }
+  prepareCamera(state: GameState, options?: CameraFollowOptions): void { this.camera.follow(state.player, activeWorld(state), options); }
 
   diagnostics(state: GameState) {
     return { depthOrder: depthSort(this.entities(state)).map(entity => entity.id), occluded: isForegroundOccluded(state.player, activeWorld(state)), foregroundOpacity: foregroundOpacity(state.player, activeWorld(state)), layerOrder: LAYER_ORDER, labels: this.labels.diagnostics(), hudRects: this.hudRects.map(rect => ({ ...rect })), playerPresence: playerPresence(state), crosshair: this.lastCrosshair };
@@ -122,19 +125,20 @@ export class CanvasScene {
       ...state.targets.flatMap((target, index) => target.role === 'capsule' ? [] : [{ id: target.id, y: target.y, kind: 'target', index }]),
       { id: 'tissue', y: state.tissue.y, kind: 'tissue' },
       ...(state.endless ? [] : [{ id: 'terminal', y: state.terminal.y, kind: 'terminal' }]),
-      ...(state.battle?.graph.nodes.filter(node => node.kind === 'valve' || node.kind === 'gate' || node.kind === 'research' || node.kind === 'exit').map(node => ({ id: node.id, y: node.y, kind: 'device' })) ?? []),
-      ...(state.growth?.beacon && state.growth.beacon.organId === state.battle?.organId && state.growth.beacon.until > state.elapsed ? [{ id: state.growth.beacon.id, y: state.growth.beacon.y, kind: 'beacon' }] : []),
-      ...(state.growth?.cells?.flatMap((cell, index) => cell.organId === state.battle?.organId && cell.until > state.elapsed ? [{ id: cell.id, y: cell.y, kind: 'immune', index }] : []) ?? []),
+      ...(state.battle?.graph.nodes.filter(node => node.kind === 'valve' || node.kind === 'gate' || node.kind === 'research' || node.kind === 'exit' || node.kind === 'healing').map(node => ({ id: node.id, y: node.y, kind: 'device' })) ?? []),
+      ...(immuneLegions(state.growth).filter(beacon => beacon.organId === state.battle?.organId && beacon.until > state.elapsed).map(beacon => ({ id: beacon.id, y: beacon.y, kind: 'beacon' }))),
+      ...(state.growth?.cells?.flatMap((cell, index) => cell.organId === state.battle?.organId && cell.until > state.elapsed && (cell.hp ?? 1) > 0 ? [{ id: cell.id, y: cell.y, kind: 'immune', index }] : []) ?? []),
       ...activeWorld(state).obstacles.map(obstacle => ({ id: obstacle.id, y: obstacle.y, kind: 'obstacle' })),
     ];
   }
 
-  render(state: GameState, aim: Vec, opts: { lowEffects?: boolean; cameraPrepared?: boolean; authoritativeState?: GameState } = {}): void {
+  render(state: GameState, aim: Vec, opts: { lowEffects?: boolean; cameraPrepared?: boolean; authoritativeState?: GameState; aimRange?: number; aimCancelled?: boolean } = {}): void {
     if (!opts.cameraPrepared) this.prepareCamera(state);
     let ctx = this.ctx;
     this.labels.begin({ width: this.width, height: this.height, scale: this.camera.scale,
       project: point => this.camera.worldToScreen(point), blocked: this.hudRects,
-      scope: `${state.growth?.runId ?? state.seed}:${state.battle?.organId ?? 'training'}` });
+      scope: `${state.growth?.runId ?? state.seed}:${state.battle?.organId ?? 'training'}`,
+      text: this.canvas.ownerDocument?.body?.classList.contains('touch-mode') ? touchCopy : undefined });
     // Labels yield to the player's body and exact ground aim. Their shapes stay
     // in world space; only the surrounding explanatory text can move.
     this.reserveLabelPoint(state.player, 30, 78, 12);
@@ -161,6 +165,7 @@ export class CanvasScene {
     if (this.art) this.drawSurfaceFinish(ctx, state);
     this.drawAtmosphere(ctx, state, Boolean(opts.lowEffects));
     this.drawGroundSignals(ctx, state, aim);
+    drawHostEventGround(ctx, state);
     drawEncounterGround(ctx, state, Boolean(opts.lowEffects), this.labels);
     this.growthVisuals.drawGround(ctx, state, state.growth, Boolean(opts.lowEffects));
     this.drawShadows(ctx, state);
@@ -187,7 +192,7 @@ export class CanvasScene {
         const point = entity.kind === 'target' ? state.targets[entity.index!] : entity.kind === 'tissue' ? state.tissue : entity.kind === 'terminal' ? state.terminal
           : entity.kind === 'obstacle' ? activeWorld(state).obstacles.find(item => item.id === entity.id)!
           : entity.kind === 'device' ? state.battle!.graph.nodes.find(item => item.id === entity.id)!
-          : entity.kind === 'immune' ? state.growth!.cells![entity.index!] : entity.kind === 'player' ? state.player : state.growth!.beacon!;
+          : entity.kind === 'immune' ? state.growth!.cells![entity.index!] : entity.kind === 'player' ? state.player : immuneLegions(state.growth).find(beacon => beacon.id === entity.id)!;
         entityPosition = point;
         const screen = this.camera.worldToScreen(point);
         if (screen.x < -220 || screen.x > this.width + 220 || screen.y < -120 || screen.y > this.height + 260) continue;
@@ -215,11 +220,12 @@ export class CanvasScene {
       this.drawBattleDangers(ctx, state);
       drawEnemyTacticDangers(ctx, state, this.labels);
       if (state.campaign?.core.combat) drawMotherCoreDangers(ctx, state, state.campaign.core.combat, this.labels);
-      drawBattleLabels(ctx, state, this.labels);
+      drawBattleLabels(ctx, state.targets.some(target => target.role === 'event') ? { ...state, targets: state.targets.filter(target => target.role !== 'event') } : state, this.labels);
+      drawHostEventLabels(state, this.labels);
       this.drawTissueMarker(ctx, state);
     }
     if (!this.art) drawPlayerPresence(ctx, state, playerPresence(state, raisedActorBodies));
-    this.drawCrosshair(ctx, state, aim, opts.authoritativeState ?? state);
+    this.drawCrosshair(ctx, state, aim, opts.authoritativeState ?? state, opts.aimRange, opts.aimCancelled);
     ctx.restore();
     this.labels.draw(ctx);
     if (this.art) this.art.raster('signals', this.signalCanvas!, 10000);
@@ -238,7 +244,7 @@ export class CanvasScene {
         if (state.battle?.organId === 'lung') drawLungObstacle(ctx, obstacle, opacity); else this.drawObstacle(ctx, obstacle, opacity);
       }
       if (entity.kind === 'device') this.drawBattleDevice(ctx, state.battle!.graph.nodes.find(node => node.id === entity.id)!, state);
-      if (entity.kind === 'beacon') this.growthVisuals.drawBeacon(ctx, state, state.growth, this.labels);
+      if (entity.kind === 'beacon') this.growthVisuals.drawBeacon(ctx, state, state.growth, this.labels, entity.id);
       if (entity.kind === 'immune') {
         const cell = state.growth!.cells![entity.index!], body = immuneCellBody(cell, state.elapsed);
         if (body.alpha > 0) {
@@ -253,14 +259,14 @@ export class CanvasScene {
   annotateArtEntity(ctx: CanvasRenderingContext2D, entity: {id: string; kind: string}, state: GameState, halfWidth: number, above: number): void {
     const point = entity.kind === 'player' ? state.player : entity.kind === 'target' ? state.targets.find(t => t.id === entity.id)!
       : entity.kind === 'immune' ? state.growth!.cells!.find(cell => cell.id === entity.id)!
-      : entity.kind === 'beacon' ? state.growth?.beacon
+      : entity.kind === 'beacon' ? immuneLegions(state.growth).find(beacon => beacon.id === entity.id)
       : entity.kind === 'tissue' ? state.tissue : state.battle!.graph.nodes.find(n => n.id === entity.id)!;
     if (!point) return;
     if (entity.kind === 'beacon') {
-      const beacon = state.growth?.beacon;
+      const beacon = immuneLegions(state.growth).find(beacon => beacon.id === entity.id);
       if (!beacon || beacon.id !== entity.id || beacon.organId !== state.battle?.organId || beacon.until <= state.elapsed) return;
       if (beacon.mode !== 'patrol') this.reserveLabelPoint(point, halfWidth, above, 12);
-      this.growthVisuals.drawBeaconLabel(ctx, state, state.growth, this.labels); return;
+      this.growthVisuals.drawBeaconLabel(ctx, state, state.growth, this.labels, entity.id); return;
     }
     this.reserveLabelPoint(point, halfWidth, above, 12);
     ctx.save(); ctx.globalAlpha = 0;
@@ -501,7 +507,20 @@ export class CanvasScene {
     const near = Math.hypot(state.player.x - node.x, state.player.y - node.y) <= BALANCE.interactionRange;
     ctx.save(); ctx.translate(node.x, node.y); ctx.scale(1, 1 / .72);
     const flow = state.battle?.organId === 'lung' ? state.campaign?.arenas.lung.flow : undefined;
-    if (node.id === 'airway' && flow) {
+    if (node.kind === 'healing') {
+      const infection = Math.max(0, Math.min(100, node.infection ?? 0)), occupied = infection >= 100;
+      const color = occupied ? '#df8f9a' : infection > 0 ? '#ecc58e' : '#b3dec6';
+      ellipse(ctx, 0, 4, 37, 13, '#315c5066', color);
+      ctx.beginPath(); ctx.roundRect(-22, -40, 44, 39, 11); ctx.fillStyle = occupied ? '#885d70' : '#679486'; ctx.fill(); ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = color; ctx.fillRect(-12, -25, 24, 7); ctx.fillRect(-3.5, -33, 7, 23);
+      if (infection > 0) { ctx.beginPath(); ctx.arc(0, -20, 30, -Math.PI / 2, -Math.PI / 2 + TAU * infection / 100); ctx.strokeStyle = '#e5a98f'; ctx.lineWidth = 3; ctx.stroke(); }
+      const healingNear = Math.hypot(state.player.x - node.x, state.player.y - node.y) <= 150;
+      const wait = Math.max(0, (node.healReadyAt ?? 0) - time);
+      this.addEntityLabel({ id: `device:${node.id}`, anchor: node, offset: { x: 0, y: healingNear ? -72 : 29 }, priority: healingNear ? 76 : infection > 0 ? 55 : 35, essential: healingNear,
+        lines: [{ text: occupied ? '✚ 治疗点 · 已感染' : infection > 0 ? `✚ 治疗点 · 感染 ${Math.ceil(infection)}%` : '✚ 治疗点', color, size: 11 },
+          { text: wait > 0 ? `恢复中 ${wait.toFixed(1)}s` : occupied ? '3 + 点击 · 消耗 2 样本夺回' : healingNear ? '3 + 点击 · 快速净化 / 耐久 +25' : '靠近后用 3 治疗', color: '#d3e2cb', size: 10 }],
+        bar: infection > 0 ? { ratio: infection / 100, color: '#d99a92', width: 55 } : undefined });
+    } else if (node.id === 'airway' && flow) {
       drawLungAirway(ctx, state, flow, near, this.labels, node);
     } else if (node.kind === 'exit') {
       const destination = state.battle?.organId === 'lung' ? '心脏' : '肺部';
@@ -649,6 +668,7 @@ export class CanvasScene {
   }
 
   private drawTarget(ctx: CanvasRenderingContext2D, target: Target, state: GameState): void {
+    if (drawHostEventTarget(ctx, target, state)) return;
     if (state.battle) { drawBattleTarget(ctx, target, state); return; }
     const live = target.hp > 0;
     ctx.save(); ctx.translate(target.x, target.y); ctx.scale(1, 1 / .72);
@@ -885,11 +905,11 @@ export class CanvasScene {
     line(ctx, [-5, 0, 0, 0, 5, -5], '#d5fff3', 2); line(ctx, [0, 0, 5, 5], '#d5fff3', 2); ctx.restore();
   }
 
-  private drawCrosshair(ctx: CanvasRenderingContext2D, state: GameState, aim: Vec, authoritativeState: GameState): void {
+  private drawCrosshair(ctx: CanvasRenderingContext2D, state: GameState, aim: Vec, authoritativeState: GameState, range?: number, cancelled = false): void {
     if (state.phase !== 'playing') { this.lastCrosshair = null; return; }
-    const status = crosshairStatus(authoritativeState, aim);
+    const status = cancelled ? 'blocked' : crosshairStatus(authoritativeState, aim, range);
     this.lastCrosshair = { status, aim: { ...aim } };
-    const color = status === 'in-range' ? state.tool === 3 ? '#b5f7c2' : '#b2f8eb' : '#ddb58a';
+    const color = cancelled ? '#f5a595' : status === 'in-range' ? state.tool === 3 ? '#b5f7c2' : '#b2f8eb' : '#ddb58a';
     ctx.save(); ctx.translate(aim.x, aim.y); ctx.scale(1, 1 / .72);
     ctx.lineWidth = 1.3; ctx.strokeStyle = color;
     ctx.beginPath(); ctx.arc(0, 0, 9, .15, 1.4); ctx.arc(0, 0, 9, 1.7, 2.95); ctx.arc(0, 0, 9, 3.3, 4.55); ctx.arc(0, 0, 9, 4.85, 6.1); ctx.stroke();

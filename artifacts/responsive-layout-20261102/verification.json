@@ -1,0 +1,58 @@
+{
+  "feature": "responsive-desktop-mobile-layout",
+  "verifiedAt": "2026-11-02T05:02:39.040Z",
+  "rule": {
+    "maxWidth": 1024,
+    "maxHeight": 600,
+    "coarseTouchKeepsMobile": true,
+    "forceTouchQuery": "mobile=1",
+    "distributionMarkerForcesLayout": false
+  },
+  "transition": "Pause combat and clear all input; keep the same run; restore actual HUD/map nodes and desktop controls/text; require an explicit resume.",
+  "typecheck": "passed",
+  "unit": {
+    "passed": 53,
+    "failed": 0,
+    "report": "artifacts/responsive-layout-20261102/unit-report.json"
+  },
+  "browser": {
+    "passed": 46,
+    "failed": 0,
+    "skipped": 2,
+    "uniqueCases": 48,
+    "originalMatrix": {
+      "report": "artifacts/responsive-layout-20261102/browser-report.json",
+      "stats": {
+        "startTime": "2026-11-02T04:54:58.546Z",
+        "duration": 216938.412,
+        "expected": 46,
+        "skipped": 0,
+        "unexpected": 2,
+        "flaky": 0
+      }
+    },
+    "affectedEnvironmentCases": {
+      "report": "artifacts/responsive-layout-20261102/coarse-report.json",
+      "stats": {
+        "startTime": "2026-11-02T05:00:59.825Z",
+        "duration": 15356.598,
+        "expected": 4,
+        "skipped": 2,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    "explanation": "Windows desktop WebKit does not expose a coarse touch device with positive navigator.maxTouchPoints under hasTouch emulation. The two unsupported environment cases are explicitly skipped; Chrome/Edge retain strict environment assertions. No production layout rules or hardware properties were overridden.",
+    "scope": "Desktop bundle and single HTML, Chrome/Edge/WebKit; breakpoint boundaries, repeated resizing, same run/storage, real DOM-node restoration, held keyboard/mouse/skill reset, portrait pause, help wording, explicit override, and emulated coarse-touch context."
+  },
+  "release": {
+    "html": "releases/Viral-Invasion-Adaptive.html",
+    "zip": "releases/Viral-Invasion-Adaptive.zip",
+    "htmlSha256": "3874b7c5802c1af4f41470806d1002969d8ce75f90e4b840cf04bc92de695a43",
+    "zipSha256": "89695f00769d1adab67b6f7448733eeaf9df5f40948b030ed7d16499e971ea2a",
+    "sourceCount": 192,
+    "sourceAndOutputValidation": "passed",
+    "zipDecodedByteValidation": "passed"
+  },
+  "limits": "Browser regression and coarse-touch emulation do not replace a physical iPhone/Sitecase check."
+}

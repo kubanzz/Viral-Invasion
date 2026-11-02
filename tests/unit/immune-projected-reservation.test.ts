@@ -14,23 +14,23 @@ function fixture() {
   state.world = structuredClone(world); Object.assign(state.player, { x: 500, y: 500 });
   Object.assign(state.tissue, { x: 500, y: 750, hp: 100 });
   state.endlessGrowth!.ranks = { immune: 5, power: 5 };
-  const weak = target('a-weak', 30), next = target('b-next', 100, 570); state.targets = [weak, next];
+  const weak = target('a-weak', 18), next = target('b-next', 100, 570); state.targets = [weak, next];
   session.step(input({ scan: true }));
   state.growth!.cells = state.growth!.cells!.map(cell => ({ ...cell, x: 550, y: 500, attackReadyAt: 0, attackUntil: 0, targetId: null, waypoint: null }));
   return { session, state, weak, next };
 }
 
 describe('immune planning reserves the actual projected host damage', () => {
-  it('uses one scaled bite for a 30HP body, then lets the other two cells hit the nearby living body', () => {
+  it('uses one scaled bite for an 18HP body, then lets the other four upgraded cells hit the nearby living body', () => {
     const { session, state, weak, next } = fixture();
     session.step(input());
     const hits = state.events.filter(event => event.tick === state.tick && event.type === 'TARGET_HIT' && event.data.protocolId === 'IMMUNE_BEACON');
     expect(hits.filter(event => event.data.id === weak.id)).toHaveLength(1);
-    expect(hits.filter(event => event.data.id === next.id)).toHaveLength(2);
-    expect(weak.hp).toBe(0); expect(next.hp).toBeCloseTo(100 - 2 * 8 * 1.9 * 2);
+    expect(hits.filter(event => event.data.id === next.id)).toHaveLength(4);
+    expect(weak.hp).toBe(0); expect(next.hp).toBeCloseTo(100 - 4 * (24 / 5) * 1.9 * 2);
     expect(hits.every(event => Number(event.data.damage) > 0)).toBe(true);
     const bites = state.events.filter(event => event.tick === state.tick && event.type === 'PROTOCOL_BEACON_HIT');
-    expect(bites).toHaveLength(3);
+    expect(bites).toHaveLength(5);
     expect(bites.every(event => hits.some(hit => hit.data.rootId === event.data.rootId && hit.data.id === event.data.targetId))).toBe(true);
   });
 
@@ -40,7 +40,7 @@ describe('immune planning reserves the actual projected host damage', () => {
     for (const cell of state.growth!.cells!) cell.attackReadyAt = 100;
     session.step(input({ fire: true, tool: 2 }));
     for (let tick = 0; tick < 18; tick++) session.step(input());
-    expect(state.endlessGrowth!.pendingCatalysis).toBeDefined(); expect(weak.hp).toBe(22); expect(next.hp).toBe(92);
+    expect(state.endlessGrowth!.pendingCatalysis).toBeDefined(); expect(weak.hp).toBe(10); expect(next.hp).toBe(92);
     state.growth!.cells = state.growth!.cells!.map(cell => ({ ...cell, x: 550, y: 500, attackReadyAt: 0, attackUntil: 0, waypoint: null }));
     const oldClocks = state.growth!.cells!.map(cell => ({ id: cell.id, ready: cell.attackReadyAt, until: cell.attackUntil }));
     session.step(input({ tool: 1 }));
@@ -49,7 +49,7 @@ describe('immune planning reserves the actual projected host damage', () => {
     const bites = state.events.filter(event => event.tick === state.tick && event.type === 'PROTOCOL_BEACON_HIT');
     const rejected = state.events.filter(event => event.tick === state.tick && event.type === 'IMMUNE_BITE_REJECTED');
     expect(actual).toHaveLength(1); expect(bites).toHaveLength(1); expect(bites[0].data.damage).toBe(actual[0].data.damage);
-    expect(rejected).toHaveLength(2); expect(rejected.every(event => event.data.reason === 'target-already-cleared' && event.data.clockRefunded === true)).toBe(true);
+    expect(rejected).toHaveLength(4); expect(rejected.every(event => event.data.reason === 'target-already-cleared' && event.data.clockRefunded === true)).toBe(true);
     for (const event of rejected) {
       const cell = state.growth!.cells!.find(cell => cell.id === event.data.cellId)!, old = oldClocks.find(clock => clock.id === cell.id)!;
       expect(cell.attackReadyAt).toBe(old.ready); expect(cell.attackUntil).toBe(old.until);
@@ -71,7 +71,7 @@ describe('immune planning reserves the actual projected host damage', () => {
     const chain: GrowthCommand = { kind: 'damage', organId: 'heart', protocolId: 'PURIFY_CHAIN', rootId: 'earlier-chain', targetId: next.id, amount: 1000, cause: 'protocol', hop: 1 };
     (session as unknown as { applyGrowthCommands(commands: readonly GrowthCommand[]): void }).applyGrowthCommands([chain, ...planned.commands]);
     const rejected = state.events.filter(event => event.tick === state.tick && event.type === 'IMMUNE_BITE_REJECTED');
-    expect(next.hp).toBe(0); expect(weak.hp).toBe(0); expect(rejected).toHaveLength(2);
+    expect(next.hp).toBe(0); expect(weak.hp).toBe(0); expect(rejected).toHaveLength(4);
     expect(state.events.filter(event => event.tick === state.tick && event.type === 'PROTOCOL_BEACON_HIT')).toHaveLength(1);
     for (const cell of state.growth!.cells!.slice(1)) {
       expect(cell.attackReadyAt).toBe(0); expect(cell.attackUntil).toBe(0);
