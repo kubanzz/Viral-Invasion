@@ -91,6 +91,59 @@ function fixture(stateOverride?: GameState) {
 
 afterEach(() => vi.unstubAllGlobals());
 
+describe('challenge charge input edges and captured touch gestures', () => {
+  const challenge = () => { const game = new GameSession(42, { mode: 'endless' }); game.start(); return fixture(game.state); };
+  it('keeps Space dash immediate, sends one press and one release, and ignores keyboard repeat', () => {
+    const f = challenge(); f.frame();
+    keyboard(f.browser, 'keydown', 'Space');
+    expect(f.frame()).toMatchObject({ dash: true, chargePressed: true, chargeHeld: true, chargeReleased: false });
+    const repeated = new Event('keydown', { cancelable: true }); Object.assign(repeated, { code: 'Space', repeat: true }); f.browser.dispatchEvent(repeated);
+    expect(f.frame()).toMatchObject({ dash: false, chargePressed: false, chargeHeld: true, chargeReleased: false });
+    keyboard(f.browser, 'keyup', 'Space');
+    expect(f.frame()).toMatchObject({ chargeHeld: false, chargeReleased: true });
+    expect(f.frame().chargeReleased).toBe(false);
+  });
+  it('cancels on tool switch and blur, requiring a fresh key press after recovery', () => {
+    const f = challenge(); f.frame(); keyboard(f.browser, 'keydown', 'Space'); f.frame();
+    f.input.select(2);
+    expect(f.frame()).toMatchObject({ chargeHeld: false, chargeCancelled: true, chargeReleased: false });
+    keyboard(f.browser, 'keyup', 'Space'); expect(f.frame().chargeReleased).toBe(false);
+    keyboard(f.browser, 'keydown', 'Space'); f.frame(); f.browser.dispatchEvent(new Event('blur'));
+    expect(f.frame()).toMatchObject({ chargeHeld: false, chargeCancelled: true, chargeReleased: false });
+    keyboard(f.browser, 'keyup', 'Space'); expect(f.frame().chargeReleased).toBe(false);
+    keyboard(f.browser, 'keydown', 'Space'); expect(f.frame().chargePressed).toBe(true);
+  });
+  it('captures dash hold, drags sword direction, and releases once while movement stays live', () => {
+    const f = challenge(); f.input.setWorldAim({ x: 900, y: 400 });
+    pointer(f.root, 'pointerdown', 1, 90, 50, f.move);
+    pointer(f.root, 'pointerdown', 2, 50, 50, f.buttons.dash);
+    expect(f.frame()).toMatchObject({ moveX: 1, dash: true, chargePressed: true, chargeHeld: true });
+    expect(f.cancel.hidden).toBe(false);
+    pointer(f.browser, 'pointermove', 2, 50, 100);
+    const preview = f.input.resolvePreview(f.state, f.project)!;
+    expect(preview.kind).toBe('charge'); expect(preview.aim.y).toBeGreaterThan(f.state.player.y);
+    pointer(f.browser, 'pointerup', 2, 50, 100);
+    expect(f.frame()).toMatchObject({ moveX: 1, chargeHeld: false, chargeReleased: true, chargeAim: preview.aim });
+    expect(f.frame().chargeReleased).toBe(false); expect(f.cancel.hidden).toBe(true);
+  });
+  it.each(['cancel-zone', 'pointercancel', 'clear'] as const)('cancels touch charge via %s without release fire', reason => {
+    const f = challenge();
+    pointer(f.root, 'pointerdown', 2, 50, 50, f.buttons.dash); f.frame();
+    if (reason === 'cancel-zone') { pointer(f.browser, 'pointermove', 2, 360, 40); pointer(f.browser, 'pointerup', 2, 360, 40); }
+    else if (reason === 'pointercancel') pointer(f.browser, 'pointercancel', 2);
+    else f.input.clear();
+    expect(f.frame()).toMatchObject({ chargeCancelled: true, chargeHeld: false, chargeReleased: false });
+    expect(f.buttons.dash.captures.size).toBe(0);
+  });
+  it('keeps hidden training on plain dash and removes challenge cannon guide confirmation', () => {
+    const training = fixture(); training.frame(); keyboard(training.browser, 'keydown', 'Space');
+    expect(training.frame()).toMatchObject({ dash: true }); expect(training.frame().chargeHeld).toBeUndefined();
+    const f = challenge(); f.state.endlessGrowth!.ranks.nova = 3;
+    pointer(f.root, 'pointerdown', 9, 628, 148, f.skills['2']);
+    expect(f.guide.hidden).toBe(true);
+  });
+});
+
 describe('mobile input ownership and world aiming', () => {
   it('supports simultaneous movement and primary fire, and releasing either finger preserves the other', () => {
     const f = fixture();

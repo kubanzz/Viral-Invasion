@@ -79,11 +79,11 @@ describe('one accepted elite commitment alternates only after completion', () =>
     f.advance(20); expect(f.target.tactic).toBe('mimic-corrosion'); expect(f.target.attackAt).toBeUndefined();
   });
 
-  it.each(['CARAPACE', 'FISSION', 'MIMIC'] as const)('tool2 damages %s after its fuse while preserving the frozen commitment and full natural recovery', first => {
+  it.each(['CARAPACE', 'FISSION', 'MIMIC'] as const)('tool2 damages %s after flight while preserving the frozen commitment and full natural recovery', first => {
     const second = first === 'MIMIC' ? 'FISSION' : 'MIMIC'; const f = fixture([first, second]); f.step();
     const recovery = f.target.attackPlan!.recoveryExposure, plan = structuredClone(f.target.attackPlan);
     f.step({ tool: 2, fire: true }); expect(f.target.hp).toBe(204);
-    f.advance(18);
+    f.advance(25);
     expect(ofType(f.events, 'TRACTION_DISPLACED')).toHaveLength(0); expect(f.target.hp).toBe(124);
     expect(f.target.attackPlan).toEqual(plan); expect(f.target.eliteCycle?.index).toBe(0);
     expect(ofType(f.events, 'ELITE_TACTIC_ADVANCED')).toHaveLength(0);
@@ -206,7 +206,7 @@ describe('cycle callbacks cannot replay accepted actions or contaminate a fresh 
 
   it('clears a dead commitment without advancing, then consumes each promised child before its spawn pause', () => {
     const f = fixture(); f.target.hp = 65; f.step(); f.step({ tool: 2, fire: true });
-    f.advance(18);
+    f.until(() => f.target.hp === 0, 30);
     expect(f.target.hp).toBe(0); expect(f.target.eliteCycle?.index).toBe(0); expect(f.target.eliteCycle?.committedTick).toBeUndefined();
     // Forty-six live neighbors plus two reserved children fill the challenge budget48.
     for (let i = 0; i < 46; i++) f.s.targets.push({ id: `neighbor-${i}`, x: 1800 + i % 5 * 80, y: 150 + Math.floor(i / 5) * 80,

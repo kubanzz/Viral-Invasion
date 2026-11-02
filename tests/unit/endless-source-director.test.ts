@@ -12,7 +12,7 @@ function fixture(wave = 6, seed = 71) {
   const session = new GameSession(seed, { mode: 'endless' }); session.start(); const state = session.state, e = state.endless!;
   state.targets = [];
   Object.assign(e, { wave: wave - 1, clearedWaves: wave - 1, phase: 'intermission', phaseUntil: 0, remainingToSpawn: 0,
-    traits: ['CARAPACE', 'FISSION'], evolution: { history: [], recentPrimaries: [] } });
+    traits: ['CARAPACE', 'FISSION'], evolution: { history: [], recentPrimaries: [], opening: { precisionDamage: 500, areaDamage: 0, selection: { trait: 'CARAPACE', reason: 'precision-dominant', frozenAtTick: 0 } } } });
   const events: GameEvent[] = [], messages: string[] = [];
   let director: EndlessDirector;
   const host: EndlessHost = { state, emit(type, data) {

@@ -30,6 +30,10 @@ function configure(session: GameSession) {
   state.growth!.chainCharge = 0;
   return { session, host: session as unknown as Host, a: state.targets[0], b: state.targets[1] };
 }
+function fireVolley(session: GameSession) {
+  session.step(input);
+  for (let i = 0; i < 40 && session.state.playerProjectiles?.length && session.state.phase === 'playing'; i++) session.step({ ...input, fire: false });
+}
 function fixture() {
   const session = new GameSession(71, { mode: 'endless' }); session.start();
   return configure(session);
@@ -39,7 +43,7 @@ const receipts = (session: GameSession) => session.state.events.filter(event => 
 const history = (session: GameSession) => session.state.growth!.protocolHistory.filter(entry => entry.type === 'PROTOCOL_RICOCHET_HIT');
 const damageCommands = (commands: readonly GrowthCommand[]) => commands.filter((command): command is Extract<GrowthCommand, { kind: 'damage' }> => command.kind === 'damage');
 function evidence(f: ReturnType<typeof fixture>) {
-  return { scope: 'Explicit post-growth fixture; one public step, unchanged host damage path. Not natural acquisition, campaign, browser, or human evidence.',
+  return { scope: 'Explicit post-growth fixture; one public volley followed by fixed flight ticks, unchanged host damage path. Not natural acquisition, campaign, browser, or human evidence.',
     input, preset: { player: { x: 500, y: 500 }, targets: ['a', 'b'].map((id, index) => ({ id, x: 600 + index * 150, y: 500, hp: 204, radius: 30 })),
       ranks: { multishot: 2 }, protocol: { id: 'PURIFY_CHAIN', tuning: 'balanced', rank: 3 }, chainCharge: 0 },
     result: { aHp: f.a.hp, bHp: f.b.hp, actualBDamage: 204 - f.b.hp,
@@ -57,8 +61,8 @@ function normalized(session: GameSession) {
 }
 
 describe('independent accepted ricochet transaction receipts', () => {
-  it('records both real folds from one public five-ray shot as 140 actual and 140 reported damage', () => {
-    const f = fixture(); f.session.step(input);
+  it('records both real folds from one public five-bullet shot as 140 actual and 140 reported damage', () => {
+    const f = fixture(); fireVolley(f.session);
     if (process.env.VI_RICOCHET_REPORT) {
       mkdirSync(dirname(process.env.VI_RICOCHET_REPORT), { recursive: true });
       writeFileSync(process.env.VI_RICOCHET_REPORT, JSON.stringify(evidence(f), null, 2), { flag: 'wx' });
@@ -86,7 +90,7 @@ describe('independent accepted ricochet transaction receipts', () => {
   });
 
   it('still deduplicates repeated receipt and log deliveries for each accepted transaction', () => {
-    const f = fixture(); f.session.step(input);
+    const f = fixture(); fireVolley(f.session);
     const before = { control: structuredClone(f.session.state.runMetrics!.summary.control), history: structuredClone(history(f.session)) };
     const deliveries = f.session.state.events.filter(event => event.type === 'TARGET_HIT' && event.data.protocolId === 'PURIFY_CHAIN' || event.type === 'PROTOCOL_RICOCHET_HIT');
     for (let repeat = 0; repeat < 3; repeat++) for (const event of deliveries) f.session.emit(event.type, event.data);
@@ -97,7 +101,7 @@ describe('independent accepted ricochet transaction receipts', () => {
 
   it('retains actual HP clipping separately for two same-tick folds to the same body', () => {
     const f = fixture(); f.b.hp = 75;
-    f.session.step(input);
+    fireVolley(f.session);
     expect(receipts(f.session).map(event => event.data.damage)).toEqual([70, 5]);
     expect(f.session.state.runMetrics!.summary.control.ricochetHits).toBe(2);
     expect(history(f.session).map(entry => entry.text)).toEqual([
@@ -143,12 +147,12 @@ describe('independent accepted ricochet transaction receipts', () => {
   });
 
   it('replays deterministically in a fresh controller and resets after restart without reusing the old run namespace', () => {
-    const f = fixture(); f.session.step(input);
+    const f = fixture(); fireVolley(f.session);
     const first = normalized(f.session), oldRoots = logs(f.session).map(event => event.data.rootId);
-    const replay = fixture(); replay.session.step(input);
+    const replay = fixture(); fireVolley(replay.session);
     expect(normalized(replay.session)).toEqual(first);
     expect(logs(replay.session).map(event => event.data.rootId)).toEqual(oldRoots);
-    f.session.restart(); configure(f.session); f.session.step(input);
+    f.session.restart(); configure(f.session); fireVolley(f.session);
     expect(normalized(f.session)).toEqual(first);
     expect(logs(f.session).map(event => event.data.rootId).some(root => oldRoots.includes(root))).toBe(false);
   });

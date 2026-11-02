@@ -247,6 +247,7 @@ describe('announced current-generation dual elite births', () => {
       generation: 0, sourceId: 'endless:wave:20', hitUntil: 0, scanned: false, attackReady: 100 };
     state.targets = [parent]; state.growth!.equipped = [];
     session.step({ moveX: 0, moveY: 0, aim: parent, fire: true, tool: 1 });
+    for (let tick = 0; tick < 20 && parent.hp > 0; tick++) session.step({ moveX: 0, moveY: 0, aim: parent, fire: false });
     expect(parent.hp).toBe(0); expect(parent.splitAt).toBeDefined();
     for (let tick = 0; tick < 49; tick++) session.step({ moveX: 0, moveY: 0, aim: parent, fire: false });
     const children = state.targets.filter(target => target.generation === 1);
@@ -254,6 +255,7 @@ describe('announced current-generation dual elite births', () => {
     for (const child of children) {
       state.cooldowns[1] = state.elapsed;
       session.step({ moveX: 0, moveY: 0, aim: child, fire: true, tool: 1 });
+      for (let tick = 0; tick < 20 && child.hp > 0; tick++) session.step({ moveX: 0, moveY: 0, aim: child, fire: false });
       expect(child.hp).toBe(0); expect(child.splitAt).toBeUndefined();
     }
     expect(state.events.filter(event => event.type === 'FISSION_WARNING')).toHaveLength(1);

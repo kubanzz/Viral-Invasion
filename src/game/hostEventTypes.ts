@@ -17,6 +17,11 @@ export interface HostEventActive {
   description: string; slotIndex: number | null; zones: HostEventZone[];
   targetIds: string[]; placements: Vec[]; healed: number; nextHealAt: number;
   affectsLegions: boolean; affectsHealingPoints: boolean;
+  trigger?: 'scheduled' | 'opening' | 'debug';
+}
+export interface HostEventAnnouncement {
+  sourceId: string; id: HostEventId; category: HostEventCategory;
+  phase: 'warning' | 'active' | 'ended' | 'cancelled'; at: number; reason?: string;
 }
 export interface HostEventSlot { at: number; status: 'pending' | 'selected' | 'completed' | 'cancelled' | 'skipped'; reason?: string; id?: HostEventId }
 export type HostEventCommand = { kind: 'damage'; targetId: string; amount: number; origin: 'host-event' }
@@ -27,6 +32,11 @@ export interface HostEventState {
   usedIds: HostEventId[]; successCount: number; redCount: number; lastCategory: HostEventCategory | null;
   lastEndedAt: number | null; alarmUntil: number; wasAlarm: boolean;
   active: HostEventActive | null;
+  /** Challenge teaching replaces the 75-second random slot without consuming RNG. */
+  openingExercise?: { status: 'pending' | 'selected' | 'completed' | 'cancelled'; ready: boolean;
+    waitingReason?: string; reason?: string; sourceId?: string };
+  /** Survives combat-log truncation; renderers never create announcement timing. */
+  announcement?: HostEventAnnouncement;
   /** Event-owned modifiers are computed from this registry, never multiplied into base stats. */
   sources: Record<string, { eventId: HostEventId; organId: OrganId }>;
   disabled: Partial<Record<HostEventId, string>>; pendingCommands: HostEventCommand[];

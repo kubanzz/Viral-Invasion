@@ -59,15 +59,15 @@ export interface EndlessGrowthState {
 export interface EndlessCombatStats {
   /** Multiplier for base combat damage; the host applies it once per hit. */
   damageMultiplier: number;
-  /** Total precision rays per trigger: 1, 3 or 5. */
+  /** Total real primary bullets per trigger: 1, 3 or 5. */
   shotRays: number;
-  /** Additional targets per precision ray, after its first target: 0..3. */
+  /** Additional targets per primary bullet, after its first target: 0..3. */
   pierceCount: number;
   /** World-space radius of tool 2. */
   areaRadius: number;
   /** Collection radius, separate from the smaller delayed blast. */
   areaGatherRadius: number;
-  /** Maximum held guidance time; zero until nova rank III. */
+  /** Legacy traction compatibility; challenge cannon always projects zero. */
   areaGuideDuration: number;
   /** Extra multiplier for tool 2, applied with damageMultiplier once. */
   areaDamageMultiplier: number;
@@ -89,6 +89,6 @@ export interface EndlessCombatStats {
   cellDurationBonus: number;
   /** Multiplier applied to the beacon's independent base cooldown. */
   cellCooldownMultiplier: number;
-  /** Complete per-target explosion damage, including power/nova and the 1.25 factor; 0 is locked. */
+  /** Complete aftershock damage including power/nova and the .4 factor; legacy ID, 0 is locked. */
   catalysisDamage: number;
 }

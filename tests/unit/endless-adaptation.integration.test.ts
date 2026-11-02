@@ -76,7 +76,7 @@ describe('announced endless generations in the actual session', () => {
     const f = boundary(); f.advance(481); expect(f.e.evolution!.current).toBeDefined();
     f.session.start(71);
     expect(f.session.state.tick).toBe(0); expect(f.session.state.endless!.wave).toBe(1);
-    expect(f.session.state.endless!.evolution).toEqual({ history: [], recentPrimaries: [] });
+    expect(f.session.state.endless!.evolution).toEqual({ history: [], recentPrimaries: [], opening: { precisionDamage: 0, areaDamage: 0 } });
     expect(f.session.state.endless!.traits).toEqual([]);
   });
 });

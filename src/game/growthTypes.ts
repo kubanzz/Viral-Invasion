@@ -88,7 +88,7 @@ export interface GrowthContext {
   acceptedEvents?: readonly GameEvent[];
 }
 export interface DamageOrigin {
-  cause: 'basic' | 'protocol' | 'ability'; ability?: 'nova' | 'scan' | 'dash' | 'catalysis' | 'host-event';
+  cause: 'basic' | 'protocol' | 'ability'; ability?: 'nova' | 'scan' | 'dash' | 'catalysis' | 'host-event' | 'charged-slash' | 'cannon-aftershock';
   basicTool?: Tool; immuneCellId?: string;
   rootId?: string; wasPulseExposed?: boolean; protocolId?: ProtocolId; allowChain?: boolean;
 }

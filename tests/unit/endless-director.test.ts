@@ -15,6 +15,9 @@ function fixture(seed = 71) {
     shots: 0, hits: 0, scans: 0, dashes: 0, result: null };
   initializeBattle(state, { milestone: 'G3', encounterMode: 'fixture' });
   initializeEndless(state);
+  // Explicit prior-damage fixture keeps these arrival tests on the crystal
+  // opening branch; observation/selection and both quotas have separate tests.
+  state.endless!.evolution!.opening!.precisionDamage = 200;
   const completed: number[] = [], events: GameEvent[] = [];
   let director: EndlessDirector;
   const host: EndlessHost = { state, emit(type, data) { const event = { type, tick: state.tick, data }; events.push(event); director.recordEvent(event); },
@@ -44,7 +47,7 @@ describe('continuous endless wave director', () => {
       if (wave <= 5) {
         expect(roles.filter(role => role === 'support')).toHaveLength(wave === 3 || wave === 5 ? 1 : 0);
         expect(roles.filter(role => role === 'elite')).toHaveLength(wave === 5 ? 1 : 0);
-        expect(e.traits).toEqual(wave === 5 ? ['CARAPACE'] : []);
+        expect(e.traits).toEqual(wave >= 3 ? ['CARAPACE'] : []);
       }
       f.finishWave(); f.state.targets = [];
       if (wave < expected.length) { f.advance(E.intermissionSeconds); f.advance(f.state.endless!.warningSeconds); }

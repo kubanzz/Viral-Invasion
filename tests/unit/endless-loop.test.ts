@@ -184,6 +184,7 @@ describe('real session continuous challenge loop', () => {
       radius: 22, traits: ['FISSION'], generation: 0, sourceId: 'endless:wave:10', hitUntil: 0, scanned: false, attackReady: 100 };
     s.targets = [parent];
     session.step({ ...idle(parent), fire: true, tool: 1 });
+    for (let tick = 0; tick < 20 && parent.hp > 0; tick++) session.step(idle());
     expect(parent.hp).toBe(0); expect(parent.splitAt).toBeGreaterThan(s.elapsed);
     expect(s.endless!.phase).toBe('combat'); expect(s.endless!.pendingChildren).toBe(2); expect(s.endless!.clearedWaves).toBe(0);
     for (let i = 0; i < 49; i++) session.step(idle());
@@ -191,7 +192,7 @@ describe('real session continuous challenge loop', () => {
     expect(children).toHaveLength(2); expect(children.every(child => child.generation === 1 && child.sourceId === parent.sourceId)).toBe(true);
     expect(s.endless!.phase).toBe('combat'); expect(s.endless!.pendingChildren).toBe(0);
     session.step({ ...idle({ x: parent.x, y: parent.y }), tool: 2, fire: true });
-    for (let tick = 0; tick < 18 && s.phase === 'playing'; tick++) session.step(idle());
+    for (let tick = 0; tick < 30 && s.phase === 'playing'; tick++) session.step(idle());
     expect(children.every(child => child.hp === 0 && child.splitAt === undefined)).toBe(true);
     expect(s.endless!.clearedWaves).toBe(10); expect(s.endless!.kills).toBe(3); expect(s.phase).toBe('paused');
     expect(s.events.filter(event => event.type === 'ENDLESS_WAVE_CLEARED')).toHaveLength(1);

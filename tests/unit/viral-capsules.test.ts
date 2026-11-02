@@ -194,6 +194,7 @@ describe('finite detached viral capsules', () => {
   it('lets real primary input intercept one capsule with no virus kill, combo, XP, research or chain award', () => {
     const f = interceptionFixture(); f.state.growth!.equipped = [{ id: 'PURIFY_CHAIN', tuning: 'balanced', rank: 3 }];
     f.session.step({ ...f.input, fire: true, tool: 1 });
+    for (let frame = 0; frame < 20 && f.capsule.hp > 0; frame++) f.session.step(f.input);
     expect(f.capsule.hp).toBe(0); expect(f.capsule.viralCapsule!.terminalReason).toBe('intercepted');
     expect({ kills: f.state.endless!.kills, combo: f.state.endless!.combo, score: f.state.endless!.score, xp: f.state.growth!.xp,
       research: f.state.growth!.research, battleKills: f.state.battle!.stats.kills }).toEqual(f.before);

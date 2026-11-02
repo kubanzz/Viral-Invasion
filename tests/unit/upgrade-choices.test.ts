@@ -35,18 +35,18 @@ describe('readable upgrade choices', () => {
     expect(copy.caution).toContain('不直接造成伤害');
   });
 
-  it('makes the destructive tool conversion visible without opening its numerical details', () => {
+  it('shows the additional aftershock without implying the main explosion loses damage', () => {
     const growth = createEndlessGrowth(13), option: EndlessUpgradeOption = { id: 'catalysis', title: '催化裂解', description: '完整机制', currentRank: 0, nextRank: 1 };
     const copy = endlessChoiceCopy(option, growth);
-    expect(copy.summary).toContain('用 2'); expect(copy.action).toContain('再切 1 左键');
-    expect(copy.caution).toContain('替换 2 的普通爆破'); expect(copy.caution).toContain('直接伤害降低');
+    expect(copy.summary).toContain('保持完整伤害'); expect(copy.action).toContain('0.35秒');
+    expect(copy.change).toContain('75%半径'); expect(copy.caution).toContain('不递归');
   });
 
   it('explains new controls at the actual upgraded rank, including a two-rank breakthrough', () => {
     const growth = createEndlessGrowth(13); growth.ranks = { nova: 2, dash: 4, immune: 2 };
     const option = (id: EndlessUpgradeOption['id'], currentRank: number, nextRank: number): EndlessUpgradeOption => ({ id, currentRank, nextRank, title: id, description: '' });
-    expect(endlessChoiceCopy(option('nova', 2, 3), growth).action).toContain('按住可拖动');
-    expect(endlessChoiceCopy(option('dash', 4, 6), growth).summary).toContain('延迟回斩');
+    expect(endlessChoiceCopy(option('nova', 2, 3), growth).action).toContain('按住左键连发');
+    expect(endlessChoiceCopy(option('dash', 4, 6), growth).summary).toContain('追加回斩');
     expect(endlessChoiceCopy(option('immune', 2, 3), growth).action).toContain('装备灯塔后');
   });
 

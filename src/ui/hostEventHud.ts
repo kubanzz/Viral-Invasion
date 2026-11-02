@@ -1,5 +1,7 @@
 import type { GameState } from '../game/types';
-import { HOST_EVENT_BALANCE as B, hostEventPresentation } from '../game/hostEvents';
+import { HOST_EVENT_BALANCE as B, HOST_EVENT_CARDS, hostEventPresentation } from '../game/hostEvents';
+import { TRAITS } from '../game/battleConfig';
+import { openingEvolutionCounter } from './endlessEvolutionWarning';
 
 const categoryNames = { green: '绿色 · 有利', red: '红色 · 危险', yellow: '黄色 · 权衡' } as const;
 const percent = (factor: number) => Math.round(Math.abs(factor - 1) * 100);
@@ -19,6 +21,86 @@ export function compactHostEventDescription(state: GameState): string {
 }
 
 export const hostEventHudMarkup = `<aside id="host-event-card" class="host-event-card" aria-label="宿主活动事件" aria-live="polite" hidden><div class="host-event-kicker"><span id="host-event-category"></span><span id="host-event-phase"></span></div><div class="host-event-heading"><strong id="host-event-title"></strong><b id="host-event-time"></b></div><p id="host-event-description"></p><div class="host-event-footer"><span id="host-event-objectives"></span><span id="host-event-status">宿主活动</span></div><div class="host-event-meter"><i id="host-event-progress"></i></div></aside>`;
+
+/** Independent of the details card and never moved into a mobile modal. */
+export const hostEventAnnouncementMarkup = `<aside id="host-event-announcement" class="host-event-announcement" aria-label="战场公告" hidden><div class="host-announcement-heading" aria-hidden="true"><span id="host-announcement-icon"></span><strong id="host-announcement-title"></strong><b id="host-announcement-time"></b></div><p id="host-announcement-description" aria-hidden="true"></p><span id="host-announcement-status" class="host-announcement-status" role="status" aria-live="polite" aria-atomic="true"></span></aside>`;
+
+interface CombatAnnouncementView {
+  key: string; phase: 'warning' | 'active' | 'ended' | 'cancelled'; category: 'green' | 'red' | 'yellow';
+  kind: 'host' | 'evolution'; icon: string; title: string; description: string; remaining: string; expanded: boolean;
+}
+const spokenAnnouncements = new WeakMap<object, { run: string; keys: Set<string> }>();
+
+/** The first appearance is a real birth receipt, not simply an expired warning. */
+export function openingEvolutionAnnouncementView(state: GameState): CombatAnnouncementView | null {
+  const e = state.endless, opening = e?.evolution?.opening, selected = opening?.selection;
+  if (state.phase !== 'playing' || !e || e.wave < 3 || e.wave > 5 || !opening || !selected) return null;
+  const info = TRAITS[selected.trait], run = state.growth?.runId ?? `${state.seed}`;
+  if (e.wave === 3 && e.phase === 'warning' && opening.warningAt !== undefined)
+    return { key: `${run}:opening:warning`, phase: 'warning', category: 'yellow', kind: 'evolution', icon: info.symbol,
+      title: `病毒首次进化 · ${info.name}`, description: openingEvolutionCounter(selected.trait),
+      remaining: `${Math.max(0, e.phaseUntil - state.elapsed).toFixed(1)}s`, expanded: true };
+  const notice = opening.waveNotice;
+  if (!notice || notice.wave !== e.wave || state.elapsed < notice.bornAt || state.elapsed - notice.bornAt >= 3 || e.phase !== 'combat') return null;
+  return { key: `${run}:opening:birth:${notice.wave}`, phase: 'active', category: 'yellow', kind: 'evolution', icon: info.symbol,
+    title: notice.wave === 5 && notice.elite ? `精英继承 · ${info.name}` : notice.wave === 3 ? `${info.name}已出现` : `少量${info.name}混入敌群`,
+    description: openingEvolutionCounter(selected.trait), remaining: '', expanded: true };
+}
+
+export function hostEventAnnouncementView(state: GameState): CombatAnnouncementView | null {
+  const evolution = openingEvolutionAnnouncementView(state);
+  if (evolution) return evolution;
+  const notice = state.hostEvents?.announcement;
+  if (!notice || state.phase !== 'playing') return null;
+  const age = Math.max(0, state.elapsed - notice.at), card = HOST_EVENT_CARDS[notice.id];
+  const exercise = notice.id === 'EXERCISE', active = state.hostEvents?.active;
+  const transient = notice.phase === 'ended' || notice.phase === 'cancelled';
+  if (transient && age >= 3) return null;
+  if (!transient && (!active || active.sourceId !== notice.sourceId)) return null;
+  const expanded = transient || age < (notice.phase === 'warning' ? 2 : 3);
+  const title = exercise
+    ? notice.phase === 'warning' ? expanded ? '宿主准备运动' : '运动预警'
+      : notice.phase === 'active' ? expanded ? '宿主开始运动' : '宿主运动中'
+        : notice.phase === 'ended' ? '宿主运动结束' : '运动预警取消'
+    : `${card.name}${notice.phase === 'warning' ? ' · 即将发生' : notice.phase === 'active' ? ' · 生效中' : notice.phase === 'ended' ? ' · 已结束' : ' · 已取消'}`;
+  const description = exercise
+    ? notice.phase === 'warning' ? '冲流将更频繁，轻型病毒追击加快。'
+      : notice.phase === 'active' ? '冲流冷却 −30% · 推动 +25% · 轻型病毒移速 +15%'
+        : notice.phase === 'ended' ? '冲流与轻型病毒速度已恢复。' : '本次运动未生效，继续净化。'
+    : transient ? '宿主活动影响已清除。' : compactHostEventDescription(state);
+  return { key: `${state.growth?.runId ?? state.seed}:${notice.sourceId}:${notice.phase}`, phase: notice.phase, category: notice.category, kind: 'host',
+    icon: card.icon, title, description, expanded,
+    remaining: transient ? '' : `${Math.max(0, (notice.phase === 'warning' ? active!.startsAt : active!.endsAt) - state.elapsed).toFixed(1)}s` };
+}
+
+/** No DOM timers: pausing and opening details cannot reset a reveal or replay a cue. */
+export function updateHostEventAnnouncement(state: GameState, options: { lowEffects?: boolean } = {}): void {
+  const banner = document.getElementById('host-event-announcement');
+  if (!banner) return;
+  const view = hostEventAnnouncementView(state);
+  banner.hidden = !view;
+  const app = document.getElementById('app');
+  if (app) app.dataset.hostAnnouncementVisible = String(!!view);
+  if (!view) return;
+  banner.dataset.phase = view.phase; banner.dataset.category = view.category; banner.dataset.kind = view.kind;
+  banner.dataset.expanded = String(view.expanded); banner.dataset.lowEffects = String(!!options.lowEffects);
+  const setText = (id: string, value: string) => {
+    const node = document.getElementById(id);
+    if (node && node.textContent !== value) node.textContent = value;
+  };
+  setText('host-announcement-icon', view.icon); setText('host-announcement-title', view.title);
+  setText('host-announcement-time', view.remaining); setText('host-announcement-description', view.description);
+  const status = document.getElementById('host-announcement-status');
+  if (status) {
+    const run = state.growth?.runId ?? `${state.seed}`;
+    let spoken = spokenAnnouncements.get(status);
+    if (!spoken || spoken.run !== run) { spoken = { run, keys: new Set() }; spokenAnnouncements.set(status, spoken); }
+    status.dataset.notice = view.key;
+    if (!spoken.keys.has(view.key)) {
+      spoken.keys.add(view.key); status.textContent = `${view.title}。${view.description}`;
+    }
+  }
+}
 
 /** This card follows simulation time; neither reveal nor countdown advances while paused. */
 export function updateHostEventHud(state: GameState, debugReport = ''): void {

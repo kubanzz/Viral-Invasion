@@ -75,9 +75,11 @@ describe('known mixed support tactics retain counter windows', () => {
   it('lets two base shots remove a lightweight support and release its heavy slot without needing a specific upgrade', () => {
     const first = actor('fragile-first', 'fission-burst', 680, 700, 68), next = actor('fragile-next', 'fission-burst', 1520, 700, 68);
     const f = fixture([first, next]); f.step({ fire: true, tool: 1, aim: first });
+    for (let ticks = 0; ticks < 30 && first.hp === 68; ticks++) f.step();
     expect(first.hp).toBe(34); expect(first.attackPlan?.kind).toBe('fission-burst'); expect(next.attackAt).toBeUndefined();
     for (let ticks = 0; ticks < 11; ticks++) f.step();
     f.step({ fire: true, tool: 1, aim: first });
+    for (let ticks = 0; ticks < 30 && first.hp > 0; ticks++) f.step();
     expect(first.hp).toBe(0); expect(first.attackAt).toBeUndefined(); expect(first.splitAt).toBeUndefined();
     expect(next.attackPlan?.kind).toBe('fission-burst');
     expect(f.events.filter(event => event.type === 'TARGET_HIT' && event.data.id === first.id)).toHaveLength(2);

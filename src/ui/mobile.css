@@ -162,3 +162,12 @@ body.touch-mode #app .endless-stage-complete .stats strong { font-size:23px; }
   body.touch-mode #app .endless-stage-complete .actions { margin-top:9px; gap:6px; }
 }
 @media (orientation:portrait) { body.touch-mode #app .draft-grid,body.touch-mode #app .endless-upgrade-grid,body.touch-mode #mobile-details-content { grid-template-columns:1fr; } body.touch-mode #app .modal .help-grid { grid-template-columns:1fr; } body.touch-mode #app .intro-card h1 { font-size:57px; } body.touch-mode #app .intro-card { padding-top:18px; } }
+
+#app .ability-charge { display:block; margin-top:3px; color:#277867; font-size:10px; white-space:nowrap; }
+body.touch-mode .mobile-charge-state { position:absolute; left:50%; top:-17px; bottom:auto; transform:translateX(-50%); color:#edfff7; background:#173e3ddd; padding:1px 3px; border-radius:3px; font-size:9px; line-height:13px; white-space:nowrap; pointer-events:none; }
+body.touch-mode .mobile-charge-ring { position:absolute; inset:0; width:100%; height:100%; fill:none; stroke:#a9ffe5; stroke-width:2; pointer-events:none; transform:rotate(-90deg); }
+body.touch-mode .mobile-charge-ring circle { stroke-dasharray:163.36; stroke-dashoffset:calc(163.36 * (1 - var(--charge-progress,1))); }
+body:not(.endless-mode) .mobile-charge-ring { display:none; }
+body.touch-mode [data-charging=true] { box-shadow:0 0 0 2px #98edcf,0 0 13px #aaffdd77; }
+body.touch-mode [data-charge-full=true] .mobile-charge-state { color:#173e3d; background:#dffff1; }
+body.touch-mode #mobile-skill-preview[data-kind='2'],body.touch-mode #mobile-skill-preview[data-kind=charge] { --preview-color:#b9ffe4; }

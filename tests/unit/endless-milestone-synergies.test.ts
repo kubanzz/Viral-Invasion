@@ -67,6 +67,8 @@ describe('milestone-selected synergy receipts through actual session combat', ()
     const session = milestoneFixture('PULSE_BREAK', 'PURIFY_CHAIN', [root, ...neighbors]);
     while (session.state.tick < 131) session.step(input());
     session.step(input({ fire: true, tool: 1, aim: root }));
+    expect(root.hp).toBe(44);
+    for (let tick = 0; tick < 6; tick++) session.step(input());
     expect(session.state.battle!.pulse.phase).toBe('surge');
     expect(root.hp).toBe(0);
     const events = session.state.events;

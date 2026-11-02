@@ -5,9 +5,8 @@ import { endlessPacing } from '../game/endlessPacing';
 import { sourceQuotaRemaining } from '../game/endlessSource';
 import { endlessAssaultSlots } from '../game/endlessAssault';
 import { IMMUNE_GUARD_BALANCE } from '../game/immuneFocus';
-import { TRACTION_BALANCE } from '../game/traction';
 import { viralCapsulePlan } from '../game/viralCapsules';
-import { endlessEvolutionWarningMarkup, endlessTraitCopy, endlessUpcomingTraits, updateEndlessEvolutionWarning } from './endlessEvolutionWarning';
+import { endlessEvolutionWarningMarkup, endlessTraitCopy, endlessUpcomingTraits, openingEvolutionDetailText, updateEndlessEvolutionWarning } from './endlessEvolutionWarning';
 import { catalysisToolCopy } from './catalysisHud';
 import { eliteCycleCounter, eliteCycleForecast, eliteCycleStatus } from './eliteTacticCycleHud';
 import type { EnemyTactic } from '../game/enemyTacticsTypes';
@@ -113,7 +112,7 @@ export function endlessHudMarkup(): string {
     ${endlessEvolutionWarningMarkup()}
     <section class="endless-wave-panel"><div class="eyebrow">ENDLESS / 连续挑战</div><div class="endless-wave-heading"><strong id="endless-wave">第 1 波</strong><span id="endless-cleared">已清 0 波</span></div>
       <div class="endless-count"><b id="endless-remaining">0</b><span>敌群剩余<small id="endless-spawn-plan"></small></span></div>
-      <h3 id="endless-phase"></h3><p id="endless-objective"></p><p id="endless-traits"></p><div class="endless-score"><span>得分 <b id="endless-score">0</b></span><span id="endless-combo">连击 0</span></div></section>
+      <h3 id="endless-phase"></h3><p id="endless-objective"></p><p id="endless-traits"></p><details id="endless-opening-details" hidden><summary>首阶段进化观察</summary><p id="endless-opening-detail"></p></details><div class="endless-score"><span>得分 <b id="endless-score">0</b></span><span id="endless-combo">连击 0</span></div></section>
     <section class="endless-vitals" aria-label="救援体和组织状态"><div><span>救援体耐久</span><b id="endless-hp"></b></div><div class="meter"><i id="endless-hp-meter"></i></div>
       <div><span>组织完整度</span><b id="endless-tissue"></b></div><div class="meter"><i id="endless-tissue-meter"></i></div><p id="endless-pressure"></p><p id="endless-critical" role="status"></p></section>
     <section class="endless-build-panel"><strong id="endless-level">战斗进化 Lv.0</strong><div id="endless-abilities">${Array.from({ length: 4 }, (_, i) => `<p id="endless-ability-${i}"></p>`).join('')}</div><p id="endless-latest" class="endless-latest"></p></section>
@@ -195,6 +194,9 @@ export function updateEndlessHud(state: GameState): void {
     ? `${assaultHint}${e.phase === 'warning' && e.wave >= 16 ? `；混编：${mixedSupportCopy(state)}` : ''}`
     : e.phase === 'warning' && e.wave >= 16 ? `${traitText}；混编：${mixedSupportCopy(state)}` : traitText;
   text('endless-traits', `${capsules ? `◆ 离体弹囊${capsules}枚 · 2/挥斩击落；` : announcedCapsule ? `◆ ${announcedCapsule.fork ? '分叉母囊' : '死亡释放弹囊'}；` : ''}${compactThreat}${e.source ? `；${sourceCopy(state, true)}` : ''}`);
+  const observation = openingEvolutionDetailText(state), observationNode = document.getElementById('endless-opening-details');
+  if (observationNode) observationNode.hidden = !observation;
+  text('endless-opening-detail', observation);
   updateEndlessEvolutionWarning(state);
   text('endless-score', String(e.score)); text('endless-combo', `连击 ${e.combo} · 最高 ${e.bestCombo}`);
   text('endless-hp', `${Math.ceil(state.player.hp)} / ${stats.maxHp}`); meter('endless-hp-meter', state.player.hp / stats.maxHp);
@@ -225,11 +227,13 @@ function effects(low: boolean): string { return `<button data-action="effects">�
 function buildSummary(state: GameState): string {
   const stats = statsFor(state), growth = state.endlessGrowth;
   return `<div class="endless-build-summary"><h3>本局战斗进化 · Lv.${growth?.level ?? 0}</h3><p>${ENDLESS_UPGRADE_IDS.filter(id => growth?.ranks[id]).map(id => `${ENDLESS_UPGRADES[id].title} ${growth!.ranks[id]}阶`).join(' · ') || '尚未获得战斗进化'}</p>
-    <dl><dt>精确净化</dt><dd>${stats.shotRays}束 × ${number(BALANCE.damage[1] * stats.damageMultiplier)}伤害 · 每束额外贯穿${stats.pierceCount}体 · 间隔${number(stats.primaryCooldown, 3)}s</dd>
-    <dt>${stats.catalysisDamage > 0 ? '催化牵引' : '牵引裂解'}</dt><dd>${catalysisToolCopy(stats)?.detail ?? `聚拢${number(stats.areaGatherRadius)}→爆心${number(stats.areaRadius)} · ${number(BALANCE.damage[2] * stats.damageMultiplier * stats.areaDamageMultiplier)}伤害`} · 射程${TRACTION_BALANCE.range} · 延迟${TRACTION_BALANCE.fuse}s · 冷却${number(stats.areaCooldown, 2)}s</dd>
+    <dl><dt>粒子净化</dt><dd>${stats.shotRays}弹 × ${number(BALANCE.damage[1] * stats.damageMultiplier)}伤害 · 每弹额外贯穿${stats.pierceCount}体 · 间隔${number(stats.primaryCooldown, 3)}s</dd>
+    <dt>净化能量炮</dt><dd>爆炸半径${number(stats.areaRadius)} · ${number(80 * stats.damageMultiplier * stats.areaDamageMultiplier)}伤害 · 射程420 · 冷却${number(stats.areaCooldown, 2)}s${stats.catalysisDamage > 0 ? `；${catalysisToolCopy(stats)?.detail}` : ''}</dd>
     <dt>冲刺 / Q爆发</dt><dd>${number(stats.dashDamage * stats.damageMultiplier)} / ${number(stats.scanDamage * stats.damageMultiplier)}伤害（0表示未解锁）</dd>
+    <dt>蓄能净化斩</dt><dd>开局可用 · 3道 / 满蓄5道 · ${number((45 + (growth?.ranks.dash ?? 0) * 15) * stats.damageMultiplier)}—${number((80 + (growth?.ranks.dash ?? 0) * 15) * stats.damageMultiplier)}伤害 · 满蓄1.25s · 独立冷却6s</dd>
     <dt>免疫与耐久</dt><dd>细胞伤害×${number(stats.cellDamageMultiplier * stats.damageMultiplier, 2)} · 军团持续存在，可被击杀 · 最多2团 · 小队冷却×${number(stats.cellCooldownMultiplier, 2)} · Q ${number(stats.scanCooldown, 2)}s · 最大耐久${stats.maxHp}</dd></dl>
-    ${growth?.lastChoice ? `<p class="endless-latest">最近获得 · ${escape(growth.lastChoice.title)}：${escape(growth.lastChoice.description)}</p>` : ''}</div>`;
+    ${growth?.lastChoice ? `<p class="endless-latest">最近获得 · ${escape(growth.lastChoice.title)}：${escape(growth.lastChoice.description)}</p>` : ''}
+    ${openingEvolutionDetailText(state) ? `<p class="endless-opening-observation"><strong>首阶段进化观察：</strong>${escape(openingEvolutionDetailText(state))}</p>` : ''}</div>`;
 }
 
 export function endlessMenuEntry(record?: EndlessRecordView): string {
@@ -243,18 +247,19 @@ export function endlessOverlay(state: GameState, help: boolean, lowEffects: bool
   const e = state.endless;
   if (help) return modal(`<div class="eyebrow">ENDLESS / 连续挑战手册</div><h2>越打越强，选择你的清场方式。</h2><div class="endless-help-scroll">
     <p>移动射击，清群进化，让心脏重获生机。首5波完成一段救援，随后可继续无尽。在大地图自由移动，用右下导航找回＋组织与◇阀门。敌群从周围分批来袭，清完活体、待入场敌人和待分裂小体才算清波；没有等倒计时自动胜利。</p>
-    <div class="help-grid"><div><kbd>WASD</kbd>移动</div><div><kbd>鼠标</kbd>瞄准 · 1按住连射；2轻点布置</div><div><kbd>1</kbd>精确净化 · 远距即时持续火力</div><div><kbd>2</kbd>牵引裂解 · 聚拢后延迟爆破</div><div><kbd>3</kbd>瞄准＋组织抢修，也能恢复少量耐久</div><div><kbd>Q</kbd>扫描显形 · 召集或指挥免疫小队</div><div><kbd>Space</kbd>冲刺挥斩 · Ⅲ回旋 / Ⅵ追加回斩</div><div><kbd>E</kbd>靠近◇阀门，朝鼠标发动冲流</div></div>
-    <p><strong>2布点，1追击，细胞收网。</strong>2射程${TRACTION_BALANCE.range}，将游走体向鼠标落点收拢，${TRACTION_BALANCE.fuse}秒后爆发，冷却${TRACTION_BALANCE.cooldown}秒。已经锁定的招式和冲锋不受牵引，仍要躲避前摇。新星Ⅲ后，轻点仍可快速释放；按住左键可短时拖动落点，松开或到时爆发。导流时移动降至75%，每体整次位移有上限。按住1连射时切2可直接开一次，保持2按住不会反复施放。</p>
-    <p><strong>挥刀清场。</strong>冲刺斩Ⅰ即在实际落点解锁宽弧刃，伤害只按实际扇面与遮挡判定；Ⅲ变为圆周回旋，Ⅵ在短延迟后从你移动后的实际位置追加回斩。它可切开近身弹囊；墙后的敌人仍安全。</p>
+    <div class="help-grid"><div><kbd>WASD</kbd>移动</div><div><kbd>鼠标</kbd>手动瞄准 · 1 / 2按住连发</div><div><kbd>1</kbd>粒子净化 · 高速真实弹丸</div><div><kbd>2</kbd>净化能量炮 · 碰撞范围爆炸</div><div><kbd>3</kbd>瞄准＋组织抢修，也能恢复少量耐久</div><div><kbd>Q</kbd>扫描显形 · 召集或指挥免疫小队</div><div><kbd>Space</kbd>点按冲刺 · 长按蓄能，松开发射剑气</div><div><kbd>E</kbd>靠近◇阀门，朝鼠标发动冲流</div></div>
+    <p><strong>粒子穿群，能量净化。</strong>1发射速度1800、射程530的真实弹丸；扇射增加实际弹数，贯穿增加命中数量，同一弹丸不会重复伤害同一目标。2发射射程420的净化能量炮，遇首个病毒、弹囊或障碍立即爆炸，无碰撞则在落点爆炸；基础爆炸半径96、伤害80、冷却2秒。瞄准敌群按住左键可按冷却连发，新星提高范围和伤害。墙后的目标不受爆炸伤害。</p>
+    <p><strong>冲刺与蓄能剑气。</strong>按下Space立即冲刺，普通冲刺冷却1.5秒；持续按住超过0.25秒进入蓄力，按下后1.25秒满蓄。蓄力期间移动降至70%、暂停工具开火，方向跟随鼠标；松开发出3道剑气，满蓄发出5道，射程650、遇墙消散，每次释放对同一敌人最多伤害一次。基础伤害45至80，每级冲刺斩额外增加15，再乘本局伤害倍率。剑气独立冷却6秒，从释放开始；取消不耗剑气冷却，已发生的冲刺不退款。暂停、详情、换工具或失焦会取消，恢复后需重新按下。冲刺斩Ⅰ保留落点近身挥斩，Ⅲ回旋、Ⅵ追加回斩。</p>
     <p><strong>病毒的离体攻击。</strong>第5波精英首次携带弹囊；第6波起压力分队可向组织释放，第15波后出现途中分叉的母囊。携带者施法或死亡只消费同一份库存；杀宿主不会消除已经离体的弹囊。预警后沿锁定方向飞行，可用1射落、2爆破、挥斩或真实细胞接触拦截；也可侧移、借墙。先击落母囊可阻止分叉。弹囊击落不提供病毒击杀分或经验，收割波不新增携带者。</p>
-    <p><strong>顶住压力，再进化收割。</strong>每5波为一轮：第1、3波是压力关，第2、4波是更密集但单体更脆的收割关，第5波迎战精英。新一轮敌体更强，上一轮取得的成长仍然保留；波次与难度固定，不因你的输出临时追平。</p>
+    <p><strong>病毒也会进化。</strong>前两波观察你的实际伤害，第3波出现一次晶壳或裂殖；第3、4、5波分别混入6、8、8只普通特化体，第5波精英继承同一进化。以弹丸为主时更易见到晶壳，以炮弹或剑气等范围攻击为主时出现裂殖；混合打法或观测不足也会出现一种变异。晶壳挡住正面弹丸，可用炮弹、剑气、绕后或冲流反制；裂殖母体死亡后分出2只22血小体，不能继续分裂。第6—9波延续这次分支，潜伏留到后续阶段。</p>
+    <p><strong>顶住压力，再进化收割。</strong>每5波为一轮：第1、3波是压力关，第2、4波是更密集但单体更脆的收割关，第5波迎战精英。新一轮敌体更强，上一轮取得的成长仍然保留；数量、血量和波次节奏固定，特化方向根据前两波的实际打法确定。</p>
     <p><strong>远侧增援源 · 可选截断路线。</strong>第6、11、16……波会预告地图上的□增援源，最多关联6体有限普通增援。你可以先处理近敌或抢修，再外出提前拆源；基础工具与实际细胞咬击都可清除，尚未出生的关联普通体才会被截断，已出生敌体与裂殖小体仍要处理。截断的增援不计击杀分或连击；保留敌群可争取真实击杀分，整波进化照常获得。配额用完后源会枯竭，不必再跑过去补刀，也不会额外发放击杀或经验。</p>
-    <p><strong>压力波要保护组织。</strong>第6波起，压力波中有2只普通体以＋组织为目标，小地图用橙色▲指出它们。它们占原来的有限普通槽，不会因为你外出而消失；仍可射杀、用2聚拢或用细胞拦截。收割波不新增这类分队。免疫军团达到${IMMUNE_GUARD_BALANCE.minimumRank}阶且装备免疫灯塔后，在${IMMUNE_GUARD_BALANCE.commandRange}范围内Q瞄准＋组织可驻防：细胞实际行走到组织周围${IMMUNE_GUARD_BALANCE.radius}范围，优先吞噬组织袭击者，你可以外出处理□源。它们会持续驻防，具有生命值，可被病毒击杀；再次Q指敌或空地可转回进攻。</p>
-    <p><strong>治疗点争夺。</strong>地图新增两处＋治疗点。病毒靠近约12秒可占领，围攻会加快感染；占满前靠近150范围内，用3瞄准治疗点点击即可免费清除感染并恢复25耐久，设施冷却4秒。完全占领后用3夺回，本次不回血，4秒后可以正常治疗；原有十字组织仍用于器官抢修。</p><p><strong>每次清波三选一。</strong>每波一次战斗强化，每5波再选一次协议，选择全程暂停。首份固定提供扇形抗体Ⅰ、裂解新星Ⅱ、冲刺斩Ⅰ。战斗进化会立即改变真实攻击：更多射线、贯穿、扩大裂解、冲刺斩、Q爆发、免疫军团、耐久与射速；选项会写明本次前后数值。每5波精英突破时，所选成长最多连升两阶，受路线阶数上限限制。战斗进化可持续获得，已达到机制上限的项目会退出选池，数值成长仍会继续。协议与这些强化同时生效；连续挑战不使用经验草案。</p>
-    <p><strong>催化裂解 · 可选改造。</strong>第6次成长起，已有新星Ⅰ或免疫军团Ⅰ可抽到。选后保留2的牵引和导流，普通爆发转换为最多8直伤及最多3体、4秒的催化标记；随后用1命中任一标记体，或让真实细胞接触咬击，整批兑现一次110半径爆发，最多伤及3体。有效再铺会覆盖旧批；不用这张卡可保留原牵引爆破。</p>
+    <p><strong>压力波要保护组织。</strong>第6波起，压力波中有2只普通体以＋组织为目标，小地图用橙色▲指出它们。它们占原来的有限普通槽，不会因为你外出而消失；仍可射杀、用2爆破或用细胞拦截。收割波不新增这类分队。免疫军团达到${IMMUNE_GUARD_BALANCE.minimumRank}阶且装备免疫灯塔后，在${IMMUNE_GUARD_BALANCE.commandRange}范围内Q瞄准＋组织可驻防：细胞实际行走到组织周围${IMMUNE_GUARD_BALANCE.radius}范围，优先吞噬组织袭击者，你可以外出处理□源。它们会持续驻防，具有生命值，可被病毒击杀；再次Q指敌或空地可转回进攻。</p>
+    <p><strong>治疗点争夺。</strong>地图新增两处＋治疗点。病毒靠近约12秒可占领，围攻会加快感染；占满前靠近150范围内，用3瞄准治疗点点击即可免费清除感染并恢复25耐久，设施冷却4秒。完全占领后用3夺回，本次不回血，4秒后可以正常治疗；原有十字组织仍用于器官抢修。</p><p><strong>每次清波三选一。</strong>每波一次战斗强化，每5波再选一次协议，选择全程暂停。首份固定提供扇形抗体Ⅰ、裂解新星Ⅱ、冲刺斩Ⅰ。战斗进化会立即改变真实攻击：更多弹丸、贯穿、扩大爆炸、冲刺斩、Q爆发、免疫军团、耐久与射速；选项会写明本次前后数值。每5波精英突破时，所选成长最多连升两阶，受路线阶数上限限制。战斗进化可持续获得，已达到机制上限的项目会退出选池，数值成长仍会继续。协议与这些强化同时生效；连续挑战不使用经验草案。</p>
+    <p><strong>净化余震 · 追加清场。</strong>第6次成长起，已有新星Ⅰ可抽到。主爆炸保持完整伤害，0.35秒后原爆心追加一次75%半径、40%伤害的余震；余震不递归产生余震或协议攻击。旧升级记录继续沿用。</p>
     <p><strong>Q 不只是扫描。</strong>Q 就绪时，准星对准敌体可下达短时围猎指令，小队从原位短时加速集结；指空地则区域部署。细胞会实际移动并吞噬，必须赶到接触范围才咬击；指定目标结束后恢复自动选敌。小队仍在且召集冷却中时，Q 就绪后再按 Q 改指挥点；不重置咬击冷却、不额外耗组织。最多部署两个军团，细胞持续存在但可被击杀；免疫军团强化数量、伤害和召集效率。</p>
     <p><strong>读编队，换打法。</strong>正面双潮、交叉夹击、聚群猎场与侧翼点射会改变接敌方向与节奏。第16波起三名支援混用已见过的招式，第30波起四名，分批入场。轻型支援随轮次成长，无精英被动特性；精英仍有其变异。重型招式同类最多一体起手，总并发最多三体。</p>
-    <p><strong>第20波起，病毒也会换代。</strong>每5波参考近期有效行动，轻度调整下一代变异倾向。提前8秒读进化预警，查看两项变异的能力、代价与基础反制。该波第一只精英兼具本代两项变异，按“主招→恢复→伴招→恢复”交替；第30波起的第二只精英仍单招。看清前摇，侧闪冲锋、离开双圈、Q打断侵蚀，利用恢复窗口清除。牵引不搬动已经锁定的攻击；击杀施法者后仍要处理已离体弹囊。</p>
+    <p><strong>第20波起，病毒也会换代。</strong>每5波参考近期有效行动，轻度调整下一代变异倾向。提前8秒读进化预警，查看两项变异的能力、代价与基础反制。该波第一只精英兼具本代两项变异，按“主招→恢复→伴招→恢复”交替；第30波起的第二只精英仍单招。看清前摇，侧闪冲锋、离开双圈、Q打断侵蚀，利用恢复窗口清除。炮弹不会中断已经锁定的攻击；击杀施法者后仍要处理已离体弹囊。</p>
     <p>${specialTactics.map(tactic => `<strong>${escape(ENEMY_TACTIC_INFO[tactic].name)}</strong> · ${escape(ENEMY_TACTIC_INFO[tactic].counter)}${tactic === 'crystal-charge' ? '让开路线后反打。' : ''}`).join('<br>')}</p>
     <p><strong>每5波协议联动重配。</strong>清除精英波后，除战斗进化外再获一次免费协议草案。优先补齐显影围猎或共振连锁的伙伴；最多三槽，进阶至Ⅲ后仍可调校。免样本、可放弃，不会抵消本波战斗成长。</p>
     <p>连击需要连续净化维持；清波与升级后继续下一波。Esc、失焦与手册暂停模拟；暂停里可主动撤离并结算。死亡也记录本局成绩。战绩独立保存，下一局从基础能力重新构筑，最高通关只计完全清除的波次。</p>${buildSummary(state)}</div>
@@ -270,7 +275,7 @@ export function endlessOverlay(state: GameState, help: boolean, lowEffects: bool
   if (draft) return modal(`<div class="endless-reward-progress"><strong>第 ${draft.wave} 波清场奖励</strong><span>1 / ${draft.wave % 5 === 0 ? 2 : 1} · 战斗强化</span></div><div class="eyebrow">${draft.breakthrough ? '精英突破' : '清群进化'}</div><h2>选一项，让自己更强。</h2><p>${draft.breakthrough ? '本次所选能力最多提升两阶，随后选择协议。' : '选 1 项立即生效，继续下一波。'}选择期间战场暂停。</p>
     <div class="endless-upgrade-grid">${draft.options.map(option => {
       const copy=endlessChoiceCopy(option,state.endlessGrowth!);
-      return `<article class="upgrade-card"><button class="endless-upgrade choice-select" data-action="endless-upgrade" data-run="${escape(state.growth?.runId ?? '')}" data-draft="${escape(draft.id)}" data-upgrade="${escape(option.id)}">${choiceIconMarkup(option.id)}<span class="choice-kind">${option.currentRank ? `${option.currentRank}阶 → ${option.nextRank}阶` : option.id === 'catalysis' ? '改造工具2 · 有取舍' : ENDLESS_UPGRADES[option.id].newMechanic ? '新能力' : '能力强化'}</span><strong>${escape(option.title)}</strong><p class="choice-summary">${escape(copy.summary)}</p>${copy.change?`<p class="choice-change">${escape(copy.change)}</p>`:''}<p class="choice-action">${escape(copy.action)}</p>${copy.caution?`<p class="choice-caution">${escape(copy.caution)}</p>`:''}<b class="choice-commit">选择这项 ↗</b></button><details class="upgrade-details"><summary aria-label="${escape(option.title)}的数值与限制">查看数值与限制</summary><p>${escape(option.description)}</p></details></article>`;
+      return `<article class="upgrade-card"><button class="endless-upgrade choice-select" data-action="endless-upgrade" data-run="${escape(state.growth?.runId ?? '')}" data-draft="${escape(draft.id)}" data-upgrade="${escape(option.id)}">${choiceIconMarkup(option.id)}<span class="choice-kind">${option.currentRank ? `${option.currentRank}阶 → ${option.nextRank}阶` : option.id === 'catalysis' ? '工具2 · 追加余震' : ENDLESS_UPGRADES[option.id].newMechanic ? '新能力' : '能力强化'}</span><strong>${escape(option.title)}</strong><p class="choice-summary">${escape(copy.summary)}</p>${copy.change?`<p class="choice-change">${escape(copy.change)}</p>`:''}<p class="choice-action">${escape(copy.action)}</p>${copy.caution?`<p class="choice-caution">${escape(copy.caution)}</p>`:''}<b class="choice-commit">选择这项 ↗</b></button><details class="upgrade-details"><summary aria-label="${escape(option.title)}的数值与限制">查看数值与限制</summary><p>${escape(option.description)}</p></details></article>`;
     }).join('')}</div>
     <div class="actions"><button data-action="help">查看操作与构筑</button></div>`, '清波战斗进化三选一', 'endless-draft choice-overlay');
   if (state.phase === 'paused' && e.stageCheckpoint === 'pending' && (!e.reward || e.reward.step === 'complete')) return modal(`

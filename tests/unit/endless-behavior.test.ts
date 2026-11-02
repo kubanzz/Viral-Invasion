@@ -146,17 +146,19 @@ describe('endless behavior from actual session inputs', () => {
     const input: InputFrame = { moveX: 0, moveY: 0, aim: { x: 800, y: 500 }, fire: true, tool: 1 };
     const originalInput = structuredClone(input);
     session.step(input);
+    for (let i = 0; i < 12; i++) step(session);
     expect(input).toEqual(originalInput);
     expect(observed.events.find(next => next.type === 'TARGET_HIT')?.data).toMatchObject({ damage: 7, rawDamage: 34 * 1.18, cause: 'basic', tool: 1 });
     expect(totals(observed, session.state.tick)).toMatchObject({ precisionDamage: 7, areaDamage: 0 });
   });
 
-  it('retains all three real ray hits on one body during one simulation tick', () => {
+  it('records all three physical bullets at their actual collision ticks', () => {
     const { session, observed } = fixture({ multishot: 1 }, [target('wide-body', 800, 500, { radius: 80 })]);
     step(session, { fire: true });
+    throughTick(session, 15);
     const hits = observed.events.filter(next => next.type === 'TARGET_HIT');
-    expect(hits).toHaveLength(3); expect(new Set(hits.map(next => next.tick)).size).toBe(1);
-    expect(observed.history).toEqual([bin(1, { precisionDamage: 102 })]);
+    expect(hits).toHaveLength(3); expect(hits.every(hit => hit.tick > 1)).toBe(true);
+    expect(totals(observed, session.state.tick).precisionDamage).toBe(102);
   });
 
   it('records upgraded tool-2 nova through its real basic area attack path', () => {

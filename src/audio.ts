@@ -39,15 +39,51 @@ export class Soundscape {
       this.lastEvent = undefined; this.cueTicks.clear(); this.run = run;
     }
     const index = this.lastEvent ? state.events.indexOf(this.lastEvent) : -1;
+    const projectileLaunches = new Set(state.events.filter(event => event.type === 'PLAYER_PROJECTILE_LAUNCHED')
+      .map(event => `${event.tick}:${event.data.kind === 'primary' ? 1 : event.data.kind === 'cannon' ? 2 : 'sword'}`));
     for (const event of state.events.slice(index + 1)) {
       const type = event.type;
-      if (type === 'TOOL_FIRED' && (event.data.tool === 1 || event.data.tool === 2 || event.data.tool === 3)) this.cue(`fire:${event.data.tool}`, event.tick, 4, () => {
+      if (type === 'ENDLESS_OPENING_EVOLUTION_WARNING') this.cue('opening-evolution-warning', event.tick, 1, () => {
+        this.tone(390, .1, .018, 520); this.tone(520, .16, .018, 430, .13);
+      });
+      if (type === 'ENDLESS_OPENING_VARIANT_BORN') this.cue(`opening-evolution-born:${event.data.wave}`, event.tick, 1, () => {
+        this.tone(event.data.trait === 'FISSION' ? 470 : 590, .12, .02, 760);
+        if (event.data.elite === true) this.tone(300, .18, .018, 430, .1);
+      });
+      if (type === 'TOOL_FIRED' && !projectileLaunches.has(`${event.tick}:${event.data.tool}`) && (event.data.tool === 1 || event.data.tool === 2 || event.data.tool === 3)) this.cue(`fire:${event.data.tool}`, event.tick, 4, () => {
         // One short, distinguishable launch cue per accepted action. Impact and
         // successful repair have separate, rate-limited cues below.
         if (event.data.tool === 1) this.tone(820, .06, .022, 390);
         else if (event.data.tool === 2) this.tone(230, .09, .018, 430);
         else if (event.data.tool === 3) this.tone(560, .09, .018, 830);
       });
+      if (type === 'PLAYER_PROJECTILE_LAUNCHED' && event.data.kind !== 'sword') this.cue(`fire:${event.data.kind === 'primary' ? 1 : 2}`, event.tick, 4, () => {
+        if (event.data.kind === 'primary') this.tone(1180, .055, .019, 540);
+        else { this.tone(210, .16, .027, 520); this.tone(680, .07, .013, 330, .025); }
+      });
+      if (type === 'PLAYER_PROJECTILE_HIT' && event.data.kind === 'primary')
+        this.cue('hit:tool1', event.tick, 4, () => this.tone(620, .045, .022, 330));
+      if (type === 'PLAYER_CANNON_EXPLODED') this.cue('cannon-blast', event.tick, 6, () => {
+        this.tone(170, .22, .035, 58); this.tone(1040, .1, .019, 360);
+      });
+      if (type === 'PLAYER_CANNON_AFTERSHOCK') this.cue('cannon-aftershock', event.tick, 6, () => this.tone(380, .14, .018, 110));
+      if (type === 'PLAYER_CHARGE_STARTED') this.cue('charge-start', event.tick, 1, () => this.tone(340, .2, .014, 720));
+      if (type === 'PLAYER_CHARGE_FULL') this.cue('charge-full', event.tick, 1, () => {
+        this.tone(880, .09, .021, 1100); this.tone(1320, .13, .016, 1540, .07);
+      });
+      if (type === 'PLAYER_CHARGE_RELEASED') this.cue('charge-release', event.tick, 1, () => {
+        this.tone(1520, .2, .032, 170); this.tone(180, .13, .022, 60, .025);
+      });
+      if (event.data.id === 'EXERCISE') {
+        if (type === 'HOST_EVENT_WARNING') this.cue('exercise-warning', event.tick, 1, () => {
+          this.tone(520, .1, .018, 660); this.tone(520, .1, .018, 660, .16);
+        });
+        if (type === 'HOST_EVENT_STARTED') this.cue('exercise-started', event.tick, 1, () => {
+          this.tone(660, .14, .022, 990); this.tone(990, .13, .017, 1220, .12);
+        });
+        if (type === 'HOST_EVENT_ENDED' || type === 'HOST_EVENT_CANCELLED' && event.data.triggered !== false)
+          this.cue('exercise-ended', event.tick, 1, () => this.tone(660, .18, .014, 440));
+      }
       if (type === 'TARGET_HIT') {
         // `tool` can be the currently selected tool for autonomous damage.
         // Only explicit basicTool provenance identifies a player's tool hit.

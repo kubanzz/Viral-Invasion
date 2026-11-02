@@ -1,6 +1,7 @@
 import { distance, isLegalPosition } from '../actors/collision';
 import { EnemyNavigator } from '../actors/enemyNavigation';
 import { endlessCombatStats } from './endlessGrowth';
+import { openingIntroductionBlocked } from './openingEvolution';
 import { activeWorld, BALANCE, type GameState, type Target, type Vec } from './types';
 import type { OrganId } from './battleTypes';
 import type { HostEventActive, HostEventCategory, HostEventCommand, HostEventId, HostEventModifierKind, HostEventState, HostEventZone } from './hostEventTypes';
@@ -15,7 +16,7 @@ export const HOST_EVENT_BALANCE = {
   sleepless: { duration: 35, immuneAttackFrequency: .8, captureProgress: 1.25 },
   smoke: { duration: 35, targetCount: 3, hpD: 3, radiusR: 5, minimumDistanceR: 8, moveMultiplier: .8, immuneAttackFrequency: .8, targetRadiusR: 1 },
   alcohol: { duration: 30, targetCount: 2, hpD: 4, radiusR: 6, repairMultiplier: .6, targetRadiusR: 1 },
-  exercise: { duration: 30, pulseCooldown: .7, pulseStrength: 1.25, lightVirusMove: 1.15 },
+  exercise: { duration: 30, challengeDuration: 35, pulseCooldown: .7, pulseStrength: 1.25, lightVirusMove: 1.15 },
 } as const;
 
 const B = HOST_EVENT_BALANCE;
@@ -37,9 +38,10 @@ export const HOST_EVENT_IDS = Object.keys(HOST_EVENT_CARDS) as HostEventId[];
 
 export function initializeHostEvents(game: GameState): HostEventState {
   const events: HostEventState = { schemaVersion: 1, rngState: (game.seed ^ 0x686f7374) >>> 0, serial: 0,
-    slots: B.slots.map(at => ({ at, status: 'pending' })), usedIds: [], successCount: 0, redCount: 0,
+    slots: B.slots.filter(at => !game.endless || at !== 75).map(at => ({ at, status: 'pending' })), usedIds: [], successCount: 0, redCount: 0,
     lastCategory: null, lastEndedAt: null, alarmUntil: 0, wasAlarm: false,
     active: null, sources: {}, disabled: {}, pendingCommands: [] };
+  if (game.endless) events.openingExercise = { status: 'pending', ready: false, waitingReason: 'wave-3-not-reached' };
   game.hostEvents = events;
   refreshHostEventEligibility(game);
   return events;
@@ -175,9 +177,11 @@ function log(state: HostEventState, type: string, data: Extract<HostEventCommand
   state.pendingCommands.push({ kind: 'log', type, data });
 }
 
-function begin(game: GameState, id: HostEventId, eligibility: HostEventEligibility, slotIndex: number | null): void {
+function begin(game: GameState, id: HostEventId, eligibility: HostEventEligibility, slotIndex: number | null,
+  trigger: NonNullable<HostEventActive['trigger']> = 'scheduled'): void {
   const state = game.hostEvents!, card = HOST_EVENT_CARDS[id], sourceId = `host-event:${++state.serial}:${id}`;
-  const startsAt = game.elapsed + B.warning[card.category], endsAt = startsAt + card.duration;
+  const startsAt = game.elapsed + B.warning[card.category];
+  const endsAt = startsAt + (game.endless && id === 'EXERCISE' ? B.exercise.challengeDuration : card.duration);
   const placements = eligibility.placements.map(point => ({ ...point }));
   if (id === 'MEDICATION' && placements.length) {
     const offset = Math.floor(nextRandom(state) * placements.length);
@@ -187,7 +191,7 @@ function begin(game: GameState, id: HostEventId, eligibility: HostEventEligibili
   const active: HostEventActive = { id, category: card.category, organId: game.battle!.organId, sourceId,
     phase: 'warning', warningStartedAt: game.elapsed, startsAt, endsAt, description: description(id, eligibility), slotIndex,
     zones: [], targetIds: [], placements, healed: 0, nextHealAt: startsAt + B.rest.tickSeconds,
-    affectsLegions: eligibility.affectsLegions, affectsHealingPoints: eligibility.affectsHealingPoints };
+    affectsLegions: eligibility.affectsLegions, affectsHealingPoints: eligibility.affectsHealingPoints, trigger };
   if (id === 'MEDICATION') active.zones = B.medication.appearances.map((offset, index): HostEventZone => ({
     ...placements[index], id: `${sourceId}:zone:${index}`, kind: 'medication', radius: B.medication.radiusR * game.player.radius,
     medicationState: 'pending',
@@ -195,9 +199,10 @@ function begin(game: GameState, id: HostEventId, eligibility: HostEventEligibili
     endsAt: startsAt + offset + B.medication.zoneDuration, nextTickAt: startsAt + offset + B.medication.tickSeconds,
   }));
   state.active = active;
+  state.announcement = { sourceId, id, category: card.category, phase: 'warning', at: game.elapsed };
   state.usedIds.push(id);
   if (slotIndex !== null) { state.slots[slotIndex].status = 'selected'; state.slots[slotIndex].id = id; }
-  log(state, 'HOST_EVENT_WARNING', { id, category: card.category, organId: active.organId, startsAt, endsAt, debug: slotIndex === null });
+  log(state, 'HOST_EVENT_WARNING', { id, category: card.category, organId: active.organId, startsAt, endsAt, debug: trigger === 'debug', trigger });
 }
 
 export function beginDebugHostEvent(game: GameState, id: HostEventId): { ok: boolean; reason?: string } {
@@ -211,7 +216,7 @@ export function beginDebugHostEvent(game: GameState, id: HostEventId): { ok: boo
   if (HOST_EVENT_CARDS[id].category !== 'green' && hostEventCrisis(game)) return { ok: false, reason: '当前处于低耐久、高感染或低完整度危机' };
   const eligibility = hostEventEligibility(game, id);
   if (!eligibility.ok) return { ok: false, reason: eligibility.reason };
-  begin(game, id, eligibility, null);
+  begin(game, id, eligibility, null, 'debug');
   return { ok: true };
 }
 
@@ -227,6 +232,7 @@ function rescalePulseCooldown(game: GameState, oldMultiplier: number, newMultipl
 function activate(game: GameState): void {
   const state = game.hostEvents!, active = state.active!;
   active.phase = 'active';
+  state.announcement = { sourceId: active.sourceId, id: active.id, category: active.category, phase: 'active', at: game.elapsed };
   state.sources[active.sourceId] = { eventId: active.id, organId: active.organId };
   state.successCount++; state.lastCategory = active.category;
   if (active.category === 'red') state.redCount++;
@@ -268,6 +274,15 @@ export function endHostEvent(game: GameState, reason = 'ended'): void {
   }
   const state = game.hostEvents, active = state?.active;
   if (!state) return;
+  const opening = state.openingExercise;
+  if (opening?.status === 'pending' && (['restart', 'menu', 'run-ended', 'player-dead', 'organ-changed'].includes(reason)
+    || game.phase === 'result' || game.player.hp <= 0)) {
+    opening.status = 'cancelled'; opening.reason = game.player.hp <= 0 ? 'player-dead' : reason;
+    log(state, 'HOST_EVENT_CANCELLED', { id: 'EXERCISE', category: 'yellow', reason: opening.reason,
+      blockedBy: opening.waitingReason ?? 'not-started', trigger: 'opening', triggered: false });
+    state.announcement = { sourceId: 'host-event:opening:EXERCISE', id: 'EXERCISE', category: 'yellow',
+      phase: 'cancelled', at: game.elapsed, reason: opening.reason };
+  }
   if (!active) {
     for (const sourceId of Object.keys(state.sources)) removeOwnedTargets(game, sourceId);
     state.sources = {};
@@ -282,8 +297,13 @@ export function endHostEvent(game: GameState, reason = 'ended'): void {
   }
   state.lastEndedAt = game.elapsed;
   state.active = null;
+  state.announcement = { sourceId: active.sourceId, id: active.id, category: active.category,
+    phase: active.phase === 'warning' ? 'cancelled' : 'ended', at: game.elapsed, reason };
+  if (opening?.sourceId === active.sourceId) {
+    opening.status = active.phase === 'warning' ? 'cancelled' : 'completed'; opening.reason = reason;
+  }
   log(state, active.phase === 'warning' ? 'HOST_EVENT_CANCELLED' : 'HOST_EVENT_ENDED',
-    { id: active.id, category: active.category, organId: active.organId, reason });
+    { id: active.id, category: active.category, organId: active.organId, reason, trigger: active.trigger ?? 'scheduled' });
 }
 
 /** Call after accepted basic damage, without advancing periodic effects twice. */
@@ -311,11 +331,15 @@ export function syncHostEventSafety(game: GameState): void {
   // the grace there grants the full 15 seconds instead of losing one step.
   if (alarm || state.wasAlarm) state.alarmUntil = game.elapsed + B.alarmGrace;
   state.wasAlarm = alarm;
+  if (game.phase === 'result' || game.player.hp <= 0) {
+    endHostEvent(game, game.player.hp <= 0 ? 'player-dead' : 'run-ended'); return;
+  }
   const active = state.active;
   if (!active) return;
-  if (game.phase === 'result' || game.phase === 'menu' || game.player.hp <= 0) endHostEvent(game, 'run-ended');
+  if (game.phase === 'menu') endHostEvent(game, 'run-ended');
   else if (active.organId !== game.battle?.organId) endHostEvent(game, 'organ-changed');
-  else if (alarm && (active.phase === 'warning' || active.category !== 'green')) endHostEvent(game, 'alarm');
+  else if (alarm && (active.phase === 'warning' || active.category !== 'green')
+    && !(active.trigger === 'opening' && active.phase === 'warning')) endHostEvent(game, 'alarm');
   if (state.active?.id === 'MEDICATION') updateMedicationZones(game);
 }
 
@@ -377,21 +401,67 @@ function drawCandidate(game: GameState): { id: HostEventId; eligibility: HostEve
   return inCategory[Math.floor(nextRandom(state) * inCategory.length)];
 }
 
+/** The opening lesson waits indefinitely for safety instead of expiring a random slot. */
+function openingBlockReason(game: GameState, needsLiveVirus: boolean): string | undefined {
+  const state = game.hostEvents!, endless = game.endless;
+  if (!endless || endless.wave < 3) return 'wave-3-not-reached';
+  if (game.phase !== 'playing') return 'simulation-paused';
+  if (endless.reward && endless.reward.step !== 'complete') return 'wave-reward';
+  if (endless.stageCheckpoint === 'pending') return 'stage-checkpoint';
+  if (endless.phase !== 'combat') return 'wave-not-in-combat';
+  if (openingIntroductionBlocked(game)) return 'evolution-introduction';
+  if (hostEventAlarm(game)) return 'alarm';
+  if (game.elapsed + 1e-8 < state.alarmUntil) return 'alarm-grace';
+  if (hostEventCrisis(game)) return 'crisis';
+  if (state.active && state.active.trigger !== 'opening') return 'host-event-busy';
+  const eligibility = hostEventEligibility(game, 'EXERCISE');
+  if (!eligibility.ok && (needsLiveVirus || eligibility.reason !== '当前器官没有轻型病毒'))
+    return eligibility.reason ?? 'dependency-lost';
+  return undefined;
+}
+
+function scheduleOpeningExercise(game: GameState): void {
+  const state = game.hostEvents!, opening = state.openingExercise;
+  if (!opening || opening.status !== 'pending') return;
+  if (game.endless!.wave >= 3 && game.endless!.phase === 'combat' && game.targets.some(isLightHostEventVirus)) opening.ready = true;
+  const blocked = openingBlockReason(game, true);
+  opening.waitingReason = blocked;
+  if (!opening.ready || blocked) return;
+  if (state.usedIds.includes('EXERCISE')) {
+    // A deliberate debug selection already fulfilled the lesson; never duplicate it.
+    opening.status = 'completed'; opening.reason = 'already-selected'; return;
+  }
+  begin(game, 'EXERCISE', hostEventEligibility(game, 'EXERCISE'), null, 'opening');
+  opening.status = 'selected'; opening.sourceId = state.active!.sourceId;
+}
+
 /** Fixed-step host call only; wall time and rendering never drive this scheduler. */
 export function advanceHostEvents(game: GameState, dt: number): HostEventCommand[] {
   if (game.phase !== 'playing' || !Number.isFinite(dt) || Math.abs(dt - BALANCE.step) > 1e-10) return [];
   const state = game.hostEvents ?? initializeHostEvents(game);
   syncHostEventSafety(game);
+  if (game.player.hp <= 0) return drainHostEventCommands(game);
   const alarm = hostEventAlarm(game);
   if (alarm) state.alarmUntil = game.elapsed + B.alarmGrace;
   state.wasAlarm = alarm;
   const active = state.active;
   if (active) {
+    const openingWarningBlocked = active.trigger === 'opening' && active.phase === 'warning'
+      ? openingBlockReason(game, false) : undefined;
     if (active.organId !== game.battle?.organId) endHostEvent(game, 'organ-changed');
     else if (game.player.hp <= 0) endHostEvent(game, 'player-dead');
+    else if (openingWarningBlocked) {
+      // Pause the full eight-second telegraph through crises and intermissions.
+      active.warningStartedAt += dt; active.startsAt += dt; active.endsAt += dt;
+      if (state.announcement?.sourceId === active.sourceId) state.announcement.at += dt;
+      if (state.openingExercise) state.openingExercise.waitingReason = openingWarningBlocked;
+    }
     else if (alarm && (active.phase === 'warning' || active.category !== 'green')) endHostEvent(game, 'alarm');
     else if (active.phase === 'warning' && game.elapsed + 1e-8 >= active.startsAt) {
-      const eligibility = hostEventEligibility(game, active.id);
+      let eligibility = hostEventEligibility(game, active.id);
+      // Clearing a wave during its warning does not invalidate the lesson's
+      // movement modifier: it applies to lightweight viruses born next wave.
+      if (active.trigger === 'opening' && eligibility.reason === '当前器官没有轻型病毒') eligibility = { ...eligibility, ok: true };
       if (active.category !== 'green' && hostEventCrisis(game)) endHostEvent(game, 'crisis-before-start');
       else if (active.id !== 'MEDICATION' && !eligibility.ok) endHostEvent(game, eligibility.reason ?? 'dependency-lost');
       else {
@@ -404,6 +474,7 @@ export function advanceHostEvents(game: GameState, dt: number): HostEventCommand
     }
     if (state.active?.phase === 'active') advanceActive(game);
   }
+  scheduleOpeningExercise(game);
   // Every elapsed slot is finalized, even while another event or alarm blocks it.
   for (let index = 0; index < state.slots.length; index++) {
     const slot = state.slots[index];

@@ -18,43 +18,43 @@ function fixture() {
   return state;
 }
 
-describe('catalysis choice and preparation presentation', () => {
-  it('identifies the tool conversion while retaining the actual pull and guidance in the active summary', () => {
+describe('purification aftershock presentation with legacy upgrade IDs', () => {
+  it('explains a full-damage main explosion followed by one smaller aftershock', () => {
     const base = createEndlessGrowth(7); expect(catalysisToolCopy(endlessCombatStats(base))).toBeNull();
     base.ranks = { immune: 1, catalysis: 1 };
     const copy = catalysisToolCopy(endlessCombatStats(base))!;
-    expect(copy.short).toContain('直伤≤8'); expect(copy.detail).toContain('保留牵引与导流');
-    expect(copy.detail).not.toContain('无击退');
-    expect(copy.detail).toContain('整批一次'); expect(copy.detail).toContain('不叠加');
+    expect(copy.title).toBe('净化余震'); expect(copy.short).toContain('主爆不减伤');
+    expect(copy.detail).toContain('0.35秒'); expect(copy.detail).toContain('75%半径、40%伤害');
+    expect(copy.detail).toContain('不会递归'); expect(copy.detail).not.toContain('铺标');
     const state = fixture(); state.phase = 'paused';
     const html = endlessOverlay(state, false, false)!;
-    expect(html).toContain('<dt>催化牵引</dt>'); expect(html).toContain('普通爆发改为低伤铺标');
+    expect(html).toContain('<dt>净化能量炮</dt>'); expect(html).toContain('净化余震');
   });
 
-  it('shows preparation, hides dead/expired batches, and keeps the same deadline through pause', () => {
+  it('does not advertise stale catalyst batches in the challenge or mutate their historical data', () => {
     const state = fixture(), before = JSON.stringify(state), text = catalysisStatus(state);
-    expect(text).toContain('催化 3体'); expect(text).toContain('1/细胞引爆'); expect(text).not.toContain('已命中');
+    expect(text).toBe('');
     expect(JSON.stringify(state)).toBe(before); state.phase = 'paused'; expect(catalysisStatus(state)).toBe(text);
-    state.targets[0].hp = 0; expect(catalysisStatus(state)).toContain('催化 2体');
+    state.targets[0].hp = 0; expect(catalysisStatus(state)).toBe('');
     state.elapsed = state.endlessGrowth!.pendingCatalysis!.until; expect(catalysisStatus(state)).toBe('');
   });
 
-  it('draws only the three actual marked bodies and never drives gameplay from rendering', () => {
+  it('does not draw old conversion markers in challenge or drive gameplay from rendering', () => {
     const state = fixture(), before = JSON.stringify(state), labels: SceneLabel[] = [];
     const ctx = new Proxy({}, { get: () => (..._args: unknown[]) => undefined, set: () => true }) as CanvasRenderingContext2D;
     drawCatalysis(ctx, state, { add: label => labels.push(label) });
-    expect(labels).toHaveLength(3); expect(labels.every(l => l.essential && l.lines[0].text.includes('催化'))).toBe(true);
+    expect(labels).toHaveLength(0);
     expect(JSON.stringify(state)).toBe(before);
   });
 
-  it('labels an actually offered first catalyst as a conversion with a cost', () => {
+  it('labels the actual nova-gated legacy upgrade ID as an additional aftershock', () => {
     const state = fixture(); delete state.endlessGrowth!.pendingCatalysis;
     for (let seed = 0; seed < 50; seed++) {
-      const growth = createEndlessGrowth(seed); growth.level = 5; growth.ranks.immune = 1; offerEndlessUpgrade(growth, 6);
+      const growth = createEndlessGrowth(seed); growth.level = 5; growth.ranks.nova = 1; offerEndlessUpgrade(growth, 6);
       if (!growth.draft!.options.some(o => o.id === 'catalysis')) continue;
       state.endlessGrowth = growth; state.phase = 'paused';
       const html = endlessOverlay(state, false, false)!;
-      expect(html).toContain('改造工具2 · 有取舍'); expect(html).toContain('data-upgrade="catalysis"'); return;
+      expect(html).toContain('工具2 · 追加余震'); expect(html).toContain('data-upgrade="catalysis"'); return;
     }
     throw Error('Expected a legal seed with the gated catalyst offer');
   });

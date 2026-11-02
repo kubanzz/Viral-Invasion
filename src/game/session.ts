@@ -29,6 +29,8 @@ import { dashTrailVisible } from './dashTrail';
 import { advanceHealingPoints, ensureHealingPoints, healingPoints, HEALING_POINT_BALANCE, treatHealingPoint } from './healingPoints';
 import { initializeHostEvents, advanceHostEvents, beginDebugHostEvent, endHostEvent, drainHostEventCommands, eventModifier, reconcileHostEvent, syncHostEventSafety } from './hostEvents';
 import type { HostEventCommand, HostEventId } from './hostEventTypes';
+import { advancePlayerProjectiles, clearPlayerProjectiles, launchCannon, launchPrimary, launchSwordVolley } from './playerProjectiles';
+import { CHARGED_SLASH_BALANCE, chargedSlashProfile } from './chargedSlash';
 
 // Exporting the clock here is convenient for hosts, while it remains independently testable.
 export { FixedClock };
@@ -63,6 +65,8 @@ export class GameSession {
   private tractionSerial = 0;
   private tractionFireHeld = false;
   private tractionAwaitRelease = false;
+  private projectileSerial = 0;
+  private pendingProjectileShot: { tool: 1 | 2; aim: Vec } | undefined;
 
   constructor(seed = 130026, private options: CampaignOptions = {}) {
     this.options = { ...options, ...(options.mode === 'endless' ? { campaign: true, milestone: 'G3' } : {}) };
@@ -85,6 +89,8 @@ export class GameSession {
   private resetCampaign(): void {
     this.campaignTransactions.clear(); this.deferredCampaign = []; this.motherController = undefined;
     this.catalysisSerial = 0; this.acceptedBiteTick = -1; this.acceptedBiteCells.clear();
+    this.projectileSerial = 0;
+    this.pendingProjectileShot = undefined;
     this.tractionSerial = 0; this.tractionAwaitRelease = this.tractionFireHeld; this.tractionFireHeld = false;
     this.endlessDirector = this.state.endless ? new EndlessDirector(this) : undefined;
     this.campaignController = !this.state.endless && this.state.battle?.milestone === 'G3' ? new CampaignDirector(this.state.seed, this.state) : undefined;
@@ -115,6 +121,8 @@ export class GameSession {
     if (this.options.mode === 'endless' && state.battle) {
       initializeEndless(state);
       state.endlessGrowth = createEndlessGrowth(seed);
+      state.playerProjectiles = [];
+      state.chargedSlashReadyAt = 0;
     }
     ensureHealingPoints(state);
     initializeHostEvents(state);
@@ -122,7 +130,10 @@ export class GameSession {
   }
 
   start(seed = this.state.seed, runOptions?: Pick<CampaignOptions, 'mode' | 'counterGuide' | 'encounterMode' | 'firstTrait' | 'preparation'>): void {
-    endHostEvent(this.state, 'restart');
+    const previous = this.state;
+    endHostEvent(previous, 'restart');
+    this.applyHostEventCommands(drainHostEventCommands(previous));
+    if (this.state !== previous) return;
     if (runOptions) this.options = { ...this.options, ...runOptions };
     if (this.options.mode === 'endless') this.options = { ...this.options, campaign: true, milestone: 'G3' };
     this.effectId = 0;
@@ -148,6 +159,9 @@ export class GameSession {
     const state = this.state;
     this.state.phase = 'paused';
     this.state.player.moving = false;
+    this.cancelChargedSlash('paused');
+    if (this.state !== state || state.phase !== 'paused') return;
+    this.pendingProjectileShot = undefined;
     this.tractionAwaitRelease = true;
     this.clearTraction('paused');
     if (this.state !== state || state.phase !== 'paused') return;
@@ -163,7 +177,10 @@ export class GameSession {
   }
 
   menu(): void {
-    endHostEvent(this.state, 'menu');
+    const previous = this.state;
+    endHostEvent(previous, 'menu');
+    this.applyHostEventCommands(drainHostEventCommands(previous));
+    if (this.state !== previous) return;
     const seed = this.state.seed;
     this.options = { ...this.options, mode: 'campaign' };
     this.state = this.initial(seed);
@@ -178,8 +195,13 @@ export class GameSession {
     this.state.result = { success, reason };
     this.state.phase = 'result';
     this.state.player.moving = false;
+    this.cancelChargedSlash('run-ended');
+    if (this.state !== state || state.phase !== 'result') return;
+    this.pendingProjectileShot = undefined;
+    clearPlayerProjectiles(state);
     endHostEvent(state, 'run-ended');
     this.applyHostEventCommands(drainHostEventCommands(state));
+    if (this.state !== state || state.phase !== 'result') return;
     if (this.state.endlessGrowth) this.state.endlessGrowth.draft = null;
     this.clearTraction('run-ended');
     if (this.state !== state) return;
@@ -301,6 +323,9 @@ export class GameSession {
     if (state.traction && state.traction.organId !== (state.battle?.organId ?? 'heart')) this.clearTraction('organ-changed');
     if (this.state !== state || state.phase !== 'playing') return;
     if (input.tool && input.tool !== state.tool) {
+      this.cancelChargedSlash('tool-changed');
+      if (this.state !== state || state.phase !== 'playing') return;
+      this.pendingProjectileShot = undefined;
       state.tool = input.tool;
       this.emit('TOOL_SELECTED', { tool: input.tool });
     }
@@ -313,6 +338,9 @@ export class GameSession {
     if (!input.fire) this.tractionAwaitRelease = false;
     const direction = normalized(input.aim.x - state.player.x, input.aim.y - state.player.y);
     if (direction.x || direction.y) state.player.facing = Math.atan2(direction.y, direction.x);
+    this.updateChargedSlash(input);
+    if (this.state !== state || state.phase !== 'playing') return;
+    const charging = !!state.chargedSlash && state.elapsed - state.chargedSlash.startedAt > CHARGED_SLASH_BALANCE.threshold;
     const move = normalized(input.moveX, input.moveY);
     state.player.moving = !!(move.x || move.y);
     if (input.dash) {
@@ -326,7 +354,8 @@ export class GameSession {
     }
     const dashing = state.elapsed < state.player.dashUntil;
     const velocity = dashing ? this.dashDirection : move;
-    const speed = (dashing ? BALANCE.dashSpeed : BALANCE.speed) * tractionMoveMultiplier(state) * eventModifier(state, 'playerMove', state.player);
+    const speed = (dashing ? BALANCE.dashSpeed : BALANCE.speed) * tractionMoveMultiplier(state) * eventModifier(state, 'playerMove', state.player)
+      * (charging ? CHARGED_SLASH_BALANCE.moveMultiplier : 1);
     const before = { x: state.player.x, y: state.player.y };
     const desired = { x: velocity.x * speed * dt, y: velocity.y * speed * dt };
     const after = moveWithCollision(state.player, desired, state.player.radius, activeWorld(state));
@@ -375,11 +404,21 @@ export class GameSession {
       this.scan();
       if (this.state !== state || state.phase !== 'playing') return;
     }
-    if (input.fire && (state.tool !== 2 || tool2Pressed)) {
-      this.fire(input.aim);
+    if (input.fire && !charging && (state.endless || state.tool !== 2 || tool2Pressed)) {
+      this.fire(this.pendingProjectileShot?.tool === state.tool ? this.pendingProjectileShot.aim : input.aim);
+      if (this.state !== state || state.phase !== 'playing') return;
+    } else if (state.endless && !charging && this.pendingProjectileShot?.tool === state.tool) {
+      this.fire(this.pendingProjectileShot.aim);
       if (this.state !== state || state.phase !== 'playing') return;
     }
-    this.advanceTool2(input);
+    if (!state.endless) this.advanceTool2(input);
+    if (state.endless) {
+      const session = this;
+      advancePlayerProjectiles({ get state() { return session.state; },
+        damage: (target, amount, origin) => this.damage(target, amount, origin),
+        emit: (type, data) => this.emit(type, data),
+        effect: (kind, from, to, radius, duration) => this.effect(kind, from, to, radius, duration) }, dt);
+    }
     if (this.state !== state || state.phase !== 'playing') return;
     if (input.interact) {
       this.interact();
@@ -473,10 +512,72 @@ export class GameSession {
     }
   }
 
+  private cancelChargedSlash(reason: string): void {
+    if (!this.state.chargedSlash) return;
+    delete this.state.chargedSlash;
+    this.emit('PLAYER_CHARGE_CANCELLED', { reason });
+  }
+
+  private updateChargedSlash(input: InputFrame): void {
+    const state = this.state;
+    if (!state.endless || !state.endlessGrowth) return;
+    if (input.chargeCancelled) { this.cancelChargedSlash('input-cancelled'); return; }
+    const aim = input.chargeAim ?? input.aim;
+    if (input.chargePressed && !state.chargedSlash && state.elapsed + 1e-9 >= (state.chargedSlashReadyAt ?? 0)) {
+      state.chargedSlash = { startedAt: state.elapsed, aim: { ...aim } };
+      this.emit('PLAYER_CHARGE_STARTED', { x: state.player.x, y: state.player.y });
+      if (this.state !== state || state.phase !== 'playing') return;
+    }
+    const charge = state.chargedSlash;
+    if (!charge) return;
+    if (charge.releasedAt === undefined && (input.chargeHeld || input.chargeReleased)) charge.aim = { ...aim };
+    if (input.chargeReleased && charge.releasedAt === undefined) charge.releasedAt = state.elapsed;
+    const stats = endlessCombatStats(state.endlessGrowth);
+    const profile = chargedSlashProfile(charge.startedAt, charge.releasedAt ?? state.elapsed, state.endlessGrowth.ranks.dash ?? 0, stats.damageMultiplier);
+    if (profile.progress >= 1 - 1e-8 && !charge.fullNotified) {
+      charge.fullNotified = true;
+      this.emit('PLAYER_CHARGE_FULL', { x: state.player.x, y: state.player.y });
+      if (this.state !== state || state.phase !== 'playing') return;
+    }
+    if (charge.releasedAt !== undefined) {
+      if (charge.releasedAt - charge.startedAt <= CHARGED_SLASH_BALANCE.threshold + 1e-9) {
+        delete state.chargedSlash;
+        return;
+      }
+      const castId = `player:sword:${++this.projectileSerial}`;
+      // A full queue defers the accepted release until space becomes available.
+      if (!launchSwordVolley(state, charge.aim, profile.damage, profile.count, castId)) return;
+      delete state.chargedSlash;
+      state.chargedSlashReadyAt = state.elapsed + CHARGED_SLASH_BALANCE.cooldown;
+      state.player.actionUntil = state.elapsed + .25;
+      this.emit('PLAYER_PROJECTILE_LAUNCHED', { kind: 'sword', castId, count: profile.count,
+        x: state.player.x, y: state.player.y, aimX: charge.aim.x, aimY: charge.aim.y });
+      if (this.state !== state || state.phase !== 'playing') return;
+      this.emit('PLAYER_CHARGE_RELEASED', { castId, count: profile.count, damage: profile.damage, progress: profile.progress,
+        x: state.player.x, y: state.player.y });
+    } else if (!input.chargeHeld && !input.chargePressed) this.cancelChargedSlash('hold-ended');
+  }
+
   private fire(aim: Vec): void {
     const state = this.state;
     const tool = state.tool;
     const combat = state.endlessGrowth ? endlessCombatStats(state.endlessGrowth) : undefined;
+    if (state.endless && combat && (tool === 1 || tool === 2)) {
+      if (state.elapsed + 1e-9 < state.cooldowns[tool]) return;
+      const castId = `player:${tool}:${++this.projectileSerial}`;
+      const accepted = tool === 1 ? launchPrimary(state, aim, combat, castId) : launchCannon(state, aim, combat, castId);
+      if (!accepted) { this.pendingProjectileShot ??= { tool, aim: { ...aim } }; return; }
+      this.pendingProjectileShot = undefined;
+      state.cooldowns[tool] = state.elapsed + (tool === 1 ? combat.primaryCooldown : combat.areaCooldown);
+      state.player.actionUntil = state.elapsed + .15;
+      state.shots++;
+      this.emit('PLAYER_PROJECTILE_LAUNCHED', { kind: tool === 1 ? 'primary' : 'cannon', castId,
+        count: tool === 1 ? combat.shotRays : 1, x: state.player.x, y: state.player.y, aimX: aim.x, aimY: aim.y });
+      if (this.state !== state || state.phase !== 'playing') return;
+      this.emit('TOOL_FIRED', { tool, x: aim.x, y: aim.y, hit: false, rays: tool === 1 ? combat.shotRays : 1,
+        pierce: tool === 1 ? combat.pierceCount : 0, castId });
+      return;
+    }
     if (tool === 2) { this.startTool2(aim, combat); return; }
     if (state.elapsed + 1e-9 < state.cooldowns[tool]) return;
     const cooldown = (tool === 1 ? combat?.primaryCooldown : undefined) ?? BALANCE.cooldowns[tool];
@@ -710,7 +811,7 @@ export class GameSession {
       if (this.battleDirector) this.battleDirector.cleared(target, suppressRewards);
       else this.message(state.targets.every(t => t.hp === 0) ? '全部靶标已净化！按 3 修复十字标记组织，再到复测台按 E。' : '训练靶已净化。继续处理其他靶标。');
       if (this.state !== state || state.phase !== 'playing') return actual;
-      if (!suppressRewards && this.growthController && target.role !== 'capsule' && origin.ability !== 'catalysis') this.applyGrowthCommands(this.growthController.onKill({ ...growthContext(state), tool: origin.basicTool ?? state.tool }, target, { ...origin, wasPulseExposed }));
+      if (!suppressRewards && this.growthController && target.role !== 'capsule' && origin.ability !== 'catalysis' && origin.ability !== 'cannon-aftershock') this.applyGrowthCommands(this.growthController.onKill({ ...growthContext(state), tool: origin.basicTool ?? state.tool }, target, { ...origin, wasPulseExposed }));
       if (coreContext && this.motherController) this.applyCoreCommands(this.motherController.notifyCleared(coreContext));
     } else if (!suppressRewards && this.growthController && target.role !== 'capsule' && origin.cause === 'basic' && ((origin.basicTool ?? state.tool) === 1 || (origin.basicTool ?? state.tool) === 2)) {
       this.applyGrowthCommands(this.growthController.onHit({ ...growthContext(state), tool: origin.basicTool ?? state.tool }, target, { ...origin, wasPulseExposed }));
@@ -901,6 +1002,11 @@ export class GameSession {
     if (!state.endless || !state.endlessGrowth || state.phase !== 'playing') return;
     if (!Number.isSafeInteger(wave) || wave < 1 || state.endless.reward && wave <= state.endless.reward.wave) return;
     this.clearTraction('wave-cleared');
+    if (this.state !== state || state.phase !== 'playing') return;
+    this.cancelChargedSlash('wave-cleared');
+    if (this.state !== state || state.phase !== 'playing') return;
+    this.pendingProjectileShot = undefined;
+    clearPlayerProjectiles(state);
     if (this.state !== state || state.phase !== 'playing') return;
     delete state.bladeOpening;
     delete state.bladeFollow;
@@ -1155,6 +1261,11 @@ export class GameSession {
         endHostEvent(state, 'organ-changed');
         this.applyHostEventCommands(drainHostEventCommands(state));
         this.clearTraction('organ-changed');
+        if (this.state !== state || state.phase !== 'playing') return;
+        this.cancelChargedSlash('organ-changed');
+        if (this.state !== state || state.phase !== 'playing') return;
+        this.pendingProjectileShot = undefined;
+        clearPlayerProjectiles(state);
         if (this.state !== state || state.phase !== 'playing') return;
         this.tractionAwaitRelease = true;
         this.dashDirection = { x: 1, y: 0 };

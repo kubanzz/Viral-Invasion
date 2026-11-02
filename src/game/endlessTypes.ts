@@ -3,6 +3,7 @@ import type { Effect, GameEvent, GameState, MessagePriority, Vec } from './types
 import type { BehaviorBin } from './evolutionTypes';
 import type { EndlessEvolutionDecision } from './endlessEvolutionTypes';
 import type { EndlessUpgradeId } from './endlessGrowthTypes';
+import type { OpeningEvolutionState } from './openingEvolution';
 
 export type EndlessEvolutionWarning = Extract<EndlessEvolutionDecision, { kind: 'warn' }>;
 export interface EndlessAdaptationState {
@@ -11,6 +12,8 @@ export interface EndlessAdaptationState {
   recentPrimaries: TraitId[];
   current?: EndlessEvolutionWarning;
   pending?: { decision: EndlessEvolutionWarning; warnedAt: number; appliesAt: number };
+  /** First-two-wave evidence and one branch for the opening lessons; independent of late generations. */
+  opening?: OpeningEvolutionState;
 }
 
 export type EndlessFormation = 'front' | 'cross' | 'fission-pack' | 'mixed';

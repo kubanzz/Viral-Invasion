@@ -6,11 +6,11 @@ export const BINDINGS = [
 ];
 export type GameAction = 'dash' | 'scan' | 'interact' | 'antibody';
 export type ScreenToWorld = (point: Vec) => Vec;
-export type AimState = Pick<GameState, 'player' | 'tool'>;
+export type AimState = Pick<GameState, 'player' | 'tool'> & Partial<Pick<GameState, 'endless'>>;
 export type TouchState = AimState & Partial<Pick<GameState, 'elapsed' | 'traction' | 'endlessGrowth'>>;
 export type SkillKind = 2 | 3 | 'scan';
 export interface SkillPresentation {
-  kind: SkillKind; aim: Vec; range: number; cancelled: boolean; phase: 'preview' | 'guiding';
+  kind: SkillKind | 'charge'; aim: Vec; range: number; cancelled: boolean; phase: 'preview' | 'guiding';
 }
 export interface TouchPresentation { aim: Vec; tool: Tool; preview?: SkillPresentation }
 type PreviewAim = { mode: 'world'; point: Vec } | { mode: 'stick'; vector: Vec };
@@ -52,6 +52,13 @@ export class Controller {
   private worldAim: Vec | undefined;
   private lastAim: Vec | undefined;
   private gated = false;
+  private chargeEnabled = false;
+  private chargeOwner: 'keyboard' | 'touch' | undefined;
+  private chargePressed = false;
+  private chargeReleased = false;
+  private chargeCancelled = false;
+  private chargeAim: Vec | undefined;
+  private chargePreviewCancelled = false;
   private readonly clearListeners = new Set<() => void>();
   pointer: Vec = { x: innerWidth / 2, y: innerHeight / 2 };
   constructor(private readonly canvas: HTMLCanvasElement, onPause: () => void, onBlur: () => void,
@@ -62,11 +69,18 @@ export class Controller {
       if (!this.accepts() || e.ctrlKey || e.altKey || e.metaKey) return;
       if (e.code === 'Space') e.preventDefault();
       if (e.repeat) return;
-      if (!this.keys.has(e.code)) this.pressed.add(e.code);
+      const fresh = !this.keys.has(e.code);
+      if (fresh) this.pressed.add(e.code);
       this.keys.add(e.code);
+      if (fresh && e.code === 'Space' && this.chargeEnabled && !this.chargeOwner) {
+        this.chargeOwner = 'keyboard'; this.chargePressed = true; this.chargeAim = undefined;
+      }
       if (/^Digit[123]$/.test(e.code)) this.select(Number(e.code.at(-1)) as Tool);
     });
-    window.addEventListener('keyup', e => this.keys.delete(e.code));
+    window.addEventListener('keyup', e => {
+      this.keys.delete(e.code);
+      if (e.code === 'Space' && this.chargeOwner === 'keyboard') this.endCharge(false);
+    });
     const updatePointer = (e: PointerEvent) => {
       if (e.pointerType === 'touch') return;
       const r = canvas.getBoundingClientRect(); this.pointer = { x: e.clientX - r.left, y: e.clientY - r.top };
@@ -110,12 +124,38 @@ export class Controller {
 
   select(tool: Tool): void {
     if (!this.accepts() || ![1, 2, 3].includes(tool)) return;
+    if (this.activeTool !== tool) this.endCharge(true);
     if (this.activeTool !== tool && this.castHeld) { this.castBlocked = true; this.castEdges = []; this.castStep = false; }
     this.activeTool = tool; this.tool = tool;
   }
 
   queueAction(action: GameAction): void { if (this.accepts()) this.actions.add(action); }
   queuePracticeHit(): void { if (this.accepts()) this.practiceHit = true; }
+
+  beginTouchCharge(state: AimState, aim: Vec): void {
+    this.chargeEnabled = !!state.endless;
+    if (!this.accepts() || !this.chargeEnabled || this.chargeOwner || !finite(aim)) return;
+    this.chargeOwner = 'touch'; this.chargePressed = true; this.chargeAim = { ...aim };
+    this.chargePreviewCancelled = false; this.actions.add('dash');
+  }
+
+  updateTouchCharge(aim: Vec, cancelled = false): void {
+    if (this.chargeOwner !== 'touch') return;
+    if (finite(aim)) this.chargeAim = { ...aim };
+    this.chargePreviewCancelled = cancelled;
+  }
+
+  endTouchCharge(cancelled = false): void {
+    if (this.chargeOwner === 'touch') this.endCharge(cancelled || this.chargePreviewCancelled);
+  }
+
+  private endCharge(cancelled: boolean): void {
+    if (!this.chargeOwner) return;
+    this.chargeOwner = undefined;
+    if (cancelled) { this.chargeCancelled = true; this.chargePressed = false; this.chargeReleased = false; }
+    else this.chargeReleased = true;
+    this.chargePreviewCancelled = false;
+  }
 
   setTouchMove(vector: Vec): void {
     if (this.accepts() && finite(vector)) this.touchMove = { ...vector };
@@ -168,6 +208,7 @@ export class Controller {
 
   beginSkillPreview(kind: SkillKind, point: Vec): void {
     if (!this.accepts() || !finite(point)) return;
+    this.endCharge(true);
     this.skillPreview = { kind, aim: { mode: 'world', point: { ...point } }, cancelled: false };
     // A skill owns firing until that gesture ends. Old held fingers must be
     // released before they can start primary fire again after the skill.
@@ -199,6 +240,7 @@ export class Controller {
   }
 
   resolvePreview(state: TouchState, screenToWorld: ScreenToWorld): SkillPresentation | undefined {
+    if (this.chargeOwner === 'touch' && this.chargeAim) return { kind: 'charge', aim: { ...this.chargeAim }, range: 650, cancelled: this.chargePreviewCancelled, phase: 'preview' };
     const preview = this.skillPreview;
     if (preview) return { kind: preview.kind, aim: preview.aim.mode === 'world' ? { ...preview.aim.point }
       : this.resolveVector(preview.aim.vector, this.skillRange(preview.kind), state, screenToWorld),
@@ -216,7 +258,7 @@ export class Controller {
   commitSkillPreview(state: TouchState, screenToWorld: ScreenToWorld): void {
     if (!this.accepts()) return;
     const preview = this.resolvePreview(state, screenToWorld);
-    if (!this.skillPreview || !preview || preview.cancelled) { this.cancelSkillPreview(); return; }
+    if (!this.skillPreview || !preview || preview.kind === 'charge' || preview.cancelled) { this.cancelSkillPreview(); return; }
     this.skillCommands.push({ kind: preview.kind, aim: { ...preview.aim } });
     this.skillPreview = undefined;
   }
@@ -254,6 +296,7 @@ export class Controller {
   /** Resolve through the displayed camera; stick direction is relative to the
    * current player, while a released stick or battlefield tap keeps a world point. */
   getAim(state: AimState, screenToWorld: ScreenToWorld): Vec {
+    this.chargeEnabled = !!state.endless;
     if (this.tool === undefined) this.activeTool = state.tool;
     let aim: Vec;
     if (this.aimSource === 'stick') {
@@ -267,6 +310,8 @@ export class Controller {
   onClear(listener: () => void): () => void { this.clearListeners.add(listener); return () => this.clearListeners.delete(listener); }
 
   clear(): void {
+    this.endCharge(true);
+    this.chargePressed = false; this.chargeReleased = false; this.chargeAim = undefined;
     const mousePointer = this.mousePointer; this.mousePointer = undefined;
     this.keys.clear(); this.pressed.clear(); this.actions.clear(); this.practiceHit = false; this.tool = undefined;
     this.mouseHeld = false; this.mouseBlocked = false; this.castHeld = false; this.castBlocked = false; this.mousePressed = false; this.castStep = false;
@@ -310,11 +355,15 @@ export class Controller {
       if (attackFire) atomic = { tool: 1 };
       this.mousePressed = false; this.attackPressed = false;
     }
+    const charge = this.chargeEnabled ? { chargePressed: this.chargePressed, chargeHeld: !!this.chargeOwner,
+      chargeReleased: this.chargeReleased, chargeCancelled: this.chargeCancelled,
+      chargeAim: this.chargeAim ?? aim } : {};
     const frame = { moveX: Number(this.keys.has('KeyD')) - Number(this.keys.has('KeyA')) + this.touchMove.x,
       moveY: Number(this.keys.has('KeyS')) - Number(this.keys.has('KeyW')) + this.touchMove.y, aim, fire, tool: this.tool,
       dash: this.pressed.has('Space') || this.actions.has('dash'), scan: this.pressed.has('KeyQ') || this.actions.has('scan'),
       interact: this.pressed.has('KeyE') || this.actions.has('interact'), practiceHit: this.practiceHit,
-      antibody: this.pressed.has('KeyR') || this.actions.has('antibody'), ...atomic };
+      antibody: this.pressed.has('KeyR') || this.actions.has('antibody'), ...atomic, ...charge };
+    this.chargePressed = false; this.chargeReleased = false; this.chargeCancelled = false;
     this.pressed.clear(); this.actions.clear(); this.tool = undefined; this.practiceHit = false; return frame;
   }
 }

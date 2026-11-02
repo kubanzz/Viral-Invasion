@@ -56,7 +56,7 @@ describe('effective 60Hz endless haste progression', () => {
     for (let rank = 0; rank < 5; rank++) {
       const { growth, option } = hasteOffer(rank), draft = growth.draft!;
       expect(option.currentRank).toBe(rank); expect(option.nextRank).toBe(rank + 1);
-      expect(option.description).toContain(`精准净化间隔约 ${descriptions[rank][0]} 秒`);
+      expect(option.description).toContain(`净化弹间隔约 ${descriptions[rank][0]} 秒`);
       expect(option.description).toContain(`射速约 ${descriptions[rank][1]} 发/秒`);
       expect(option.description).toContain('整组扇射共用一次间隔');
       expect(option.description).not.toMatch(/60Hz|帧/);

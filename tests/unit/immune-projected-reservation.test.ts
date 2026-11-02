@@ -38,9 +38,11 @@ describe('immune planning reserves the actual projected host damage', () => {
     const { session, state, weak, next } = fixture();
     state.endlessGrowth!.ranks.catalysis = 1; state.endlessGrowth!.ranks.nova = 1;
     for (const cell of state.growth!.cells!) cell.attackReadyAt = 100;
-    session.step(input({ fire: true, tool: 2 }));
-    for (let tick = 0; tick < 18; tick++) session.step(input());
-    expect(state.endlessGrowth!.pendingCatalysis).toBeDefined(); expect(weak.hp).toBe(10); expect(next.hp).toBe(92);
+    // Explicit legacy batch fixture: challenge now launches a full-damage cannon.
+    // This isolates the retained host's accepted/rejected bite receipt contract.
+    weak.hp = 10; next.hp = 92;
+    state.endlessGrowth!.pendingCatalysis = { id: 'legacy-fixture', organId: 'heart',
+      createdAt: state.elapsed, until: state.elapsed + 4, targetIds: [weak.id, next.id], damage: 200 };
     state.growth!.cells = state.growth!.cells!.map(cell => ({ ...cell, x: 550, y: 500, attackReadyAt: 0, attackUntil: 0, waypoint: null }));
     const oldClocks = state.growth!.cells!.map(cell => ({ id: cell.id, ready: cell.attackReadyAt, until: cell.attackUntil }));
     session.step(input({ tool: 1 }));

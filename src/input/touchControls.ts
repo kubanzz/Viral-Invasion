@@ -1,5 +1,6 @@
 import { BALANCE, type Vec } from '../game/types';
 import { endlessCombatStats } from '../game/endlessGrowth';
+import { TRACTION_BALANCE } from '../game/traction';
 import { Controller, type GameAction, type ScreenToWorld, type SkillKind, type SkillPresentation, type TouchState } from './controller';
 
 export interface TouchControlsOptions {
@@ -13,7 +14,7 @@ export interface TouchControlsOptions {
   onPreviewChange?: (preview: SkillPresentation | undefined) => void;
 }
 
-type PointerKind = 'move' | 'aim' | 'attack' | 'skill' | 'guide' | 'cast' | 'action' | 'point';
+type PointerKind = 'move' | 'aim' | 'attack' | 'skill' | 'guide' | 'cast' | 'action' | 'point' | 'charge';
 interface OwnedPointer {
   kind: PointerKind;
   element: HTMLElement;
@@ -85,7 +86,12 @@ export class TouchControls {
       this.capture(event, { kind: 'skill', element, start: { x: event.clientX, y: event.clientY } }); return;
     }
     const action = element.dataset.touchAction;
-    if (action === 'cast') {
+    if (action === 'dash' && this.options.getState().endless) {
+      if (this.owns('charge') || this.owns('skill') || this.owns('guide')) return;
+      const state = this.options.getState(), aim = this.options.input.getAim(state, this.options.screenToWorld);
+      this.capture(event, { kind: 'charge', element, start: { x: event.clientX, y: event.clientY } });
+      this.options.input.beginTouchCharge(state, aim);
+    } else if (action === 'cast') {
       if (this.owns('cast')) return;
       const worldStart = this.options.input.getAim(this.options.getState(), this.options.screenToWorld);
       this.capture(event, { kind: 'cast', element, start: { x: event.clientX, y: event.clientY }, worldStart });
@@ -97,7 +103,7 @@ export class TouchControls {
   }
 
   private startPoint(event: PointerEvent): void {
-    if (event.pointerType !== 'touch' || !this.accepts() || this.owns('point') || this.owns('skill') || this.owns('guide')) return;
+    if (event.pointerType !== 'touch' || !this.accepts() || this.owns('point') || this.owns('skill') || this.owns('guide') || this.owns('charge')) return;
     this.capture(event, { kind: 'point', element: this.options.canvas }); this.selectPoint(event);
   }
 
@@ -129,8 +135,9 @@ export class TouchControls {
   }
 
   private guideUnlocked(): boolean {
+    if (this.options.getState().endless) return false;
     const growth = this.options.getState().endlessGrowth;
-    return !!growth && endlessCombatStats(growth).areaGuideDuration > 0;
+    return !!growth && (endlessCombatStats(growth).areaGuideDuration > 0 || (growth.ranks.nova ?? 0) >= TRACTION_BALANCE.guideMinimumRank);
   }
 
   private updateSkill(pointer: OwnedPointer, event: PointerEvent): void {
@@ -174,6 +181,19 @@ export class TouchControls {
     this.options.input.updateSkillGuide({ x: pointer.worldStart.x + delta.x - origin.x, y: pointer.worldStart.y + delta.y - origin.y });
   }
 
+  private updateCharge(pointer: OwnedPointer, event: PointerEvent): void {
+    const { input, getState, screenToWorld } = this.options;
+    const preview = input.resolvePreview(getState(), screenToWorld);
+    if (preview?.kind !== 'charge') return;
+    if (this.hit('[data-touch-cancel]', event)) { input.updateTouchCharge(preview.aim, true); return; }
+    if (!pointer.start) return;
+    const delta = { x: event.clientX - pointer.start.x, y: event.clientY - pointer.start.y };
+    if (Math.hypot(delta.x, delta.y) < 7) { input.updateTouchCharge(preview.aim); return; }
+    const origin = screenToWorld({ x: 0, y: 0 }), direction = screenToWorld(delta), state = getState();
+    const dx = direction.x - origin.x, dy = direction.y - origin.y, length = Math.hypot(dx, dy);
+    input.updateTouchCharge(length > 0 ? { x: state.player.x + dx / length * 650, y: state.player.y + dy / length * 650 } : preview.aim);
+  }
+
   private move(event: PointerEvent): void {
     const pointer = this.pointers.get(event.pointerId);
     if (!pointer) return;
@@ -194,6 +214,7 @@ export class TouchControls {
     }
     else if (pointer.kind === 'skill') this.updateSkill(pointer, event);
     else if (pointer.kind === 'guide') this.updateGuide(pointer, event);
+    else if (pointer.kind === 'charge') this.updateCharge(pointer, event);
     else if (pointer.kind === 'point') this.selectPoint(event);
     else if (pointer.kind === 'cast' && pointer.start && pointer.worldStart) {
       const delta = { x: event.clientX - pointer.start.x, y: event.clientY - pointer.start.y };
@@ -219,6 +240,7 @@ export class TouchControls {
       else this.options.input.commitSkillPreview(this.options.getState(), this.options.screenToWorld);
     }
     if (pointer.kind === 'guide') this.options.input.endSkillGuide(event.type !== 'pointerup');
+    if (pointer.kind === 'charge') this.options.input.endTouchCharge(event.type !== 'pointerup' || this.hit('[data-touch-cancel]', event));
     if (pointer.kind === 'cast') this.options.input.setTouchCast(false, event.type !== 'pointerup');
     if (![...this.pointers.values()].some(owned => owned.element === pointer.element)) this.resetElement(pointer.element);
     this.release(pointer.element, event.pointerId);
@@ -250,7 +272,7 @@ export class TouchControls {
     const cancel = root.querySelector<HTMLElement>('[data-touch-cancel]'), guide = root.querySelector<HTMLElement>('[data-touch-guide]');
     if (cancel) cancel.hidden = !preview || preview.phase !== 'preview';
     if (guide) guide.hidden = !preview || preview.phase !== 'preview' || preview.kind !== 2 || !this.guideUnlocked();
-    for (const pointer of this.pointers.values()) if (pointer.kind === 'skill' || pointer.kind === 'guide') pointer.element.dataset.cancelled = String(preview?.cancelled ?? false);
+    for (const pointer of this.pointers.values()) if (pointer.kind === 'skill' || pointer.kind === 'guide' || pointer.kind === 'charge') pointer.element.dataset.cancelled = String(preview?.cancelled ?? false);
     this.options.onPreviewChange?.(preview);
   }
 
@@ -259,7 +281,7 @@ export class TouchControls {
     else {
       this.options.input.syncSkillGuide(this.options.getState());
       const preview = this.options.input.resolvePreview(this.options.getState(), this.options.screenToWorld);
-      if (!preview) for (const [id, pointer] of [...this.pointers]) if (pointer.kind === 'guide') {
+      if (!preview) for (const [id, pointer] of [...this.pointers]) if (pointer.kind === 'guide' || pointer.kind === 'charge') {
         this.pointers.delete(id); this.resetElement(pointer.element); this.release(pointer.element, id);
       }
     }

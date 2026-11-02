@@ -41,6 +41,42 @@ const event = (type: string, tick: number, data: GameEvent['data'] = {}): GameEv
 const state = (events: GameEvent[], tick = Math.max(0, ...events.map(item => item.tick)), seed = 91): GameState => ({ seed, tick, events } as GameState);
 
 describe('event-driven sound feedback', () => {
+  it('plays early evolution only for an accepted warning or real first variant birth, once per wave', () => {
+    const { sound, scheduled } = audioFixture();
+    const warning = event('ENDLESS_OPENING_EVOLUTION_WARNING', 10, { trait: 'CARAPACE' });
+    const born = event('ENDLESS_OPENING_VARIANT_BORN', 490, { wave: 3, trait: 'CARAPACE', elite: false });
+    const events = [event('ENDLESS_OPENING_EVOLUTION_SELECTED', 1), warning, event('ENDLESS_OPENING_EVOLUTION_APPLIED', 490), born, born];
+    sound.update(state(events)); expect(scheduled.map(tone => tone.from)).toEqual([390, 520, 590]);
+    sound.update(state(events)); expect(scheduled).toHaveLength(3);
+    sound.update(state([...events, event('ENDLESS_OPENING_VARIANT_BORN', 700, { wave: 5, trait: 'FISSION', elite: true })]));
+    expect(scheduled.map(tone => tone.from)).toEqual([390, 520, 590, 470, 300]);
+  });
+  it('uses one real projectile launch cue, separates the cannon explosion and does not replay a paused event', () => {
+    const { sound, scheduled } = audioFixture();
+    const events = [event('TOOL_FIRED', 10, { tool: 1 }), event('PLAYER_PROJECTILE_LAUNCHED', 10, { kind: 'primary', count: 5 }),
+      event('TOOL_FIRED', 30, { tool: 2 }), event('PLAYER_PROJECTILE_LAUNCHED', 30, { kind: 'cannon', count: 1 })];
+    sound.update(state(events)); expect(scheduled.map(tone => tone.from)).toEqual([1180, 210, 680]);
+    const blast = event('PLAYER_CANNON_EXPLODED', 45), aftershock = event('PLAYER_CANNON_AFTERSHOCK', 66);
+    sound.update(state([...events, blast, aftershock]));
+    expect(scheduled.map(tone => tone.from)).toEqual([1180, 210, 680, 170, 1040, 380]);
+    sound.update(state([...events, blast, aftershock])); expect(scheduled).toHaveLength(6);
+  });
+  it('plays full-charge and release cues once, while cancelled holds never play the release cue', () => {
+    const { sound, scheduled } = audioFixture();
+    const events = [event('PLAYER_CHARGE_STARTED', 10), event('PLAYER_CHARGE_FULL', 70), event('PLAYER_CHARGE_CANCELLED', 90)];
+    sound.update(state(events)); expect(scheduled.map(tone => tone.from)).toEqual([340, 880, 1320]);
+    sound.update(state([...events, event('PLAYER_CHARGE_RELEASED', 100)]));
+    expect(scheduled.map(tone => tone.from)).toEqual([340, 880, 1320, 1520, 180]);
+  });
+  it('announces exercise lifecycle through the sound toggle and keeps an untriggered cancellation silent', () => {
+    const { sound, scheduled } = audioFixture();
+    const events = [event('HOST_EVENT_CANCELLED', 1, { id: 'EXERCISE', triggered: false }),
+      event('HOST_EVENT_WARNING', 10, { id: 'EXERCISE' }), event('HOST_EVENT_STARTED', 490, { id: 'EXERCISE' })];
+    sound.update(state(events)); expect(scheduled.map(tone => tone.from)).toEqual([520, 520, 660, 990]);
+    sound.toggle(); const ended = event('HOST_EVENT_ENDED', 2590, { id: 'EXERCISE' });
+    sound.update(state([...events, ended])); sound.toggle(); sound.update(state([...events, ended]));
+    expect(scheduled).toHaveLength(4);
+  });
   it('plays distinct accepted tool launch cues, bounds bursts and keeps impact independent', () => {
     const { sound, scheduled } = audioFixture();
     const events = [event('TOOL_FIRED', 10, { tool: 1 }), event('TOOL_FIRED', 10, { tool: 1 }),

@@ -3,6 +3,7 @@ import { activeWorld, BALANCE, WORLD, type Effect, type GameState, type Target, 
 import { endlessCombatStats } from '../game/endlessGrowth';
 import { drawEnemyTacticDangers } from './enemyTacticVisuals';
 import { drawCombatEffects } from './combatEffects';
+import { drawPlayerProjectiles } from './playerProjectileVisuals';
 import { Camera, type CameraFollowOptions } from './camera';
 import { depthSort } from './depthSort';
 import { foregroundOpacity, isForegroundOccluded } from './occlusion';
@@ -215,6 +216,7 @@ export class CanvasScene {
     if (this.art) this.art.foreground(state, this.camera); else this.drawForeground(ctx, state);
     this.drawEffects(ctx, state, Boolean(opts.lowEffects));
     drawCombatEffects(ctx, state, Boolean(opts.lowEffects));
+    drawPlayerProjectiles(ctx, state, Boolean(opts.lowEffects), castId => this.art?.projectileOrigin?.(castId));
     this.growthVisuals.drawMarks(ctx, state, state.growth);
     this.growthVisuals.drawProtocolHits(ctx, state, state.growth, this.labels);
     if (state.battle) {

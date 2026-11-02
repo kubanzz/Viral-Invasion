@@ -1,12 +1,22 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { GameSession } from '../../src/game/session';
 import { MotherCoreController } from '../../src/game/motherCore';
-import { copyMobileMinimap, mobileCooldownViews, mobileHudMarkup, mobileHudView, setMobileDetailsOpen, updateMobileHud } from '../../src/ui/mobileHud';
+import { copyMobileMinimap, mobileChargeView, mobileCooldownViews, mobileHudMarkup, mobileHudView, setMobileDetailsOpen, updateMobileHud } from '../../src/ui/mobileHud';
 
 afterEach(() => vi.unstubAllGlobals());
 const campaign = () => { const game = new GameSession(71, { campaign: true, milestone: 'G3' }); game.start(); return game; };
 
 describe('touch battlefield status', () => {
+  it('shows charge progress independently from the normal dash cooldown', () => {
+    const game = new GameSession(42, { mode: 'endless' }); game.start(); const state = game.state;
+    state.elapsed = 8; state.player.dashReady = 9; state.chargedSlashReadyAt = 0;
+    expect(mobileChargeView(state)).toMatchObject({ charging: false, remaining: 0, label: '长按剑气' });
+    state.chargedSlash = { startedAt: 7, aim: { x: 900, y: 400 } };
+    expect(mobileChargeView(state).progress).toBeCloseTo(.75);
+    state.elapsed = 8.25; expect(mobileChargeView(state)).toMatchObject({ charging: true, progress: 1, label: '满蓄 · 松开' });
+    state.chargedSlash = undefined; state.chargedSlashReadyAt = 14.25;
+    expect(mobileChargeView(state)).toMatchObject({ charging: false, remaining: 6 });
+  });
   it('retains crisis, mutation, migration and host warnings without changing simulation', () => {
     const game = campaign(), state = game.state;
     expect(game.debugHostEvent('MEDICATION').ok).toBe(true);
@@ -112,7 +122,7 @@ describe('touch battlefield status', () => {
     const buttons = ['attack', '2', '3', 'dash', 'scan', 'interact', 'antibody'].map(key => ({ dataset: { cooldown: key, ready: '', cooling: '', active: key === '2' ? 'true' : 'false' }, disabled: false, style: { setProperty: vi.fn() }, setAttribute: vi.fn() }));
     const nodes = new Map([...mobileHudMarkup.matchAll(/id="([^"]+)"/g)].map(match => [match[1], { textContent: '', innerHTML: '', hidden: false, dataset: {} as Record<string, string>, style: { width: '' } }]));
     const root = nodes.get('mobile-controls')!;
-    Object.assign(root, { querySelectorAll: () => buttons });
+    Object.assign(root, { querySelectorAll: () => buttons, querySelector: () => null });
     vi.stubGlobal('document', { getElementById: (id: string) => nodes.get(id) ?? null });
     state.cooldowns[1] = 10; state.cooldowns[2] = 10; state.player.dashReady = 10;
     updateMobileHud(state);

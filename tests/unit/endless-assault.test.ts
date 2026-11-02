@@ -165,7 +165,7 @@ describe('finite pressure-wave tissue assault', () => {
     f.session.step({ ...idle, aim: { x: 1250, y: 900 }, fire: true, tool: 2 });
     expect(f.target.hp).toBe(200); expect(f.target.x).toBe(1275);
     expect(f.target.attackAt).toBe(deadline); expect(f.target.attackTarget).toBe('tissue');
-    for (let frame = 0; frame < 18; frame++) f.session.step(idle);
+    for (let frame = 0; frame < 24; frame++) f.session.step(idle);
     expect(f.target.hp).toBe(200 - BALANCE.damage[2]);
     expect(f.target.attackAt).toBe(deadline);
     for (let frame = 0; frame < 27; frame++) f.session.step(idle);
@@ -177,6 +177,8 @@ describe('finite pressure-wave tissue assault', () => {
     Object.assign(f.state.player, { x: 1650 }); f.session.step(idle);
     expect(f.target.attackTarget).toBe('tissue');
     f.session.step({ ...idle, aim: f.target, fire: true, tool: 1 });
+    expect(f.target.hp).toBe(BALANCE.damage[1]);
+    for (let frame = 0; frame < 15 && f.target.hp > 0; frame++) f.session.step(idle);
     expect(f.target.hp).toBe(0);
     for (let frame = 0; frame < 50; frame++) f.session.step(idle);
     expect(f.state.tissue.hp).toBe(100);

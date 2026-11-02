@@ -93,7 +93,7 @@ describe('continuous endless upgrades', () => {
       areaCooldown: 2, dashDamage: 0, scanDamage: 0, maxHp: 100, cellDamageMultiplier: 1, scanCooldown: 3, cellDurationBonus: 0, cellCooldownMultiplier: 1, catalysisDamage: 0 });
     growth.ranks = { power: 2, multishot: 2, pierce: 3, nova: 6, dash: 1, scan: 1, vitality: 3, haste: 7, immune: 2 };
     const upgraded = endlessCombatStats(growth);
-    expect(upgraded).toMatchObject({ shotRays: 5, pierceCount: 3, areaRadius: 180, areaGatherRadius: 214, areaGuideDuration: .85, areaCooldown: 2, primaryCooldown: .1,
+    expect(upgraded).toMatchObject({ shotRays: 5, pierceCount: 3, areaRadius: 180, areaGatherRadius: 214, areaGuideDuration: 0, areaCooldown: 2, primaryCooldown: .1,
       dashDamage: 55, scanDamage: 30, maxHp: 160, cellDurationBonus: 2.5 });
     expect(upgraded.damageMultiplier).toBeCloseTo(1.36);
     expect(upgraded.areaDamageMultiplier).toBeCloseTo(1.9);

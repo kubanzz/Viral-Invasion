@@ -803,6 +803,33 @@ describe('actual Renderer native art dispatch through an isolated host', () => {
     expect(scene.bridge.effectOrigin!(unrelated, displayed)).toBeUndefined();
   });
 
+  it.each([1, 2] as const)('registers the real painted muzzle for challenge tool %i without changing projectile geometry', async toolNumber => {
+    Object.assign(mocked.runtime.assets, fixtureHeroAnimationAssets()); const source = fixturePaintedToolAsset();
+    mocked.runtime.assets['weapon.emitter.painted'] = source;
+    const game = new GameSession(31, { mode: 'endless' }); game.start(); const aim = { x: 1000, y: 500 };
+    game.state.targets = []; game.state.world!.obstacles = [];
+    game.step(heroInput({ fire: true, tool: toolNumber, aim }));
+    const shot = game.state.playerProjectiles![0]; expect(shot).toBeDefined();
+    const displayed = game.snapshot(); displayed.player.x -= 2;
+    mocked.entities.push({ id: 'player', kind: 'player', y: displayed.player.y });
+    const { renderer, host, scene } = await setup(), before = JSON.stringify(game.state);
+    renderer.render(displayed, aim, { authoritativeState: game.state });
+    const nativeTool = host.sprites.find(sprite => sprite.id === 'player:tool')!.config;
+    const muzzle = sourcePoint(nativeTool, source, source.sourceMuzzle!.x, source.sourceMuzzle!.y);
+    const registered = scene.bridge.projectileOrigin!(shot.castId)!, offset = renderer.camera.worldToScreen({ x: 0, y: 0 });
+    expect(registered.x + offset.x).toBeCloseTo(muzzle.x, 10);
+    expect(registered.y * .72 + offset.y).toBeCloseTo(muzzle.y, 10);
+    expect(JSON.stringify(game.state)).toBe(before);
+    const captured = { ...registered };
+    game.step(heroInput({ moveX: 1, tool: 3, aim: { x: 100, y: 400 } }));
+    renderer.witnessSimulation(game.state); renderer.render(game.state, game.state.player);
+    expect(scene.bridge.projectileOrigin!(shot.castId)).toEqual(captured);
+    game.pause(); renderer.render(game.state, game.state.player);
+    expect(scene.bridge.projectileOrigin!(shot.castId)).toEqual(captured);
+    game.restart(31); renderer.render(game.state, game.state.player);
+    expect(scene.bridge.projectileOrigin!(shot.castId)).toBeUndefined();
+  });
+
   it('retains only a witnessed player muzzle when several simulation steps precede a render', async () => {
     Object.assign(mocked.runtime.assets, fixtureHeroAnimationAssets()); const source = fixturePaintedToolAsset();
     mocked.runtime.assets['weapon.emitter.painted'] = source;

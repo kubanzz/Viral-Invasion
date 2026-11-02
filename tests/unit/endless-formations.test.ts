@@ -20,6 +20,9 @@ function fixture(seed = 71, world = openWorld) {
     tool: 1, cooldowns: { 1: 0, 2: 0, 3: 0 }, scanReady: 0, scanUntil: 0, effects: [], events: [], message: '', messageUntil: 0,
     shots: 0, hits: 0, scans: 0, dashes: 0, result: null };
   initializeBattle(state, { milestone: 'G3', encounterMode: 'fixture' }); state.world = world; initializeEndless(state);
+  // Supplied first-phase damage evidence isolates formation/tactic geometry
+  // from the independently tested adaptive branch draw.
+  state.endless!.evolution!.opening!.precisionDamage = 200;
   const events: GameEvent[] = [], completed: number[] = [], messages: string[] = [];
   let director: EndlessDirector;
   const host: EndlessHost = { state, emit(type, data) { const event = { type, data, tick: state.tick }; events.push(event); director.recordEvent(event); },

@@ -31,7 +31,8 @@ import type { EndlessUpgradeId } from './game/endlessGrowthTypes';
 import './ui/endless.css';
 import './ui/artTheme.css';
 import { artIconMarkup, installArtIcons } from './ui/artIcons';
-import { hostEventHudMarkup, updateHostEventHud } from './ui/hostEventHud';
+import { hostEventHudMarkup, updateHostEventHud, hostEventAnnouncementMarkup, updateHostEventAnnouncement } from './ui/hostEventHud';
+import { chargedSlashProgress } from './game/chargedSlash';
 import { HOST_EVENT_IDS } from './game/hostEvents';
 import './ui/hostEventHud.css';
 import { mobileHudMarkup, mobileDetailsMarkup, setMobileDetailsOpen, updateMobileHud } from './ui/mobileHud';
@@ -104,10 +105,10 @@ app.innerHTML = `
     <section class="objective"><div class="eyebrow">TRAINING / 心脏训练场</div><h2 id="objective-title">建立你的第一道防线</h2><ol><li id="step-targets"><span>1</span><span>净化两类靶标 <b id="target-count">0 / 4</b></span></li><li id="step-tissue"><span>2</span><span>修复组织至完整</span></li><li id="step-terminal"><span>3</span><span>靠近复测终端，按 E</span></li></ol></section>
     <aside class="telemetry"><div class="readout"><label>战士耐久 <b id="hp-label">100 / 100</b></label><div class="meter"><i id="hp-meter"></i></div><p>训练靶不会攻击 · 自由练习</p></div><div class="readout"><label>心脏组织 <b id="tissue-label">25%</b></label><div class="meter"><i id="tissue-meter"></i></div><p>使用 3 修复组织节点<br>净化工具不能修复组织</p></div></aside>
     <div class="message" id="message">WASD 移动 · 点击靶标底部的瞄准环</div>
-    <div class="dock-wrap"><div class="ability"><div class="ability-key">${artIconMarkup('dash')}<kbd>Space</kbd></div><span class="ability-name">冲刺</span><em id="dash-ready">就绪</em></div><div class="tool-dock">${([[1,'精确净化','单点 · 快速冷却'],[2,'牵引裂解','聚拢 · 延迟爆发'],[3,'组织修复','治疗 · +25 完整度']] as const).map(([id,title,subtitle])=>`<button class="tool" data-action="tool-${id}" aria-label="${id} ${title}"><kbd>${id}</kbd><strong>${id===3?artIconMarkup('heal'):''}${title}</strong><small>${subtitle}</small><i class="charge" id="charge-${id}"></i></button>`).join('')}</div><div class="ability"><div class="ability-key">${artIconMarkup('scan')}<kbd>Q</kbd></div><span class="ability-name">扫描</span><em id="scan-ready">就绪</em></div></div>
+    <div class="dock-wrap"><div class="ability"><div class="ability-key">${artIconMarkup('dash')}<kbd>Space</kbd></div><span class="ability-name">冲刺</span><em id="dash-ready">就绪</em><small class="ability-charge" id="charged-slash-ready" hidden>长按蓄能剑气</small></div><div class="tool-dock">${([[1,'精确净化','单点 · 快速冷却'],[2,'牵引裂解','聚拢 · 延迟爆发'],[3,'组织修复','治疗 · +25 完整度']] as const).map(([id,title,subtitle])=>`<button class="tool" data-action="tool-${id}" aria-label="${id} ${title}"><kbd>${id}</kbd><strong>${id===3?artIconMarkup('heal'):''}${title}</strong><small>${subtitle}</small><i class="charge" id="charge-${id}"></i></button>`).join('')}</div><div class="ability"><div class="ability-key">${artIconMarkup('scan')}<kbd>Q</kbd></div><span class="ability-name">扫描</span><em id="scan-ready">就绪</em></div></div>
     <div class="micro-footer">G0 · 基础训练 / 架空生物幻想</div><div class="run-time" id="run-time"></div>
     ${hostEventHudMarkup}
-  </main>${mobileHudMarkup}<div id="overlay-host"></div>`;
+  </main>${hostEventAnnouncementMarkup}${mobileHudMarkup}<div id="overlay-host"></div>`;
 if (!trainingFixture) {
   app.classList.add('campaign');
   canvas.setAttribute('aria-label', '病毒入侵战场：WASD移动，鼠标瞄准，1精准净化，2范围控场，3抢修，Q召集免疫细胞，E交互');
@@ -396,6 +397,7 @@ function updateOverlay() {
 function updateHud() {
   const s = session.state;
   updateHostEventHud(s, hostEventDebugReport);
+  updateHostEventAnnouncement(s, { lowEffects });
   document.body.classList.toggle('endless-mode', !!s.endless);
   if (s.endless) {
     document.body.classList.remove('dual-organ');
@@ -442,7 +444,7 @@ function refreshMobileAimViewport(): void {
   const dash = document.querySelector<HTMLElement>('[data-touch-action="dash"]')?.getBoundingClientRect();
   const rect = canvas.getBoundingClientRect();
   if (!move?.width || !dash?.width) { mobileAimViewport = undefined; return; }
-  mobilePreviewHeaderBottom = Math.max(...['.mobile-readouts', '.mobile-map', '.mobile-top-actions']
+  mobilePreviewHeaderBottom = Math.max(...['.mobile-readouts', '.mobile-map', '.mobile-top-actions', '.mobile-notice', '.mobile-warning-strip']
     .map(selector => document.querySelector<HTMLElement>(selector)?.getBoundingClientRect().bottom ?? rect.top)) - rect.top + 8;
   mobileAimViewport = { left: move.right - rect.left + 12, right: dash.left - rect.left - 10,
     top: Math.max(mobilePreviewHeaderBottom, Math.min(80, rect.height * .3)), bottom: move.bottom - rect.top - 10 };
@@ -460,21 +462,27 @@ function updateCommonHud() {
   document.querySelector('.status-chip')!.textContent = s.endless ? `连续挑战 / ${s.endless.wave}` : s.battle?.organId === 'lung' ? 'LUNG / 02' : 'HEART / 01';
   el('dash-ready').textContent = s.player.dashReady > s.elapsed ? `${(s.player.dashReady-s.elapsed).toFixed(1)}s`:'就绪';
   el('dash-ready').previousElementSibling!.textContent = combat?.dashDamage ? '冲刺挥斩' : '冲刺';
+  const chargeLabel = el('charged-slash-ready');
+  chargeLabel.hidden = !s.endless;
+  chargeLabel.textContent = s.chargedSlash ? `蓄能 ${Math.round(chargedSlashProgress(s.chargedSlash.startedAt, s.elapsed) * 100)}% · 松开发射` : (s.chargedSlashReadyAt ?? 0) > s.elapsed ? `剑气 ${(s.chargedSlashReadyAt! - s.elapsed).toFixed(1)}s` : '长按蓄能剑气';
   el('scan-ready').textContent = s.scanReady > s.elapsed ? `${(s.scanReady-s.elapsed).toFixed(1)}s`:'就绪';
   el('run-time').textContent = `SEED ${s.seed}　 /　${formatTime(s.elapsed)}`;
   document.querySelectorAll<HTMLButtonElement>('.tool').forEach((button,index)=>{
     const tool=(index+1) as Tool, cooldown = (tool === 1 ? combat?.primaryCooldown : tool === 2 ? combat?.areaCooldown : undefined) ?? BALANCE.cooldowns[tool];
     button.classList.toggle('selected',s.tool===tool);button.setAttribute('aria-pressed',String(s.tool===tool));
     el(`charge-${tool}`).style.width=`${Math.max(0,1-Math.max(0,s.cooldowns[tool]-s.elapsed)/cooldown)*100}%`;
-    if (tool === 1) button.querySelector('small')!.textContent = combat ? `${combat.shotRays} 束 · 贯穿 +${combat.pierceCount}` : '单点 · 快速冷却';
-    if (tool === 2) {
-      const catalytic = (combat?.catalysisDamage ?? 0) > 0;
-      button.querySelector('strong')!.textContent = catalytic ? '催化牵引' : '牵引裂解';
-      button.setAttribute('aria-label', `2 ${catalytic ? '催化牵引' : '牵引裂解'}`);
-      button.querySelector('small')!.textContent = catalytic ? '直伤≤8 · 1/细胞引爆' : combat ? `聚拢 ${combat.areaGatherRadius} · ${combat.areaGuideDuration ? '可按住导流' : '延迟爆发'}` : '聚拢 · 延迟爆发';
-      if (s.traction) button.querySelector('small')!.textContent = s.traction.stage === 'guiding' ? '拖动鼠标 · 松手引爆' : s.traction.stage === 'aiming' ? '按住导流 / 轻点快放' : '聚拢中 · 即将爆发';
+    if (tool === 1) {
+      button.querySelector('strong')!.textContent = s.endless ? '粒子净化' : '精确净化';
+      button.setAttribute('aria-label', `1 ${s.endless ? '粒子净化' : '精确净化'}`);
+      button.querySelector('small')!.textContent = combat ? `${combat.shotRays} 弹 · 贯穿 +${combat.pierceCount}` : '单点 · 快速冷却';
     }
-    if (touchMode) button.querySelector('strong')!.textContent = tool === 2 && (combat?.catalysisDamage ?? 0) > 0 ? '催化' : touchToolLabels[index];
+    if (tool === 2) {
+      button.querySelector('strong')!.textContent = s.endless ? '净化能量炮' : '牵引裂解';
+      button.setAttribute('aria-label', `2 ${s.endless ? '净化能量炮' : '牵引裂解'}`);
+      button.querySelector('small')!.textContent = s.endless ? `爆心 ${combat?.areaRadius ?? 96}${(combat?.catalysisDamage ?? 0) > 0 ? ' · 追加余震' : ' · 按住连发'}` : '聚拢 · 延迟爆发';
+      if (!s.endless && s.traction) button.querySelector('small')!.textContent = s.traction.stage === 'guiding' ? '拖动鼠标 · 松手引爆' : s.traction.stage === 'aiming' ? '按住导流 / 轻点快放' : '聚拢中 · 即将爆发';
+    }
+    if (touchMode) button.querySelector('strong')!.textContent = tool === 2 && s.endless ? '能量炮' : touchToolLabels[index];
   });
   document.querySelector('.micro-footer')!.textContent = s.endless ? 'v0.9.0 · 连续进化挑战 / 微观绘本' : `v0.9.0 · ${s.battle ? '器官联防' : '基础训练'} / 微观绘本`;
   document.querySelectorAll<HTMLButtonElement>('[data-action="sound"]').forEach(button => { button.textContent = `声音 ${sound.enabled?'开':'关'}`; });
@@ -567,7 +575,7 @@ function decorateTouchOverlay(): void {
   host.dataset.touchDecorated = overlayKey;
   if (help) {
     const grid = host.querySelector('.help-grid');
-    if (grid) grid.innerHTML = '<div>左摇杆移动，右下大圆盘按住净化、拖动瞄准</div><div>裂解 / 修复 / 免疫：按下预览，拖动瞄准，松手施放</div><div>拖入 × 区域再松手，取消这次技能</div><div>点战场保留精确落点，再轻点技能也可施放</div><div>解锁导流后，裂解瞄准时拖入 ✓ 圈确认，再拖动引导，松手引爆</div><div>右侧小键冲刺 / 抗体；靠近装置点击交互，治疗点用修复</div>';
+    if (grid) grid.innerHTML = session.state.endless ? '<div>左摇杆移动；右下净化盘按住连射、拖动瞄准</div><div>能量炮 / 修复 / 免疫：按下预览、拖动瞄准、松手施放</div><div>拖入 × 区域再松手可取消技能或蓄能</div><div>点战场可保留精确落点，再轻点技能施放</div><div>点冲刺立即位移；长按蓄能，拖动定向，松开发射剑气</div><div>满蓄1.25秒发射5道剑气；释放后独立冷却6秒</div>' : '<div>左摇杆移动，右下净化盘按住攻击、拖动瞄准</div><div>裂解 / 修复 / 免疫：按下预览，松手施放</div><div>拖入 × 区域再松手取消</div><div>解锁导流后拖入 ✓ 圈确认，再拖动引导，松手引爆</div><div>点冲刺位移；靠近装置点击交互</div>';
   }
   adaptTouchText(host);
   host.querySelectorAll('.intro-footnote').forEach(node => { node.textContent = '触屏 v3 候选 · 待 iPhone 复测 · 左杆移动 / 右侧技能轮盘 · 完全离线'; });
@@ -586,12 +594,14 @@ function updateTouchSkillPreview(preview: SkillPresentation | undefined): void {
     element.style.width = `${radius * scale * 2}px`; element.style.height = `${radius * scale * .72 * 2}px`;
   };
   position('.mobile-preview-range', origin, preview.range);
-  position('.mobile-preview-target', aim, preview.kind === 2 ? session.state.traction?.radius ?? BALANCE.areaRadius : 30);
+  position('.mobile-preview-target', aim, preview.kind === 2 ? session.state.endlessGrowth ? endlessCombatStats(session.state.endlessGrowth).areaRadius : session.state.traction?.radius ?? BALANCE.areaRadius : 30);
   const dx = aim.x - origin.x, dy = aim.y - origin.y, ray = host.querySelector<HTMLElement>('.mobile-preview-ray')!;
   ray.style.left = `${origin.x}px`; ray.style.top = `${origin.y}px`; ray.style.width = `${Math.hypot(dx, dy)}px`; ray.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
   const label = host.querySelector<HTMLElement>('.mobile-preview-label')!;
-  label.textContent = preview.cancelled ? '松手取消' : preview.phase === 'guiding' ? '导流中 · 松手引爆' : `松手${preview.kind === 2 ? '裂解' : preview.kind === 3 ? '修复' : '指挥'} · 拖至 × 取消`;
-  label.style.left = `${Math.max(90, Math.min(innerWidth - 150, aim.x))}px`;
+  label.textContent = preview.cancelled ? '松手取消' : preview.phase === 'guiding' ? '导流中 · 松手引爆' : `松手${preview.kind === 'charge' ? '发射剑气' : preview.kind === 2 ? session.state.endless ? '发射能量炮' : '裂解' : preview.kind === 3 ? '修复' : '指挥'} · 拖至 × 取消`;
+  const halfWidth = label.offsetWidth / 2;
+  const left = (mobileAimViewport?.left ?? 8) + halfWidth, right = (mobileAimViewport?.right ?? innerWidth - 8) - halfWidth;
+  label.style.left = `${right >= left ? Math.max(left, Math.min(right, aim.x)) : ((mobileAimViewport?.left ?? 0) + (mobileAimViewport?.right ?? innerWidth)) / 2}px`;
   const labelHeight = label.offsetHeight;
   const labelY = aim.y - 24 - labelHeight >= mobilePreviewHeaderBottom ? aim.y - 24 : aim.y + labelHeight + 20;
   label.style.top = `${Math.max(mobilePreviewHeaderBottom + labelHeight, Math.min(innerHeight - 8, labelY))}px`;

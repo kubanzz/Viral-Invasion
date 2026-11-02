@@ -86,8 +86,9 @@ describe('a counterable ranged support in real fixed updates', () => {
     const f = fixture();
     Object.assign(f.target, { x: 1000, y: 700, tactic: 'melee', tacticPosture: undefined, traits: ['CARAPACE'], facing: 0 });
     f.advance(1, () => ({ fire: true, tool: 1 }));
+    f.advance(4);
     expect(f.target.hp).toBeCloseTo(68 - 34 * .3);
-    let firedFromSide = false, travelled = 0, targetTravelled = 0;
+    let firedFromSide = false, travelled = 0, targetTravelled = 0, sideMove = { moveX: 0, moveY: 0 };
     for (let tick = 0; tick < 150 && !firedFromSide; tick++) {
       const player = f.s.player, target = f.target, gap = distance(player, target);
       const radial = { x: (player.x - target.x) / gap, y: (player.y - target.y) / gap };
@@ -98,10 +99,12 @@ describe('a counterable ranged support in real fixed updates', () => {
       // Wait for an unmistakable rear/side window, then fire through the same
       // public tool path used for the earlier frontal hit.
       firedFromSide = Math.cos(incoming - target.facing!) < .1;
+      sideMove = { moveX: x / length, moveY: y / length };
       f.advance(1, () => ({ moveX: x / length, moveY: y / length, fire: firedFromSide, tool: 1 }));
       travelled += distance(before, player); targetTravelled += distance(oldTarget, target);
     }
     expect(firedFromSide).toBe(true); expect(travelled).toBeGreaterThan(200); expect(targetTravelled).toBeGreaterThan(10);
+    f.advance(4, () => sideMove);
     expect(f.target.hp).toBeCloseTo(68 - 34 * .3 - 34);
     expect(f.events.filter(event => event.type === 'CARAPACE_RESISTED')).toHaveLength(1);
     expect(f.s.player.hp).toBe(100);

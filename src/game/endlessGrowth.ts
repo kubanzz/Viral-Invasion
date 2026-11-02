@@ -10,6 +10,7 @@ export type * from './endlessGrowthTypes';
 export const ENDLESS_UPGRADE_IDS: readonly EndlessUpgradeId[] = ['power', 'multishot', 'pierce', 'nova', 'dash', 'scan', 'vitality', 'haste', 'immune', 'catalysis'];
 export const CATALYSIS_UPGRADE_BALANCE = {
   minimumChoice: 6, maxTargets: 3, duration: 4, radius: 110, damageMultiplier: 1.25, primerDamageCap: 8,
+  aftershockDelay: .35, aftershockRadiusFactor: .75, aftershockDamageFactor: .4,
 } as const;
 const PRIMARY_BASE_TICKS = Math.ceil(BALANCE.cooldowns[1] / BALANCE.step);
 // The old .09s floor already fired every six 60Hz ticks. Keep that real floor,
@@ -26,7 +27,7 @@ export const ENDLESS_UPGRADES: Record<EndlessUpgradeId, { title: string; maxRank
   vitality: { title: '生命扩容', newMechanic: false },
   haste: { title: '急速净化', maxRank: PRIMARY_BASE_TICKS - PRIMARY_MIN_TICKS, newMechanic: false },
   immune: { title: '免疫军团', newMechanic: false },
-  catalysis: { title: '催化裂解', maxRank: 1, newMechanic: true },
+  catalysis: { title: '净化余震', maxRank: 1, newMechanic: true },
 };
 
 const MAX_COUNT = Number.MAX_SAFE_INTEGER;
@@ -51,7 +52,7 @@ export function endlessCombatStats(growth: EndlessGrowthState): EndlessCombatSta
     pierceCount: pierce,
     areaRadius: BALANCE.areaRadius + nova * 14,
     areaGatherRadius: TRACTION_BALANCE.gatherRadius + nova * 14,
-    areaGuideDuration: nova >= TRACTION_BALANCE.guideMinimumRank ? TRACTION_BALANCE.guideDuration : 0,
+    areaGuideDuration: 0,
     areaDamageMultiplier,
     primaryCooldown: haste === 0 ? BALANCE.cooldowns[1] : Math.max(PRIMARY_MIN_TICKS, PRIMARY_BASE_TICKS - haste) * BALANCE.step,
     areaCooldown: TRACTION_BALANCE.cooldown,
@@ -63,7 +64,7 @@ export function endlessCombatStats(growth: EndlessGrowthState): EndlessCombatSta
     cellDurationBonus: Math.min(8, immune * 1.25),
     cellCooldownMultiplier: Math.max(.5, 1 / (1 + immune * .15)),
     catalysisDamage: effectiveRank(growth, 'catalysis') > 0
-      ? BALANCE.damage[2] * damageMultiplier * areaDamageMultiplier * CATALYSIS_UPGRADE_BALANCE.damageMultiplier : 0,
+      ? BALANCE.damage[2] * damageMultiplier * areaDamageMultiplier * CATALYSIS_UPGRADE_BALANCE.aftershockDamageFactor : 0,
   };
 }
 
@@ -77,20 +78,19 @@ function optionFor(growth: EndlessGrowthState, id: EndlessUpgradeId, wave: numbe
   const before = endlessCombatStats(growth), after = endlessCombatStats({ ...growth, ranks: { ...growth.ranks, [id]: nextRank } });
   const beforeShotTicks = Math.ceil(before.primaryCooldown / BALANCE.step - 1e-9), afterShotTicks = Math.ceil(after.primaryCooldown / BALANCE.step - 1e-9);
   const change = (a: number, b: number) => `${display(a)} → ${display(b)}`;
-  const areaDamage = BALANCE.damage[2] * before.damageMultiplier * before.areaDamageMultiplier;
   const description: Record<EndlessUpgradeId, string> = {
     power: `基础净化伤害倍率 ×${display(before.damageMultiplier)} → ×${display(after.damageMultiplier)}；强化现有攻击。`,
-    multishot: `精准净化 ${change(before.shotRays, after.shotRays)} 束；向左右同时发射更多抗体。`,
-    pierce: `每束精准射线额外贯穿 ${change(before.pierceCount, after.pierceCount)} 个敌体，遵循组织碰撞。`,
-    nova: `牵引圈 ${change(before.areaGatherRadius, after.areaGatherRadius)}，爆心 ${change(before.areaRadius, after.areaRadius)}，伤害倍率 ${change(before.areaDamageMultiplier, after.areaDamageMultiplier)}；射程 ${TRACTION_BALANCE.range}，聚拢后 ${TRACTION_BALANCE.fuse} 秒爆发，冷却 ${after.areaCooldown} 秒。${after.areaGuideDuration > 0 ? `${before.areaGuideDuration === 0 ? '新操作：' : ''}导流已解锁：2 左键轻点快放，按住超过 ${TRACTION_BALANCE.guideThreshold} 秒可拖动落点，最长 ${after.areaGuideDuration} 秒自动松开；导流移动速度 75%，每体整次位移仍最多 ${TRACTION_BALANCE.displacementBudget}。` : 'Ⅲ阶解锁按住左键拖动落点的导流操作。'}`,
+    multishot: `高速净化弹 ${change(before.shotRays, after.shotRays)} 颗；向左右同时发射更多真实抗体弹丸。`,
+    pierce: `每颗净化弹额外贯穿 ${change(before.pierceCount, after.pierceCount)} 个敌体，同一弹丸只命中每体一次，遵循组织遮挡。`,
+    nova: `净化能量炮爆炸半径 ${change(before.areaRadius, after.areaRadius)}，伤害倍率 ${change(before.areaDamageMultiplier, after.areaDamageMultiplier)}；射程 ${TRACTION_BALANCE.range}，碰到病毒、弹囊或障碍立即爆炸，冷却 ${after.areaCooldown} 秒。`,
     dash: `Space 冲刺抵达实际落点时近身挥斩，基础伤害 ${change(before.dashDamage, after.dashDamage)}，半径 ${change(dashBladeProfile(currentRank).radius, dashBladeProfile(nextRank).radius)}；${nextRank >= DASH_BLADE_BALANCE.circularRank ? `${currentRank < DASH_BLADE_BALANCE.circularRank ? '新操作效果：' : ''}Ⅲ阶圆周回旋，覆盖身后。` : '基础为前方 216° 扇斩，Ⅲ阶变为圆周回旋。'}${nextRank >= DASH_BLADE_BALANCE.returnRank ? `${currentRank < DASH_BLADE_BALANCE.returnRank ? '新操作效果：' : ''}Ⅵ阶在 ${DASH_BLADE_BALANCE.returnDelay} 秒后，于真实当前位置追加 ${DASH_BLADE_BALANCE.returnDamageFactor * 100}% 伤害回斩。` : 'Ⅵ阶追加延迟回斩。'}斩击遵循障碍遮挡。`,
     scan: `Q 扫描同时引爆身边 260 范围，基础伤害 ${change(before.scanDamage, after.scanDamage)}；扫描显形继续生效。`,
     vitality: `最大耐久 ${change(before.maxHp, after.maxHp)}；本次补给按新的耐久上限结算。`,
-    haste: `精准净化间隔约 ${change(beforeShotTicks * BALANCE.step, afterShotTicks * BALANCE.step)} 秒；射速约 ${change(1 / (beforeShotTicks * BALANCE.step), 1 / (afterShotTicks * BALANCE.step))} 发/秒；整组扇射共用一次间隔。`,
+    haste: `净化弹间隔约 ${change(beforeShotTicks * BALANCE.step, afterShotTicks * BALANCE.step)} 秒；射速约 ${change(1 / (beforeShotTicks * BALANCE.step), 1 / (afterShotTicks * BALANCE.step))} 发/秒；整组扇射共用一次间隔。`,
     immune: `免疫细胞伤害倍率 ${change(before.cellDamageMultiplier, after.cellDamageMultiplier)}，每团成员 ${Math.min(5, 3 + currentRank)} → ${Math.min(5, 3 + nextRank)} 体，常驻且有生命；Q 冷却 ${change(before.scanCooldown, after.scanCooldown)} 秒，小队独立冷却倍率 ${change(before.cellCooldownMultiplier, after.cellCooldownMultiplier)}。${nextRank >= IMMUNE_GUARD_BALANCE.minimumRank
       ? `${currentRank < IMMUNE_GUARD_BALANCE.minimumRank ? '新操作：' : ''}组织驻防已解锁：${IMMUNE_GUARD_BALANCE.commandRange} 范围内 Q 瞄准十字组织，小队守备 ${IMMUNE_GUARD_BALANCE.radius} 范围并优先拦截袭击者；你可离开，细胞仍须真实到达和接触。Q 指敌或空地改令，保留当前生命与咬击冷却。`
       : `${IMMUNE_GUARD_BALANCE.minimumRank} 阶解锁新操作：Q 点组织驻防，优先拦截袭击组织者。`}`,
-    catalysis: `转换工具 2 的爆发：保留牵引与已解锁导流，取消普通爆发，直伤 ${change(areaDamage, Math.min(CATALYSIS_UPGRADE_BALANCE.primerDamageCap, areaDamage))}。最多 ${CATALYSIS_UPGRADE_BALANCE.maxTargets} 个实际受击存活目标铺标 ${CATALYSIS_UPGRADE_BALANCE.duration} 秒；随后用 1 正伤命中或真实细胞接触咬击，整批引爆一次。爆发半径 ${CATALYSIS_UPGRADE_BALANCE.radius}、最多 ${CATALYSIS_UPGRADE_BALANCE.maxTargets} 体，每体伤害 ${display(after.catalysisDamage)}（原工具 2 完整成长伤害 ×${CATALYSIS_UPGRADE_BALANCE.damageMultiplier}，按施法捕获）。再次 2 的有效铺标覆盖旧批，不叠加。`,
+    catalysis: `净化能量炮保留完整主爆炸，${CATALYSIS_UPGRADE_BALANCE.aftershockDelay} 秒后原爆心追加一次余震。余震半径为主爆炸的 75%，伤害为 40%：${change(before.catalysisDamage, after.catalysisDamage)}；按发射时成长捕获，余震不再产生余震或协议攻击。`,
   };
   return { id, title: ENDLESS_UPGRADES[id].title, description: description[id], currentRank, nextRank };
 }
@@ -99,7 +99,7 @@ function available(growth: EndlessGrowthState, id: EndlessUpgradeId): boolean {
   const current = rank(growth, id);
   if (current >= (ENDLESS_UPGRADES[id].maxRank ?? MAX_COUNT)) return false;
   if (id === 'catalysis' && (count(growth.level) < CATALYSIS_UPGRADE_BALANCE.minimumChoice - 1
-    || rank(growth, 'nova') < 1 && rank(growth, 'immune') < 1)) return false;
+    || rank(growth, 'nova') < 1)) return false;
   const before = endlessCombatStats(growth), after = endlessCombatStats({ ...growth, ranks: { ...growth.ranks, [id]: current + 1 } });
   // Even at the finite representation limit, never offer an upgrade whose
   // actual projected parameters would be unchanged by floating-point rounding.

@@ -13,7 +13,8 @@ export function recordEndlessBehavior(history: readonly BehaviorBin[], event: Ga
   if (event.type === 'TARGET_HIT' && positiveFinite(data.damage)) {
     if (data.cause === 'basic' && data.tool === 1) behavior = { tick: event.tick, kind: 'precisionDamage', amount: data.damage };
     else if (data.cause === 'basic' && data.tool === 2) behavior = { tick: event.tick, kind: 'areaDamage', amount: data.damage };
-    else if (data.cause === 'ability' && (data.ability === 'nova' || data.ability === 'scan' || data.ability === 'dash' || data.ability === 'catalysis')) {
+    else if (data.cause === 'ability' && (data.ability === 'nova' || data.ability === 'scan' || data.ability === 'dash' || data.ability === 'catalysis'
+      || data.ability === 'charged-slash' || data.ability === 'cannon-aftershock')) {
       behavior = { tick: event.tick, kind: 'areaDamage', amount: data.damage };
     }
   } else if (event.type === 'SCAN_COMPLETED' && positiveFinite(data.found) && Number.isSafeInteger(data.found)) {

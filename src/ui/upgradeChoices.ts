@@ -55,15 +55,15 @@ export function endlessChoiceCopy(option: EndlessUpgradeOption, growth: EndlessG
   const before = endlessCombatStats(growth), after = endlessCombatStats({ ...growth, ranks: { ...growth.ranks, [option.id]: option.nextRank } });
   const copies: Record<EndlessUpgradeId, ChoiceCopy> = {
     power: { summary: '提升攻击伤害，更快清除敌人。', action: '所有攻击自动生效', change: `伤害倍率 ×${number(before.damageMultiplier)} → ×${number(after.damageMultiplier)}`, caution: '' },
-    multishot: { summary: '一次发射更多射线，扫过前方敌群。', action: '切到 1，按住左键射击', change: `每次发射 ${arrow(before.shotRays, after.shotRays, ' 束')}`, caution: '' },
-    pierce: { summary: '射线穿过敌人，继续命中后排。', action: '切到 1，左键攻击一列敌人', change: `额外贯穿 ${arrow(before.pierceCount, after.pierceCount, ' 个敌人')}`, caution: '射线仍会被组织障碍挡住' },
-    nova: { summary: '牵引和爆破范围更大，聚群清场更轻松。', action: option.nextRank >= 3 ? '切到 2，轻点左键释放，按住可拖动' : '切到 2，左键聚拢敌人后爆破', change: `爆破半径 ${arrow(before.areaRadius, after.areaRadius)}`, caution: option.nextRank >= 3 ? '拖动落点时移动稍慢' : '爆破有短暂延迟' },
-    dash: { summary: option.nextRank >= 6 ? '冲刺挥斩后，追加一次延迟回斩。' : option.nextRank >= 3 ? '冲刺抵达时，挥刀攻击周围一圈。' : '冲刺抵达时，挥刀攻击前方敌人。', action: '按 Space 冲刺挥斩', change: `斩击伤害 ${arrow(before.dashDamage, after.dashDamage)}`, caution: '无法斩中障碍后的敌人' },
+    multishot: { summary: '一次发射更多净化弹丸，扫过前方敌群。', action: '切到 1，按住左键射击', change: `每次发射 ${arrow(before.shotRays, after.shotRays, ' 弹')}`, caution: '' },
+    pierce: { summary: '弹丸穿过敌人，继续命中后排。', action: '切到 1，左键攻击一列敌人', change: `额外贯穿 ${arrow(before.pierceCount, after.pierceCount, ' 个敌人')}`, caution: '弹丸仍会被组织障碍挡住' },
+    nova: { summary: '能量炮爆炸范围与伤害提高，清除密集敌群。', action: '切到 2，瞄准后按住左键连发', change: `爆炸半径 ${arrow(before.areaRadius, after.areaRadius)}`, caution: '首个病毒、弹囊或障碍会提前引爆炮弹' },
+    dash: { summary: option.nextRank >= 6 ? '冲刺挥斩追加回斩，蓄能剑气也更强。' : option.nextRank >= 3 ? '冲刺挥斩变为回旋，蓄能剑气也更强。' : '冲刺解锁近身挥斩，蓄能剑气也更强。', action: '点 Space 冲刺；长按后松开发射剑气', change: `近身斩击 ${arrow(before.dashDamage, after.dashDamage)} · 剑气每阶 +15`, caution: '蓄能斩独立冷却6秒，遇墙消散' },
     scan: { summary: '扫描时引爆身边敌人，缓解近身压力。', action: '按 Q 扫描并引爆', change: `爆发伤害 ${arrow(before.scanDamage, after.scanDamage)}`, caution: '' },
     vitality: { summary: '提高最大耐久，让你更能扛住攻击。', action: '立即提高耐久上限', change: `最大耐久 ${arrow(before.maxHp, after.maxHp)}`, caution: '' },
     haste: { summary: '提高精准净化射速，持续压制敌人。', action: '切到 1，按住左键射击', caution: '' },
     immune: { summary: '增加军团成员并强化攻击，召集更快。', action: option.nextRank >= 3 ? '装备灯塔后，Q 点组织驻防 · R 注射抗体' : '按 Q 部署或指挥军团', change: `军团成员 ${Math.min(5, 3 + (growth.ranks.immune ?? 0))} → ${Math.min(5, 3 + option.nextRank)} 体；攻击 ×${number(after.cellDamageMultiplier)}`, caution: '常驻但会被击杀，最多两支军团' },
-    catalysis: { summary: '用 2 铺设标记，再用 1 或细胞引爆。', action: '切到 2 左键铺标，再切 1 左键命中', caution: '取舍：替换 2 的普通爆破，直接伤害降低' },
+    catalysis: { summary: '主爆炸保持完整伤害，随后追加一次净化余震。', action: '用 2 发射能量炮，0.35秒后自动余震', change: '余震：75%半径 · 40%伤害', caution: '余震不递归产生余震或协议攻击' },
   };
   return copies[option.id];
 }

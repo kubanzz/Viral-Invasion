@@ -46,6 +46,7 @@ export class Renderer {
   private heroPresentation:HeroPresentation|undefined;
   private readonly beamOrigins=new Map<string,Vec>();
   private readonly witnessedBeamOrigins=new Map<string,Vec>();
+  private readonly projectileOrigins=new Map<string,Vec>();
   private beamRun='';
   private beamElapsed=-1;
   private beamTick=-1;
@@ -63,6 +64,7 @@ export class Renderer {
       foreground:(state)=>this.foreground(state),
       actorBodies:state=>this.raisedBodies(state),
       effectOrigin:effect=>this.beamOrigins.get(this.beamKey(effect)),
+      projectileOrigin:castId=>this.projectileOrigins.get(castId),
       raster:(key,source,depth,x=0,y=0,scale=1)=>{
         this.seenRasters.add(key);this.rasterKeys.add(key);
         // Full-screen textures use device pixels internally; the host places
@@ -80,6 +82,8 @@ export class Renderer {
   /** Observe accepted shots at their actual birth step, including steps between rendered frames. */
   witnessSimulation(state:GameState):void {
     if(!this.host.isReady||state.phase!=='playing')return;
+    this.syncBeamState(state);
+    this.prepareProjectileOrigins(state,this.prepareHeroPresentation(state,true).tool);
     let fired=false;
     for(let i=state.events.length-1;i>=0;i--){const event=state.events[i];if(event.tick<state.tick)break;
       if(event.tick===state.tick&&event.type==='TOOL_FIRED'&&event.data.tool===1){fired=true;break;}}
@@ -117,6 +121,7 @@ export class Renderer {
     this.host.beginFrame();this.seenRasters.clear();this.bodies.clear();
     this.heroPresentation=this.prepareHeroPresentation(state);
     this.prepareBeamOrigins(state,opts.authoritativeState??state);
+    this.prepareProjectileOrigins(opts.authoritativeState??state,this.heroPresentation.tool);
     if(state.phase==='menu'){
       this.effectSprites.clear();
       if(!opts.cameraPrepared)this.prepareCamera(state);this.environment(state,this.camera);
@@ -128,7 +133,7 @@ export class Renderer {
     if(organ!==this.lastOrgan){document.body.dataset.organ=organ;this.lastOrgan=organ;}
     if(state.phase!==this.lastPhase){this.app?.setAttribute('data-phase',state.phase);this.lastPhase=state.phase;}
   }
-  destroy():void {this.host.destroy();this.rasterKeys.clear();this.bodies.clear();this.heroAnimation.reset();this.heroPresentation=undefined;this.beamOrigins.clear();this.witnessedBeamOrigins.clear();}
+  destroy():void {this.host.destroy();this.rasterKeys.clear();this.bodies.clear();this.heroAnimation.reset();this.heroPresentation=undefined;this.beamOrigins.clear();this.witnessedBeamOrigins.clear();this.projectileOrigins.clear();}
   private createAnimations():void {for(const kind of ['scan','heal']){const frames=Object.keys(art.assets).filter(id=>id.startsWith(`fx.${kind}.`)).sort();if(frames.length>1)this.host.scene.anims.create({key:`art-${kind}`,frames:frames.map(id=>({key:art.assets[id].atlas,frame:art.assets[id].frame})),frameRate:kind==='scan'?12:10,repeat:0});}}
   private environment(state:GameState,camera:Camera):void {
     const world=activeWorld(state),organ=state.battle?.organId??'heart',b=world.bounds;
@@ -188,7 +193,7 @@ export class Renderer {
   private syncBeamState(state:GameState):void {
     const run=`${state.seed}:${state.runMetrics?.runId??state.growth?.runId??''}`;
     if(run!==this.beamRun||state.elapsed<this.beamElapsed||state.tick<this.beamTick||state.phase==='menu'){
-      this.beamOrigins.clear();this.witnessedBeamOrigins.clear();
+      this.beamOrigins.clear();this.witnessedBeamOrigins.clear();this.projectileOrigins.clear();
     }
     this.beamRun=run;this.beamElapsed=state.elapsed;this.beamTick=state.tick;
   }
@@ -217,6 +222,19 @@ export class Renderer {
       const muzzle=paintedToolMuzzle(asset,tool);if(muzzle)origins.set(this.beamKey(effect),{x:muzzle.x,y:muzzle.y/.72});
     }
     return origins;
+  }
+  private prepareProjectileOrigins(state:GameState,tool:AimedPaintedTool|undefined):void {
+    const live=new Set((state.playerProjectiles??[]).map(shot=>shot.castId));
+    const asset=art.assets['weapon.emitter.painted'];
+    for(const event of state.events){
+      if(event.type!=='PLAYER_PROJECTILE_LAUNCHED'||event.data.kind==='sword')continue;
+      const age=state.elapsed-event.tick*BALANCE.step,castId=String(event.data.castId);
+      if(age>=0&&age<.14)live.add(castId);
+      if(event.tick!==state.tick||this.projectileOrigins.has(castId)||!asset||!tool)continue;
+      const muzzle=paintedToolMuzzle(asset,tool);
+      if(muzzle)this.projectileOrigins.set(castId,{x:muzzle.x,y:muzzle.y/.72});
+    }
+    for(const key of this.projectileOrigins.keys())if(!live.has(key))this.projectileOrigins.delete(key);
   }
   private prepareBeamOrigins(state:GameState,authoritativeState:GameState=state):void {
     this.syncBeamState(state);

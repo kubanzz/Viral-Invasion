@@ -8,6 +8,7 @@ import { touchCopy } from './touchCopy';
 import { artIconMarkup } from './artIcons';
 import { ANTIBODY_BALANCE } from '../game/immuneCells';
 import { endlessTutorialHint } from './endlessTutorial';
+import { chargedSlashProgress, CHARGED_SLASH_BALANCE } from '../game/chargedSlash';
 
 const escape = (value: string) => value.replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]!));
 const seconds = (readyAt: number, elapsed: number) => Math.max(0, readyAt - elapsed);
@@ -27,7 +28,7 @@ export const mobileHudMarkup = `<section id="mobile-controls" aria-label="触屏
     <button type="button" class="mobile-skill" data-touch-skill="2" data-cooldown="2" aria-label="裂解，按住瞄准，松手施放">${artIconMarkup('chain')}<span class="stick-knob"></span>${cooldownRing}<span class="mobile-cooldown" id="mobile-area-ready"></span><span class="mobile-caption">裂解</span></button>
     <button type="button" class="mobile-skill" data-touch-skill="3" data-cooldown="3" aria-label="修复，按住瞄准组织或治疗点，松手施放">${artIconMarkup('heal')}<span class="stick-knob"></span>${cooldownRing}<span class="mobile-cooldown" id="mobile-heal-ready"></span><span class="mobile-caption">修复</span></button>
     <button type="button" class="mobile-skill" data-touch-skill="scan" data-cooldown="scan" aria-label="扫描与军团指挥，按住瞄准，松手施放">${artIconMarkup('scan')}<span class="stick-knob"></span>${cooldownRing}<span class="mobile-cooldown" id="mobile-scan-ready"></span><span class="mobile-caption">免疫</span></button>
-    <button type="button" class="mobile-aux" data-touch-action="dash" data-cooldown="dash" aria-label="冲刺">${artIconMarkup('dash')}${cooldownRing}<span class="mobile-cooldown" id="mobile-dash-ready"></span><span class="mobile-caption">冲刺</span></button>
+    <button type="button" class="mobile-aux" data-touch-action="dash" data-cooldown="dash" aria-label="冲刺">${artIconMarkup('dash')}${cooldownRing}<span class="mobile-cooldown" id="mobile-dash-ready"></span><span class="mobile-caption">冲刺</span><span class="mobile-charge-state" id="mobile-charge-ready" hidden>长按剑气</span><svg class="mobile-charge-ring" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="26" /></svg></button>
     <button type="button" class="mobile-aux" data-touch-action="interact" data-cooldown="interact" aria-label="交互，靠近装置"><span class="interact-glyph" aria-hidden="true">⌁</span>${cooldownRing}<span class="mobile-cooldown" id="mobile-interact-ready"></span><span class="mobile-caption" id="mobile-interact-label">交互</span></button>
     <button type="button" class="mobile-aux" data-touch-action="antibody" data-cooldown="antibody" aria-label="注射抗体">${artIconMarkup('chain')}${cooldownRing}<span class="mobile-cooldown" id="mobile-antibody-ready"></span><span class="mobile-charge" id="mobile-antibody-charges">2</span><span class="mobile-caption">抗体</span></button>
   </div>
@@ -116,6 +117,11 @@ export function mobileHudView(state: GameState): MobileHudView {
   if (state.endless && state.tissue.hp < 30) warnings.push({ kind: 'organ', text: `组织濒危 ${Math.ceil(state.tissue.hp)}%` });
   const pending = state.endless?.evolution?.pending;
   if (pending) warnings.push({ kind: 'mutation', text: `${pending.decision.generation}代 ${pending.decision.traits.map(trait => TRAITS[trait].name).join('/')} ${Math.max(0, pending.appliesAt - state.elapsed).toFixed(1)}s` });
+  const opening = state.endless?.evolution?.opening;
+  if (opening?.selection && state.endless!.wave >= 3 && state.endless!.wave <= 9 && state.endless!.phase !== 'intermission') {
+    const trait = opening.selection.trait;
+    warnings.push({ kind: 'opening-evolution', text: `${TRAITS[trait].symbol}${TRAITS[trait].name} · ${trait === 'CARAPACE' ? '炮弹/剑气/绕后' : '击破后清小体'}` });
+  }
   const crisis = state.campaign?.encounters?.crisis;
   if (crisis && ['arming', 'charging', 'exhausted'].includes(crisis.status)) {
     const organ = crisis.organId === 'heart' ? '心脏' : '肺部';
@@ -159,6 +165,12 @@ export interface MobileHudFlags { blocked?: boolean; portrait?: boolean }
 
 export type MobileCooldownKey = 'attack' | '2' | '3' | 'scan' | 'dash' | 'interact' | 'antibody';
 export interface MobileCooldown { remaining: number; ratio: number; label: string }
+export function mobileChargeView(state: GameState): { charging: boolean; progress: number; remaining: number; label: string } {
+  const charging = !!state.endless && !!state.chargedSlash;
+  const progress = charging ? chargedSlashProgress(state.chargedSlash!.startedAt, state.elapsed) : 0;
+  const remaining = state.endless ? seconds(state.chargedSlashReadyAt ?? 0, state.elapsed) : 0;
+  return { charging, progress, remaining, label: charging ? progress >= 1 ? '满蓄 · 松开' : `蓄能${Math.round(progress * 100)}%` : remaining > 0 ? `剑气${remaining.toFixed(1)}` : '长按剑气' };
+}
 const cooldownState = (readyAt: number, elapsed: number, duration: number): MobileCooldown => {
   const remaining = seconds(readyAt, elapsed);
   return { remaining, ratio: Math.max(0, Math.min(1, remaining / Math.max(.001, duration))), label: remaining > 0 ? remaining >= 10 ? String(Math.ceil(remaining)) : remaining.toFixed(1) : '' };
@@ -215,6 +227,19 @@ export function updateMobileHud(state: GameState, flags: MobileHudFlags = {}): v
   const legion = legionView(state);
   set('mobile-antibody-charges', String(legion.charges)); set('mobile-cast-label', '净化');
   const cooldowns = mobileCooldownViews(state);
+  const charge = mobileChargeView(state), dash = root.querySelector<HTMLButtonElement>('[data-touch-action="dash"]');
+  const chargeLabel = document.getElementById('mobile-charge-ready');
+  if (chargeLabel) { chargeLabel.hidden = !state.endless; chargeLabel.textContent = charge.label; }
+  if (dash) {
+    dash.dataset.charging = String(charge.charging); dash.dataset.chargeFull = String(charge.progress >= 1);
+    dash.style.setProperty('--charge-progress', String(charge.charging ? charge.progress : Math.max(0, 1 - charge.remaining / CHARGED_SLASH_BALANCE.cooldown)));
+    dash.setAttribute('aria-label', state.endless ? `冲刺，长按蓄能，拖动瞄准，松手发射剑气。${charge.label}` : '冲刺');
+  }
+  const area = root.querySelector<HTMLButtonElement>('[data-touch-skill="2"]');
+  if (area) {
+    const caption = area.querySelector<HTMLElement>('.mobile-caption'); if (caption) caption.textContent = state.endless ? '能量炮' : '裂解';
+    area.setAttribute('aria-label', state.endless ? '净化能量炮，按住瞄准，松手发射' : '裂解，按住瞄准，松手施放');
+  }
   const cooldownIds: Record<MobileCooldownKey, string> = { attack: 'mobile-cast-ready', 2: 'mobile-area-ready', 3: 'mobile-heal-ready', scan: 'mobile-scan-ready', dash: 'mobile-dash-ready', interact: 'mobile-interact-ready', antibody: 'mobile-antibody-ready' };
   for (const button of root.querySelectorAll<HTMLButtonElement>('[data-cooldown]')) {
     const key = button.dataset.cooldown as MobileCooldownKey, status = cooldowns[key];
@@ -222,7 +247,7 @@ export function updateMobileHud(state: GameState, flags: MobileHudFlags = {}): v
     button.style.setProperty('--cooldown', String(status.ratio));
     button.dataset.cooling = String(status.remaining > 0);
     set(cooldownIds[key], status.label);
-    const available = key === 'attack' || (key === 'antibody' ? legion.enabled : key === 'interact' ? view.interaction.nearby : status.remaining <= 0);
+    const available = key === 'attack' || key === 'dash' && !!state.endless && charge.remaining <= 0 || (key === 'antibody' ? legion.enabled : key === 'interact' ? view.interaction.nearby : status.remaining <= 0);
     // A committed guided skill still owns its finger through cooldown. Only a
     // global input gate may disable it before that real pointer is released.
     button.disabled = !active || button.dataset.active !== 'true' && !available;

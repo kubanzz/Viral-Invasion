@@ -148,7 +148,7 @@ describe('continuous challenge UI contracts', () => {
     const markup = endlessOverlay(state, false, false, profile.load())!;
     expect(markup).toContain('完全清除波次'); expect(markup).toContain('到达第 7 波');
     expect(markup).toContain('通关 6 波 / 440 分'); expect(markup).toContain('最大耐久140');
-    expect(markup).toContain('3束'); expect(markup).toContain('&lt;safe reason&gt;');
+    expect(markup).toContain('3弹'); expect(markup).toContain('&lt;safe reason&gt;');
     expect(markup).toContain('主动撤离'); expect(markup).not.toContain('data-action="endless-upgrade"');
     expect(markup).toContain('记录仅保留');
   });

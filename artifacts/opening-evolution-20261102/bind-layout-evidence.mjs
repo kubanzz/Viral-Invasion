@@ -1,0 +1,4 @@
+import {readFile,writeFile} from 'node:fs/promises';import{createHash}from'node:crypto';
+const hash=async p=>createHash('sha256').update(await readFile(p)).digest('hex');
+const identity={desktopHtml:await hash('dist/index.html'),gameJs:await hash('dist/game.js'),mobileHtml:await hash('releases/Viral-Invasion-Mobile.html')};
+for(const name of ['final-announcements','final-mobile-announcements']){const p=`artifacts/opening-evolution-20261102/${name}/browser-report.json`,j=JSON.parse(await readFile(p,'utf8'));j.identity=identity;await writeFile(p,JSON.stringify(j,null,2));console.log(JSON.stringify({name,identity,sourcesUnchanged:j.sourcesUnchanged,reports:j.reports.map(r=>({name:r.name,pass:r.pass,sizes:r.announcementLayouts.map(x=>({width:x.width,height:x.height,visibility:x.tutorialVisibility,banner:x.rect.height}))}))}));}

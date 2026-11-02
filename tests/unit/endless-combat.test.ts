@@ -43,20 +43,24 @@ function throughTick(session: GameSession, tick: number, input: Partial<InputFra
 const hits = (session: GameSession, id: string) => session.state.events.filter(event => event.type === 'TARGET_HIT' && event.data.id === id);
 
 describe('endless upgrades through real session input', () => {
-  it('fires three physical rays into separate bodies, applies power once and shares one shot cooldown', () => {
+  it('fires three real bullets into separate bodies after flight, applies power once and shares one shot cooldown', () => {
     const actors = [0, -.14, .14].map((angle, index) => target(`ray-${index}`, 500 + Math.cos(angle) * 400, 500 + Math.sin(angle) * 400));
     const session = fixture({ multishot: 1, power: 2 }, actors);
     step(session, { fire: true });
-    for (const actor of actors) {
-      expect(actor.hp).toBeCloseTo(1000 - 34 * 1.36);
-      expect(hits(session, actor.id)).toHaveLength(1);
-    }
-    expect(session.state.effects.filter(effect => effect.kind === 'beam')).toHaveLength(3);
+    for (const actor of actors) expect(actor.hp).toBe(1000);
+    expect(session.state.playerProjectiles).toHaveLength(3);
+    expect(session.state.effects.filter(effect => effect.kind === 'beam')).toHaveLength(0);
     expect(session.state.shots).toBe(1);
     throughTick(session, 11, { fire: true });
     expect(session.state.shots).toBe(1);
     step(session, { fire: true });
     expect(session.state.shots).toBe(2);
+    throughTick(session, 14);
+    for (const actor of actors) {
+      expect(actor.hp).toBeCloseTo(1000 - 34 * 1.36);
+      expect(hits(session, actor.id)).toHaveLength(1);
+    }
+    throughTick(session, 25);
     for (const actor of actors) expect(actor.hp).toBeCloseTo(1000 - 2 * 34 * 1.36);
   });
 
@@ -64,40 +68,40 @@ describe('endless upgrades through real session input', () => {
     const first = target('first', 650, 500), second = target('second', 750, 500), blocked = target('blocked', 860, 500);
     const session = fixture({ pierce: 3 }, [blocked, second, first], [{ id: 'fold', x: 805, y: 500, radius: 20 }]);
     step(session, { fire: true });
+    throughTick(session, 12);
     expect(first.hp).toBe(966);
     expect(second.hp).toBe(966);
     expect(blocked.hp).toBe(1000);
     expect(session.state.events.filter(event => event.type === 'TARGET_HIT').map(event => event.data.id)).toEqual(['first', 'second']);
-    const beam = session.state.effects.find(effect => effect.kind === 'beam')!;
-    expect(beam.to.x).toBeCloseTo(785);
-    expect(beam.to.y).toBe(500);
+    expect(session.state.playerProjectiles).toHaveLength(0);
+    expect(session.state.effects.some(effect => effect.kind === 'beam')).toBe(false);
   });
 
   it('respects the extra-body limit even when another body is on an unobstructed ray', () => {
     const actors = [650, 750, 850].map((x, index) => target(`pierce-${index}`, x, 500));
     const session = fixture({ pierce: 1 }, actors);
     step(session, { fire: true });
+    throughTick(session, 12);
     expect(actors.map(actor => actor.hp)).toEqual([966, 966, 1000]);
   });
 
-  it('expands the delayed nova hit radius and damage, keeps local cover and enforces a fresh press after cooldown', () => {
+  it('expands cannon radius and damage, keeps local cover and fires again while held after cooldown', () => {
     const aim = { x: 800, y: 500 };
-    const edge = target('edge', 800, 632), outside = target('outside', 665, 500), covered = target('covered', 900, 500);
+    const edge = target('edge', 800, 632), outside = target('outside', 665, 570), covered = target('covered', 900, 500);
     const session = fixture({ nova: 2, power: 1 }, [edge, outside, covered], [{ id: 'cover', x: 850, y: 500, radius: 15 }]);
     step(session, { fire: true, tool: 2, aim });
     expect(edge.hp).toBe(1000); expect(session.state.cooldowns[2] - session.state.elapsed).toBeCloseTo(2);
-    throughTick(session, 19);
+    throughTick(session, 21);
     const damage = BALANCE.damage[2] * 1.18 * 1.3;
     expect(edge.hp).toBeCloseTo(1000 - damage);
     expect(outside.hp).toBe(1000);
     expect(covered.hp).toBe(1000);
-    expect(session.state.effects.find(effect => effect.kind === 'burst')?.radius).toBe(124);
+    expect(session.state.events.find(event => event.type === 'PLAYER_CANNON_EXPLODED')?.data.radius).toBe(124);
     throughTick(session, 120, { fire: true, tool: 2, aim });
     expect(session.state.shots).toBe(1);
-    step(session, { fire: false, tool: 2, aim });
     step(session, { fire: true, tool: 2, aim });
     expect(session.state.shots).toBe(2);
-    throughTick(session, 140);
+    throughTick(session, 142);
     expect(edge.hp).toBeCloseTo(1000 - 2 * damage);
   });
 

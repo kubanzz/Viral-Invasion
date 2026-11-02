@@ -11,5 +11,6 @@ export interface ArtPresentation {
   actorBodies(state: GameState): RaisedActorBody[];
   /** Optional drawing-only origin for a proven emission; simulation endpoints stay untouched. */
   effectOrigin?(effect: Effect, state: GameState): Vec | undefined;
+  projectileOrigin?(castId: string): Vec | undefined;
   raster(key: string, canvas: HTMLCanvasElement, depth: number, x?: number, y?: number, scale?: number): void;
 }

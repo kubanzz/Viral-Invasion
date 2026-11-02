@@ -3,7 +3,7 @@ import { distance, isLegalPosition } from '../../src/actors/collision';
 import { BATTLE_BALANCE } from '../../src/game/battleConfig';
 import { ENDLESS_BALANCE } from '../../src/game/endless';
 import { GameSession } from '../../src/game/session';
-import { BALANCE, type GameEvent, type Target } from '../../src/game/types';
+import type { GameEvent, Target } from '../../src/game/types';
 
 function idle(session: GameSession) {
   return { moveX: 0, moveY: 0, aim: { x: session.state.player.x + 1, y: session.state.player.y }, fire: false };
@@ -35,15 +35,19 @@ function pendingFission(options: { terminalQueue?: boolean; earlierDeadline?: bo
   ticks(session, 147);
   expect(s.endless!.spawnSerial).toBe(6);
   let parent: Target | undefined, priorDeadline = 0;
+  session.bus.on('event', event => {
+    if (event.type === 'TARGET_HIT' && event.data.id === parent?.id && parent!.hp === 0 && s.endless!.remainingToSpawn > 0) {
+      // Configure the explicit future-deadline case at the actual collision,
+      // independent of flight time or an earlier cohort's natural deadline.
+      priorDeadline = s.elapsed + (options.earlierDeadline ? .2 : 2);
+      s.endless!.nextSpawnAt = priorDeadline;
+    }
+  });
   for (let attempt = 0; attempt < 12 * 60; attempt++) {
     const living = s.targets.filter(target => target.hp > 0).sort((a, b) => distance(s.player, a) - distance(s.player, b));
     const target = living[0];
     const canMark = options.terminalQueue ? s.endless!.remainingToSpawn === 0 : s.endless!.remainingToSpawn > 0;
     if (!parent && living.length === 1 && canMark) { parent = target; parent.traits = ['FISSION']; parent.kind = 'cluster'; }
-    if (parent && target === parent && target.hp <= 34 && s.elapsed + BALANCE.step + 1e-9 >= s.cooldowns[1]) {
-      if (options.earlierDeadline) s.endless!.nextSpawnAt = s.elapsed + BALANCE.step + .2;
-      priorDeadline = s.endless!.nextSpawnAt;
-    }
     session.step(target ? { ...idle(session), aim: { x: target.x, y: target.y }, fire: true, tool: 1 } : idle(session));
     if (parent?.splitAt !== undefined) {
       expect(parent.hp).toBe(0); expect(s.targets.filter(target => target.hp > 0)).toHaveLength(0);

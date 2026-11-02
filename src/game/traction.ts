@@ -16,7 +16,8 @@ const point = (position: Vec): Vec => ({ x: position.x, y: position.y });
 const finitePoint = (position: Vec): boolean => Number.isFinite(position.x) && Number.isFinite(position.y);
 
 export function beginTraction(state: GameState, id: string, center: Vec, stats?: EndlessCombatStats): TractionCast {
-  const guideUnlocked = (stats?.areaGuideDuration ?? 0) > 0;
+  const guideUnlocked = (stats?.areaGuideDuration ?? 0) > 0
+    || !state.endless && (stats?.areaDamageMultiplier ?? 1) >= 1 + TRACTION_BALANCE.guideMinimumRank * .15;
   const cast: TractionCast = {
     id, organId: state.battle?.organId ?? 'heart', stage: guideUnlocked ? 'aiming' : 'fuse',
     center: point(center), initialCenter: point(center), startedAt: state.elapsed,
@@ -25,7 +26,9 @@ export function beginTraction(state: GameState, id: string, center: Vec, stats?:
     radius: stats?.areaRadius ?? BALANCE.areaRadius,
     gatherRadius: stats?.areaGatherRadius ?? TRACTION_BALANCE.gatherRadius,
     damageSnapshot: BALANCE.damage[2] * (stats?.damageMultiplier ?? 1) * (stats?.areaDamageMultiplier ?? 1),
-    catalysisDamageSnapshot: stats?.catalysisDamage ?? 0,
+    catalysisDamageSnapshot: !state.endless && (stats?.catalysisDamage ?? 0) > 0
+      ? BALANCE.damage[2] * (stats?.damageMultiplier ?? 1) * (stats?.areaDamageMultiplier ?? 1) * 1.25
+      : stats?.catalysisDamage ?? 0,
     guideUnlocked, gathered: false, movedByTargetId: {},
   };
   state.traction = cast;
