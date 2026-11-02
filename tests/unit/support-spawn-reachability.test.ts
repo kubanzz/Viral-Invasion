@@ -146,7 +146,7 @@ describe('corrosion admission reachability without permanent finite-queue stalls
     expect((committed as unknown as { distanceToTissue: number }).distanceToTissue).toBeLessThanOrEqual(650 + 1e-7);
     if (!scenario.tissueVisibleAtBirth) expect(blockedTicks).toBeGreaterThan(0);
     expect(illegalTicks).toBe(0);
-    expect(maxPopulation).toBeLessThanOrEqual(24); expect(maxReservedPopulation).toBeLessThanOrEqual(24); expect(maxConcurrent).toBeLessThanOrEqual(3);
+    expect(maxPopulation).toBeLessThanOrEqual(48); expect(maxReservedPopulation).toBeLessThanOrEqual(48); expect(maxConcurrent).toBeLessThanOrEqual(3);
     expect(e.spawnSerial).toBeGreaterThan(scenario.serial);
     expect(e.totalToSpawn - e.remainingToSpawn).toBe(births.length); expect(e.spawnSerial).toBe(births.length);
     if (scenario.role === 'virus') {

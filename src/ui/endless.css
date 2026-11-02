@@ -1,4 +1,20 @@
 /* Challenge UI is independent of campaign progression and keeps the protocol panel. */
+body.endless-mode #hud > .growth-panel #growth-research,
+body.endless-mode #hud > .growth-panel #growth-xp,
+body.endless-mode #hud > .growth-panel > .meter,
+body.endless-mode #hud > .growth-panel #protocol-slots,
+body.endless-mode #hud > .growth-panel #research-hint { display:none; }
+body.endless-mode #hud > .growth-panel .growth-heading > span { font-size:0; }
+body.endless-mode #hud > .growth-panel .growth-heading > span::after { content:'辅助配装'; font-size:11px; }
+body.endless-mode #hud > .growth-panel .legion-command { margin-top:4px; }
+.endless-reward-progress { display:flex; justify-content:space-between; align-items:center; gap:16px; padding-bottom:12px; margin-bottom:12px; border-bottom:1px solid #9eb6a870; color:#486b5e; font-size:12px; }
+.endless-reward-progress > span { white-space:nowrap; font-size:11px; color:#6a7d68; }
+#app .endless-stage-complete { max-width:680px; text-align:center; background:radial-gradient(ellipse at 50% 0,#dceecf,#f7f2e6 70%); }
+#app .endless-stage-seal { display:grid; place-items:center; width:60px; height:60px; margin:0 auto 16px; border:1px solid #8bb893; border-radius:50%; background:#e4f4dc; color:#3b816c; font-size:34px; }
+#app .endless-stage-complete .actions { justify-content:center; }
+#app .endless-stage-health,#app .endless-stage-build { color:#476b5d; font-size:12px; line-height:1.7; }
+#app .endless-stage-note { color:#6d7d6b; font-size:10px; }
+#app .endless-build-panel #endless-ability-1 { max-height:44px; overflow:hidden; }
 body.endless-mode .battle-objective,body.endless-mode .battle-telemetry,body.endless-mode .trait-strip,body.endless-mode .evolution-card,body.endless-mode .organ-overview,body.endless-mode .migration-card,body.endless-mode .mother-core-panel{display:none!important}
 .endless-hud{display:none;position:absolute;inset:0;pointer-events:none;color:#e3efdf}
 body.endless-mode .endless-hud{display:block}

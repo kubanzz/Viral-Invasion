@@ -208,8 +208,8 @@ describe('cycle callbacks cannot replay accepted actions or contaminate a fresh 
     const f = fixture(); f.target.hp = 65; f.step(); f.step({ tool: 2, fire: true });
     f.advance(18);
     expect(f.target.hp).toBe(0); expect(f.target.eliteCycle?.index).toBe(0); expect(f.target.eliteCycle?.committedTick).toBeUndefined();
-    // Twenty-two live neighbors plus the two reserved children use exactly the existing budget24.
-    for (let i = 0; i < 22; i++) f.s.targets.push({ id: `neighbor-${i}`, x: 1800 + i % 5 * 80, y: 150 + Math.floor(i / 5) * 80,
+    // Forty-six live neighbors plus two reserved children fill the challenge budget48.
+    for (let i = 0; i < 46; i++) f.s.targets.push({ id: `neighbor-${i}`, x: 1800 + i % 5 * 80, y: 150 + Math.floor(i / 5) * 80,
       hp: 68, maxHp: 68, radius: 22, role: 'virus', kind: 'single', traits: [], hitUntil: 0, scanned: false,
       generation: 0, sourceId: 'endless:wave:20', tactic: 'melee', attackReady: Infinity });
     let atCallback: ReturnType<GameSession['snapshot']> | undefined;
@@ -217,7 +217,7 @@ describe('cycle callbacks cannot replay accepted actions or contaminate a fresh 
     f.until(() => !!atCallback); expect(f.session.snapshot()).toEqual(atCallback); expect(f.target.splitPositions).toHaveLength(1);
     f.session.resume(); f.step(); const children = f.s.targets.filter(t => t.generation === 1);
     expect(children).toHaveLength(2); expect(children.every(t => t.hp === 22 && t.eliteCycle === undefined)).toBe(true);
-    expect(f.s.targets.filter(t => t.hp > 0)).toHaveLength(24);
+    expect(f.s.targets.filter(t => t.hp > 0)).toHaveLength(48);
     expect(f.target.splitAt).toBeUndefined(); expect(ofType(f.events, 'FISSION_SPAWNED').at(-1)?.data.children).toBe(2);
     expect(ofType(f.events, 'ELITE_TACTIC_ADVANCED')).toHaveLength(0);
   });

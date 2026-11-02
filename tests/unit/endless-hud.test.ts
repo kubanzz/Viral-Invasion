@@ -130,7 +130,7 @@ describe('continuous challenge UI contracts', () => {
     for (const info of Object.entries(ENEMY_TACTIC_INFO).filter(([id]) => id !== 'melee').map(([, info]) => info)) {
       expect(help).toContain(info.name); expect(help).toContain(info.counter);
     }
-    for (const copy of ['让开路线后反打', '两个固定落点', '每5波协议联动重配', '免样本、可放弃', '不会抵消本波战斗成长', '不重置咬击冷却、不额外耗组织', '最多部署两个军团', '需要2研究样本夺回']) expect(help).toContain(copy);
+    for (const copy of ['让开路线后反打', '两个固定落点', '每5波协议联动重配', '免样本、可放弃', '不会抵消本波战斗成长', '不重置咬击冷却、不额外耗组织', '最多部署两个军团', '本次不回血，4秒后可以正常治疗']) expect(help).toContain(copy);
     expect(help).not.toContain('data-action="endless-upgrade"');
     expect(endlessOverlay(state, false, false)).toContain('data-action="endless-upgrade"');
     expect(state).toEqual(before);
@@ -174,11 +174,13 @@ describe('continuous challenge UI contracts', () => {
     updateEndlessHud(state);
     expect(nodes.get('endless-hp')!.textContent).toBe('112 / 140');
     expect(nodes.get('endless-hp-meter')!.style.width).toBe('80%');
-    expect(nodes.get('endless-ability-0')!.textContent).toContain('3 束 × 40.1伤害');
-    expect(nodes.get('endless-ability-2')!.textContent).toContain('弧刃斩 64.9伤害');
+    expect(nodes.get('endless-ability-0')!.textContent).toContain('3束射击 · 贯穿0 · 火力×1.18');
+    expect(nodes.get('endless-ability-2')!.textContent).toContain('已解锁冲刺挥斩');
     expect(nodes.get('endless-remaining')!.textContent).toBe('6');
     expect(nodes.get('endless-spawn-plan')!.textContent).toContain('待分裂 2');
-    expect(nodes.get('endless-critical')!.textContent).toContain('12s');
+    expect(nodes.get('endless-pressure')!.textContent).toContain('生命复苏 0 / 5');
+    expect(nodes.get('endless-pressure')!.textContent).not.toContain('感染');
+    expect(nodes.get('endless-critical')!.textContent).not.toContain('致命感染');
     expect(state).toEqual(before);
   });
 
@@ -202,18 +204,38 @@ describe('continuous challenge UI contracts', () => {
     expect(state).toEqual(before);
   });
 
-  it('prioritizes a pending free milestone over the simultaneous combat card without consuming either', () => {
+  it('shows combat first and the earned milestone only after its accepted choice', () => {
     const game = session(), state = game.state, nodes = mountHud();
-    game.completeWave(5);
     Object.assign(state.endless!, { phase: 'intermission', clearedWaves: 5 });
+    game.completeWave(5);
+    const draft=state.endlessGrowth!.draft!;
+    expect(state.growth!.draft).toBeNull();
+    expect(endlessOverlay(state,false,false)).toContain('1 / 2 · 战斗强化');
+    expect(game.chooseCombatUpgrade(draft.id,draft.options[0].id,state.growth!.runId)).toBe(true);
     expect(state.growth!.draft!.source).toBe('endless');
-    expect(state.endlessGrowth!.draft).not.toBeNull();
+    expect(state.endlessGrowth!.draft).toBeNull();
     const before = structuredClone(state);
     updateEndlessHud(state);
     expect(nodes.get('endless-objective')!.textContent).toContain('精英波联动重配');
     expect(nodes.get('endless-objective')!.textContent).toContain('免样本、可放弃');
     expect(nodes.get('endless-objective')!.textContent).toContain('战斗进化照常获得');
     expect(state).toEqual(before);
+  });
+
+  it('shows stage success only after all rewards and keeps actual damage visible', () => {
+    const state=session().state;
+    Object.assign(state.endless!,{clearedWaves:5,wave:5,stageCheckpoint:'pending',reward:{wave:5,step:'complete'}});
+    state.phase='paused'; state.tissue.hp=63; state.player.hp=71;
+    const before=structuredClone(state),markup=endlessOverlay(state,false,false)!;
+    expect(markup).toContain('第一阶段完成');
+    expect(markup).toContain('组织完整度 63%');
+    expect(markup).toContain('组织仍有损伤');
+    expect(markup).toContain('data-action="endless-stage-continue"');
+    expect(markup).toContain('data-action="endless-stage-finish"');
+    expect(markup).not.toContain('data-action="continue"');
+    expect(state).toEqual(before);
+    state.endless!.reward!.step='protocol';
+    expect(endlessOverlay(state,false,false)).not.toContain('data-action="endless-stage-continue"');
   });
 
   it.each([16, 30])('warns about the real mixed support roster at wave %s even in the compact-visible row', wave => {

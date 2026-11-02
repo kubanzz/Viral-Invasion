@@ -89,7 +89,8 @@ describe('announced current-generation dual elite births', () => {
       expect(elite.hp).toBe(Math.round(170 * endlessPacing(wave).eliteHealthMultiplier));
       expect(elite.attackReady! - elite.born!).toBeCloseTo(.35);
     }
-    expect(f.e.totalToSpawn).toBe(Math.min(ENDLESS_BALANCE.maximumWaveBudget, 6 + wave * 2 + endlessPacing(wave).budgetBonus));
+    expect(f.e.totalToSpawn).toBe(f.e.batchSchedule.flatMap(batch => batch.roles).length);
+    expect(f.e.totalToSpawn).toBeGreaterThan(48); expect(f.e.totalToSpawn).toBeLessThanOrEqual(ENDLESS_BALANCE.maximumWaveBudget);
     expect(f.e.batchSchedule.flatMap(batch => batch.roles).filter(role => role === 'elite')).toHaveLength(wave % 5 === 0 ? wave >= 30 ? 2 : 1 : 0);
     if (wave === 30) {
       f.advance(f.e.nextSpawnAt - f.state.elapsed);
@@ -137,12 +138,12 @@ describe('announced current-generation dual elite births', () => {
 
   it('reserves two population places for FISSION in either position and retries without demoting or skipping its elite', () => {
     for (const pair of [['FISSION', 'MIMIC'], ['MIMIC', 'FISSION']] as [TraitId, TraitId][]) {
-      const f = fixture(); f.state.targets = Array.from({ length: 23 }, (_, index) => resident(`resident-${index}`, index));
-      f.enter(pair); expect(f.state.targets).toHaveLength(23); expect(f.e.remainingToSpawn).toBe(f.e.totalToSpawn); expect(f.e.batchMemberIndex).toBe(0);
+      const f = fixture(); f.state.targets = Array.from({ length: 47 }, (_, index) => resident(`resident-${index}`, index));
+      f.enter(pair); expect(f.state.targets).toHaveLength(47); expect(f.e.remainingToSpawn).toBe(f.e.totalToSpawn); expect(f.e.batchMemberIndex).toBe(0);
       f.state.targets[0].hp = 0; f.advance(.25);
       const elite = f.state.targets.find(target => target.role === 'elite')!;
       expect(elite.traits).toEqual(pair); expect(elite.eliteCycle).toBeDefined();
-      expect(f.e.remainingToSpawn).toBe(f.e.totalToSpawn - 1); expect(f.e.batchMemberIndex).toBe(1); expect(reservation(f.state)).toBe(24);
+      expect(f.e.remainingToSpawn).toBe(f.e.totalToSpawn - 1); expect(f.e.batchMemberIndex).toBe(1); expect(reservation(f.state)).toBe(48);
       expect(f.events.filter(event => event.type === 'ACTOR_SPAWNED')).toHaveLength(1);
     }
   });
@@ -161,14 +162,14 @@ describe('announced current-generation dual elite births', () => {
     const f = fixture();
     const pending = { ...resident('pending-parent', 0, true), hp: 0, sourceId: 'endless:wave:20', splitAt: 100,
       splitPositions: [{ x: 80, y: 80 }, { x: 110, y: 80 }] };
-    f.state.targets = [pending, ...Array.from({ length: 22 }, (_, index) => resident(`resident-${index}`, index + 1))];
+    f.state.targets = [pending, ...Array.from({ length: 46 }, (_, index) => resident(`resident-${index}`, index + 1))];
     f.enter(['FISSION', 'CARAPACE']);
-    expect(f.e.pendingChildren).toBe(2); expect(reservation(f.state)).toBe(24);
+    expect(f.e.pendingChildren).toBe(2); expect(reservation(f.state)).toBe(48);
     expect(f.e.remainingToSpawn).toBe(f.e.totalToSpawn); expect(f.e.batchMemberIndex).toBe(0);
     f.state.targets[1].hp = 0; f.advance(.25);
-    expect(f.e.remainingToSpawn).toBe(f.e.totalToSpawn); expect(reservation(f.state)).toBe(23);
+    expect(f.e.remainingToSpawn).toBe(f.e.totalToSpawn); expect(reservation(f.state)).toBe(47);
     f.state.targets[2].hp = 0; f.advance(.25);
-    expect(f.e.remainingToSpawn).toBe(f.e.totalToSpawn - 1); expect(f.e.pendingChildren).toBe(2); expect(reservation(f.state)).toBe(24);
+    expect(f.e.remainingToSpawn).toBe(f.e.totalToSpawn - 1); expect(f.e.pendingChildren).toBe(2); expect(reservation(f.state)).toBe(48);
     const elite = f.state.targets.find(target => target.role === 'elite')!;
     expect(elite.traits).toEqual(['FISSION', 'CARAPACE']); expect(elite.eliteCycle).toBeDefined();
   });

@@ -2,6 +2,7 @@ import type { TraitId } from './battleTypes';
 import type { Effect, GameEvent, GameState, MessagePriority, Vec } from './types';
 import type { BehaviorBin } from './evolutionTypes';
 import type { EndlessEvolutionDecision } from './endlessEvolutionTypes';
+import type { EndlessUpgradeId } from './endlessGrowthTypes';
 
 export type EndlessEvolutionWarning = Extract<EndlessEvolutionDecision, { kind: 'warn' }>;
 export interface EndlessAdaptationState {
@@ -70,6 +71,13 @@ export interface EndlessState {
   supportRemaining: number;
   evolution?: EndlessAdaptationState;
   source?: EndlessSourcePlan;
+  /** One paused transaction per cleared wave; protocol follows combat. */
+  reward?: { wave: number; step: 'combat' | 'protocol' | 'complete' };
+  stageCheckpoint?: 'pending' | 'acknowledged';
+  tutorial?: {
+    fired: boolean; deployed: boolean; tissueHurt: boolean; repaired: boolean;
+    seenUpgrades: EndlessUpgradeId[]; upgradeHint?: EndlessUpgradeId; upgradeHintUntil?: number;
+  };
 }
 
 export interface EndlessHost {

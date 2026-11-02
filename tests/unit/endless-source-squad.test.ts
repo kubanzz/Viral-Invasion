@@ -167,7 +167,12 @@ describe('optional finite source through actual tool and squad input', () => {
   it('lets the finite quota exhaust without manufacturing source damage, kills, XP or combo', () => {
     const { session, source } = fixture(), state = session.state, e = state.endless!;
     const before = { kills: e.kills, combo: e.combo, xp: state.growth!.xp }, started = state.tick;
-    while (e.source!.status === 'active' && state.phase === 'playing' && state.tick - started < 600) session.step(idle());
+    // This finite-queue fixture retires ordinary bodies without damage receipts;
+    // horde survival is covered by the real-input run, not this exhaustion check.
+    while (e.source!.status === 'active' && state.phase === 'playing' && state.tick - started < 1800) {
+      for (const actor of state.targets) if (actor.role !== 'source') { actor.hp = 0; actor.splitAt = undefined; }
+      session.step(idle());
+    }
     expect(state.phase).toBe('playing'); expect(e.source!.status).toBe('exhausted');
     expect(source.hp).toBe(0); expect(e.source!.bornQuotaSlots).toEqual(e.source!.quotaSlots);
     expect(e.source!.canceledSlots).toEqual([]); expect(e.canceledToSpawn).toBe(0);

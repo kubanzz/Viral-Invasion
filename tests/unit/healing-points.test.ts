@@ -107,4 +107,18 @@ describe('Capturable healing points', () => {
     expect(treatHealingPoint(game.state, point)).toMatchObject({ kind: 'treated', healed: 3 });
     expect(game.state.player.hp).toBe(140);
   });
+
+  it('reclaims a fully occupied endless point without samples or healing, then permits treatment after four seconds', () => {
+    const game = new GameSession(41, { mode: 'endless' }); game.start();
+    const point = healingPoints(game.state)[0];
+    Object.assign(game.state.player, { x: point.x - 100, y: point.y, hp: 45 });
+    point.infection = 100; point.infected = true;
+    expect(game.state.growth!.research).toBe(0);
+    expect(treatHealingPoint(game.state, point)).toEqual({ kind: 'treated', healed: 0, cost: 0, infectionBefore: 100 });
+    expect(game.state.player.hp).toBe(45); expect(point.infected).toBe(false);
+    expect(treatHealingPoint(game.state, point)).toMatchObject({ kind: 'rejected', reason: 'cooldown' });
+    game.state.elapsed += 4;
+    expect(treatHealingPoint(game.state, point)).toMatchObject({ kind: 'treated', healed: 25 });
+    expect(game.state.player.hp).toBe(70); expect(game.state.growth!.research).toBe(0);
+  });
 });

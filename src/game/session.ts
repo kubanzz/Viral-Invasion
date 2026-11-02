@@ -77,7 +77,8 @@ export class GameSession {
     this.growthController = this.state.battle && this.state.battle.milestone !== 'G1'
       ? new GrowthController(this.state.seed, `${this.state.seed}:${++this.runSerial}`, this.state.endless
         ? { version: 1, starterProtocolId: 'IMMUNE_BEACON' }
-        : this.state.battle.encounter?.configId === 'campaign-1' ? this.options.preparation : undefined) : undefined;
+        : this.state.battle.encounter?.configId === 'campaign-1' ? this.options.preparation : undefined,
+        this.state.endless ? 'endless' : 'campaign') : undefined;
     if (this.growthController) this.state.growth = this.growthController.state;
   }
 
@@ -156,6 +157,7 @@ export class GameSession {
   resume(): void {
     if (this.state.phase !== 'paused') return;
     if (this.state.growth?.draft || this.state.growth?.pendingResearch || this.state.endlessGrowth?.draft) return;
+    if (this.state.endless?.stageCheckpoint === 'pending' || this.state.endless?.reward && this.state.endless.reward.step !== 'complete') return;
     this.state.phase = 'playing';
     this.emit('RUN_RESUMED', {});
   }
@@ -223,6 +225,15 @@ export class GameSession {
 
   emit(type: string, data: GameEvent['data']): void {
     const event: GameEvent = { type, tick: this.state.tick, data };
+    const tutorial = this.state.endless?.tutorial;
+    if (tutorial) {
+      if (type === 'TOOL_FIRED' && data.tool === 1) tutorial.fired = true;
+      if (type === 'PROTOCOL_BEACON_CREATED' || type === 'IMMUNE_PATROL_CREATED') tutorial.deployed = true;
+      if (type === 'ORGAN_INTEGRITY_CHANGED') {
+        if (Number(data.after) < Number(data.before)) tutorial.tissueHurt = true;
+        if (data.reason === 'repair' && Number(data.after) > Number(data.before)) tutorial.repaired = true;
+      }
+    }
     if (this.state.runMetrics) this.state.runMetrics = reduceRunMetrics(this.state.runMetrics,
       { runId: this.state.runMetrics.runId, sequence: ++this.metricsSequence, event });
     this.state.events.push(event);
@@ -275,7 +286,9 @@ export class GameSession {
     for (const event of advanceHealingPoints(state, dt)) {
       this.emit(event.type, event.data);
       if (this.state !== state || state.phase !== 'playing') return;
-      if (event.type === 'HEALING_POINT_OCCUPIED') this.message('治疗点已被占领：靠近后用 3，消耗 2 研究样本夺回。', 4, 1);
+      if (event.type === 'HEALING_POINT_OCCUPIED') this.message(state.endless
+        ? '治疗点已被占领：用 3 净化夺回，本次不回血，4 秒后可治疗。'
+        : '治疗点已被占领：靠近后用 3，消耗 2 研究样本夺回。', 4, 1);
     }
     this.battleDirector?.beforeInput(input);
     this.endlessDirector?.beforeInput();
@@ -493,7 +506,9 @@ export class GameSession {
         this.emit('TOOL_FIRED', { tool, x: aim.x, y: aim.y });
         this.emit('HEALING_POINT_TREATED', { nodeId: point.id, organId: state.battle!.organId,
           healed: result.healed, cost: result.cost, infectionBefore: result.infectionBefore, remainingHp: state.player.hp });
-        this.message(`${result.cost ? '消耗 2 研究样本，夺回治疗点' : result.infectionBefore > 0 ? '已快速净化治疗点' : '治疗完成'}；耐久 +${result.healed}，4 秒后可再次治疗。`, 3, 1);
+        this.message(state.endless && result.infectionBefore >= 100
+          ? '治疗点已夺回；本次仅净化，4 秒后可恢复耐久。'
+          : `${result.cost ? '消耗 2 研究样本，夺回治疗点' : result.infectionBefore > 0 ? '已快速净化治疗点' : '治疗完成'}；耐久 +${result.healed}，4 秒后可再次治疗。`, 3, 1);
         return;
       }
     }
@@ -884,6 +899,7 @@ export class GameSession {
   completeWave(wave: number): void {
     const state = this.state;
     if (!state.endless || !state.endlessGrowth || state.phase !== 'playing') return;
+    if (!Number.isSafeInteger(wave) || wave < 1 || state.endless.reward && wave <= state.endless.reward.wave) return;
     this.clearTraction('wave-cleared');
     if (this.state !== state || state.phase !== 'playing') return;
     delete state.bladeOpening;
@@ -891,8 +907,12 @@ export class GameSession {
     this.clearCatalysis('wave-cleared');
     if (this.state !== state || state.phase !== 'playing') return;
     offerEndlessUpgrade(state.endlessGrowth, wave);
-    this.growthController?.rewardEndlessWave(wave, state.elapsed);
-    this.growthController?.rewardEndlessMilestone(wave, growthContext(state));
+    if (!state.endlessGrowth.draft) return;
+    state.endless.reward = { wave, step: 'combat' };
+    if (wave === 5 && state.endless.clearedWaves === 5) state.endless.stageCheckpoint = 'pending';
+    this.draftPauseId = state.endlessGrowth.draft.id;
+    this.pause();
+    this.emit('INPUT_RESET_REQUESTED', { reason: 'wave-reward-opened' });
     this.effect('success', state.player, state.player, 110, .8);
     this.message(`第 ${wave} 波清除！${state.endlessGrowth.draft?.breakthrough ? '精英突破：所选成长最多连升两阶' : '选择一次实战进化'}；确认后恢复耐久和组织。`, 5, 2);
   }
@@ -915,11 +935,52 @@ export class GameSession {
       previousRank, rank: growth.ranks[upgradeId] ?? previousRank, rankGain: (growth.ranks[upgradeId] ?? previousRank) - previousRank, breakthrough,
       healed: state.player.hp - before, organRepaired: state.tissue.hp - organBefore });
     this.emit('ORGAN_INTEGRITY_CHANGED', { organId: 'heart', before: organBefore, after: state.tissue.hp, reason: 'wave-supply' });
+    const tutorial = state.endless.tutorial;
+    if (tutorial && !tutorial.seenUpgrades.includes(upgradeId)) {
+      tutorial.seenUpgrades.push(upgradeId);
+      tutorial.upgradeHint = upgradeId; tutorial.upgradeHintUntil = state.elapsed + 7;
+    }
     this.message(`${breakthrough ? '精英突破 · ' : ''}${growth.lastChoice?.title ?? '实战进化'} ${previousRank}→${growth.ranks[upgradeId]}阶 · 耐久 +${Math.round(state.player.hp - before)} / 组织 +${Math.round(state.tissue.hp - organBefore)}`, 5, 2);
     this.draftPauseId = null;
+    const reward = state.endless.reward;
+    if (reward?.step === 'combat') {
+      reward.step = reward.wave % 5 === 0 ? 'protocol' : 'complete';
+      if (reward.step === 'protocol') {
+        // This reward was earned during combat; its transaction stays paused.
+        this.growthController?.rewardEndlessMilestone(reward.wave, { ...growthContext(state), active: true });
+        this.draftPauseId = state.growth.draft?.id ?? null;
+        this.flushPausedGrowthLogs();
+        if (!state.growth.draft) reward.step = 'complete';
+      }
+    }
     this.resume();
     this.emit('INPUT_RESET_REQUESTED', { reason: 'combat-upgrade-committed' });
     return true;
+  }
+
+  /** A checkpoint is part of the same run; only its explicit exit ends it. */
+  continueEndlessStage(): boolean {
+    const state = this.state;
+    if (!this.ownsEndlessStage()) return false;
+    state.endless!.stageCheckpoint = 'acknowledged';
+    this.emit('ENDLESS_STAGE_CONTINUED', { wave: 5, score: state.endless!.score });
+    this.emit('INPUT_RESET_REQUESTED', { reason: 'stage-continued' });
+    this.resume();
+    return true;
+  }
+
+  finishEndlessStage(): boolean {
+    if (!this.ownsEndlessStage()) return false;
+    this.state.endless!.stageCheckpoint = 'acknowledged';
+    this.finish(true, '第一阶段完成：五波感染已净化，心脏重获生机。');
+    return true;
+  }
+
+  private ownsEndlessStage(): boolean {
+    const s = this.state;
+    return s.phase === 'paused' && s.endless?.stageCheckpoint === 'pending'
+      && s.endless.clearedWaves === 5 && s.endless.reward?.step === 'complete'
+      && !s.endlessGrowth?.draft && !s.growth?.draft && !s.growth?.pendingResearch;
   }
 
   slowFactor(targetId: string): number { return this.growthController?.slowFactor(targetId, this.state.battle!.organId, this.state.elapsed) ?? 1; }
@@ -982,7 +1043,11 @@ export class GameSession {
   private resolveDraftPause(result: DraftResolution, draftId: string): void {
     if (result.kind === 'rejected' || this.draftPauseId !== draftId) return;
     if (this.state.growth?.draft) this.draftPauseId = this.state.growth.draft.id;
-    else { this.draftPauseId = null; this.resume(); }
+    else {
+      this.draftPauseId = null;
+      if (this.state.endless?.reward?.step === 'protocol') this.state.endless.reward.step = 'complete';
+      this.resume();
+    }
   }
 
   isMigratingActor(id: string): boolean { return this.campaignController?.isMigratingActor(id) ?? false; }

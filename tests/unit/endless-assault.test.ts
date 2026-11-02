@@ -29,7 +29,7 @@ function fixture(wave = 6, seed = 71) {
   };
   const enter = () => advance(e.warningSeconds);
   const drain = () => {
-    for (let index = 0; index < 50 && e.remainingToSpawn > 0; index++) {
+    for (let index = 0; index < e.batchSchedule.length + 2 && e.remainingToSpawn > 0; index++) {
       for (const actor of state.targets) if (actor.role !== 'source') { actor.hp = 0; delete actor.splitAt; delete actor.splitPositions; }
       advance(Math.max(0, e.nextSpawnAt - state.elapsed));
       expect(e.spawnSerial + e.canceledToSpawn + e.remainingToSpawn).toBe(e.totalToSpawn);

@@ -42,7 +42,10 @@ function challengeInput(s: GameState): InputFrame {
   const next = waypoint(s, destination);
   const move = distance(s.player, destination) > 12 ? normalized(next.x - s.player.x, next.y - s.player.y) : { x: 0, y: 0 };
   const canRepair = repair && distance(s.player, s.tissue) < 520 && visible(s, s.tissue, s.tissue.radius);
-  const areaReady = s.cooldowns[2] <= s.elapsed;
+  // Tool 2 has a shorter range than primary fire; rejected casts cannot be
+  // used as a reason to keep retrying it instead of shooting a distant body.
+  const areaReady = s.cooldowns[2] <= s.elapsed && !!target && distance(s.player, target) < 410
+    && visible(s, target, target.radius);
   const aim = canRepair ? s.tissue : target ?? destination;
   return { moveX: move.x, moveY: move.y, aim: { x: aim.x, y: aim.y }, fire: canRepair || !!target,
     tool: canRepair ? 3 : areaReady ? 2 : 1,
@@ -83,6 +86,7 @@ function choosePending(session: GameSession, trace: string[]): void {
       expect(session.chooseCombatUpgrade(combat.id, option.id, growth.runId)).toBe(true);
       trace.push(`combat:${combat.wave}:${option.id}`); continue;
     }
+    if (s.endless?.stageCheckpoint === 'pending') { expect(session.continueEndlessStage()).toBe(true); continue; }
     session.resume();
   }
   expect(session.state.phase, 'all pending public choices must resume combat').toBe('playing');
@@ -92,7 +96,8 @@ function diagnosis(session: GameSession): string {
   const s = session.state;
   return JSON.stringify({ phase: s.phase, result: s.result, wave: s.endless?.wave, cleared: s.endless?.clearedWaves,
     elapsed: s.elapsed, hp: s.player.hp, tissue: s.tissue.hp, player: { x: s.player.x, y: s.player.y },
-    remaining: s.endless?.remainingToSpawn, pending: s.endless?.pendingChildren,
+    remaining: s.endless?.remainingToSpawn, pending: s.endless?.pendingChildren, shots: s.shots, hits: s.hits,
+    receipts: s.events.filter(event => event.type === 'TOOL_FIRED' || event.type === 'TOOL_REJECTED').slice(-8),
     targets: s.targets.filter(target => target.hp > 0).map(({ id, x, y, hp, traits, attackAt }) => ({ id, x, y, hp, traits, attackAt })) });
 }
 
@@ -125,7 +130,7 @@ describe('real session continuous challenge loop', () => {
       const live = a.state.targets.filter(target => target.hp > 0);
       maxLiving = Math.max(maxLiving, live.length); maxTelegraphs = Math.max(maxTelegraphs, live.filter(target => target.attackAt !== undefined).length);
       if (a.state.targets.some(target => target.splitAt !== undefined)) pendingFissionTicks++;
-      expect(live.length).toBeLessThanOrEqual(24); expect(live.filter(target => target.attackAt !== undefined).length).toBeLessThanOrEqual(3);
+      expect(live.length).toBeLessThanOrEqual(48); expect(live.filter(target => target.attackAt !== undefined).length).toBeLessThanOrEqual(3);
       for (const pose of committed) {
         const current = live.find(target => target.id === pose.id);
         if (!current || current.attackAt !== pose.at) continue; // real death, resolution or accepted knockback can end the commitment
@@ -228,22 +233,22 @@ describe('real session continuous challenge loop', () => {
     expect(s.player.hp).toBe(100);
   });
 
-  it('materializes eight promised children into the 24-body cap before admitting another primary batch', () => {
+  it('materializes eight promised children into the 48-body cap before admitting another primary batch', () => {
     const session = new GameSession(71, { mode: 'endless' }); session.start(); const s = session.state;
     Object.assign(s.endless!, { phase: 'combat', remainingToSpawn: 12, totalToSpawn: 28, phaseUntil: 0, nextSpawnAt: 0 });
     const base: Target = { id: 'resident', role: 'virus', kind: 'single', x: 1000, y: 800, radius: 22,
       hp: 68, maxHp: 68, traits: [], generation: 0, sourceId: 'endless:wave:1', hitUntil: 0, scanned: false, attackReady: 100 };
-    s.targets = Array.from({ length: 16 }, (_, i) => ({ ...base, id: `resident-${i}`, x: 1000 + (i % 4) * 60, y: 730 + Math.floor(i / 4) * 60 }));
+    s.targets = Array.from({ length: 40 }, (_, i) => ({ ...base, id: `resident-${i}`, x: 1000 + (i % 8) * 60, y: 530 + Math.floor(i / 8) * 60 }));
     for (let i = 0; i < 4; i++) {
       const point = { x: 1100 + Math.cos(i * Math.PI / 2) * 220, y: 800 + Math.sin(i * Math.PI / 2) * 220 };
       s.targets.push({ ...base, ...point, id: `pending-parent-${i}`, hp: 0, deadAt: 0, traits: ['FISSION'],
         splitAt: .1, splitPositions: [{ x: point.x - 27, y: point.y + 10 }, { x: point.x + 27, y: point.y + 10 }] });
     }
     for (let i = 0; i < 10; i++) {
-      session.step(idle()); expect(s.targets.filter(target => target.hp > 0).length).toBeLessThanOrEqual(24);
+      session.step(idle()); expect(s.targets.filter(target => target.hp > 0).length).toBeLessThanOrEqual(48);
       expect(s.endless!.remainingToSpawn).toBe(12);
     }
-    expect(s.targets.filter(target => target.hp > 0)).toHaveLength(24);
+    expect(s.targets.filter(target => target.hp > 0)).toHaveLength(48);
     expect(s.targets.filter(target => target.hp > 0 && target.generation === 1)).toHaveLength(8);
     expect(s.endless!.pendingChildren).toBe(0);
     expect(s.events.filter(event => event.type === 'ACTOR_SPAWNED')).toHaveLength(8);

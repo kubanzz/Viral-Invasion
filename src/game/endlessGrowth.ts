@@ -72,7 +72,8 @@ export const isEndlessBreakthrough = (wave: number): boolean => Number.isSafeInt
 
 function optionFor(growth: EndlessGrowthState, id: EndlessUpgradeId, wave: number): EndlessUpgradeOption {
   const currentRank = rank(growth, id);
-  const nextRank = Math.min(currentRank + (isEndlessBreakthrough(wave) ? 2 : 1), ENDLESS_UPGRADES[id].maxRank ?? MAX_COUNT);
+  const openingNova = wave === 1 && growth.level === 0 && id === 'nova' && currentRank === 0;
+  const nextRank = Math.min(currentRank + (isEndlessBreakthrough(wave) || openingNova ? 2 : 1), ENDLESS_UPGRADES[id].maxRank ?? MAX_COUNT);
   const before = endlessCombatStats(growth), after = endlessCombatStats({ ...growth, ranks: { ...growth.ranks, [id]: nextRank } });
   const beforeShotTicks = Math.ceil(before.primaryCooldown / BALANCE.step - 1e-9), afterShotTicks = Math.ceil(after.primaryCooldown / BALANCE.step - 1e-9);
   const change = (a: number, b: number) => `${display(a)} → ${display(b)}`;
@@ -122,11 +123,15 @@ export function offerEndlessUpgrade(growth: EndlessGrowthState, wave: number): v
   // rendering, another controller's RNG or the bounded presentation history.
   const rng = new SeedRng((growth.seed ^ Math.imul(wave, 0x9e3779b1) ^ Math.imul(growth.level + 1, 0x85ebca6b)) >>> 0);
   let selected: EndlessUpgradeId[];
-  if (growth.level === 0 && rank(growth, 'multishot') === 0 && rank(growth, 'immune') === 0) {
-    selected = ['multishot', 'immune', shuffled(pool.filter(id => id !== 'multishot' && id !== 'immune'), rng)[0]];
+  if (wave === 1 && growth.level === 0 && ['multishot', 'nova', 'dash'].every(id => pool.includes(id as EndlessUpgradeId))) {
+    selected = ['multishot', 'nova', 'dash'];
   } else {
-    const unlearned = pool.filter(id => ENDLESS_UPGRADES[id].newMechanic && rank(growth, id) === 0);
-    const guaranteed = unlearned.length ? [shuffled(unlearned, rng)[0]] : [];
+    const universal: readonly EndlessUpgradeId[] = ['power', 'vitality', 'haste'];
+    const learned = pool.filter(id => !universal.includes(id) && rank(growth, id) > 0);
+    const unlearned = pool.filter(id => !universal.includes(id) && rank(growth, id) === 0);
+    const newActions = unlearned.filter(id => ENDLESS_UPGRADES[id].newMechanic);
+    const numerical = pool.filter(id => universal.includes(id));
+    const guaranteed = [learned, newActions.length ? newActions : unlearned, numerical].flatMap(items => items.length ? [shuffled(items, rng)[0]] : []);
     selected = [...guaranteed, ...shuffled(pool.filter(id => !guaranteed.includes(id)), rng)].slice(0, 3);
   }
   growth.draft = { id: `endless:${growth.seed}:wave:${wave}:level:${growth.level + 1}`, wave,

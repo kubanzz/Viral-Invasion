@@ -12,7 +12,7 @@ const commit = (growth: EndlessGrowthState, wave: number, pick?: EndlessUpgradeI
 };
 
 describe('continuous endless upgrades', () => {
-  it('preserves the nine-route opening pool and first-wave multishot/immune showcase', () => {
+  it('opens with three visible combat routes and a meaningful rank-II nova without guidance', () => {
     const seen = new Set<EndlessUpgradeId>();
     for (let seed = 0; seed < 160; seed++) {
       const growth = createEndlessGrowth(seed); offerEndlessUpgrade(growth, 1);
@@ -20,14 +20,16 @@ describe('continuous endless upgrades', () => {
       expect(options).toHaveLength(3);
       expect(new Set(options.map(option => option.id)).size).toBe(3);
       expect(options.map(option => option.id)).toContain('multishot');
-      expect(options.map(option => option.id)).toContain('immune');
+      expect(options.map(option => option.id).sort()).toEqual(['dash', 'multishot', 'nova']);
       expect(options.map(option => option.id)).not.toContain('catalysis');
       for (const option of options) {
         seen.add(option.id); expect(option.description).toContain('→');
-        expect(option.nextRank).toBe(option.currentRank + 1);
+        expect(option.nextRank).toBe(option.id === 'nova' ? 2 : 1);
       }
     }
-    expect([...seen].sort()).toEqual(ENDLESS_UPGRADE_IDS.filter(id => id !== 'catalysis').sort());
+    expect([...seen].sort()).toEqual(['dash', 'multishot', 'nova']);
+    const growth = createEndlessGrowth(71); commit(growth, 1, 'nova');
+    expect(endlessCombatStats(growth)).toMatchObject({ areaRadius: 124, areaGatherRadius: 158, areaGuideDuration: 0 });
   });
 
   it('is deterministic across serialized restores and ignores unrelated history truncation', () => {

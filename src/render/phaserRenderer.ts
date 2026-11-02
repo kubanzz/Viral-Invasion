@@ -19,6 +19,7 @@ import type { MotherCoreState } from '../game/motherCoreTypes';
 import { drawMotherCoreAccents, motherCoreLift, type MotherCoreAccentGeometry } from './battleVisuals';
 import { toolFeedback } from './toolFeedback';
 import { createHeroRig, type HeroRig } from './heroRig';
+import { endlessDeathPose, endlessRestoration } from './endlessVisuals';
 
 interface Asset extends HeroAnimationAsset { atlas:string; frame:string; flags:string[]; status:string }
 interface RuntimeArt {inputSignature:string; atlases:{key:string;dataUri:string;data:object}[];assets:Record<string,Asset>;environments:Record<string,{dataUri:string;width:number;height:number}>}
@@ -131,16 +132,17 @@ export class Renderer {
   private createAnimations():void {for(const kind of ['scan','heal']){const frames=Object.keys(art.assets).filter(id=>id.startsWith(`fx.${kind}.`)).sort();if(frames.length>1)this.host.scene.anims.create({key:`art-${kind}`,frames:frames.map(id=>({key:art.assets[id].atlas,frame:art.assets[id].frame})),frameRate:kind==='scan'?12:10,repeat:0});}}
   private environment(state:GameState,camera:Camera):void {
     const world=activeWorld(state),organ=state.battle?.organId??'heart',b=world.bounds;
-    const put=(id:string,key:string,x:number,y:number,w:number,h:number,depth:number,alpha=1)=>{const p=camera.worldToScreen({x,y});this.host.sprite(id,{texture:`environment:${key}`,x:p.x,y:p.y,width:w*camera.scale,height:h*camera.scale,depth,originX:0,originY:0,alpha});};
+    const restoration=endlessRestoration(state);
+    const put=(id:string,key:string,x:number,y:number,w:number,h:number,depth:number,alpha=1)=>{const p=camera.worldToScreen({x,y});this.host.sprite(id,{texture:`environment:${key}`,x:p.x,y:p.y,width:w*camera.scale,height:h*camera.scale,depth,originX:0,originY:0,alpha,...(restoration?{tint:restoration.tint}:{})});};
     // Enclosing tissue sits outside the actual collision bounds; the interior crop has no walls.
     put('environment:back',organ==='lung'?'lung.floor':'heart.full',-220,-300,world.width+440,world.height*.72+470,-100);
     put('environment:floor',`${organ}.floor`,b.left,b.top,b.right-b.left,(b.bottom-b.top)*.72,-90);
     if(organ==='lung')put('environment:wall','lung.wall',-180,-310,world.width+360,300,-80,.8);
   }
-  private emit(id:string,assetId:string,p:Vec,height:number,depth:number,options:{flipX?:boolean;alpha?:number;lift?:number}={}):boolean {
+  private emit(id:string,assetId:string,p:Vec,height:number,depth:number,options:{flipX?:boolean;alpha?:number;lift?:number;tint?:number}={}):boolean {
     const a=art.assets[assetId];if(!a)return false;const screen=this.camera.worldToScreen(p),factor=height/a.visibleBounds.height,w=a.width*factor,h=a.height*factor;
     if(screen.x+w*this.camera.scale<0||screen.x-w*this.camera.scale>this.width||screen.y+40<0||screen.y-h*this.camera.scale>this.height)return true;
-    this.host.sprite(id,{texture:a.atlas,frame:a.frame,x:screen.x,y:screen.y+(options.lift??0)*this.camera.scale,width:w*this.camera.scale,height:h*this.camera.scale,depth,alpha:options.alpha,flipX:options.flipX,originX:options.flipX?1-a.pivot.x:a.pivot.x,originY:a.pivot.y});return true;
+    this.host.sprite(id,{texture:a.atlas,frame:a.frame,x:screen.x,y:screen.y+(options.lift??0)*this.camera.scale,width:w*this.camera.scale,height:h*this.camera.scale,depth,alpha:options.alpha,flipX:options.flipX,originX:options.flipX?1-a.pivot.x:a.pivot.x,originY:a.pivot.y,...(options.tint!==undefined?{tint:options.tint}:{})});return true;
   }
   private bounds(id:string,p:Vec,height:number,flipX=false,lift=0):VisualBounds {const b=spriteBodyBounds(art.assets[id],p,height,flipX);return {...b,top:b.top+lift,bottom:b.bottom+lift};}
   private prepareHeroPresentation(state:GameState,preview=false):HeroPresentation {
@@ -365,17 +367,23 @@ export class Renderer {
     }
     if(entity.kind==='target'){
       const t=state.targets[entity.index!];if(t.role==='core')return this.nativeMother(entity,t,state,ctx,depth);
+      const death=endlessDeathPose(t,state,this.lowEffects);
+      if(death){
+        const asset=this.targetAsset({...t,hp:1});
+        if(asset&&death.alpha>0)this.emit(t.id,asset,t,this.targetHeight(t)*death.scale,depth,{alpha:death.alpha});
+        return true;
+      }
       const id=this.targetAsset(t);if(!id)return false;
       const revealed=(t.revealedUntil??0)>state.elapsed||(t.exposedUntil??0)>state.elapsed||state.scanUntil>state.elapsed||!!state.growth?.marks.some(m=>m.targetId===t.id&&m.until>state.elapsed&&m.organId===state.battle?.organId);
       const hidden=t.traits?.includes('MIMIC')&&!revealed,exposed=(t.exposedUntil??0)>state.elapsed||(t.recoverUntil??0)>state.elapsed,height=this.targetHeight(t),windup=(t.attackAt??0)>state.elapsed;
       if(hidden){const age=(state.elapsed-(t.born??0))%BATTLE_BALANCE.mimicPeriod;if(age<BATTLE_BALANCE.mimicDisturbance){const progress=age/BATTLE_BALANCE.mimicDisturbance;ctx.save();ctx.globalAlpha=1-progress;ring(ctx,t,t.radius+progress*35,'#7f557e',1.5);ctx.scale(1,1/.72);ctx.fillStyle='#694b73';ctx.font='bold 19px sans-serif';ctx.textAlign='center';ctx.fillText('≈',t.x,t.y*.72-height-8);ctx.restore();}}
       const lift=this.targetLift(t,state),body=this.bounds(id,t,height,false,lift);
-      this.emit(t.id,id,t,height,depth,{alpha:hidden?.5:1,lift});this.bodies.set(t.id,body);this.painter.annotateArtEntity(ctx,entity,state,Math.max(t.radius*1.25,t.x-body.left,body.right-t.x),Math.max(height+8,t.y*.72-body.top+8));ring(ctx,t,t.radius,hidden?'#728b9c88':'#a23e5590',1);
+      this.emit(t.id,id,t,height,depth,{alpha:hidden?.5:1,lift,...(state.endless&&t.hitUntil>state.elapsed?{tint:0xfff3c7}:{})});this.bodies.set(t.id,body);this.painter.annotateArtEntity(ctx,entity,state,Math.max(t.radius*1.25,t.x-body.left,body.right-t.x),Math.max(height+8,t.y*.72-body.top+8));ring(ctx,t,t.radius,hidden?'#728b9c88':'#a23e5590',1);
       ctx.save();ctx.translate(t.x,t.y);ctx.scale(1,1/.72);
       if(t.traits?.includes('CARAPACE')){const angle=Math.atan2(Math.sin(t.facing??0)*.72,Math.cos(t.facing??0));ctx.beginPath();ctx.arc(0,-height*.42,t.radius*.9,angle-1,angle+1);ctx.strokeStyle=exposed?'#fff2cf':'#6d386a';ctx.lineWidth=exposed?1.5:4;ctx.setLineDash(exposed?[3,4]:[]);ctx.stroke();ctx.setLineDash([]);}
       if(t.traits?.includes('FISSION')&&(t.generation??0)===0){ctx.fillStyle='#6f3954';ctx.font='bold 11px sans-serif';ctx.textAlign='center';ctx.fillText('Ⅱ',t.radius*.65,-height*.15);}
       if(windup||exposed||t.role==='elite'||t.tactic==='thin-ray'){ctx.fillStyle=windup?'#a62e38':exposed?'#176b78':'#8d3b47';ctx.font='bold 15px sans-serif';ctx.textAlign='center';ctx.fillText(windup?'!':exposed?'◇':t.role==='elite'?'♛':'⌁',0,-height-5);}
-      if(t.hitUntil>state.elapsed){ctx.strokeStyle='#fff4b7';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-9,-height*.5);ctx.lineTo(9,-height*.5);ctx.moveTo(0,-height*.5-9);ctx.lineTo(0,-height*.5+9);ctx.stroke();}
+      if(t.hitUntil>state.elapsed&&!state.endless){ctx.strokeStyle='#fff4b7';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(-9,-height*.5);ctx.lineTo(9,-height*.5);ctx.moveTo(0,-height*.5-9);ctx.lineTo(0,-height*.5+9);ctx.stroke();}
       if(!state.battle){ctx.fillStyle='#fff8e6';ctx.fillRect(-t.radius,-height-7,t.radius*2,4);ctx.fillStyle='#b14d62';ctx.fillRect(-t.radius,-height-7,t.radius*2*t.hp/t.maxHp,4);}ctx.restore();return true;
     }
     if(entity.kind==='immune'){

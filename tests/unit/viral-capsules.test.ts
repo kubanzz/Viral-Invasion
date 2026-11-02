@@ -160,11 +160,11 @@ describe('finite detached viral capsules', () => {
 
   it('fizzles once at the shared population limit without stealing a promised fission child or queue slot', () => {
     const f = fixture(6); expect(f.carrier).toBeDefined();
-    f.state.targets = [f.carrier, ...Array.from({ length: 22 }, (_, index): Target => ({ id: `full-${index}`, x: 300 + index * 50,
+    f.state.targets = [f.carrier, ...Array.from({ length: 46 }, (_, index): Target => ({ id: `full-${index}`, x: 300 + index * 50,
       y: 300, radius: 22, hp: 68, maxHp: 68, role: 'virus', kind: 'single', hitUntil: 0, scanned: false, traits: [], attackReady: Infinity }))];
-    f.carrier.traits = ['FISSION']; expect(viralCapsuleReservedPopulation(f.state)).toBe(24);
+    f.carrier.traits = ['FISSION']; expect(viralCapsuleReservedPopulation(f.state)).toBe(48);
     const budget = f.e.remainingToSpawn; f.carrier.hp = 0; f.battle.cleared(f.carrier);
-    expect(f.carrier.splitPositions).toHaveLength(2); expect(viralCapsuleReservedPopulation(f.state)).toBe(24);
+    expect(f.carrier.splitPositions).toHaveLength(2); expect(viralCapsuleReservedPopulation(f.state)).toBe(48);
     expect(f.carrier.viralCapsuleCarrier!.stock).toBe(0); expect(f.state.targets.some(actor => actor.role === 'capsule')).toBe(false);
     expect(f.events.filter(event => event.type === 'VIRAL_CAPSULE_FIZZLED')).toHaveLength(1);
     expect(f.events.find(event => event.type === 'VIRAL_CAPSULE_FIZZLED')!.data.reason).toBe('population-cap');

@@ -74,7 +74,7 @@ describe('pacing reaches actual births and combat without bypassing rules', () =
     const pressure = fixture(1), release = fixture(2), next = fixture(3);
     expect(pressure.state.targets[0].hp).toBe(68);
     expect(release.state.targets[0].hp).toBeLessThan(pressure.state.targets[0].hp);
-    expect(next.state.targets[0].hp).toBeGreaterThan(pressure.state.targets[0].hp);
+    expect(next.state.targets[0].hp).toBe(pressure.state.targets[0].hp);
     expect(release.state.endless!.title).toContain('进化收割'); expect(next.state.endless!.title).toContain('压力推进');
     expect(release.state.endless!.batchSchedule[2].at).toBeLessThan(pressure.state.endless!.batchSchedule[2].at);
     for (const f of [pressure, release, next]) {
@@ -125,11 +125,11 @@ describe('pacing reaches actual births and combat without bypassing rules', () =
 
   it('keeps a full reserved population blocked without extra births or a catch-up batch', () => {
     const f = fixture(101), base = f.state.targets.find(actor => actor.role === 'virus')!;
-    f.state.targets = Array.from({ length: 20 }, (_, index): Target => ({ ...base, id: `reserved-${index}`,
+    f.state.targets = Array.from({ length: 44 }, (_, index): Target => ({ ...base, id: `reserved-${index}`,
       x: 80 + index * 65, y: 80, traits: index < 4 ? ['FISSION'] : [], generation: 0 }));
     const remaining = f.state.endless!.remainingToSpawn, before = structuredClone(f.state.targets);
     f.advance(100); expect(f.state.targets).toEqual(before); expect(f.state.endless!.remainingToSpawn).toBe(remaining);
-    expect(f.state.endless!.totalToSpawn).toBe(48);
+    expect(f.state.endless!.totalToSpawn).toBe(ENDLESS_BALANCE.maximumWaveBudget);
     f.state.phase = 'paused'; const paused = structuredClone(f.state.endless); f.advance(100);
     expect(f.state.endless).toEqual(paused);
   });

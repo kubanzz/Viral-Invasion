@@ -298,8 +298,6 @@ describe('atomic catalysis conversion and original protocol order', () => {
 
   it('resolves an actual last-wave kill before clear rewards and their ordinary modal pause', () => {
     const f = fixture([actor('last-body', 800, 500, { hp: 70, role: 'virus' })]); prime(f.session);
-    // An already-settled preparation lets this real clear open an XP draft as well.
-    f.state.growth!.starterDebt = 0;
     f.state.endless!.remainingToSpawn = 0;
     step(f.session, { tool: 1, fire: true });
     const resolved = f.events.findIndex(event => event.type === 'CATALYSIS_RESOLVED');
@@ -307,7 +305,8 @@ describe('atomic catalysis conversion and original protocol order', () => {
     const paused = f.events.findIndex(event => event.type === 'RUN_PAUSED');
     expect(resolved).toBeGreaterThanOrEqual(0); expect(cleared).toBeGreaterThan(resolved); expect(paused).toBeGreaterThan(cleared);
     expect(f.state.phase).toBe('paused'); expect(f.state.endlessGrowth!.draft).toBeDefined();
-    expect(f.state.growth!.draft?.source).toBe('xp'); expect(f.state.endless!.clearedWaves).toBe(1);
+    expect(f.state.growth!.draft).toBeNull(); expect(f.state.growth!.xp).toBe(0);
+    expect(f.state.endless!.reward).toMatchObject({ wave: 1, step: 'combat' }); expect(f.state.endless!.clearedWaves).toBe(1);
   });
 });
 

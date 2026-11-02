@@ -58,17 +58,18 @@ function actor(tactic: EnemyTactic, state: GameState, patch: Partial<Target> = {
 }
 
 describe('real finite challenge formations', () => {
-  it('spawns coherent front cohorts at their announced pressure cadence, then leaves a real breather', () => {
+  it('spawns coherent front cohorts at their announced dense pressure cadence', () => {
     const f = fixture(); f.enter(1); const s = f.state;
     expect(s.endless!.formation).toBe('front'); expect(s.targets).toHaveLength(3);
     const secondAt = s.endless!.batchSchedule[1].at;
-    expect(s.endless!.batchSchedule[0].at).toBe(0); expect(secondAt).toBeCloseTo(.45 * endlessPacing(1).spawnIntervalMultiplier);
+    expect(s.endless!.batchSchedule[0].at).toBe(0); expect(secondAt).toBeCloseTo(.22);
     expect(s.endless!.batchSchedule[0].sector).toBe(s.endless!.batchSchedule[1].sector);
     const angles = s.targets.map(target => Math.atan2(target.y - s.player.y, target.x - s.player.x));
     const spread = Math.max(...angles.map(angle => Math.abs(Math.atan2(Math.sin(angle - angles[1]), Math.cos(angle - angles[1])))));
-    expect(spread).toBeLessThan(.3);
+    // Body-safe member offsets add a small angle beyond the announced sector.
+    expect(spread).toBeLessThan(s.endless!.batchSchedule[0].spread + .08);
     f.advance(secondAt - .01); expect(s.targets).toHaveLength(3); f.advance(.01); expect(s.targets).toHaveLength(6);
-    expect(s.endless!.nextSpawnAt - s.elapsed).toBeGreaterThan(3);
+    expect(s.endless!.nextSpawnAt - s.elapsed).toBeCloseTo(.98);
     for (const target of s.targets) { expect(target.maxHp).toBe(68); expect(target.tactic).toBe('melee'); }
   });
 
@@ -116,9 +117,9 @@ describe('real finite challenge formations', () => {
     f.advance(2); expect(f.state.targets).toHaveLength(3); f.advance(100); expect(f.state.targets).toHaveLength(6);
     expect(f.state.endless!.nextSpawnAt).toBeGreaterThan(f.state.elapsed);
     const resident = f.state.targets[0];
-    f.state.targets = Array.from({ length: 20 }, (_, index) => ({ ...resident, id: `resident-${index}`, traits: index < 4 ? ['FISSION' as const] : [] }));
+    f.state.targets = Array.from({ length: 44 }, (_, index) => ({ ...resident, id: `resident-${index}`, traits: index < 4 ? ['FISSION' as const] : [] }));
     const remaining = f.state.endless!.remainingToSpawn; f.advance(100);
-    expect(f.state.targets).toHaveLength(20); expect(f.state.endless!.remainingToSpawn).toBe(remaining);
+    expect(f.state.targets).toHaveLength(44); expect(f.state.endless!.remainingToSpawn).toBe(remaining);
     expect(f.state.endless!.batchMemberIndex).toBe(0);
   });
 
@@ -128,7 +129,7 @@ describe('real finite challenge formations', () => {
       f.enter(wave); const s = f.state, e = s.endless!;
       expect(e.batchSchedule.flatMap(batch => batch.roles)).toHaveLength(e.totalToSpawn);
       expect(e.batchSchedule.length).toBeLessThanOrEqual(Math.ceil(ENDLESS_BALANCE.maximumWaveBudget / 3)); expect(e.totalToSpawn).toBeLessThanOrEqual(ENDLESS_BALANCE.maximumWaveBudget);
-      expect(e.batchSchedule.flatMap(batch => batch.roles).filter(role => role === 'support').length).toBe(wave < 3 ? 0 : wave < 6 ? 1 : wave < 16 ? 2 : wave < 30 ? 3 : 4);
+      expect(e.batchSchedule.flatMap(batch => batch.roles).filter(role => role === 'support').length).toBe(wave <= 5 ? wave === 3 || wave === 5 ? 1 : 0 : wave < 16 ? 2 : wave < 30 ? 3 : 4);
       if (wave % 5 === 0) {
         expect(e.warningSeconds).toBe(8);
         const elite = s.targets.find(target => target.role === 'elite')!;

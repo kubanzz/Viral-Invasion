@@ -57,7 +57,7 @@ export function advanceHealingPoints(state: GameState, dt: number): Array<{ type
     if (before === 0 && node.infection > 0) events.push({ type: 'HEALING_POINT_CONTESTED',
       data: { nodeId: node.id, organId: state.battle!.organId, infection: node.infection } });
     if (node.infection >= 100) events.push({ type: 'HEALING_POINT_OCCUPIED',
-      data: { nodeId: node.id, organId: state.battle!.organId, cost: HEALING_POINT_BALANCE.reclaimCost } });
+      data: { nodeId: node.id, organId: state.battle!.organId, cost: state.endless ? 0 : HEALING_POINT_BALANCE.reclaimCost } });
   }
   return events;
 }
@@ -71,13 +71,14 @@ export function treatHealingPoint(state: GameState, node: HealingPointNode): Hea
   if (distance(state.player, node) > HEALING_POINT_BALANCE.treatmentRange) return { kind: 'rejected', reason: 'range' };
   if (state.elapsed + 1e-9 < node.healReadyAt) return { kind: 'rejected', reason: 'cooldown' };
   const infectionBefore = node.infection;
-  const cost = infectionBefore >= 100 ? HEALING_POINT_BALANCE.reclaimCost : 0;
+  const endlessReclaim = !!state.endless && infectionBefore >= 100;
+  const cost = infectionBefore >= 100 && !state.endless ? HEALING_POINT_BALANCE.reclaimCost : 0;
   const samples = state.growth?.research ?? 0;
   if (samples < cost) return { kind: 'rejected', reason: 'insufficient-samples', missing: cost - samples };
   if (cost && state.growth) state.growth.research -= cost;
   node.infection = 0; node.infected = false; node.healReadyAt = state.elapsed + HEALING_POINT_BALANCE.cooldown;
   const before = state.player.hp;
   const maxHp = state.endlessGrowth ? endlessCombatStats(state.endlessGrowth).maxHp : 100;
-  state.player.hp = Math.min(maxHp, state.player.hp + HEALING_POINT_BALANCE.heal);
+  if (!endlessReclaim) state.player.hp = Math.min(maxHp, state.player.hp + HEALING_POINT_BALANCE.heal);
   return { kind: 'treated', healed: state.player.hp - before, cost, infectionBefore };
 }

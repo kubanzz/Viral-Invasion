@@ -75,11 +75,11 @@ export class GrowthController {
   private acceptedHistory = new Map<string, { entry: GrowthHistoryEntry; targets: Set<string>; damage: number; synergy: boolean }>();
   private ricochetTick = -1;
   private acceptedRicochets = 0;
-  constructor(seed: number, runId = `${seed >>> 0}:growth`, preparation?: RunPreparation) {
+  constructor(seed: number, runId = `${seed >>> 0}:growth`, preparation?: RunPreparation, mode: 'campaign' | 'endless' = 'campaign') {
     const initialPreparation = parsePreparation(preparation) ?? preparationForPlan('field');
     const starter = initialPreparation.starterProtocolId;
-    this.state = { runId, seed: seed >>> 0, lastElapsed: 0, xp: 0, level: 0, nextXp: B.xpThresholds[0], research: 0,
-      preparation: initialPreparation, starterDebt: starter ? 1 : 0, carriedProtocols: starter ? [starter] : [],
+    this.state = { runId, seed: seed >>> 0, lastElapsed: 0, xp: 0, level: 0, nextXp: mode === 'endless' ? null : B.xpThresholds[0], research: 0,
+      preparation: initialPreparation, starterDebt: starter && mode !== 'endless' ? 1 : 0, carriedProtocols: starter ? [starter] : [],
       equipped: starter ? [{ id: starter, tuning: 'balanced' }] : [], draft: null, pendingLevels: [], consumedDraftIds: [], rewardedKeys: [], sourceKillCounts: {},
       lastMilestoneWave: 0, nextMilestoneWave: null,
       damageTakenByOrgan: { heart: 0, lung: 0 }, protectionNeeded: { heart: false, lung: false },
@@ -88,6 +88,11 @@ export class GrowthController {
       activations: {}, marks: [], resonance: [], chainRoots: [], protocolHistory: [], pendingLogs: [],
       budgetTick: -1, budgetUsed: 0, skippedCommands: 0 };
     if (starter) {
+      if (mode === 'endless') {
+        this.log('PROTOCOL_EQUIPPED', { source: 'preparation', protocolId: starter, tuning: 'balanced', rank: 1, slots: 1, actionHint: PROTOCOL_ACTIONS[starter] });
+        this.remember('PROTOCOL_EQUIPPED', `${PROTOCOLS[starter].name}：初始预装 Ⅰ · 均衡。`);
+        return;
+      }
       const title = `${PROTOCOLS[starter].name} Ⅰ · 初始预装`;
       const hint = `${PROTOCOL_ACTIONS[starter]}已预支首份成长，${B.xpThresholds[0]} XP 仅结清；下一份草案 ${B.xpThresholds[1]} XP。`;
       this.state.lastEvolution = { protocolId: starter, rank: 1, until: 8, title, hint };
@@ -214,11 +219,9 @@ export class GrowthController {
   }
 
   rewardEndlessWave(wave: number, elapsed: number): void {
-    if (this.state.ended || this.state.nextXp === null || !Number.isInteger(wave) || wave < 1) return;
-    this.award(`endless-wave:${wave}`, 30, 0, elapsed);
-    // Queue both clear rewards before the host pauses. Resolving one card must
-    // reveal the other without briefly resuming combat for a simulation tick.
-    this.openNextLevel();
+    // Kept as a compatibility entry point. Combat growth owns every clear;
+    // protocols now arrive only from explicit fifth-wave milestone rewards.
+    void wave; void elapsed;
   }
 
   /** The host calls once per fifth clear. Pending consecutive milestones use two numbers. */

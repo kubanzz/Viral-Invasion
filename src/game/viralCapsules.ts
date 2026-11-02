@@ -3,6 +3,7 @@ import { endlessPacing } from './endlessPacing';
 import type { EndlessSourcePlan, EndlessSpawnRole } from './endlessTypes';
 import { activeWorld, BALANCE, type GameEvent, type GameState, type Target, type Vec } from './types';
 import type { ViralCapsuleCarrier, ViralCapsuleEnd, ViralCapsuleObjective, ViralCapsuleState } from './viralCapsulesTypes';
+import { combatPopulationLimit } from './combatPopulation';
 
 export const VIRAL_CAPSULE_BALANCE = {
   carrierWarning: .8, warning: .8, branchWarning: .45, speed: 220, range: 760, lifetime: 5,
@@ -46,7 +47,7 @@ function capacityReason(state: GameState, transactionId: string): string | undef
   if (live.length >= VIRAL_CAPSULE_BALANCE.maximumBodies) return 'capsule-cap';
   if (!live.some(target => target.viralCapsule!.transactionId === transactionId)
     && new Set(live.map(target => target.viralCapsule!.transactionId)).size >= VIRAL_CAPSULE_BALANCE.maximumTransactions) return 'transaction-cap';
-  if (viralCapsuleReservedPopulation(state) >= VIRAL_CAPSULE_BALANCE.maximumPopulation) return 'population-cap';
+  if (viralCapsuleReservedPopulation(state) >= combatPopulationLimit(state)) return 'population-cap';
   if (commitments(state) >= VIRAL_CAPSULE_BALANCE.maximumCommitments) return 'commitment-cap';
   return;
 }
@@ -92,7 +93,7 @@ export function releaseViralCapsule(host: ViralCapsuleHost, carrier: Target, cau
     ?? (!isLegalPosition(carrier, VIRAL_CAPSULE_BALANCE.radius, activeWorld(state)) ? 'illegal-origin' : undefined);
   if (reason) {
     host.emit('VIRAL_CAPSULE_FIZZLED', { transactionId: info.transactionId, carrierId: carrier.id, wave: info.wave, objective: info.objective,
-      reason, cause, stock: 0, capsuleCap: VIRAL_CAPSULE_BALANCE.maximumBodies, populationCap: VIRAL_CAPSULE_BALANCE.maximumPopulation });
+      reason, cause, stock: 0, capsuleCap: VIRAL_CAPSULE_BALANCE.maximumBodies, populationCap: combatPopulationLimit(state) });
     return;
   }
   const capsule = capsuleBody(state, carrier, info, aim, secondary); state.targets.push(capsule);
@@ -100,7 +101,7 @@ export function releaseViralCapsule(host: ViralCapsuleHost, carrier: Target, cau
     objective: info.objective, cause, fork: info.fork, x: capsule.x, y: capsule.y, aimX: aim.x, aimY: aim.y,
     directionX: capsule.viralCapsule!.direction.x, directionY: capsule.viralCapsule!.direction.y,
     warningUntil: capsule.viralCapsule!.warningUntil, expiresAt: capsule.viralCapsule!.expiresAt, speed: capsule.viralCapsule!.speed,
-    capsuleCap: VIRAL_CAPSULE_BALANCE.maximumBodies, populationCap: VIRAL_CAPSULE_BALANCE.maximumPopulation, stock: 0 });
+    capsuleCap: VIRAL_CAPSULE_BALANCE.maximumBodies, populationCap: combatPopulationLimit(state), stock: 0 });
 }
 
 /** Uses the real ordinary commitment fields, so existing displacement can interrupt. */

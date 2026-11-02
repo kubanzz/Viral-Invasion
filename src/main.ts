@@ -37,6 +37,7 @@ import './ui/hostEventHud.css';
 import { mobileHudMarkup, mobileDetailsMarkup, setMobileDetailsOpen, updateMobileHud } from './ui/mobileHud';
 import './ui/mobile.css';
 import { mainMenuOverlay } from './ui/mainMenu';
+import { endlessTutorialHint } from './ui/endlessTutorial';
 import './ui/mainMenu.css';
 import { touchCopy } from './ui/touchCopy';
 import { resolveTouchLayout } from './ui/responsiveLayout';
@@ -315,6 +316,11 @@ app.addEventListener('click', event => {
     session.chooseCombatUpgrade(button.dataset.draft!, button.dataset.upgrade as EndlessUpgradeId, button.dataset.run!);
     input.clear(); clock.reset(); overlayKey = ''; button.blur(); return;
   }
+  if (action === 'endless-stage-continue' || action === 'endless-stage-finish') {
+    if (action === 'endless-stage-continue') session.continueEndlessStage();
+    else session.finishEndlessStage();
+    input.clear(); clock.reset(); overlayKey = ''; button.blur(); return;
+  }
   if (action === 'endless-extract') {
     if (session.state.endless && session.state.phase === 'paused' && !session.state.endlessGrowth?.draft && !session.state.growth?.draft) {
       session.finish(true, `主动撤离：已完成 ${session.state.endless.clearedWaves} 波，得分 ${session.state.endless.score}。`);
@@ -339,7 +345,7 @@ app.addEventListener('click', event => {
 function updateOverlay() {
   const state = session.state;
   const draft = state.growth?.draft;
-  const key = `${touchMode}:${!!state.endless}:${state.endlessGrowth?.draft?.id}:${state.phase}:${help}:${lowEffects}:${history}:${growthDetails}:${profileOpen}:${startingPlanOpen}:${startingPlanSelection}:${migrationGuide}:${mobileDetailsOpen}:${portraitBlocked}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}:${state.growth?.pendingResearch?.id}:${state.battle?.encounter?.firstCounter.guideStatus}`;
+  const key = `${touchMode}:${!!state.endless}:${state.endless?.reward?.step}:${state.endless?.stageCheckpoint}:${state.endlessGrowth?.draft?.id}:${state.phase}:${help}:${lowEffects}:${history}:${growthDetails}:${profileOpen}:${startingPlanOpen}:${startingPlanSelection}:${migrationGuide}:${mobileDetailsOpen}:${portraitBlocked}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}:${state.growth?.pendingResearch?.id}:${state.battle?.encounter?.firstCounter.guideStatus}`;
   if (key === overlayKey) return;
   overlayKey = key;
   const challengeHome = state.phase === 'menu' && !trainingFixture && milestone === 'G3' && !help && !history;
@@ -443,6 +449,8 @@ function refreshMobileAimViewport(): void {
 }
 function updateCommonHud() {
   const s = session.state;
+  const tutorial = endlessTutorialHint(s, touchMode);
+  if (tutorial) el('message').textContent = tutorial;
   if (touchMode) el('message').textContent = touchCopy(el('message').textContent ?? '');
   if (touchMode && mobileDetailsOpen) adaptTouchText(el('mobile-details-content'));
   updateMobileHud(s, { blocked: !canAcceptGameInput(), portrait: portraitBlocked });

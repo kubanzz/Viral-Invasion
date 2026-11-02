@@ -10,6 +10,7 @@ import { acceptedFirstCounter } from './counterLesson';
 import { ENEMY_CROWD, moveEnemyThroughCrowd, planEnemySpacing } from '../actors/enemyCrowd';
 import { endlessCombatStats } from './endlessGrowth';
 import { endlessPacing } from './endlessPacing';
+import { combatPopulationLimit } from './combatPopulation';
 import { endlessStrikeDamage } from './endlessStrikeBalance';
 import { EnemyNavigator } from '../actors/enemyNavigation';
 import { enemyAttackPlan, enemyAttackHits, enemyRayEnd, segmentDistance } from './enemyTactics';
@@ -361,7 +362,7 @@ export class BattleDirector {
 
   private aliveCount(): number { return this.s.targets.filter(t => t.hp > 0 && t.role !== 'event').length; }
   private spawn(position: Vec, role: 'virus' | 'elite', traits = this.b.traits, generation = 0, sourceId?: string, accepted?: () => void): Target | undefined {
-    if (this.aliveCount() >= B.maxActors) return;
+    if (this.aliveCount() >= combatPopulationLimit(this.s)) return;
     const encounter = this.b.encounter, opening = role === 'virus' && encounter?.configId === 'campaign-1' && encounter.firstCounter.status !== 'resolved';
     if (opening && (this.s.targets.filter(target => target.hp > 0 && target.role === 'virus').length >= ENCOUNTER_CONFIGS['campaign-1'].openingOrdinaryCap
       || encounter.guideVariant === 'guided' && encounter.openingSpawned >= ENCOUNTER_CONFIGS['campaign-1'].openingSpawnBudget)) return;
@@ -406,7 +407,7 @@ export class BattleDirector {
         target.kind = trait === 'FISSION' ? 'cluster' : 'single';
       }
       // Reserve an elite slot by retiring one ordinary body if the population is full.
-      if (!formal && this.aliveCount() >= B.maxActors) {
+      if (!formal && this.aliveCount() >= combatPopulationLimit(s)) {
         const ordinary = s.targets.find(t => t.hp > 0 && t.role === 'virus');
         if (ordinary) { ordinary.hp = 0; ordinary.deadAt = s.elapsed; ordinary.attackAt = undefined; }
       }

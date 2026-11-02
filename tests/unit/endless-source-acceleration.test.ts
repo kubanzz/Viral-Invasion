@@ -68,10 +68,10 @@ describe('finite source does not hold an empty attack queue idle', () => {
     expect(f.e.phase).toBe('intermission'); expect(f.completed).toEqual([6]);
   });
 
-  it('continues counting the live source and pending children toward the same 24-place population cap', () => {
+  it('continues counting the live source and pending children toward the same 48-place population cap', () => {
     const f = fixture(), parent = attacker('pending-parent', { hp: 0, traits: ['FISSION'], splitAt: 99,
       splitPositions: [{ x: 350, y: 400 }, { x: 450, y: 400 }] });
-    f.state.targets.push(...Array.from({ length: 21 }, (_, index) => attacker(`crowd-${index}`)), parent);
+    f.state.targets.push(...Array.from({ length: 45 }, (_, index) => attacker(`crowd-${index}`)), parent);
     f.e.nextSpawnAt = f.state.elapsed;
     f.director.afterInput();
     expect(f.e.remainingToSpawn).toBe(3); expect(f.e.pendingChildren).toBe(2);

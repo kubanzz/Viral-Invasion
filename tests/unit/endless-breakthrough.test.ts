@@ -31,7 +31,7 @@ describe('earned elite-wave breakthroughs', () => {
       const growth = createEndlessGrowth(7);
       offerEndlessUpgrade(growth, wave);
       expect(growth.draft!.breakthrough).not.toBe(true);
-      expect(growth.draft!.options.every(option => option.nextRank === option.currentRank + 1)).toBe(true);
+      expect(growth.draft!.options.every(option => option.nextRank === option.currentRank + (wave === 1 && option.id === 'nova' ? 2 : 1))).toBe(true);
     }
     let observed = 0;
     for (let seed = 1; seed <= 80; seed++) {

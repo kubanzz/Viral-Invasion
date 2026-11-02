@@ -1,5 +1,6 @@
 import { wallHit } from '../actors/collision';
 import { activeWorld, type GameState, type Vec } from '../game/types';
+import { drawCombatReceiptFeedback } from './endlessVisuals';
 
 const TAU = Math.PI * 2;
 function ring(ctx: CanvasRenderingContext2D, center: Vec, radius: number): void {
@@ -9,6 +10,7 @@ function ring(ctx: CanvasRenderingContext2D, center: Vec, radius: number): void 
 /** Only reads simulation geometry. Raster assets and collision remain independent. */
 export function drawCombatEffects(ctx: CanvasRenderingContext2D, state: GameState, lowEffects = false): void {
   const world = activeWorld(state);
+  drawCombatReceiptFeedback(ctx, state, lowEffects);
   for (const effect of state.effects) if (effect.kind === 'slash') {
     const age = state.elapsed - effect.born;
     if (age < 0 || age >= effect.duration) continue;

@@ -7,6 +7,7 @@ import { legionView } from './legionHud';
 import { touchCopy } from './touchCopy';
 import { artIconMarkup } from './artIcons';
 import { ANTIBODY_BALANCE } from '../game/immuneCells';
+import { endlessTutorialHint } from './endlessTutorial';
 
 const escape = (value: string) => value.replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]!));
 const seconds = (readyAt: number, elapsed: number) => Math.max(0, readyAt - elapsed);
@@ -15,7 +16,7 @@ const cooldownRing = '<svg class="mobile-cooldown-ring" viewBox="0 0 64 64" aria
 /** Kept outside #hud: modals make that element inert while paused. */
 export const mobileHudMarkup = `<section id="mobile-controls" aria-label="触屏操作" data-layout="moba-v3" data-active="false" data-phase="menu">
   <button type="button" id="mobile-map-button" class="mobile-map" data-action="mobile-map" aria-label="打开战况与完整地图"><canvas id="mobile-minimap" width="192" height="116" aria-hidden="true"></canvas></button>
-  <div class="mobile-readouts" aria-label="战场状态"><div class="mobile-hp-line"><span>耐久</span><b id="mobile-hp">100</b></div><div class="mobile-hp-track"><i id="mobile-hp-fill"></i></div><div class="mobile-status-line"><span id="mobile-organ-readout">心脏 <b id="mobile-tissue">70%</b></span><span>感 <b id="mobile-infection">0%</b></span><span>稳 <b id="mobile-vitality">100%</b></span></div><div class="mobile-organ-track"><i id="mobile-tissue-fill"></i></div></div>
+  <div class="mobile-readouts" aria-label="战场状态"><div class="mobile-hp-line"><span>耐久</span><b id="mobile-hp">100</b></div><div class="mobile-hp-track"><i id="mobile-hp-fill"></i></div><div class="mobile-status-line"><span id="mobile-organ-readout">心脏 <b id="mobile-tissue">70%</b></span><span class="mobile-campaign-readout">感 <b id="mobile-infection">0%</b></span><span class="mobile-campaign-readout">稳 <b id="mobile-vitality">100%</b></span></div><div class="mobile-organ-track"><i id="mobile-tissue-fill"></i></div></div>
   <nav class="mobile-top-actions"><button type="button" data-action="mobile-details" aria-label="打开战况与地图">☷</button><button type="button" data-action="pause" aria-label="暂停游戏">Ⅱ</button></nav>
   <div class="mobile-objective"><span id="mobile-objective-text"></span><b id="mobile-wave"></b></div>
   <div class="mobile-warning-strip" id="mobile-warnings" role="status" aria-live="polite" hidden></div>
@@ -105,13 +106,14 @@ function shortObjective(state: GameState): string {
 /** Read-only presentation. It never decides targets or commits game actions. */
 export function mobileHudView(state: GameState): MobileHudView {
   const warnings: MobileHudView['warnings'] = [];
-  if (state.battle) {
+  if (state.battle && !state.endless) {
     const pressure = state.battle.pressure;
     if (pressure.criticalSince !== null) warnings.push({ kind: 'fatal', text: `失控 ${Math.max(0, BATTLE_BALANCE.crisisDuration - (state.elapsed - pressure.criticalSince)).toFixed(1)}s` });
     else if (pressure.organAlarm) warnings.push({ kind: 'organ', text: `${state.battle.organId === 'heart' ? '心脏' : '肺部'}濒危 ${Math.ceil(state.tissue.hp)}%` });
     const warning = state.battle.warning;
     if (warning) warnings.push({ kind: 'mutation', text: `${TRAITS[warning.trait].name} ${Math.max(0, warning.applyAt - state.elapsed).toFixed(1)}s` });
   }
+  if (state.endless && state.tissue.hp < 30) warnings.push({ kind: 'organ', text: `组织濒危 ${Math.ceil(state.tissue.hp)}%` });
   const pending = state.endless?.evolution?.pending;
   if (pending) warnings.push({ kind: 'mutation', text: `${pending.decision.generation}代 ${pending.decision.traits.map(trait => TRAITS[trait].name).join('/')} ${Math.max(0, pending.appliesAt - state.elapsed).toFixed(1)}s` });
   const crisis = state.campaign?.encounters?.crisis;
@@ -149,8 +151,8 @@ export function mobileHudView(state: GameState): MobileHudView {
   if (!state.battle && Math.hypot(state.terminal.x - state.player.x, state.terminal.y - state.player.y) <= BALANCE.interactionRange) Object.assign(interaction, { label: '复测', hint: '可用', nearby: true });
   if (nearby?.id === 'airway') interaction.label = state.campaign?.arenas.lung.flow?.airwayOpen ? '关气道' : '开气道';
   return { hp: `${Math.ceil(state.player.hp)}/${hostEventMaxHp(state)}`, tissue: `${Math.ceil(state.tissue.hp / state.tissue.maxHp * 100)}%`,
-    organ: state.battle?.organId === 'lung' ? '肺部' : '心脏', infection: state.battle ? `${Math.ceil(state.battle.pressure.infection)}%` : '—', vitality: state.battle ? `${Math.ceil(state.battle.pressure.vitality)}%` : '—',
-    objective: shortObjective(state), notice: activeNotice(state), wave: state.endless ? `第${state.endless.wave}波 · 剩余${endlessRemaining(state)}` : '', warnings: warnings.map(warning => ({ ...warning, text: touchCopy(warning.text) })), interaction };
+    organ: state.battle?.organId === 'lung' ? '肺部' : '心脏', infection: state.battle && !state.endless ? `${Math.ceil(state.battle.pressure.infection)}%` : '', vitality: state.battle && !state.endless ? `${Math.ceil(state.battle.pressure.vitality)}%` : '',
+    objective: shortObjective(state), notice: endlessTutorialHint(state, true) || activeNotice(state), wave: state.endless ? `第${state.endless.wave}波 · 剩余${endlessRemaining(state)}` : '', warnings: warnings.map(warning => ({ ...warning, text: touchCopy(warning.text) })), interaction };
 }
 
 export interface MobileHudFlags { blocked?: boolean; portrait?: boolean }

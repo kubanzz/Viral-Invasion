@@ -1,6 +1,6 @@
 import { distance, isLegalPosition, moveWithCollision, normalized, wallHit } from '../actors/collision';
 import { SeedRng } from '../core/rng';
-import { BATTLE_BALANCE, TRAITS } from './battleConfig';
+import { TRAITS } from './battleConfig';
 import type { TraitId } from './battleTypes';
 import type { EndlessBatch, EndlessFormation, EndlessGameState, EndlessHost, EndlessSpawnRole, EndlessState } from './endlessTypes';
 import type { EnemyTactic } from './enemyTacticsTypes';
@@ -15,14 +15,15 @@ import { endlessAssaultPosition, endlessAssaultSlots } from './endlessAssault';
 import { makeViralCapsuleCarrier, viralCapsulePlan } from './viralCapsules';
 import { ENDLESS_SOURCE_BALANCE, isEndlessSourceId, planEndlessSource, sourceQuotaPosition, sourceQuotaRemaining } from './endlessSource';
 import { activeWorld, type GameEvent, type GameState, type Target, type Vec } from './types';
+import { ENDLESS_POPULATION_LIMIT } from './combatPopulation';
 export type { EndlessHost, EndlessState } from './endlessTypes';
 
 export const ENDLESS_BALANCE = {
   warningSeconds: 2, traitWarningSeconds: 8, intermissionSeconds: 1,
   batchSize: 3, batchInterval: 2, minimumBatchInterval: 1.2,
   minimumSpawnDistance: 340, spawnRingInner: 420, spawnRingOuter: 600,
-  spawnGrace: 1.5, maximumActors: BATTLE_BALANCE.maxActors,
-  maximumWaveBudget: 48, maximumFissionParents: 4,
+  spawnGrace: 1.5, maximumActors: ENDLESS_POPULATION_LIMIT,
+  maximumWaveBudget: 360, maximumFissionParents: 4,
   comboSeconds: 3, maximumComboMultiplier: 4,
 } as const;
 
@@ -37,6 +38,7 @@ const MIXED_SUPPORT_TACTICS: readonly EnemyTactic[] = ['crystal-charge', 'fissio
 
 /** Later supports reuse attacks presented by the three early elite lessons. */
 export function endlessSupportTactics(seed: number, wave: number): EnemyTactic[] {
+  if (wave <= 5) return wave === 3 || wave === 5 ? ['thin-ray'] : [];
   if (wave < 16) return Array.from({ length: wave < 3 ? 0 : wave < 6 ? 1 : 2 }, () => 'thin-ray' as const);
   const rotation = new SeedRng((seed ^ 0x53555050) >>> 0).int(0, 2);
   const first = (rotation + wave - 16) % MIXED_SUPPORT_TACTICS.length;
@@ -51,8 +53,11 @@ function wavePlan(state: GameState, wave: number, inheritedTraits?: readonly Tra
   const eliteWave = wave % 5 === 0;
   const generation = Math.floor(wave / 5);
   const offset = new SeedRng((seed ^ 0x454e444c) >>> 0).int(0, 2);
-  const traits: TraitId[] = inheritedTraits ? [...inheritedTraits] : generation === 0 ? [] : [TRAIT_ORDER[(offset + generation - 1) % 3]];
-  if (!inheritedTraits && generation >= 3) traits.push(TRAIT_ORDER[(offset + generation - 2) % 3]);
+  const traits: TraitId[] = wave <= 5 ? wave === 5 ? ['CARAPACE'] : [] : inheritedTraits ? [...inheritedTraits] : generation === 0 ? [] : [TRAIT_ORDER[(offset + generation - 1) % 3]];
+  // The first three elite lessons cover every later mixed-support tactic.
+  if (wave === 10) traits.splice(0, traits.length, 'FISSION');
+  if (wave === 15) traits.splice(0, traits.length, 'MIMIC');
+  if (!inheritedTraits && generation >= 3 && wave !== 15) traits.push(TRAIT_ORDER[(offset + generation - 2) % 3]);
   const formation = traits[0] === 'FISSION' && wave % 2 === 1 ? 'fission-pack' : FORMATIONS[(wave - 1) % FORMATIONS.length];
   const formationLabel = `${FORMATION_LABELS[formation]}${wave >= 16 ? ' · 混编支援' : ''}`;
   const cycle = eliteWave && wave >= 20 ? createEliteTacticCycle(traits) : undefined;
@@ -60,7 +65,10 @@ function wavePlan(state: GameState, wave: number, inheritedTraits?: readonly Tra
     : eliteWave ? `精英围猎 · ${TRAITS[traits[0]].name}` : traits.length ? `${TRAITS[traits[0]].name} · ${formationLabel}` : formationLabel;
   const title = `${pacing.label} · ${encounterTitle}`;
   const eliteRemaining = eliteWave ? Math.min(2, 1 + Math.floor((wave - 5) / 25)) : 0;
-  const totalToSpawn = Math.min(ENDLESS_BALANCE.maximumWaveBudget, 6 + wave * 2 + pacing.budgetBonus);
+  const openingBudgets = [40, 100, 80, 160, 120];
+  const laterBudgets = [80, 140, 110, 200, 150];
+  const totalToSpawn = wave <= 5 ? openingBudgets[wave - 1]
+    : Math.min(ENDLESS_BALANCE.maximumWaveBudget, laterBudgets[pacing.step - 1] + (pacing.cycle - 1) * 20);
   const supportRemaining = endlessSupportTactics(seed, wave).length;
   const roles: EndlessSpawnRole[] = Array.from({ length: totalToSpawn }, () => 'ordinary');
   for (let elite = 0; elite < eliteRemaining; elite++) roles[elite * 3] = 'elite';
@@ -68,13 +76,15 @@ function wavePlan(state: GameState, wave: number, inheritedTraits?: readonly Tra
   const source = planEndlessSource(state, wave, roles);
   if (source) roles[source.slot] = 'source';
   const rotation = new SeedRng((seed ^ Math.imul(wave, 0x45d9f3b)) >>> 0).int(0, 7);
-  const pairInterval = Math.max(.9, Math.max(2.6, 4.2 - (wave - 1) * .035) * pacing.spawnIntervalMultiplier);
+  // Dense finite cohorts sustain a horde; the population budget gates arrivals.
+  // These timings depend on wave role only, never the player's build or output.
+  const pairInterval = pacing.role === 'release' ? .6 : wave === 1 ? 1.2 : pacing.role === 'elite' ? 1.1 : .9;
   const batchSchedule: EndlessBatch[] = [];
   for (let batch = 0; batch * 3 < totalToSpawn; batch++) {
     const pair = Math.floor(batch / 2), second = batch % 2;
-    const gap = Math.max(.14, (formation === 'front' ? .45 : formation === 'cross' ? .7 : formation === 'fission-pack' ? .55 : .6) * pacing.spawnIntervalMultiplier);
+    const gap = pacing.role === 'release' ? .12 : .22;
     const sector = (rotation + (formation === 'cross' ? second * 4 + pair * 2 : formation === 'mixed' ? APPROACH_ORDER[batch % 8] : formation === 'fission-pack' ? pair % 2 : 0)) % 8;
-    batchSchedule.push({ at: pair * pairInterval + second * gap, sector, spread: formation === 'fission-pack' ? .13 : .18,
+    batchSchedule.push({ at: pair * pairInterval + second * gap, sector, spread: formation === 'fission-pack' ? .13 : pacing.role === 'release' ? .48 : wave <= 5 ? .3 : .18,
       roles: roles.slice(batch * 3, batch * 3 + 3) });
   }
   return { traits, title, eliteWave, eliteRemaining, formation, formationLabel, batchSchedule, supportRemaining, ...(source ? { source } : {}),
@@ -115,10 +125,11 @@ export function initializeEndless(state: GameState): void {
     spawnedIds: [], creditedKillIds: [], kills: 0, score: 0, combo: 0, bestCombo: 0, lastKillAt: -1000,
     nextSpawnAt: state.elapsed + plan.warningSeconds, batchSerial: 0, spawnSerial: 0, pendingChildren: 0, directions: [], batchIndex: 0, batchMemberIndex: 0,
     evolution: { history: [], recentPrimaries: [] },
+    tutorial: { fired: false, deployed: false, tissueHurt: false, repaired: false, seenUpgrades: [] },
   };
   battle.stage = 0; battle.stageLabel = `第 1 波 · ${plan.title}`;
   battle.objective = '连续清场成长；普通感染体追击你，潜伏体侵蚀中央组织。每 5 波迎战精英。';
-  state.message = 'WASD 移动 · 按住左键连射 · Q 朝敌群部署免疫小队；清波后选择进化，3 可抢修十字组织。';
+  state.message = 'WASD 移动 · 鼠标瞄准 · 按住左键持续射击。';
   state.messageUntil = 8; state.messagePriority = 1;
 }
 
@@ -129,7 +140,7 @@ export class EndlessDirector {
   private active(): boolean { return !!this.e && this.state.phase === 'playing' && this.state.player.hp > 0 && this.state.tissue.hp > 0; }
   private current(target: Target): boolean { return target.sourceId === sourceId(this.e.wave); }
 
-  /** Reserve the future children too, so simultaneous fission deaths cannot exceed 24. */
+  /** Reserve future children too, so simultaneous fission deaths cannot exceed the mode cap. */
   private population(): { reserved: number; parents: number; pending: number } {
     let reserved = 0, parents = 0, pending = 0;
     for (const target of this.state.targets) {
@@ -325,7 +336,7 @@ export class EndlessDirector {
       let traits: TraitId[] = [];
       // Mixed cohorts retain a fast baseline: never stack every discovered trait on every body.
       if (eliteCycle) traits = [...e.traits];
-      else if (!support && !sourceBody && e.traits.length && (elite || ordinal % 3 !== 2)) traits = [e.traits[ordinal % e.traits.length]];
+      else if (!support && !sourceBody && e.traits.length && (elite || e.wave > 5 && ordinal % 3 !== 2)) traits = [e.traits[ordinal % e.traits.length]];
       if (traits.includes('FISSION') && population.parents >= ENDLESS_BALANCE.maximumFissionParents) {
         // The announced duet keeps its finite queue slot and real child
         // reservation. Only ordinary legacy cohorts may shed this trait.
@@ -353,7 +364,9 @@ export class EndlessDirector {
       const standoff = wantsStandoff && playerDistance >= STANDOFF_BALANCE.inner - 1e-7
         && playerDistance <= STANDOFF_BALANCE.outer + 1e-7;
       const pacing = endlessPacing(e.wave);
-      const hp = Math.round(elite ? 170 * pacing.eliteHealthMultiplier : 68 * pacing.healthMultiplier * (sourceBody ? ENDLESS_SOURCE_BALANCE.healthInOrdinaryBodies : 1));
+      const hp = e.wave <= 5 && !elite && !support && !sourceBody
+        ? pacing.role === 'release' ? 34 : 68
+        : Math.round(elite ? 170 * pacing.eliteHealthMultiplier : 68 * pacing.healthMultiplier * (sourceBody ? ENDLESS_SOURCE_BALANCE.healthInOrdinaryBodies : 1));
       const serial = ++this.state.battle!.nextActorId;
       const id = sourceBody ? e.source!.id : `${elite ? 'elite' : 'virus'}-${serial}`;
       const capsulePlan = viralCapsulePlan(e.wave, e.batchSchedule.flatMap(batch => batch.roles), e.source);

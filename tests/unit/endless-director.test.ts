@@ -23,7 +23,7 @@ function fixture(seed = 71) {
   function advance(seconds: number) { state.elapsed += seconds; state.tick += Math.max(1, Math.round(seconds * 60)); director.beforeInput(); director.afterInput(); }
   function clear(target: Target) { target.hp = 0; director.recordEvent({ type: 'TARGET_CLEARED', tick: state.tick, data: { id: target.id } }); }
   function finishWave() {
-    for (let attempt = 0; attempt < 50 && state.endless!.phase === 'combat'; attempt++) {
+    for (let attempt = 0; attempt < 150 && state.endless!.phase === 'combat'; attempt++) {
       for (const target of state.targets) { if (target.hp > 0) clear(target); target.splitAt = undefined; }
       director.afterInput();
       if (state.endless!.phase === 'combat') advance(2.1);
@@ -34,6 +34,39 @@ function fixture(seed = 71) {
 }
 
 describe('continuous endless wave director', () => {
+  it('announces the five horde budgets, reserves one visible elite lesson, and maintains dense waves after the checkpoint', () => {
+    const f = fixture(); f.advance(E.warningSeconds);
+    const expected = [40, 100, 80, 160, 120, 100, 160];
+    for (let wave = 1; wave <= expected.length; wave++) {
+      const e = f.state.endless!, roles = e.batchSchedule.flatMap(batch => batch.roles);
+      expect(e.wave).toBe(wave); expect(e.totalToSpawn).toBe(expected[wave - 1]);
+      expect(roles).toHaveLength(e.totalToSpawn);
+      if (wave <= 5) {
+        expect(roles.filter(role => role === 'support')).toHaveLength(wave === 3 || wave === 5 ? 1 : 0);
+        expect(roles.filter(role => role === 'elite')).toHaveLength(wave === 5 ? 1 : 0);
+        expect(e.traits).toEqual(wave === 5 ? ['CARAPACE'] : []);
+      }
+      f.finishWave(); f.state.targets = [];
+      if (wave < expected.length) { f.advance(E.intermissionSeconds); f.advance(f.state.endless!.warningSeconds); }
+    }
+  });
+
+  it('fills a harvest cohort to the shared 48-body cap while retaining the finite queue and safe spawn distances', () => {
+    const f = fixture(); f.advance(E.warningSeconds); f.finishWave(); f.state.targets = [];
+    f.advance(E.intermissionSeconds); f.advance(E.warningSeconds);
+    f.state.world = { ...f.state.world!, obstacles: [] };
+    for (let tick = 0; tick < 100; tick++) f.advance(.1);
+    const live = f.state.targets.filter(target => target.hp > 0);
+    expect(live).toHaveLength(48);
+    expect(f.state.endless!.remainingToSpawn).toBe(52);
+    expect(live.every(target => target.hp === 34 && distance(target, f.state.player) >= E.minimumSpawnDistance)).toBe(true);
+    const before = f.state.endless!.spawnSerial; f.advance(100);
+    expect(f.state.endless!.spawnSerial).toBe(before);
+    f.clear(live[0]); f.advance(.3);
+    expect(f.state.targets.filter(target => target.hp > 0)).toHaveLength(48);
+    expect(f.state.endless!.remainingToSpawn).toBe(51);
+  });
+
   it('removes campaign production and research while retaining a legal large chamber and central facilities', () => {
     const f = fixture(), s = f.state, world = s.world!;
     expect(s.targets).toEqual([]); expect(s.battle!.graph.edges).toEqual([]); expect(s.battle!.nextSpawnAt).toEqual({});
@@ -74,6 +107,9 @@ describe('continuous endless wave director', () => {
   it('brings the next real batch within half a second of an actual public-input clear', () => {
     const session = new GameSession(71, { mode: 'endless' }); session.start();
     const s = session.state, pursuit: GameEvent[] = [];
+    // An explicit sparse schedule isolates fast-clear acceleration from horde density.
+    s.endless!.batchSchedule = s.endless!.batchSchedule.slice(0, 3).map((batch, index) => ({ ...batch, at: [0, .45, 3.5][index], roles: index === 2 ? batch.roles.slice(0, 2) : batch.roles }));
+    s.endless!.totalToSpawn = s.endless!.remainingToSpawn = 8;
     const idle = { moveX: 0, moveY: 0, aim: { x: s.player.x + 1, y: s.player.y }, fire: false };
     session.bus.on('event', event => { if (event.type === 'ENDLESS_PURSUIT_ACCELERATED') pursuit.push(event); });
     for (let tick = 0; tick < 8 * 60 && pursuit.length === 0; tick++) {
@@ -112,7 +148,7 @@ describe('continuous endless wave director', () => {
     const closer = f.state.endless!.nextSpawnAt; f.director.afterInput();
     expect(f.state.endless!.nextSpawnAt).toBe(closer);
     expect(f.events.filter(event => event.type === 'ENDLESS_PURSUIT_ACCELERATED')).toHaveLength(1);
-    f.advance(.2); expect(f.state.targets.filter(target => target.hp > 0)).toHaveLength(2);
+    f.advance(.2); expect(f.state.targets.filter(target => target.hp > 0)).toHaveLength(3);
   });
 
   it('freezes a pending pursuit while paused or terminal and never spawns overdue catch-up batches', () => {
@@ -137,6 +173,7 @@ describe('continuous endless wave director', () => {
     const f = fixture(); f.advance(E.warningSeconds); f.finishWave();
     f.advance(E.intermissionSeconds); f.advance(E.warningSeconds); f.advance(.7);
     for (const target of f.state.targets) f.clear(target);
+    f.state.endless!.nextSpawnAt = f.state.elapsed + 2;
     f.director.afterInput(); expect(f.state.endless!.nextSpawnAt - f.state.elapsed).toBeCloseTo(.5);
     const serial = f.state.endless!.batchSerial, remaining = f.state.endless!.remainingToSpawn; f.advance(100);
     expect(f.state.endless!.batchSerial).toBe(serial + 1);
@@ -193,15 +230,15 @@ describe('continuous endless wave director', () => {
     expect(f.state.endless!.kills).toBe(1);
   });
 
-  it('reserves the worst-case fission population, holds a full batch without deleting actors and respects the 24 cap', () => {
+  it('reserves the worst-case fission population, holds a full batch without deleting actors and respects the 48 cap', () => {
     const f = fixture(); f.advance(3); const base = f.state.targets[0];
-    f.state.targets = Array.from({ length: 20 }, (_, index) => ({ ...base, id: `resident-${index}`, traits: index < 4 ? ['FISSION' as const] : [], x: 200 + index * 70, y: 200 }));
+    f.state.targets = Array.from({ length: 44 }, (_, index) => ({ ...base, id: `resident-${index}`, traits: index < 4 ? ['FISSION' as const] : [], x: 200 + index % 20 * 70, y: 200 + Math.floor(index / 20) * 70 }));
     f.state.endless!.remainingToSpawn = 20; const before = structuredClone(f.state.targets); f.advance(2.1);
     expect(f.state.targets).toEqual(before); expect(f.state.endless!.remainingToSpawn).toBe(20);
     // Four dying parents reserve eight landings: no primary batch may steal those slots.
     for (const parent of f.state.targets.slice(0, 4)) { parent.hp = 0; parent.splitAt = f.state.elapsed + .8; parent.splitPositions = [{ x: parent.x, y: 250 }, { x: parent.x, y: 300 }]; }
-    f.advance(2.1); expect(f.state.endless!.pendingChildren).toBe(8); expect(f.state.targets.filter(target => target.hp > 0)).toHaveLength(16);
-    expect(f.state.targets).toHaveLength(20);
+    f.advance(2.1); expect(f.state.endless!.pendingChildren).toBe(8); expect(f.state.targets.filter(target => target.hp > 0)).toHaveLength(40);
+    expect(f.state.targets).toHaveLength(44);
   });
 
   it('keeps combos from accepted kills, expires them in simulation time and preserves the best', () => {
@@ -230,12 +267,15 @@ describe('continuous endless wave director', () => {
           expect(elite.traits!.length).toBe(wave >= 20 && index === 0 ? 2 : 1);
         }
       }
-      for (const target of f.state.targets.filter(target => target.hp > 0 && target.role === 'virus')) expect(target.maxHp).toBe(Math.round(68 * endlessPacing(wave).healthMultiplier));
+      for (const target of f.state.targets.filter(target => target.hp > 0 && target.role === 'virus')) {
+        const openingOrdinary = wave <= 5 && target.tactic === 'melee';
+        expect(target.maxHp).toBe(openingOrdinary ? wave === 2 || wave === 4 ? 34 : 68 : Math.round(68 * endlessPacing(wave).healthMultiplier));
+      }
       f.finishWave();
       // Mimic the host's bounded corpse cleanup rather than retaining test corpses forever.
       f.state.targets = [];
     }
-    expect(new Set(eliteTraits.slice(0, 3)).size).toBe(3); expect(f.completed).toHaveLength(31);
+    expect(eliteTraits[0]).toBe('CARAPACE'); expect(new Set(eliteTraits).size).toBe(3); expect(f.completed).toHaveLength(31);
     expect(f.state.endless!.clearedWaves).toBe(31); expect(f.state.phase).toBe('playing');
   });
 

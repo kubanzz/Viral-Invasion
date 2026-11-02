@@ -42,6 +42,9 @@ describe('touch battlefield status', () => {
     const view = mobileHudView(state);
     expect(view.wave).toBe('第7波 · 剩余6');
     expect(view.hp).toBe('100/140');
+    expect(view.infection).toBe('');
+    expect(view.vitality).toBe('');
+    expect(view.notice).toContain('按住右下净化盘');
   });
 
   it('keeps attack and organ-crisis countdowns in compact warnings', () => {

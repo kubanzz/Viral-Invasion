@@ -18,50 +18,48 @@ function milestoneFixture(equipped: ProtocolId, learned: ProtocolId, targets: Ta
   s.targets = targets;
   s.battle!.graph.nodes.push(...targets.map(target => ({ id: target.id, kind: 'source' as const, x: target.x, y: target.y, active: true, infected: true })));
   Object.assign(s.growth!, { xp: 220, level: 5, nextXp: null, starterDebt: 0, equipped: [{ id: equipped, tuning: 'balanced' }] });
+  Object.assign(s.endlessGrowth!, { level: 1, ranks: { immune: 1 } });
   session.completeWave(10);
-  session.step(input());
   expect(s.phase).toBe('paused');
+  const combat = s.endlessGrowth!.draft!;
+  expect(session.chooseCombatUpgrade(combat.id, 'immune', s.growth!.runId)).toBe(true);
   expect(s.growth!.draft).toMatchObject({ source: 'endless', endlessWave: 10 });
   const draft = s.growth!.draft!, option = draft.options.find(option => option.protocolId === learned)!;
   expect(option).toBeTruthy();
   const pausedTick = s.tick;
   expect(session.chooseDraft({ runId: s.growth!.runId, draftId: draft.id, optionId: option.id }).kind).toBe('committed');
-  expect(s.phase).toBe('paused');
+  expect(s.phase).toBe('playing');
   expect(s.tick).toBe(pausedTick);
   expect(s.growth!.draft).toBeNull();
-  expect(s.endlessGrowth!.draft).not.toBeNull();
-  const combat = s.endlessGrowth!.draft!;
-  expect(session.chooseCombatUpgrade(combat.id, 'immune', s.growth!.runId)).toBe(true);
+  expect(s.endlessGrowth!.draft).toBeNull();
   expect(s.phase).toBe('playing');
   expect(s.growth!.equipped.map(slot => slot.id)).toEqual([equipped, learned]);
-  expect(s.endlessGrowth!.level).toBe(1);
+  expect(s.endlessGrowth!.level).toBe(2);
   expect(s.growth!.research).toBe(0);
   return session;
 }
 
 describe('milestone-selected synergy receipts through actual session combat', () => {
-  it('keeps XP, milestone and combat choices paused through all three public transactions', () => {
+  it('keeps combat and milestone choices paused without an XP draft or a checkpoint bypass', () => {
     const session = new GameSession(71, { mode: 'endless' }); session.start();
     const s = session.state;
-    Object.assign(s.growth!, { xp: 120, level: 3, nextXp: 150, starterDebt: 0 });
-    session.completeWave(5); session.step(input());
-    expect(s.phase).toBe('paused'); expect(s.growth!.draft!.source).toBe('xp');
-    expect(s.growth!.nextMilestoneWave).toBe(5); expect(s.endlessGrowth!.draft).not.toBeNull();
-    const frozenTick = s.tick, xp = s.growth!.draft!, option = xp.options.find(option => option.protocolId === 'IMMUNE_BEACON') ?? xp.options[0];
-    expect(session.chooseDraft({ runId: s.growth!.runId, draftId: xp.id, optionId: option.id }).kind).toBe('committed');
+    Object.assign(s.endless!, { wave: 5, clearedWaves: 5, phase: 'intermission' });
+    session.completeWave(5);
+    expect(s.phase).toBe('paused'); expect(s.growth!.draft).toBeNull();
+    const frozenTick = s.tick, combat = s.endlessGrowth!.draft!;
+    expect(session.chooseCombatUpgrade(combat.id, combat.options[0].id, s.growth!.runId)).toBe(true);
     expect(s.growth!.draft).toMatchObject({ source: 'endless', endlessWave: 5 });
     expect(s.phase).toBe('paused'); expect(s.tick).toBe(frozenTick);
     const milestone = s.growth!.draft!;
     expect(session.discardDraft(milestone.id).kind).toBe('discarded');
-    expect(s.phase).toBe('paused'); expect(s.endlessGrowth!.draft).not.toBeNull();
+    expect(s.phase).toBe('paused'); expect(s.endlessGrowth!.draft).toBeNull();
     for (let count = 0; count < 20; count++) session.step(input({ fire: true, scan: true }));
     expect(s.tick).toBe(frozenTick);
-    const combat = s.endlessGrowth!.draft!;
-    expect(session.chooseCombatUpgrade(combat.id, 'immune', s.growth!.runId)).toBe(true);
+    expect(session.continueEndlessStage()).toBe(true);
     expect(s.phase).toBe('playing'); expect(s.tick).toBe(frozenTick);
-    expect(s.growth).toMatchObject({ xp: 150, level: 4, draft: null, nextMilestoneWave: null, lastMilestoneWave: 5 });
+    expect(s.growth).toMatchObject({ xp: 0, level: 0, draft: null, nextMilestoneWave: null, lastMilestoneWave: 5 });
     expect(s.endlessGrowth!.level).toBe(1);
-    expect(s.growth!.consumedDraftIds).toEqual([xp.id, milestone.id]);
+    expect(s.growth!.consumedDraftIds).toEqual([milestone.id]);
   });
 
   it('accepts a real resonance last hit followed by exactly three actual chain hops under one synergy root', () => {

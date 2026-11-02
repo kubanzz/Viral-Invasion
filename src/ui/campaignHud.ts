@@ -38,7 +38,8 @@ export function healingPointInteractionHint(state: GameState): string | null {
   const nearby = healingPoints(state).filter(node => node.active && Math.hypot(node.x - state.player.x, node.y - state.player.y) <= HEALING_POINT_BALANCE.treatmentRange)
     .sort((a, b) => Math.hypot(a.x - state.player.x, a.y - state.player.y) - Math.hypot(b.x - state.player.x, b.y - state.player.y))[0];
   if (!nearby) return null;
-  if (nearby.infection >= 100) return `3 + 左键 · 夺回治疗点，消耗 2 研究样本（已有 ${state.growth?.research ?? 0}）`;
+  if (nearby.infection >= 100) return state.endless ? '3 + 左键 · 夺回治疗点，本次不回血，4秒后可正常治疗'
+    : `3 + 左键 · 夺回治疗点，消耗 2 研究样本（已有 ${state.growth?.research ?? 0}）`;
   if (nearby.healReadyAt > state.elapsed) return `治疗点恢复中 ${(nearby.healReadyAt - state.elapsed).toFixed(1)} 秒 · 感染 ${Math.ceil(nearby.infection)}%`;
   return `3 + 左键 · ${nearby.infection > 0 ? `快速净化（感染 ${Math.ceil(nearby.infection)}%） / ` : ''}免费治疗耐久 +25`;
 }

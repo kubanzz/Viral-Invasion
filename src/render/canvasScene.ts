@@ -27,6 +27,7 @@ import { drawPlayerPresence, playerPresence } from './playerPresence';
 import type { ArtPresentation } from './artPresentation';
 import { crosshairStatus, type CrosshairStatus } from './crosshairStatus';
 import { drawHostEventGround, drawHostEventLabels, drawHostEventTarget } from './hostEventVisuals';
+import { drawEndlessRestoration } from './endlessVisuals';
 
 const TAU = Math.PI * 2;
 const hash = (n: number): number => { const a = Math.sin(n * 127.1 + 311.7) * 43758.5453123; return a - Math.floor(a); };
@@ -163,6 +164,7 @@ export class CanvasScene {
       ctx.drawImage(this.landscapes.get(key)!, -100, -200);
     }
     if (this.art) this.drawSurfaceFinish(ctx, state);
+    drawEndlessRestoration(ctx, state, Boolean(opts.lowEffects));
     this.drawAtmosphere(ctx, state, Boolean(opts.lowEffects));
     this.drawGroundSignals(ctx, state, aim);
     drawHostEventGround(ctx, state);
@@ -518,7 +520,7 @@ export class CanvasScene {
       const wait = Math.max(0, (node.healReadyAt ?? 0) - time);
       this.addEntityLabel({ id: `device:${node.id}`, anchor: node, offset: { x: 0, y: healingNear ? -72 : 29 }, priority: healingNear ? 76 : infection > 0 ? 55 : 35, essential: healingNear,
         lines: [{ text: occupied ? '✚ 治疗点 · 已感染' : infection > 0 ? `✚ 治疗点 · 感染 ${Math.ceil(infection)}%` : '✚ 治疗点', color, size: 11 },
-          { text: wait > 0 ? `恢复中 ${wait.toFixed(1)}s` : occupied ? '3 + 点击 · 消耗 2 样本夺回' : healingNear ? '3 + 点击 · 快速净化 / 耐久 +25' : '靠近后用 3 治疗', color: '#d3e2cb', size: 10 }],
+          { text: wait > 0 ? `恢复中 ${wait.toFixed(1)}s` : occupied ? state.endless ? '3 净化夺回 · 本次不回血 · 冷却4秒' : '3 + 点击 · 消耗 2 样本夺回' : healingNear ? '3 + 点击 · 快速净化 / 耐久 +25' : '靠近后用 3 治疗', color: '#d3e2cb', size: 10 }],
         bar: infection > 0 ? { ratio: infection / 100, color: '#d99a92', width: 55 } : undefined });
     } else if (node.id === 'airway' && flow) {
       drawLungAirway(ctx, state, flow, near, this.labels, node);
@@ -817,6 +819,8 @@ export class CanvasScene {
 
   private drawEffects(ctx: CanvasRenderingContext2D, state: GameState, low: boolean): void {
     for (const effect of state.effects) {
+      // Dense challenge hits are merged from accepted receipts in combatEffects.
+      if (state.endless && effect.kind === 'hit') continue;
       const age = state.elapsed - effect.born, progress = clamp(age / effect.duration, 0, 1);
       if (progress >= 1 || age < 0) continue;
       ctx.save(); ctx.globalAlpha = 1 - progress;

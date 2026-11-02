@@ -25,6 +25,11 @@ function reserved(session: GameSession): number {
 function pendingFission(options: { terminalQueue?: boolean; earlierDeadline?: boolean } = {}) {
   const session = new GameSession(71, { mode: 'endless' }); session.start();
   const s = session.state, events: GameEvent[] = [];
+  // Pin a sparse eight-body schedule to isolate pursuit/fission timing from
+  // the separately tested high-density opening and its 40-body budget.
+  s.endless!.batchSchedule = s.endless!.batchSchedule.slice(0, 3).map((batch, index) => ({ ...batch,
+    at: [0, .45, 3.5][index], roles: index === 2 ? batch.roles.slice(0, 2) : batch.roles }));
+  s.endless!.totalToSpawn = s.endless!.remainingToSpawn = 8;
   session.bus.on('event', event => events.push(structuredClone(event)));
   // Let both initial three-body pulses enter before shooting any target.
   ticks(session, 147);
@@ -146,31 +151,31 @@ describe('finite pursuit overlapping an unchanged fission promise', () => {
     expect(f.events.some(event => event.type === 'ENDLESS_WAVE_CLEARED')).toBe(false);
   });
 
-  it('holds a due primary batch behind 24 actual and reserved actors, then spends each freed budget slot once', () => {
+  it('holds a due primary batch behind 48 actual and reserved actors, then spends each freed budget slot once', () => {
     const f = pendingFission(), { s, session, parent } = f, e = s.endless!;
-    // Explicit density fixture: 16 ordinary residents plus four pending two-child
-    // promises fill 24 slots. This verifies admission, not natural crowd survival.
+    // Explicit density fixture: 40 ordinary residents plus four pending two-child
+    // promises fill 48 slots. This verifies admission, not natural crowd survival.
     s.world = { width: 2400, height: 1500, bounds: { left: 20, right: 2380, top: 20, bottom: 1480 }, obstacles: [], foreground: { x: 0, y: 0, width: 0, height: 0 } };
-    for (let index = 0; index < 16; index++) {
-      const angle = index * Math.PI * 2 / 16;
+    for (let index = 0; index < 40; index++) {
+      const angle = index * Math.PI * 2 / 40;
       s.targets.push({ ...parent, id: `density-resident-${index}`, x: s.player.x + Math.cos(angle) * 550, y: s.player.y + Math.sin(angle) * 550,
         hp: 68, maxHp: 68, traits: [], kind: 'single', splitAt: undefined, splitPositions: undefined, attackReady: s.elapsed + 10 });
     }
     for (let index = 0; index < 3; index++) s.targets.push({ ...parent, id: `density-pending-${index}`, x: 350 + index * 350, y: 250,
       splitPositions: [{ x: 323 + index * 350, y: 260 }, { x: 377 + index * 350, y: 260 }] });
     const remaining = e.remainingToSpawn, serial = e.spawnSerial;
-    expect(reserved(session)).toBe(24);
+    expect(reserved(session)).toBe(48);
     expect(e.nextSpawnAt - f.deathAt).toBeCloseTo(.5);
     ticks(session, 30);
     expect(e.pendingChildren).toBe(8); expect(e.spawnSerial).toBe(serial); expect(e.remainingToSpawn).toBe(remaining);
-    expect(e.batchMemberIndex).toBe(0); expect(reserved(session)).toBe(24);
+    expect(e.batchMemberIndex).toBe(0); expect(reserved(session)).toBe(48);
     expect(e.nextSpawnAt - s.elapsed).toBeCloseTo(.25);
     ticks(session, 18);
-    expect(e.pendingChildren).toBe(0); expect(s.targets.filter(target => target.hp > 0)).toHaveLength(24);
+    expect(e.pendingChildren).toBe(0); expect(s.targets.filter(target => target.hp > 0)).toHaveLength(48);
     expect(f.events.filter(event => event.type === 'FISSION_SPAWNED')).toHaveLength(4);
     expect(f.events.filter(event => event.type === 'FISSION_SPAWNED').every(event => event.data.children === 2)).toBe(true);
     expect(e.spawnSerial).toBe(serial); expect(e.remainingToSpawn).toBe(remaining);
-    const cap = BATTLE_BALANCE.maxActors;
+    const cap = ENDLESS_BALANCE.maximumActors;
     for (let attempt = 0; attempt < 180 && e.remainingToSpawn > 0; attempt++) {
       const target = s.targets.filter(target => target.hp > 0).sort((a, b) => distance(s.player, a) - distance(s.player, b))[0];
       session.step({ ...idle(session), aim: target, fire: true, tool: 1 });

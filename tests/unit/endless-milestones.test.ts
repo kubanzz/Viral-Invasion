@@ -19,16 +19,17 @@ function choose(controller: GrowthController, id: ProtocolId) {
 }
 
 describe('recurring endless protocol milestones', () => {
-  it('queues all earned milestones behind XP without consuming XP, samples or another reward', () => {
-    const controller = new GrowthController(71, 'queued', { version: 1, starterProtocolId: 'IMMUNE_BEACON' });
+  it('awards only explicit protocol milestones, without clear XP or a starter debt', () => {
+    const controller = new GrowthController(71, 'queued', { version: 1, starterProtocolId: 'IMMUNE_BEACON' }, 'endless');
     controller.rewardEndlessWave(1, 1); controller.rewardEndlessWave(2, 2);
-    expect(current(controller).source).toBe('xp');
-    const xpId = current(controller).id, xp = controller.state.xp;
+    expect(controller.state.draft).toBeNull();
+    expect(controller.state.nextXp).toBeNull(); expect(controller.state.starterDebt).toBe(0);
+    expect(controller.state.lastEvolution).toBeUndefined();
+    const xp = controller.state.xp;
     for (const wave of [5, 10, 15]) controller.rewardEndlessMilestone(wave, context());
-    expect(current(controller).id).toBe(xpId);
-    expect(controller.state.nextMilestoneWave).toBe(5);
+    expect(current(controller)).toMatchObject({ source: 'endless', endlessWave: 5 });
+    expect(controller.state.nextMilestoneWave).toBe(10);
     expect(controller.state.lastMilestoneWave).toBe(15);
-    expect(discard(controller)).toMatchObject({ kind: 'discarded', nextDraftId: current(controller).id });
     for (const wave of [5, 10, 15]) {
       expect(current(controller)).toMatchObject({ source: 'endless', endlessWave: wave });
       controller.rewardEndlessMilestone(wave, context());
@@ -39,7 +40,7 @@ describe('recurring endless protocol milestones', () => {
     expect(controller.state.nextMilestoneWave).toBeNull();
     expect(controller.state.xp).toBe(xp);
     expect(controller.state.research).toBe(0);
-    expect(controller.state.rewardedKeys).toEqual(['endless-wave:1', 'endless-wave:2']);
+    expect(controller.state.rewardedKeys).toEqual([]);
     controller.rewardEndlessMilestone(10, context());
     expect(controller.state.draft).toBeNull();
   });

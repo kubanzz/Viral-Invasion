@@ -30,14 +30,14 @@ describe('Healing point HUD', () => {
     expect(healingPointInteractionHint(state)).toBeNull();
   });
 
-  it('documents paid reclamation and labelled colored markers in both modes', () => {
+  it('documents the different reclamation rules and labelled colored markers', () => {
     expect(campaignHudMarkup).toContain('两个治疗点'); expect(campaignHudMarkup).toContain('红色加号为已占领');
     expect(endlessHudMarkup()).toContain('红色加号为已占领');
     expect(campaignOverlay(session().state, true, true, false, false)).toContain('消耗2研究样本才能夺回');
-    expect(endlessOverlay(session(true).state, true, false)).toContain('需要2研究样本夺回');
+    expect(endlessOverlay(session(true).state, true, false)).toContain('本次不回血，4秒后可以正常治疗');
   });
 
-  it('paints clean, contested and occupied markers and shows a local paid-treatment hint without state writes', () => {
+  it('paints markers and shows a local free reclamation hint without state writes', () => {
     const state = session(true).state, nodes = new Map<string, { textContent: string; style: Record<string, string>; dataset: Record<string, string> }>();
     for (const match of endlessHudMarkup().matchAll(/id="([^"]+)"/g)) nodes.set(match[1], { textContent: '', style: {}, dataset: {} });
     const strokes: string[] = [], drawing: Record<string, unknown> = {};
@@ -48,6 +48,8 @@ describe('Healing point HUD', () => {
     const before = structuredClone(state); updateEndlessHud(state);
     expect(strokes).toContain('#f47f78'); expect(strokes).toContain('#88ddcc');
     expect(nodes.get('endless-tissue-route')!.textContent).toContain('3 + 左键 · 夺回治疗点');
+    expect(nodes.get('endless-tissue-route')!.textContent).toContain('本次不回血');
+    expect(nodes.get('endless-tissue-route')!.textContent).not.toContain('研究样本');
     expect(state).toEqual(before);
     points[1].infection = 25; updateEndlessHud(state);
     expect(strokes).toContain('#e9bd61');

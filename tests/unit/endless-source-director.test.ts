@@ -41,7 +41,8 @@ describe('optional far-side finite source plan', () => {
     for (const wave of [1, 5, 6, 7, 8, 10, 11, 16, 21, 31]) {
       const f = fixture(wave), slots = f.e.batchSchedule.flatMap(batch => batch.roles), source = f.e.source;
       expect(!!source).toBe(wave >= 6 && (wave - 1) % 5 === 0);
-      expect(f.e.totalToSpawn).toBe(Math.min(48, 6 + wave * 2 + endlessPacing(wave).budgetBonus));
+      expect(f.e.totalToSpawn).toBe(slots.length);
+      expect(f.e.totalToSpawn).toBeGreaterThanOrEqual(40);
       if (!source) continue;
       expect(slots.filter(role => role === 'source')).toHaveLength(1); expect(slots[0]).toBe('source');
       expect(source.quotaSlots).toEqual(slots.flatMap((role, index) => role === 'ordinary' ? [index] : []).slice(-6));
