@@ -1,0 +1,1445 @@
+{
+  "schemaVersion": 1,
+  "evidenceLevel": "harness-only-self-check",
+  "browserStarted": false,
+  "productionBuildRead": false,
+  "productionAcceptance": false,
+  "policy": {
+    "playerTool": "every observed rAF",
+    "sceneSampleMs": 100,
+    "streamFlushMs": 2000,
+    "maxPendingBytes": 8388608,
+    "maxRecordBytes": 524288,
+    "maxCatalogueEntries": 512,
+    "maxEventKeys": 100000,
+    "maxEventBytes": 16777216,
+    "maxTrackedTargets": 512,
+    "maxPendingRecords": 20000,
+    "enemyTransitions": "rAF-observed logical state changes only; point observations, not continuous enemy animation",
+    "overflow": "Stop recorder and reject completeness; never silently discard player/tool frames",
+    "encoding": "UTF-8 NDJSON, incrementally drained and checked; catalogue records precede their dynamic references"
+  },
+  "fixture": {
+    "path": "artifacts/actor-overhaul-20261103/recorder-check-reaction-v3/recorder-check.synthetic.ndjson",
+    "sha256": "6eecdf09c064f4897a45241b3620f33671dae7fa6e548329148de904b37d923c",
+    "bytes": 13215
+  },
+  "fixtureRecords": 15,
+  "fixtureTiming": {
+    "scope": "Pure Node supplied-state factory and actual hero action timing helper; no browser/Renderer/production art or build loaded.",
+    "caseCount": 100,
+    "stateCount": 4209,
+    "events": {
+      "hurt": 280,
+      "release": 420
+    },
+    "issues": [],
+    "pass": true
+  },
+  "assertions": [
+    {
+      "name": "One batch and cross-action/event/catalogue batches have equivalent aggregate summaries",
+      "pass": true
+    },
+    {
+      "name": "Splits inside JSON records preserve the same aggregate",
+      "pass": true
+    },
+    {
+      "name": "Repeated event across batches is counted once",
+      "pass": true,
+      "details": {
+        "events": 2,
+        "eventRecords": 3
+      }
+    },
+    {
+      "name": "Actual frame lookup, source foot and independent palm/grip/muzzle accept valid fixtures",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "Scene/facility samples remain distinct from player rAF; removed bodies grant no native proof",
+      "pass": true,
+      "details": {
+        "header": 1,
+        "catalogue": 3,
+        "event": 3,
+        "player": 2,
+        "scene": 1,
+        "transition": 3,
+        "checkedFrames": 4,
+        "notApplicableTransitionPoints": 2
+      }
+    },
+    {
+      "name": "Menu uses its actual menu:hero/menu:tool palm attachment and fixed FR idle independently of simulated player state",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "Native -pi and declared +pi describe the same tool direction without relaxing geometry tolerance",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "A real small rotation mismatch still fails the unchanged angular tolerance",
+      "pass": true,
+      "details": [
+        {
+          "record": 4,
+          "kind": "player",
+          "sequence": 1,
+          "tick": 1,
+          "invalid": {
+            "invalidWeaponGeometry": 1
+          },
+          "independentHero": {
+            "expectedClip": "idle",
+            "expectedDirection": "front_right",
+            "actualSemanticId": "fantasy.actor.hero.front_right.idle.00",
+            "decodedClip": "idle",
+            "decodedView": "front_right",
+            "declaredClip": "idle",
+            "declaredDirection": "front_right",
+            "clipMatches": true,
+            "viewMatches": true,
+            "actualNativeFlipX": false
+          },
+          "actorIds": [
+            "player",
+            "player:tool"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Unknown frame and known wrong clip are both rejected",
+      "pass": true,
+      "details": {
+        "invalidFrames": 2,
+        "failures": [
+          {
+            "record": 14,
+            "kind": "player",
+            "sequence": 3,
+            "tick": 3,
+            "invalid": {
+              "provenanceMismatches": 1,
+              "nativeDispatchMismatches": 1,
+              "invalidWeaponGeometry": 1,
+              "invalidSourceRegistration": 1
+            },
+            "independentHero": {
+              "expectedClip": "walk",
+              "expectedDirection": "front_right",
+              "actualSemanticId": null,
+              "decodedClip": null,
+              "decodedView": null,
+              "declaredClip": "walk",
+              "declaredDirection": "front_right",
+              "clipMatches": false,
+              "viewMatches": false,
+              "actualNativeFlipX": false
+            },
+            "actorIds": [
+              "player",
+              "player:tool"
+            ]
+          },
+          {
+            "record": 15,
+            "kind": "player",
+            "sequence": 4,
+            "tick": 4,
+            "invalid": {
+              "provenanceMismatches": 1,
+              "nativeDispatchMismatches": 1
+            },
+            "independentHero": {
+              "expectedClip": "walk",
+              "expectedDirection": "front_right",
+              "actualSemanticId": "fantasy.actor.hero.front_right.idle.00",
+              "decodedClip": "idle",
+              "decodedView": "front_right",
+              "declaredClip": "walk",
+              "declaredDirection": "front_right",
+              "clipMatches": false,
+              "viewMatches": true,
+              "actualNativeFlipX": false
+            },
+            "actorIds": [
+              "player",
+              "player:tool"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "Wrong frames cannot increment valid action coverage or native clip frames",
+      "pass": true,
+      "details": {
+        "observed": true,
+        "samples": 3,
+        "nativeSamples": 1,
+        "actualPlayerFrames": [
+          "fantasy.actor.hero.front_right.walk.01:hero01"
+        ],
+        "firstTick": 2,
+        "lastTick": 4
+      }
+    },
+    {
+      "name": "A sequence gap invalidates completeness",
+      "pass": true,
+      "details": [
+        "Player rAF sequence gap: 1 -> 4"
+      ]
+    },
+    {
+      "name": "A final page/Node count mismatch invalidates completeness",
+      "pass": true,
+      "details": [
+        "Total stream count mismatch: 13 vs 14"
+      ]
+    },
+    {
+      "name": "A catalogue referenced before definition invalidates completeness",
+      "pass": true,
+      "details": [
+        "Catalogue reference precedes definition: c1",
+        "Catalogue reference precedes definition: c1",
+        "Catalogue reference precedes definition: c1"
+      ]
+    },
+    {
+      "name": "Truncated final line and oversized partial record are rejected",
+      "pass": true
+    },
+    {
+      "name": "The actual browser-queue/Node-stream functions preserve all four synthetic rAF rows across drains",
+      "pass": true,
+      "details": {
+        "captureComplete": true,
+        "policy": {
+          "playerTool": "every observed rAF",
+          "sceneSampleMs": 100,
+          "streamFlushMs": 2000,
+          "maxPendingBytes": 8388608,
+          "maxRecordBytes": 524288,
+          "maxCatalogueEntries": 512,
+          "maxEventKeys": 100000,
+          "maxEventBytes": 16777216,
+          "maxTrackedTargets": 512,
+          "maxPendingRecords": 20000,
+          "enemyTransitions": "rAF-observed logical state changes only; point observations, not continuous enemy animation",
+          "overflow": "Stop recorder and reject completeness; never silently discard player/tool frames",
+          "encoding": "UTF-8 NDJSON, incrementally drained and checked; catalogue records precede their dynamic references"
+        },
+        "recordCount": 11,
+        "batches": 3,
+        "bytes": 11571,
+        "maxBatchBytes": 5423,
+        "pageMaxPendingBytes": 5423,
+        "pageMaxPendingRecords": 6,
+        "pageCounts": {
+          "header": 1,
+          "catalogue": 3,
+          "event": 2,
+          "player": 4,
+          "scene": 1,
+          "transition": 0
+        },
+        "retainedEventBytes": 122,
+        "errors": []
+      }
+    },
+    {
+      "name": "Incremental stream hash equals the independently read small fixture hash",
+      "pass": true
+    },
+    {
+      "name": "An intentionally reduced harness queue cap stops capture and rejects completeness",
+      "pass": true,
+      "details": [
+        "Page recorder: Hard evidence cap exceeded (scene, record=1920, pending=3490); capture incomplete"
+      ]
+    },
+    {
+      "name": "Actual recorder distinguishes expired reaction, infection DOT without hurtUntil, and zero-damage events from visual hurt",
+      "pass": true,
+      "details": []
+    },
+    {
+      "name": "All supplied simulation ticks/elapsed and hurt/release event ages meet actual action windows",
+      "pass": true,
+      "details": {
+        "scope": "Pure Node supplied-state factory and actual hero action timing helper; no browser/Renderer/production art or build loaded.",
+        "caseCount": 100,
+        "stateCount": 4209,
+        "events": {
+          "hurt": 280,
+          "release": 420
+        },
+        "issues": [],
+        "pass": true
+      }
+    }
+  ],
+  "pass": true,
+  "summary": {
+    "name": "harness-only",
+    "trace": null,
+    "frameCount": 4,
+    "frameCountScope": "Continuous observed player/tool rAF records only; enemy scene/transition observations are separate tiers.",
+    "tierCounts": {
+      "header": 1,
+      "catalogue": 3,
+      "event": 3,
+      "player": 4,
+      "scene": 1,
+      "transition": 3,
+      "checkedFrames": 6,
+      "notApplicableTransitionPoints": 2
+    },
+    "transport": {
+      "captureComplete": true,
+      "policy": {
+        "playerTool": "every observed rAF",
+        "sceneSampleMs": 100,
+        "streamFlushMs": 2000,
+        "maxPendingBytes": 8388608,
+        "maxRecordBytes": 524288,
+        "maxCatalogueEntries": 512,
+        "maxEventKeys": 100000,
+        "maxEventBytes": 16777216,
+        "maxTrackedTargets": 512,
+        "maxPendingRecords": 20000,
+        "enemyTransitions": "rAF-observed logical state changes only; point observations, not continuous enemy animation",
+        "overflow": "Stop recorder and reject completeness; never silently discard player/tool frames",
+        "encoding": "UTF-8 NDJSON, incrementally drained and checked; catalogue records precede their dynamic references"
+      },
+      "recordCount": 15,
+      "batches": 1,
+      "bytes": 13215,
+      "maxBatchBytes": 13215,
+      "pageMaxPendingBytes": 0,
+      "pageMaxPendingRecords": 0,
+      "pageCounts": {
+        "header": 1,
+        "catalogue": 3,
+        "event": 3,
+        "player": 4,
+        "scene": 1,
+        "transition": 3
+      },
+      "retainedEventBytes": 122,
+      "errors": []
+    },
+    "simulationSeconds": 0.05,
+    "maxAlive": 3,
+    "actionCoverage": {
+      "idle": {
+        "observed": true,
+        "samples": 1,
+        "nativeSamples": 1,
+        "actualPlayerFrames": [
+          "fantasy.actor.hero.front_right.idle.00:hero00"
+        ],
+        "firstTick": 1,
+        "lastTick": 1
+      },
+      "walk": {
+        "observed": true,
+        "samples": 3,
+        "nativeSamples": 1,
+        "actualPlayerFrames": [
+          "fantasy.actor.hero.front_right.walk.01:hero01"
+        ],
+        "firstTick": 2,
+        "lastTick": 4
+      },
+      "fire": {
+        "observed": true,
+        "samples": 4,
+        "nativeSamples": 2,
+        "actualPlayerFrames": [
+          "fantasy.actor.hero.front_right.idle.00:hero00",
+          "fantasy.actor.hero.front_right.walk.01:hero01"
+        ],
+        "firstTick": 1,
+        "lastTick": 4
+      },
+      "walk-fire": {
+        "observed": true,
+        "samples": 3,
+        "nativeSamples": 1,
+        "actualPlayerFrames": [
+          "fantasy.actor.hero.front_right.walk.01:hero01"
+        ],
+        "firstTick": 2,
+        "lastTick": 4
+      },
+      "dash": {
+        "observed": false,
+        "samples": 0,
+        "nativeSamples": 0,
+        "actualPlayerFrames": [],
+        "firstTick": null,
+        "lastTick": null
+      },
+      "charge": {
+        "observed": false,
+        "samples": 0,
+        "nativeSamples": 0,
+        "actualPlayerFrames": [],
+        "firstTick": null,
+        "lastTick": null
+      },
+      "release": {
+        "observed": false,
+        "samples": 0,
+        "nativeSamples": 0,
+        "actualPlayerFrames": [],
+        "firstTick": null,
+        "lastTick": null
+      },
+      "scan": {
+        "observed": false,
+        "samples": 0,
+        "nativeSamples": 0,
+        "actualPlayerFrames": [],
+        "firstTick": null,
+        "lastTick": null
+      },
+      "heal": {
+        "observed": false,
+        "samples": 0,
+        "nativeSamples": 0,
+        "actualPlayerFrames": [],
+        "firstTick": null,
+        "lastTick": null
+      },
+      "hurt": {
+        "observed": false,
+        "samples": 0,
+        "nativeSamples": 0,
+        "actualPlayerFrames": [],
+        "firstTick": null,
+        "lastTick": null
+      }
+    },
+    "heroClipFrames": {
+      "idle": [
+        "hero00"
+      ],
+      "walk": [
+        "hero01"
+      ],
+      "dash": [],
+      "hurt": []
+    },
+    "enemyStateFrames": [],
+    "camera": {
+      "scope": "Actual production main.ts camera; no supplied camera overrides",
+      "normalScaleRange": {
+        "min": 1,
+        "max": 1
+      }
+    },
+    "cssVisibleBodyHeight": {
+      "hero": {
+        "min": 128,
+        "max": 128
+      },
+      "basic": null
+    },
+    "directions": [
+      "front_right"
+    ],
+    "actuallyRenderedDirections": [
+      "front_right"
+    ],
+    "strictNativeCoverage": false,
+    "invalidFrames": 2,
+    "firstInvalidFrames": [
+      {
+        "record": 14,
+        "kind": "player",
+        "sequence": 3,
+        "tick": 3,
+        "invalid": {
+          "provenanceMismatches": 1,
+          "nativeDispatchMismatches": 1,
+          "invalidWeaponGeometry": 1,
+          "invalidSourceRegistration": 1
+        },
+        "independentHero": {
+          "expectedClip": "walk",
+          "expectedDirection": "front_right",
+          "actualSemanticId": null,
+          "decodedClip": null,
+          "decodedView": null,
+          "declaredClip": "walk",
+          "declaredDirection": "front_right",
+          "clipMatches": false,
+          "viewMatches": false,
+          "actualNativeFlipX": false
+        },
+        "actorIds": [
+          "player",
+          "player:tool"
+        ]
+      },
+      {
+        "record": 15,
+        "kind": "player",
+        "sequence": 4,
+        "tick": 4,
+        "invalid": {
+          "provenanceMismatches": 1,
+          "nativeDispatchMismatches": 1
+        },
+        "independentHero": {
+          "expectedClip": "walk",
+          "expectedDirection": "front_right",
+          "actualSemanticId": "fantasy.actor.hero.front_right.idle.00",
+          "decodedClip": "idle",
+          "decodedView": "front_right",
+          "declaredClip": "walk",
+          "declaredDirection": "front_right",
+          "clipMatches": false,
+          "viewMatches": true,
+          "actualNativeFlipX": false
+        },
+        "actorIds": [
+          "player",
+          "player:tool"
+        ]
+      }
+    ],
+    "provenance": [
+      {
+        "id": "player",
+        "texture": "self-check",
+        "frame": "hero00",
+        "x": 100,
+        "y": 200,
+        "width": 128,
+        "height": 128,
+        "originX": 0.5,
+        "originY": 0.85,
+        "rotation": 0,
+        "flipX": false,
+        "flipY": false,
+        "visible": true,
+        "semanticId": "fantasy.actor.hero.front_right.idle.00",
+        "source": "self-check/hero00.png",
+        "visibleCssWidth": 128,
+        "visibleCssHeight": 128,
+        "sourceSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "oldActorSource": false
+      },
+      {
+        "id": "player:tool",
+        "texture": "self-check",
+        "frame": "tool",
+        "x": 100,
+        "y": 176.2,
+        "width": 64,
+        "height": 64,
+        "originX": 0.5,
+        "originY": 0.5,
+        "rotation": 0,
+        "flipX": false,
+        "flipY": false,
+        "visible": true,
+        "semanticId": "fantasy.actor.weapon.emitter",
+        "source": "self-check/tool.png",
+        "visibleCssWidth": 64,
+        "visibleCssHeight": 64,
+        "sourceSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "oldActorSource": false
+      },
+      {
+        "id": "player",
+        "texture": "self-check",
+        "frame": "hero01",
+        "x": 100,
+        "y": 200,
+        "width": 128,
+        "height": 128,
+        "originX": 0.5,
+        "originY": 0.85,
+        "rotation": 0,
+        "flipX": false,
+        "flipY": false,
+        "visible": true,
+        "semanticId": "fantasy.actor.hero.front_right.walk.01",
+        "source": "self-check/hero01.png",
+        "visibleCssWidth": 128,
+        "visibleCssHeight": 128,
+        "sourceSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "oldActorSource": false
+      },
+      {
+        "id": "source-fixture",
+        "texture": "self-check",
+        "frame": "source",
+        "x": 20,
+        "y": 30,
+        "width": 64,
+        "height": 64,
+        "visible": true,
+        "semanticId": "fantasy.source.active",
+        "source": "self-check/source.png",
+        "visibleCssWidth": 64,
+        "visibleCssHeight": 64,
+        "sourceSha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "oldActorSource": false
+      }
+    ],
+    "fallbackFrames": 0,
+    "oldActorFrames": 0,
+    "eventTypes": [
+      "TOOL_FIRED",
+      "PLAYER_CHARGE_RELEASED"
+    ],
+    "events": [
+      {
+        "type": "TOOL_FIRED",
+        "tick": 1,
+        "data": {
+          "tool": 1,
+          "note": "跨批动作"
+        }
+      },
+      {
+        "type": "PLAYER_CHARGE_RELEASED",
+        "tick": 2,
+        "data": {}
+      }
+    ],
+    "naturalLungReached": false,
+    "actorContactReview": "Continuous player/tool feet and native geometry are recorded at each observed rAF. Enemy/native geometry is sampled every 100ms plus rAF-observed logical transition points; enemy animation continuity is not inferred. Review the matching video for visible sliding/grip/scale jumps."
+  },
+  "queueTransport": {
+    "scope": "The actual recording/streaming functions executed against synthetic read-only window.__viral and manually driven rAF callbacks; no browser or production build.",
+    "streamed": {
+      "name": "harness-queue-and-stream",
+      "trace": {
+        "path": "artifacts/actor-overhaul-20261103/recorder-check-reaction-v3/natural/harness-queue-and-stream-rAF.ndjson",
+        "sha256": "b52cdb4eb5d32cc57dad4c4f76c8ccd77035bedb908fffec07105a4f4d523fd5",
+        "bytes": 11571,
+        "encoding": "UTF-8 NDJSON"
+      },
+      "frameCount": 4,
+      "frameCountScope": "Continuous observed player/tool rAF records only; enemy scene/transition observations are separate tiers.",
+      "tierCounts": {
+        "header": 1,
+        "catalogue": 3,
+        "event": 2,
+        "player": 4,
+        "scene": 1,
+        "transition": 0,
+        "checkedFrames": 5,
+        "notApplicableTransitionPoints": 0
+      },
+      "transport": {
+        "captureComplete": true,
+        "policy": {
+          "playerTool": "every observed rAF",
+          "sceneSampleMs": 100,
+          "streamFlushMs": 2000,
+          "maxPendingBytes": 8388608,
+          "maxRecordBytes": 524288,
+          "maxCatalogueEntries": 512,
+          "maxEventKeys": 100000,
+          "maxEventBytes": 16777216,
+          "maxTrackedTargets": 512,
+          "maxPendingRecords": 20000,
+          "enemyTransitions": "rAF-observed logical state changes only; point observations, not continuous enemy animation",
+          "overflow": "Stop recorder and reject completeness; never silently discard player/tool frames",
+          "encoding": "UTF-8 NDJSON, incrementally drained and checked; catalogue records precede their dynamic references"
+        },
+        "recordCount": 11,
+        "batches": 3,
+        "bytes": 11571,
+        "maxBatchBytes": 5423,
+        "pageMaxPendingBytes": 5423,
+        "pageMaxPendingRecords": 6,
+        "pageCounts": {
+          "header": 1,
+          "catalogue": 3,
+          "event": 2,
+          "player": 4,
+          "scene": 1,
+          "transition": 0
+        },
+        "retainedEventBytes": 122,
+        "errors": []
+      },
+      "simulationSeconds": 0.05,
+      "maxAlive": 0,
+      "actionCoverage": {
+        "idle": {
+          "observed": true,
+          "samples": 1,
+          "nativeSamples": 1,
+          "actualPlayerFrames": [
+            "fantasy.actor.hero.front_right.idle.00:hero00"
+          ],
+          "firstTick": 1,
+          "lastTick": 1
+        },
+        "walk": {
+          "observed": true,
+          "samples": 3,
+          "nativeSamples": 1,
+          "actualPlayerFrames": [
+            "fantasy.actor.hero.front_right.walk.01:hero01"
+          ],
+          "firstTick": 2,
+          "lastTick": 4
+        },
+        "fire": {
+          "observed": true,
+          "samples": 4,
+          "nativeSamples": 2,
+          "actualPlayerFrames": [
+            "fantasy.actor.hero.front_right.idle.00:hero00",
+            "fantasy.actor.hero.front_right.walk.01:hero01"
+          ],
+          "firstTick": 1,
+          "lastTick": 4
+        },
+        "walk-fire": {
+          "observed": true,
+          "samples": 3,
+          "nativeSamples": 1,
+          "actualPlayerFrames": [
+            "fantasy.actor.hero.front_right.walk.01:hero01"
+          ],
+          "firstTick": 2,
+          "lastTick": 4
+        },
+        "dash": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        },
+        "charge": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        },
+        "release": {
+          "observed": true,
+          "samples": 3,
+          "nativeSamples": 1,
+          "actualPlayerFrames": [
+            "fantasy.actor.hero.front_right.walk.01:hero01"
+          ],
+          "firstTick": 2,
+          "lastTick": 4
+        },
+        "scan": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        },
+        "heal": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        },
+        "hurt": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        }
+      },
+      "heroClipFrames": {
+        "idle": [
+          "hero00"
+        ],
+        "walk": [
+          "hero01"
+        ],
+        "dash": [],
+        "hurt": []
+      },
+      "enemyStateFrames": [],
+      "camera": {
+        "scope": "Actual production main.ts camera; no supplied camera overrides",
+        "normalScaleRange": {
+          "min": 1,
+          "max": 1
+        }
+      },
+      "cssVisibleBodyHeight": {
+        "hero": {
+          "min": 128,
+          "max": 128
+        },
+        "basic": null
+      },
+      "directions": [
+        "front_right"
+      ],
+      "actuallyRenderedDirections": [
+        "front_right"
+      ],
+      "strictNativeCoverage": false,
+      "invalidFrames": 2,
+      "firstInvalidFrames": [
+        {
+          "record": 10,
+          "kind": "player",
+          "sequence": 3,
+          "tick": 3,
+          "invalid": {
+            "provenanceMismatches": 1,
+            "nativeDispatchMismatches": 1,
+            "invalidWeaponGeometry": 1,
+            "invalidSourceRegistration": 1
+          },
+          "independentHero": {
+            "expectedClip": "walk",
+            "expectedDirection": "front_right",
+            "actualSemanticId": null,
+            "decodedClip": null,
+            "decodedView": null,
+            "declaredClip": "walk",
+            "declaredDirection": "front_right",
+            "clipMatches": false,
+            "viewMatches": false,
+            "actualNativeFlipX": false
+          },
+          "actorIds": [
+            "player",
+            "player:tool"
+          ]
+        },
+        {
+          "record": 11,
+          "kind": "player",
+          "sequence": 4,
+          "tick": 4,
+          "invalid": {
+            "provenanceMismatches": 1,
+            "nativeDispatchMismatches": 1
+          },
+          "independentHero": {
+            "expectedClip": "walk",
+            "expectedDirection": "front_right",
+            "actualSemanticId": "fantasy.actor.hero.front_right.idle.00",
+            "decodedClip": "idle",
+            "decodedView": "front_right",
+            "declaredClip": "walk",
+            "declaredDirection": "front_right",
+            "clipMatches": false,
+            "viewMatches": true,
+            "actualNativeFlipX": false
+          },
+          "actorIds": [
+            "player",
+            "player:tool"
+          ]
+        }
+      ],
+      "provenance": [
+        {
+          "id": "player",
+          "texture": "self-check",
+          "frame": "hero00",
+          "x": 100,
+          "y": 200,
+          "width": 128,
+          "height": 128,
+          "originX": 0.5,
+          "originY": 0.85,
+          "rotation": 0,
+          "flipX": false,
+          "flipY": false,
+          "visible": true,
+          "semanticId": "fantasy.actor.hero.front_right.idle.00",
+          "source": "self-check/hero00.png",
+          "visibleCssWidth": 128,
+          "visibleCssHeight": 128,
+          "sourceSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "oldActorSource": false
+        },
+        {
+          "id": "player:tool",
+          "texture": "self-check",
+          "frame": "tool",
+          "x": 100,
+          "y": 176.2,
+          "width": 64,
+          "height": 64,
+          "originX": 0.5,
+          "originY": 0.5,
+          "rotation": 0,
+          "flipX": false,
+          "flipY": false,
+          "visible": true,
+          "semanticId": "fantasy.actor.weapon.emitter",
+          "source": "self-check/tool.png",
+          "visibleCssWidth": 64,
+          "visibleCssHeight": 64,
+          "sourceSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "oldActorSource": false
+        },
+        {
+          "id": "player",
+          "texture": "self-check",
+          "frame": "hero01",
+          "x": 100,
+          "y": 200,
+          "width": 128,
+          "height": 128,
+          "originX": 0.5,
+          "originY": 0.85,
+          "rotation": 0,
+          "flipX": false,
+          "flipY": false,
+          "visible": true,
+          "semanticId": "fantasy.actor.hero.front_right.walk.01",
+          "source": "self-check/hero01.png",
+          "visibleCssWidth": 128,
+          "visibleCssHeight": 128,
+          "sourceSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "oldActorSource": false
+        }
+      ],
+      "fallbackFrames": 0,
+      "oldActorFrames": 0,
+      "eventTypes": [
+        "TOOL_FIRED",
+        "PLAYER_CHARGE_RELEASED"
+      ],
+      "events": [
+        {
+          "type": "TOOL_FIRED",
+          "tick": 1,
+          "data": {
+            "tool": 1,
+            "note": "跨批动作"
+          }
+        },
+        {
+          "type": "PLAYER_CHARGE_RELEASED",
+          "tick": 2,
+          "data": {}
+        }
+      ],
+      "naturalLungReached": false,
+      "actorContactReview": "Continuous player/tool feet and native geometry are recorded at each observed rAF. Enemy/native geometry is sampled every 100ms plus rAF-observed logical transition points; enemy animation continuity is not inferred. Review the matching video for visible sliding/grip/scale jumps."
+    },
+    "overflow": {
+      "name": "harness-hard-cap",
+      "trace": {
+        "path": "artifacts/actor-overhaul-20261103/recorder-check-reaction-v3/natural/harness-hard-cap-rAF.ndjson",
+        "sha256": "b8437ea22ec131827dff0d53fbac85170ca6a89513124bed4fa29257f23cfcae",
+        "bytes": 3490,
+        "encoding": "UTF-8 NDJSON"
+      },
+      "frameCount": 1,
+      "frameCountScope": "Continuous observed player/tool rAF records only; enemy scene/transition observations are separate tiers.",
+      "tierCounts": {
+        "header": 1,
+        "catalogue": 2,
+        "event": 1,
+        "player": 1,
+        "scene": 0,
+        "transition": 0,
+        "checkedFrames": 1,
+        "notApplicableTransitionPoints": 0
+      },
+      "transport": {
+        "captureComplete": false,
+        "policy": {
+          "playerTool": "every observed rAF",
+          "sceneSampleMs": 100,
+          "streamFlushMs": 2000,
+          "maxPendingBytes": 8388608,
+          "maxRecordBytes": 524288,
+          "maxCatalogueEntries": 512,
+          "maxEventKeys": 100000,
+          "maxEventBytes": 16777216,
+          "maxTrackedTargets": 512,
+          "maxPendingRecords": 20000,
+          "enemyTransitions": "rAF-observed logical state changes only; point observations, not continuous enemy animation",
+          "overflow": "Stop recorder and reject completeness; never silently discard player/tool frames",
+          "encoding": "UTF-8 NDJSON, incrementally drained and checked; catalogue records precede their dynamic references"
+        },
+        "recordCount": 5,
+        "batches": 1,
+        "bytes": 3490,
+        "maxBatchBytes": 3490,
+        "pageMaxPendingBytes": 3490,
+        "pageMaxPendingRecords": 5,
+        "pageCounts": {
+          "header": 1,
+          "catalogue": 2,
+          "event": 1,
+          "player": 1,
+          "scene": 0,
+          "transition": 0
+        },
+        "retainedEventBytes": 70,
+        "errors": [
+          "Page recorder: Hard evidence cap exceeded (scene, record=1920, pending=3490); capture incomplete"
+        ]
+      },
+      "simulationSeconds": 0,
+      "maxAlive": 0,
+      "actionCoverage": {
+        "idle": {
+          "observed": true,
+          "samples": 1,
+          "nativeSamples": 1,
+          "actualPlayerFrames": [
+            "fantasy.actor.hero.front_right.idle.00:hero00"
+          ],
+          "firstTick": 1,
+          "lastTick": 1
+        },
+        "walk": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        },
+        "fire": {
+          "observed": true,
+          "samples": 1,
+          "nativeSamples": 1,
+          "actualPlayerFrames": [
+            "fantasy.actor.hero.front_right.idle.00:hero00"
+          ],
+          "firstTick": 1,
+          "lastTick": 1
+        },
+        "walk-fire": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        },
+        "dash": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        },
+        "charge": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        },
+        "release": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        },
+        "scan": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        },
+        "heal": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        },
+        "hurt": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        }
+      },
+      "heroClipFrames": {
+        "idle": [
+          "hero00"
+        ],
+        "walk": [],
+        "dash": [],
+        "hurt": []
+      },
+      "enemyStateFrames": [],
+      "camera": {
+        "scope": "Actual production main.ts camera; no supplied camera overrides",
+        "normalScaleRange": {
+          "min": 1,
+          "max": 1
+        }
+      },
+      "cssVisibleBodyHeight": {
+        "hero": {
+          "min": 128,
+          "max": 128
+        },
+        "basic": null
+      },
+      "directions": [
+        "front_right"
+      ],
+      "actuallyRenderedDirections": [
+        "front_right"
+      ],
+      "strictNativeCoverage": false,
+      "invalidFrames": 0,
+      "firstInvalidFrames": [],
+      "provenance": [
+        {
+          "id": "player",
+          "texture": "self-check",
+          "frame": "hero00",
+          "x": 100,
+          "y": 200,
+          "width": 128,
+          "height": 128,
+          "originX": 0.5,
+          "originY": 0.85,
+          "rotation": 0,
+          "flipX": false,
+          "flipY": false,
+          "visible": true,
+          "semanticId": "fantasy.actor.hero.front_right.idle.00",
+          "source": "self-check/hero00.png",
+          "visibleCssWidth": 128,
+          "visibleCssHeight": 128,
+          "sourceSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "oldActorSource": false
+        },
+        {
+          "id": "player:tool",
+          "texture": "self-check",
+          "frame": "tool",
+          "x": 100,
+          "y": 176.2,
+          "width": 64,
+          "height": 64,
+          "originX": 0.5,
+          "originY": 0.5,
+          "rotation": 0,
+          "flipX": false,
+          "flipY": false,
+          "visible": true,
+          "semanticId": "fantasy.actor.weapon.emitter",
+          "source": "self-check/tool.png",
+          "visibleCssWidth": 64,
+          "visibleCssHeight": 64,
+          "sourceSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "oldActorSource": false
+        }
+      ],
+      "fallbackFrames": 0,
+      "oldActorFrames": 0,
+      "eventTypes": [
+        "TOOL_FIRED"
+      ],
+      "events": [
+        {
+          "type": "TOOL_FIRED",
+          "tick": 1,
+          "data": {
+            "tool": 1,
+            "note": "跨批动作"
+          }
+        }
+      ],
+      "naturalLungReached": false,
+      "actorContactReview": "Continuous player/tool feet and native geometry are recorded at each observed rAF. Enemy/native geometry is sampled every 100ms plus rAF-observed logical transition points; enemy animation continuity is not inferred. Review the matching video for visible sliding/grip/scale jumps."
+    },
+    "reactionBoundaries": {
+      "name": "harness-hurt-reaction-boundaries",
+      "trace": {
+        "path": "artifacts/actor-overhaul-20261103/recorder-check-reaction-v3/natural/harness-hurt-reaction-boundaries-rAF.ndjson",
+        "sha256": "282f8e110f7eea97d3903b478849b0583cb7a210c77baad39c8389cf41812bf1",
+        "bytes": 9578,
+        "encoding": "UTF-8 NDJSON"
+      },
+      "frameCount": 3,
+      "frameCountScope": "Continuous observed player/tool rAF records only; enemy scene/transition observations are separate tiers.",
+      "tierCounts": {
+        "header": 1,
+        "catalogue": 2,
+        "event": 3,
+        "player": 3,
+        "scene": 1,
+        "transition": 0,
+        "checkedFrames": 4,
+        "notApplicableTransitionPoints": 0
+      },
+      "transport": {
+        "captureComplete": true,
+        "policy": {
+          "playerTool": "every observed rAF",
+          "sceneSampleMs": 100,
+          "streamFlushMs": 2000,
+          "maxPendingBytes": 8388608,
+          "maxRecordBytes": 524288,
+          "maxCatalogueEntries": 512,
+          "maxEventKeys": 100000,
+          "maxEventBytes": 16777216,
+          "maxTrackedTargets": 512,
+          "maxPendingRecords": 20000,
+          "enemyTransitions": "rAF-observed logical state changes only; point observations, not continuous enemy animation",
+          "overflow": "Stop recorder and reject completeness; never silently discard player/tool frames",
+          "encoding": "UTF-8 NDJSON, incrementally drained and checked; catalogue records precede their dynamic references"
+        },
+        "recordCount": 10,
+        "batches": 3,
+        "bytes": 9578,
+        "maxBatchBytes": 5459,
+        "pageMaxPendingBytes": 5459,
+        "pageMaxPendingRecords": 6,
+        "pageCounts": {
+          "header": 1,
+          "catalogue": 2,
+          "event": 3,
+          "player": 3,
+          "scene": 1,
+          "transition": 0
+        },
+        "retainedEventBytes": 276,
+        "errors": []
+      },
+      "simulationSeconds": 0.2666666666666666,
+      "maxAlive": 0,
+      "actionCoverage": {
+        "idle": {
+          "observed": true,
+          "samples": 3,
+          "nativeSamples": 3,
+          "actualPlayerFrames": [
+            "fantasy.actor.hero.front_right.idle.00:hero00"
+          ],
+          "firstTick": 135,
+          "lastTick": 151
+        },
+        "walk": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        },
+        "fire": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        },
+        "walk-fire": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        },
+        "dash": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        },
+        "charge": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        },
+        "release": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        },
+        "scan": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        },
+        "heal": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        },
+        "hurt": {
+          "observed": false,
+          "samples": 0,
+          "nativeSamples": 0,
+          "actualPlayerFrames": [],
+          "firstTick": null,
+          "lastTick": null
+        }
+      },
+      "heroClipFrames": {
+        "idle": [
+          "hero00"
+        ],
+        "walk": [],
+        "dash": [],
+        "hurt": []
+      },
+      "enemyStateFrames": [],
+      "camera": {
+        "scope": "Actual production main.ts camera; no supplied camera overrides",
+        "normalScaleRange": {
+          "min": 1,
+          "max": 1
+        }
+      },
+      "cssVisibleBodyHeight": {
+        "hero": {
+          "min": 128,
+          "max": 128
+        },
+        "basic": null
+      },
+      "directions": [
+        "front_right"
+      ],
+      "actuallyRenderedDirections": [
+        "front_right"
+      ],
+      "strictNativeCoverage": true,
+      "invalidFrames": 0,
+      "firstInvalidFrames": [],
+      "provenance": [
+        {
+          "id": "player",
+          "texture": "self-check",
+          "frame": "hero00",
+          "x": 100,
+          "y": 200,
+          "width": 128,
+          "height": 128,
+          "originX": 0.5,
+          "originY": 0.85,
+          "rotation": 0,
+          "flipX": false,
+          "flipY": false,
+          "visible": true,
+          "semanticId": "fantasy.actor.hero.front_right.idle.00",
+          "source": "self-check/hero00.png",
+          "visibleCssWidth": 128,
+          "visibleCssHeight": 128,
+          "sourceSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "oldActorSource": false
+        },
+        {
+          "id": "player:tool",
+          "texture": "self-check",
+          "frame": "tool",
+          "x": 100,
+          "y": 176.2,
+          "width": 64,
+          "height": 64,
+          "originX": 0.5,
+          "originY": 0.5,
+          "rotation": 0,
+          "flipX": false,
+          "flipY": false,
+          "visible": true,
+          "semanticId": "fantasy.actor.weapon.emitter",
+          "source": "self-check/tool.png",
+          "visibleCssWidth": 64,
+          "visibleCssHeight": 64,
+          "sourceSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "oldActorSource": false
+        }
+      ],
+      "fallbackFrames": 0,
+      "oldActorFrames": 0,
+      "eventTypes": [
+        "PLAYER_HURT"
+      ],
+      "events": [
+        {
+          "type": "PLAYER_HURT",
+          "tick": 126,
+          "data": {
+            "damage": 5,
+            "reason": "synthetic-reaction-boundary"
+          }
+        },
+        {
+          "type": "PLAYER_HURT",
+          "tick": 150,
+          "data": {
+            "damage": 1,
+            "reason": "synthetic-reaction-boundary"
+          }
+        },
+        {
+          "type": "PLAYER_HURT",
+          "tick": 150,
+          "data": {
+            "damage": 0,
+            "reason": "synthetic-reaction-boundary"
+          }
+        }
+      ],
+      "naturalLungReached": false,
+      "actorContactReview": "Continuous player/tool feet and native geometry are recorded at each observed rAF. Enemy/native geometry is sampled every 100ms plus rAF-observed logical transition points; enemy animation continuity is not inferred. Review the matching video for visible sliding/grip/scale jumps."
+    }
+  }
+}

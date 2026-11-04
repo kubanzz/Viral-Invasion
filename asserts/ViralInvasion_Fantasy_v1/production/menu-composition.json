@@ -1,0 +1,183 @@
+{
+  "schemaVersion": 1,
+  "id": "menu.composition.candidate.v02",
+  "status": "composition-candidate-not-runtime-or-live-game-acceptance",
+  "previewOnly": true,
+  "runtimeEligible": false,
+  "preview": {
+    "path": "production/qa/menu-composition-candidate-v02.png",
+    "dimensions": [
+      1600,
+      900
+    ],
+    "sha256": "f0a08e3b6be202ce6f2ae6555f8b2c988aa1024919f259e0e2e08dbc166c00f0"
+  },
+  "camera": {
+    "worldViewport": [
+      1600,
+      1250
+    ],
+    "yScale": 0.72,
+    "projectionAppliedToGroundOnce": true,
+    "spritePositionsProjectedOnce": true,
+    "spriteArtworkYSquashed": false
+  },
+  "reservedMenuUiRegion": {
+    "screenPixels": [
+      0,
+      0,
+      960,
+      900
+    ],
+    "normalized": [
+      0,
+      0,
+      0.6,
+      1
+    ],
+    "objectPixelsInReservedUiRegion": 0,
+    "bakedUi": false,
+    "bakedText": false,
+    "bakedActors": false,
+    "bakedEnemies": false
+  },
+  "ground": {
+    "assetId": "heart.ground.healthy",
+    "sourcePath": "heart/ground_healthy_v02.png",
+    "sourceSha256": "0bace3444c7615281e35a3a33f835eb4f5b778d68736e36c2e06ec3bc5d24a4f",
+    "worldTileDimensions": [
+      625,
+      625
+    ],
+    "projectedTilePixels": [
+      625,
+      450
+    ],
+    "paletteTreatment": "none; resize only"
+  },
+  "placements": [
+    {
+      "assetId": "scenery.pulseTree.healthy",
+      "worldPosition": [
+        1290,
+        520
+      ],
+      "canvasTargetPixels": [
+        260,
+        260
+      ],
+      "role": "sparse-upper-right-background",
+      "sourcePath": "scenery/pulse_tree_healthy_v01.png",
+      "sourceSha256": "10ee6c5b4ecab7684ec129cc6f00d54302df97378dc6ca6a83b62066b0bad361",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "projectedFootPixels": [
+        1290,
+        374.4
+      ],
+      "canvasPlacementPixels": [
+        1160,
+        153,
+        260,
+        260
+      ],
+      "spriteArtworkYSquashed": false
+    },
+    {
+      "assetId": "scenery.pulseTree.healthy",
+      "worldPosition": [
+        1460,
+        1050
+      ],
+      "canvasTargetPixels": [
+        430,
+        430
+      ],
+      "role": "right-edge-ecology-frame",
+      "sourcePath": "scenery/pulse_tree_healthy_v01.png",
+      "sourceSha256": "10ee6c5b4ecab7684ec129cc6f00d54302df97378dc6ca6a83b62066b0bad361",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "projectedFootPixels": [
+        1460,
+        756
+      ],
+      "canvasPlacementPixels": [
+        1245,
+        391,
+        430,
+        430
+      ],
+      "spriteArtworkYSquashed": false
+    },
+    {
+      "assetId": "scenery.crystal.healthy",
+      "worldPosition": [
+        1140,
+        1130
+      ],
+      "canvasTargetPixels": [
+        190,
+        190
+      ],
+      "role": "small-lower-right-accent",
+      "sourcePath": "scenery/crystal_healthy_v01.png",
+      "sourceSha256": "6ac999257df08b7eae598e4c09fdfa95cd43c01e922a065e5ac41dba8d4023a0",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "projectedFootPixels": [
+        1140,
+        813.6
+      ],
+      "canvasPlacementPixels": [
+        1045,
+        652,
+        190,
+        190
+      ],
+      "spriteArtworkYSquashed": false
+    },
+    {
+      "assetId": "scenery.crystal.healthy",
+      "worldPosition": [
+        1510,
+        1180
+      ],
+      "canvasTargetPixels": [
+        220,
+        220
+      ],
+      "role": "right-corner-rock-frame",
+      "sourcePath": "scenery/crystal_healthy_v01.png",
+      "sourceSha256": "6ac999257df08b7eae598e4c09fdfa95cd43c01e922a065e5ac41dba8d4023a0",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "projectedFootPixels": [
+        1510,
+        849.6
+      ],
+      "canvasPlacementPixels": [
+        1400,
+        663,
+        220,
+        220
+      ],
+      "spriteArtworkYSquashed": false
+    }
+  ],
+  "compositionNotes": [
+    "The left 60% contains only low-contrast ground texture, with no trees, rocks, facilities, actors, text or UI.",
+    "All objects reuse delivered PNG bytes without palette or alpha modification; only preview scaling/placement/canvas clipping is applied.",
+    "The menu has its own render branch; apply these module placement suggestions there. Do not add this full preview to runtime or replace scene collision/region masks with it.",
+    "Existing runtime actors, UI and effects remain separate, under the main chat.",
+    "Ground uses the delivered non-mirrored v02 quiet tissue texture. This is a module composition candidate, not live-game acceptance."
+  ]
+}

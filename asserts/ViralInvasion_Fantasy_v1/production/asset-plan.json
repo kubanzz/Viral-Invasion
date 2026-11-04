@@ -1,0 +1,1316 @@
+{
+  "schemaVersion": 1,
+  "status": "complete-production-plan-not-delivery",
+  "expectedCounts": {
+    "P0": 17,
+    "P1": 8,
+    "total": 25
+  },
+  "reference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+  "assets": [
+    {
+      "id": "heart.ground.healthy",
+      "batch": "P0",
+      "path": "heart/ground_healthy_v02.png",
+      "stateGroup": "heart.ground",
+      "state": "healthy",
+      "kind": "ground",
+      "pivot": [
+        0,
+        0
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": true,
+      "alphaRequirements": {
+        "required": false,
+        "fullyOpaque": true
+      },
+      "dependsOn": null,
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 1,
+      "sourceAnchorPx": [
+        0,
+        0
+      ],
+      "registration": {
+        "group": "heart.ground",
+        "baselineAssetId": "heart.ground.healthy",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": true,
+        "status": "untested",
+        "test": "3x3 repeat + X/Y half-offset seam inspection"
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "heart.ground.infected",
+      "batch": "P0",
+      "path": "heart/ground_infected_v02.png",
+      "stateGroup": "heart.ground",
+      "state": "infected",
+      "kind": "ground",
+      "pivot": [
+        0,
+        0
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": true,
+      "alphaRequirements": {
+        "required": false,
+        "fullyOpaque": true
+      },
+      "dependsOn": "heart.ground.healthy",
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 2,
+      "sourceAnchorPx": [
+        0,
+        0
+      ],
+      "registration": {
+        "group": "heart.ground",
+        "baselineAssetId": "heart.ground.healthy",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": true,
+        "status": "untested",
+        "test": "3x3 repeat + X/Y half-offset seam inspection"
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": "shared healthy base + transparent infection coverage"
+    },
+    {
+      "id": "scenery.pulseTree.healthy",
+      "batch": "P0",
+      "path": "scenery/pulse_tree_healthy_v01.png",
+      "stateGroup": "scenery.pulseTree",
+      "state": "healthy",
+      "kind": "object",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": false,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate"
+      },
+      "dependsOn": null,
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 3,
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "registration": {
+        "group": "scenery.pulseTree",
+        "baselineAssetId": "scenery.pulseTree.healthy",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "scenery.pulseTree.infected",
+      "batch": "P0",
+      "path": "scenery/pulse_tree_infected_v01.png",
+      "stateGroup": "scenery.pulseTree",
+      "state": "infected",
+      "kind": "object",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": false,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": "scenery.pulseTree.healthy",
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 4,
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "registration": {
+        "group": "scenery.pulseTree",
+        "baselineAssetId": "scenery.pulseTree.healthy",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "infection.patch.a",
+      "batch": "P0",
+      "path": "overlays/infection_patch_a_v01.png",
+      "stateGroup": "infection.patch",
+      "state": "variant-a",
+      "kind": "overlay",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": true,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": null,
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 5,
+      "sourceAnchorPx": [
+        512,
+        512
+      ],
+      "registration": {
+        "group": "infection.patch",
+        "baselineAssetId": "infection.patch.a",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "infection.patch.b",
+      "batch": "P0",
+      "path": "overlays/infection_patch_b_v01.png",
+      "stateGroup": "infection.patch",
+      "state": "variant-b",
+      "kind": "overlay",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": true,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": null,
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 6,
+      "sourceAnchorPx": [
+        512,
+        512
+      ],
+      "registration": {
+        "group": "infection.patch",
+        "baselineAssetId": "infection.patch.b",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "infection.edge.a",
+      "batch": "P0",
+      "path": "overlays/infection_edge_a_v01.png",
+      "stateGroup": "infection.edge",
+      "state": "variant-a",
+      "kind": "overlay",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": true,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": null,
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 7,
+      "sourceAnchorPx": [
+        512,
+        512
+      ],
+      "registration": {
+        "group": "infection.edge",
+        "baselineAssetId": "infection.edge.a",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "infection.edge.b",
+      "batch": "P0",
+      "path": "overlays/infection_edge_b_v01.png",
+      "stateGroup": "infection.edge",
+      "state": "variant-b",
+      "kind": "overlay",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": true,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": null,
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 8,
+      "sourceAnchorPx": [
+        512,
+        512
+      ],
+      "registration": {
+        "group": "infection.edge",
+        "baselineAssetId": "infection.edge.b",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "scenery.crystal.healthy",
+      "batch": "P0",
+      "path": "scenery/crystal_healthy_v01.png",
+      "stateGroup": "scenery.crystal",
+      "state": "healthy",
+      "kind": "object",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": false,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": null,
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 9,
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "registration": {
+        "group": "scenery.crystal",
+        "baselineAssetId": "scenery.crystal.healthy",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "scenery.crystal.infected",
+      "batch": "P0",
+      "path": "scenery/crystal_infected_v01.png",
+      "stateGroup": "scenery.crystal",
+      "state": "infected",
+      "kind": "object",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": false,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": "scenery.crystal.healthy",
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 10,
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "registration": {
+        "group": "scenery.crystal",
+        "baselineAssetId": "scenery.crystal.healthy",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "healingNode.healthy",
+      "batch": "P0",
+      "path": "facilities/healing_node_healthy_v01.png",
+      "stateGroup": "healingNode",
+      "state": "healthy",
+      "kind": "object",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": false,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": null,
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 11,
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "registration": {
+        "group": "healingNode",
+        "baselineAssetId": "healingNode.healthy",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "healingNode.infected",
+      "batch": "P0",
+      "path": "facilities/healing_node_infected_v01.png",
+      "stateGroup": "healingNode",
+      "state": "infected",
+      "kind": "object",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": false,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": "healingNode.healthy",
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 12,
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "registration": {
+        "group": "healingNode",
+        "baselineAssetId": "healingNode.healthy",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "healingNode.recovering",
+      "batch": "P0",
+      "path": "facilities/healing_node_recovering_v01.png",
+      "stateGroup": "healingNode",
+      "state": "recovering",
+      "kind": "object",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": false,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": "healingNode.healthy",
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 13,
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "registration": {
+        "group": "healingNode",
+        "baselineAssetId": "healingNode.healthy",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "infection.source",
+      "batch": "P0",
+      "path": "facilities/infection_source_v01.png",
+      "stateGroup": "infection.source",
+      "state": "active",
+      "kind": "object",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": false,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": null,
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 14,
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "registration": {
+        "group": "infection.source",
+        "baselineAssetId": "infection.source",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "heart.core.base",
+      "batch": "P0",
+      "path": "facilities/heart_core_base_v01.png",
+      "stateGroup": "heart.core.base",
+      "state": "base",
+      "kind": "object",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": false,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": null,
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 15,
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "registration": {
+        "group": "heart.core.base",
+        "baselineAssetId": "heart.core.base",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "heart.valve.closed",
+      "batch": "P0",
+      "path": "facilities/heart_valve_closed_v01.png",
+      "stateGroup": "heart.valve",
+      "state": "closed",
+      "kind": "object",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": false,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": null,
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 16,
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "registration": {
+        "group": "heart.valve",
+        "baselineAssetId": "heart.valve.closed",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "heart.valve.open",
+      "batch": "P0",
+      "path": "facilities/heart_valve_open_v01.png",
+      "stateGroup": "heart.valve",
+      "state": "open",
+      "kind": "object",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": false,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": "heart.valve.closed",
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 17,
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "registration": {
+        "group": "heart.valve",
+        "baselineAssetId": "heart.valve.closed",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "lung.ground.healthy",
+      "batch": "P1",
+      "path": "lung/ground_healthy_v02.png",
+      "stateGroup": "lung.ground",
+      "state": "healthy",
+      "kind": "ground",
+      "pivot": [
+        0,
+        0
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": true,
+      "alphaRequirements": {
+        "required": false,
+        "fullyOpaque": true
+      },
+      "dependsOn": null,
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 18,
+      "sourceAnchorPx": [
+        0,
+        0
+      ],
+      "registration": {
+        "group": "lung.ground",
+        "baselineAssetId": "lung.ground.healthy",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": true,
+        "status": "untested",
+        "test": "3x3 repeat + X/Y half-offset seam inspection"
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "lung.ground.infected",
+      "batch": "P1",
+      "path": "lung/ground_infected_v02.png",
+      "stateGroup": "lung.ground",
+      "state": "infected",
+      "kind": "ground",
+      "pivot": [
+        0,
+        0
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": true,
+      "alphaRequirements": {
+        "required": false,
+        "fullyOpaque": true
+      },
+      "dependsOn": "lung.ground.healthy",
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 19,
+      "sourceAnchorPx": [
+        0,
+        0
+      ],
+      "registration": {
+        "group": "lung.ground",
+        "baselineAssetId": "lung.ground.healthy",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": true,
+        "status": "untested",
+        "test": "3x3 repeat + X/Y half-offset seam inspection"
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": "shared healthy base + transparent infection coverage"
+    },
+    {
+      "id": "lung.plant.healthy",
+      "batch": "P1",
+      "path": "lung/plant_healthy_v01.png",
+      "stateGroup": "lung.plant",
+      "state": "healthy",
+      "kind": "object",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": false,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": null,
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 20,
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "registration": {
+        "group": "lung.plant",
+        "baselineAssetId": "lung.plant.healthy",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "lung.plant.infected",
+      "batch": "P1",
+      "path": "lung/plant_infected_v01.png",
+      "stateGroup": "lung.plant",
+      "state": "infected",
+      "kind": "object",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": false,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": "lung.plant.healthy",
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 21,
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "registration": {
+        "group": "lung.plant",
+        "baselineAssetId": "lung.plant.healthy",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "lung.rock.healthy",
+      "batch": "P1",
+      "path": "lung/rock_healthy_v01.png",
+      "stateGroup": "lung.rock",
+      "state": "healthy",
+      "kind": "object",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": false,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": null,
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 22,
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "registration": {
+        "group": "lung.rock",
+        "baselineAssetId": "lung.rock.healthy",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "lung.rock.infected",
+      "batch": "P1",
+      "path": "lung/rock_infected_v01.png",
+      "stateGroup": "lung.rock",
+      "state": "infected",
+      "kind": "object",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": false,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": "lung.rock.healthy",
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 23,
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "registration": {
+        "group": "lung.rock",
+        "baselineAssetId": "lung.rock.healthy",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "lung.airway.closed",
+      "batch": "P1",
+      "path": "lung/airway_closed_v01.png",
+      "stateGroup": "lung.airway",
+      "state": "closed",
+      "kind": "object",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": false,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": null,
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 24,
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "registration": {
+        "group": "lung.airway",
+        "baselineAssetId": "lung.airway.closed",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    },
+    {
+      "id": "lung.airway.open",
+      "batch": "P1",
+      "path": "lung/airway_open_v01.png",
+      "stateGroup": "lung.airway",
+      "state": "open",
+      "kind": "object",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": false,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": "lung.airway.closed",
+      "trim": false,
+      "status": "planned",
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 25,
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "registration": {
+        "group": "lung.airway",
+        "baselineAssetId": "lung.airway.closed",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "planned-maliang-generation",
+        "approvedReference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+        "rawPath": null,
+        "runId": null
+      },
+      "fallback": null
+    }
+  ],
+  "counts": {
+    "P0": 17,
+    "P1": 8,
+    "total": 25
+  },
+  "approvedReferenceSha256": "8caaa9cabe4a229f6a091360f642436bc021cf03aafed4111e173760aafdfabe",
+  "runtimeConstraints": {
+    "groundProjection": "world XY; camera applies Y=0.72",
+    "runtimeJsonLimitBytes": 20971520,
+    "fullResolutionSourcesAreNotRuntimeAtlasSizes": true,
+    "dynamicBoundaryAndHealingEffects": "parent-program-only",
+    "preserveApprovedPalette": true
+  }
+}

@@ -1,0 +1,135 @@
+{
+  "id": "infection.patch.a",
+  "kind": "overlay",
+  "sourceSha256": "f7501da950f455a5805a61e6e19d3fe53217c9007c94e5b1510ee2850e356125",
+  "processing": {
+    "outer": {
+      "method": "border-connected-white-key",
+      "whiteMin": 225,
+      "chromaMax": 40,
+      "matteCleanup": true,
+      "edgeWidth": 2,
+      "removedPixels": 3123444,
+      "cleanedEdgePixels": 17235,
+      "limitations": "White foreground connected directly to a white backdrop is ambiguous. Inspect both black/white QA views before acceptance."
+    },
+    "negativeSpaces": {
+      "method": "reviewed-negative-space-white-matte-cleanup",
+      "kind": "overlay",
+      "clearedPixels": 11743,
+      "softenedPixels": 153248,
+      "nodeRegion": null,
+      "reason": "Purple mycelium has no physical white pigment; white pixels are backdrop/holes."
+    },
+    "components": {
+      "method": "retain-mycelium-components-at-least-50-source-pixels",
+      "componentSizes": [
+        1050973,
+        418,
+        418,
+        295,
+        277,
+        255,
+        217,
+        199,
+        155,
+        120,
+        114,
+        101
+      ],
+      "retainedComponents": 20,
+      "removedPixels": 4196,
+      "reason": "Source review confirms a single connected crystal/flower or a purple mycelium patch; detached grey-white paper-grain remnants are backdrop, not separate intended objects."
+    },
+    "paletteTreatment": "No palette, hue, saturation, brightness, contrast or tone changes; only white-matte removal."
+  },
+  "transform": {
+    "sourceCanvas": [
+      2048,
+      2048
+    ],
+    "targetCanvas": [
+      1024,
+      1024
+    ],
+    "sourceAnchor": [
+      0.5,
+      0.5
+    ],
+    "targetAnchor": [
+      0.5,
+      0.5
+    ],
+    "targetAnchorPixels": [
+      512,
+      512
+    ],
+    "requestedScale": 0.5,
+    "width": 1024,
+    "height": 1024,
+    "left": 0,
+    "top": 0,
+    "method": "shared-full-canvas-scale-and-translation",
+    "alphaBoundsUsedForScaling": false
+  },
+  "image": {
+    "sha256": "bc066e80908c886bea67737f113c73e9ed214b08843d24e320deeffc1b1994b9",
+    "bytes": 891827,
+    "width": 1024,
+    "height": 1024,
+    "format": "png",
+    "channels": 4,
+    "hasAlphaChannel": true,
+    "alpha": {
+      "transparent": 770038,
+      "partial": 122260,
+      "opaque": 156278,
+      "transparentFraction": 0.7343654632568359,
+      "visible": 270371,
+      "borderVisible": 0,
+      "whiteVisible": 185
+    },
+    "bbox": [
+      64,
+      255,
+      949,
+      754
+    ],
+    "margins": {
+      "left": 64,
+      "top": 255,
+      "right": 75,
+      "bottom": 270,
+      "minimumFraction": 0.0625
+    },
+    "luma": {
+      "mean": 137.42804335677087,
+      "standardDeviation": 25.767572049360002,
+      "min": 0,
+      "max": 254.99999999999997
+    }
+  },
+  "output": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\infection.patch.a.png",
+  "previews": {
+    "black": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\infection.patch.a.qa-black.png",
+      "sha256": "9325e2daf1f5cf2fde2b98201e4e606d13af7438c9c06314aae5f2aa8099cbf8",
+      "bytes": 728812
+    },
+    "white": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\infection.patch.a.qa-white.png",
+      "sha256": "4f803a78b08535b44cada41c39dfcb3d18cee31c0c2d454427d748f4c829c523",
+      "bytes": 716441
+    },
+    "alpha": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\infection.patch.a.qa-alpha.png",
+      "sha256": "31be2c39f50a0f307170fdea1b3620212c1b479e46edee7ffe7baa67ee4c759c",
+      "bytes": 198498
+    },
+    "black-white": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\infection.patch.a.qa-black-white.png",
+      "sha256": "de627ed1d290111d438aa6ba20d920ce4a3adc13ac1a3791175712870b9c3934",
+      "bytes": 1299320
+    }
+  }
+}

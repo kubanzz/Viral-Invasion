@@ -1,0 +1,4534 @@
+{
+  "schemaVersion": 1,
+  "scope": "79 non-hero candidates; metadata, timing and sourceRect/reference integrity only",
+  "auditedAt": "2026-11-03T01:59:04.811Z",
+  "deliverySnapshotSha256": "da3d9b3fe5c75bfe24a06bd1d4e6f946aa875e6a930505e8589473de41dd0826",
+  "deliveryWritten": false,
+  "pngFilesWritten": 0,
+  "srcTouched": false,
+  "status": "passed-with-advisories",
+  "passes": true,
+  "counts": {
+    "assets": 79,
+    "byFamily": {
+      "enemy": 48,
+      "enemy-addon": 2,
+      "immune": 16,
+      "weapon": 1,
+      "beacon": 1,
+      "mother": 11
+    },
+    "clips": 30,
+    "staticOrOverlayItems": 9,
+    "errors": 0,
+    "warnings": 2
+  },
+  "basicMotionDefinition": "grounded soft membrane squash/stretch; basic is not a biped and no two-foot gait is claimed",
+  "timingPolicy": "Declared explicit animationGroups.frameDurationsMs take scheduling authority; per-asset frameDurationMs and total group duration must agree. Otherwise use per-asset fps. Single keypose holds are state-driven and not complete loops.",
+  "checks": {
+    "actualPngSha256": true,
+    "sourcePngSha256": true,
+    "fixedCanvas": true,
+    "fullRegisteredSourceRect": true,
+    "sourceFrameAlias": true,
+    "normalizedCanvas": true,
+    "sourceFragmentLineage": true,
+    "frameIndexesAndCounts": true,
+    "keyposeVsSequence": true,
+    "loopFlags": true,
+    "previewGifFrameDurations": true,
+    "sheetRectBoundsAndActualPixels": "compared wherever an explicit sheet-frame map exists; missing maps are reported as warnings"
+  },
+  "sheetPixelComparisonCoverage": 50,
+  "errors": [],
+  "warnings": [
+    {
+      "code": "PREVIEW_RUNTIME_TIMING_DIFFERS",
+      "subject": "immune.back_right.crawl",
+      "runtimeFps": 8,
+      "runtimeFrameDurationsMs": [
+        125,
+        125,
+        125,
+        125
+      ],
+      "previewDelayMs": [
+        150,
+        150,
+        150,
+        150
+      ],
+      "qaPlaybackOnly": true,
+      "note": "Preview timing is advisory unless explicitly chosen as runtime timing authority. GIF centisecond quantization up to5ms/frame is tolerated."
+    },
+    {
+      "code": "PREVIEW_RUNTIME_TIMING_DIFFERS",
+      "subject": "immune.back_right.bite",
+      "runtimeFps": 10,
+      "runtimeFrameDurationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "previewDelayMs": [
+        140,
+        110,
+        150,
+        200
+      ],
+      "qaPlaybackOnly": true,
+      "note": "Preview timing is advisory unless explicitly chosen as runtime timing authority. GIF centisecond quantization up to5ms/frame is tolerated."
+    }
+  ],
+  "clips": [
+    {
+      "name": "enemy.basic.walk",
+      "count": 4,
+      "indexes": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "classification": "rig-baked-sequence",
+      "kinds": [
+        "rig-baked-sequence"
+      ],
+      "fps": 7.142857142857143,
+      "loop": true,
+      "uniqueRawFrames": 4,
+      "runtimeFrameMs": 140,
+      "runtimeFrameDurationsMs": [
+        140,
+        140,
+        140,
+        140
+      ],
+      "runtimeDurationMs": 560,
+      "fpsImpliedDurationMs": 560,
+      "registryDurationMs": 560,
+      "registryProductionFragment": "production/basic.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/basic.v02.fragment.json"
+      ],
+      "preview": {
+        "path": "production/v02/qa/enemy.basic.walk.gif",
+        "pages": 4,
+        "delay": [
+          140,
+          140,
+          140,
+          140
+        ],
+        "durationMs": 560
+      },
+      "keyposeHoldDurationMs": null,
+      "fpsAuthority": "explicit animationGroups.frameDurationsMs; fps is descriptive average",
+      "loopEndpointEvidence": true,
+      "loopEndpointNote": null,
+      "sheetChecks": []
+    },
+    {
+      "name": "enemy.basic.windup",
+      "count": 2,
+      "indexes": [
+        0,
+        1
+      ],
+      "classification": "keyposes-not-complete-action",
+      "kinds": [
+        "windup-keypose"
+      ],
+      "fps": 7.142857142857143,
+      "loop": false,
+      "uniqueRawFrames": 2,
+      "runtimeFrameMs": 140,
+      "runtimeFrameDurationsMs": [
+        140,
+        140
+      ],
+      "runtimeDurationMs": 280,
+      "fpsImpliedDurationMs": 280,
+      "registryDurationMs": 280,
+      "registryProductionFragment": "production/basic.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/basic.v02.fragment.json"
+      ],
+      "preview": null,
+      "keyposeHoldDurationMs": 280,
+      "fpsAuthority": "keypose holds are state driven; fps does not turn them into a complete action",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": [
+        {
+          "id": "fantasy.actor.enemy.basic.windup.00",
+          "rect": {
+            "x": 0,
+            "y": 512,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.basic.windup.01",
+          "rect": {
+            "x": 512,
+            "y": 512,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901819,
+          "maxAlphaDifference": 0
+        }
+      ]
+    },
+    {
+      "name": "enemy.basic.hurt",
+      "count": 1,
+      "indexes": [
+        0
+      ],
+      "classification": "keyposes-not-complete-action",
+      "kinds": [
+        "hurt-keypose"
+      ],
+      "fps": 8.333333333333334,
+      "loop": false,
+      "uniqueRawFrames": 1,
+      "runtimeFrameMs": 119.99999999999999,
+      "runtimeFrameDurationsMs": [
+        120
+      ],
+      "runtimeDurationMs": 120,
+      "fpsImpliedDurationMs": 119.99999999999999,
+      "registryDurationMs": 120,
+      "registryProductionFragment": "production/basic.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/basic.v02.fragment.json"
+      ],
+      "preview": null,
+      "keyposeHoldDurationMs": 120,
+      "fpsAuthority": "keypose holds are state driven; fps does not turn them into a complete action",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": [
+        {
+          "id": "fantasy.actor.enemy.basic.hurt.00",
+          "rect": {
+            "x": 1024,
+            "y": 512,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        }
+      ]
+    },
+    {
+      "name": "enemy.basic.dissolve",
+      "count": 1,
+      "indexes": [
+        0
+      ],
+      "classification": "keyposes-not-complete-action",
+      "kinds": [
+        "dissolve-keypose"
+      ],
+      "fps": 5.555555555555555,
+      "loop": false,
+      "uniqueRawFrames": 1,
+      "runtimeFrameMs": 180,
+      "runtimeFrameDurationsMs": [
+        180
+      ],
+      "runtimeDurationMs": 180,
+      "fpsImpliedDurationMs": 180,
+      "registryDurationMs": 180,
+      "registryProductionFragment": "production/basic.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/basic.v02.fragment.json"
+      ],
+      "preview": null,
+      "keyposeHoldDurationMs": 180,
+      "fpsAuthority": "keypose holds are state driven; fps does not turn them into a complete action",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": [
+        {
+          "id": "fantasy.actor.enemy.basic.dissolve.00",
+          "rect": {
+            "x": 1536,
+            "y": 512,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.5607843137254918,
+          "maxAlphaDifference": 0
+        }
+      ]
+    },
+    {
+      "name": "enemy.thinRay.walk",
+      "count": 4,
+      "indexes": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "classification": "rig-baked-sequence",
+      "kinds": [
+        "rig-baked-sequence"
+      ],
+      "fps": 7.142857142857143,
+      "loop": true,
+      "uniqueRawFrames": 4,
+      "runtimeFrameMs": 140,
+      "runtimeFrameDurationsMs": [
+        140,
+        140,
+        140,
+        140
+      ],
+      "runtimeDurationMs": 560,
+      "fpsImpliedDurationMs": 560,
+      "registryDurationMs": 560,
+      "registryProductionFragment": "production/enemy.thinRay.v03.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.thinRay.v03.fragment.json"
+      ],
+      "preview": {
+        "path": "production/v03/qa/enemy.thinRay.walk.gif",
+        "pages": 4,
+        "delay": [
+          140,
+          140,
+          140,
+          140
+        ],
+        "durationMs": 560
+      },
+      "keyposeHoldDurationMs": null,
+      "fpsAuthority": "explicit animationGroups.frameDurationsMs; fps is descriptive average",
+      "loopEndpointEvidence": true,
+      "loopEndpointNote": null,
+      "sheetChecks": [
+        {
+          "id": "fantasy.actor.enemy.thinRay.walk.00",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.thinRay.walk.01",
+          "rect": {
+            "x": 512,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.thinRay.walk.02",
+          "rect": {
+            "x": 1024,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.thinRay.walk.03",
+          "rect": {
+            "x": 1536,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        }
+      ]
+    },
+    {
+      "name": "enemy.thinRay.windup",
+      "count": 2,
+      "indexes": [
+        0,
+        1
+      ],
+      "classification": "keyposes-not-complete-action",
+      "kinds": [
+        "windup-keypose"
+      ],
+      "fps": 6.25,
+      "loop": false,
+      "uniqueRawFrames": 2,
+      "runtimeFrameMs": 160,
+      "runtimeFrameDurationsMs": [
+        160,
+        160
+      ],
+      "runtimeDurationMs": 320,
+      "fpsImpliedDurationMs": 320,
+      "registryDurationMs": 320,
+      "registryProductionFragment": "production/enemy.thinRay.v03.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.thinRay.v03.fragment.json"
+      ],
+      "preview": {
+        "path": "production/v03/qa/enemy.thinRay.windup.gif",
+        "pages": 2,
+        "delay": [
+          160,
+          160
+        ],
+        "durationMs": 320
+      },
+      "keyposeHoldDurationMs": 320,
+      "fpsAuthority": "keypose holds are state driven; fps does not turn them into a complete action",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": [
+        {
+          "id": "fantasy.actor.enemy.thinRay.windup.00",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.thinRay.windup.01",
+          "rect": {
+            "x": 512,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        }
+      ]
+    },
+    {
+      "name": "enemy.thinRay.hurt",
+      "count": 1,
+      "indexes": [
+        0
+      ],
+      "classification": "keyposes-not-complete-action",
+      "kinds": [
+        "hurt-keypose"
+      ],
+      "fps": 6.25,
+      "loop": false,
+      "uniqueRawFrames": 1,
+      "runtimeFrameMs": 160,
+      "runtimeFrameDurationsMs": [
+        160
+      ],
+      "runtimeDurationMs": 160,
+      "fpsImpliedDurationMs": 160,
+      "registryDurationMs": 160,
+      "registryProductionFragment": "production/enemy.thinRay.v03.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.thinRay.v03.fragment.json"
+      ],
+      "preview": null,
+      "keyposeHoldDurationMs": 160,
+      "fpsAuthority": "keypose holds are state driven; fps does not turn them into a complete action",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": [
+        {
+          "id": "fantasy.actor.enemy.thinRay.hurt.00",
+          "rect": {
+            "x": 1024,
+            "y": 512,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9764705882353155,
+          "maxAlphaDifference": 0
+        }
+      ]
+    },
+    {
+      "name": "enemy.thinRay.dissolve",
+      "count": 1,
+      "indexes": [
+        0
+      ],
+      "classification": "keyposes-not-complete-action",
+      "kinds": [
+        "dissolve-keypose"
+      ],
+      "fps": 6.25,
+      "loop": false,
+      "uniqueRawFrames": 1,
+      "runtimeFrameMs": 160,
+      "runtimeFrameDurationsMs": [
+        160
+      ],
+      "runtimeDurationMs": 160,
+      "fpsImpliedDurationMs": 160,
+      "registryDurationMs": 160,
+      "registryProductionFragment": "production/enemy.thinRay.v03.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.thinRay.v03.fragment.json"
+      ],
+      "preview": null,
+      "keyposeHoldDurationMs": 160,
+      "fpsAuthority": "keypose holds are state driven; fps does not turn them into a complete action",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": [
+        {
+          "id": "fantasy.actor.enemy.thinRay.dissolve.00",
+          "rect": {
+            "x": 1536,
+            "y": 512,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.5607843137254918,
+          "maxAlphaDifference": 0
+        }
+      ]
+    },
+    {
+      "name": "enemy.carapace.walk",
+      "count": 4,
+      "indexes": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "classification": "rig-baked-sequence",
+      "kinds": [
+        "rig-baked-sequence"
+      ],
+      "fps": 7.142857142857143,
+      "loop": true,
+      "uniqueRawFrames": 4,
+      "runtimeFrameMs": 140,
+      "runtimeFrameDurationsMs": [
+        140,
+        140,
+        140,
+        140
+      ],
+      "runtimeDurationMs": 560,
+      "fpsImpliedDurationMs": 560,
+      "registryDurationMs": 560,
+      "registryProductionFragment": "production/enemy.carapace.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.carapace.v02.fragment.json"
+      ],
+      "preview": {
+        "path": "production/v02/qa/enemy.carapace.walk.gif",
+        "pages": 4,
+        "delay": [
+          140,
+          140,
+          140,
+          140
+        ],
+        "durationMs": 560
+      },
+      "keyposeHoldDurationMs": null,
+      "fpsAuthority": "delivery per-asset fps",
+      "loopEndpointEvidence": true,
+      "loopEndpointNote": null,
+      "sheetChecks": [
+        {
+          "id": "fantasy.actor.enemy.carapace.walk.00",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.carapace.walk.01",
+          "rect": {
+            "x": 512,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.carapace.walk.02",
+          "rect": {
+            "x": 1024,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.carapace.walk.03",
+          "rect": {
+            "x": 1536,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        }
+      ]
+    },
+    {
+      "name": "enemy.carapace.windup",
+      "count": 2,
+      "indexes": [
+        0,
+        1
+      ],
+      "classification": "keyposes-not-complete-action",
+      "kinds": [
+        "windup-keypose"
+      ],
+      "fps": 6.25,
+      "loop": false,
+      "uniqueRawFrames": 2,
+      "runtimeFrameMs": 160,
+      "runtimeFrameDurationsMs": [
+        160,
+        160
+      ],
+      "runtimeDurationMs": 320,
+      "fpsImpliedDurationMs": 320,
+      "registryDurationMs": 320,
+      "registryProductionFragment": "production/enemy.carapace.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.carapace.v02.fragment.json"
+      ],
+      "preview": {
+        "path": "production/v02/qa/enemy.carapace.windup.gif",
+        "pages": 2,
+        "delay": [
+          160,
+          160
+        ],
+        "durationMs": 320
+      },
+      "keyposeHoldDurationMs": 320,
+      "fpsAuthority": "keypose holds are state driven; fps does not turn them into a complete action",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": [
+        {
+          "id": "fantasy.actor.enemy.carapace.windup.00",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.carapace.windup.01",
+          "rect": {
+            "x": 512,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        }
+      ]
+    },
+    {
+      "name": "enemy.carapace.hurt",
+      "count": 1,
+      "indexes": [
+        0
+      ],
+      "classification": "keyposes-not-complete-action",
+      "kinds": [
+        "hurt-keypose"
+      ],
+      "fps": 6.25,
+      "loop": false,
+      "uniqueRawFrames": 1,
+      "runtimeFrameMs": 160,
+      "runtimeFrameDurationsMs": [
+        160
+      ],
+      "runtimeDurationMs": 160,
+      "fpsImpliedDurationMs": 160,
+      "registryDurationMs": 160,
+      "registryProductionFragment": "production/enemy.carapace.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.carapace.v02.fragment.json"
+      ],
+      "preview": null,
+      "keyposeHoldDurationMs": 160,
+      "fpsAuthority": "keypose holds are state driven; fps does not turn them into a complete action",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": []
+    },
+    {
+      "name": "enemy.carapace.dissolve",
+      "count": 1,
+      "indexes": [
+        0
+      ],
+      "classification": "keyposes-not-complete-action",
+      "kinds": [
+        "dissolve-keypose"
+      ],
+      "fps": 6.25,
+      "loop": false,
+      "uniqueRawFrames": 1,
+      "runtimeFrameMs": 160,
+      "runtimeFrameDurationsMs": [
+        160
+      ],
+      "runtimeDurationMs": 160,
+      "fpsImpliedDurationMs": 160,
+      "registryDurationMs": 160,
+      "registryProductionFragment": "production/enemy.carapace.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.carapace.v02.fragment.json"
+      ],
+      "preview": null,
+      "keyposeHoldDurationMs": 160,
+      "fpsAuthority": "keypose holds are state driven; fps does not turn them into a complete action",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": []
+    },
+    {
+      "name": "enemy.fission.parent.walk",
+      "count": 4,
+      "indexes": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "classification": "rig-baked-sequence",
+      "kinds": [
+        "rig-baked-sequence"
+      ],
+      "fps": 7.142857142857143,
+      "loop": true,
+      "uniqueRawFrames": 4,
+      "runtimeFrameMs": 140,
+      "runtimeFrameDurationsMs": [
+        140,
+        140,
+        140,
+        140
+      ],
+      "runtimeDurationMs": 560,
+      "fpsImpliedDurationMs": 560,
+      "registryDurationMs": 560,
+      "registryProductionFragment": "production/enemy.fission.parent.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.fission.parent.v02.fragment.json"
+      ],
+      "preview": {
+        "path": "production/v02/qa/enemy.fission.parent.walk.gif",
+        "pages": 4,
+        "delay": [
+          140,
+          140,
+          140,
+          140
+        ],
+        "durationMs": 560
+      },
+      "keyposeHoldDurationMs": null,
+      "fpsAuthority": "delivery per-asset fps",
+      "loopEndpointEvidence": true,
+      "loopEndpointNote": null,
+      "sheetChecks": [
+        {
+          "id": "fantasy.actor.enemy.fission.parent.walk.00",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.fission.parent.walk.01",
+          "rect": {
+            "x": 512,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.fission.parent.walk.02",
+          "rect": {
+            "x": 1024,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.fission.parent.walk.03",
+          "rect": {
+            "x": 1536,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        }
+      ]
+    },
+    {
+      "name": "enemy.fission.parent.windup",
+      "count": 2,
+      "indexes": [
+        0,
+        1
+      ],
+      "classification": "keyposes-not-complete-action",
+      "kinds": [
+        "windup-keypose"
+      ],
+      "fps": 6.25,
+      "loop": false,
+      "uniqueRawFrames": 2,
+      "runtimeFrameMs": 160,
+      "runtimeFrameDurationsMs": [
+        160,
+        160
+      ],
+      "runtimeDurationMs": 320,
+      "fpsImpliedDurationMs": 320,
+      "registryDurationMs": 320,
+      "registryProductionFragment": "production/enemy.fission.parent.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.fission.parent.v02.fragment.json"
+      ],
+      "preview": {
+        "path": "production/v02/qa/enemy.fission.parent.windup.gif",
+        "pages": 2,
+        "delay": [
+          160,
+          160
+        ],
+        "durationMs": 320
+      },
+      "keyposeHoldDurationMs": 320,
+      "fpsAuthority": "keypose holds are state driven; fps does not turn them into a complete action",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": [
+        {
+          "id": "fantasy.actor.enemy.fission.parent.windup.00",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.fission.parent.windup.01",
+          "rect": {
+            "x": 512,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        }
+      ]
+    },
+    {
+      "name": "enemy.fission.parent.hurt",
+      "count": 1,
+      "indexes": [
+        0
+      ],
+      "classification": "keyposes-not-complete-action",
+      "kinds": [
+        "hurt-keypose"
+      ],
+      "fps": 6.25,
+      "loop": false,
+      "uniqueRawFrames": 1,
+      "runtimeFrameMs": 160,
+      "runtimeFrameDurationsMs": [
+        160
+      ],
+      "runtimeDurationMs": 160,
+      "fpsImpliedDurationMs": 160,
+      "registryDurationMs": 160,
+      "registryProductionFragment": "production/enemy.fission.parent.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.fission.parent.v02.fragment.json"
+      ],
+      "preview": null,
+      "keyposeHoldDurationMs": 160,
+      "fpsAuthority": "keypose holds are state driven; fps does not turn them into a complete action",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": []
+    },
+    {
+      "name": "enemy.fission.parent.dissolve",
+      "count": 1,
+      "indexes": [
+        0
+      ],
+      "classification": "keyposes-not-complete-action",
+      "kinds": [
+        "dissolve-keypose"
+      ],
+      "fps": 6.25,
+      "loop": false,
+      "uniqueRawFrames": 1,
+      "runtimeFrameMs": 160,
+      "runtimeFrameDurationsMs": [
+        160
+      ],
+      "runtimeDurationMs": 160,
+      "fpsImpliedDurationMs": 160,
+      "registryDurationMs": 160,
+      "registryProductionFragment": "production/enemy.fission.parent.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.fission.parent.v02.fragment.json"
+      ],
+      "preview": null,
+      "keyposeHoldDurationMs": 160,
+      "fpsAuthority": "keypose holds are state driven; fps does not turn them into a complete action",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": []
+    },
+    {
+      "name": "enemy.fission.child.walk",
+      "count": 4,
+      "indexes": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "classification": "rig-baked-sequence",
+      "kinds": [
+        "rig-baked-sequence"
+      ],
+      "fps": 9.090909090909092,
+      "loop": true,
+      "uniqueRawFrames": 4,
+      "runtimeFrameMs": 109.99999999999999,
+      "runtimeFrameDurationsMs": [
+        109.99999999999999,
+        109.99999999999999,
+        109.99999999999999,
+        109.99999999999999
+      ],
+      "runtimeDurationMs": 439.99999999999994,
+      "fpsImpliedDurationMs": 439.99999999999994,
+      "registryDurationMs": 440,
+      "registryProductionFragment": "production/enemy.fission.child.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.fission.child.v02.fragment.json"
+      ],
+      "preview": {
+        "path": "production/v02/qa/enemy.fission.child.walk.gif",
+        "pages": 4,
+        "delay": [
+          110,
+          110,
+          110,
+          110
+        ],
+        "durationMs": 440
+      },
+      "keyposeHoldDurationMs": null,
+      "fpsAuthority": "delivery per-asset fps",
+      "loopEndpointEvidence": true,
+      "loopEndpointNote": null,
+      "sheetChecks": [
+        {
+          "id": "fantasy.actor.enemy.fission.child.walk.00",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.fission.child.walk.01",
+          "rect": {
+            "x": 512,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.fission.child.walk.02",
+          "rect": {
+            "x": 1024,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.fission.child.walk.03",
+          "rect": {
+            "x": 1536,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        }
+      ]
+    },
+    {
+      "name": "enemy.fission.child.windup",
+      "count": 2,
+      "indexes": [
+        0,
+        1
+      ],
+      "classification": "keyposes-not-complete-action",
+      "kinds": [
+        "windup-keypose"
+      ],
+      "fps": 6.25,
+      "loop": false,
+      "uniqueRawFrames": 2,
+      "runtimeFrameMs": 160,
+      "runtimeFrameDurationsMs": [
+        160,
+        160
+      ],
+      "runtimeDurationMs": 320,
+      "fpsImpliedDurationMs": 320,
+      "registryDurationMs": 320,
+      "registryProductionFragment": "production/enemy.fission.child.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.fission.child.v02.fragment.json"
+      ],
+      "preview": {
+        "path": "production/v02/qa/enemy.fission.child.windup.gif",
+        "pages": 2,
+        "delay": [
+          160,
+          160
+        ],
+        "durationMs": 320
+      },
+      "keyposeHoldDurationMs": 320,
+      "fpsAuthority": "keypose holds are state driven; fps does not turn them into a complete action",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": [
+        {
+          "id": "fantasy.actor.enemy.fission.child.windup.00",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.fission.child.windup.01",
+          "rect": {
+            "x": 512,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        }
+      ]
+    },
+    {
+      "name": "enemy.fission.child.hurt",
+      "count": 1,
+      "indexes": [
+        0
+      ],
+      "classification": "keyposes-not-complete-action",
+      "kinds": [
+        "hurt-keypose"
+      ],
+      "fps": 6.25,
+      "loop": false,
+      "uniqueRawFrames": 1,
+      "runtimeFrameMs": 160,
+      "runtimeFrameDurationsMs": [
+        160
+      ],
+      "runtimeDurationMs": 160,
+      "fpsImpliedDurationMs": 160,
+      "registryDurationMs": 160,
+      "registryProductionFragment": "production/enemy.fission.child.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.fission.child.v02.fragment.json"
+      ],
+      "preview": null,
+      "keyposeHoldDurationMs": 160,
+      "fpsAuthority": "keypose holds are state driven; fps does not turn them into a complete action",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": []
+    },
+    {
+      "name": "enemy.fission.child.dissolve",
+      "count": 1,
+      "indexes": [
+        0
+      ],
+      "classification": "keyposes-not-complete-action",
+      "kinds": [
+        "dissolve-keypose"
+      ],
+      "fps": 6.25,
+      "loop": false,
+      "uniqueRawFrames": 1,
+      "runtimeFrameMs": 160,
+      "runtimeFrameDurationsMs": [
+        160
+      ],
+      "runtimeDurationMs": 160,
+      "fpsImpliedDurationMs": 160,
+      "registryDurationMs": 160,
+      "registryProductionFragment": "production/enemy.fission.child.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.fission.child.v02.fragment.json"
+      ],
+      "preview": null,
+      "keyposeHoldDurationMs": 160,
+      "fpsAuthority": "keypose holds are state driven; fps does not turn them into a complete action",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": []
+    },
+    {
+      "name": "enemy.mimic.walk",
+      "count": 4,
+      "indexes": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "classification": "rig-baked-sequence",
+      "kinds": [
+        "rig-baked-sequence"
+      ],
+      "fps": 6.25,
+      "loop": true,
+      "uniqueRawFrames": 4,
+      "runtimeFrameMs": 160,
+      "runtimeFrameDurationsMs": [
+        160,
+        160,
+        160,
+        160
+      ],
+      "runtimeDurationMs": 640,
+      "fpsImpliedDurationMs": 640,
+      "registryDurationMs": 640,
+      "registryProductionFragment": "production/enemy.mimic.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.mimic.v02.fragment.json"
+      ],
+      "preview": {
+        "path": "production/v02/qa/enemy.mimic.walk.gif",
+        "pages": 4,
+        "delay": [
+          160,
+          160,
+          160,
+          160
+        ],
+        "durationMs": 640
+      },
+      "keyposeHoldDurationMs": null,
+      "fpsAuthority": "delivery per-asset fps",
+      "loopEndpointEvidence": true,
+      "loopEndpointNote": null,
+      "sheetChecks": [
+        {
+          "id": "fantasy.actor.enemy.mimic.walk.00",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901819,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.mimic.walk.01",
+          "rect": {
+            "x": 512,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.mimic.walk.02",
+          "rect": {
+            "x": 1024,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.mimic.walk.03",
+          "rect": {
+            "x": 1536,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        }
+      ]
+    },
+    {
+      "name": "enemy.mimic.windup",
+      "count": 2,
+      "indexes": [
+        0,
+        1
+      ],
+      "classification": "keyposes-not-complete-action",
+      "kinds": [
+        "windup-keypose"
+      ],
+      "fps": 6.25,
+      "loop": false,
+      "uniqueRawFrames": 2,
+      "runtimeFrameMs": 160,
+      "runtimeFrameDurationsMs": [
+        160,
+        160
+      ],
+      "runtimeDurationMs": 320,
+      "fpsImpliedDurationMs": 320,
+      "registryDurationMs": 320,
+      "registryProductionFragment": "production/enemy.mimic.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.mimic.v02.fragment.json"
+      ],
+      "preview": {
+        "path": "production/v02/qa/enemy.mimic.windup.gif",
+        "pages": 2,
+        "delay": [
+          160,
+          160
+        ],
+        "durationMs": 320
+      },
+      "keyposeHoldDurationMs": 320,
+      "fpsAuthority": "keypose holds are state driven; fps does not turn them into a complete action",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": [
+        {
+          "id": "fantasy.actor.enemy.mimic.windup.00",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.enemy.mimic.windup.01",
+          "rect": {
+            "x": 512,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        }
+      ]
+    },
+    {
+      "name": "enemy.mimic.hurt",
+      "count": 1,
+      "indexes": [
+        0
+      ],
+      "classification": "keyposes-not-complete-action",
+      "kinds": [
+        "hurt-keypose"
+      ],
+      "fps": 6.25,
+      "loop": false,
+      "uniqueRawFrames": 1,
+      "runtimeFrameMs": 160,
+      "runtimeFrameDurationsMs": [
+        160
+      ],
+      "runtimeDurationMs": 160,
+      "fpsImpliedDurationMs": 160,
+      "registryDurationMs": 160,
+      "registryProductionFragment": "production/enemy.mimic.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.mimic.v02.fragment.json"
+      ],
+      "preview": null,
+      "keyposeHoldDurationMs": 160,
+      "fpsAuthority": "keypose holds are state driven; fps does not turn them into a complete action",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": []
+    },
+    {
+      "name": "enemy.mimic.dissolve",
+      "count": 1,
+      "indexes": [
+        0
+      ],
+      "classification": "keyposes-not-complete-action",
+      "kinds": [
+        "dissolve-keypose"
+      ],
+      "fps": 6.25,
+      "loop": false,
+      "uniqueRawFrames": 1,
+      "runtimeFrameMs": 160,
+      "runtimeFrameDurationsMs": [
+        160
+      ],
+      "runtimeDurationMs": 160,
+      "fpsImpliedDurationMs": 160,
+      "registryDurationMs": 160,
+      "registryProductionFragment": "production/enemy.mimic.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/enemy.mimic.v02.fragment.json"
+      ],
+      "preview": null,
+      "keyposeHoldDurationMs": 160,
+      "fpsAuthority": "keypose holds are state driven; fps does not turn them into a complete action",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": []
+    },
+    {
+      "name": "immune.front_right.crawl",
+      "count": 4,
+      "indexes": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "classification": "rig-baked-sequence",
+      "kinds": [
+        "rig-baked-sequence"
+      ],
+      "fps": 7.142857142857143,
+      "loop": true,
+      "uniqueRawFrames": 4,
+      "runtimeFrameMs": 140,
+      "runtimeFrameDurationsMs": [
+        140,
+        140,
+        140,
+        140
+      ],
+      "runtimeDurationMs": 560,
+      "fpsImpliedDurationMs": 560,
+      "registryDurationMs": 560,
+      "registryProductionFragment": "production/immune-front-right.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/immune-front-right.v02.fragment.json"
+      ],
+      "preview": {
+        "path": "production/v02/qa/immune.front_right.crawl.gif",
+        "pages": 4,
+        "delay": [
+          140,
+          140,
+          140,
+          140
+        ],
+        "durationMs": 560
+      },
+      "keyposeHoldDurationMs": null,
+      "fpsAuthority": "explicit animationGroups.frameDurationsMs; fps is descriptive average",
+      "loopEndpointEvidence": true,
+      "loopEndpointNote": null,
+      "sheetChecks": []
+    },
+    {
+      "name": "immune.front_right.bite",
+      "count": 4,
+      "indexes": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "classification": "rig-baked-sequence",
+      "kinds": [
+        "rig-baked-sequence"
+      ],
+      "fps": 7.142857142857143,
+      "loop": false,
+      "uniqueRawFrames": 4,
+      "runtimeFrameMs": 140,
+      "runtimeFrameDurationsMs": [
+        130,
+        110,
+        110,
+        210
+      ],
+      "runtimeDurationMs": 560,
+      "fpsImpliedDurationMs": 560,
+      "registryDurationMs": 560,
+      "registryProductionFragment": "production/immune-front-right.v02.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/immune-front-right.v02.fragment.json"
+      ],
+      "preview": {
+        "path": "production/v02/qa/immune.front_right.bite.gif",
+        "pages": 4,
+        "delay": [
+          130,
+          110,
+          110,
+          210
+        ],
+        "durationMs": 560
+      },
+      "keyposeHoldDurationMs": null,
+      "fpsAuthority": "explicit animationGroups.frameDurationsMs; fps is descriptive average",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": []
+    },
+    {
+      "name": "immune.back_right.crawl",
+      "count": 4,
+      "indexes": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "classification": "rig-baked-sequence",
+      "kinds": [
+        "rig-baked-sequence"
+      ],
+      "fps": 8,
+      "loop": true,
+      "uniqueRawFrames": 4,
+      "runtimeFrameMs": 125,
+      "runtimeFrameDurationsMs": [
+        125,
+        125,
+        125,
+        125
+      ],
+      "runtimeDurationMs": 500,
+      "fpsImpliedDurationMs": 500,
+      "registryDurationMs": 500,
+      "registryProductionFragment": "production/immune-back8.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/immune-back8.fragment.json"
+      ],
+      "preview": {
+        "path": "production/qa/immune-back-right-crawl.gif",
+        "pages": 4,
+        "delay": [
+          150,
+          150,
+          150,
+          150
+        ],
+        "durationMs": 600
+      },
+      "keyposeHoldDurationMs": null,
+      "fpsAuthority": "explicit animationGroups.frameDurationsMs; fps is descriptive average",
+      "loopEndpointEvidence": true,
+      "loopEndpointNote": null,
+      "sheetChecks": [
+        {
+          "id": "fantasy.actor.immune.back_right.crawl.00",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901819,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.immune.back_right.crawl.01",
+          "rect": {
+            "x": 512,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.immune.back_right.crawl.02",
+          "rect": {
+            "x": 1024,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9764705882352942,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.immune.back_right.crawl.03",
+          "rect": {
+            "x": 1536,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901819,
+          "maxAlphaDifference": 0
+        }
+      ]
+    },
+    {
+      "name": "immune.back_right.bite",
+      "count": 4,
+      "indexes": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "classification": "rig-baked-sequence",
+      "kinds": [
+        "rig-baked-sequence"
+      ],
+      "fps": 10,
+      "loop": false,
+      "uniqueRawFrames": 4,
+      "runtimeFrameMs": 100,
+      "runtimeFrameDurationsMs": [
+        100,
+        100,
+        100,
+        100
+      ],
+      "runtimeDurationMs": 400,
+      "fpsImpliedDurationMs": 400,
+      "registryDurationMs": 400,
+      "registryProductionFragment": "production/immune-back8.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/immune-back8.fragment.json"
+      ],
+      "preview": {
+        "path": "production/qa/immune-back-right-bite.gif",
+        "pages": 4,
+        "delay": [
+          140,
+          110,
+          150,
+          200
+        ],
+        "durationMs": 600
+      },
+      "keyposeHoldDurationMs": null,
+      "fpsAuthority": "explicit animationGroups.frameDurationsMs; fps is descriptive average",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": null,
+      "sheetChecks": [
+        {
+          "id": "fantasy.actor.immune.back_right.bite.00",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.immune.back_right.bite.01",
+          "rect": {
+            "x": 512,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.immune.back_right.bite.02",
+          "rect": {
+            "x": 1024,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9764705882352871,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.immune.back_right.bite.03",
+          "rect": {
+            "x": 1536,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901819,
+          "maxAlphaDifference": 0
+        }
+      ]
+    },
+    {
+      "name": "mother.base",
+      "count": 4,
+      "indexes": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "classification": "rig-baked-sequence",
+      "kinds": [
+        "rig-baked-sequence"
+      ],
+      "fps": 4,
+      "loop": true,
+      "uniqueRawFrames": 4,
+      "runtimeFrameMs": 250,
+      "runtimeFrameDurationsMs": [
+        250,
+        250,
+        250,
+        250
+      ],
+      "runtimeDurationMs": 1000,
+      "fpsImpliedDurationMs": 1000,
+      "registryDurationMs": 1000,
+      "registryProductionFragment": "production/mother-base-core.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/mother-base-core.fragment.json"
+      ],
+      "preview": {
+        "path": "production/qa/mother.base.gif",
+        "pages": 4,
+        "delay": [
+          250,
+          250,
+          250,
+          250
+        ],
+        "durationMs": 1000
+      },
+      "keyposeHoldDurationMs": null,
+      "fpsAuthority": "explicit animationGroups.frameDurationsMs; fps is descriptive average",
+      "loopEndpointEvidence": true,
+      "loopEndpointNote": null,
+      "sheetChecks": [
+        {
+          "id": "fantasy.actor.mother.base.00",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1024,
+            "height": 1024
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.mother.base.01",
+          "rect": {
+            "x": 1024,
+            "y": 0,
+            "width": 1024,
+            "height": 1024
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.mother.base.02",
+          "rect": {
+            "x": 2048,
+            "y": 0,
+            "width": 1024,
+            "height": 1024
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.mother.base.03",
+          "rect": {
+            "x": 3072,
+            "y": 0,
+            "width": 1024,
+            "height": 1024
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9843137254901961,
+          "maxAlphaDifference": 0
+        }
+      ]
+    },
+    {
+      "name": "mother.core",
+      "count": 2,
+      "indexes": [
+        0,
+        1
+      ],
+      "classification": "rig-baked-sequence",
+      "kinds": [
+        "rig-baked-sequence"
+      ],
+      "fps": 4,
+      "loop": true,
+      "uniqueRawFrames": 2,
+      "runtimeFrameMs": 250,
+      "runtimeFrameDurationsMs": [
+        250,
+        250
+      ],
+      "runtimeDurationMs": 500,
+      "fpsImpliedDurationMs": 500,
+      "registryDurationMs": 500,
+      "registryProductionFragment": "production/mother-base-core.fragment.json",
+      "currentAssetProductionFragments": [
+        "production/mother-base-core.fragment.json"
+      ],
+      "preview": {
+        "path": "production/qa/mother.core.gif",
+        "pages": 2,
+        "delay": [
+          250,
+          250
+        ],
+        "durationMs": 500
+      },
+      "keyposeHoldDurationMs": null,
+      "fpsAuthority": "explicit animationGroups.frameDurationsMs; fps is descriptive average",
+      "loopEndpointEvidence": null,
+      "loopEndpointNote": "Intentional discrete two-pose loop; no continuous virtual endpoint proof claimed.",
+      "sheetChecks": [
+        {
+          "id": "fantasy.actor.mother.core.00",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1024,
+            "height": 1024
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9764705882352871,
+          "maxAlphaDifference": 0
+        },
+        {
+          "id": "fantasy.actor.mother.core.01",
+          "rect": {
+            "x": 1024,
+            "y": 0,
+            "width": 1024,
+            "height": 1024
+          },
+          "changedPixelsBeyondPremultipliedTolerance1_1": 0,
+          "maxPremultipliedDifference": 0.9647058823529306,
+          "maxAlphaDifference": 0
+        }
+      ]
+    }
+  ],
+  "staticOrOverlayItems": [
+    {
+      "id": "fantasy.actor.enemy.addon.spore_crown",
+      "classification": "enemy-overlay",
+      "animationRequired": false
+    },
+    {
+      "id": "fantasy.actor.enemy.elite.fungal_horns",
+      "classification": "enemy-overlay",
+      "animationRequired": false
+    },
+    {
+      "id": "fantasy.actor.weapon.emitter",
+      "classification": "independent-tool",
+      "animationRequired": false
+    },
+    {
+      "id": "fantasy.actor.immune.beacon",
+      "classification": "immune-beacon",
+      "animationRequired": false
+    },
+    {
+      "id": "fantasy.actor.mother.membrane",
+      "classification": "mother-overlay",
+      "animationRequired": false
+    },
+    {
+      "id": "fantasy.actor.mother.carapace",
+      "classification": "mother-overlay",
+      "animationRequired": false
+    },
+    {
+      "id": "fantasy.actor.mother.fission",
+      "classification": "mother-overlay",
+      "animationRequired": false
+    },
+    {
+      "id": "fantasy.actor.mother.mimic",
+      "classification": "mother-overlay",
+      "animationRequired": false
+    },
+    {
+      "id": "fantasy.actor.mother.purified",
+      "classification": "static",
+      "animationRequired": false
+    }
+  ],
+  "assets": [
+    {
+      "id": "fantasy.actor.enemy.basic.walk.00",
+      "path": "enemy/basic/walk/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/enemy/basic/master_v02.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/basic.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.basic.walk.01",
+      "path": "enemy/basic/walk/01.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/enemy/basic/master_v02.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/basic.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.basic.walk.02",
+      "path": "enemy/basic/walk/02.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/enemy/basic/master_v02.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/basic.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.basic.walk.03",
+      "path": "enemy/basic/walk/03.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/enemy/basic/master_v02.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/basic.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.basic.windup.00",
+      "path": "enemy/basic/windup/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/enemy/basic/master_v02.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/basic.v02.fragment.json",
+      "classification": "windup-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.basic.windup.01",
+      "path": "enemy/basic/windup/01.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/enemy/basic/master_v02.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/basic.v02.fragment.json",
+      "classification": "windup-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.basic.hurt.00",
+      "path": "enemy/basic/hurt/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/enemy/basic/master_v02.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/basic.v02.fragment.json",
+      "classification": "hurt-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.basic.dissolve.00",
+      "path": "enemy/basic/dissolve/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/enemy/basic/master_v02.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/basic.v02.fragment.json",
+      "classification": "dissolve-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.thinRay.walk.00",
+      "path": "enemy/thinRay/walk/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.thinRay.master.v02.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.thinRay.v03.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.thinRay.walk.01",
+      "path": "enemy/thinRay/walk/01.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.thinRay.master.v02.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.thinRay.v03.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.thinRay.walk.02",
+      "path": "enemy/thinRay/walk/02.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.thinRay.master.v02.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.thinRay.v03.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.thinRay.walk.03",
+      "path": "enemy/thinRay/walk/03.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.thinRay.master.v02.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.thinRay.v03.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.thinRay.windup.00",
+      "path": "enemy/thinRay/windup/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.thinRay.master.v02.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.thinRay.v03.fragment.json",
+      "classification": "windup-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.thinRay.windup.01",
+      "path": "enemy/thinRay/windup/01.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.thinRay.master.v02.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.thinRay.v03.fragment.json",
+      "classification": "windup-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.thinRay.hurt.00",
+      "path": "enemy/thinRay/hurt/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.thinRay.master.v02.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.thinRay.v03.fragment.json",
+      "classification": "hurt-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.thinRay.dissolve.00",
+      "path": "enemy/thinRay/dissolve/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.thinRay.master.v02.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.thinRay.v03.fragment.json",
+      "classification": "dissolve-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.carapace.walk.00",
+      "path": "enemy/carapace/walk/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.carapace.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.carapace.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.carapace.walk.01",
+      "path": "enemy/carapace/walk/01.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.carapace.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.carapace.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.carapace.walk.02",
+      "path": "enemy/carapace/walk/02.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.carapace.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.carapace.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.carapace.walk.03",
+      "path": "enemy/carapace/walk/03.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.carapace.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.carapace.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.carapace.windup.00",
+      "path": "enemy/carapace/windup/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.carapace.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.carapace.v02.fragment.json",
+      "classification": "windup-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.carapace.windup.01",
+      "path": "enemy/carapace/windup/01.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.carapace.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.carapace.v02.fragment.json",
+      "classification": "windup-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.carapace.hurt.00",
+      "path": "enemy/carapace/hurt/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.carapace.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.carapace.v02.fragment.json",
+      "classification": "hurt-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.carapace.dissolve.00",
+      "path": "enemy/carapace/dissolve/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.carapace.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.carapace.v02.fragment.json",
+      "classification": "dissolve-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.parent.walk.00",
+      "path": "enemy/fission/parent/walk/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.fission.parent.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.fission.parent.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.parent.walk.01",
+      "path": "enemy/fission/parent/walk/01.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.fission.parent.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.fission.parent.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.parent.walk.02",
+      "path": "enemy/fission/parent/walk/02.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.fission.parent.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.fission.parent.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.parent.walk.03",
+      "path": "enemy/fission/parent/walk/03.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.fission.parent.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.fission.parent.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.parent.windup.00",
+      "path": "enemy/fission/parent/windup/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.fission.parent.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.fission.parent.v02.fragment.json",
+      "classification": "windup-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.parent.windup.01",
+      "path": "enemy/fission/parent/windup/01.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.fission.parent.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.fission.parent.v02.fragment.json",
+      "classification": "windup-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.parent.hurt.00",
+      "path": "enemy/fission/parent/hurt/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.fission.parent.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.fission.parent.v02.fragment.json",
+      "classification": "hurt-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.parent.dissolve.00",
+      "path": "enemy/fission/parent/dissolve/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.fission.parent.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.fission.parent.v02.fragment.json",
+      "classification": "dissolve-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.child.walk.00",
+      "path": "enemy/fission/child/walk/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.fission.child.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.fission.child.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.child.walk.01",
+      "path": "enemy/fission/child/walk/01.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.fission.child.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.fission.child.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.child.walk.02",
+      "path": "enemy/fission/child/walk/02.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.fission.child.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.fission.child.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.child.walk.03",
+      "path": "enemy/fission/child/walk/03.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.fission.child.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.fission.child.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.child.windup.00",
+      "path": "enemy/fission/child/windup/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.fission.child.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.fission.child.v02.fragment.json",
+      "classification": "windup-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.child.windup.01",
+      "path": "enemy/fission/child/windup/01.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.fission.child.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.fission.child.v02.fragment.json",
+      "classification": "windup-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.child.hurt.00",
+      "path": "enemy/fission/child/hurt/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.fission.child.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.fission.child.v02.fragment.json",
+      "classification": "hurt-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.child.dissolve.00",
+      "path": "enemy/fission/child/dissolve/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.fission.child.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.fission.child.v02.fragment.json",
+      "classification": "dissolve-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.mimic.walk.00",
+      "path": "enemy/mimic/walk/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.mimic.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.mimic.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.mimic.walk.01",
+      "path": "enemy/mimic/walk/01.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.mimic.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.mimic.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.mimic.walk.02",
+      "path": "enemy/mimic/walk/02.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.mimic.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.mimic.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.mimic.walk.03",
+      "path": "enemy/mimic/walk/03.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.mimic.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.mimic.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.mimic.windup.00",
+      "path": "enemy/mimic/windup/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.mimic.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.mimic.v02.fragment.json",
+      "classification": "windup-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.mimic.windup.01",
+      "path": "enemy/mimic/windup/01.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.mimic.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.mimic.v02.fragment.json",
+      "classification": "windup-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.mimic.hurt.00",
+      "path": "enemy/mimic/hurt/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.mimic.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.mimic.v02.fragment.json",
+      "classification": "hurt-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.mimic.dissolve.00",
+      "path": "enemy/mimic/dissolve/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.enemy.mimic.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/enemy.mimic.v02.fragment.json",
+      "classification": "dissolve-keypose",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.addon.spore_crown",
+      "path": "enemy/addon/spore_crown.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/enemy/addon/spore_crown/master_v01.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/static-runtime.fragment.json",
+      "classification": "enemy-overlay",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.enemy.elite.fungal_horns",
+      "path": "enemy/elite/fungal_horns.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/enemy/elite/fungal_horns/master_v01.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/static-runtime.fragment.json",
+      "classification": "enemy-overlay",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.crawl.00",
+      "path": "immune/front_right/crawl/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/immune/front_right/master_v01.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/immune-front-right.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.crawl.01",
+      "path": "immune/front_right/crawl/01.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/immune/front_right/master_v01.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/immune-front-right.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.crawl.02",
+      "path": "immune/front_right/crawl/02.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/immune/front_right/master_v01.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/immune-front-right.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.crawl.03",
+      "path": "immune/front_right/crawl/03.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/immune/front_right/master_v01.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/immune-front-right.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.bite.00",
+      "path": "immune/front_right/bite/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/immune/front_right/master_v01.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/immune-front-right.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.bite.01",
+      "path": "immune/front_right/bite/01.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/immune/front_right/master_v01.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/immune-front-right.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.bite.02",
+      "path": "immune/front_right/bite/02.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/immune/front_right/master_v01.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/immune-front-right.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.bite.03",
+      "path": "immune/front_right/bite/03.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/immune/front_right/master_v01.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/immune-front-right.v02.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.immune.back_right.crawl.00",
+      "path": "immune/back_right/crawl/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/immune/back_right/master_v01.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/immune-back8.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.immune.back_right.crawl.01",
+      "path": "immune/back_right/crawl/01.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/immune/back_right/master_v01.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/immune-back8.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.immune.back_right.crawl.02",
+      "path": "immune/back_right/crawl/02.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/immune/back_right/master_v01.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/immune-back8.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.immune.back_right.crawl.03",
+      "path": "immune/back_right/crawl/03.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/immune/back_right/master_v01.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/immune-back8.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.immune.back_right.bite.00",
+      "path": "immune/back_right/bite/00.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/immune/back_right/master_v01.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/immune-back8.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.immune.back_right.bite.01",
+      "path": "immune/back_right/bite/01.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/immune/back_right/master_v01.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/immune-back8.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.immune.back_right.bite.02",
+      "path": "immune/back_right/bite/02.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/immune/back_right/master_v01.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/immune-back8.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.immune.back_right.bite.03",
+      "path": "immune/back_right/bite/03.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/immune/back_right/master_v01.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/immune-back8.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.weapon.emitter",
+      "path": "weapon/emitter.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/weapon/emitter/master_v01.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/static-runtime.fragment.json",
+      "classification": "independent-tool",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.immune.beacon",
+      "path": "immune/beacon.png",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 512,
+        "height": 512
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "sources/immune/beacon/master_v02.png",
+        "sha256Matches": true,
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "productionFragment": "production/static-runtime.fragment.json",
+      "classification": "immune-beacon",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.mother.base.00",
+      "path": "mother/base/00.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.mother.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "productionFragment": "production/mother-base-core.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.mother.base.01",
+      "path": "mother/base/01.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.mother.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "productionFragment": "production/mother-base-core.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.mother.base.02",
+      "path": "mother/base/02.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.mother.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "productionFragment": "production/mother-base-core.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.mother.base.03",
+      "path": "mother/base/03.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.mother.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "productionFragment": "production/mother-base-core.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.mother.core.00",
+      "path": "mother/core/00.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.mother.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "productionFragment": "production/mother-base-core.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.mother.core.01",
+      "path": "mother/core/01.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.mother.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "productionFragment": "production/mother-base-core.fragment.json",
+      "classification": "rig-baked-sequence",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.mother.membrane",
+      "path": "mother/membrane.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "raw/fantasy.actor.mother.membrane.layer.master/05f231b1-7206-4bdd-8bfa-35905db98b49.png",
+        "sha256Matches": true,
+        "dimensions": [
+          2048,
+          2048
+        ]
+      },
+      "productionFragment": "production/membrane-v03.fragment.json",
+      "classification": "mother-overlay",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.mother.carapace",
+      "path": "mother/carapace.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "raw/fantasy.actor.mother.carapace.layer.master/a924957f-3ffa-4df6-99a0-5e679f4d9bb6.png",
+        "sha256Matches": true,
+        "dimensions": [
+          2048,
+          2048
+        ]
+      },
+      "productionFragment": "production/mother-layers-v02.fragment.json",
+      "classification": "mother-overlay",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.mother.fission",
+      "path": "mother/fission.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "raw/fantasy.actor.mother.fission.layer.master/b90fa0e7-b63f-437f-b22a-1f096f85fb3a.png",
+        "sha256Matches": true,
+        "dimensions": [
+          2048,
+          2048
+        ]
+      },
+      "productionFragment": "production/mother-layers-v02.fragment.json",
+      "classification": "mother-overlay",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.mother.mimic",
+      "path": "mother/mimic.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "raw/fantasy.actor.mother.mimic.layer.master/db2dd681-7d30-40c2-b982-869f6ea3433e.png",
+        "sha256Matches": true,
+        "dimensions": [
+          2048,
+          2048
+        ]
+      },
+      "productionFragment": "production/mother-layers-v02.fragment.json",
+      "classification": "mother-overlay",
+      "passes": true
+    },
+    {
+      "id": "fantasy.actor.mother.purified",
+      "path": "mother/purified.png",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sha256Matches": true,
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "sourceFrame": {
+        "x": 0,
+        "y": 0,
+        "width": 1024,
+        "height": 1024
+      },
+      "rectCoordinateSpace": "registered PNG canvas, not the original raw generation canvas",
+      "source": {
+        "path": "production/processed/masters/fantasy.actor.mother.master.png",
+        "sha256Matches": true,
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "productionFragment": "production/mother-base-core.fragment.json",
+      "classification": "static",
+      "passes": true
+    }
+  ],
+  "limitations": [
+    "No images were generated, edited or written.",
+    "This audit does not replace main-session mobile visual approval or prove continuous motion from pixel hashes.",
+    "Hero remains excluded and its gate is unchanged."
+  ]
+}

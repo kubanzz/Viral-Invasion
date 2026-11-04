@@ -10,7 +10,9 @@ export function immuneCellBody(cell: ImmuneCellState, elapsed: number) {
   const crawling = cell.activity === 'seeking' || cell.activity === 'returning', biting = elapsed < cell.attackUntil;
   const pulse = Math.sin(elapsed * (crawling ? 13 : 4) + cell.born * 3), radius = cell.radius + (biting ? 3 : 0);
   const outline = Array.from({ length: 37 }, (_, index) => {
-    const angle = index / 36 * TAU, r = radius * (1 + Math.sin(angle * 5 + elapsed * 3) * .085 + (crawling ? pulse * .035 : 0));
+    // Five broad leaf lobes, with a stable phase: movement can flex the cell
+    // without spinning its silhouette or making it resemble a second bot.
+    const angle = index / 36 * TAU, r = radius * (.93 + Math.cos(angle * 5) * .13 + (crawling ? pulse * .025 : 0));
     return { x: Math.cos(angle) * r, y: Math.sin(angle) * r * .88 };
   });
   return { alpha, crawling, biting, pulse, radius, rotation: Math.atan2(Math.sin(cell.facing) * .72, Math.cos(cell.facing)), outline };
@@ -24,7 +26,7 @@ export type ImmuneCellAccentLayer = 'ground' | 'overlay' | 'all';
 
 function drawGround(ctx: CanvasRenderingContext2D, cell: ImmuneCellState): void {
   ctx.beginPath(); ctx.ellipse(0, 3, cell.radius + 4, (cell.radius + 4) * .46, 0, 0, TAU);
-  ctx.fillStyle = '#0c252d77'; ctx.fill();
+  ctx.fillStyle = '#4f685c35'; ctx.fill();
 }
 
 /** A soft contact shadow for the painted body; the complete fallback keeps its original shadow. */
@@ -36,37 +38,36 @@ function drawNativeGround(ctx: CanvasRenderingContext2D, cell: ImmuneCellState):
 
 /** Local upright body only; the caller owns its lift, orientation and alpha. */
 function drawBody(ctx: CanvasRenderingContext2D, body: ImmuneBody): void {
-  // Every unit carries its own cross/nucleus rather than reading as a second turret.
+  // Cream leaf membrane and a paired sage nucleus identify an organic ally.
   ctx.beginPath();
   for (const [index, vertex] of body.outline.entries()) {
     if (index === 0) ctx.moveTo(vertex.x, vertex.y); else ctx.lineTo(vertex.x, vertex.y);
   }
-  ctx.closePath(); ctx.fillStyle = body.biting ? '#ecffe4' : '#cdebd7'; ctx.fill(); ctx.strokeStyle = '#619b89'; ctx.lineWidth = 2; ctx.stroke();
-  ctx.beginPath(); ctx.ellipse(-4, -2, 6, 8, -.4, 0, TAU); ctx.ellipse(4, 3, 5, 7, .4, 0, TAU);
-  ctx.fillStyle = '#689c9c'; ctx.fill();
-  stroke(ctx, { x: -4, y: -1 }, { x: 4, y: -1 }, '#f4ffdd', 2.2);
-  stroke(ctx, { x: 0, y: -5 }, { x: 0, y: 3 }, '#f4ffdd', 2.2);
+  ctx.closePath(); ctx.fillStyle = body.biting ? '#f8efd7' : '#eee9d3'; ctx.fill(); ctx.strokeStyle = '#6f927b'; ctx.lineWidth = 1.8; ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(-3, -2, 4, 6, -.5, 0, TAU); ctx.ellipse(3, 2, 3.5, 5, -.5, 0, TAU);
+  ctx.fillStyle = '#8caf91'; ctx.fill();
 }
 
 function drawActivity(ctx: CanvasRenderingContext2D, cell: ImmuneCellState, elapsed: number, body: ImmuneBody, low: boolean): void {
   const { crawling, biting, pulse, radius } = body;
   if (!low && crawling) for (const sign of [-1, 1]) {
-    stroke(ctx, { x: -radius - 7, y: sign * 5 }, { x: -radius - 1, y: sign * 5 + pulse * 2 }, '#b1e3ceaa', 1.5);
+    ctx.beginPath(); ctx.ellipse(-radius - 4, sign * 4 + pulse, 1.8, 1.3, 0, 0, TAU); ctx.fillStyle = '#97b598'; ctx.fill();
   }
   if (biting) {
-    const open = .5 + (cell.attackUntil - elapsed) / .24 * .8;
-    ctx.beginPath(); ctx.arc(0, 0, radius + 7, -.7 - open, .7 + open); ctx.strokeStyle = '#e3ffba'; ctx.lineWidth = 3; ctx.stroke();
+    const open = .3 + Math.min(1, (cell.attackUntil - elapsed) / .24) * .35;
+    ctx.beginPath(); ctx.arc(0, 0, radius + 5, -open, open); ctx.strokeStyle = '#496f59'; ctx.lineWidth = 4; ctx.stroke();
+    ctx.strokeStyle = '#f3e7bc'; ctx.lineWidth = 2; ctx.stroke();
   }
 }
 
 function drawLifetime(ctx: CanvasRenderingContext2D, cell: ImmuneCellState, elapsed: number): void {
   const remaining = Math.max(0, Math.min(1, cell.hp !== undefined ? cell.hp / (cell.maxHp ?? 60) : Number.isFinite(cell.until) ? (cell.until - elapsed) / (cell.until - cell.born) : 1));
-  stroke(ctx, { x: -10, y: 8 }, { x: 10, y: 8 }, '#193f3e', 3);
-  stroke(ctx, { x: -10, y: 8 }, { x: -10 + remaining * 20, y: 8 }, remaining < .35 ? '#ed9b8b' : '#c7efb5', 2);
+  stroke(ctx, { x: -10, y: 8 }, { x: 10, y: 8 }, '#465c4d', 3);
+  stroke(ctx, { x: -10, y: 8 }, { x: -10 + remaining * 20, y: 8 }, remaining < .35 ? '#c77e70' : '#bdd0a8', 2);
   if ((cell.antibodyUntil ?? 0) > elapsed) {
     ctx.beginPath(); ctx.ellipse(0, -7, cell.radius + 7, cell.radius * .65 + 5, 0, 0, TAU);
-    ctx.strokeStyle = '#efc56c'; ctx.lineWidth = 2; ctx.stroke();
-    stroke(ctx, { x: -10, y: 12 }, { x: -10 + Math.min(1, (cell.antibodyUntil! - elapsed) / 8) * 20, y: 12 }, '#efc56c', 2);
+    ctx.strokeStyle = '#ad8955'; ctx.lineWidth = 2; ctx.stroke();
+    stroke(ctx, { x: -10, y: 12 }, { x: -10 + Math.min(1, (cell.antibodyUntil! - elapsed) / 8) * 20, y: 12 }, '#ad8955', 2);
   }
 }
 

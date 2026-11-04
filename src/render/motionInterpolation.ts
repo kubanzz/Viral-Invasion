@@ -1,5 +1,6 @@
 import { activeWorld, type GameState, type Vec, type WorldGeometry } from '../game/types';
 import { isLegalPosition } from '../actors/collision';
+import { isTerritoryPlayerAirborne } from '../game/territoryCannon';
 
 interface ActorPose extends Vec { facing?: number }
 interface Positions {
@@ -96,7 +97,7 @@ export class MotionInterpolation {
     // A straight chord can cut inside a fold when a body slides around it.
     // Show the authoritative position when that happens, without changing the
     // simulated body. Off-organ cells are never checked against this organ.
-    const visiblePlayer = blendLegal(state.player, prev.player, t, world);
+    const visiblePlayer = isTerritoryPlayerAirborne(state)?blend(state.player,prev.player,t):blendLegal(state.player, prev.player, t, world);
     const shown: GameState = {
       ...state,
       visualTime: prev.time + (current.time - prev.time) * t,
@@ -123,7 +124,7 @@ export class MotionInterpolation {
       if (!old || Math.hypot(current.x - old.x, current.y - old.y) > MAX_STEP_DISTANCE || !isLegalPosition(old, current.radius, world)) return current;
       return { ...current, x: old.x, y: old.y };
     };
-    return { ...state, visualTime: held.time, player: use(state.player, held.player),
+    return { ...state, visualTime: held.time, player: isTerritoryPlayerAirborne(state)&&held.player?{...state.player,...held.player}:use(state.player, held.player),
       targets: state.targets.map(target => blendFacing(use(target, held.targets.get(target.id)), held.targets.get(target.id), 0)),
       growth: state.growth?.cells ? { ...state.growth, cells: state.growth.cells.map(cell => cell.organId === organ
         ? blendFacing(use(cell, held.cells.get(`${cell.organId}:${cell.id}`)), held.cells.get(`${cell.organId}:${cell.id}`), 0) : cell) } : state.growth };

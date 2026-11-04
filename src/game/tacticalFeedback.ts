@@ -42,6 +42,14 @@ export function tacticalFeedback(event: GameEvent): Feedback | undefined {
   const organKey = d.organId === 'lung' ? 'lung' : d.organId === 'heart' ? 'heart' : 'current';
   const item = (text: string, priority: MessagePriority = 2, seconds = 7, suffix = '', toast = true): Feedback => ({ key: `${event.type}${suffix}`, text, priority, seconds, toast });
   switch (event.type) {
+    case 'IMMUNE_SQUAD_REDIRECTED': {
+      if (d.footDeployment !== true) return;
+      if (d.withdrewFront === true && (d.previousRegionId === 'front-north' || d.previousRegionId === 'front-south')) {
+        const lane = d.previousRegionId === 'front-north' ? '北' : '南';
+        return item(`${lane}前线撤防：最近军团正向脚下行军，原感染源可能恢复护膜。`, 2, 4, `:${lane}`);
+      }
+      return item('最近军团正向脚下行军并留守，生命与攻击冷却保留。', 1, 3, ':ground');
+    }
     case 'EVOLUTION_WARNING': return item(`变异预警 · ${t?.name ?? '未知特性'}：${t?.ability ?? ''}。代价：${t?.cost ?? ''}。反制：${t?.counter ?? '先扫描诊断'}。`, 2, Number(d.duration) || 8, `:${trait ?? 'unknown'}`);
     case 'EVOLUTION_APPLIED': return item(`${t?.symbol ?? '△'} ${t?.name ?? '病毒变异'}已出现。弱点：${t?.counter ?? '扫描诊断'}。`, 2, 7, `:${trait ?? 'unknown'}`);
     case 'INFECTION_CRISIS_STARTED': return item('感染负荷 100！15 秒内净化感染源/感染体或抢修，降低感染即可解除危机。', 3, 15);

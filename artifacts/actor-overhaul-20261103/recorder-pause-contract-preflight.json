@@ -1,0 +1,97 @@
+{
+  "scope": "Pure Node preflight of the new strict pause-reference harness. No browser was launched. Completed final-4 logs belong to old candidate71d2 and lack immediately previous-rAF enemy references; their old paused failures are retained, never retroactively accepted. Only actual playing samples are independently replayed here.",
+  "scriptSha256": "db837b44473738b57233330dd3e3338c5e881ea750e82eac5c01a6fc7bf06951",
+  "oldCaptureGameJsSha256": "71d2a8d6c2b8a0f2c90ac16640e7b1e995234a98f299d8360a0d9f6c1d3ddcce",
+  "currentCandidateGameJsSha256": "3ee2d91c62b5c1301d4260d8d47d231bf55384234c47fa2011d3b5cf15eb1f26",
+  "selfCheck": {
+    "path": "artifacts/actor-overhaul-20261103/recorder-check-pause-final/recorder-check.json",
+    "assertions": 34,
+    "pass": true
+  },
+  "runs": [
+    {
+      "name": "training-standard-actions",
+      "playing": 463,
+      "playingInvalid": 0,
+      "paused": 11,
+      "legacyPausedInvalid": 0,
+      "errors": []
+    },
+    {
+      "name": "heart-standard-actions",
+      "playing": 668,
+      "playingInvalid": 0,
+      "paused": 0,
+      "legacyPausedInvalid": 0,
+      "errors": []
+    },
+    {
+      "name": "training-low-actions",
+      "playing": 469,
+      "playingInvalid": 0,
+      "paused": 14,
+      "legacyPausedInvalid": 0,
+      "errors": []
+    },
+    {
+      "name": "heart-low-actions",
+      "playing": 680,
+      "playingInvalid": 0,
+      "paused": 0,
+      "legacyPausedInvalid": 0,
+      "errors": []
+    },
+    {
+      "name": "heart-standard-compact-actions",
+      "playing": 685,
+      "playingInvalid": 0,
+      "paused": 0,
+      "legacyPausedInvalid": 0,
+      "errors": []
+    },
+    {
+      "name": "heart-low-compact-actions",
+      "playing": 684,
+      "playingInvalid": 0,
+      "paused": 0,
+      "legacyPausedInvalid": 0,
+      "errors": []
+    },
+    {
+      "name": "heart-precision-combat",
+      "playing": 6409,
+      "playingInvalid": 0,
+      "paused": 75,
+      "legacyPausedInvalid": 10,
+      "errors": []
+    },
+    {
+      "name": "heart-area-combat",
+      "playing": 6327,
+      "playingInvalid": 0,
+      "paused": 49,
+      "legacyPausedInvalid": 6,
+      "errors": []
+    }
+  ],
+  "corruptProof": {
+    "run": "training-standard-actions",
+    "tick": 9,
+    "actorId": "single-1",
+    "actualReplacement": "fantasy.actor.enemy.basic.dissolve.00",
+    "rejected": true,
+    "enemySemanticMismatch": {
+      "actorId": "single-1",
+      "family": "basic",
+      "validationScope": "current-battle-state",
+      "expectedClip": "walk",
+      "expectedPrefix": "fantasy.actor.enemy.basic.walk.",
+      "actualSemanticId": "fantasy.actor.enemy.basic.dissolve.00",
+      "declaredClip": "walk",
+      "matches": false
+    }
+  },
+  "pass": true,
+  "browserStarted": false,
+  "oldPausedCoverageAccepted": false
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "status": "pause-diagnostics-source-refrozen-for-parent-candidate-rebuild",
+  "createdAt": "2026-11-03T03:15:38.770Z",
+  "problem": "Paused actors can retain the last displayed walk/bite frame while current rule intent changes to dissolve/guard. Diagnostics previously combined the retained semanticId with the new request action/clip/direction.",
+  "change": "Primary presentation fields now use the actual selected ActorFrame. Current requested action/clip/direction/flip are separate; logicalAction preserves current fire/catalysis/scan/role intent. Player request diagnostics now read the real current hero request.",
+  "changedFiles": [
+    {
+      "path": "src/render/phaserRenderer.ts",
+      "previousSha256": "a6267d322e5e1285d92b4fb0a8381fb0a2e36637c43ca9949e5334b85b9821d7",
+      "currentSha256": "b5de306b4918cf1586bcfdac01a3e1a9bffecea2cdaf1598e221476437daaa79"
+    },
+    {
+      "path": "tests/unit/native-art-dispatch.test.ts",
+      "previousSha256": "7f0b0b9a75b47d1659d7f82afe1daf7dc4ac549d7ed763877acddacb758b0e7d",
+      "currentSha256": "4fc52090b84b0eb372e3478a732779cc551e97e0f2d2fa7aa7ad250554da9582"
+    }
+  ],
+  "verification": {
+    "relevantTests": "138/138 passed, including paused enemy alive→dead→resume, immune bite/back-left→guard/front-right pause, and static emitter logical fire/catalysis preservation",
+    "typecheck": "passed",
+    "artCheck": "passed"
+  },
+  "selectionSha256": "c171105fb5999af9ccddcb974fab4e3fd74b06466d781726fce4d70692a268c4",
+  "runtimeSha256": "f2d4a6a330c183d6aca8382cd93bdf8667deb066871653b72d0f86fc02c4eb3a",
+  "inputSignature": "ba9830adaa1e1c25b3f844b9689f3b8827c6e53de99a6ba3450f3b60a874749b",
+  "sourceImageSignature": "e032b2e87b2c439235a3cbca243c008efa11e5c5a3f6ef8de91cf9c12d12787b",
+  "renderingAndPauseRulesChanged": false,
+  "sourcePixelsOrSelectionChanged": false,
+  "remaining": "Parent verifier uses strict previous-native-frame consistency during pause and independent rule semantics during playing; parent rebuild/natural acceptance still required."
+}

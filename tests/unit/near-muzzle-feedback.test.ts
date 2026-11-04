@@ -1,4 +1,3 @@
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { isLegalPosition } from '../../src/actors/collision';
 import { GameSession } from '../../src/game/session';
@@ -7,8 +6,17 @@ import { CanvasScene } from '../../src/render/canvasScene';
 import { aimedPaintedTool, paintedToolMuzzle, type SourceRegisteredSpriteAsset } from '../../src/render/spriteGeometry';
 import { toolFeedback } from '../../src/render/toolFeedback';
 
-const art = JSON.parse(readFileSync('.art-generated/art-runtime.json', 'utf8')) as { assets: Record<string, SourceRegisteredSpriteAsset> };
-const emitter = art.assets['weapon.emitter.painted'];
+// Isolated geometry contract: a +X tool, handle at(32,64), outlet at(252,64).
+// These tests exercise real GameSession hits/walls and the render-only origin
+// bridge, independently of whichever production art family is selected today.
+// Current production tool registrations remain covered by their integration
+// and near-contact browser checks; this fixture is not their visual approval.
+const emitter: SourceRegisteredSpriteAsset = {
+  width: 256, height: 128, pivot: { x: 32 / 256, y: .5 },
+  visibleBounds: { x: 0, y: 0, width: 256, height: 128 },
+  sourceSize: { width: 256, height: 128 }, sourceBounds: { x: 0, y: 0, width: 256, height: 128 },
+  sourceMuzzle: { x: 252, y: 64 },
+};
 
 function shoot(position: Vec, aim: Vec, targetX?: number) {
   const session = new GameSession(31); session.start();
@@ -35,7 +43,7 @@ function draw(state: GameState, origin: Vec, low: boolean, scale = 1) {
   const contacts: { position: Vec; radius: number }[] = [], colors: string[] = [];
   const ctx = { globalAlpha: 1, strokeStyle: '', lineWidth: 1, save() {}, restore() {}, beginPath() {}, moveTo() {}, lineTo() {}, stroke() { strokes++; },
     translate(x: number, y: number) { translation = { x, y }; }, scale() {},
-    ellipse(_x: number, _y: number, radius: number) { contacts.push({ position: { ...translation }, radius }); }, fill() {} } as unknown as CanvasRenderingContext2D;
+    ellipse(x: number, y: number, radius: number) { if(x===0&&y===0)contacts.push({ position: { ...translation }, radius }); }, fill() {} } as unknown as CanvasRenderingContext2D;
   ctx.stroke = function () { strokes++; colors.push(String(ctx.strokeStyle)); };
   const scene = Object.create(CanvasScene.prototype) as CanvasScene;
   Object.assign(scene, { art: { effectOrigin: () => origin }, camera: { scale }, drawAntibody: () => { antibodies++; } });
@@ -95,8 +103,8 @@ describe('short primary beams at the painted muzzle', () => {
   it('keeps ordinary forward beams and the original origin fallback', () => {
     const result = shoot({ x: 330, y: 440 }, { x: 800, y: 440 });
     for (const low of [false, true]) {
-      expect(draw(result.state, result.origin, low)).toEqual({ strokes: 2, antibodies: 1, contacts: [], colors: ['#8bece455', '#e8fff1'] });
-      expect(draw(result.state, result.beam.from, low)).toEqual({ strokes: 2, antibodies: 1, contacts: [], colors: ['#8bece455', '#e8fff1'] });
+      expect(draw(result.state, result.origin, low)).toEqual({ strokes: 3, antibodies: 1, contacts: [], colors: ['#254a48','#fff8d4','#315b51'] });
+      expect(draw(result.state, result.beam.from, low)).toEqual({ strokes: 3, antibodies: 1, contacts: [], colors: ['#254a48','#fff8d4','#315b51'] });
     }
   });
 });

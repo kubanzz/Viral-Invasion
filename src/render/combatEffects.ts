@@ -25,27 +25,33 @@ export function drawCombatEffects(ctx: CanvasRenderingContext2D, state: GameStat
     ctx.save(); ctx.globalAlpha = Math.max(0, 1 - progress); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
     ctx.beginPath(); ctx.moveTo(effect.from.x, effect.from.y);
     for (const p of edge) ctx.lineTo(p.x, p.y);
-    ctx.closePath(); ctx.fillStyle = '#9df9e82e'; ctx.fill();
-    for (const [inset, color, width] of [[.85, '#51c9bc99', 12], [.94, '#a4fff2', 5], [1, '#ffffe4', 2]] as const) {
-      ctx.beginPath();
-      edge.forEach((p, i) => {
-        const x = effect.from.x + (p.x - effect.from.x) * inset, y = effect.from.y + (p.y - effect.from.y) * inset;
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      });
-      ctx.strokeStyle = color; ctx.lineWidth = width; ctx.stroke();
+    ctx.closePath(); ctx.fillStyle = '#bfd0aa20'; ctx.fill();
+    // One tapered cream blade, with its outer edge on the real clipped hit
+    // boundary. The inner silhouette avoids three overlapping neon outlines.
+    ctx.beginPath();
+    edge.forEach((p, i) => { if (!i) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+    for (let i = edge.length - 1; i >= 0; i--) {
+      const taper = Math.sin(i / (edge.length - 1) * Math.PI), inset = 1 - .13 * taper;
+      ctx.lineTo(effect.from.x + (edge[i].x - effect.from.x) * inset, effect.from.y + (edge[i].y - effect.from.y) * inset);
     }
+    ctx.closePath(); ctx.fillStyle = '#f7eacb'; ctx.fill();
+    ctx.beginPath(); edge.forEach((p, i) => { if (!i) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+    ctx.strokeStyle = '#548b78'; ctx.lineWidth = 1.8; ctx.stroke();
     ctx.restore();
   }
   const cast = state.traction;
   if (cast) {
-    ctx.save(); ctx.strokeStyle = '#4caaa8'; ctx.lineWidth = 1.5; ctx.setLineDash([7, 5]); ring(ctx, cast.center, cast.gatherRadius); ctx.setLineDash([]);
-    ctx.strokeStyle = cast.catalysisDamageSnapshot > 0 ? '#e8a74d' : '#b7fff1'; ctx.lineWidth = 3; ring(ctx, cast.center, cast.radius);
-    const time = state.elapsed - cast.startedAt, arms = lowEffects ? 4 : 7;
+    ctx.save(); ctx.strokeStyle = '#537f71'; ctx.lineWidth = 1.5; ctx.setLineDash([7, 7]); ring(ctx, cast.center, cast.gatherRadius); ctx.setLineDash([]);
+    ctx.strokeStyle = cast.catalysisDamageSnapshot > 0 ? '#a77252' : '#547c63'; ctx.lineWidth = 3; ring(ctx, cast.center, cast.radius);
+    const time = state.elapsed - cast.startedAt, arms = lowEffects ? 2 : 4;
     for (let i = 0; i < arms; i++) {
       const angle = i / arms * TAU + time * 2;
       const from = { x: cast.center.x + Math.cos(angle) * cast.gatherRadius, y: cast.center.y + Math.sin(angle) * cast.gatherRadius };
       const to = { x: cast.center.x + Math.cos(angle - .35) * cast.radius * .45, y: cast.center.y + Math.sin(angle - .35) * cast.radius * .45 };
-      ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.quadraticCurveTo(cast.center.x, from.y, to.x, to.y); ctx.strokeStyle = '#8ae4d78c'; ctx.lineWidth = 2; ctx.stroke();
+      // Short inward leaflets show direction; the two circles alone own the
+      // gathering and explosion ranges, including in low quality.
+      const x = from.x + (to.x - from.x) * .55, y = from.y + (to.y - from.y) * .55;
+      ctx.beginPath(); ctx.ellipse(x, y, 5, 2.5, angle - .3, 0, TAU); ctx.fillStyle = '#88ad8d'; ctx.fill();
     }
     ctx.fillStyle = '#184a4c'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
     ctx.fillText(cast.stage === 'guiding' ? '导流 · 松开引爆' : cast.stage === 'aiming' ? '按住导流 / 轻点快放' : `牵引裂解 ${(Math.max(0, cast.resolveAt - state.elapsed)).toFixed(1)}s`, cast.center.x, cast.center.y - cast.gatherRadius - 10);

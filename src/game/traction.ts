@@ -38,7 +38,7 @@ export function beginTraction(state: GameState, id: string, center: Vec, stats?:
 /** Committed attacks keep their frozen warning and body position. No plan is cancelled. */
 function displacementFactor(target: Target, elapsed: number): number {
   if (!Number.isFinite(target.hp) || target.hp <= 0 || !Number.isFinite(target.radius) || target.radius <= 0
-    || target.role === 'source' || target.role === 'core' || target.role === 'capsule' || target.role === 'event'
+    || target.role === 'source' || target.role === 'core' || target.role === 'capsule' || target.role === 'event' || target.role === 'nest'
     || target.attackPlan || target.charge || (target.recoverUntil ?? 0) > elapsed
     || target.attackAt !== undefined && target.attackAt >= elapsed) return 0;
   return target.role === 'elite' || target.traits?.includes('CARAPACE') ? TRACTION_BALANCE.heavyFactor : 1;

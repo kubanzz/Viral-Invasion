@@ -4,6 +4,8 @@ import type { BehaviorBin } from './evolutionTypes';
 import type { EndlessEvolutionDecision } from './endlessEvolutionTypes';
 import type { EndlessUpgradeId } from './endlessGrowthTypes';
 import type { OpeningEvolutionState } from './openingEvolution';
+import type { TerritoryLaneId, TerritoryNodeId, TerritorySourceId } from './territoryTypes';
+import type { SmartSupportWave } from './smartVirusesTypes';
 
 export type EndlessEvolutionWarning = Extract<EndlessEvolutionDecision, { kind: 'warn' }>;
 export interface EndlessAdaptationState {
@@ -35,6 +37,35 @@ export interface EndlessBatch {
   sector: number;
   spread: number;
   roles: EndlessSpawnRole[];
+}
+
+/** Four existing ordinary budget slots become one finite objective squad. */
+export interface TerritorySquadPlan {
+  id: string;
+  wave: number;
+  laneId: TerritoryLaneId;
+  sourceId: TerritorySourceId;
+  slots: number[];
+  /** Seconds after the actual start of this wave's combat. */
+  departureOffset: number;
+  status: 'pending' | 'warning' | 'active' | 'complete' | 'canceled';
+  warnedAt?: number;
+  bornAt?: number;
+  memberIds: string[];
+  origin?: Vec;
+  nodeId?: TerritoryNodeId;
+  blocked?: 'lane-busy' | 'population' | 'position';
+  retryAt?: number;
+  /** Actual healthy facility where this finite squad was first fought. */
+  defenseNodeId?: TerritoryNodeId;
+  defenseFailed?: boolean;
+  defenseResolved?: boolean;
+}
+export interface TerritoryWaveTasks {
+  wave: number;
+  squads: TerritorySquadPlan[];
+  /** Reserved ordinary ordinals are skipped by the ordinary queue, not spent twice. */
+  reservedSlots: number[];
 }
 
 /** Run-local challenge progress. Arrays contain only the current finite wave. */
@@ -74,6 +105,8 @@ export interface EndlessState {
   supportRemaining: number;
   evolution?: EndlessAdaptationState;
   source?: EndlessSourcePlan;
+  territoryTasks?: TerritoryWaveTasks;
+  smartSupport?: SmartSupportWave;
   /** One paused transaction per cleared wave; protocol follows combat. */
   reward?: { wave: number; step: 'combat' | 'protocol' | 'complete' };
   stageCheckpoint?: 'pending' | 'acknowledged';

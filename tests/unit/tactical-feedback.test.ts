@@ -13,6 +13,17 @@ const create = (milestone: 'G1' | 'G3' = 'G3') => {
 const at = (session: GameSession, seconds: number) => { session.state.tick = Math.round(seconds * 60); session.state.elapsed = seconds; };
 
 describe('bounded tactical explanations and notification priority', () => {
+  it('explains withdrawing a front garrison while using one bounded record for that lane', () => {
+    const session = create();
+    session.emit('IMMUNE_SQUAD_REDIRECTED', { footDeployment: true, withdrewFront: true, previousRegionId: 'front-north' });
+    expect(session.state.message).toContain('北前线撤防'); expect(session.state.message).toContain('向脚下行军');
+    expect(session.state.message).toContain('护膜');
+    const record = session.state.tacticalRecords!.find(item => item.eventType === 'IMMUNE_SQUAD_REDIRECTED')!;
+    expect(record.key).toBe('IMMUNE_SQUAD_REDIRECTED:北');
+    session.emit('IMMUNE_SQUAD_REDIRECTED', { footDeployment: true, withdrewFront: true, previousRegionId: 'front-north', beaconId: 'another-id' });
+    expect(session.state.tacticalRecords!.filter(item => item.eventType === 'IMMUNE_SQUAD_REDIRECTED')).toHaveLength(1);
+  });
+
   it.each(['EVOLUTION_WARNING', 'MIGRATION_WARNING', 'INFECTION_CRISIS_STARTED'])('protects %s from scan, repair and routine action spam, then expires', type => {
     const session = create();
     session.emit(type, { trait: 'CARAPACE', duration: 8 });

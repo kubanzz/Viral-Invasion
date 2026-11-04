@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "version": "v0.14",
+  "root": "ViralInvasion_Fantasy_Combat_v3",
+  "expectedRuntimeCount": 72,
+  "canvas": [
+    512,
+    512
+  ],
+  "pivot": [
+    0.5,
+    0.85
+  ],
+  "foot": [
+    256,
+    435.2
+  ],
+  "trim": false,
+  "directions": [
+    "front_right",
+    "back_right"
+  ],
+  "leftDirections": "mirrorX of corresponding authored right view",
+  "sourceMethod": "Maliang design source + local registered layered/soft-body action baking; not AI per-frame generation",
+  "runtimeBudget": {
+    "totalMiB": 20,
+    "existingApproxMiB": 9.61,
+    "availableApproxMiB": 10.39
+  },
+  "entities": [
+    {
+      "key": "immuneCannon",
+      "idPrefix": "fantasy.combat.immuneCannon",
+      "directions": [
+        "fixed"
+      ],
+      "states": {
+        "ready": 2,
+        "load": 2,
+        "fire": 3
+      },
+      "suggestedVisibleWorldHeight": 72,
+      "groundWorldDiameterMax": 80,
+      "recommendedRuntimeTexture": 256
+    },
+    {
+      "key": "slimeMage",
+      "idPrefix": "fantasy.combat.slimeMage",
+      "directions": [
+        "front_right",
+        "back_right"
+      ],
+      "states": {
+        "idle": 2,
+        "walk": 4,
+        "windup": 2,
+        "cast": 3
+      },
+      "suggestedVisibleWorldHeight": 74,
+      "groundWorldDiameterMax": null,
+      "recommendedRuntimeTexture": 192
+    },
+    {
+      "key": "nestBuilder",
+      "idPrefix": "fantasy.combat.nestBuilder",
+      "directions": [
+        "front_right",
+        "back_right"
+      ],
+      "states": {
+        "idle": 2,
+        "walk": 4,
+        "build": 3
+      },
+      "suggestedVisibleWorldHeight": 72,
+      "groundWorldDiameterMax": null,
+      "recommendedRuntimeTexture": 192
+    },
+    {
+      "key": "miniNest",
+      "idPrefix": "fantasy.combat.miniNest",
+      "directions": [
+        "fixed"
+      ],
+      "states": {
+        "construction": 3,
+        "incubate": 2,
+        "depleted": 2
+      },
+      "suggestedVisibleWorldHeight": 64,
+      "groundWorldDiameterMax": null,
+      "recommendedRuntimeTexture": 256
+    },
+    {
+      "key": "swiftLarva",
+      "idPrefix": "fantasy.combat.swiftLarva",
+      "directions": [
+        "front_right",
+        "back_right"
+      ],
+      "states": {
+        "idle": 2,
+        "run": 4,
+        "attack": 3
+      },
+      "suggestedVisibleWorldHeight": 38,
+      "groundWorldDiameterMax": null,
+      "recommendedRuntimeTexture": 192
+    }
+  ]
+}

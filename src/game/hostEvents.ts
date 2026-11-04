@@ -438,6 +438,7 @@ function scheduleOpeningExercise(game: GameState): void {
 /** Fixed-step host call only; wall time and rendering never drive this scheduler. */
 export function advanceHostEvents(game: GameState, dt: number): HostEventCommand[] {
   if (game.phase !== 'playing' || !Number.isFinite(dt) || Math.abs(dt - BALANCE.step) > 1e-10) return [];
+  if (game.territory && game.elapsed < 180) return [];
   const state = game.hostEvents ?? initializeHostEvents(game);
   syncHostEventSafety(game);
   if (game.player.hp <= 0) return drainHostEventCommands(game);

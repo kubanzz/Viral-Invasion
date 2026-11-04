@@ -30,16 +30,17 @@ describe('native immune body procedural feedback', () => {
     const actor = cell(), before = JSON.stringify(actor);
     for (const low of [false, true]) {
       const result = recorder(); drawImmuneCellAccents(result.ctx, actor, 1, low);
-      expect(result.paints.filter(p => p.method === 'fill').map(p => p.color)).toEqual(['#45685d35']);
-      expect(result.paints.some(p => p.color === '#e3ffba' && p.path.some(command => command.method === 'arc'))).toBe(true);
-      const bar = result.paints.find(p => p.color === '#c7efb5')!;
+      expect(result.paints.filter(p => p.method === 'fill').map(p => p.color)).toEqual(low ? ['#45685d35'] : ['#45685d35', '#97b598', '#97b598']);
+      expect(result.paints.some(p => p.color === '#f3e7bc' && p.path.some(command => command.method === 'arc'))).toBe(true);
+      const bar = result.paints.find(p => p.color === '#bdd0a8')!;
       expect(bar.path).toEqual([{ method: 'moveTo', args: [-10, 8] }, { method: 'lineTo', args: [6, 8] }]);
-      expect(result.paints.filter(p => p.color === '#b1e3ceaa')).toHaveLength(low ? 0 : 2);
-      expect(result.paints.some(p => ['#cdebd7', '#ecffe4', '#689c9c', '#f4ffdd'].includes(p.color))).toBe(false);
+      expect(result.paints.filter(p => p.color === '#97b598')).toHaveLength(low ? 0 : 2);
+      expect(result.paints.some(p => ['#eee9d3', '#f8efd7', '#8caf91'].includes(p.color))).toBe(false);
+      expect(result.paints.filter(p => p.method === 'fill').every(p => !p.path.some(command => command.method === 'lineTo'))).toBe(true);
       expect(result.stack).toHaveLength(0);
     }
     const afterBite = recorder(); drawImmuneCellAccents(afterBite.ctx, actor, 1.3);
-    expect(afterBite.paints.some(p => p.color === '#e3ffba')).toBe(false);
+    expect(afterBite.paints.some(p => p.color === '#f3e7bc')).toBe(false);
     expect(JSON.stringify(actor)).toBe(before);
   });
 
@@ -53,7 +54,7 @@ describe('native immune body procedural feedback', () => {
       expect(ground.paints).toHaveLength(1); expect(ground.paints[0].method).toBe('fill');
       expect(ground.paints[0].color).toBe('#45685d35');
       expect(ground.paints[0].path).toEqual([{ method: 'ellipse', args: [0, 3, 13.5, 4.32, 0, 0, Math.PI * 2] }]);
-      expect(overlay.paints.every(p => p.method === 'stroke')).toBe(true);
+      expect(overlay.paints.filter(p => p.method === 'fill').every(p => p.color === '#97b598' && p.path.every(command => command.method === 'ellipse' && command.args[2] <= 2))).toBe(true);
       expect(all.paints).toEqual([...ground.paints, ...overlay.paints]);
       expect(all.paints.every(p => Math.abs(p.alpha - immuneCellBody(actor, elapsed).alpha) < 1e-8)).toBe(true);
       expect(all.paints[0].alpha).toBeCloseTo(.5);
@@ -64,11 +65,11 @@ describe('native immune body procedural feedback', () => {
 
   it('retains the complete procedural fallback body alongside the same essential feedback', () => {
     const result = recorder(); drawImmuneCell(result.ctx, cell(), 1, true);
-    expect(result.paints.filter(p => p.method === 'fill').map(p => p.color)).toEqual(['#0c252d77', '#ecffe4', '#689c9c']);
+    expect(result.paints.filter(p => p.method === 'fill').map(p => p.color)).toEqual(['#4f685c35', '#f8efd7', '#8caf91']);
     expect(result.paints[0].path).toEqual([{ method: 'ellipse', args: [0, 3, 19, 19 * .46, 0, 0, Math.PI * 2] }]);
-    expect(result.paints.filter(p => p.color === '#f4ffdd')).toHaveLength(2);
-    expect(result.paints.some(p => p.color === '#e3ffba')).toBe(true);
-    expect(result.paints.some(p => p.color === '#c7efb5')).toBe(true);
+    expect(result.paints.find(p => p.color === '#f8efd7')!.path.filter(command => command.method === 'lineTo')).toHaveLength(36);
+    expect(result.paints.some(p => p.color === '#f3e7bc')).toBe(true);
+    expect(result.paints.some(p => p.color === '#bdd0a8')).toBe(true);
     expect(result.stack).toHaveLength(0);
   });
 });

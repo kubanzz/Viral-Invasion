@@ -1,0 +1,5 @@
+import{readFile,writeFile}from'node:fs/promises';import{resolve,dirname}from'node:path';import{fileURLToPath}from'node:url';
+const file=resolve(dirname(fileURLToPath(import.meta.url)),'prompt-catalog.json'),c=JSON.parse(await readFile(file,'utf8')),row=c.assets.find(v=>v.id==='fantasy.actor.hero.front_right.hold.master');
+row.skipOriginalStyleReference=true;
+row.prompt='任务：对实际输入的这张512方形英雄参考图做精确局部修改。仅修改双前臂和双手，其他区域不变；保持完整画布、相同角色大小、相同头部位置和双鞋位置，不放大、不变焦、不裁切。\n【原样保留】奶白大头盔的全部轮廓与比例、同一深色面罩、两个薄荷眼、头盔上的大深薄荷十字、胸腹奶白薄荷块、上臂肩关节、双腿双鞋、手绘暖棕边线、哑光配色全部原样保留。脚锚仍在512坐标256、435，身体朝前右，不能重画成另一个头身比例。\n【唯一局部重绘】两肘自然弯曲，双前臂向胸腹正前方收拢，两只小C形手靠在一起，形成胸前居中的空手持枪预备姿。双手应靠近身体中轴、略有前后重叠，不能仍相隔半个身体。按输入512原画布，主C形手内凹握点在横向256附近、高度315附近；辅助手的内凹口在横向278、高度315附近，两握点相隔约22像素，双手的共同持握中心在中轴附近。手掌大小沿用原参考小手，不要放大成两只巨大手套。上臂保留肩位，重绘自然弯肘和有遮挡关系的前臂，不挪动整个躯干或脚来迁就握点。\n【留空】两只C形手的内凹处为独立短喷射器预留握持空隙，但本图只画空手身体，绝对不画枪、工具、罐、握柄、光束或粒子。\n【输出】同样完整512方画布构图、真透明或均匀纯白底。禁止背景、纸纹、棋盘格、地面投影、平台、文字、UI、水印；禁止改头脸、改头盔章、改变奶白薄荷灰蓝的材质、改变站立比例、缩放或裁掉头顶脚底。';
+await writeFile(file,JSON.stringify(c,null,2)+'\n');console.log(JSON.stringify({id:row.id,revision:2,skipOriginalStyleReference:true,actualReference:row.identityReference}));

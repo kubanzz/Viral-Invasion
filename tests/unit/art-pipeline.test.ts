@@ -45,7 +45,7 @@ describe('curated offline art pipeline', () => {
       expect(Math.max(...data.subarray(4, 7))).toBeLessThan(255);
       expect(Math.min(...data.subarray(8, 11))).toBeGreaterThanOrEqual(35);
     }
-    for (const id of ['fx.heal.00', 'fx.scan.00', 'icon.chain', 'icon.dash']) {
+    for (const id of ['fx.heal.00', 'fx.scan.00', 'icon.chain', 'icon.dash', 'fantasy.tree.healthy', 'fantasy.tree.infected', 'fantasy.floor.healthy']) {
       expect(artToneFor(id)).toBeNull();
       expect(await finishArtImage(image(), artToneFor(id)).raw().toBuffer()).toEqual(original);
     }
@@ -70,6 +70,62 @@ describe('curated offline art pipeline', () => {
       const bytes = await readFile(join(root, asset.source));
       expect(createHash('sha256').update(bytes).digest('hex'), `${asset.id} source changed without review`).toBe(asset.expectedSha256);
     }
+  });
+
+  it('extracts reviewed sheet cells into frame-local shared canvases, preserves raw colour and local grip/muzzle registration', async () => {
+    const f = await fixture();
+    const block = await sharp({ create: { width: 128, height: 256, channels: 4, background: '#bf7194ff' } }).png().toBuffer();
+    const sheet = await sharp({ create: { width: 1024, height: 512, channels: 4, background: '#00000000' } })
+      .composite([{ input: block, left: 180, top: 100 }, { input: block, left: 692, top: 160 }]).png().toBuffer();
+    await writeFile(join(f.sourceRoot, 'sheet.png'), sheet);
+    const sprites = [0, 1].map(index => ({ id: `fantasy.actor.test.walk.0${index}`, source: 'sheet.png',
+      expectedSha256: createHash('sha256').update(sheet).digest('hex'), sourceFrame: { x: index * 512, y: 0, width: 512, height: 512 },
+      size: 256, trim: false, pivotSource: [.5, .85], actorRegistration: { canvas: { width: 512, height: 512 },
+        foot: { x: 256, y: 435.2 }, grip: { x: 300, y: 340 }, muzzle: { x: 410, y: 320 }, commonCanvasScale: 1 },
+      animation: { group: 'fantasy.actor.test.walk', index, fps: 8, frameCount: 2, approved: true } }));
+    const selection = { schemaVersion: 1, sprites, environments: [], actorContract: { version: 2 } };
+    await writeFile(join(f.localRoot, 'art-selection.json'), JSON.stringify(selection));
+    const { runtime } = await syncArt(f.options), first = runtime.assets[sprites[0].id], second = runtime.assets[sprites[1].id];
+    expect(runtime.actorContract).toEqual({ version: 2 });
+    for (const frame of [first, second]) {
+      expect(frame.sourceSize).toEqual({ width: 512, height: 512 }); expect(frame.tone).toBeNull();
+      expect(frame.actorRegistration).toEqual(sprites[0].actorRegistration);
+      expect(frame.sourceMuzzle).toEqual({ x: 410, y: 320 });
+      expect(frame.sourceBounds.x).toBe(180); expect(frame.sourceBounds.width).toBe(128);
+    }
+    expect(first.sourceBounds.y).toBe(100); expect(second.sourceBounds.y).toBe(160);
+    expect(first.width).toBe(second.width); expect(first.height).toBe(second.height); expect(first.pivot).toEqual(second.pivot);
+    expect(first.sourceFrame).toEqual(sprites[0].sourceFrame); expect(second.sourceFrame).toEqual(sprites[1].sourceFrame);
+    const atlas = runtime.atlases.find((page: { key: string }) => page.key === first.atlas);
+    const rgba = await sharp(Buffer.from(atlas.dataUri.split(',')[1], 'base64')).ensureAlpha().raw().toBuffer();
+    expect(rgba.includes(Buffer.from([191, 113, 148, 255]))).toBe(true);
+    sprites[1].sourceFrame.x = 513;
+    await writeFile(join(f.localRoot, 'art-selection.json'), JSON.stringify(selection));
+    await expect(syncArt(f.options)).rejects.toThrow('Source frame outside sheet');
+  });
+
+  it('rejects repeated sheet cells and independent alpha fitting in new actor groups', async () => {
+    const f = await fixture(), id = 'fantasy.actor.test.walk';
+    const first = { id: `${id}.00`, source: 'hero.png', size: 64, trim: false,
+      animation: { group: id, index: 0, fps: 8, frameCount: 2, approved: true } };
+    const selection = { schemaVersion: 1, sprites: [first, { ...first, id: `${id}.01`, animation: { ...first.animation, index: 1 } }], environments: [] };
+    await writeFile(join(f.localRoot, 'art-selection.json'), JSON.stringify(selection));
+    await expect(syncArt(f.options)).rejects.toThrow('Repeated source cell');
+    selection.sprites.pop(); first.trim = true;
+    await writeFile(join(f.localRoot, 'art-selection.json'), JSON.stringify(selection));
+    await expect(syncArt(f.options)).rejects.toThrow('complete shared canvas');
+  });
+
+  it('rejects a generic candidate animation group before it silently falls back to only frame zero', async () => {
+    const f=await fixture(),id='fantasy.actor.test.walk.00';
+    const selection={schemaVersion:1,sprites:[{id,source:'hero.png',size:64,trim:false,
+      animation:{group:'fantasy.actor.walk',index:0,fps:8,frameCount:1,approved:false}}],environments:[]};
+    await writeFile(join(f.localRoot,'art-selection.json'),JSON.stringify(selection));
+    await expect(syncArt(f.options)).rejects.toThrow('Actor animation group must match its identity and clip');
+    selection.sprites[0].animation.group='fantasy.actor.test.walk';
+    await writeFile(join(f.localRoot,'art-selection.json'),JSON.stringify(selection));
+    const result=await syncArt(f.options);
+    expect(result.runtime.assets[id].animation).toEqual(selection.sprites[0].animation);
   });
 
   it('uses workspace assets by default even when a legacy source environment variable is set', async () => {

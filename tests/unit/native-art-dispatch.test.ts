@@ -20,7 +20,7 @@ interface TestHost {
   rasters: { key: string; depth: number; paints: Paint[] }[];
 }
 const mocked = vi.hoisted(() => ({
-  runtime: { inputSignature: 'isolated-native-dispatch', atlases: [], environments: {}, assets: {} as Record<string, FixtureAsset> },
+  runtime: { inputSignature: 'isolated-native-dispatch', actorContract: undefined as {version:number}|undefined, atlases: [], environments: {}, assets: {} as Record<string, FixtureAsset> },
   entities: [] as SceneEntity[], scenes: [] as TestScene[], hosts: [] as TestHost[],
   animationKeys: new Set<string>(),
 }));
@@ -68,8 +68,12 @@ import { immuneCellBody } from '../../src/render/immuneVisuals';
 import { MotherCoreController, MOTHER_CORE_BALANCE } from '../../src/game/motherCore';
 import type { InputFrame } from '../../src/game/types';
 import { fixtureHeroAnimationAssets } from '../fixtures/heroAnimationAssets';
+import { fixtureActorAnimationAssets } from '../fixtures/actorAnimationAssets';
+import { ACTOR_STATIC_IDS } from '../../src/render/actorAnimation';
 import { fixturePaintedToolAsset, PAINTED_TOOL_FIXTURE_GRIP } from '../fixtures/paintedToolAsset';
 import { aimedPaintedTool, paintedToolMuzzle } from '../../src/render/spriteGeometry';
+import { createTerritoryState, territoryNodeAt } from '../../src/game/territory';
+import { FANTASY_ART, fantasyObstacleKind } from '../../src/render/fantasyTerritory';
 
 function recordedContext(): RecordedContext {
   const paints: Paint[] = [], rotations: number[] = [], stack: { alpha: number; fill: string; stroke: string }[] = [];
@@ -82,6 +86,8 @@ function recordedContext(): RecordedContext {
     rotate(angle: number) { rotations.push(angle); },
     beginPath() { path = []; }, closePath() { path.push('closePath'); },
     moveTo() { path.push('moveTo'); }, lineTo() { path.push('lineTo'); },
+    quadraticCurveTo() { path.push('quadraticCurveTo'); },
+    bezierCurveTo() { path.push('bezierCurveTo'); }, clip() { path.push('clip'); },
     ellipse() { path.push('ellipse'); }, arc() { path.push('arc'); },
     roundRect() { path.push('roundRect'); },
     fill() { paints.push({ method: 'fill', color: this.fillStyle, alpha: this.globalAlpha, path: [...path] }); },
@@ -165,6 +171,7 @@ function sourcePoint(sprite: HostedSprite, fixture: FixtureAsset, x: number, y: 
 const heroInput = (changes: Partial<InputFrame> = {}): InputFrame => ({ moveX: 0, moveY: 0, fire: false, aim: { x: 700, y: 440 }, ...changes });
 
 beforeEach(() => {
+  mocked.runtime.actorContract=undefined;
   mocked.entities.length = 0; mocked.hosts.length = 0; mocked.scenes.length = 0;
   mocked.animationKeys.clear();
   for (const key of Object.keys(mocked.runtime.assets)) delete mocked.runtime.assets[key];
@@ -176,6 +183,53 @@ beforeEach(() => {
 afterEach(() => { vi.unstubAllGlobals(); });
 
 describe('actual Renderer native art dispatch through an isolated host', () => {
+  it('switches paired scenery by real ownership without per-silhouette resizing, tinting or shifting its ground anchor', async () => {
+    const sample = state(); sample.territory = createTerritoryState();
+    sample.endless = { wave: 1, clearedWaves: 0 } as GameState['endless'];
+    const obstacle = sample.world!.obstacles[0], kind = fantasyObstacleKind(obstacle.id);
+    for (const [owner, box] of [['healthy', { x: 170, y: 130, width: 680, height: 740 }], ['infected', { x: 140, y: 90, width: 740, height: 800 }]] as const) {
+      const id = FANTASY_ART[kind][owner];
+      mocked.runtime.assets[id] = { atlas: 'fantasy-atlas', frame: id, width: 1024, height: 1024,
+        pivot: { x: .5, y: .85 }, visibleBounds: box, sourceSize: { width: 1024, height: 1024 }, sourceBounds: box, flags: [], status: 'test-only' };
+    }
+    mocked.entities.push({ id: obstacle.id, y: obstacle.y, kind: 'obstacle' });
+    const { renderer, host } = await setup();
+    const node = territoryNodeAt(sample.territory, obstacle)!; node.owner = 'healthy';
+    renderer.render(sample, sample.player); const healthy = host.sprites.find(sprite => sprite.id === obstacle.id)!.config;
+    sample.endless!.clearedWaves = 5;
+    renderer.render(sample, sample.player); expect(host.sprites.find(sprite => sprite.id === obstacle.id)!.config.frame).toBe(FANTASY_ART[kind].healthy);
+    node.owner = 'infected'; renderer.render(sample, sample.player);
+    const infected = host.sprites.find(sprite => sprite.id === obstacle.id)!.config;
+    expect(infected.frame).toBe(FANTASY_ART[kind].infected);
+    for (const key of ['x', 'y', 'width', 'height', 'originX', 'originY'] as const) expect(infected[key]).toBeCloseTo(healthy[key]!);
+    expect(healthy.tint).toBeUndefined(); expect(infected.tint).toBeUndefined();
+    sample.player.x = obstacle.x; sample.player.y = obstacle.y - obstacle.radius * 1.6;
+    renderer.render(sample, sample.player);
+    expect(host.sprites.find(sprite => sprite.id === obstacle.id)!.config.alpha).toBe(.22);
+    sample.player.y = obstacle.y + 120;
+    renderer.render(sample, sample.player);
+    expect(host.sprites.find(sprite => sprite.id === obstacle.id)!.config.alpha).toBe(1);
+  });
+
+  it('keeps the fantasy core and infection source separate from virus actors and HP-dependent ownership', async () => {
+    const sample = state(); sample.territory = createTerritoryState();
+    sample.endless = { wave: 1, clearedWaves: 0 } as GameState['endless'];
+    for (const id of [FANTASY_ART.core.healthy, FANTASY_ART.core.infected, FANTASY_ART.source]) {
+      const box = { x: 180, y: 180, width: 650, height: 690 };
+      mocked.runtime.assets[id] = { atlas: 'fantasy-atlas', frame: id, width: 1024, height: 1024,
+        pivot: { x: .5, y: .85 }, visibleBounds: box, sourceSize: { width: 1024, height: 1024 }, sourceBounds: box, flags: [], status: 'test-only' };
+    }
+    sample.tissue.x = 500; sample.tissue.y = 400;
+    const source = target('territory-source', { role: 'source', x: 650, y: 400, traits: [] });
+    sample.targets = [source]; sample.tissue.hp = 15;
+    sample.territory.nodes.forEach(node => { node.owner = 'healthy'; });
+    mocked.entities.push({ id: 'tissue', y: sample.tissue.y, kind: 'tissue' }, { id: source.id, y: source.y, kind: 'target', index: 0 });
+    const { renderer, host } = await setup(); renderer.render(sample, sample.player);
+    expect(host.sprites.find(sprite => sprite.id === 'tissue')!.config.frame).toBe(FANTASY_ART.core.healthy);
+    expect(host.sprites.find(sprite => sprite.id === source.id)!.config.frame).toBe(FANTASY_ART.source);
+    expect(host.sprites.filter(sprite => sprite.config.frame === 'enemy.basic')).toHaveLength(0);
+  });
+
   it('keeps virus bob phase tied to identity and smooth presentation time, independent of horizontal movement',async()=>{
     const sample=state(),actor=target('stable-virus',{traits:[],x:500,y:400});sample.targets=[actor];sample.visualTime=.9;
     mocked.entities.push({id:actor.id,kind:'target',index:0,y:actor.y});const {renderer,host}=await setup();
@@ -307,7 +361,7 @@ describe('actual Renderer native art dispatch through an isolated host', () => {
     mocked.entities.push({ id: 'cell', kind: 'immune', index: 0, y: 400 });
     const before = JSON.stringify(sample); renderer.render(sample, sample.player, { lowEffects: true });
     expect(host.sprites[0].config.frame).toBe('immune.cell.idle');
-    expect(scene.ctx.paints.some(paint => paint.color === '#e3ffba' && paint.path.includes('arc'))).toBe(true);
+    expect(scene.ctx.paints.some(paint => paint.color === '#f3e7bc' && paint.path.includes('arc'))).toBe(true);
     expect(scene.ctx.rotations).toContainEqual(immuneCellBody(sample.growth!.cells![0], sample.elapsed).rotation);
     expect(JSON.stringify(sample)).toBe(before);
   });
@@ -318,7 +372,7 @@ describe('actual Renderer native art dispatch through an isolated host', () => {
     const bite = mocked.runtime.assets['immune.cell.bite']; delete mocked.runtime.assets['immune.cell.bite'];
     renderer.render(sample, sample.player);
     expect(host.sprites[0].config.frame).toBe('immune.cell.idle');
-    expect(scene.ctx.paints.some(paint => paint.color === '#e3ffba' && paint.path.includes('arc'))).toBe(true);
+    expect(scene.ctx.paints.some(paint => paint.color === '#f3e7bc' && paint.path.includes('arc'))).toBe(true);
     mocked.runtime.assets['immune.cell.bite'] = bite;
     mocked.runtime.assets['immune.cell.bite'].sourceSize!.width = 512; renderer.render(sample, sample.player);
     expect(host.sprites[0].config.frame).toBe('immune.cell.idle');
@@ -340,8 +394,8 @@ describe('actual Renderer native art dispatch through an isolated host', () => {
       expect(host.rasters[index].paints).toEqual([{ method: 'fill', color: '#45685d35', alpha: .5, path: ['ellipse'] }]);
     }
     expect(scene.ctx.paints.every(paint => paint.method === 'stroke')).toBe(true);
-    expect(scene.ctx.paints.filter(paint => paint.color === '#e3ffba')).toHaveLength(3);
-    expect(scene.ctx.paints.filter(paint => paint.color === '#c7efb5')).toHaveLength(3);
+    expect(scene.ctx.paints.filter(paint => paint.color === '#f3e7bc')).toHaveLength(3);
+    expect(scene.ctx.paints.filter(paint => paint.color === '#bdd0a8')).toHaveLength(3);
     expect(renderer.diagnostics(sample).art.activeBodies).toHaveLength(3);
     expect(JSON.stringify(sample)).toBe(before);
     sample.elapsed = 5; renderer.render(sample, sample.player);
@@ -536,9 +590,10 @@ describe('actual Renderer native art dispatch through an isolated host', () => {
     sample.world = { width: 1200, height: 800, bounds: { left: 0, top: 0, right: 1200, bottom: 800 },
       obstacles: [{ id: 'fold', x: 500, y: 430, radius: 70 }], foreground: { x: 490, y: 400, width: 20, height: 100 } };
     mocked.entities.push({ id: 'player', kind: 'player', y: 400 }, { id: 'fold', kind: 'obstacle', y: 430 });
-    const { renderer, host, scene } = await setup(); renderer.render(sample, sample.player);
+    const { renderer, host, scene } = await setup(); renderer.witnessSimulation(sample);
+    sample.tick++;sample.elapsed+=1/60;sample.player.x+=1;renderer.render(sample, sample.player);
     expect(host.sprites.find(item => item.id === 'player')!.config.frame).toBe('hero.front_right.walk.00');
-    sample.elapsed += 2 / 12; sample.tick += 10;
+    sample.elapsed += 2 / 12; sample.tick += 10;sample.player.x+=27;
     for (const facing of [0, Math.PI]) {
       sample.player.facing = facing; const before = JSON.stringify(sample); renderer.render(sample, sample.player);
       const sprite = host.sprites.find(item => item.id === 'player')!.config;
@@ -571,7 +626,8 @@ describe('actual Renderer native art dispatch through an isolated host', () => {
     Object.assign(mocked.runtime.assets, assets); const sample = state(); sample.player.moving = true;
     sample.world={width:1200,height:800,bounds:{left:0,top:0,right:1200,bottom:800},obstacles:[{id:'fold',x:sample.player.x,y:sample.player.y+30,radius:70}],foreground:{x:sample.player.x-10,y:sample.player.y,width:20,height:100}};
     mocked.entities.push({ id: 'player', kind: 'player', y: sample.player.y });
-    const { renderer, host, scene } = await setup(), before = JSON.stringify(sample); renderer.render(sample, sample.player);
+    const { renderer, host, scene } = await setup();renderer.witnessSimulation(sample);
+    sample.tick++;sample.elapsed+=1/60;sample.player.x+=2;const before=JSON.stringify(sample);renderer.render(sample, sample.player);
     const sprite = host.sprites[0].config;
     expect(sprite.frame).toBe('hero.front_right.idle.00'); expect(sprite.mesh).toBeDefined();
     expect(visibleHeight(sprite,mocked.runtime.assets[String(sprite.frame)])).toBeCloseTo(86);
@@ -918,5 +974,215 @@ describe('actual Renderer native art dispatch through an isolated host', () => {
     sample.runMetrics!.runId += '-metadata'; sample.events = [{ type: 'TOOL_FIRED', tick: sample.tick, data: { tool: 1, x: from.x + 300, y: from.y, rays: 3 } }];
     delete mocked.runtime.assets['weapon.emitter.painted'].sourceMuzzle; renderer.render(sample, sample.player);
     expect(sample.effects.map(effect => scene.bridge.effectOrigin!(effect, sample))).toEqual([undefined, undefined, undefined]);
+  });
+});
+
+describe('new complete actor groups through the actual Renderer dispatch', () => {
+  function actors() { mocked.runtime.actorContract={version:2}; Object.assign(mocked.runtime.assets,fixtureActorAnimationAssets()); }
+  it('renders front tissue as an independent paired crystal node with real purification alpha and no healing asset or rule writes',async()=>{
+    actors();const sample=state();sample.territory=createTerritoryState();sample.endless={wave:1,clearedWaves:0}as GameState['endless'];
+    const node=sample.territory.nodes.find(node=>node.id==='front-north')!;
+    for(const [owner,box]of [['healthy',{x:170,y:130,width:680,height:740}],['infected',{x:140,y:90,width:740,height:800}]]as const){
+      const id=FANTASY_ART.front[owner];mocked.runtime.assets[id]={atlas:'fantasy-atlas',frame:id,width:1024,height:1024,pivot:{x:.5,y:.85},visibleBounds:box,
+        sourceSize:{width:1024,height:1024},sourceBounds:box,flags:[],status:'test-only'};
+    }
+    mocked.entities.push({id:node.id,kind:'territory-node',y:node.y});const {renderer,host,scene}=await setup();
+    const before=JSON.stringify(sample);renderer.render(sample,sample.player);const infected=host.sprites.find(item=>item.id===node.id)!.config;
+    expect(infected.frame).toBe(FANTASY_ART.front.infected);expect(scene.fallbacks).toEqual([]);expect(JSON.stringify(sample)).toBe(before);
+    node.purificationProgress=50;renderer.render(sample,sample.player,{lowEffects:true});const overlay=host.sprites.find(item=>item.id===`${node.id}:purification`)!.config;
+    expect(overlay.frame).toBe(FANTASY_ART.front.healthy);expect(overlay.alpha).toBe(.4);expect(host.sprites.some(item=>String(item.config.frame).includes('healing'))).toBe(false);
+    node.owner='healthy';renderer.render(sample,sample.player);const healthy=host.sprites.find(item=>item.id===node.id)!.config;
+    for(const key of ['x','y','width','height','originX','originY']as const)expect(healthy[key]).toBeCloseTo(infected[key]!);
+    const foot=sourcePoint(healthy,mocked.runtime.assets[String(healthy.frame)],512,870.4),expected=renderer.camera.worldToScreen(node);
+    expect(foot.x).toBeCloseTo(expected.x,9);expect(foot.y).toBeCloseTo(expected.y,9);
+    node.owner='infected';node.purificationProgress=50;sample.player.x=node.x;sample.player.y=node.y-30;
+    for(const lowEffects of[false,true]){
+      const overlapBefore=JSON.stringify(sample);renderer.render(sample,sample.player,{lowEffects});
+      const base=host.sprites.find(item=>item.id===node.id)!.config,recovery=host.sprites.find(item=>item.id===`${node.id}:purification`)!.config;
+      expect(recovery.alpha).toBeCloseTo(.4*.22);expect(base.alpha!+(1-base.alpha!)*recovery.alpha!).toBeCloseTo(.22);
+      for(const key of ['x','y','width','height','originX','originY']as const)expect(base[key]).toBeCloseTo(infected[key]!);
+      expect(JSON.stringify(sample)).toBe(overlapBefore);
+    }
+    sample.player.y=node.y+100;renderer.render(sample,sample.player);
+    expect(host.sprites.find(item=>item.id===node.id)!.config.alpha).toBe(1);expect(host.sprites.find(item=>item.id===`${node.id}:purification`)!.config.alpha).toBe(.4);
+  });
+  it('equips the enlarged menu hero at its own actual palm and scaled96/128 source ratio, independent of the simulation player point',async()=>{
+    actors();const sample=state();sample.phase='menu';sample.player.x=65;sample.player.y=125;sample.player.facing=-2.5;
+    sample.player.moving=true;sample.player.dashUntil=sample.elapsed+.16;
+    const {renderer,host}=await setup(),before=JSON.stringify(sample);renderer.render(sample,sample.player);
+    const body=host.sprites.find(item=>item.id==='menu:hero')!.config,tool=host.sprites.find(item=>item.id==='menu:tool')!.config;
+    expect(host.sprites.map(item=>item.id)).toEqual(['menu:hero','menu:tool']);expect(body.frame).toBe('fantasy.actor.hero.front_right.idle.00');
+    expect(body.flipX).toBe(false);expect(tool.depth).toBeGreaterThan(body.depth);expect(body.mesh).toBeUndefined();
+    const frames=renderer.diagnostics(sample).art.actorFrames,hero=frames.find(a=>a.actorId==='menu:hero')!,weapon=frames.find(a=>a.actorId==='menu:tool')!;
+    expect(renderer.diagnostics(sample).art.heroAnimation.frame?.id).toBe(body.frame);
+    expect(renderer.diagnostics(sample).art.weapon.assetId).toBe(ACTOR_STATIC_IDS.emitter);
+    const hand=hero.sourceGrip as {x:number;y:number},grip=weapon.sourceGrip as {x:number;y:number},muzzle=weapon.sourceMuzzle as {x:number;y:number};
+    const actualHand=sourcePoint(body,mocked.runtime.assets[String(body.frame)],hand.x,hand.y),actualGrip=sourcePoint(tool,mocked.runtime.assets[String(tool.frame)],grip.x,grip.y),actualMuzzle=sourcePoint(tool,mocked.runtime.assets[String(tool.frame)],muzzle.x,muzzle.y);
+    expect(actualHand.x).toBeCloseTo(actualGrip.x,9);expect(actualHand.y).toBeCloseTo(actualGrip.y,9);
+    expect((weapon.sourceScale as number)/(hero.sourceScale as number)).toBeCloseTo(96/128,9);
+    expect(hero.screenFoot).toEqual({x:1440*.76,y:900*.86});expect(weapon.worldFoot).toEqual(hero.worldFoot);
+    expect(hero.worldFoot).not.toEqual({x:sample.player.x,y:sample.player.y});expect(weapon.entityId).toBe('menu:hero');expect(weapon.sourceFoot).toBeNull();
+    const origin=renderer.camera.worldToScreen({x:0,y:0}),recorded=weapon.muzzle as {x:number;y:number};
+    expect(actualMuzzle.x).toBeCloseTo(origin.x+recorded.x*renderer.camera.scale,9);expect(actualMuzzle.y).toBeCloseTo(origin.y+recorded.y*renderer.camera.scale,9);
+    expect(JSON.stringify(sample)).toBe(before);
+  });
+
+  it.each(['hero-back-frame','emitter'] as const)('keeps the normal menu holding composition unready when %s is missing',async missing=>{
+    actors();delete mocked.runtime.assets[missing==='emitter'?ACTOR_STATIC_IDS.emitter:'fantasy.actor.hero.back_right.walk.07'];
+    const sample=state();sample.phase='menu';const {renderer,host}=await setup();renderer.render(sample,sample.player);
+    expect(host.sprites.filter(item=>item.id==='menu:hero'||item.id==='menu:tool')).toEqual([]);
+    const diagnostics=renderer.diagnostics(sample);expect(diagnostics.art.actorContract.ready).toBe(false);
+    expect(diagnostics.art.actorFrames.find(a=>a.actorId==='menu:hero')).toMatchObject({native:false,fallback:true,
+      fallbackReason:missing==='emitter'?'emitter-registration-or-group-not-ready':'hero-group-not-ready'});
+  });
+
+  it('renders four real authored/mirrored views with the per-pose hand/tool muzzle and never uses the old mesh rig', async () => {
+    actors();const sample=state();mocked.entities.push({id:'player',kind:'player',y:sample.player.y});
+    const {renderer,host,scene}=await setup();
+    for(const [facing,direction] of [[.5,'front_right'],[2.5,'front_left'],[-.5,'back_right'],[-2.5,'back_left']] as const){
+      sample.player.facing=facing;sample.elapsed+=.2;sample.tick+=12;
+      const before=JSON.stringify(sample);renderer.render(sample,sample.player);
+      const body=host.sprites.find(item=>item.id==='player')!.config,tool=host.sprites.find(item=>item.id==='player:tool')!.config;
+      expect(body.frame).toMatch(/fantasy\.actor\.hero\.(front_right|back_right)\.idle\./);expect(body.mesh).toBeUndefined();
+      expect(tool.depth).toBeGreaterThan(body.depth);
+      expect(scene.fallbacks).toEqual([]);
+      const diagnostics=renderer.diagnostics(sample).art.actorFrames;
+      const hero=diagnostics.find(item=>item.actorId==='player')!,weapon=diagnostics.find(item=>item.actorId==='player:tool')!;
+      expect(hero.direction).toBe(direction);expect(hero.native).toBe(true);expect(hero.groupReady).toBe(true);
+      const foot=sourcePoint(body,mocked.runtime.assets[String(body.frame)],256,435.2);
+      expect(foot.x).toBeCloseTo((hero.screenFoot as {x:number}).x,9);expect(foot.y).toBeCloseTo((hero.screenFoot as {y:number}).y,9);
+      const muzzle=sourcePoint(tool,mocked.runtime.assets[ACTOR_STATIC_IDS.emitter],390,285),p=renderer.camera.worldToScreen({x:0,y:0});
+      expect(muzzle.x).toBeCloseTo(p.x+(weapon.muzzle as {x:number}).x*renderer.camera.scale,9);
+      expect(muzzle.y).toBeCloseTo(p.y+(weapon.muzzle as {y:number}).y*renderer.camera.scale,9);
+      expect(JSON.stringify(sample)).toBe(before);
+    }
+  });
+
+  it('freezes the actual new walk frame and reports its presented clip when pause clears moving',async()=>{
+    actors();const sample=state();sample.player.moving=true;mocked.entities.push({id:'player',kind:'player',y:sample.player.y});
+    const {renderer,host}=await setup();renderer.render(sample,sample.player);
+    sample.elapsed+=.2;sample.tick+=12;sample.player.x+=28;renderer.render(sample,sample.player);
+    const moving=host.sprites.find(item=>item.id==='player')!.config.frame;
+    sample.phase='paused';sample.player.moving=false;renderer.render(sample,sample.player);
+    expect(host.sprites.find(item=>item.id==='player')!.config.frame).toBe(moving);
+    // The frozen distance controller retains its walk request while paused;
+    // the accepted input state has been cleared and the shown body stays fixed.
+    expect(sample.player.moving).toBe(false);
+    expect(renderer.diagnostics(sample).art.actorFrames.find(item=>item.actorId==='player')).toMatchObject({action:'walk',clip:'walk',requestedAction:'walk',requestedClip:'walk'});
+  });
+  it('lifts exactly one real hero and its registered tool at the flight apex, preserving the ground footprint',async()=>{
+    actors();const sample=state();sample.playerFlight={id:'flight',from:{x:sample.player.x-100,y:sample.player.y},to:{x:sample.player.x+100,y:sample.player.y},born:.625,landsAt:1.375};
+    mocked.entities.push({id:'player',kind:'player',y:sample.player.y});const {renderer,host}=await setup(),before=JSON.stringify(sample);
+    renderer.render(sample,sample.player);const player=host.sprites.filter(item=>item.id==='player');expect(player).toHaveLength(1);
+    const foot=renderer.camera.worldToScreen(sample.player);expect(player[0].config.y).toBeCloseTo(foot.y-120*renderer.camera.scale,8);
+    expect(player[0].config.frame).toContain('.dash.');expect(host.sprites.filter(item=>item.id==='player:tool')).toHaveLength(1);
+    expect(renderer.diagnostics(sample).art.activeBodies.find(item=>item.id==='player')!.bounds.top).toBeLessThan(sample.player.y*.72-120);
+    expect(JSON.stringify(sample)).toBe(before);
+  });
+
+  it('reports the actual frozen enemy walk frame after death during pause, then reports dissolve only when it is displayed on resume',async()=>{
+    actors();const sample=state();sample.visualTime=sample.elapsed;
+    const actor=target('pause-death',{traits:[],facing:2.5});sample.targets=[actor];
+    mocked.entities.push({id:actor.id,kind:'target',index:0,y:actor.y});const {renderer,host}=await setup();
+    renderer.render(sample,sample.player);sample.elapsed+=.13;sample.visualTime=sample.elapsed;sample.tick+=8;renderer.render(sample,sample.player);
+    const previous={...host.sprites.find(item=>item.id===actor.id)!.config};
+    expect(previous.frame).toBe('fantasy.actor.enemy.basic.walk.01');expect(previous.flipX).toBe(true);
+    sample.phase='paused';actor.hp=0;actor.deadAt=sample.elapsed;actor.hitUntil=sample.elapsed+.1;actor.facing=.5;
+    const before=JSON.stringify(sample);renderer.render(sample,sample.player);
+    const frozen=host.sprites.find(item=>item.id===actor.id)!.config,paused=renderer.diagnostics(sample).art.actorFrames.find(item=>item.actorId===actor.id)!;
+    expect(frozen.frame).toBe(previous.frame);expect(frozen.flipX).toBe(previous.flipX);
+    expect(paused).toMatchObject({semanticId:frozen.frame,frame:frozen.frame,identity:'enemy.basic',action:'walk',clip:'walk',frameIndex:1,
+      direction:'front_left',authoredDirection:'front_right',flipX:true,requestedAction:'dissolve',requestedClip:'dissolve',requestedDirection:'front_right',requestedFlipX:false});
+    expect(JSON.stringify(sample)).toBe(before);
+    sample.phase='playing';const resumedBefore=JSON.stringify(sample);renderer.render(sample,sample.player);
+    const resumed=host.sprites.find(item=>item.id===actor.id)!.config;
+    expect(resumed.frame).toBe('fantasy.actor.enemy.basic.dissolve.00');expect(resumed.flipX).toBe(false);
+    expect(renderer.diagnostics(sample).art.actorFrames.find(item=>item.actorId===actor.id)).toMatchObject({semanticId:resumed.frame,
+      action:'dissolve',clip:'dissolve',frameIndex:0,direction:'front_right',flipX:false,requestedAction:'dissolve',requestedClip:'dissolve'});
+    expect(JSON.stringify(sample)).toBe(resumedBefore);
+  });
+
+  it('reports the actual paused immune bite and mirrored back view when current intent changes to a front-view guard',async()=>{
+    actors();const sample=state();sample.elapsed=1.19;sample.visualTime=sample.elapsed;
+    const actor=cell({facing:-2.5,attackUntil:1.2,activity:'biting'});sample.growth!.cells=[actor];
+    mocked.entities.push({id:actor.id,kind:'immune',index:0,y:actor.y});const {renderer,host}=await setup();renderer.render(sample,sample.player);
+    const previous={...host.sprites.find(item=>item.id===actor.id)!.config};
+    expect(previous.frame).toBe('fantasy.actor.immune.back_right.bite.03');expect(previous.flipX).toBe(true);
+    sample.phase='paused';actor.facing=.5;actor.attackUntil=sample.elapsed;actor.activity='guarding';
+    const before=JSON.stringify(sample);renderer.render(sample,sample.player);
+    const frozen=host.sprites.find(item=>item.id===actor.id)!.config;
+    expect(frozen.frame).toBe(previous.frame);expect(frozen.flipX).toBe(previous.flipX);
+    expect(renderer.diagnostics(sample).art.actorFrames.find(item=>item.actorId===actor.id)).toMatchObject({semanticId:frozen.frame,
+      action:'bite',clip:'bite',frameIndex:3,direction:'back_left',authoredDirection:'back_right',flipX:true,
+      requestedAction:'guard',requestedClip:'crawl',requestedDirection:'front_right',requestedAuthoredDirection:'front_right',requestedFlipX:false});
+    expect(JSON.stringify(sample)).toBe(before);
+    sample.phase='playing';const resumedBefore=JSON.stringify(sample);renderer.render(sample,sample.player);
+    const resumed=host.sprites.find(item=>item.id===actor.id)!.config;
+    expect(resumed.frame).toBe('fantasy.actor.immune.front_right.crawl.00');expect(resumed.flipX).toBe(false);
+    expect(renderer.diagnostics(sample).art.actorFrames.find(item=>item.actorId===actor.id)).toMatchObject({semanticId:resumed.frame,
+      action:'guard',clip:'crawl',frameIndex:0,direction:'front_right',authoredDirection:'front_right',flipX:false,requestedAction:'guard',requestedClip:'crawl'});
+    expect(JSON.stringify(sample)).toBe(resumedBefore);
+  });
+
+  it('keeps a missing back-view group explicitly unready even while old hero PNGs remain available in an isolated fixture', async () => {
+    actors();delete mocked.runtime.assets['fantasy.actor.hero.back_right.walk.07'];
+    const sample=state();mocked.entities.push({id:'player',kind:'player',y:sample.player.y});const {renderer,host,scene}=await setup();
+    renderer.render(sample,sample.player);expect(host.sprites.filter(item=>item.id==='player')).toEqual([]);expect(scene.fallbacks).toContain('player');
+    expect(renderer.diagnostics(sample).art.actorFrames.find(item=>item.actorId==='player')).toMatchObject({native:false,groupReady:false,fallback:true,fallbackReason:'hero-group-not-ready'});
+    expect(renderer.diagnostics(sample).art.actorContract.ready).toBe(false);
+  });
+
+  it.each([1,2] as const)('registers the new emitter muzzle for accepted challenge tool %i and retains its actual historical emission',async toolNumber=>{
+    actors();const source=mocked.runtime.assets[ACTOR_STATIC_IDS.emitter];
+    const game=new GameSession(31,{mode:'endless'});game.start();game.state.targets=[];game.state.world!.obstacles=[];
+    const aim={x:1000,y:500};game.step(heroInput({fire:true,tool:toolNumber,aim}));const shot=game.state.playerProjectiles![0];expect(shot).toBeDefined();
+    mocked.entities.push({id:'player',kind:'player',y:game.state.player.y});const {renderer,host,scene}=await setup();
+    const before=JSON.stringify(game.state);renderer.render(game.state,aim);
+    const tool=host.sprites.find(item=>item.id==='player:tool')!.config,muzzle=sourcePoint(tool,source,390,285);
+    expect(renderer.diagnostics(game.state).art.actorFrames.find(item=>item.actorId==='player:tool')).toMatchObject({
+      action:'static',clip:'static',logicalAction:toolNumber===1?'fire':'catalysis',requestedAction:toolNumber===1?'fire':'catalysis',requestedClip:'static'});
+    const body=host.sprites.find(item=>item.id==='player')!.config,hero=renderer.diagnostics(game.state).art.actorFrames.find(item=>item.actorId==='player')!;
+    const handSource=hero.sourceGrip as {x:number;y:number},hand=sourcePoint(body,mocked.runtime.assets[String(body.frame)],handSource.x,handSource.y);
+    const held=sourcePoint(tool,source,96,320);
+    expect(held.x).toBeCloseTo(hand.x,9);expect(held.y).toBeCloseTo(hand.y,9);
+    const origin=scene.bridge.projectileOrigin!(shot.castId)!,offset=renderer.camera.worldToScreen({x:0,y:0});
+    expect(origin.x*renderer.camera.scale+offset.x).toBeCloseTo(muzzle.x,9);
+    expect(origin.y*.72*renderer.camera.scale+offset.y).toBeCloseTo(muzzle.y,9);expect(JSON.stringify(game.state)).toBe(before);
+    const captured={...origin};game.step(heroInput({moveX:1,tool:3,aim:{x:100,y:400}}));renderer.witnessSimulation(game.state);renderer.render(game.state,game.state.player);
+    expect(scene.bridge.projectileOrigin!(shot.castId)).toEqual(captured);
+  });
+
+  it('shows the real back-view bite frame on a living immune entity without rotating its upright PNG',async()=>{
+    actors();const sample=state();sample.elapsed=1.19;sample.growth!.cells=[cell({facing:-2.5,attackUntil:1.2})];
+    mocked.entities.push({id:'cell',kind:'immune',index:0,y:400});const {renderer,host,scene}=await setup();renderer.render(sample,sample.player);
+    expect(scene.fallbacks).toEqual([]);const sprite=host.sprites.find(item=>item.id==='cell')!.config;
+    expect(sprite.frame).toBe('fantasy.actor.immune.back_right.bite.03');expect(sprite.flipX).toBe(true);expect(sprite.rotation??0).toBe(0);
+    expect(renderer.diagnostics(sample).art.actorFrames.find(item=>item.actorId==='cell')).toMatchObject({action:'bite',direction:'back_left',native:true,groupReady:true});
+  });
+
+  it('keeps real family/role attachments and a low-effects dissolve frame, without recolouring the new body', async () => {
+    actors();const sample=state();sample.elapsed=2;
+    sample.targets=[target('elite-new',{role:'elite',traits:['FISSION','CARAPACE'],generation:1,territoryTask:{kind:'invade',nodeId:'heart-healing-1'}}),
+      target('dead-new',{hp:0,deadAt:1.85,traits:[]})];
+    mocked.entities.push(...sample.targets.map((t,index)=>({id:t.id,kind:'target',index,y:t.y})));
+    const {renderer,host,scene}=await setup();renderer.render(sample,sample.player,{lowEffects:true});
+    expect(scene.fallbacks).toEqual([]);
+    expect(host.sprites.find(item=>item.id==='elite-new')!.config.frame).toContain('enemy.fission.child.walk');
+    expect(host.sprites.filter(item=>item.id.startsWith('elite-new:')).map(item=>item.config.frame)).toEqual([ACTOR_STATIC_IDS.invader,ACTOR_STATIC_IDS.elite]);
+    const dead=host.sprites.find(item=>item.id==='dead-new')!.config;expect(dead.frame).toContain('enemy.basic.dissolve.00');expect(dead.alpha).toBeCloseTo(.5,9);
+    expect(host.sprites.every(item=>item.config.tint===undefined)).toBe(true);
+    expect(renderer.diagnostics(sample).art.actorFrames.find(item=>item.actorId==='dead-new')!.action).toBe('dissolve');
+  });
+
+  it('uses new registered mother phase layers and neutral fallback for any incomplete identity', async () => {
+    actors();const {sample,actor,combat}=motherFixture(['CARAPACE','FISSION']);const {renderer,host}=await setup();
+    renderer.render(sample,sample.player);
+    expect(host.sprites.filter(item=>item.id===actor.id||item.id.startsWith(`${actor.id}:`)).every(item=>String(item.config.frame).startsWith('fantasy.actor.mother.'))).toBe(true);
+    expect(renderer.diagnostics(sample).art.actorFrames.filter(item=>item.identity==='mother').every(item=>(item.sourceFoot as {y:number}).y===870.4)).toBe(true);
+    combat.exposedUntil=sample.elapsed+1;renderer.render(sample,sample.player);
+    expect(host.sprites.some(item=>String(item.config.frame).includes('mother.membrane'))).toBe(true);
+    expect(host.sprites.some(item=>item.config.frame==='fantasy.actor.mother.core.01')).toBe(true);
+    combat.membrane.remaining=0;renderer.render(sample,sample.player);
+    expect(host.sprites.some(item=>String(item.config.frame).includes('mother.membrane'))).toBe(false);
   });
 });

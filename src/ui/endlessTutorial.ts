@@ -22,6 +22,16 @@ const upgradeCopy = (id: EndlessUpgradeId, touch: boolean): string => {
 export function endlessTutorialHint(state: GameState, touch = false): string {
   if (!state.endless || state.phase !== 'playing') return '';
   const guide = state.endless.tutorial;
+  if (state.territory) {
+    if (!guide?.fired) return touch ? '左侧移动；净化盘射击。点驻防，军团在脚下留守。' : 'WASD移动，左键射击；Q在脚下部署军团，离开后军团留守。';
+    if (guide?.upgradeHint && state.elapsed < (guide.upgradeHintUntil ?? 0)) {
+      if (guide.upgradeHint === 'immune') return touch ? '军团已增强：走到健康节点附近，点驻防在脚下留守。' : '军团已增强：走到健康前线附近按Q驻防，完成实战接防。';
+      return upgradeCopy(guide.upgradeHint, touch);
+    }
+    // Territory HUD owns the one nearby action/progress hint and infection
+    // status, so a tutorial toast never repeats or contradicts that instruction.
+    return '';
+  }
   if (guide?.tissueHurt && !guide.repaired && state.tissue.hp < state.tissue.maxHp) return touch
     ? '组织受损：靠近十字组织，修复按钮拖向组织后松手。'
     : '组织受损：按 3，瞄准十字组织点击抢修。';

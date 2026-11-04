@@ -263,7 +263,8 @@ export class PhaserHost {
       articulatedMeshes: [...this.meshes.values()].filter(mesh => mesh.visible).length,
       visibleRasterLayers: [...this.layers.values()].filter(layer => layer.image.visible).length,
       rasterDimensions: [...this.layers].map(([id, layer]) => ({ id, width: layer.texture.width, height: layer.texture.height,
-        displayWidth: layer.image.displayWidth, displayHeight: layer.image.displayHeight, x: layer.image.x, y: layer.image.y })),
+        displayWidth: layer.image.displayWidth, displayHeight: layer.image.displayHeight, x: layer.image.x, y: layer.image.y,
+        depth: layer.image.depth, visible: layer.image.visible })),
       animations: [...this.sprites].flatMap(([id, sprite]) => sprite.anims.currentAnim ? [{
         id, key: sprite.anims.currentAnim.key, frame: sprite.frame.name,
         isPlaying: sprite.anims.isPlaying, isPaused: sprite.anims.isPaused,
@@ -271,6 +272,8 @@ export class PhaserHost {
       nativeSprites: [...this.sprites].map(([id, sprite]) => ({
         id, texture: sprite.texture.key, frame: sprite.frame.name, x: sprite.x, y: sprite.y,
         width: sprite.displayWidth, height: sprite.displayHeight, depth: sprite.depth, visible: !!this.meshes.get(id)?.visible || sprite.visible,
+        originX: sprite.originX, originY: sprite.originY, alpha: sprite.alpha,
+        flipX: sprite.flipX, flipY: sprite.flipY, rotation: sprite.rotation,
         articulated: this.meshes.get(id)?.visible ?? false,
       })),
       widthCSS: this.cssWidth, heightCSS: this.cssHeight, dpr: this.dpr,

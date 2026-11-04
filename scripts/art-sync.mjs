@@ -5,7 +5,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const SCRIPT_PATH = fileURLToPath(import.meta.url);
 const DEFAULT_WORKSPACE = resolve(dirname(SCRIPT_PATH), '..');
-const PIPELINE_VERSION = 2;
+const PIPELINE_VERSION = 4;
 const MAX_ATLAS_SIZE = 2048;
 const ATLAS_GUTTER = 4;
 const MAX_GENERATED_BYTES = 20 * 1024 * 1024;
@@ -17,6 +17,9 @@ const samePath = (a, b) => resolve(a).toLowerCase() === resolve(b).toLowerCase()
 // artwork, registration geometry and alpha remain authoritative. Signals and
 // icons retain their original colours so danger/ability cues stay distinct.
 export function artToneFor(id, kind = 'sprite') {
+  // Fantasy production assets have already passed the approved palette and
+  // contrast review. Preserve those pixels; old actor grading stays separate.
+  if (id.startsWith('fantasy.')) return null;
   if (/^(fx|icon)\./.test(id)) return null;
   if (kind === 'environment') return id.startsWith('heart.')
     ? { name: 'warm-matte', saturation: .70, brightness: .99, contrast: .94, lift: 7 }
@@ -88,6 +91,7 @@ export function alphaBounds(data, width, height, channels = 4) {
 function validateSelection(selection) {
   if (selection.schemaVersion !== 1 || !Array.isArray(selection.sprites) || !Array.isArray(selection.environments)) throw new Error('Unsupported art-selection.json schema');
   const ids = new Set();
+  const actorCells = new Set();
   for (const asset of [...selection.sprites, ...selection.environments]) {
     for (const id of [asset.id, ...(asset.aliases ?? [])]) {
       if (!id || ids.has(id)) throw new Error(`Duplicate or empty art ID: ${id}`);
@@ -97,11 +101,35 @@ function validateSelection(selection) {
     if (asset.pivotSource && (asset.pivotSource.length !== 2 || asset.pivotSource.some(v => !Number.isFinite(v) || v < 0 || v > 1))) throw new Error(`Invalid source pivot for ${asset.id}`);
     if (asset.expectedSha256 !== undefined && !/^[a-f0-9]{64}$/i.test(asset.expectedSha256)) throw new Error(`Invalid expected source SHA-256 for ${asset.id}`);
     if (asset.sourceMuzzle !== undefined && (!asset.sourceMuzzle || !Number.isFinite(asset.sourceMuzzle.x) || !Number.isFinite(asset.sourceMuzzle.y) || asset.sourceMuzzle.x < 0 || asset.sourceMuzzle.y < 0)) throw new Error(`Invalid source muzzle for ${asset.id}`);
+    if (asset.sourceFrame !== undefined && (!asset.sourceFrame || !['x', 'y', 'width', 'height'].every(key => Number.isInteger(asset.sourceFrame[key]))
+      || asset.sourceFrame.x < 0 || asset.sourceFrame.y < 0 || asset.sourceFrame.width <= 0 || asset.sourceFrame.height <= 0)) throw new Error(`Invalid source frame for ${asset.id}`);
+    if (asset.id.startsWith('fantasy.actor.') && asset.trim !== false) throw new Error(`Actor frames require a complete shared canvas: ${asset.id}`);
+    if (asset.id.startsWith('fantasy.actor.') && asset.animation && asset.animation.group !== asset.id.replace(/\.\d\d$/, '')) {
+      throw new Error(`Actor animation group must match its identity and clip: ${asset.id}`);
+    }
+    if (asset.id.startsWith('fantasy.actor.') && asset.animation?.approved === true) {
+      const cell = JSON.stringify([asset.animation.group, asset.source, asset.sourceFrame ?? null]);
+      if (actorCells.has(cell)) throw new Error(`Repeated source cell in reviewed actor group: ${asset.id}`);
+      actorCells.add(cell);
+    }
   }
 }
 
 async function renderSprite(sharp, bytes, spec) {
+  const sheet = await sharp(bytes).metadata();
+  if (spec.sourceFrame) {
+    const frame = spec.sourceFrame;
+    if (frame.x + frame.width > sheet.width || frame.y + frame.height > sheet.height) throw new Error(`Source frame outside sheet for ${spec.id}`);
+    bytes = await sharp(bytes).extract({ left: frame.x, top: frame.y, width: frame.width, height: frame.height }).png().toBuffer();
+  }
   const { data, info } = await sharp(bytes).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const registration = spec.actorRegistration;
+  if (registration) {
+    const validPoint = point => point && [point.x, point.y].every(Number.isFinite) && point.x >= 0 && point.y >= 0 && point.x <= info.width && point.y <= info.height;
+    if (registration.canvas?.width !== info.width || registration.canvas?.height !== info.height || !validPoint(registration.foot)
+      || !Number.isFinite(registration.commonCanvasScale) || registration.commonCanvasScale <= 0
+      || registration.grip && !validPoint(registration.grip) || registration.muzzle && !validPoint(registration.muzzle)) throw new Error(`Actor registration outside logical frame for ${spec.id}`);
+  }
   if (spec.sourceMuzzle && (spec.sourceMuzzle.x >= info.width || spec.sourceMuzzle.y >= info.height)) throw new Error(`Source muzzle outside original canvas for ${spec.id}`);
   const bounds = alphaBounds(data, info.width, info.height, info.channels);
   const crop = spec.trim === false ? { x: 0, y: 0, width: info.width, height: info.height } : bounds;
@@ -221,6 +249,9 @@ export async function syncArt(options = {}) {
       frames[spec.id] = { frame: { x: sprite.x, y: sprite.y, w: sprite.width, h: sprite.height }, rotated: false, trimmed: false, spriteSourceSize: { x: 0, y: 0, w: sprite.width, h: sprite.height }, sourceSize: { w: sprite.width, h: sprite.height } };
       const descriptor = { atlas: key, frame: spec.id, width: sprite.width, height: sprite.height, pivot: sprite.pivot, visibleBounds: sprite.visibleBounds, source: spec.source, sourceSha256: local.get(spec.source).sha256, sourceSize: sprite.sourceSize, sourceBounds: sprite.sourceBounds, touchesSourceEdge: sprite.touchesSourceEdge, status: spec.status ?? 'prototype', flags: spec.flags ?? [], tone: sprite.tone, ...(spec.animation ? { animation: spec.animation } : {}) };
       if (spec.sourceMuzzle) descriptor.sourceMuzzle = { ...spec.sourceMuzzle };
+      else if (spec.actorRegistration?.muzzle) descriptor.sourceMuzzle = { ...spec.actorRegistration.muzzle };
+      if (spec.sourceFrame) descriptor.sourceFrame = { ...spec.sourceFrame };
+      if (spec.actorRegistration) descriptor.actorRegistration = structuredClone(spec.actorRegistration);
       assets[spec.id] = descriptor;
       for (const alias of spec.aliases ?? []) assets[alias] = { ...descriptor, aliasOf: spec.id };
     }
@@ -239,7 +270,9 @@ export async function syncArt(options = {}) {
     environments[spec.id] = { dataUri: `data:image/png;base64,${png.toString('base64')}`, width: info.width, height: info.height, source: spec.source, sourceSha256: local.get(spec.source).sha256, sourceSize: { width: metadata.width, height: metadata.height }, crop: spec.crop ?? null, status: spec.status ?? 'prototype', flags: spec.flags ?? [], tone, bytes: png.length, sha256: sha256(png) };
     await writeChanged(join(outputDirectory, `${spec.id}.png`), png);
   }
-  const runtime = { schemaVersion: 1, pipelineVersion: PIPELINE_VERSION, inputSignature, selectionSha256, pipelineSha256, candidateSignature, sourceManifest, atlases, assets, environments, report: { unknownCandidates, missing, pending, selectedAssetCount: required.length, selectedSourceCount: Object.keys(sourceManifest).length } };
+  const runtime = { schemaVersion: 1, pipelineVersion: PIPELINE_VERSION, inputSignature, selectionSha256, pipelineSha256, candidateSignature, sourceManifest, atlases, assets, environments,
+    ...(selection.actorContract ? { actorContract: structuredClone(selection.actorContract) } : {}),
+    report: { unknownCandidates, missing, pending, selectedAssetCount: required.length, selectedSourceCount: Object.keys(sourceManifest).length } };
   validateRuntime(runtime);
   const runtimeBytes = Buffer.from(JSON.stringify(runtime));
   if (runtimeBytes.length > MAX_GENERATED_BYTES) throw new Error(`Generated runtime exceeds 20MB budget: ${runtimeBytes.length}`);

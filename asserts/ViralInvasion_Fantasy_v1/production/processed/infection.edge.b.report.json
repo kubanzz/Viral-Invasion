@@ -1,0 +1,157 @@
+{
+  "id": "infection.edge.b",
+  "kind": "overlay",
+  "sourceSha256": "f296e21233a35351054689ef9f8c5880f5eb755335d00c05d8dd860a62cb95f7",
+  "processing": {
+    "outer": {
+      "method": "border-connected-white-key",
+      "whiteMin": 225,
+      "chromaMax": 40,
+      "matteCleanup": true,
+      "edgeWidth": 2,
+      "removedPixels": 4007550,
+      "cleanedEdgePixels": 6543,
+      "limitations": "White foreground connected directly to a white backdrop is ambiguous. Inspect both black/white QA views before acceptance."
+    },
+    "negativeSpaces": {
+      "method": "reviewed-negative-space-white-matte-cleanup",
+      "kind": "overlay",
+      "clearedPixels": 2815,
+      "softenedPixels": 8952,
+      "reviewedHoles": [],
+      "reason": "Purple mycelium has no physical white pigment; white pixels are backdrop/holes."
+    },
+    "components": {
+      "method": "retain-mycelium-components-at-least-50-source-pixels",
+      "componentSizes": [
+        177107,
+        2089,
+        858,
+        639,
+        578,
+        416,
+        340,
+        238,
+        212,
+        133,
+        107,
+        96
+      ],
+      "retainedComponents": 18,
+      "removedPixels": 694,
+      "reason": "Source review confirms a single connected crystal/flower or a purple mycelium patch; detached grey-white paper-grain remnants are backdrop, not separate intended objects."
+    },
+    "arcExtraction": {
+      "method": "retain-upper-half-of-generated-ring-as-open-ground-edge-brush",
+      "sourceCanvas": [
+        2048,
+        2048
+      ],
+      "sourceRetainedRegion": [
+        0,
+        0,
+        2048,
+        1020
+      ],
+      "cutoffLogicalY": 510,
+      "featherLogicalRows": 4,
+      "logicalTranslation": [
+        0,
+        48
+      ],
+      "closedLoopDelivered": false,
+      "interiorFillDelivered": false,
+      "verticalProjectionApplied": false,
+      "paletteChanged": false
+    }
+  },
+  "transform": {
+    "sourceCanvas": [
+      2048,
+      2048
+    ],
+    "targetCanvas": [
+      1024,
+      1024
+    ],
+    "sourceAnchor": [
+      0.5,
+      0.5
+    ],
+    "targetAnchor": [
+      0.5,
+      0.5
+    ],
+    "targetAnchorPixels": [
+      512,
+      512
+    ],
+    "requestedScale": 0.5,
+    "width": 1024,
+    "height": 1024,
+    "left": 0,
+    "top": 48,
+    "method": "full-canvas-half-scale-then-reviewed-upper-arc-extraction-and-translation",
+    "alphaBoundsUsedForScaling": false
+  },
+  "image": {
+    "sha256": "0c2818f0eaa5e245e5a59d7d261c5e9a7e162ea984ac07989d314f67850377c2",
+    "bytes": 105997,
+    "width": 1024,
+    "height": 1024,
+    "format": "png",
+    "channels": 4,
+    "hasAlphaChannel": true,
+    "alpha": {
+      "transparent": 1018271,
+      "partial": 12909,
+      "opaque": 17396,
+      "transparentFraction": 0.9710988998413086,
+      "visible": 27273,
+      "borderVisible": 0,
+      "whiteVisible": 72
+    },
+    "bbox": [
+      61,
+      467,
+      966,
+      558
+    ],
+    "margins": {
+      "left": 61,
+      "top": 467,
+      "right": 58,
+      "bottom": 466,
+      "minimumFraction": 0.056640625
+    },
+    "luma": {
+      "mean": 124.78433849594826,
+      "standardDeviation": 36.000277702866505,
+      "min": 0,
+      "max": 254.99999999999997
+    }
+  },
+  "output": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\infection.edge.b.png",
+  "previews": {
+    "black": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\infection.edge.b.qa-black.png",
+      "sha256": "bf869b199f026f10f2be3de82909582335d89d4c8e7eb646269ff00ff0a6991f",
+      "bytes": 85207
+    },
+    "white": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\infection.edge.b.qa-white.png",
+      "sha256": "6bcff2065220e2849a8a2fb6566461882b992f6912dc95af1d681be06bcb184a",
+      "bytes": 88891
+    },
+    "alpha": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\infection.edge.b.qa-alpha.png",
+      "sha256": "f257b068cb91792950788f79e311e64c6444fb75d0b648e604e4644ad499683c",
+      "bytes": 26802
+    },
+    "black-white": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\infection.edge.b.qa-black-white.png",
+      "sha256": "f4357c0f3a9aee979f32bba77d1972a6c1342d85943301ef86ef766dea609925",
+      "bytes": 170167
+    }
+  }
+}

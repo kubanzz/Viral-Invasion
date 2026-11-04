@@ -38,11 +38,14 @@ describe('persistent, bounded immune legions', () => {
     growth.afterInput(context(3));
     expect(growth.state.cells).toHaveLength(3);
     expect(growth.state.beacon!.cellCount).toBe(4);
-    expect(growth.state.cells!.find(cell => cell.id === veteran.id)!.hp).toBe(36);
+    expect(growth.state.cells!.find(cell => cell.id === veteran.id)!.hp).toBe(30);
+    expect(growth.state.cells!.find(cell => cell.id === veteran.id)!.maxHp).toBe(72);
     growth.state.equipped[0].rank = 3;
     growth.afterInput(context(4));
     expect(growth.state.cells).toHaveLength(4);
     expect(growth.state.beacon!.cellCount).toBe(5);
+    expect(growth.state.cells!.find(cell => cell.id === veteran.id)!.hp).toBe(30);
+    expect(growth.state.cells!.find(cell => cell.id === veteran.id)!.maxHp).toBe(84);
     growth.afterInput(context(5));
     expect(growth.state.cells).toHaveLength(4);
   });

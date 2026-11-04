@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 1,
+  "revision": 3,
+  "fragmentFile": "samples.hero-v03.fragment.json",
+  "samples": [
+    {
+      "id": "fantasy.actor.hero.front_right.master",
+      "runId": "ad1fb31d-2823-4b85-82e6-78974145e195",
+      "rawPath": "D:/Workspace/Projects/xsj/Viral-Invasion/asserts/ViralInvasion_Fantasy_Actors_v2/raw/fantasy.actor.hero.front_right.master/ad1fb31d-2823-4b85-82e6-78974145e195-cross-v03.png",
+      "identityReview": {
+        "status": "accepted-for-processing",
+        "reviewer": "root + production_manifest",
+        "revision": "v03-enlarged-solid-cross",
+        "notes": "Root仅要求十字扩大至raw约150²；保持原中心与朝向，实心深薄荷，不发光；源脚点与完整画布注册矩阵不变。其余helmet/visor/eyes/limbs材质在ROI外像素差0。"
+      },
+      "matte": {
+        "whiteMin": 240,
+        "chromaMax": 18,
+        "edgeWidth": 2,
+        "matteCleanup": true,
+        "keepLargestComponent": true,
+        "protectedPolygons": [
+          [
+            [
+              790,
+              350
+            ],
+            [
+              1160,
+              325
+            ],
+            [
+              1350,
+              550
+            ],
+            [
+              1090,
+              610
+            ],
+            [
+              870,
+              540
+            ]
+          ]
+        ],
+        "negativeSpaceSeeds": [
+          [
+            735,
+            1355
+          ],
+          [
+            990,
+            1600
+          ]
+        ],
+        "preservationProbes": [
+          {
+            "label": "奶白头壳",
+            "point": [
+              1050,
+              420
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "灰蓝医疗十字",
+            "point": [
+              1390,
+              490
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "左侧薄荷眼",
+            "point": [
+              1158,
+              866
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "右侧薄荷眼",
+            "point": [
+              1396,
+              806
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "屏幕左手奶白掌",
+            "point": [
+              495,
+              1460
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "屏幕右手奶白掌",
+            "point": [
+              1570,
+              1210
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "左臂与身体之间负空间",
+            "point": [
+              735,
+              1355
+            ],
+            "expect": "clear"
+          },
+          {
+            "label": "两腿之间负空间",
+            "point": [
+              990,
+              1600
+            ],
+            "expect": "clear"
+          }
+        ]
+      },
+      "registration": {
+        "sourceFootPx": [
+          1052.75,
+          1842
+        ],
+        "uniformScale": 0.25,
+        "footAnnotation": "横向取实际鞋底接触点near[825.5,1842]与far[1280,1647]的X中点1052.75；纵向取前侧最低鞋底1842，保留透视高度差。完整2048画布0.25缩放+接地平移，不用bbox fit，也不强行拉齐两足Y。"
+      },
+      "handGrips": {},
+      "outputStem": "fantasy.actor.hero.front_right.master.v03",
+      "revision": 3,
+      "primaryHand": {
+        "id": null,
+        "status": "pending-new-centered-hold-source",
+        "toolAttachmentPoint": null,
+        "wristRegisteredPx": null,
+        "palmGripRegisteredPx": null,
+        "oldNearOrFarAccepted": false,
+        "requiredNewGripRegion": {
+          "centerPx": [
+            256,
+            315
+          ],
+          "xRangePx": [
+            244,
+            268
+          ]
+        },
+        "nextSource": "fantasy.actor.hero.front_right.hold.master",
+        "rule": "两前臂/双小C手须由实际v03 reference重绘到胸前；旧near/far点仅为解剖landmark，禁止扭旧臂像素伪造通过。"
+      },
+      "sourceLandmarks": {
+        "weaponWrist": {
+          "sourcePx": [
+            1510,
+            1220
+          ],
+          "registeredPx": [
+            370.3125,
+            279.7
+          ],
+          "definition": "实际grid crop复核，朝前右的screen-right手之灰蓝腕箍中点"
+        },
+        "weaponPalmGrip": {
+          "sourcePx": [
+            1570,
+            1250
+          ],
+          "registeredPx": [
+            385.3125,
+            287.2
+          ],
+          "definition": "同一C形手的内侧持物中心，约[385,287]；正式工具接合点"
+        },
+        "nearWrist": {
+          "sourcePx": [
+            548,
+            1380
+          ],
+          "registeredPx": [
+            129.8125,
+            319.7
+          ],
+          "toolAttachmentAllowed": false
+        },
+        "nearPalm": {
+          "sourcePx": [
+            570,
+            1485
+          ],
+          "registeredPx": [
+            135.3125,
+            345.95
+          ],
+          "toolAttachmentAllowed": false
+        },
+        "qa": "qa/hero-forward-c-hand-source-coordinates.png"
+      },
+      "heroWeaponPose": "pending-new-centered-hold-source"
+    }
+  ]
+}

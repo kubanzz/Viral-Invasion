@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 2,
+  "scope": "Read-only repeated per-enemy payload estimate from 96 existing actual Renderer receipts; not a new natural/performance run. Row wrappers, player/tool, effects, static catalogue records and all transition traffic are additional. Full plans when present in receipts are included. Current catalogue token length is approximated as c48.",
+  "input": {
+    "path": "artifacts/territory-20261103/nonhero-rule-directions/report.json",
+    "sha256": "172bdd258981726b207fb288328db0ba8ab24848af9dec62617921876e6af58b",
+    "samples": 96
+  },
+  "measurementScriptSha256": "200f9caf2fdcba22d3e4da86d3809ba492fc4da36c19a5a0bf93023b8f8246b9",
+  "meanBytes": {
+    "oldActor": 1218.4166666666667,
+    "newActor": 695.25,
+    "native": 320.7083333333333,
+    "oldLogical": 240.75,
+    "newLogical": 329.7916666666667,
+    "globalCue": 342.8333333333333
+  },
+  "oldPerEnemyBytes": 2122.7083333333335,
+  "newPerSceneEnemyBytes": 1688.5833333333333,
+  "illustrativeTwo240SecondRoutes": [
+    {
+      "averageEnemies": 15,
+      "old60HzEnemyOnlyMiB": 874.5288848876954,
+      "new10HzSceneEnemyOnlyMiB": 115.94581604003906,
+      "transitionTraffic": "Additional and state-dependent; no fixed overall reduction claimed."
+    },
+    {
+      "averageEnemies": 48,
+      "old60HzEnemyOnlyMiB": 2798.4924316406255,
+      "new10HzSceneEnemyOnlyMiB": 371.026611328125,
+      "transitionTraffic": "Additional and state-dependent; no fixed overall reduction claimed."
+    }
+  ],
+  "policy": {
+    "playerTool": "every observed rAF",
+    "sceneSampleMs": 100,
+    "streamFlushMs": 2000,
+    "maxPendingBytes": 8388608,
+    "maxRecordBytes": 524288,
+    "maxCatalogueEntries": 512,
+    "maxEventKeys": 100000,
+    "maxEventBytes": 16777216,
+    "maxTrackedTargets": 512,
+    "maxPendingRecords": 20000,
+    "enemyTransitions": "rAF-observed logical state changes only; point observations, not continuous enemy animation",
+    "overflow": "Stop recorder and reject completeness; never silently discard player/tool frames",
+    "encoding": "UTF-8 NDJSON, incrementally drained and checked; catalogue records precede their dynamic references"
+  },
+  "verification": {
+    "selfCheck": "artifacts/actor-overhaul-20261103/recorder-check-final/recorder-check.json",
+    "assertions": 15,
+    "pass": true,
+    "browserStarted": false,
+    "productionBuildRead": false,
+    "typeScript": "node node_modules/typescript/bin/tsc --noEmit passed",
+    "embeddedFixture": "Memory-only esbuild succeeded;95 inputs;no writes/browser."
+  },
+  "supersedes": "recorder-resource-audit.json used a shorter placeholder old catalogue key and omitted newly added logical fields; this revision uses the actual old key construction and complete new logical shape.",
+  "additionalCorrection": "finishNatural now retains the same run result object in the report so caller-computed combat branch/rescue/coverage fields survive postprocessing."
+}

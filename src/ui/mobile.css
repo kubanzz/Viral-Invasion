@@ -171,3 +171,37 @@ body:not(.endless-mode) .mobile-charge-ring { display:none; }
 body.touch-mode [data-charging=true] { box-shadow:0 0 0 2px #98edcf,0 0 13px #aaffdd77; }
 body.touch-mode [data-charge-full=true] .mobile-charge-state { color:#173e3d; background:#dffff1; }
 body.touch-mode #mobile-skill-preview[data-kind='2'],body.touch-mode #mobile-skill-preview[data-kind=charge] { --preview-color:#b9ffe4; }
+/* Fixed thumb slots: no reflow when contextual actions appear or disappear. */
+body.touch-mode #mobile-controls button[hidden] { display:none!important; }
+body.touch-mode #mobile-controls .mobile-top-actions button { width:48px; height:48px; }
+body.touch-mode .mobile-top-actions { gap:8px; }
+body.touch-mode #mobile-controls .mobile-attack { width:80px; height:80px; right:calc(var(--mobile-right) + 16px); bottom:calc(var(--mobile-bottom) + 16px); }
+body.touch-mode #mobile-controls .mobile-skill { width:52px; height:52px; }
+body.touch-mode #mobile-controls .mobile-aux { width:48px; height:48px; }
+body.touch-mode .mobile-skill[data-touch-skill='2'] { right:calc(var(--mobile-right) + 112px); bottom:calc(var(--mobile-bottom) + 16px); }
+body.touch-mode .mobile-skill[data-touch-skill='3'] { right:calc(var(--mobile-right) + 108px); bottom:calc(var(--mobile-bottom) + 84px); }
+body.touch-mode .mobile-skill[data-touch-skill=scan] { right:calc(var(--mobile-right) + 36px); bottom:calc(var(--mobile-bottom) + 116px); }
+body.touch-mode .mobile-aux[data-touch-action=dash] { right:calc(var(--mobile-right) + 176px); bottom:calc(var(--mobile-bottom) + 16px); }
+body.touch-mode .mobile-aux[data-touch-action=interact] { right:calc(var(--mobile-right) + 176px); bottom:calc(var(--mobile-bottom) + 80px); }
+body.touch-mode .mobile-aux[data-touch-action=antibody] { right:calc(var(--mobile-right) + 108px); bottom:calc(var(--mobile-bottom) + 152px); }
+body.touch-mode #mobile-controls .mobile-skill .art-icon { width:28px; height:28px; transform:translateY(-6px); }
+body.touch-mode #mobile-controls .mobile-aux .art-icon { width:24px; height:24px; transform:translateY(-6px); }
+body.touch-mode .mobile-skill .mobile-caption,body.touch-mode .mobile-aux .mobile-caption { bottom:3px; font-size:10px; line-height:12px; }
+body.touch-mode .mobile-aux .interact-glyph { display:block; transform:translateY(-6px); }
+body.touch-mode .mobile-attack .attack-glyph { top:13px; }
+body.touch-mode .mobile-attack .mobile-caption { bottom:10px; }
+body.touch-mode .mobile-charge { position:absolute; right:-4px; top:-5px; padding:1px 3px; min-width:17px; min-height:16px; display:grid; place-items:center; border-radius:8px; background:#244d43; border:1px solid #cce8c0; color:#fff3cb; font-size:9px; }
+body.touch-mode .mobile-charge:empty { display:none; }
+body.touch-mode #mobile-controls .mobile-cancel { right:calc(var(--mobile-right) + 240px); bottom:calc(var(--mobile-bottom) + 92px); width:48px; height:48px; }
+body.touch-mode #mobile-controls .mobile-guide { right:calc(var(--mobile-right) + 240px); bottom:calc(var(--mobile-bottom) + 28px); width:48px; height:48px; }
+body.touch-mode #mobile-controls[data-skill=scan] .mobile-attack,body.touch-mode #mobile-controls[data-skill=cannon] .mobile-attack { opacity:1; }
+body.touch-mode #mobile-skill-preview[data-kind=cannon] { --preview-color:#ffe7a7; }
+body.touch-mode #mobile-controls[data-low-hp=true] .mobile-hp-track { outline:1px solid #ffb39d; box-shadow:0 0 8px #c8464280; }
+body.touch-mode #mobile-controls[data-low-hp=true] .mobile-hp-track > i { background:#f48d78; }
+body.touch-mode #mobile-stability-details { padding:10px; background:#def0dd; border:1px solid #8eb69b; border-radius:6px; color:#315c53; font-size:12px; }
+@media (max-height:360px) {
+  body.touch-mode .mobile-stick[data-stick=move] { width:96px; height:96px; left:calc(var(--mobile-left) + 16px); bottom:calc(var(--mobile-bottom) + 16px); }
+  body.touch-mode .mobile-notice { max-height:28px; top:calc(var(--mobile-top) + 84px); width:min(240px,40vw); }
+  body.touch-mode .mobile-warning-strip { left:calc(var(--mobile-left) + 138px); right:calc(var(--mobile-right) + 236px); top:calc(var(--mobile-top) + 94px); max-height:32px; }
+  body.touch-mode .mobile-charge-state { font-size:8px; top:-15px; }
+}

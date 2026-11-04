@@ -1,0 +1,3653 @@
+{
+  "schemaVersion": 1,
+  "scope": "Fantasy_Actors_v2-source-samples-only",
+  "status": "three-source-samples-processed-agent-reviewed-awaiting-root-approval",
+  "runtimeCompletedCount": 0,
+  "expectedRuntimeCount": 115,
+  "sourceCount": 3,
+  "expectedSourceCount": 3,
+  "pendingSourceIds": [],
+  "sources": [
+    {
+      "id": "fantasy.actor.hero.front_right.master",
+      "kind": "source-master-only",
+      "runtime": false,
+      "runtimeFrameCredit": 0,
+      "runId": "ad1fb31d-2823-4b85-82e6-78974145e195",
+      "source": {
+        "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_Actors_v2\\raw\\fantasy.actor.hero.front_right.master\\ad1fb31d-2823-4b85-82e6-78974145e195-cross-v02.png",
+        "image": {
+          "sha256": "624f4ceee32f9cb87fa02313f3f174dcf0756400d7e42a582823cd7eccf6c3dc",
+          "bytes": 5872358,
+          "width": 2048,
+          "height": 2048,
+          "format": "png",
+          "channels": 3,
+          "hasAlphaChannel": false,
+          "alpha": {
+            "transparent": 0,
+            "partial": 0,
+            "opaque": 4194304,
+            "transparentFraction": 0,
+            "visible": 4194304,
+            "borderVisible": 8188,
+            "whiteVisible": 2905497
+          },
+          "bbox": [
+            0,
+            0,
+            2048,
+            2048
+          ],
+          "margins": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "minimumFraction": 0
+          },
+          "luma": {
+            "mean": 228.02270634667588,
+            "standardDeviation": 51.85593937842926,
+            "min": 0,
+            "max": 254.99999999999997
+          }
+        }
+      },
+      "identityReview": {
+        "status": "accepted-for-processing",
+        "reviewer": "root + production_manifest",
+        "revision": "v02-cross-only",
+        "notes": "Root保留hero身份；仅中性灰医疗十字精确mask改为灰蓝，ROI及mask之外像素差均0。原pose/奶白头壳/深面罩/两点眼/短肢全部保留；尚需最终身份核准。"
+      },
+      "removal": {
+        "sourceSha256": "624f4ceee32f9cb87fa02313f3f174dcf0756400d7e42a582823cd7eccf6c3dc",
+        "processing": {
+          "method": "border-connected-white-key",
+          "whiteMin": 240,
+          "chromaMax": 18,
+          "matteCleanup": true,
+          "edgeWidth": 2,
+          "removedPixels": 2940478,
+          "cleanedEdgePixels": 4724,
+          "limitations": "White foreground connected directly to a white backdrop is ambiguous. Inspect both black/white QA views before acceptance."
+        },
+        "image": {
+          "sha256": "88898df705de362be2ecd22ab2d8ac72aedfe317cd766ce65fd1654d0986ecb9",
+          "bytes": 3650723,
+          "width": 2048,
+          "height": 2048,
+          "format": "png",
+          "channels": 4,
+          "hasAlphaChannel": true,
+          "alpha": {
+            "transparent": 2940478,
+            "partial": 4724,
+            "opaque": 1249102,
+            "transparentFraction": 0.7010645866394043,
+            "visible": 1253826,
+            "borderVisible": 0,
+            "whiteVisible": 4381
+          },
+          "bbox": [
+            380,
+            212,
+            1652,
+            1843
+          ],
+          "margins": {
+            "left": 380,
+            "top": 212,
+            "right": 396,
+            "bottom": 205,
+            "minimumFraction": 0.10009765625
+          },
+          "luma": {
+            "mean": 172.25283331708954,
+            "standardDeviation": 68.11884996942028,
+            "min": 0,
+            "max": 254.99999999999997
+          }
+        },
+        "protectedPolygons": [
+          [
+            [
+              790,
+              350
+            ],
+            [
+              1160,
+              325
+            ],
+            [
+              1350,
+              550
+            ],
+            [
+              1090,
+              610
+            ],
+            [
+              870,
+              540
+            ]
+          ]
+        ],
+        "restoredPixels": 0,
+        "removedHolePixels": 0,
+        "holeReports": [
+          {
+            "sourceSeed": [
+              735,
+              1355
+            ],
+            "componentPixels": 2940478,
+            "newlyRemovedPixels": 0
+          },
+          {
+            "sourceSeed": [
+              990,
+              1600
+            ],
+            "componentPixels": 0,
+            "newlyRemovedPixels": 0
+          }
+        ],
+        "shadowCleanup": null,
+        "componentCleanup": {
+          "method": "reviewed-single-subject-keep-largest-connected-component",
+          "components": 18,
+          "keptPixels": 1253809,
+          "discardedPixels": 17,
+          "discardedComponentSizes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "preservationProbes": [
+          {
+            "label": "奶白头壳",
+            "point": [
+              1050,
+              420
+            ],
+            "expect": "opaque",
+            "before": [
+              245,
+              243,
+              229,
+              255
+            ],
+            "after": [
+              245,
+              243,
+              229,
+              255
+            ]
+          },
+          {
+            "label": "灰蓝医疗十字",
+            "point": [
+              1390,
+              490
+            ],
+            "expect": "opaque",
+            "before": [
+              80,
+              128,
+              139,
+              255
+            ],
+            "after": [
+              80,
+              128,
+              139,
+              255
+            ]
+          },
+          {
+            "label": "左侧薄荷眼",
+            "point": [
+              1158,
+              866
+            ],
+            "expect": "opaque",
+            "before": [
+              160,
+              230,
+              205,
+              255
+            ],
+            "after": [
+              160,
+              230,
+              205,
+              255
+            ]
+          },
+          {
+            "label": "右侧薄荷眼",
+            "point": [
+              1396,
+              806
+            ],
+            "expect": "opaque",
+            "before": [
+              157,
+              229,
+              200,
+              255
+            ],
+            "after": [
+              157,
+              229,
+              200,
+              255
+            ]
+          },
+          {
+            "label": "屏幕左手奶白掌",
+            "point": [
+              495,
+              1460
+            ],
+            "expect": "opaque",
+            "before": [
+              239,
+              234,
+              222,
+              255
+            ],
+            "after": [
+              239,
+              234,
+              222,
+              255
+            ]
+          },
+          {
+            "label": "屏幕右手奶白掌",
+            "point": [
+              1570,
+              1210
+            ],
+            "expect": "opaque",
+            "before": [
+              240,
+              233,
+              222,
+              255
+            ],
+            "after": [
+              240,
+              233,
+              222,
+              255
+            ]
+          },
+          {
+            "label": "左臂与身体之间负空间",
+            "point": [
+              735,
+              1355
+            ],
+            "expect": "clear",
+            "before": [
+              252,
+              255,
+              254,
+              255
+            ],
+            "after": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "label": "两腿之间负空间",
+            "point": [
+              990,
+              1600
+            ],
+            "expect": "clear",
+            "before": [
+              249,
+              250,
+              249,
+              255
+            ],
+            "after": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "finalCutoutImage": {
+          "sha256": "2600e39983553862fb18935f2044f2e246abd02d5d8efcdd06577f9d7fef8ac9",
+          "bytes": 3650609,
+          "width": 2048,
+          "height": 2048,
+          "format": "png",
+          "channels": 4,
+          "hasAlphaChannel": true,
+          "alpha": {
+            "transparent": 2940495,
+            "partial": 4717,
+            "opaque": 1249092,
+            "transparentFraction": 0.701068639755249,
+            "visible": 1253809,
+            "borderVisible": 0,
+            "whiteVisible": 4381
+          },
+          "bbox": [
+            380,
+            212,
+            1652,
+            1843
+          ],
+          "margins": {
+            "left": 380,
+            "top": 212,
+            "right": 396,
+            "bottom": 205,
+            "minimumFraction": 0.10009765625
+          },
+          "luma": {
+            "mean": 172.25246257048167,
+            "standardDeviation": 68.11889696639068,
+            "min": 0,
+            "max": 254.99999999999997
+          }
+        },
+        "caution": "White foreground versus white background is resolved by actual image review and explicit seed/protection annotations, not by global white deletion."
+      },
+      "transform": {
+        "method": "first-reviewed-identity-full-canvas-uniform-scale-and-foot-translation",
+        "sourceCanvas": [
+          2048,
+          2048
+        ],
+        "sourceFootPx": [
+          1052.75,
+          1842
+        ],
+        "requestedUniformScale": 0.25,
+        "uniformScale": 0.25,
+        "resampledCanvas": [
+          512,
+          512
+        ],
+        "translationPx": [
+          -7.1875,
+          -25.30000000000001
+        ],
+        "matrixSourceToRegistered": [
+          [
+            0.25,
+            0,
+            -7.1875
+          ],
+          [
+            0,
+            0.25,
+            -25.30000000000001
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ],
+        "targetCanvas": [
+          512,
+          512
+        ],
+        "targetAnchorPx": [
+          256,
+          435.2
+        ],
+        "pivot": [
+          0.5,
+          0.85
+        ],
+        "mappedSourceFootPx": [
+          256,
+          435.2
+        ],
+        "sourceBbox": [
+          380,
+          212,
+          1652,
+          1843
+        ],
+        "projectedBbox": [
+          87.8125,
+          27.69999999999999,
+          405.8125,
+          435.45
+        ],
+        "alphaBoundsUsedForScaling": false,
+        "alphaCropUsed": false,
+        "futureGroupPolicy": "Lock this transform for the identity/direction group after approval; never independently fit animation frames.",
+        "footAnnotation": "横向取实际鞋底接触点near[825.5,1842]与far[1280,1647]的X中点1052.75；纵向取前侧最低鞋底1842，保留透视高度差。完整2048画布0.25缩放+接地平移，不用bbox fit，也不强行拉齐两足Y。"
+      },
+      "output": {
+        "path": "processed/fantasy.actor.hero.front_right.master.png",
+        "sha256": "22f1acec027e79dd555c7ef30db9720039402ed529f5cc2a0ced601a865832c1",
+        "bytes": 207333
+      },
+      "image": {
+        "sha256": "22f1acec027e79dd555c7ef30db9720039402ed529f5cc2a0ced601a865832c1",
+        "bytes": 207333,
+        "width": 512,
+        "height": 512,
+        "format": "png",
+        "channels": 4,
+        "hasAlphaChannel": true,
+        "alpha": {
+          "transparent": 179737,
+          "partial": 8460,
+          "opaque": 73947,
+          "transparentFraction": 0.6856422424316406,
+          "visible": 79801,
+          "borderVisible": 0,
+          "whiteVisible": 74
+        },
+        "bbox": [
+          87,
+          27,
+          406,
+          436
+        ],
+        "margins": {
+          "left": 87,
+          "top": 27,
+          "right": 106,
+          "bottom": 76,
+          "minimumFraction": 0.052734375
+        },
+        "luma": {
+          "mean": 171.50141269905947,
+          "standardDeviation": 65.99545505886044,
+          "min": 7.0485999999999995,
+          "max": 251.85559999999998
+        }
+      },
+      "qa": {
+        "black": {
+          "path": "qa/fantasy.actor.hero.front_right.master.black.png",
+          "sha256": "03f6c75c4f7ed97c588a4db9271cfcc200f9ef177b72fa3c9a3cd62854b36013",
+          "bytes": 183323
+        },
+        "white": {
+          "path": "qa/fantasy.actor.hero.front_right.master.white.png",
+          "sha256": "a6a3fba1cf62a9e0d9be1ca2e619ca61c76cc88462a9926b79ef83fb79ec12b6",
+          "bytes": 184325
+        },
+        "alpha": {
+          "path": "qa/fantasy.actor.hero.front_right.master.alpha.png",
+          "sha256": "55c0c9c98e28e90b00d83bc012f663259afc02d59cec888bbec4922392153a0a",
+          "bytes": 17452
+        },
+        "black-white": {
+          "path": "qa/fantasy.actor.hero.front_right.master.black-white.png",
+          "sha256": "5ab22987d39c5ba278967765fbb395c49b81ad8d67fcd37291644f775176a070",
+          "bytes": 240300
+        },
+        "24px-1x": {
+          "path": "qa/fantasy.actor.hero.front_right.master.24px-1x.png",
+          "sha256": "899570aaa366f99b7bd8eb171a975d04c5c5490eef002c18f5a6ecddf7d2f746",
+          "bytes": 1542
+        },
+        "24px-5x-nearest": {
+          "path": "qa/fantasy.actor.hero.front_right.master.24px-5x-nearest.png",
+          "sha256": "9ac800baba2a588d5d2c751c91f96706b53906624c371d266ccd8151f92eb17b",
+          "bytes": 2246
+        },
+        "32px-1x": {
+          "path": "qa/fantasy.actor.hero.front_right.master.32px-1x.png",
+          "sha256": "046793938e0cd118a785aae61ec835734fc1ec3859600cdc057222a6a9d30edc",
+          "bytes": 2403
+        },
+        "32px-5x-nearest": {
+          "path": "qa/fantasy.actor.hero.front_right.master.32px-5x-nearest.png",
+          "sha256": "fa4464d261835b03ea751677492c81edf58a110a013e60f836b8a20c9d1b195f",
+          "bytes": 3555
+        },
+        "recognition-sheet": {
+          "path": "qa/fantasy.actor.hero.front_right.master.recognition-sheet.png",
+          "sha256": "2e92b810c997087938b4242f32054c25764885eec3c6ba405edbe09aaaa8407d",
+          "bytes": 25387
+        }
+      },
+      "recognition": [
+        {
+          "bodyHeightPx": 24,
+          "oneXCanvas": [
+            19,
+            24
+          ],
+          "fiveXCanvas": [
+            95,
+            120
+          ],
+          "diagnosticCrop": {
+            "left": 87,
+            "top": 27,
+            "width": 319,
+            "height": 409
+          },
+          "productionPngUncropped": true,
+          "scaling": "1x body-height sample plus exact 5x nearest comparison"
+        },
+        {
+          "bodyHeightPx": 32,
+          "oneXCanvas": [
+            25,
+            32
+          ],
+          "fiveXCanvas": [
+            125,
+            160
+          ],
+          "diagnosticCrop": {
+            "left": 87,
+            "top": 27,
+            "width": 319,
+            "height": 409
+          },
+          "productionPngUncropped": true,
+          "scaling": "1x body-height sample plus exact 5x nearest comparison"
+        }
+      ],
+      "handGrips": {
+        "screenLeft": {
+          "sourcePoint": [
+            595,
+            1493
+          ],
+          "confidence": "visual-estimate ±12 source px",
+          "definition": "实际view下方手掌与拇指内凹的持物接触中心；不是旧绑定坐标。",
+          "registeredPoint": [
+            141.5625,
+            347.95
+          ]
+        },
+        "screenRight": {
+          "sourcePoint": [
+            1570,
+            1250
+          ],
+          "confidence": "visual-estimate ±12 source px",
+          "definition": "实际view右侧C形手掌内凹的持物接触中心；不是旧绑定坐标。",
+          "registeredPoint": [
+            385.3125,
+            287.2
+          ]
+        }
+      },
+      "visualQa": {
+        "status": "agent-reviewed-clean-alpha",
+        "accepted": true,
+        "reviewer": "production_manifest",
+        "notes": [
+          "Actual black/white/alpha images inspected; original foreground, eyes/mouth and identity marks remain opaque.",
+          "24/32px true 1x body-height previews and exact 5x nearest comparisons inspected. Production canvas remains untrimmed 512 RGBA.",
+          "No visible baked floor, shadow, outer clipping, white matte or erased cream body patches."
+        ],
+        "identityApproval": "pending-root-final-review"
+      },
+      "approvalStatus": "awaiting-parent-and-user-review",
+      "sourceGroupTransformLocked": false,
+      "reportFile": {
+        "path": "qa/fantasy.actor.hero.front_right.master.report.json",
+        "sha256": "f50f17e679139fdeba83080d1708b7250640a12de9c796024c0e2a6741e4b69a",
+        "bytes": 14543
+      },
+      "revision": {
+        "name": "v02-cross-only",
+        "report": "qa/hero-cross-v02-revision.json",
+        "outsideRoiDifference": 0,
+        "outsideMaskDifference": 0,
+        "changedPixels": 3854,
+        "cross48And64Qa": "qa/hero-cross-v02-48-64px-comparison.png",
+        "sourceFootRefinement": "X uses measured near/far sole centers midpoint1052.75; y uses lowest near outsole1842 without leveling perspective."
+      }
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.master",
+      "kind": "source-master-only",
+      "runtime": false,
+      "runtimeFrameCredit": 0,
+      "runId": "289e5e8d-cfe7-4fd9-9ed7-7eead9539148",
+      "source": {
+        "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_Actors_v2\\raw\\fantasy.actor.immune.front_right.master\\289e5e8d-cfe7-4fd9-9ed7-7eead9539148.png",
+        "image": {
+          "sha256": "6c8a411ac0f893ad4da921ba9d7a692520a3bc66168fe01a17735dd8d4834700",
+          "bytes": 4331569,
+          "width": 2048,
+          "height": 2048,
+          "format": "png",
+          "channels": 3,
+          "hasAlphaChannel": false,
+          "alpha": {
+            "transparent": 0,
+            "partial": 0,
+            "opaque": 4194304,
+            "transparentFraction": 0,
+            "visible": 4194304,
+            "borderVisible": 8188,
+            "whiteVisible": 2897222
+          },
+          "bbox": [
+            0,
+            0,
+            2048,
+            2048
+          ],
+          "margins": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "minimumFraction": 0
+          },
+          "luma": {
+            "mean": 235.62990980887807,
+            "standardDeviation": 37.604315771463995,
+            "min": 2.3386,
+            "max": 254.99999999999997
+          }
+        }
+      },
+      "identityReview": {
+        "status": "accepted-for-processing",
+        "reviewer": "root + production_manifest",
+        "revision": "r01",
+        "notes": "Root已允许保留immune身份；实际view为奶白豆团、少量大薄荷叶、清楚眼口与医疗十字，进入alpha/foot/小尺寸审查；不计动画完成。"
+      },
+      "removal": {
+        "sourceSha256": "6c8a411ac0f893ad4da921ba9d7a692520a3bc66168fe01a17735dd8d4834700",
+        "processing": {
+          "method": "border-connected-white-key",
+          "whiteMin": 240,
+          "chromaMax": 18,
+          "matteCleanup": true,
+          "edgeWidth": 2,
+          "removedPixels": 2910526,
+          "cleanedEdgePixels": 3478,
+          "limitations": "White foreground connected directly to a white backdrop is ambiguous. Inspect both black/white QA views before acceptance."
+        },
+        "image": {
+          "sha256": "0784b50d82b10347fc0f1154235ec6e4a0cce24b49bac8e6bad78c32fae6d4eb",
+          "bytes": 3194326,
+          "width": 2048,
+          "height": 2048,
+          "format": "png",
+          "channels": 4,
+          "hasAlphaChannel": true,
+          "alpha": {
+            "transparent": 2910526,
+            "partial": 3478,
+            "opaque": 1280300,
+            "transparentFraction": 0.6939234733581543,
+            "visible": 1283778,
+            "borderVisible": 0,
+            "whiteVisible": 1483
+          },
+          "bbox": [
+            310,
+            357,
+            1740,
+            1800
+          ],
+          "margins": {
+            "left": 310,
+            "top": 357,
+            "right": 308,
+            "bottom": 248,
+            "minimumFraction": 0.12109375
+          },
+          "luma": {
+            "mean": 197.74015342097272,
+            "standardDeviation": 50.99354951394701,
+            "min": 2.3386,
+            "max": 254.99999999999997
+          }
+        },
+        "protectedPolygons": [
+          [
+            [
+              1070,
+              700
+            ],
+            [
+              1360,
+              740
+            ],
+            [
+              1490,
+              920
+            ],
+            [
+              1400,
+              1050
+            ],
+            [
+              1130,
+              980
+            ]
+          ]
+        ],
+        "restoredPixels": 0,
+        "removedHolePixels": 0,
+        "holeReports": [
+          {
+            "sourceSeed": [
+              1050,
+              1670
+            ],
+            "componentPixels": 2910526,
+            "newlyRemovedPixels": 0
+          }
+        ],
+        "shadowCleanup": null,
+        "componentCleanup": {
+          "method": "reviewed-single-subject-keep-largest-connected-component",
+          "components": 8,
+          "keptPixels": 1283769,
+          "discardedPixels": 9,
+          "discardedComponentSizes": [
+            3,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "preservationProbes": [
+          {
+            "label": "奶白主体",
+            "point": [
+              1110,
+              790
+            ],
+            "expect": "opaque",
+            "before": [
+              249,
+              240,
+              228,
+              255
+            ],
+            "after": [
+              249,
+              240,
+              228,
+              255
+            ]
+          },
+          {
+            "label": "医疗十字",
+            "point": [
+              980,
+              1320
+            ],
+            "expect": "opaque",
+            "before": [
+              138,
+              208,
+              173,
+              255
+            ],
+            "after": [
+              138,
+              208,
+              173,
+              255
+            ]
+          },
+          {
+            "label": "近侧眼",
+            "point": [
+              1240,
+              1090
+            ],
+            "expect": "opaque",
+            "before": [
+              153,
+              122,
+              115,
+              255
+            ],
+            "after": [
+              153,
+              122,
+              115,
+              255
+            ]
+          },
+          {
+            "label": "远侧眼",
+            "point": [
+              1530,
+              1055
+            ],
+            "expect": "opaque",
+            "before": [
+              64,
+              23,
+              20,
+              255
+            ],
+            "after": [
+              64,
+              23,
+              20,
+              255
+            ]
+          },
+          {
+            "label": "左侧大叶片",
+            "point": [
+              510,
+              890
+            ],
+            "expect": "opaque",
+            "before": [
+              139,
+              195,
+              161,
+              255
+            ],
+            "after": [
+              139,
+              195,
+              161,
+              255
+            ]
+          },
+          {
+            "label": "两枚叶足之间负空间",
+            "point": [
+              1050,
+              1670
+            ],
+            "expect": "clear",
+            "before": [
+              249,
+              250,
+              249,
+              255
+            ],
+            "after": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "finalCutoutImage": {
+          "sha256": "73555547ef0f9e343e141e943f276876ac87edf22f73f6139957c72cc4cf70ee",
+          "bytes": 3194250,
+          "width": 2048,
+          "height": 2048,
+          "format": "png",
+          "channels": 4,
+          "hasAlphaChannel": true,
+          "alpha": {
+            "transparent": 2910535,
+            "partial": 3473,
+            "opaque": 1280296,
+            "transparentFraction": 0.6939256191253662,
+            "visible": 1283769,
+            "borderVisible": 0,
+            "whiteVisible": 1483
+          },
+          "bbox": [
+            310,
+            357,
+            1740,
+            1715
+          ],
+          "margins": {
+            "left": 310,
+            "top": 357,
+            "right": 308,
+            "bottom": 333,
+            "minimumFraction": 0.150390625
+          },
+          "luma": {
+            "mean": 197.74013923600705,
+            "standardDeviation": 50.99359413691964,
+            "min": 2.3386,
+            "max": 254.99999999999997
+          }
+        },
+        "caution": "White foreground versus white background is resolved by actual image review and explicit seed/protection annotations, not by global white deletion."
+      },
+      "transform": {
+        "method": "first-reviewed-identity-full-canvas-uniform-scale-and-foot-translation",
+        "sourceCanvas": [
+          2048,
+          2048
+        ],
+        "sourceFootPx": [
+          1060,
+          1714
+        ],
+        "requestedUniformScale": 0.25,
+        "uniformScale": 0.25,
+        "resampledCanvas": [
+          512,
+          512
+        ],
+        "translationPx": [
+          -9,
+          6.699999999999989
+        ],
+        "matrixSourceToRegistered": [
+          [
+            0.25,
+            0,
+            -9
+          ],
+          [
+            0,
+            0.25,
+            6.699999999999989
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ],
+        "targetCanvas": [
+          512,
+          512
+        ],
+        "targetAnchorPx": [
+          256,
+          435.2
+        ],
+        "pivot": [
+          0.5,
+          0.85
+        ],
+        "mappedSourceFootPx": [
+          256,
+          435.2
+        ],
+        "sourceBbox": [
+          310,
+          357,
+          1740,
+          1715
+        ],
+        "projectedBbox": [
+          68.5,
+          95.94999999999999,
+          426,
+          435.45
+        ],
+        "alphaBoundsUsedForScaling": false,
+        "alphaCropUsed": false,
+        "futureGroupPolicy": "Lock this transform for the identity/direction group after approval; never independently fit animation frames.",
+        "footAnnotation": "横向取两枚叶状接地部位的中部，纵向取前侧叶足最低描边像素基线1714；完整2048画布0.25缩放后接地平移，无独立bbox fit。"
+      },
+      "output": {
+        "path": "processed/fantasy.actor.immune.front_right.master.png",
+        "sha256": "3e5420b6e4735a248dba6389f164a4dcedeb6becd0dea868533caa4079a7467f",
+        "bytes": 187302
+      },
+      "image": {
+        "sha256": "3e5420b6e4735a248dba6389f164a4dcedeb6becd0dea868533caa4079a7467f",
+        "bytes": 187302,
+        "width": 512,
+        "height": 512,
+        "format": "png",
+        "channels": 4,
+        "hasAlphaChannel": true,
+        "alpha": {
+          "transparent": 179197,
+          "partial": 5605,
+          "opaque": 77342,
+          "transparentFraction": 0.6835823059082031,
+          "visible": 81061,
+          "borderVisible": 0,
+          "whiteVisible": 33
+        },
+        "bbox": [
+          68,
+          95,
+          426,
+          436
+        ],
+        "margins": {
+          "left": 68,
+          "top": 95,
+          "right": 86,
+          "bottom": 76,
+          "minimumFraction": 0.1328125
+        },
+        "luma": {
+          "mean": 197.4254430268132,
+          "standardDeviation": 50.04098087022658,
+          "min": 17.7952,
+          "max": 254.99999999999997
+        }
+      },
+      "qa": {
+        "black": {
+          "path": "qa/fantasy.actor.immune.front_right.master.black.png",
+          "sha256": "ebd539c45b811389fab3cda1be4f5906f8088bff2f7202d7ec9ea0e03651fbee",
+          "bytes": 170628
+        },
+        "white": {
+          "path": "qa/fantasy.actor.immune.front_right.master.white.png",
+          "sha256": "d6e189778f4082132a10b65dcecf7b085801e0c2d37d06a6846a929bc215d53b",
+          "bytes": 171103
+        },
+        "alpha": {
+          "path": "qa/fantasy.actor.immune.front_right.master.alpha.png",
+          "sha256": "ef10fd71466841849522d1420317c021a6a02291e767a729ef9373826dcdeca5",
+          "bytes": 12117
+        },
+        "black-white": {
+          "path": "qa/fantasy.actor.immune.front_right.master.black-white.png",
+          "sha256": "819e97cccd7bc9b6b27517e29aab3ff74c9a928684ea1207bd997c314fcc3239",
+          "bytes": 218193
+        },
+        "24px-1x": {
+          "path": "qa/fantasy.actor.immune.front_right.master.24px-1x.png",
+          "sha256": "3152dbd77a795bafe4ccab41e3f2c1ed22321bff79498cac53e40bcee6a1df17",
+          "bytes": 1840
+        },
+        "24px-5x-nearest": {
+          "path": "qa/fantasy.actor.immune.front_right.master.24px-5x-nearest.png",
+          "sha256": "49d686a2f49ef0c8491a540c1481d336201e0ae012acba7bd3436f67df9cb73a",
+          "bytes": 2699
+        },
+        "32px-1x": {
+          "path": "qa/fantasy.actor.immune.front_right.master.32px-1x.png",
+          "sha256": "ef9d01a29b1fea60be60e7b31640b2e508f64a9479cbb256df7f2c0432c4dba9",
+          "bytes": 2905
+        },
+        "32px-5x-nearest": {
+          "path": "qa/fantasy.actor.immune.front_right.master.32px-5x-nearest.png",
+          "sha256": "0e9a432f7cb2a5424d2cb6ac9ade713b261c6bab5527dd02c680768346efcb82",
+          "bytes": 4357
+        },
+        "recognition-sheet": {
+          "path": "qa/fantasy.actor.immune.front_right.master.recognition-sheet.png",
+          "sha256": "6ac337e6fff253ba246c747fb638e0b7acb5cf82bde43624f9592fc7c3fe15c1",
+          "bytes": 27672
+        }
+      },
+      "recognition": [
+        {
+          "bodyHeightPx": 24,
+          "oneXCanvas": [
+            25,
+            24
+          ],
+          "fiveXCanvas": [
+            125,
+            120
+          ],
+          "diagnosticCrop": {
+            "left": 68,
+            "top": 95,
+            "width": 358,
+            "height": 341
+          },
+          "productionPngUncropped": true,
+          "scaling": "1x body-height sample plus exact 5x nearest comparison"
+        },
+        {
+          "bodyHeightPx": 32,
+          "oneXCanvas": [
+            34,
+            32
+          ],
+          "fiveXCanvas": [
+            170,
+            160
+          ],
+          "diagnosticCrop": {
+            "left": 68,
+            "top": 95,
+            "width": 358,
+            "height": 341
+          },
+          "productionPngUncropped": true,
+          "scaling": "1x body-height sample plus exact 5x nearest comparison"
+        }
+      ],
+      "handGrips": null,
+      "visualQa": {
+        "status": "agent-reviewed-clean-alpha",
+        "accepted": true,
+        "reviewer": "production_manifest",
+        "notes": [
+          "Actual black/white/alpha images inspected; original foreground, eyes/mouth and identity marks remain opaque.",
+          "24/32px true 1x body-height previews and exact 5x nearest comparisons inspected. Production canvas remains untrimmed 512 RGBA.",
+          "No visible baked floor, shadow, outer clipping, white matte or erased cream body patches."
+        ],
+        "identityApproval": "pending-root-final-review"
+      },
+      "approvalStatus": "awaiting-parent-and-user-review",
+      "sourceGroupTransformLocked": false,
+      "reportFile": {
+        "path": "qa/fantasy.actor.immune.front_right.master.report.json",
+        "sha256": "d626fd5f35a6153ddc2157dcda42131810a0742b1e937a7e7b1e05c2fb35f7db",
+        "bytes": 12477
+      }
+    },
+    {
+      "id": "fantasy.actor.enemy.basic.master",
+      "kind": "source-master-only",
+      "runtime": false,
+      "runtimeFrameCredit": 0,
+      "runId": "d6c5fb30-de6c-409a-befc-a183a1c75e43",
+      "source": {
+        "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_Actors_v2\\raw\\fantasy.actor.enemy.basic.master\\d6c5fb30-de6c-409a-befc-a183a1c75e43.png",
+        "image": {
+          "sha256": "3252ea3e3c328177258c6ccf496ede5ff96ab95c7793534903cdfeb99c848a62",
+          "bytes": 3423610,
+          "width": 2048,
+          "height": 2048,
+          "format": "png",
+          "channels": 3,
+          "hasAlphaChannel": false,
+          "alpha": {
+            "transparent": 0,
+            "partial": 0,
+            "opaque": 4194304,
+            "transparentFraction": 0,
+            "visible": 4194304,
+            "borderVisible": 8188,
+            "whiteVisible": 3344844
+          },
+          "bbox": [
+            0,
+            0,
+            2048,
+            2048
+          ],
+          "margins": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "minimumFraction": 0
+          },
+          "luma": {
+            "mean": 232.4288191783642,
+            "standardDeviation": 46.82406224028075,
+            "min": 7.653600000000001,
+            "max": 254.99999999999997
+          }
+        }
+      },
+      "identityReview": {
+        "status": "accepted-for-processing",
+        "reviewer": "root + production_manifest",
+        "revision": "r02",
+        "notes": "Root与本agent实际view：近圆珊瑚短刺体、琥珀窄眼下压眉、深口两小牙；r01惊讶布丁版拒绝，不作为最终样板。烘焙接地阴影须精确去除。"
+      },
+      "removal": {
+        "sourceSha256": "3252ea3e3c328177258c6ccf496ede5ff96ab95c7793534903cdfeb99c848a62",
+        "processing": {
+          "method": "border-connected-white-key",
+          "whiteMin": 240,
+          "chromaMax": 18,
+          "matteCleanup": true,
+          "edgeWidth": 2,
+          "removedPixels": 3350441,
+          "cleanedEdgePixels": 2884,
+          "limitations": "White foreground connected directly to a white backdrop is ambiguous. Inspect both black/white QA views before acceptance."
+        },
+        "image": {
+          "sha256": "1c52beaa4db7f98e55cea3e145461d405eb61832d2e8638602e8b07194a407c3",
+          "bytes": 2606414,
+          "width": 2048,
+          "height": 2048,
+          "format": "png",
+          "channels": 4,
+          "hasAlphaChannel": true,
+          "alpha": {
+            "transparent": 3350441,
+            "partial": 2884,
+            "opaque": 840979,
+            "transparentFraction": 0.7988073825836182,
+            "visible": 843863,
+            "borderVisible": 0,
+            "whiteVisible": 0
+          },
+          "bbox": [
+            432,
+            488,
+            1613,
+            1546
+          ],
+          "margins": {
+            "left": 432,
+            "top": 488,
+            "right": 435,
+            "bottom": 502,
+            "minimumFraction": 0.2109375
+          },
+          "luma": {
+            "mean": 149.8719761843096,
+            "standardDeviation": 49.422383323212635,
+            "min": 7.653600000000001,
+            "max": 253.1268
+          }
+        },
+        "protectedPolygons": [],
+        "restoredPixels": 0,
+        "removedHolePixels": 0,
+        "holeReports": [],
+        "shadowCleanup": {
+          "method": "inspected-ROI-only-clear-below-each-column-dark-body-contour",
+          "roi": [
+            800,
+            1490,
+            470,
+            75
+          ],
+          "darkMax": [
+            190,
+            100,
+            85
+          ],
+          "removedPixels": 3208,
+          "retainedDarkContourPixels": 8537,
+          "lostDarkContourPixels": 0,
+          "columnBottoms": [
+            [
+              814,
+              1490
+            ],
+            [
+              815,
+              1490
+            ],
+            [
+              816,
+              1491
+            ],
+            [
+              817,
+              1491
+            ],
+            [
+              818,
+              1492
+            ],
+            [
+              819,
+              1492
+            ],
+            [
+              820,
+              1493
+            ],
+            [
+              821,
+              1493
+            ],
+            [
+              822,
+              1494
+            ],
+            [
+              823,
+              1494
+            ],
+            [
+              824,
+              1495
+            ],
+            [
+              825,
+              1495
+            ],
+            [
+              826,
+              1496
+            ],
+            [
+              827,
+              1496
+            ],
+            [
+              828,
+              1496
+            ],
+            [
+              829,
+              1497
+            ],
+            [
+              830,
+              1497
+            ],
+            [
+              831,
+              1498
+            ],
+            [
+              832,
+              1499
+            ],
+            [
+              833,
+              1499
+            ],
+            [
+              834,
+              1499
+            ],
+            [
+              835,
+              1499
+            ],
+            [
+              836,
+              1500
+            ],
+            [
+              837,
+              1501
+            ],
+            [
+              838,
+              1501
+            ],
+            [
+              839,
+              1501
+            ],
+            [
+              840,
+              1501
+            ],
+            [
+              841,
+              1502
+            ],
+            [
+              842,
+              1502
+            ],
+            [
+              843,
+              1502
+            ],
+            [
+              844,
+              1503
+            ],
+            [
+              845,
+              1503
+            ],
+            [
+              846,
+              1503
+            ],
+            [
+              847,
+              1504
+            ],
+            [
+              848,
+              1504
+            ],
+            [
+              849,
+              1505
+            ],
+            [
+              850,
+              1505
+            ],
+            [
+              851,
+              1505
+            ],
+            [
+              852,
+              1509
+            ],
+            [
+              853,
+              1511
+            ],
+            [
+              854,
+              1512
+            ],
+            [
+              855,
+              1513
+            ],
+            [
+              856,
+              1514
+            ],
+            [
+              857,
+              1515
+            ],
+            [
+              858,
+              1515
+            ],
+            [
+              859,
+              1515
+            ],
+            [
+              860,
+              1516
+            ],
+            [
+              861,
+              1517
+            ],
+            [
+              862,
+              1517
+            ],
+            [
+              863,
+              1518
+            ],
+            [
+              864,
+              1518
+            ],
+            [
+              865,
+              1518
+            ],
+            [
+              866,
+              1519
+            ],
+            [
+              867,
+              1519
+            ],
+            [
+              868,
+              1520
+            ],
+            [
+              869,
+              1520
+            ],
+            [
+              870,
+              1521
+            ],
+            [
+              871,
+              1521
+            ],
+            [
+              872,
+              1522
+            ],
+            [
+              873,
+              1522
+            ],
+            [
+              874,
+              1522
+            ],
+            [
+              875,
+              1522
+            ],
+            [
+              876,
+              1522
+            ],
+            [
+              877,
+              1523
+            ],
+            [
+              878,
+              1524
+            ],
+            [
+              879,
+              1524
+            ],
+            [
+              880,
+              1524
+            ],
+            [
+              881,
+              1524
+            ],
+            [
+              882,
+              1524
+            ],
+            [
+              883,
+              1525
+            ],
+            [
+              884,
+              1525
+            ],
+            [
+              885,
+              1525
+            ],
+            [
+              886,
+              1526
+            ],
+            [
+              887,
+              1526
+            ],
+            [
+              888,
+              1526
+            ],
+            [
+              889,
+              1526
+            ],
+            [
+              890,
+              1527
+            ],
+            [
+              891,
+              1527
+            ],
+            [
+              892,
+              1528
+            ],
+            [
+              893,
+              1528
+            ],
+            [
+              894,
+              1528
+            ],
+            [
+              895,
+              1529
+            ],
+            [
+              896,
+              1529
+            ],
+            [
+              897,
+              1529
+            ],
+            [
+              898,
+              1529
+            ],
+            [
+              899,
+              1529
+            ],
+            [
+              900,
+              1530
+            ],
+            [
+              901,
+              1530
+            ],
+            [
+              902,
+              1530
+            ],
+            [
+              903,
+              1530
+            ],
+            [
+              904,
+              1530
+            ],
+            [
+              905,
+              1531
+            ],
+            [
+              906,
+              1531
+            ],
+            [
+              907,
+              1531
+            ],
+            [
+              908,
+              1532
+            ],
+            [
+              909,
+              1532
+            ],
+            [
+              910,
+              1532
+            ],
+            [
+              911,
+              1532
+            ],
+            [
+              912,
+              1532
+            ],
+            [
+              913,
+              1533
+            ],
+            [
+              914,
+              1533
+            ],
+            [
+              915,
+              1533
+            ],
+            [
+              916,
+              1533
+            ],
+            [
+              917,
+              1533
+            ],
+            [
+              918,
+              1534
+            ],
+            [
+              919,
+              1534
+            ],
+            [
+              920,
+              1534
+            ],
+            [
+              921,
+              1534
+            ],
+            [
+              922,
+              1534
+            ],
+            [
+              923,
+              1534
+            ],
+            [
+              924,
+              1534
+            ],
+            [
+              925,
+              1534
+            ],
+            [
+              926,
+              1535
+            ],
+            [
+              927,
+              1535
+            ],
+            [
+              928,
+              1535
+            ],
+            [
+              929,
+              1535
+            ],
+            [
+              930,
+              1535
+            ],
+            [
+              931,
+              1535
+            ],
+            [
+              932,
+              1535
+            ],
+            [
+              933,
+              1536
+            ],
+            [
+              934,
+              1536
+            ],
+            [
+              935,
+              1536
+            ],
+            [
+              936,
+              1536
+            ],
+            [
+              937,
+              1536
+            ],
+            [
+              938,
+              1536
+            ],
+            [
+              939,
+              1536
+            ],
+            [
+              940,
+              1537
+            ],
+            [
+              941,
+              1536
+            ],
+            [
+              942,
+              1537
+            ],
+            [
+              943,
+              1537
+            ],
+            [
+              944,
+              1537
+            ],
+            [
+              945,
+              1537
+            ],
+            [
+              946,
+              1536
+            ],
+            [
+              947,
+              1537
+            ],
+            [
+              948,
+              1537
+            ],
+            [
+              949,
+              1537
+            ],
+            [
+              950,
+              1537
+            ],
+            [
+              951,
+              1538
+            ],
+            [
+              952,
+              1537
+            ],
+            [
+              953,
+              1537
+            ],
+            [
+              954,
+              1538
+            ],
+            [
+              955,
+              1538
+            ],
+            [
+              956,
+              1538
+            ],
+            [
+              957,
+              1538
+            ],
+            [
+              958,
+              1538
+            ],
+            [
+              959,
+              1538
+            ],
+            [
+              960,
+              1539
+            ],
+            [
+              961,
+              1539
+            ],
+            [
+              962,
+              1538
+            ],
+            [
+              963,
+              1538
+            ],
+            [
+              964,
+              1539
+            ],
+            [
+              965,
+              1538
+            ],
+            [
+              966,
+              1539
+            ],
+            [
+              967,
+              1538
+            ],
+            [
+              968,
+              1538
+            ],
+            [
+              969,
+              1539
+            ],
+            [
+              970,
+              1539
+            ],
+            [
+              971,
+              1539
+            ],
+            [
+              972,
+              1539
+            ],
+            [
+              973,
+              1540
+            ],
+            [
+              974,
+              1540
+            ],
+            [
+              975,
+              1539
+            ],
+            [
+              976,
+              1539
+            ],
+            [
+              977,
+              1540
+            ],
+            [
+              978,
+              1540
+            ],
+            [
+              979,
+              1540
+            ],
+            [
+              980,
+              1540
+            ],
+            [
+              981,
+              1539
+            ],
+            [
+              982,
+              1539
+            ],
+            [
+              983,
+              1539
+            ],
+            [
+              984,
+              1540
+            ],
+            [
+              985,
+              1539
+            ],
+            [
+              986,
+              1540
+            ],
+            [
+              987,
+              1540
+            ],
+            [
+              988,
+              1539
+            ],
+            [
+              989,
+              1540
+            ],
+            [
+              990,
+              1540
+            ],
+            [
+              991,
+              1540
+            ],
+            [
+              992,
+              1540
+            ],
+            [
+              993,
+              1540
+            ],
+            [
+              994,
+              1540
+            ],
+            [
+              995,
+              1540
+            ],
+            [
+              996,
+              1540
+            ],
+            [
+              997,
+              1540
+            ],
+            [
+              998,
+              1540
+            ],
+            [
+              999,
+              1540
+            ],
+            [
+              1000,
+              1540
+            ],
+            [
+              1001,
+              1540
+            ],
+            [
+              1002,
+              1540
+            ],
+            [
+              1003,
+              1540
+            ],
+            [
+              1004,
+              1540
+            ],
+            [
+              1005,
+              1540
+            ],
+            [
+              1006,
+              1540
+            ],
+            [
+              1007,
+              1540
+            ],
+            [
+              1008,
+              1540
+            ],
+            [
+              1009,
+              1540
+            ],
+            [
+              1010,
+              1540
+            ],
+            [
+              1011,
+              1540
+            ],
+            [
+              1012,
+              1540
+            ],
+            [
+              1013,
+              1540
+            ],
+            [
+              1014,
+              1540
+            ],
+            [
+              1015,
+              1540
+            ],
+            [
+              1016,
+              1540
+            ],
+            [
+              1017,
+              1540
+            ],
+            [
+              1018,
+              1540
+            ],
+            [
+              1019,
+              1541
+            ],
+            [
+              1020,
+              1540
+            ],
+            [
+              1021,
+              1540
+            ],
+            [
+              1022,
+              1540
+            ],
+            [
+              1023,
+              1540
+            ],
+            [
+              1024,
+              1540
+            ],
+            [
+              1025,
+              1540
+            ],
+            [
+              1026,
+              1540
+            ],
+            [
+              1027,
+              1540
+            ],
+            [
+              1028,
+              1540
+            ],
+            [
+              1029,
+              1540
+            ],
+            [
+              1030,
+              1540
+            ],
+            [
+              1031,
+              1540
+            ],
+            [
+              1032,
+              1540
+            ],
+            [
+              1033,
+              1540
+            ],
+            [
+              1034,
+              1540
+            ],
+            [
+              1035,
+              1540
+            ],
+            [
+              1036,
+              1540
+            ],
+            [
+              1037,
+              1540
+            ],
+            [
+              1038,
+              1540
+            ],
+            [
+              1039,
+              1540
+            ],
+            [
+              1040,
+              1540
+            ],
+            [
+              1041,
+              1540
+            ],
+            [
+              1042,
+              1540
+            ],
+            [
+              1043,
+              1540
+            ],
+            [
+              1044,
+              1540
+            ],
+            [
+              1045,
+              1539
+            ],
+            [
+              1046,
+              1539
+            ],
+            [
+              1047,
+              1539
+            ],
+            [
+              1048,
+              1539
+            ],
+            [
+              1049,
+              1540
+            ],
+            [
+              1050,
+              1540
+            ],
+            [
+              1051,
+              1540
+            ],
+            [
+              1052,
+              1540
+            ],
+            [
+              1053,
+              1540
+            ],
+            [
+              1054,
+              1539
+            ],
+            [
+              1055,
+              1540
+            ],
+            [
+              1056,
+              1540
+            ],
+            [
+              1057,
+              1540
+            ],
+            [
+              1058,
+              1540
+            ],
+            [
+              1059,
+              1540
+            ],
+            [
+              1060,
+              1540
+            ],
+            [
+              1061,
+              1540
+            ],
+            [
+              1062,
+              1540
+            ],
+            [
+              1063,
+              1540
+            ],
+            [
+              1064,
+              1540
+            ],
+            [
+              1065,
+              1540
+            ],
+            [
+              1066,
+              1540
+            ],
+            [
+              1067,
+              1540
+            ],
+            [
+              1068,
+              1540
+            ],
+            [
+              1069,
+              1539
+            ],
+            [
+              1070,
+              1539
+            ],
+            [
+              1071,
+              1540
+            ],
+            [
+              1072,
+              1539
+            ],
+            [
+              1073,
+              1539
+            ],
+            [
+              1074,
+              1539
+            ],
+            [
+              1075,
+              1539
+            ],
+            [
+              1076,
+              1539
+            ],
+            [
+              1077,
+              1539
+            ],
+            [
+              1078,
+              1539
+            ],
+            [
+              1079,
+              1539
+            ],
+            [
+              1080,
+              1539
+            ],
+            [
+              1081,
+              1539
+            ],
+            [
+              1082,
+              1539
+            ],
+            [
+              1083,
+              1539
+            ],
+            [
+              1084,
+              1539
+            ],
+            [
+              1085,
+              1538
+            ],
+            [
+              1086,
+              1538
+            ],
+            [
+              1087,
+              1539
+            ],
+            [
+              1088,
+              1539
+            ],
+            [
+              1089,
+              1538
+            ],
+            [
+              1090,
+              1538
+            ],
+            [
+              1091,
+              1538
+            ],
+            [
+              1092,
+              1538
+            ],
+            [
+              1093,
+              1538
+            ],
+            [
+              1094,
+              1538
+            ],
+            [
+              1095,
+              1537
+            ],
+            [
+              1096,
+              1537
+            ],
+            [
+              1097,
+              1537
+            ],
+            [
+              1098,
+              1538
+            ],
+            [
+              1099,
+              1538
+            ],
+            [
+              1100,
+              1537
+            ],
+            [
+              1101,
+              1537
+            ],
+            [
+              1102,
+              1537
+            ],
+            [
+              1103,
+              1537
+            ],
+            [
+              1104,
+              1537
+            ],
+            [
+              1105,
+              1537
+            ],
+            [
+              1106,
+              1537
+            ],
+            [
+              1107,
+              1537
+            ],
+            [
+              1108,
+              1537
+            ],
+            [
+              1109,
+              1536
+            ],
+            [
+              1110,
+              1536
+            ],
+            [
+              1111,
+              1536
+            ],
+            [
+              1112,
+              1536
+            ],
+            [
+              1113,
+              1537
+            ],
+            [
+              1114,
+              1537
+            ],
+            [
+              1115,
+              1536
+            ],
+            [
+              1116,
+              1536
+            ],
+            [
+              1117,
+              1536
+            ],
+            [
+              1118,
+              1536
+            ],
+            [
+              1119,
+              1536
+            ],
+            [
+              1120,
+              1535
+            ],
+            [
+              1121,
+              1535
+            ],
+            [
+              1122,
+              1536
+            ],
+            [
+              1123,
+              1536
+            ],
+            [
+              1124,
+              1535
+            ],
+            [
+              1125,
+              1535
+            ],
+            [
+              1126,
+              1535
+            ],
+            [
+              1127,
+              1535
+            ],
+            [
+              1128,
+              1534
+            ],
+            [
+              1129,
+              1534
+            ],
+            [
+              1130,
+              1534
+            ],
+            [
+              1131,
+              1534
+            ],
+            [
+              1132,
+              1533
+            ],
+            [
+              1133,
+              1533
+            ],
+            [
+              1134,
+              1534
+            ],
+            [
+              1135,
+              1533
+            ],
+            [
+              1136,
+              1533
+            ],
+            [
+              1137,
+              1533
+            ],
+            [
+              1138,
+              1532
+            ],
+            [
+              1139,
+              1532
+            ],
+            [
+              1140,
+              1532
+            ],
+            [
+              1141,
+              1532
+            ],
+            [
+              1142,
+              1532
+            ],
+            [
+              1143,
+              1532
+            ],
+            [
+              1144,
+              1532
+            ],
+            [
+              1145,
+              1532
+            ],
+            [
+              1146,
+              1531
+            ],
+            [
+              1147,
+              1531
+            ],
+            [
+              1148,
+              1531
+            ],
+            [
+              1149,
+              1531
+            ],
+            [
+              1150,
+              1531
+            ],
+            [
+              1151,
+              1530
+            ],
+            [
+              1152,
+              1530
+            ],
+            [
+              1153,
+              1530
+            ],
+            [
+              1154,
+              1530
+            ],
+            [
+              1155,
+              1529
+            ],
+            [
+              1156,
+              1529
+            ],
+            [
+              1157,
+              1528
+            ],
+            [
+              1158,
+              1528
+            ],
+            [
+              1159,
+              1529
+            ],
+            [
+              1160,
+              1528
+            ],
+            [
+              1161,
+              1528
+            ],
+            [
+              1162,
+              1528
+            ],
+            [
+              1163,
+              1528
+            ],
+            [
+              1164,
+              1527
+            ],
+            [
+              1165,
+              1527
+            ],
+            [
+              1166,
+              1527
+            ],
+            [
+              1167,
+              1527
+            ],
+            [
+              1168,
+              1526
+            ],
+            [
+              1169,
+              1526
+            ],
+            [
+              1170,
+              1526
+            ],
+            [
+              1171,
+              1526
+            ],
+            [
+              1172,
+              1526
+            ],
+            [
+              1173,
+              1525
+            ],
+            [
+              1174,
+              1525
+            ],
+            [
+              1175,
+              1524
+            ],
+            [
+              1176,
+              1524
+            ],
+            [
+              1177,
+              1524
+            ],
+            [
+              1178,
+              1524
+            ],
+            [
+              1179,
+              1524
+            ],
+            [
+              1180,
+              1524
+            ],
+            [
+              1181,
+              1523
+            ],
+            [
+              1182,
+              1522
+            ],
+            [
+              1183,
+              1522
+            ],
+            [
+              1184,
+              1522
+            ],
+            [
+              1185,
+              1523
+            ],
+            [
+              1186,
+              1522
+            ],
+            [
+              1187,
+              1522
+            ],
+            [
+              1188,
+              1522
+            ],
+            [
+              1189,
+              1521
+            ],
+            [
+              1190,
+              1521
+            ],
+            [
+              1191,
+              1520
+            ],
+            [
+              1192,
+              1520
+            ],
+            [
+              1193,
+              1520
+            ],
+            [
+              1194,
+              1520
+            ],
+            [
+              1195,
+              1520
+            ],
+            [
+              1196,
+              1519
+            ],
+            [
+              1197,
+              1518
+            ],
+            [
+              1198,
+              1518
+            ],
+            [
+              1199,
+              1518
+            ],
+            [
+              1200,
+              1518
+            ],
+            [
+              1201,
+              1518
+            ],
+            [
+              1202,
+              1517
+            ],
+            [
+              1203,
+              1517
+            ],
+            [
+              1204,
+              1516
+            ],
+            [
+              1205,
+              1515
+            ],
+            [
+              1206,
+              1516
+            ],
+            [
+              1207,
+              1515
+            ],
+            [
+              1208,
+              1515
+            ],
+            [
+              1209,
+              1515
+            ],
+            [
+              1210,
+              1514
+            ],
+            [
+              1211,
+              1514
+            ],
+            [
+              1212,
+              1513
+            ],
+            [
+              1213,
+              1513
+            ],
+            [
+              1214,
+              1513
+            ],
+            [
+              1215,
+              1513
+            ],
+            [
+              1216,
+              1512
+            ],
+            [
+              1217,
+              1512
+            ],
+            [
+              1218,
+              1512
+            ],
+            [
+              1219,
+              1511
+            ],
+            [
+              1220,
+              1510
+            ],
+            [
+              1221,
+              1510
+            ],
+            [
+              1222,
+              1510
+            ],
+            [
+              1223,
+              1510
+            ],
+            [
+              1224,
+              1509
+            ],
+            [
+              1225,
+              1509
+            ],
+            [
+              1226,
+              1508
+            ],
+            [
+              1227,
+              1508
+            ],
+            [
+              1228,
+              1508
+            ],
+            [
+              1229,
+              1507
+            ],
+            [
+              1230,
+              1507
+            ],
+            [
+              1231,
+              1507
+            ],
+            [
+              1232,
+              1506
+            ],
+            [
+              1233,
+              1506
+            ],
+            [
+              1234,
+              1505
+            ],
+            [
+              1235,
+              1505
+            ],
+            [
+              1236,
+              1505
+            ],
+            [
+              1237,
+              1504
+            ],
+            [
+              1238,
+              1504
+            ],
+            [
+              1239,
+              1503
+            ],
+            [
+              1240,
+              1503
+            ],
+            [
+              1241,
+              1503
+            ],
+            [
+              1242,
+              1502
+            ],
+            [
+              1243,
+              1501
+            ],
+            [
+              1244,
+              1501
+            ],
+            [
+              1245,
+              1501
+            ],
+            [
+              1246,
+              1501
+            ],
+            [
+              1247,
+              1500
+            ],
+            [
+              1248,
+              1500
+            ],
+            [
+              1249,
+              1499
+            ],
+            [
+              1250,
+              1499
+            ],
+            [
+              1251,
+              1498
+            ],
+            [
+              1252,
+              1498
+            ],
+            [
+              1253,
+              1497
+            ],
+            [
+              1254,
+              1497
+            ],
+            [
+              1255,
+              1496
+            ],
+            [
+              1256,
+              1496
+            ],
+            [
+              1257,
+              1496
+            ],
+            [
+              1258,
+              1495
+            ],
+            [
+              1259,
+              1494
+            ],
+            [
+              1260,
+              1494
+            ],
+            [
+              1261,
+              1493
+            ],
+            [
+              1262,
+              1493
+            ],
+            [
+              1263,
+              1492
+            ],
+            [
+              1264,
+              1492
+            ],
+            [
+              1265,
+              1491
+            ],
+            [
+              1266,
+              1491
+            ],
+            [
+              1267,
+              1490
+            ],
+            [
+              1268,
+              1490
+            ]
+          ],
+          "outsideRoiTouchedByThisOperation": false,
+          "shadowUsedAsFootAnchor": false
+        },
+        "componentCleanup": {
+          "method": "reviewed-single-subject-keep-largest-connected-component",
+          "components": 79,
+          "keptPixels": 840571,
+          "discardedPixels": 84,
+          "discardedComponentSizes": [
+            4,
+            2,
+            2,
+            2,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "preservationProbes": [
+          {
+            "label": "左侧琥珀眼",
+            "point": [
+              1040,
+              1090
+            ],
+            "expect": "opaque",
+            "before": [
+              249,
+              188,
+              108,
+              255
+            ],
+            "after": [
+              249,
+              188,
+              108,
+              255
+            ]
+          },
+          {
+            "label": "右侧琥珀眼",
+            "point": [
+              1380,
+              1010
+            ],
+            "expect": "opaque",
+            "before": [
+              252,
+              204,
+              127,
+              255
+            ],
+            "after": [
+              252,
+              204,
+              127,
+              255
+            ]
+          },
+          {
+            "label": "深色口",
+            "point": [
+              1220,
+              1230
+            ],
+            "expect": "opaque",
+            "before": [
+              140,
+              40,
+              46,
+              255
+            ],
+            "after": [
+              140,
+              40,
+              46,
+              255
+            ]
+          },
+          {
+            "label": "近侧小牙",
+            "point": [
+              1170,
+              1210
+            ],
+            "expect": "opaque",
+            "before": [
+              245,
+              218,
+              187,
+              255
+            ],
+            "after": [
+              245,
+              218,
+              187,
+              255
+            ]
+          },
+          {
+            "label": "远侧小牙",
+            "point": [
+              1310,
+              1190
+            ],
+            "expect": "opaque",
+            "before": [
+              243,
+              210,
+              178,
+              255
+            ],
+            "after": [
+              243,
+              210,
+              178,
+              255
+            ]
+          },
+          {
+            "label": "底部棕轮廓",
+            "point": [
+              1030,
+              1540
+            ],
+            "expect": "opaque",
+            "before": [
+              80,
+              11,
+              5,
+              255
+            ],
+            "after": [
+              80,
+              11,
+              5,
+              255
+            ]
+          },
+          {
+            "label": "左侧烘焙影已去",
+            "point": [
+              825,
+              1520
+            ],
+            "expect": "clear",
+            "before": [
+              202,
+              159,
+              148,
+              255
+            ],
+            "after": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "label": "右侧烘焙影已去",
+            "point": [
+              1230,
+              1525
+            ],
+            "expect": "clear",
+            "before": [
+              219,
+              168,
+              154,
+              255
+            ],
+            "after": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "label": "脚点下方白背景",
+            "point": [
+              1030,
+              1550
+            ],
+            "expect": "clear",
+            "before": [
+              252,
+              252,
+              251,
+              255
+            ],
+            "after": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "finalCutoutImage": {
+          "sha256": "f4035f814fdadb69153eb86c810b58977d28c3fce63fbfbcbed4b4f7e5104ddb",
+          "bytes": 2593515,
+          "width": 2048,
+          "height": 2048,
+          "format": "png",
+          "channels": 4,
+          "hasAlphaChannel": true,
+          "alpha": {
+            "transparent": 3353733,
+            "partial": 2378,
+            "opaque": 838193,
+            "transparentFraction": 0.7995922565460205,
+            "visible": 840571,
+            "borderVisible": 0,
+            "whiteVisible": 0
+          },
+          "bbox": [
+            432,
+            490,
+            1612,
+            1542
+          ],
+          "margins": {
+            "left": 432,
+            "top": 490,
+            "right": 436,
+            "bottom": 506,
+            "minimumFraction": 0.2109375
+          },
+          "luma": {
+            "mean": 149.864804582149,
+            "standardDeviation": 49.4912625758729,
+            "min": 7.653600000000001,
+            "max": 251.1284
+          }
+        },
+        "caution": "White foreground versus white background is resolved by actual image review and explicit seed/protection annotations, not by global white deletion."
+      },
+      "transform": {
+        "method": "first-reviewed-identity-full-canvas-uniform-scale-and-foot-translation",
+        "sourceCanvas": [
+          2048,
+          2048
+        ],
+        "sourceFootPx": [
+          1030,
+          1541
+        ],
+        "requestedUniformScale": 0.25,
+        "uniformScale": 0.25,
+        "resampledCanvas": [
+          512,
+          512
+        ],
+        "translationPx": [
+          -1.5,
+          49.94999999999999
+        ],
+        "matrixSourceToRegistered": [
+          [
+            0.25,
+            0,
+            -1.5
+          ],
+          [
+            0,
+            0.25,
+            49.94999999999999
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ],
+        "targetCanvas": [
+          512,
+          512
+        ],
+        "targetAnchorPx": [
+          256,
+          435.2
+        ],
+        "pivot": [
+          0.5,
+          0.85
+        ],
+        "mappedSourceFootPx": [
+          256,
+          435.2
+        ],
+        "sourceBbox": [
+          432,
+          490,
+          1612,
+          1542
+        ],
+        "projectedBbox": [
+          106.5,
+          172.45,
+          401.5,
+          435.45
+        ],
+        "alphaBoundsUsedForScaling": false,
+        "alphaCropUsed": false,
+        "futureGroupPolicy": "Lock this transform for the identity/direction group after approval; never independently fit animation frames.",
+        "footAnnotation": "依据实际底部crop，主体最低深棕轮廓y1541作为接地，未使用粉灰烘焙椭圆影；横向取主体接地中心1030。完整2048源画布0.25缩放+脚点平移，不按alpha bbox单独缩放。"
+      },
+      "output": {
+        "path": "processed/fantasy.actor.enemy.basic.master.png",
+        "sha256": "d0fb7dbaca350444a4afcbed3a5044a98e3edcec02a4b9dcaa7d38c42f6d5f07",
+        "bytes": 157787
+      },
+      "image": {
+        "sha256": "d0fb7dbaca350444a4afcbed3a5044a98e3edcec02a4b9dcaa7d38c42f6d5f07",
+        "bytes": 157787,
+        "width": 512,
+        "height": 512,
+        "format": "png",
+        "channels": 4,
+        "hasAlphaChannel": true,
+        "alpha": {
+          "transparent": 206620,
+          "partial": 6023,
+          "opaque": 49501,
+          "transparentFraction": 0.7881927490234375,
+          "visible": 53496,
+          "borderVisible": 0,
+          "whiteVisible": 0
+        },
+        "bbox": [
+          106,
+          172,
+          402,
+          436
+        ],
+        "margins": {
+          "left": 106,
+          "top": 172,
+          "right": 110,
+          "bottom": 76,
+          "minimumFraction": 0.1484375
+        },
+        "luma": {
+          "mean": 149.4140311013923,
+          "standardDeviation": 47.63472083820949,
+          "min": 12.3308,
+          "max": 240.027
+        }
+      },
+      "qa": {
+        "black": {
+          "path": "qa/fantasy.actor.enemy.basic.master.black.png",
+          "sha256": "e7cb48e88aad32fd250b2aa7b74de6d9d22574eefe94918619c2b0447061f687",
+          "bytes": 141383
+        },
+        "white": {
+          "path": "qa/fantasy.actor.enemy.basic.master.white.png",
+          "sha256": "faa8244ccf17320a0f0f478a3450b959803a5b0da27867bddf4975632ef243c1",
+          "bytes": 142546
+        },
+        "alpha": {
+          "path": "qa/fantasy.actor.enemy.basic.master.alpha.png",
+          "sha256": "36ad1d8b3be512d674cc29b67b3808227ff8c3108e5dc986f1d506f10ad80f9d",
+          "bytes": 12332
+        },
+        "black-white": {
+          "path": "qa/fantasy.actor.enemy.basic.master.black-white.png",
+          "sha256": "4dfe867789b1372735108df4ad96149f22a4f3d97ff19f49a9f586e01f3d6c3f",
+          "bytes": 184856
+        },
+        "24px-1x": {
+          "path": "qa/fantasy.actor.enemy.basic.master.24px-1x.png",
+          "sha256": "92d207b5551ad9f5dc1be1ff2cd3f0a7586b8285ea6a55fcece81d293aac9dc7",
+          "bytes": 2128
+        },
+        "24px-5x-nearest": {
+          "path": "qa/fantasy.actor.enemy.basic.master.24px-5x-nearest.png",
+          "sha256": "c74d5e41f85e80652ec75cb3853a765774de6679e70c574a389e40f2c02e03bc",
+          "bytes": 3059
+        },
+        "32px-1x": {
+          "path": "qa/fantasy.actor.enemy.basic.master.32px-1x.png",
+          "sha256": "aa5499524c7d94ab1c5c01f11f5019e05223999e98a5e3588b43e36ab2a9720f",
+          "bytes": 3473
+        },
+        "32px-5x-nearest": {
+          "path": "qa/fantasy.actor.enemy.basic.master.32px-5x-nearest.png",
+          "sha256": "6bc96da5f1a6636f5c94c6e82fc63d0aff2b158bf13264bea799217c5a199b8e",
+          "bytes": 5000
+        },
+        "recognition-sheet": {
+          "path": "qa/fantasy.actor.enemy.basic.master.recognition-sheet.png",
+          "sha256": "2780bd1c311cf48b73ac0dbc5280f121dc6a597221e1657d60fb8d082eda8048",
+          "bytes": 29378
+        }
+      },
+      "recognition": [
+        {
+          "bodyHeightPx": 24,
+          "oneXCanvas": [
+            27,
+            24
+          ],
+          "fiveXCanvas": [
+            135,
+            120
+          ],
+          "diagnosticCrop": {
+            "left": 106,
+            "top": 172,
+            "width": 296,
+            "height": 264
+          },
+          "productionPngUncropped": true,
+          "scaling": "1x body-height sample plus exact 5x nearest comparison"
+        },
+        {
+          "bodyHeightPx": 32,
+          "oneXCanvas": [
+            36,
+            32
+          ],
+          "fiveXCanvas": [
+            180,
+            160
+          ],
+          "diagnosticCrop": {
+            "left": 106,
+            "top": 172,
+            "width": 296,
+            "height": 264
+          },
+          "productionPngUncropped": true,
+          "scaling": "1x body-height sample plus exact 5x nearest comparison"
+        }
+      ],
+      "handGrips": null,
+      "visualQa": {
+        "status": "agent-reviewed-clean-alpha",
+        "accepted": true,
+        "reviewer": "production_manifest",
+        "notes": [
+          "Actual black/white/alpha images inspected; original foreground, eyes/mouth and identity marks remain opaque.",
+          "24/32px true 1x body-height previews and exact 5x nearest comparisons inspected. Production canvas remains untrimmed 512 RGBA.",
+          "No visible baked floor, shadow, outer clipping, white matte or erased cream body patches."
+        ],
+        "identityApproval": "pending-root-final-review"
+      },
+      "approvalStatus": "awaiting-parent-and-user-review",
+      "sourceGroupTransformLocked": false,
+      "reportFile": {
+        "path": "qa/fantasy.actor.enemy.basic.master.report.json",
+        "sha256": "9dc889338268086a7b5c2e4488f92a388cf6b313db4ecee86cd32c940eb295e2",
+        "bytes": 37940
+      },
+      "revision": {
+        "name": "r02",
+        "r01Rejected": true,
+        "shadowCleanupReport": "removal.shadowCleanup",
+        "notes": "Narrow amber eyes/down brows/dark grin with two small teeth remain identifiable at24/32px; shadow removed below inspected dark contour only."
+      }
+    }
+  ],
+  "runtimeAssets": [],
+  "registrationPolicy": "Independent first source drafts establish proposed identity transforms; lock each after approval and reuse for every frame in its group.",
+  "frozenEnvironmentWritten": false,
+  "runtimeIntegrationPerformed": false,
+  "contact": "qa/samples-three-source-masters-contact.png"
+}

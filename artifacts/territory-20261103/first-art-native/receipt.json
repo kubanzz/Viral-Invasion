@@ -1,0 +1,1086 @@
+{
+  "scope": "Current source/dev runtime initial live UI with first two authored assets. No full-run or final-art claim.",
+  "errors": [],
+  "state": {
+    "game": "viral-invasion",
+    "schemaVersion": 1,
+    "seed": 130026,
+    "phase": "paused",
+    "tick": 33,
+    "elapsed": 0.55,
+    "player": {
+      "x": 1100,
+      "y": 800,
+      "hp": 100,
+      "radius": 19,
+      "facing": 0,
+      "moving": false,
+      "dashUntil": 0,
+      "dashReady": 0,
+      "hurtUntil": 0,
+      "actionUntil": 0
+    },
+    "targets": [],
+    "tissue": {
+      "x": 1200,
+      "y": 900,
+      "hp": 100,
+      "maxHp": 100,
+      "radius": 43
+    },
+    "terminal": {
+      "x": 350,
+      "y": 1180
+    },
+    "tool": 1,
+    "cooldowns": {
+      "1": 0,
+      "2": 0,
+      "3": 0
+    },
+    "scanReady": 0,
+    "scanUntil": 0,
+    "effects": [],
+    "events": [
+      {
+        "type": "RUN_STARTED",
+        "tick": 0,
+        "data": {
+          "seed": 130026,
+          "mode": "endless",
+          "startAtTick": 0,
+          "encounterConfig": "endless-1",
+          "counterGuide": "adaptive",
+          "firstTraitOverride": ""
+        }
+      },
+      {
+        "type": "PROTOCOL_EQUIPPED",
+        "tick": 0,
+        "data": {
+          "source": "preparation",
+          "protocolId": "IMMUNE_BEACON",
+          "tuning": "balanced",
+          "rank": 1,
+          "slots": 1,
+          "actionHint": "Q 部署常驻军团；满两支后指挥附近军团转向。细胞有生命，升级增加人数。"
+        }
+      },
+      {
+        "type": "RUN_PAUSED",
+        "tick": 33,
+        "data": {}
+      }
+    ],
+    "message": "WASD 移动 · 鼠标瞄准 · 按住左键持续射击。",
+    "messageUntil": 8,
+    "shots": 0,
+    "hits": 0,
+    "scans": 0,
+    "dashes": 0,
+    "result": null,
+    "runMetrics": {
+      "runId": "130026:metrics:2",
+      "lastSequence": 3,
+      "lastTick": 33,
+      "ended": false,
+      "frame": {
+        "tick": 33,
+        "entries": []
+      },
+      "summary": {
+        "schemaVersion": 1,
+        "limited": false,
+        "care": {
+          "repairActions": 0,
+          "repaired": 0,
+          "organLoss": 0,
+          "organCost": 0,
+          "playerDamage": 0,
+          "organs": {
+            "heart": {
+              "repairActions": 0,
+              "repaired": 0,
+              "loss": 0,
+              "cost": 0
+            },
+            "lung": {
+              "repairActions": 0,
+              "repaired": 0,
+              "loss": 0,
+              "cost": 0
+            }
+          }
+        },
+        "control": {
+          "chainTriggers": 0,
+          "chainHops": 0,
+          "ricochetHits": 0,
+          "resonanceHits": 0,
+          "beaconBites": 0,
+          "patrolBites": 0,
+          "synergyPulseChain": 0,
+          "synergyTraceBeacon": 0,
+          "scans": 0,
+          "pulseUses": 0,
+          "crystalExposures": 0,
+          "corePulseHits": 0,
+          "airwayCloses": 0,
+          "airwayOpens": 0,
+          "crisisPulseInterrupts": 0,
+          "crisisAirwayInterrupts": 0,
+          "coreScanInterrupts": 0,
+          "diagnosedTraits": [],
+          "migrationChoice": null,
+          "migrationInterception": null,
+          "migrationMissed": false,
+          "coreMembranes": [],
+          "coreCleared": false
+        }
+      }
+    },
+    "world": {
+      "width": 2400,
+      "height": 1500,
+      "bounds": {
+        "left": 85,
+        "right": 2315,
+        "top": 145,
+        "bottom": 1415
+      },
+      "obstacles": [
+        {
+          "id": "fold-a",
+          "x": 730,
+          "y": 650,
+          "radius": 85
+        },
+        {
+          "id": "fold-b",
+          "x": 1630,
+          "y": 1190,
+          "radius": 90
+        },
+        {
+          "id": "fold-c",
+          "x": 1350,
+          "y": 540,
+          "radius": 72
+        },
+        {
+          "id": "fold-d",
+          "x": 2120,
+          "y": 720,
+          "radius": 85
+        },
+        {
+          "id": "fold-e",
+          "x": 780,
+          "y": 980,
+          "radius": 70
+        }
+      ],
+      "foreground": {
+        "x": 1110,
+        "y": 1195,
+        "width": 275,
+        "height": 150
+      }
+    },
+    "battle": {
+      "milestone": "G3",
+      "organId": "heart",
+      "graph": {
+        "nodes": [
+          {
+            "id": "valve",
+            "kind": "valve",
+            "x": 1200,
+            "y": 600,
+            "active": true,
+            "infected": false
+          },
+          {
+            "id": "tissue",
+            "kind": "tissue",
+            "x": 1200,
+            "y": 900,
+            "active": true,
+            "infected": false
+          },
+          {
+            "x": 1150,
+            "y": 330,
+            "id": "heart-healing-1",
+            "kind": "healing",
+            "active": true,
+            "infected": false,
+            "infection": 0,
+            "healReadyAt": 0
+          },
+          {
+            "x": 1880,
+            "y": 1300,
+            "id": "heart-healing-2",
+            "kind": "healing",
+            "active": true,
+            "infected": true,
+            "infection": 100,
+            "healReadyAt": 0
+          }
+        ],
+        "edges": []
+      },
+      "pressure": {
+        "infection": 0,
+        "vitality": 100,
+        "criticalSince": null,
+        "organAlarm": false,
+        "crisisReason": ""
+      },
+      "pulse": {
+        "phase": "charge",
+        "phaseRemaining": 1.45,
+        "readyAt": 0,
+        "activeUntil": 0,
+        "origin": {
+          "x": 1200,
+          "y": 600
+        },
+        "direction": 2.0344439357957027,
+        "uses": 0,
+        "cycleIndex": 0
+      },
+      "warning": null,
+      "traits": [],
+      "defeatedTraits": [],
+      "nextEvolutionAt": 0,
+      "stage": 0,
+      "stageLabel": "第 1 波 · 压力推进 · 正面双潮",
+      "objective": "连续清场成长；普通感染体追击你，潜伏体侵蚀中央组织。每 5 波迎战精英。",
+      "readyToRetest": false,
+      "lastAim": {
+        "x": 1100,
+        "y": 800
+      },
+      "stats": {
+        "kills": 0,
+        "sourceClears": 0,
+        "eliteClears": 0,
+        "repairs": 0,
+        "pulses": 0,
+        "playerDamage": 0,
+        "tissueDamage": 0,
+        "scans": 0
+      },
+      "nextSpawnAt": {},
+      "nextActorId": 2,
+      "firstTrait": "CARAPACE",
+      "recentNotice": "",
+      "gateChangedAt": -10,
+      "organLowSince": null,
+      "eliteSpawned": 0,
+      "history": [],
+      "behaviorHistory": [],
+      "evolutionDecisions": []
+    },
+    "endless": {
+      "schemaVersion": 1,
+      "wave": 1,
+      "clearedWaves": 0,
+      "phase": "warning",
+      "phaseUntil": 2,
+      "phaseStartedAt": 0,
+      "traits": [],
+      "title": "压力推进 · 正面双潮",
+      "eliteWave": false,
+      "eliteRemaining": 0,
+      "formation": "front",
+      "formationLabel": "正面双潮",
+      "batchSchedule": [
+        {
+          "at": 0,
+          "sector": 3,
+          "spread": 0.3,
+          "roles": [
+            "ordinary",
+            "ordinary",
+            "ordinary"
+          ]
+        },
+        {
+          "at": 0.22,
+          "sector": 3,
+          "spread": 0.3,
+          "roles": [
+            "ordinary",
+            "ordinary",
+            "ordinary"
+          ]
+        },
+        {
+          "at": 1.2,
+          "sector": 3,
+          "spread": 0.3,
+          "roles": [
+            "ordinary",
+            "ordinary",
+            "ordinary"
+          ]
+        },
+        {
+          "at": 1.42,
+          "sector": 3,
+          "spread": 0.3,
+          "roles": [
+            "ordinary",
+            "ordinary",
+            "ordinary"
+          ]
+        },
+        {
+          "at": 2.4,
+          "sector": 3,
+          "spread": 0.3,
+          "roles": [
+            "ordinary",
+            "ordinary",
+            "ordinary"
+          ]
+        },
+        {
+          "at": 2.62,
+          "sector": 3,
+          "spread": 0.3,
+          "roles": [
+            "ordinary",
+            "ordinary",
+            "ordinary"
+          ]
+        },
+        {
+          "at": 3.5999999999999996,
+          "sector": 3,
+          "spread": 0.3,
+          "roles": [
+            "ordinary",
+            "ordinary",
+            "ordinary"
+          ]
+        },
+        {
+          "at": 3.82,
+          "sector": 3,
+          "spread": 0.3,
+          "roles": [
+            "ordinary",
+            "ordinary",
+            "ordinary"
+          ]
+        },
+        {
+          "at": 4.8,
+          "sector": 3,
+          "spread": 0.3,
+          "roles": [
+            "ordinary",
+            "ordinary",
+            "ordinary"
+          ]
+        },
+        {
+          "at": 5.02,
+          "sector": 3,
+          "spread": 0.3,
+          "roles": [
+            "ordinary",
+            "ordinary",
+            "ordinary"
+          ]
+        },
+        {
+          "at": 6,
+          "sector": 3,
+          "spread": 0.3,
+          "roles": [
+            "ordinary",
+            "ordinary",
+            "ordinary"
+          ]
+        },
+        {
+          "at": 6.22,
+          "sector": 3,
+          "spread": 0.3,
+          "roles": [
+            "ordinary",
+            "ordinary",
+            "ordinary"
+          ]
+        },
+        {
+          "at": 7.199999999999999,
+          "sector": 3,
+          "spread": 0.3,
+          "roles": [
+            "ordinary",
+            "ordinary",
+            "ordinary"
+          ]
+        },
+        {
+          "at": 7.419999999999999,
+          "sector": 3,
+          "spread": 0.3,
+          "roles": [
+            "ordinary"
+          ]
+        }
+      ],
+      "supportRemaining": 0,
+      "warningSeconds": 2,
+      "totalToSpawn": 40,
+      "remainingToSpawn": 40,
+      "canceledToSpawn": 0,
+      "spawnedIds": [],
+      "creditedKillIds": [],
+      "kills": 0,
+      "score": 0,
+      "combo": 0,
+      "bestCombo": 0,
+      "lastKillAt": -1000,
+      "nextSpawnAt": 2,
+      "batchSerial": 0,
+      "spawnSerial": 0,
+      "pendingChildren": 0,
+      "directions": [],
+      "batchIndex": 0,
+      "batchMemberIndex": 0,
+      "evolution": {
+        "history": [],
+        "recentPrimaries": [],
+        "opening": {
+          "precisionDamage": 0,
+          "areaDamage": 0
+        }
+      },
+      "tutorial": {
+        "fired": false,
+        "deployed": false,
+        "tissueHurt": false,
+        "repaired": false,
+        "seenUpgrades": []
+      }
+    },
+    "messagePriority": 1,
+    "endlessGrowth": {
+      "seed": 130026,
+      "ranks": {},
+      "level": 0,
+      "draft": null,
+      "offeredThroughWave": 0,
+      "history": []
+    },
+    "playerProjectiles": [],
+    "chargedSlashReadyAt": 0,
+    "territory": {
+      "schemaVersion": 1,
+      "stage": "rescue",
+      "campBuilt": false,
+      "purification": null,
+      "healingContact": {
+        "nodeId": null,
+        "seconds": 0
+      },
+      "nodes": [
+        {
+          "id": "core",
+          "name": "心核",
+          "kind": "core",
+          "x": 1200,
+          "y": 900,
+          "owner": "healthy",
+          "infectionProgress": 0,
+          "purificationProgress": 0,
+          "permanent": false,
+          "firstPurified": false
+        },
+        {
+          "id": "heart-healing-1",
+          "name": "北侧生命泉",
+          "kind": "healing",
+          "x": 1150,
+          "y": 330,
+          "owner": "healthy",
+          "infectionProgress": 0,
+          "purificationProgress": 0,
+          "permanent": false,
+          "firstPurified": false
+        },
+        {
+          "id": "heart-healing-2",
+          "name": "南侧生命泉",
+          "kind": "healing",
+          "x": 1880,
+          "y": 1300,
+          "owner": "infected",
+          "infectionProgress": 100,
+          "purificationProgress": 0,
+          "permanent": false,
+          "firstPurified": false
+        },
+        {
+          "id": "source-west",
+          "name": "西侧感染源",
+          "kind": "source",
+          "x": 450,
+          "y": 600,
+          "owner": "infected",
+          "infectionProgress": 100,
+          "purificationProgress": 0,
+          "permanent": false,
+          "firstPurified": false
+        },
+        {
+          "id": "source-east",
+          "name": "东侧感染源",
+          "kind": "source",
+          "x": 1950,
+          "y": 450,
+          "owner": "infected",
+          "infectionProgress": 100,
+          "purificationProgress": 0,
+          "permanent": false,
+          "firstPurified": false
+        }
+      ],
+      "sources": {
+        "source-west": {
+          "nodeId": "source-west",
+          "healingNodeId": "heart-healing-1",
+          "unlocked": false,
+          "spawned": false,
+          "destroyed": false,
+          "rewarded": false
+        },
+        "source-east": {
+          "nodeId": "source-east",
+          "healingNodeId": "heart-healing-2",
+          "unlocked": false,
+          "spawned": false,
+          "destroyed": false,
+          "rewarded": false
+        }
+      }
+    },
+    "playerInfection": null,
+    "hostEvents": {
+      "schemaVersion": 1,
+      "rngState": 1752074398,
+      "serial": 0,
+      "slots": [
+        {
+          "at": 240,
+          "status": "pending"
+        },
+        {
+          "at": 420,
+          "status": "pending"
+        },
+        {
+          "at": 600,
+          "status": "pending"
+        }
+      ],
+      "usedIds": [],
+      "successCount": 0,
+      "redCount": 0,
+      "lastCategory": null,
+      "lastEndedAt": null,
+      "alarmUntil": 0,
+      "wasAlarm": false,
+      "active": null,
+      "sources": {},
+      "disabled": {
+        "MEDICATION": "当前器官没有合法血流锚点",
+        "SMOKE": "仅肺部可用",
+        "ALCOHOL": "当前器官只有一个可修复组织，需要两个；治疗点不属于组织",
+        "EXERCISE": "当前器官没有轻型病毒"
+      },
+      "pendingCommands": [],
+      "openingExercise": {
+        "status": "pending",
+        "ready": false,
+        "waitingReason": "wave-3-not-reached"
+      }
+    },
+    "growth": {
+      "runId": "130026:2",
+      "seed": 130026,
+      "lastElapsed": 0.55,
+      "xp": 0,
+      "level": 0,
+      "nextXp": null,
+      "research": 0,
+      "preparation": {
+        "version": 1,
+        "starterProtocolId": "IMMUNE_BEACON"
+      },
+      "starterDebt": 0,
+      "carriedProtocols": [
+        "IMMUNE_BEACON"
+      ],
+      "equipped": [
+        {
+          "id": "IMMUNE_BEACON",
+          "tuning": "balanced"
+        }
+      ],
+      "draft": null,
+      "pendingLevels": [],
+      "consumedDraftIds": [],
+      "rewardedKeys": [],
+      "sourceKillCounts": {},
+      "lastMilestoneWave": 0,
+      "nextMilestoneWave": null,
+      "damageTakenByOrgan": {
+        "heart": 0,
+        "lung": 0
+      },
+      "protectionNeeded": {
+        "heart": false,
+        "lung": false
+      },
+      "draftSerial": 0,
+      "historyHash": 2166136261,
+      "ended": false,
+      "pendingResearch": null,
+      "researchSerial": 0,
+      "beacon": null,
+      "beacons": [],
+      "beaconReadyAt": 0,
+      "cells": [],
+      "antibodyCharges": 2,
+      "antibodySerial": 0,
+      "activations": {},
+      "marks": [],
+      "resonance": [],
+      "chainRoots": [],
+      "protocolHistory": [
+        {
+          "at": 0,
+          "type": "PROTOCOL_EQUIPPED",
+          "text": "免疫灯塔：初始预装 Ⅰ · 均衡。"
+        }
+      ],
+      "pendingLogs": [],
+      "budgetTick": -1,
+      "budgetUsed": 0,
+      "skippedCommands": 0
+    }
+  },
+  "diagnostics": {
+    "depthOrder": [
+      "heart-healing-1",
+      "fold-c",
+      "valve",
+      "fold-a",
+      "fold-d",
+      "player",
+      "tissue",
+      "fold-e",
+      "fold-b",
+      "heart-healing-2"
+    ],
+    "occluded": false,
+    "foregroundOpacity": 0.94,
+    "layerOrder": [
+      "distant",
+      "terrain",
+      "contact-shadows",
+      "world-y-sorted",
+      "foreground",
+      "effects",
+      "hud"
+    ],
+    "labels": {
+      "requested": 4,
+      "placed": 3,
+      "omitted": 1,
+      "offscreen": 1,
+      "conflicted": 0,
+      "measureCacheSize": 5,
+      "placementCacheSize": 3,
+      "placements": [
+        {
+          "id": "tissue",
+          "priority": 75,
+          "essential": true,
+          "rect": {
+            "left": 728.5448481241862,
+            "right": 850.7884852091471,
+            "top": 483.1333333333333,
+            "bottom": 511.4
+          },
+          "anchor": {
+            "x": 789.6666666666666,
+            "y": 460.8
+          },
+          "baseline": {
+            "x": 789.6666666666666,
+            "y": 498.1333333333333
+          },
+          "compact": false,
+          "fallback": false,
+          "conflicted": false
+        },
+        {
+          "id": "device:heart-healing-1",
+          "priority": 35,
+          "essential": false,
+          "rect": {
+            "left": 679.5855916341146,
+            "right": 793.0810750325521,
+            "top": 38.97333333333336,
+            "bottom": 74.70666666666669
+          },
+          "anchor": {
+            "x": 736.3333333333334,
+            "y": 23.040000000000024
+          },
+          "baseline": {
+            "x": 736.3333333333334,
+            "y": 53.97333333333336
+          },
+          "compact": false,
+          "fallback": false,
+          "conflicted": false
+        },
+        {
+          "id": "device:valve",
+          "priority": 30,
+          "essential": false,
+          "rect": {
+            "left": 756.341677347819,
+            "right": 822.9916559855143,
+            "top": 246.26666666666665,
+            "bottom": 280
+          },
+          "anchor": {
+            "x": 789.6666666666666,
+            "y": 230.4
+          },
+          "baseline": {
+            "x": 789.6666666666666,
+            "y": 260.26666666666665
+          },
+          "compact": false,
+          "fallback": false,
+          "conflicted": false
+        }
+      ]
+    },
+    "hudRects": [
+      {
+        "left": 30,
+        "right": 249.5625,
+        "top": 22,
+        "bottom": 67
+      },
+      {
+        "left": 997.875,
+        "right": 1336,
+        "top": 27.5,
+        "bottom": 61.5
+      },
+      {
+        "left": 529.5859375,
+        "right": 836.4140625,
+        "top": 596,
+        "bottom": 633
+      },
+      {
+        "left": 327.4296875,
+        "right": 1038.5703125,
+        "top": 642,
+        "bottom": 743
+      },
+      {
+        "left": 1215.3125,
+        "right": 1334,
+        "top": 739,
+        "bottom": 754
+      },
+      {
+        "left": 32,
+        "right": 250,
+        "top": 434,
+        "bottom": 594
+      },
+      {
+        "left": 16,
+        "right": 248,
+        "top": 265,
+        "bottom": 449
+      },
+      {
+        "left": 1164,
+        "right": 1350,
+        "top": 72,
+        "bottom": 210
+      },
+      {
+        "left": 1130,
+        "right": 1350,
+        "top": 245,
+        "bottom": 384.5
+      },
+      {
+        "left": 1130,
+        "right": 1350,
+        "top": 467.046875,
+        "bottom": 680
+      },
+      {
+        "left": 16,
+        "right": 268,
+        "top": 72,
+        "bottom": 233
+      }
+    ],
+    "playerPresence": {
+      "active": false,
+      "potentialBodyOccluders": [],
+      "raisedOccluders": [],
+      "foreground": false,
+      "pendingRoundDangers": [],
+      "bodyBounds": {
+        "left": 1075,
+        "right": 1142,
+        "top": 505.21528555438147,
+        "bottom": 581.2152855543815
+      },
+      "groundAnchor": {
+        "x": 1100,
+        "y": 800
+      }
+    },
+    "crosshair": {
+      "status": "in-range",
+      "aim": {
+        "x": 1100,
+        "y": 800
+      }
+    },
+    "phaser": {
+      "engine": "Phaser",
+      "version": "4.2.1",
+      "renderer": "webgl",
+      "ready": true,
+      "textureCount": 16,
+      "activeSprites": 4,
+      "pooledSprites": 1,
+      "rasterLayers": 9,
+      "articulatedMeshes": 1,
+      "visibleRasterLayers": 9,
+      "rasterDimensions": [
+        {
+          "id": "fantasy-terrain",
+          "width": 2048,
+          "height": 1381,
+          "displayWidth": 2944,
+          "displayHeight": 1428.48,
+          "x": -682.3333333333334,
+          "y": -368.6399999999999
+        },
+        {
+          "id": "ground",
+          "width": 1366,
+          "height": 768,
+          "displayWidth": 1366,
+          "displayHeight": 768,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "id": "actor:heart-healing-1",
+          "width": 236,
+          "height": 300,
+          "displayWidth": 251.73333333333332,
+          "displayHeight": 320,
+          "x": 610.4666666666667,
+          "y": -262.82666666666665
+        },
+        {
+          "id": "actor:valve",
+          "width": 236,
+          "height": 300,
+          "displayWidth": 251.73333333333332,
+          "displayHeight": 320,
+          "x": 663.8,
+          "y": -55.46666666666667
+        },
+        {
+          "id": "actor:fold-a",
+          "width": 376,
+          "height": 440,
+          "displayWidth": 401.06666666666666,
+          "displayHeight": 469.3333333333333,
+          "x": 87.79999999999998,
+          "y": -166.39999999999998
+        },
+        {
+          "id": "actor:tissue",
+          "width": 208,
+          "height": 272,
+          "displayWidth": 221.86666666666667,
+          "displayHeight": 290.1333333333333,
+          "x": 678.7333333333333,
+          "y": 204.8
+        },
+        {
+          "id": "actor:fold-b",
+          "width": 396,
+          "height": 460,
+          "displayWidth": 422.4,
+          "displayHeight": 490.6666666666667,
+          "x": 1037.1333333333332,
+          "y": 226.98666666666668
+        },
+        {
+          "id": "actor:heart-healing-2",
+          "width": 236,
+          "height": 300,
+          "displayWidth": 251.73333333333332,
+          "displayHeight": 320,
+          "x": 1389.1333333333334,
+          "y": 482.1333333333333
+        },
+        {
+          "id": "signals",
+          "width": 1366,
+          "height": 768,
+          "displayWidth": 1366,
+          "displayHeight": 768,
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "animations": [],
+      "nativeSprites": [
+        {
+          "id": "fold-c",
+          "texture": "viral-art-0",
+          "frame": "fantasy.tree.healthy",
+          "x": 949.6666666666666,
+          "y": 184.32000000000002,
+          "width": 256.44521739130437,
+          "height": 279.1513043478261,
+          "depth": 103,
+          "visible": true,
+          "articulated": false
+        },
+        {
+          "id": "player",
+          "texture": "viral-art-0",
+          "frame": "hero.front_right.idle.02",
+          "x": 683,
+          "y": 384,
+          "width": 97.44950566893424,
+          "height": 102.23024761904762,
+          "depth": 115,
+          "visible": true,
+          "articulated": true
+        },
+        {
+          "id": "player:tool",
+          "texture": "viral-art-1",
+          "frame": "weapon.emitter.painted",
+          "x": 705.4,
+          "y": 363.73333333333335,
+          "width": 58.03636363636364,
+          "height": 42.14839757994814,
+          "depth": 115.2,
+          "visible": true,
+          "articulated": false
+        },
+        {
+          "id": "fold-e",
+          "texture": "viral-art-0",
+          "frame": "fantasy.tree.healthy",
+          "x": 341.6666666666667,
+          "y": 522.24,
+          "width": 249.32173913043476,
+          "height": 271.39710144927534,
+          "depth": 121,
+          "visible": true,
+          "articulated": false
+        }
+      ],
+      "widthCSS": 1366,
+      "heightCSS": 768,
+      "dpr": 1,
+      "backingWidth": 1366,
+      "backingHeight": 768,
+      "frameLoopBound": true
+    },
+    "art": {
+      "signature": "f7342a7e74c099994b1dea8a13fdfed3763a5daf238a0e66916d6f720b1af292",
+      "selectedAssets": 58,
+      "fantasyGround": {
+        "key": "f7342a7e74c099994b1dea8a13fdfed3763a5daf238a0e66916d6f720b1af292:heart:2400:1500:85:145:2315:1415:core:1200:900:healthy:heart-healing-1:1150:330:healthy:heart-healing-2:1880:1300:infected:source-west:450:600:infected:source-east:1950:450:infected",
+        "revisions": 2,
+        "width": 2048,
+        "height": 1381
+      },
+      "activeBodies": [
+        {
+          "id": "player",
+          "bounds": {
+            "left": 1066.7085714285715,
+            "right": 1156.1363636363637,
+            "top": 483.49142857142857,
+            "bottom": 583
+          }
+        }
+      ],
+      "heroAnimation": {
+        "enabledClips": [
+          "idle"
+        ],
+        "frame": {
+          "id": "hero.front_right.idle.02",
+          "clip": "idle",
+          "index": 2,
+          "animated": true,
+          "flipX": false,
+          "articulated": true,
+          "gait": {
+            "phase": 0,
+            "amount": 0,
+            "lean": 0
+          }
+        }
+      },
+      "weapon": {
+        "assetId": "weapon.emitter.painted",
+        "mode": "painted-static"
+      },
+      "provisional": [
+        "continuous-player-animation",
+        "mother-static-layers",
+        "missing-continuous-mother-animation",
+        "painted-lung",
+        "fission-static-poses",
+        "immune-static-poses"
+      ]
+    },
+    "touch": {
+      "aim": {
+        "x": 1100,
+        "y": 800
+      },
+      "tool": 1
+    }
+  }
+}

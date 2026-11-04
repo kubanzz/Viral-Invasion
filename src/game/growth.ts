@@ -5,16 +5,17 @@ import { activeWorld, isDiagnosticTarget, type GameEvent, type GameState, type T
 import { GROWTH_BALANCE as B, makeDraftOption, PROTOCOL_IDS, PROTOCOLS, TUNINGS, getBeaconConfig, getChainConfig, getPulseConfig, getTraceConfig, PATROL_CONFIG, protocolRank, PROTOCOL_ACTIONS, chainRicochetPeriod } from './protocols';
 import type { DamageOrigin, DraftIntent, DraftOption, DraftResolution, EquippedProtocol, GrowthCommand, GrowthContext, GrowthState, GrowthHistoryEntry, ProtocolDraft, ProtocolId, ProtocolRank, ResearchResult, ResearchDirectionId, ResearchConfirmIntent, ResearchRequestIntent, ResearchRequestResult, ResearchConfirmResult, ResearchCancelResult } from './growthTypes';
 import { advanceImmuneCells, redirectImmuneCells, summonImmuneCells, livingImmuneCells, ANTIBODY_BALANCE, IMMUNE_CELL_BALANCE, ENDLESS_IMMUNE_CELL_BALANCE } from './immuneCells';
-import { IMMUNE_FOCUS_BALANCE, IMMUNE_GUARD_BALANCE, isImmuneGuardCommand, selectImmuneFocusTarget } from './immuneFocus';
+import { activeImmuneGuard, IMMUNE_FOCUS_BALANCE, IMMUNE_GUARD_BALANCE, selectImmuneGuardCommand, selectImmuneFocusTarget } from './immuneFocus';
 import { endlessCombatStats } from './endlessGrowth';
 import { availableResearchDirections, RESEARCH_DIRECTIONS } from './research';
 import { parsePreparation, preparationForPlan, type RunPreparation } from './preparation';
+import { territoryBeaconRank } from './territory';
 
 export type { GrowthCommand, GrowthContext, GrowthState, DamageOrigin, DraftIntent, DraftResolution } from './growthTypes';
 
 export function growthContext(state: GameState): GrowthContext {
   const combat = state.endlessGrowth ? endlessCombatStats(state.endlessGrowth) : undefined;
-  return { hostEvents: state.hostEvents, endless: !!state.endless, tick: state.tick, elapsed: state.elapsed, active: state.phase === 'playing', organId: state.battle?.organId ?? 'heart',
+  return { hostEvents: state.hostEvents, endless: !!state.endless, territory: state.territory, tick: state.tick, elapsed: state.elapsed, active: state.phase === 'playing', organId: state.battle?.organId ?? 'heart',
     ...(combat ? { immuneRank: state.endlessGrowth!.ranks.immune ?? 0, cellDamageMultiplier: combat.damageMultiplier * combat.cellDamageMultiplier } : {}),
     rhythm: state.battle?.pulse.phase ?? 'rest', deviceOrigin: state.battle?.pulse.origin ?? state.terminal,
     player: state.player, aim: state.battle?.lastAim ?? state.player, tissue: state.tissue, targets: state.targets, tool: state.tool, geometry: activeWorld(state), rhythmCycle: state.battle?.pulse.cycleIndex,
@@ -42,6 +43,7 @@ const unobstructed = (from: Vec, to: Target, geometry?: WorldGeometry): boolean 
 };
 const stableNearest = (from: Vec, targets: readonly Target[]): Target[] => [...targets].sort((a,b)=>distance(from,a)-distance(from,b)||(a.id<b.id?-1:a.id>b.id?1:0));
 function beaconPosition(context: GrowthContext): Vec {
+  if (context.territory) return point(moveWithCollision(context.player, { x: 0, y: 0 }, 12, context.geometry));
   const direction=normalized(context.aim.x-context.player.x,context.aim.y-context.player.y),length=Math.min(B.beaconPlacementRange,distance(context.player,context.aim));
   const wall=wallHit(context.player,direction,length,context.geometry);
   const travel=Math.max(0,Math.min(length,wall===null?length:wall-18));
@@ -151,6 +153,14 @@ export class GrowthController {
   }
   private log(type: string, data: GameEvent['data']): void { this.state.pendingLogs.push({ type, data }); }
   private equipped(id: ProtocolId): EquippedProtocol | undefined { return this.state.equipped.find(slot=>slot.id===id); }
+  private ensureTerritoryBeacon(context: GrowthContext): void {
+    if(!context.territory)return;
+    const s=this.state;s.territoryBeaconRequired=true;
+    const slot=this.equipped('IMMUNE_BEACON');
+    // Production heart sessions pre-equip this slot. Missing-slot unit fixtures
+    // retain their explicit one-cell patrol rather than inventing hidden gear.
+    if(slot)slot.rank=territoryBeaconRank({territory:context.territory,growth:s});
+  }
   private activated(id: ProtocolId): void {
     this.state.activations ??= {};
     this.state.activations[id] = (this.state.activations[id] ?? 0) + 1;
@@ -175,6 +185,7 @@ export class GrowthController {
   /** Accept only real accepted events. Keys live independently of the bounded diagnostic event log. */
   recordEvent(event: GameEvent, context?: GrowthContext): void {
     const s=this.state, data=event.data, elapsed=context?.elapsed??event.tick/60;
+    if(context?.territory)this.ensureTerritoryBeacon(context);
     this.observeTime(elapsed);
     if(event.type==='RUN_ENDED') { s.ended=true;s.draft=null;s.pendingResearch=null;s.pendingLevels=[];s.nextMilestoneWave=null;s.beacon=null;s.beacons=[];s.cells=[];s.marks=[];s.resonance=[];this.acceptedHistory.clear();return; }
     if(s.ended)return;
@@ -393,6 +404,7 @@ export class GrowthController {
       if(draft.selectedOptionId!==option.id)return{kind:'rejected',reason:'different-replacement-option'};
       const index=intent.slotIndex;
       if(index===undefined||!Number.isInteger(index)||index<0||index>=B.slots||s.equipped[index]?.id!==intent.expectedPreviousProtocolId)return{kind:'rejected',reason:'invalid-or-stale-slot'};
+      if(s.territoryBeaconRequired&&s.equipped[index]?.id==='IMMUNE_BEACON')return{kind:'rejected',reason:'required-territory-protocol'};
       s.equipped[index]={id:option.protocolId,tuning:option.tuning};
     }
     this.cleanupChanged(previous,s.equipped);
@@ -467,10 +479,11 @@ export class GrowthController {
   onScan(context:GrowthContext):GrowthCommand[] {
     this.observeTime(context.elapsed);
     if(this.state.ended||!context.active)return[];
+    this.ensureTerritoryBeacon(context);
     const beacons=this.immuneBeacons(context.elapsed);
     const previous={marks:this.state.marks.map(mark=>({...mark})),beacon:this.state.beacon,beacons:[...beacons],cells:this.state.cells,readyAt:this.state.beaconReadyAt,history:this.state.protocolHistory.slice()};
     const commands:GrowthCommand[]=[],trace=this.equipped('EXPOSE_TRACE'),beacon=this.equipped('IMMUNE_BEACON');
-    const guard = !!beacon && isImmuneGuardCommand(context);
+    const guardOrder = beacon ? selectImmuneGuardCommand(context) : undefined, guard = !!guardOrder;
     const rootId=`${this.state.runId}:scan:${context.tick}`;
     if(trace) {
       const config=getTraceConfig(trace.tuning,protocolRank(trace));let count=0;
@@ -485,9 +498,9 @@ export class GrowthController {
       const config=beacon?getBeaconConfig(beacon.tuning,protocolRank(beacon)):{...PATROL_CONFIG,tissueCost:0};
       const rank=protocolRank(beacon), count=beacon?Math.min(5,Math.max(rank+2,3+Math.floor(context.immuneRank??0))):1;
       const position=beaconPosition(context);
-      this.state.beacon={...point(guard ? context.tissue : position),id:`${rootId}:beacon`,organId:context.organId,born:context.elapsed,until:Infinity,
+      this.state.beacon={...point(guardOrder?.anchor ?? position),id:`${rootId}:beacon`,organId:context.organId,born:context.elapsed,until:Infinity,
         radius:config.radius,damage:config.damage,interval:config.interval,nextAttackAt:context.elapsed+.1,tuning:beacon?.tuning??'balanced',mode:beacon?'protocol':'patrol',cellCount:count,rank};
-      if(guard) { this.state.beacon.guard={kind:'tissue',radius:IMMUNE_GUARD_BALANCE.radius}; this.state.beacon.deploymentOrigin=point(position); }
+      if(guardOrder) { this.state.beacon.guard={...guardOrder.guard}; this.state.beacon.deploymentOrigin=point(position); }
       const focus=guard?undefined:selectImmuneFocusTarget(context,this.state.beacon);
       if(focus)this.state.beacon.focus={targetId:focus.id,until:Math.min(context.elapsed+IMMUNE_FOCUS_BALANCE.duration,this.state.beacon.until)};
       this.state.cells=[...(this.state.cells??[]),...summonImmuneCells(this.state.beacon,context,count)];
@@ -498,20 +511,23 @@ export class GrowthController {
       commands.push({...base,kind:'effect',effect:'scan',from:point(position),to:point(position),radius:config.radius,duration:.6},
         {kind:'log',type:beacon?'PROTOCOL_BEACON_CREATED':'IMMUNE_PATROL_CREATED',data:{...(beacon?{protocolId:'IMMUNE_BEACON'}:{}),rootId,x:position.x,y:position.y,duration:0,persistent:true,cost:config.tissueCost,cooldown:config.cooldown,cells:count,
           ...(this.state.beacon.focus?{focusTargetId:this.state.beacon.focus.targetId,focusUntil:this.state.beacon.focus.until}:{}),
-          ...(guard?{guard:true,guardX:this.state.beacon.x,guardY:this.state.beacon.y,guardRadius:IMMUNE_GUARD_BALANCE.radius}:{}),
+          ...(guard?{guard:true,guardX:this.state.beacon.x,guardY:this.state.beacon.y,guardRadius:IMMUNE_GUARD_BALANCE.radius,...(guardOrder?.guard.kind==='territory'?{regionId:guardOrder.guard.regionId}:{})}:{}),
           ...(context.endless&&beacon&&this.state.beacon.focus?{rallyUntil:this.state.cells[0]?.rallyUntil??context.elapsed,rallySpeed:ENDLESS_IMMUNE_CELL_BALANCE.rallySpeed}:{})}});
       // The host may add the existing combat-growth lifetime after creation.
       // This is the controller's order snapshot; read beacon.until for expiry.
       if(guard)commands.push({kind:'log',type:'IMMUNE_GUARD_ASSIGNED',data:{rootId,beaconId:this.state.beacon.id,organId:context.organId,
-        x:this.state.beacon.x,y:this.state.beacon.y,radius:IMMUNE_GUARD_BALANCE.radius,plannedUntil:this.state.beacon.until,newSquad:true}});
+        x:this.state.beacon.x,y:this.state.beacon.y,radius:IMMUNE_GUARD_BALANCE.radius,plannedUntil:this.state.beacon.until,newSquad:true,...(guardOrder?.guard.kind==='territory'?{regionId:guardOrder.guard.regionId}:{})}});
       this.remember(beacon?'PROTOCOL_BEACON_CREATED':'IMMUNE_PATROL_CREATED',beacon?`${count} 只免疫细胞驻守，组织承压 −${config.tissueCost}；阵亡后空出军团位。`:'Q 召来一只常驻免疫侦巡细胞，可被病毒击杀。',context.elapsed);
     }else if(beacons.some(value=>value.organId===context.organId)) {
       const position=beaconPosition(context),old=beacons.filter(value=>value.organId===context.organId)
         .sort((a,b)=>distance(a,position)-distance(b,position)||a.id.localeCompare(b.id))[0];
+      const previousRegionId = old.guard?.kind === 'territory' ? old.guard.regionId : '';
+      const withdrewFront = !!context.territory && ['front-north','front-south'].includes(previousRegionId)
+        && (guardOrder?.guard.kind !== 'territory' || guardOrder.guard.regionId !== previousRegionId);
       // Repoint the zone, never the bodies. Preserve every unit's independent
       // bite clock and lifetime; normal fixed updates perform the actual travel.
-      this.state.beacon={...old,...point(guard ? context.tissue : position)};
-      if(guard)this.state.beacon.guard={kind:'tissue',radius:IMMUNE_GUARD_BALANCE.radius};else delete this.state.beacon.guard;
+      this.state.beacon={...old,...point(guardOrder?.anchor ?? position)};
+      if(guardOrder)this.state.beacon.guard={...guardOrder.guard};else delete this.state.beacon.guard;
       const focus=guard?undefined:selectImmuneFocusTarget(context,this.state.beacon);
       if(focus)this.state.beacon.focus={targetId:focus.id,until:Math.min(context.elapsed+IMMUNE_FOCUS_BALANCE.duration,old.until)};
       else delete this.state.beacon.focus;
@@ -521,12 +537,17 @@ export class GrowthController {
       commands.push({...base,kind:'effect',effect:'scan',from:point(position),to:point(position),radius:old.radius,duration:.6},
         {kind:'log',type:'IMMUNE_SQUAD_REDIRECTED',data:{protocolId:'IMMUNE_BEACON',rootId,beaconId:old.id,
           fromX:old.x,fromY:old.y,x:position.x,y:position.y,cells:this.state.cells.filter(cell=>cell.beaconId===old.id).length,until:old.until,readyAt:this.state.beaconReadyAt,cost:0,
+          ...(context.territory ? { footDeployment: true, previousRegionId, withdrewFront } : {}),
           ...(this.state.beacon.focus?{focusTargetId:this.state.beacon.focus.targetId,focusUntil:this.state.beacon.focus.until}:{}),
-          ...(guard?{guard:true,guardX:this.state.beacon.x,guardY:this.state.beacon.y,guardRadius:IMMUNE_GUARD_BALANCE.radius}:{}),
+          ...(guard?{guard:true,guardX:this.state.beacon.x,guardY:this.state.beacon.y,guardRadius:IMMUNE_GUARD_BALANCE.radius,...(guardOrder?.guard.kind==='territory'?{regionId:guardOrder.guard.regionId}:{})}:{}),
           ...(context.endless&&this.state.beacon.focus?{rallyUntil:this.state.cells[0]?.rallyUntil??context.elapsed,rallySpeed:ENDLESS_IMMUNE_CELL_BALANCE.rallySpeed}:{})}});
       if(guard)commands.push({kind:'log',type:'IMMUNE_GUARD_ASSIGNED',data:{rootId,beaconId:old.id,organId:context.organId,
-        x:this.state.beacon.x,y:this.state.beacon.y,radius:IMMUNE_GUARD_BALANCE.radius,plannedUntil:old.until,newSquad:false}});
-      this.remember('IMMUNE_SQUAD_REDIRECTED','免疫军团转向新战线；保留当前生命与吞噬冷却，不消耗组织。',context.elapsed);
+        x:this.state.beacon.x,y:this.state.beacon.y,radius:IMMUNE_GUARD_BALANCE.radius,plannedUntil:old.until,newSquad:false,...(guardOrder?.guard.kind==='territory'?{regionId:guardOrder.guard.regionId}:{})}});
+      this.remember('IMMUNE_SQUAD_REDIRECTED',context.territory
+        ? withdrewFront
+          ? '最近军团向脚下行军；原前线撤防可能恢复感染源护膜。生命与攻击冷却保留。'
+          : '最近军团向脚下行军并留守；生命、人数与攻击冷却保留。'
+        : '免疫军团转向新战线；保留当前生命与吞噬冷却，不消耗组织。',context.elapsed);
     }
     const accepted=this.budget(context,commands);
     if(commands.length&&!accepted.length){this.state.marks=previous.marks;this.state.beacon=previous.beacon;this.state.beacons=previous.beacons;this.state.cells=previous.cells;this.state.beaconReadyAt=previous.readyAt;this.state.protocolHistory=previous.history;}
@@ -608,6 +629,7 @@ export class GrowthController {
     const s=this.state;if(s.ended)return[];
     const logs:GrowthCommand[]=s.pendingLogs.splice(0).map(log=>({kind:'log',...log}));
     if(!context.active)return logs;
+    this.ensureTerritoryBeacon(context);
     const liveIds=new Set(context.targets.filter(target=>target.hp>0).map(target=>target.id));
     s.marks=s.marks.filter(mark=>mark.until>context.elapsed&&(mark.organId!==context.organId||liveIds.has(mark.targetId)));
     s.resonance=s.resonance.filter(hit=>hit.organId===context.organId&&hit.cycle===(context.rhythmCycle??Math.floor(context.elapsed/6))&&liveIds.has(hit.targetId));
@@ -616,7 +638,7 @@ export class GrowthController {
     // A newly earned rank reinforces each surviving legion once. It never
     // replenishes casualties at an unchanged rank or removes veteran bodies.
     for(const beacon of beacons)if(beacon.organId===context.organId) {
-      if(beacon.guard&&context.tissue.hp<=0)delete beacon.guard;
+      if(beacon.guard&&!activeImmuneGuard(beacon,context))delete beacon.guard;
       if(slot) {
         const rank=protocolRank(slot),count=Math.min(5,Math.max(rank+2,3+Math.floor(context.immuneRank??0)));
         const previousCount=beacon.cellCount??(beacon.mode==='patrol'?1:3),config=getBeaconConfig(slot.tuning,rank);
@@ -627,7 +649,7 @@ export class GrowthController {
           cell.damage=config.damage/beacon.cellCount;cell.interval=config.interval;
           const maxHp=IMMUNE_CELL_BALANCE.health+(rank-1)*12;
           if(maxHp>(cell.maxHp??IMMUNE_CELL_BALANCE.health)) {
-            cell.hp=(cell.hp??IMMUNE_CELL_BALANCE.health)*maxHp/(cell.maxHp??IMMUNE_CELL_BALANCE.health);cell.maxHp=maxHp;
+            cell.hp??=IMMUNE_CELL_BALANCE.health;cell.maxHp=maxHp;
           }
         }
         if(count>previousCount) {

@@ -9,6 +9,21 @@ import type { DraftOption } from '../../src/game/growthTypes';
 import type { EndlessUpgradeOption } from '../../src/game/endlessGrowthTypes';
 
 describe('readable upgrade choices', () => {
+  it('locks the heart-rescue beacon slot while offering other replacement choices normally', () => {
+    const game = new GameSession(13, { mode: 'endless', territory: true }); game.start();
+    const growth = game.state.growth!;
+    growth.equipped = [{ id: 'IMMUNE_BEACON', tuning: 'balanced', rank: 1 }, { id: 'PURIFY_CHAIN', tuning: 'balanced', rank: 1 }, { id: 'EXPOSE_TRACE', tuning: 'balanced', rank: 1 }];
+    const option = makeDraftOption('PULSE_BREAK', 'balanced', 'equip');
+    growth.draft = { id: 'locked-replacement', source: 'xp', serial: 1, options: [option, { ...option, id: 'second' }, { ...option, id: 'third' }], status: 'replacing', selectedOptionId: option.id };
+    const html = draftOverlay(game.state)!;
+    expect(html).toContain('关卡能力·军团驻防');
+    expect(html).toContain('disabled aria-disabled="true"');
+    expect(html).not.toContain('data-previous="IMMUNE_BEACON"');
+    expect(html).toContain('data-previous="PURIFY_CHAIN"');
+    delete game.state.territory;
+    expect(draftOverlay(game.state)).toContain('data-previous="IMMUNE_BEACON"');
+  });
+
   it('keeps committing buttons short and the complete mechanics in separate optional disclosures', () => {
     const game = new GameSession(13, { campaign: true, milestone: 'G3' }); game.start();
     const options = ['IMMUNE_BEACON', 'PURIFY_CHAIN', 'EXPOSE_TRACE'].map(id => makeDraftOption(id as DraftOption['protocolId'], 'balanced', 'equip')) as [DraftOption, DraftOption, DraftOption];

@@ -12,17 +12,35 @@ function cast(where: 'empty' | 'tissue', hp: number) {
 }
 
 function draw(state: GameState, low: boolean) {
-  const ellipses: number[] = [], strokes: { color: string; from: Vec; to: Vec }[] = [];
-  let from = { x: 0, y: 0 }, to = { x: 0, y: 0 };
+  type Paint = { color: string; width: number };
+  type EllipsePath = { center: Vec; rx: number; ry: number; fills: string[]; strokes: Paint[] };
+  const ellipses: EllipsePath[] = [], crossStrokes: (Paint & { from: Vec; to: Vec })[] = [];
+  let ellipse: EllipsePath | undefined, from = { x: 0, y: 0 }, to = { x: 0, y: 0 };
   const ctx = { globalAlpha: 1, strokeStyle: '', fillStyle: '', lineWidth: 1,
-    save() {}, restore() {}, beginPath() {}, fill() {},
-    ellipse(_x: number, _y: number, rx: number) { ellipses.push(rx); },
+    save() {}, restore() {}, beginPath() { ellipse = undefined; },
+    fill(this: { fillStyle: string }) { ellipse?.fills.push(this.fillStyle); },
+    ellipse(x: number, y: number, rx: number, ry: number) {
+      ellipse = { center: { x, y }, rx, ry, fills: [], strokes: [] }; ellipses.push(ellipse);
+    },
     moveTo(x: number, y: number) { from = { x, y }; }, lineTo(x: number, y: number) { to = { x, y }; },
-    stroke(this: { strokeStyle: string }) { strokes.push({ color: this.strokeStyle, from: { ...from }, to: { ...to } }); },
+    stroke(this: { strokeStyle: string; lineWidth: number }) {
+      const paint = { color: this.strokeStyle, width: this.lineWidth };
+      if (ellipse) ellipse.strokes.push(paint);
+      else crossStrokes.push({ ...paint, from: { ...from }, to: { ...to } });
+    },
   } as unknown as CanvasRenderingContext2D;
   const scene = Object.create(CanvasScene.prototype) as CanvasScene;
   (scene as unknown as { drawEffects(ctx: CanvasRenderingContext2D, state: GameState, low: boolean): void }).drawEffects(ctx, state, low);
-  return { ellipses, crossStrokes: strokes.filter(stroke => stroke.color === '#d8ffcf') };
+  return { rings: ellipses.filter(path => path.strokes.length > 0),
+    droplets: ellipses.filter(path => path.fills.length > 0 && path.strokes.length === 0), crossStrokes };
+}
+
+function expectedCross(center: Vec, progress = 0) {
+  const y = center.y - progress * 38;
+  return [{ color: '#496f58', width: 5 }, { color: '#f4e9bf', width: 2.5 }].flatMap(paint => [
+    { ...paint, from: { x: center.x - 8, y }, to: { x: center.x + 8, y } },
+    { ...paint, from: { x: center.x, y: y - 11 }, to: { x: center.x, y: y + 11 } },
+  ]);
 }
 
 describe('repair presentation uses the outcome of the same accepted cast', () => {
@@ -43,9 +61,12 @@ describe('repair presentation uses the outcome of the same accepted cast', () =>
     const before = JSON.stringify(game.state);
     for (const low of [false, true]) {
       const result = draw(game.state, low);
-      expect(result.ellipses).toHaveLength(1);
-      expect(result.ellipses[0]).toBe(success ? 44 : 10);
-      expect(result.crossStrokes).toHaveLength(success ? 2 : 0);
+      expect(result.rings).toEqual([{ center: effect.to, rx: success ? 44 : 10, ry: success ? 44 : 10,
+        fills: ['#a4be9010'], strokes: [{ color: success ? '#6e956d' : '#7a9b7a', width: success ? 2 : 1.5 }] }]);
+      expect(result.crossStrokes).toEqual(success ? expectedCross(effect.to) : []);
+      expect(result.droplets).toEqual(success && !low ? Array.from({ length: 5 }, () => ({
+        center: effect.to, rx: 2.5, ry: 1.7, fills: ['#b0c69b'], strokes: [],
+      })) : []);
     }
     expect(JSON.stringify(game.state)).toBe(before);
   });
@@ -53,14 +74,22 @@ describe('repair presentation uses the outcome of the same accepted cast', () =>
   it('keeps a successful result through pause and independent subsequent attempts', () => {
     const { game, effect } = cast('tissue', 25);
     game.pause(); game.state.events = [];
-    expect(draw(game.state, true).crossStrokes).toHaveLength(2);
+    expect(draw(game.state, true).crossStrokes).toEqual(expectedCross(effect.to));
     game.resume(); game.state.cooldowns[3] = 0; game.state.tissue.hp = game.state.tissue.maxHp;
     game.step({ moveX: 0, moveY: 0, tool: 3, fire: true, aim: { x: 650, y: 500 } });
     const casts = game.state.effects.filter(item => item.kind === 'heal');
     expect(casts).toHaveLength(2);
     expect(casts[0]).toBe(effect);
     expect(casts.map(item => Boolean(item.repairSucceeded))).toEqual([true, false]);
-    expect(draw(game.state, true).crossStrokes).toHaveLength(2);
+    const progress = (game.state.elapsed - effect.born) / effect.duration;
+    const presentation = draw(game.state, true);
+    expect(presentation.crossStrokes).toEqual(expectedCross(effect.to, progress));
+    expect(presentation.rings).toEqual([
+      { center: effect.to, rx: 44 + progress * 17, ry: 44 + progress * 17,
+        fills: ['#a4be9010'], strokes: [{ color: '#6e956d', width: 2 }] },
+      { center: casts[1].to, rx: 10, ry: 10,
+        fills: ['#a4be9010'], strokes: [{ color: '#7a9b7a', width: 1.5 }] },
+    ]);
   });
 
   it.each([

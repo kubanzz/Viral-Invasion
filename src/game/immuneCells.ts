@@ -4,6 +4,7 @@ import type { BeaconState, GrowthCommand, GrowthContext } from './growthTypes';
 import { WORLD, type Target, type Vec, type WorldGeometry } from './types';
 import { activeImmuneFocusTarget, activeImmuneGuard } from './immuneFocus';
 import { eventModifierFromState } from './hostEvents';
+import { territoryInvaderGoal, territoryNodeContaminators, TERRITORY_LANES } from './territory';
 
 export const IMMUNE_CELL_BALANCE = { maximum: 20, maximumLegions: 2, health: 60, radius: 15, speed: 190, biteReach: 9, attackPose: .24, navigationInterval: .35 } as const;
 export const ANTIBODY_BALANCE = { charges: 2, duration: 8, speedMultiplier: 1.4, damageMultiplier: 1.5, healthRetained: 2 / 3 } as const;
@@ -117,6 +118,9 @@ function chooseTarget(cell: ImmuneCellState, beacon: CellBeacon, context: Growth
   // The mother core remains the player's objective; temporary cells clear its defenders.
   // Reserve planned damage so later cells never celebrate biting an already-cleared body.
   const guarding = activeImmuneGuard(beacon, context);
+  const guardedContaminators = guarding && beacon.guard?.kind === 'territory' && context.territory
+    ? new Set(territoryNodeContaminators({ territory: context.territory, targets: context.targets, world: context.geometry }, beacon.guard.regionId).map(target => target.id))
+    : new Set<string>();
   const candidates = context.targets.filter(target => target.role !== 'core' && (remainingHp.get(target.id) ?? target.hp) > 0
     && distance(beacon, target) <= (guarding ? beacon.guard!.radius : beacon.radius) + target.radius);
   if (context.endless && beacon.mode === 'protocol') {
@@ -125,8 +129,28 @@ function chooseTarget(cell: ImmuneCellState, beacon: CellBeacon, context: Growth
     // and do not abandon nearby progress merely to spread the squad out.
     const approachDistance = (target: Target) => distance(cell, target)
       - (target.id === cell.targetId ? ENDLESS_IMMUNE_CELL_BALANCE.targetRetentionDistance : 0);
-    const assault = (target: Target) => target.assaultObjective === 'tissue';
-    return candidates.sort((a, b) => (guarding ? Number(assault(b)) - Number(assault(a)) : 0)
+    const guardPriority = (target: Target): number => {
+      if (!guarding) return 0;
+      const guard = beacon.guard!;
+      if (guardedContaminators.has(target.id)) return 2;
+      if (guard.kind === 'territory' && target.territoryTask?.kind === 'invade') {
+        const destination = territoryInvaderGoal(context, target);
+        if (destination?.id === guard.regionId) return 2;
+        // A previously accepted guard order still intercepts its lane after
+        // the local node falls, while the core only promotes actual core threats.
+        if (guard.regionId !== 'core' && (target.territoryTask.nodeId === guard.regionId
+          || TERRITORY_LANES.some(lane => lane.sourceId === target.territorySourceId
+            && lane.path.some(id => id === guard.regionId)))) return 2;
+        const attacksCore = destination?.kind === 'core';
+        // A successful invader now walks toward the core. The original region
+        // guard above still intercepts its assigned invaders without moving.
+        if (guard.regionId === 'core' && attacksCore) return 2;
+      }
+      if (guard.kind === 'territory' && guard.regionId === 'core' && target.attackTarget === 'tissue'
+        && Number.isFinite(target.attackAt) && target.attackAt! + 1e-7 >= context.elapsed) return 1;
+      return target.assaultObjective === 'tissue' ? 1 : 0;
+    };
+    return candidates.sort((a, b) => guardPriority(b) - guardPriority(a)
       || Number(traceIds.has(b.id)) - Number(traceIds.has(a.id))
       || Number(contact(cell, cell.radius, b, context.geometry)) - Number(contact(cell, cell.radius, a, context.geometry))
       || approachDistance(a) - approachDistance(b) || (assigned.get(a.id) ?? 0) - (assigned.get(b.id) ?? 0) || stableId(a, b))[0];

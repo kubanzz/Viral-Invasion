@@ -30,12 +30,13 @@ test('camera follows real dash steps and pointer input at controlled low frame r
     window.cancelAnimationFrame = handle => { pending.delete(handle); };
   });
   await page.goto(`${entry}?seed=130026`);
-  await page.locator('[data-action="start"]').click();
+  await page.locator('#overlay-host [data-action="endless-start"]').click();
   await expect.poll(() => page.evaluate(() => window.__viral.snapshot().phase)).toBe('playing');
+  const startX = await page.evaluate(() => window.__viral.snapshot().player.x);
   await page.mouse.move(900, 400);
   await page.keyboard.press('Digit1');
   await page.keyboard.down('KeyD');
-  await expect.poll(() => page.evaluate(() => window.__viral.snapshot().player.x), { timeout: 15000 }).toBeGreaterThan(700);
+  await expect.poll(() => page.evaluate(() => window.__viral.snapshot().player.x), { timeout: 15000 }).toBeGreaterThan(startX + 150);
   await page.evaluate(() => {
     type Sample = { time: number; tick: number; x: number; phase: string; dash: boolean; pan: number; shownX: number; events: unknown[] };
     const samples: Sample[] = [];

@@ -1,4 +1,5 @@
 import type { GameEvent, GameState } from './game/types';
+import { PlayerDangerFeedback } from './render/playerDamageFeedback';
 
 type AudioContextFactory = () => AudioContext | undefined;
 const defaultContext: AudioContextFactory = () => typeof AudioContext === 'undefined' ? undefined : new AudioContext();
@@ -11,6 +12,9 @@ export class Soundscape {
   private run = '';
   private readonly cueTicks = new Map<string, number>();
   private readonly activeTones = new Set<{ oscillator: OscillatorNode; cleanup: () => void }>();
+  private readonly dangerFeedback = new PlayerDangerFeedback();
+  private nextHeartbeat = 0;
+  private lastPhase?: GameState['phase'];
 
   constructor(private readonly createContext: AudioContextFactory = defaultContext) {}
 
@@ -37,6 +41,21 @@ export class Soundscape {
     const run = `${state.seed}:${state.growth?.runId ?? 'training'}`;
     if (run !== this.run || state.tick < this.lastTick) {
       this.lastEvent = undefined; this.cueTicks.clear(); this.run = run;
+      this.dangerFeedback.reset(); this.nextHeartbeat=state.tick;
+    }
+    if(state.phase==='paused'||state.phase==='menu'||state.phase==='result'){
+      if(this.lastPhase!==state.phase)for(const tone of [...this.activeTones]){try{tone.oscillator.stop(this.context?.currentTime??0);}catch{/* Already ended. */}tone.cleanup();}
+      this.lastPhase=state.phase;
+      if(state.phase!=='result'){this.lastEvent=state.events.at(-1);this.lastTick=state.tick;return;}
+    }
+    this.lastPhase=state.phase;
+    if(state.player){
+      const danger=this.dangerFeedback.update(state);
+      if(state.phase==='playing'&&danger!=='healthy'&&state.tick>=this.nextHeartbeat){
+        this.nextHeartbeat=state.tick+(danger==='critical'?43:69);
+        this.tone(83,.12,danger==='critical'?.037:.025,49);
+        this.tone(65,.13,danger==='critical'?.029:.018,40,.14);
+      }else if(danger==='healthy')this.nextHeartbeat=state.tick;
     }
     const index = this.lastEvent ? state.events.indexOf(this.lastEvent) : -1;
     const projectileLaunches = new Set(state.events.filter(event => event.type === 'PLAYER_PROJECTILE_LAUNCHED')
@@ -58,7 +77,7 @@ export class Soundscape {
         else if (event.data.tool === 3) this.tone(560, .09, .018, 830);
       });
       if (type === 'PLAYER_PROJECTILE_LAUNCHED' && event.data.kind !== 'sword') this.cue(`fire:${event.data.kind === 'primary' ? 1 : 2}`, event.tick, 4, () => {
-        if (event.data.kind === 'primary') this.tone(1180, .055, .019, 540);
+        if (event.data.kind === 'primary') this.tone(1180, .055, .028, 540);
         else { this.tone(210, .16, .027, 520); this.tone(680, .07, .013, 330, .025); }
       });
       if (type === 'PLAYER_PROJECTILE_HIT' && event.data.kind === 'primary')
@@ -67,6 +86,8 @@ export class Soundscape {
         this.tone(170, .22, .035, 58); this.tone(1040, .1, .019, 360);
       });
       if (type === 'PLAYER_CANNON_AFTERSHOCK') this.cue('cannon-aftershock', event.tick, 6, () => this.tone(380, .14, .018, 110));
+      if(type==='TERRITORY_CANNON_FIRED')this.cue('territory-cannon-fire',event.tick,1,()=>{this.tone(125,.22,.045,54);this.tone(710,.09,.025,210,.025);});
+      if(type==='TERRITORY_CANNON_EXPLODED')this.cue('territory-cannon-impact',event.tick,1,()=>{this.tone(95,.32,.045,32);this.tone(610,.14,.025,150);});
       if (type === 'PLAYER_CHARGE_STARTED') this.cue('charge-start', event.tick, 1, () => this.tone(340, .2, .014, 720));
       if (type === 'PLAYER_CHARGE_FULL') this.cue('charge-full', event.tick, 1, () => {
         this.tone(880, .09, .021, 1100); this.tone(1320, .13, .016, 1540, .07);
@@ -123,7 +144,10 @@ export class Soundscape {
       if (type === 'VIRAL_CAPSULE_RELEASED') this.cue('capsule', event.tick, 18, () => {
         this.tone(350, .08, .025, 490); this.tone(350, .08, .025, 490, .1);
       });
-      if (type === 'PLAYER_HURT') this.cue('player-hurt', event.tick, 6, () => this.tone(210, .2, .035, 90));
+      if (type === 'PLAYER_HURT' && Number(event.data.damage ?? 1)>0) {
+        if(event.data.reason==='infection')this.cue('player-infection-tick',event.tick,6,()=>this.tone(155,.12,.021,105));
+        else this.cue('player-hurt', event.tick, 6, () => this.tone(210, .2, .035, 90));
+      }
       if (type === 'PLAYER_DASHED') this.cue('dash', event.tick, 10, () => this.tone(480, .12, .018, 180));
       if (type === 'RUN_ENDED') this.cue('result', event.tick, 60, () => this.tone(440, .65, .04, 880));
     }

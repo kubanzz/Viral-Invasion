@@ -1,0 +1,476 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "tests/e2e/dualfront-clarity.spec.ts",
+      "--project=chrome"
+    ],
+    "configFile": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\playwright.config.ts",
+    "rootDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/garrison-20261103/e2e-touch-c3/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chrome",
+        "name": "chrome",
+        "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      },
+      {
+        "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/garrison-20261103/e2e-touch-c3/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "edge",
+        "name": "edge",
+        "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\garrison-20261103\\e2e-touch-c3\\results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "chrome",
+        "testDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
+        "snapshotDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 90000,
+        "use": {
+          "browserName": "chromium",
+          "headless": true,
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "deviceScaleFactor": 1,
+          "actionTimeout": 8000,
+          "screenshot": "only-on-failure",
+          "video": "off",
+          "trace": "off",
+          "channel": "chrome"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "chrome"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/garrison-20261103/e2e-touch-c3/report.json"
+        }
+      ],
+      [
+        "html",
+        {
+          "outputFolder": "artifacts/garrison-20261103/e2e-touch-c3/html",
+          "open": "never"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "dualfront-clarity.spec.ts",
+      "file": "dualfront-clarity.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "desktop dual-front clarity",
+          "file": "dualfront-clarity.spec.ts",
+          "line": 175,
+          "column": 6,
+          "specs": [
+            {
+              "title": "real desktop E hold previews, pause cancels without ammo, and release fires exactly once",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chrome",
+                  "projectName": "chrome",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 3906,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m0.1\u001b[39m\nReceived:   \u001b[31m22.575040659976363\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m0.1\u001b[39m\nReceived:   \u001b[31m22.575040659976363\u001b[39m\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\dualfront-clarity.spec.ts:201:135",
+                        "location": {
+                          "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\dualfront-clarity.spec.ts",
+                          "column": 135,
+                          "line": 201
+                        },
+                        "snippet": "  199 |       await expect.poll(async () => (await snapshot(page)).territory!.cannon?.serial ?? 0).toBe(serial + 1);\n  200 |       const after = await snapshot(page), receipt = after.events.filter(event => event.tick > canceled.tick && event.type === 'TERRITORY_CANNON_FIRED');\n> 201 |       expect(receipt).toHaveLength(1); expect(distance({ x: Number(receipt[0].data.x), y: Number(receipt[0].data.y) }, preview!.aim)).toBeLessThan(.1);\n      |                                                                                                                                       ^\n  202 |       expect(after.tool).toBe(before.tool); expect(after.shots).toBeGreaterThan(before.shots);\n  203 |       await finish(page, opened, { trail, before, canceled, preview, after, cancellation: 'Real Escape pause cleared held E; no shell consumed.' });\n  204 |     } finally { await page.mouse.up(); await page.keyboard.up('KeyE'); await keys.release(); }"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\dualfront-clarity.spec.ts",
+                            "column": 135,
+                            "line": 201
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThan\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: < \u001b[32m0.1\u001b[39m\nReceived:   \u001b[31m22.575040659976363\u001b[39m\n\n  199 |       await expect.poll(async () => (await snapshot(page)).territory!.cannon?.serial ?? 0).toBe(serial + 1);\n  200 |       const after = await snapshot(page), receipt = after.events.filter(event => event.tick > canceled.tick && event.type === 'TERRITORY_CANNON_FIRED');\n> 201 |       expect(receipt).toHaveLength(1); expect(distance({ x: Number(receipt[0].data.x), y: Number(receipt[0].data.y) }, preview!.aim)).toBeLessThan(.1);\n      |                                                                                                                                       ^\n  202 |       expect(after.tool).toBe(before.tool); expect(after.shots).toBeGreaterThan(before.shots);\n  203 |       await finish(page, opened, { trail, before, canceled, preview, after, cancellation: 'Real Escape pause cleared held E; no shell consumed.' });\n  204 |     } finally { await page.mouse.up(); await page.keyboard.up('KeyE'); await keys.release(); }\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\dualfront-clarity.spec.ts:201:135"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-03T15:00:54.174Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\garrison-20261103\\e2e-touch-c3\\results\\dualfront-clarity-desktop--70a98--release-fires-exactly-once-chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "failure-observation",
+                          "contentType": "application/json",
+                          "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\garrison-20261103\\e2e-touch-c3\\results\\dualfront-clarity-desktop--70a98--release-fires-exactly-once-chrome\\attachments\\failure-observation-ded27afd13e24f1cadfe0b7c940336d2b127997f.json"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\garrison-20261103\\e2e-touch-c3\\results\\dualfront-clarity-desktop--70a98--release-fires-exactly-once-chrome\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\dualfront-clarity.spec.ts",
+                        "column": 135,
+                        "line": 201
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "d9d340d7c9978c04fd55-69a767face2eec488315",
+              "file": "dualfront-clarity.spec.ts",
+              "line": 177,
+              "column": 3
+            },
+            {
+              "title": "public 0.13 entry exposes seven nodes and only one core/two lanes/one goal HUD",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chrome",
+                  "projectName": "chrome",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4798,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-03T15:00:59.661Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "natural-input-evidence",
+                          "contentType": "application/json",
+                          "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\garrison-20261103\\e2e-touch-c3\\results\\dualfront-clarity-desktop--ed4f5-core-two-lanes-one-goal-HUD-chrome\\attachments\\natural-input-evidence-40053e753cef14fe9f284700eae4bd403ffe23bf.json"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d9d340d7c9978c04fd55-e7e3c52101a45717496f",
+              "file": "dualfront-clarity.spec.ts",
+              "line": 207,
+              "column": 3
+            },
+            {
+              "title": "real WASD reaches a front and distant reticle plus held cannon survive one-key purification",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chrome",
+                  "projectName": "chrome",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6653,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-03T15:01:04.974Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "natural-input-evidence",
+                          "contentType": "application/json",
+                          "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\garrison-20261103\\e2e-touch-c3\\results\\dualfront-clarity-desktop--95da7-urvive-one-key-purification-chrome\\attachments\\natural-input-evidence-55df410f056d8081459194fedf4ff7a9b5374aac.json"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d9d340d7c9978c04fd55-b37db0aa7df409cd3450",
+              "file": "dualfront-clarity.spec.ts",
+              "line": 237,
+              "column": 3
+            },
+            {
+              "title": "leaving the real 150 range pauses accepted progress and returning resumes or exposes the actual blocker",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chrome",
+                  "projectName": "chrome",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5611,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-03T15:01:11.644Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "natural-input-evidence",
+                          "contentType": "application/json",
+                          "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\garrison-20261103\\e2e-touch-c3\\results\\dualfront-clarity-desktop--e36c5--exposes-the-actual-blocker-chrome\\attachments\\natural-input-evidence-635203e22af143687486e28476b2f7c71d0c13b0.json"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d9d340d7c9978c04fd55-0db2d1d3ba08a2962e90",
+              "file": "dualfront-clarity.spec.ts",
+              "line": 256,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "trusted Chrome touch dual-front clarity",
+          "file": "dualfront-clarity.spec.ts",
+          "line": 302,
+          "column": 6,
+          "specs": [
+            {
+              "title": "quick nearby garrison tap keeps the independent movement and primary attack fingers live",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chrome",
+                  "projectName": "chrome",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2993,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-03T15:01:17.276Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "natural-input-evidence",
+                          "contentType": "application/json",
+                          "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\garrison-20261103\\e2e-touch-c3\\results\\dualfront-clarity-trusted--9bf5b-primary-attack-fingers-live-chrome\\attachments\\natural-input-evidence-ef3f79f44d66bcfa37c28dff52116cbc6fe3fc86.json"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d9d340d7c9978c04fd55-89f728caaa8286e52dbe",
+              "file": "dualfront-clarity.spec.ts",
+              "line": 304,
+              "column": 3
+            },
+            {
+              "title": "nearby cannon preview cancels without ammo loss and releases a real shell while retaining primary aim",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chrome",
+                  "projectName": "chrome",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3386,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-03T15:01:20.287Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "natural-input-evidence",
+                          "contentType": "application/json",
+                          "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\garrison-20261103\\e2e-touch-c3\\results\\dualfront-clarity-trusted--23bec-while-retaining-primary-aim-chrome\\attachments\\natural-input-evidence-370b7c775256b17cce4b0b8a6dd381d91c8bab9f.json"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d9d340d7c9978c04fd55-1762b1c5bb1747ed8968",
+              "file": "dualfront-clarity.spec.ts",
+              "line": 328,
+              "column": 3
+            },
+            {
+              "title": "real joystick and primary attack remain live while a third finger taps 3 without a skill preview",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chrome",
+                  "projectName": "chrome",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 4610,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-03T15:01:23.690Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "natural-input-evidence",
+                          "contentType": "application/json",
+                          "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\garrison-20261103\\e2e-touch-c3\\results\\dualfront-clarity-trusted--e140f-s-3-without-a-skill-preview-chrome\\attachments\\natural-input-evidence-80e5a32803604e3aa3bf80a83417c780d70adb34.json"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d9d340d7c9978c04fd55-7473d1af8de5c6d42e0b",
+              "file": "dualfront-clarity.spec.ts",
+              "line": 363,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-03T15:00:53.169Z",
+    "duration": 35488.894,
+    "expected": 6,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

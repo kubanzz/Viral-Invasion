@@ -1,0 +1,58 @@
+{
+  "scope": "Pure Node actual approved immune atlas/source geometry and independent current-state/pause semantics. No browser or game writes.",
+  "checks": {
+    "currentCrawlAccepted": true,
+    "wrongCurrentBiteRejected": true,
+    "existingPausedCrawlFrozenAccepted": true,
+    "newbornPausedWrongCrawlRejected": true
+  },
+  "details": {
+    "current": [
+      {
+        "actorId": "immune-fixture",
+        "validationScope": "current-immune-state",
+        "expectedClip": "crawl",
+        "actualSemanticId": "fantasy.actor.immune.front_right.crawl.00",
+        "matches": true
+      }
+    ],
+    "wrong": [
+      {
+        "actorId": "immune-fixture",
+        "validationScope": "current-immune-state",
+        "expectedClip": "bite",
+        "actualSemanticId": "fantasy.actor.immune.front_right.crawl.00",
+        "matches": false
+      }
+    ],
+    "frozen": [
+      {
+        "actorId": "immune-fixture",
+        "identity": "immune",
+        "required": true,
+        "referenceObservationOrdinal": 1,
+        "currentObservationOrdinal": 2,
+        "expectedSemanticId": "fantasy.actor.immune.front_right.crawl.00",
+        "expectedClip": "crawl",
+        "expectedDirection": "front_right",
+        "actualSemanticId": "fantasy.actor.immune.front_right.crawl.00",
+        "chronological": true,
+        "sameFrame": true,
+        "referenceTruthful": true,
+        "orientation": true,
+        "declaration": true,
+        "matches": true
+      }
+    ],
+    "newborn": [
+      {
+        "actorId": "immune-fixture",
+        "validationScope": "current-immune-state",
+        "expectedClip": "bite",
+        "actualSemanticId": "fantasy.actor.immune.front_right.crawl.00",
+        "matches": false
+      }
+    ]
+  },
+  "pass": true
+}

@@ -1,0 +1,135 @@
+{
+  "id": "scenery.crystal.infected",
+  "kind": "cutout",
+  "sourceSha256": "d8c37220e8079b7b7056512773406080e69a00c42002e8b57d88efbf101119b9",
+  "processing": {
+    "outer": {
+      "method": "border-connected-white-key",
+      "whiteMin": 225,
+      "chromaMax": 40,
+      "matteCleanup": true,
+      "edgeWidth": 2,
+      "removedPixels": 2997642,
+      "cleanedEdgePixels": 1527,
+      "limitations": "White foreground connected directly to a white backdrop is ambiguous. Inspect both black/white QA views before acceptance."
+    },
+    "negativeSpaces": {
+      "method": "reviewed-negative-space-white-matte-cleanup",
+      "kind": "crystal",
+      "clearedPixels": 0,
+      "softenedPixels": 0,
+      "nodeRegion": null,
+      "reason": "Only the coral-root and green-leaf lower region was cleared; cream petals and white highlights are preserved."
+    },
+    "components": {
+      "method": "retain-single-contiguous-reviewed-object",
+      "componentSizes": [
+        1190189,
+        7,
+        6,
+        6,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5
+      ],
+      "retainedComponents": 1,
+      "removedPixels": 6473,
+      "reason": "Source review confirms a single connected crystal/flower or a purple mycelium patch; detached grey-white paper-grain remnants are backdrop, not separate intended objects."
+    },
+    "paletteTreatment": "No palette, hue, saturation, brightness, contrast or tone changes; only white-matte removal."
+  },
+  "transform": {
+    "sourceCanvas": [
+      2048,
+      2048
+    ],
+    "targetCanvas": [
+      1024,
+      1024
+    ],
+    "sourceAnchor": [
+      0.5,
+      0.85
+    ],
+    "targetAnchor": [
+      0.5,
+      0.85
+    ],
+    "targetAnchorPixels": [
+      512,
+      870.4
+    ],
+    "requestedScale": 0.5,
+    "width": 1024,
+    "height": 1024,
+    "left": 0,
+    "top": 0,
+    "method": "shared-full-canvas-scale-and-translation",
+    "alphaBoundsUsedForScaling": false
+  },
+  "image": {
+    "sha256": "271a2decd4450c1ec86349ca211d0f077827e8da152d6cecb0b84470bfc1197f",
+    "bytes": 933180,
+    "width": 1024,
+    "height": 1024,
+    "format": "png",
+    "channels": 4,
+    "hasAlphaChannel": true,
+    "alpha": {
+      "transparent": 747350,
+      "partial": 7927,
+      "opaque": 293299,
+      "transparentFraction": 0.7127285003662109,
+      "visible": 298630,
+      "borderVisible": 0,
+      "whiteVisible": 382
+    },
+    "bbox": [
+      204,
+      152,
+      831,
+      870
+    ],
+    "margins": {
+      "left": 204,
+      "top": 152,
+      "right": 193,
+      "bottom": 154,
+      "minimumFraction": 0.1484375
+    },
+    "luma": {
+      "mean": 164.2405102769358,
+      "standardDeviation": 41.344345601332165,
+      "min": 10.4976,
+      "max": 254.99999999999997
+    }
+  },
+  "output": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\scenery.crystal.infected.png",
+  "previews": {
+    "black": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\scenery.crystal.infected.qa-black.png",
+      "sha256": "94d566eff448c90bcd3db94ef7f74f0e3bc284475af622a8b0d566f29b9a6100",
+      "bytes": 828529
+    },
+    "white": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\scenery.crystal.infected.qa-white.png",
+      "sha256": "0c92351124670c98f0d01e6c2ba97168bc44638d73c196aead5030654df3e925",
+      "bytes": 829051
+    },
+    "alpha": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\scenery.crystal.infected.qa-alpha.png",
+      "sha256": "7b12beed738485f3ab58197faf1e907c4ca1fc5566676329fd65353b3b16b2f2",
+      "bytes": 24108
+    },
+    "black-white": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\scenery.crystal.infected.qa-black-white.png",
+      "sha256": "aaac0e43242dea5db59e6aaf6b6360f77bf9c72ec04730473a6b3c7a224a290b",
+      "bytes": 1019252
+    }
+  }
+}

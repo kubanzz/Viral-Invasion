@@ -1,0 +1,159 @@
+{
+  "sourceSha256": "ae7ce0831fe0ef0e5704bb3c5a931ba0f05e040d93bc0d89fcd2f46feb64b2c4",
+  "processing": {
+    "method": "border-connected-white-key",
+    "whiteMin": 240,
+    "chromaMax": 16,
+    "matteCleanup": true,
+    "edgeWidth": 3,
+    "removedPixels": 3261110,
+    "cleanedEdgePixels": 3451,
+    "limitations": "White foreground connected directly to a white backdrop is ambiguous. Inspect both black/white QA views before acceptance."
+  },
+  "image": {
+    "sha256": "5ea1bc1957a0529cfbc7d0f31ca2de291708d8c8c2652f2cf8b5d94acf2d51ad",
+    "bytes": 2865472,
+    "width": 2048,
+    "height": 2048,
+    "format": "png",
+    "channels": 4,
+    "hasAlphaChannel": true,
+    "alpha": {
+      "transparent": 3261110,
+      "partial": 3451,
+      "opaque": 929743,
+      "transparentFraction": 0.7775092124938965,
+      "visible": 933194,
+      "borderVisible": 0,
+      "whiteVisible": 1339
+    },
+    "bbox": [
+      408,
+      535,
+      1612,
+      1746
+    ],
+    "margins": {
+      "left": 408,
+      "top": 535,
+      "right": 436,
+      "bottom": 302,
+      "minimumFraction": 0.1474609375
+    },
+    "luma": {
+      "mean": 160.76545670378314,
+      "standardDeviation": 56.01831382918974,
+      "min": 4.8898,
+      "max": 254.99999999999997
+    }
+  },
+  "protectedPolygons": [],
+  "restoredPixels": 0,
+  "removedHolePixels": 0,
+  "holeReports": [],
+  "shadowCleanup": null,
+  "rowContourCleanup": null,
+  "semanticMask": null,
+  "componentCleanup": {
+    "method": "reviewed-single-subject-keep-largest-connected-component",
+    "components": 15,
+    "keptPixels": 933180,
+    "discardedPixels": 14,
+    "discardedComponentSizes": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "preservationProbes": [
+    {
+      "label": "dark neutral orifice must remain opaque",
+      "point": [
+        1265,
+        1330
+      ],
+      "expect": "opaque",
+      "before": [
+        37,
+        0,
+        1,
+        255
+      ],
+      "after": [
+        37,
+        0,
+        1,
+        255
+      ]
+    },
+    {
+      "label": "cream head highlight",
+      "point": [
+        1190,
+        800
+      ],
+      "expect": "opaque",
+      "before": [
+        243,
+        180,
+        157,
+        255
+      ],
+      "after": [
+        243,
+        180,
+        157,
+        255
+      ]
+    }
+  ],
+  "finalCutoutImage": {
+    "sha256": "b80d925d09a082a4f806f66a7c136ceb3264b4dec1289b65f3685f422267d179",
+    "bytes": 2865382,
+    "width": 2048,
+    "height": 2048,
+    "format": "png",
+    "channels": 4,
+    "hasAlphaChannel": true,
+    "alpha": {
+      "transparent": 3261124,
+      "partial": 3443,
+      "opaque": 929737,
+      "transparentFraction": 0.7775125503540039,
+      "visible": 933180,
+      "borderVisible": 0,
+      "whiteVisible": 1339
+    },
+    "bbox": [
+      408,
+      535,
+      1612,
+      1742
+    ],
+    "margins": {
+      "left": 408,
+      "top": 535,
+      "right": 436,
+      "bottom": 306,
+      "minimumFraction": 0.1494140625
+    },
+    "luma": {
+      "mean": 160.76527216017294,
+      "standardDeviation": 56.01810484871956,
+      "min": 4.8898,
+      "max": 254.99999999999997
+    }
+  },
+  "caution": "White foreground versus white background is resolved by actual image review and explicit seed/protection annotations, not by global white deletion."
+}

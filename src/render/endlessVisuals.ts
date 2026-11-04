@@ -94,18 +94,18 @@ export function combatReceiptFeedback(state: GameState, lowEffects = false): Com
 export function drawCombatReceiptFeedback(ctx: CanvasRenderingContext2D, state: GameState, lowEffects = false): void {
   const feedback = combatReceiptFeedback(state, lowEffects);
   for (const hit of feedback.hits) {
-    ctx.save(); ctx.globalAlpha = hit.strength; ctx.strokeStyle = '#fff4cf'; ctx.lineWidth = 2;
+    ctx.save(); ctx.globalAlpha = hit.strength; ctx.strokeStyle = '#f1dfb5'; ctx.lineWidth = 2;
     const size = 5 + Math.min(3, hit.count);
     ctx.beginPath(); ctx.moveTo(hit.x - size, hit.y - size); ctx.lineTo(hit.x + size, hit.y + size);
     ctx.moveTo(hit.x + size, hit.y - size); ctx.lineTo(hit.x - size, hit.y + size); ctx.stroke(); ctx.restore();
   }
   for (const kill of feedback.kills) {
-    ctx.save(); ctx.globalAlpha = kill.strength * .75; ctx.strokeStyle = '#d5f7be'; ctx.lineWidth = 2;
-    const spread = 10 + (1 - kill.strength) * 24;
+    ctx.save(); ctx.globalAlpha = kill.strength * .75;
+    const spread = 7 + (1 - kill.strength) * 17;
     for (let index = 0; index < 4; index++) {
       const angle = index / 4 * TAU + .4;
-      ctx.beginPath(); ctx.moveTo(kill.x + Math.cos(angle) * spread, kill.y + Math.sin(angle) * spread);
-      ctx.lineTo(kill.x + Math.cos(angle) * (spread + 7), kill.y + Math.sin(angle) * (spread + 7)); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(kill.x + Math.cos(angle) * spread, kill.y + Math.sin(angle) * spread, 2.4, 1.7, angle, 0, TAU);
+      ctx.fillStyle = index % 2 ? '#a4bc91' : '#e8dcba'; ctx.fill();
     }
     ctx.restore();
   }

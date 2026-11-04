@@ -1,23 +1,41 @@
-import { distance, isLegalPosition } from '../actors/collision';
+import { distance, isLegalPosition, moveWithCollision } from '../actors/collision';
 import type { BeaconState, GrowthContext } from './growthTypes';
 import { GROWTH_BALANCE } from './protocols';
-import type { Target } from './types';
+import type { Target, Vec } from './types';
 
 export const IMMUNE_FOCUS_BALANCE = { duration: 3, aimTolerance: 12, range: GROWTH_BALANCE.scanRadius } as const;
 export const IMMUNE_GUARD_BALANCE = { minimumRank: 3, radius: 300, aimTolerance: 12, commandRange: GROWTH_BALANCE.scanRadius } as const;
 
-/** New orders need scan reach; an accepted guard later uses its tissue anchor. */
-export function isImmuneGuardCommand(context: GrowthContext): boolean {
-  return !!context.endless && context.active && Number.isSafeInteger(context.immuneRank) && context.immuneRank! >= IMMUNE_GUARD_BALANCE.minimumRank
+/** Pick a healthy node at command time. Existing guards continue after ownership changes. */
+export function selectImmuneGuardCommand(context: GrowthContext): { anchor: Vec; guard: NonNullable<BeaconState['guard']> } | undefined {
+  if (context.territory) {
+    if (!context.endless || !context.active || context.tissue.hp <= 0) return;
+    const anchor = moveWithCollision(context.player, { x: 0, y: 0 }, 12, context.geometry);
+    if (!isLegalPosition(anchor, 12, context.geometry)) return;
+    const node = context.territory.nodes.filter(candidate => candidate.owner === 'healthy'
+      && isLegalPosition(candidate, 12, context.geometry)
+      && distance(anchor, candidate) <= 150 + 1e-7)
+      .sort((a, b) => distance(anchor, a) - distance(anchor, b) || a.id.localeCompare(b.id))[0];
+    return { anchor, guard: node ? { kind: 'territory', regionId: node.id, radius: IMMUNE_GUARD_BALANCE.radius }
+      : { kind: 'ground', radius: IMMUNE_GUARD_BALANCE.radius } };
+  }
+  const accepted = !!context.endless && context.active && Number.isSafeInteger(context.immuneRank) && context.immuneRank! >= IMMUNE_GUARD_BALANCE.minimumRank
     && context.tissue.hp > 0 && isLegalPosition(context.tissue, 12, context.geometry)
     && distance(context.player, context.tissue) <= IMMUNE_GUARD_BALANCE.commandRange + 1e-7
     && distance(context.aim, context.tissue) <= context.tissue.radius + IMMUNE_GUARD_BALANCE.aimTolerance + 1e-7;
+  return accepted ? { anchor: { x: context.tissue.x, y: context.tissue.y }, guard: { kind: 'tissue', radius: IMMUNE_GUARD_BALANCE.radius } } : undefined;
+}
+
+/** Legacy callers only need the acceptance fact. */
+export function isImmuneGuardCommand(context: GrowthContext): boolean {
+  return !!selectImmuneGuardCommand(context);
 }
 
 export function activeImmuneGuard(beacon: BeaconState | null | undefined, context: GrowthContext): boolean {
-  return !!context.endless && activeBeacon(beacon, context) && beacon.mode === 'protocol'
-    && beacon.guard?.kind === 'tissue' && beacon.guard.radius === IMMUNE_GUARD_BALANCE.radius
-    && context.tissue.hp > 0;
+  if (!context.endless || !activeBeacon(beacon, context) || beacon.mode !== 'protocol'
+    || beacon.guard?.radius !== IMMUNE_GUARD_BALANCE.radius || context.tissue.hp <= 0) return false;
+  const guard = beacon.guard;
+  return guard.kind === 'ground' || guard.kind === 'tissue' || !!context.territory?.nodes.some(node => node.id === guard.regionId);
 }
 
 function inSquadRegion(target: Target, beacon: BeaconState, context: GrowthContext): boolean {

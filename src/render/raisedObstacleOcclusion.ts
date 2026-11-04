@@ -2,6 +2,7 @@ import { immuneLegions } from '../game/immuneLegions';
 import { activeWorld, type GameState, type Target, type Vec } from '../game/types';
 import type { TraitId } from '../game/battleTypes';
 import { traceVirusOutline } from './battleVisuals';
+import { territoryPlayerFlightHeight } from '../game/territoryCannon';
 import { immuneCellBody, IMMUNE_BODY_LIFT } from './immuneVisuals';
 import type { ImmuneCellState } from '../game/immuneCells';
 import { boundsOf, boundsOverlap, localUpperSilhouette, RAISED_OBSTACLE_FADED_OPACITY, SPRITE_Y_SCALE, upperSilhouetteOverlapsBounds,
@@ -37,11 +38,13 @@ export function playerVisualBounds(state: GameState): VisualBounds {
   const points: Vec[] = [{ x: -25, y: -44 }, { x: 25, y: 6 },
     { x: head.x - head.rx - 1, y: head.y - head.ry - 1 }, { x: head.x + head.rx + 1, y: head.y + head.ry + 1 }];
   const cos = Math.cos(direction), sin = Math.sin(direction), mx = cos * 24, my = sin * 24;
-  for (const [x, y] of [[-11, -6], [18, -6], [18, 6], [-11, 6]]) points.push({ x: mx + x * cos - y * sin, y: my + x * sin + y * cos });
+  // Includes the chunky upper reservoir and the forward nozzle, not the old
+  // thin emitter. These are presentation extents; the collider stays untouched.
+  for (const [x, y] of [[-12, -14], [21, -14], [21, 8], [-12, 8]]) points.push({ x: mx + x * cos - y * sin, y: my + x * sin + y * cos });
   for (const [x, y] of [[12, -25], [24, -15], [mx - 4, my - 5], [mx, my]]) {
     points.push({ x: x - 4, y: y - 4 }, { x: x + 4, y: y + 4 });
   }
-  return projectBounds(boundsOf(points), state.player.x, state.player.y, -bob);
+  return projectBounds(boundsOf(points), state.player.x, state.player.y, -bob-territoryPlayerFlightHeight(state));
 }
 
 // Bounds derive from the same exported outline tracer used by actual enemies.
@@ -55,29 +58,34 @@ function outlineBounds(trait: TraitId | undefined): VisualBounds {
   const bounds = boundsOf(points); virusBounds.set(key, bounds); return bounds;
 }
 export function targetVisualBounds(target: Target, state: GameState): VisualBounds {
-  const r = target.radius, t = state.elapsed, source = target.role === 'source', core = state.campaign?.core.combat;
-  if (!state.battle) {
-    const appendage = r * .93 * 1.28 + (target.kind === 'cluster' ? 6 : 5);
-    return projectBounds({ left: -appendage, right: appendage, top: -appendage, bottom: appendage }, target.x, target.y, -r * .7 + Math.sin(t * 3.2 + target.x) * 2);
-  }
+  const r = target.radius, t = state.elapsed, source = target.role === 'source', core = (state.endless && state.battle?.organId === 'heart' ? state.territory?.bossCombat : undefined) ?? state.campaign?.core.combat;
   if (target.role === 'core' && core?.coreId === target.id) {
     const lift = core.phase === 'windup' ? -3 : core.phase === 'recovery' ? 3 : Math.sin(t * 2.8) * 1.4;
-    // Control-point envelope of the actual body and present traits, plus the
-    // grounded root feet. Absent mantle/crown traits do not inflate the bounds.
-    let width = r * 1.12 + 1.5, top = -r * 1.4 - 1.5, bottom = r * 1.05 + 1.5;
-    if (core.traits.includes('MIMIC')) { width = Math.max(width, r * 1.6 + .75); top = Math.min(top, -r * 1.7 - .75); }
-    if (core.traits.includes('FISSION')) width = Math.max(width, r * 1.11 + 1);
+    // The same round fallback outline, side brood pods and short shell plates.
+    // There is no old translucent mantle or long crystal crown to reserve.
+    const outline = outlineBounds(undefined);
+    let left = outline.left * r - 1.5, right = outline.right * r + 1.5;
+    let top = outline.top * r - 1.5, bottom = outline.bottom * r + 1.5;
+    if (core.traits.includes('FISSION')) {
+      const radius = core.activeTrait === 'FISSION' ? r * .3 : r * .24;
+      left = Math.min(left, -r * .8 - radius - 1); right = Math.max(right, r * .8 + radius + 1);
+      bottom = Math.max(bottom, r * .2 + radius * 1.05 + 1);
+    }
     if (core.traits.includes('CARAPACE')) {
       const spread = Math.max(core.exposedUntil, target.exposedUntil ?? 0) > t ? 1.3 : 1;
-      width = Math.max(width, r * .9 * spread + 12.75); top = Math.min(top, -r * .92 * spread - r * .18 - 22.75);
+      const rx = r * .3, ry = r * .47;
+      const ex = Math.hypot(rx * Math.cos(.55), ry * Math.sin(.55));
+      const ey = Math.hypot(rx * Math.sin(.55), ry * Math.cos(.55));
+      left = Math.min(left, -r * .57 * spread - ex - 1); right = Math.max(right, r * .57 * spread + ex + 1);
+      top = Math.min(top, -r * .48 - ey - 1);
     }
-    const local = { left: -width, right: width, top, bottom };
+    const local = { left, right, top, bottom };
     const result = projectBounds(local, target.x, target.y, -r * .96 + lift);
-    result.left = Math.min(result.left, target.x - r * 1.52 - 1);
-    result.right = Math.max(result.right, target.x + r * 1.52 + 1);
+    result.left = Math.min(result.left, target.x - r * 1.38 - 1);
+    result.right = Math.max(result.right, target.x + r * 1.38 + 1);
     result.bottom = Math.max(result.bottom, target.y * SPRITE_Y_SCALE + 11); return result;
   }
-  const trait = target.traits?.[0], b = outlineBounds(trait), bob = source ? Math.sin(t * 2) * 1.2 : Math.sin(t * 5 + target.x) * 2;
+  const trait = target.traits?.[0] ?? (!state.battle && target.kind === 'cluster' ? 'FISSION' : undefined), b = outlineBounds(trait), bob = source ? Math.sin(t * 2) * 1.2 : Math.sin(t * 5 + target.x) * 2;
   const local = { left: b.left * r - 1.25, right: b.right * r + 1.25, top: b.top * r - 1.25, bottom: b.bottom * r + 1.25 };
   if (trait === 'CARAPACE') { local.left = Math.min(local.left, -r * 1.16 - 1); local.right = Math.max(local.right, r * 1.16 + 1); local.bottom = Math.max(local.bottom, r * 1.16 + 1); }
   if (target.role === 'elite' || target.role === 'core') local.top = Math.min(local.top, -r * 1.08 - 19);

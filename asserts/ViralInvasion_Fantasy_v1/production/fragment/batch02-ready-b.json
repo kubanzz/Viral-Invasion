@@ -1,0 +1,634 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "id": "healingNode.healthy",
+      "outputPath": "production/processed/healingNode.healthy.png",
+      "reportPath": "production/processed/healingNode.healthy.report.json",
+      "runId": "64300587-dee7-4ab4-8c65-8d763b49a65d",
+      "rawPath": "raw/healingNode.healthy/64300587-dee7-4ab4-8c65-8d763b49a65d.png",
+      "processing": {
+        "outer": {
+          "method": "border-connected-white-key",
+          "whiteMin": 225,
+          "chromaMax": 40,
+          "matteCleanup": true,
+          "edgeWidth": 2,
+          "removedPixels": 2652286,
+          "cleanedEdgePixels": 4238,
+          "limitations": "White foreground connected directly to a white backdrop is ambiguous. Inspect both black/white QA views before acceptance."
+        },
+        "negativeSpaces": {
+          "method": "reviewed-negative-space-white-matte-cleanup",
+          "kind": "node",
+          "clearedPixels": 0,
+          "softenedPixels": 0,
+          "reviewedHoles": [
+            {
+              "seed": [
+                1360,
+                1590
+              ],
+              "minimum": 120,
+              "chroma": 90,
+              "region": [
+                600,
+                1450,
+                850,
+                400
+              ],
+              "pixels": 12089
+            },
+            {
+              "seed": [
+                1384,
+                1290
+              ],
+              "minimum": 200,
+              "chroma": 50,
+              "region": [
+                1320,
+                1220,
+                120,
+                180
+              ],
+              "pixels": 1700
+            }
+          ],
+          "reason": "Only separately reviewed enclosed backdrop gaps were flood-cleared; cream petals and white highlights are preserved."
+        },
+        "components": {
+          "method": "retain-single-contiguous-reviewed-object",
+          "componentSizes": [
+            1528210,
+            13,
+            3,
+            2,
+            1
+          ],
+          "retainedComponents": 1,
+          "removedPixels": 19,
+          "reason": "Source review confirms a single connected crystal/flower or a purple mycelium patch; detached grey-white paper-grain remnants are backdrop, not separate intended objects."
+        },
+        "paletteTreatment": "No palette, hue, saturation, brightness, contrast or tone changes; only white-matte removal."
+      },
+      "registration": {
+        "transform": {
+          "sourceCanvas": [
+            2048,
+            2048
+          ],
+          "targetCanvas": [
+            1024,
+            1024
+          ],
+          "sourceAnchor": [
+            0.5,
+            0.85
+          ],
+          "targetAnchor": [
+            0.5,
+            0.85
+          ],
+          "targetAnchorPixels": [
+            512,
+            870.4
+          ],
+          "requestedScale": 0.5,
+          "width": 1024,
+          "height": 1024,
+          "left": 0,
+          "top": 0,
+          "method": "shared-full-canvas-scale-and-translation",
+          "alphaBoundsUsedForScaling": false
+        },
+        "perStateAlphaHeightNormalization": false,
+        "state": "fixed-canvas-and-measured-ground-support",
+        "sameFullCanvasTransform": true,
+        "canonicalVisibleBoundsUnion": [
+          127,
+          146,
+          916,
+          888
+        ],
+        "supportLandmarks": [
+          {
+            "state": "healthy",
+            "support": {
+              "point": [
+                582.1176470588235,
+                885
+              ],
+              "samplePixels": 68
+            },
+            "deltaFromHealthy": [
+              0,
+              0
+            ]
+          },
+          {
+            "state": "infected",
+            "support": {
+              "point": [
+                583.02,
+                886
+              ],
+              "samplePixels": 50
+            },
+            "deltaFromHealthy": [
+              0.9023529411764457,
+              1
+            ]
+          },
+          {
+            "state": "recovering",
+            "support": {
+              "point": [
+                576.8269230769231,
+                884
+              ],
+              "samplePixels": 52
+            },
+            "deltaFromHealthy": [
+              -5.290723981900442,
+              -1
+            ]
+          }
+        ],
+        "rootSupportDefinition": "alpha>=192 central roots, centroid of the lowest four rows within x350..664",
+        "runtimeScaleRule": "Use one group source scale or canonical union bounds; do not resize each state to its own visible alpha height."
+      },
+      "qaPaths": {
+        "black": "production/processed/healingNode.healthy.qa-black.png",
+        "white": "production/processed/healingNode.healthy.qa-white.png",
+        "alpha": "production/processed/healingNode.healthy.qa-alpha.png",
+        "black-white": "production/processed/healingNode.healthy.qa-black-white.png",
+        "overlayinfected": "production/qa/healing-state-healthy-infected-overlay.png",
+        "overlayrecovering": "production/qa/healing-state-healthy-recovering-overlay.png"
+      },
+      "visualReview": {
+        "state": "passed-production-black-white-alpha-review-after-white-petal-repair",
+        "reviewedViews": [
+          "raw-original",
+          "black-background",
+          "white-background",
+          "alpha-channel",
+          "healthy-infected-overlay",
+          "healthy-recovering-overlay"
+        ],
+        "whitePetalRepair": "Removed the broad lower-region key; cream petals retain opaque source pigment. Only individually reviewed backdrop holes were seed-flooded.",
+        "notes": "Healthy open cream/mint flower, infected all gray-purple/dim cross, recovering folded flower. No baked healing effects, range circle, actors, text, UI, or ground shadow.",
+        "mainVisualApproval": false
+      }
+    },
+    {
+      "id": "healingNode.infected",
+      "outputPath": "production/processed/healingNode.infected.png",
+      "reportPath": "production/processed/healingNode.infected.report.json",
+      "runId": "a1271ade-4b69-4ef4-8dd1-c5410157ceec",
+      "rawPath": "raw/healingNode.infected/a1271ade-4b69-4ef4-8dd1-c5410157ceec.png",
+      "processing": {
+        "outer": {
+          "method": "border-connected-white-key",
+          "whiteMin": 225,
+          "chromaMax": 40,
+          "matteCleanup": true,
+          "edgeWidth": 2,
+          "removedPixels": 2653502,
+          "cleanedEdgePixels": 2703,
+          "limitations": "White foreground connected directly to a white backdrop is ambiguous. Inspect both black/white QA views before acceptance."
+        },
+        "negativeSpaces": {
+          "method": "reviewed-negative-space-white-matte-cleanup",
+          "kind": "node",
+          "clearedPixels": 0,
+          "softenedPixels": 0,
+          "reviewedHoles": [
+            {
+              "seed": [
+                1360,
+                1590
+              ],
+              "minimum": 120,
+              "chroma": 90,
+              "region": [
+                600,
+                1450,
+                850,
+                400
+              ],
+              "pixels": 11963
+            },
+            {
+              "seed": [
+                1384,
+                1290
+              ],
+              "minimum": 200,
+              "chroma": 50,
+              "region": [
+                1320,
+                1220,
+                120,
+                180
+              ],
+              "pixels": 1682
+            }
+          ],
+          "reason": "Only separately reviewed enclosed backdrop gaps were flood-cleared; cream petals and white highlights are preserved."
+        },
+        "components": {
+          "method": "retain-single-contiguous-reviewed-object",
+          "componentSizes": [
+            1526885,
+            13,
+            4,
+            2,
+            2,
+            2,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "retainedComponents": 1,
+          "removedPixels": 272,
+          "reason": "Source review confirms a single connected crystal/flower or a purple mycelium patch; detached grey-white paper-grain remnants are backdrop, not separate intended objects."
+        },
+        "paletteTreatment": "No palette, hue, saturation, brightness, contrast or tone changes; only white-matte removal."
+      },
+      "registration": {
+        "transform": {
+          "sourceCanvas": [
+            2048,
+            2048
+          ],
+          "targetCanvas": [
+            1024,
+            1024
+          ],
+          "sourceAnchor": [
+            0.5,
+            0.85
+          ],
+          "targetAnchor": [
+            0.5,
+            0.85
+          ],
+          "targetAnchorPixels": [
+            512,
+            870.4
+          ],
+          "requestedScale": 0.5,
+          "width": 1024,
+          "height": 1024,
+          "left": 0,
+          "top": 0,
+          "method": "shared-full-canvas-scale-and-translation",
+          "alphaBoundsUsedForScaling": false
+        },
+        "perStateAlphaHeightNormalization": false,
+        "state": "fixed-canvas-and-measured-ground-support",
+        "sameFullCanvasTransform": true,
+        "canonicalVisibleBoundsUnion": [
+          127,
+          146,
+          916,
+          888
+        ],
+        "supportLandmarks": [
+          {
+            "state": "healthy",
+            "support": {
+              "point": [
+                582.1176470588235,
+                885
+              ],
+              "samplePixels": 68
+            },
+            "deltaFromHealthy": [
+              0,
+              0
+            ]
+          },
+          {
+            "state": "infected",
+            "support": {
+              "point": [
+                583.02,
+                886
+              ],
+              "samplePixels": 50
+            },
+            "deltaFromHealthy": [
+              0.9023529411764457,
+              1
+            ]
+          },
+          {
+            "state": "recovering",
+            "support": {
+              "point": [
+                576.8269230769231,
+                884
+              ],
+              "samplePixels": 52
+            },
+            "deltaFromHealthy": [
+              -5.290723981900442,
+              -1
+            ]
+          }
+        ],
+        "rootSupportDefinition": "alpha>=192 central roots, centroid of the lowest four rows within x350..664",
+        "runtimeScaleRule": "Use one group source scale or canonical union bounds; do not resize each state to its own visible alpha height."
+      },
+      "qaPaths": {
+        "black": "production/processed/healingNode.infected.qa-black.png",
+        "white": "production/processed/healingNode.infected.qa-white.png",
+        "alpha": "production/processed/healingNode.infected.qa-alpha.png",
+        "black-white": "production/processed/healingNode.infected.qa-black-white.png",
+        "overlayinfected": "production/qa/healing-state-healthy-infected-overlay.png",
+        "overlayrecovering": "production/qa/healing-state-healthy-recovering-overlay.png"
+      },
+      "visualReview": {
+        "state": "passed-production-black-white-alpha-review-after-white-petal-repair",
+        "reviewedViews": [
+          "raw-original",
+          "black-background",
+          "white-background",
+          "alpha-channel",
+          "healthy-infected-overlay",
+          "healthy-recovering-overlay"
+        ],
+        "whitePetalRepair": "Removed the broad lower-region key; cream petals retain opaque source pigment. Only individually reviewed backdrop holes were seed-flooded.",
+        "notes": "Healthy open cream/mint flower, infected all gray-purple/dim cross, recovering folded flower. No baked healing effects, range circle, actors, text, UI, or ground shadow.",
+        "mainVisualApproval": false
+      }
+    },
+    {
+      "id": "healingNode.recovering",
+      "outputPath": "production/processed/healingNode.recovering.png",
+      "reportPath": "production/processed/healingNode.recovering.report.json",
+      "runId": "e699a82c-0a6f-4bc2-9cd5-ed68eb7ba451",
+      "rawPath": "raw/healingNode.recovering/e699a82c-0a6f-4bc2-9cd5-ed68eb7ba451.png",
+      "processing": {
+        "outer": {
+          "method": "border-connected-white-key",
+          "whiteMin": 225,
+          "chromaMax": 40,
+          "matteCleanup": true,
+          "edgeWidth": 2,
+          "removedPixels": 3035089,
+          "cleanedEdgePixels": 2805,
+          "limitations": "White foreground connected directly to a white backdrop is ambiguous. Inspect both black/white QA views before acceptance."
+        },
+        "negativeSpaces": {
+          "method": "reviewed-negative-space-white-matte-cleanup",
+          "kind": "node",
+          "clearedPixels": 0,
+          "softenedPixels": 0,
+          "reviewedHoles": [
+            {
+              "seed": [
+                720,
+                1538
+              ],
+              "minimum": 120,
+              "chroma": 90,
+              "region": [
+                600,
+                1450,
+                850,
+                400
+              ],
+              "pixels": 2817
+            },
+            {
+              "seed": [
+                1280,
+                1600
+              ],
+              "minimum": 120,
+              "chroma": 90,
+              "region": [
+                600,
+                1450,
+                850,
+                400
+              ],
+              "pixels": 8835
+            },
+            {
+              "seed": [
+                824,
+                1372
+              ],
+              "minimum": 225,
+              "chroma": 40,
+              "region": [
+                740,
+                1300,
+                200,
+                180
+              ],
+              "pixels": 2640
+            }
+          ],
+          "reason": "Only separately reviewed enclosed backdrop gaps were flood-cleared; cream petals and white highlights are preserved."
+        },
+        "components": {
+          "method": "retain-single-contiguous-reviewed-object",
+          "componentSizes": [
+            1144678,
+            22,
+            17,
+            16,
+            11,
+            10,
+            8,
+            6,
+            6,
+            6,
+            6,
+            4
+          ],
+          "retainedComponents": 1,
+          "removedPixels": 245,
+          "reason": "Source review confirms a single connected crystal/flower or a purple mycelium patch; detached grey-white paper-grain remnants are backdrop, not separate intended objects."
+        },
+        "paletteTreatment": "No palette, hue, saturation, brightness, contrast or tone changes; only white-matte removal."
+      },
+      "registration": {
+        "transform": {
+          "sourceCanvas": [
+            2048,
+            2048
+          ],
+          "targetCanvas": [
+            1024,
+            1024
+          ],
+          "sourceAnchor": [
+            0.5,
+            0.85
+          ],
+          "targetAnchor": [
+            0.5,
+            0.85
+          ],
+          "targetAnchorPixels": [
+            512,
+            870.4
+          ],
+          "requestedScale": 0.5,
+          "width": 1024,
+          "height": 1024,
+          "left": 0,
+          "top": 0,
+          "method": "shared-full-canvas-scale-and-translation",
+          "alphaBoundsUsedForScaling": false
+        },
+        "perStateAlphaHeightNormalization": false,
+        "state": "fixed-canvas-and-measured-ground-support",
+        "sameFullCanvasTransform": true,
+        "canonicalVisibleBoundsUnion": [
+          127,
+          146,
+          916,
+          888
+        ],
+        "supportLandmarks": [
+          {
+            "state": "healthy",
+            "support": {
+              "point": [
+                582.1176470588235,
+                885
+              ],
+              "samplePixels": 68
+            },
+            "deltaFromHealthy": [
+              0,
+              0
+            ]
+          },
+          {
+            "state": "infected",
+            "support": {
+              "point": [
+                583.02,
+                886
+              ],
+              "samplePixels": 50
+            },
+            "deltaFromHealthy": [
+              0.9023529411764457,
+              1
+            ]
+          },
+          {
+            "state": "recovering",
+            "support": {
+              "point": [
+                576.8269230769231,
+                884
+              ],
+              "samplePixels": 52
+            },
+            "deltaFromHealthy": [
+              -5.290723981900442,
+              -1
+            ]
+          }
+        ],
+        "rootSupportDefinition": "alpha>=192 central roots, centroid of the lowest four rows within x350..664",
+        "runtimeScaleRule": "Use one group source scale or canonical union bounds; do not resize each state to its own visible alpha height."
+      },
+      "qaPaths": {
+        "black": "production/processed/healingNode.recovering.qa-black.png",
+        "white": "production/processed/healingNode.recovering.qa-white.png",
+        "alpha": "production/processed/healingNode.recovering.qa-alpha.png",
+        "black-white": "production/processed/healingNode.recovering.qa-black-white.png",
+        "overlayinfected": "production/qa/healing-state-healthy-infected-overlay.png",
+        "overlayrecovering": "production/qa/healing-state-healthy-recovering-overlay.png"
+      },
+      "visualReview": {
+        "state": "passed-production-black-white-alpha-review-after-white-petal-repair",
+        "reviewedViews": [
+          "raw-original",
+          "black-background",
+          "white-background",
+          "alpha-channel",
+          "healthy-infected-overlay",
+          "healthy-recovering-overlay"
+        ],
+        "whitePetalRepair": "Removed the broad lower-region key; cream petals retain opaque source pigment. Only individually reviewed backdrop holes were seed-flooded.",
+        "notes": "Healthy open cream/mint flower, infected all gray-purple/dim cross, recovering folded flower. No baked healing effects, range circle, actors, text, UI, or ground shadow.",
+        "mainVisualApproval": false
+      }
+    }
+  ],
+  "registration": {
+    "sameFullCanvasTransform": true,
+    "perStateAlphaHeightNormalization": false,
+    "canonicalVisibleBoundsUnion": [
+      127,
+      146,
+      916,
+      888
+    ],
+    "supportLandmarks": [
+      {
+        "state": "healthy",
+        "support": {
+          "point": [
+            582.1176470588235,
+            885
+          ],
+          "samplePixels": 68
+        },
+        "deltaFromHealthy": [
+          0,
+          0
+        ]
+      },
+      {
+        "state": "infected",
+        "support": {
+          "point": [
+            583.02,
+            886
+          ],
+          "samplePixels": 50
+        },
+        "deltaFromHealthy": [
+          0.9023529411764457,
+          1
+        ]
+      },
+      {
+        "state": "recovering",
+        "support": {
+          "point": [
+            576.8269230769231,
+            884
+          ],
+          "samplePixels": 52
+        },
+        "deltaFromHealthy": [
+          -5.290723981900442,
+          -1
+        ]
+      }
+    ],
+    "rootSupportDefinition": "alpha>=192 central roots, centroid of the lowest four rows within x350..664",
+    "state": "fixed-canvas-and-measured-ground-support",
+    "runtimeScaleRule": "Use one group source scale or canonical union bounds; do not resize each state to its own visible alpha height."
+  },
+  "pending": [
+    "infection.edge.b r02 open arc extraction"
+  ]
+}

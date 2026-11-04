@@ -117,23 +117,28 @@ describe('essential danger presentation (recorded drawing, not human readability
     expect(JSON.stringify(state)).toBe(before);
   });
 
-  it('actually composites the real crisis after foreground/effects and defers its text to the final screen pass', () => {
+  it('actually composites the real crisis after all raised scenery/effects and defers its text to the final screen pass', () => {
     const state = readSnapshot('artifacts/completion-v074/browser/full-1/output/encounters-v070-Formal-enc-2953d-real-stages-and-clean-retry-chrome/formal-evidence.json', ['milestones', 'window']);
     const before = JSON.stringify(state); freeze(state);
     for (const low of [false, true]) {
       const drawn = recorder(), actual = renderer(drawn), crisis = state.campaign!.encounters!.crisis;
       const source = state.targets.find(target => target.id === crisis.sourceId)!;
       const stages = actual as unknown as Record<string, (...args: unknown[]) => void>;
-      for (const name of ['drawForeground', 'drawEffects']) {
+      const paintEntity = stages.paintEntity.bind(actual);
+      vi.spyOn(stages, 'paintEntity').mockImplementation((...args: unknown[]) => {
+        paintEntity(...args);
+        if ((args[1] as { kind: string }).kind === 'obstacle') drawn.record('stageEnd', ['raisedScenery']);
+      });
+      for (const name of ['drawEffects']) {
         const original = stages[name].bind(actual);
         vi.spyOn(stages, name).mockImplementation((...args: unknown[]) => { original(...args); drawn.record('stageEnd', [name]); });
       }
       actual.render(state, state.player, { lowEffects: low });
-      const foreground = drawn.paints.findIndex(p => p.method === 'stageEnd' && p.args[0] === 'drawForeground');
+      const scenery = drawn.paints.flatMap((p, index) => p.method === 'stageEnd' && p.args[0] === 'raisedScenery' ? [index] : []);
       const effects = drawn.paints.findIndex(p => p.method === 'stageEnd' && p.args[0] === 'drawEffects');
       const sourceRing = drawn.paints.findIndex(p => p.method === 'ellipse' && p.args[0] === source.x && p.args[1] === source.y && p.args[2] === source.radius + 12);
       const countdown = drawn.paints.findIndex(p => p.method === 'fillText' && p.args[0] === `冲击 ${crisis.chargeRemaining.toFixed(1)}s`);
-      expect(foreground).toBeGreaterThan(-1); expect(effects).toBeGreaterThan(foreground);
+      expect(scenery.length).toBeGreaterThan(0); expect(effects).toBeGreaterThan(Math.max(...scenery));
       expect(sourceRing).toBeGreaterThan(effects); expect(countdown).toBeGreaterThan(sourceRing);
       expect(drawn.paints[countdown].matrix).toEqual([1, 0, 0, 1, 0, 0]);
       expect(drawn.paints[sourceRing].alpha).toBeGreaterThan(0);
@@ -187,7 +192,7 @@ describe('essential danger presentation (recorded drawing, not human readability
     expect(JSON.stringify(state)).toBe(before);
   });
 
-  it('retains every real serialized ordinary windup with its circle, inner dash, progress and X in both production modes', () => {
+  it('retains every real serialized ordinary windup with its true circle, progress and X in both production modes', () => {
     const state = readSnapshot('artifacts/completion-v074/performance/attempt-1/dense-standard-state.json');
     const threats = state.targets.filter(t => t.hp > 0 && t.attackAim && t.attackAt! > state.elapsed);
     expect(threats).toHaveLength(4); const before = JSON.stringify(state); freeze(state);
@@ -208,7 +213,6 @@ describe('essential danger presentation (recorded drawing, not human readability
         expect(circles).toHaveLength(sameAim.length);
         const progress = 1 - Math.max(0, Math.min(1, (target.attackAt! - state.elapsed) / BATTLE_BALANCE.attackWindup));
         const cue = dangers;
-        expect(cue.some(p => p.method === 'ellipse' && p.args.slice(0, 4).join() === [aim.x, aim.y, radius * .76, radius * .76].join() && p.dash.join() === '4,5')).toBe(true);
         expect(cue.some(p => p.method === 'arc' && p.args.slice(0, 4).join() === [aim.x, aim.y, radius + 5, -Math.PI / 2].join() && Math.abs(Number(p.args[4]) - (-Math.PI / 2 + Math.PI * 2 * progress)) < 1e-8)).toBe(true);
         for (const [from, to] of [ [[aim.x - 5, aim.y - 4], [aim.x + 5, aim.y + 4]], [[aim.x - 5, aim.y + 4], [aim.x + 5, aim.y - 4]] ]) {
           expect(cue.some(p => p.method === 'moveTo' && p.args.join() === from.join())).toBe(true);

@@ -9,15 +9,17 @@ import { artIconMarkup } from './artIcons';
 import { ANTIBODY_BALANCE } from '../game/immuneCells';
 import { endlessTutorialHint } from './endlessTutorial';
 import { chargedSlashProgress, CHARGED_SLASH_BALANCE } from '../game/chargedSlash';
+import { territoryHudView } from './territoryHud';
+import { isTerritoryPlayerAirborne, territoryCannonView } from '../game/territoryCannon';
 
 const escape = (value: string) => value.replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]!));
 const seconds = (readyAt: number, elapsed: number) => Math.max(0, readyAt - elapsed);
 const cooldownRing = '<svg class="mobile-cooldown-ring" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29" /></svg>';
 
 /** Kept outside #hud: modals make that element inert while paused. */
-export const mobileHudMarkup = `<section id="mobile-controls" aria-label="触屏操作" data-layout="moba-v3" data-active="false" data-phase="menu">
+export const mobileHudMarkup = `<section id="mobile-controls" aria-label="触屏操作" data-layout="moba-v4" data-active="false" data-phase="menu">
   <button type="button" id="mobile-map-button" class="mobile-map" data-action="mobile-map" aria-label="打开战况与完整地图"><canvas id="mobile-minimap" width="192" height="116" aria-hidden="true"></canvas></button>
-  <div class="mobile-readouts" aria-label="战场状态"><div class="mobile-hp-line"><span>耐久</span><b id="mobile-hp">100</b></div><div class="mobile-hp-track"><i id="mobile-hp-fill"></i></div><div class="mobile-status-line"><span id="mobile-organ-readout">心脏 <b id="mobile-tissue">70%</b></span><span class="mobile-campaign-readout">感 <b id="mobile-infection">0%</b></span><span class="mobile-campaign-readout">稳 <b id="mobile-vitality">100%</b></span></div><div class="mobile-organ-track"><i id="mobile-tissue-fill"></i></div></div>
+  <div class="mobile-readouts" aria-label="战场状态"><div class="mobile-hp-line"><span>耐久</span><b id="mobile-hp">100</b></div><div class="mobile-hp-track"><i id="mobile-hp-fill"></i></div><div class="mobile-status-line"><span id="mobile-organ-readout">心脏 <b id="mobile-tissue">70%</b></span><span class="mobile-campaign-readout">感 <b id="mobile-infection">0%</b></span><span class="mobile-campaign-readout">稳 <b id="mobile-vitality">100%</b></span></div><div class="mobile-organ-track"><i id="mobile-tissue-fill"></i></div><div id="mobile-combat-readout" class="mobile-combat-readout"></div></div>
   <nav class="mobile-top-actions"><button type="button" data-action="mobile-details" aria-label="打开战况与地图">☷</button><button type="button" data-action="pause" aria-label="暂停游戏">Ⅱ</button></nav>
   <div class="mobile-objective"><span id="mobile-objective-text"></span><b id="mobile-wave"></b></div>
   <div class="mobile-warning-strip" id="mobile-warnings" role="status" aria-live="polite" hidden></div>
@@ -27,7 +29,7 @@ export const mobileHudMarkup = `<section id="mobile-controls" aria-label="触屏
   <div class="mobile-actions">
     <button type="button" class="mobile-skill" data-touch-skill="2" data-cooldown="2" aria-label="裂解，按住瞄准，松手施放">${artIconMarkup('chain')}<span class="stick-knob"></span>${cooldownRing}<span class="mobile-cooldown" id="mobile-area-ready"></span><span class="mobile-caption">裂解</span></button>
     <button type="button" class="mobile-skill" data-touch-skill="3" data-cooldown="3" aria-label="修复，按住瞄准组织或治疗点，松手施放">${artIconMarkup('heal')}<span class="stick-knob"></span>${cooldownRing}<span class="mobile-cooldown" id="mobile-heal-ready"></span><span class="mobile-caption">修复</span></button>
-    <button type="button" class="mobile-skill" data-touch-skill="scan" data-cooldown="scan" aria-label="扫描与军团指挥，按住瞄准，松手施放">${artIconMarkup('scan')}<span class="stick-knob"></span>${cooldownRing}<span class="mobile-cooldown" id="mobile-scan-ready"></span><span class="mobile-caption">免疫</span></button>
+    <button type="button" class="mobile-skill" data-touch-skill="scan" data-cooldown="scan" aria-label="扫描与军团指挥，按住瞄准，松手施放">${artIconMarkup('scan')}<span class="stick-knob"></span>${cooldownRing}<span class="mobile-cooldown" id="mobile-scan-ready"></span><span class="mobile-caption">驻防</span><span id="mobile-garrison-count" class="mobile-charge"></span></button>
     <button type="button" class="mobile-aux" data-touch-action="dash" data-cooldown="dash" aria-label="冲刺">${artIconMarkup('dash')}${cooldownRing}<span class="mobile-cooldown" id="mobile-dash-ready"></span><span class="mobile-caption">冲刺</span><span class="mobile-charge-state" id="mobile-charge-ready" hidden>长按剑气</span><svg class="mobile-charge-ring" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="26" /></svg></button>
     <button type="button" class="mobile-aux" data-touch-action="interact" data-cooldown="interact" aria-label="交互，靠近装置"><span class="interact-glyph" aria-hidden="true">⌁</span>${cooldownRing}<span class="mobile-cooldown" id="mobile-interact-ready"></span><span class="mobile-caption" id="mobile-interact-label">交互</span></button>
     <button type="button" class="mobile-aux" data-touch-action="antibody" data-cooldown="antibody" aria-label="注射抗体">${artIconMarkup('chain')}${cooldownRing}<span class="mobile-cooldown" id="mobile-antibody-ready"></span><span class="mobile-charge" id="mobile-antibody-charges">2</span><span class="mobile-caption">抗体</span></button>
@@ -39,7 +41,7 @@ export const mobileHudMarkup = `<section id="mobile-controls" aria-label="触屏
   <div id="mobile-rotate-notice" role="dialog" aria-modal="true" aria-label="请横屏游玩" hidden><div><span aria-hidden="true">↻</span><h2>请横屏游玩</h2><p>战斗已暂停。横屏后点击继续，重新按下摇杆。</p></div></div>
 </section>`;
 
-export const mobileDetailsMarkup = `<div class="overlay mobile-details-overlay"><section class="modal mobile-details-dialog" role="dialog" aria-modal="true" aria-label="战况与地图"><header><div><div class="eyebrow">FIELD STATUS</div><h2>战况与地图</h2></div><button type="button" data-action="mobile-close-details">返回</button></header><p class="mobile-details-help">当前战斗已暂停。查看器官风险、军团、协议和地图。</p><div id="mobile-details-content"></div><div class="actions"><button type="button" data-action="help">操作指南</button><button type="button" data-action="history">战术记录</button><button type="button" class="primary" data-action="mobile-close-details">返回战场</button></div></section></div>`;
+export const mobileDetailsMarkup = `<div class="overlay mobile-details-overlay"><section class="modal mobile-details-dialog" role="dialog" aria-modal="true" aria-label="战况与地图"><header><div><div class="eyebrow">FIELD STATUS</div><h2>战况与地图</h2></div><button type="button" data-action="mobile-close-details">返回</button></header><p class="mobile-details-help">当前战斗已暂停。查看器官风险、军团、协议和地图。</p><p id="mobile-stability-details" hidden></p><div id="mobile-details-content"></div><div class="actions"><button type="button" data-action="help">操作指南</button><button type="button" data-action="history">战术记录</button><button type="button" class="primary" data-action="mobile-close-details">返回战场</button></div></section></div>`;
 
 const detailSelectors = '.objective,.telemetry,.growth-panel,.organ-overview,.endless-wave-panel,.endless-vitals,.endless-build-panel,.endless-navigation,.host-event-card,.mother-core-panel,.evolution-card,#endless-evolution-warning';
 const movedPanels: { element: HTMLElement; marker: Comment }[] = [];
@@ -93,6 +95,7 @@ function activeNotice(state: GameState): string {
 }
 
 function shortObjective(state: GameState): string {
+  if (state.territory) return territoryHudView(state)?.objective ?? '';
   if (state.endless) return state.endless.phase === 'warning' ? '敌群来袭' : state.endless.phase === 'intermission' ? '整理构筑' : state.endless.eliteWave ? '净化精英' : '净化本波敌群';
   const campaign = state.campaign;
   if (campaign) {
@@ -114,7 +117,10 @@ export function mobileHudView(state: GameState): MobileHudView {
     const warning = state.battle.warning;
     if (warning) warnings.push({ kind: 'mutation', text: `${TRAITS[warning.trait].name} ${Math.max(0, warning.applyAt - state.elapsed).toFixed(1)}s` });
   }
-  if (state.endless && state.tissue.hp < 30) warnings.push({ kind: 'organ', text: `组织濒危 ${Math.ceil(state.tissue.hp)}%` });
+  if (state.endless && !state.territory && state.tissue.hp < 30) warnings.push({ kind: 'organ', text: `组织濒危 ${Math.ceil(state.tissue.hp)}%` });
+  const noHealthySpring = !!state.territory && !state.territory.nodes.some(node => node.kind === 'healing' && node.owner === 'healthy');
+  if (state.playerInfection && state.playerInfection.until > state.elapsed) warnings.push({ kind: 'fatal', text: `已感染 ${Math.ceil(state.playerInfection.until - state.elapsed)}秒 · ${noHealthySpring ? '先夺回生命泉' : '前往健康生命泉'}` });
+  if (state.player.hp / hostEventMaxHp(state) <= .3) warnings.unshift({ kind: 'fatal', text: noHealthySpring ? '耐久低 · 先夺回生命泉' : state.player.hp / hostEventMaxHp(state) <= .15 ? '耐久濒危 · 立即回泉' : '耐久低 · 前往健康生命泉' });
   const pending = state.endless?.evolution?.pending;
   if (pending) warnings.push({ kind: 'mutation', text: `${pending.decision.generation}代 ${pending.decision.traits.map(trait => TRAITS[trait].name).join('/')} ${Math.max(0, pending.appliesAt - state.elapsed).toFixed(1)}s` });
   const opening = state.endless?.evolution?.opening;
@@ -156,6 +162,10 @@ export function mobileHudView(state: GameState): MobileHudView {
     : { label: '交互', hint: '靠近', nearby: false };
   if (!state.battle && Math.hypot(state.terminal.x - state.player.x, state.terminal.y - state.player.y) <= BALANCE.interactionRange) Object.assign(interaction, { label: '复测', hint: '可用', nearby: true });
   if (nearby?.id === 'airway') interaction.label = state.campaign?.arenas.lung.flow?.airwayOpen ? '关气道' : '开气道';
+  if (state.territory) {
+    const cannon = territoryCannonView(state);
+    Object.assign(interaction, { label: cannon?.ready ? '弹射' : '装填', hint: cannon?.ready ? '按住选落点，松手弹射' : `装填 ${Math.ceil(cannon?.remaining ?? 0)}秒`, nearby: !!cannon?.nearby });
+  }
   return { hp: `${Math.ceil(state.player.hp)}/${hostEventMaxHp(state)}`, tissue: `${Math.ceil(state.tissue.hp / state.tissue.maxHp * 100)}%`,
     organ: state.battle?.organId === 'lung' ? '肺部' : '心脏', infection: state.battle && !state.endless ? `${Math.ceil(state.battle.pressure.infection)}%` : '', vitality: state.battle && !state.endless ? `${Math.ceil(state.battle.pressure.vitality)}%` : '',
     objective: shortObjective(state), notice: endlessTutorialHint(state, true) || activeNotice(state), wave: state.endless ? `第${state.endless.wave}波 · 剩余${endlessRemaining(state)}` : '', warnings: warnings.map(warning => ({ ...warning, text: touchCopy(warning.text) })), interaction };
@@ -183,10 +193,11 @@ export function mobileCooldownViews(state: GameState): Record<MobileCooldownKey,
   return {
     attack: cooldownState(state.cooldowns[1], state.elapsed, combat?.primaryCooldown ?? BALANCE.cooldowns[1]),
     2: cooldownState(state.cooldowns[2], state.elapsed, combat?.areaCooldown ?? BALANCE.cooldowns[2]),
-    3: cooldownState(state.cooldowns[3], state.elapsed, BALANCE.cooldowns[3]),
+    3: state.territory ? cooldownState(0, state.elapsed, 1) : cooldownState(state.cooldowns[3], state.elapsed, BALANCE.cooldowns[3]),
     scan: cooldownState(state.scanReady, state.elapsed, combat?.scanCooldown ?? BALANCE.scanCooldown),
     dash: cooldownState(state.player.dashReady, state.elapsed, BALANCE.dashCooldown),
-    interact: cooldownState(0, state.elapsed, 1),
+    interact: state.territory ? { remaining: territoryCannonView(state)?.remaining ?? 0,
+      ratio: 1 - (territoryCannonView(state)?.progress ?? 1), label: (territoryCannonView(state)?.remaining ?? 0) > 0 ? String(Math.ceil(territoryCannonView(state)!.remaining)) : '' } : cooldownState(0, state.elapsed, 1),
     antibody: cooldownState(boostUntil, state.elapsed, ANTIBODY_BALANCE.duration),
   };
 }
@@ -209,16 +220,19 @@ export function copyMobileMinimap(state: GameState): void {
 export function updateMobileHud(state: GameState, flags: MobileHudFlags = {}): void {
   const root = document.getElementById('mobile-controls');
   if (!root) return;
-  const view = mobileHudView(state), active = state.phase === 'playing' && !flags.blocked && !flags.portrait;
+  const view = mobileHudView(state), active = state.phase === 'playing' && !flags.blocked && !flags.portrait && !isTerritoryPlayerAirborne(state);
   root.dataset.phase = state.phase; root.dataset.active = String(active);
   const set = (id: string, value: string) => { const element = document.getElementById(id); if (element && element.textContent !== value) element.textContent = value; };
   set('mobile-hp', view.hp); set('mobile-tissue', view.tissue); set('mobile-infection', view.infection); set('mobile-vitality', view.vitality);
   const hpFill = document.getElementById('mobile-hp-fill'), tissueFill = document.getElementById('mobile-tissue-fill');
+  root.dataset.lowHp = String(state.player.hp / hostEventMaxHp(state) <= .3);
   if (hpFill) hpFill.style.width = `${Math.max(0, Math.min(100, state.player.hp / hostEventMaxHp(state) * 100))}%`;
   if (tissueFill) tissueFill.style.width = `${Math.max(0, Math.min(100, state.tissue.hp / state.tissue.maxHp * 100))}%`;
   const organ = document.getElementById('mobile-organ-readout');
   if (organ?.firstChild) organ.firstChild.textContent = `${view.organ} `;
   set('mobile-objective-text', view.objective); set('mobile-wave', view.wave);
+  const combat = state.endlessGrowth ? endlessCombatStats(state.endlessGrowth) : undefined;
+  set('mobile-combat-readout', state.territory ? `余敌${endlessRemaining(state)} · ${combat?.shotRays ?? 1}弹` : '');
   const notice = document.getElementById('mobile-notice');
   if (notice) { if (notice.textContent !== view.notice) notice.textContent = view.notice; notice.hidden = !view.notice; }
   const strip = document.getElementById('mobile-warnings');
@@ -226,6 +240,21 @@ export function updateMobileHud(state: GameState, flags: MobileHudFlags = {}): v
   set('mobile-interact-label', view.interaction.label);
   const legion = legionView(state);
   set('mobile-antibody-charges', String(legion.charges)); set('mobile-cast-label', '净化');
+  set('mobile-garrison-count', state.territory ? `${legion.squads}/2` : '');
+  const garrison = root.querySelector<HTMLButtonElement>('[data-touch-skill="scan"]');
+  if (garrison) {
+    const caption = garrison.querySelector<HTMLElement>('.mobile-caption'); if (caption) caption.textContent = state.territory ? '驻防' : '免疫';
+    garrison.setAttribute('aria-label', state.territory ? '脚下驻防，点按立即部署；满两支时最近军团向脚下行军，保留生命与人数' : '扫描与军团指挥，按住瞄准，松手施放');
+  }
+  const territoryView = territoryHudView(state), stabilityDetails = document.getElementById('mobile-stability-details');
+  if (stabilityDetails) { stabilityDetails.hidden = !territoryView; stabilityDetails.textContent = territoryView ? `${territoryView.stability} · ${territoryView.stabilityDetail}` : ''; }
+  // Never remove an owned control while another captured finger is active.
+  if (root.dataset.pointerHeld !== 'true') {
+    const interact = root.querySelector<HTMLButtonElement>('[data-touch-action="interact"]');
+    if (interact) interact.hidden = !!state.territory && !view.interaction.nearby;
+    const antibody = root.querySelector<HTMLButtonElement>('[data-touch-action="antibody"]');
+    if (antibody) antibody.hidden = !!state.territory && !(legion.count > 0 && legion.charges > 0);
+  }
   const cooldowns = mobileCooldownViews(state);
   const charge = mobileChargeView(state), dash = root.querySelector<HTMLButtonElement>('[data-touch-action="dash"]');
   const chargeLabel = document.getElementById('mobile-charge-ready');
@@ -240,6 +269,12 @@ export function updateMobileHud(state: GameState, flags: MobileHudFlags = {}): v
     const caption = area.querySelector<HTMLElement>('.mobile-caption'); if (caption) caption.textContent = state.endless ? '能量炮' : '裂解';
     area.setAttribute('aria-label', state.endless ? '净化能量炮，按住瞄准，松手发射' : '裂解，按住瞄准，松手施放');
   }
+  const cleanse = root.querySelector<HTMLButtonElement>('[data-touch-skill="3"]');
+  if (cleanse) {
+    const caption = cleanse.querySelector<HTMLElement>('.mobile-caption'); if (caption) caption.textContent = state.territory ? '修复/净化' : '修复';
+    cleanse.setAttribute('aria-label', state.territory ? '附近净化，点按净化附近感染节点或修复心核，不切换武器' : '修复，按住瞄准组织或治疗点，松手施放');
+    if (caption && state.territory) caption.textContent = '附近净化';
+  }
   const cooldownIds: Record<MobileCooldownKey, string> = { attack: 'mobile-cast-ready', 2: 'mobile-area-ready', 3: 'mobile-heal-ready', scan: 'mobile-scan-ready', dash: 'mobile-dash-ready', interact: 'mobile-interact-ready', antibody: 'mobile-antibody-ready' };
   for (const button of root.querySelectorAll<HTMLButtonElement>('[data-cooldown]')) {
     const key = button.dataset.cooldown as MobileCooldownKey, status = cooldowns[key];
@@ -247,7 +282,7 @@ export function updateMobileHud(state: GameState, flags: MobileHudFlags = {}): v
     button.style.setProperty('--cooldown', String(status.ratio));
     button.dataset.cooling = String(status.remaining > 0);
     set(cooldownIds[key], status.label);
-    const available = key === 'attack' || key === 'dash' && !!state.endless && charge.remaining <= 0 || (key === 'antibody' ? legion.enabled : key === 'interact' ? view.interaction.nearby : status.remaining <= 0);
+    const available = key === 'attack' || key === '3' && !!state.territory || key === 'dash' && !!state.endless && charge.remaining <= 0 || (key === 'antibody' ? legion.enabled : key === 'interact' ? view.interaction.nearby : status.remaining <= 0);
     // A committed guided skill still owns its finger through cooldown. Only a
     // global input gate may disable it before that real pointer is released.
     button.disabled = !active || button.dataset.active !== 'true' && !available;

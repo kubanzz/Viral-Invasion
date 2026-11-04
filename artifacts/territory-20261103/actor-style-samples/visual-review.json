@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "scope": "Style/scale acceptance of three single-pose source masters only. Zero authored animation frame credit; no final product or natural play acceptance.",
+  "reviewedAt": "2026-11-02T22:13:05.042Z",
+  "reviewers": [
+    "fantasy_progression",
+    "root"
+  ],
+  "status": "style-scale-samples-approved-hero-badge-revision-pending",
+  "runtimeSha256": "21c4765c915974c1537b8dd849bca109d205960fe4385b9361ffc18be40a52fc",
+  "sourceMasters": [
+    {
+      "id": "fantasy.actor.hero.front_right.master",
+      "path": "sources/hero/front_right/master_v02.png",
+      "sha256": "22f1acec027e79dd555c7ef30db9720039402ed529f5cc2a0ced601a865832c1",
+      "styleAccepted": true,
+      "finalMasterApproved": false,
+      "runtimeFrameCredit": 0,
+      "notes": "Silhouette and palette fit the scene. Helmet medical emblem must be enlarged in v03 before the hero master transform is locked."
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.master",
+      "path": "sources/immune/front_right/master_v01.png",
+      "sha256": "3e5420b6e4735a248dba6389f164a4dcedeb6becd0dea868533caa4079a7467f",
+      "styleAccepted": true,
+      "finalMasterApproved": true,
+      "runtimeFrameCredit": 0,
+      "notes": "Source alpha, palette and small-screen identity accepted; subsequent real frame groups still need individual review."
+    },
+    {
+      "id": "fantasy.actor.enemy.basic.master",
+      "path": "sources/enemy/basic/master_v02.png",
+      "sha256": "d0fb7dbaca350444a4afcbed3a5044a98e3edcec02a4b9dcaa7d38c42f6d5f07",
+      "styleAccepted": true,
+      "finalMasterApproved": true,
+      "runtimeFrameCredit": 0,
+      "notes": "Source alpha, palette and small-screen identity accepted; subsequent real frame groups still need individual review."
+    }
+  ],
+  "commonCanvasScales": {
+    "heroCanvasHeight": 128,
+    "enemyCanvasHeightPerRadius": 4.1,
+    "immuneCanvasHeightPerRadius": 3.5,
+    "independentAlphaFit": false
+  },
+  "actualCssEnvelopes": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "cameraScale": 1.25,
+      "file": "1440x900-enemy-4.1.png",
+      "heights": [
+        {
+          "identity": "hero",
+          "semanticId": "fantasy.actor.hero.front_right.master",
+          "native": true,
+          "visibleCssHeight": 127.8125,
+          "visibleCssWidth": 99.6875,
+          "sourceFoot": {
+            "x": 256,
+            "y": 435.2
+          },
+          "groupReady": false
+        },
+        {
+          "identity": "enemy.basic",
+          "semanticId": "fantasy.actor.enemy.basic.master",
+          "native": true,
+          "visibleCssHeight": 47.56640624999999,
+          "visibleCssWidth": 53.33203124999999,
+          "sourceFoot": {
+            "x": 256,
+            "y": 435.2
+          },
+          "groupReady": false
+        },
+        {
+          "identity": "immune",
+          "semanticId": "fantasy.actor.immune.front_right.master",
+          "native": true,
+          "visibleCssHeight": 43.707275390625,
+          "visibleCssWidth": 45.88623046874999,
+          "sourceFoot": {
+            "x": 256,
+            "y": 435.2
+          },
+          "groupReady": false
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "width": 667,
+        "height": 320
+      },
+      "cameraScale": 0.62,
+      "file": "667x320-enemy-4.1.png",
+      "heights": [
+        {
+          "identity": "hero",
+          "semanticId": "fantasy.actor.hero.front_right.master",
+          "native": true,
+          "visibleCssHeight": 63.39500000000001,
+          "visibleCssWidth": 49.445,
+          "sourceFoot": {
+            "x": 256,
+            "y": 435.2
+          },
+          "groupReady": false
+        },
+        {
+          "identity": "enemy.basic",
+          "semanticId": "fantasy.actor.enemy.basic.master",
+          "native": true,
+          "visibleCssHeight": 23.592937499999998,
+          "visibleCssWidth": 26.4526875,
+          "sourceFoot": {
+            "x": 256,
+            "y": 435.2
+          },
+          "groupReady": false
+        },
+        {
+          "identity": "immune",
+          "semanticId": "fantasy.actor.immune.front_right.master",
+          "native": true,
+          "visibleCssHeight": 21.678808593750002,
+          "visibleCssWidth": 22.7595703125,
+          "sourceFoot": {
+            "x": 256,
+            "y": 435.2
+          },
+          "groupReady": false
+        }
+      ]
+    }
+  ],
+  "comparison": {
+    "enemyFactor3Rejected": "At 667x320 and .62 scale, the actual 17.263px basic body is too small; at 4.1 the actual 23.593px body retains angry eyes/mouth without competing with player or scenery.",
+    "heroAndImmune": "Hero actual63.395px and immune actual21.679px stay distinguishable at the tested small-screen viewport."
+  },
+  "evidence": [
+    "report.json",
+    "1440x900-enemy-3.png",
+    "1440x900-enemy-4.1.png",
+    "667x320-enemy-3.png",
+    "667x320-enemy-4.1.png"
+  ]
+}

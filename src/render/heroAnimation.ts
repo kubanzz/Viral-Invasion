@@ -1,6 +1,7 @@
 import { BALANCE, type GameState } from '../game/types';
 import { heroArtPose, sourceRegisteredSpriteLayout, type RegisteredSpriteLayout, type SourceRegisteredSpriteAsset } from './spriteGeometry';
 import type { HeroGait } from './heroRig';
+import type { HeroLocomotion } from './heroLocomotion';
 
 export type HeroClip = 'idle' | 'walk' | 'hurt' | 'dash';
 const CLIP_COUNTS: Record<HeroClip, number> = { idle: 4, walk: 8, hurt: 2, dash: 4 };
@@ -8,6 +9,14 @@ const GROUP_PREFIX = 'hero.front_right.';
 const REFERENCE_ID = `${GROUP_PREFIX}idle.00`;
 export const HERO_HURT_REACTION_SECONDS = .15;
 const EPSILON = 1e-8;
+
+/** Two authored views and an X reflection produce four honest aim views. */
+export function heroFacingDirection(facing: number) {
+  const authoredDirection = Math.sin(facing) < 0 ? 'back_right' : 'front_right';
+  const flipX = Math.cos(facing) < 0;
+  const direction = flipX ? authoredDirection.replace('_right', '_left') : authoredDirection;
+  return { authoredDirection, direction, flipX } as const;
+}
 
 export interface HeroAnimationAsset extends SourceRegisteredSpriteAsset { animation?: unknown; aliasOf?: string }
 interface FrameMetadata { group: string; index: number; fps: number; frameCount: number; approved: true }
@@ -58,7 +67,8 @@ export function approvedHeroAnimationClips(assets: Readonly<Record<string, HeroA
 }
 
 /** Action timing is derived exclusively from the serialized simulation clock and accepted damage events. */
-export function requestedHeroAnimation(state: Pick<GameState, 'player' | 'elapsed' | 'tick' | 'events'>): { clip: HeroClip; age?: number; duration?: number } {
+export function requestedHeroAnimation(state: Pick<GameState, 'player' | 'elapsed' | 'tick' | 'events'> & Partial<Pick<GameState,'playerFlight'>>): { clip: HeroClip; age?: number; duration?: number } {
+  if(state.playerFlight)return {clip:'dash',age:Math.max(0,state.elapsed-state.playerFlight.born),duration:state.playerFlight.landsAt-state.playerFlight.born};
   const elapsed = state.elapsed, dashStart = state.player.dashUntil - BALANCE.dashDuration;
   if (elapsed < state.player.dashUntil && elapsed >= dashStart - EPSILON) return { clip: 'dash', age: Math.max(0, elapsed - dashStart), duration: BALANCE.dashDuration };
   if (elapsed < state.player.hurtUntil) {
@@ -87,13 +97,13 @@ export class HeroAnimationController {
     this.gait = { phase: 0, amount: 0, lean: 0 }; this.gaitSample = undefined; }
 
   /** Observing a shot between rendered frames must not advance the displayed gait. */
-  preview(state: GameState): HeroFramePresentation {
+  preview(state: GameState, locomotion?: Readonly<HeroLocomotion>): HeroFramePresentation {
     const saved = { run: this.run, lastElapsed: this.lastElapsed, lastTick: this.lastTick, loop: this.loop,
       enteredAt: this.enteredAt, last: this.last, gait: this.gait, gaitSample: this.gaitSample };
-    const frame = this.select(state); Object.assign(this, saved); return frame;
+    const frame = this.select(state,locomotion); Object.assign(this, saved); return frame;
   }
 
-  select(state: GameState): HeroFramePresentation {
+  select(state: GameState, locomotion?: Readonly<HeroLocomotion>): HeroFramePresentation {
     const run = `${state.seed}:${state.runMetrics?.runId ?? state.growth?.runId ?? ''}`;
     if (run !== this.run || state.elapsed < this.lastElapsed || state.tick < this.lastTick || state.phase === 'menu') this.reset();
     this.run = run; this.lastElapsed = state.elapsed; this.lastTick = state.tick;
@@ -101,7 +111,9 @@ export class HeroAnimationController {
     // clip as well as its index, rather than changing a paused walk into idle.
     if (state.phase !== 'playing' && this.last) return this.last;
     const time = state.visualTime ?? state.elapsed;
-    const request = requestedHeroAnimation(state), clip = this.clips[request.clip];
+    const request = requestedHeroAnimation(state);
+    if(locomotion&&(request.clip==='walk'||request.clip==='idle'))request.clip=locomotion.moving?'walk':'idle';
+    const clip = this.clips[request.clip];
     if (request.clip === 'idle' || request.clip === 'walk') {
       if (this.loop !== request.clip) { this.loop = request.clip; this.enteredAt = time; }
     } else this.loop = undefined;
@@ -114,11 +126,16 @@ export class HeroAnimationController {
     } else {
       const index = request.duration !== undefined
         ? Math.min(clip.frames.length - 1, Math.floor((request.age! / request.duration) * clip.frames.length + EPSILON))
-        : Math.floor(Math.max(0, time - this.enteredAt) * clip.fps + EPSILON) % clip.frames.length;
+        : locomotion&&request.clip==='walk'?Math.floor(locomotion.cycle*clip.frames.length+EPSILON)%clip.frames.length
+          : Math.floor(Math.max(0, time - this.enteredAt) * clip.fps + EPSILON) % clip.frames.length;
       const frame = clip.frames[index];
       this.last = { id: frame.id, clip: request.clip, index, animated: true, flipX: Math.cos(state.player.facing) < 0, lift: 0, layout: frame.layout };
     }
     if (!this.clips.walk && this.last.layout && state.phase !== 'menu') {
+      if(locomotion){
+        this.gait={phase:locomotion.cycle*Math.PI*2,amount:locomotion.moving?1:0,lean:locomotion.lean};
+        return this.last={...this.last,gait:{...this.gait}};
+      }
       const p = state.player, previous = this.gaitSample, dt = previous ? time - previous.time : 0;
       if (previous && dt > 0 && dt < .2) {
         const dx = p.x - previous.x, distance = Math.hypot(dx, p.y - previous.y);

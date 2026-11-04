@@ -4,16 +4,24 @@ export interface CameraViewport { left: number; top: number; right: number; bott
 /** Offsets from the player's ground anchor in projected world units. Upright
  * sprite Y offsets are not compressed by yScale. */
 export interface CameraPlayerFrame { left: number; top: number; right: number; bottom: number }
-// The 86-unit registered hero, native rig padding and independently aimed
-// 36-unit emitter all fit this envelope; an asset-geometry regression checks it.
-export const CAMERA_PLAYER_FRAME: Readonly<CameraPlayerFrame> = Object.freeze({ left: -64, top: -104, right: 64, bottom: 28 });
+// The registered hero and independently aimed emitter must fit this envelope;
+// an asset-geometry regression checks every selected body frame and tool angle.
+export const CAMERA_PLAYER_FRAME: Readonly<CameraPlayerFrame> = Object.freeze({ left: -64, top: -112, right: 64, bottom: 28 });
 export interface CameraFollowOptions {
   deltaSeconds?: number;
   snap?: boolean;
   aim?: Vec;
+  /** Ground footprint around an aimed landing, e.g. the central heavy cannon. */
+  aimRadius?: number;
   viewport?: CameraViewport;
   playerFrame?: Readonly<CameraPlayerFrame>;
+  /** Normal combat readability, in CSS pixels per world unit. A distant skill
+   * preview may still zoom out to keep its real endpoint and the player visible. */
+  minimumScale?: number;
 }
+
+/** Normal compact combat keeps actor details readable; source alpha determines visible height. */
+export const COMPACT_COMBAT_MINIMUM_SCALE = .62;
 
 /** Visual projection only: simulation and collision always use the XY plane. */
 export class Camera {
@@ -40,12 +48,17 @@ export class Camera {
   }
   /** Large arenas keep combat readable instead of shrinking the whole organ. */
   follow(point: Vec, world: WorldGeometry, options: CameraFollowOptions = {}): void {
-    if (world.width <= 1200 && world.height <= 800) { this.resize(this.width, this.height); return; }
+    const overviewScale = Math.min(this.width / 1440, this.height / 900);
+    const minimumScale = typeof options.minimumScale === 'number' && Number.isFinite(options.minimumScale)
+      && options.minimumScale > 0 ? Math.min(2, options.minimumScale) : 0;
+    const overview = world.width <= 1200 && world.height <= 800;
+    if (overview && minimumScale <= overviewScale) { this.resize(this.width, this.height); return; }
     const key = `${world.width}:${world.height}`;
     const dt = options.deltaSeconds;
     const snap = options.snap || this.followScope !== key || dt === undefined || !Number.isFinite(dt);
     const blend = snap ? 1 : 1 - Math.exp(-Math.max(0, Math.min(.1, dt)) / .09);
-    const baseScale = Math.min(this.width / 1152, this.height / 720);
+    const fittedScale = overview ? overviewScale : Math.min(this.width / 1152, this.height / 720);
+    const baseScale = Math.max(minimumScale, fittedScale);
     const aim = options.aim && Number.isFinite(options.aim.x) && Number.isFinite(options.aim.y) ? options.aim : undefined;
     const requested = options.viewport;
     const viewport = requested && [requested.left, requested.top, requested.right, requested.bottom].every(Number.isFinite)
@@ -59,8 +72,9 @@ export class Camera {
       && suppliedFrame.left < suppliedFrame.right && suppliedFrame.top < suppliedFrame.bottom ? suppliedFrame : CAMERA_PLAYER_FRAME;
     const body = { left: point.x + frame.left, right: point.x + frame.right,
       top: point.y * this.yScale + frame.top, bottom: point.y * this.yScale + frame.bottom };
-    const framed = aim ? { left: Math.min(body.left, aim.x), right: Math.max(body.right, aim.x),
-      top: Math.min(body.top, aim.y * this.yScale), bottom: Math.max(body.bottom, aim.y * this.yScale) } : body;
+    const aimRadius=typeof options.aimRadius==='number'&&Number.isFinite(options.aimRadius)?Math.max(0,options.aimRadius):0;
+    const framed = aim ? { left: Math.min(body.left, aim.x-aimRadius), right: Math.max(body.right, aim.x+aimRadius),
+      top: Math.min(body.top, (aim.y-aimRadius) * this.yScale), bottom: Math.max(body.bottom, (aim.y+aimRadius) * this.yScale) } : body;
     let targetScale = baseScale;
     if (aim) {
       const fitX = (viewport.right - viewport.left - 40) / (framed.right - framed.left);
@@ -69,8 +83,14 @@ export class Camera {
       // foot. The former .72 floor could not fit that union on short phones.
       // Keep a bounded readable floor for impossible, out-of-range points and
       // a small fit allowance so eased zoom reaches the safe interval promptly.
-      targetScale = Math.max(baseScale * .5, Math.min(baseScale, Math.min(fitX, fitY) * .98));
+      // A real landing footprint may need more room between desktop HUD
+      // panels than a point preview. Ordinary aim keeps its prior scale floor.
+      const floor=aimRadius>0?Math.min(fittedScale*.5,.12):fittedScale*.5;
+      targetScale = Math.max(floor, Math.min(baseScale, Math.min(fitX, fitY) * .98));
       this.framingScale ??= this.scale;
+      // Do not advertise a footprint underneath the HUD while easing out.
+      // New/upward flight poses fit immediately; returning zoom remains eased.
+      if(aimRadius>0&&targetScale<this.scale)this.framingScale=targetScale;
     }
     if (this.framingScale !== undefined) {
       this.framingScale += (targetScale - this.framingScale) * blend;

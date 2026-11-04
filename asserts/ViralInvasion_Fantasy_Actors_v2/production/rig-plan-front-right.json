@@ -1,0 +1,2255 @@
+{
+  "schemaVersion": 1,
+  "status": "paused-await-new-centered-hold-and-eight-view-review",
+  "assetId": "fantasy.actor.hero.front_right.master",
+  "direction": "front_right",
+  "scope": {
+    "writes": "this JSON only",
+    "formalFramesWritten": 0,
+    "maskImagesWritten": 0,
+    "oldRigCoordinatesUsed": false,
+    "backRightAvailable": false
+  },
+  "source": {
+    "runId": "ad1fb31d-2823-4b85-82e6-78974145e195",
+    "originalPath": "../raw/fantasy.actor.hero.front_right.master/ad1fb31d-2823-4b85-82e6-78974145e195.png",
+    "originalSha256": "b61a2baab9f21735090872af7030b6bb87cdb8e17c5b7bcd49158ccbaaed6d15",
+    "currentCrossRevisionPath": "../raw/fantasy.actor.hero.front_right.master/ad1fb31d-2823-4b85-82e6-78974145e195-cross-v03.png",
+    "currentCrossRevisionSha256": "5ff59259ad1562bb60d5849f90a8382a04fbd392cb5d7b6a57115686818b440f",
+    "anatomy": "Cross-only revision has the same measured body geometry. Head/cross remain a single layer.",
+    "canvas": [
+      2048,
+      2048
+    ],
+    "rawHasAuthoredAlpha": false,
+    "inspectedEvidence": [
+      "runs.json",
+      "raw original actual image",
+      "qa/hero-source-lower-detail.png",
+      "processed/fantasy.actor.hero.front_right.master.png",
+      "sample-processing.spec.json",
+      "samples.fragment.json"
+    ],
+    "coordinateConvention": "full source pixel-edge coordinates; normalized point = sourcePx / [2048,2048]; masks are coarse review-only ROIs, not final segmentations",
+    "canonicalPath": "../sources/hero/front_right/master_v03.png",
+    "canonicalSha256": "2c75e43f1574900eb0325c219b04296b0780cc07f90e5906f3d91da66a8ce876"
+  },
+  "viewNaming": {
+    "near": "screen-left/down, larger leg and arm",
+    "far": "screen-right/up, smaller leg and arm",
+    "anatomicalSide": "not inferred"
+  },
+  "registration": {
+    "observedOnly": true,
+    "locked": true,
+    "from": "samples.fragment.json hero transform",
+    "sourceCanvas": [
+      2048,
+      2048
+    ],
+    "observedUniformScale": 0.25,
+    "observedTranslationPx": [
+      -7.1875,
+      -25.3
+    ],
+    "observedSourceLogicalFootPx": [
+      1052.75,
+      1842
+    ],
+    "observedTargetLogicalAnchorPx": [
+      256,
+      435.2
+    ],
+    "applyRule": "Wait for root to lock final alpha/full-canvas registration; then apply that ONE matrix to every joint, polygon, mask and frame in this direction. Do not independently normalize pieces/frames by alpha bbox.",
+    "caution": "Logical entity anchor is not either shoe contact. Individual near/far contacts retain perspective depth; keep their separately measured baselines."
+  },
+  "joints": {
+    "bodyCenter": {
+      "sourcePx": [
+        1080,
+        1270
+      ],
+      "normalizedToSourceCanvas": [
+        0.52734375,
+        0.6201171875
+      ],
+      "observedRegistration512PreviewPx": [
+        262.8125,
+        292.2
+      ],
+      "confidenceSourcePx": 24,
+      "note": "胸甲/骨盆控制中心；此点是新图绑定建议，不是实体接地锚点。",
+      "toolAttachmentAllowed": false
+    },
+    "pelvis": {
+      "sourcePx": [
+        1070,
+        1404
+      ],
+      "normalizedToSourceCanvas": [
+        0.5224609375,
+        0.685546875
+      ],
+      "observedRegistration512PreviewPx": [
+        260.3125,
+        325.7
+      ],
+      "confidenceSourcePx": 20,
+      "note": "两腿连接的骨盆控制点，隐藏结构仍需补绘确认。",
+      "toolAttachmentAllowed": false
+    },
+    "neck": {
+      "sourcePx": [
+        1096,
+        1084
+      ],
+      "normalizedToSourceCanvas": [
+        0.53515625,
+        0.529296875
+      ],
+      "observedRegistration512PreviewPx": [
+        266.8125,
+        245.7
+      ],
+      "confidenceSourcePx": 20,
+      "note": "头盔下缘与深蓝领口附近的旋转中心，初始头倾限制约±1°。",
+      "toolAttachmentAllowed": false
+    },
+    "nearShoulder": {
+      "sourcePx": [
+        785,
+        1120
+      ],
+      "normalizedToSourceCanvas": [
+        0.38330078125,
+        0.546875
+      ],
+      "observedRegistration512PreviewPx": [
+        189.0625,
+        254.7
+      ],
+      "confidenceSourcePx": 20,
+      "note": "screen-left/down肩甲中心，手臂近侧。",
+      "toolAttachmentAllowed": false
+    },
+    "nearElbow": {
+      "sourcePx": [
+        655,
+        1275
+      ],
+      "normalizedToSourceCanvas": [
+        0.31982421875,
+        0.62255859375
+      ],
+      "observedRegistration512PreviewPx": [
+        156.5625,
+        293.45
+      ],
+      "confidenceSourcePx": 20,
+      "note": "近侧上臂灰蓝甲与薄荷/奶白前臂连接区域；需切片精修。",
+      "toolAttachmentAllowed": false
+    },
+    "nearWrist": {
+      "sourcePx": [
+        548,
+        1380
+      ],
+      "normalizedToSourceCanvas": [
+        0.267578125,
+        0.673828125
+      ],
+      "observedRegistration512PreviewPx": [
+        129.8125,
+        319.7
+      ],
+      "confidenceSourcePx": 16,
+      "note": "腕圈与奶白手套连接中心，仅作为辅助点，初稿前臂手合层。",
+      "toolAttachmentAllowed": false
+    },
+    "nearGrip": {
+      "sourcePx": [
+        570,
+        1485
+      ],
+      "normalizedToSourceCanvas": [
+        0.2783203125,
+        0.72509765625
+      ],
+      "observedRegistration512PreviewPx": [
+        135.3125,
+        345.95
+      ],
+      "confidenceSourcePx": 12,
+      "note": "新图近手拇指内凹持物中心；与样板处理人工标注一致。",
+      "toolAttachmentAllowed": false
+    },
+    "farShoulder": {
+      "sourcePx": [
+        1402,
+        1071
+      ],
+      "normalizedToSourceCanvas": [
+        0.6845703125,
+        0.52294921875
+      ],
+      "observedRegistration512PreviewPx": [
+        343.3125,
+        242.45
+      ],
+      "confidenceSourcePx": 20,
+      "note": "screen-right/up肩甲中心，部分被头盔覆盖。",
+      "toolAttachmentAllowed": false
+    },
+    "farElbow": {
+      "sourcePx": [
+        1493,
+        1174
+      ],
+      "normalizedToSourceCanvas": [
+        0.72900390625,
+        0.5732421875
+      ],
+      "observedRegistration512PreviewPx": [
+        366.0625,
+        268.2
+      ],
+      "confidenceSourcePx": 18,
+      "note": "远臂弯折附近，现阶段整臂小幅摆动，暂不独立拆肘。",
+      "toolAttachmentAllowed": false
+    },
+    "farWrist": {
+      "sourcePx": [
+        1510,
+        1220
+      ],
+      "normalizedToSourceCanvas": [
+        0.7373046875,
+        0.595703125
+      ],
+      "observedRegistration512PreviewPx": [
+        370.3125,
+        279.7
+      ],
+      "confidenceSourcePx": 16,
+      "note": "远手腕圈连接区域，仅作为辅助点。",
+      "toolAttachmentAllowed": false
+    },
+    "farGrip": {
+      "sourcePx": [
+        1570,
+        1250
+      ],
+      "normalizedToSourceCanvas": [
+        0.7666015625,
+        0.6103515625
+      ],
+      "observedRegistration512PreviewPx": [
+        385.3125,
+        287.2
+      ],
+      "confidenceSourcePx": 12,
+      "note": "新图远手C形内凹持物中心；与样板处理人工标注一致。",
+      "toolAttachmentAllowed": false
+    },
+    "nearHip": {
+      "sourcePx": [
+        875,
+        1420
+      ],
+      "normalizedToSourceCanvas": [
+        0.42724609375,
+        0.693359375
+      ],
+      "observedRegistration512PreviewPx": [
+        211.5625,
+        329.7
+      ],
+      "confidenceSourcePx": 20,
+      "note": "近侧奶白大腿插入骨盆的上部中心；被骨盆遮挡的上端未画出。",
+      "toolAttachmentAllowed": false
+    },
+    "nearKnee": {
+      "sourcePx": [
+        855,
+        1577
+      ],
+      "normalizedToSourceCanvas": [
+        0.41748046875,
+        0.77001953125
+      ],
+      "observedRegistration512PreviewPx": [
+        206.5625,
+        368.95
+      ],
+      "confidenceSourcePx": 18,
+      "note": "近侧奶白大腿与薄荷护胫的交界中心；作为两节腿的主弯曲关节。",
+      "toolAttachmentAllowed": false
+    },
+    "farHip": {
+      "sourcePx": [
+        1210,
+        1382
+      ],
+      "normalizedToSourceCanvas": [
+        0.5908203125,
+        0.6748046875
+      ],
+      "observedRegistration512PreviewPx": [
+        295.3125,
+        320.2
+      ],
+      "confidenceSourcePx": 22,
+      "note": "远侧大腿顶端，遮挡较多，需补绘后复核。",
+      "toolAttachmentAllowed": false
+    },
+    "farKnee": {
+      "sourcePx": [
+        1218,
+        1467
+      ],
+      "normalizedToSourceCanvas": [
+        0.5947265625,
+        0.71630859375
+      ],
+      "observedRegistration512PreviewPx": [
+        297.3125,
+        341.45
+      ],
+      "confidenceSourcePx": 18,
+      "note": "远侧奶白大腿与薄荷护胫交界中心，保留较短的透视长度。",
+      "toolAttachmentAllowed": false
+    },
+    "nearSoleContact": {
+      "sourcePx": [
+        825.5,
+        1842
+      ],
+      "normalizedToSourceCanvas": [
+        0.403076171875,
+        0.8994140625
+      ],
+      "observedRegistration512PreviewPx": [
+        199.1875,
+        435.2
+      ],
+      "confidenceSourcePx": 3,
+      "note": "近鞋最低暗描边在y1841附近，接触基线取像素下边界1842；并非逻辑实体锚点x1024。",
+      "toolAttachmentAllowed": false
+    },
+    "farSoleContact": {
+      "sourcePx": [
+        1280,
+        1647
+      ],
+      "normalizedToSourceCanvas": [
+        0.625,
+        0.80419921875
+      ],
+      "observedRegistration512PreviewPx": [
+        312.8125,
+        386.45
+      ],
+      "confidenceSourcePx": 4,
+      "note": "远鞋最后连续暗描边为y1646、x1270..1289，接触基线取1647；不得强拉到近鞋y1842。",
+      "toolAttachmentAllowed": false
+    }
+  },
+  "hierarchy": [
+    {
+      "part": "bodyPelvis",
+      "parent": null,
+      "joint": "bodyCenter"
+    },
+    {
+      "part": "head",
+      "parent": "bodyPelvis",
+      "attachJoint": "neck",
+      "sourceJoint": "neck"
+    },
+    {
+      "part": "nearUpperArm",
+      "parent": "bodyPelvis",
+      "attachJoint": "nearShoulder",
+      "sourceJoint": "nearShoulder"
+    },
+    {
+      "part": "nearForearmHand",
+      "parent": "nearUpperArm",
+      "attachJoint": "nearElbow",
+      "sourceJoint": "nearElbow"
+    },
+    {
+      "part": "farArmHand",
+      "parent": "bodyPelvis",
+      "attachJoint": "farShoulder",
+      "sourceJoint": "farShoulder"
+    },
+    {
+      "part": "nearThigh",
+      "parent": "bodyPelvis",
+      "attachJoint": "nearHip",
+      "sourceJoint": "nearHip"
+    },
+    {
+      "part": "nearShinBoot",
+      "parent": "nearThigh",
+      "attachJoint": "nearKnee",
+      "sourceJoint": "nearKnee"
+    },
+    {
+      "part": "farThigh",
+      "parent": "bodyPelvis",
+      "attachJoint": "farHip",
+      "sourceJoint": "farHip"
+    },
+    {
+      "part": "farShinBoot",
+      "parent": "farThigh",
+      "attachJoint": "farKnee",
+      "sourceJoint": "farKnee"
+    }
+  ],
+  "partMaskDrafts": [
+    {
+      "id": "head",
+      "z": 30,
+      "sourceRect": {
+        "left": 530,
+        "top": 205,
+        "width": 1050,
+        "height": 910
+      },
+      "joint": "neck",
+      "vertices": [
+        [
+          545,
+          638
+        ],
+        [
+          566,
+          488
+        ],
+        [
+          650,
+          364
+        ],
+        [
+          815,
+          268
+        ],
+        [
+          1005,
+          215
+        ],
+        [
+          1210,
+          242
+        ],
+        [
+          1375,
+          328
+        ],
+        [
+          1482,
+          468
+        ],
+        [
+          1532,
+          605
+        ],
+        [
+          1554,
+          705
+        ],
+        [
+          1513,
+          880
+        ],
+        [
+          1425,
+          991
+        ],
+        [
+          1280,
+          1069
+        ],
+        [
+          1082,
+          1100
+        ],
+        [
+          927,
+          1081
+        ],
+        [
+          815,
+          1037
+        ],
+        [
+          740,
+          977
+        ],
+        [
+          661,
+          966
+        ],
+        [
+          591,
+          914
+        ],
+        [
+          564,
+          830
+        ],
+        [
+          541,
+          735
+        ]
+      ],
+      "note": "头盔、耳罩、面罩、两眼及已修色cross合为一层；下缘沿真实头盔描边精修，不分离cross。",
+      "maskType": "coarse-polygon-review-only",
+      "doNotAutoRasterize": true,
+      "normalizedVertices": [
+        [
+          0.26611328,
+          0.31152344
+        ],
+        [
+          0.27636719,
+          0.23828125
+        ],
+        [
+          0.31738281,
+          0.17773438
+        ],
+        [
+          0.39794922,
+          0.13085938
+        ],
+        [
+          0.49072266,
+          0.10498047
+        ],
+        [
+          0.59082031,
+          0.11816406
+        ],
+        [
+          0.67138672,
+          0.16015625
+        ],
+        [
+          0.72363281,
+          0.22851563
+        ],
+        [
+          0.74804688,
+          0.29541016
+        ],
+        [
+          0.75878906,
+          0.34423828
+        ],
+        [
+          0.73876953,
+          0.4296875
+        ],
+        [
+          0.69580078,
+          0.48388672
+        ],
+        [
+          0.625,
+          0.52197266
+        ],
+        [
+          0.52832031,
+          0.53710938
+        ],
+        [
+          0.45263672,
+          0.52783203
+        ],
+        [
+          0.39794922,
+          0.50634766
+        ],
+        [
+          0.36132813,
+          0.47705078
+        ],
+        [
+          0.32275391,
+          0.47167969
+        ],
+        [
+          0.28857422,
+          0.44628906
+        ],
+        [
+          0.27539063,
+          0.40527344
+        ],
+        [
+          0.26416016,
+          0.35888672
+        ]
+      ],
+      "maskRule": "Refine against actual connected source alpha and painted part seam; polygon is only a starting ROI. Do not duplicate opaque boundary pixels across layers. Hidden overlap cannot be recovered from the flattened source."
+    },
+    {
+      "id": "bodyPelvis",
+      "z": 10,
+      "sourceRect": {
+        "left": 730,
+        "top": 995,
+        "width": 635,
+        "height": 480
+      },
+      "joint": "bodyCenter",
+      "vertices": [
+        [
+          770,
+          1020
+        ],
+        [
+          892,
+          1092
+        ],
+        [
+          1070,
+          1112
+        ],
+        [
+          1230,
+          1065
+        ],
+        [
+          1320,
+          1015
+        ],
+        [
+          1350,
+          1080
+        ],
+        [
+          1352,
+          1202
+        ],
+        [
+          1310,
+          1328
+        ],
+        [
+          1240,
+          1405
+        ],
+        [
+          1110,
+          1452
+        ],
+        [
+          997,
+          1465
+        ],
+        [
+          858,
+          1418
+        ],
+        [
+          784,
+          1338
+        ],
+        [
+          744,
+          1195
+        ],
+        [
+          735,
+          1095
+        ]
+      ],
+      "note": "胸甲与骨盆先合层；头盔和近臂覆盖其上。移开手臂/大腿后露出的侧腹、下腹缺口须补绘。",
+      "maskType": "coarse-polygon-review-only",
+      "doNotAutoRasterize": true,
+      "normalizedVertices": [
+        [
+          0.37597656,
+          0.49804688
+        ],
+        [
+          0.43554688,
+          0.53320313
+        ],
+        [
+          0.52246094,
+          0.54296875
+        ],
+        [
+          0.60058594,
+          0.52001953
+        ],
+        [
+          0.64453125,
+          0.49560547
+        ],
+        [
+          0.65917969,
+          0.52734375
+        ],
+        [
+          0.66015625,
+          0.58691406
+        ],
+        [
+          0.63964844,
+          0.6484375
+        ],
+        [
+          0.60546875,
+          0.68603516
+        ],
+        [
+          0.54199219,
+          0.70898438
+        ],
+        [
+          0.48681641,
+          0.71533203
+        ],
+        [
+          0.41894531,
+          0.69238281
+        ],
+        [
+          0.3828125,
+          0.65332031
+        ],
+        [
+          0.36328125,
+          0.58349609
+        ],
+        [
+          0.35888672,
+          0.53466797
+        ]
+      ],
+      "maskRule": "Refine against actual connected source alpha and painted part seam; polygon is only a starting ROI. Do not duplicate opaque boundary pixels across layers. Hidden overlap cannot be recovered from the flattened source."
+    },
+    {
+      "id": "nearUpperArm",
+      "z": 20,
+      "sourceRect": {
+        "left": 579,
+        "top": 1010,
+        "width": 340,
+        "height": 338
+      },
+      "joint": "nearShoulder",
+      "vertices": [
+        [
+          733,
+          1014
+        ],
+        [
+          811,
+          1040
+        ],
+        [
+          863,
+          1110
+        ],
+        [
+          875,
+          1180
+        ],
+        [
+          837,
+          1245
+        ],
+        [
+          747,
+          1318
+        ],
+        [
+          694,
+          1330
+        ],
+        [
+          593,
+          1249
+        ],
+        [
+          620,
+          1174
+        ],
+        [
+          663,
+          1100
+        ]
+      ],
+      "note": "screen-left/down灰蓝上臂；末端接缝应沿真实护甲交线精修，肘部保留被前臂遮住的延展。",
+      "maskType": "coarse-polygon-review-only",
+      "doNotAutoRasterize": true,
+      "normalizedVertices": [
+        [
+          0.35791016,
+          0.49511719
+        ],
+        [
+          0.39599609,
+          0.5078125
+        ],
+        [
+          0.42138672,
+          0.54199219
+        ],
+        [
+          0.42724609,
+          0.57617188
+        ],
+        [
+          0.40869141,
+          0.60791016
+        ],
+        [
+          0.36474609,
+          0.64355469
+        ],
+        [
+          0.33886719,
+          0.64941406
+        ],
+        [
+          0.28955078,
+          0.60986328
+        ],
+        [
+          0.30273438,
+          0.57324219
+        ],
+        [
+          0.32373047,
+          0.53710938
+        ]
+      ],
+      "maskRule": "Refine against actual connected source alpha and painted part seam; polygon is only a starting ROI. Do not duplicate opaque boundary pixels across layers. Hidden overlap cannot be recovered from the flattened source."
+    },
+    {
+      "id": "nearForearmHand",
+      "z": 22,
+      "sourceRect": {
+        "left": 377,
+        "top": 1160,
+        "width": 365,
+        "height": 430
+      },
+      "joint": "nearElbow",
+      "vertices": [
+        [
+          574,
+          1169
+        ],
+        [
+          640,
+          1214
+        ],
+        [
+          713,
+          1277
+        ],
+        [
+          727,
+          1335
+        ],
+        [
+          695,
+          1410
+        ],
+        [
+          652,
+          1476
+        ],
+        [
+          654,
+          1513
+        ],
+        [
+          624,
+          1545
+        ],
+        [
+          585,
+          1525
+        ],
+        [
+          569,
+          1568
+        ],
+        [
+          539,
+          1587
+        ],
+        [
+          500,
+          1572
+        ],
+        [
+          477,
+          1547
+        ],
+        [
+          442,
+          1564
+        ],
+        [
+          403,
+          1530
+        ],
+        [
+          385,
+          1488
+        ],
+        [
+          380,
+          1450
+        ],
+        [
+          398,
+          1393
+        ],
+        [
+          424,
+          1348
+        ],
+        [
+          432,
+          1304
+        ],
+        [
+          461,
+          1247
+        ],
+        [
+          507,
+          1200
+        ]
+      ],
+      "note": "薄荷前臂、腕圈、奶白拳套先合层。手内凹持物点随此层；不要从现图补造隐藏掌心。",
+      "maskType": "coarse-polygon-review-only",
+      "doNotAutoRasterize": true,
+      "normalizedVertices": [
+        [
+          0.28027344,
+          0.57080078
+        ],
+        [
+          0.3125,
+          0.59277344
+        ],
+        [
+          0.34814453,
+          0.62353516
+        ],
+        [
+          0.35498047,
+          0.65185547
+        ],
+        [
+          0.33935547,
+          0.68847656
+        ],
+        [
+          0.31835938,
+          0.72070313
+        ],
+        [
+          0.31933594,
+          0.73876953
+        ],
+        [
+          0.3046875,
+          0.75439453
+        ],
+        [
+          0.28564453,
+          0.74462891
+        ],
+        [
+          0.27783203,
+          0.765625
+        ],
+        [
+          0.26318359,
+          0.77490234
+        ],
+        [
+          0.24414063,
+          0.76757813
+        ],
+        [
+          0.23291016,
+          0.75537109
+        ],
+        [
+          0.21582031,
+          0.76367188
+        ],
+        [
+          0.19677734,
+          0.74707031
+        ],
+        [
+          0.18798828,
+          0.7265625
+        ],
+        [
+          0.18554688,
+          0.70800781
+        ],
+        [
+          0.19433594,
+          0.68017578
+        ],
+        [
+          0.20703125,
+          0.65820313
+        ],
+        [
+          0.2109375,
+          0.63671875
+        ],
+        [
+          0.22509766,
+          0.60888672
+        ],
+        [
+          0.24755859,
+          0.5859375
+        ]
+      ],
+      "maskRule": "Refine against actual connected source alpha and painted part seam; polygon is only a starting ROI. Do not duplicate opaque boundary pixels across layers. Hidden overlap cannot be recovered from the flattened source."
+    },
+    {
+      "id": "farArmHand",
+      "z": 5,
+      "sourceRect": {
+        "left": 1325,
+        "top": 975,
+        "width": 335,
+        "height": 335
+      },
+      "joint": "farShoulder",
+      "vertices": [
+        [
+          1351,
+          981
+        ],
+        [
+          1423,
+          1007
+        ],
+        [
+          1509,
+          1069
+        ],
+        [
+          1557,
+          1120
+        ],
+        [
+          1585,
+          1160
+        ],
+        [
+          1613,
+          1184
+        ],
+        [
+          1648,
+          1217
+        ],
+        [
+          1652,
+          1257
+        ],
+        [
+          1642,
+          1285
+        ],
+        [
+          1612,
+          1300
+        ],
+        [
+          1584,
+          1282
+        ],
+        [
+          1562,
+          1258
+        ],
+        [
+          1535,
+          1279
+        ],
+        [
+          1519,
+          1301
+        ],
+        [
+          1491,
+          1298
+        ],
+        [
+          1470,
+          1272
+        ],
+        [
+          1465,
+          1238
+        ],
+        [
+          1438,
+          1217
+        ],
+        [
+          1398,
+          1181
+        ],
+        [
+          1361,
+          1144
+        ],
+        [
+          1339,
+          1098
+        ]
+      ],
+      "note": "远臂手先整体小角度摆动，肩根位于躯干/头盔之后；其真实肘部坐标仅辅助标注，补绘后再拆两节。",
+      "maskType": "coarse-polygon-review-only",
+      "doNotAutoRasterize": true,
+      "normalizedVertices": [
+        [
+          0.65966797,
+          0.47900391
+        ],
+        [
+          0.69482422,
+          0.49169922
+        ],
+        [
+          0.73681641,
+          0.52197266
+        ],
+        [
+          0.76025391,
+          0.546875
+        ],
+        [
+          0.77392578,
+          0.56640625
+        ],
+        [
+          0.78759766,
+          0.578125
+        ],
+        [
+          0.8046875,
+          0.59423828
+        ],
+        [
+          0.80664063,
+          0.61376953
+        ],
+        [
+          0.80175781,
+          0.62744141
+        ],
+        [
+          0.78710938,
+          0.63476563
+        ],
+        [
+          0.7734375,
+          0.62597656
+        ],
+        [
+          0.76269531,
+          0.61425781
+        ],
+        [
+          0.74951172,
+          0.62451172
+        ],
+        [
+          0.74169922,
+          0.63525391
+        ],
+        [
+          0.72802734,
+          0.63378906
+        ],
+        [
+          0.71777344,
+          0.62109375
+        ],
+        [
+          0.71533203,
+          0.60449219
+        ],
+        [
+          0.70214844,
+          0.59423828
+        ],
+        [
+          0.68261719,
+          0.57666016
+        ],
+        [
+          0.66455078,
+          0.55859375
+        ],
+        [
+          0.65380859,
+          0.53613281
+        ]
+      ],
+      "maskRule": "Refine against actual connected source alpha and painted part seam; polygon is only a starting ROI. Do not duplicate opaque boundary pixels across layers. Hidden overlap cannot be recovered from the flattened source."
+    },
+    {
+      "id": "nearThigh",
+      "z": 4,
+      "sourceRect": {
+        "left": 744,
+        "top": 1372,
+        "width": 250,
+        "height": 246
+      },
+      "joint": "nearHip",
+      "vertices": [
+        [
+          806,
+          1375
+        ],
+        [
+          915,
+          1388
+        ],
+        [
+          974,
+          1438
+        ],
+        [
+          980,
+          1490
+        ],
+        [
+          961,
+          1568
+        ],
+        [
+          913,
+          1602
+        ],
+        [
+          820,
+          1609
+        ],
+        [
+          766,
+          1573
+        ],
+        [
+          752,
+          1522
+        ],
+        [
+          773,
+          1442
+        ]
+      ],
+      "note": "近侧奶白大腿。髋上缘被骨盆遮挡，不把此粗轮廓当成完整大腿图；膝上缘由护胫覆盖。",
+      "maskType": "coarse-polygon-review-only",
+      "doNotAutoRasterize": true,
+      "normalizedVertices": [
+        [
+          0.39355469,
+          0.67138672
+        ],
+        [
+          0.44677734,
+          0.67773438
+        ],
+        [
+          0.47558594,
+          0.70214844
+        ],
+        [
+          0.47851563,
+          0.72753906
+        ],
+        [
+          0.46923828,
+          0.765625
+        ],
+        [
+          0.44580078,
+          0.78222656
+        ],
+        [
+          0.40039063,
+          0.78564453
+        ],
+        [
+          0.37402344,
+          0.76806641
+        ],
+        [
+          0.3671875,
+          0.74316406
+        ],
+        [
+          0.37744141,
+          0.70410156
+        ]
+      ],
+      "maskRule": "Refine against actual connected source alpha and painted part seam; polygon is only a starting ROI. Do not duplicate opaque boundary pixels across layers. Hidden overlap cannot be recovered from the flattened source."
+    },
+    {
+      "id": "nearShinBoot",
+      "z": 6,
+      "sourceRect": {
+        "left": 661,
+        "top": 1528,
+        "width": 310,
+        "height": 320
+      },
+      "joint": "nearKnee",
+      "vertices": [
+        [
+          747,
+          1532
+        ],
+        [
+          794,
+          1575
+        ],
+        [
+          856,
+          1607
+        ],
+        [
+          923,
+          1591
+        ],
+        [
+          961,
+          1568
+        ],
+        [
+          948,
+          1620
+        ],
+        [
+          917,
+          1694
+        ],
+        [
+          940,
+          1730
+        ],
+        [
+          947,
+          1771
+        ],
+        [
+          929,
+          1808
+        ],
+        [
+          887,
+          1830
+        ],
+        [
+          832,
+          1843
+        ],
+        [
+          789,
+          1839
+        ],
+        [
+          746,
+          1813
+        ],
+        [
+          710,
+          1779
+        ],
+        [
+          686,
+          1734
+        ],
+        [
+          666,
+          1681
+        ],
+        [
+          679,
+          1611
+        ],
+        [
+          703,
+          1563
+        ]
+      ],
+      "note": "近侧薄荷护胫与灰蓝鞋连成一层；没有明确踝球，不能随意再切出踝关节。膝处需要少量被大腿遮住的完整盖面。",
+      "maskType": "coarse-polygon-review-only",
+      "doNotAutoRasterize": true,
+      "normalizedVertices": [
+        [
+          0.36474609,
+          0.74804688
+        ],
+        [
+          0.38769531,
+          0.76904297
+        ],
+        [
+          0.41796875,
+          0.78466797
+        ],
+        [
+          0.45068359,
+          0.77685547
+        ],
+        [
+          0.46923828,
+          0.765625
+        ],
+        [
+          0.46289063,
+          0.79101563
+        ],
+        [
+          0.44775391,
+          0.82714844
+        ],
+        [
+          0.45898438,
+          0.84472656
+        ],
+        [
+          0.46240234,
+          0.86474609
+        ],
+        [
+          0.45361328,
+          0.8828125
+        ],
+        [
+          0.43310547,
+          0.89355469
+        ],
+        [
+          0.40625,
+          0.89990234
+        ],
+        [
+          0.38525391,
+          0.89794922
+        ],
+        [
+          0.36425781,
+          0.88525391
+        ],
+        [
+          0.34667969,
+          0.86865234
+        ],
+        [
+          0.33496094,
+          0.84667969
+        ],
+        [
+          0.32519531,
+          0.82080078
+        ],
+        [
+          0.33154297,
+          0.78662109
+        ],
+        [
+          0.34326172,
+          0.76318359
+        ]
+      ],
+      "maskRule": "Refine against actual connected source alpha and painted part seam; polygon is only a starting ROI. Do not duplicate opaque boundary pixels across layers. Hidden overlap cannot be recovered from the flattened source."
+    },
+    {
+      "id": "farThigh",
+      "z": 0,
+      "sourceRect": {
+        "left": 1101,
+        "top": 1338,
+        "width": 245,
+        "height": 160
+      },
+      "joint": "farHip",
+      "vertices": [
+        [
+          1132,
+          1380
+        ],
+        [
+          1220,
+          1370
+        ],
+        [
+          1305,
+          1355
+        ],
+        [
+          1334,
+          1418
+        ],
+        [
+          1324,
+          1463
+        ],
+        [
+          1261,
+          1491
+        ],
+        [
+          1175,
+          1469
+        ],
+        [
+          1126,
+          1439
+        ]
+      ],
+      "note": "远侧大腿更短，保持原透视比例；髋内侧和顶端遮挡面缺失最多。不能复制近腿缩小代替。",
+      "maskType": "coarse-polygon-review-only",
+      "doNotAutoRasterize": true,
+      "normalizedVertices": [
+        [
+          0.55273438,
+          0.67382813
+        ],
+        [
+          0.59570313,
+          0.66894531
+        ],
+        [
+          0.63720703,
+          0.66162109
+        ],
+        [
+          0.65136719,
+          0.69238281
+        ],
+        [
+          0.64648438,
+          0.71435547
+        ],
+        [
+          0.61572266,
+          0.72802734
+        ],
+        [
+          0.57373047,
+          0.71728516
+        ],
+        [
+          0.54980469,
+          0.70263672
+        ]
+      ],
+      "maskRule": "Refine against actual connected source alpha and painted part seam; polygon is only a starting ROI. Do not duplicate opaque boundary pixels across layers. Hidden overlap cannot be recovered from the flattened source."
+    },
+    {
+      "id": "farShinBoot",
+      "z": 2,
+      "sourceRect": {
+        "left": 1080,
+        "top": 1424,
+        "width": 310,
+        "height": 232
+      },
+      "joint": "farKnee",
+      "vertices": [
+        [
+          1125,
+          1432
+        ],
+        [
+          1170,
+          1469
+        ],
+        [
+          1250,
+          1496
+        ],
+        [
+          1327,
+          1457
+        ],
+        [
+          1334,
+          1506
+        ],
+        [
+          1324,
+          1533
+        ],
+        [
+          1353,
+          1540
+        ],
+        [
+          1376,
+          1575
+        ],
+        [
+          1370,
+          1601
+        ],
+        [
+          1345,
+          1631
+        ],
+        [
+          1300,
+          1647
+        ],
+        [
+          1265,
+          1649
+        ],
+        [
+          1210,
+          1632
+        ],
+        [
+          1154,
+          1613
+        ],
+        [
+          1104,
+          1582
+        ],
+        [
+          1085,
+          1540
+        ],
+        [
+          1097,
+          1489
+        ]
+      ],
+      "note": "远侧护胫与鞋完整层；鞋底画面Y较高来自透视，不直接等价于腾空。",
+      "maskType": "coarse-polygon-review-only",
+      "doNotAutoRasterize": true,
+      "normalizedVertices": [
+        [
+          0.54931641,
+          0.69921875
+        ],
+        [
+          0.57128906,
+          0.71728516
+        ],
+        [
+          0.61035156,
+          0.73046875
+        ],
+        [
+          0.64794922,
+          0.71142578
+        ],
+        [
+          0.65136719,
+          0.73535156
+        ],
+        [
+          0.64648438,
+          0.74853516
+        ],
+        [
+          0.66064453,
+          0.75195313
+        ],
+        [
+          0.671875,
+          0.76904297
+        ],
+        [
+          0.66894531,
+          0.78173828
+        ],
+        [
+          0.65673828,
+          0.79638672
+        ],
+        [
+          0.63476563,
+          0.80419922
+        ],
+        [
+          0.61767578,
+          0.80517578
+        ],
+        [
+          0.59082031,
+          0.796875
+        ],
+        [
+          0.56347656,
+          0.78759766
+        ],
+        [
+          0.5390625,
+          0.77246094
+        ],
+        [
+          0.52978516,
+          0.75195313
+        ],
+        [
+          0.53564453,
+          0.72705078
+        ]
+      ],
+      "maskRule": "Refine against actual connected source alpha and painted part seam; polygon is only a starting ROI. Do not duplicate opaque boundary pixels across layers. Hidden overlap cannot be recovered from the flattened source."
+    }
+  ],
+  "contactMaskDrafts": [
+    {
+      "part": "nearShinBoot",
+      "landmark": "nearSoleContact",
+      "soleBandRect": {
+        "left": 775,
+        "top": 1824,
+        "width": 111,
+        "height": 21
+      },
+      "vertices": [
+        [
+          775,
+          1828
+        ],
+        [
+          806,
+          1825
+        ],
+        [
+          869,
+          1828
+        ],
+        [
+          886,
+          1834
+        ],
+        [
+          864,
+          1840
+        ],
+        [
+          838,
+          1844
+        ],
+        [
+          805,
+          1843
+        ],
+        [
+          785,
+          1836
+        ]
+      ],
+      "note": "Intersection with refined part alpha; pin only while near contact=1. This is a narrow sole contact band, not the full boot.",
+      "normalizedVertices": [
+        [
+          0.37841797,
+          0.89257813
+        ],
+        [
+          0.39355469,
+          0.89111328
+        ],
+        [
+          0.42431641,
+          0.89257813
+        ],
+        [
+          0.43261719,
+          0.89550781
+        ],
+        [
+          0.421875,
+          0.8984375
+        ],
+        [
+          0.40917969,
+          0.90039063
+        ],
+        [
+          0.39306641,
+          0.89990234
+        ],
+        [
+          0.38330078,
+          0.89648438
+        ]
+      ],
+      "doNotAutoRasterize": true
+    },
+    {
+      "part": "farShinBoot",
+      "landmark": "farSoleContact",
+      "soleBandRect": {
+        "left": 1225,
+        "top": 1630,
+        "width": 109,
+        "height": 21
+      },
+      "vertices": [
+        [
+          1225,
+          1634
+        ],
+        [
+          1264,
+          1630
+        ],
+        [
+          1317,
+          1633
+        ],
+        [
+          1334,
+          1638
+        ],
+        [
+          1311,
+          1646
+        ],
+        [
+          1288,
+          1650
+        ],
+        [
+          1262,
+          1649
+        ],
+        [
+          1239,
+          1641
+        ]
+      ],
+      "note": "Intersection with refined far-boot alpha; pin only while far contact=1. Preserve its higher projected baseline.",
+      "normalizedVertices": [
+        [
+          0.59814453,
+          0.79785156
+        ],
+        [
+          0.6171875,
+          0.79589844
+        ],
+        [
+          0.64306641,
+          0.79736328
+        ],
+        [
+          0.65136719,
+          0.79980469
+        ],
+        [
+          0.64013672,
+          0.80371094
+        ],
+        [
+          0.62890625,
+          0.80566406
+        ],
+        [
+          0.61621094,
+          0.80517578
+        ],
+        [
+          0.60498047,
+          0.80126953
+        ]
+      ],
+      "doNotAutoRasterize": true
+    }
+  ],
+  "repaintRequirements": [
+    {
+      "id": "nearHipCap",
+      "sourceRect": {
+        "left": 773,
+        "top": 1355,
+        "width": 250,
+        "height": 145
+      },
+      "reason": "近大腿被骨盆遮住的顶端/髋盖面；摆动后会露白洞或截平边。",
+      "status": "not-painted",
+      "policy": "Do not invent invisible full anatomy or render new views. Fill only the small overlap actually exposed by the approved motion."
+    },
+    {
+      "id": "farHipCapAndInnerThigh",
+      "sourceRect": {
+        "left": 1093,
+        "top": 1315,
+        "width": 270,
+        "height": 170
+      },
+      "reason": "远髋上端和内侧当前未画出，不能复制近腿/拉伸白边充当隐藏面。",
+      "status": "not-painted",
+      "policy": "Do not invent invisible full anatomy or render new views. Fill only the small overlap actually exposed by the approved motion."
+    },
+    {
+      "id": "nearKneeOverlap",
+      "sourceRect": {
+        "left": 752,
+        "top": 1514,
+        "width": 250,
+        "height": 135
+      },
+      "reason": "屈膝露出的护胫上沿背面及裤腿连接；先只补可见关节连接所需的小盖面。",
+      "status": "not-painted",
+      "policy": "Do not invent invisible full anatomy or render new views. Fill only the small overlap actually exposed by the approved motion."
+    },
+    {
+      "id": "farKneeOverlap",
+      "sourceRect": {
+        "left": 1108,
+        "top": 1420,
+        "width": 245,
+        "height": 115
+      },
+      "reason": "远膝护胫与大腿重叠面，需保持较短透视比例。",
+      "status": "not-painted",
+      "policy": "Do not invent invisible full anatomy or render new views. Fill only the small overlap actually exposed by the approved motion."
+    },
+    {
+      "id": "nearShoulderAndArmpit",
+      "sourceRect": {
+        "left": 724,
+        "top": 1016,
+        "width": 210,
+        "height": 230
+      },
+      "reason": "近肩被头盔/胸甲遮挡的根部，以及摆臂后露出的腋下。",
+      "status": "not-painted",
+      "policy": "Do not invent invisible full anatomy or render new views. Fill only the small overlap actually exposed by the approved motion."
+    },
+    {
+      "id": "farShoulderCap",
+      "sourceRect": {
+        "left": 1302,
+        "top": 974,
+        "width": 214,
+        "height": 205
+      },
+      "reason": "远肩根在头盔/躯干后，初版整臂小摆；拆两节前需补全连接面。",
+      "status": "not-painted",
+      "policy": "Do not invent invisible full anatomy or render new views. Fill only the small overlap actually exposed by the approved motion."
+    },
+    {
+      "id": "nearElbowOverlap",
+      "sourceRect": {
+        "left": 570,
+        "top": 1195,
+        "width": 182,
+        "height": 180
+      },
+      "reason": "上臂与前臂接缝不能直接切成两条带深描边的断面。",
+      "status": "not-painted",
+      "policy": "Do not invent invisible full anatomy or render new views. Fill only the small overlap actually exposed by the approved motion."
+    },
+    {
+      "id": "bodyUnderNearArm",
+      "sourceRect": {
+        "left": 732,
+        "top": 1112,
+        "width": 220,
+        "height": 247
+      },
+      "reason": "近臂移开后露出的侧腹/胸甲底层。",
+      "status": "not-painted",
+      "policy": "Do not invent invisible full anatomy or render new views. Fill only the small overlap actually exposed by the approved motion."
+    },
+    {
+      "id": "bodyUnderFarArm",
+      "sourceRect": {
+        "left": 1284,
+        "top": 1045,
+        "width": 170,
+        "height": 235
+      },
+      "reason": "远臂摆动后露出的侧躯干，限制摆幅可减少所需补绘范围。",
+      "status": "not-painted",
+      "policy": "Do not invent invisible full anatomy or render new views. Fill only the small overlap actually exposed by the approved motion."
+    },
+    {
+      "id": "pelvisUnderLegs",
+      "sourceRect": {
+        "left": 805,
+        "top": 1368,
+        "width": 445,
+        "height": 120
+      },
+      "reason": "大腿摆离后可见的骨盆下缘/腹股沟连接面。",
+      "status": "not-painted",
+      "policy": "Do not invent invisible full anatomy or render new views. Fill only the small overlap actually exposed by the approved motion."
+    },
+    {
+      "id": "neckOnlyIfTilting",
+      "sourceRect": {
+        "left": 860,
+        "top": 994,
+        "width": 500,
+        "height": 150
+      },
+      "reason": "头倾后露出的领口；完成前头部限制约±1°。",
+      "status": "not-painted",
+      "policy": "Do not invent invisible full anatomy or render new views. Fill only the small overlap actually exposed by the approved motion."
+    }
+  ],
+  "gaitDraft": {
+    "kind": "rig-baked-sequence",
+    "status": "IK/pose design only; no exported frames",
+    "frameCount": 8,
+    "suggestedDurationMs": 640,
+    "loop": true,
+    "frameTimes": "i/8; virtual phase 1 equals frame 0 for seam QA only",
+    "contact0": "near=1, far=0",
+    "contact4": "near=0, far=1",
+    "drive": "Per-leg two-bone hip/knee IK to measured sole targets. Shin+boot stays one piece; keep original projected limb lengths. Resolve hip/knee geometry first, then add counter-swinging arms and small body compression.",
+    "projectedForwardAxis": {
+      "candidateUnit": [
+        0.78,
+        0.6258
+      ],
+      "status": "direction-tuning-required",
+      "note": "Trial screen-down/right tangent, not inferred world geometry; root should tune to intended movement projection."
+    },
+    "nearHalfStride512Px": 8,
+    "farHalfStride512Px": 6.5,
+    "nearMaxSwingLift512Px": 10,
+    "farMaxSwingLift512Px": 8,
+    "targetFormula": "shoeTarget = registeredRestSole + forwardAxis * halfStride * stepAxisMultiplier + [0,-maxLift*liftMultiplier]. Joint angles are solved from targets; do not combine incompatible hand-set leg angles with pinned targets.",
+    "stanceQa": "This is an in-place gait: supporting shoe moves backward in sprite coordinates while entity advances forward. Verify world-space contact after that motion compensation, or compare each frame against its declared expected local sole target. Do not feed one constant local footTarget to renderClip for all stance frames.",
+    "rootMotionProxy": "For each stance half-cycle, nominal entity forward displacement is the negative of stance shoe local forward displacement, so planted world contact stays fixed. Far stride perspective differs and needs visual tuning.",
+    "meshPins": "Apply pinned sole masks to the contact leg only and to local compression fields only. Never pin both complete legs throughout the cycle; that would erase alternating articulation.",
+    "frames": [
+      {
+        "frame": 0,
+        "phase": 0,
+        "label": "near着地/far卸重",
+        "near": {
+          "contact": 1,
+          "stepAxisMultiplier": 1,
+          "liftMultiplier": 0
+        },
+        "far": {
+          "contact": 0,
+          "stepAxisMultiplier": -1,
+          "liftMultiplier": 0
+        },
+        "bodyCompressionY512Px": 0,
+        "nearUpperArmDeltaDeg": -6,
+        "farArmDeltaDeg": 4,
+        "headDeltaDeg": 0
+      },
+      {
+        "frame": 1,
+        "phase": 0.125,
+        "label": "near承重压缩/far提脚",
+        "near": {
+          "contact": 1,
+          "stepAxisMultiplier": 0.5,
+          "liftMultiplier": 0
+        },
+        "far": {
+          "contact": 0,
+          "stepAxisMultiplier": -0.5,
+          "liftMultiplier": 0.6
+        },
+        "bodyCompressionY512Px": 1.2,
+        "nearUpperArmDeltaDeg": -3,
+        "farArmDeltaDeg": 2,
+        "headDeltaDeg": -0.5
+      },
+      {
+        "frame": 2,
+        "phase": 0.25,
+        "label": "near支撑/far最高通过",
+        "near": {
+          "contact": 1,
+          "stepAxisMultiplier": 0,
+          "liftMultiplier": 0
+        },
+        "far": {
+          "contact": 0,
+          "stepAxisMultiplier": 0,
+          "liftMultiplier": 1
+        },
+        "bodyCompressionY512Px": -0.6,
+        "nearUpperArmDeltaDeg": 0,
+        "farArmDeltaDeg": 0,
+        "headDeltaDeg": 0
+      },
+      {
+        "frame": 3,
+        "phase": 0.375,
+        "label": "near后段支撑/far前伸",
+        "near": {
+          "contact": 1,
+          "stepAxisMultiplier": -0.5,
+          "liftMultiplier": 0
+        },
+        "far": {
+          "contact": 0,
+          "stepAxisMultiplier": 0.5,
+          "liftMultiplier": 0.6
+        },
+        "bodyCompressionY512Px": 0.3,
+        "nearUpperArmDeltaDeg": 3,
+        "farArmDeltaDeg": -2,
+        "headDeltaDeg": 0.5
+      },
+      {
+        "frame": 4,
+        "phase": 0.5,
+        "label": "far着地/near卸重",
+        "near": {
+          "contact": 0,
+          "stepAxisMultiplier": -1,
+          "liftMultiplier": 0
+        },
+        "far": {
+          "contact": 1,
+          "stepAxisMultiplier": 1,
+          "liftMultiplier": 0
+        },
+        "bodyCompressionY512Px": 0,
+        "nearUpperArmDeltaDeg": 6,
+        "farArmDeltaDeg": -4,
+        "headDeltaDeg": 0
+      },
+      {
+        "frame": 5,
+        "phase": 0.625,
+        "label": "far承重压缩/near提脚",
+        "near": {
+          "contact": 0,
+          "stepAxisMultiplier": -0.5,
+          "liftMultiplier": 0.6
+        },
+        "far": {
+          "contact": 1,
+          "stepAxisMultiplier": 0.5,
+          "liftMultiplier": 0
+        },
+        "bodyCompressionY512Px": 1.2,
+        "nearUpperArmDeltaDeg": 3,
+        "farArmDeltaDeg": -2,
+        "headDeltaDeg": -0.5
+      },
+      {
+        "frame": 6,
+        "phase": 0.75,
+        "label": "far支撑/near最高通过",
+        "near": {
+          "contact": 0,
+          "stepAxisMultiplier": 0,
+          "liftMultiplier": 1
+        },
+        "far": {
+          "contact": 1,
+          "stepAxisMultiplier": 0,
+          "liftMultiplier": 0
+        },
+        "bodyCompressionY512Px": -0.6,
+        "nearUpperArmDeltaDeg": 0,
+        "farArmDeltaDeg": 0,
+        "headDeltaDeg": 0
+      },
+      {
+        "frame": 7,
+        "phase": 0.875,
+        "label": "far后段支撑/near前伸",
+        "near": {
+          "contact": 0,
+          "stepAxisMultiplier": 0.5,
+          "liftMultiplier": 0.6
+        },
+        "far": {
+          "contact": 1,
+          "stepAxisMultiplier": -0.5,
+          "liftMultiplier": 0
+        },
+        "bodyCompressionY512Px": 0.3,
+        "nearUpperArmDeltaDeg": -3,
+        "farArmDeltaDeg": 2,
+        "headDeltaDeg": 0.5
+      }
+    ],
+    "virtualFrame8": "same pose/contacts as frame0, not an additional delivery frame",
+    "interpolation": "Periodic smooth interpolation; actual output samples remain 8 poses. Use extra virtual endpoint for position/velocity QA.",
+    "bounds": {
+      "nearHipInitialAbsDeltaDeg": 12,
+      "nearKneeInitialFlexDeg": 30,
+      "farHipInitialAbsDeltaDeg": 12,
+      "farKneeInitialFlexDeg": 30,
+      "nearArmInitialAbsDeltaDeg": 8,
+      "farArmInitialAbsDeltaDeg": 6,
+      "headAbsDeltaDeg": 1
+    },
+    "proofRequired": [
+      "Frame0 and frame4 have opposite contact leg and different knee/boot silhouettes, not mirrored copies.",
+      "Frames2 and6 have opposite airborne passing leg with visible knee flexion.",
+      "Body bounce is secondary; limb relative matrices must change and frames must be visibly distinct.",
+      "Visible alpha must remain complete at hip/knee/shoulder joins; no doubled outlines or transparent seams.",
+      "Loop virtual1 and0 close in pose and velocity; source body/identity proportions remain stable."
+    ]
+  },
+  "gatesBeforeBake": [
+    "Root locks final alpha and full-canvas registration for front-right.",
+    "Coarse mask polygons are manually refined against actual source pixels; these JSON ROIs are not finished segmentation masks.",
+    "Required exposed overlap patches are completed or motion limits avoid exposing unpainted regions.",
+    "Foot-target trajectories/IK feasibility are checked against new source limb lengths and actual projected gait direction.",
+    "Head cross remains part of the accepted recolored head; no further identity changes.",
+    "Back-right requires its own approved mother image; never rotate/warp this front-right into back-right."
+  ],
+  "primaryHandContract": {
+    "id": null,
+    "status": "pending-new-centered-hold-source",
+    "toolAttachmentPoint": null,
+    "wristRegisteredPx": null,
+    "palmGripRegisteredPx": null,
+    "oldNearOrFarAccepted": false,
+    "requiredNewGripRegion": {
+      "centerPx": [
+        256,
+        315
+      ],
+      "xRangePx": [
+        244,
+        268
+      ]
+    },
+    "nextSource": "fantasy.actor.hero.front_right.hold.master",
+    "rule": "两前臂/双小C手须由实际v03 reference重绘到胸前；旧near/far点仅为解剖landmark，禁止扭旧臂像素伪造通过。"
+  },
+  "heroWeaponPose": "pending-new-centered-hold-source",
+  "formalHeroFramesWritten": 0,
+  "productionBlocked": true
+}

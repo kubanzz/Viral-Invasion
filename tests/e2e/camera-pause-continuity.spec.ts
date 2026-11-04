@@ -9,7 +9,7 @@ test('moving camera holds its displayed view on pause and resumes smoothly', asy
   await context.setOffline(true);
   await page.setViewportSize({ width: 1366, height: 768 });
   await page.goto(`${entry}?seed=130026`);
-  await page.locator('[data-action="start"]').click();
+  await page.locator('#overlay-host [data-action="endless-start"]').click();
   await page.keyboard.down('KeyD');
   await page.waitForTimeout(700);
   await page.evaluate(() => {

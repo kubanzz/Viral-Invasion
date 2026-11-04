@@ -11,18 +11,18 @@ function lane(ctx: CanvasRenderingContext2D, from: Vec, to: Vec, radius: number,
   ctx.arc(to.x, to.y, radius, angle + Math.PI / 2, angle - Math.PI / 2, true);
   ctx.lineTo(from.x - normal.x, from.y - normal.y);
   ctx.arc(from.x, from.y, radius, angle - Math.PI / 2, angle + Math.PI / 2, true); ctx.closePath();
-  ctx.fillStyle = '#a63c5520'; ctx.fill(); ctx.strokeStyle = '#8f3f59'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.fillStyle = '#b2777d26'; ctx.fill(); ctx.strokeStyle = '#814f61'; ctx.lineWidth = 2; ctx.stroke();
   ctx.setLineDash([6, 6]); ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.lineTo(to.x, to.y);
-  ctx.strokeStyle = '#76455cb0'; ctx.lineWidth = 1.5; ctx.stroke(); ctx.setLineDash([]);
+  ctx.strokeStyle = '#765567aa'; ctx.lineWidth = 1.5; ctx.stroke(); ctx.setLineDash([]);
   ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.lineTo(from.x + (to.x - from.x) * progress, from.y + (to.y - from.y) * progress);
-  ctx.strokeStyle = '#fff2ce'; ctx.lineWidth = 3; ctx.stroke();
+  ctx.strokeStyle = '#e6c8a6'; ctx.lineWidth = 3; ctx.stroke();
 }
 
 function circle(ctx: CanvasRenderingContext2D, center: Vec, radius: number, progress: number): void {
   ctx.beginPath(); ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
-  ctx.fillStyle = '#a63c5520'; ctx.fill(); ctx.strokeStyle = '#8f3f59'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.fillStyle = '#b2777d26'; ctx.fill(); ctx.strokeStyle = '#814f61'; ctx.lineWidth = 2; ctx.stroke();
   ctx.beginPath(); ctx.arc(center.x, center.y, radius + 5, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * progress);
-  ctx.strokeStyle = '#fff2ce'; ctx.lineWidth = 3; ctx.stroke();
+  ctx.strokeStyle = '#e6c8a6'; ctx.lineWidth = 3; ctx.stroke();
   ctx.beginPath(); ctx.moveTo(center.x - 5, center.y); ctx.lineTo(center.x + 5, center.y);
   ctx.moveTo(center.x, center.y - 5); ctx.lineTo(center.x, center.y + 5); ctx.lineWidth = 1.5; ctx.stroke();
 }

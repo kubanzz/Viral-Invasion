@@ -1,0 +1,161 @@
+{
+  "version": "0.11.0",
+  "completedAt": "2026-11-03T04:15:25.441Z",
+  "gameJsSha256": "3ee2d91c62b5c1301d4260d8d47d231bf55384234c47fa2011d3b5cf15eb1f26",
+  "attestedInputs": 287,
+  "sourcesAndOutputsMatch": true,
+  "scope": "Actor-style replacement and presentation self-check. Existing territory gameplay retained.",
+  "reports": {
+    "unit": "artifacts/actor-overhaul-20261103/final-pause-unit.json",
+    "systemSixSeed": "artifacts/actor-overhaul-20261103/final-pause-system-six-seed.json",
+    "art": "artifacts/actor-art-v2/final-5/report.json",
+    "desktopE2e": "artifacts/actor-overhaul-20261103/e2e-3ee2-report.json",
+    "desktopDirectionalRerun": "artifacts/actor-overhaul-20261103/e2e-hero-startup-rerun-report.json",
+    "chromeTrustedTouch": "artifacts/actor-overhaul-20261103/e2e-touch-cleanup-rerun-report.json",
+    "performance": "artifacts/actor-overhaul-20261103/performance-3ee2/performance-report.json",
+    "guard": "artifacts/actor-overhaul-20261103/guard-3ee2/browser-report.json",
+    "offline": "artifacts/actor-overhaul-20261103/final-offline-smoke.json",
+    "desktopPackage": "artifacts/releases/v0.11.0/release-package.json",
+    "mobilePackage": "artifacts/mobile-release/package-report.json",
+    "naturalComparison": "artifacts/actor-overhaul-20261103/natural-comparison/comparison-v0.11.0-final-5.json"
+  },
+  "unit": {
+    "total": 1606,
+    "passed": 1606,
+    "failed": 0,
+    "skipped": 0,
+    "systemSeeds": 6
+  },
+  "art": {
+    "technicalPass": true,
+    "actorAcceptance": true,
+    "derivedCases": 100,
+    "nativeIds": 115,
+    "observedNativeIds": 115,
+    "densePresentationCases": 16,
+    "ruleDirectionCases": 48,
+    "missingActions": [],
+    "missingViews": [],
+    "originalAcceptanceStatus": "technical-actor-coverage-accepted-human-visual-review-and-exclusive-performance-pending",
+    "visualReview": {
+      "reviewer": "Codex root visual inspection, not human player testing",
+      "scope": "Approved concept, actual-size family/action/direction contacts, menu, dense cases, final natural training comparison and mother combat image reviewed."
+    }
+  },
+  "performance": {
+    "scope": "Desktop Windows browser and a touch HUD layout driven by keyboard/mouse; not phone hardware or a natural touch full run. Snapshot polling, navigation inputs and rAF observation overhead are included in measured frame times. No forced GC.",
+    "pass": true,
+    "cases": [
+      {
+        "name": "desktop-standard",
+        "pass": true,
+        "averageFps": 59.93453202397382,
+        "p95Ms": 16.799999999999272,
+        "maxMs": 33.400000000001455,
+        "seconds": 14.999699999999997,
+        "minAlive": 48,
+        "maxAlive": 48,
+        "maxReserved": 48,
+        "minVisible": 41,
+        "maxVisible": 48,
+        "errors": []
+      },
+      {
+        "name": "desktop-low",
+        "pass": true,
+        "averageFps": 59.66786002386713,
+        "p95Ms": 16.80000000000291,
+        "maxMs": 33.400000000001455,
+        "seconds": 14.999700000000004,
+        "minAlive": 48,
+        "maxAlive": 48,
+        "maxReserved": 48,
+        "minVisible": 38,
+        "maxVisible": 48,
+        "errors": []
+      },
+      {
+        "name": "touch-layout-standard",
+        "pass": true,
+        "averageFps": 59.80159470919225,
+        "p95Ms": 16.799999999999272,
+        "maxMs": 33.400000000001455,
+        "seconds": 14.9996,
+        "minAlive": 48,
+        "maxAlive": 48,
+        "maxReserved": 48,
+        "minVisible": 43,
+        "maxVisible": 48,
+        "errors": []
+      },
+      {
+        "name": "touch-layout-low",
+        "pass": true,
+        "averageFps": 60.00120002400049,
+        "p95Ms": 16.80000000000291,
+        "maxMs": 17.5,
+        "seconds": 14.999699999999997,
+        "minAlive": 48,
+        "maxAlive": 48,
+        "maxReserved": 48,
+        "minVisible": 43,
+        "maxVisible": 48,
+        "errors": []
+      }
+    ]
+  },
+  "guard": {
+    "pass": true,
+    "savedRuns": 1,
+    "savedRescues": 1,
+    "victoryElapsed": 84.56666666666666,
+    "end": {
+      "exit": "menu",
+      "phase": "menu",
+      "elapsed": 94.73333333333333,
+      "wave": 4,
+      "score": 10750,
+      "kills": 238,
+      "result": null,
+      "snapshot": {
+        "runId": "d07eb0c3-feff-45d1-9905-2eb1ba0be7f1",
+        "seed": 71,
+        "atTick": 5074,
+        "elapsed": 84.56666666666666,
+        "wave": 3,
+        "clearedWaves": 3,
+        "score": 9260,
+        "kills": 194,
+        "bestCombo": 95,
+        "level": 3,
+        "playerHp": 120,
+        "coreHp": 97
+      }
+    },
+    "errors": []
+  },
+  "desktop": {
+    "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-G4-v0.11.0.zip",
+    "bytes": 7993608,
+    "sha256": "54f5bd82820532d4b88ef15307ee4fd8be5a1c5d2f55e7823452956313b06fb7"
+  },
+  "mobile": {
+    "html": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-Mobile.html",
+    "htmlBytes": 12398432,
+    "htmlSha256": "45f392a1ede75ceafab87af1e1ede3080c68bb4bcd0d0b9dd2a8bdf2c9ff4a90",
+    "zip": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-Mobile.zip",
+    "zipBytes": 7976741,
+    "zipSha256": "154d4165e7a9b4d271dec340dc74da75a8ac77510a5ce4110a66bdabb472f5a1",
+    "testedCandidateMatches": true
+  },
+  "runtimeArtBytes": 10079420,
+  "limits": [
+    "Windows desktop browsers and CDP trusted touch events; physical phone and five-player testing pending.",
+    "Lung presentation covered by supplied Renderer cases; no new natural full lung traversal.",
+    "Four independent dense performance samples of about 15 seconds; not a 600-second or hardware-phone benchmark.",
+    "Player/tool observed each rAF; enemies use 100ms scene samples plus state transitions, not all enemy transient frames.",
+    "Eight natural sequences include six short action flows and two rescue routes; 240 seconds is an upper bound, not completed duration.",
+    "AI source art plus reference posing and local rig/soft-body baking; not 115 independently AI-painted animation frames."
+  ],
+  "pass": true
+}

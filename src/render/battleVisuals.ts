@@ -10,6 +10,8 @@ import type { SceneLabelSink } from './sceneLabels';
 import { drawImmuneFocus } from './immuneFocusVisuals';
 import { drawCatalysis } from './catalysisVisuals';
 import { drawEliteTacticCycles } from './eliteTacticCycleVisuals';
+import { presentedMotherCombat } from './artPresentation';
+import { enemyRayEnd } from '../game/enemyTactics';
 
 const TAU = Math.PI * 2;
 
@@ -31,7 +33,10 @@ function label(ctx: CanvasRenderingContext2D, value: string, x: number, y: numbe
 }
 
 function groundLabel(ctx: CanvasRenderingContext2D, value: string, x: number, y: number, color: string, size = 11): void {
-  ctx.save(); ctx.translate(x, y); ctx.scale(1, 1 / .72); label(ctx, value, 0, 0, color, size); ctx.restore();
+  ctx.save(); ctx.translate(x, y); ctx.scale(1, 1 / .72);
+  ctx.font = `500 ${size}px "Microsoft YaHei", "Segoe UI", sans-serif`; ctx.textAlign = 'center';
+  ctx.strokeStyle = '#5a4352e0'; ctx.lineWidth = 3; ctx.strokeText(value, 0, 0);
+  label(ctx, value, 0, 0, color, size); ctx.restore();
 }
 
 /** All three branches use genuinely different outer paths, including in monochrome. */
@@ -39,15 +44,17 @@ export function traceVirusOutline(ctx: CanvasRenderingContext2D, trait: TraitId 
   const r = radius;
   ctx.beginPath();
   if (trait === 'CARAPACE') {
-    const points = [-1.05, .15, -1.3, -.23, -.82, -.52, -.88, -1.12, -.35, -.85, -.03, -1.38, .35, -.91, .86, -1.05, .85, -.46, 1.28, -.17, .95, .25, 1.08, .73, .45, .81, .13, 1.03, -.31, .81, -.91, .85];
-    ctx.moveTo(points[0] * r, points[1] * r);
-    for (let i = 2; i < points.length; i += 2) ctx.lineTo(points[i] * r, points[i + 1] * r);
+    // A broad shell cap and two short side plates, rather than a radial star.
+    ctx.moveTo(-r, .24 * r); ctx.bezierCurveTo(-1.18 * r, -.18 * r, -1.18 * r, -.18 * r, -.83 * r, -.45 * r);
+    ctx.lineTo(-.74 * r, -.88 * r); ctx.bezierCurveTo(0, -1.15 * r, 0, -1.15 * r, .74 * r, -.88 * r);
+    ctx.lineTo(.83 * r, -.45 * r); ctx.bezierCurveTo(1.18 * r, -.18 * r, 1.18 * r, -.18 * r, r, .24 * r);
+    ctx.bezierCurveTo(.72 * r, .94 * r, .72 * r, .94 * r, 0, .91 * r); ctx.bezierCurveTo(-.72 * r, .94 * r, -.72 * r, .94 * r, -r, .24 * r);
   } else if (trait === 'FISSION') {
-    ctx.moveTo(-1.02 * r, .15 * r);
-    ctx.bezierCurveTo(-1.55 * r, -.56 * r, -.86 * r, -1.3 * r, -.12 * r, -.78 * r);
-    ctx.bezierCurveTo(.41 * r, -1.4 * r, 1.38 * r, -.95 * r, 1.07 * r, -.12 * r);
-    ctx.bezierCurveTo(1.55 * r, .5 * r, .85 * r, 1.21 * r, .21 * r, .79 * r);
-    ctx.bezierCurveTo(-.32 * r, 1.3 * r, -1.5 * r, .92 * r, -1.02 * r, .15 * r);
+    ctx.moveTo(0, -.63 * r);
+    ctx.bezierCurveTo(-.55 * r, -1.34 * r, -1.3 * r, -.75 * r, -1.12 * r, .06 * r);
+    ctx.bezierCurveTo(-1.2 * r, .9 * r, -.4 * r, 1.08 * r, 0, .68 * r);
+    ctx.bezierCurveTo(.4 * r, 1.08 * r, 1.2 * r, .9 * r, 1.12 * r, .06 * r);
+    ctx.bezierCurveTo(1.3 * r, -.75 * r, .55 * r, -1.34 * r, 0, -.63 * r);
   } else if (trait === 'MIMIC') {
     ctx.moveTo(-1.68 * r, .48 * r);
     ctx.bezierCurveTo(-.88 * r, .07 * r, -1.03 * r, -.7 * r, -.36 * r, -.96 * r);
@@ -55,8 +62,8 @@ export function traceVirusOutline(ctx: CanvasRenderingContext2D, trait: TraitId 
     ctx.bezierCurveTo(.85 * r, .83 * r, .28 * r, 1.03 * r, -.22 * r, .74 * r);
     ctx.bezierCurveTo(-.83 * r, .52 * r, -1.03 * r, .88 * r, -1.68 * r, .48 * r);
   } else {
-    for (let i = 0; i <= 48; i++) {
-      const angle = i / 48 * TAU, length = r * (1 + Math.sin(angle * 8) * .11);
+    for (let i = 0; i <= 60; i++) {
+      const angle = i / 60 * TAU, length = r * (1 + Math.cos(angle * 6) * .105);
       const x = Math.cos(angle) * length, y = Math.sin(angle) * length * .86;
       if (!i) ctx.moveTo(x, y); else ctx.lineTo(x, y);
     }
@@ -66,12 +73,164 @@ export function traceVirusOutline(ctx: CanvasRenderingContext2D, trait: TraitId 
 
 const TRAIT_NAME: Record<TraitId, string> = { CARAPACE: '晶壳', FISSION: '裂殖', MIMIC: '潜伏' };
 
+export interface NativeEnemyRuleGeometry {
+  actorId: string;
+  type: 'carapace' | 'thin-ray';
+  angle: number;
+  projectedAngle: number;
+  origin: Vec;
+  end: Vec;
+  displayOrigin: Vec;
+  displayEnd: Vec;
+  sectorHalfAngle?: number;
+  displayRadius?: number;
+  exposed: boolean;
+  committed: boolean;
+}
+export interface NativeEnemyRuleCue extends NativeEnemyRuleGeometry { visible: true }
+
+export interface NativeMimicCue { actorId: string; reason: 'disturbance' | 'scan' | 'revealed' | 'trace' | 'exposed'; origin: Vec; visible: true }
+
+/** Two short ink waves, not a full-body halo or an extra tissue disguise. */
+function drawMimicStateMark(ctx: CanvasRenderingContext2D, x: number, y: number, revealed: boolean): void {
+  for (const [width, color] of [[3.6, '#efe3ca'], [1.5, revealed ? '#477565' : '#8e6076']] as const) {
+    ctx.beginPath();
+    for (const row of [-1, 1]) {
+      ctx.moveTo(x - 5, y + row * 3);
+      ctx.quadraticCurveTo(x - 2.5, y + row * 3 - 3, x, y + row * 3);
+      ctx.quadraticCurveTo(x + 2.5, y + row * 3 + 3, x + 5, y + row * 3);
+    }
+    ctx.strokeStyle = color; ctx.lineWidth = width; ctx.stroke();
+  }
+}
+
+/** Preserve the ordinary mimic's actual born-relative disturbance period even
+ * when a native PNG owns the disguise. This never grants reveal or damage. */
+export function drawNativeMimicAccents(ctx: CanvasRenderingContext2D, target: Target, state: GameState): NativeMimicCue | undefined {
+  if (!target.traits?.includes('MIMIC') || target.hp <= 0 || target.role === 'core'
+    || !['playing', 'paused'].includes(state.phase) || (target.born ?? 0) > state.elapsed) return;
+  const time = state.elapsed;
+  const traced = state.growth?.marks.some(mark => mark.targetId === target.id && mark.organId === state.battle?.organId && mark.until > time);
+  const age = (time - (target.born ?? 0)) % BATTLE_BALANCE.mimicPeriod;
+  const reason: NativeMimicCue['reason'] | undefined = (target.exposedUntil ?? 0) > time ? 'exposed'
+    : state.scanUntil > time ? 'scan' : (target.revealedUntil ?? 0) > time ? 'revealed' : traced ? 'trace'
+      : age < BATTLE_BALANCE.mimicDisturbance ? 'disturbance' : undefined;
+  if (!reason) return;
+  const origin = { x: target.x + target.radius + 9, y: target.y - target.radius * .8 / .72 };
+  ctx.save(); ctx.translate(origin.x, origin.y); ctx.scale(1, 1 / .72);
+  drawMimicStateMark(ctx, 0, 0, reason !== 'disturbance'); ctx.restore();
+  return { actorId: target.id, reason, origin, visible: true };
+}
+
+/** Ground-space state markers, not extra collision/damage footprints. Native
+ * upright art cannot communicate arbitrary world-facing by rotating its body.
+ * The armour half angle is the exact cos(incoming-facing) > .2 damage rule.
+ * Mother-core membranes have their own rule owner and never enter this path. */
+export function nativeEnemyRuleGeometry(target: Target, state: GameState): NativeEnemyRuleGeometry[] {
+  if (target.hp <= 0 || target.role === 'core' || !['playing', 'paused'].includes(state.phase)) return [];
+  const result: NativeEnemyRuleGeometry[] = [];
+  const facing = Number.isFinite(target.facing) ? target.facing! : 0;
+  const exposed = (target.exposedUntil ?? 0) > state.elapsed;
+  const projected = (angle: number) => Math.atan2(Math.sin(angle) * .72, Math.cos(angle));
+  if (target.traits?.includes('CARAPACE')) {
+    const origin = { x: target.x, y: target.y }, radius = target.radius + 8;
+    const end = { x: origin.x + Math.cos(facing) * radius, y: origin.y + Math.sin(facing) * radius };
+    result.push({ actorId: target.id, type: 'carapace', angle: facing, projectedAngle: projected(facing),
+      origin, end, displayOrigin: origin, displayEnd: end, sectorHalfAngle: Math.acos(.2), displayRadius: radius,
+      exposed, committed: false });
+  }
+  if (target.tactic === 'thin-ray' || target.attackPlan?.kind === 'thin-ray') {
+    const plan = target.attackPlan?.kind === 'thin-ray' && (target.attackAt ?? 0) > state.elapsed ? target.attackPlan : undefined;
+    const origin = plan ? { ...plan.origin } : { x: target.x, y: target.y };
+    const end = plan ? enemyRayEnd(plan, activeWorld(state)) : {
+      x: origin.x + Math.cos(facing) * (target.radius + 25), y: origin.y + Math.sin(facing) * (target.radius + 25),
+    };
+    const length = Math.hypot(end.x - origin.x, end.y - origin.y);
+    // A completely blocked plan has no forward segment to promise.
+    if (length > 1e-7) {
+      const angle = Math.atan2(end.y - origin.y, end.x - origin.x);
+      const at = (distance: number) => ({ x: origin.x + Math.cos(angle) * distance, y: origin.y + Math.sin(angle) * distance });
+      result.push({ actorId: target.id, type: 'thin-ray', angle, projectedAngle: projected(angle), origin, end,
+        displayOrigin: at(Math.min(target.radius + 4, length * .35)),
+        displayEnd: at(Math.min(target.radius + 25, length)), exposed, committed: !!plan });
+    }
+  }
+  return result;
+}
+
+/** A compact, upright state symbol anchored at the real protected front. Its
+ * closed / split outline survives overlap with the native shell at phone scale. */
+function drawCarapaceFrontMark(ctx: CanvasRenderingContext2D, cue: NativeEnemyRuleGeometry): void {
+  ctx.save();
+  ctx.translate(cue.displayEnd.x - cue.origin.x, cue.displayEnd.y - cue.origin.y);
+  ctx.scale(1, 1 / .72);
+  const outline = () => {
+    ctx.beginPath();
+    if (cue.exposed) {
+      // Separated, open halves: never leave an intact shield during exposure.
+      ctx.moveTo(-3, -6); ctx.lineTo(-7, -6); ctx.lineTo(-6, 1); ctx.lineTo(-3, 4);
+      ctx.moveTo(3, -4); ctx.lineTo(7, -4); ctx.lineTo(6, 3); ctx.lineTo(2, 7);
+    } else {
+      ctx.moveTo(-6, -6); ctx.lineTo(6, -6); ctx.lineTo(5, 2); ctx.lineTo(0, 7); ctx.lineTo(-5, 2); ctx.closePath();
+    }
+  };
+  outline(); ctx.strokeStyle = '#f3e7cf'; ctx.lineWidth = 5.5; ctx.stroke();
+  outline(); ctx.strokeStyle = cue.exposed ? '#a66d68' : '#664457'; ctx.lineWidth = 2.8; ctx.stroke();
+  ctx.restore();
+}
+
+/** No actor body, labels, light aura or filled sector is painted. Return the
+ * geometry actually consumed by this draw so diagnostics cannot drift from it.
+ * Every mark is essential and identical in normal and low-effects rendering. */
+export function drawNativeEnemyAccents(ctx: CanvasRenderingContext2D, target: Target, state: GameState): NativeEnemyRuleCue[] {
+  drawNativeMimicAccents(ctx, target, state);
+  const drawn: NativeEnemyRuleCue[] = [];
+  for (const cue of nativeEnemyRuleGeometry(target, state)) {
+    ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    if (cue.type === 'carapace') {
+      ctx.translate(cue.origin.x, cue.origin.y);
+      const radius = cue.displayRadius!, half = cue.sectorHalfAngle!;
+      const arc = () => { ctx.beginPath(); ctx.arc(0, 0, radius, cue.angle - half, cue.angle + half); };
+      if (cue.exposed) {
+        // The front is physically open, independent of colour or dash support.
+        const fragments = () => {
+          ctx.beginPath(); ctx.arc(0, 0, radius, cue.angle - half, cue.angle - .3);
+          ctx.moveTo(Math.cos(cue.angle + .3) * radius, Math.sin(cue.angle + .3) * radius);
+          ctx.arc(0, 0, radius, cue.angle + .3, cue.angle + half);
+        };
+        ctx.setLineDash([3, 6]);
+        fragments(); ctx.strokeStyle = '#f3e7cf'; ctx.lineWidth = 4.8; ctx.stroke();
+        fragments(); ctx.strokeStyle = '#987b83'; ctx.lineWidth = 2.4; ctx.stroke(); ctx.setLineDash([]);
+      } else {
+        arc(); ctx.strokeStyle = '#f3e7cf'; ctx.lineWidth = 7; ctx.stroke();
+        arc(); ctx.strokeStyle = '#664457'; ctx.lineWidth = 3.8; ctx.stroke();
+        // Two short end caps distinguish the protected front from the open rear.
+        for (const angle of [cue.angle - half, cue.angle + half]) {
+          line(ctx, [Math.cos(angle) * (radius - 3), Math.sin(angle) * (radius - 3),
+            Math.cos(angle) * (radius + 3), Math.sin(angle) * (radius + 3)], '#664457', 2.8);
+        }
+      }
+      drawCarapaceFrontMark(ctx, cue);
+    } else {
+      line(ctx, [cue.displayOrigin.x, cue.displayOrigin.y, cue.displayEnd.x, cue.displayEnd.y], '#f0e3c9', 4.5);
+      line(ctx, [cue.displayOrigin.x, cue.displayOrigin.y, cue.displayEnd.x, cue.displayEnd.y], cue.committed ? '#9e5f62' : '#826776', 2);
+      ctx.translate(cue.displayEnd.x, cue.displayEnd.y); ctx.rotate(cue.angle);
+      // A short solid pointer owns direction. It never follows a fixed painted
+      // nozzle and never invents a second ray width or attack endpoint.
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-8, -4.5); ctx.lineTo(-6, 0); ctx.lineTo(-8, 4.5); ctx.closePath();
+      ctx.fillStyle = cue.committed ? '#9e5f62' : '#826776'; ctx.fill();
+    }
+    ctx.restore(); drawn.push({ ...cue, visible: true });
+  }
+  return drawn;
+}
+
 /** Drawn in the same Y-sorted world layer as every other actor. */
 export function drawBattleTarget(ctx: CanvasRenderingContext2D, target: Target, state: GameState): void {
-  const core = state.campaign?.core.combat;
+  const core = presentedMotherCombat(state);
   if (target.role === 'core' && core?.coreId === target.id) { drawMotherCore(ctx, target, state, core); return; }
   const t = state.elapsed, r = target.radius;
-  const trait = target.traits?.[0];
+  const trait = target.traits?.[0] ?? (!state.battle && target.kind === 'cluster' ? 'FISSION' : undefined);
   const exposed = (target.exposedUntil ?? 0) > t;
   const traced = state.growth?.marks.some(mark => mark.targetId === target.id && mark.organId === state.battle?.organId && mark.until > t) ?? false;
   const revealed = (target.revealedUntil ?? 0) > t || exposed || state.scanUntil > t || traced;
@@ -130,12 +289,12 @@ export function drawBattleTarget(ctx: CanvasRenderingContext2D, target: Target, 
     ctx.fillStyle = '#f0c993'; ctx.fill(); ctx.strokeStyle = '#542b43'; ctx.lineWidth = 2; ctx.stroke();
   }
 
-  const body = ctx.createLinearGradient(-r, -r, r, r);
-  body.addColorStop(0, target.hitUntil > t ? '#fff2c5' : mimic ? '#b17d7a' : trait === 'CARAPACE' ? '#b997c3' : trait === 'FISSION' ? '#f1b077' : '#ed8a87');
-  body.addColorStop(.55, mimic ? '#805663' : trait === 'CARAPACE' ? '#785c9b' : '#ba5c73');
-  body.addColorStop(1, '#633a58');
+  const body = ctx.createLinearGradient(0, -r, 0, r);
+  body.addColorStop(0, target.hitUntil > t ? '#f4dfb3' : mimic ? '#a98c8c' : trait === 'CARAPACE' ? '#ab9cb3' : trait === 'FISSION' ? '#d2a08a' : '#d99186');
+  body.addColorStop(.68, mimic ? '#9b7c86' : trait === 'CARAPACE' ? '#9989a7' : trait === 'FISSION' ? '#c58d80' : '#cd827d');
+  body.addColorStop(1, mimic ? '#907581' : trait === 'CARAPACE' ? '#8c7b9b' : '#b97274');
   traceVirusOutline(ctx, trait, r); ctx.fillStyle = body; ctx.fill();
-  ctx.strokeStyle = revealed && target.traits?.includes('MIMIC') ? '#9cf2e8' : '#3b203d'; ctx.lineWidth = revealed ? 2.5 : 2; ctx.stroke();
+  ctx.strokeStyle = revealed && target.traits?.includes('MIMIC') ? '#527a69' : '#785967'; ctx.lineWidth = revealed ? 2.5 : 1.8; ctx.stroke();
 
   if (trait === 'CARAPACE') {
     const facing = target.facing ?? 0;
@@ -145,45 +304,43 @@ export function drawBattleTarget(ctx: CanvasRenderingContext2D, target: Target, 
       for (let i = -1; i <= 1; i++) {
         const a = i * .61;
         ctx.beginPath(); ctx.moveTo(r * .28, 0); ctx.lineTo(Math.cos(a - .35) * r * .85, Math.sin(a - .35) * r * .85);
-        ctx.lineTo(Math.cos(a) * r * 1.16, Math.sin(a) * r * 1.16);
+        ctx.lineTo(Math.cos(a) * r * 1.09, Math.sin(a) * r * 1.09);
         ctx.lineTo(Math.cos(a + .35) * r * .85, Math.sin(a + .35) * r * .85); ctx.closePath();
-        ctx.fillStyle = '#c8b3d0'; ctx.fill(); ctx.strokeStyle = '#ead7d8a8'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.fillStyle = '#c4b6c4'; ctx.fill(); ctx.strokeStyle = '#796581'; ctx.lineWidth = 1; ctx.stroke();
       }
     } else {
       line(ctx, [r * .56, -r * .8, r * .84, -r * 1.05], '#fff4bf', 3);
       line(ctx, [r * .72, r * .65, r * 1.04, r * .88], '#fff4bf', 3);
     }
     ctx.restore();
-    ellipse(ctx, -.15 * r, .09 * r, r * .39, r * .43, exposed ? '#ffd68e' : '#d6a4a0', '#e9c5a0');
+    ellipse(ctx, -.15 * r, .09 * r, r * .39, r * .43, exposed ? '#ead3a0' : '#cfa99c', '#a38389');
     if (exposed) line(ctx, [-r * .4, -r * .2, -r * .14, r * .1, r * .1, -r * .22], '#fff7c9', 3);
   } else if (trait === 'FISSION') {
-    ellipse(ctx, -r * .48, -r * .23, r * .35, r * .4, '#ffd4a986', '#f4c18e');
-    ellipse(ctx, r * .43, -r * .14, r * .32, r * .35, '#fbc4c483', '#f4b6b4');
-    ellipse(ctx, 0, r * .42, r * .28, r * .26, '#ffdf9b77', '#f2d6a3');
-    line(ctx, [0, -r * .66, -r * .17, -r * .27, r * .15, r * .08, -.12 * r, r * .45, .13 * r, .73 * r], '#572541', 2.5);
+    // Two broad lobes share one cleft. Small translucent gel bubbles made
+    // dense groups read as shine; the cleft now carries the splitting cue.
+    line(ctx, [0, -r * .61, -.08 * r, -r * .27, .08 * r, r * .15, 0, .66 * r], '#916b70', 2);
     if ((target.generation ?? 0) === 0) label(ctx, 'Ⅱ', r * .65, r * .68, '#ffedc2', 11);
   } else if (trait === 'MIMIC') {
-    for (let i = 0; i < 3; i++) ellipse(ctx, (i - 1) * r * .42, Math.sin(i * 2) * r * .23, r * .34, r * .2, mimic ? '#b28b8044' : '#bddcce44', '#dfbca76b');
+    ellipse(ctx, -.1 * r, .12 * r, r * .52, r * .28, mimic ? '#b3998933' : '#b4c4a344');
     if (revealed) {
-      ctx.setLineDash([4, 3]); ellipse(ctx, 0, 0, r * 1.1, r * 1.08, '#00000000', '#b5fbeb'); ctx.setLineDash([]);
-      line(ctx, [-r * .3, -r * .2, r * .2, r * .1, -.06 * r, r * .45], '#c2ffef', 2);
+      ctx.setLineDash([4, 5]); ellipse(ctx, 0, 0, r * 1.1, r * 1.08, '#00000000', '#547d6b'); ctx.setLineDash([]);
     }
   } else {
-    ellipse(ctx, -3, -r * .35, r * .57, r * .23, '#ffdfb947');
-    ellipse(ctx, 0, 3, r * .43, r * .44, '#f7b38955', '#f4b27d77');
+    ellipse(ctx, 0, r * .4, r * .42, r * .18, '#bc77745c');
   }
 
   if (!mimic) {
     const pupilX = Math.cos(target.facing ?? 0) * 1.3;
-    ellipse(ctx, -r * .27, -3, telegraph ? 4 : 3, telegraph ? 2 : 4, '#2e1e38');
-    ellipse(ctx, r * .25, -3, telegraph ? 4 : 3, telegraph ? 2 : 4, '#2e1e38');
-    ellipse(ctx, -r * .27 + pupilX, -4, 1, 1, '#fff1c1'); ellipse(ctx, r * .25 + pupilX, -4, 1, 1, '#fff1c1');
-    if (telegraph) label(ctx, '!', 0, -r * .88, '#ffdf9f', 16);
+    ellipse(ctx, -r * .27, -3, telegraph ? 4 : 3.8, telegraph ? 2.7 : 5, '#e7d3a0');
+    ellipse(ctx, r * .25, -3, telegraph ? 4 : 3.8, telegraph ? 2.7 : 5, '#e7d3a0');
+    ellipse(ctx, -r * .27 + pupilX, -2, 1.5, 2.4, '#634e56'); ellipse(ctx, r * .25 + pupilX, -2, 1.5, 2.4, '#634e56');
+    ellipse(ctx, 0, r * .3, r * .17, telegraph ? r * .19 : r * .1, '#e2bc85');
+    if (telegraph) label(ctx, '!', 0, -r * .88, '#ecd9a9', 16);
   }
   ctx.restore();
 
   // Every actor retains its exact ground anchor, even while its body disguises.
-  ctx.lineWidth = 1; ellipse(ctx, 0, 1, 9, 4, '#f1ca8b0b', mimic ? '#d9ab8c55' : '#efc69aa0');
+  ctx.lineWidth = 1; ellipse(ctx, 0, 1, 9, 4, '#85687416', mimic ? '#9b80824a' : '#8c6a7955');
   ctx.restore();
 }
 
@@ -197,58 +354,39 @@ function drawMotherCore(ctx: CanvasRenderingContext2D, target: Target, state: Ga
     ellipse(ctx, 0, 0, r, 12, '#9cddbd14', '#b1e7ca66');
     drawMotherCoreLocalAccents(ctx, target, state, combat, false); ctx.restore(); return;
   }
-  // Rooted ribs, a hanging central lantern and two smaller brood chambers give
-  // the mother a different construction from any enlarged ordinary virus.
+  // The fallback shares the round, short-bud virus family. Two low roots and
+  // one cream heart distinguish a mother without rebuilding a glowing torso.
   for (const sign of [-1, 1]) {
     ctx.beginPath(); ctx.moveTo(sign * r * .26, -r * .45);
-    ctx.bezierCurveTo(sign * r * 1.3, -r * .45, sign * r * .8, -8, sign * r * 1.38, 4);
-    ctx.strokeStyle = '#d5a7ad'; ctx.lineWidth = 8; ctx.stroke();
-    ctx.strokeStyle = '#754a69'; ctx.lineWidth = 3; ctx.stroke();
-    ellipse(ctx, sign * r * 1.3, 4, r * .22, 6, '#80536d', '#d5b4af');
+    ctx.bezierCurveTo(sign * r * .9, -r * .27, sign * r * .9, -2, sign * r * 1.2, 4);
+    ctx.strokeStyle = '#b39b9c'; ctx.lineWidth = 9; ctx.stroke();
+    ellipse(ctx, sign * r * 1.16, 4, r * .22, 6, '#9a828f', '#796773');
   }
   const lift = motherCoreLift(combat, time);
   ctx.save(); ctx.translate(0, -r * .96 + lift); ctx.globalAlpha = hidden ? .68 : 1;
-  if (combat.traits.includes('MIMIC')) {
-    const mantle = ctx.createLinearGradient(0, -r * 1.3, 0, r);
-    mantle.addColorStop(0, hidden ? '#b5b4b752' : '#bbb4c775'); mantle.addColorStop(1, '#706e9560');
-    ctx.beginPath(); ctx.moveTo(-r * 1.1, r * .55); ctx.bezierCurveTo(-r * 1.6, -r * .2, -r * 1.05, -r * 1.7, 0, -r * 1.38);
-    ctx.bezierCurveTo(r * 1.15, -r * 1.67, r * 1.55, -r * .2, r * 1.1, r * .55);
-    ctx.quadraticCurveTo(r * .5, r * .22, 0, r * .72); ctx.quadraticCurveTo(-r * .65, r * .21, -r * 1.1, r * .55);
-    ctx.fillStyle = mantle; ctx.fill(); ctx.strokeStyle = '#d8d6d788'; ctx.lineWidth = 1.5; ctx.stroke();
-  }
-  const body = ctx.createLinearGradient(-r, -r * 1.2, r, r * .9);
-  body.addColorStop(0, target.hitUntil > time ? '#fff2c5' : '#e4bcc4'); body.addColorStop(.48, '#a57195'); body.addColorStop(1, '#654563');
-  ctx.beginPath(); ctx.moveTo(-r * .85, r * .2); ctx.bezierCurveTo(-r * 1.1, -r * .4, -r * .55, -r * 1.4, 0, -r * 1.21);
-  ctx.bezierCurveTo(r * .7, -r * 1.4, r * 1.12, -r * .23, r * .74, r * .39);
-  ctx.quadraticCurveTo(r * .43, r * 1.05, 0, r * .87); ctx.quadraticCurveTo(-r * .62, r * 1.03, -r * .85, r * .2);
-  ctx.fillStyle = body; ctx.fill(); ctx.strokeStyle = '#432d4e'; ctx.lineWidth = 3; ctx.stroke();
+  const body = ctx.createLinearGradient(0, -r, 0, r);
+  body.addColorStop(0, target.hitUntil > time ? '#ead6ad' : '#b29caa'); body.addColorStop(1, '#937d91');
+  traceVirusOutline(ctx, undefined, r); ctx.fillStyle = body; ctx.fill(); ctx.strokeStyle = '#766172'; ctx.lineWidth = 2.5; ctx.stroke();
   if (combat.traits.includes('FISSION')) {
     for (const sign of [-1, 1]) {
-      const radius = active === 'FISSION' ? r * .43 : r * .32;
-      ellipse(ctx, sign * r * .68, r * .13, radius, radius * 1.16, '#c88fa0', active === 'FISSION' ? '#ffe1a4' : '#e9bdbe');
-      ellipse(ctx, sign * r * .69, r * .11, radius * .42, radius * .61, '#dfb7a6', '#f3d3b5');
+      const radius = active === 'FISSION' ? r * .3 : r * .24;
+      ellipse(ctx, sign * r * .8, r * .2, radius, radius * 1.05, '#c2a09b', active === 'FISSION' ? '#e4cd9e' : '#987c87');
     }
-    line(ctx, [-r * .14, -r * .91, r * .08, -r * .55, -r * .14, -r * .22, r * .11, r * .15, -r * .07, r * .66], active === 'FISSION' ? '#ffe7b4' : '#65435c', active === 'FISSION' ? 3 : 2);
   }
   if (combat.traits.includes('CARAPACE')) {
     const spread = exposed ? 1.3 : 1;
-    for (let i = 0; i < 5; i++) {
-      const angle = -Math.PI + i / 4 * Math.PI;
-      const x = Math.cos(angle) * r * .9 * spread, y = Math.sin(angle) * r * .92 * spread - r * .18;
-      ctx.beginPath(); ctx.moveTo(x - 10, y + 9); ctx.lineTo(x - 6, y - 12); ctx.lineTo(x + 5, y - 22); ctx.lineTo(x + 12, y + 4); ctx.closePath();
-      ctx.fillStyle = active === 'CARAPACE' && !exposed ? '#d7c1d5' : '#997da8'; ctx.fill(); ctx.strokeStyle = '#ead5d8'; ctx.lineWidth = 1.5; ctx.stroke();
+    for (const sign of [-1, 1]) {
+      const x = sign * r * .57 * spread;
+      ctx.beginPath(); ctx.ellipse(x, -r * .48, r * .3, r * .47, sign * .55, 0, TAU);
+      ctx.fillStyle = active === 'CARAPACE' && !exposed ? '#c5b7c3' : '#a08da7'; ctx.fill(); ctx.strokeStyle = '#827084'; ctx.lineWidth = 1.5; ctx.stroke();
     }
   }
   // The visible heart of the lantern is the core's readable weak point.
   const coreY = -r * .14;
-  ellipse(ctx, 0, coreY, r * .38, r * .55, exposed ? '#ffe6ac' : '#dfada7', exposed ? '#fff5ce' : '#f1c7b2');
+  ellipse(ctx, 0, coreY, r * .38, r * .55, exposed ? '#f0deb0' : '#d4b6a0', exposed ? '#795e58' : '#a18386');
   ctx.beginPath(); ctx.moveTo(-r * .22, coreY); ctx.lineTo(0, coreY - r * .32); ctx.lineTo(r * .22, coreY); ctx.lineTo(0, coreY + r * .3); ctx.closePath();
-  ctx.fillStyle = exposed ? '#fffae2' : '#795271'; ctx.fill();
-  for (const sign of [-1, 1]) {
-    const x = sign * r * .35;
-    ctx.beginPath(); ctx.moveTo(x, -r * .91); ctx.bezierCurveTo(x * 1.9, -r * .35, x * 1.6, r * .45, sign * r * .12, r * .78);
-    ctx.strokeStyle = '#e3b5ba'; ctx.lineWidth = 4; ctx.stroke();
-  }
+  ctx.fillStyle = exposed ? '#f8efd4' : '#8d707e'; ctx.fill();
+  for (const sign of [-1, 1]) ellipse(ctx, sign * r * .48, -r * .22, r * .07, r * .13, '#e4cda0');
   ctx.restore();
   drawMotherCoreLocalAccents(ctx, target, state, combat, false);
   ctx.restore();
@@ -260,11 +398,49 @@ export function motherCoreLift(combat: MotherCoreState, time: number): number {
 
 /** Status cues for a separately rendered mother body; no body, core or trait attachment is painted here. */
 export interface MotherCoreAccentGeometry { coreOffset: Vec; bodyBounds: { left: number; right: number; top: number; bottom: number } }
+export interface MotherCoreStageCue {
+  actorId: string; remaining: number; total: number; floorRatio: number; phaseFloorActive: boolean;
+  exposed: boolean; stageOrigin: Vec; filledStages: number; visible: true;
+}
 export function drawMotherCoreAccents(ctx: CanvasRenderingContext2D, target: Target, state: GameState, combat: MotherCoreState,
-  geometry?: MotherCoreAccentGeometry): void {
+  geometry?: MotherCoreAccentGeometry, options: { labels?: boolean } = {}): MotherCoreStageCue | undefined {
   ctx.save(); ctx.translate(target.x, target.y); ctx.scale(1, 1 / .72);
-  drawMotherCoreLocalAccents(ctx, target, state, combat, true, geometry);
+  const cue = drawMotherCoreLocalAccents(ctx, target, state, combat, true, geometry, options.labels !== false);
   ctx.restore();
+  return cue;
+}
+
+/** Small pips describe remaining demonstration stages, not invulnerability.
+ * The half-HP phase floor and temporary exposure are independent authorities. */
+function drawMotherCoreStages(ctx: CanvasRenderingContext2D, target: Target, state: GameState, combat: MotherCoreState,
+  geometry?: MotherCoreAccentGeometry): MotherCoreStageCue | undefined {
+  if (!combat.membrane || ![combat.membrane.total, combat.membrane.remaining, combat.membrane.floorRatio].every(Number.isFinite)) return;
+  const total = Math.max(1, Math.min(2, Math.floor(combat.membrane.total)));
+  const remaining = Math.max(0, Math.min(total, Math.floor(combat.membrane.remaining)));
+  const exposed = Math.max(combat.exposedUntil, target.exposedUntil ?? 0) > state.elapsed;
+  const bodyY = -target.radius * .96 + motherCoreLift(combat, state.elapsed);
+  const core = geometry?.coreOffset ?? { x: 0, y: bodyY - target.radius * .14 };
+  const y = core.y + target.radius * (geometry ? .32 : .55) + 7;
+  const width = total * 10 + 4, x = core.x - width / 2;
+  ctx.beginPath(); ctx.roundRect(x, y - 4, width, 9, 3); ctx.fillStyle = '#efe4cce6'; ctx.fill();
+  ctx.lineWidth = 1; ctx.strokeStyle = '#756d6380'; ctx.stroke();
+  for (let index = 0; index < total; index++) {
+    ctx.beginPath(); ctx.roundRect(x + 3 + index * 10, y - 1.5, 7, 4, 1.2);
+    ctx.strokeStyle = index < remaining ? '#76566d' : '#7b957a'; ctx.lineWidth = 1;
+    if (index < remaining) { ctx.fillStyle = '#8f6f87'; ctx.fill(); }
+    ctx.stroke();
+  }
+  if (exposed) {
+    // A separate open diamond means temporary exposure. It can coexist with
+    // filled stage pips: exposure does not cancel the remaining phase floor.
+    const dx = core.x + target.radius * .44, dy = core.y;
+    ctx.beginPath(); ctx.moveTo(dx, dy - 5); ctx.lineTo(dx + 4, dy); ctx.lineTo(dx, dy + 5); ctx.lineTo(dx - 4, dy); ctx.closePath();
+    ctx.strokeStyle = '#efe3c9'; ctx.lineWidth = 4; ctx.stroke();
+    ctx.strokeStyle = '#985e69'; ctx.lineWidth = 1.8; ctx.stroke();
+  }
+  return { actorId: target.id, remaining, total, floorRatio: combat.membrane.floorRatio,
+    phaseFloorActive: remaining > 0 && combat.membrane.floorRatio > 0, exposed,
+    stageOrigin: { x: core.x, y }, filledStages: remaining, visible: true };
 }
 
 /** The procedural fallback already conveys hits/exposure in its painted core. */
@@ -275,8 +451,9 @@ function motherCoreCaption(ctx: CanvasRenderingContext2D, value: string, x: numb
 }
 
 function drawMotherCoreLocalAccents(ctx: CanvasRenderingContext2D, target: Target, state: GameState, combat: MotherCoreState, spriteFeedback: boolean,
-  geometry?: MotherCoreAccentGeometry): void {
+  geometry?: MotherCoreAccentGeometry, labels = true): MotherCoreStageCue | undefined {
   if (target.hp <= 0) {
+    if (!labels) return;
     if (geometry) motherCoreCaption(ctx, '✓ 母巢核心已清除', (geometry.bodyBounds.left + geometry.bodyBounds.right) / 2,
       geometry.bodyBounds.top - 8, 130, 12, '#24574f');
     else label(ctx, '✓ 母巢核心已清除', 0, -15, '#d4efd4', 12);
@@ -285,16 +462,10 @@ function drawMotherCoreLocalAccents(ctx: CanvasRenderingContext2D, target: Targe
   const r = target.radius, time = state.elapsed, active = combat.activeTrait;
   const exposed = Math.max(combat.exposedUntil, target.exposedUntil ?? 0) > time;
   const bodyY = -r * .96 + motherCoreLift(combat, time);
-  if (active === 'MIMIC' && (motherCoreDisturbed(combat, time) || spriteFeedback && exposed)) {
-    ctx.save(); if (!geometry) ctx.translate(0, bodyY);
-    // The old fallback drew this cue in its fully visible body layer.
-    if (!spriteFeedback) ctx.globalAlpha = 1;
-    ctx.lineWidth = 4; ctx.setLineDash([5, 4]);
-    if (geometry) {
-      const b = geometry.bodyBounds;
-      ellipse(ctx, (b.left + b.right) / 2, (b.top + b.bottom) / 2, (b.right - b.left) / 2 + 4, (b.bottom - b.top) / 2 + 4, '#00000000', '#376b688f');
-    } else ellipse(ctx, 0, -r * .17, r * 1.18, r * 1.31, '#00000000', '#d1efe1');
-    ctx.restore();
+  if (active === 'MIMIC' && (motherCoreDisturbed(combat, time) || (target.revealedUntil ?? 0) > time || exposed)) {
+    const core = geometry?.coreOffset ?? { x: 0, y: bodyY - r * .14 };
+    drawMimicStateMark(ctx, core.x - r * .54, core.y - r * .25,
+      combat.revealedUntil > time || (target.revealedUntil ?? 0) > time || exposed);
   }
   if (active === 'CARAPACE') {
     ctx.save(); ctx.scale(1, .72); ctx.beginPath();
@@ -308,13 +479,14 @@ function drawMotherCoreLocalAccents(ctx: CanvasRenderingContext2D, target: Targe
     if (target.hitUntil > time) {
       line(ctx, [coreX - 7, coreY, coreX + 7, coreY], geometry ? '#245d65' : '#fff4b7', 2.5);
       line(ctx, [coreX, coreY - 7, coreX, coreY + 7], geometry ? '#245d65' : '#fff4b7', 2.5);
-    } else if (exposed) label(ctx, '◇', coreX, coreY + 4, geometry ? '#6d3e4f' : '#fff5ce', 14);
+    } else if (exposed && labels) label(ctx, '◇', coreX, coreY + 4, geometry ? '#6d3e4f' : '#fff5ce', 14);
   }
   ctx.lineWidth = 3;
   ellipse(ctx, 0, 2, 14, 5, '#ffd99d18', geometry ? exposed ? '#496f66' : '#8a5b60' : exposed ? '#fff1ba' : '#e7bea4');
   const traitText = combat.traits.map(trait => `${TRAIT_SYMBOL[trait]}${TRAIT_NAME[trait]}`).join(' / ');
-  if (geometry) motherCoreCaption(ctx, traitText, 0, 28, combat.traits.length > 1 ? 106 : 58, 10, '#5e3f4b');
-  else label(ctx, traitText, 0, 28, '#e7ccb8', 10);
+  const stage = drawMotherCoreStages(ctx, target, state, combat, geometry);
+  if (labels) motherCoreCaption(ctx, traitText, 0, 28, combat.traits.length > 1 ? 106 : 58, 10, '#5e3f4b');
+  return stage;
 }
 
 /** Every warning is read directly from the serialized attack used for damage. */
@@ -343,7 +515,7 @@ export function drawMotherCoreDangers(ctx: CanvasRenderingContext2D, state: Game
       const distance = Math.min(attack.range, wallHit(attack.origin, direction, attack.range, activeWorld(state)) ?? attack.range);
       ctx.lineTo(attack.origin.x + direction.x * distance, attack.origin.y + direction.y * distance);
     }
-    ctx.closePath(); ctx.fillStyle = '#ee976d1b'; ctx.fill(); ctx.strokeStyle = '#ffd398'; ctx.stroke();
+    ctx.closePath(); ctx.fillStyle = '#b7818528'; ctx.fill(); ctx.strokeStyle = '#825365'; ctx.stroke();
     for (let i = 1; i <= 3; i++) {
       const radius = attack.range * i / 4, x = attack.origin.x + Math.cos(attack.angle) * radius, y = attack.origin.y + Math.sin(attack.angle) * radius;
       const block = wallHit(attack.origin, { x: Math.cos(attack.angle), y: Math.sin(attack.angle) }, radius, activeWorld(state));
@@ -355,12 +527,12 @@ export function drawMotherCoreDangers(ctx: CanvasRenderingContext2D, state: Game
     for (const center of centers) {
       protectPoint(center); protectPoint({ x: center.x, y: center.y - attack.radius - 5 }, 5);
       ctx.setLineDash(attack.kind === 'brood' ? [3, 5] : []);
-      ellipse(ctx, center.x, center.y, attack.radius, attack.radius, '#f5be8b13', '#ffd29b'); ctx.setLineDash([]);
-      ctx.beginPath(); ctx.arc(center.x, center.y, attack.radius + 5, -Math.PI / 2, -Math.PI / 2 + TAU * progress); ctx.strokeStyle = '#ffe7b1'; ctx.lineWidth = 3; ctx.stroke();
-      line(ctx, [center.x - 6, center.y - 6, center.x + 6, center.y + 6], '#ffdaa4', 2); line(ctx, [center.x - 6, center.y + 6, center.x + 6, center.y - 6], '#ffdaa4', 2);
+      ellipse(ctx, center.x, center.y, attack.radius, attack.radius, '#b7818528', '#825365'); ctx.setLineDash([]);
+      ctx.beginPath(); ctx.arc(center.x, center.y, attack.radius + 5, -Math.PI / 2, -Math.PI / 2 + TAU * progress); ctx.strokeStyle = '#e3c7a3'; ctx.lineWidth = 3; ctx.stroke();
+      line(ctx, [center.x - 6, center.y - 6, center.x + 6, center.y + 6], '#d7bba2', 2); line(ctx, [center.x - 6, center.y + 6, center.x + 6, center.y - 6], '#d7bba2', 2);
     }
     if (attack.kind === 'corrosion') {
-      ctx.setLineDash([5, 7]); line(ctx, [attack.origin.x, attack.origin.y, attack.aim.x, attack.aim.y], '#f4d9b4', 1.5); ctx.setLineDash([]);
+      ctx.setLineDash([5, 7]); line(ctx, [attack.origin.x, attack.origin.y, attack.aim.x, attack.aim.y], '#805e6a', 1.5); ctx.setLineDash([]);
       const near = Math.hypot(state.player.x - attack.origin.x, state.player.y - attack.origin.y) <= MOTHER_CORE_BALANCE.scanRange;
       const counter = !near ? '靠近母巢后 Q 中断' : state.scanReady > state.elapsed ? `Q 冷却 ${(state.scanReady - state.elapsed).toFixed(1)}s · 抢修组织` : 'Q 扫描中断侵蚀';
       caption(`${counter} · ${remaining.toFixed(1)}s`, { x: (attack.origin.x + attack.aim.x) / 2, y: (attack.origin.y + attack.aim.y) / 2 }, { x: 0, y: -20 }, '#ffe5b7', 12);
@@ -384,7 +556,7 @@ const overlaps = (a: LabelBox, b: LabelBox): boolean => a.left < b.right && a.ri
 
 /** Protect actual small sprite features, not a full empty body bounding box. */
 function reserveTargetFeatures(labels: SceneLabelSink, target: Target, state: GameState): void {
-  const r = target.radius, time = state.elapsed, core = state.campaign?.core.combat;
+  const r = target.radius, time = state.elapsed, core = presentedMotherCombat(state);
   // The sprite is drawn at worldY*.72, then local y is uncompressed. Convert
   // local feature bounds back to ground-world y before reserveWorld projects it.
   const local = (x: number, y: number, rx: number, ry: number) => labels.reserveWorld?.({
@@ -418,8 +590,9 @@ export function drawBattleLabels(ctx: CanvasRenderingContext2D, state: GameState
   const targets = state.targets.filter(target => target.hp > 0).sort((a, b) => priority(a) - priority(b) || a.id.localeCompare(b.id));
   if (labels) {
     for (const target of targets) {
-      const full = target.role === 'source' || target.role === 'elite' || target.role === 'core', focused = aimed(target);
-      const tacticName = target.tactic && target.tactic !== 'melee' ? ENEMY_TACTIC_INFO[target.tactic].name : '';
+      const full = target.role === 'source' || target.role === 'elite' || target.role === 'core' || target.role === 'nest', focused = aimed(target);
+      const tacticName = target.profession === 'slime-caster' ? '黏液法师' : target.profession === 'nest-builder' ? '筑巢者'
+        : target.profession === 'fastling' && focused ? '高速幼体' : target.tactic && target.tactic !== 'melee' ? ENEMY_TACTIC_INFO[target.tactic].name : '';
       const exposed = (target.exposedUntil ?? 0) > time;
       const traced = state.growth?.marks.some(mark => mark.targetId === target.id && mark.organId === state.battle?.organId && mark.until > time) ?? false;
       const mimic = target.traits?.includes('MIMIC') && (target.revealedUntil ?? 0) <= time && state.scanUntil <= time && !exposed && !traced;
@@ -427,7 +600,7 @@ export function drawBattleLabels(ctx: CanvasRenderingContext2D, state: GameState
       if (full || tacticName || focused || exposed) reserveTargetFeatures(labels, target, state);
       const bar = full || !!tacticName || focused || target.hitUntil > time, symbols = target.traits?.map(id => TRAIT_SYMBOL[id]).join('') ?? '';
       if (!full && !bar && (!symbols || !target.scanned)) continue;
-      const role = target.role === 'core' ? '母巢' : target.role === 'elite' ? '精英' : '感染源';
+      const role = target.role === 'nest' ? '小母巢' : target.role === 'core' ? '母巢' : target.role === 'elite' ? '精英' : '感染源';
       const name = full ? `${role}${tacticName ? ' · ' + tacticName : target.traits?.length ? ' · ' + target.traits.map(id => TRAIT_NAME[id]).join('·') : ''}` : tacticName || symbols;
       const baseY = -target.radius * 1.96 - (target.role === 'elite' || target.role === 'core' ? 17 : 7);
       labels.add({ id: `target:${target.id}`, anchor: { x: target.x, y: target.y }, offset: { x: 0, y: baseY - 7 },
@@ -449,8 +622,9 @@ export function drawBattleLabels(ctx: CanvasRenderingContext2D, state: GameState
   }
   const occupied: LabelBox[] = [];
   for (const target of targets) {
-    const full = target.role === 'source' || target.role === 'elite' || target.role === 'core';
-    const tacticName = target.tactic && target.tactic !== 'melee' ? ENEMY_TACTIC_INFO[target.tactic].name : '';
+    const full = target.role === 'source' || target.role === 'elite' || target.role === 'core' || target.role === 'nest';
+    const tacticName = target.profession === 'slime-caster' ? '黏液法师' : target.profession === 'nest-builder' ? '筑巢者'
+      : target.profession === 'fastling' && aimed(target) ? '高速幼体' : target.tactic && target.tactic !== 'melee' ? ENEMY_TACTIC_INFO[target.tactic].name : '';
     const exposed = (target.exposedUntil ?? 0) > time;
     const traced = state.growth?.marks.some(mark => mark.targetId === target.id && mark.organId === state.battle?.organId && mark.until > time) ?? false;
     const mimic = target.traits?.includes('MIMIC') && (target.revealedUntil ?? 0) <= time && state.scanUntil <= time && !exposed && !traced;
@@ -458,7 +632,7 @@ export function drawBattleLabels(ctx: CanvasRenderingContext2D, state: GameState
     const focused = aimed(target), bar = full || !!tacticName || focused || target.hitUntil > time;
     const symbols = target.traits?.map(id => TRAIT_SYMBOL[id]).join('') ?? '';
     if (!full && !bar && (!symbols || !target.scanned)) continue;
-    const role = target.role === 'core' ? '母巢' : target.role === 'elite' ? '精英' : '感染源';
+    const role = target.role === 'nest' ? '小母巢' : target.role === 'core' ? '母巢' : target.role === 'elite' ? '精英' : '感染源';
     const name = full ? `${role}${tacticName ? ' · ' + tacticName : target.traits?.length ? ' · ' + target.traits.map(id => TRAIT_NAME[id]).join('·') : ''}` : tacticName || symbols;
     const width = Math.max(target.radius * 2, name.length * 10 + 10), baseY = -target.radius * 1.96 - (target.role === 'elite' || target.role === 'core' ? 17 : 7);
     const offsets = full || focused ? [0, -16, -32, -48, -64] : [0, -14];

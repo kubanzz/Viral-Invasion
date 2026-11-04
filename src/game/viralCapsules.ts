@@ -3,7 +3,7 @@ import { endlessPacing } from './endlessPacing';
 import type { EndlessSourcePlan, EndlessSpawnRole } from './endlessTypes';
 import { activeWorld, BALANCE, type GameEvent, type GameState, type Target, type Vec } from './types';
 import type { ViralCapsuleCarrier, ViralCapsuleEnd, ViralCapsuleObjective, ViralCapsuleState } from './viralCapsulesTypes';
-import { combatPopulationLimit } from './combatPopulation';
+import { combatPopulationLimit, combatPopulation } from './combatPopulation';
 
 export const VIRAL_CAPSULE_BALANCE = {
   carrierWarning: .8, warning: .8, branchWarning: .45, speed: 220, range: 760, lifetime: 5,
@@ -35,9 +35,7 @@ export function makeViralCapsuleCarrier(id: string, wave: number, objective: Vir
 }
 
 export function viralCapsuleReservedPopulation(state: GameState): number {
-  return state.targets.reduce((count, target) => count + (target.hp > 0
-    ? target.role !== 'source' && target.role !== 'core' && target.role !== 'capsule' && target.traits?.includes('FISSION') && (target.generation ?? 0) === 0 ? 2 : 1
-    : target.splitAt !== undefined ? target.splitPositions?.length ?? 2 : 0), 0);
+  return combatPopulation(state).reserved;
 }
 function commitments(state: GameState): number {
   return state.targets.filter(target => target.hp > 0 && (target.role === 'capsule' || target.attackAt !== undefined || target.charge !== undefined)).length;

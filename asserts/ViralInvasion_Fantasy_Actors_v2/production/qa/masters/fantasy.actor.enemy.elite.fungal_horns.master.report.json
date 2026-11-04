@@ -1,0 +1,645 @@
+{
+  "id": "fantasy.actor.enemy.elite.fungal_horns.master",
+  "kind": "source-master-only",
+  "runtime": false,
+  "runtimeFrameCredit": 0,
+  "runId": "117357c3-9081-40af-a858-4a983bd1111a",
+  "revision": 1,
+  "source": {
+    "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_Actors_v2\\raw\\fantasy.actor.enemy.elite.fungal_horns.master\\117357c3-9081-40af-a858-4a983bd1111a.png",
+    "sha256": "c1eb53b88cc2d735af65532b8bf5c1565469328c49bbc0eb2a9c20a54d24b7a0",
+    "image": {
+      "sha256": "c1eb53b88cc2d735af65532b8bf5c1565469328c49bbc0eb2a9c20a54d24b7a0",
+      "bytes": 1746852,
+      "width": 2048,
+      "height": 2048,
+      "format": "png",
+      "channels": 3,
+      "hasAlphaChannel": false,
+      "alpha": {
+        "transparent": 0,
+        "partial": 0,
+        "opaque": 4194304,
+        "transparentFraction": 0,
+        "visible": 4194304,
+        "borderVisible": 8188,
+        "whiteVisible": 3862659
+      },
+      "bbox": [
+        0,
+        0,
+        2048,
+        2048
+      ],
+      "margins": {
+        "left": 0,
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "minimumFraction": 0
+      },
+      "luma": {
+        "mean": 246.5638913505861,
+        "standardDeviation": 28.541461729193447,
+        "min": 24.2662,
+        "max": 254.99999999999997
+      }
+    },
+    "derivedSource": null
+  },
+  "identityReview": {
+    "status": "accepted-for-processing",
+    "actualImageViewed": true,
+    "reviewer": "actor_sources",
+    "actualViews": [
+      "qa/masters/raw-wave2.contact.png",
+      "full raw original"
+    ],
+    "notes": [
+      "仅两枚短粗菌角与细窄冠弧，切除原图宽半球额头下缘，留基础病毒可见脸部。",
+      "全画布保留透明负空间，先去白，再用显式源坐标mask提取附件，不按bbox单独fit。",
+      "冠弧初放出现悬空，按base头顶源定位调整整件下移40.05逻辑px；不用bbox拟合，脸与前盾保持不遮挡。"
+    ]
+  },
+  "actualImageInputs": [
+    {
+      "mode": "uploaded-image-node",
+      "role": "reference",
+      "nodeId": "87200bf8-2887-4b7c-a9ff-25bdd67eb110",
+      "sourceName": "master_v02.png",
+      "sha256": "d0fb7dbaca350444a4afcbed3a5044a98e3edcec02a4b9dcaa7d38c42f6d5f07",
+      "actualImageInput": true
+    },
+    {
+      "mode": "uploaded-image-node",
+      "role": "style",
+      "nodeId": "17183c61-eb17-47bb-a607-d98b8b4daaf1",
+      "sourceName": "exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+      "sha256": "8caaa9cabe4a229f6a091360f642436bc021cf03aafed4111e173760aafdfabe",
+      "actualImageInput": true
+    }
+  ],
+  "textualAppearanceReferences": [],
+  "removal": {
+    "sourceSha256": "c1eb53b88cc2d735af65532b8bf5c1565469328c49bbc0eb2a9c20a54d24b7a0",
+    "processing": {
+      "method": "border-connected-white-key",
+      "whiteMin": 240,
+      "chromaMax": 16,
+      "matteCleanup": true,
+      "edgeWidth": 3,
+      "removedPixels": 3868790,
+      "cleanedEdgePixels": 3416,
+      "limitations": "White foreground connected directly to a white backdrop is ambiguous. Inspect both black/white QA views before acceptance."
+    },
+    "image": {
+      "sha256": "dc08bf82f95b40606a5347e6b78c6509b9bb308b2e206b38559c2e3476f738e3",
+      "bytes": 1005767,
+      "width": 2048,
+      "height": 2048,
+      "format": "png",
+      "channels": 4,
+      "hasAlphaChannel": true,
+      "alpha": {
+        "transparent": 3868790,
+        "partial": 3416,
+        "opaque": 322098,
+        "transparentFraction": 0.922391414642334,
+        "visible": 325514,
+        "borderVisible": 0,
+        "whiteVisible": 226
+      },
+      "bbox": [
+        475,
+        448,
+        1569,
+        1055
+      ],
+      "margins": {
+        "left": 475,
+        "top": 448,
+        "right": 479,
+        "bottom": 993,
+        "minimumFraction": 0.21875
+      },
+      "luma": {
+        "mean": 159.6693225643931,
+        "standardDeviation": 49.37032549465914,
+        "min": 23.3882,
+        "max": 254.92779999999996
+      }
+    },
+    "protectedPolygons": [],
+    "restoredPixels": 0,
+    "removedHolePixels": 0,
+    "holeReports": [],
+    "shadowCleanup": null,
+    "rowContourCleanup": null,
+    "semanticMask": {
+      "method": "actually-reviewed-explicit-source-polygon-mask",
+      "keepPolygons": [
+        [
+          [
+            550,
+            400
+          ],
+          [
+            1450,
+            400
+          ],
+          [
+            1450,
+            845
+          ],
+          [
+            1370,
+            800
+          ],
+          [
+            1300,
+            775
+          ],
+          [
+            1200,
+            735
+          ],
+          [
+            1100,
+            715
+          ],
+          [
+            1000,
+            705
+          ],
+          [
+            900,
+            722
+          ],
+          [
+            800,
+            755
+          ],
+          [
+            700,
+            805
+          ],
+          [
+            620,
+            860
+          ],
+          [
+            550,
+            870
+          ]
+        ]
+      ],
+      "discardedPixels": 181652,
+      "annotation": "实际查看后只保留上方双角及约90原始像素宽的冠弧；不收整片半球头。",
+      "fullCanvasPreserved": true
+    },
+    "componentCleanup": {
+      "method": "reviewed-single-subject-keep-largest-connected-component",
+      "components": 77,
+      "keptPixels": 143777,
+      "discardedPixels": 85,
+      "discardedComponentSizes": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    "preservationProbes": [
+      {
+        "label": "left horn",
+        "point": [
+          700,
+          550
+        ],
+        "expect": "opaque",
+        "before": [
+          155,
+          124,
+          134,
+          255
+        ],
+        "after": [
+          155,
+          124,
+          134,
+          255
+        ]
+      },
+      {
+        "label": "right horn",
+        "point": [
+          1300,
+          550
+        ],
+        "expect": "opaque",
+        "before": [
+          158,
+          122,
+          122,
+          255
+        ],
+        "after": [
+          158,
+          122,
+          122,
+          255
+        ]
+      },
+      {
+        "label": "thin crown band",
+        "point": [
+          1000,
+          660
+        ],
+        "expect": "opaque",
+        "before": [
+          203,
+          173,
+          168,
+          255
+        ],
+        "after": [
+          203,
+          173,
+          168,
+          255
+        ]
+      },
+      {
+        "label": "lower half-head removed",
+        "point": [
+          1000,
+          850
+        ],
+        "expect": "clear",
+        "before": [
+          202,
+          170,
+          170,
+          255
+        ],
+        "after": [
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "finalCutoutImage": {
+      "sha256": "1822717ac81ce5655a5cab88057fcaa6816c1ee33762ed45d4e5b30268e2e5fa",
+      "bytes": 478077,
+      "width": 2048,
+      "height": 2048,
+      "format": "png",
+      "channels": 4,
+      "hasAlphaChannel": true,
+      "alpha": {
+        "transparent": 4050527,
+        "partial": 1057,
+        "opaque": 142720,
+        "transparentFraction": 0.9657208919525146,
+        "visible": 143777,
+        "borderVisible": 0,
+        "whiteVisible": 133
+      },
+      "bbox": [
+        550,
+        453,
+        1450,
+        870
+      ],
+      "margins": {
+        "left": 550,
+        "top": 453,
+        "right": 598,
+        "bottom": 1178,
+        "minimumFraction": 0.22119140625
+      },
+      "luma": {
+        "mean": 151.18315465338264,
+        "standardDeviation": 53.655997838134894,
+        "min": 23.3882,
+        "max": 254.92779999999996
+      }
+    },
+    "caution": "White foreground versus white background is resolved by actual image review and explicit seed/protection annotations, not by global white deletion."
+  },
+  "transform": {
+    "method": "first-reviewed-identity-full-canvas-uniform-scale-and-explicit-anchor-translation",
+    "sourceCanvas": [
+      2048,
+      2048
+    ],
+    "sourceAnchorPx": [
+      1024,
+      690
+    ],
+    "anchorName": "crown-to-head",
+    "sourceFootPx": null,
+    "requestedUniformScale": 0.25,
+    "uniformScale": 0.25,
+    "resampledCanvas": [
+      512,
+      512
+    ],
+    "translationPx": [
+      0,
+      39.5
+    ],
+    "matrixSourceToRegistered": [
+      [
+        0.25,
+        0,
+        0
+      ],
+      [
+        0,
+        0.25,
+        39.5
+      ],
+      [
+        0,
+        0,
+        1
+      ]
+    ],
+    "targetCanvas": [
+      512,
+      512
+    ],
+    "targetAnchorPx": [
+      256,
+      212
+    ],
+    "pivot": [
+      0.5,
+      0.85
+    ],
+    "groupFootPx": [
+      256,
+      435.2
+    ],
+    "mappedSourceAnchorPx": [
+      256,
+      212
+    ],
+    "sourceBbox": [
+      550,
+      453,
+      1450,
+      870
+    ],
+    "projectedBbox": [
+      137.5,
+      152.75,
+      362.5,
+      257
+    ],
+    "alphaBoundsUsedForScaling": false,
+    "alphaCropUsed": false,
+    "futureGroupPolicy": "Lock this transform for the identity/direction group after parent approval; never independently fit animation frames.",
+    "anchorAnnotation": "实看base合成后将窄冠弧下缘贴住base上额，头顶映射至[256,212]；完整源统一.25缩放+平移，逻辑组脚点仍[256,435.2]。"
+  },
+  "image": {
+    "sha256": "b9227be57b66ecba88f5ffa2e8a8ba997115be2ebe5329461183d84e6bd0d2c0",
+    "bytes": 37209,
+    "width": 512,
+    "height": 512,
+    "format": "png",
+    "channels": 4,
+    "hasAlphaChannel": true,
+    "alpha": {
+      "transparent": 251266,
+      "partial": 3539,
+      "opaque": 7339,
+      "transparentFraction": 0.9585037231445312,
+      "visible": 9586,
+      "borderVisible": 0,
+      "whiteVisible": 3
+    },
+    "bbox": [
+      137,
+      152,
+      363,
+      258
+    ],
+    "margins": {
+      "left": 137,
+      "top": 152,
+      "right": 149,
+      "bottom": 254,
+      "minimumFraction": 0.267578125
+    },
+    "luma": {
+      "mean": 150.63209883162904,
+      "standardDeviation": 50.851377898137244,
+      "min": 38.3332,
+      "max": 254.71119999999996
+    }
+  },
+  "landmarks": {
+    "crownAttachment": {
+      "sourcePoint": [
+        1024,
+        690
+      ],
+      "annotation": "窄冠弧下缘对齐base头顶上缘，前脸不覆盖",
+      "registeredPoint": [
+        256,
+        212
+      ]
+    }
+  },
+  "direction": null,
+  "silhouette": "仅两枚短粗菌角与细窄冠弧，切除原图宽半球额头下缘，留基础病毒可见脸部。",
+  "visualQa": {
+    "status": "visually-reviewed",
+    "accepted": true,
+    "reviewer": "actor_sources",
+    "actualImagesViewed": [
+      "qa/masters/fantasy.actor.enemy.elite.fungal_horns.master.black-white.png",
+      "qa/masters/statics-recognition.contact.png",
+      "qa/masters/addon-registration.contact.png"
+    ],
+    "notes": [
+      "保留两短粗菌角和细窄冠弧，半球头已mask清除；黑白底无雾。",
+      "与basic合成修正初次悬空，现贴合头额且不遮脸，24/32px两角轮廓可辨。"
+    ],
+    "limits": [
+      "source master only; parent decides runtime static copy and acceptance; no runtime credit here"
+    ],
+    "reviewedOutputSha256": "b9227be57b66ecba88f5ffa2e8a8ba997115be2ebe5329461183d84e6bd0d2c0"
+  },
+  "approvalStatus": "awaiting-parent-review",
+  "sourceGroupTransformLocked": false,
+  "output": {
+    "path": "processed/masters/fantasy.actor.enemy.elite.fungal_horns.master.png",
+    "sha256": "b9227be57b66ecba88f5ffa2e8a8ba997115be2ebe5329461183d84e6bd0d2c0",
+    "bytes": 37209
+  },
+  "qa": {
+    "black": {
+      "path": "qa/masters/fantasy.actor.enemy.elite.fungal_horns.master.black.png",
+      "sha256": "992101ad5777e98dd2764e6a0386af6b16a61eace424a75f6a84624d4db20bde",
+      "bytes": 31382
+    },
+    "white": {
+      "path": "qa/masters/fantasy.actor.enemy.elite.fungal_horns.master.white.png",
+      "sha256": "5d949c925d4978070aaa33c7fb336c12bac94450e1f26a47013140c2002eb63a",
+      "bytes": 32385
+    },
+    "alpha": {
+      "path": "qa/masters/fantasy.actor.enemy.elite.fungal_horns.master.alpha.png",
+      "sha256": "d0b8c5ff2162c02eeb7069d8d9601fd86a9eed81c369f2a3e8934a579e571e21",
+      "bytes": 6879
+    },
+    "black-white": {
+      "path": "qa/masters/fantasy.actor.enemy.elite.fungal_horns.master.black-white.png",
+      "sha256": "88bd010d12a9bfb2c2386976078d783c49dc956222e3785ba7614afa2789ff14",
+      "bytes": 54710
+    },
+    "24px-1x": {
+      "path": "qa/masters/fantasy.actor.enemy.elite.fungal_horns.master.24px-1x.png",
+      "sha256": "bc7b4d5b7febe61ed7b592296c99b8be5a90f2e00143e829e3fb7bf18f944bbb",
+      "bytes": 2667
+    },
+    "24px-5x-nearest": {
+      "path": "qa/masters/fantasy.actor.enemy.elite.fungal_horns.master.24px-5x-nearest.png",
+      "sha256": "39fd79801202e77090836599184bc7e83fed7962dc2a35dfd05731cdad32e320",
+      "bytes": 4187
+    },
+    "32px-1x": {
+      "path": "qa/masters/fantasy.actor.enemy.elite.fungal_horns.master.32px-1x.png",
+      "sha256": "34df321ff20cb1a9027a73b91196762f5840b88502819c88c96c953ec8c63442",
+      "bytes": 4208
+    },
+    "32px-5x-nearest": {
+      "path": "qa/masters/fantasy.actor.enemy.elite.fungal_horns.master.32px-5x-nearest.png",
+      "sha256": "f59ac5b841b453b5f4573528b27a9cdbc1d4a3c5086d559c64f7ddc3a912a057",
+      "bytes": 6573
+    },
+    "recognition-sheet": {
+      "path": "qa/masters/fantasy.actor.enemy.elite.fungal_horns.master.recognition-sheet.png",
+      "sha256": "6724fd409e76442b9844231912ecd8f1f281bed635605b5e59a8a5026822f717",
+      "bytes": 31666
+    }
+  },
+  "recognition": [
+    {
+      "bodyHeightPx": 24,
+      "oneXCanvas": [
+        51,
+        24
+      ],
+      "fiveXCanvas": [
+        255,
+        120
+      ],
+      "diagnosticCrop": {
+        "left": 137,
+        "top": 152,
+        "width": 226,
+        "height": 106
+      },
+      "productionPngUncropped": true,
+      "scaling": "1x body-height sample plus exact 5x nearest comparison"
+    },
+    {
+      "bodyHeightPx": 32,
+      "oneXCanvas": [
+        68,
+        32
+      ],
+      "fiveXCanvas": [
+        340,
+        160
+      ],
+      "diagnosticCrop": {
+        "left": 137,
+        "top": 152,
+        "width": 226,
+        "height": 106
+      },
+      "productionPngUncropped": true,
+      "scaling": "1x body-height sample plus exact 5x nearest comparison"
+    }
+  ]
+}

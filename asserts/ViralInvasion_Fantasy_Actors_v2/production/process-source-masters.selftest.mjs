@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import sharp from 'sharp';
+import { processMasterBuffer } from './process-source-masters.mjs';
+const bytes = Buffer.alloc(64 * 64 * 4, 255);
+const fill = (l,t,r,b,c) => { for(let y=t;y<b;y++)for(let x=l;x<r;x++) c.forEach((v,k)=>bytes[(y*64+x)*4+k]=v); };
+fill(12,10,52,53,[90,45,45,255]); fill(16,14,48,49,[255,255,250,255]);
+fill(20,20,30,30,[90,45,45,255]);fill(22,22,28,28,[255,255,255,255]);
+const source = await sharp(bytes,{raw:{width:64,height:64,channels:4}}).png().toBuffer();
+const entry={id:'fantasy.actor.enemy.thinRay.master',identityReview:{status:'accepted-for-processing',actualImageViewed:true},registration:{sourceFootPx:[32,53],uniformScale:1.5},matte:{negativeSpaceSeeds:[[24,24]],preservationProbes:[{label:'cream foreground',point:[40,40],expect:'opaque'},{label:'explicit enclosed hole',point:[24,24],expect:'clear'}]}};
+const actor=await processMasterBuffer(source,entry);
+assert.deepEqual(actor.report.transform.targetCanvas,[512,512]);assert.equal(actor.report.runtimeFrameCredit,0);
+assert.deepEqual(actor.report.transform.mappedSourceAnchorPx,[256,435.2]);assert.equal(actor.report.removal.removedHolePixels,36);
+assert.equal(actor.report.removal.preservationProbes[0].after[3],255);
+assert.equal(actor.report.removal.preservationProbes[1].after[3],0);
+const mother=await processMasterBuffer(source,{...entry,id:'fantasy.actor.mother.master',registration:{sourceFootPx:[32,53],uniformScale:8}});
+assert.deepEqual(mother.report.transform.targetCanvas,[1024,1024]);assert.deepEqual(mother.report.transform.mappedSourceAnchorPx,[512,870.4]);
+const tool=await processMasterBuffer(source,{...entry,id:'fantasy.actor.weapon.emitter.master',registration:{sourceAnchorPx:[20,30],anchorName:'grip',targetAnchorPx:[200,256],uniformScale:2},landmarks:{grip:{sourcePoint:[20,30]},muzzle:{sourcePoint:[45,30]}}});
+assert.deepEqual(tool.report.landmarks.grip.registeredPoint,[200,256]);assert.deepEqual(tool.report.landmarks.muzzle.registeredPoint,[250,256]);
+await assert.rejects(()=>processMasterBuffer(source,{...entry,identityReview:{status:'accepted-for-processing'}}),/Actual source image/);
+await assert.rejects(()=>processMasterBuffer(source,{...entry,id:'fantasy.actor.weapon.emitter.master'}),/explicit grip/);
+await assert.rejects(()=>processMasterBuffer(source,{...entry,registration:{sourceFootPx:[0,53],uniformScale:8}}),/clip foreground/);
+console.log(JSON.stringify({passed:6,checks:['cream body preserved','explicit enclosed hole removed','512 foot registration','1024 mother registration','independent grip/muzzle anchors','review/anchor/clipping refusal'],writes:0}));
+

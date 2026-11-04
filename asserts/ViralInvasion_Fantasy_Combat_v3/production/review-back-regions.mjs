@@ -1,0 +1,15 @@
+import {readFile,writeFile} from 'node:fs/promises';
+const root='asserts/ViralInvasion_Fantasy_Combat_v3';
+const p=root+'/production/action-regions.json',r=JSON.parse(await readFile(p,'utf8'));
+r.entities.slimeMage.directions.back_right={regions:{hat:[.07,0,.72,.47],head:[.36,.30,.24,.24],body:[0,.39,.72,.55],arm:[.49,.41,.44,.20],staff:[.78,.25,.22,.50],footLeft:[.16,.90,.16,.10],footRight:[.54,.84,.16,.11]}};
+r.entities.nestBuilder.directions.back_right={regions:{sac:[0,0,.92,.79],body:[.06,.59,.84,.36],head:[.80,.15,.20,.35],footRearFar:[.10,.67,.18,.16],footRearNear:[.38,.80,.27,.20],footFrontFar:[.80,.45,.20,.20],footFrontNear:[.79,.55,.21,.16]}};
+r.entities.swiftLarva.directions.back_right={regions:{head:[.59,0,.40,.37],middle:[.23,.27,.59,.42],tail:[0,.50,.48,.50],footRear:[.28,.76,.35,.24],footFront:[.73,.51,.27,.24]}};
+await writeFile(p,JSON.stringify(r,null,2)+'\n');
+const processing=JSON.parse(await readFile(root+'/production/source-processing.json','utf8'));
+const review={schemaVersion:1,status:'eight-selected-source-directions-reviewed-by-producer',scope:'Source design, authored turn, transparency and registration only. Main renderer pixel approval remains pending.',reviewer:'root producer actual image inspection',sources:processing.sources.map(s=>({key:s.key,path:s.output.path,sha256:s.output.sha256,reviewed:true,approvalStatus:'producer-selected-pending-main-renderer',notes:s.key.startsWith('slimeMage')?'Pointed fungus cap, stem body and staff retain ranged silhouette; back hides front face.':s.key.startsWith('nestBuilder')?'Twin large back sacs retained; actual rear turn, not front mirror.':s.key.startsWith('swiftLarva')?'Three coral body segments, rear swept tail, short feet and single back fin retained; v02 front ground shadow removed.':s.key.startsWith('miniNest')?'Compact closed four-lobe nest; no eggs, face, final mother crown or ground shadow.':'Empty leaf cradle, cream pod and compact crystal base; no player or projectile.'}))};
+await writeFile(root+'/production/source-visual-review.json',JSON.stringify(review,null,2)+'\n');
+const cPath=root+'/production/candidate-selection.json',c=JSON.parse(await readFile(cPath,'utf8'));
+c.cannonStatus='empty-cradle-revision-selected-by-producer-awaiting-main-renderer';
+c.candidates.push({entity:'immuneCannon',runId:'19d5836c-525f-43e1-ad80-5a9000afeaeb',selected:null,rejected:['left','right'],reason:'Central mint sphere reads as a standalone projectile; both initial designs rejected.'},{entity:'immuneCannon',runId:'faa77c6f-985e-47b1-9c7c-65318c27c01f',selected:'single empty-cradle revision',rejected:[],reason:'Retains selected left shell/base style while removing the projectile-like sphere.',selectionScope:'producer-source-design-review'});
+await writeFile(cPath,JSON.stringify(c,null,2)+'\n');
+console.log(JSON.stringify({reviewedSources:review.sources.length,mainApproval:'pending'}));

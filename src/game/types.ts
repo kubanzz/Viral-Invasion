@@ -9,6 +9,9 @@ import type { EnemyAttackPlan, EnemyCharge, EnemyTactic, EliteTacticCycle } from
 import type { ViralCapsuleCarrier, ViralCapsuleState } from './viralCapsulesTypes';
 import type { HostEventState } from './hostEventTypes';
 import type { PlayerProjectile } from './playerProjectiles';
+import type { PlayerInfection, TerritoryNodeId, TerritorySourceId, TerritoryState } from './territoryTypes';
+import type { TerritoryPlayerFlight } from './territoryCannon';
+import type { SmartProfession, SmartVirusState } from './smartVirusesTypes';
 export interface Vec { x: number; y: number }
 export interface WorldGeometry {
   width: number; height: number;
@@ -21,11 +24,22 @@ export type Tool = 1 | 2 | 3;
 export interface Player extends Vec { hp: number; radius: number; facing: number; moving: boolean; dashUntil: number; dashReady: number; hurtUntil: number; actionUntil: number }
 export interface Target extends Vec {
   id: string; kind: 'single' | 'cluster'; radius: number; hp: number; maxHp: number; hitUntil: number; scanned: boolean;
-  role?: 'virus' | 'source' | 'elite' | 'core' | 'capsule' | 'event'; traits?: TraitId[]; facing?: number;
+  role?: 'virus' | 'source' | 'elite' | 'core' | 'capsule' | 'event' | 'nest'; traits?: TraitId[]; facing?: number;
+  profession?: SmartProfession;
+  /** Actual fixed-step displacement, used by profession animation only. */
+  moving?: boolean;
+  /** Finite support package and optional ordinary lane objective, independent of handoff squads. */
+  smartSupportId?: string;
+  springRaidLane?: 'north' | 'south';
   /** Event objectives are attackable by ordinary tools, with no combat rewards. */
   hostEventSourceId?: string;
   born?: number; deadAt?: number; revealedUntil?: number; exposedUntil?: number;
   attackAt?: number; attackReady?: number; attackAim?: Vec; generation?: number; sourceId?: string;
+  /** Explicit wave membership; persistent territory objectives need not block a clear. */
+  waveId?: number;
+  blocksWaveClear?: boolean;
+  territorySourceId?: TerritorySourceId;
+  territoryTask?: { kind: 'invade' | 'escort'; nodeId: TerritoryNodeId; squadId?: string; leaderId?: string };
   splitAt?: number; splitPositions?: Vec[];
   attackTarget?: 'player' | 'tissue' | 'immune';
   /** A real immune body selected when the telegraph starts; never retarget mid-attack. */
@@ -70,6 +84,10 @@ export interface GameState {
   campaign?: CampaignState;
   endless?: EndlessState;
   endlessGrowth?: EndlessGrowthState;
+  territory?: TerritoryState;
+  playerInfection?: PlayerInfection | null;
+  playerFlight?: TerritoryPlayerFlight;
+  smartViruses?: SmartVirusState;
   hostEvents?: HostEventState;
   playerProjectiles?: PlayerProjectile[];
   chargedSlash?: { startedAt: number; aim: Vec; fullNotified?: boolean; releasedAt?: number };
@@ -82,7 +100,8 @@ export interface GameState {
   /** Accepted-action counters; independent of the bounded recent event log. */
   runMetrics?: RunMetrics;
 }
-export interface InputFrame { moveX: number; moveY: number; aim: Vec; fire: boolean; tool?: Tool; scan?: boolean; dash?: boolean; interact?: boolean; practiceHit?: boolean; antibody?: boolean;
+export interface InputFrame { moveX: number; moveY: number; aim: Vec; fire: boolean; tool?: Tool; scan?: boolean; scanAim?: Vec; dash?: boolean; interact?: boolean; practiceHit?: boolean; antibody?: boolean; territoryAction?: boolean;
+  cannonPressed?: boolean; cannonHeld?: boolean; cannonReleased?: boolean; cannonCancelled?: boolean; cannonAim?: Vec;
   chargePressed?: boolean; chargeHeld?: boolean; chargeReleased?: boolean; chargeCancelled?: boolean; chargeAim?: Vec }
 export const WORLD = { width: 1200, height: 800, bounds: { left: 65, right: 1135, top: 110, bottom: 735 }, obstacles: [{ id: 'fold-a', x: 440, y: 295, radius: 47 }, { id: 'fold-b', x: 1005, y: 575, radius: 53 }], foreground: { x: 155, y: 550, width: 190, height: 125 } } as const;
 export const activeWorld = (state: GameState): WorldGeometry => state.world ?? WORLD;

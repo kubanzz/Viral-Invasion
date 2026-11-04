@@ -1,0 +1,211 @@
+{
+  "scope": "Read-only candidate screenshot and registration/math inspection. No src or source PNG changes. Pixel overlap is compositing evidence, not a gameplay hit test or animation-completion claim.",
+  "deliverySha256": "d680a8422655fb32b0928ca9d90bca94d52693f1006c6e5fe210e81c1aad9f0e",
+  "deliveryUpdatedAt": "2026-11-02T23:21:39.433Z",
+  "deliveryCandidates": 79,
+  "acceptedRuntimeCount": 0,
+  "excludedCandidates": [
+    {
+      "fragment": "production/mother.fragment.json",
+      "ids": [
+        "fantasy.actor.mother.membrane",
+        "fantasy.actor.mother.carapace",
+        "fantasy.actor.mother.fission",
+        "fantasy.actor.mother.mimic"
+      ],
+      "reason": "Initial extracted same-state overlays were visually ineffective; replaced by four actual Maliang layer generations in mother-layers-v02.fragment.json."
+    }
+  ],
+  "sources": {
+    "sources/enemy/basic/master_v02.png": {
+      "sha256": "d0fb7dbaca350444a4afcbed3a5044a98e3edcec02a4b9dcaa7d38c42f6d5f07",
+      "width": 512,
+      "height": 512
+    },
+    "sources/enemy/thinRay/master_v01.png": {
+      "sha256": "6a109236c553c51fee03f665470aa66ad0051c44e94405d5c3ffd6c1c1114c8b",
+      "width": 512,
+      "height": 512
+    },
+    "sources/enemy/carapace/master_v01.png": {
+      "sha256": "6e4ec86522ed5ed302199ce5aeb066a098fc3501faca5284148419ebb5164410",
+      "width": 512,
+      "height": 512
+    },
+    "sources/enemy/fission/parent/master_v01.png": {
+      "sha256": "020183e8ea3722d3ab1d7c34a300ac89e6e60e4acd2fff202cf8532def9b75e8",
+      "width": 512,
+      "height": 512
+    },
+    "sources/enemy/fission/child/master_v01.png": {
+      "sha256": "255356005c76783bb737d6e6dd7dc69512f9ff78a6cbd7f0cfceb390ed6b0f9f",
+      "width": 512,
+      "height": 512
+    },
+    "sources/enemy/mimic/master_v01.png": {
+      "sha256": "88c496fd3f1deedd3c4498bf6b45c04deda0253392b8cde1fdb56c25b130612f",
+      "width": 512,
+      "height": 512
+    },
+    "mother/base/00.png": {
+      "sha256": "6513ed8f7ffc08c7ce194e72b79c615d18b2bba557997a211ab0ecbc9df91dfd",
+      "width": 1024,
+      "height": 1024
+    },
+    "mother/core/00.png": {
+      "sha256": "8a2856fc4b9b9dc73db7f814bc9d4ffee7517f77271292058630286c6b173690",
+      "width": 1024,
+      "height": 1024
+    },
+    "mother/core/01.png": {
+      "sha256": "94d264b07c06a4818a6054e6975a1a5b2bfd622bd97c0964965c68c995d5abdd",
+      "width": 1024,
+      "height": 1024
+    },
+    "mother/membrane.png": {
+      "sha256": "43ee4f5d65bbe5e6bf3662308deefaaa394120bde94345a926f4ee16850b2093",
+      "width": 1024,
+      "height": 1024
+    },
+    "mother/carapace.png": {
+      "sha256": "6247b9398beaae730b5f83b01e64f6dfd95837c32d5d4b1f56d0ca5281d1f6f2",
+      "width": 1024,
+      "height": 1024
+    },
+    "mother/fission.png": {
+      "sha256": "be2d0295e0af9a675ad4ef79074802887de539ca8c30683d2f238731ad3843e2",
+      "width": 1024,
+      "height": 1024
+    },
+    "mother/mimic.png": {
+      "sha256": "28b00e992dc84dd7f67c414c47cc19937ff28c151e726ca63633d11bd70eb7c7",
+      "width": 1024,
+      "height": 1024
+    },
+    "mother/purified.png": {
+      "sha256": "9c93d9437fcb9075a57b269c296a638b59cd1e8cdaddc5b63a5737696d426627",
+      "width": 1024,
+      "height": 1024
+    }
+  },
+  "assumptions": {
+    "cameraScale": 0.62,
+    "adultRadius": 18,
+    "childRadius": 14,
+    "motherRadius": 52,
+    "enemyCanvasRadiusFactor": 4.1,
+    "motherCanvasRadiusFactor": 4.1
+  },
+  "enemies": [
+    [
+      "basic",
+      "sources/enemy/basic/master_v02.png",
+      18
+    ],
+    [
+      "thinRay",
+      "sources/enemy/thinRay/master_v01.png",
+      18
+    ],
+    [
+      "carapace",
+      "sources/enemy/carapace/master_v01.png",
+      18
+    ],
+    [
+      "fission parent",
+      "sources/enemy/fission/parent/master_v01.png",
+      18
+    ],
+    [
+      "fission child",
+      "sources/enemy/fission/child/master_v01.png",
+      14
+    ],
+    [
+      "mimic",
+      "sources/enemy/mimic/master_v01.png",
+      18
+    ]
+  ],
+  "cases": [
+    [
+      "exposed core01",
+      [
+        "mother/base/00.png",
+        "mother/core/01.png"
+      ]
+    ],
+    [
+      "membrane core00",
+      [
+        "mother/base/00.png",
+        "mother/core/00.png",
+        "mother/membrane.png"
+      ]
+    ],
+    [
+      "CARAPACE + membrane",
+      [
+        "mother/base/00.png",
+        "mother/carapace.png",
+        "mother/core/00.png",
+        "mother/membrane.png"
+      ]
+    ],
+    [
+      "FISSION + membrane",
+      [
+        "mother/base/00.png",
+        "mother/fission.png",
+        "mother/core/00.png",
+        "mother/membrane.png"
+      ]
+    ],
+    [
+      "MIMIC revealed + membrane",
+      [
+        "mother/base/00.png",
+        "mother/mimic.png",
+        "mother/core/00.png",
+        "mother/membrane.png"
+      ]
+    ],
+    [
+      "purified",
+      [
+        "mother/purified.png"
+      ]
+    ]
+  ],
+  "overlaps": {
+    "membrane": {
+      "coreOpaquePixels": 13029,
+      "layerAlphaAbove32OverCorePixels": 1165,
+      "fraction": 0.08941591833601965,
+      "meanLayerAlphaOverCore": 10.833985724153811,
+      "maxLayerAlpha": 122
+    },
+    "carapace": {
+      "coreOpaquePixels": 13029,
+      "layerAlphaAbove32OverCorePixels": 12779,
+      "fraction": 0.9808120346918413,
+      "meanLayerAlphaOverCore": 249.94903676414154,
+      "maxLayerAlpha": 255
+    },
+    "fission": {
+      "coreOpaquePixels": 13029,
+      "layerAlphaAbove32OverCorePixels": 0,
+      "fraction": 0,
+      "meanLayerAlphaOverCore": 0,
+      "maxLayerAlpha": 255
+    },
+    "mimic": {
+      "coreOpaquePixels": 13029,
+      "layerAlphaAbove32OverCorePixels": 11201,
+      "fraction": 0.8596975976667435,
+      "meanLayerAlphaOverCore": 218.62921175838514,
+      "maxLayerAlpha": 255
+    }
+  }
+}

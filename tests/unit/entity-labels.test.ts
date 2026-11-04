@@ -9,8 +9,11 @@ import type { SceneLabel } from '../../src/render/sceneLabels';
 // Isolated drawing fixtures: these are never written into the browser game.
 function canvas() {
   const text: string[] = [], shapes: string[] = [];
-  return { text, shapes, ctx: new Proxy({}, {
-    get: (_, method) => method === 'fillText' ? (value: string) => text.push(value) : () => shapes.push(String(method)),
+  const commands: { method: string; args: unknown[] }[] = [];
+  return { text, shapes, commands, ctx: new Proxy({}, {
+    get: (_, method) => method === 'fillText' ? (value: string) => text.push(value) : (...args: unknown[]) => {
+      shapes.push(String(method)); commands.push({ method: String(method), args });
+    },
     set: () => true,
   }) as CanvasRenderingContext2D };
 }
@@ -29,7 +32,14 @@ describe('shared entity information pass', () => {
     expect(labels[0].lines[0].text).toBe('✚ 免疫军团 ×1 · 8.0s');
     expect(labels[0].anchor).toMatchObject({ x: 500, y: 500 });
     expect(drawn.text).toEqual([]);
-    expect(drawn.shapes).toContain('roundRect'); // The actual beacon remains at its body anchor.
+    // The fallback is a rooted leaf body at the real beacon, independent of its label.
+    expect(drawn.commands.filter(call => call.method === 'translate').map(call => call.args)).toEqual([[500, 500]]);
+    expect(drawn.commands.filter(call => call.method === 'quadraticCurveTo').map(call => call.args.slice(-2))).toEqual([
+      [-24, -17], [0, 0], [24, -17], [0, 0],
+    ]);
+    expect(drawn.commands.filter(call => call.method === 'bezierCurveTo').map(call => call.args.slice(-2))).toEqual([[0, -34], [0, 0]]);
+    expect(drawn.shapes.filter(method => method === 'closePath')).toHaveLength(3);
+    expect(drawn.shapes).not.toContain('roundRect');
     expect(JSON.stringify(state)).toBe(before);
   });
 

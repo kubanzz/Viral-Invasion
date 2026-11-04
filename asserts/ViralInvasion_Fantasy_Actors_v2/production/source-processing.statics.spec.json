@@ -1,0 +1,453 @@
+{
+  "fragmentFile": "sources.fragment.json",
+  "sources": [
+    {
+      "id": "fantasy.actor.immune.beacon.master",
+      "rawPath": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_Actors_v2\\raw\\fantasy.actor.immune.beacon.master\\5b948879-3564-46ff-842b-5c84ee63d4da.png",
+      "rawSha256": "1d9cfc72a910662bcf5572902667cbae708033d044d296a775e528836cdec370",
+      "runId": "5b948879-3564-46ff-842b-5c84ee63d4da",
+      "actualImageInputs": [
+        {
+          "mode": "uploaded-image-node",
+          "role": "reference",
+          "nodeId": "7f3817d5-9272-42dd-ad43-921dacdd604a",
+          "sourceName": "master_v01.png",
+          "sha256": "3e5420b6e4735a248dba6389f164a4dcedeb6becd0dea868533caa4079a7467f",
+          "actualImageInput": true
+        },
+        {
+          "mode": "uploaded-image-node",
+          "role": "style",
+          "nodeId": "17183c61-eb17-47bb-a607-d98b8b4daaf1",
+          "sourceName": "exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+          "sha256": "8caaa9cabe4a229f6a091360f642436bc021cf03aafed4111e173760aafdfabe",
+          "actualImageInput": true
+        }
+      ],
+      "revision": 2,
+      "identityReview": {
+        "status": "accepted-for-processing",
+        "actualImageViewed": true,
+        "reviewer": "actor_sources",
+        "actualViews": [
+          "qa/masters/raw-wave2.contact.png",
+          "full raw original"
+        ],
+        "notes": [
+          "低矮奶白根茎信标，三枚大薄荷叶、绿色十字、短根足；无悬浮光效或文字。",
+          "全画布保留透明负空间，先去白，再用显式源坐标mask提取附件，不按bbox单独fit。",
+          "复查叶柄间封闭白缝，显式种子935,1000去除；下方根托灰底按ROI每列最后深棕接地轮廓以下清理，不动奶白根足。"
+        ]
+      },
+      "silhouette": "低矮奶白根茎信标，三枚大薄荷叶、绿色十字、短根足；无悬浮光效或文字。",
+      "matte": {
+        "whiteMin": 240,
+        "chromaMax": 16,
+        "edgeWidth": 3,
+        "keepLargestComponent": true,
+        "preservationProbes": [
+          {
+            "label": "cream root body",
+            "point": [
+              940,
+              1420
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "mint cross",
+            "point": [
+              940,
+              1160
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "outside paper",
+            "point": [
+              1700,
+              1800
+            ],
+            "expect": "clear"
+          },
+          {
+            "label": "enclosed gap between middle/right leaves",
+            "point": [
+              935,
+              1000
+            ],
+            "expect": "clear"
+          }
+        ],
+        "negativeSpaceSeeds": [
+          [
+            935,
+            1000
+          ]
+        ],
+        "removeShadowBelowContour": {
+          "roi": [
+            500,
+            1450,
+            850,
+            260
+          ],
+          "darkMax": [
+            190,
+            170,
+            150
+          ]
+        }
+      },
+      "landmarks": {},
+      "registration": {
+        "sourceFootPx": [
+          1024,
+          1674
+        ],
+        "uniformScale": 0.25,
+        "footAnnotation": "实际最低根足深棕轮廓接地，无投影。"
+      }
+    },
+    {
+      "id": "fantasy.actor.enemy.addon.spore_crown.master",
+      "rawPath": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_Actors_v2\\raw\\fantasy.actor.enemy.addon.spore_crown.master\\47d5e109-498e-43b9-9caa-70a60b8710dc.png",
+      "rawSha256": "e12a6f76e58f6e337f244bd03a39f9c117a29c41024b2b377b187ed99d678a6e",
+      "runId": "47d5e109-498e-43b9-9caa-70a60b8710dc",
+      "actualImageInputs": [
+        {
+          "mode": "uploaded-image-node",
+          "role": "reference",
+          "nodeId": "5b3cd24f-7f90-46ba-a343-2f4919d858e3",
+          "sourceName": "master_v02.png",
+          "sha256": "d0fb7dbaca350444a4afcbed3a5044a98e3edcec02a4b9dcaa7d38c42f6d5f07",
+          "actualImageInput": true
+        },
+        {
+          "mode": "uploaded-image-node",
+          "role": "style",
+          "nodeId": "17183c61-eb17-47bb-a607-d98b8b4daaf1",
+          "sourceName": "exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+          "sha256": "8caaa9cabe4a229f6a091360f642436bc021cf03aafed4111e173760aafdfabe",
+          "actualImageInput": true
+        }
+      ],
+      "revision": 1,
+      "identityReview": {
+        "status": "accepted-for-processing",
+        "actualImageViewed": true,
+        "reviewer": "actor_sources",
+        "actualViews": [
+          "qa/masters/raw-wave2.contact.png",
+          "full raw original"
+        ],
+        "notes": [
+          "仅灰紫孢子背囊和两支短分枝，剔除原图错误附带的整个珊瑚身体和两枚薄荷眼。",
+          "全画布保留透明负空间，先去白，再用显式源坐标mask提取附件，不按bbox单独fit。"
+        ]
+      },
+      "silhouette": "仅灰紫孢子背囊和两支短分枝，剔除原图错误附带的整个珊瑚身体和两枚薄荷眼。",
+      "matte": {
+        "whiteMin": 240,
+        "chromaMax": 16,
+        "edgeWidth": 3,
+        "keepLargestComponent": true,
+        "keepPolygons": [
+          [
+            [
+              0,
+              0
+            ],
+            [
+              1010,
+              0
+            ],
+            [
+              1010,
+              766
+            ],
+            [
+              960,
+              767
+            ],
+            [
+              900,
+              778
+            ],
+            [
+              850,
+              790
+            ],
+            [
+              800,
+              810
+            ],
+            [
+              750,
+              835
+            ],
+            [
+              700,
+              868
+            ],
+            [
+              650,
+              910
+            ],
+            [
+              610,
+              960
+            ],
+            [
+              580,
+              1015
+            ],
+            [
+              558,
+              1070
+            ],
+            [
+              540,
+              1135
+            ],
+            [
+              535,
+              1163
+            ],
+            [
+              0,
+              1163
+            ]
+          ]
+        ],
+        "maskAnnotation": "实际查看原图后沿前景珊瑚身体遮挡边界保留左后灰紫背囊/两支短分枝；整个身体、眼、底部都清除。",
+        "preservationProbes": [
+          {
+            "label": "spore sac",
+            "point": [
+              600,
+              800
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "upper branch",
+            "point": [
+              820,
+              650
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "lower branch",
+            "point": [
+              350,
+              1000
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "invalid mint eye removed",
+            "point": [
+              1010,
+              1240
+            ],
+            "expect": "clear"
+          },
+          {
+            "label": "invalid cream body removed",
+            "point": [
+              1000,
+              1510
+            ],
+            "expect": "clear"
+          }
+        ]
+      },
+      "landmarks": {
+        "backAttachment": {
+          "sourcePoint": [
+            760,
+            960
+          ],
+          "annotation": "背囊隐藏连接区域，与base后上缘对应"
+        }
+      },
+      "registration": {
+        "sourceFootPx": [
+          1024,
+          1743
+        ],
+        "uniformScale": 0.25,
+        "footAnnotation": "附件无脚；依据原图同一主体接地中轴注册到base共同512画布。原错带身体只用于测定同画布接地基准，像素已全部清除。"
+      }
+    },
+    {
+      "id": "fantasy.actor.enemy.elite.fungal_horns.master",
+      "rawPath": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_Actors_v2\\raw\\fantasy.actor.enemy.elite.fungal_horns.master\\117357c3-9081-40af-a858-4a983bd1111a.png",
+      "rawSha256": "c1eb53b88cc2d735af65532b8bf5c1565469328c49bbc0eb2a9c20a54d24b7a0",
+      "runId": "117357c3-9081-40af-a858-4a983bd1111a",
+      "actualImageInputs": [
+        {
+          "mode": "uploaded-image-node",
+          "role": "reference",
+          "nodeId": "87200bf8-2887-4b7c-a9ff-25bdd67eb110",
+          "sourceName": "master_v02.png",
+          "sha256": "d0fb7dbaca350444a4afcbed3a5044a98e3edcec02a4b9dcaa7d38c42f6d5f07",
+          "actualImageInput": true
+        },
+        {
+          "mode": "uploaded-image-node",
+          "role": "style",
+          "nodeId": "17183c61-eb17-47bb-a607-d98b8b4daaf1",
+          "sourceName": "exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+          "sha256": "8caaa9cabe4a229f6a091360f642436bc021cf03aafed4111e173760aafdfabe",
+          "actualImageInput": true
+        }
+      ],
+      "revision": 1,
+      "identityReview": {
+        "status": "accepted-for-processing",
+        "actualImageViewed": true,
+        "reviewer": "actor_sources",
+        "actualViews": [
+          "qa/masters/raw-wave2.contact.png",
+          "full raw original"
+        ],
+        "notes": [
+          "仅两枚短粗菌角与细窄冠弧，切除原图宽半球额头下缘，留基础病毒可见脸部。",
+          "全画布保留透明负空间，先去白，再用显式源坐标mask提取附件，不按bbox单独fit。",
+          "冠弧初放出现悬空，按base头顶源定位调整整件下移40.05逻辑px；不用bbox拟合，脸与前盾保持不遮挡。"
+        ]
+      },
+      "silhouette": "仅两枚短粗菌角与细窄冠弧，切除原图宽半球额头下缘，留基础病毒可见脸部。",
+      "matte": {
+        "whiteMin": 240,
+        "chromaMax": 16,
+        "edgeWidth": 3,
+        "keepLargestComponent": true,
+        "keepPolygons": [
+          [
+            [
+              550,
+              400
+            ],
+            [
+              1450,
+              400
+            ],
+            [
+              1450,
+              845
+            ],
+            [
+              1370,
+              800
+            ],
+            [
+              1300,
+              775
+            ],
+            [
+              1200,
+              735
+            ],
+            [
+              1100,
+              715
+            ],
+            [
+              1000,
+              705
+            ],
+            [
+              900,
+              722
+            ],
+            [
+              800,
+              755
+            ],
+            [
+              700,
+              805
+            ],
+            [
+              620,
+              860
+            ],
+            [
+              550,
+              870
+            ]
+          ]
+        ],
+        "maskAnnotation": "实际查看后只保留上方双角及约90原始像素宽的冠弧；不收整片半球头。",
+        "preservationProbes": [
+          {
+            "label": "left horn",
+            "point": [
+              700,
+              550
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "right horn",
+            "point": [
+              1300,
+              550
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "thin crown band",
+            "point": [
+              1000,
+              660
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "lower half-head removed",
+            "point": [
+              1000,
+              850
+            ],
+            "expect": "clear"
+          }
+        ]
+      },
+      "landmarks": {
+        "crownAttachment": {
+          "sourcePoint": [
+            1024,
+            690
+          ],
+          "annotation": "窄冠弧下缘对齐base头顶上缘，前脸不覆盖"
+        }
+      },
+      "registration": {
+        "sourceAnchorPx": [
+          1024,
+          690
+        ],
+        "anchorName": "crown-to-head",
+        "targetAnchorPx": [
+          256,
+          212
+        ],
+        "uniformScale": 0.25,
+        "pivot": [
+          0.5,
+          0.85
+        ],
+        "groupFootPx": [
+          256,
+          435.2
+        ],
+        "anchorAnnotation": "实看base合成后将窄冠弧下缘贴住base上额，头顶映射至[256,212]；完整源统一.25缩放+平移，逻辑组脚点仍[256,435.2]。"
+      }
+    }
+  ]
+}

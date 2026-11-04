@@ -4,7 +4,6 @@ import type { GameState, Target } from '../../src/game/types';
 import type { ImmuneCellState } from '../../src/game/immuneCells';
 import { immuneCellBody } from '../../src/render/immuneVisuals';
 import { CanvasScene as Renderer } from '../../src/render/canvasScene';
-import { drawLungObstacle } from '../../src/render/lungVisuals';
 import { boundsOverlap, drawRaisedBodyLayers, localUpperSilhouette, raisedObstacleCurves, upperSilhouetteOverlapsBounds } from '../../src/render/raisedObstacleGeometry';
 import { getRaisedActorBodies, getRaisedObstacleOcclusion, PLAYER_HEAD_SHAPE, playerBodyPose, projectedRaisedObstacle, RAISED_OBSTACLE_FADED_OPACITY, SPRITE_Y_SCALE } from '../../src/render/raisedObstacleOcclusion';
 import { raisedObstacleEndpoints } from '../fixtures/raisedObstacleEndpoints';
@@ -132,15 +131,18 @@ describe('raised obstacle upper-body occlusion', () => {
     expect(paints.at(-1)!.alpha).toBe(.8); expect(ctx.globalAlpha).toBe(.8);
   });
 
-  it('runs real heart/lung draw callbacks with opaque shadows and leaves complete simulation state unchanged', () => {
+  it('runs real healthy/infected scenery callbacks with opaque shadows and leaves complete simulation state unchanged', () => {
     const sample = state(), original = JSON.stringify(sample), { ctx, paints } = canvas();
-    const renderer = Object.create(Renderer.prototype) as { drawObstacle(ctx: CanvasRenderingContext2D, obstacle: typeof fold, opacity: number): void; drawShadows(ctx: CanvasRenderingContext2D, state: GameState): void };
+    const renderer = Object.create(Renderer.prototype) as { drawFantasyObstacle(ctx: CanvasRenderingContext2D, obstacle: typeof fold, owner: 'healthy' | 'infected', opacity: number): void; drawShadows(ctx: CanvasRenderingContext2D, state: GameState): void };
     renderer.drawShadows(ctx, sample);
     const shadowEnd = paints.length;
-    renderer.drawObstacle(ctx, fold, .22); drawLungObstacle(ctx, fold, .22);
-    expect(paints.slice(0, shadowEnd).filter(paint => paint.method === 'fill').every(paint => paint.alpha === 1)).toBe(true);
-    expect(paints.slice(shadowEnd).filter(paint => paint.method === 'fill' && paint.clip?.[1] === -180).every(paint => paint.alpha === .22)).toBe(true);
-    expect(paints.slice(shadowEnd).filter(paint => paint.method === 'fill' && paint.clip?.[1] === 0).every(paint => paint.alpha === 1)).toBe(true);
+    renderer.drawFantasyObstacle(ctx, fold, 'healthy', .22); renderer.drawFantasyObstacle(ctx, fold, 'infected', .22);
+    const shadows = paints.slice(0, shadowEnd).filter(paint => paint.method === 'fill');
+    const upper = paints.slice(shadowEnd).filter(paint => paint.method === 'fill' && paint.clip?.[1] === -180);
+    const lower = paints.slice(shadowEnd).filter(paint => paint.method === 'fill' && paint.clip?.[1] === 0);
+    expect(shadows.length).toBeGreaterThan(0); expect(shadows.every(paint => paint.alpha === 1)).toBe(true);
+    expect(upper).toHaveLength(2); expect(upper.every(paint => paint.alpha === .22)).toBe(true);
+    expect(lower).toHaveLength(2); expect(lower.every(paint => paint.alpha === 1)).toBe(true);
     expect(JSON.stringify(sample)).toBe(original);
   });
 });

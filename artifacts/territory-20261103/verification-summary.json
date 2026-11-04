@@ -1,0 +1,154 @@
+{
+  "version": "0.10.0",
+  "generatedAt": "2026-11-02T20:08:49.678Z",
+  "timezone": "Asia/Shanghai",
+  "automaticPass": true,
+  "checks": {
+    "unit": true,
+    "art": true,
+    "scenes": true,
+    "entry": true,
+    "mobileTap": true,
+    "performance": true,
+    "build": true,
+    "desktopPackage": true,
+    "mobilePackage": true
+  },
+  "gameJsSha256": "c440ca6bf74d40377677538e6c39a552b54c6c8af7a5ab8ddc12c2b51af7a170",
+  "sourceCount": 229,
+  "changedSources": [],
+  "art": {
+    "inputSignature": "5547d0d47406edf5775957e9502a28fcfb9e23c3aca80549470def05248d6581",
+    "coverage": {
+      "planned": 25,
+      "delivered": 25,
+      "numericallyIntegrated": 25,
+      "visuallyReviewedInRuntime": 25
+    },
+    "runtimeBytes": 11644665,
+    "limitBytes": 20971520
+  },
+  "unit": {
+    "passed": 1529,
+    "failed": 0,
+    "skipped": 0,
+    "report": "artifacts/territory-20261103/unit-final.json",
+    "legacyCampaignScope": "12-seed smoke passed separately; not a full 1000-seed rerun"
+  },
+  "scenes": {
+    "count": 24,
+    "report": "artifacts/territory-20261103/fantasy-final-scenes/report.json"
+  },
+  "entry": {
+    "passed": 12,
+    "report": "artifacts/territory-20261103/post-webkit-fix-entry/report.json"
+  },
+  "mobileTap": {
+    "passed": 3,
+    "report": "artifacts/territory-20261103/post-webkit-fix-mobile/report.json",
+    "scope": "Windows headless Chrome/Edge/WebKit real browser taps; not physical phone play"
+  },
+  "routes": [
+    {
+      "branch": "precision",
+      "report": "artifacts/territory-20261103/post-webkit-fix-precision/browser-report.json",
+      "guardExit": "extract",
+      "rescueSeconds": 89.38333333333333,
+      "totalSeconds": 99.58333333333333,
+      "maxAlive": 48,
+      "maxReserved": 48,
+      "errors": [],
+      "pass": true
+    },
+    {
+      "branch": "area",
+      "report": "artifacts/territory-20261103/post-webkit-fix-area/browser-report.json",
+      "guardExit": "menu",
+      "rescueSeconds": 102.23333333333333,
+      "totalSeconds": 112.5,
+      "maxAlive": 48,
+      "maxReserved": 48,
+      "errors": [],
+      "pass": true
+    }
+  ],
+  "performance": {
+    "report": "artifacts/territory-20261103/post-webkit-fix-performance/performance-report.json",
+    "scope": "Desktop Windows browser and a touch HUD layout driven by keyboard/mouse; not phone hardware or a natural touch full run. Snapshot polling, navigation inputs and rAF observation overhead are included in measured frame times. No forced GC.",
+    "cases": [
+      {
+        "name": "desktop-standard",
+        "pass": true,
+        "durationSeconds": 14.999700000000004,
+        "simulationSeconds": 14.98333333333333,
+        "minAlive": 48,
+        "maxAlive": 48,
+        "maxReserved": 48,
+        "highDensitySeconds": 14.999700000000004,
+        "averageFps": 60.00120002400046,
+        "p95Ms": 16.80000000000291,
+        "maxMs": 17,
+        "errors": []
+      },
+      {
+        "name": "desktop-low",
+        "pass": true,
+        "durationSeconds": 14.999699999999997,
+        "simulationSeconds": 14.983333333333334,
+        "minAlive": 48,
+        "maxAlive": 48,
+        "maxReserved": 48,
+        "highDensitySeconds": 14.999699999999997,
+        "averageFps": 60.00120002400049,
+        "p95Ms": 16.80000000000291,
+        "maxMs": 16.900000000001455,
+        "errors": []
+      },
+      {
+        "name": "touch-layout-standard",
+        "pass": true,
+        "durationSeconds": 14.999699999999997,
+        "simulationSeconds": 14.98333333333333,
+        "minAlive": 48,
+        "maxAlive": 48,
+        "maxReserved": 48,
+        "highDensitySeconds": 14.999699999999997,
+        "averageFps": 59.73452802389382,
+        "p95Ms": 16.799999999999272,
+        "maxMs": 33.5,
+        "errors": []
+      },
+      {
+        "name": "touch-layout-low",
+        "pass": true,
+        "durationSeconds": 14.999600000000003,
+        "simulationSeconds": 14.983333333333334,
+        "minAlive": 48,
+        "maxAlive": 48,
+        "maxReserved": 48,
+        "highDensitySeconds": 14.999600000000003,
+        "averageFps": 59.86826315368409,
+        "p95Ms": 16.799999999999272,
+        "maxMs": 33.30000000000291,
+        "errors": []
+      }
+    ]
+  },
+  "packages": {
+    "desktopZip": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-G4-v0.10.0.zip",
+    "desktopZipSha256": "984c14f717fad94a2d65333463f96211e8098fa3d1106d3a8013fbd4b52db0e8",
+    "mobileHtml": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-Mobile.html",
+    "mobileHtmlSha256": "10aa6c37368041e3e3b87860bdedb8b3f58b267a8541c22797707e259852a737",
+    "mobileZip": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-Mobile.zip",
+    "mobileZipSha256": "f2f213613d86e751cb21fed02001f181333eed94791dc931ce8aedfe82ea3a47"
+  },
+  "manualPending": [
+    "Physical landscape phone: full rescue/guard, multi-touch, background/rotation, sustained hardware performance and persisted storage",
+    "Five first-time players: 4/5 explain goals and region benefits, 4/5 finish one capture loop, 3/5 voluntarily restart"
+  ],
+  "historicalEvidence": {
+    "threeMinuteRun": "artifacts/territory-20261103/final-precision/browser-report.json",
+    "gameJsSha256": "c9911551f6dbd713a154b1a6537e202ac7543e4010dad3b17c6e6a0bab4a25fa",
+    "qualification": "192.517 simulation seconds on pre-WebKit-input-fix candidate; game rules/art unchanged per webkit-fix-build-diff.json, not reported as current-binary 3-minute validation"
+  }
+}

@@ -268,7 +268,7 @@ test('a third skill finger suppresses an already held primary attack through rel
     window.addEventListener('pointerup', event => {
       if (!(event.target instanceof Element) || !event.target.closest('[data-touch-skill]')) return;
       const preview = (window.__viral.diagnostics() as unknown as Diagnostics).touch?.preview;
-      if (preview && preview.kind !== 'charge') target.__mobileSkillRelease = { kind: preview.kind, aim: { ...preview.aim }, tick: window.__viral.snapshot().tick };
+      if (preview && preview.kind !== 'charge' && preview.kind !== 'cannon') target.__mobileSkillRelease = { kind: preview.kind, aim: { ...preview.aim }, tick: window.__viral.snapshot().tick };
     }, true);
   });
   await fingers.down(1, await center(page, moveStick, 24, 0)); await fingers.down(2, await center(page, attack)); await expect.poll(async () => (await readState(page)).shots).toBeGreaterThan(0);

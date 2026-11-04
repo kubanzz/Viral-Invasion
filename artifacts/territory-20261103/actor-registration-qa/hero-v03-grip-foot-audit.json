@@ -1,0 +1,190 @@
+{
+  "scope": "Read-only audit of source registration and renderer math; standalone QA screenshot only, no source images/JSON/src changed. No new weapon asset has been delivered.",
+  "source": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_Actors_v2\\production\\processed\\fantasy.actor.hero.front_right.master.v03.png",
+  "sourceSha256": "2c75e43f1574900eb0325c219b04296b0780cc07f90e5906f3d91da66a8ce876",
+  "canvas": [
+    512,
+    512
+  ],
+  "anchors": {
+    "logicalFoot": [
+      256,
+      435.2
+    ],
+    "nearSole": [
+      199.1875,
+      435.2
+    ],
+    "farSole": [
+      312.8125,
+      386.45
+    ],
+    "nearPalmV03": [
+      135.3125,
+      345.95
+    ],
+    "nearWristV03": [
+      129.8125,
+      319.7
+    ],
+    "farPalmV02": [
+      385.3125,
+      287.2
+    ]
+  },
+  "probes": [
+    {
+      "name": "logicalFoot",
+      "point": [
+        256,
+        435.2
+      ],
+      "rgba": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "nearSole",
+      "point": [
+        199.1875,
+        435.2
+      ],
+      "rgba": [
+        124,
+        87,
+        63,
+        80
+      ]
+    },
+    {
+      "name": "farSole",
+      "point": [
+        312.8125,
+        386.45
+      ],
+      "rgba": [
+        102,
+        60,
+        40,
+        149
+      ]
+    },
+    {
+      "name": "nearPalmV03",
+      "point": [
+        135.3125,
+        345.95
+      ],
+      "rgba": [
+        243,
+        239,
+        227,
+        255
+      ]
+    },
+    {
+      "name": "nearWristV03",
+      "point": [
+        129.8125,
+        319.7
+      ],
+      "rgba": [
+        70,
+        86,
+        102,
+        255
+      ]
+    },
+    {
+      "name": "farPalmV02",
+      "point": [
+        385.3125,
+        287.2
+      ],
+      "rgba": [
+        139,
+        94,
+        65,
+        255
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "y": 287,
+      "alphaAbove128Spans": [
+        [
+          112,
+          322
+        ],
+        [
+          356,
+          403
+        ]
+      ]
+    },
+    {
+      "y": 314,
+      "alphaAbove128Spans": [
+        [
+          99,
+          174
+        ],
+        [
+          189,
+          323
+        ]
+      ]
+    },
+    {
+      "y": 320,
+      "alphaAbove128Spans": [
+        [
+          96,
+          171
+        ],
+        [
+          190,
+          324
+        ]
+      ]
+    },
+    {
+      "y": 346,
+      "alphaAbove128Spans": [
+        [
+          89,
+          161
+        ],
+        [
+          180,
+          238
+        ],
+        [
+          268,
+          323
+        ]
+      ]
+    }
+  ],
+  "observations": [
+    "nearPalmV03 lies in actual opaque palm; nearWristV03 lies in actual opaque wrist cuff.",
+    "logicalFoot is transparent because it is a logical ground anchor, not either shoe contact.",
+    "near +X path crosses pelvis/legs in the neutral pose; a landmark is not proof of a valid held-gun configuration.",
+    "farPalmV02 lies on the visible C-hand edge and has a clear +X exit, but is provisional until actual gun handle geometry is reviewed.",
+    "Delivery v02 and v03 fragment currently disagree on primary hand; the rig plan also retains an older observed X translation of zero.",
+    "With canvasWorldHeight128, sourceScale0.25, camera0.62: mirroring the rigid near grip across x=256 jumps37.413125CSSpx; far candidate jumps40.086875CSSpx.",
+    "Weapon-only recoil of3world while hand PNG stays fixed can separate the grip by up to1.86CSSpx."
+  ],
+  "constraints": [
+    "Lock anatomical holding hand across front/back/mirror views; do not switch to whichever screen-side hand is nearer per frame.",
+    "Approve an actual gun-ready body pose and named palm/handle contact before authoring clips.",
+    "Every pose uses one family/direction transform; preserve separate source sole contacts and a stable logical foot.",
+    "Weapon grip, body hand and source muzzle must follow the same rotation/reflection, without arbitrary tool offsets used to hide bad hand placement.",
+    "Across aim-view boundaries and during motion/recoil, handle remains in fingers and muzzle remains outside the body in the actual firing direction.",
+    "Check four views and epsilon before/after horizontal and vertical view transitions at final scale."
+  ]
+}

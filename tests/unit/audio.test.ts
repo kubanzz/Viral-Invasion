@@ -41,6 +41,23 @@ const event = (type: string, tick: number, data: GameEvent['data'] = {}): GameEv
 const state = (events: GameEvent[], tick = Math.max(0, ...events.map(item => item.tick)), seed = 91): GameState => ({ seed, tick, events } as GameState);
 
 describe('event-driven sound feedback', () => {
+  it('plays infection ticks only for accepted damage and heavy-cannon fire separately from its landing',()=>{
+    const {sound,scheduled}=audioFixture();
+    const events=[event('PLAYER_INFECTED',1),event('PLAYER_HURT',2,{reason:'infection',damage:0}),
+      event('PLAYER_HURT',60,{reason:'infection',damage:1}),event('TERRITORY_CANNON_FIRED',61),event('TERRITORY_CANNON_EXPLODED',97)];
+    sound.update(state(events));expect(scheduled.map(tone=>tone.from)).toEqual([155,125,710,95,610]);
+    sound.update(state(events));expect(scheduled).toHaveLength(5);
+  });
+  it('rates heartbeat by actual low health with hysteresis and stops scheduled tones on pause',()=>{
+    const {sound,scheduled,oscillators}=audioFixture();const session=new GameSession(71);session.start();const s=session.state;s.events=[];
+    s.player.hp=30;sound.update(s);expect(scheduled.map(t=>t.from)).toEqual([83,65]);
+    sound.update(s);expect(scheduled).toHaveLength(2);
+    s.tick=69;s.elapsed=69/60;s.player.hp=32;sound.update(s);expect(scheduled).toHaveLength(4);
+    s.phase='paused';sound.update(s);expect(oscillators.every(t=>!t.connected)).toBe(true);
+    s.phase='playing';s.tick=138;s.elapsed=138/60;s.player.hp=35;sound.update(s);expect(scheduled).toHaveLength(4);
+    s.tick=139;s.elapsed=139/60;s.player.hp=15;sound.update(s);expect(scheduled).toHaveLength(6);
+    sound.toggle();s.tick=182;s.elapsed=182/60;sound.update(s);expect(scheduled).toHaveLength(6);
+  });
   it('plays early evolution only for an accepted warning or real first variant birth, once per wave', () => {
     const { sound, scheduled } = audioFixture();
     const warning = event('ENDLESS_OPENING_EVOLUTION_WARNING', 10, { trait: 'CARAPACE' });
@@ -151,7 +168,9 @@ describe('event-driven sound feedback', () => {
     const hit = game.events.find(event => event.type === 'TARGET_HIT' && event.data.rootId === bite!.data.rootId);
     expect(hit?.data).toMatchObject({ cause: 'protocol', protocolId: 'IMMUNE_BEACON' });
     expect(Number(hit?.data.damage)).toBeGreaterThan(0);
-    expect(!!hit?.data.immuneCellId).toBe(mode === 'catalysis');
+    // Real challenge bites carry their physical cell identity even before
+    // catalysis is selected, so garrison handoff can attribute an interception.
+    expect(!!hit?.data.immuneCellId).toBe(mode !== 'campaign');
     const { sound, scheduled } = audioFixture();
     sound.update(state([hit!, bite!], bite!.tick));
     expect(scheduled.map(tone => tone.from)).toEqual([450]);

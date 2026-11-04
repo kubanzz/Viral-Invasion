@@ -1,0 +1,134 @@
+{
+  "id": "lung.ground.healthy",
+  "sourceSha256": "f9b681bbb63a42c7a280d97ce82a0adc16681504624105fbfda843257a5d3910",
+  "outputPath": "production/processed/lung.ground.healthy.v02.png",
+  "processing": {
+    "method": "low-variance-original-crop-then-non-mirror-periodic-edge-fusion",
+    "sourceCrop": {
+      "left": 1824,
+      "top": 1856,
+      "width": 64,
+      "height": 64
+    },
+    "candidateIndex": 0,
+    "cropScan": {
+      "index": 0,
+      "sourceCrop": {
+        "left": 1824,
+        "top": 1856,
+        "width": 64,
+        "height": 64
+      },
+      "meanLuma": 223.06207866212935,
+      "stdLuma": 3.11526488797586,
+      "meanRgb": [
+        233.531494140625,
+        221.5673828125,
+        207.0400390625
+      ],
+      "score": 3.11526488797586
+    },
+    "healthyColourGrade": "none; no hue/saturation/brightness/contrast/lift adjustment",
+    "sourceSmoothingSigma": 0.6,
+    "sourceSmoothingReason": "Subpixel grain averaging before upscaling the sampled tissue crop; not a palette grade.",
+    "resizeKernel": "lanczos3",
+    "periodicEdges": {
+      "method": "non-mirrored-raised-cosine-opposing-edge-band-fusion",
+      "bandPixels": 96,
+      "edgeBlendFormula": "A*(1-t)+B*t; t=.5*cos(pi*d/(2*band))^2, paired only in opposing edge bands",
+      "exactBoundaryConstraint": "Opposite edge bytes equal; nearest two rows/columns share seam bytes for zero boundary slope.",
+      "interiorUnchangedRegion": [
+        96,
+        96,
+        832,
+        832
+      ],
+      "measuredMaxInteriorChannelDifference": 0,
+      "meanRgbDeltaFromEdgeFusion": [
+        0.0030975341796875,
+        0.0027589797973632812,
+        0.0028810501098632812
+      ],
+      "mirrorQuadrants": false,
+      "wholeTileFlipOrRotation": false
+    },
+    "provenance": [
+      {
+        "assetId": "lung.ground.healthy",
+        "runId": "5988eab5-ded3-49e8-9f8e-a714362857b8",
+        "rawPath": "raw/lung.ground.healthy/5988eab5-ded3-49e8-9f8e-a714362857b8.png",
+        "sha256": "f9b681bbb63a42c7a280d97ce82a0adc16681504624105fbfda843257a5d3910"
+      }
+    ]
+  },
+  "image": {
+    "sha256": "04a474d007c082392755035467ad8041c312d0676e42952458e273cad34da4c2",
+    "bytes": 573190,
+    "width": 1024,
+    "height": 1024,
+    "format": "png",
+    "channels": 4,
+    "hasAlphaChannel": true,
+    "alpha": {
+      "transparent": 0,
+      "partial": 0,
+      "opaque": 1048576,
+      "transparentFraction": 0,
+      "visible": 1048576,
+      "borderVisible": 4092,
+      "whiteVisible": 0
+    },
+    "bbox": [
+      0,
+      0,
+      1024,
+      1024
+    ],
+    "margins": {
+      "left": 0,
+      "top": 0,
+      "right": 0,
+      "bottom": 0,
+      "minimumFraction": 0
+    },
+    "luma": {
+      "mean": 223.0705553084289,
+      "standardDeviation": 2.763291398899259,
+      "min": 210.581,
+      "max": 233.1966
+    }
+  },
+  "seams": {
+    "horizontal": {
+      "rms": 0,
+      "maxDifference": 0,
+      "samples": 4096
+    },
+    "vertical": {
+      "rms": 0,
+      "maxDifference": 0,
+      "samples": 4096
+    },
+    "exactlyPeriodic": true
+  },
+  "registration": {
+    "state": "algorithmically-shared-base",
+    "stateGroup": "lung.ground",
+    "sharedBaseCoordinateDelta": [
+      0,
+      0
+    ],
+    "groundPreprojected": false
+  },
+  "visualReview": {
+    "state": "passed-production-v02-3x3-and-state-overlay-review",
+    "reviewedViews": [
+      "low-variance-crop-candidates",
+      "healthy-3x3",
+      "infected-3x3",
+      "50-percent-state-overlay"
+    ],
+    "notes": "Final 64-pixel quiet tissue crops contain no nucleus or vessel junction. No mirrored quadrants, diamond/medallion motif, actor, text, UI, baked object, shadow or camera projection. The subtle grain remains periodic but does not form a repeated central object.",
+    "mainVisualApproval": false
+  }
+}

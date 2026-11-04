@@ -1,0 +1,1648 @@
+{
+  "schemaVersion": 1,
+  "scope": "Candidate-1 visual QA. Derived states use the actual Renderer and imported candidate-matching dependencies, frozen 2400x1500 states. Synthetic HUD reserve rectangles are measured from natural candidate1 entry; fixture does not claim to render the production HUD.",
+  "boundary": "No full rescue, physical phone, human preference or performance claim. Candidate1 HUD source differs from newer workspace UI incoming-warning patch.",
+  "build": "artifacts\\dualfront-20261103\\candidate-1",
+  "version": "0.12.0",
+  "startedAt": "2026-11-03T06:21:30.655Z",
+  "errors": [],
+  "remote": [],
+  "natural": [
+    {
+      "width": 1366,
+      "height": 768,
+      "file": "natural-entry-1366x768.png",
+      "method": "Public DOM start; read-only snapshot and diagnostics, candidate1 HTML/game bytes. No storage or game-state writes.",
+      "snapshot": {
+        "game": "viral-invasion",
+        "schemaVersion": 1,
+        "seed": 71,
+        "phase": "playing",
+        "tick": 0,
+        "elapsed": 0,
+        "player": {
+          "x": 1100,
+          "y": 800,
+          "hp": 100,
+          "radius": 19,
+          "facing": 0,
+          "moving": false,
+          "dashUntil": 0,
+          "dashReady": 0,
+          "hurtUntil": 0,
+          "actionUntil": 0
+        },
+        "targets": [],
+        "tissue": {
+          "x": 1200,
+          "y": 900,
+          "hp": 100,
+          "maxHp": 100,
+          "radius": 43
+        },
+        "terminal": {
+          "x": 350,
+          "y": 1180
+        },
+        "tool": 1,
+        "cooldowns": {
+          "1": 0,
+          "2": 0,
+          "3": 0
+        },
+        "scanReady": 0,
+        "scanUntil": 0,
+        "effects": [],
+        "events": [
+          {
+            "type": "RUN_STARTED",
+            "tick": 0,
+            "data": {
+              "seed": 71,
+              "mode": "endless",
+              "startAtTick": 0,
+              "encounterConfig": "endless-1",
+              "counterGuide": "adaptive",
+              "firstTraitOverride": ""
+            }
+          },
+          {
+            "type": "PROTOCOL_EQUIPPED",
+            "tick": 0,
+            "data": {
+              "source": "preparation",
+              "protocolId": "IMMUNE_BEACON",
+              "tuning": "balanced",
+              "rank": 1,
+              "slots": 1,
+              "actionHint": "Q 部署常驻军团；满两支后指挥附近军团转向。细胞有生命，升级增加人数。"
+            }
+          }
+        ],
+        "message": "WASD 移动 · 鼠标瞄准 · 按住左键持续射击。",
+        "messageUntil": 8,
+        "shots": 0,
+        "hits": 0,
+        "scans": 0,
+        "dashes": 0,
+        "result": null,
+        "runMetrics": {
+          "runId": "71:metrics:2",
+          "lastSequence": 2,
+          "lastTick": 0,
+          "ended": false,
+          "frame": {
+            "tick": 0,
+            "entries": []
+          },
+          "summary": {
+            "schemaVersion": 1,
+            "limited": false,
+            "care": {
+              "repairActions": 0,
+              "repaired": 0,
+              "organLoss": 0,
+              "organCost": 0,
+              "playerDamage": 0,
+              "organs": {
+                "heart": {
+                  "repairActions": 0,
+                  "repaired": 0,
+                  "loss": 0,
+                  "cost": 0
+                },
+                "lung": {
+                  "repairActions": 0,
+                  "repaired": 0,
+                  "loss": 0,
+                  "cost": 0
+                }
+              }
+            },
+            "control": {
+              "chainTriggers": 0,
+              "chainHops": 0,
+              "ricochetHits": 0,
+              "resonanceHits": 0,
+              "beaconBites": 0,
+              "patrolBites": 0,
+              "synergyPulseChain": 0,
+              "synergyTraceBeacon": 0,
+              "scans": 0,
+              "pulseUses": 0,
+              "crystalExposures": 0,
+              "corePulseHits": 0,
+              "airwayCloses": 0,
+              "airwayOpens": 0,
+              "crisisPulseInterrupts": 0,
+              "crisisAirwayInterrupts": 0,
+              "coreScanInterrupts": 0,
+              "diagnosedTraits": [],
+              "migrationChoice": null,
+              "migrationInterception": null,
+              "migrationMissed": false,
+              "coreMembranes": [],
+              "coreCleared": false
+            }
+          }
+        },
+        "world": {
+          "width": 2400,
+          "height": 1500,
+          "bounds": {
+            "left": 85,
+            "right": 2315,
+            "top": 145,
+            "bottom": 1415
+          },
+          "obstacles": [
+            {
+              "id": "fold-a",
+              "x": 730,
+              "y": 650,
+              "radius": 85
+            },
+            {
+              "id": "fold-b",
+              "x": 1630,
+              "y": 1190,
+              "radius": 90
+            },
+            {
+              "id": "fold-c",
+              "x": 1350,
+              "y": 540,
+              "radius": 72
+            },
+            {
+              "id": "fold-d",
+              "x": 2120,
+              "y": 720,
+              "radius": 85
+            },
+            {
+              "id": "fold-e",
+              "x": 780,
+              "y": 980,
+              "radius": 70
+            }
+          ],
+          "foreground": {
+            "x": 1110,
+            "y": 1195,
+            "width": 275,
+            "height": 150
+          }
+        },
+        "battle": {
+          "milestone": "G3",
+          "organId": "heart",
+          "graph": {
+            "nodes": [
+              {
+                "id": "valve",
+                "kind": "valve",
+                "x": 1200,
+                "y": 600,
+                "active": true,
+                "infected": false
+              },
+              {
+                "id": "tissue",
+                "kind": "tissue",
+                "x": 1200,
+                "y": 900,
+                "active": true,
+                "infected": false
+              },
+              {
+                "x": 1150,
+                "y": 330,
+                "id": "heart-healing-1",
+                "kind": "healing",
+                "active": true,
+                "infected": false,
+                "infection": 0,
+                "healReadyAt": 0
+              },
+              {
+                "x": 1880,
+                "y": 1300,
+                "id": "heart-healing-2",
+                "kind": "healing",
+                "active": true,
+                "infected": false,
+                "infection": 0,
+                "healReadyAt": 0
+              }
+            ],
+            "edges": []
+          },
+          "pressure": {
+            "infection": 0,
+            "vitality": 100,
+            "criticalSince": null,
+            "organAlarm": false,
+            "crisisReason": ""
+          },
+          "pulse": {
+            "phase": "charge",
+            "phaseRemaining": 2,
+            "readyAt": 0,
+            "activeUntil": 0,
+            "origin": {
+              "x": 1200,
+              "y": 600
+            },
+            "direction": 1.5707963267948966,
+            "uses": 0
+          },
+          "warning": null,
+          "traits": [],
+          "defeatedTraits": [],
+          "nextEvolutionAt": 0,
+          "stage": 0,
+          "stageLabel": "第 1 波 · 压力推进 · 正面双潮",
+          "objective": "连续清场成长；普通感染体追击你，潜伏体侵蚀中央组织。每 5 波迎战精英。",
+          "readyToRetest": false,
+          "lastAim": {
+            "x": 1020,
+            "y": 650
+          },
+          "stats": {
+            "kills": 0,
+            "sourceClears": 0,
+            "eliteClears": 0,
+            "repairs": 0,
+            "pulses": 0,
+            "playerDamage": 0,
+            "tissueDamage": 0,
+            "scans": 0
+          },
+          "nextSpawnAt": {},
+          "nextActorId": 2,
+          "firstTrait": "CARAPACE",
+          "recentNotice": "",
+          "gateChangedAt": -10,
+          "organLowSince": null,
+          "eliteSpawned": 0,
+          "history": [],
+          "behaviorHistory": [],
+          "evolutionDecisions": []
+        },
+        "endless": {
+          "schemaVersion": 1,
+          "wave": 1,
+          "clearedWaves": 0,
+          "phase": "warning",
+          "phaseUntil": 2,
+          "phaseStartedAt": 0,
+          "traits": [],
+          "title": "压力推进 · 正面双潮",
+          "eliteWave": false,
+          "eliteRemaining": 0,
+          "formation": "front",
+          "formationLabel": "正面双潮",
+          "batchSchedule": [
+            {
+              "at": 0,
+              "sector": 4,
+              "spread": 0.3,
+              "roles": [
+                "ordinary",
+                "ordinary",
+                "ordinary"
+              ]
+            },
+            {
+              "at": 0.22,
+              "sector": 4,
+              "spread": 0.3,
+              "roles": [
+                "ordinary",
+                "ordinary",
+                "ordinary"
+              ]
+            },
+            {
+              "at": 1.2,
+              "sector": 4,
+              "spread": 0.3,
+              "roles": [
+                "ordinary",
+                "ordinary",
+                "ordinary"
+              ]
+            },
+            {
+              "at": 1.42,
+              "sector": 4,
+              "spread": 0.3,
+              "roles": [
+                "ordinary",
+                "ordinary",
+                "ordinary"
+              ]
+            },
+            {
+              "at": 2.4,
+              "sector": 4,
+              "spread": 0.3,
+              "roles": [
+                "ordinary",
+                "ordinary",
+                "ordinary"
+              ]
+            },
+            {
+              "at": 2.62,
+              "sector": 4,
+              "spread": 0.3,
+              "roles": [
+                "ordinary",
+                "ordinary",
+                "ordinary"
+              ]
+            },
+            {
+              "at": 3.5999999999999996,
+              "sector": 4,
+              "spread": 0.3,
+              "roles": [
+                "ordinary",
+                "ordinary",
+                "ordinary"
+              ]
+            },
+            {
+              "at": 3.82,
+              "sector": 4,
+              "spread": 0.3,
+              "roles": [
+                "ordinary",
+                "ordinary",
+                "ordinary"
+              ]
+            },
+            {
+              "at": 4.8,
+              "sector": 4,
+              "spread": 0.3,
+              "roles": [
+                "ordinary",
+                "ordinary",
+                "ordinary"
+              ]
+            },
+            {
+              "at": 5.02,
+              "sector": 4,
+              "spread": 0.3,
+              "roles": [
+                "ordinary",
+                "ordinary",
+                "ordinary"
+              ]
+            },
+            {
+              "at": 6,
+              "sector": 4,
+              "spread": 0.3,
+              "roles": [
+                "ordinary",
+                "ordinary",
+                "ordinary"
+              ]
+            },
+            {
+              "at": 6.22,
+              "sector": 4,
+              "spread": 0.3,
+              "roles": [
+                "ordinary",
+                "ordinary",
+                "ordinary"
+              ]
+            },
+            {
+              "at": 7.199999999999999,
+              "sector": 4,
+              "spread": 0.3,
+              "roles": [
+                "ordinary",
+                "ordinary",
+                "ordinary"
+              ]
+            },
+            {
+              "at": 7.419999999999999,
+              "sector": 4,
+              "spread": 0.3,
+              "roles": [
+                "ordinary"
+              ]
+            }
+          ],
+          "supportRemaining": 0,
+          "warningSeconds": 2,
+          "totalToSpawn": 40,
+          "remainingToSpawn": 40,
+          "canceledToSpawn": 0,
+          "spawnedIds": [],
+          "creditedKillIds": [],
+          "kills": 0,
+          "score": 0,
+          "combo": 0,
+          "bestCombo": 0,
+          "lastKillAt": -1000,
+          "nextSpawnAt": 2,
+          "batchSerial": 0,
+          "spawnSerial": 0,
+          "pendingChildren": 0,
+          "directions": [],
+          "batchIndex": 0,
+          "batchMemberIndex": 0,
+          "evolution": {
+            "history": [],
+            "recentPrimaries": [],
+            "opening": {
+              "precisionDamage": 0,
+              "areaDamage": 0
+            }
+          },
+          "tutorial": {
+            "fired": false,
+            "deployed": false,
+            "tissueHurt": false,
+            "repaired": false,
+            "seenUpgrades": []
+          }
+        },
+        "messagePriority": 1,
+        "endlessGrowth": {
+          "seed": 71,
+          "ranks": {},
+          "level": 0,
+          "draft": null,
+          "offeredThroughWave": 0,
+          "history": []
+        },
+        "playerProjectiles": [],
+        "chargedSlashReadyAt": 0,
+        "territory": {
+          "schemaVersion": 1,
+          "stage": "rescue",
+          "campBuilt": false,
+          "purification": null,
+          "healingContact": {
+            "nodeId": null,
+            "seconds": 0
+          },
+          "nodes": [
+            {
+              "id": "core",
+              "name": "心核",
+              "kind": "core",
+              "x": 1200,
+              "y": 900,
+              "owner": "healthy",
+              "infectionProgress": 0,
+              "purificationProgress": 0,
+              "permanent": false,
+              "firstPurified": false
+            },
+            {
+              "id": "heart-healing-1",
+              "name": "北侧生命泉",
+              "kind": "healing",
+              "x": 1150,
+              "y": 330,
+              "owner": "healthy",
+              "infectionProgress": 0,
+              "purificationProgress": 0,
+              "permanent": false,
+              "firstPurified": false
+            },
+            {
+              "id": "heart-healing-2",
+              "name": "南侧生命泉",
+              "kind": "healing",
+              "x": 1880,
+              "y": 1300,
+              "owner": "healthy",
+              "infectionProgress": 0,
+              "purificationProgress": 0,
+              "permanent": false,
+              "firstPurified": false
+            },
+            {
+              "id": "source-west",
+              "name": "西侧感染源",
+              "kind": "source",
+              "x": 450,
+              "y": 600,
+              "owner": "infected",
+              "infectionProgress": 100,
+              "purificationProgress": 0,
+              "permanent": false,
+              "firstPurified": false
+            },
+            {
+              "id": "source-east",
+              "name": "东侧感染源",
+              "kind": "source",
+              "x": 1950,
+              "y": 450,
+              "owner": "infected",
+              "infectionProgress": 100,
+              "purificationProgress": 0,
+              "permanent": false,
+              "firstPurified": false
+            },
+            {
+              "id": "front-north",
+              "name": "北线前沿",
+              "kind": "front",
+              "x": 700,
+              "y": 350,
+              "owner": "infected",
+              "infectionProgress": 100,
+              "purificationProgress": 0,
+              "permanent": false,
+              "firstPurified": false
+            },
+            {
+              "id": "front-south",
+              "name": "南线前沿",
+              "kind": "front",
+              "x": 2140,
+              "y": 950,
+              "owner": "infected",
+              "infectionProgress": 100,
+              "purificationProgress": 0,
+              "permanent": false,
+              "firstPurified": false
+            }
+          ],
+          "sources": {
+            "source-west": {
+              "nodeId": "source-west",
+              "frontNodeId": "front-north",
+              "healingNodeId": "heart-healing-1",
+              "unlocked": false,
+              "spawned": false,
+              "destroyed": false,
+              "rewarded": false
+            },
+            "source-east": {
+              "nodeId": "source-east",
+              "frontNodeId": "front-south",
+              "healingNodeId": "heart-healing-2",
+              "unlocked": false,
+              "spawned": false,
+              "destroyed": false,
+              "rewarded": false
+            }
+          },
+          "recordId": "b64194cd-ed13-4d41-bc3f-d6f50237f755"
+        },
+        "playerInfection": null,
+        "hostEvents": {
+          "schemaVersion": 1,
+          "rngState": 1752134451,
+          "serial": 0,
+          "slots": [
+            {
+              "at": 240,
+              "status": "pending"
+            },
+            {
+              "at": 420,
+              "status": "pending"
+            },
+            {
+              "at": 600,
+              "status": "pending"
+            }
+          ],
+          "usedIds": [],
+          "successCount": 0,
+          "redCount": 0,
+          "lastCategory": null,
+          "lastEndedAt": null,
+          "alarmUntil": 0,
+          "wasAlarm": false,
+          "active": null,
+          "sources": {},
+          "disabled": {
+            "MEDICATION": "当前器官没有合法血流锚点",
+            "SMOKE": "仅肺部可用",
+            "ALCOHOL": "当前器官只有一个可修复组织，需要两个；治疗点不属于组织",
+            "EXERCISE": "当前器官没有轻型病毒"
+          },
+          "pendingCommands": [],
+          "openingExercise": {
+            "status": "pending",
+            "ready": false,
+            "waitingReason": "wave-3-not-reached"
+          }
+        },
+        "growth": {
+          "runId": "71:2",
+          "seed": 71,
+          "lastElapsed": 0,
+          "xp": 0,
+          "level": 0,
+          "nextXp": null,
+          "research": 0,
+          "preparation": {
+            "version": 1,
+            "starterProtocolId": "IMMUNE_BEACON"
+          },
+          "starterDebt": 0,
+          "carriedProtocols": [
+            "IMMUNE_BEACON"
+          ],
+          "equipped": [
+            {
+              "id": "IMMUNE_BEACON",
+              "tuning": "balanced"
+            }
+          ],
+          "draft": null,
+          "pendingLevels": [],
+          "consumedDraftIds": [],
+          "rewardedKeys": [],
+          "sourceKillCounts": {},
+          "lastMilestoneWave": 0,
+          "nextMilestoneWave": null,
+          "damageTakenByOrgan": {
+            "heart": 0,
+            "lung": 0
+          },
+          "protectionNeeded": {
+            "heart": false,
+            "lung": false
+          },
+          "draftSerial": 0,
+          "historyHash": 2166136261,
+          "ended": false,
+          "pendingResearch": null,
+          "researchSerial": 0,
+          "beacon": null,
+          "beacons": [],
+          "beaconReadyAt": 0,
+          "cells": [],
+          "antibodyCharges": 2,
+          "antibodySerial": 0,
+          "activations": {},
+          "marks": [],
+          "resonance": [],
+          "chainRoots": [],
+          "protocolHistory": [
+            {
+              "at": 0,
+              "type": "PROTOCOL_EQUIPPED",
+              "text": "免疫灯塔：初始预装 Ⅰ · 均衡。"
+            }
+          ],
+          "pendingLogs": [],
+          "budgetTick": -1,
+          "budgetUsed": 0,
+          "skippedCommands": 0
+        }
+      },
+      "diagnostics": {
+        "depthOrder": [
+          "heart-healing-1",
+          "front-north",
+          "fold-c",
+          "valve",
+          "fold-a",
+          "fold-d",
+          "player",
+          "tissue",
+          "front-south",
+          "fold-e",
+          "fold-b",
+          "heart-healing-2"
+        ],
+        "occluded": false,
+        "foregroundOpacity": 0.94,
+        "layerOrder": [
+          "distant",
+          "terrain",
+          "contact-shadows",
+          "world-y-sorted",
+          "foreground",
+          "effects",
+          "hud"
+        ],
+        "labels": {
+          "requested": 2,
+          "placed": 2,
+          "omitted": 0,
+          "offscreen": 0,
+          "conflicted": 0,
+          "measureCacheSize": 3,
+          "placementCacheSize": 2,
+          "placements": [
+            {
+              "id": "territory-node:core",
+              "priority": 45,
+              "essential": true,
+              "rect": {
+                "left": 759.9093729654948,
+                "right": 819.4239603678385,
+                "top": 293.6666666666667,
+                "bottom": 312.6666666666667
+              },
+              "anchor": {
+                "x": 789.6666666666666,
+                "y": 460.8
+              },
+              "baseline": {
+                "x": 789.6666666666666,
+                "y": 307.6666666666667
+              },
+              "compact": false,
+              "fallback": false,
+              "conflicted": false,
+              "leader": {
+                "from": {
+                  "x": 789.6666666666666,
+                  "y": 322.0083333333333
+                },
+                "to": {
+                  "x": 789.6666666666666,
+                  "y": 312.6666666666667
+                }
+              }
+            },
+            {
+              "id": "device:valve",
+              "priority": 30,
+              "essential": false,
+              "rect": {
+                "left": 756.341677347819,
+                "right": 822.9916559855143,
+                "top": 269.26666666666665,
+                "bottom": 288.26666666666665
+              },
+              "anchor": {
+                "x": 789.6666666666666,
+                "y": 230.4
+              },
+              "baseline": {
+                "x": 789.6666666666666,
+                "y": 283.26666666666665
+              },
+              "compact": true,
+              "fallback": false,
+              "conflicted": false,
+              "leader": {
+                "from": {
+                  "x": 789.6666666666666,
+                  "y": 247.20000000000002
+                },
+                "to": {
+                  "x": 789.6666666666666,
+                  "y": 269.26666666666665
+                }
+              }
+            }
+          ]
+        },
+        "hudRects": [
+          {
+            "left": 30,
+            "right": 249.5625,
+            "top": 22,
+            "bottom": 67
+          },
+          {
+            "left": 997.875,
+            "right": 1336,
+            "top": 27.5,
+            "bottom": 61.5
+          },
+          {
+            "left": 529.5859375,
+            "right": 836.4140625,
+            "top": 596,
+            "bottom": 633
+          },
+          {
+            "left": 327.4296875,
+            "right": 1038.5703125,
+            "top": 642,
+            "bottom": 743
+          },
+          {
+            "left": 1239.03125,
+            "right": 1334,
+            "top": 739,
+            "bottom": 754
+          },
+          {
+            "left": 32,
+            "right": 250,
+            "top": 434,
+            "bottom": 594
+          },
+          {
+            "left": 16,
+            "right": 248,
+            "top": 194,
+            "bottom": 378
+          },
+          {
+            "left": 1164,
+            "right": 1350,
+            "top": 72,
+            "bottom": 132
+          },
+          {
+            "left": 1130,
+            "right": 1350,
+            "top": 245,
+            "bottom": 384.5
+          },
+          {
+            "left": 1130,
+            "right": 1350,
+            "top": 467.046875,
+            "bottom": 680
+          },
+          {
+            "left": 16,
+            "right": 766,
+            "top": 72,
+            "bottom": 157.6875
+          }
+        ],
+        "playerPresence": {
+          "active": false,
+          "potentialBodyOccluders": [],
+          "raisedOccluders": [],
+          "foreground": false,
+          "pendingRoundDangers": [],
+          "bodyBounds": {
+            "left": 1075,
+            "right": 1145,
+            "top": 506,
+            "bottom": 584
+          },
+          "groundAnchor": {
+            "x": 1100,
+            "y": 800
+          }
+        },
+        "crosshair": {
+          "status": "in-range",
+          "aim": {
+            "x": 1100,
+            "y": 800
+          }
+        },
+        "territoryVisuals": {
+          "geometry": {
+            "key": "85|145|2315|1415|core:1200:900|front-north:700:350|front-south:2140:950|heart-healing-1:1150:330|heart-healing-2:1880:1300|source-east:1950:450|source-west:450:600",
+            "revisions": 1,
+            "regionCount": 7
+          },
+          "labelledNodeIds": [
+            "core"
+          ],
+          "offscreenAttacks": [],
+          "nodes": [
+            {
+              "id": "core",
+              "status": "healthy",
+              "infectionProgress": 0,
+              "purificationProgress": 0,
+              "purificationActive": false,
+              "pausedReason": null,
+              "incomingFrom": null,
+              "attackerIds": []
+            },
+            {
+              "id": "heart-healing-1",
+              "status": "healthy",
+              "infectionProgress": 0,
+              "purificationProgress": 0,
+              "purificationActive": false,
+              "pausedReason": null,
+              "incomingFrom": null,
+              "attackerIds": []
+            },
+            {
+              "id": "heart-healing-2",
+              "status": "healthy",
+              "infectionProgress": 0,
+              "purificationProgress": 0,
+              "purificationActive": false,
+              "pausedReason": null,
+              "incomingFrom": null,
+              "attackerIds": []
+            },
+            {
+              "id": "source-west",
+              "status": "infected",
+              "infectionProgress": 100,
+              "purificationProgress": 0,
+              "purificationActive": false,
+              "pausedReason": null,
+              "incomingFrom": null,
+              "attackerIds": []
+            },
+            {
+              "id": "source-east",
+              "status": "infected",
+              "infectionProgress": 100,
+              "purificationProgress": 0,
+              "purificationActive": false,
+              "pausedReason": null,
+              "incomingFrom": null,
+              "attackerIds": []
+            },
+            {
+              "id": "front-north",
+              "status": "infected",
+              "infectionProgress": 100,
+              "purificationProgress": 0,
+              "purificationActive": false,
+              "pausedReason": null,
+              "incomingFrom": null,
+              "attackerIds": []
+            },
+            {
+              "id": "front-south",
+              "status": "infected",
+              "infectionProgress": 100,
+              "purificationProgress": 0,
+              "purificationActive": false,
+              "pausedReason": null,
+              "incomingFrom": null,
+              "attackerIds": []
+            }
+          ],
+          "lanes": [
+            {
+              "id": "north",
+              "shielded": true,
+              "origin": {
+                "x": 700,
+                "y": 350
+              },
+              "attackedNodeIds": [],
+              "suppliedBy": [
+                "front-north"
+              ]
+            },
+            {
+              "id": "south",
+              "shielded": true,
+              "origin": {
+                "x": 2140,
+                "y": 950
+              },
+              "attackedNodeIds": [],
+              "suppliedBy": [
+                "front-south"
+              ]
+            }
+          ]
+        },
+        "phaser": {
+          "engine": "Phaser",
+          "version": "4.2.1",
+          "renderer": "webgl",
+          "ready": true,
+          "textureCount": 14,
+          "activeSprites": 10,
+          "pooledSprites": 2,
+          "rasterLayers": 3,
+          "articulatedMeshes": 0,
+          "visibleRasterLayers": 3,
+          "rasterDimensions": [
+            {
+              "id": "fantasy-terrain",
+              "width": 2048,
+              "height": 1381,
+              "displayWidth": 2944,
+              "displayHeight": 1428.48,
+              "x": -682.3333333333334,
+              "y": -368.6399999999999,
+              "depth": -90,
+              "visible": true
+            },
+            {
+              "id": "ground",
+              "width": 1366,
+              "height": 768,
+              "displayWidth": 1366,
+              "displayHeight": 768,
+              "x": 0,
+              "y": 0,
+              "depth": 0,
+              "visible": true
+            },
+            {
+              "id": "signals",
+              "width": 1366,
+              "height": 768,
+              "displayWidth": 1366,
+              "displayHeight": 768,
+              "x": 0,
+              "y": 0,
+              "depth": 10000,
+              "visible": true
+            }
+          ],
+          "animations": [],
+          "nativeSprites": [
+            {
+              "id": "heart-healing-1",
+              "texture": "viral-art-0",
+              "frame": "fantasy.healing.healthy",
+              "x": 736.3333333333334,
+              "y": 23.040000000000024,
+              "width": 129.11304347826086,
+              "height": 140.5449275362319,
+              "depth": 100,
+              "visible": true,
+              "originX": 0.5,
+              "originY": 0.8464114832535885,
+              "alpha": 1,
+              "flipX": false,
+              "flipY": false,
+              "rotation": 0,
+              "articulated": false
+            },
+            {
+              "id": "front-north",
+              "texture": "viral-art-1",
+              "frame": "fantasy.rock.infected",
+              "x": 256.3333333333333,
+              "y": 38.40000000000001,
+              "width": 155.82608695652172,
+              "height": 169.6231884057971,
+              "depth": 103,
+              "visible": true,
+              "originX": 0.5,
+              "originY": 0.8464114832535885,
+              "alpha": 1,
+              "flipX": false,
+              "flipY": false,
+              "rotation": 0,
+              "articulated": false
+            },
+            {
+              "id": "fold-c",
+              "texture": "viral-art-1",
+              "frame": "fantasy.tree.healthy",
+              "x": 949.6666666666666,
+              "y": 184.32000000000002,
+              "width": 256.44521739130437,
+              "height": 279.1513043478261,
+              "depth": 106,
+              "visible": true,
+              "originX": 0.5,
+              "originY": 0.8464114832535885,
+              "alpha": 1,
+              "flipX": false,
+              "flipY": false,
+              "rotation": 0,
+              "articulated": false
+            },
+            {
+              "id": "valve",
+              "texture": "viral-art-1",
+              "frame": "fantasy.valve.closed",
+              "x": 789.6666666666666,
+              "y": 230.4,
+              "width": 135.79130434782607,
+              "height": 147.8144927536232,
+              "depth": 109,
+              "visible": true,
+              "originX": 0.5,
+              "originY": 0.8464114832535885,
+              "alpha": 1,
+              "flipX": false,
+              "flipY": false,
+              "rotation": 0,
+              "articulated": false
+            },
+            {
+              "id": "fold-a",
+              "texture": "viral-art-1",
+              "frame": "fantasy.tree.infected",
+              "x": 288.3333333333333,
+              "y": 268.8,
+              "width": 302.74782608695654,
+              "height": 329.5536231884058,
+              "depth": 112,
+              "visible": true,
+              "originX": 0.5,
+              "originY": 0.8464114832535885,
+              "alpha": 1,
+              "flipX": false,
+              "flipY": false,
+              "rotation": 0,
+              "articulated": false
+            },
+            {
+              "id": "player",
+              "texture": "viral-art-1",
+              "frame": "fantasy.actor.hero.front_right.idle.00",
+              "x": 683,
+              "y": 384,
+              "width": 145.63555555555556,
+              "height": 159.2888888888889,
+              "depth": 118,
+              "visible": true,
+              "originX": 0.5,
+              "originY": 0.8428571428571429,
+              "alpha": 1,
+              "flipX": false,
+              "flipY": false,
+              "rotation": 0,
+              "articulated": false
+            },
+            {
+              "id": "player:tool",
+              "texture": "viral-art-2",
+              "frame": "fantasy.actor.weapon.emitter",
+              "x": 681.8166666666667,
+              "y": 349.3333333333333,
+              "width": 111.7090909090909,
+              "height": 158.83636363636367,
+              "depth": 118.2,
+              "visible": true,
+              "originX": 0.5,
+              "originY": 0.6483516483516484,
+              "alpha": 1,
+              "flipX": false,
+              "flipY": false,
+              "rotation": 0,
+              "articulated": false
+            },
+            {
+              "id": "tissue",
+              "texture": "viral-art-0",
+              "frame": "fantasy.core.healthy",
+              "x": 789.6666666666666,
+              "y": 460.8,
+              "width": 166.95652173913044,
+              "height": 181.73913043478262,
+              "depth": 121,
+              "visible": true,
+              "originX": 0.5,
+              "originY": 0.8464114832535885,
+              "alpha": 1,
+              "flipX": false,
+              "flipY": false,
+              "rotation": 0,
+              "articulated": false
+            },
+            {
+              "id": "fold-e",
+              "texture": "viral-art-1",
+              "frame": "fantasy.tree.healthy",
+              "x": 341.6666666666667,
+              "y": 522.24,
+              "width": 249.32173913043476,
+              "height": 271.39710144927534,
+              "depth": 127,
+              "visible": true,
+              "originX": 0.5,
+              "originY": 0.8464114832535885,
+              "alpha": 1,
+              "flipX": false,
+              "flipY": false,
+              "rotation": 0,
+              "articulated": false
+            },
+            {
+              "id": "fold-b",
+              "texture": "viral-art-1",
+              "frame": "fantasy.rock.healthy",
+              "x": 1248.3333333333333,
+              "y": 683.52,
+              "width": 320.5565217391304,
+              "height": 348.9391304347826,
+              "depth": 130,
+              "visible": true,
+              "originX": 0.5,
+              "originY": 0.8464114832535885,
+              "alpha": 1,
+              "flipX": false,
+              "flipY": false,
+              "rotation": 0,
+              "articulated": false
+            }
+          ],
+          "widthCSS": 1366,
+          "heightCSS": 768,
+          "dpr": 1,
+          "backingWidth": 1366,
+          "backingHeight": 768,
+          "frameLoopBound": true
+        },
+        "art": {
+          "signature": "ba9830adaa1e1c25b3f844b9689f3b8827c6e53de99a6ba3450f3b60a874749b",
+          "selectedAssets": 132,
+          "fantasyGround": {
+            "key": "ba9830adaa1e1c25b3f844b9689f3b8827c6e53de99a6ba3450f3b60a874749b:heart:2400:1500:85:145:2315:1415:core:1200:900:healthy:heart-healing-1:1150:330:healthy:heart-healing-2:1880:1300:healthy:source-west:450:600:infected:source-east:1950:450:infected:front-north:700:350:infected:front-south:2140:950:infected",
+            "revisions": 2,
+            "width": 2048,
+            "height": 1381,
+            "imageIds": [
+              "fantasy.floor.healthy",
+              "fantasy.floor.infected",
+              "fantasy.infection.patch.b",
+              "fantasy.infection.patch.a",
+              "fantasy.infection.edge.a",
+              "fantasy.infection.edge.b"
+            ],
+            "geometry": {
+              "key": "85|145|2315|1415|core:1200:900|front-north:700:350|front-south:2140:950|heart-healing-1:1150:330|heart-healing-2:1880:1300|source-east:1950:450|source-west:450:600",
+              "revisions": 2,
+              "regionCount": 7
+            }
+          },
+          "actorFrames": [
+            {
+              "actorId": "player",
+              "entityId": "player",
+              "semanticId": "fantasy.actor.hero.front_right.idle.00",
+              "identity": "hero",
+              "action": "idle",
+              "clip": "idle",
+              "requestedAction": "idle",
+              "requestedClip": "idle",
+              "requestedDirection": "front_right",
+              "requestedAuthoredDirection": "front_right",
+              "requestedFlipX": false,
+              "index": 0,
+              "frameIndex": 0,
+              "frame": "fantasy.actor.hero.front_right.idle.00",
+              "direction": "front_right",
+              "authoredDirection": "front_right",
+              "flipX": false,
+              "native": true,
+              "visible": true,
+              "groupReady": true,
+              "fallback": false,
+              "fallbackReason": null,
+              "candidate": false,
+              "motionMethod": "pixel-derived-local-rig-animation",
+              "source": {
+                "path": "ViralInvasion_Fantasy_Actors_v2/hero/front_right/idle/00.png",
+                "sha256": "605ef201075207efbcf78e850fb721e0d929737132c37598d386edb7412607dc",
+                "sourceFrame": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 512,
+                  "height": 512
+                }
+              },
+              "sourceFoot": {
+                "x": 256,
+                "y": 435.2
+              },
+              "sourceGrip": {
+                "x": 251.5625,
+                "y": 305.2
+              },
+              "sourceMuzzle": null,
+              "sourceScale": 0.25,
+              "commonCanvasScale": 1,
+              "worldFoot": {
+                "x": 1100,
+                "y": 800
+              },
+              "screenFoot": {
+                "x": 683,
+                "y": 384
+              },
+              "bodyBounds": {
+                "left": 1066,
+                "right": 1134.75,
+                "top": 468.95,
+                "bottom": 578.45
+              },
+              "grip": null,
+              "muzzle": null,
+              "rotation": null,
+              "ruleCue": []
+            },
+            {
+              "actorId": "player:tool",
+              "entityId": "player",
+              "semanticId": "fantasy.actor.weapon.emitter",
+              "identity": "weapon.emitter",
+              "action": "static",
+              "logicalAction": "held",
+              "clip": "static",
+              "requestedAction": "held",
+              "requestedClip": "static",
+              "requestedDirection": "radial",
+              "requestedAuthoredDirection": "radial",
+              "requestedFlipX": false,
+              "index": 0,
+              "frameIndex": 0,
+              "frame": "fantasy.actor.weapon.emitter",
+              "direction": "radial",
+              "authoredDirection": "radial",
+              "flipX": false,
+              "native": true,
+              "visible": true,
+              "groupReady": true,
+              "fallback": false,
+              "fallbackReason": null,
+              "candidate": false,
+              "motionMethod": "maliang-source-static-pixel-extraction",
+              "source": {
+                "path": "ViralInvasion_Fantasy_Actors_v2/weapon/emitter.png",
+                "sha256": "9cfbaa84707026f12967e9c1993f16311e901b98b6bd845989eb4700ac32c535",
+                "sourceFrame": {
+                  "x": 0,
+                  "y": 0,
+                  "width": 512,
+                  "height": 512
+                }
+              },
+              "sourceFoot": null,
+              "sourceGrip": {
+                "x": 256,
+                "y": 256
+              },
+              "sourceMuzzle": {
+                "x": 342.6985755384527,
+                "y": 201.25045325140576
+              },
+              "sourceScale": 0.1875,
+              "commonCanvasScale": 1,
+              "worldFoot": {
+                "x": 1100,
+                "y": 800
+              },
+              "screenFoot": {
+                "x": 683,
+                "y": 384
+              },
+              "bodyBounds": {
+                "left": 1082.453125,
+                "right": 1120.390625,
+                "top": 523.875,
+                "bottom": 551.5
+              },
+              "grip": {
+                "x": 1098.890625,
+                "y": 543.5
+              },
+              "muzzle": {
+                "x": 1115.1466079134598,
+                "y": 533.2344599846385
+              },
+              "rotation": 0,
+              "ruleCue": [],
+              "flipY": false
+            }
+          ],
+          "ruleDirections": [],
+          "motherStages": [],
+          "actorContract": {
+            "version": 2,
+            "preview": false,
+            "animationPreview": false,
+            "groups": [
+              {
+                "identity": "hero",
+                "ready": true,
+                "missing": [],
+                "issues": []
+              },
+              {
+                "identity": "enemy.basic",
+                "ready": true,
+                "missing": [],
+                "issues": []
+              },
+              {
+                "identity": "enemy.thinRay",
+                "ready": true,
+                "missing": [],
+                "issues": []
+              },
+              {
+                "identity": "enemy.carapace",
+                "ready": true,
+                "missing": [],
+                "issues": []
+              },
+              {
+                "identity": "enemy.fission.parent",
+                "ready": true,
+                "missing": [],
+                "issues": []
+              },
+              {
+                "identity": "enemy.fission.child",
+                "ready": true,
+                "missing": [],
+                "issues": []
+              },
+              {
+                "identity": "enemy.mimic",
+                "ready": true,
+                "missing": [],
+                "issues": []
+              },
+              {
+                "identity": "immune",
+                "ready": true,
+                "missing": [],
+                "issues": []
+              },
+              {
+                "identity": "mother",
+                "ready": true,
+                "missing": [],
+                "issues": []
+              },
+              {
+                "identity": "weapon.emitter",
+                "ready": true,
+                "missing": [],
+                "issues": []
+              },
+              {
+                "identity": "immune.beacon",
+                "ready": true,
+                "missing": [],
+                "issues": []
+              },
+              {
+                "identity": "enemy.addon.spore_crown",
+                "ready": true,
+                "missing": [],
+                "issues": []
+              },
+              {
+                "identity": "enemy.elite.fungal_horns",
+                "ready": true,
+                "missing": [],
+                "issues": []
+              }
+            ],
+            "ready": true,
+            "oldSourceIds": [],
+            "unexpectedActorIds": []
+          },
+          "activeBodies": [
+            {
+              "id": "player",
+              "bounds": {
+                "left": 1066,
+                "right": 1134.75,
+                "top": 468.95,
+                "bottom": 578.45
+              }
+            }
+          ],
+          "heroAnimation": {
+            "enabledClips": [
+              "idle",
+              "walk",
+              "hurt",
+              "dash"
+            ],
+            "frame": {
+              "id": "fantasy.actor.hero.front_right.idle.00",
+              "clip": "idle",
+              "index": 0,
+              "animated": true,
+              "flipX": false,
+              "articulated": false
+            }
+          },
+          "weapon": {
+            "assetId": "fantasy.actor.weapon.emitter",
+            "mode": "painted-static"
+          },
+          "provisional": []
+        },
+        "touch": {
+          "aim": {
+            "x": 1100,
+            "y": 800
+          },
+          "tool": 1
+        }
+      },
+      "hud": "\n  心核 100 / 100北线前线待净化南线前线待净化\n  净化北线前沿，解除源膜区域净化 0% · 留在附近第1波 · 0分\n"
+    }
+  ],
+  "derived": [],
+  "imports": {
+    ".art-generated/art-runtime.json": "f2d4a6a330c183d6aca8382cd93bdf8667deb066871653b72d0f86fc02c4eb3a",
+    "node_modules/phaser/dist/phaser.esm.js": "df50bc49e7856363b625fdf4f2c4e2e577cfc1644690c026c3610c594aff372f",
+    "src/actors/collision.ts": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0",
+    "src/actors/enemyCrowd.ts": "821f9e4fe997fc519724afac4bf2c041a552d22083308c6f7a36470f71c16597",
+    "src/actors/enemyNavigation.ts": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd",
+    "src/core/clock.ts": "2e65d1623f903f438f01ac80640ff5ef06cf400d32a888e27471d0326b3a46bd",
+    "src/core/events.ts": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+    "src/core/rng.ts": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+    "src/game/battle.ts": "4bb690a6efbec910dc80dc96d32f75263b690b715eb6005049cdc0130885f9f4",
+    "src/game/battleConfig.ts": "3365d6963f8edf43abdef1259483d3d21787a738abe1ccd81e2ebd6b1fdc609d",
+    "src/game/campaign.ts": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+    "src/game/campaignEncounters.ts": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+    "src/game/catalysis.ts": "f7d4a5b0710ff3eac65809a7762effe910b79f63ab7a74735128d6e6b6288113",
+    "src/game/chargedSlash.ts": "bde88263277215d6173f6759ce197a639eac3b011d0a21a517330c7625969c8d",
+    "src/game/combatPopulation.ts": "7e51112fa8e38c6548679793228c33776e38708cb5bb78841b7e7d888d379d8e",
+    "src/game/counterLesson.ts": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+    "src/game/dashBlade.ts": "c7bb058f5b38bc3124fb8efd4739f661b42acee026f1ce1c008de1234dc6d771",
+    "src/game/dashTrail.ts": "2e0f6b4d4ab8321a1718aae30a56a4ea1b1cfd9c5f94b982653f7bc911b0d287",
+    "src/game/eliteTacticCycle.ts": "862b23512773a196d997dbd9062b18a9f17188f22449ba93dee98ead13c3e8dd",
+    "src/game/encounterConfig.ts": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+    "src/game/endless.ts": "688c1575011183778bf95dbf4138e26f89019145afef974def9fd27408c9ff03",
+    "src/game/endlessAssault.ts": "e60f8e6cec6e4b963614c467062efc05a89b0eacb1825b71dd0f3fba1503417a",
+    "src/game/endlessBehavior.ts": "9d01e26a8097cc194011523a70e61f47c1303088531a6e8654b1d3f73c986dc9",
+    "src/game/endlessEvolution.ts": "b3ad9b394634da947bf9aa7ff32d9b9ccb7774909771c524a078d490bba1db4f",
+    "src/game/endlessGrowth.ts": "d50fc60d8fb8fc205645f80c6e9fb194bc948a1b711483ab72a6cdfea3a2b21e",
+    "src/game/endlessPacing.ts": "c0d9376d4225c2a6606956f05c51283e5587ab86741f3d615d9d653b5627c090",
+    "src/game/endlessSource.ts": "5a3cbfea571f371707a64c0526e1ebd2e36ac2da404051b37e4692203a51c6fe",
+    "src/game/endlessStrikeBalance.ts": "70b6fb73a94c0fac1baad402b2f41d47e9882b01b4847369aef7efd11660330b",
+    "src/game/enemyFacing.ts": "f2f97826b5fbae1d19bfcd718eac2c216800187c86003d11bcfc9c8c63cec24d",
+    "src/game/enemyPositioning.ts": "d01aff7f39ea4d4a3c34f306947452e93de57b93106a56c103bb64c9c097a878",
+    "src/game/enemyTacticInfo.ts": "ee6f959eb75b09e298f82dd78fbad5d6bb98ae0bbb7d7cef6701a0953030c5a8",
+    "src/game/enemyTactics.ts": "d0a393a0803ae53a84a59fceb9d74e0fe88cbdda50d79cfe4115f08ef68abfe6",
+    "src/game/evolution.ts": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+    "src/game/growth.ts": "b6e6f0d36d002c07508fce93320993140f394588f8d08cfe510a767131bdbe55",
+    "src/game/healingPoints.ts": "915eabdd233f7ad1e62610fd9be29a71ba326fec9bb7cbda327dd9b4f00de277",
+    "src/game/hostEvents.ts": "367fad03129ce257e847dedac946bb6d3cac522abb3f5e0922207f51f77fbfae",
+    "src/game/immuneCells.ts": "c92d3e53499f28153f0906a833b92c0b7012485d9fccd559738c3e3990592b44",
+    "src/game/immuneFocus.ts": "150fccdf51e1e75ca512effdbb2819d8510f1e2884a04525cb8bb2a9c30628a5",
+    "src/game/immuneLegions.ts": "399fc580b5afe53b5b22ad7b4b7d5c874271cc7af8feb666773cdcb1d2b83ee0",
+    "src/game/motherCore.ts": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+    "src/game/openingEvolution.ts": "98e3b977800044f5f57cb34edb8886d26d82b37c6d83ce84f8ad14a9efdcafe1",
+    "src/game/organConfig.ts": "f7984fa67337966b8342bf6dd2f5d8a1efc7b4baec5eb8ae03e032927a745bfc",
+    "src/game/organRules.ts": "7e6b4951b1c76ce6e0eb0964f41eedff20bb3cc71e14d8421c878b0aa53515f0",
+    "src/game/playerProjectiles.ts": "655102eae55d675423350c77a024294be43d4229a966816e4d4449b03f6804ba",
+    "src/game/preparation.ts": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+    "src/game/protocols.ts": "4e407a74e0b87b7bbba93c48c881cb729a0770f24a027cbc8d59f7f512449260",
+    "src/game/research.ts": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+    "src/game/runMetrics.ts": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+    "src/game/session.ts": "447be782b17bae6b65d8a59628bd9a64cde7aa55441654e56ab9c93f273a12be",
+    "src/game/tacticalFeedback.ts": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+    "src/game/territory.ts": "419bf60f65cfbf6257f30f83dd6236b5d4a2d1bc10e09c23e2d3faf0232c8b25",
+    "src/game/traction.ts": "0709702ddc2cf8b1769653eb9a0157dec33dfbe3b94045c170c46cd27ada01d8",
+    "src/game/types.ts": "7a4eb15c27d64dff58c57259e448fdcdd9d78b439a34802f9ca8220cdeeffcc8",
+    "src/game/viralCapsules.ts": "fa4fee119cccbdb63ab24c427bab614ff5c29504bd68d85925b479ff0159cfcf",
+    "src/render/actorAnimation.ts": "27b31d7e3a59ba06010ec6205416ae667cf43494a557f6eba42f286a1a62cef5",
+    "src/render/artPresentation.ts": "212fc0c004df4f953524b35f6eee7028b6d8a123ff2f5678f1ef13d1ecf07c03",
+    "src/render/battleVisuals.ts": "fac508bef86ddd82b9b558a6878fbe6d5aad49b4af96ac78262709a61fef0eea",
+    "src/render/camera.ts": "35c1607487df29e08e10f33a1cf1ae0f5cc81aaf46a332816ada314dbcc9a6c3",
+    "src/render/canvasScene.ts": "9a669118c2455b5707ef9f71cd9f7a2c890991f25cba1e69c10787e9fe6d3db5",
+    "src/render/catalysisVisuals.ts": "719fd36fa0eeb54e7ec92d87202480ac8ac593682aed54221d505626067baacc",
+    "src/render/combatEffects.ts": "bbbe31e30acdd04d7384a97b233eed384ececc680c1a8b7eebe44a072caf87df",
+    "src/render/crosshairStatus.ts": "5c7d1751a6e586bb905e8acb0ebd574590cc47c76a483f58c91e9594f029f943",
+    "src/render/depthSort.ts": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+    "src/render/eliteTacticCycleVisuals.ts": "973db60769fba9e70f83a1e1fff276f4011e6acebaf4f4b581671909f00c95f7",
+    "src/render/encounterVisuals.ts": "62e43895e405cd1300d735f59f150781cdf07b74036d5dbcc0b6f93011e01629",
+    "src/render/endlessVisuals.ts": "49f0da60be1c8963cab864e4c845c39956401a7670a6d56866c8115d59c45b2e",
+    "src/render/enemyTacticVisuals.ts": "27c6e91e71886a7533af3ed0706e80477cc7023d717df4ff3204031783b87951",
+    "src/render/fantasyTerritory.ts": "3d98ae8111344f01e1b82ed3cba7b898c4b8895f9ff3c05e25fffc8445b98dc7",
+    "src/render/growthVisuals.ts": "ae3e197c729b0724540bd335236481e6e5b95a2f9540f0b799f94ae94e976547",
+    "src/render/heroAnimation.ts": "2902b7b1993df7145fdbed53d287910f3fe062962d2e7cdf005fd0f1b00a2b30",
+    "src/render/heroRig.ts": "9ac59ab7b944617a0b4486ff2d2cff41be1502a49fe1b442c935fe0c3cf06df5",
+    "src/render/hostEventVisuals.ts": "6c7ef88f48a85bcf64473da8e4a77c69cbb8e624f0dade645e6a5b09b96ec381",
+    "src/render/immuneFocusVisuals.ts": "671ef27635c303f30d5d6328fe7c96a7d695174dc7821418bb4f49fae4fed787",
+    "src/render/immuneTraceCues.ts": "611926281627e1ba999a24184448e283b062503a4e23a6080c5e9a8c1e52fe63",
+    "src/render/immuneVisuals.ts": "4ded7b1536d71de696d2c9d388eb9c4194cbe66af40169c62d3802dfa1c7e297",
+    "src/render/layers.ts": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+    "src/render/lungVisuals.ts": "7bc495edd2c18da89ce1b8e6934e98ade262e982b953bf732593827e18ac7b77",
+    "src/render/navigation.ts": "fd3dac19ab33f9fa0d3f8a58f2446129aa704e489de7db186862010bd26df50d",
+    "src/render/occlusion.ts": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+    "src/render/phaserHost.ts": "b9a3e34425b82a4dbeb4ba5ee938f8358e854ebd139bbb0c6cfe3dd3f994165c",
+    "src/render/phaserRenderer.ts": "3849e173cf8f185266ac9dfa97ff69a95cda8aaefda779f5fa8baeb85db8d3b0",
+    "src/render/playerPresence.ts": "f0d4cadaa08a7835eed6c62585ef61db42848352aadf7a0bd79bf6b775c6cd0f",
+    "src/render/playerProjectileVisuals.ts": "c438acbf4454de376c915dd0a83ca78acdb6e33b84b78a4cd0c2868b0b23efac",
+    "src/render/pulsePreview.ts": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+    "src/render/raisedObstacleGeometry.ts": "373e3f145fd521367be7adc93c8461b5407cfe384866f2eb59c2a3ee645a3df6",
+    "src/render/raisedObstacleOcclusion.ts": "7a92de77f7fe9040365d8d1e150e1d340f7aa00ad4265f04948a7c9f0a7adf87",
+    "src/render/renderer.ts": "fd8ccd12117953d32463d8e147f39c0b032bc853b0225ea1cb3185400af6be45",
+    "src/render/sceneLabels.ts": "0cceb5ffa23face8ee93aaff4b31c49a72b43fa760b724009c8fc4e80f108755",
+    "src/render/spriteGeometry.ts": "16261b404b2353a10f83caf756eb53707d318b4139d02c212821a2106a23699d",
+    "src/render/toolFeedback.ts": "feb52b4474686bd31a62c5bdb0953e088d4126209a489b8a4d36033dff8bfb0b",
+    "src/ui/catalysisHud.ts": "efa01b8d61f9298f34124f9e0774a05069ffd934b842817b341c511022d161b5",
+    "src/ui/eliteTacticCycleHud.ts": "36f8c5b310d0672ea52c6c17a3bf4a0e5420fcc6d698ce20ab3ab4d16a025a8e",
+    "src/ui/immuneFocusHud.ts": "95e001cbb29334aec52e12f71b2f8497421625ec13d21e47cca54b3333f8c91d",
+    "src/ui/touchCopy.ts": "9c7fd2ea0b5e3edf0f377e36a70a27757bf6b147e21d4999fb538fda53bf9e15"
+  },
+  "fixtureHash": "d80ef80c04b94767077ee323f92e0cbe8109aa3bfa55e1613493001c5c061ed8",
+  "fixtureBundleHash": "8691e184abf1d3e190c4ce9cd9c79bcaf4e62d485a24d4f553bffc5cdbde4d41"
+}

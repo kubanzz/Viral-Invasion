@@ -1,0 +1,166 @@
+{
+  "id": "healingNode.infected",
+  "kind": "cutout",
+  "sourceSha256": "06bd4d87b49e9f6bc75e92f7a98d8cd705daf8643fe0825365ea2ad6b3eef385",
+  "processing": {
+    "outer": {
+      "method": "border-connected-white-key",
+      "whiteMin": 225,
+      "chromaMax": 40,
+      "matteCleanup": true,
+      "edgeWidth": 2,
+      "removedPixels": 2653502,
+      "cleanedEdgePixels": 2703,
+      "limitations": "White foreground connected directly to a white backdrop is ambiguous. Inspect both black/white QA views before acceptance."
+    },
+    "negativeSpaces": {
+      "method": "reviewed-negative-space-white-matte-cleanup",
+      "kind": "node",
+      "clearedPixels": 0,
+      "softenedPixels": 0,
+      "reviewedHoles": [
+        {
+          "seed": [
+            1360,
+            1590
+          ],
+          "minimum": 120,
+          "chroma": 90,
+          "region": [
+            600,
+            1450,
+            850,
+            400
+          ],
+          "pixels": 11963
+        },
+        {
+          "seed": [
+            1384,
+            1290
+          ],
+          "minimum": 200,
+          "chroma": 50,
+          "region": [
+            1320,
+            1220,
+            120,
+            180
+          ],
+          "pixels": 1682
+        }
+      ],
+      "reason": "Only separately reviewed enclosed backdrop gaps were flood-cleared; cream petals and white highlights are preserved."
+    },
+    "components": {
+      "method": "retain-single-contiguous-reviewed-object",
+      "componentSizes": [
+        1526885,
+        13,
+        4,
+        2,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "retainedComponents": 1,
+      "removedPixels": 272,
+      "reason": "Source review confirms a single connected crystal/flower or a purple mycelium patch; detached grey-white paper-grain remnants are backdrop, not separate intended objects."
+    },
+    "paletteTreatment": "No palette, hue, saturation, brightness, contrast or tone changes; only white-matte removal."
+  },
+  "transform": {
+    "sourceCanvas": [
+      2048,
+      2048
+    ],
+    "targetCanvas": [
+      1024,
+      1024
+    ],
+    "sourceAnchor": [
+      0.5,
+      0.85
+    ],
+    "targetAnchor": [
+      0.5,
+      0.85
+    ],
+    "targetAnchorPixels": [
+      512,
+      870.4
+    ],
+    "requestedScale": 0.5,
+    "width": 1024,
+    "height": 1024,
+    "left": 0,
+    "top": 0,
+    "method": "shared-full-canvas-scale-and-translation",
+    "alphaBoundsUsedForScaling": false
+  },
+  "image": {
+    "sha256": "09a398782ac6cc57395ad5ec0fc951984b211030e19a71bf0eaab8689f86d1c5",
+    "bytes": 1203393,
+    "width": 1024,
+    "height": 1024,
+    "format": "png",
+    "channels": 4,
+    "hasAlphaChannel": true,
+    "alpha": {
+      "transparent": 660381,
+      "partial": 14023,
+      "opaque": 374172,
+      "transparentFraction": 0.6297883987426758,
+      "visible": 383665,
+      "borderVisible": 0,
+      "whiteVisible": 262
+    },
+    "bbox": [
+      127,
+      146,
+      916,
+      888
+    ],
+    "margins": {
+      "left": 127,
+      "top": 146,
+      "right": 108,
+      "bottom": 136,
+      "minimumFraction": 0.10546875
+    },
+    "luma": {
+      "mean": 117.60502889299069,
+      "standardDeviation": 41.96316884311951,
+      "min": 4.542000000000001,
+      "max": 254.99999999999997
+    }
+  },
+  "output": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\healingNode.infected.png",
+  "previews": {
+    "black": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\healingNode.infected.qa-black.png",
+      "sha256": "38e9da04e5c53f80315418c08d4efd82fee8fdcc2a4aa6ee3e64936766554e5f",
+      "bytes": 1071752
+    },
+    "white": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\healingNode.infected.qa-white.png",
+      "sha256": "28fc10fbe7f7b26043761458ce54ca857712d81e679deade15ab73f8cc25821a",
+      "bytes": 1076396
+    },
+    "alpha": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\healingNode.infected.qa-alpha.png",
+      "sha256": "7e7e7a9223e1b1b777be8e579e1e2dbd91aa2290bc3e15f7a7cda0e771317aac",
+      "bytes": 37326
+    },
+    "black-white": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\healingNode.infected.qa-black-white.png",
+      "sha256": "0273d3220ebf0caa0e0983429f4bb750d2ae4a94d138384a134ee5d8d2957f29",
+      "bytes": 1313414
+    }
+  }
+}

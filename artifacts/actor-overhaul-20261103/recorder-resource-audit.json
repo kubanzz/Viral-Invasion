@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "scope": "Read-only payload estimate from 96 existing actual Renderer receipts. Not a natural or performance run; only the repeated per-enemy part is estimated. New transition traffic, player/tool, effects and row wrappers are additional.",
+  "input": {
+    "path": "artifacts/territory-20261103/nonhero-rule-directions/report.json",
+    "sha256": "172bdd258981726b207fb288328db0ba8ab24848af9dec62617921876e6af58b",
+    "samples": 96
+  },
+  "measurementScriptSha256": "b995c81fd8e1623fbbdb70b9f6bfe4f327204f35dcf4d42645ca5dea2febd35c",
+  "meanBytes": {
+    "oldActor": 1128.0833333333333,
+    "newActor": 694.25,
+    "native": 320.7083333333333,
+    "logical": 240.75,
+    "globalCue": 342.8333333333333
+  },
+  "oldPerEnemyBytes": 2032.3749999999998,
+  "newPerSceneEnemyBytes": 1598.5416666666665,
+  "illustrativeTwo240SecondRoutes": [
+    {
+      "averageEnemies": 15,
+      "old60HzEnemyOnlyMiB": 837.3126983642577,
+      "new10HzSceneEnemyOnlyMiB": 109.76314544677733,
+      "transitionTraffic": "Additional, state-dependent; no fixed reduction claimed."
+    },
+    {
+      "averageEnemies": 48,
+      "old60HzEnemyOnlyMiB": 2679.4006347656245,
+      "new10HzSceneEnemyOnlyMiB": 351.24206542968744,
+      "transitionTraffic": "Additional, state-dependent; no fixed reduction claimed."
+    }
+  ],
+  "memoryPolicy": {
+    "pendingBytes": 8388608,
+    "maxRecordBytes": 524288,
+    "catalogueEntries": 512,
+    "eventKeys": 100000,
+    "eventUtf8Bytes": 16777216,
+    "trackedTargetsAndActorsPerMap": 512,
+    "stream": "Drain every 2 seconds; incremental file writes, SHA and aggregate summary. No all-frame/check expansion.",
+    "overflow": "Stops recorder and rejects captureComplete."
+  },
+  "verification": {
+    "selfCheck": "artifacts/actor-overhaul-20261103/recorder-check-4/recorder-check.json",
+    "assertionsPassed": 14,
+    "browserStarted": false,
+    "productionBuildRead": false,
+    "typeScript": "node node_modules/typescript/bin/tsc --noEmit passed",
+    "embeddedFixture": "Memory-only esbuild succeeded; 95 inputs, no writes or browser."
+  }
+}

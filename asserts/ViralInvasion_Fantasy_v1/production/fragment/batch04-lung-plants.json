@@ -1,0 +1,626 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "id": "lung.plant.healthy",
+      "batch": "P1",
+      "path": "lung/plant_healthy_v01.png",
+      "stateGroup": "lung.plant",
+      "state": "healthy",
+      "kind": "object",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": false,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": null,
+      "trim": false,
+      "status": "processed-qa-passed-awaiting-assembly",
+      "runId": "24cf43b6-3b08-4887-bfdb-b4e72f596fed",
+      "sha256": "dd206b588d08481ce04cc7a52fa128ca11440b38cf1e6a96888eb28967ebb1aa",
+      "productionOrder": 20,
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "registration": {
+        "group": "lung.plant",
+        "baselineAssetId": "lung.plant.healthy",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false,
+        "state": "measured-cut-stem-pair",
+        "transform": {
+          "sourceCanvas": [
+            2048,
+            2048
+          ],
+          "sourceAnchor": [
+            0.5,
+            0.85
+          ],
+          "requestedScale": 0.5,
+          "width": 1024,
+          "height": 1024,
+          "left": 0,
+          "top": 0,
+          "targetCanvas": [
+            1024,
+            1024
+          ],
+          "targetAnchor": [
+            0.5,
+            0.85
+          ],
+          "targetAnchorPixels": [
+            512,
+            870.4
+          ],
+          "actualAnchorPixels": [
+            512,
+            870.4
+          ],
+          "method": "shared-full-canvas-scale-and-translation",
+          "alphaBoundsUsedForScaling": false
+        },
+        "measured": {
+          "groupScale": 0.5,
+          "noIndependentAlphaHeightScaling": true,
+          "transformMethod": "corresponding-cut-stem-only-translation-then-shared-full-canvas-resize",
+          "healthyOriginalFoot": {
+            "point": [
+              1020.3342465753425,
+              1814
+            ],
+            "method": "lowest opaque cut-stem support; x centroid of its last eight rows in x800..1250",
+            "alphaThreshold": 192
+          },
+          "targetSourceAnchor": [
+            1024,
+            1740.8
+          ],
+          "sharedSourcePlacement": [
+            4,
+            -73
+          ],
+          "infectedCorrespondence": {
+            "sourceRoi": [
+              850,
+              1530,
+              370,
+              310
+            ],
+            "sampleStride": 2,
+            "alphaThreshold": 192,
+            "sourceTranslation": [
+              -7,
+              3
+            ],
+            "logicalTranslation": [
+              -3.5,
+              1.5
+            ],
+            "diceBefore": 0.8690248565965584,
+            "diceAfter": 0.8607955895632337,
+            "alternativeBestRoiTranslation": [
+              2,
+              6
+            ],
+            "alternativeBestRoiDice": 0.8760518105322871,
+            "selectionReason": "Align the corresponding cut-stem foot directly. Broader stem shape changed, so optimizing its whole silhouette alone leaves a foot offset."
+          },
+          "alignedHealthyFoot": {
+            "point": [
+              1024.3342465753424,
+              1741
+            ],
+            "method": "lowest opaque cut-stem support; x centroid of its last eight rows in x800..1250",
+            "alphaThreshold": 192
+          },
+          "alignedInfectedFoot": {
+            "point": [
+              1024.5572916666667,
+              1741
+            ],
+            "method": "lowest opaque cut-stem support; x centroid of its last eight rows in x800..1250",
+            "alphaThreshold": 192
+          },
+          "healthyAnchorResidualLogicalPx": [
+            0.16712328767118834,
+            0.10000000000002274
+          ],
+          "pairFootResidualLogicalPx": [
+            0.11152254566218289,
+            0
+          ],
+          "pairFootResidualEuclideanLogicalPx": 0.11152254566218289,
+          "crownChangeIsIntentionalSourceGeometry": true,
+          "limitation": "Changed leaves are not forced into a common alpha height. Measurement is restricted to corresponding stem/base."
+        }
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "maliang-generation-processed",
+        "rawPath": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\raw\\lung.plant.healthy\\24cf43b6-3b08-4887-bfdb-b4e72f596fed.png",
+        "rawSha256": "a1032fa36edc69c7835106108acbf1c78797eca29ece29cc0cdf12ab35764930",
+        "runId": "24cf43b6-3b08-4887-bfdb-b4e72f596fed",
+        "nodeId": "84a6d3c7-77b7-4a7a-a439-32ead3ef537b"
+      },
+      "fallback": null,
+      "outputPath": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\lung.plant.healthy.png",
+      "productionPath": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\lung.plant.healthy.png",
+      "processing": {
+        "outer": {
+          "method": "border-connected-white-key",
+          "whiteMin": 238,
+          "chromaMax": 18,
+          "matteCleanup": true,
+          "edgeWidth": 2,
+          "removedPixels": 3634715,
+          "cleanedEdgePixels": 2930,
+          "limitations": "White foreground connected directly to a white backdrop is ambiguous. Inspect both black/white QA views before acceptance."
+        },
+        "holes": {
+          "method": "three-reviewed-branch-air-gaps-cream-leaf-rim-preserved",
+          "holes": [
+            {
+              "seed": [
+                1017,
+                1314
+              ],
+              "pixels": 7945,
+              "bbox": [
+                1017,
+                1314,
+                1091,
+                1522
+              ]
+            },
+            {
+              "seed": [
+                1302,
+                1406
+              ],
+              "pixels": 6038,
+              "bbox": [
+                1141,
+                1406,
+                1311,
+                1566
+              ]
+            },
+            {
+              "seed": [
+                1265,
+                1253
+              ],
+              "pixels": 4749,
+              "bbox": [
+                1161,
+                1253,
+                1267,
+                1431
+              ]
+            }
+          ],
+          "allNearWhitePixels": 0,
+          "preservedSmallNearWhitePixels": 0,
+          "minimumWhiteComponentArea": 1,
+          "cleanedInnerEdgePixels": 977,
+          "rootNegativeSpaceCleanup": {
+            "region": [
+              700,
+              1500,
+              650,
+              548
+            ],
+            "whiteMin": 235,
+            "chromaMax": 18,
+            "removedPixels": 0,
+            "reason": "Visually confirmed white backdrop between coral root toes; original roots contain no white pigment"
+          }
+        },
+        "body": {
+          "method": "retain-single-connected-plant",
+          "componentCount": 378,
+          "retainedPixels": 537784,
+          "detachedPaperPixelsRemoved": 642,
+          "creamRimPreserved": true
+        },
+        "backLeafQaCorrection": {
+          "region": [
+            1415,
+            900,
+            185,
+            200
+          ],
+          "removedPixels": 2431,
+          "reason": "Original close-up confirms pale pigment bleed outside the dark back-leaf outline; cream-yellow rim and mint leaf remain foreground."
+        }
+      },
+      "measurements": {
+        "sha256": "dd206b588d08481ce04cc7a52fa128ca11440b38cf1e6a96888eb28967ebb1aa",
+        "bytes": 420540,
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "channels": 4,
+        "hasAlphaChannel": true,
+        "alpha": {
+          "transparent": 910695,
+          "partial": 8255,
+          "opaque": 129626,
+          "transparentFraction": 0.8685064315795898,
+          "visible": 135318,
+          "borderVisible": 0,
+          "whiteVisible": 174
+        },
+        "bbox": [
+          316,
+          396,
+          836,
+          872
+        ],
+        "margins": {
+          "left": 316,
+          "top": 396,
+          "right": 188,
+          "bottom": 152,
+          "minimumFraction": 0.1484375
+        },
+        "luma": {
+          "mean": 195.01880078038238,
+          "standardDeviation": 35.13632890886347,
+          "min": 18.9988,
+          "max": 254.99999999999997
+        }
+      },
+      "qa": {
+        "black": {
+          "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\qa\\lung.plant.healthy.black.png",
+          "sha256": "0c890d4cb6ddd3c0c1db6a1a2e2a66018ac13bb557e4e64db7175a077c0ecc2d"
+        },
+        "white": {
+          "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\qa\\lung.plant.healthy.white.png",
+          "sha256": "383c92883801c78637c80cc0cc29ca040249aa9f63d29248c38583a868244dec"
+        },
+        "alpha": {
+          "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\qa\\lung.plant.healthy.alpha.png",
+          "sha256": "a45ca6c1726b04a07bcdbd0b9386e155490b10140a7f012ba456f2c6344f4713"
+        },
+        "black-white": {
+          "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\qa\\lung.plant.healthy.black-white.png",
+          "sha256": "7f86a413c78d2885105e4d7f7a6eb54f1d51d1be86ba02da866612fa1f21c18d"
+        },
+        "pair": {
+          "overlay50": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\qa\\lung.plant.pair.overlay50.png",
+          "stemOverlay50": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\qa\\lung.plant.pair.stem-overlay50.png"
+        }
+      },
+      "visualReview": {
+        "state": "passed",
+        "creamRimIsSubject": true,
+        "noColourGrade": true,
+        "checked": [
+          "raw-original",
+          "source-back-leaf-close-up",
+          "black-background",
+          "white-background",
+          "alpha-channel",
+          "paired-stem-50-percent-overlay"
+        ],
+        "limitations": "Leaf crown differs substantially in the AI source; common source scale preserved. Cut-stem contact is registered, broad stem silhouette is not pixel-identical."
+      }
+    },
+    {
+      "id": "lung.plant.infected",
+      "batch": "P1",
+      "path": "lung/plant_infected_v01.png",
+      "stateGroup": "lung.plant",
+      "state": "infected",
+      "kind": "object",
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "worldPlane": false,
+      "alphaRequirements": {
+        "required": true,
+        "generationBackground": "#FFFFFF",
+        "groundShadow": "absent-or-separate",
+        "noCheckerboard": true
+      },
+      "dependsOn": "lung.plant.healthy",
+      "trim": false,
+      "status": "processed-qa-passed-awaiting-assembly",
+      "runId": "ca3658db-8157-4f78-9da1-46161e493566",
+      "sha256": "67c692eeff389d9e87c88760b96aedc62abae7f6714969eeb9f9b8dc6f840cd3",
+      "productionOrder": 21,
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "registration": {
+        "group": "lung.plant",
+        "baselineAssetId": "lung.plant.healthy",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false,
+        "state": "measured-cut-stem-pair",
+        "transform": {
+          "sourceCanvas": [
+            2048,
+            2048
+          ],
+          "sourceAnchor": [
+            0.5,
+            0.85
+          ],
+          "requestedScale": 0.5,
+          "width": 1024,
+          "height": 1024,
+          "left": 0,
+          "top": 0,
+          "targetCanvas": [
+            1024,
+            1024
+          ],
+          "targetAnchor": [
+            0.5,
+            0.85
+          ],
+          "targetAnchorPixels": [
+            512,
+            870.4
+          ],
+          "actualAnchorPixels": [
+            512,
+            870.4
+          ],
+          "method": "shared-full-canvas-scale-and-translation",
+          "alphaBoundsUsedForScaling": false
+        },
+        "measured": {
+          "groupScale": 0.5,
+          "noIndependentAlphaHeightScaling": true,
+          "transformMethod": "corresponding-cut-stem-only-translation-then-shared-full-canvas-resize",
+          "healthyOriginalFoot": {
+            "point": [
+              1020.3342465753425,
+              1814
+            ],
+            "method": "lowest opaque cut-stem support; x centroid of its last eight rows in x800..1250",
+            "alphaThreshold": 192
+          },
+          "targetSourceAnchor": [
+            1024,
+            1740.8
+          ],
+          "sharedSourcePlacement": [
+            4,
+            -73
+          ],
+          "infectedCorrespondence": {
+            "sourceRoi": [
+              850,
+              1530,
+              370,
+              310
+            ],
+            "sampleStride": 2,
+            "alphaThreshold": 192,
+            "sourceTranslation": [
+              -7,
+              3
+            ],
+            "logicalTranslation": [
+              -3.5,
+              1.5
+            ],
+            "diceBefore": 0.8690248565965584,
+            "diceAfter": 0.8607955895632337,
+            "alternativeBestRoiTranslation": [
+              2,
+              6
+            ],
+            "alternativeBestRoiDice": 0.8760518105322871,
+            "selectionReason": "Align the corresponding cut-stem foot directly. Broader stem shape changed, so optimizing its whole silhouette alone leaves a foot offset."
+          },
+          "alignedHealthyFoot": {
+            "point": [
+              1024.3342465753424,
+              1741
+            ],
+            "method": "lowest opaque cut-stem support; x centroid of its last eight rows in x800..1250",
+            "alphaThreshold": 192
+          },
+          "alignedInfectedFoot": {
+            "point": [
+              1024.5572916666667,
+              1741
+            ],
+            "method": "lowest opaque cut-stem support; x centroid of its last eight rows in x800..1250",
+            "alphaThreshold": 192
+          },
+          "healthyAnchorResidualLogicalPx": [
+            0.16712328767118834,
+            0.10000000000002274
+          ],
+          "pairFootResidualLogicalPx": [
+            0.11152254566218289,
+            0
+          ],
+          "pairFootResidualEuclideanLogicalPx": 0.11152254566218289,
+          "crownChangeIsIntentionalSourceGeometry": true,
+          "limitation": "Changed leaves are not forced into a common alpha height. Measurement is restricted to corresponding stem/base."
+        }
+      },
+      "tileability": {
+        "required": false,
+        "status": "untested",
+        "test": null
+      },
+      "source": {
+        "type": "maliang-generation-processed",
+        "rawPath": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\raw\\lung.plant.infected\\ca3658db-8157-4f78-9da1-46161e493566.png",
+        "rawSha256": "cdc21552e1eafdc82beba7712c6e1299fd7c6451abd8c17e54983549a7702911",
+        "runId": "ca3658db-8157-4f78-9da1-46161e493566",
+        "nodeId": "a1a18a91-4de9-45de-91d1-00867fc52a28"
+      },
+      "fallback": null,
+      "outputPath": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\lung.plant.infected.png",
+      "productionPath": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\lung.plant.infected.png",
+      "processing": {
+        "outer": {
+          "method": "border-connected-white-key",
+          "whiteMin": 238,
+          "chromaMax": 18,
+          "matteCleanup": true,
+          "edgeWidth": 2,
+          "removedPixels": 3018090,
+          "cleanedEdgePixels": 8552,
+          "limitations": "White foreground connected directly to a white backdrop is ambiguous. Inspect both black/white QA views before acceptance."
+        },
+        "holes": {
+          "method": "one-reviewed-branch-air-gap-cream-leaf-rim-preserved",
+          "holes": [
+            {
+              "seed": [
+                1380,
+                1158
+              ],
+              "pixels": 13728,
+              "bbox": [
+                1147,
+                1158,
+                1388,
+                1435
+              ]
+            }
+          ],
+          "allNearWhitePixels": 0,
+          "preservedSmallNearWhitePixels": 0,
+          "minimumWhiteComponentArea": 1,
+          "cleanedInnerEdgePixels": 882,
+          "rootNegativeSpaceCleanup": {
+            "region": [
+              700,
+              1500,
+              650,
+              548
+            ],
+            "whiteMin": 235,
+            "chromaMax": 18,
+            "removedPixels": 0,
+            "reason": "Visually confirmed white backdrop between coral root toes; original roots contain no white pigment"
+          }
+        },
+        "body": {
+          "method": "retain-single-connected-plant",
+          "componentCount": 8930,
+          "retainedPixels": 964203,
+          "detachedPaperPixelsRemoved": 9581,
+          "creamRimPreserved": true
+        },
+        "backLeafQaCorrection": {
+          "method": "original-pixel-restoration-inside-visually-traced-pale-back-leaf",
+          "sourcePixelColoursUnchanged": true,
+          "alphaTraceSourceCoordinates": "M1268 581 C1334 580 1409 612 1427 669 C1450 731 1410 793 1340 819 Q1280 842 1248 840 L1246 782 Z",
+          "oneSourcePixelNeutralWhiteFringeRemoved": 196716,
+          "reason": "Original close-up shows a real pale necrotic back leaf bounded by a faint cream contour. Restore original pixels inside that contour; remove one source pixel of neutral paper fringe touching transparency, preserving coloured cream rims."
+        }
+      },
+      "measurements": {
+        "sha256": "67c692eeff389d9e87c88760b96aedc62abae7f6714969eeb9f9b8dc6f840cd3",
+        "bytes": 795793,
+        "width": 1024,
+        "height": 1024,
+        "format": "png",
+        "channels": 4,
+        "hasAlphaChannel": true,
+        "alpha": {
+          "transparent": 800456,
+          "partial": 16552,
+          "opaque": 231568,
+          "transparentFraction": 0.7633743286132812,
+          "visible": 243116,
+          "borderVisible": 0,
+          "whiteVisible": 453
+        },
+        "bbox": [
+          203,
+          143,
+          855,
+          872
+        ],
+        "margins": {
+          "left": 203,
+          "top": 143,
+          "right": 169,
+          "bottom": 152,
+          "minimumFraction": 0.1396484375
+        },
+        "luma": {
+          "mean": 156.25201043696504,
+          "standardDeviation": 44.552091972333486,
+          "min": 15.632000000000001,
+          "max": 254.99999999999997
+        }
+      },
+      "qa": {
+        "black": {
+          "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\qa\\lung.plant.infected.black.png",
+          "sha256": "559264c20517a37441a54b14d204db1321600ee1425b5cd90ad7f6083cd4b8ce"
+        },
+        "white": {
+          "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\qa\\lung.plant.infected.white.png",
+          "sha256": "fa18819266a06e179a3d16f8d55d729313a5eed8a5b3c15e136bd8e8583314d7"
+        },
+        "alpha": {
+          "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\qa\\lung.plant.infected.alpha.png",
+          "sha256": "bf02534d1a709e076a214b0673906252bf726793eefc407b7cd78884153f7011"
+        },
+        "black-white": {
+          "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\qa\\lung.plant.infected.black-white.png",
+          "sha256": "803d809abf1b1393bcc67b730bffd17b5b78483fb996aa1a468e7ec27a6342bc"
+        },
+        "pair": {
+          "overlay50": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\qa\\lung.plant.pair.overlay50.png",
+          "stemOverlay50": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\qa\\lung.plant.pair.stem-overlay50.png"
+        }
+      },
+      "visualReview": {
+        "state": "passed",
+        "creamRimIsSubject": true,
+        "noColourGrade": true,
+        "checked": [
+          "raw-original",
+          "source-back-leaf-close-up",
+          "black-background",
+          "white-background",
+          "alpha-channel",
+          "paired-stem-50-percent-overlay"
+        ],
+        "limitations": "Leaf crown differs substantially in the AI source; common source scale preserved. Cut-stem contact is registered, broad stem silhouette is not pixel-identical."
+      }
+    }
+  ]
+}

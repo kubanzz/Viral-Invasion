@@ -170,3 +170,208 @@ export class EndlessProfileStore {
     return { kind: 'recorded', record: structuredClone(record), persisted: this.persist() };
   }
 }
+
+/** Each territory ruleset keeps its own scores; older keys are never rewritten. */
+export const LEGACY_TERRITORY_PROFILE_STORAGE_KEY = 'viral-invasion:2:territory-profile';
+export const DUAL_FRONT_PROFILE_STORAGE_KEY = 'viral-invasion:3:territory-profile';
+export const GARRISON_PROFILE_STORAGE_KEY = 'viral-invasion:4:territory-profile';
+export const TERRITORY_PROFILE_STORAGE_KEY = 'viral-invasion:5:territory-profile';
+export const TERRITORY_PROFILE_SCHEMA_VERSION = 5 as const;
+export interface TerritoryRescueReceipt {
+  runId: string; seed: number; atTick: number; elapsed: number; wave: number; clearedWaves: number;
+  score: number; kills: number; bestCombo: number; level: number; playerHp: number; coreHp: number;
+  fullyPurifiedSeconds: number; longestFullyPurifiedSeconds: number;
+}
+export interface TerritoryRunRecord extends EndlessRunRecord {
+  fullyPurifiedSeconds: number; longestFullyPurifiedSeconds: number;
+  rescue: { success: false } | { success: true; snapshot: TerritoryRescueReceipt };
+  ended: boolean;
+  guard: { started: boolean; ended: boolean; waveReached: number; clearedWaves: number; score: number; durationSeconds: number };
+}
+export interface TerritoryProfileData {
+  game: 'viral-invasion'; mode: 'territory'; schemaVersion: typeof TERRITORY_PROFILE_SCHEMA_VERSION;
+  runs: number; rescues: number; bestWave: number; bestScore: number; bestCombo: number;
+  recentRuns: TerritoryRunRecord[]; recentRunIds: string[];
+}
+export interface TerritoryProfileSnapshot {
+  data: TerritoryProfileData; status: EndlessProfileStatus; legacyAvailable: boolean;
+  previousGarrison?: Omit<TerritoryProfileData, 'schemaVersion'> & { schemaVersion: 4 };
+}
+export type TerritoryRecordResult =
+  | { kind: 'recorded' | 'updated' | 'duplicate'; record?: TerritoryRunRecord; persisted: boolean }
+  | { kind: 'rejected'; reason: 'invalid-run-id' | 'not-territory' | 'run-not-ended' | 'invalid-result' };
+
+export function emptyTerritoryProfile(): TerritoryProfileData {
+  return { game: 'viral-invasion', mode: 'territory', schemaVersion: TERRITORY_PROFILE_SCHEMA_VERSION, runs: 0, rescues: 0,
+    bestWave: 0, bestScore: 0, bestCombo: 0, recentRuns: [], recentRunIds: [] };
+}
+function parseRescueReceipt(value: unknown): TerritoryRescueReceipt | null {
+  if (!object(value) || !runIdValid(value.runId) || !count(value.seed) || value.seed > 0xffffffff
+    || !count(value.atTick) || !duration(value.elapsed) || !count(value.wave) || value.wave < 1
+    || !count(value.clearedWaves) || value.clearedWaves > value.wave || !count(value.score)
+    || !count(value.kills) || !count(value.bestCombo) || !count(value.level)
+    || !duration(value.playerHp) || !duration(value.coreHp)
+    || !duration(value.fullyPurifiedSeconds) || !duration(value.longestFullyPurifiedSeconds)
+    || value.longestFullyPurifiedSeconds > value.fullyPurifiedSeconds + 1e-6
+    || value.fullyPurifiedSeconds > value.elapsed + 1e-6) return null;
+  return { runId: value.runId, seed: value.seed, atTick: value.atTick, elapsed: value.elapsed,
+    wave: value.wave, clearedWaves: value.clearedWaves, score: value.score, kills: value.kills,
+    bestCombo: value.bestCombo, level: value.level, playerHp: value.playerHp, coreHp: value.coreHp,
+    fullyPurifiedSeconds: value.fullyPurifiedSeconds, longestFullyPurifiedSeconds: value.longestFullyPurifiedSeconds };
+}
+function parseTerritoryRecord(value: unknown): TerritoryRunRecord | null {
+  const base = parseRecord(value);
+  if (!base || !object(value) || !duration(value.fullyPurifiedSeconds) || !duration(value.longestFullyPurifiedSeconds)
+    || value.longestFullyPurifiedSeconds > value.fullyPurifiedSeconds + 1e-6 || value.fullyPurifiedSeconds > base.durationSeconds + 1e-6
+    || typeof value.ended !== 'boolean' || !object(value.rescue)
+    || typeof value.rescue.success !== 'boolean' || !object(value.guard)) return null;
+  const guard = value.guard;
+  if (typeof guard.started !== 'boolean' || typeof guard.ended !== 'boolean' || !count(guard.waveReached)
+    || !count(guard.clearedWaves) || guard.clearedWaves > guard.waveReached || !count(guard.score)
+    || !duration(guard.durationSeconds) || guard.ended && !guard.started) return null;
+  const snapshot = value.rescue.success ? parseRescueReceipt(value.rescue.snapshot) : null;
+  if (value.rescue.success && (!snapshot || snapshot.runId !== base.runId || snapshot.seed !== base.seed)) return null;
+  if (snapshot && (snapshot.score > base.score || snapshot.clearedWaves > base.clearedWaves || snapshot.elapsed > base.durationSeconds
+    || snapshot.fullyPurifiedSeconds > value.fullyPurifiedSeconds + 1e-6
+    || snapshot.longestFullyPurifiedSeconds > value.longestFullyPurifiedSeconds + 1e-6)) return null;
+  return { ...base, fullyPurifiedSeconds: value.fullyPurifiedSeconds, longestFullyPurifiedSeconds: value.longestFullyPurifiedSeconds,
+    ended: value.ended, rescue: snapshot ? { success: true, snapshot } : { success: false },
+    guard: { started: guard.started, ended: guard.ended, waveReached: guard.waveReached,
+      clearedWaves: guard.clearedWaves, score: guard.score, durationSeconds: guard.durationSeconds } };
+}
+export function parseTerritoryProfile(value: unknown): TerritoryProfileData | null {
+  if (!object(value) || value.game !== 'viral-invasion' || value.mode !== 'territory' || value.schemaVersion !== TERRITORY_PROFILE_SCHEMA_VERSION
+    || !count(value.runs) || !count(value.rescues) || value.rescues > value.runs
+    || !count(value.bestWave) || !count(value.bestScore) || !count(value.bestCombo)
+    || !Array.isArray(value.recentRuns) || value.recentRuns.length > ENDLESS_RECENT_RUN_LIMIT
+    || !Array.isArray(value.recentRunIds) || value.recentRunIds.length > ENDLESS_DEDUP_LIMIT
+    || !value.recentRunIds.every(runIdValid) || new Set(value.recentRunIds).size !== value.recentRunIds.length
+    || value.runs < value.recentRunIds.length || value.runs < value.recentRuns.length) return null;
+  const records: TerritoryRunRecord[] = [];
+  for (const raw of value.recentRuns) {
+    const record = parseTerritoryRecord(raw);
+    if (!record || !value.recentRunIds.includes(record.runId) || records.some(previous => previous.runId === record.runId)
+      || record.score > value.bestScore || record.bestCombo > value.bestCombo || record.clearedWaves > value.bestWave) return null;
+    records.push(record);
+  }
+  if (records.filter(record => record.rescue.success).length > value.rescues) return null;
+  return { game: 'viral-invasion', mode: 'territory', schemaVersion: TERRITORY_PROFILE_SCHEMA_VERSION, runs: value.runs, rescues: value.rescues,
+    bestWave: value.bestWave, bestScore: value.bestScore, bestCombo: value.bestCombo,
+    recentRuns: records, recentRunIds: [...value.recentRunIds] as string[] };
+}
+
+export class TerritoryProfileStore {
+  private value = emptyTerritoryProfile();
+  private readonly storage: EndlessProfileStorage | null;
+  private dirty = false;
+  private legacy = false;
+  private previousGarrison?: TerritoryProfileSnapshot['previousGarrison'];
+  private currentStatus: EndlessProfileStatus = { mode: 'session', code: 'unavailable', message: '救援成果暂存于本次页面。' };
+  constructor(storage?: EndlessProfileStorage | null) {
+    this.storage = storage === undefined ? defaultStorage() : storage;
+    if (!this.storage) return;
+    try { this.legacy = this.storage.getItem(ENDLESS_PROFILE_STORAGE_KEY) !== null
+      || this.storage.getItem(GARRISON_PROFILE_STORAGE_KEY) !== null
+      || this.storage.getItem(DUAL_FRONT_PROFILE_STORAGE_KEY) !== null
+      || this.storage.getItem(LEGACY_TERRITORY_PROFILE_STORAGE_KEY) !== null; } catch { /* Legacy detection is optional. */ }
+    try {
+      const raw = this.storage.getItem(GARRISON_PROFILE_STORAGE_KEY);
+      if (raw !== null && raw.length <= 256_000) {
+        const parsed: unknown = JSON.parse(raw);
+        if (object(parsed) && parsed.schemaVersion === 4) {
+          const data = parseTerritoryProfile({ ...parsed, schemaVersion: TERRITORY_PROFILE_SCHEMA_VERSION });
+          if (data) this.previousGarrison = { ...data, schemaVersion: 4 };
+        }
+      }
+    } catch { /* Older scores remain untouched even when their optional preview is corrupt. */ }
+    try {
+      const raw = this.storage.getItem(TERRITORY_PROFILE_STORAGE_KEY);
+      this.currentStatus = { mode: 'persistent', code: 'empty', message: '双线救援战绩独立保存。' };
+      if (raw !== null) {
+        if (raw.length > 256_000) throw Error('Oversized territory profile');
+        const parsed: unknown = JSON.parse(raw);
+        if (object(parsed) && parsed.schemaVersion !== TERRITORY_PROFILE_SCHEMA_VERSION) this.currentStatus = { mode: 'persistent', code: 'incompatible', message: '战绩版本不兼容，已启用双线救援记录。' };
+        else {
+          const data = parseTerritoryProfile(parsed);
+          if (!data) throw Error('Malformed territory profile');
+          this.value = data;
+          this.currentStatus = { mode: 'persistent', code: 'loaded', message: '救援成果与守卫纪录已载入。' };
+        }
+      }
+    } catch { this.currentStatus = { mode: 'persistent', code: 'corrupt', message: '救援战绩无法读取，本局启用新记录。' }; }
+    const probe = `${TERRITORY_PROFILE_STORAGE_KEY}:probe`;
+    try {
+      this.storage.setItem(probe, 'territory');
+      if (this.storage.getItem(probe) !== 'territory') throw Error('Discarded write');
+      this.storage.removeItem(probe);
+    } catch {
+      try { this.storage.removeItem(probe); } catch { /* Storage unavailable. */ }
+      this.currentStatus = { mode: 'session', code: 'unavailable', message: '本地存储暂不可用，救援成果暂存于本次页面。' };
+    }
+  }
+  get data(): TerritoryProfileData { return structuredClone(this.value); }
+  get status(): EndlessProfileStatus { return { ...this.currentStatus }; }
+  load(): TerritoryProfileSnapshot { return { data: this.data, status: this.status, legacyAvailable: this.legacy,
+    ...(this.previousGarrison ? { previousGarrison: structuredClone(this.previousGarrison) } : {}) }; }
+  save(): TerritoryProfileSnapshot { this.persist(); return this.load(); }
+  private persist(): boolean {
+    if (!this.storage) return false;
+    try {
+      const serialized = JSON.stringify(this.value);
+      this.storage.setItem(TERRITORY_PROFILE_STORAGE_KEY, serialized);
+      if (this.storage.getItem(TERRITORY_PROFILE_STORAGE_KEY) !== serialized) throw Error('Discarded write');
+      this.dirty = false;
+      this.currentStatus = { mode: 'persistent', code: 'saved', message: '救援成果已保存；继续守卫不会撤销成功。' };
+      return true;
+    } catch {
+      this.currentStatus = { mode: 'session', code: 'write-failed', message: '保存失败，成果仍在本次页面；可重试保存。' };
+      return false;
+    }
+  }
+  /** Can run at victory before result. A later guard result updates this same record. */
+  checkpoint(state: GameState, requestedRunId?: string): TerritoryRecordResult {
+    if (!state.territory || !state.endless) return { kind: 'rejected', reason: 'not-territory' };
+    const receipt = state.territory.rescueSnapshot;
+    const runId = receipt?.runId ?? requestedRunId ?? state.territory.recordId ?? state.growth?.runId ?? '';
+    if (!runIdValid(runId) || requestedRunId && requestedRunId !== runId) return { kind: 'rejected', reason: 'invalid-run-id' };
+    const ended = state.phase === 'result' && !!state.result;
+    if (!receipt && !ended) return { kind: 'rejected', reason: 'run-not-ended' };
+    const snapshot = receipt ? parseRescueReceipt(receipt) : null;
+    if (receipt && !snapshot) return { kind: 'rejected', reason: 'invalid-result' };
+    const previous = this.value.recentRuns.find(record => record.runId === runId);
+    if (this.value.recentRunIds.includes(runId) && !previous) return { kind: 'duplicate', persisted: !this.dirty && this.currentStatus.mode === 'persistent' };
+    const e = state.endless, guardStarted = state.territory.stage === 'guard' || !!previous?.guard.started;
+    const candidate = parseTerritoryRecord({ runId, seed: state.seed, waveReached: e.wave, clearedWaves: e.clearedWaves,
+      score: e.score, kills: e.kills, bestCombo: e.bestCombo, level: state.endlessGrowth?.level ?? 0,
+      durationSeconds: state.elapsed, extracted: snapshot !== null || previous?.rescue.success === true,
+      fullyPurifiedSeconds: state.territory.stability.totalSeconds,
+      longestFullyPurifiedSeconds: state.territory.stability.bestSeconds,
+      reason: ended ? state.result!.reason : '心核救援成功。', ended,
+      rescue: previous?.rescue.success ? previous.rescue : snapshot ? { success: true, snapshot } : { success: false },
+      guard: { started: guardStarted, ended: guardStarted && ended, waveReached: guardStarted ? e.wave : 0,
+        clearedWaves: guardStarted ? e.clearedWaves : 0, score: guardStarted ? e.score : 0,
+        durationSeconds: guardStarted ? Math.max(0, state.elapsed - (snapshot?.elapsed ?? 0)) : 0 } });
+    if (!candidate) return { kind: 'rejected', reason: 'invalid-result' };
+    if (previous) {
+      for (const key of ['waveReached', 'clearedWaves', 'score', 'kills', 'bestCombo', 'level', 'durationSeconds', 'fullyPurifiedSeconds', 'longestFullyPurifiedSeconds'] as const) candidate[key] = Math.max(previous[key], candidate[key]);
+      candidate.ended ||= previous.ended;
+      if (previous.ended && !ended) candidate.reason = previous.reason;
+      candidate.guard.ended ||= previous.guard.ended;
+      for (const key of ['waveReached', 'clearedWaves', 'score', 'durationSeconds'] as const) candidate.guard[key] = Math.max(previous.guard[key], candidate.guard[key]);
+    }
+    if (previous && JSON.stringify(previous) === JSON.stringify(candidate)) return { kind: 'duplicate', record: structuredClone(previous), persisted: this.dirty ? this.persist() : this.currentStatus.mode === 'persistent' };
+    if (!previous) {
+      this.value.runs = safeAdd(this.value.runs, 1);
+      this.value.recentRunIds.push(runId);
+      if (this.value.recentRunIds.length > ENDLESS_DEDUP_LIMIT) this.value.recentRunIds.splice(0, this.value.recentRunIds.length - ENDLESS_DEDUP_LIMIT);
+    }
+    if (candidate.rescue.success && !previous?.rescue.success) this.value.rescues = safeAdd(this.value.rescues, 1);
+    this.value.bestWave = Math.max(this.value.bestWave, candidate.clearedWaves);
+    this.value.bestScore = Math.max(this.value.bestScore, candidate.score);
+    this.value.bestCombo = Math.max(this.value.bestCombo, candidate.bestCombo);
+    this.value.recentRuns = [candidate, ...this.value.recentRuns.filter(record => record.runId !== runId)].slice(0, ENDLESS_RECENT_RUN_LIMIT);
+    this.dirty = true;
+    return { kind: previous ? 'updated' : 'recorded', record: structuredClone(candidate), persisted: this.persist() };
+  }
+  recordRun(state: GameState, runId?: string): TerritoryRecordResult { return this.checkpoint(state, runId); }
+}

@@ -1,0 +1,756 @@
+{
+  "schemaVersion": 1,
+  "scope": "Fantasy_Actors_v2-source-samples-only",
+  "status": "hero-v03-processed-agent-reviewed-awaiting-root-lock",
+  "runtimeCompletedCount": 0,
+  "expectedRuntimeCount": 115,
+  "sourceCount": 1,
+  "expectedSourceCount": 3,
+  "pendingSourceIds": [
+    "fantasy.actor.enemy.basic.master",
+    "fantasy.actor.immune.front_right.master"
+  ],
+  "sources": [
+    {
+      "id": "fantasy.actor.hero.front_right.master",
+      "kind": "source-master-only",
+      "runtime": false,
+      "runtimeFrameCredit": 0,
+      "runId": "ad1fb31d-2823-4b85-82e6-78974145e195",
+      "source": {
+        "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_Actors_v2\\raw\\fantasy.actor.hero.front_right.master\\ad1fb31d-2823-4b85-82e6-78974145e195-cross-v03.png",
+        "image": {
+          "sha256": "5ff59259ad1562bb60d5849f90a8382a04fbd392cb5d7b6a57115686818b440f",
+          "bytes": 5847123,
+          "width": 2048,
+          "height": 2048,
+          "format": "png",
+          "channels": 3,
+          "hasAlphaChannel": false,
+          "alpha": {
+            "transparent": 0,
+            "partial": 0,
+            "opaque": 4194304,
+            "transparentFraction": 0,
+            "visible": 4194304,
+            "borderVisible": 8188,
+            "whiteVisible": 2905413
+          },
+          "bbox": [
+            0,
+            0,
+            2048,
+            2048
+          ],
+          "margins": {
+            "left": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "minimumFraction": 0
+          },
+          "luma": {
+            "mean": 227.8526202606472,
+            "standardDeviation": 52.01310554348069,
+            "min": 0,
+            "max": 254.99999999999997
+          }
+        }
+      },
+      "identityReview": {
+        "status": "accepted-for-processing",
+        "reviewer": "root + production_manifest",
+        "revision": "v03-enlarged-solid-cross",
+        "notes": "Root仅要求十字扩大至raw约150²；保持原中心与朝向，实心深薄荷，不发光；源脚点与完整画布注册矩阵不变。其余helmet/visor/eyes/limbs材质在ROI外像素差0。"
+      },
+      "removal": {
+        "sourceSha256": "5ff59259ad1562bb60d5849f90a8382a04fbd392cb5d7b6a57115686818b440f",
+        "processing": {
+          "method": "border-connected-white-key",
+          "whiteMin": 240,
+          "chromaMax": 18,
+          "matteCleanup": true,
+          "edgeWidth": 2,
+          "removedPixels": 2940478,
+          "cleanedEdgePixels": 4724,
+          "limitations": "White foreground connected directly to a white backdrop is ambiguous. Inspect both black/white QA views before acceptance."
+        },
+        "image": {
+          "sha256": "6912a09587334461d22308327aa670ef7cb04df203cbc458a65dc7883a74f511",
+          "bytes": 3624320,
+          "width": 2048,
+          "height": 2048,
+          "format": "png",
+          "channels": 4,
+          "hasAlphaChannel": true,
+          "alpha": {
+            "transparent": 2940478,
+            "partial": 4724,
+            "opaque": 1249102,
+            "transparentFraction": 0.7010645866394043,
+            "visible": 1253826,
+            "borderVisible": 0,
+            "whiteVisible": 4297
+          },
+          "bbox": [
+            380,
+            212,
+            1652,
+            1843
+          ],
+          "margins": {
+            "left": 380,
+            "top": 212,
+            "right": 396,
+            "bottom": 205,
+            "minimumFraction": 0.10009765625
+          },
+          "luma": {
+            "mean": 171.68386062790546,
+            "standardDeviation": 68.05216491425863,
+            "min": 0,
+            "max": 254.99999999999997
+          }
+        },
+        "protectedPolygons": [
+          [
+            [
+              790,
+              350
+            ],
+            [
+              1160,
+              325
+            ],
+            [
+              1350,
+              550
+            ],
+            [
+              1090,
+              610
+            ],
+            [
+              870,
+              540
+            ]
+          ]
+        ],
+        "restoredPixels": 0,
+        "removedHolePixels": 0,
+        "holeReports": [
+          {
+            "sourceSeed": [
+              735,
+              1355
+            ],
+            "componentPixels": 2940478,
+            "newlyRemovedPixels": 0
+          },
+          {
+            "sourceSeed": [
+              990,
+              1600
+            ],
+            "componentPixels": 0,
+            "newlyRemovedPixels": 0
+          }
+        ],
+        "shadowCleanup": null,
+        "componentCleanup": {
+          "method": "reviewed-single-subject-keep-largest-connected-component",
+          "components": 18,
+          "keptPixels": 1253809,
+          "discardedPixels": 17,
+          "discardedComponentSizes": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "preservationProbes": [
+          {
+            "label": "奶白头壳",
+            "point": [
+              1050,
+              420
+            ],
+            "expect": "opaque",
+            "before": [
+              245,
+              243,
+              229,
+              255
+            ],
+            "after": [
+              245,
+              243,
+              229,
+              255
+            ]
+          },
+          {
+            "label": "灰蓝医疗十字",
+            "point": [
+              1390,
+              490
+            ],
+            "expect": "opaque",
+            "before": [
+              69,
+              135,
+              132,
+              255
+            ],
+            "after": [
+              69,
+              135,
+              132,
+              255
+            ]
+          },
+          {
+            "label": "左侧薄荷眼",
+            "point": [
+              1158,
+              866
+            ],
+            "expect": "opaque",
+            "before": [
+              160,
+              230,
+              205,
+              255
+            ],
+            "after": [
+              160,
+              230,
+              205,
+              255
+            ]
+          },
+          {
+            "label": "右侧薄荷眼",
+            "point": [
+              1396,
+              806
+            ],
+            "expect": "opaque",
+            "before": [
+              157,
+              229,
+              200,
+              255
+            ],
+            "after": [
+              157,
+              229,
+              200,
+              255
+            ]
+          },
+          {
+            "label": "屏幕左手奶白掌",
+            "point": [
+              495,
+              1460
+            ],
+            "expect": "opaque",
+            "before": [
+              239,
+              234,
+              222,
+              255
+            ],
+            "after": [
+              239,
+              234,
+              222,
+              255
+            ]
+          },
+          {
+            "label": "屏幕右手奶白掌",
+            "point": [
+              1570,
+              1210
+            ],
+            "expect": "opaque",
+            "before": [
+              240,
+              233,
+              222,
+              255
+            ],
+            "after": [
+              240,
+              233,
+              222,
+              255
+            ]
+          },
+          {
+            "label": "左臂与身体之间负空间",
+            "point": [
+              735,
+              1355
+            ],
+            "expect": "clear",
+            "before": [
+              252,
+              255,
+              254,
+              255
+            ],
+            "after": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "label": "两腿之间负空间",
+            "point": [
+              990,
+              1600
+            ],
+            "expect": "clear",
+            "before": [
+              249,
+              250,
+              249,
+              255
+            ],
+            "after": [
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "finalCutoutImage": {
+          "sha256": "aa02b7169211775a74a8809dba23cf814aaf28f3687ee8ea3908ba34ab59ec64",
+          "bytes": 3624188,
+          "width": 2048,
+          "height": 2048,
+          "format": "png",
+          "channels": 4,
+          "hasAlphaChannel": true,
+          "alpha": {
+            "transparent": 2940495,
+            "partial": 4717,
+            "opaque": 1249092,
+            "transparentFraction": 0.701068639755249,
+            "visible": 1253809,
+            "borderVisible": 0,
+            "whiteVisible": 4297
+          },
+          "bbox": [
+            380,
+            212,
+            1652,
+            1843
+          ],
+          "margins": {
+            "left": 380,
+            "top": 212,
+            "right": 396,
+            "bottom": 205,
+            "minimumFraction": 0.10009765625
+          },
+          "luma": {
+            "mean": 171.68348216677668,
+            "standardDeviation": 68.05220792063756,
+            "min": 0,
+            "max": 254.99999999999997
+          }
+        },
+        "caution": "White foreground versus white background is resolved by actual image review and explicit seed/protection annotations, not by global white deletion."
+      },
+      "transform": {
+        "method": "first-reviewed-identity-full-canvas-uniform-scale-and-foot-translation",
+        "sourceCanvas": [
+          2048,
+          2048
+        ],
+        "sourceFootPx": [
+          1052.75,
+          1842
+        ],
+        "requestedUniformScale": 0.25,
+        "uniformScale": 0.25,
+        "resampledCanvas": [
+          512,
+          512
+        ],
+        "translationPx": [
+          -7.1875,
+          -25.30000000000001
+        ],
+        "matrixSourceToRegistered": [
+          [
+            0.25,
+            0,
+            -7.1875
+          ],
+          [
+            0,
+            0.25,
+            -25.30000000000001
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ],
+        "targetCanvas": [
+          512,
+          512
+        ],
+        "targetAnchorPx": [
+          256,
+          435.2
+        ],
+        "pivot": [
+          0.5,
+          0.85
+        ],
+        "mappedSourceFootPx": [
+          256,
+          435.2
+        ],
+        "sourceBbox": [
+          380,
+          212,
+          1652,
+          1843
+        ],
+        "projectedBbox": [
+          87.8125,
+          27.69999999999999,
+          405.8125,
+          435.45
+        ],
+        "alphaBoundsUsedForScaling": false,
+        "alphaCropUsed": false,
+        "futureGroupPolicy": "Lock this transform for the identity/direction group after approval; never independently fit animation frames.",
+        "footAnnotation": "横向取实际鞋底接触点near[825.5,1842]与far[1280,1647]的X中点1052.75；纵向取前侧最低鞋底1842，保留透视高度差。完整2048画布0.25缩放+接地平移，不用bbox fit，也不强行拉齐两足Y。"
+      },
+      "output": {
+        "path": "processed/fantasy.actor.hero.front_right.master.v03.png",
+        "sha256": "2c75e43f1574900eb0325c219b04296b0780cc07f90e5906f3d91da66a8ce876",
+        "bytes": 206982
+      },
+      "image": {
+        "sha256": "2c75e43f1574900eb0325c219b04296b0780cc07f90e5906f3d91da66a8ce876",
+        "bytes": 206982,
+        "width": 512,
+        "height": 512,
+        "format": "png",
+        "channels": 4,
+        "hasAlphaChannel": true,
+        "alpha": {
+          "transparent": 179737,
+          "partial": 8460,
+          "opaque": 73947,
+          "transparentFraction": 0.6856422424316406,
+          "visible": 79801,
+          "borderVisible": 0,
+          "whiteVisible": 78
+        },
+        "bbox": [
+          87,
+          27,
+          406,
+          436
+        ],
+        "margins": {
+          "left": 87,
+          "top": 27,
+          "right": 106,
+          "bottom": 76,
+          "minimumFraction": 0.052734375
+        },
+        "luma": {
+          "mean": 170.93866815951873,
+          "standardDeviation": 65.9038980942783,
+          "min": 7.0485999999999995,
+          "max": 251.85559999999998
+        }
+      },
+      "qa": {
+        "black": {
+          "path": "qa/fantasy.actor.hero.front_right.master.v03.black.png",
+          "sha256": "878c4dfb91f701dad761e43e0c3d8b227ce257145b8ce0fbd72b0e30375365bc",
+          "bytes": 182966
+        },
+        "white": {
+          "path": "qa/fantasy.actor.hero.front_right.master.v03.white.png",
+          "sha256": "c00ea107c643606525c34dd840b1d25658f73f7d81a5e05846858fb5ea726641",
+          "bytes": 183964
+        },
+        "alpha": {
+          "path": "qa/fantasy.actor.hero.front_right.master.v03.alpha.png",
+          "sha256": "55c0c9c98e28e90b00d83bc012f663259afc02d59cec888bbec4922392153a0a",
+          "bytes": 17452
+        },
+        "black-white": {
+          "path": "qa/fantasy.actor.hero.front_right.master.v03.black-white.png",
+          "sha256": "578c391b56614d3adadc94221ff1efc7249f35a9b6f06f40b7febde6e8c74636",
+          "bytes": 239928
+        },
+        "24px-1x": {
+          "path": "qa/fantasy.actor.hero.front_right.master.v03.24px-1x.png",
+          "sha256": "da5cc4f9486ed7f4978e22c1ae7c7f036d7e6f2682829c88970fa0cad36b88f1",
+          "bytes": 1545
+        },
+        "24px-5x-nearest": {
+          "path": "qa/fantasy.actor.hero.front_right.master.v03.24px-5x-nearest.png",
+          "sha256": "a1389d65f9a38d42642ac8a9ea4e84d69085b64b33cfbb6258533dff77cdcd5e",
+          "bytes": 2247
+        },
+        "32px-1x": {
+          "path": "qa/fantasy.actor.hero.front_right.master.v03.32px-1x.png",
+          "sha256": "7f3f6392a71acafddec1bf34b736174af9bae9a9709cf7e85b2ed32e2deb9161",
+          "bytes": 2409
+        },
+        "32px-5x-nearest": {
+          "path": "qa/fantasy.actor.hero.front_right.master.v03.32px-5x-nearest.png",
+          "sha256": "be018dfd59438a287eec200835540952ba565eeb2a8579aa8022b6ae7522e5c3",
+          "bytes": 3562
+        },
+        "recognition-sheet": {
+          "path": "qa/fantasy.actor.hero.front_right.master.v03.recognition-sheet.png",
+          "sha256": "014dbb7ba293f3253e350cff5bcec36ded72f74c91def2e5bea306c86e7cb55d",
+          "bytes": 25395
+        }
+      },
+      "recognition": [
+        {
+          "bodyHeightPx": 24,
+          "oneXCanvas": [
+            19,
+            24
+          ],
+          "fiveXCanvas": [
+            95,
+            120
+          ],
+          "diagnosticCrop": {
+            "left": 87,
+            "top": 27,
+            "width": 319,
+            "height": 409
+          },
+          "productionPngUncropped": true,
+          "scaling": "1x body-height sample plus exact 5x nearest comparison"
+        },
+        {
+          "bodyHeightPx": 32,
+          "oneXCanvas": [
+            25,
+            32
+          ],
+          "fiveXCanvas": [
+            125,
+            160
+          ],
+          "diagnosticCrop": {
+            "left": 87,
+            "top": 27,
+            "width": 319,
+            "height": 409
+          },
+          "productionPngUncropped": true,
+          "scaling": "1x body-height sample plus exact 5x nearest comparison"
+        }
+      ],
+      "handGrips": {},
+      "primaryHand": {
+        "id": null,
+        "status": "pending-new-centered-hold-source",
+        "toolAttachmentPoint": null,
+        "wristRegisteredPx": null,
+        "palmGripRegisteredPx": null,
+        "oldNearOrFarAccepted": false,
+        "requiredNewGripRegion": {
+          "centerPx": [
+            256,
+            315
+          ],
+          "xRangePx": [
+            244,
+            268
+          ]
+        },
+        "nextSource": "fantasy.actor.hero.front_right.hold.master",
+        "rule": "两前臂/双小C手须由实际v03 reference重绘到胸前；旧near/far点仅为解剖landmark，禁止扭旧臂像素伪造通过。"
+      },
+      "sourceLandmarks": {
+        "weaponWrist": {
+          "sourcePx": [
+            1510,
+            1220
+          ],
+          "registeredPx": [
+            370.3125,
+            279.7
+          ],
+          "definition": "实际grid crop复核，朝前右的screen-right手之灰蓝腕箍中点"
+        },
+        "weaponPalmGrip": {
+          "sourcePx": [
+            1570,
+            1250
+          ],
+          "registeredPx": [
+            385.3125,
+            287.2
+          ],
+          "definition": "同一C形手的内侧持物中心，约[385,287]；正式工具接合点"
+        },
+        "nearWrist": {
+          "sourcePx": [
+            548,
+            1380
+          ],
+          "registeredPx": [
+            129.8125,
+            319.7
+          ],
+          "toolAttachmentAllowed": false
+        },
+        "nearPalm": {
+          "sourcePx": [
+            570,
+            1485
+          ],
+          "registeredPx": [
+            135.3125,
+            345.95
+          ],
+          "toolAttachmentAllowed": false
+        },
+        "qa": "qa/hero-forward-c-hand-source-coordinates.png",
+        "oldNearAndFarAreAnatomyOnly": true
+      },
+      "revision": 3,
+      "visualQa": {
+        "status": "agent-reviewed-v03-alpha-and-small-size",
+        "accepted": true,
+        "identityApproval": "pending-root-final-cross-size-lock",
+        "notes": [
+          "Existing alpha/body PNG unchanged; forward C hand is sole formal weapon hand.",
+          "Primary wrist/palm remeasured on source-coordinate crop; previous near-primary instruction revoked."
+        ]
+      },
+      "approvalStatus": "awaiting-parent-and-user-review",
+      "sourceGroupTransformLocked": false,
+      "reportFile": {
+        "path": "qa/fantasy.actor.hero.front_right.master.v03.report.json",
+        "sha256": "52fe3f18808d3e73c650cfd76c39fed5b7b9ea4303ee452490483aa9f7164027",
+        "bytes": 16522
+      },
+      "badgeRevision": {
+        "report": "qa/hero-cross-v03-revision.json",
+        "rawBadgeSizePx": [
+          151,
+          151
+        ],
+        "normalized512BadgeSizePx": [
+          37.75,
+          37.75
+        ],
+        "centerSourcePx": [
+          1383.5,
+          491.5
+        ],
+        "outsideRoiDifference": 0,
+        "outsideMaskDifference": 0,
+        "outputDifferenceBbox": [
+          317,
+          76,
+          360,
+          120
+        ],
+        "outputChangedPixels": 1063,
+        "outputAlphaChangedPixels": 0,
+        "smallSizeQa": "qa/hero-cross-v03-48-64px-comparison.png",
+        "smallSizeMeasurements": [
+          {
+            "bodyHeightPx": 48,
+            "oneXCanvas": [
+              37,
+              48
+            ],
+            "projectedBadgeSizePx": [
+              4.378526645768025,
+              4.430317848410758
+            ],
+            "visibleTintBbox": [
+              27,
+              6,
+              31,
+              10
+            ],
+            "visibleTintSizePx": [
+              4,
+              4
+            ],
+            "visibleTintPixels": 10,
+            "display": "actual 1x source; 5x nearest shown separately"
+          },
+          {
+            "bodyHeightPx": 64,
+            "oneXCanvas": [
+              50,
+              64
+            ],
+            "projectedBadgeSizePx": [
+              5.91692789968652,
+              5.907090464547677
+            ],
+            "visibleTintBbox": [
+              37,
+              8,
+              42,
+              14
+            ],
+            "visibleTintSizePx": [
+              5,
+              6
+            ],
+            "visibleTintPixels": 18,
+            "display": "actual 1x source; 5x nearest shown separately"
+          }
+        ]
+      },
+      "handContractRevision": "revoked-await-centered-hold",
+      "heroWeaponPose": "pending-new-centered-hold-source",
+      "weaponPoseApproved": false
+    }
+  ],
+  "runtimeAssets": [],
+  "registrationPolicy": "Independent first source drafts establish proposed identity transforms; lock each after approval and reuse for every frame in its group.",
+  "frozenEnvironmentWritten": false,
+  "runtimeIntegrationPerformed": false,
+  "revision": 3,
+  "heroWeaponPose": "pending-new-centered-hold-source"
+}

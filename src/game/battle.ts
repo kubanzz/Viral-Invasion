@@ -1,6 +1,6 @@
 import { clamp, distance, moveWithCollision, normalized, wallHit } from '../actors/collision';
 import { SeedRng } from '../core/rng';
-import { activeWorld, BALANCE, isDiagnosticTarget, type Effect, type GameEvent, type GameState, type InputFrame, type MessagePriority, type Target, type Tool, type Vec } from './types';
+import { activeWorld, BALANCE, isDiagnosticTarget, type Effect, type GameEvent, type GameState, type InputFrame, type MessagePriority, type Target, type Tool, type Vec, type WorldGeometry } from './types';
 import type { BattleState, CampaignOptions, TraitId } from './battleTypes';
 import { BATTLE_BALANCE as B, TRAITS } from './battleConfig';
 import { recordBehavior, chooseEvolution } from './evolution';
@@ -20,6 +20,10 @@ import { activeEliteTacticCycle, commitEliteTactic, finishEliteTactic, prepareEl
 import { advanceViralCapsuleCarrier, advanceViralCapsules, releaseViralCapsule, terminateViralCapsule, type ViralCapsuleHost } from './viralCapsules';
 import type { ImmuneCellState } from './immuneCells';
 import { eventModifier, isHostEventLightVirus } from './hostEvents';
+import { TERRITORY_BALANCE, territoryInvaderGoal } from './territory';
+import { immuneLegions } from './immuneLegions';
+import { advanceSmartViruses, advanceSmartVirusActor, smartSpringRaidGoal, SMART_VIRUS_BALANCE } from './smartViruses';
+import { isTerritoryPlayerAirborne } from './territoryCannon';
 
 export interface BattleHost {
   state: GameState;
@@ -89,6 +93,7 @@ export function initializeBattle(state: GameState, options: CampaignOptions): vo
 /** G1 rules attach to the shared session; tools/movement/time stay in GameSession. */
 export class BattleDirector {
   private readonly navigator = new EnemyNavigator();
+  private territoryRouteWorld?: { base: WorldGeometry; signature: string; world: WorldGeometry };
   private readonly fissionBirths = new WeakMap<Target, number>();
   constructor(private host: BattleHost) {}
   private get s() { return this.host.state; }
@@ -240,9 +245,9 @@ export class BattleDirector {
     if (amount <= 0) return;
     this.b.stats.repairs++;
     this.b.pressure.infection = Math.max(0, this.b.pressure.infection - B.repairRelief);
-    if (distance(this.s.player, this.s.tissue) < 200) this.s.player.hp = Math.min(this.s.endlessGrowth ? endlessCombatStats(this.s.endlessGrowth).maxHp : 100, this.s.player.hp + 4);
+    if (!this.s.territory && distance(this.s.player, this.s.tissue) < 200) this.s.player.hp = Math.min(this.s.endlessGrowth ? endlessCombatStats(this.s.endlessGrowth).maxHp : 100, this.s.player.hp + 4);
     this.host.emit('PRESSURE_RELIEVED', { reason: 'repair', amount: B.repairRelief });
-    this.host.message(this.s.endless ? `组织修复 +${Math.round(amount)}。近距离修复可恢复耐久。`
+    this.host.message(this.s.territory ? `心核修复 +${Math.round(amount)}。靠近健康生命泉可恢复救援体耐久。` : this.s.endless ? `组织修复 +${Math.round(amount)}。近距离修复可恢复耐久。`
       : `组织修复 +${Math.round(amount)}；感染负荷 -${B.repairRelief}。近距离修复可恢复耐久。`, 3);
   }
 
@@ -344,10 +349,14 @@ export class BattleDirector {
   afterInput(): void {
     const state = this.s;
     if (!this.s.endless) { this.evolution(); this.spread(); }
+    advanceSmartViruses(this.host);
+    if (this.s !== state || state.phase !== 'playing') return;
     advanceViralCapsules(this.capsuleHost());
     if (this.s !== state || state.phase !== 'playing') return;
+    const positions=new Map(this.s.targets.filter(t=>!!t.profession).map(t=>[t.id,{x:t.x,y:t.y}]));
     this.enemies();
     if (this.s !== state || state.phase !== 'playing') return;
+    for(const target of state.targets)if(target.profession){const before=positions.get(target.id);target.moving=!!before&&distance(before,target)>1e-6;}
     if (!this.s.endless) { this.pressure(); this.objectives(); }
     // Dead sources remain as inert landmarks. Other corpses have a short bounded lifetime.
     this.s.targets = this.s.targets.filter(t => t.hp > 0 || t.role === 'source' || !!state.endless && t.splitAt !== undefined || this.s.elapsed - (t.deadAt ?? this.s.elapsed) < 1.5);
@@ -361,7 +370,7 @@ export class BattleDirector {
   }
 
   private aliveCount(): number { return this.s.targets.filter(t => t.hp > 0 && t.role !== 'event').length; }
-  private spawn(position: Vec, role: 'virus' | 'elite', traits = this.b.traits, generation = 0, sourceId?: string, accepted?: () => void): Target | undefined {
+  private spawn(position: Vec, role: 'virus' | 'elite', traits = this.b.traits, generation = 0, sourceId?: string, accepted?: (target: Target) => void): Target | undefined {
     if (this.aliveCount() >= combatPopulationLimit(this.s)) return;
     const encounter = this.b.encounter, opening = role === 'virus' && encounter?.configId === 'campaign-1' && encounter.firstCounter.status !== 'resolved';
     if (opening && (this.s.targets.filter(target => target.hp > 0 && target.role === 'virus').length >= ENCOUNTER_CONFIGS['campaign-1'].openingOrdinaryCap
@@ -373,7 +382,7 @@ export class BattleDirector {
     const target: Target = { ...pos, id: `${role}-${++this.b.nextActorId}`, role, kind: traits.includes('FISSION') ? 'cluster' : 'single', radius, hp, maxHp: hp, hitUntil: 0, scanned: false, traits: [...traits], facing: 0, born: this.s.elapsed, attackReady: this.s.elapsed + 1.5, generation, sourceId };
     this.s.targets.push(target);
     if (opening) encounter.openingSpawned++;
-    accepted?.();
+    accepted?.(target);
     this.host.emit('ACTOR_SPAWNED', { id: target.id, role, generation, sourceId: sourceId ?? '', traits: traits.join('+') });
     return target;
   }
@@ -470,6 +479,7 @@ export class BattleDirector {
   private damageImmune(target: Target, cell: ImmuneCellState, amount: number, reason: string): boolean {
     const { s } = this;
     if (cell.organId !== this.b.organId || (cell.hp ?? 1) <= 0 || cell.until <= s.elapsed || amount <= 0) return false;
+    if (s.territory && target.territoryTask?.kind === 'escort') amount *= TERRITORY_BALANCE.escortArmyDamageMultiplier;
     const before = cell.hp ?? cell.maxHp ?? 60;
     cell.hp = Math.max(0, before - amount);
     cell.hurtUntil = s.elapsed + .3;
@@ -483,7 +493,7 @@ export class BattleDirector {
 
   private damagePlayer(target: Target, amount: number, reason: string, accepted?: () => void): boolean {
     const { s, b } = this;
-    if (s.player.hp <= 0 || s.elapsed < s.player.dashUntil || amount <= 0) return false;
+    if (s.player.hp <= 0 || isTerritoryPlayerAirborne(s) || s.elapsed < s.player.dashUntil || amount <= 0) return false;
     const before = s.player.hp;
     s.player.hp = Math.max(0, before - amount); b.stats.playerDamage += before - s.player.hp;
     s.player.hurtUntil = s.elapsed + .5;
@@ -590,11 +600,26 @@ export class BattleDirector {
   private enemies(): void {
     const { s } = this;
     this.navigator.prune(s.targets);
+    const world = activeWorld(s);
+    let territoryRouteWorld = world;
+    if (s.territory) {
+      const sources = s.targets.filter(target => target.hp > 0 && target.role === 'source');
+      const signature = sources.map(target => `${target.id}:${target.x}:${target.y}:${target.radius}`).join('|');
+      if (this.territoryRouteWorld?.base !== world || this.territoryRouteWorld.signature !== signature) {
+        this.territoryRouteWorld = { base: world, signature, world: sources.length ? { ...world, obstacles: [
+          ...sources.map(target => ({ id: target.id, x: target.x, y: target.y, radius: target.radius + ENEMY_CROWD.gap })),
+          ...world.obstacles,
+        ] } : world };
+      }
+      territoryRouteWorld = this.territoryRouteWorld.world;
+    }
     for (const target of s.targets) if (target.recoverUntil !== undefined && target.recoverUntil <= s.elapsed) target.recoverUntil = undefined;
     const wave = s.endless?.wave ?? 1;
     const pace = s.endless ? endlessPacing(wave) : undefined;
     const strike = s.endless ? endlessStrikeDamage(wave) : undefined;
-    const speed = (target: Target) => B.enemySpeed * (pace?.speedMultiplier ?? 1) * (target.traits?.includes('CARAPACE') ? B.carapaceSpeed : 1)
+    const speed = (target: Target) => (target.profession === 'fastling' ? SMART_VIRUS_BALANCE.fastlingSpeed
+      : target.profession === 'slime-caster' ? SMART_VIRUS_BALANCE.casterSpeed
+      : target.profession === 'nest-builder' ? SMART_VIRUS_BALANCE.builderSpeed : B.enemySpeed * (pace?.speedMultiplier ?? 1)) * (target.traits?.includes('CARAPACE') ? B.carapaceSpeed : 1)
       * (target.traits?.includes('MIMIC') ? B.mimicSpeed : 1) * (this.host.slowFactor?.(target.id) ?? 1)
       * (isHostEventLightVirus(target) ? eventModifier(s, 'lightVirusMove') : 1);
     const spacing = planEnemySpacing(s.targets.filter(target => target.role !== 'event'), activeWorld(s), {
@@ -612,7 +637,17 @@ export class BattleDirector {
         if (target.splitAt !== undefined && s.elapsed + 1e-9 >= target.splitAt) {
           while (target.splitPositions?.length) {
             const pos = target.splitPositions[0];
-            const child = this.spawn(pos, 'virus', target.traits, 1, target.sourceId, () => {
+            const child = this.spawn(pos, 'virus', target.traits, 1, target.sourceId, child => {
+              if (s.territory && target.territoryTask) {
+                child.territorySourceId = target.territorySourceId;
+                child.waveId = target.waveId;
+                child.blocksWaveClear = target.blocksWaveClear;
+                // Offspring preserve finite squad obligations without gaining
+                // a new specialist's territorial capture ability.
+                child.territoryTask = { ...target.territoryTask, kind: 'escort', leaderId: target.territoryTask.leaderId ?? target.id };
+                const squad = s.endless?.territoryTasks?.squads.find(item => item.id === target.territoryTask?.squadId);
+                if (squad && !squad.memberIds.includes(child.id)) squad.memberIds.push(child.id);
+              }
               target.splitPositions!.shift();
               this.fissionBirths.set(target, (this.fissionBirths.get(target) ?? 0) + 1);
             });
@@ -628,6 +663,7 @@ export class BattleDirector {
         continue;
       }
       if (target.role === 'source' || target.role === 'core' || target.role === 'capsule' || target.role === 'event' || this.host.isMigratingActor?.(target.id)) continue;
+      if (advanceSmartVirusActor(this.host, target, spacing.has(target.id) ? 0 : BALANCE.step)) continue;
       if (advanceViralCapsuleCarrier(this.capsuleHost(), target)) {
         if (this.s !== s || s.phase !== 'playing') return;
         continue;
@@ -637,17 +673,40 @@ export class BattleDirector {
       prepareEliteTactic(s, target);
       const mimic = target.tactic === 'mimic-corrosion' || (!target.tactic || target.tactic === 'melee') && target.traits?.includes('MIMIC');
       const assault = !!s.endless && target.role === 'virus' && target.tactic === 'melee' && target.assaultObjective === 'tissue';
-      const originalGoal = assault || mimic || !s.endless && distance(target, s.player) > 270 ? s.tissue : s.player;
-      const immune = this.immuneGoal(target, originalGoal);
+      const territoryGoal = territoryInvaderGoal(s, target);
+      const originalGoal = territoryGoal?.kind === 'core' || assault || mimic || !s.endless && distance(target, s.player) > 270 ? s.tissue : s.player;
+      // The specialist commits to its advertised node. Its guards handle
+      // interception; a distant immune body must not lure the front off route.
+      const occupying = !!territoryGoal && territoryGoal.kind !== 'core';
+      const escortLeader = target.territoryTask?.kind === 'escort'
+        ? s.targets.find(actor => actor.hp > 0 && actor.id === target.territoryTask!.leaderId) : undefined;
+      const escortNode = target.territoryTask?.kind === 'escort' && !escortLeader
+        ? territoryInvaderGoal(s, { ...target, territoryTask: { ...target.territoryTask, kind: 'invade' } }) : undefined;
+      const escortGuard = escortNode && immuneLegions(s.growth).some(beacon => beacon.organId === this.b.organId && beacon.until > s.elapsed
+        && beacon.guard?.kind === 'territory' && beacon.guard.regionId === escortNode.id
+        && this.livingImmuneCells().some(cell => cell.beaconId === beacon.id));
+      // Surviving escorts finish their announced attack on a guarded node.
+      // Otherwise killing the specialist faster sends every escort out of the
+      // garrison radius and perversely makes a stronger army unable to hand off.
+      const escortAnchor = escortLeader ?? (escortGuard ? escortNode : undefined);
+      const leaderGoal = escortLeader && territoryInvaderGoal(s, escortLeader);
+      const behind = escortLeader && leaderGoal ? normalized(escortLeader.x - leaderGoal.x, escortLeader.y - leaderGoal.y) : undefined;
+      const escortIndex = s.endless?.territoryTasks?.squads.find(squad => squad.id === target.territoryTask?.squadId)?.memberIds.indexOf(target.id) ?? 1;
+      const flank = ((Math.max(1, escortIndex) - 1) % 3 - 1) * 55;
+      const escortGoal = escortAnchor && distance(target, s.player) > 400
+        ? { x: escortAnchor.x + (behind ? behind.x * 70 - behind.y * flank : 0),
+          y: escortAnchor.y + (behind ? behind.y * 70 + behind.x * flank : 0), radius: behind ? 24 : 65 } : undefined;
+      const immune = occupying ? undefined : this.immuneGoal(target, originalGoal);
       // One of three ordinary bodies pressures a nearby aid point. The others
       // keep their existing objectives, and antibody scent always takes priority.
       const raider = originalGoal === s.tissue && !mimic && target.role === 'virus' && (!target.tactic || target.tactic === 'melee')
         && [...target.id].reduce((sum, letter) => sum + letter.charCodeAt(0), 0) % 3 === 0;
-      const aidPoint = !immune && raider ? this.b.graph.nodes.filter(node => node.kind === 'healing' && node.active
+      const aidPoint = !s.territory && !immune && raider ? this.b.graph.nodes.filter(node => node.kind === 'healing' && node.active
         && (node.infection ?? 0) < 100 && distance(target, node) <= 480)
         .sort((a, b) => distance(target, a) - distance(target, b) || a.id.localeCompare(b.id))[0] : undefined;
-      const occupationGoal = aidPoint ? { ...aidPoint, radius: 36 } : undefined;
-      const goal = immune ?? occupationGoal ?? originalGoal;
+      const springRaid = smartSpringRaidGoal(s, target);
+      const occupationGoal = occupying ? { ...territoryGoal!, radius: 36 } : aidPoint || springRaid ? { ...(aidPoint ?? springRaid)!, radius: 36 } : undefined;
+      const goal = immune ?? occupationGoal ?? escortGoal ?? originalGoal;
       const dir = normalized(goal.x - target.x, goal.y - target.y);
       if (target.attackPlan && target.attackAt !== undefined) {
         if (s.elapsed + 1e-9 >= target.attackAt) this.resolveTactic(target);
@@ -697,7 +756,7 @@ export class BattleDirector {
           const victim = this.livingImmuneCells().find(cell => cell.id === target.immuneAttackTargetId);
           if (victim && distance(victim, aim) <= radius + victim.radius
             && distance(target, victim) <= B.attackRadius + victim.radius && this.canStrikeBody(target, victim)) {
-            this.damageImmune(target, victim, strike ? target.role === 'elite' ? strike.elitePlayer : strike.player : B.playerDamage, 'enemy-attack');
+            this.damageImmune(target, victim, target.profession === 'fastling' ? SMART_VIRUS_BALANCE.fastlingDamage : strike ? target.role === 'elite' ? strike.elitePlayer : strike.player : B.playerDamage, 'enemy-attack');
           }
         } else if (attackingTissue) {
           if (distance(target, s.tissue) <= B.attackRadius + s.tissue.radius && this.canStrikeBody(target, s.tissue)) {
@@ -706,23 +765,24 @@ export class BattleDirector {
         } else if (distance(s.player, aim) <= radius + s.player.radius && this.canStrikeBody(target, s.player)) {
           // The frozen warning remains valid, but a legal move behind a fold
           // must block the strike at resolution just as it blocks ranged tools.
-          this.damagePlayer(target, strike ? target.role === 'elite' ? strike.elitePlayer : strike.player : B.playerDamage, 'enemy-attack');
+          this.damagePlayer(target, target.profession === 'fastling' ? SMART_VIRUS_BALANCE.fastlingDamage : strike ? target.role === 'elite' ? strike.elitePlayer : strike.player : B.playerDamage, 'enemy-attack');
         }
         target.attackAt = undefined; target.attackAim = undefined; target.attackTarget = undefined;
         target.immuneAttackTargetId = undefined;
-        target.attackReady = s.elapsed + (s.endless ? Math.max(1.1, B.attackInterval - (wave - 1) * .025) : B.attackInterval);
+        target.attackReady = s.elapsed + (target.profession === 'fastling' ? SMART_VIRUS_BALANCE.fastlingInterval : s.endless ? Math.max(1.1, B.attackInterval - (wave - 1) * .025) : B.attackInterval);
       }
       const eliteBlast = !!s.endless && target.role === 'elite' && goal === s.player;
       const reach = eliteBlast ? 250 : B.attackRadius + goal.radius - 8;
       const block = wallHit(target, dir, distance(target, goal), activeWorld(s));
       const lineClear = block === null || block >= distance(target, goal) - 20;
-      if (occupationGoal && distance(target, occupationGoal) <= 105) continue;
-      if (special || occupationGoal || distance(target, goal) > reach || !lineClear) {
+      if (occupationGoal && distance(target, occupationGoal) <= (springRaid ? 36 + target.radius - 2 : 105)) continue;
+      if (escortGoal && !immune && distance(target, escortGoal) <= escortGoal.radius) continue;
+      if (special || occupationGoal || escortGoal && !immune || distance(target, goal) > reach || !lineClear) {
         // Relaxation already used this body's movement budget. Do not cancel
         // it with an immediate pursuit step back into the same exact stack.
         if (spacing.has(target.id) || postureMoved) continue;
         const movementSpeed = speed(target);
-        const next = this.navigator.waypoint(target, goal, activeWorld(s), s.elapsed);
+        const next = this.navigator.waypoint(target, goal, target.territoryTask ? territoryRouteWorld : world, s.elapsed);
         const motion = normalized(next.x - target.x, next.y - target.y);
         const step = { x: motion.x * movementSpeed * BALANCE.step, y: motion.y * movementSpeed * BALANCE.step };
         let pos = moveEnemyThroughCrowd(target, step, s.targets, activeWorld(s));
@@ -739,8 +799,9 @@ export class BattleDirector {
         const line = normalized(goal.x - target.x, goal.y - target.y);
         const block = wallHit(target, line, distance(target, goal), activeWorld(s));
         if (block !== null && block < distance(target, goal) - 20) continue;
-        target.attackAt = s.elapsed + (eliteBlast ? 1.1 : B.attackWindup);
-        target.attackWindup = eliteBlast ? 1.1 : B.attackWindup;
+        const windup = target.profession === 'fastling' ? SMART_VIRUS_BALANCE.fastlingWindup : eliteBlast ? 1.1 : B.attackWindup;
+        target.attackAt = s.elapsed + windup;
+        target.attackWindup = windup;
         if (s.endless) target.attackRadius = eliteBlast ? 105 : B.attackRadius;
         target.attackAim = { x: goal.x, y: goal.y };
         target.attackTarget = immune ? 'immune' : goal === s.tissue ? 'tissue' : 'player';

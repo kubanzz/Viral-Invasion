@@ -64,19 +64,20 @@ export function registeredSpriteBodyBounds(layout: RegisteredSpriteLayout, point
 }
 
 /** A +X authored tool rotates at its inspected grip, with upright art on both aim half-planes. */
-export function aimedPaintedTool(asset: SourceRegisteredSpriteAsset, point: Vec, facing: number, lift = 0, heldGrip?: Vec): AimedPaintedTool | undefined {
+export function aimedPaintedTool(asset: SourceRegisteredSpriteAsset, point: Vec, facing: number, lift = 0, heldGrip?: Vec,
+  registeredScale?: number, angleOffset = 0): AimedPaintedTool | undefined {
   const source = asset.sourceBounds, canvas = asset.sourceSize, v = asset.visibleBounds;
   if (!source || !canvas || typeof source.x !== 'number' || typeof source.y !== 'number' || typeof source.width !== 'number'
-    || ![canvas.width, canvas.height, source.width, source.height, facing, lift].every(Number.isFinite)
+    || ![canvas.width, canvas.height, source.width, source.height, facing, lift, angleOffset].every(Number.isFinite)
     || canvas.width <= 0 || canvas.height <= 0 || source.width <= 0 || source.height <= 0 || v.width <= 0 || v.height <= 0) return;
   // Source pivotSource was the human-inspected grip. Recover its atlas anchor;
   // any remaining source-pixel rounding is checked again with the final image.
   const sourceGrip = { x: source.x + (asset.pivot.x * asset.width - v.x) * source.width / v.width,
     y: source.y + (asset.pivot.y * asset.height - v.y) * source.height / v.height };
   if (![sourceGrip.x, sourceGrip.y].every(Number.isFinite) || sourceGrip.x < 0 || sourceGrip.x > canvas.width || sourceGrip.y < 0 || sourceGrip.y > canvas.height) return;
-  const sourceScale = 36 / source.width;
+  const sourceScale = registeredScale ?? 36 / source.width;
   const layout = sourceRegisteredSpriteLayout(asset, canvas, sourceGrip, sourceScale); if (!layout) return;
-  const angle = Math.atan2(Math.sin(facing) * SPRITE_Y_SCALE, Math.cos(facing)), cos = Math.cos(angle), sin = Math.sin(angle), flipY = Math.cos(facing) < 0;
+  const angle = Math.atan2(Math.sin(facing) * SPRITE_Y_SCALE, Math.cos(facing)) + angleOffset, cos = Math.cos(angle), sin = Math.sin(angle), flipY = Math.cos(facing) < 0;
   const grip = heldGrip ?? { x: point.x + cos * 20, y: point.y * SPRITE_Y_SCALE - 30 + lift + sin * 20 }, b = layout.bounds;
   const corners = [b.left, b.right].flatMap(x => [b.top, b.bottom].map(rawY => {
     const y = flipY ? -rawY : rawY;
@@ -85,6 +86,13 @@ export function aimedPaintedTool(asset: SourceRegisteredSpriteAsset, point: Vec,
   return { layout, angle, flipY, grip, sourceGrip, sourceScale,
     bounds: { left: Math.min(...corners.map(p => p.x)), right: Math.max(...corners.map(p => p.x)),
       top: Math.min(...corners.map(p => p.y)), bottom: Math.max(...corners.map(p => p.y)) } };
+}
+
+/** A body landmark follows its authored common canvas and foot, never its alpha height. */
+export function registeredSourcePoint(point: Vec, sourcePoint: Vec, sourceFoot: Vec, sourceScale: number,
+  flipX = false, lift = 0): Vec {
+  return { x: point.x + (sourcePoint.x - sourceFoot.x) * sourceScale * (flipX ? -1 : 1),
+    y: point.y * SPRITE_Y_SCALE + (sourcePoint.y - sourceFoot.y) * sourceScale + lift };
 }
 
 /** The same pose decision must drive the displayed sprite and its occlusion envelope. */

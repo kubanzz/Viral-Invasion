@@ -5,7 +5,7 @@ import { MotionInterpolation } from './render/motionInterpolation';
 import { Controller, BINDINGS, type SkillPresentation } from './input/controller';
 import { TouchControls } from './input/touchControls';
 import { Renderer } from './render/renderer';
-import { BALANCE, type Tool } from './game/types';
+import { BALANCE, type Tool, type GameState } from './game/types';
 import { Soundscape } from './audio';
 import { battleHudMarkup, battleOverlay, updateBattleHud } from './ui/battleHud';
 import type { TraitId } from './game/battleTypes';
@@ -24,8 +24,10 @@ import './ui/startingPlan.css';
 import { preparationForPlan, type StartingPlanId } from './game/preparation';
 import { readVisibleHudRects } from './ui/hudLayout';
 import { CameraFollowPolicy } from './render/cameraFollowPolicy';
+import { desktopAimViewport as deriveDesktopAimViewport } from './render/desktopAimViewport';
+import { COMPACT_COMBAT_MINIMUM_SCALE, type CameraFollowOptions } from './render/camera';
 import { endlessHudMarkup, updateEndlessHud, endlessOverlay, endlessMenuEntry } from './ui/endlessHud';
-import { EndlessProfileStore } from './meta/endlessProfile';
+import { TerritoryProfileStore } from './meta/endlessProfile';
 import { endlessCombatStats } from './game/endlessGrowth';
 import type { EndlessUpgradeId } from './game/endlessGrowthTypes';
 import './ui/endless.css';
@@ -33,6 +35,8 @@ import './ui/artTheme.css';
 import { artIconMarkup, installArtIcons } from './ui/artIcons';
 import { hostEventHudMarkup, updateHostEventHud, hostEventAnnouncementMarkup, updateHostEventAnnouncement } from './ui/hostEventHud';
 import { chargedSlashProgress } from './game/chargedSlash';
+import { TERRITORY_CANNON_BALANCE } from './game/territoryCannon';
+import { territoryCannonCameraFocus } from './render/territoryCannonVisuals';
 import { HOST_EVENT_IDS } from './game/hostEvents';
 import './ui/hostEventHud.css';
 import { mobileHudMarkup, mobileDetailsMarkup, setMobileDetailsOpen, updateMobileHud } from './ui/mobileHud';
@@ -42,6 +46,9 @@ import { endlessTutorialHint } from './ui/endlessTutorial';
 import './ui/mainMenu.css';
 import { touchCopy } from './ui/touchCopy';
 import { resolveTouchLayout } from './ui/responsiveLayout';
+import { territoryHudMarkup, updateTerritoryHud, territoryVictoryOverlay, territoryResultOverlay } from './ui/territoryHud';
+import './ui/territory.css';
+import { ModalPointerIntent } from './ui/modalPointerIntent';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
 const app = document.querySelector<HTMLDivElement>('#app')!;
@@ -56,6 +63,7 @@ let portraitBlocked = touchMode && innerHeight > innerWidth;
 let mobileDetailsOpen = false;
 let resumeAfterMobileDetails = false;
 let mobileAimViewport: { left: number; right: number; top: number; bottom: number } | undefined;
+let desktopFlightViewport: { left: number; right: number; top: number; bottom: number } | undefined;
 let mobilePreviewHeaderBottom = 80;
 const seedText = params.get('seed');
 const seedParam = seedText !== null && seedText.trim() !== '' ? Number(seedText) : NaN;
@@ -69,11 +77,16 @@ const hostEventParam = params.get('hostEvent')?.trim().toUpperCase();
 const debugHostEventId = HOST_EVENT_IDS.find(id => id === hostEventParam);
 let hostEventDebugReport = '';
 const profile = new ProfileStore();
-const endlessProfile = new EndlessProfileStore();
+const endlessProfile = new TerritoryProfileStore();
 const session = new GameSession(initialSeed, { campaign: !trainingFixture, ...newRunOptions(profile.data, firstTrait), milestone });
 const clock = new FixedClock();
 const motion = new MotionInterpolation();
 const renderer = new Renderer(canvas);
+function prepareCombatCamera(state: GameState, options: CameraFollowOptions = {}): void {
+  renderer.prepareCamera(state, { ...options,
+    ...((options.aimRadius??0)>0||!options.aim&&territoryCannonCameraFocus(state) ? { viewport: touchMode?mobileAimViewport:desktopFlightViewport } : {}),
+    ...(touchMode && state.phase !== 'menu' ? { minimumScale: COMPACT_COMBAT_MINIMUM_SCALE } : {}) });
+}
 let presentedState = session.state;
 app.inert = true;
 app.setAttribute('aria-busy', 'true');
@@ -118,6 +131,7 @@ if (!trainingFixture) {
   document.querySelector('.battle-objective')!.insertAdjacentHTML('beforeend', encounterHudMarkup);
   if (session.state.growth) document.querySelector('#hud')!.insertAdjacentHTML('beforeend', growthHudMarkup);
   document.querySelector('#hud')!.insertAdjacentHTML('beforeend', endlessHudMarkup());
+  document.querySelector('#hud')!.insertAdjacentHTML('beforeend', territoryHudMarkup);
   if (session.state.campaign) document.querySelector('.tool[data-action="tool-2"] small')!.textContent = '聚拢 · 延迟爆发';
   document.querySelector('.micro-footer')!.textContent = `${milestone === 'G3' ? 'G4' : milestone} · ${milestone === 'G3' ? '器官联防' : '心脏防线'} / 架空生物幻想`;
   document.querySelector('.dock-wrap .ability:last-child .ability-name')!.textContent = '扫描 / 召集';
@@ -134,7 +148,8 @@ function applyControlLayout(): void {
     else title.innerHTML = desktopToolTitles[index];
   });
   canvas.setAttribute('aria-label', touchMode
-    ? '病毒入侵战场：左杆移动，右下大盘按住攻击；技能拖动瞄准、松手施放，拖至取消区撤销。点击战场可精确选点。'
+    ? session.state.territory ? '病毒入侵战场：左杆移动，净化盘按住攻击；驻防和附近净化点按即用。能量炮拖动瞄准，松手施放；弹射器按住选择落点，松手起飞。'
+      : '病毒入侵战场：左杆移动，右下大盘按住攻击；技能拖动瞄准、松手施放，拖至取消区撤销。点击战场可精确选点。'
     : desktopCanvasLabel);
 }
 applyControlLayout();
@@ -167,6 +182,7 @@ session.bus.on('event', event => {
   if (event.type === 'RUN_PAUSED' || event.type === 'RUN_ENDED') input.clear();
   if (event.type === 'RUN_ENDED' && session.state.campaign && runId) profile.recordRun(session.state, runId);
   if (event.type === 'RUN_ENDED' && session.state.endless && runId) endlessProfile.recordRun(session.state, runId);
+  if (event.type === 'TERRITORY_RESCUE_COMPLETED') { endlessProfile.checkpoint(session.state); overlayKey = ''; }
   if (event.type === 'MIGRATION_WARNING' && !migrationGuideSeen) migrationGuidePending = true;
   if (event.type === 'COUNTER_GUIDE_COMPLETED') profile.acknowledgeCounterGuide('completed');
   if (event.type === 'COUNTER_GUIDE_SKIPPED') profile.acknowledgeCounterGuide('skipped');
@@ -198,13 +214,15 @@ function start(newSeed?: number, replay?: RunEncounterRecord | null, preserveCur
   // Records predating preparation replay with no preloaded protocol. They must
   // not silently borrow the newly selected menu preference.
   if (replay === null) options.preparation = preparationForPlan('field');
-  sound.unlock(); session.start(newSeed ?? session.state.seed, preserveCurrent ? { mode } : { ...options, mode });
+  sound.unlock(); session.start(newSeed ?? session.state.seed, preserveCurrent ? { mode, territory: mode === 'endless', recordId: runId } : { ...options, mode, territory: mode === 'endless', recordId: runId });
+  input.setTerritoryMode(!!session.state.territory);
   hostEventDebugReport = '';
   if (debugHostEventId) {
     const result = session.debugHostEvent(debugHostEventId, params.get('hostEventOrgan') === 'lung' ? 'lung' : undefined);
     if (!result.ok) hostEventDebugReport = result.reason ?? '当前场景未满足此卡条件。';
   } else if (hostEventParam) hostEventDebugReport = `未知卡牌 ${hostEventParam}。可用 ID：${HOST_EVENT_IDS.join(' / ')}。`;
   document.body.classList.toggle('endless-mode', !!session.state.endless);
+  document.body.classList.toggle('territory-mode', !!session.state.territory);
   syncTouchOrientation();
 }
 function showHelp() {
@@ -238,6 +256,16 @@ function closeMigrationGuide() {
 }
 let handledTouchButton: HTMLButtonElement | undefined;
 let handledTouchAt = 0;
+const modalPointerIntent = new ModalPointerIntent();
+window.addEventListener('pointerdown', event => {
+  const target = event.target instanceof Element ? event.target.closest<HTMLButtonElement>('button[data-action]') : null;
+  modalPointerIntent.pointerDown(event.pointerId, target && app.contains(target) && !target.disabled ? target : null, event.pointerType);
+}, { capture: true });
+window.addEventListener('pointerup', event => {
+  const target = event.target instanceof Element ? event.target.closest<HTMLButtonElement>('button[data-action]') : null;
+  modalPointerIntent.pointerUp(event.pointerId, target && app.contains(target) && !target.disabled ? target : null);
+}, { capture: true });
+window.addEventListener('pointercancel', event => modalPointerIntent.pointerCancel(event.pointerId), { capture: true });
 app.addEventListener('pointerdown', event => {
   if (!touchMode || event.pointerType !== 'touch') return;
   const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-action]');
@@ -251,6 +279,7 @@ app.addEventListener('pointerdown', event => {
 app.addEventListener('click', event => {
   const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-action]');
   if (!button) return;
+  if (!modalPointerIntent.acceptsClick(event as PointerEvent, button, !!button.closest('.overlay'))) { event.preventDefault(); return; }
   if (event.isTrusted && (event as PointerEvent).pointerType !== 'mouse'
     && handledTouchButton === button && performance.now() - handledTouchAt < 800) return;
   const action = button.dataset.action!;
@@ -313,6 +342,12 @@ app.addEventListener('click', event => {
   }
   if (action.startsWith('tool-')) { input.select(Number(action.at(-1)) as Tool); return; }
   if (action === 'endless-start') { start(undefined, undefined, false, 'endless'); return; }
+  if (action === 'territory-save') { endlessProfile.save(); overlayKey = ''; input.clear(); clock.reset(); return; }
+  if (action === 'territory-finish' || action === 'territory-guard') {
+    if (action === 'territory-finish') session.finishTerritoryRescue();
+    else if (session.continueTerritoryGuard()) endlessProfile.checkpoint(session.state);
+    input.clear(); clock.reset(); overlayKey = ''; button.blur(); return;
+  }
   if (action === 'endless-upgrade') {
     session.chooseCombatUpgrade(button.dataset.draft!, button.dataset.upgrade as EndlessUpgradeId, button.dataset.run!);
     input.clear(); clock.reset(); overlayKey = ''; button.blur(); return;
@@ -324,7 +359,9 @@ app.addEventListener('click', event => {
   }
   if (action === 'endless-extract') {
     if (session.state.endless && session.state.phase === 'paused' && !session.state.endlessGrowth?.draft && !session.state.growth?.draft) {
-      session.finish(true, `主动撤离：已完成 ${session.state.endless.clearedWaves} 波，得分 ${session.state.endless.score}。`);
+      session.finish(session.state.territory ? !!session.state.territory.rescueSnapshot : true,
+        session.state.territory ? session.state.territory.rescueSnapshot ? '结束守卫，已完成的救援成果保留。' : '主动撤离：本次尚未完成救援。'
+          : `主动撤离：已完成 ${session.state.endless.clearedWaves} 波，得分 ${session.state.endless.score}。`);
       input.clear(); clock.reset();
     }
     return;
@@ -333,7 +370,15 @@ app.addEventListener('click', event => {
   if (action === 'retry') start(undefined, undefined, true);
   if (action === 'new') start((session.state.seed + 2654435761) >>> 0);
   if (action === 'pause' || action === 'continue') togglePause();
-  if (action === 'menu') { setMobileDetailsOpen(false); mobileDetailsOpen = false; resumeAfterMobileDetails = false; input.clear(); clock.reset(); help = false; history = false; growthDetails = false; resumeAfterGrowthDetails = false; profileOpen = false; startingPlanOpen = false; migrationGuide = false; migrationGuidePending = false; session.menu(); document.body.classList.remove('crisis'); }
+  if (action === 'menu') {
+    setMobileDetailsOpen(false); mobileDetailsOpen = false; resumeAfterMobileDetails = false; input.clear(); clock.reset();
+    help = false; history = false; growthDetails = false; resumeAfterGrowthDetails = false; profileOpen = false; startingPlanOpen = false; migrationGuide = false; migrationGuidePending = false;
+    // Leaving optional guard play settles its latest metrics through RUN_ENDED
+    // before replacing the live session; the rescue receipt stays authoritative.
+    if (session.state.territory?.stage === 'guard' && session.state.territory.rescueSnapshot)
+      session.finish(true, '守卫结束：返回菜单，已完成的救援成果保留。');
+    session.menu(); document.body.classList.remove('crisis');
+  }
   if (action === 'help') showHelp();
   if (action === 'close-help') { help = false; input.clear(); clock.reset(); if (resumeAfterHelp) session.resume(); resumeAfterHelp = false; }
   if (action === 'practice-hit') { help = false; input.clear(); clock.reset(); session.resume(); input.queuePracticeHit(); resumeAfterHelp = false; }
@@ -346,7 +391,7 @@ app.addEventListener('click', event => {
 function updateOverlay() {
   const state = session.state;
   const draft = state.growth?.draft;
-  const key = `${touchMode}:${!!state.endless}:${state.endless?.reward?.step}:${state.endless?.stageCheckpoint}:${state.endlessGrowth?.draft?.id}:${state.phase}:${help}:${lowEffects}:${history}:${growthDetails}:${profileOpen}:${startingPlanOpen}:${startingPlanSelection}:${migrationGuide}:${mobileDetailsOpen}:${portraitBlocked}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}:${state.growth?.pendingResearch?.id}:${state.battle?.encounter?.firstCounter.guideStatus}`;
+  const key = `${state.territory?.stage}:${state.territory?.rescueSnapshot?.runId}:${endlessProfile.status.code}:${touchMode}:${!!state.endless}:${state.endless?.reward?.step}:${state.endless?.stageCheckpoint}:${state.endlessGrowth?.draft?.id}:${state.phase}:${help}:${lowEffects}:${history}:${growthDetails}:${profileOpen}:${startingPlanOpen}:${startingPlanSelection}:${migrationGuide}:${mobileDetailsOpen}:${portraitBlocked}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}:${state.growth?.pendingResearch?.id}:${state.battle?.encounter?.firstCounter.guideStatus}`;
   if (key === overlayKey) return;
   overlayKey = key;
   const challengeHome = state.phase === 'menu' && !trainingFixture && milestone === 'G3' && !help && !history;
@@ -358,7 +403,7 @@ function updateOverlay() {
   el('hud').inert = modalActive;
   const host = el('overlay-host');
   setMobileDetailsOpen(false);
-  if (challengeHome) { host.innerHTML = mainMenuOverlay({ data: endlessProfile.data, status: endlessProfile.status }, touchMode); return; }
+  if (challengeHome) { host.innerHTML = mainMenuOverlay(endlessProfile.load(), touchMode); return; }
   if (mobileDetailsOpen) { host.innerHTML = mobileDetailsMarkup; setMobileDetailsOpen(true); return; }
   if (growthDetails) {
     host.innerHTML = growthDetailsOverlay(state, growthDetailsReturnLabel);
@@ -369,8 +414,9 @@ function updateOverlay() {
   if (profileOpen) { host.innerHTML = profileOverlay(profile.data, profile.status); return; }
   if (migrationGuide) { host.innerHTML = `<div class="overlay"><section class="modal" role="dialog" aria-modal="true" aria-label="首次迁移指引"><div class="eyebrow">THE NEXT CHAMBER / 首次迁移</div><h2>病毒要去另一个器官了。</h2><p>倒数已暂停。你可以去器官出口（见小地图）按 E 追击，或在隔离闸（见小地图）按 E 留守 2 秒封锁。放任会让肺部新增感染源，仍可补救。</p><p>追击后清掉迁移小体，或关闭肺部气道；器官图会显示心脏残留风险，出口可双向返回。此说明之后可在作战手册回看。</p><div class="actions"><button class="primary" data-action="close-migration-guide">明白了，继续作战</button></div></section></div>`; return; }
   if (state.endless) {
-    host.innerHTML = (!help && state.phase === 'paused' ? draftOverlay(state) : null)
-      ?? endlessOverlay(state, help, lowEffects, { data: endlessProfile.data, status: endlessProfile.status }) ?? '';
+    host.innerHTML = (!help ? territoryVictoryOverlay(state, endlessProfile.load()) ?? territoryResultOverlay(state, endlessProfile.load()) : null)
+      ?? (!help && state.phase === 'paused' ? draftOverlay(state) : null)
+      ?? endlessOverlay(state, help, lowEffects, endlessProfile.load(), touchMode) ?? '';
     return;
   }
   if (state.battle) {
@@ -380,7 +426,7 @@ function updateOverlay() {
     if (state.growth && history) host.querySelector('h2')?.insertAdjacentHTML('afterend', growthHistoryMarkup(state));
     if (state.growth && (help || history || state.phase === 'paused' || state.phase === 'result') && !host.querySelector('[data-action="growth-details"]')) host.querySelector('.actions')?.insertAdjacentHTML('beforeend', growthDetailsEntryMarkup);
     if (state.campaign) host.querySelector('.switches')?.insertAdjacentHTML('beforeend', `<button data-action="sound">声音 ${sound.enabled?'开':'关'}</button>`);
-    if (state.campaign && state.phase === 'result' && !help && !history) host.querySelector('.actions')?.insertAdjacentHTML('afterbegin', endlessMenuEntry({ data: endlessProfile.data, status: endlessProfile.status }));
+    if (state.campaign && state.phase === 'result' && !help && !history) host.querySelector('.actions')?.insertAdjacentHTML('afterbegin', endlessMenuEntry(endlessProfile.load()));
     if (state.campaign && state.phase === 'result' && !help && !history) host.querySelector('.modal')?.insertAdjacentHTML('beforeend', profileResultMarkup(state, profile.data, profile.status));
     return;
   }
@@ -399,6 +445,8 @@ function updateHud() {
   updateHostEventHud(s, hostEventDebugReport);
   updateHostEventAnnouncement(s, { lowEffects });
   document.body.classList.toggle('endless-mode', !!s.endless);
+  document.body.classList.toggle('territory-mode', !!s.territory);
+  updateTerritoryHud(s);
   if (s.endless) {
     document.body.classList.remove('dual-organ');
     updateEndlessHud(s);
@@ -433,10 +481,12 @@ function updateHud() {
 }
 function refreshHudRects() {
   const point = renderer.camera.worldToScreen(presentedState.player), scale = renderer.camera.scale;
-  renderer.setHudRects(readVisibleHudRects(canvas, {
+  const rects=readVisibleHudRects(canvas, {
     active: session.state.phase === 'playing', now: performance.now(),
     player: { left: point.x - 27 * scale, right: point.x + 27 * scale, top: point.y - 68 * scale, bottom: point.y + 10 * scale },
-  }));
+  });
+  renderer.setHudRects(rects);
+  if(!touchMode)desktopFlightViewport=deriveDesktopAimViewport(renderer.camera.width,renderer.camera.height,rects);
 }
 function refreshMobileAimViewport(): void {
   if (!touchMode) return;
@@ -459,7 +509,7 @@ function updateCommonHud() {
   if (touchMode && !mobileAimViewport) refreshMobileAimViewport();
   touchControls.update();
   const combat = s.endlessGrowth ? endlessCombatStats(s.endlessGrowth) : undefined;
-  document.querySelector('.status-chip')!.textContent = s.endless ? `连续挑战 / ${s.endless.wave}` : s.battle?.organId === 'lung' ? 'LUNG / 02' : 'HEART / 01';
+  document.querySelector('.status-chip')!.textContent = s.endless ? `${s.territory ? '心脏救援' : '连续挑战'} / ${s.endless.wave}` : s.battle?.organId === 'lung' ? 'LUNG / 02' : 'HEART / 01';
   el('dash-ready').textContent = s.player.dashReady > s.elapsed ? `${(s.player.dashReady-s.elapsed).toFixed(1)}s`:'就绪';
   el('dash-ready').previousElementSibling!.textContent = combat?.dashDamage ? '冲刺挥斩' : '冲刺';
   const chargeLabel = el('charged-slash-ready');
@@ -469,8 +519,9 @@ function updateCommonHud() {
   el('run-time').textContent = `SEED ${s.seed}　 /　${formatTime(s.elapsed)}`;
   document.querySelectorAll<HTMLButtonElement>('.tool').forEach((button,index)=>{
     const tool=(index+1) as Tool, cooldown = (tool === 1 ? combat?.primaryCooldown : tool === 2 ? combat?.areaCooldown : undefined) ?? BALANCE.cooldowns[tool];
-    button.classList.toggle('selected',s.tool===tool);button.setAttribute('aria-pressed',String(s.tool===tool));
-    el(`charge-${tool}`).style.width=`${Math.max(0,1-Math.max(0,s.cooldowns[tool]-s.elapsed)/cooldown)*100}%`;
+    const selected = s.tool === tool && !(s.territory && tool === 3);
+    button.classList.toggle('selected',selected);button.setAttribute('aria-pressed',String(selected));
+    el(`charge-${tool}`).style.width=`${s.territory && tool === 3 ? 100 : Math.max(0,1-Math.max(0,s.cooldowns[tool]-s.elapsed)/cooldown)*100}%`;
     if (tool === 1) {
       button.querySelector('strong')!.textContent = s.endless ? '粒子净化' : '精确净化';
       button.setAttribute('aria-label', `1 ${s.endless ? '粒子净化' : '精确净化'}`);
@@ -482,9 +533,21 @@ function updateCommonHud() {
       button.querySelector('small')!.textContent = s.endless ? `爆心 ${combat?.areaRadius ?? 96}${(combat?.catalysisDamage ?? 0) > 0 ? ' · 追加余震' : ' · 按住连发'}` : '聚拢 · 延迟爆发';
       if (!s.endless && s.traction) button.querySelector('small')!.textContent = s.traction.stage === 'guiding' ? '拖动鼠标 · 松手引爆' : s.traction.stage === 'aiming' ? '按住导流 / 轻点快放' : '聚拢中 · 即将爆发';
     }
-    if (touchMode) button.querySelector('strong')!.textContent = tool === 2 && s.endless ? '能量炮' : touchToolLabels[index];
+    if (tool === 3 && s.territory) {
+      button.querySelector('strong')!.textContent = '附近净化';
+      button.querySelector('small')!.textContent = '靠近按3 · 保留当前武器';
+      button.setAttribute('aria-label', '3 附近净化或修复心核，不切换武器');
+    } else if (tool === 3) {
+      const title = button.querySelector('strong')!;
+      if (title.innerHTML !== desktopToolTitles[index]) title.innerHTML = desktopToolTitles[index];
+      button.querySelector('small')!.textContent = '治疗 · +25 完整度';
+      button.setAttribute('aria-label', '3 组织修复');
+    }
+    if (touchMode) button.querySelector('strong')!.textContent = tool === 2 && s.endless ? '能量炮' : tool === 3 && s.territory ? '附近净化' : touchToolLabels[index];
   });
-  document.querySelector('.micro-footer')!.textContent = s.endless ? 'v0.9.0 · 连续进化挑战 / 微观绘本' : `v0.9.0 · ${s.battle ? '器官联防' : '基础训练'} / 微观绘本`;
+  document.querySelector('.micro-footer')!.textContent = s.territory ? 'v0.14.0 · 脚下驻军 / 免疫弹射 / 智能病毒'
+    : s.endless ? 'v0.14.0 · 连续挑战回归场景' : `v0.14.0 · ${s.battle ? '器官联防' : '基础训练'} / 奇幻生态`;
+  document.querySelector('.dock-wrap .ability:last-child .ability-name')!.textContent = s.territory ? '脚下驻军' : s.battle ? '扫描 / 召集' : '扫描';
   document.querySelectorAll<HTMLButtonElement>('[data-action="sound"]').forEach(button => { button.textContent = `声音 ${sound.enabled?'开':'关'}`; });
   document.querySelector<HTMLButtonElement>('[data-action="pause"]')!.hidden = s.phase === 'menu' || s.phase === 'result';
 }
@@ -516,11 +579,14 @@ function frame(now: number) {
   const cameraScope = `${session.state.seed}:${session.state.runMetrics?.runId ?? session.state.growth?.runId ?? ''}:${session.state.battle?.organId ?? 'training'}`;
   const dt = lastFrame === undefined ? 0 : Math.max(0, (now - lastFrame) / 1000);
   const cameraDecision = cameraFollowPolicy.next(cameraScope, session.state.phase, session.state.player, dt, clock.discontinuity, stepPositions);
-  const framing = touchMode ? input.resolvePreview(presentedState, point => renderer.camera.screenToWorld(point)) : undefined;
-  if (!cameraDecision.hold) renderer.prepareCamera(presentedState, { deltaSeconds: dt, snap: cameraDecision.snap,
-    ...(framing && !framing.cancelled ? { aim: framing.aim, viewport: mobileAimViewport } : {}) });
+  const previewFraming = input.resolvePreview(presentedState, point => renderer.camera.screenToWorld(point));
+  const framing = touchMode || previewFraming?.kind === 'cannon' ? previewFraming : undefined;
+  if (!cameraDecision.hold) prepareCombatCamera(presentedState, { deltaSeconds: dt, snap: cameraDecision.snap,
+    ...(framing && !framing.cancelled ? { aim: framing.aim, viewport: touchMode?mobileAimViewport:desktopFlightViewport,
+      ...(framing.kind === 'cannon' ? { aimRadius: TERRITORY_CANNON_BALANCE.radius } : {}) } : {}) });
   lastFrame = now;
   const touchPresentation = input.getPresentation(presentedState, point => renderer.camera.screenToWorld(point));
+  const cannonPreview = touchPresentation.preview?.kind === 'cannon' ? touchPresentation.preview : undefined;
   updateTouchSkillPreview(touchPresentation.preview);
   // The preview label follows every displayed frame; include its current box,
   // and newly shown cancel/guide areas, before placing world labels this frame.
@@ -528,10 +594,11 @@ function frame(now: number) {
   lastTouchPreviewActive = !!touchPresentation.preview;
   // A skill wheel can preview another tool without selecting or firing it in
   // the simulation. The authoritative input changes only on a real commit.
-  renderer.render(touchPresentation.preview ? { ...presentedState, tool: touchPresentation.tool } : presentedState,
-    touchPresentation.aim, { lowEffects, cameraPrepared: true,
-      authoritativeState: touchPresentation.preview ? { ...session.state, tool: touchPresentation.tool } : session.state,
-      aimRange: touchPresentation.preview?.range, aimCancelled: touchPresentation.preview?.cancelled });
+  renderer.render(touchPresentation.preview && !cannonPreview ? { ...presentedState, tool: touchPresentation.tool } : presentedState,
+    cannonPreview ? input.getAim(presentedState, point => renderer.camera.screenToWorld(point)) : touchPresentation.aim, { lowEffects, cameraPrepared: true,
+      authoritativeState: touchPresentation.preview && !cannonPreview ? { ...session.state, tool: touchPresentation.tool } : session.state,
+      aimRange: cannonPreview ? undefined : touchPresentation.preview?.range, aimCancelled: touchPresentation.preview?.cancelled,
+      ...(cannonPreview ? { cannonPreview: { aim: cannonPreview.aim, cancelled: cannonPreview.cancelled } } : {}) });
   sound.update(session.state);
   updateOverlay();
   decorateTouchOverlay();
@@ -546,7 +613,7 @@ function syncControlLayout(): boolean {
   for (const [node, record] of adaptedTouchText) if (node.nodeValue === record.adapted) node.nodeValue = record.original;
   adaptedTouchText.clear();
   touchMode = next; applyControlLayout();
-  mobileAimViewport = undefined; lastTouchPreviewActive = false;
+  mobileAimViewport = undefined; desktopFlightViewport=undefined;lastTouchPreviewActive = false;
   handledTouchButton = undefined; handledTouchAt = 0;
   overlayKey = ''; delete el('overlay-host').dataset.touchDecorated;
   updateTouchSkillPreview(undefined);
@@ -557,7 +624,7 @@ function resizeViewport(): void {
   syncTouchOrientation(); motion.reset(); cameraFollowPolicy.reset(); presentedState = session.state;
   renderer.resize();
   if (changed) { updateOverlay(); decorateTouchOverlay(); updateHud(); }
-  refreshMobileAimViewport(); renderer.prepareCamera(session.state); refreshHudRects(); clock.reset();
+  refreshMobileAimViewport(); prepareCombatCamera(session.state); refreshHudRects(); clock.reset();
 }
 window.addEventListener('resize', resizeViewport);
 window.visualViewport?.addEventListener('resize', resizeViewport);
@@ -575,7 +642,7 @@ function decorateTouchOverlay(): void {
   host.dataset.touchDecorated = overlayKey;
   if (help) {
     const grid = host.querySelector('.help-grid');
-    if (grid) grid.innerHTML = session.state.endless ? '<div>左摇杆移动；右下净化盘按住连射、拖动瞄准</div><div>能量炮 / 修复 / 免疫：按下预览、拖动瞄准、松手施放</div><div>拖入 × 区域再松手可取消技能或蓄能</div><div>点战场可保留精确落点，再轻点技能施放</div><div>点冲刺立即位移；长按蓄能，拖动定向，松开发射剑气</div><div>满蓄1.25秒发射5道剑气；释放后独立冷却6秒</div>' : '<div>左摇杆移动，右下净化盘按住攻击、拖动瞄准</div><div>裂解 / 修复 / 免疫：按下预览，松手施放</div><div>拖入 × 区域再松手取消</div><div>解锁导流后拖入 ✓ 圈确认，再拖动引导，松手引爆</div><div>点冲刺位移；靠近装置点击交互</div>';
+    if (grid) grid.innerHTML = session.state.endless ? `<div>左摇杆移动；右下净化盘按住连射、拖动瞄准</div><div>${session.state.territory ? '驻防：点按立即在脚下部署；满两支时调最近团到脚下' : '能量炮 / 免疫：按下预览、拖动瞄准、松手施放'}</div><div>${session.state.territory ? '附近净化点按即用；能量炮拖动瞄准后松手施放' : '修复：按下预览，拖向组织，松手施放'}</div>${session.state.territory ? '<div>靠近弹射器，按住弹射选择落点，松手起飞；红色落点不可降落</div>' : ''}<div>拖入 × 区域再松手可取消技能或蓄能</div><div>点冲刺立即位移；长按蓄能，拖动定向，松开发射剑气</div><div>满蓄1.25秒发射5道剑气；释放后独立冷却6秒</div>` : '<div>左摇杆移动，右下净化盘按住攻击、拖动瞄准</div><div>裂解 / 修复 / 免疫：按下预览，松手施放</div><div>拖入 × 区域再松手取消</div><div>解锁导流后拖入 ✓ 圈确认，再拖动引导，松手引爆</div><div>点冲刺位移；靠近装置点击交互</div>';
   }
   adaptTouchText(host);
   host.querySelectorAll('.intro-footnote').forEach(node => { node.textContent = '触屏 v3 候选 · 待 iPhone 复测 · 左杆移动 / 右侧技能轮盘 · 完全离线'; });
@@ -587,18 +654,20 @@ function updateTouchSkillPreview(preview: SkillPresentation | undefined): void {
   if (!preview || host.hidden) return;
   if (!host.firstElementChild) host.innerHTML = '<div class="mobile-preview-range"></div><div class="mobile-preview-ray"></div><div class="mobile-preview-target"></div><span class="mobile-preview-label"></span>';
   host.dataset.kind = String(preview.kind); host.dataset.cancelled = String(preview.cancelled);
-  const origin = renderer.camera.worldToScreen(presentedState.player), aim = renderer.camera.worldToScreen(preview.aim), scale = renderer.camera.scale;
+  const origin = renderer.camera.worldToScreen(preview.kind === 'cannon' ? TERRITORY_CANNON_BALANCE.origin : presentedState.player), aim = renderer.camera.worldToScreen(preview.aim), scale = renderer.camera.scale;
   const position = (selector: string, point: { x: number; y: number }, radius: number) => {
     const element = host.querySelector<HTMLElement>(selector)!;
     element.style.left = `${point.x}px`; element.style.top = `${point.y}px`;
     element.style.width = `${radius * scale * 2}px`; element.style.height = `${radius * scale * .72 * 2}px`;
   };
   position('.mobile-preview-range', origin, preview.range);
-  position('.mobile-preview-target', aim, preview.kind === 2 ? session.state.endlessGrowth ? endlessCombatStats(session.state.endlessGrowth).areaRadius : session.state.traction?.radius ?? BALANCE.areaRadius : 30);
+  position('.mobile-preview-target', aim, preview.kind === 'cannon' ? TERRITORY_CANNON_BALANCE.radius : preview.kind === 2 ? session.state.endlessGrowth ? endlessCombatStats(session.state.endlessGrowth).areaRadius : session.state.traction?.radius ?? BALANCE.areaRadius : 30);
   const dx = aim.x - origin.x, dy = aim.y - origin.y, ray = host.querySelector<HTMLElement>('.mobile-preview-ray')!;
   ray.style.left = `${origin.x}px`; ray.style.top = `${origin.y}px`; ray.style.width = `${Math.hypot(dx, dy)}px`; ray.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
   const label = host.querySelector<HTMLElement>('.mobile-preview-label')!;
-  label.textContent = preview.cancelled ? '松手取消' : preview.phase === 'guiding' ? '导流中 · 松手引爆' : `松手${preview.kind === 'charge' ? '发射剑气' : preview.kind === 2 ? session.state.endless ? '发射能量炮' : '裂解' : preview.kind === 3 ? '修复' : '指挥'} · 拖至 × 取消`;
+  label.textContent = preview.valid === false ? preview.hint ?? '落点受阻 · 调整方向'
+    : preview.cancelled ? '松手取消' : preview.hint ? `${preview.hint} · 拖至 × 取消`
+      : preview.phase === 'guiding' ? '导流中 · 松手引爆' : `松手${preview.kind === 'cannon' ? '弹射' : preview.kind === 'charge' ? '发射剑气' : preview.kind === 2 ? session.state.endless ? '发射能量炮' : '裂解' : preview.kind === 3 ? '修复' : '指挥'} · 拖至 × 取消`;
   const halfWidth = label.offsetWidth / 2;
   const left = (mobileAimViewport?.left ?? 8) + halfWidth, right = (mobileAimViewport?.right ?? innerWidth - 8) - halfWidth;
   label.style.left = `${right >= left ? Math.max(left, Math.min(right, aim.x)) : ((mobileAimViewport?.left ?? 0) + (mobileAimViewport?.right ?? innerWidth)) / 2}px`;
@@ -621,10 +690,10 @@ function adaptTouchText(root: HTMLElement): void {
   }
 }
 syncTouchOrientation();
-renderer.prepareCamera(session.state); updateOverlay(); updateHud();
+prepareCombatCamera(session.state); updateOverlay(); updateHud();
 renderer.ready.then(() => {
   app.inert = false; app.removeAttribute('aria-busy');
-  renderer.prepareCamera(session.state); refreshHudRects(); clock.reset(); renderer.startFrameLoop(frame);
+  prepareCombatCamera(session.state); refreshHudRects(); clock.reset(); renderer.startFrameLoop(frame);
 }).catch(error => {
   app.inert = false; app.removeAttribute('aria-busy');
   const host = document.querySelector<HTMLElement>('#overlay-host')!;
@@ -635,7 +704,7 @@ renderer.ready.then(() => {
 
 // Read-only diagnostics for browser regression. Inputs always use the real DOM.
 Object.defineProperty(window, '__viral', { value: Object.freeze({
-  version: '0.9.0-G4', snapshot: () => session.snapshot(),
+  version: '0.14.0-combat', snapshot: () => session.snapshot(),
   toScreen: (point: { x: number; y: number }) => renderer.camera.worldToScreen(point),
   toWorld: (point: { x: number; y: number }) => renderer.camera.screenToWorld(point),
   diagnostics: () => ({ ...renderer.diagnostics(session.state), touch: input.getPresentation(presentedState, point => renderer.camera.screenToWorld(point)) }),

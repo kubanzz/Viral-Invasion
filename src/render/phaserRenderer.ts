@@ -6,28 +6,37 @@ import { PhaserHost } from './phaserHost';
 import type { SceneEntity } from './artPresentation';
 import type { Camera, CameraFollowOptions } from './camera';
 import { foregroundOpacity } from './occlusion';
-import { getRaisedActorBodies, immuneVisualBounds, targetVisualBounds, type VisualBounds } from './raisedObstacleOcclusion';
+import { getRaisedActorBodies, immuneVisualBounds, playerVisualBounds, targetVisualBounds, type VisualBounds } from './raisedObstacleOcclusion';
 import { boundsOverlap } from './raisedObstacleGeometry';
 import { PROTOCOLS, protocolRank } from '../game/protocols';
 import { BATTLE_BALANCE } from '../game/battleConfig';
-import { aimedPaintedTool, paintedToolMuzzle, registeredSpriteBodyBounds, sourceRegisteredSpriteLayout, spriteBodyBounds, type AimedPaintedTool, type RegisteredSpriteLayout } from './spriteGeometry';
+import { aimedPaintedTool, paintedToolMuzzle, registeredSourcePoint, registeredSpriteBodyBounds, sourceRegisteredSpriteLayout, spriteBodyBounds, type AimedPaintedTool, type RegisteredSpriteLayout } from './spriteGeometry';
 import { approvedHeroAnimationClips, HeroAnimationController, type HeroAnimationAsset, type HeroFramePresentation } from './heroAnimation';
 import { drawImmuneCellAccents, immuneCellBody } from './immuneVisuals';
 import type { ImmuneCellState } from '../game/immuneCells';
 import { motherCoreDisturbed } from '../game/motherCore';
 import type { MotherCoreState } from '../game/motherCoreTypes';
-import { drawMotherCoreAccents, motherCoreLift, type MotherCoreAccentGeometry } from './battleVisuals';
+import { drawMotherCoreAccents, drawNativeEnemyAccents, motherCoreLift, type MotherCoreAccentGeometry, type MotherCoreStageCue, type NativeEnemyRuleCue } from './battleVisuals';
 import { toolFeedback } from './toolFeedback';
 import { createHeroRig, type HeroRig } from './heroRig';
-import { endlessDeathPose, endlessRestoration } from './endlessVisuals';
+import { endlessDeathPose } from './endlessVisuals';
+import { FANTASY_ART, FANTASY_SOURCE_ANCHOR, FANTASY_SOURCE_CANVAS, FANTASY_SOURCE_CANVAS_FACTOR, FantasyGroundCache, fantasyObstacleKind, fantasyOwnerAt, fantasySceneryId, visibleTerritory } from './fantasyTerritory';
+import { ACTOR_CANVAS, ACTOR_RUNTIME_IDS, ACTOR_STATIC_IDS, ActorAnimationController, ActorAnimationLibrary, actorLogicalAction, actorRecoilAngle, requestedActorEnemy, requestedActorHero, requestedActorImmune,
+  type ActorAsset, type ActorFrame, type ActorRequest } from './actorAnimation';
+import { HeroLocomotionController } from './heroLocomotion';
+import { createActorFootPlant, heroSoleContact } from './actorFootPlant';
+import { territoryPlayerFlightHeight } from '../game/territoryCannon';
+import { combatActorFrame, combatCannonFrame, combatConstructionFrame, type CombatFrame } from './smartVirusVisuals';
+import { territoryCannonBodyOpacity } from './territoryCannonVisuals';
 
-interface Asset extends HeroAnimationAsset { atlas:string; frame:string; flags:string[]; status:string }
-interface RuntimeArt {inputSignature:string; atlases:{key:string;dataUri:string;data:object}[];assets:Record<string,Asset>;environments:Record<string,{dataUri:string;width:number;height:number}>}
+interface Asset extends HeroAnimationAsset, ActorAsset { atlas:string; frame:string; flags:string[]; status:string }
+interface RuntimeArt {inputSignature:string; actorContract?:{version:number}; atlases:{key:string;dataUri:string;data:object}[];assets:Record<string,Asset>;environments:Record<string,{dataUri:string;width:number;height:number;source?:string}>}
 interface MotherArtComposition {
-  combat:MotherCoreState; layers:{id:string;layout:RegisteredSpriteLayout}[];
+  combat:MotherCoreState; layers:{id:string;layout:RegisteredSpriteLayout;frame?:ActorFrame;alpha?:number}[];
   alpha:number;lift:number;bounds:VisualBounds;geometry:MotherCoreAccentGeometry;
 }
-interface HeroPresentation { frame:HeroFramePresentation; bounds:VisualBounds; tool?:AimedPaintedTool; rig?:HeroRig }
+interface HeroPresentation { frame:HeroFramePresentation; bounds:VisualBounds; tool?:AimedPaintedTool; rig?:HeroRig;
+  actorFrame?:ActorFrame; toolId?:string; fallbackReason?:string }
 const art = artRuntime as unknown as RuntimeArt;
 const TAU = Math.PI * 2;
 function ring(ctx:CanvasRenderingContext2D,p:Vec,r:number,color:string,width=1.5) {ctx.beginPath();ctx.ellipse(p.x,p.y,r,r,0,0,TAU);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke();}
@@ -41,8 +50,16 @@ export class Renderer {
   private readonly rasterKeys=new Set<string>();
   private readonly seenRasters=new Set<string>();
   private readonly bodies=new Map<string,VisualBounds>();
+  private obstacleActors:{groundY:number;bodyBounds:VisualBounds}[]|undefined;
   private readonly effectSprites=new Set<string>();
   private readonly heroAnimation=new HeroAnimationController(approvedHeroAnimationClips(art.assets));
+  private readonly actorLibrary=new ActorAnimationLibrary(art.assets);
+  private readonly actorAnimation=new ActorAnimationController(this.actorLibrary);
+  private readonly locomotion=new HeroLocomotionController();
+  private readonly newActors=art.actorContract?.version===2;
+  private readonly actorFrames:Record<string,unknown>[]=[];
+  private readonly ruleDirections:NativeEnemyRuleCue[]=[];
+  private readonly motherStages:MotherCoreStageCue[]=[];
   private heroPresentation:HeroPresentation|undefined;
   private readonly beamOrigins=new Map<string,Vec>();
   private readonly witnessedBeamOrigins=new Map<string,Vec>();
@@ -56,8 +73,10 @@ export class Renderer {
   private lastPhase='';
   private lowEffects=false;
   private readonly immuneShadow=document.createElement('canvas');
+  private readonly fantasyGround=new FantasyGroundCache();
   private readonly app=document.querySelector<HTMLElement>('#app');
-  constructor(private readonly canvas:HTMLCanvasElement) {
+  constructor(private readonly canvas:HTMLCanvasElement,private readonly options:{actorPreview?:boolean;actorAnimationPreview?:boolean;actorPreviewEnemyCanvasFactor?:number;
+    actorPreviewToolCanvasHeight?:number;actorPreviewToolDepth?:'front'|'back'}={}) {
     this.painter=new CanvasScene(document.createElement('canvas'),{
       environment:(state,camera)=>this.environment(state,camera),
       nativeEntity:(entity,state,ctx,depth)=>this.nativeEntity(entity,state,ctx,depth),
@@ -65,6 +84,7 @@ export class Renderer {
       actorBodies:state=>this.raisedBodies(state),
       effectOrigin:effect=>this.beamOrigins.get(this.beamKey(effect)),
       projectileOrigin:castId=>this.projectileOrigins.get(castId),
+      heroContact:()=>heroSoleContact(this.heroPresentation?.actorFrame),
       raster:(key,source,depth,x=0,y=0,scale=1)=>{
         this.seenRasters.add(key);this.rasterKeys.add(key);
         // Full-screen textures use device pixels internally; the host places
@@ -81,6 +101,7 @@ export class Renderer {
   startFrameLoop(callback:(now:number)=>void):void {this.host.startFrameLoop(callback);}
   /** Observe accepted shots at their actual birth step, including steps between rendered frames. */
   witnessSimulation(state:GameState):void {
+    this.locomotion.observe(state);
     if(!this.host.isReady||state.phase!=='playing')return;
     this.syncBeamState(state);
     this.prepareProjectileOrigins(state,this.prepareHeroPresentation(state,true).tool);
@@ -105,44 +126,87 @@ export class Renderer {
   diagnostics(state:GameState) {
     const heroComplete=(['idle','walk','hurt','dash'] as const).every(clip=>!!this.heroAnimation.clips[clip]);
     const frame=this.heroPresentation?.frame;
+    const actorGroups=[...this.actorLibrary.statuses,...Object.values(ACTOR_STATIC_IDS).map(id=>({identity:id.replace('fantasy.actor.',''),
+      ready:!!this.actorLibrary.staticAsset(id),missing:this.actorLibrary.staticAsset(id)?[]:[id],issues:[]}))];
+    const oldSourceIds=Object.entries({...art.assets,...art.environments}).filter(([,asset])=>asset.source?.startsWith('ViralInvasion_Art_v1/')).map(([id])=>id);
+    const unexpectedActorIds=Object.keys(art.assets).filter(id=>id.startsWith('fantasy.actor.')&&!ACTOR_RUNTIME_IDS.includes(id));
     return {...this.painter.diagnostics(state),phaser:this.host.diagnostics(),art:{signature:art.inputSignature,selectedAssets:Object.keys(art.assets).length,
+      fantasyGround:this.fantasyGround.diagnostics(),
+      actorFrames:this.newActors?this.actorFrames:[],
+      ruleDirections:this.newActors?this.ruleDirections:[],
+      motherStages:this.newActors?this.motherStages:[],
+      actorContract:{version:this.newActors?2:1,preview:!!this.options.actorPreview,animationPreview:!!this.options.actorAnimationPreview,groups:actorGroups,
+        ready:this.newActors&&!this.options.actorPreview&&!this.options.actorAnimationPreview&&actorGroups.every(group=>group.ready)&&oldSourceIds.length===0&&unexpectedActorIds.length===0,
+        oldSourceIds,unexpectedActorIds},
       activeBodies:[...this.bodies].map(([id,bounds])=>({id,bounds})),
-      heroAnimation:{enabledClips:Object.keys(this.heroAnimation.clips),frame:frame?{id:frame.id,clip:frame.clip,index:frame.index,animated:frame.animated,flipX:frame.flipX,articulated:!!this.heroPresentation?.rig,gait:frame.gait}:null},
-      weapon:{assetId:this.heroPresentation?.tool?'weapon.emitter.painted':null,mode:this.heroPresentation?.tool?'painted-static':'procedural-fallback'},
-      provisional:[...(heroComplete?['additional-player-directions']:['continuous-player-animation']),
+      heroAnimation:{enabledClips:this.newActors?(this.actorLibrary.ready('hero')?['idle','walk','hurt','dash']:[]):Object.keys(this.heroAnimation.clips),frame:frame?{id:frame.id,clip:frame.clip,index:frame.index,animated:frame.animated,flipX:frame.flipX,articulated:!!this.heroPresentation?.rig,gait:frame.gait,
+        locomotion:{...this.locomotion.current},contact:heroSoleContact(this.heroPresentation?.actorFrame)??null}:null},
+      weapon:{assetId:this.heroPresentation?.tool?(this.heroPresentation.toolId??'weapon.emitter.painted'):null,mode:this.heroPresentation?.tool?'painted-static':'procedural-fallback'},
+      provisional:this.newActors?actorGroups.filter(group=>!group.ready).map(group=>`actor-group-not-ready:${group.identity}`):[...(heroComplete?['additional-player-directions']:['continuous-player-animation']),
         ...(this.motherArtLayersReady()?['mother-static-layers','missing-continuous-mother-animation']:['mother-core']),
         ...(!this.heroPresentation?.tool?['painted-emitter-tool']:[]),
-        'painted-lung',...(art.assets['enemy.fission.parent']&&art.assets['enemy.fission.child']?['fission-static-poses']:['fission-single-body']),
+        ...(['fantasy.lung.floor.healthy','fantasy.lung.floor.infected'].every(id=>!!art.environments[id])
+          &&['fantasy.lung.tree.healthy','fantasy.lung.tree.infected','fantasy.lung.rock.healthy','fantasy.lung.rock.infected',
+            'fantasy.lung.airway.closed','fantasy.lung.airway.open'].every(id=>!!art.assets[id])?[]:['painted-lung']),
+        ...(art.assets['enemy.fission.parent']&&art.assets['enemy.fission.child']?['fission-static-poses']:['fission-single-body']),
         ...(art.assets['immune.cell.idle']?['immune-static-poses']:['immune-squad'])]}};
   }
-  render(state:GameState,aim:Vec,opts:{lowEffects?:boolean;cameraPrepared?:boolean;authoritativeState?:GameState;aimRange?:number;aimCancelled?:boolean}={}):void {
+  render(state:GameState,aim:Vec,opts:{lowEffects?:boolean;cameraPrepared?:boolean;authoritativeState?:GameState;aimRange?:number;aimCancelled?:boolean;cannonPreview?:{aim:Vec;cancelled:boolean}}={}):void {
     if(!this.host.isReady)return;
     this.lowEffects=!!opts.lowEffects;
-    this.host.beginFrame();this.seenRasters.clear();this.bodies.clear();
+    this.locomotion.observe(opts.authoritativeState??state);
+    this.host.beginFrame();this.seenRasters.clear();this.bodies.clear();this.obstacleActors=undefined;
+    this.actorFrames.length=0;this.ruleDirections.length=0;this.motherStages.length=0;this.actorAnimation.beginFrame(state);
     this.heroPresentation=this.prepareHeroPresentation(state);
     this.prepareBeamOrigins(state,opts.authoritativeState??state);
     this.prepareProjectileOrigins(opts.authoritativeState??state,this.heroPresentation.tool);
     if(state.phase==='menu'){
       this.effectSprites.clear();
       if(!opts.cameraPrepared)this.prepareCamera(state);this.environment(state,this.camera);
-      this.emit('menu:hero','hero.selected',this.camera.screenToWorld({x:this.width*.76,y:this.height*.86}),Math.min(430,this.height*.58),500);
+      if(this.newActors){
+        // This display anchor is independent of the live player. Enlarge body
+        // and emitter together while preserving the inspected hand attachment.
+        const point=this.camera.screenToWorld({x:this.width*.76,y:this.height*.86}),height=Math.min(430,this.height*.58)/this.camera.scale;
+        const request:ActorRequest={identity:'hero',action:'idle',clip:'idle',logicalAction:'idle',authoredDirection:'front_right',direction:'front_right',flipX:false};
+        const frame=this.actorAnimation.select('menu:hero',request,state,height,!!this.options.actorPreview,false,!!this.options.actorAnimationPreview);
+        const emitter=this.actorLibrary.staticAsset(ACTOR_STATIC_IDS.emitter,!!this.options.actorPreview),r=frame?.registration;
+        const grip=frame&&r?.grip?registeredSourcePoint(point,r.grip,r.foot,frame.sourceScale,false):undefined;
+        const toolHeight=height*this.emitterCanvasHeight()/ACTOR_CANVAS.hero;
+        const tool=emitter&&grip?aimedPaintedTool(emitter.asset,point,Math.PI/4,0,grip,
+          toolHeight/emitter.registration.canvas.width*emitter.registration.commonCanvasScale):undefined;
+        const available=!!frame&&(!!tool||!!this.options.actorPreview),body=available?this.emitActor('menu:hero',frame!,point,500):undefined;
+        const menuBounds=body&&tool?{left:Math.min(body.left,tool.bounds.left),right:Math.max(body.right,tool.bounds.right),
+          top:Math.min(body.top,tool.bounds.top),bottom:Math.max(body.bottom,tool.bounds.bottom)}:body??{left:point.x,right:point.x,top:point.y*.72,bottom:point.y*.72};
+        this.heroPresentation={frame:{id:available?frame!.id:'',clip:available?'idle':null,index:frame?.index??0,animated:available&&frame!.groupReady,
+          flipX:false,lift:0,layout:available?frame!.layout:undefined},actorFrame:available?frame:undefined,bounds:menuBounds,tool:available?tool:undefined,
+          toolId:available&&tool?ACTOR_STATIC_IDS.emitter:undefined,fallbackReason:available?frame!.preview?'style-preview-only':undefined:!frame?'hero-group-not-ready':'emitter-registration-or-group-not-ready'};
+        this.recordActor('menu:hero',request,point,state,available?frame:undefined,body,!frame?'hero-group-not-ready':!available?'emitter-registration-or-group-not-ready':frame.preview?'style-preview-only':undefined);
+        const toolFrame=this.staticActor(ACTOR_STATIC_IDS.emitter,'weapon.emitter',toolHeight);
+        if(available&&tool&&emitter){
+          this.emitToolSprite('menu:tool',ACTOR_STATIC_IDS.emitter,point,tool,500.2);
+          this.recordActor('menu:tool',{identity:'weapon.emitter',action:'held',clip:'static',logicalAction:'held'},point,state,toolFrame,tool.bounds,
+            toolFrame?.preview?'style-preview-only':undefined,{entityId:'menu:hero',sourceFoot:null,sourceGrip:tool.sourceGrip,
+              sourceMuzzle:emitter.asset.sourceMuzzle??emitter.registration.muzzle??null,grip:tool.grip,muzzle:paintedToolMuzzle(emitter.asset,tool)??null,rotation:tool.angle,flipY:tool.flipY});
+        }else this.recordActor('menu:tool',{identity:'weapon.emitter',action:'held',clip:'static'},point,state,undefined,undefined,
+          frame?'emitter-registration-or-group-not-ready':'hero-group-not-ready',{entityId:'menu:hero',sourceFoot:null});
+      }else this.emit('menu:hero','hero.selected',this.camera.screenToWorld({x:this.width*.76,y:this.height*.86}),Math.min(430,this.height*.58),500);
     }else{this.painter.render(state,aim,opts);this.drawAtlasEffects(state,!!opts.lowEffects);}
     for(const key of this.rasterKeys)if(!this.seenRasters.has(key)){this.host.removeRasterLayer(key);this.rasterKeys.delete(key);}
     this.host.endFrame();
+    this.actorAnimation.endFrame();
     const organ=state.battle?.organId??'heart';
     if(organ!==this.lastOrgan){document.body.dataset.organ=organ;this.lastOrgan=organ;}
     if(state.phase!==this.lastPhase){this.app?.setAttribute('data-phase',state.phase);this.lastPhase=state.phase;}
   }
-  destroy():void {this.host.destroy();this.rasterKeys.clear();this.bodies.clear();this.heroAnimation.reset();this.heroPresentation=undefined;this.beamOrigins.clear();this.witnessedBeamOrigins.clear();this.projectileOrigins.clear();}
-  private createAnimations():void {for(const kind of ['scan','heal']){const frames=Object.keys(art.assets).filter(id=>id.startsWith(`fx.${kind}.`)).sort();if(frames.length>1)this.host.scene.anims.create({key:`art-${kind}`,frames:frames.map(id=>({key:art.assets[id].atlas,frame:art.assets[id].frame})),frameRate:kind==='scan'?12:10,repeat:0});}}
+  destroy():void {this.host.destroy();this.rasterKeys.clear();this.bodies.clear();this.heroAnimation.reset();this.actorAnimation.reset();this.actorFrames.length=0;this.heroPresentation=undefined;this.beamOrigins.clear();this.witnessedBeamOrigins.clear();this.projectileOrigins.clear();}
+  private createAnimations():void {if(this.newActors)return;for(const kind of ['scan','heal']){const frames=Object.keys(art.assets).filter(id=>id.startsWith(`fx.${kind}.`)).sort();if(frames.length>1)this.host.scene.anims.create({key:`art-${kind}`,frames:frames.map(id=>({key:art.assets[id].atlas,frame:art.assets[id].frame})),frameRate:kind==='scan'?12:10,repeat:0});}}
   private environment(state:GameState,camera:Camera):void {
-    const world=activeWorld(state),organ=state.battle?.organId??'heart',b=world.bounds;
-    const restoration=endlessRestoration(state);
-    const put=(id:string,key:string,x:number,y:number,w:number,h:number,depth:number,alpha=1)=>{const p=camera.worldToScreen({x,y});this.host.sprite(id,{texture:`environment:${key}`,x:p.x,y:p.y,width:w*camera.scale,height:h*camera.scale,depth,originX:0,originY:0,alpha,...(restoration?{tint:restoration.tint}:{})});};
-    // Enclosing tissue sits outside the actual collision bounds; the interior crop has no walls.
-    put('environment:back',organ==='lung'?'lung.floor':'heart.full',-220,-300,world.width+440,world.height*.72+470,-100);
-    put('environment:floor',`${organ}.floor`,b.left,b.top,b.right-b.left,(b.bottom-b.top)*.72,-90);
-    if(organ==='lung')put('environment:wall','lung.wall',-180,-310,world.width+360,300,-80,.8);
+    const ground=this.fantasyGround.prepare(state,art.inputSignature,id=>art.environments[id]
+      ?this.host.scene.textures.get(`environment:${id}`).getSourceImage() as HTMLImageElement:undefined);
+    const point=camera.worldToScreen(ground),key='fantasy-terrain';
+    this.seenRasters.add(key);this.rasterKeys.add(key);
+    this.host.setRasterLayer(key,ground.canvas,-90,ground.width*camera.scale,
+      ground.height*camera.yScale*camera.scale,point.x,point.y,ground.dirty);
   }
   private emit(id:string,assetId:string,p:Vec,height:number,depth:number,options:{flipX?:boolean;alpha?:number;lift?:number;tint?:number}={}):boolean {
     const a=art.assets[assetId];if(!a)return false;const screen=this.camera.worldToScreen(p),factor=height/a.visibleBounds.height,w=a.width*factor,h=a.height*factor;
@@ -150,8 +214,24 @@ export class Renderer {
     this.host.sprite(id,{texture:a.atlas,frame:a.frame,x:screen.x,y:screen.y+(options.lift??0)*this.camera.scale,width:w*this.camera.scale,height:h*this.camera.scale,depth,alpha:options.alpha,flipX:options.flipX,originX:options.flipX?1-a.pivot.x:a.pivot.x,originY:a.pivot.y,...(options.tint!==undefined?{tint:options.tint}:{})});return true;
   }
   private bounds(id:string,p:Vec,height:number,flipX=false,lift=0):VisualBounds {const b=spriteBodyBounds(art.assets[id],p,height,flipX);return {...b,top:b.top+lift,bottom:b.bottom+lift};}
+  /** State pairs share their complete authored canvas and foot anchor. Their
+   * differing alpha bounds never resize the tree/stone when ownership flips. */
+  private fantasySprite(id:string,assetId:string,p:Vec,canvasSize:number,depth:number,alpha=1):VisualBounds|undefined {
+    const asset=art.assets[assetId];if(!asset)return;
+    const layout=sourceRegisteredSpriteLayout(asset,FANTASY_SOURCE_CANVAS,FANTASY_SOURCE_ANCHOR,canvasSize/1024);
+    if(!layout)return;
+    const point=this.camera.worldToScreen(p),scale=this.camera.scale;
+    const body=registeredSpriteBodyBounds(layout,p,false,0);
+    if(point.x+(body.right-p.x)*scale>=0&&point.x+(body.left-p.x)*scale<=this.width
+      &&point.y+(body.bottom-p.y*.72)*scale>=0&&point.y+(body.top-p.y*.72)*scale<=this.height)
+      this.host.sprite(id,{texture:asset.atlas,frame:asset.frame,x:point.x,y:point.y,width:layout.width*scale,height:layout.height*scale,
+        depth,originX:layout.originX,originY:layout.originY,alpha});
+    return body;
+  }
   private prepareHeroPresentation(state:GameState,preview=false):HeroPresentation {
-    const frame=preview?this.heroAnimation.preview(state):this.heroAnimation.select(state);
+    if(this.newActors)return this.prepareActorHero(state,preview);
+    const selected=preview?this.heroAnimation.preview(state,this.locomotion.current):this.heroAnimation.select(state,this.locomotion.current);
+    const frame={...selected,lift:selected.lift-territoryPlayerFlightHeight(state)};
     let body=frame.layout?registeredSpriteBodyBounds(frame.layout,state.player,frame.flipX,frame.lift)
       :this.bounds(frame.id,state.player,86,frame.flipX,frame.lift);
     // The old weapon.emitter is a prototype and never enables replacement.
@@ -168,6 +248,113 @@ export class Renderer {
       top:Math.min(body.top,tool.bounds.top),bottom:Math.max(body.bottom,tool.bounds.bottom)}:body;
     return {frame,bounds,tool,rig};
   }
+  private prepareActorHero(state:GameState,inspectOnly=false):HeroPresentation {
+    const request=requestedActorHero(state,this.locomotion.current),actorFrame=this.actorAnimation.select('player',request,state,ACTOR_CANVAS.hero,!!this.options.actorPreview,inspectOnly,!!this.options.actorAnimationPreview);
+    if(!actorFrame)return {frame:{id:'',clip:null,index:0,animated:false,flipX:!!request.flipX,lift:0},
+      bounds:playerVisualBounds(state),fallbackReason:'hero-group-not-ready'};
+    const frame:HeroFramePresentation={id:actorFrame.id,clip:actorFrame.clip as HeroFramePresentation['clip'],index:actorFrame.index,
+      animated:actorFrame.groupReady,flipX:!!actorFrame.flipX,lift:-territoryPlayerFlightHeight(state),layout:actorFrame.layout};
+    const rig=createActorFootPlant(actorFrame,state.player);
+    let bounds=rig?.bounds??registeredSpriteBodyBounds(actorFrame.layout,state.player,frame.flipX,frame.lift);
+    const emitter=this.actorLibrary.staticAsset(ACTOR_STATIC_IDS.emitter,!!this.options.actorPreview),r=actorFrame.registration;
+    const recoil=actorRecoilAngle(state.player.facing,toolFeedback(state)?.strength??0);
+    const hand=r.grip?registeredSourcePoint(state.player,r.grip,r.foot,actorFrame.sourceScale,frame.flipX,frame.lift):undefined;
+    const tool=emitter&&hand?aimedPaintedTool(emitter.asset,state.player,state.player.facing,frame.lift,hand,this.emitterCanvasHeight()/emitter.registration.canvas.width,recoil):undefined;
+    if(tool)bounds={left:Math.min(bounds.left,tool.bounds.left),right:Math.max(bounds.right,tool.bounds.right),
+      top:Math.min(bounds.top,tool.bounds.top),bottom:Math.max(bounds.bottom,tool.bounds.bottom)};
+    return {frame,bounds,tool,actorFrame,rig,toolId:tool?ACTOR_STATIC_IDS.emitter:undefined,
+      fallbackReason:!tool?'emitter-registration-or-group-not-ready':actorFrame.preview?'style-preview-only':undefined};
+  }
+  private emitterCanvasHeight():number {
+    return this.options.actorPreview&&Number.isFinite(this.options.actorPreviewToolCanvasHeight)&&this.options.actorPreviewToolCanvasHeight!>0
+      ?this.options.actorPreviewToolCanvasHeight!:ACTOR_CANVAS.emitter;
+  }
+  private emitActor(id:string,frame:ActorFrame,point:Vec,depth:number,alpha=1):VisualBounds {
+    const body=registeredSpriteBodyBounds(frame.layout,point,!!frame.flipX,0),screen=this.camera.worldToScreen(point),scale=this.camera.scale;
+    const a=art.assets[frame.id],layout=frame.layout;
+    if(screen.x+(body.right-point.x)*scale>=0&&screen.x+(body.left-point.x)*scale<=this.width
+      &&screen.y+(body.bottom-point.y*.72)*scale>=0&&screen.y+(body.top-point.y*.72)*scale<=this.height)
+      this.host.sprite(id,{texture:a.atlas,frame:a.frame,x:screen.x,y:screen.y,width:layout.width*scale,height:layout.height*scale,
+        originX:frame.flipX?1-layout.originX:layout.originX,originY:layout.originY,flipX:!!frame.flipX,depth,alpha});
+    return body;
+  }
+  private emitCombat(id:string,frame:CombatFrame,point:Vec,state:GameState,depth:number,alpha=1):VisualBounds {
+    const a=art.assets[frame.id],layout=frame.layout,screen=this.camera.worldToScreen(point),scale=this.camera.scale;
+    const body=registeredSpriteBodyBounds(layout,point,frame.flipX,0);
+    this.host.sprite(id,{texture:a.atlas,frame:a.frame,x:screen.x,y:screen.y,width:layout.width*scale,height:layout.height*scale,
+      originX:frame.flipX?1-layout.originX:layout.originX,originY:layout.originY,flipX:frame.flipX,depth,alpha,
+      ...(id!=='valve'&&state.targets.some(t=>t.id===id&&t.hitUntil>state.elapsed)?{tint:0xfff3c7}:{})});
+    const parts=frame.id.split('.'),clip=parts.at(-2)!,identity=parts.slice(0,3).join('.'),size=a.sourceSize!;
+    const registered:ActorFrame={identity,action:clip,clip,id:frame.id,index:Number(parts.at(-1)),asset:a,
+      registration:{canvas:size,foot:{x:size.width*.5,y:size.height*.85},commonCanvasScale:1},layout,
+      sourceScale:layout.width/(a.width*(a.sourceBounds!.width!/a.visibleBounds.width)),groupReady:true,preview:false,flipX:frame.flipX};
+    this.recordActor(id,registered,point,state,registered,body);this.bodies.set(id,body);return body;
+  }
+  private recordActor(id:string,request:ActorRequest,point:Vec,state:GameState,frame?:ActorFrame,body?:VisualBounds,fallbackReason?:string,
+    extra:Record<string,unknown>={}) {
+    const source=frame?.asset,screenFoot=this.camera.worldToScreen(point),presented=frame??request;
+    const animation=source?.animation as {approved?:boolean;motionMethod?:string;kind?:string}|undefined;
+    const visible=body?screenFoot.x+(body.right-point.x)*this.camera.scale>=0&&screenFoot.x+(body.left-point.x)*this.camera.scale<=this.width
+      &&screenFoot.y+(body.bottom-point.y*.72)*this.camera.scale>=0&&screenFoot.y+(body.top-point.y*.72)*this.camera.scale<=this.height
+      :screenFoot.x>=-100&&screenFoot.x<=this.width+100&&screenFoot.y>=-150&&screenFoot.y<=this.height+50;
+    // Pausing may retain a previously displayed frame after rule intent changes.
+    // Report that frame's presentation, and keep current intent separately.
+    this.actorFrames.push({actorId:id,entityId:id,semanticId:frame?.id??null,identity:presented.identity,action:presented.action,
+      logicalAction:request.logicalAction??(request.identity==='hero'?actorLogicalAction(state):request.action),clip:presented.clip,
+      requestedAction:request.action,requestedClip:request.clip,requestedDirection:request.direction??'radial',
+      requestedAuthoredDirection:request.authoredDirection??'radial',requestedFlipX:!!request.flipX,
+      index:frame?.index??null,frameIndex:frame?.index??null,frame:frame?.id??null,direction:presented.direction??'radial',
+      authoredDirection:presented.authoredDirection??'radial',flipX:!!presented.flipX,native:!!frame&&(!fallbackReason||fallbackReason==='style-preview-only'),visible,
+      groupReady:frame?.groupReady??false,fallback:!!fallbackReason||!frame||!!frame.preview,fallbackReason:fallbackReason??(frame?.preview?'style-preview-only':frame?null:'actor-group-not-ready'),
+      candidate:!!frame?.preview||animation?.approved===false,motionMethod:animation?.motionMethod??animation?.kind??null,
+      source:source?{path:source.source,sha256:source.sourceSha256,sourceFrame:source.sourceFrame??null}:null,
+      sourceFoot:frame?.registration.foot??null,sourceGrip:frame?.registration.grip??null,sourceMuzzle:frame?.registration.muzzle??source?.sourceMuzzle??null,
+      sourceScale:frame?.sourceScale??null,commonCanvasScale:frame?.registration.commonCanvasScale??null,
+      worldFoot:{x:point.x,y:point.y},screenFoot,bodyBounds:body??null,grip:null,muzzle:null,rotation:null,ruleCue:[],...extra});
+  }
+  private staticActor(id:string,identity:string,canvasWorldHeight:number):ActorFrame|undefined {
+    const item=this.actorLibrary.staticAsset(id,!!this.options.actorPreview);if(!item)return;
+    const sourceScale=canvasWorldHeight/item.registration.canvas.height*item.registration.commonCanvasScale;
+    const layout=sourceRegisteredSpriteLayout(item.asset,item.registration.canvas,item.registration.foot,sourceScale);if(!layout)return;
+    const groupReady=!!this.actorLibrary.staticAsset(id);
+    return {...item,identity,clip:'static',action:'static',index:0,layout,sourceScale,groupReady,preview:!groupReady};
+  }
+  private actorEnemy(target:Target,state:GameState) {
+    if(target.hp<=0&&(target.deadAt===undefined||state.elapsed-target.deadAt>=.3))return;
+    const previewFactor=this.options.actorPreview&&Number.isFinite(this.options.actorPreviewEnemyCanvasFactor)&&this.options.actorPreviewEnemyCanvasFactor!>0
+      ?this.options.actorPreviewEnemyCanvasFactor!:ACTOR_CANVAS.enemyRadiusFactor;
+    const request=requestedActorEnemy(target,state),height=target.radius*previewFactor;
+    const frame=this.actorAnimation.select(target.id,request,state,height,!!this.options.actorPreview,false,!!this.options.actorAnimationPreview);
+    const attachments:(ActorFrame|undefined)[]=[...(target.territoryTask?.kind==='invade'?[ACTOR_STATIC_IDS.invader]:[]),
+      ...(target.role==='elite'?[ACTOR_STATIC_IDS.elite]:[])].map(id=>{const item=this.staticActor(id,request.identity,height);
+        return item?{...item,flipX:request.flipX,direction:request.direction,authoredDirection:request.authoredDirection}:undefined;});
+    const ready=!!frame&&attachments.every(Boolean);
+    const bounds=frame?registeredSpriteBodyBounds(frame.layout,target,!!frame.flipX):undefined;
+    if(bounds)for(const accessory of attachments)if(accessory){const b=registeredSpriteBodyBounds(accessory.layout,target,!!accessory.flipX);
+      bounds.left=Math.min(bounds.left,b.left);bounds.right=Math.max(bounds.right,b.right);bounds.top=Math.min(bounds.top,b.top);bounds.bottom=Math.max(bounds.bottom,b.bottom);}
+    return {request,frame:ready?frame:undefined,body:bounds,attachments:attachments.filter((item):item is ActorFrame=>!!item),
+      fallbackReason:ready?undefined:!frame?'enemy-group-not-ready':'role-attachment-not-ready'};
+  }
+  private nativeActorEnemy(entity:SceneEntity,target:Target,state:GameState,ctx:CanvasRenderingContext2D,depth:number):boolean {
+    const presentation=this.actorEnemy(target,state);if(!presentation)return true;
+    const {request,frame,attachments,fallbackReason}=presentation;
+    const marked=!!state.growth?.marks.some(mark=>mark.targetId===target.id&&mark.until>state.elapsed&&mark.organId===state.battle?.organId);
+    const hidden=target.traits?.includes('MIMIC')&&(target.revealedUntil??0)<=state.elapsed
+      &&(target.exposedUntil??0)<=state.elapsed&&state.scanUntil<=state.elapsed&&!marked;
+    const alpha=target.hp<=0?Math.max(0,1-(state.elapsed-target.deadAt!)/.3):hidden ? .6 : 1;
+    const body=frame?this.emitActor(target.id,frame,target,depth,alpha):presentation.body;
+    if(!frame){this.recordActor(target.id,request,target,state,frame,body,fallbackReason);return false;}
+    const ruleCue=drawNativeEnemyAccents(ctx,target,state).filter(cue=>{
+      const a=this.camera.worldToScreen(cue.displayOrigin),b=this.camera.worldToScreen(cue.displayEnd),r=(cue.displayRadius??7)*this.camera.scale;
+      return Math.max(a.x,b.x)+r>=0&&Math.min(a.x,b.x)-r<=this.width
+        &&Math.max(a.y,b.y)+r*.72>=0&&Math.min(a.y,b.y)-r*.72<=this.height;});this.ruleDirections.push(...ruleCue);
+    this.recordActor(target.id,request,target,state,frame,body,fallbackReason,{ruleCue});
+    const visualBody=presentation.body??body!;this.bodies.set(target.id,visualBody);
+    for(const accessory of attachments){const id=`${target.id}:${accessory.id}`,b=this.emitActor(id,accessory,target,depth+.1,alpha);
+      this.recordActor(id,{...accessory,action:accessory.id===ACTOR_STATIC_IDS.invader?'invade':'elite'},target,state,accessory,b,undefined,{entityId:target.id});}
+    this.painter.annotateArtEntity(ctx,entity,state,Math.max(target.radius,target.x-visualBody.left,visualBody.right-target.x),Math.max(25,target.y*.72-visualBody.top+8));
+    return true;
+  }
   private playerPresentation(state:GameState):HeroPresentation {
     return this.heroPresentation??=this.prepareHeroPresentation(state);
   }
@@ -183,11 +370,16 @@ export class Renderer {
     return bounds;
   }
   private emitPaintedTool(state:GameState,tool:AimedPaintedTool,depth:number):void {
-    const a=art.assets['weapon.emitter.painted'],origin=this.camera.worldToScreen(state.player),scale=this.camera.scale;
-    this.host.sprite('player:tool',{texture:a.atlas,frame:a.frame,x:origin.x+(tool.grip.x-state.player.x)*scale,
-      y:origin.y+(tool.grip.y-state.player.y*.72)*scale,width:tool.layout.width*scale,height:tool.layout.height*scale,
+    const offset=this.newActors&&this.options.actorPreview&&this.options.actorPreviewToolDepth
+      ?this.options.actorPreviewToolDepth==='front'?.2:-.1:(this.newActors||this.heroPresentation?.rig) ? .2 : Math.sin(tool.angle)<0?-.1:.2;
+    this.emitToolSprite('player:tool',this.heroPresentation?.toolId??'weapon.emitter.painted',state.player,tool,depth+offset);
+  }
+  private emitToolSprite(id:string,assetId:string,point:Vec,tool:AimedPaintedTool,depth:number):void {
+    const a=art.assets[assetId],origin=this.camera.worldToScreen(point),scale=this.camera.scale;
+    this.host.sprite(id,{texture:a.atlas,frame:a.frame,x:origin.x+(tool.grip.x-point.x)*scale,
+      y:origin.y+(tool.grip.y-point.y*.72)*scale,width:tool.layout.width*scale,height:tool.layout.height*scale,
       originX:tool.layout.originX,originY:tool.flipY?1-tool.layout.originY:tool.layout.originY,flipY:tool.flipY,
-      rotation:tool.angle,depth:depth+(this.heroPresentation?.rig ? .2 : Math.sin(tool.angle)<0?-.1:.2)});
+      rotation:tool.angle,depth});
   }
   private beamKey(effect:Effect):string {return JSON.stringify([effect.id,effect.kind,effect.born,effect.duration,effect.radius,effect.from.x,effect.from.y,effect.to.x,effect.to.y]);}
   private syncBeamState(state:GameState):void {
@@ -201,7 +393,7 @@ export class Renderer {
     const origins=new Map<string,Vec>(),epsilon=1e-8;
     const fires=authoritativeState.events.filter(event=>event.type==='TOOL_FIRED'&&event.tick===authoritativeState.tick&&event.data.tool===1
       &&typeof event.data.x==='number'&&Number.isFinite(event.data.x)&&typeof event.data.y==='number'&&Number.isFinite(event.data.y));
-    const asset=art.assets['weapon.emitter.painted'];
+    const asset=art.assets[this.newActors?ACTOR_STATIC_IDS.emitter:'weapon.emitter.painted'];
     for(const effect of state.effects){
       if(effect.kind!=='beam'||effect.born>state.elapsed||state.elapsed-effect.born>=effect.duration)continue;
       // Effect has no actor/facing identity. Only observe proven player shots at
@@ -225,7 +417,7 @@ export class Renderer {
   }
   private prepareProjectileOrigins(state:GameState,tool:AimedPaintedTool|undefined):void {
     const live=new Set((state.playerProjectiles??[]).map(shot=>shot.castId));
-    const asset=art.assets['weapon.emitter.painted'];
+    const asset=art.assets[this.newActors?ACTOR_STATIC_IDS.emitter:'weapon.emitter.painted'];
     for(const event of state.events){
       if(event.type!=='PLAYER_PROJECTILE_LAUNCHED'||event.data.kind==='sword')continue;
       const age=state.elapsed-event.tick*BALANCE.step,castId=String(event.data.castId);
@@ -266,11 +458,13 @@ export class Renderer {
     return windup?-2:Math.sin(time*4+phase)*1.2;
   }
   private motherArtLayersReady():boolean {
+    if(this.newActors)return this.actorLibrary.ready('mother');
     return ['mother.base','mother.core.exposed','mother.membrane','mother.carapace','mother.fission','mother.mimic','mother.purified']
       .every(id=>!!art.assets[id]&&!!sourceRegisteredSpriteLayout(art.assets[id],{width:1024,height:1024},{x:512,y:850},1));
   }
   private motherComposition(target:Target,state:GameState):MotherArtComposition|undefined {
-    const combat=state.campaign?.core.combat,base=art.assets['mother.base'];
+    if(this.newActors)return this.actorMotherComposition(target,state);
+    const combat=state.territory?.bossCombat??state.campaign?.core.combat,base=art.assets['mother.base'];
     if(target.role!=='core'||!combat||combat.coreId!==target.id||combat.organId!==state.battle?.organId
       ||!base?.sourceBounds||base.sourceBounds.height<=0)return;
     const canvas={width:1024,height:1024},anchor={x:512,y:850},sourceScale=target.radius*2.8/base.sourceBounds.height;
@@ -293,21 +487,57 @@ export class Renderer {
       geometry:{coreOffset,bodyBounds:local}};
   }
   private artTargetBounds(target:Target,state:GameState):VisualBounds|undefined {
+    if(target.profession){const f=combatActorFrame(art.assets,target,state);return f?registeredSpriteBodyBounds(f.layout,target,f.flipX,0):undefined;}
     if(target.role==='core')return this.motherComposition(target,state)?.bounds;
+    if(target.role==='source'&&art.assets[FANTASY_ART.source]){
+      const layout=sourceRegisteredSpriteLayout(art.assets[FANTASY_ART.source],FANTASY_SOURCE_CANVAS,FANTASY_SOURCE_ANCHOR,target.radius*FANTASY_SOURCE_CANVAS_FACTOR/1024);
+      if(layout)return registeredSpriteBodyBounds(layout,target,false,0);
+    }
+    if(this.newActors){const actor=this.actorEnemy(target,state);return actor?.frame?actor.body:undefined;}
     const id=this.targetAsset(target);return id?this.bounds(id,target,this.targetHeight(target),false,this.targetLift(target,state)):undefined;
   }
   private nativeMother(entity:SceneEntity,target:Target,state:GameState,ctx:CanvasRenderingContext2D,depth:number):boolean {
-    const composition=this.motherComposition(target,state);if(!composition)return false;
+    const composition=this.motherComposition(target,state);if(!composition){if(this.newActors)this.recordActor(target.id,
+      {identity:'mother',action:(state.territory?.bossCombat??state.campaign?.core.combat)?.phase??'awakening',clip:'base'},target,state,undefined,undefined,'mother-group-not-ready');return false;}
     const point=this.camera.worldToScreen(target),scale=this.camera.scale;
     for(const [index,layer]of composition.layers.entries()){
       const a=art.assets[layer.id],layout=layer.layout,b=layout.bounds;
       if(point.x+b.right*scale<0||point.x+b.left*scale>this.width||point.y+(b.bottom+composition.lift)*scale<0||point.y+(b.top+composition.lift)*scale>this.height)continue;
       this.host.sprite(index===0?target.id:`${target.id}:${layer.id}`,{texture:a.atlas,frame:a.frame,x:point.x,y:point.y+composition.lift*scale,
-        width:layout.width*scale,height:layout.height*scale,originX:layout.originX,originY:layout.originY,depth:depth+index*.1,alpha:composition.alpha});
+        width:layout.width*scale,height:layout.height*scale,originX:layout.originX,originY:layout.originY,depth:depth+index*.1,alpha:composition.alpha*(layer.alpha??1)});
+      if(layer.frame)this.recordActor(index===0?target.id:`${target.id}:${layer.id}`,layer.frame,target,state,layer.frame,
+        registeredSpriteBodyBounds(layout,target,false,composition.lift),undefined,{entityId:target.id,combatPhase:composition.combat.phase});
     }
     const body=composition.bounds;this.bodies.set(target.id,body);
     this.painter.annotateArtEntity(ctx,entity,state,Math.max(target.x-body.left,body.right-target.x),Math.max(20,target.y*.72-body.top+8));
-    drawMotherCoreAccents(ctx,target,state,composition.combat,composition.geometry);return true;
+    const stage=drawMotherCoreAccents(ctx,target,state,composition.combat,composition.geometry);if(this.newActors&&stage)this.motherStages.push(stage);return true;
+  }
+  private actorMotherComposition(target:Target,state:GameState):MotherArtComposition|undefined {
+    const combat=state.territory?.bossCombat??state.campaign?.core.combat;
+    if(target.role!=='core'||!combat||combat.coreId!==target.id||combat.organId!==state.battle?.organId
+      ||!this.actorLibrary.ready('mother')&&!this.options.actorPreview)return;
+    const dead=target.hp<=0,exposed=Math.max(combat.exposedUntil,target.exposedUntil??0)>state.elapsed;
+    const clips=dead?['purified']:['base',...(['FISSION','CARAPACE','MIMIC'] as const).filter(trait=>combat.traits.includes(trait)).map(trait=>trait.toLowerCase()),
+      'core',...(combat.membrane.remaining>0?['membrane']:[])];
+    const layers:MotherArtComposition['layers']=[];
+    for(const clip of clips){
+      const request:ActorRequest={identity:'mother',action:dead?'defeated':combat.phase,clip,direction:'radial',
+        ...(clip==='core'?{age:exposed?.5:0,duration:1}:clip==='base'&&combat.attack?
+          {age:state.elapsed-combat.attack.startedAt,duration:combat.attack.resolveAt-combat.attack.startedAt}:{}),moving:clip==='base'};
+      const frame=this.actorAnimation.select(`${target.id}:${clip}`,request,state,target.radius*ACTOR_CANVAS.motherRadiusFactor,
+        !!this.options.actorPreview,false,!!this.options.actorAnimationPreview);if(!frame)return;
+      const alpha=clip==='membrane'?.5+.25*combat.membrane.remaining/Math.max(1,combat.membrane.total)
+        :clip==='carapace'?(exposed?.18:combat.activeTrait==='CARAPACE'?1:.45)
+          :clip==='mimic'?(exposed?.12:combat.activeTrait==='MIMIC'?.9:.35):1;
+      layers.push({id:frame.id,layout:frame.layout,frame,alpha});
+    }
+    const bounds={left:Infinity,right:-Infinity,top:Infinity,bottom:-Infinity};
+    for(const layer of layers){const b=registeredSpriteBodyBounds(layer.layout,target,false);
+      bounds.left=Math.min(bounds.left,b.left);bounds.right=Math.max(bounds.right,b.right);bounds.top=Math.min(bounds.top,b.top);bounds.bottom=Math.max(bounds.bottom,b.bottom);}
+    const core=layers.find(layer=>layer.frame?.clip==='core')?.layout.bounds;
+    return {combat,layers,lift:0,alpha:!dead&&combat.activeTrait==='MIMIC'&&!motherCoreDisturbed(combat,state.elapsed)&&!exposed?.68:1,
+      bounds,geometry:{coreOffset:core?{x:(core.left+core.right)/2,y:(core.top+core.bottom)/2}:{x:0,y:0},
+        bodyBounds:{left:bounds.left-target.x,right:bounds.right-target.x,top:bounds.top-target.y*.72,bottom:bounds.bottom-target.y*.72}}};
   }
   private immunePose(cell:ImmuneCellState,state:GameState):{id:string;height:number;flipX:boolean}|undefined {
     const idle=art.assets['immune.cell.idle'];if(!idle)return undefined;
@@ -326,17 +556,31 @@ export class Renderer {
     return {id,height:cell.radius*2.4*ratio,flipX:Math.cos(cell.facing)<0};
   }
   private immuneBounds(cell:ImmuneCellState,state:GameState):VisualBounds {
+    if(this.newActors){const frame=this.actorAnimation.select(cell.id,requestedActorImmune(cell,state),state,cell.radius*ACTOR_CANVAS.immuneRadiusFactor,!!this.options.actorPreview,false,!!this.options.actorAnimationPreview);
+      return frame?registeredSpriteBodyBounds(frame.layout,cell,!!frame.flipX):immuneVisualBounds(cell,state.elapsed);}
     const pose=this.immunePose(cell,state);return pose?this.bounds(pose.id,cell,pose.height,pose.flipX):immuneVisualBounds(cell,state.elapsed);
   }
   private beaconBounds(state:GameState, beacon=state.growth?.beacon):VisualBounds|undefined {
+    if(this.newActors){const frame=this.staticActor(ACTOR_STATIC_IDS.beacon,'immune.beacon',ACTOR_CANVAS.beacon);
+      return frame&&beacon&&beacon.mode!=='patrol'&&beacon.organId===state.battle?.organId&&beacon.until>state.elapsed
+        ?registeredSpriteBodyBounds(frame.layout,beacon,false):undefined;}
     return art.assets['immune.beacon']&&beacon&&beacon.mode!=='patrol'&&beacon.organId===state.battle?.organId&&beacon.until>state.elapsed
       ?this.bounds('immune.beacon',beacon,54):undefined;
   }
   private raisedBodies(state:GameState) {
     return getRaisedActorBodies(state,{player:this.playerPresentation(state).bounds,
       targets:new Map(state.targets.flatMap(t=>{const body=this.artTargetBounds(t,state);return body?[[t.id,body] as const]:[];})),
-      immune:new Map((state.growth?.cells??[]).flatMap(cell=>this.immunePose(cell,state)?[[cell.id,this.immuneBounds(cell,state)] as const]:[])),
+      immune:new Map((state.growth?.cells??[]).flatMap(cell=>this.newActors||this.immunePose(cell,state)?[[cell.id,this.immuneBounds(cell,state)] as const]:[])),
       beacons:new Map(immuneLegions(state.growth).flatMap(beacon=>{const bounds=this.beaconBounds(state,beacon);return bounds?[[beacon.id,bounds] as const]:[];}))});
+  }
+  private fantasyObstacleActors(state:GameState):{groundY:number;bodyBounds:VisualBounds}[] {
+    return this.obstacleActors??=[
+      {groundY:state.player.y,bodyBounds:this.playerPresentation(state).bounds},
+      ...state.targets.flatMap(target=>{const bounds=this.artTargetBounds(target,state);return target.hp>0&&bounds?[{groundY:target.y,bodyBounds:bounds}]:[];}),
+      ...(state.growth?.cells??[]).filter(cell=>cell.organId===state.battle?.organId&&immuneCellBody(cell,state.elapsed).alpha>0)
+        .map(cell=>({groundY:cell.y,bodyBounds:this.immuneBounds(cell,state)})),
+      ...immuneLegions(state.growth).flatMap(beacon=>{const bounds=this.beaconBounds(state,beacon);return bounds?[{groundY:beacon.y,bodyBounds:bounds}]:[];}),
+    ];
   }
   private drawImmuneShadow(cell:ImmuneCellState,state:GameState):void {
     const buffer=this.immuneShadow;if(buffer.width!==96||buffer.height!==64){buffer.width=96;buffer.height=64;}
@@ -347,7 +591,30 @@ export class Renderer {
     this.host.setRasterLayer(key,buffer,1,96*this.camera.scale,64*this.camera.scale,p.x-48*this.camera.scale,p.y-32*this.camera.scale);
   }
   private nativeEntity(entity:SceneEntity,state:GameState,ctx:CanvasRenderingContext2D,depth:number):boolean {
+    if(entity.kind==='smart-construction'){
+      const plan=state.endless?.smartSupport?.plans[entity.index!],p=plan?.nestPosition;
+      if(!plan||!p)return true;
+      const f=combatConstructionFrame(art.assets,plan,state);if(!f)return false;
+      this.emitCombat(entity.id,f,p,state,depth,.8);return true;
+    }
     if(entity.kind==='player'){
+      if(this.newActors){
+        const presentation=this.playerPresentation(state),frame=presentation.actorFrame,tool=presentation.tool,request=requestedActorHero(state,this.locomotion.current);
+        if(!frame||!tool&&!this.options.actorPreview){this.recordActor('player',request,state.player,state,frame,presentation.bounds,presentation.fallbackReason);return false;}
+        const body=presentation.rig||presentation.frame.lift!==0?this.emitHero(state,depth):this.emitActor('player',frame,state.player,depth);this.bodies.set('player',presentation.bounds);
+        this.recordActor('player',request,state.player,state,frame,body,frame.preview?'style-preview-only':undefined);
+        this.painter.annotateArtEntity(ctx,entity,state,Math.max(32,state.player.x-body.left,body.right-state.player.x),Math.max(70,state.player.y*.72-body.top));
+        if(tool){
+          this.emitPaintedTool(state,tool,depth);
+          const asset=art.assets[ACTOR_STATIC_IDS.emitter],toolFrame=this.staticActor(ACTOR_STATIC_IDS.emitter,'weapon.emitter',this.emitterCanvasHeight());
+          const muzzle=paintedToolMuzzle(asset,tool);
+          this.recordActor('player:tool',{identity:'weapon.emitter',action:actorLogicalAction(state)??'held',clip:'static',logicalAction:actorLogicalAction(state)},
+            state.player,state,toolFrame,tool.bounds,toolFrame?.preview?'style-preview-only':undefined,
+            {sourceFoot:null,sourceGrip:tool.sourceGrip,sourceMuzzle:asset.sourceMuzzle??toolFrame?.registration.muzzle??null,
+              grip:tool.grip,muzzle:muzzle??null,rotation:tool.angle,flipY:tool.flipY,entityId:'player'});
+        }else this.recordActor('player:tool',{identity:'weapon.emitter',action:'held',clip:'static'},state.player,state,undefined,undefined,'emitter-registration-or-group-not-ready');
+        return true;
+      }
       const p=state.player,t=state.elapsed,body=this.emitHero(state,depth);this.bodies.set('player',body);
       this.painter.annotateArtEntity(ctx,entity,state,Math.max(40,p.x-body.left,body.right-p.x),Math.max(92,p.y*.72-body.top));ring(ctx,p,24,'#187f8ecc',2);
       ctx.save();ctx.translate(p.x,p.y);ctx.scale(1,1/.72);
@@ -385,6 +652,25 @@ export class Renderer {
     }
     if(entity.kind==='target'){
       const t=state.targets[entity.index!];if(t.role==='core')return this.nativeMother(entity,t,state,ctx,depth);
+      if(t.profession){
+        if(t.hp<=0)return true;
+        const f=combatActorFrame(art.assets,t,state);if(!f)return false;
+        const b=this.emitCombat(t.id,f,t,state,depth);
+        this.painter.annotateArtEntity(ctx,entity,state,Math.max(t.radius,t.x-b.left,b.right-t.x),Math.max(60,t.y*.72-b.top+8));return true;
+      }
+      if(this.newActors&&(t.role==='virus'||t.role==='elite'||!t.role))return this.nativeActorEnemy(entity,t,state,ctx,depth);
+      if(t.role==='source'&&art.assets[FANTASY_ART.source]){
+        if(t.hp<=0)return true;
+        const body=this.fantasySprite(t.id,FANTASY_ART.source,t,t.radius*FANTASY_SOURCE_CANVAS_FACTOR,depth);
+        if(body){this.bodies.set(t.id,body);
+          if(this.newActors){const a=art.assets[FANTASY_ART.source],sourceScale=t.radius*FANTASY_SOURCE_CANVAS_FACTOR/1024,
+            layout=sourceRegisteredSpriteLayout(a,FANTASY_SOURCE_CANVAS,FANTASY_SOURCE_ANCHOR,sourceScale)!;
+            const frame:ActorFrame={identity:'infection.source',action:'active',clip:'static',id:FANTASY_ART.source,index:0,asset:a,
+              registration:{canvas:FANTASY_SOURCE_CANVAS,foot:FANTASY_SOURCE_ANCHOR,commonCanvasScale:1},layout,sourceScale,groupReady:true,preview:false};
+            this.recordActor(t.id,frame,t,state,frame,body);}
+          this.painter.annotateArtEntity(ctx,entity,state,
+          Math.max(t.radius,t.x-body.left,body.right-t.x),Math.max(70,t.y*.72-body.top+8));return true;}
+      }
       const death=endlessDeathPose(t,state,this.lowEffects);
       if(death){
         const asset=this.targetAsset({...t,hp:1});
@@ -406,6 +692,16 @@ export class Renderer {
     }
     if(entity.kind==='immune'){
       const cell=state.growth?.cells?.[entity.index!];if(!cell)return false;
+      if(this.newActors){
+        const body=immuneCellBody(cell,state.elapsed);if(body.alpha<=0||cell.organId!==state.battle?.organId)return true;
+        const request=requestedActorImmune(cell,state),frame=this.actorAnimation.select(cell.id,request,state,cell.radius*ACTOR_CANVAS.immuneRadiusFactor,!!this.options.actorPreview,false,!!this.options.actorAnimationPreview);
+        const bounds=frame?this.emitActor(cell.id,frame,cell,depth,body.alpha):undefined;
+        this.recordActor(cell.id,request,cell,state,frame,bounds,frame?undefined:'immune-group-not-ready');
+        if(!frame)return false;
+        this.drawImmuneShadow(cell,state);this.bodies.set(cell.id,bounds!);
+        this.painter.annotateArtEntity(ctx,entity,state,Math.max(23,cell.x-bounds!.left,bounds!.right-cell.x),Math.max(30,cell.y*.72-bounds!.top+5));
+        drawImmuneCellAccents(ctx,cell,state.elapsed,this.lowEffects,'overlay');return true;
+      }
       const pose=this.immunePose(cell,state);if(!pose)return false;
       const body=immuneCellBody(cell,state.elapsed);if(body.alpha<=0||cell.organId!==state.battle?.organId)return true;
       this.drawImmuneShadow(cell,state);
@@ -418,11 +714,23 @@ export class Renderer {
       const beacon=immuneLegions(state.growth).find(beacon=>beacon.id===entity.id);
       if(!beacon||beacon.id!==entity.id||beacon.organId!==state.battle?.organId||beacon.until<=state.elapsed)return true;
       if(beacon.mode==='patrol'){this.painter.annotateArtEntity(ctx,entity,state,0,0);return true;}
+      if(this.newActors){const frame=this.staticActor(ACTOR_STATIC_IDS.beacon,'immune.beacon',ACTOR_CANVAS.beacon),body=frame?this.emitActor(beacon.id,frame,beacon,depth):undefined;
+        this.recordActor(beacon.id,{identity:'immune.beacon',action:beacon.mode??'guard',clip:'static'},beacon,state,frame,body,frame?undefined:'beacon-not-ready');
+        if(!frame)return false;this.bodies.set(beacon.id,body!);this.painter.annotateArtEntity(ctx,entity,state,35,65);return true;}
       const body=this.beaconBounds(state,beacon);if(!body)return false;
       this.emit(beacon.id,'immune.beacon',beacon,54,depth);this.bodies.set(beacon.id,body);
       this.painter.annotateArtEntity(ctx,entity,state,Math.max(24,beacon.x-body.left,body.right-beacon.x),Math.max(59,beacon.y*.72-body.top+5));return true;
     }
     if(entity.kind==='tissue'){
+      const fantasy=FANTASY_ART.core.healthy,asset=art.assets[fantasy];
+      if(asset){
+        const layout=sourceRegisteredSpriteLayout(asset,FANTASY_SOURCE_CANVAS,FANTASY_SOURCE_ANCHOR,150/1024);
+        if(layout){const body=registeredSpriteBodyBounds(layout,state.tissue,false,0);
+          const covered=state.player.y<=state.tissue.y&&boundsOverlap(this.playerPresentation(state).bounds,body);
+          this.fantasySprite('tissue',fantasy,state.tissue,150,depth,covered?.28:1);
+          this.painter.annotateArtEntity(ctx,entity,state,Math.max(52,state.tissue.x-body.left,body.right-state.tissue.x),Math.max(76,state.tissue.y*.72-body.top+8));return true;}
+      }
+      if(art.environments[FANTASY_ART.healthyFloor])return false;
       const tissue=state.tissue,id=tissue.hp>=tissue.maxHp?'tissue.restored':'tissue.unstable';if(!art.assets[id])return false;
       const frame=this.playerPresentation(state).frame;
       // Protect the current body frame, not the independent tool's wider reach.
@@ -431,13 +739,66 @@ export class Renderer {
       const covered=state.player.y<=tissue.y&&boundsOverlap(playerBody,this.bounds(id,tissue,65));
       this.emit('tissue',id,tissue,65,depth,{alpha:covered?.28:1});this.painter.annotateArtEntity(ctx,entity,state,52,76);return true;
     }
+    if(entity.kind==='territory-node'){
+      const node=visibleTerritory(state)?.nodes.find(item=>item.id===entity.id&&item.kind==='front');if(!node)return false;
+      const asset=art.assets[FANTASY_ART.front[node.owner]],layout=asset?sourceRegisteredSpriteLayout(asset,FANTASY_SOURCE_CANVAS,FANTASY_SOURCE_ANCHOR,140/1024):undefined;
+      if(!layout)return false;
+      const bounds=registeredSpriteBodyBounds(layout,node,false,0),restoreRatio=node.owner==='infected'?Math.max(0,Math.min(1,node.purificationProgress/100))*.8:0;
+      const healthy=art.assets[FANTASY_ART.front.healthy],restoredLayout=restoreRatio&&healthy?sourceRegisteredSpriteLayout(healthy,FANTASY_SOURCE_CANVAS,FANTASY_SOURCE_ANCHOR,140/1024):undefined;
+      if(restoredLayout){const restored=registeredSpriteBodyBounds(restoredLayout,node,false,0);
+        bounds.left=Math.min(bounds.left,restored.left);bounds.right=Math.max(bounds.right,restored.right);bounds.top=Math.min(bounds.top,restored.top);bounds.bottom=Math.max(bounds.bottom,restored.bottom);}
+      const opacity=this.fantasyObstacleActors(state).some(actor=>actor.groundY<=node.y&&boundsOverlap(actor.bodyBounds,bounds))?.22:1;
+      const overlayAlpha=restoredLayout?restoreRatio*opacity:0;
+      // Treat both state-pair layers as one faded prop: their combined opacity
+      // stays .22 rather than stacking a second opaque silhouette over an actor.
+      const baseAlpha=(opacity-overlayAlpha)/(1-overlayAlpha);
+      const body=this.fantasySprite(node.id,FANTASY_ART.front[node.owner],node,140,depth,baseAlpha);if(!body)return false;
+      if(restoredLayout){
+        const restored=this.fantasySprite(`${node.id}:purification`,FANTASY_ART.front.healthy,node,140,depth+.1,overlayAlpha);
+        if(restored){body.left=Math.min(body.left,restored.left);body.right=Math.max(body.right,restored.right);body.top=Math.min(body.top,restored.top);body.bottom=Math.max(body.bottom,restored.bottom);}
+      }
+      this.painter.annotateArtEntity(ctx,entity,state,Math.max(38,node.x-body.left,body.right-node.x),Math.max(80,node.y*.72-body.top+8));return true;
+    }
     if(entity.kind==='device'){
-      const n=state.battle!.graph.nodes.find(n=>n.id===entity.id)!;if(n.kind!=='valve'&&n.kind!=='gate'&&n.id!=='airway')return false;
+      const n=state.battle!.graph.nodes.find(n=>n.id===entity.id)!;
+      if(state.territory&&n.kind==='valve'){
+        const f=combatCannonFrame(art.assets,state);if(!f)return false;
+        const b=this.emitCombat(n.id,{...f,flipX:false},n,state,depth,territoryCannonBodyOpacity(state));
+        this.painter.annotateArtEntity(ctx,entity,state,Math.max(40,n.x-b.left,b.right-n.x),Math.max(80,n.y*.72-b.top+8));return true;
+      }
+      if(n.kind==='healing'){
+        const owner=state.territory&&state.battle?.organId==='heart'&&state.endless
+          ?fantasyOwnerAt(state,n):(n.infection??0)>=100?'infected':'healthy';
+        const node=visibleTerritory(state)?.nodes.find(node=>node.id===n.id);
+        const body=this.fantasySprite(n.id,FANTASY_ART.healing[owner],n,116,depth);
+        if(!body)return false;
+        if(owner==='infected'&&node&&node.purificationProgress>0){
+          const restored=this.fantasySprite(`${n.id}:purification`,art.assets['fantasy.healing.recovering']?'fantasy.healing.recovering':FANTASY_ART.healing.healthy,
+            n,116,depth+.1,Math.max(0,Math.min(1,node.purificationProgress/100))*.8);
+          if(restored){body.left=Math.min(body.left,restored.left);body.right=Math.max(body.right,restored.right);body.top=Math.min(body.top,restored.top);body.bottom=Math.max(body.bottom,restored.bottom);}
+        }
+        this.painter.annotateArtEntity(ctx,entity,state,Math.max(42,n.x-body.left,body.right-n.x),Math.max(60,n.y*.72-body.top+8));return true;
+      }
+      if(n.kind!=='valve'&&n.kind!=='gate'&&n.id!=='airway')return false;
       const closed=n.id==='airway'?!state.campaign?.arenas.lung.flow?.airwayOpen:!state.battle!.graph.edges.filter(e=>e.from===n.id||e.to===n.id).some(e=>e.open);
+      const fantasy=n.id==='airway'?`fantasy.lung.airway.${closed?'closed':'open'}`
+        :`fantasy.${n.kind==='valve'?'valve':'gate'}.${n.kind==='valve'?state.battle!.pulse.phase==='surge'?'open':'closed':closed?'closed':'open'}`;
+      if(this.fantasySprite(n.id,fantasy,n,122,depth)){this.painter.annotateArtEntity(ctx,entity,state,50,88);return true;}
+      if(art.environments[FANTASY_ART.healthyFloor])return false;
       this.emit(n.id,n.kind==='valve'?`valve.${state.battle!.pulse.phase==='surge'?'open':'closed'}`:`gate.${closed?'closed':'open'}`,n,74,depth);this.painter.annotateArtEntity(ctx,entity,state,50,88);return true;
     }
     if(entity.kind==='obstacle'){
-      const o=activeWorld(state).obstacles.find(o=>o.id===entity.id)!,id=state.battle?.organId==='lung'?'scenery.alveoli':'scenery.heartTissueB',a=art.assets[id];
+      const o=activeWorld(state).obstacles.find(o=>o.id===entity.id)!,kind=fantasyObstacleKind(o.id),owner=fantasyOwnerAt(state,o);
+      const preferred=fantasySceneryId(state,kind,owner),fantasy=art.assets[preferred]?preferred:FANTASY_ART[kind][owner];
+      const asset=art.assets[fantasy],layout=asset?sourceRegisteredSpriteLayout(asset,FANTASY_SOURCE_CANVAS,FANTASY_SOURCE_ANCHOR,o.radius*3.2/1024):undefined;
+      if(layout){
+        const body=registeredSpriteBodyBounds(layout,o,false,0),actors=this.fantasyObstacleActors(state);
+        const opacity=actors.some(actor=>actor.groundY<=o.y&&boundsOverlap(actor.bodyBounds,body))?.22:1;
+        this.fantasySprite(o.id,fantasy,o,o.radius*3.2,depth,opacity);ring(ctx,o,o.radius,'#536d6240',1);return true;
+      }
+      if(art.environments[FANTASY_ART.healthyFloor])return false;
+      const id=state.battle?.organId==='lung'?'scenery.alveoli':'scenery.heartTissueB',a=art.assets[id];
+      if(!a)return false;
       const height=o.radius*2.08*a.visibleBounds.height/a.visibleBounds.width,body=this.bounds(id,o,height);
       const legionBodies=immuneLegions(state.growth).flatMap(beacon=>{const bounds=this.beaconBounds(state,beacon);return bounds?[{y:beacon.y,bounds}]:[];});
       const actors=[{y:state.player.y,bounds:this.playerPresentation(state).bounds},...state.targets.flatMap(t=>{const native=this.artTargetBounds(t,state);return t.hp>0||native?[{y:t.y,bounds:native??targetVisualBounds(t,state)}]:[];}),...(state.growth?.cells??[]).filter(cell=>cell.organId===state.battle?.organId&&immuneCellBody(cell,state.elapsed).alpha>0).map(cell=>({y:cell.y,bounds:this.immuneBounds(cell,state)})),...legionBodies];
@@ -447,6 +808,9 @@ export class Renderer {
     return false;
   }
   private foreground(state:GameState):void {
+    // Raised props are actual obstacles in the existing Y-sorted entity pass.
+    // No giant organ/scenery overlay is painted across actors or telegraphs.
+    if(art.environments[FANTASY_ART.healthyFloor])return;
     const world=activeWorld(state),a=world.foreground,organ=state.battle?.organId??'heart',id=organ==='lung'?'scenery.alveoli':'scenery.heartTissueA',point={x:a.x+a.width/2,y:a.y+a.height/2},height=Math.min(145,a.height*.9);
     const covered=[...this.bodies.values()].some(b=>boundsOverlap(b,this.bounds(id,point,height)));
     const alpha=Math.min(covered?.2:.78,foregroundOpacity(state.player,world),...state.targets.filter(t=>t.hp>0).map(t=>foregroundOpacity(t,world)));
@@ -454,6 +818,7 @@ export class Renderer {
     if(organ==='heart')for(let i=0;i<5;i++)this.emit(`scenery:rim:${i}`,i%2?'scenery.heartTissueB':'scenery.heartTissueA',{x:world.bounds.left+100+i*(world.width-250)/4,y:world.bounds.top-28},116+(i%2)*25,-20,{alpha:.85});
   }
   private drawAtlasEffects(state:GameState,low:boolean):void {
+    if(this.newActors){this.effectSprites.clear();return;}
     const alive=new Set<string>();if(!low)for(const effect of state.effects){if(effect.kind!=='scan'&&(effect.kind!=='heal'||!effect.repairSucceeded))continue;const age=state.elapsed-effect.born;if(age<0||age>=effect.duration)continue;
       const first=art.assets[`fx.${effect.kind}.00`];if(!first||!this.host.scene.anims.exists(`art-${effect.kind}`))continue;const id=`effect:${state.growth?.runId??state.seed}:${effect.id}`,p=this.camera.worldToScreen(effect.kind==='scan'?effect.from:effect.to);alive.add(id);
       const s=this.host.sprite(id,{texture:first.atlas,x:p.x,y:p.y,width:110*this.camera.scale,height:110*.72*this.camera.scale,depth:9500,originX:.5,originY:.5,alpha:Math.max(0,Math.min(.65,1-age/effect.duration))});

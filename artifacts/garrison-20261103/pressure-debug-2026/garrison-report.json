@@ -1,0 +1,5772 @@
+{
+  "scope": "Isolated production GameSession combat with supplied initial rank, healthy north front and an obstacle-free heart arena. Real Q deploys one garrison; stationary player never fires, purifies, repairs, replaces cells or injects combat HP/damage/deaths. Finite squads use production warning, birth, navigation, attacks and capture. Does not measure browser input, natural progression, phone performance or human difficulty.",
+  "sources": {
+    "src/game/immuneLegions.ts": "399fc580b5afe53b5b22ad7b4b7d5c874271cc7af8feb666773cdcb1d2b83ee0",
+    "src/core/clock.ts": "2e65d1623f903f438f01ac80640ff5ef06cf400d32a888e27471d0326b3a46bd",
+    "src/core/events.ts": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+    "src/core/rng.ts": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+    "src/game/types.ts": "56ba33ff7a2c73be644f4534cea98fe442b6a59a5770f5f0304965d0222d68ee",
+    "src/actors/collision.ts": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0",
+    "src/game/battleConfig.ts": "3365d6963f8edf43abdef1259483d3d21787a738abe1ccd81e2ebd6b1fdc609d",
+    "src/game/evolution.ts": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+    "src/game/protocols.ts": "4e407a74e0b87b7bbba93c48c881cb729a0770f24a027cbc8d59f7f512449260",
+    "src/game/immuneFocus.ts": "150fccdf51e1e75ca512effdbb2819d8510f1e2884a04525cb8bb2a9c30628a5",
+    "src/game/traction.ts": "0709702ddc2cf8b1769653eb9a0157dec33dfbe3b94045c170c46cd27ada01d8",
+    "src/game/dashBlade.ts": "c7bb058f5b38bc3124fb8efd4739f661b42acee026f1ce1c008de1234dc6d771",
+    "src/game/endlessGrowth.ts": "d50fc60d8fb8fc205645f80c6e9fb194bc948a1b711483ab72a6cdfea3a2b21e",
+    "src/actors/enemyNavigation.ts": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd",
+    "src/game/openingEvolution.ts": "98e3b977800044f5f57cb34edb8886d26d82b37c6d83ce84f8ad14a9efdcafe1",
+    "src/game/hostEvents.ts": "367fad03129ce257e847dedac946bb6d3cac522abb3f5e0922207f51f77fbfae",
+    "src/game/healingPoints.ts": "915eabdd233f7ad1e62610fd9be29a71ba326fec9bb7cbda327dd9b4f00de277",
+    "src/game/organConfig.ts": "f7984fa67337966b8342bf6dd2f5d8a1efc7b4baec5eb8ae03e032927a745bfc",
+    "src/game/encounterConfig.ts": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+    "src/game/counterLesson.ts": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+    "src/actors/enemyCrowd.ts": "821f9e4fe997fc519724afac4bf2c041a552d22083308c6f7a36470f71c16597",
+    "src/game/endlessPacing.ts": "c0d9376d4225c2a6606956f05c51283e5587ab86741f3d615d9d653b5627c090",
+    "src/game/combatPopulation.ts": "7e51112fa8e38c6548679793228c33776e38708cb5bb78841b7e7d888d379d8e",
+    "src/game/endlessStrikeBalance.ts": "70b6fb73a94c0fac1baad402b2f41d47e9882b01b4847369aef7efd11660330b",
+    "src/game/enemyPositioning.ts": "d01aff7f39ea4d4a3c34f306947452e93de57b93106a56c103bb64c9c097a878",
+    "src/game/enemyTactics.ts": "d0a393a0803ae53a84a59fceb9d74e0fe88cbdda50d79cfe4115f08ef68abfe6",
+    "src/game/enemyFacing.ts": "f2f97826b5fbae1d19bfcd718eac2c216800187c86003d11bcfc9c8c63cec24d",
+    "src/game/eliteTacticCycle.ts": "862b23512773a196d997dbd9062b18a9f17188f22449ba93dee98ead13c3e8dd",
+    "src/game/viralCapsules.ts": "fa4fee119cccbdb63ab24c427bab614ff5c29504bd68d85925b479ff0159cfcf",
+    "src/game/territory.ts": "31934b06d9075e6e0f08640ad56e7f714872482d5a283b507d31004f31f02e3e",
+    "src/game/battle.ts": "70da2472803de1f9bbabf4badac75d3c8fb3ada9bff3691a43236714309936ab",
+    "src/game/immuneCells.ts": "c92d3e53499f28153f0906a833b92c0b7012485d9fccd559738c3e3990592b44",
+    "src/game/research.ts": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+    "src/game/preparation.ts": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+    "src/game/growth.ts": "a5e41010081ed5fe8c52655436308d6e92c3488eb9988c4beb90ff6fb196fe96",
+    "src/game/organRules.ts": "7e6b4951b1c76ce6e0eb0964f41eedff20bb3cc71e14d8421c878b0aa53515f0",
+    "src/game/campaignEncounters.ts": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+    "src/game/campaign.ts": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+    "src/game/motherCore.ts": "cef2fc21b779fb6919eec516ee178224a3c74c72055aac16795a4999c5f203da",
+    "src/game/tacticalFeedback.ts": "bd1bc57d36143436cef005b00adacfe1cff8a605e875f0e3911f9d4f48db1acc",
+    "src/game/runMetrics.ts": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+    "src/game/enemyTacticInfo.ts": "ee6f959eb75b09e298f82dd78fbad5d6bb98ae0bbb7d7cef6701a0953030c5a8",
+    "src/game/endlessEvolution.ts": "b3ad9b394634da947bf9aa7ff32d9b9ccb7774909771c524a078d490bba1db4f",
+    "src/game/endlessBehavior.ts": "9d01e26a8097cc194011523a70e61f47c1303088531a6e8654b1d3f73c986dc9",
+    "src/game/endlessAssault.ts": "e60f8e6cec6e4b963614c467062efc05a89b0eacb1825b71dd0f3fba1503417a",
+    "src/game/endlessSource.ts": "5a3cbfea571f371707a64c0526e1ebd2e36ac2da404051b37e4692203a51c6fe",
+    "src/game/endless.ts": "f7503a3bfc9a11d6f7ed2e842d032ff59e1008e3a2b6b7987a5c7c72d4db313d",
+    "src/game/catalysis.ts": "f7d4a5b0710ff3eac65809a7762effe910b79f63ab7a74735128d6e6b6288113",
+    "src/game/dashTrail.ts": "2e0f6b4d4ab8321a1718aae30a56a4ea1b1cfd9c5f94b982653f7bc911b0d287",
+    "src/game/playerProjectiles.ts": "655102eae55d675423350c77a024294be43d4229a966816e4d4449b03f6804ba",
+    "src/game/chargedSlash.ts": "bde88263277215d6173f6759ce197a639eac3b011d0a21a517330c7625969c8d",
+    "src/game/territoryCannon.ts": "3b94286c1f562e78b1f1fc4b72230809d9584f346af47d69401ef4ee3720c978",
+    "src/game/session.ts": "b419cb3d498ec764b6acde938b1fc00d42676f52181375969d78ed2b3e82896b",
+    "tests/fixtures/garrisonCombat.ts": "20102fe3ac0b6490f85afe10e612d4f5b8d2e8b0af342468fea2d889ac950d81"
+  },
+  "sourcesUnchanged": true,
+  "matureSingle": {
+    "held": 0,
+    "total": 1,
+    "tookDamageCount": 0,
+    "allRealBites": true,
+    "handoffs": 0
+  },
+  "cases": [
+    {
+      "seed": 2026,
+      "rank": 1,
+      "rounds": 1,
+      "wave": 3,
+      "elapsed": 15.166666666666666,
+      "phase": "paused",
+      "owner": "healthy",
+      "held": true,
+      "wavesCleared": 3,
+      "squadCount": 1,
+      "finishedSquads": 1,
+      "incomingTasks": 0,
+      "garrisonDamage": 78,
+      "casualties": 1,
+      "liveCells": 2,
+      "realBites": 36,
+      "handoff": false,
+      "handoffStarted": false,
+      "maxCellRank": 2,
+      "catalysisRank": 0,
+      "captureTimes": [],
+      "finalActors": [
+        {
+          "id": "territory:source-west",
+          "x": 450,
+          "y": 600,
+          "hp": 1200,
+          "role": "source"
+        },
+        {
+          "id": "territory:source-east",
+          "x": 1950,
+          "y": 450,
+          "hp": 1200,
+          "role": "source"
+        }
+      ],
+      "finalCells": [
+        {
+          "id": "2026:2:scan:1:beacon:cell:0",
+          "x": 522.8762250369605,
+          "y": 528.5521494374137,
+          "hp": 60,
+          "targetId": "virus-6",
+          "activity": "guarding",
+          "waypoint": {
+            "x": 522.5374349145134,
+            "y": 529.0738764804482
+          },
+          "attackReadyAt": 15.216666666666667
+        },
+        {
+          "id": "2026:2:scan:1:beacon:cell:2",
+          "x": 466.46039275413585,
+          "y": 583.6287874966653,
+          "hp": 42,
+          "targetId": "virus-6",
+          "activity": "biting",
+          "waypoint": {
+            "x": 466.2251202847261,
+            "y": 585.897491474884
+          },
+          "attackReadyAt": 15.966666666666667
+        }
+      ],
+      "events": [
+        {
+          "type": "TERRITORY_SOURCE_ACTIVATED",
+          "tick": 1,
+          "data": {
+            "id": "territory:source-west",
+            "sourceId": "source-west",
+            "x": 450,
+            "y": 600,
+            "hp": 1200
+          }
+        },
+        {
+          "type": "TERRITORY_SOURCE_ACTIVATED",
+          "tick": 1,
+          "data": {
+            "id": "territory:source-east",
+            "sourceId": "source-east",
+            "x": 1950,
+            "y": 450,
+            "hp": 1200
+          }
+        },
+        {
+          "type": "IMMUNE_GUARD_ASSIGNED",
+          "tick": 1,
+          "data": {
+            "rootId": "2026:2:scan:1",
+            "beaconId": "2026:2:scan:1:beacon",
+            "organId": "heart",
+            "x": 700,
+            "y": 350,
+            "radius": 300,
+            "plannedUntil": null,
+            "newSquad": true,
+            "regionId": "front-north"
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 1,
+          "data": {
+            "squadId": "isolated:2026:north:0",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_SPAWNED",
+          "tick": 241,
+          "data": {
+            "squadId": "isolated:2026:north:0",
+            "wave": 3,
+            "sourceId": "source-west",
+            "laneId": "north",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "count": 4
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 278,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 60,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:278",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 278,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:278",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-5",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 523.0821805219982,
+            "y": 477.47027825685274
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 286,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 52,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:286",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 286,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:286",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-5",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 483.47334542203623,
+            "y": 424.81242244279673
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 289,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 44,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:289",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 289,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:289",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-5",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 518.8485101095795,
+            "y": 447.1494298634424
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 326,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 36,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:326",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 326,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:326",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-5",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 477.7213170593946,
+            "y": 508.09772617824575
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 334,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 28,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:334",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 334,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:334",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-5",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 445.06034801775877,
+            "y": 446.99730800241565
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 337,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 20,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:337",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 337,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:337",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-5",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 514.3148126430153,
+            "y": 449.25788600044626
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 374,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 12,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:374",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 374,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:374",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-5",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 477.7213170593946,
+            "y": 508.09772617824575
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 375,
+          "data": {
+            "actorId": "virus-5",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 18,
+            "remainingHp": 42,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 379,
+          "data": {
+            "actorId": "virus-4",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 18,
+            "remainingHp": 24,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 382,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 4,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:382",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 382,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:382",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-5",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 445.06034801775877,
+            "y": 446.99730800241565
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 385,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 4,
+            "rawDamage": 4,
+            "remainingHp": 0,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:385",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 385,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:385",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-5",
+            "damage": 4,
+            "prioritizedTrace": false,
+            "x": 514.3148126430153,
+            "y": 449.25788600044626
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 422,
+          "data": {
+            "id": "virus-4",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 60,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:422",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 422,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:422",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-4",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 430.13578684506007,
+            "y": 555.4952194159299
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 430,
+          "data": {
+            "id": "virus-4",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 52,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:430",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 430,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:430",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-4",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 395.4892648005375,
+            "y": 495.139756325798
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 433,
+          "data": {
+            "id": "virus-4",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 44,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:433",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 433,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:433",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-4",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 463.9545061197085,
+            "y": 494.137791164995
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 470,
+          "data": {
+            "id": "virus-4",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 36,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:470",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 470,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:470",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-4",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 430.13578684506007,
+            "y": 555.4952194159299
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 478,
+          "data": {
+            "id": "virus-4",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 28,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:478",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 478,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:478",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-4",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 395.4892648005375,
+            "y": 495.139756325798
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 481,
+          "data": {
+            "id": "virus-4",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 20,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:481",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 481,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:481",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-4",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 463.9545061197085,
+            "y": 494.137791164995
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 509,
+          "data": {
+            "actorId": "virus-6",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 18,
+            "remainingHp": 6,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 518,
+          "data": {
+            "id": "virus-4",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 12,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:518",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 518,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:518",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-4",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 430.13578684506007,
+            "y": 555.4952194159299
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 526,
+          "data": {
+            "id": "virus-4",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 4,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:526",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 526,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:526",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-4",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 395.4892648005375,
+            "y": 495.139756325798
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 529,
+          "data": {
+            "id": "virus-4",
+            "organId": "heart",
+            "damage": 4,
+            "rawDamage": 4,
+            "remainingHp": 0,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:529",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 529,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:529",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-4",
+            "damage": 4,
+            "prioritizedTrace": false,
+            "x": 463.9545061197085,
+            "y": 494.137791164995
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 572,
+          "data": {
+            "id": "virus-3",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 60,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:572",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 572,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:572",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-3",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 452.8606306015177,
+            "y": 569.8921606466599
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 574,
+          "data": {
+            "id": "virus-3",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 52,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:574",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 574,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:574",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-3",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 411.9438063144871,
+            "y": 511.2318640820795
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 577,
+          "data": {
+            "id": "virus-3",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 44,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:577",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 577,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:577",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-3",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 485.7980918727143,
+            "y": 501.10432136843735
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 620,
+          "data": {
+            "id": "virus-3",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 36,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:620",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 620,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:620",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-3",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 496.99712734559023,
+            "y": 535.5970782011651
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 622,
+          "data": {
+            "id": "virus-3",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 28,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:622",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 622,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:622",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-3",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 459.02432590923354,
+            "y": 477.59843716375684
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 625,
+          "data": {
+            "id": "virus-3",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 20,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:625",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 625,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:625",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-3",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 532.9308544486966,
+            "y": 467.85548541954665
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 668,
+          "data": {
+            "id": "virus-3",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 12,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:668",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 668,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:668",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-3",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 544.1298899215725,
+            "y": 502.3482422522744
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 670,
+          "data": {
+            "id": "virus-3",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 4,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:670",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 670,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:670",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-3",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 506.1570884852158,
+            "y": 444.34960121486614
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 673,
+          "data": {
+            "id": "virus-3",
+            "organId": "heart",
+            "damage": 4,
+            "rawDamage": 4,
+            "remainingHp": 0,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:673",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 673,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:673",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-3",
+            "damage": 4,
+            "prioritizedTrace": false,
+            "x": 580.0636170246788,
+            "y": 434.60664947065595
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 682,
+          "data": {
+            "actorId": "virus-6",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 6,
+            "remainingHp": 0,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_DIED",
+          "tick": 682,
+          "data": {
+            "actorId": "virus-6",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "beaconId": "2026:2:scan:1:beacon",
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 718,
+          "data": {
+            "id": "virus-6",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 60,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:718",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 718,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:718",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-6",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 466.46039275413585,
+            "y": 583.6287874966653
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 721,
+          "data": {
+            "id": "virus-6",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 52,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:721",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 721,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:721",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-6",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 522.8762250369605,
+            "y": 528.5521494374137
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 766,
+          "data": {
+            "id": "virus-6",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 44,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:766",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 766,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:766",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-6",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 466.46039275413585,
+            "y": 583.6287874966653
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 769,
+          "data": {
+            "id": "virus-6",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 36,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:769",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 769,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:769",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-6",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 522.8762250369605,
+            "y": 528.5521494374137
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 814,
+          "data": {
+            "id": "virus-6",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 28,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:814",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 814,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:814",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-6",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 466.46039275413585,
+            "y": 583.6287874966653
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 817,
+          "data": {
+            "id": "virus-6",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 20,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:817",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 817,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:817",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-6",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 522.8762250369605,
+            "y": 528.5521494374137
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 856,
+          "data": {
+            "actorId": "virus-6",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 18,
+            "remainingHp": 42,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 862,
+          "data": {
+            "id": "virus-6",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 12,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:862",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 862,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:862",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-6",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 466.46039275413585,
+            "y": 583.6287874966653
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 865,
+          "data": {
+            "id": "virus-6",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 4,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:865",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 865,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:865",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-6",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 522.8762250369605,
+            "y": 528.5521494374137
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 910,
+          "data": {
+            "id": "virus-6",
+            "organId": "heart",
+            "damage": 4,
+            "rawDamage": 4,
+            "remainingHp": 0,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:910",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 910,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:910",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-6",
+            "damage": 4,
+            "prioritizedTrace": false,
+            "x": 466.46039275413585,
+            "y": 583.6287874966653
+          }
+        },
+        {
+          "type": "TERRITORY_DEFENSE_MILESTONE",
+          "tick": 910,
+          "data": {
+            "laneId": "north",
+            "nodeId": "front-north",
+            "rank": 2
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_CLEARED",
+          "tick": 910,
+          "data": {
+            "squadId": "isolated:2026:north:0",
+            "wave": 3,
+            "sourceId": "source-west"
+          }
+        }
+      ]
+    },
+    {
+      "seed": 2026,
+      "rank": 1,
+      "rounds": 3,
+      "wave": 3,
+      "elapsed": 68.66666666666667,
+      "phase": "result",
+      "owner": "healthy",
+      "held": false,
+      "wavesCleared": 0,
+      "squadCount": 3,
+      "finishedSquads": 2,
+      "incomingTasks": 0,
+      "garrisonDamage": 252,
+      "casualties": 4,
+      "liveCells": 0,
+      "realBites": 94,
+      "handoff": false,
+      "handoffStarted": false,
+      "maxCellRank": 2,
+      "catalysisRank": 0,
+      "captureTimes": [],
+      "finalActors": [
+        {
+          "id": "territory:source-west",
+          "x": 450,
+          "y": 600,
+          "hp": 1200,
+          "role": "source"
+        },
+        {
+          "id": "territory:source-east",
+          "x": 1950,
+          "y": 450,
+          "hp": 1200,
+          "role": "source"
+        },
+        {
+          "id": "virus-12",
+          "x": 990.4352186159715,
+          "y": 816.0086686342913,
+          "hp": 50,
+          "role": "virus",
+          "task": {
+            "kind": "escort",
+            "nodeId": "front-north",
+            "squadId": "isolated:2026:north:2",
+            "leaderId": "virus-11"
+          }
+        }
+      ],
+      "finalCells": [],
+      "events": [
+        {
+          "type": "TERRITORY_SOURCE_ACTIVATED",
+          "tick": 1,
+          "data": {
+            "id": "territory:source-west",
+            "sourceId": "source-west",
+            "x": 450,
+            "y": 600,
+            "hp": 1200
+          }
+        },
+        {
+          "type": "TERRITORY_SOURCE_ACTIVATED",
+          "tick": 1,
+          "data": {
+            "id": "territory:source-east",
+            "sourceId": "source-east",
+            "x": 1950,
+            "y": 450,
+            "hp": 1200
+          }
+        },
+        {
+          "type": "IMMUNE_GUARD_ASSIGNED",
+          "tick": 1,
+          "data": {
+            "rootId": "2026:2:scan:1",
+            "beaconId": "2026:2:scan:1:beacon",
+            "organId": "heart",
+            "x": 700,
+            "y": 350,
+            "radius": 300,
+            "plannedUntil": null,
+            "newSquad": true,
+            "regionId": "front-north"
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 1,
+          "data": {
+            "squadId": "isolated:2026:north:0",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_SPAWNED",
+          "tick": 241,
+          "data": {
+            "squadId": "isolated:2026:north:0",
+            "wave": 3,
+            "sourceId": "source-west",
+            "laneId": "north",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "count": 4
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 278,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 60,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:278",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 278,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:278",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-5",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 523.0821805219982,
+            "y": 477.47027825685274
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 286,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 52,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:286",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 286,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:286",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-5",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 483.47334542203623,
+            "y": 424.81242244279673
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 289,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 44,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:289",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 289,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:289",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-5",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 518.8485101095795,
+            "y": 447.1494298634424
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 326,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 36,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:326",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 326,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:326",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-5",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 477.7213170593946,
+            "y": 508.09772617824575
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 334,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 28,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:334",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 334,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:334",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-5",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 445.06034801775877,
+            "y": 446.99730800241565
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 337,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 20,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:337",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 337,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:337",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-5",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 514.3148126430153,
+            "y": 449.25788600044626
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 374,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 12,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:374",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 374,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:374",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-5",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 477.7213170593946,
+            "y": 508.09772617824575
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 375,
+          "data": {
+            "actorId": "virus-5",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 18,
+            "remainingHp": 42,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 379,
+          "data": {
+            "actorId": "virus-4",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 18,
+            "remainingHp": 24,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 382,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 4,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:382",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 382,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:382",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-5",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 445.06034801775877,
+            "y": 446.99730800241565
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 385,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 4,
+            "rawDamage": 4,
+            "remainingHp": 0,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:385",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 385,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:385",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-5",
+            "damage": 4,
+            "prioritizedTrace": false,
+            "x": 514.3148126430153,
+            "y": 449.25788600044626
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 422,
+          "data": {
+            "id": "virus-4",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 60,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:422",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 422,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:422",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-4",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 430.13578684506007,
+            "y": 555.4952194159299
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 430,
+          "data": {
+            "id": "virus-4",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 52,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:430",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 430,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:430",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-4",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 395.4892648005375,
+            "y": 495.139756325798
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 433,
+          "data": {
+            "id": "virus-4",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 44,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:433",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 433,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:433",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-4",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 463.9545061197085,
+            "y": 494.137791164995
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 470,
+          "data": {
+            "id": "virus-4",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 36,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:470",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 470,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:470",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-4",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 430.13578684506007,
+            "y": 555.4952194159299
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 478,
+          "data": {
+            "id": "virus-4",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 28,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:478",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 478,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:478",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-4",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 395.4892648005375,
+            "y": 495.139756325798
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 481,
+          "data": {
+            "id": "virus-4",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 20,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:481",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 481,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:481",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-4",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 463.9545061197085,
+            "y": 494.137791164995
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 509,
+          "data": {
+            "actorId": "virus-6",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 18,
+            "remainingHp": 6,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 518,
+          "data": {
+            "id": "virus-4",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 12,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:518",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 518,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:518",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-4",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 430.13578684506007,
+            "y": 555.4952194159299
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 526,
+          "data": {
+            "id": "virus-4",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 4,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:526",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 526,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:526",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-4",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 395.4892648005375,
+            "y": 495.139756325798
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 529,
+          "data": {
+            "id": "virus-4",
+            "organId": "heart",
+            "damage": 4,
+            "rawDamage": 4,
+            "remainingHp": 0,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:529",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 529,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:529",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-4",
+            "damage": 4,
+            "prioritizedTrace": false,
+            "x": 463.9545061197085,
+            "y": 494.137791164995
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 572,
+          "data": {
+            "id": "virus-3",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 60,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:572",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 572,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:572",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-3",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 452.8606306015177,
+            "y": 569.8921606466599
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 574,
+          "data": {
+            "id": "virus-3",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 52,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:574",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 574,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:574",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-3",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 411.9438063144871,
+            "y": 511.2318640820795
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 577,
+          "data": {
+            "id": "virus-3",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 44,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:577",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 577,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:577",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-3",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 485.7980918727143,
+            "y": 501.10432136843735
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 601,
+          "data": {
+            "squadId": "isolated:2026:north:1",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 620,
+          "data": {
+            "id": "virus-3",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 36,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:620",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 620,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:620",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-3",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 496.99712734559023,
+            "y": 535.5970782011651
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 622,
+          "data": {
+            "id": "virus-3",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 28,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:622",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 622,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:622",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-3",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 459.02432590923354,
+            "y": 477.59843716375684
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 625,
+          "data": {
+            "id": "virus-3",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 20,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:625",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 625,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:625",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-3",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 532.9308544486966,
+            "y": 467.85548541954665
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 668,
+          "data": {
+            "id": "virus-3",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 12,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:668",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 668,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:668",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-3",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 544.1298899215725,
+            "y": 502.3482422522744
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 670,
+          "data": {
+            "id": "virus-3",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 4,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:670",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 670,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:670",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-3",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 506.1570884852158,
+            "y": 444.34960121486614
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 673,
+          "data": {
+            "id": "virus-3",
+            "organId": "heart",
+            "damage": 4,
+            "rawDamage": 4,
+            "remainingHp": 0,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:673",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 673,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:673",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-3",
+            "damage": 4,
+            "prioritizedTrace": false,
+            "x": 580.0636170246788,
+            "y": 434.60664947065595
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 682,
+          "data": {
+            "actorId": "virus-6",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 6,
+            "remainingHp": 0,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_DIED",
+          "tick": 682,
+          "data": {
+            "actorId": "virus-6",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "beaconId": "2026:2:scan:1:beacon",
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 718,
+          "data": {
+            "id": "virus-6",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 60,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:718",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 718,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:718",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-6",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 466.46039275413585,
+            "y": 583.6287874966653
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 721,
+          "data": {
+            "id": "virus-6",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 52,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:721",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 721,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:721",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-6",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 522.8762250369605,
+            "y": 528.5521494374137
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 766,
+          "data": {
+            "id": "virus-6",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 44,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:766",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 766,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:766",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-6",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 466.46039275413585,
+            "y": 583.6287874966653
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 769,
+          "data": {
+            "id": "virus-6",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 36,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:769",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 769,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:769",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-6",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 522.8762250369605,
+            "y": 528.5521494374137
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 814,
+          "data": {
+            "id": "virus-6",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 28,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:814",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 814,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:814",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-6",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 466.46039275413585,
+            "y": 583.6287874966653
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 817,
+          "data": {
+            "id": "virus-6",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 20,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:817",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 817,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:817",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-6",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 522.8762250369605,
+            "y": 528.5521494374137
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 856,
+          "data": {
+            "actorId": "virus-6",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 18,
+            "remainingHp": 42,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 862,
+          "data": {
+            "id": "virus-6",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 12,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:862",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 862,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:862",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-6",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 466.46039275413585,
+            "y": 583.6287874966653
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 865,
+          "data": {
+            "id": "virus-6",
+            "organId": "heart",
+            "damage": 8,
+            "rawDamage": 8,
+            "remainingHp": 4,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:865",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 865,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:865",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-6",
+            "damage": 8,
+            "prioritizedTrace": false,
+            "x": 522.8762250369605,
+            "y": 528.5521494374137
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 910,
+          "data": {
+            "id": "virus-6",
+            "organId": "heart",
+            "damage": 4,
+            "rawDamage": 4,
+            "remainingHp": 0,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:910",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 910,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:910",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-6",
+            "damage": 4,
+            "prioritizedTrace": false,
+            "x": 466.46039275413585,
+            "y": 583.6287874966653
+          }
+        },
+        {
+          "type": "TERRITORY_DEFENSE_MILESTONE",
+          "tick": 910,
+          "data": {
+            "laneId": "north",
+            "nodeId": "front-north",
+            "rank": 2
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_CLEARED",
+          "tick": 910,
+          "data": {
+            "squadId": "isolated:2026:north:0",
+            "wave": 3,
+            "sourceId": "source-west"
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_SPAWNED",
+          "tick": 916,
+          "data": {
+            "squadId": "isolated:2026:north:1",
+            "wave": 3,
+            "sourceId": "source-west",
+            "laneId": "north",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "count": 4
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 926,
+          "data": {
+            "id": "virus-7",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 59,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:926",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 926,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:926",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-7",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 582.5400553208713,
+            "y": 537.5520617752177
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 944,
+          "data": {
+            "id": "virus-7",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 50,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:944",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 944,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:944",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-7",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 646.5499852710656,
+            "y": 549.4258402601668
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 958,
+          "data": {
+            "id": "virus-7",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 41,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:958",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 958,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:958",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-7",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 633.8761642165919,
+            "y": 577.4222198670439
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 974,
+          "data": {
+            "id": "virus-7",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 32,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:974",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 974,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:974",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-7",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 634.3923590146144,
+            "y": 493.15147709486394
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 992,
+          "data": {
+            "id": "virus-7",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 23,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:992",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 992,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:992",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-7",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 587.9161127389096,
+            "y": 511.41509237856826
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1006,
+          "data": {
+            "id": "virus-7",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 14,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1006",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1006,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1006",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-7",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 657.9077627726037,
+            "y": 524.9868818702059
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1022,
+          "data": {
+            "id": "virus-7",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 5,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1022",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1022,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1022",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-7",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 658.4239575706263,
+            "y": 440.716139098026
+          }
+        },
+        {
+          "type": "TERRITORY_CONTESTED",
+          "tick": 1038,
+          "data": {
+            "nodeId": "front-north"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1040,
+          "data": {
+            "id": "virus-7",
+            "organId": "heart",
+            "damage": 5,
+            "rawDamage": 5,
+            "remainingHp": 0,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1040",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1040,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1040",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-7",
+            "damage": 5,
+            "prioritizedTrace": false,
+            "x": 611.9477112949215,
+            "y": 458.9797543817304
+          }
+        },
+        {
+          "type": "TERRITORY_CAPTURE_REPELLED",
+          "tick": 1044,
+          "data": {
+            "nodeId": "front-north"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1071,
+          "data": {
+            "id": "virus-10",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 59,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1071",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1071,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1071",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-10",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 526.3509835806717,
+            "y": 485.23570251837253
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1072,
+          "data": {
+            "id": "virus-10",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 50,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1072",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1072,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1072",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-10",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 523.3986295228087,
+            "y": 541.7441428928639
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1088,
+          "data": {
+            "id": "virus-10",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 41,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1088",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1088,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1088",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-10",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 453.23137392486154,
+            "y": 496.41359930154596
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 1112,
+          "data": {
+            "actorId": "virus-9",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 18,
+            "remainingHp": 24,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1119,
+          "data": {
+            "id": "virus-10",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 32,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1119",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1119,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1119",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-10",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 521.902279246934,
+            "y": 487.23172791021364
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1120,
+          "data": {
+            "id": "virus-10",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 23,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1120",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1120,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1120",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-10",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 495.51856046507305,
+            "y": 551.2934121156705
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1136,
+          "data": {
+            "id": "virus-10",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 14,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1136",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1136,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1136",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-10",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 453.23137392486154,
+            "y": 496.41359930154596
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1167,
+          "data": {
+            "id": "virus-10",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 5,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1167",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1167,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1167",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-10",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 521.902279246934,
+            "y": 487.23172791021364
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1168,
+          "data": {
+            "id": "virus-10",
+            "organId": "heart",
+            "damage": 5,
+            "rawDamage": 5,
+            "remainingHp": 0,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1168",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1168,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1168",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-10",
+            "damage": 5,
+            "prioritizedTrace": false,
+            "x": 495.51856046507305,
+            "y": 551.2934121156705
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1187,
+          "data": {
+            "id": "virus-9",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 59,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1187",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1187,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1187",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-9",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 495.4037075262854,
+            "y": 587.0860553100234
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1215,
+          "data": {
+            "id": "virus-9",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 50,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1215",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1215,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1215",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-9",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 560.5277562084678,
+            "y": 562.9062457959509
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1216,
+          "data": {
+            "id": "virus-9",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 41,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1216",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1216,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1216",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-9",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 555.8459114315856,
+            "y": 631.0468491912118
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1235,
+          "data": {
+            "id": "virus-9",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 32,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1235",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1235,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1235",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-9",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 497.5123242063567,
+            "y": 591.6196781104475
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1263,
+          "data": {
+            "id": "virus-9",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 23,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1263",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1263,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1263",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-9",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 560.5277562084678,
+            "y": 562.9062457959509
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1264,
+          "data": {
+            "id": "virus-9",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 14,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1264",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1264,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1264",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-9",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 555.8459114315856,
+            "y": 631.0468491912118
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 1276,
+          "data": {
+            "squadId": "isolated:2026:north:2",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1283,
+          "data": {
+            "id": "virus-9",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 5,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1283",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1283,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1283",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-9",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 497.5123242063567,
+            "y": 591.6196781104475
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 1285,
+          "data": {
+            "actorId": "virus-9",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 18,
+            "remainingHp": 6,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1311,
+          "data": {
+            "id": "virus-9",
+            "organId": "heart",
+            "damage": 5,
+            "rawDamage": 5,
+            "remainingHp": 0,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1311",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1311,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1311",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-9",
+            "damage": 5,
+            "prioritizedTrace": false,
+            "x": 560.5277562084678,
+            "y": 562.9062457959509
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1347,
+          "data": {
+            "id": "virus-8",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 59,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1347",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1347,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1347",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-8",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 511.69867687407,
+            "y": 557.803144636532
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1349,
+          "data": {
+            "id": "virus-8",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 50,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1349",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1349,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1349",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-8",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 558.0751807559617,
+            "y": 602.4923999610303
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1359,
+          "data": {
+            "id": "virus-8",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 41,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1359",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1359,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1359",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-8",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 536.3447148222597,
+            "y": 571.1280807409687
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 1390,
+          "data": {
+            "actorId": "virus-8",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 18,
+            "remainingHp": 54,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1395,
+          "data": {
+            "id": "virus-8",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 32,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1395",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1395,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1395",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-8",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 473.788599142696,
+            "y": 597.6506791449668
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1397,
+          "data": {
+            "id": "virus-8",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 23,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1397",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1397,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1397",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-8",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 528.2023229496451,
+            "y": 640.210049726057
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1407,
+          "data": {
+            "id": "virus-8",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 14,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1407",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1407,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1407",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-8",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 536.3447148222597,
+            "y": 571.1280807409687
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1443,
+          "data": {
+            "id": "virus-8",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 5,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1443",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1443,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1443",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-8",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 473.788599142696,
+            "y": 597.6506791449668
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1445,
+          "data": {
+            "id": "virus-8",
+            "organId": "heart",
+            "damage": 5,
+            "rawDamage": 5,
+            "remainingHp": 0,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1445",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1445,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1445",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-8",
+            "damage": 5,
+            "prioritizedTrace": false,
+            "x": 528.2023229496451,
+            "y": 640.210049726057
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_CLEARED",
+          "tick": 1445,
+          "data": {
+            "squadId": "isolated:2026:north:1",
+            "wave": 3,
+            "sourceId": "source-west"
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_SPAWNED",
+          "tick": 1516,
+          "data": {
+            "squadId": "isolated:2026:north:2",
+            "wave": 3,
+            "sourceId": "source-west",
+            "laneId": "north",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "count": 4
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1695,
+          "data": {
+            "id": "virus-11",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 59,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1695",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1695,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1695",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-11",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 518.7530485604193,
+            "y": 515.3707231327812
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1702,
+          "data": {
+            "id": "virus-11",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 50,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1702",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1702,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1702",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-11",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 483.73910147917815,
+            "y": 459.75536109024785
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1703,
+          "data": {
+            "id": "virus-11",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 41,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1703",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1703,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1703",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-11",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 522.9210150483764,
+            "y": 476.46463908008013
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1743,
+          "data": {
+            "id": "virus-11",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 32,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1743",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1743,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1743",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-11",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 526.8156934748359,
+            "y": 514.6729679277428
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1750,
+          "data": {
+            "id": "virus-11",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 23,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1750",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1750,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1750",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-11",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 493.72902603706217,
+            "y": 453.22356944432994
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1751,
+          "data": {
+            "id": "virus-11",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 14,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1751",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1751,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1751",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-11",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 562.7234825876232,
+            "y": 446.9176226246401
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1791,
+          "data": {
+            "id": "virus-11",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 5,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1791",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1791,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1791",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-11",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 573.9357230401284,
+            "y": 481.40608929800305
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1798,
+          "data": {
+            "id": "virus-11",
+            "organId": "heart",
+            "damage": 5,
+            "rawDamage": 5,
+            "remainingHp": 0,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1798",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1798,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1798",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-11",
+            "damage": 5,
+            "prioritizedTrace": false,
+            "x": 540.8490556023546,
+            "y": 419.9566908145901
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1816,
+          "data": {
+            "id": "virus-13",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 59,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1816",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1816,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1816",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-13",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 569.2101757090243,
+            "y": 493.95598647281656
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1839,
+          "data": {
+            "id": "virus-13",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 50,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1839",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1839,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:1839",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-13",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 552.5279879990289,
+            "y": 566.6402288220477
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1846,
+          "data": {
+            "id": "virus-14",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 59,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1846",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1846,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1846",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-14",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 432.4986820907806,
+            "y": 458.44195478068775
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 1849,
+          "data": {
+            "actorId": "virus-13",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 6,
+            "remainingHp": 0,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_DIED",
+          "tick": 1849,
+          "data": {
+            "actorId": "virus-13",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "beaconId": "2026:2:scan:1:beacon",
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1864,
+          "data": {
+            "id": "virus-13",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 41,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1864",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1864,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1864",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-13",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 566.9527681288081,
+            "y": 498.41738883270074
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 1872,
+          "data": {
+            "actorId": "virus-12",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 18,
+            "remainingHp": 36,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1894,
+          "data": {
+            "id": "virus-14",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 50,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1894",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1894,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1894",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-14",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 430.8020154725467,
+            "y": 498.4059551108153
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1912,
+          "data": {
+            "id": "virus-13",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 32,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1912",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1912,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1912",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-13",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 566.9527681288081,
+            "y": 498.41738883270074
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1942,
+          "data": {
+            "id": "virus-14",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 41,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1942",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1942,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1942",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-14",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 430.8020154725467,
+            "y": 498.4059551108153
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1960,
+          "data": {
+            "id": "virus-13",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 23,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1960",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1960,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:1960",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-13",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 566.9527681288081,
+            "y": 498.41738883270074
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 1990,
+          "data": {
+            "id": "virus-14",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 32,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1990",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 1990,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:1990",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-14",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 430.8020154725467,
+            "y": 498.4059551108153
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 2008,
+          "data": {
+            "id": "virus-13",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 14,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:2008",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 2008,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:2008",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-13",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 566.9527681288081,
+            "y": 498.41738883270074
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 2022,
+          "data": {
+            "actorId": "virus-13",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 18,
+            "remainingHp": 42,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 2023,
+          "data": {
+            "actorId": "virus-14",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 18,
+            "remainingHp": 18,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 2038,
+          "data": {
+            "id": "virus-14",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 23,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:2038",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 2038,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:2038",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-14",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 430.8020154725467,
+            "y": 498.4059551108153
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 2045,
+          "data": {
+            "actorId": "virus-12",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 18,
+            "remainingHp": 0,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_DIED",
+          "tick": 2045,
+          "data": {
+            "actorId": "virus-12",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "beaconId": "2026:2:scan:1:beacon",
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 2056,
+          "data": {
+            "id": "virus-13",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 5,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:2056",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 2056,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:2056",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-13",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 566.9527681288081,
+            "y": 498.41738883270074
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 2104,
+          "data": {
+            "id": "virus-13",
+            "organId": "heart",
+            "damage": 5,
+            "rawDamage": 5,
+            "remainingHp": 0,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:2104",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 2104,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:2104",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-13",
+            "damage": 5,
+            "prioritizedTrace": false,
+            "x": 566.9527681288081,
+            "y": 498.41738883270074
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 2152,
+          "data": {
+            "id": "virus-14",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 14,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:2152",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 2152,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:2152",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-14",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 547.2965393211504,
+            "y": 494.7251443850819
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 2196,
+          "data": {
+            "actorId": "virus-14",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 18,
+            "remainingHp": 24,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 2200,
+          "data": {
+            "id": "virus-14",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 5,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:2200",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 2200,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:2200",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-14",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 547.2965393211504,
+            "y": 494.7251443850819
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 2218,
+          "data": {
+            "actorId": "virus-12",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 18,
+            "remainingHp": 6,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 2248,
+          "data": {
+            "id": "virus-14",
+            "organId": "heart",
+            "damage": 5,
+            "rawDamage": 5,
+            "remainingHp": 0,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:2248",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 2248,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:2248",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-14",
+            "damage": 5,
+            "prioritizedTrace": false,
+            "x": 547.2965393211504,
+            "y": 494.7251443850819
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 2296,
+          "data": {
+            "id": "virus-12",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 59,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:2296",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 2296,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:2296",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-12",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 531.5508573885037,
+            "y": 507.0569528686692
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 2344,
+          "data": {
+            "id": "virus-12",
+            "organId": "heart",
+            "damage": 9,
+            "rawDamage": 9,
+            "remainingHp": 50,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:2344",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 2344,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:2344",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-12",
+            "damage": 9,
+            "prioritizedTrace": false,
+            "x": 531.5508573885037,
+            "y": 507.0569528686692
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_HURT",
+          "tick": 2391,
+          "data": {
+            "actorId": "virus-12",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "beaconId": "2026:2:scan:1:beacon",
+            "damage": 6,
+            "remainingHp": 0,
+            "reason": "enemy-attack"
+          }
+        },
+        {
+          "type": "IMMUNE_CELL_DIED",
+          "tick": 2391,
+          "data": {
+            "actorId": "virus-12",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "beaconId": "2026:2:scan:1:beacon",
+            "reason": "enemy-attack"
+          }
+        }
+      ]
+    },
+    {
+      "seed": 2026,
+      "rank": 3,
+      "rounds": 1,
+      "wave": 3,
+      "elapsed": 50,
+      "phase": "playing",
+      "owner": "healthy",
+      "held": false,
+      "wavesCleared": 0,
+      "squadCount": 1,
+      "finishedSquads": 0,
+      "incomingTasks": 0,
+      "garrisonDamage": 0,
+      "casualties": 0,
+      "liveCells": 5,
+      "realBites": 8,
+      "handoff": false,
+      "handoffStarted": true,
+      "maxCellRank": 3,
+      "catalysisRank": 0,
+      "captureTimes": [],
+      "finalActors": [
+        {
+          "id": "territory:source-west",
+          "x": 450,
+          "y": 600,
+          "hp": 1200,
+          "role": "source"
+        },
+        {
+          "id": "territory:source-east",
+          "x": 1950,
+          "y": 450,
+          "hp": 1200,
+          "role": "source"
+        },
+        {
+          "id": "virus-3",
+          "x": 399.8254479357455,
+          "y": 566.3574254911781,
+          "hp": 68,
+          "role": "virus",
+          "task": {
+            "kind": "invade",
+            "nodeId": "front-north",
+            "squadId": "isolated:2026:north:0"
+          }
+        },
+        {
+          "id": "virus-4",
+          "x": 399.8332697861277,
+          "y": 516.9025812897731,
+          "hp": 68,
+          "role": "virus",
+          "task": {
+            "kind": "escort",
+            "nodeId": "front-north",
+            "squadId": "isolated:2026:north:0",
+            "leaderId": "virus-3"
+          }
+        },
+        {
+          "id": "virus-6",
+          "x": 446.13257747971494,
+          "y": 670.2700810625587,
+          "hp": 68,
+          "role": "virus",
+          "task": {
+            "kind": "escort",
+            "nodeId": "front-north",
+            "squadId": "isolated:2026:north:0",
+            "leaderId": "virus-3"
+          }
+        }
+      ],
+      "finalCells": [
+        {
+          "id": "2026:2:scan:1:beacon:cell:0",
+          "x": 734.5324093280409,
+          "y": 351.4929315561149,
+          "hp": 84,
+          "targetId": null,
+          "activity": "guarding",
+          "waypoint": {
+            "x": 738,
+            "y": 350
+          },
+          "attackReadyAt": 5.616666666666666
+        },
+        {
+          "id": "2026:2:scan:1:beacon:cell:1",
+          "x": 708.9359907614576,
+          "y": 387.6029860118181,
+          "hp": 84,
+          "targetId": null,
+          "activity": "guarding",
+          "waypoint": {
+            "x": 711.742645786248,
+            "y": 386.14014761921584
+          },
+          "attackReadyAt": 6.366666666666666
+        },
+        {
+          "id": "2026:2:scan:1:beacon:cell:2",
+          "x": 666.5420429043791,
+          "y": 374.00302308052017,
+          "hp": 84,
+          "targetId": null,
+          "activity": "guarding",
+          "waypoint": {
+            "x": 669.257354213752,
+            "y": 372.335839587114
+          },
+          "attackReadyAt": 6.2
+        },
+        {
+          "id": "2026:2:scan:1:beacon:cell:3",
+          "x": 667.273051893694,
+          "y": 328.7936727036363,
+          "hp": 84,
+          "targetId": null,
+          "activity": "guarding",
+          "waypoint": {
+            "x": 669.257354213752,
+            "y": 327.664160412886
+          },
+          "attackReadyAt": 6.283333333333333
+        },
+        {
+          "id": "2026:2:scan:1:beacon:cell:4",
+          "x": 709.0161556900962,
+          "y": 315.1276775528647,
+          "hp": 84,
+          "targetId": null,
+          "activity": "guarding",
+          "waypoint": {
+            "x": 711.742645786248,
+            "y": 313.85985238078416
+          },
+          "attackReadyAt": 5.6499999999999995
+        }
+      ],
+      "events": [
+        {
+          "type": "TERRITORY_SOURCE_ACTIVATED",
+          "tick": 1,
+          "data": {
+            "id": "territory:source-west",
+            "sourceId": "source-west",
+            "x": 450,
+            "y": 600,
+            "hp": 1200
+          }
+        },
+        {
+          "type": "TERRITORY_SOURCE_ACTIVATED",
+          "tick": 1,
+          "data": {
+            "id": "territory:source-east",
+            "sourceId": "source-east",
+            "x": 1950,
+            "y": 450,
+            "hp": 1200
+          }
+        },
+        {
+          "type": "IMMUNE_GUARD_ASSIGNED",
+          "tick": 1,
+          "data": {
+            "rootId": "2026:2:scan:1",
+            "beaconId": "2026:2:scan:1:beacon",
+            "organId": "heart",
+            "x": 700,
+            "y": 350,
+            "radius": 300,
+            "plannedUntil": null,
+            "newSquad": true,
+            "regionId": "front-north"
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 1,
+          "data": {
+            "squadId": "isolated:2026:north:0",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TERRITORY_HANDOFF_STARTED",
+          "tick": 241,
+          "data": {
+            "laneId": "north",
+            "nodeId": "front-north",
+            "squadId": "isolated:2026:north:0",
+            "beaconId": "2026:2:scan:1:beacon"
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_SPAWNED",
+          "tick": 241,
+          "data": {
+            "squadId": "isolated:2026:north:0",
+            "wave": 3,
+            "sourceId": "source-west",
+            "laneId": "north",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "count": 4
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 276,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 9.600000000000001,
+            "rawDamage": 9.6,
+            "remainingHp": 58.4,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:276",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 276,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:276",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-5",
+            "damage": 9.600000000000001,
+            "prioritizedTrace": false,
+            "x": 520.5941526542754,
+            "y": 462.48744991200306
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 281,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 9.600000000000001,
+            "rawDamage": 9.6,
+            "remainingHp": 48.8,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:281",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 281,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:281",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-5",
+            "damage": 9.600000000000001,
+            "prioritizedTrace": false,
+            "x": 495.1031395439205,
+            "y": 426.2435783543252
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 286,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 9.600000000000001,
+            "rawDamage": 9.6,
+            "remainingHp": 39.199999999999996,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:286",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 286,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:286",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-5",
+            "damage": 9.600000000000001,
+            "prioritizedTrace": false,
+            "x": 515.5567762896219,
+            "y": 488.24527437860576
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 289,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 9.600000000000001,
+            "rawDamage": 9.6,
+            "remainingHp": 29.599999999999994,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:289",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 289,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:289",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-5",
+            "damage": 9.600000000000001,
+            "prioritizedTrace": false,
+            "x": 518.0660599670082,
+            "y": 444.66546987815855
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 291,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 9.600000000000001,
+            "rawDamage": 9.6,
+            "remainingHp": 19.999999999999993,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:4:bite:291",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:4"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 291,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:4:bite:291",
+            "cellId": "2026:2:scan:1:beacon:cell:4",
+            "targetId": "virus-5",
+            "damage": 9.600000000000001,
+            "prioritizedTrace": false,
+            "x": 482.6291968332407,
+            "y": 420.40060581911996
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 324,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 9.6,
+            "rawDamage": 9.6,
+            "remainingHp": 10.399999999999993,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:324",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 324,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:324",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-5",
+            "damage": 9.6,
+            "prioritizedTrace": false,
+            "x": 461.44903132013485,
+            "y": 499.9287990112243
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 329,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 9.6,
+            "rawDamage": 9.6,
+            "remainingHp": 0.7999999999999936,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:329",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 329,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:329",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-5",
+            "damage": 9.6,
+            "prioritizedTrace": false,
+            "x": 438.85319635875106,
+            "y": 458.81571202200496
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 334,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 0.7999999999999936,
+            "rawDamage": 0.7999999999999936,
+            "remainingHp": 0,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:334",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 334,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:334",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-5",
+            "damage": 0.7999999999999936,
+            "prioritizedTrace": false,
+            "x": 506.7502499183023,
+            "y": 492.9828996562371
+          }
+        }
+      ]
+    },
+    {
+      "seed": 2026,
+      "rank": 3,
+      "rounds": 16,
+      "wave": 3,
+      "elapsed": 350,
+      "phase": "playing",
+      "owner": "healthy",
+      "held": false,
+      "wavesCleared": 0,
+      "squadCount": 1,
+      "finishedSquads": 0,
+      "incomingTasks": 15,
+      "garrisonDamage": 0,
+      "casualties": 0,
+      "liveCells": 5,
+      "realBites": 8,
+      "handoff": false,
+      "handoffStarted": true,
+      "maxCellRank": 3,
+      "catalysisRank": 0,
+      "captureTimes": [],
+      "finalActors": [
+        {
+          "id": "territory:source-west",
+          "x": 450,
+          "y": 600,
+          "hp": 1200,
+          "role": "source"
+        },
+        {
+          "id": "territory:source-east",
+          "x": 1950,
+          "y": 450,
+          "hp": 1200,
+          "role": "source"
+        },
+        {
+          "id": "virus-3",
+          "x": 399.8254479357455,
+          "y": 566.3574254911781,
+          "hp": 68,
+          "role": "virus",
+          "task": {
+            "kind": "invade",
+            "nodeId": "front-north",
+            "squadId": "isolated:2026:north:0"
+          }
+        },
+        {
+          "id": "virus-4",
+          "x": 399.8332697861277,
+          "y": 516.9025812897731,
+          "hp": 68,
+          "role": "virus",
+          "task": {
+            "kind": "escort",
+            "nodeId": "front-north",
+            "squadId": "isolated:2026:north:0",
+            "leaderId": "virus-3"
+          }
+        },
+        {
+          "id": "virus-6",
+          "x": 446.13257747971494,
+          "y": 670.2700810625587,
+          "hp": 68,
+          "role": "virus",
+          "task": {
+            "kind": "escort",
+            "nodeId": "front-north",
+            "squadId": "isolated:2026:north:0",
+            "leaderId": "virus-3"
+          }
+        }
+      ],
+      "finalCells": [
+        {
+          "id": "2026:2:scan:1:beacon:cell:0",
+          "x": 734.5324093280409,
+          "y": 351.4929315561149,
+          "hp": 84,
+          "targetId": null,
+          "activity": "guarding",
+          "waypoint": {
+            "x": 738,
+            "y": 350
+          },
+          "attackReadyAt": 326
+        },
+        {
+          "id": "2026:2:scan:1:beacon:cell:1",
+          "x": 708.9359907614576,
+          "y": 387.6029860118181,
+          "hp": 84,
+          "targetId": null,
+          "activity": "guarding",
+          "waypoint": {
+            "x": 711.742645786248,
+            "y": 386.14014761921584
+          },
+          "attackReadyAt": 326
+        },
+        {
+          "id": "2026:2:scan:1:beacon:cell:2",
+          "x": 666.5420429043791,
+          "y": 374.00302308052017,
+          "hp": 84,
+          "targetId": null,
+          "activity": "guarding",
+          "waypoint": {
+            "x": 669.257354213752,
+            "y": 372.335839587114
+          },
+          "attackReadyAt": 326
+        },
+        {
+          "id": "2026:2:scan:1:beacon:cell:3",
+          "x": 667.273051893694,
+          "y": 328.7936727036363,
+          "hp": 84,
+          "targetId": null,
+          "activity": "guarding",
+          "waypoint": {
+            "x": 669.257354213752,
+            "y": 327.664160412886
+          },
+          "attackReadyAt": 326
+        },
+        {
+          "id": "2026:2:scan:1:beacon:cell:4",
+          "x": 709.0161556900962,
+          "y": 315.1276775528647,
+          "hp": 84,
+          "targetId": null,
+          "activity": "guarding",
+          "waypoint": {
+            "x": 711.742645786248,
+            "y": 313.85985238078416
+          },
+          "attackReadyAt": 326
+        }
+      ],
+      "events": [
+        {
+          "type": "TERRITORY_SOURCE_ACTIVATED",
+          "tick": 1,
+          "data": {
+            "id": "territory:source-west",
+            "sourceId": "source-west",
+            "x": 450,
+            "y": 600,
+            "hp": 1200
+          }
+        },
+        {
+          "type": "TERRITORY_SOURCE_ACTIVATED",
+          "tick": 1,
+          "data": {
+            "id": "territory:source-east",
+            "sourceId": "source-east",
+            "x": 1950,
+            "y": 450,
+            "hp": 1200
+          }
+        },
+        {
+          "type": "IMMUNE_GUARD_ASSIGNED",
+          "tick": 1,
+          "data": {
+            "rootId": "2026:2:scan:1",
+            "beaconId": "2026:2:scan:1:beacon",
+            "organId": "heart",
+            "x": 700,
+            "y": 350,
+            "radius": 300,
+            "plannedUntil": null,
+            "newSquad": true,
+            "regionId": "front-north"
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 1,
+          "data": {
+            "squadId": "isolated:2026:north:0",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TERRITORY_HANDOFF_STARTED",
+          "tick": 241,
+          "data": {
+            "laneId": "north",
+            "nodeId": "front-north",
+            "squadId": "isolated:2026:north:0",
+            "beaconId": "2026:2:scan:1:beacon"
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_SPAWNED",
+          "tick": 241,
+          "data": {
+            "squadId": "isolated:2026:north:0",
+            "wave": 3,
+            "sourceId": "source-west",
+            "laneId": "north",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "count": 4
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 276,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 9.600000000000001,
+            "rawDamage": 9.6,
+            "remainingHp": 58.4,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:276",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 276,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:276",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-5",
+            "damage": 9.600000000000001,
+            "prioritizedTrace": false,
+            "x": 520.5941526542754,
+            "y": 462.48744991200306
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 281,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 9.600000000000001,
+            "rawDamage": 9.6,
+            "remainingHp": 48.8,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:281",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 281,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:281",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-5",
+            "damage": 9.600000000000001,
+            "prioritizedTrace": false,
+            "x": 495.1031395439205,
+            "y": 426.2435783543252
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 286,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 9.600000000000001,
+            "rawDamage": 9.6,
+            "remainingHp": 39.199999999999996,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:286",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 286,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:286",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-5",
+            "damage": 9.600000000000001,
+            "prioritizedTrace": false,
+            "x": 515.5567762896219,
+            "y": 488.24527437860576
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 289,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 9.600000000000001,
+            "rawDamage": 9.6,
+            "remainingHp": 29.599999999999994,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:289",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:0"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 289,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:0:bite:289",
+            "cellId": "2026:2:scan:1:beacon:cell:0",
+            "targetId": "virus-5",
+            "damage": 9.600000000000001,
+            "prioritizedTrace": false,
+            "x": 518.0660599670082,
+            "y": 444.66546987815855
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 291,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 9.600000000000001,
+            "rawDamage": 9.6,
+            "remainingHp": 19.999999999999993,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:4:bite:291",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:4"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 291,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:4:bite:291",
+            "cellId": "2026:2:scan:1:beacon:cell:4",
+            "targetId": "virus-5",
+            "damage": 9.600000000000001,
+            "prioritizedTrace": false,
+            "x": 482.6291968332407,
+            "y": 420.40060581911996
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 324,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 9.6,
+            "rawDamage": 9.6,
+            "remainingHp": 10.399999999999993,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:324",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:2"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 324,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:2:bite:324",
+            "cellId": "2026:2:scan:1:beacon:cell:2",
+            "targetId": "virus-5",
+            "damage": 9.6,
+            "prioritizedTrace": false,
+            "x": 461.44903132013485,
+            "y": 499.9287990112243
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 329,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 9.6,
+            "rawDamage": 9.6,
+            "remainingHp": 0.7999999999999936,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:329",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:3"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 329,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:3:bite:329",
+            "cellId": "2026:2:scan:1:beacon:cell:3",
+            "targetId": "virus-5",
+            "damage": 9.6,
+            "prioritizedTrace": false,
+            "x": 438.85319635875106,
+            "y": 458.81571202200496
+          }
+        },
+        {
+          "type": "TARGET_HIT",
+          "tick": 334,
+          "data": {
+            "id": "virus-5",
+            "organId": "heart",
+            "damage": 0.7999999999999936,
+            "rawDamage": 0.7999999999999936,
+            "remainingHp": 0,
+            "tool": 1,
+            "cause": "protocol",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:334",
+            "protocolId": "IMMUNE_BEACON",
+            "immuneCellId": "2026:2:scan:1:beacon:cell:1"
+          }
+        },
+        {
+          "type": "PROTOCOL_BEACON_HIT",
+          "tick": 334,
+          "data": {
+            "protocolId": "IMMUNE_BEACON",
+            "rootId": "2026:2:scan:1:beacon:cell:1:bite:334",
+            "cellId": "2026:2:scan:1:beacon:cell:1",
+            "targetId": "virus-5",
+            "damage": 0.7999999999999936,
+            "prioritizedTrace": false,
+            "x": 506.7502499183023,
+            "y": 492.9828996562371
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 601,
+          "data": {
+            "squadId": "isolated:2026:north:1",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 1200,
+          "data": {
+            "squadId": "isolated:2026:north:2",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 1800,
+          "data": {
+            "squadId": "isolated:2026:north:3",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 2400,
+          "data": {
+            "squadId": "isolated:2026:north:4",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 3000,
+          "data": {
+            "squadId": "isolated:2026:north:5",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 3600,
+          "data": {
+            "squadId": "isolated:2026:north:6",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 4200,
+          "data": {
+            "squadId": "isolated:2026:north:7",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 4800,
+          "data": {
+            "squadId": "isolated:2026:north:8",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 5400,
+          "data": {
+            "squadId": "isolated:2026:north:9",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 6000,
+          "data": {
+            "squadId": "isolated:2026:north:10",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 6600,
+          "data": {
+            "squadId": "isolated:2026:north:11",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 7200,
+          "data": {
+            "squadId": "isolated:2026:north:12",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 7800,
+          "data": {
+            "squadId": "isolated:2026:north:13",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 8400,
+          "data": {
+            "squadId": "isolated:2026:north:14",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        },
+        {
+          "type": "TERRITORY_SQUAD_WARNING",
+          "tick": 9000,
+          "data": {
+            "squadId": "isolated:2026:north:15",
+            "wave": 3,
+            "laneId": "north",
+            "sourceId": "source-west",
+            "nodeId": "front-north",
+            "x": 450,
+            "y": 600,
+            "duration": 4
+          }
+        }
+      ]
+    }
+  ]
+}

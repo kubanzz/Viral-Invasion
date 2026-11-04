@@ -21,8 +21,25 @@ for(const organId of['heart','lung']){
 for(const choice of['pursue','block','ignore'])add('MIGRATION_DECIDED',{choice});
 for(const type of['INFECTION_CRISIS_STARTED','INFECTION_CRISIS_RECOVERED','MIGRATION_WARNING','MIGRATION_BLOCK_STARTED','MIGRATION_BLOCK_CANCELLED','MIGRATION_PREEMPTIVELY_BLOCKED','MIGRATION_INTERCEPTED','MIGRATION_ESTABLISHED','CORE_COMBAT_STARTED','CORE_MEMBRANES_OPENED','CORE_CORROSION_INTERRUPTED','CORE_CLEARED','RETEST_COMPLETED'])add(type);
 add('RUN_ENDED',{reason:'隔离提示夹具的终局原因'});
+for(const previousRegionId of ['front-north','front-south'])add('IMMUNE_SQUAD_REDIRECTED',{footDeployment:true,withdrewFront:true,previousRegionId});
 
 describe('exhaustive shipped high-priority feedback categories',()=>{
+  it('records a front withdrawal from a real full-army Q producer rather than an invented notification',()=>{
+    const game=new GameSession(71,{mode:'endless',territory:true});game.start();
+    game.state.world={...game.state.world!,obstacles:[]};game.state.targets=[];
+    const north=game.state.territory!.nodes.find(n=>n.id==='front-north')!,south=game.state.territory!.nodes.find(n=>n.id==='front-south')!;
+    north.owner='healthy';south.owner='healthy';
+    Object.assign(game.state.player,{x:north.x,y:north.y});
+    const act=()=>game.step({moveX:0,moveY:0,aim:{x:2300,y:1400},fire:false,scan:true});
+    act();expect(game.state.growth!.beacons).toHaveLength(1);
+    game.state.elapsed=20;game.state.tick=1200;Object.assign(game.state.player,{x:south.x,y:south.y});act();
+    expect(game.state.growth!.beacons).toHaveLength(2);
+    game.state.elapsed=40;game.state.tick=2400;Object.assign(game.state.player,{x:north.x+20,y:north.y+240});act();
+    const event=game.state.events.find(e=>e.tick===game.state.tick&&e.type==='IMMUNE_SQUAD_REDIRECTED');
+    expect(event?.data).toMatchObject({footDeployment:true,withdrewFront:true,previousRegionId:'front-north'});
+    expect(game.state.tacticalRecords!.find(r=>r.key==='IMMUNE_SQUAD_REDIRECTED:北')?.text).toContain('北前线撤防');
+  });
+
   it('keeps every real producer category reviewable after raw-log and action-history eviction',()=>{
     const source=readFileSync(resolve('src/game/tacticalFeedback.ts'),'utf8');
     const declared=[...source.matchAll(/case '([A-Z_]+)'/g)].map(match=>match[1]);

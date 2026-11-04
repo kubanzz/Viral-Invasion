@@ -19,7 +19,7 @@ function fixture() {
   const sink = { add: (value: SceneLabel) => labels.push(value), reserveScreen: (rect: LabelRect) => reservations.push(rect) };
   const calls: { method: string; args: unknown[] }[] = [];
   const ctx: Record<string, unknown> = { globalAlpha: 1, fillStyle: '', strokeStyle: '', lineWidth: 1 };
-  for (const method of ['save', 'restore', 'translate', 'scale', 'beginPath', 'closePath', 'setLineDash', 'ellipse', 'arc', 'moveTo', 'lineTo', 'roundRect', 'fill', 'stroke', 'fillText', 'strokeText']) {
+  for (const method of ['save', 'restore', 'translate', 'scale', 'beginPath', 'closePath', 'setLineDash', 'ellipse', 'arc', 'moveTo', 'lineTo', 'quadraticCurveTo', 'bezierCurveTo', 'roundRect', 'fill', 'stroke', 'fillText', 'strokeText']) {
     ctx[method] = (...args: unknown[]) => calls.push({ method, args });
   }
   return { state, labels, reservations, sink, calls, ctx: ctx as unknown as CanvasRenderingContext2D };
@@ -63,10 +63,22 @@ describe('native beacon body-free information', () => {
     expect(f.reservations).toEqual([]); expect(f.calls).toEqual([]);
   });
 
-  it('keeps the procedural fallback device and omits devices for patrols, expired beacons and other organs', () => {
+  it('roots the organic fallback at the beacon anchor and omits bodies for patrols, expired beacons and other organs', () => {
     const f = fixture(), visuals = new GrowthVisuals(), before = JSON.stringify(f.state);
     visuals.drawBeacon(f.ctx, f.state, f.state.growth, f.sink);
-    expect(f.labels).toHaveLength(1); expect(f.calls.some(call => call.method === 'roundRect')).toBe(true);
+    expect(f.labels).toHaveLength(1);
+    expect(f.calls.filter(call => call.method === 'translate').map(call => call.args)).toEqual([[420, 400]]);
+    expect(f.calls.filter(call => call.method === 'scale').map(call => call.args)).toEqual([[1, 1 / .72]]);
+    expect(f.calls.filter(call => call.method === 'quadraticCurveTo').map(call => call.args)).toEqual([
+      [-27, -3, -24, -17], [-7, -20, 0, 0], [27, -3, 24, -17], [7, -20, 0, 0],
+    ]);
+    expect(f.calls.filter(call => call.method === 'bezierCurveTo').map(call => call.args)).toEqual([
+      [-16, -9, -15, -28, 0, -34], [15, -28, 16, -9, 0, 0],
+    ]);
+    // All three leaves return to the root and close before they are painted.
+    const closed = f.calls.flatMap((call, i) => call.method === 'closePath' ? [f.calls.slice(i, i + 3).map(item => item.method)] : []);
+    expect(closed).toEqual(Array.from({ length: 3 }, () => ['closePath', 'fill', 'stroke']));
+    expect(f.calls.some(call => call.method === 'roundRect')).toBe(false);
     expect(JSON.stringify(f.state)).toBe(before);
     f.state.growth!.beacon!.mode = 'patrol'; f.calls.length = 0; f.labels.length = 0;
     visuals.drawBeacon(f.ctx, f.state, f.state.growth, f.sink);

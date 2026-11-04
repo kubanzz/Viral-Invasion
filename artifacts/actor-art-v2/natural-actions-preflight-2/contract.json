@@ -1,0 +1,303 @@
+{
+  "schemaVersion": 1,
+  "evidenceLevels": [
+    "derived-renderer-supplied-state",
+    "natural-dom-input-rAF-video"
+  ],
+  "diagnostics": {
+    "version": 2,
+    "actorArray": "art.actorFrames",
+    "groupStatus": "art.actorContract",
+    "fields": [
+      "actorId",
+      "semanticId",
+      "identity",
+      "action",
+      "clip",
+      "frameIndex",
+      "frame",
+      "direction",
+      "authoredDirection",
+      "flipX",
+      "native",
+      "visible",
+      "groupReady",
+      "fallback",
+      "fallbackReason",
+      "source",
+      "sourceFoot",
+      "worldFoot",
+      "screenFoot",
+      "bodyBounds",
+      "grip",
+      "muzzle",
+      "rotation"
+    ],
+    "ruleDirections": {
+      "array": "art.ruleDirections",
+      "scope": "Geometry returned by the same actual native accent draw, not recalculated from state in diagnostics",
+      "fields": [
+        "actorId",
+        "type",
+        "angle",
+        "projectedAngle",
+        "origin",
+        "end",
+        "displayOrigin",
+        "displayEnd",
+        "sectorHalfAngle",
+        "displayRadius",
+        "exposed",
+        "committed",
+        "visible"
+      ]
+    }
+  },
+  "views": [
+    "front_right",
+    "back_right",
+    "front_left",
+    "back_left"
+  ],
+  "note": "Four art views, independently selected from aim quadrants; eight movement inputs do not mean eight authored views.",
+  "derived": {
+    "scenes": [
+      "menu",
+      "training",
+      "heart",
+      "lung"
+    ],
+    "grounds": [
+      "healthy",
+      "infected"
+    ],
+    "effects": [
+      "standard",
+      "low"
+    ],
+    "hero": [
+      "idle",
+      "walk",
+      "fire",
+      "walk-fire",
+      "dash",
+      "charge",
+      "release",
+      "scan",
+      "heal",
+      "hurt"
+    ],
+    "enemies": [
+      "basic",
+      "thinRay",
+      "carapace",
+      "fission.parent",
+      "fission.child",
+      "mimic",
+      "invader",
+      "source",
+      "mother",
+      "immune"
+    ],
+    "enemyStates": [
+      "move",
+      "windup",
+      "attack",
+      "hurt",
+      "recovery",
+      "defeat"
+    ],
+    "density": [
+      48
+    ],
+    "forcedFallback": true,
+    "camera": {
+      "inspectionStage": "1200x800 explicitly supplied overview; not the production 2400x1500 follow view",
+      "compactCanvasCSS": {
+        "width": 667,
+        "height": 320
+      },
+      "compactMinimumScale": 0.62,
+      "menuMinimumScaleOptIn": false
+    },
+    "ruleDirections": {
+      "worldAngles": [
+        0,
+        0.7853981633974483,
+        1.5707963267948966,
+        2.356194490192345,
+        3.141592653589793,
+        3.9269908169872414,
+        4.71238898038469,
+        5.497787143782138
+      ],
+      "effects": [
+        "standard",
+        "low"
+      ],
+      "cases": [
+        "carapace-protected",
+        "carapace-exposed",
+        "thinRay-locked-plan"
+      ],
+      "labels": [
+        "normal",
+        "suppressed-in-probe"
+      ],
+      "expectedCarapaceHalfAngle": 1.369438406004566,
+      "ruleSource": "src/game/battle.ts modifiedDamage: cos(incoming-facing) > .2 and exposedUntil <= elapsed",
+      "note": "Eight rule directions are cues/geometry, not eight authored body drawings. ThinRay target.facing is deliberately opposite its frozen plan aim."
+    }
+  },
+  "natural": {
+    "entry": [
+      "public-menu",
+      "training-query",
+      "public-heart-rescue"
+    ],
+    "actions": [
+      "idle",
+      "walk",
+      "fire",
+      "walk-fire",
+      "dash",
+      "charge",
+      "release",
+      "scan",
+      "heal",
+      "hurt"
+    ],
+    "combat": [
+      "positive-virus-hit",
+      "infection",
+      "healing",
+      "cleanse",
+      "purification",
+      "variant-birth",
+      "source-defeat",
+      "mother",
+      "rescue"
+    ],
+    "excludedClaim": "Lung is supplied-state coverage unless a separately recorded public route actually reaches it.",
+    "recorder": {
+      "playerTool": "every observed rAF",
+      "sceneSampleMs": 100,
+      "streamFlushMs": 2000,
+      "maxPendingBytes": 8388608,
+      "maxRecordBytes": 524288,
+      "maxCatalogueEntries": 512,
+      "maxEventKeys": 100000,
+      "maxEventBytes": 16777216,
+      "maxTrackedTargets": 512,
+      "maxPendingRecords": 20000,
+      "enemyTransitions": "rAF-observed logical state changes only; point observations, not continuous enemy animation",
+      "overflow": "Stop recorder and reject completeness; never silently discard player/tool frames",
+      "encoding": "UTF-8 NDJSON, incrementally drained and checked; catalogue records precede their dynamic references"
+    },
+    "enemySamplingBoundary": "Whole-scene enemy/native geometry is sampled at100ms plus observed transition points. Only player/tool records remain continuous rAF; enemy transient continuity is not inferred."
+  },
+  "humanReviewRequired": [
+    "style replacement",
+    "silhouette recognition",
+    "foot sliding",
+    "start-stop continuity",
+    "grip and muzzle alignment",
+    "no doubled weapons",
+    "hazard readability at 48 bodies",
+    "eight-direction sector/heading clarity without a conflicting fixed painted pose",
+    "animation quality"
+  ],
+  "finalPerformance": "Separate exclusive natural 48-body standard/low desktop/compact run; no FPS claim from this video/diagnostic-heavy capture.",
+  "requiredGroups": [
+    "fantasy.actor.hero.front_right.idle",
+    "fantasy.actor.hero.front_right.walk",
+    "fantasy.actor.hero.front_right.hurt",
+    "fantasy.actor.hero.front_right.dash",
+    "fantasy.actor.hero.back_right.idle",
+    "fantasy.actor.hero.back_right.walk",
+    "fantasy.actor.hero.back_right.hurt",
+    "fantasy.actor.hero.back_right.dash",
+    "fantasy.actor.enemy.basic.walk",
+    "fantasy.actor.enemy.basic.windup",
+    "fantasy.actor.enemy.basic.hurt",
+    "fantasy.actor.enemy.basic.dissolve",
+    "fantasy.actor.enemy.thinRay.walk",
+    "fantasy.actor.enemy.thinRay.windup",
+    "fantasy.actor.enemy.thinRay.hurt",
+    "fantasy.actor.enemy.thinRay.dissolve",
+    "fantasy.actor.enemy.carapace.walk",
+    "fantasy.actor.enemy.carapace.windup",
+    "fantasy.actor.enemy.carapace.hurt",
+    "fantasy.actor.enemy.carapace.dissolve",
+    "fantasy.actor.enemy.fission.parent.walk",
+    "fantasy.actor.enemy.fission.parent.windup",
+    "fantasy.actor.enemy.fission.parent.hurt",
+    "fantasy.actor.enemy.fission.parent.dissolve",
+    "fantasy.actor.enemy.fission.child.walk",
+    "fantasy.actor.enemy.fission.child.windup",
+    "fantasy.actor.enemy.fission.child.hurt",
+    "fantasy.actor.enemy.fission.child.dissolve",
+    "fantasy.actor.enemy.mimic.walk",
+    "fantasy.actor.enemy.mimic.windup",
+    "fantasy.actor.enemy.mimic.hurt",
+    "fantasy.actor.enemy.mimic.dissolve",
+    "fantasy.actor.immune.front_right.crawl",
+    "fantasy.actor.immune.front_right.bite",
+    "fantasy.actor.immune.back_right.crawl",
+    "fantasy.actor.immune.back_right.bite",
+    "fantasy.actor.mother.base",
+    "fantasy.actor.mother.core"
+  ],
+  "requiredStaticIds": [
+    "fantasy.actor.weapon.emitter",
+    "fantasy.actor.immune.beacon",
+    "fantasy.actor.enemy.addon.spore_crown",
+    "fantasy.actor.enemy.elite.fungal_horns",
+    "fantasy.actor.mother.membrane",
+    "fantasy.actor.mother.carapace",
+    "fantasy.actor.mother.fission",
+    "fantasy.actor.mother.mimic",
+    "fantasy.actor.mother.purified"
+  ],
+  "requiredGroupFrameCounts": {
+    "fantasy.actor.hero.front_right.idle": 4,
+    "fantasy.actor.hero.front_right.walk": 8,
+    "fantasy.actor.hero.front_right.hurt": 2,
+    "fantasy.actor.hero.front_right.dash": 4,
+    "fantasy.actor.hero.back_right.idle": 4,
+    "fantasy.actor.hero.back_right.walk": 8,
+    "fantasy.actor.hero.back_right.hurt": 2,
+    "fantasy.actor.hero.back_right.dash": 4,
+    "fantasy.actor.enemy.basic.walk": 4,
+    "fantasy.actor.enemy.basic.windup": 2,
+    "fantasy.actor.enemy.basic.hurt": 1,
+    "fantasy.actor.enemy.basic.dissolve": 1,
+    "fantasy.actor.enemy.thinRay.walk": 4,
+    "fantasy.actor.enemy.thinRay.windup": 2,
+    "fantasy.actor.enemy.thinRay.hurt": 1,
+    "fantasy.actor.enemy.thinRay.dissolve": 1,
+    "fantasy.actor.enemy.carapace.walk": 4,
+    "fantasy.actor.enemy.carapace.windup": 2,
+    "fantasy.actor.enemy.carapace.hurt": 1,
+    "fantasy.actor.enemy.carapace.dissolve": 1,
+    "fantasy.actor.enemy.fission.parent.walk": 4,
+    "fantasy.actor.enemy.fission.parent.windup": 2,
+    "fantasy.actor.enemy.fission.parent.hurt": 1,
+    "fantasy.actor.enemy.fission.parent.dissolve": 1,
+    "fantasy.actor.enemy.fission.child.walk": 4,
+    "fantasy.actor.enemy.fission.child.windup": 2,
+    "fantasy.actor.enemy.fission.child.hurt": 1,
+    "fantasy.actor.enemy.fission.child.dissolve": 1,
+    "fantasy.actor.enemy.mimic.walk": 4,
+    "fantasy.actor.enemy.mimic.windup": 2,
+    "fantasy.actor.enemy.mimic.hurt": 1,
+    "fantasy.actor.enemy.mimic.dissolve": 1,
+    "fantasy.actor.immune.front_right.crawl": 4,
+    "fantasy.actor.immune.front_right.bite": 4,
+    "fantasy.actor.immune.back_right.crawl": 4,
+    "fantasy.actor.immune.back_right.bite": 4,
+    "fantasy.actor.mother.base": 4,
+    "fantasy.actor.mother.core": 2
+  },
+  "singleFrameBoundary": "Each enemy hurt/dissolve group has one authored key frame, plus its actual timed visual response. These are never reported as authored multi-frame animations."
+}

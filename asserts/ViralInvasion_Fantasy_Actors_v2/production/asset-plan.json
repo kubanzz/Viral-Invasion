@@ -1,0 +1,6160 @@
+{
+  "schemaVersion": 2,
+  "status": "planned-not-delivered",
+  "scope": "Fantasy_Actors_v2-only",
+  "reference": "C:/Users/SEASUN/.codex/generated_images/01a19ce0-dc23-7673-a586-810d16380fa0/exec-d92f546e-b3a9-4c4d-b690-3022f61bf94f.png",
+  "referenceSha256": "8caaa9cabe4a229f6a091360f642436bc021cf03aafed4111e173760aafdfabe",
+  "expectedCounts": {
+    "hero": 36,
+    "enemy": 48,
+    "enemyAddons": 2,
+    "immune": 16,
+    "weapon": 1,
+    "beacon": 1,
+    "mother": 11,
+    "totalRuntime": 115,
+    "approvalSamples": 3
+  },
+  "idPrefix": "fantasy.actor.",
+  "deliveryRoot": "asserts/ViralInvasion_Fantasy_Actors_v2",
+  "generationEnabled": false,
+  "gates": {
+    "current": "three-master-approval",
+    "firstBatch": [
+      "fantasy.actor.hero.front_right.master",
+      "fantasy.actor.enemy.basic.master",
+      "fantasy.actor.immune.front_right.master"
+    ],
+    "runtimeAnimationProduction": "blocked-until-3-masters-approved",
+    "samplesCountAsRuntimeFrames": false,
+    "sourceDraftCountDoesNotIncreaseRuntime115": true
+  },
+  "registrationContract": {
+    "standardActorCanvas": [
+      512,
+      512
+    ],
+    "standardFootAnchorPx": [
+      256,
+      435.2
+    ],
+    "standardPivot": [
+      0.5,
+      0.85
+    ],
+    "motherCanvas": [
+      1024,
+      1024
+    ],
+    "motherAnchorPx": [
+      512,
+      870.4
+    ],
+    "motherPivot": [
+      0.5,
+      0.85
+    ],
+    "independentTool": "握点与枪口在新稿核准后显式登记；不冒用脚点或旧械具坐标。",
+    "worldYProjection": "仅世界位置投影使用0.72；直立角色绘画本体不得预压缩Y轴。",
+    "forbidden": [
+      "逐帧独立alpha裁边",
+      "按每帧可见高度单独缩放",
+      "逐图自动居中",
+      "将旧版512,850母体锚点复制到新版",
+      "将程序mesh形变计作新增PNG动画",
+      "将前右镜像计作后右方向稿",
+      "把烘焙枪械/VFX混入玩家本体"
+    ],
+    "registeredTransform": "核准母图后按家族/方向锁定源比例与统一画布变换；后续帧沿用同一变换。"
+  },
+  "animationPolicy": {
+    "fpsStatus": "proposed-initial-review",
+    "note": "帧数量与ID为本合同固定值；fps为初始预览建议，未宣称已接入或已核准。",
+    "uniqueFrameFilesRequired": true,
+    "pixelDifferencesAloneDoNotProveContinuity": true,
+    "review": [
+      "透明边缘与残底",
+      "24至32像素读形",
+      "脚点、源比例与轮廓稳定",
+      "动作时序及末首衔接",
+      "后右方向真实转面",
+      "独立武器握点与枪口同变换",
+      "母体基体与所有附件共画布共尺度"
+    ]
+  },
+  "frozenBoundary": {
+    "environmentDirectory": "asserts/ViralInvasion_Fantasy_v1",
+    "writesAllowed": false,
+    "runtimeIntegration": "未授权本子任务修改renderer、selection、atlas或旧driver；本文件不宣称新素材已接入。"
+  },
+  "samples": [
+    {
+      "id": "fantasy.actor.hero.front_right.master",
+      "path": "sources/hero/front_right/master.png",
+      "kind": "source-master",
+      "runtime": false,
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "direction": "front_right",
+      "approvalStatus": "pending",
+      "status": "awaiting-generation",
+      "runId": null,
+      "sha256": null
+    },
+    {
+      "id": "fantasy.actor.enemy.basic.master",
+      "path": "sources/enemy/basic/master.png",
+      "kind": "source-master",
+      "runtime": false,
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "direction": "front_right",
+      "approvalStatus": "pending",
+      "status": "awaiting-generation",
+      "runId": null,
+      "sha256": null
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.master",
+      "path": "sources/immune/front_right/master.png",
+      "kind": "source-master",
+      "runtime": false,
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "direction": "front_right",
+      "approvalStatus": "pending",
+      "status": "awaiting-generation",
+      "runId": null,
+      "sha256": null
+    }
+  ],
+  "assets": [
+    {
+      "id": "fantasy.actor.hero.front_right.idle.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/front_right/idle/00.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 1,
+      "family": "hero",
+      "direction": "front_right",
+      "clip": "idle",
+      "frameIndex": 0,
+      "frameCount": 4,
+      "fps": 4,
+      "loop": true,
+      "poseNote": "中性站姿、轻微呼吸起点",
+      "registration": {
+        "group": "fantasy.actor.hero.front_right",
+        "baselineAssetId": "fantasy.actor.hero.front_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "保持核准前右母图的头身比例、奶白头壳、深面罩、两点眼与大色块配色。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.front_right.idle.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/front_right/idle/01.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 2,
+      "family": "hero",
+      "direction": "front_right",
+      "clip": "idle",
+      "frameIndex": 1,
+      "frameCount": 4,
+      "fps": 4,
+      "loop": true,
+      "poseNote": "胸部与头部轻微上提，脚点不漂",
+      "registration": {
+        "group": "fantasy.actor.hero.front_right",
+        "baselineAssetId": "fantasy.actor.hero.front_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "保持核准前右母图的头身比例、奶白头壳、深面罩、两点眼与大色块配色。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.front_right.idle.02",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/front_right/idle/02.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 3,
+      "family": "hero",
+      "direction": "front_right",
+      "clip": "idle",
+      "frameIndex": 2,
+      "frameCount": 4,
+      "fps": 4,
+      "loop": true,
+      "poseNote": "呼吸高点，双眼保持清楚",
+      "registration": {
+        "group": "fantasy.actor.hero.front_right",
+        "baselineAssetId": "fantasy.actor.hero.front_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "保持核准前右母图的头身比例、奶白头壳、深面罩、两点眼与大色块配色。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.front_right.idle.03",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/front_right/idle/03.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 4,
+      "family": "hero",
+      "direction": "front_right",
+      "clip": "idle",
+      "frameIndex": 3,
+      "frameCount": 4,
+      "fps": 4,
+      "loop": true,
+      "poseNote": "身体回到接近起点，末帧接首帧自然",
+      "registration": {
+        "group": "fantasy.actor.hero.front_right",
+        "baselineAssetId": "fantasy.actor.hero.front_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "保持核准前右母图的头身比例、奶白头壳、深面罩、两点眼与大色块配色。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.front_right.walk.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/front_right/walk/00.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 5,
+      "family": "hero",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 0,
+      "frameCount": 8,
+      "fps": 12,
+      "loop": true,
+      "poseNote": "左脚前摆、右脚后蹬",
+      "registration": {
+        "group": "fantasy.actor.hero.front_right",
+        "baselineAssetId": "fantasy.actor.hero.front_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "保持核准前右母图的头身比例、奶白头壳、深面罩、两点眼与大色块配色。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.front_right.walk.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/front_right/walk/01.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 6,
+      "family": "hero",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 1,
+      "frameCount": 8,
+      "fps": 12,
+      "loop": true,
+      "poseNote": "左脚落地、重心前移",
+      "registration": {
+        "group": "fantasy.actor.hero.front_right",
+        "baselineAssetId": "fantasy.actor.hero.front_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "保持核准前右母图的头身比例、奶白头壳、深面罩、两点眼与大色块配色。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.front_right.walk.02",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/front_right/walk/02.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 7,
+      "family": "hero",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 2,
+      "frameCount": 8,
+      "fps": 12,
+      "loop": true,
+      "poseNote": "左脚支撑、右脚越过",
+      "registration": {
+        "group": "fantasy.actor.hero.front_right",
+        "baselineAssetId": "fantasy.actor.hero.front_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "保持核准前右母图的头身比例、奶白头壳、深面罩、两点眼与大色块配色。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.front_right.walk.03",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/front_right/walk/03.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 8,
+      "family": "hero",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 3,
+      "frameCount": 8,
+      "fps": 12,
+      "loop": true,
+      "poseNote": "右脚前摆",
+      "registration": {
+        "group": "fantasy.actor.hero.front_right",
+        "baselineAssetId": "fantasy.actor.hero.front_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "保持核准前右母图的头身比例、奶白头壳、深面罩、两点眼与大色块配色。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.front_right.walk.04",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/front_right/walk/04.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 9,
+      "family": "hero",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 4,
+      "frameCount": 8,
+      "fps": 12,
+      "loop": true,
+      "poseNote": "右脚落地、左脚后蹬",
+      "registration": {
+        "group": "fantasy.actor.hero.front_right",
+        "baselineAssetId": "fantasy.actor.hero.front_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "保持核准前右母图的头身比例、奶白头壳、深面罩、两点眼与大色块配色。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.front_right.walk.05",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/front_right/walk/05.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 10,
+      "family": "hero",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 5,
+      "frameCount": 8,
+      "fps": 12,
+      "loop": true,
+      "poseNote": "右脚支撑、左脚抬起",
+      "registration": {
+        "group": "fantasy.actor.hero.front_right",
+        "baselineAssetId": "fantasy.actor.hero.front_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "保持核准前右母图的头身比例、奶白头壳、深面罩、两点眼与大色块配色。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.front_right.walk.06",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/front_right/walk/06.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 11,
+      "family": "hero",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 6,
+      "frameCount": 8,
+      "fps": 12,
+      "loop": true,
+      "poseNote": "左脚越过、身体回稳",
+      "registration": {
+        "group": "fantasy.actor.hero.front_right",
+        "baselineAssetId": "fantasy.actor.hero.front_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "保持核准前右母图的头身比例、奶白头壳、深面罩、两点眼与大色块配色。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.front_right.walk.07",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/front_right/walk/07.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 12,
+      "family": "hero",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 7,
+      "frameCount": 8,
+      "fps": 12,
+      "loop": true,
+      "poseNote": "左脚前摆预备，接首帧自然",
+      "registration": {
+        "group": "fantasy.actor.hero.front_right",
+        "baselineAssetId": "fantasy.actor.hero.front_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "保持核准前右母图的头身比例、奶白头壳、深面罩、两点眼与大色块配色。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.front_right.hurt.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/front_right/hurt/00.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 13,
+      "family": "hero",
+      "direction": "front_right",
+      "clip": "hurt",
+      "frameIndex": 0,
+      "frameCount": 2,
+      "fps": 10,
+      "loop": false,
+      "poseNote": "轻微缩肩与身体后缩，保持脚点和面罩方向",
+      "registration": {
+        "group": "fantasy.actor.hero.front_right",
+        "baselineAssetId": "fantasy.actor.hero.front_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "保持核准前右母图的头身比例、奶白头壳、深面罩、两点眼与大色块配色。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.front_right.hurt.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/front_right/hurt/01.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 14,
+      "family": "hero",
+      "direction": "front_right",
+      "clip": "hurt",
+      "frameIndex": 1,
+      "frameCount": 2,
+      "fps": 10,
+      "loop": false,
+      "poseNote": "身体恢复中性，轮廓回到待机比例",
+      "registration": {
+        "group": "fantasy.actor.hero.front_right",
+        "baselineAssetId": "fantasy.actor.hero.front_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "保持核准前右母图的头身比例、奶白头壳、深面罩、两点眼与大色块配色。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.front_right.dash.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/front_right/dash/00.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 15,
+      "family": "hero",
+      "direction": "front_right",
+      "clip": "dash",
+      "frameIndex": 0,
+      "frameCount": 4,
+      "fps": 16,
+      "loop": false,
+      "poseNote": "短距离冲刺前压低重心",
+      "registration": {
+        "group": "fantasy.actor.hero.front_right",
+        "baselineAssetId": "fantasy.actor.hero.front_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "保持核准前右母图的头身比例、奶白头壳、深面罩、两点眼与大色块配色。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.front_right.dash.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/front_right/dash/01.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 16,
+      "family": "hero",
+      "direction": "front_right",
+      "clip": "dash",
+      "frameIndex": 1,
+      "frameCount": 4,
+      "fps": 16,
+      "loop": false,
+      "poseNote": "身体前倾、后腿有力伸展",
+      "registration": {
+        "group": "fantasy.actor.hero.front_right",
+        "baselineAssetId": "fantasy.actor.hero.front_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "保持核准前右母图的头身比例、奶白头壳、深面罩、两点眼与大色块配色。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.front_right.dash.02",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/front_right/dash/02.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 17,
+      "family": "hero",
+      "direction": "front_right",
+      "clip": "dash",
+      "frameIndex": 2,
+      "frameCount": 4,
+      "fps": 16,
+      "loop": false,
+      "poseNote": "身体通过冲刺中段，手脚清楚分离",
+      "registration": {
+        "group": "fantasy.actor.hero.front_right",
+        "baselineAssetId": "fantasy.actor.hero.front_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "保持核准前右母图的头身比例、奶白头壳、深面罩、两点眼与大色块配色。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.front_right.dash.03",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/front_right/dash/03.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 18,
+      "family": "hero",
+      "direction": "front_right",
+      "clip": "dash",
+      "frameIndex": 3,
+      "frameCount": 4,
+      "fps": 16,
+      "loop": false,
+      "poseNote": "收步恢复待机；无速度线与残影",
+      "registration": {
+        "group": "fantasy.actor.hero.front_right",
+        "baselineAssetId": "fantasy.actor.hero.front_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "保持核准前右母图的头身比例、奶白头壳、深面罩、两点眼与大色块配色。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.back_right.idle.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/back_right/idle/00.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 19,
+      "family": "hero",
+      "direction": "back_right",
+      "clip": "idle",
+      "frameIndex": 0,
+      "frameCount": 4,
+      "fps": 4,
+      "loop": true,
+      "poseNote": "中性站姿、轻微呼吸起点",
+      "registration": {
+        "group": "fantasy.actor.hero.back_right",
+        "baselineAssetId": "fantasy.actor.hero.back_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "明确绘制后右视角的后壳、背部和背面肢体；不能用前右图水平镜像替代。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.back_right.idle.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/back_right/idle/01.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 20,
+      "family": "hero",
+      "direction": "back_right",
+      "clip": "idle",
+      "frameIndex": 1,
+      "frameCount": 4,
+      "fps": 4,
+      "loop": true,
+      "poseNote": "胸部与头部轻微上提，脚点不漂",
+      "registration": {
+        "group": "fantasy.actor.hero.back_right",
+        "baselineAssetId": "fantasy.actor.hero.back_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "明确绘制后右视角的后壳、背部和背面肢体；不能用前右图水平镜像替代。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.back_right.idle.02",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/back_right/idle/02.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 21,
+      "family": "hero",
+      "direction": "back_right",
+      "clip": "idle",
+      "frameIndex": 2,
+      "frameCount": 4,
+      "fps": 4,
+      "loop": true,
+      "poseNote": "呼吸高点，双眼保持清楚",
+      "registration": {
+        "group": "fantasy.actor.hero.back_right",
+        "baselineAssetId": "fantasy.actor.hero.back_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "明确绘制后右视角的后壳、背部和背面肢体；不能用前右图水平镜像替代。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.back_right.idle.03",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/back_right/idle/03.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 22,
+      "family": "hero",
+      "direction": "back_right",
+      "clip": "idle",
+      "frameIndex": 3,
+      "frameCount": 4,
+      "fps": 4,
+      "loop": true,
+      "poseNote": "身体回到接近起点，末帧接首帧自然",
+      "registration": {
+        "group": "fantasy.actor.hero.back_right",
+        "baselineAssetId": "fantasy.actor.hero.back_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "明确绘制后右视角的后壳、背部和背面肢体；不能用前右图水平镜像替代。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.back_right.walk.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/back_right/walk/00.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 23,
+      "family": "hero",
+      "direction": "back_right",
+      "clip": "walk",
+      "frameIndex": 0,
+      "frameCount": 8,
+      "fps": 12,
+      "loop": true,
+      "poseNote": "左脚前摆、右脚后蹬",
+      "registration": {
+        "group": "fantasy.actor.hero.back_right",
+        "baselineAssetId": "fantasy.actor.hero.back_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "明确绘制后右视角的后壳、背部和背面肢体；不能用前右图水平镜像替代。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.back_right.walk.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/back_right/walk/01.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 24,
+      "family": "hero",
+      "direction": "back_right",
+      "clip": "walk",
+      "frameIndex": 1,
+      "frameCount": 8,
+      "fps": 12,
+      "loop": true,
+      "poseNote": "左脚落地、重心前移",
+      "registration": {
+        "group": "fantasy.actor.hero.back_right",
+        "baselineAssetId": "fantasy.actor.hero.back_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "明确绘制后右视角的后壳、背部和背面肢体；不能用前右图水平镜像替代。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.back_right.walk.02",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/back_right/walk/02.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 25,
+      "family": "hero",
+      "direction": "back_right",
+      "clip": "walk",
+      "frameIndex": 2,
+      "frameCount": 8,
+      "fps": 12,
+      "loop": true,
+      "poseNote": "左脚支撑、右脚越过",
+      "registration": {
+        "group": "fantasy.actor.hero.back_right",
+        "baselineAssetId": "fantasy.actor.hero.back_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "明确绘制后右视角的后壳、背部和背面肢体；不能用前右图水平镜像替代。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.back_right.walk.03",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/back_right/walk/03.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 26,
+      "family": "hero",
+      "direction": "back_right",
+      "clip": "walk",
+      "frameIndex": 3,
+      "frameCount": 8,
+      "fps": 12,
+      "loop": true,
+      "poseNote": "右脚前摆",
+      "registration": {
+        "group": "fantasy.actor.hero.back_right",
+        "baselineAssetId": "fantasy.actor.hero.back_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "明确绘制后右视角的后壳、背部和背面肢体；不能用前右图水平镜像替代。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.back_right.walk.04",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/back_right/walk/04.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 27,
+      "family": "hero",
+      "direction": "back_right",
+      "clip": "walk",
+      "frameIndex": 4,
+      "frameCount": 8,
+      "fps": 12,
+      "loop": true,
+      "poseNote": "右脚落地、左脚后蹬",
+      "registration": {
+        "group": "fantasy.actor.hero.back_right",
+        "baselineAssetId": "fantasy.actor.hero.back_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "明确绘制后右视角的后壳、背部和背面肢体；不能用前右图水平镜像替代。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.back_right.walk.05",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/back_right/walk/05.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 28,
+      "family": "hero",
+      "direction": "back_right",
+      "clip": "walk",
+      "frameIndex": 5,
+      "frameCount": 8,
+      "fps": 12,
+      "loop": true,
+      "poseNote": "右脚支撑、左脚抬起",
+      "registration": {
+        "group": "fantasy.actor.hero.back_right",
+        "baselineAssetId": "fantasy.actor.hero.back_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "明确绘制后右视角的后壳、背部和背面肢体；不能用前右图水平镜像替代。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.back_right.walk.06",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/back_right/walk/06.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 29,
+      "family": "hero",
+      "direction": "back_right",
+      "clip": "walk",
+      "frameIndex": 6,
+      "frameCount": 8,
+      "fps": 12,
+      "loop": true,
+      "poseNote": "左脚越过、身体回稳",
+      "registration": {
+        "group": "fantasy.actor.hero.back_right",
+        "baselineAssetId": "fantasy.actor.hero.back_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "明确绘制后右视角的后壳、背部和背面肢体；不能用前右图水平镜像替代。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.back_right.walk.07",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/back_right/walk/07.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 30,
+      "family": "hero",
+      "direction": "back_right",
+      "clip": "walk",
+      "frameIndex": 7,
+      "frameCount": 8,
+      "fps": 12,
+      "loop": true,
+      "poseNote": "左脚前摆预备，接首帧自然",
+      "registration": {
+        "group": "fantasy.actor.hero.back_right",
+        "baselineAssetId": "fantasy.actor.hero.back_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "明确绘制后右视角的后壳、背部和背面肢体；不能用前右图水平镜像替代。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.back_right.hurt.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/back_right/hurt/00.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 31,
+      "family": "hero",
+      "direction": "back_right",
+      "clip": "hurt",
+      "frameIndex": 0,
+      "frameCount": 2,
+      "fps": 10,
+      "loop": false,
+      "poseNote": "轻微缩肩与身体后缩，保持脚点和面罩方向",
+      "registration": {
+        "group": "fantasy.actor.hero.back_right",
+        "baselineAssetId": "fantasy.actor.hero.back_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "明确绘制后右视角的后壳、背部和背面肢体；不能用前右图水平镜像替代。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.back_right.hurt.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/back_right/hurt/01.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 32,
+      "family": "hero",
+      "direction": "back_right",
+      "clip": "hurt",
+      "frameIndex": 1,
+      "frameCount": 2,
+      "fps": 10,
+      "loop": false,
+      "poseNote": "身体恢复中性，轮廓回到待机比例",
+      "registration": {
+        "group": "fantasy.actor.hero.back_right",
+        "baselineAssetId": "fantasy.actor.hero.back_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "明确绘制后右视角的后壳、背部和背面肢体；不能用前右图水平镜像替代。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.back_right.dash.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/back_right/dash/00.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 33,
+      "family": "hero",
+      "direction": "back_right",
+      "clip": "dash",
+      "frameIndex": 0,
+      "frameCount": 4,
+      "fps": 16,
+      "loop": false,
+      "poseNote": "短距离冲刺前压低重心",
+      "registration": {
+        "group": "fantasy.actor.hero.back_right",
+        "baselineAssetId": "fantasy.actor.hero.back_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "明确绘制后右视角的后壳、背部和背面肢体；不能用前右图水平镜像替代。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.back_right.dash.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/back_right/dash/01.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 34,
+      "family": "hero",
+      "direction": "back_right",
+      "clip": "dash",
+      "frameIndex": 1,
+      "frameCount": 4,
+      "fps": 16,
+      "loop": false,
+      "poseNote": "身体前倾、后腿有力伸展",
+      "registration": {
+        "group": "fantasy.actor.hero.back_right",
+        "baselineAssetId": "fantasy.actor.hero.back_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "明确绘制后右视角的后壳、背部和背面肢体；不能用前右图水平镜像替代。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.back_right.dash.02",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/back_right/dash/02.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 35,
+      "family": "hero",
+      "direction": "back_right",
+      "clip": "dash",
+      "frameIndex": 2,
+      "frameCount": 4,
+      "fps": 16,
+      "loop": false,
+      "poseNote": "身体通过冲刺中段，手脚清楚分离",
+      "registration": {
+        "group": "fantasy.actor.hero.back_right",
+        "baselineAssetId": "fantasy.actor.hero.back_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "明确绘制后右视角的后壳、背部和背面肢体；不能用前右图水平镜像替代。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.hero.back_right.dash.03",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "hero/back_right/dash/03.png",
+      "kind": "hero-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 36,
+      "family": "hero",
+      "direction": "back_right",
+      "clip": "dash",
+      "frameIndex": 3,
+      "frameCount": 4,
+      "fps": 16,
+      "loop": false,
+      "poseNote": "收步恢复待机；无速度线与残影",
+      "registration": {
+        "group": "fantasy.actor.hero.back_right",
+        "baselineAssetId": "fantasy.actor.hero.back_right.idle.00",
+        "sharedSourceScaleGroup": "fantasy.actor.hero",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master",
+      "sourceRequirements": "明确绘制后右视角的后壳、背部和背面肢体；不能用前右图水平镜像替代。",
+      "bodyRestrictions": [
+        "无枪",
+        "无独立工具",
+        "无攻击治疗特效",
+        "无烘焙投影"
+      ]
+    },
+    {
+      "id": "fantasy.actor.enemy.basic.walk.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/basic/walk/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 37,
+      "family": "enemy",
+      "species": "basic",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 0,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "低矮珊瑚红短刺圆病毒，清楚眼口，无腿圆团压扁回弹",
+      "poseNote": "中性接地与前向伸展起点",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.basic",
+        "baselineAssetId": "fantasy.actor.enemy.basic.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.basic",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.basic.walk.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/basic/walk/01.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 38,
+      "family": "enemy",
+      "species": "basic",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 1,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "低矮珊瑚红短刺圆病毒，清楚眼口，无腿圆团压扁回弹",
+      "poseNote": "轻微压扁推进，底部基准不漂",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.basic",
+        "baselineAssetId": "fantasy.actor.enemy.basic.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.basic",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.basic.walk.02",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/basic/walk/02.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 39,
+      "family": "enemy",
+      "species": "basic",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 2,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "低矮珊瑚红短刺圆病毒，清楚眼口，无腿圆团压扁回弹",
+      "poseNote": "轻微回弹，主体重心前移",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.basic",
+        "baselineAssetId": "fantasy.actor.enemy.basic.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.basic",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.basic.walk.03",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/basic/walk/03.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 40,
+      "family": "enemy",
+      "species": "basic",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 3,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "低矮珊瑚红短刺圆病毒，清楚眼口，无腿圆团压扁回弹",
+      "poseNote": "回收并接首帧；不添加肢体改变物种",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.basic",
+        "baselineAssetId": "fantasy.actor.enemy.basic.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.basic",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.basic.windup.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/basic/windup/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 41,
+      "family": "enemy",
+      "species": "basic",
+      "direction": "front_right",
+      "clip": "windup",
+      "frameIndex": 0,
+      "frameCount": 2,
+      "fps": 8,
+      "loop": false,
+      "shape": "低矮珊瑚红短刺圆病毒，清楚眼口，无腿圆团压扁回弹",
+      "poseNote": "前摇蓄力：主体轻微后缩、表情警觉",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.basic",
+        "baselineAssetId": "fantasy.actor.enemy.basic.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.basic",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.basic.windup.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/basic/windup/01.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 42,
+      "family": "enemy",
+      "species": "basic",
+      "direction": "front_right",
+      "clip": "windup",
+      "frameIndex": 1,
+      "frameCount": 2,
+      "fps": 8,
+      "loop": false,
+      "shape": "低矮珊瑚红短刺圆病毒，清楚眼口，无腿圆团压扁回弹",
+      "poseNote": "前摇峰值：主体压低与短刺收紧，攻击光效独立",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.basic",
+        "baselineAssetId": "fantasy.actor.enemy.basic.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.basic",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.basic.hurt.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/basic/hurt/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 43,
+      "family": "enemy",
+      "species": "basic",
+      "direction": "front_right",
+      "clip": "hurt",
+      "frameIndex": 0,
+      "frameCount": 1,
+      "fps": 8,
+      "loop": false,
+      "shape": "低矮珊瑚红短刺圆病毒，清楚眼口，无腿圆团压扁回弹",
+      "poseNote": "受击压缩与小幅偏转，眼口和主体比例保持",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.basic",
+        "baselineAssetId": "fantasy.actor.enemy.basic.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.basic",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.basic.dissolve.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/basic/dissolve/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 44,
+      "family": "enemy",
+      "species": "basic",
+      "direction": "front_right",
+      "clip": "dissolve",
+      "frameIndex": 0,
+      "frameCount": 1,
+      "fps": 8,
+      "loop": false,
+      "shape": "低矮珊瑚红短刺圆病毒，清楚眼口，无腿圆团压扁回弹",
+      "poseNote": "消融关键帧：外缘略松散但仍保留主体轮廓，禁止大片独立粒子或地面特效",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.basic",
+        "baselineAssetId": "fantasy.actor.enemy.basic.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.basic",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.thinRay.walk.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/thinRay/walk/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 45,
+      "family": "enemy",
+      "species": "thinRay",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 0,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "低矮薄鳐形病毒，薄软膜翼、清楚眼口，膜翼划动与躯干起伏",
+      "poseNote": "中性接地与前向伸展起点",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.thinRay",
+        "baselineAssetId": "fantasy.actor.enemy.thinRay.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.thinRay",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.thinRay.walk.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/thinRay/walk/01.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 46,
+      "family": "enemy",
+      "species": "thinRay",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 1,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "低矮薄鳐形病毒，薄软膜翼、清楚眼口，膜翼划动与躯干起伏",
+      "poseNote": "轻微压扁推进，底部基准不漂",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.thinRay",
+        "baselineAssetId": "fantasy.actor.enemy.thinRay.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.thinRay",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.thinRay.walk.02",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/thinRay/walk/02.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 47,
+      "family": "enemy",
+      "species": "thinRay",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 2,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "低矮薄鳐形病毒，薄软膜翼、清楚眼口，膜翼划动与躯干起伏",
+      "poseNote": "轻微回弹，主体重心前移",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.thinRay",
+        "baselineAssetId": "fantasy.actor.enemy.thinRay.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.thinRay",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.thinRay.walk.03",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/thinRay/walk/03.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 48,
+      "family": "enemy",
+      "species": "thinRay",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 3,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "低矮薄鳐形病毒，薄软膜翼、清楚眼口，膜翼划动与躯干起伏",
+      "poseNote": "回收并接首帧；不添加肢体改变物种",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.thinRay",
+        "baselineAssetId": "fantasy.actor.enemy.thinRay.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.thinRay",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.thinRay.windup.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/thinRay/windup/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 49,
+      "family": "enemy",
+      "species": "thinRay",
+      "direction": "front_right",
+      "clip": "windup",
+      "frameIndex": 0,
+      "frameCount": 2,
+      "fps": 8,
+      "loop": false,
+      "shape": "低矮薄鳐形病毒，薄软膜翼、清楚眼口，膜翼划动与躯干起伏",
+      "poseNote": "前摇蓄力：主体轻微后缩、表情警觉",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.thinRay",
+        "baselineAssetId": "fantasy.actor.enemy.thinRay.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.thinRay",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.thinRay.windup.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/thinRay/windup/01.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 50,
+      "family": "enemy",
+      "species": "thinRay",
+      "direction": "front_right",
+      "clip": "windup",
+      "frameIndex": 1,
+      "frameCount": 2,
+      "fps": 8,
+      "loop": false,
+      "shape": "低矮薄鳐形病毒，薄软膜翼、清楚眼口，膜翼划动与躯干起伏",
+      "poseNote": "前摇峰值：主体压低与短刺收紧，攻击光效独立",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.thinRay",
+        "baselineAssetId": "fantasy.actor.enemy.thinRay.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.thinRay",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.thinRay.hurt.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/thinRay/hurt/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 51,
+      "family": "enemy",
+      "species": "thinRay",
+      "direction": "front_right",
+      "clip": "hurt",
+      "frameIndex": 0,
+      "frameCount": 1,
+      "fps": 8,
+      "loop": false,
+      "shape": "低矮薄鳐形病毒，薄软膜翼、清楚眼口，膜翼划动与躯干起伏",
+      "poseNote": "受击压缩与小幅偏转，眼口和主体比例保持",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.thinRay",
+        "baselineAssetId": "fantasy.actor.enemy.thinRay.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.thinRay",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.thinRay.dissolve.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/thinRay/dissolve/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 52,
+      "family": "enemy",
+      "species": "thinRay",
+      "direction": "front_right",
+      "clip": "dissolve",
+      "frameIndex": 0,
+      "frameCount": 1,
+      "fps": 8,
+      "loop": false,
+      "shape": "低矮薄鳐形病毒，薄软膜翼、清楚眼口，膜翼划动与躯干起伏",
+      "poseNote": "消融关键帧：外缘略松散但仍保留主体轮廓，禁止大片独立粒子或地面特效",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.thinRay",
+        "baselineAssetId": "fantasy.actor.enemy.thinRay.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.thinRay",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.carapace.walk.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/carapace/walk/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 53,
+      "family": "enemy",
+      "species": "carapace",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 0,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "敦实病毒圆团，软哑光有机甲壳大块覆盖，清楚眼口",
+      "poseNote": "中性接地与前向伸展起点",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.carapace",
+        "baselineAssetId": "fantasy.actor.enemy.carapace.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.carapace",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.carapace.walk.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/carapace/walk/01.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 54,
+      "family": "enemy",
+      "species": "carapace",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 1,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "敦实病毒圆团，软哑光有机甲壳大块覆盖，清楚眼口",
+      "poseNote": "轻微压扁推进，底部基准不漂",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.carapace",
+        "baselineAssetId": "fantasy.actor.enemy.carapace.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.carapace",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.carapace.walk.02",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/carapace/walk/02.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 55,
+      "family": "enemy",
+      "species": "carapace",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 2,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "敦实病毒圆团，软哑光有机甲壳大块覆盖，清楚眼口",
+      "poseNote": "轻微回弹，主体重心前移",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.carapace",
+        "baselineAssetId": "fantasy.actor.enemy.carapace.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.carapace",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.carapace.walk.03",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/carapace/walk/03.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 56,
+      "family": "enemy",
+      "species": "carapace",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 3,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "敦实病毒圆团，软哑光有机甲壳大块覆盖，清楚眼口",
+      "poseNote": "回收并接首帧；不添加肢体改变物种",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.carapace",
+        "baselineAssetId": "fantasy.actor.enemy.carapace.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.carapace",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.carapace.windup.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/carapace/windup/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 57,
+      "family": "enemy",
+      "species": "carapace",
+      "direction": "front_right",
+      "clip": "windup",
+      "frameIndex": 0,
+      "frameCount": 2,
+      "fps": 8,
+      "loop": false,
+      "shape": "敦实病毒圆团，软哑光有机甲壳大块覆盖，清楚眼口",
+      "poseNote": "前摇蓄力：主体轻微后缩、表情警觉",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.carapace",
+        "baselineAssetId": "fantasy.actor.enemy.carapace.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.carapace",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.carapace.windup.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/carapace/windup/01.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 58,
+      "family": "enemy",
+      "species": "carapace",
+      "direction": "front_right",
+      "clip": "windup",
+      "frameIndex": 1,
+      "frameCount": 2,
+      "fps": 8,
+      "loop": false,
+      "shape": "敦实病毒圆团，软哑光有机甲壳大块覆盖，清楚眼口",
+      "poseNote": "前摇峰值：主体压低与短刺收紧，攻击光效独立",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.carapace",
+        "baselineAssetId": "fantasy.actor.enemy.carapace.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.carapace",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.carapace.hurt.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/carapace/hurt/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 59,
+      "family": "enemy",
+      "species": "carapace",
+      "direction": "front_right",
+      "clip": "hurt",
+      "frameIndex": 0,
+      "frameCount": 1,
+      "fps": 8,
+      "loop": false,
+      "shape": "敦实病毒圆团，软哑光有机甲壳大块覆盖，清楚眼口",
+      "poseNote": "受击压缩与小幅偏转，眼口和主体比例保持",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.carapace",
+        "baselineAssetId": "fantasy.actor.enemy.carapace.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.carapace",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.carapace.dissolve.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/carapace/dissolve/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 60,
+      "family": "enemy",
+      "species": "carapace",
+      "direction": "front_right",
+      "clip": "dissolve",
+      "frameIndex": 0,
+      "frameCount": 1,
+      "fps": 8,
+      "loop": false,
+      "shape": "敦实病毒圆团，软哑光有机甲壳大块覆盖，清楚眼口",
+      "poseNote": "消融关键帧：外缘略松散但仍保留主体轮廓，禁止大片独立粒子或地面特效",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.carapace",
+        "baselineAssetId": "fantasy.actor.enemy.carapace.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.carapace",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.parent.walk.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/fission/parent/walk/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 61,
+      "family": "enemy",
+      "species": "fission.parent",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 0,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "具有分裂识别的较大双叶病毒软团，叶瓣连成完整主体，清楚眼口",
+      "poseNote": "中性接地与前向伸展起点",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.fission.parent",
+        "baselineAssetId": "fantasy.actor.enemy.fission.parent.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.fission.parent",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.parent.walk.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/fission/parent/walk/01.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 62,
+      "family": "enemy",
+      "species": "fission.parent",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 1,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "具有分裂识别的较大双叶病毒软团，叶瓣连成完整主体，清楚眼口",
+      "poseNote": "轻微压扁推进，底部基准不漂",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.fission.parent",
+        "baselineAssetId": "fantasy.actor.enemy.fission.parent.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.fission.parent",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.parent.walk.02",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/fission/parent/walk/02.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 63,
+      "family": "enemy",
+      "species": "fission.parent",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 2,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "具有分裂识别的较大双叶病毒软团，叶瓣连成完整主体，清楚眼口",
+      "poseNote": "轻微回弹，主体重心前移",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.fission.parent",
+        "baselineAssetId": "fantasy.actor.enemy.fission.parent.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.fission.parent",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.parent.walk.03",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/fission/parent/walk/03.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 64,
+      "family": "enemy",
+      "species": "fission.parent",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 3,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "具有分裂识别的较大双叶病毒软团，叶瓣连成完整主体，清楚眼口",
+      "poseNote": "回收并接首帧；不添加肢体改变物种",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.fission.parent",
+        "baselineAssetId": "fantasy.actor.enemy.fission.parent.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.fission.parent",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.parent.windup.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/fission/parent/windup/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 65,
+      "family": "enemy",
+      "species": "fission.parent",
+      "direction": "front_right",
+      "clip": "windup",
+      "frameIndex": 0,
+      "frameCount": 2,
+      "fps": 8,
+      "loop": false,
+      "shape": "具有分裂识别的较大双叶病毒软团，叶瓣连成完整主体，清楚眼口",
+      "poseNote": "前摇蓄力：主体轻微后缩、表情警觉",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.fission.parent",
+        "baselineAssetId": "fantasy.actor.enemy.fission.parent.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.fission.parent",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.parent.windup.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/fission/parent/windup/01.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 66,
+      "family": "enemy",
+      "species": "fission.parent",
+      "direction": "front_right",
+      "clip": "windup",
+      "frameIndex": 1,
+      "frameCount": 2,
+      "fps": 8,
+      "loop": false,
+      "shape": "具有分裂识别的较大双叶病毒软团，叶瓣连成完整主体，清楚眼口",
+      "poseNote": "前摇峰值：主体压低与短刺收紧，攻击光效独立",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.fission.parent",
+        "baselineAssetId": "fantasy.actor.enemy.fission.parent.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.fission.parent",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.parent.hurt.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/fission/parent/hurt/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 67,
+      "family": "enemy",
+      "species": "fission.parent",
+      "direction": "front_right",
+      "clip": "hurt",
+      "frameIndex": 0,
+      "frameCount": 1,
+      "fps": 8,
+      "loop": false,
+      "shape": "具有分裂识别的较大双叶病毒软团，叶瓣连成完整主体，清楚眼口",
+      "poseNote": "受击压缩与小幅偏转，眼口和主体比例保持",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.fission.parent",
+        "baselineAssetId": "fantasy.actor.enemy.fission.parent.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.fission.parent",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.parent.dissolve.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/fission/parent/dissolve/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 68,
+      "family": "enemy",
+      "species": "fission.parent",
+      "direction": "front_right",
+      "clip": "dissolve",
+      "frameIndex": 0,
+      "frameCount": 1,
+      "fps": 8,
+      "loop": false,
+      "shape": "具有分裂识别的较大双叶病毒软团，叶瓣连成完整主体，清楚眼口",
+      "poseNote": "消融关键帧：外缘略松散但仍保留主体轮廓，禁止大片独立粒子或地面特效",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.fission.parent",
+        "baselineAssetId": "fantasy.actor.enemy.fission.parent.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.fission.parent",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.child.walk.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/fission/child/walk/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 69,
+      "family": "enemy",
+      "species": "fission.child",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 0,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "父体同家族的较小分裂幼体，简明圆团与短刺，清楚眼口，体型关系固定",
+      "poseNote": "中性接地与前向伸展起点",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.fission.child",
+        "baselineAssetId": "fantasy.actor.enemy.fission.child.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.fission.child",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.child.walk.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/fission/child/walk/01.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 70,
+      "family": "enemy",
+      "species": "fission.child",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 1,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "父体同家族的较小分裂幼体，简明圆团与短刺，清楚眼口，体型关系固定",
+      "poseNote": "轻微压扁推进，底部基准不漂",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.fission.child",
+        "baselineAssetId": "fantasy.actor.enemy.fission.child.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.fission.child",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.child.walk.02",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/fission/child/walk/02.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 71,
+      "family": "enemy",
+      "species": "fission.child",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 2,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "父体同家族的较小分裂幼体，简明圆团与短刺，清楚眼口，体型关系固定",
+      "poseNote": "轻微回弹，主体重心前移",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.fission.child",
+        "baselineAssetId": "fantasy.actor.enemy.fission.child.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.fission.child",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.child.walk.03",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/fission/child/walk/03.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 72,
+      "family": "enemy",
+      "species": "fission.child",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 3,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "父体同家族的较小分裂幼体，简明圆团与短刺，清楚眼口，体型关系固定",
+      "poseNote": "回收并接首帧；不添加肢体改变物种",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.fission.child",
+        "baselineAssetId": "fantasy.actor.enemy.fission.child.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.fission.child",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.child.windup.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/fission/child/windup/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 73,
+      "family": "enemy",
+      "species": "fission.child",
+      "direction": "front_right",
+      "clip": "windup",
+      "frameIndex": 0,
+      "frameCount": 2,
+      "fps": 8,
+      "loop": false,
+      "shape": "父体同家族的较小分裂幼体，简明圆团与短刺，清楚眼口，体型关系固定",
+      "poseNote": "前摇蓄力：主体轻微后缩、表情警觉",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.fission.child",
+        "baselineAssetId": "fantasy.actor.enemy.fission.child.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.fission.child",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.child.windup.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/fission/child/windup/01.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 74,
+      "family": "enemy",
+      "species": "fission.child",
+      "direction": "front_right",
+      "clip": "windup",
+      "frameIndex": 1,
+      "frameCount": 2,
+      "fps": 8,
+      "loop": false,
+      "shape": "父体同家族的较小分裂幼体，简明圆团与短刺，清楚眼口，体型关系固定",
+      "poseNote": "前摇峰值：主体压低与短刺收紧，攻击光效独立",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.fission.child",
+        "baselineAssetId": "fantasy.actor.enemy.fission.child.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.fission.child",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.child.hurt.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/fission/child/hurt/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 75,
+      "family": "enemy",
+      "species": "fission.child",
+      "direction": "front_right",
+      "clip": "hurt",
+      "frameIndex": 0,
+      "frameCount": 1,
+      "fps": 8,
+      "loop": false,
+      "shape": "父体同家族的较小分裂幼体，简明圆团与短刺，清楚眼口，体型关系固定",
+      "poseNote": "受击压缩与小幅偏转，眼口和主体比例保持",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.fission.child",
+        "baselineAssetId": "fantasy.actor.enemy.fission.child.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.fission.child",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.fission.child.dissolve.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/fission/child/dissolve/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 76,
+      "family": "enemy",
+      "species": "fission.child",
+      "direction": "front_right",
+      "clip": "dissolve",
+      "frameIndex": 0,
+      "frameCount": 1,
+      "fps": 8,
+      "loop": false,
+      "shape": "父体同家族的较小分裂幼体，简明圆团与短刺，清楚眼口，体型关系固定",
+      "poseNote": "消融关键帧：外缘略松散但仍保留主体轮廓，禁止大片独立粒子或地面特效",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.fission.child",
+        "baselineAssetId": "fantasy.actor.enemy.fission.child.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.fission.child",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.mimic.walk.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/mimic/walk/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 77,
+      "family": "enemy",
+      "species": "mimic",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 0,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "保留病毒圆团核心的拟态菌叶外覆，闭合与展开必须保持同一主体身份",
+      "poseNote": "中性接地与前向伸展起点",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.mimic",
+        "baselineAssetId": "fantasy.actor.enemy.mimic.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.mimic",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.mimic.walk.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/mimic/walk/01.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 78,
+      "family": "enemy",
+      "species": "mimic",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 1,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "保留病毒圆团核心的拟态菌叶外覆，闭合与展开必须保持同一主体身份",
+      "poseNote": "轻微压扁推进，底部基准不漂",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.mimic",
+        "baselineAssetId": "fantasy.actor.enemy.mimic.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.mimic",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.mimic.walk.02",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/mimic/walk/02.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 79,
+      "family": "enemy",
+      "species": "mimic",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 2,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "保留病毒圆团核心的拟态菌叶外覆，闭合与展开必须保持同一主体身份",
+      "poseNote": "轻微回弹，主体重心前移",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.mimic",
+        "baselineAssetId": "fantasy.actor.enemy.mimic.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.mimic",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.mimic.walk.03",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/mimic/walk/03.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 80,
+      "family": "enemy",
+      "species": "mimic",
+      "direction": "front_right",
+      "clip": "walk",
+      "frameIndex": 3,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "shape": "保留病毒圆团核心的拟态菌叶外覆，闭合与展开必须保持同一主体身份",
+      "poseNote": "回收并接首帧；不添加肢体改变物种",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.mimic",
+        "baselineAssetId": "fantasy.actor.enemy.mimic.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.mimic",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.mimic.windup.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/mimic/windup/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 81,
+      "family": "enemy",
+      "species": "mimic",
+      "direction": "front_right",
+      "clip": "windup",
+      "frameIndex": 0,
+      "frameCount": 2,
+      "fps": 8,
+      "loop": false,
+      "shape": "保留病毒圆团核心的拟态菌叶外覆，闭合与展开必须保持同一主体身份",
+      "poseNote": "前摇蓄力：主体轻微后缩、表情警觉",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.mimic",
+        "baselineAssetId": "fantasy.actor.enemy.mimic.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.mimic",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.mimic.windup.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/mimic/windup/01.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 82,
+      "family": "enemy",
+      "species": "mimic",
+      "direction": "front_right",
+      "clip": "windup",
+      "frameIndex": 1,
+      "frameCount": 2,
+      "fps": 8,
+      "loop": false,
+      "shape": "保留病毒圆团核心的拟态菌叶外覆，闭合与展开必须保持同一主体身份",
+      "poseNote": "前摇峰值：主体压低与短刺收紧，攻击光效独立",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.mimic",
+        "baselineAssetId": "fantasy.actor.enemy.mimic.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.mimic",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.mimic.hurt.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/mimic/hurt/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 83,
+      "family": "enemy",
+      "species": "mimic",
+      "direction": "front_right",
+      "clip": "hurt",
+      "frameIndex": 0,
+      "frameCount": 1,
+      "fps": 8,
+      "loop": false,
+      "shape": "保留病毒圆团核心的拟态菌叶外覆，闭合与展开必须保持同一主体身份",
+      "poseNote": "受击压缩与小幅偏转，眼口和主体比例保持",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.mimic",
+        "baselineAssetId": "fantasy.actor.enemy.mimic.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.mimic",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.mimic.dissolve.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/mimic/dissolve/00.png",
+      "kind": "enemy-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 84,
+      "family": "enemy",
+      "species": "mimic",
+      "direction": "front_right",
+      "clip": "dissolve",
+      "frameIndex": 0,
+      "frameCount": 1,
+      "fps": 8,
+      "loop": false,
+      "shape": "保留病毒圆团核心的拟态菌叶外覆，闭合与展开必须保持同一主体身份",
+      "poseNote": "消融关键帧：外缘略松散但仍保留主体轮廓，禁止大片独立粒子或地面特效",
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "registration": {
+        "group": "fantasy.actor.enemy.mimic",
+        "baselineAssetId": "fantasy.actor.enemy.mimic.walk.00",
+        "sharedSourceScaleGroup": "fantasy.actor.enemy.mimic",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "先锁定本物种的核准轮廓、体型和画布占比，再衍生动作；普通病毒母图仅作为共同风格与简化程度基准，不能把六类全部画成同一物种。"
+    },
+    {
+      "id": "fantasy.actor.enemy.addon.spore_crown",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/addon/spore_crown.png",
+      "kind": "enemy-overlay",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 85,
+      "family": "enemy-addon",
+      "label": "侵染孢子背囊枝冠",
+      "poseNote": "可与兼容敌人本体叠加的孢子背囊与短枝冠，只画附件，不重复本体、脸和地面。",
+      "registration": {
+        "group": "fantasy.actor.enemy.basic",
+        "baselineAssetId": "fantasy.actor.enemy.basic.walk.00",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "overlay": true,
+      "compatibilityStatus": "pending-integration-audit",
+      "compatibilityNote": "本合同只交付一个512²固定注册附件；应用到其他物种时必须验证其尺寸与绑定位置，不能无校验自动套用。"
+    },
+    {
+      "id": "fantasy.actor.enemy.elite.fungal_horns",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "enemy/elite/fungal_horns.png",
+      "kind": "enemy-overlay",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 86,
+      "family": "enemy-addon",
+      "label": "精英菌角冠",
+      "poseNote": "简明、低矮的有机菌角冠，只画附件，避免金属王冠、长尖角与独立光效。",
+      "registration": {
+        "group": "fantasy.actor.enemy.basic",
+        "baselineAssetId": "fantasy.actor.enemy.basic.walk.00",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.enemy.basic.master",
+      "overlay": true,
+      "compatibilityStatus": "pending-integration-audit",
+      "compatibilityNote": "本合同只交付一个512²固定注册附件；应用到其他物种时必须验证其尺寸与绑定位置，不能无校验自动套用。"
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.crawl.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "immune/front_right/crawl/00.png",
+      "kind": "immune-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 87,
+      "family": "immune",
+      "direction": "front_right",
+      "clip": "crawl",
+      "frameIndex": 0,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "poseNote": "中性豆团形体、接地稳定",
+      "requiredSourceApproval": "fantasy.actor.immune.front_right.master",
+      "registration": {
+        "group": "fantasy.actor.immune.front_right",
+        "baselineAssetId": "fantasy.actor.immune.front_right.crawl.00",
+        "sharedSourceScaleGroup": "fantasy.actor.immune",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "奶白主身、少量大薄荷绿叶、简明眼口和医疗十字保持。"
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.crawl.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "immune/front_right/crawl/01.png",
+      "kind": "immune-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 88,
+      "family": "immune",
+      "direction": "front_right",
+      "clip": "crawl",
+      "frameIndex": 1,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "poseNote": "身体前部轻伸，后部压缩",
+      "requiredSourceApproval": "fantasy.actor.immune.front_right.master",
+      "registration": {
+        "group": "fantasy.actor.immune.front_right",
+        "baselineAssetId": "fantasy.actor.immune.front_right.crawl.00",
+        "sharedSourceScaleGroup": "fantasy.actor.immune",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "奶白主身、少量大薄荷绿叶、简明眼口和医疗十字保持。"
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.crawl.02",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "immune/front_right/crawl/02.png",
+      "kind": "immune-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 89,
+      "family": "immune",
+      "direction": "front_right",
+      "clip": "crawl",
+      "frameIndex": 2,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "poseNote": "身体重心前移，叶片随形微动",
+      "requiredSourceApproval": "fantasy.actor.immune.front_right.master",
+      "registration": {
+        "group": "fantasy.actor.immune.front_right",
+        "baselineAssetId": "fantasy.actor.immune.front_right.crawl.00",
+        "sharedSourceScaleGroup": "fantasy.actor.immune",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "奶白主身、少量大薄荷绿叶、简明眼口和医疗十字保持。"
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.crawl.03",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "immune/front_right/crawl/03.png",
+      "kind": "immune-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 90,
+      "family": "immune",
+      "direction": "front_right",
+      "clip": "crawl",
+      "frameIndex": 3,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "poseNote": "身体回收恢复首帧，叶尖衔接自然",
+      "requiredSourceApproval": "fantasy.actor.immune.front_right.master",
+      "registration": {
+        "group": "fantasy.actor.immune.front_right",
+        "baselineAssetId": "fantasy.actor.immune.front_right.crawl.00",
+        "sharedSourceScaleGroup": "fantasy.actor.immune",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "奶白主身、少量大薄荷绿叶、简明眼口和医疗十字保持。"
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.bite.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "immune/front_right/bite/00.png",
+      "kind": "immune-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 91,
+      "family": "immune",
+      "direction": "front_right",
+      "clip": "bite",
+      "frameIndex": 0,
+      "frameCount": 4,
+      "fps": 10,
+      "loop": false,
+      "poseNote": "小嘴闭合准备，身体略后缩",
+      "requiredSourceApproval": "fantasy.actor.immune.front_right.master",
+      "registration": {
+        "group": "fantasy.actor.immune.front_right",
+        "baselineAssetId": "fantasy.actor.immune.front_right.crawl.00",
+        "sharedSourceScaleGroup": "fantasy.actor.immune",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "奶白主身、少量大薄荷绿叶、简明眼口和医疗十字保持。"
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.bite.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "immune/front_right/bite/01.png",
+      "kind": "immune-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 92,
+      "family": "immune",
+      "direction": "front_right",
+      "clip": "bite",
+      "frameIndex": 1,
+      "frameCount": 4,
+      "fps": 10,
+      "loop": false,
+      "poseNote": "张口蓄力，保持豆团与医疗十字",
+      "requiredSourceApproval": "fantasy.actor.immune.front_right.master",
+      "registration": {
+        "group": "fantasy.actor.immune.front_right",
+        "baselineAssetId": "fantasy.actor.immune.front_right.crawl.00",
+        "sharedSourceScaleGroup": "fantasy.actor.immune",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "奶白主身、少量大薄荷绿叶、简明眼口和医疗十字保持。"
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.bite.02",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "immune/front_right/bite/02.png",
+      "kind": "immune-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 93,
+      "family": "immune",
+      "direction": "front_right",
+      "clip": "bite",
+      "frameIndex": 2,
+      "frameCount": 4,
+      "fps": 10,
+      "loop": false,
+      "poseNote": "咬合峰值，口部向前而非整图平移",
+      "requiredSourceApproval": "fantasy.actor.immune.front_right.master",
+      "registration": {
+        "group": "fantasy.actor.immune.front_right",
+        "baselineAssetId": "fantasy.actor.immune.front_right.crawl.00",
+        "sharedSourceScaleGroup": "fantasy.actor.immune",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "奶白主身、少量大薄荷绿叶、简明眼口和医疗十字保持。"
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.bite.03",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "immune/front_right/bite/03.png",
+      "kind": "immune-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 94,
+      "family": "immune",
+      "direction": "front_right",
+      "clip": "bite",
+      "frameIndex": 3,
+      "frameCount": 4,
+      "fps": 10,
+      "loop": false,
+      "poseNote": "闭口回收，恢复爬行中性比例",
+      "requiredSourceApproval": "fantasy.actor.immune.front_right.master",
+      "registration": {
+        "group": "fantasy.actor.immune.front_right",
+        "baselineAssetId": "fantasy.actor.immune.front_right.crawl.00",
+        "sharedSourceScaleGroup": "fantasy.actor.immune",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "奶白主身、少量大薄荷绿叶、简明眼口和医疗十字保持。"
+    },
+    {
+      "id": "fantasy.actor.immune.back_right.crawl.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "immune/back_right/crawl/00.png",
+      "kind": "immune-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 95,
+      "family": "immune",
+      "direction": "back_right",
+      "clip": "crawl",
+      "frameIndex": 0,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "poseNote": "中性豆团形体、接地稳定",
+      "requiredSourceApproval": "fantasy.actor.immune.front_right.master",
+      "registration": {
+        "group": "fantasy.actor.immune.back_right",
+        "baselineAssetId": "fantasy.actor.immune.back_right.crawl.00",
+        "sharedSourceScaleGroup": "fantasy.actor.immune",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "真实后右视角，背面大叶与奶白躯干关系清楚；医疗十字按同一表面自然转向或被遮挡，不能在背面复制前脸。"
+    },
+    {
+      "id": "fantasy.actor.immune.back_right.crawl.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "immune/back_right/crawl/01.png",
+      "kind": "immune-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 96,
+      "family": "immune",
+      "direction": "back_right",
+      "clip": "crawl",
+      "frameIndex": 1,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "poseNote": "身体前部轻伸，后部压缩",
+      "requiredSourceApproval": "fantasy.actor.immune.front_right.master",
+      "registration": {
+        "group": "fantasy.actor.immune.back_right",
+        "baselineAssetId": "fantasy.actor.immune.back_right.crawl.00",
+        "sharedSourceScaleGroup": "fantasy.actor.immune",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "真实后右视角，背面大叶与奶白躯干关系清楚；医疗十字按同一表面自然转向或被遮挡，不能在背面复制前脸。"
+    },
+    {
+      "id": "fantasy.actor.immune.back_right.crawl.02",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "immune/back_right/crawl/02.png",
+      "kind": "immune-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 97,
+      "family": "immune",
+      "direction": "back_right",
+      "clip": "crawl",
+      "frameIndex": 2,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "poseNote": "身体重心前移，叶片随形微动",
+      "requiredSourceApproval": "fantasy.actor.immune.front_right.master",
+      "registration": {
+        "group": "fantasy.actor.immune.back_right",
+        "baselineAssetId": "fantasy.actor.immune.back_right.crawl.00",
+        "sharedSourceScaleGroup": "fantasy.actor.immune",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "真实后右视角，背面大叶与奶白躯干关系清楚；医疗十字按同一表面自然转向或被遮挡，不能在背面复制前脸。"
+    },
+    {
+      "id": "fantasy.actor.immune.back_right.crawl.03",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "immune/back_right/crawl/03.png",
+      "kind": "immune-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 98,
+      "family": "immune",
+      "direction": "back_right",
+      "clip": "crawl",
+      "frameIndex": 3,
+      "frameCount": 4,
+      "fps": 8,
+      "loop": true,
+      "poseNote": "身体回收恢复首帧，叶尖衔接自然",
+      "requiredSourceApproval": "fantasy.actor.immune.front_right.master",
+      "registration": {
+        "group": "fantasy.actor.immune.back_right",
+        "baselineAssetId": "fantasy.actor.immune.back_right.crawl.00",
+        "sharedSourceScaleGroup": "fantasy.actor.immune",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "真实后右视角，背面大叶与奶白躯干关系清楚；医疗十字按同一表面自然转向或被遮挡，不能在背面复制前脸。"
+    },
+    {
+      "id": "fantasy.actor.immune.back_right.bite.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "immune/back_right/bite/00.png",
+      "kind": "immune-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 99,
+      "family": "immune",
+      "direction": "back_right",
+      "clip": "bite",
+      "frameIndex": 0,
+      "frameCount": 4,
+      "fps": 10,
+      "loop": false,
+      "poseNote": "小嘴闭合准备，身体略后缩",
+      "requiredSourceApproval": "fantasy.actor.immune.front_right.master",
+      "registration": {
+        "group": "fantasy.actor.immune.back_right",
+        "baselineAssetId": "fantasy.actor.immune.back_right.crawl.00",
+        "sharedSourceScaleGroup": "fantasy.actor.immune",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "真实后右视角，背面大叶与奶白躯干关系清楚；医疗十字按同一表面自然转向或被遮挡，不能在背面复制前脸。"
+    },
+    {
+      "id": "fantasy.actor.immune.back_right.bite.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "immune/back_right/bite/01.png",
+      "kind": "immune-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 100,
+      "family": "immune",
+      "direction": "back_right",
+      "clip": "bite",
+      "frameIndex": 1,
+      "frameCount": 4,
+      "fps": 10,
+      "loop": false,
+      "poseNote": "张口蓄力，保持豆团与医疗十字",
+      "requiredSourceApproval": "fantasy.actor.immune.front_right.master",
+      "registration": {
+        "group": "fantasy.actor.immune.back_right",
+        "baselineAssetId": "fantasy.actor.immune.back_right.crawl.00",
+        "sharedSourceScaleGroup": "fantasy.actor.immune",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "真实后右视角，背面大叶与奶白躯干关系清楚；医疗十字按同一表面自然转向或被遮挡，不能在背面复制前脸。"
+    },
+    {
+      "id": "fantasy.actor.immune.back_right.bite.02",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "immune/back_right/bite/02.png",
+      "kind": "immune-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 101,
+      "family": "immune",
+      "direction": "back_right",
+      "clip": "bite",
+      "frameIndex": 2,
+      "frameCount": 4,
+      "fps": 10,
+      "loop": false,
+      "poseNote": "咬合峰值，口部向前而非整图平移",
+      "requiredSourceApproval": "fantasy.actor.immune.front_right.master",
+      "registration": {
+        "group": "fantasy.actor.immune.back_right",
+        "baselineAssetId": "fantasy.actor.immune.back_right.crawl.00",
+        "sharedSourceScaleGroup": "fantasy.actor.immune",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "真实后右视角，背面大叶与奶白躯干关系清楚；医疗十字按同一表面自然转向或被遮挡，不能在背面复制前脸。"
+    },
+    {
+      "id": "fantasy.actor.immune.back_right.bite.03",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "immune/back_right/bite/03.png",
+      "kind": "immune-frame",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 102,
+      "family": "immune",
+      "direction": "back_right",
+      "clip": "bite",
+      "frameIndex": 3,
+      "frameCount": 4,
+      "fps": 10,
+      "loop": false,
+      "poseNote": "闭口回收，恢复爬行中性比例",
+      "requiredSourceApproval": "fantasy.actor.immune.front_right.master",
+      "registration": {
+        "group": "fantasy.actor.immune.back_right",
+        "baselineAssetId": "fantasy.actor.immune.back_right.crawl.00",
+        "sharedSourceScaleGroup": "fantasy.actor.immune",
+        "sameCanvas": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "真实后右视角，背面大叶与奶白躯干关系清楚；医疗十字按同一表面自然转向或被遮挡，不能在背面复制前脸。"
+    },
+    {
+      "id": "fantasy.actor.weapon.emitter",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "weapon/emitter.png",
+      "kind": "independent-tool",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": null,
+      "pivot": null,
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 103,
+      "family": "weapon",
+      "poseNote": "柔哑光奶白与薄荷绿的独立净化发射器，简洁有机大色块；正向朝右，透明背景，无手掌、无角色、无光束。",
+      "attachment": {
+        "registrationStatus": "pending-approved-weapon-master",
+        "coordinateSystem": "512x512-source-pixels",
+        "artDirection": "+X",
+        "gripSourcePx": null,
+        "muzzleSourcePx": null,
+        "legacyCoordinatesMayBeCopied": false,
+        "gate": "核准新武器稿后明确登记握点与枪口，二者必须使用同一尺度和旋转变换；在此之前不得接入。"
+      },
+      "registration": {
+        "group": "fantasy.actor.weapon.emitter",
+        "sameCanvas": true,
+        "perFrameFitAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.hero.front_right.master"
+    },
+    {
+      "id": "fantasy.actor.immune.beacon",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "immune/beacon.png",
+      "kind": "immune-beacon",
+      "dimensions": [
+        512,
+        512
+      ],
+      "sourceAnchorPx": [
+        256,
+        435.2
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 104,
+      "family": "beacon",
+      "poseNote": "奶白花瓣与薄荷绿叶组成的小型免疫信标，简明医疗十字，无发光范围圈、光束或治疗粒子。",
+      "registration": {
+        "group": "fantasy.actor.immune.beacon",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false
+      },
+      "requiredSourceApproval": "fantasy.actor.immune.front_right.master"
+    },
+    {
+      "id": "fantasy.actor.mother.base.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "mother/base/00.png",
+      "kind": "mother-base-frame",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 105,
+      "family": "mother",
+      "direction": "front_right",
+      "clip": "base",
+      "frameIndex": 0,
+      "frameCount": 4,
+      "fps": 4,
+      "loop": true,
+      "poseNote": "母体有机菌囊基体的中性脉动起点",
+      "registration": {
+        "group": "fantasy.actor.mother",
+        "baselineAssetId": "fantasy.actor.mother.base.00",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "灰葡萄紫有机母巢，软哑光手绘大体块、菌瓣与菌脉；不是金属装置、心脏设施、树形环境障碍或独立场景。接口与落地位置保持稳定。"
+    },
+    {
+      "id": "fantasy.actor.mother.base.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "mother/base/01.png",
+      "kind": "mother-base-frame",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 106,
+      "family": "mother",
+      "direction": "front_right",
+      "clip": "base",
+      "frameIndex": 1,
+      "frameCount": 4,
+      "fps": 4,
+      "loop": true,
+      "poseNote": "基体微胀、外廓缓慢舒展",
+      "registration": {
+        "group": "fantasy.actor.mother",
+        "baselineAssetId": "fantasy.actor.mother.base.00",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "灰葡萄紫有机母巢，软哑光手绘大体块、菌瓣与菌脉；不是金属装置、心脏设施、树形环境障碍或独立场景。接口与落地位置保持稳定。"
+    },
+    {
+      "id": "fantasy.actor.mother.base.02",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "mother/base/02.png",
+      "kind": "mother-base-frame",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 107,
+      "family": "mother",
+      "direction": "front_right",
+      "clip": "base",
+      "frameIndex": 2,
+      "frameCount": 4,
+      "fps": 4,
+      "loop": true,
+      "poseNote": "基体脉动高点，接地根部与附件接口不移",
+      "registration": {
+        "group": "fantasy.actor.mother",
+        "baselineAssetId": "fantasy.actor.mother.base.00",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "灰葡萄紫有机母巢，软哑光手绘大体块、菌瓣与菌脉；不是金属装置、心脏设施、树形环境障碍或独立场景。接口与落地位置保持稳定。"
+    },
+    {
+      "id": "fantasy.actor.mother.base.03",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "mother/base/03.png",
+      "kind": "mother-base-frame",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 108,
+      "family": "mother",
+      "direction": "front_right",
+      "clip": "base",
+      "frameIndex": 3,
+      "frameCount": 4,
+      "fps": 4,
+      "loop": true,
+      "poseNote": "基体回缩到接近起点，末首衔接自然",
+      "registration": {
+        "group": "fantasy.actor.mother",
+        "baselineAssetId": "fantasy.actor.mother.base.00",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      },
+      "sourceRequirements": "灰葡萄紫有机母巢，软哑光手绘大体块、菌瓣与菌脉；不是金属装置、心脏设施、树形环境障碍或独立场景。接口与落地位置保持稳定。"
+    },
+    {
+      "id": "fantasy.actor.mother.core.00",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "mother/core/00.png",
+      "kind": "mother-core-frame",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 109,
+      "family": "mother",
+      "clip": "core",
+      "frameIndex": 0,
+      "frameCount": 2,
+      "fps": 4,
+      "loop": true,
+      "overlay": true,
+      "poseNote": "核心暴露的收缩/较暗相位，只画核心叠加层，不重复基体。",
+      "registration": {
+        "group": "fantasy.actor.mother",
+        "baselineAssetId": "fantasy.actor.mother.base.00",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      }
+    },
+    {
+      "id": "fantasy.actor.mother.core.01",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "mother/core/01.png",
+      "kind": "mother-core-frame",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 110,
+      "family": "mother",
+      "clip": "core",
+      "frameIndex": 1,
+      "frameCount": 2,
+      "fps": 4,
+      "loop": true,
+      "overlay": true,
+      "poseNote": "同一核心暴露的舒展/较亮相位，几何接口与中心保持，不烘焙强光环。",
+      "registration": {
+        "group": "fantasy.actor.mother",
+        "baselineAssetId": "fantasy.actor.mother.base.00",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      }
+    },
+    {
+      "id": "fantasy.actor.mother.membrane",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "mother/membrane.png",
+      "kind": "mother-overlay",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 111,
+      "family": "mother",
+      "overlay": true,
+      "poseNote": "薄软有机保护膜叠加层，清楚轮廓与少量菌脉，内部保持透明，不烘焙法术护盾。",
+      "registration": {
+        "group": "fantasy.actor.mother",
+        "baselineAssetId": "fantasy.actor.mother.base.00",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      }
+    },
+    {
+      "id": "fantasy.actor.mother.carapace",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "mother/carapace.png",
+      "kind": "mother-overlay",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 112,
+      "family": "mother",
+      "overlay": true,
+      "poseNote": "有机甲壳特性附件，覆盖母体预定接口，不复制基体。",
+      "registration": {
+        "group": "fantasy.actor.mother",
+        "baselineAssetId": "fantasy.actor.mother.base.00",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      }
+    },
+    {
+      "id": "fantasy.actor.mother.fission",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "mother/fission.png",
+      "kind": "mother-overlay",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 113,
+      "family": "mother",
+      "overlay": true,
+      "poseNote": "双叶菌囊与分裂芽体特性附件，接入母体接口，不额外制造独立场景或敌人。",
+      "registration": {
+        "group": "fantasy.actor.mother",
+        "baselineAssetId": "fantasy.actor.mother.base.00",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      }
+    },
+    {
+      "id": "fantasy.actor.mother.mimic",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "mother/mimic.png",
+      "kind": "mother-overlay",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 114,
+      "family": "mother",
+      "overlay": true,
+      "poseNote": "拟态菌瓣特性附件，大叶形与闭合结构简洁，接入母体接口。",
+      "registration": {
+        "group": "fantasy.actor.mother",
+        "baselineAssetId": "fantasy.actor.mother.base.00",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      }
+    },
+    {
+      "id": "fantasy.actor.mother.purified",
+      "batch": "runtime",
+      "runtime": true,
+      "path": "mother/purified.png",
+      "kind": "mother-state",
+      "dimensions": [
+        1024,
+        1024
+      ],
+      "sourceAnchorPx": [
+        512,
+        870.4
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "trim": false,
+      "alphaRequirements": {
+        "required": true,
+        "premultiplied": false,
+        "background": "transparent",
+        "bakedShadow": false,
+        "edgeBleed": false
+      },
+      "status": "planned",
+      "approved": false,
+      "runId": null,
+      "sha256": null,
+      "productionOrder": 115,
+      "family": "mother",
+      "overlay": false,
+      "poseNote": "净化后的完整母体替换状态，奶白与薄荷绿有机组织，沿用基体占地和尺度；不画光束或大范围地面。",
+      "registration": {
+        "group": "fantasy.actor.mother",
+        "baselineAssetId": "fantasy.actor.mother.base.00",
+        "sameCanvas": true,
+        "sameSourceScale": true,
+        "independentAlphaRecropAllowed": false,
+        "perFrameFitAllowed": false
+      }
+    }
+  ]
+}

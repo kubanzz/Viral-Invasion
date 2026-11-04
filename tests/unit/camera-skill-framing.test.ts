@@ -3,9 +3,8 @@ import { Camera, CAMERA_PLAYER_FRAME, type CameraFollowOptions, type CameraPlaye
 import { HEART_WORLD, LUNG_WORLD } from '../../src/game/organConfig';
 import { WORLD, type Vec } from '../../src/game/types';
 import artRuntime from '../../.art-generated/art-runtime.json';
-import { approvedHeroAnimationClips, type HeroAnimationAsset } from '../../src/render/heroAnimation';
-import { aimedPaintedTool, registeredSpriteBodyBounds } from '../../src/render/spriteGeometry';
-import { createHeroRig } from '../../src/render/heroRig';
+import { ActorAnimationLibrary, ACTOR_CANVAS, ACTOR_STATIC_IDS, actorRecoilAngle, type ActorAsset } from '../../src/render/actorAnimation';
+import { aimedPaintedTool, registeredSourcePoint, registeredSpriteBodyBounds } from '../../src/render/spriteGeometry';
 
 const viewport = (width: number, height: number): CameraViewport => ({ left: 132, top: 80, right: width - 260, bottom: height - 24 });
 function settle(camera: Camera, player: Vec, aim: Vec, view: CameraViewport, world = HEART_WORLD) {
@@ -30,19 +29,24 @@ function paddedBody(camera: Camera, point: Vec, view: CameraViewport, frame: Rea
 }
 
 describe('optional skill-preview camera framing', () => {
-  it('covers the current registered hero, articulated gait and aimed emitter with the framing envelope', () => {
-    const assets = artRuntime.assets as unknown as Record<string, HeroAnimationAsset>;
-    const frames = Object.values(approvedHeroAnimationClips(assets)).flatMap(clip => clip?.frames ?? []);
-    expect(frames.length).toBeGreaterThanOrEqual(4);
+  it('covers all 36 approved two-view hero frames, pose grips and the new aimed emitter with the framing envelope', () => {
+    const assets = artRuntime.assets as unknown as Record<string, ActorAsset>, library = new ActorAnimationLibrary(assets);
+    expect(library.ready('hero'), 'A style master or a partial animation group cannot pass production framing').toBe(true);
+    const frames = Object.entries(assets).filter(([id]) => /^fantasy\.actor\.hero\.(front_right|back_right)\.(idle|walk|hurt|dash)\.\d\d$/.test(id));
+    expect(frames).toHaveLength(36);
+    const emitter=library.staticAsset(ACTOR_STATIC_IDS.emitter);expect(emitter).toBeDefined();expect(emitter!.asset.sourceMuzzle).toBeDefined();
     const envelope = { left: Infinity, right: -Infinity, top: Infinity, bottom: -Infinity };
-    for (const frame of frames) for (const flipX of [false, true]) for (let direction = 0; direction < 8; direction++) for (const recoil of [0, 4]) {
-      const facing = direction * Math.PI / 4, angle = Math.atan2(Math.sin(facing) * .72, Math.cos(facing));
-      const point = { x: 0, y: 0 }, toolPoint = { x: -Math.cos(facing) * recoil, y: -Math.sin(facing) * recoil };
-      const grip = { x: toolPoint.x + Math.cos(angle) * 21, y: toolPoint.y * .72 - 19 + Math.sin(angle) * 3 };
-      const tool = aimedPaintedTool(assets['weapon.emitter.painted'], toolPoint, facing, 0, grip);
+    for (const [id,asset] of frames) for (const flipX of [false, true]) for (let direction = 0; direction < 8; direction++) for (const recoilStrength of [0, 1]) {
+      const [,authoredDirection,clip]=id.match(/^fantasy\.actor\.hero\.(front_right|back_right)\.(idle|walk|hurt|dash)\.\d\d$/)!;
+      const animation=asset.animation as {index:number;fps:number};
+      const frame=library.frame({identity:'hero',action:clip,clip,authoredDirection,flipX},ACTOR_CANVAS.hero,(animation.index+.01)/animation.fps)!;
+      expect(frame.id).toBe(id);
+      const facing = direction * Math.PI / 4,point = { x: 0, y: 0 };
+      const grip=registeredSourcePoint(point,frame.registration.grip!,frame.registration.foot,frame.sourceScale,flipX);
+      const tool = aimedPaintedTool(emitter!.asset, point, facing, 0, grip,ACTOR_CANVAS.emitter/emitter!.registration.canvas.width,actorRecoilAngle(facing,recoilStrength));
       expect(tool).toBeDefined();
-      for (const gait of [{ phase: 0, amount: 0, lean: 0 }, { phase: Math.PI / 2, amount: 1, lean: 1 }, { phase: Math.PI, amount: 1, lean: 0 }, { phase: Math.PI * 1.5, amount: 1, lean: -1 }]) {
-        const body = createHeroRig(assets[frame.id], frame.layout, point, flipX, 0, gait, tool)?.bounds ?? registeredSpriteBodyBounds(frame.layout, point, flipX);
+      {
+        const body = registeredSpriteBodyBounds(frame.layout, point, flipX);
         for (const bounds of [body, tool!.bounds]) {
           envelope.left = Math.min(envelope.left, bounds.left); envelope.right = Math.max(envelope.right, bounds.right);
           envelope.top = Math.min(envelope.top, bounds.top); envelope.bottom = Math.max(envelope.bottom, bounds.bottom);

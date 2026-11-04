@@ -3,6 +3,7 @@ import { BATTLE_BALANCE } from '../game/battleConfig';
 import { isForegroundOccluded } from './occlusion';
 import { boundsOverlap, SPRITE_Y_SCALE, type VisualBounds } from './raisedObstacleGeometry';
 import { getRaisedObstacleOcclusion, PLAYER_HEAD_SHAPE, playerBodyPose, playerVisualBounds, targetVisualBounds, type RaisedActorBody } from './raisedObstacleOcclusion';
+import { presentedMotherCombat } from './artPresentation';
 
 export interface PlayerPresence {
   active: boolean;
@@ -31,13 +32,13 @@ export function playerPresence(state: GameState, raisedBodies?: readonly RaisedA
   for (const target of state.targets) {
     // The player is first among same-Y world entities, so those bodies draw later.
     if (target.hp > 0 && target.y >= p.y && boundsOverlap(bodyBounds, targetVisualBounds(target, state))) result.potentialBodyOccluders.push(target.id);
-    const isCore = target.id === state.campaign?.core.combat?.coreId;
+    const isCore = target.id === presentedMotherCombat(state)?.coreId;
     if (!isCore && target.hp > 0 && target.attackAim && (target.attackAt ?? 0) > state.elapsed
       && diskOverlapsBody(target.attackAim, target.attackRadius ?? BATTLE_BALANCE.attackRadius, bodyBounds)) result.pendingRoundDangers.push(target.id);
     if ((target.splitAt ?? 0) > state.elapsed && target.splitPositions?.some(point => diskOverlapsBody(point, 18, bodyBounds))) result.pendingRoundDangers.push(`split:${target.id}`);
   }
-  const attack = state.campaign?.core.combat?.attack;
-  if (attack && attack.resolveAt > state.elapsed && state.campaign?.core.combat?.organId === state.battle?.organId && attack.kind !== 'crystal-sweep') {
+  const combat = presentedMotherCombat(state), attack = combat?.attack;
+  if (attack && attack.resolveAt > state.elapsed && combat?.organId === state.battle?.organId && attack.kind !== 'crystal-sweep') {
     const centers = attack.kind === 'brood' ? attack.landings : [attack.aim];
     if (centers.some(point => diskOverlapsBody(point, attack.radius, bodyBounds))) result.pendingRoundDangers.push(attack.id);
   }
@@ -51,7 +52,7 @@ export function playerPresence(state: GameState, raisedBodies?: readonly RaisedA
 
 /** Thin informational contour only. Normal body remains in the Y-sorted pass. */
 export function drawPlayerPresence(ctx: CanvasRenderingContext2D, state: GameState, presence: PlayerPresence): void {
-  if (!presence.active) return;
+  if (!presence.active||state.playerFlight) return;
   const p = state.player, { walk, bob, direction } = playerBodyPose(state), head = PLAYER_HEAD_SHAPE;
   ctx.save(); ctx.translate(p.x, p.y); ctx.scale(1, 1 / SPRITE_Y_SCALE);
   ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.setLineDash([]);
@@ -62,8 +63,9 @@ export function drawPlayerPresence(ctx: CanvasRenderingContext2D, state: GameSta
     ctx.moveTo(-1, -3 + walk * 2 - bob); ctx.ellipse(-11, -3 + walk * 2 - bob, 10, 7, 0, 0, Math.PI * 2);
     ctx.moveTo(21, -3 - walk * 2 - bob); ctx.ellipse(11, -3 - walk * 2 - bob, 10, 7, 0, 0, Math.PI * 2);
   };
-  // No opaque body, glow, fill, or radius-sized mask: only a narrow double line.
-  for (const [width, color] of [[4.5, '#102b3bf0'], [1.7, '#b9fff4']] as const) {
+  // Occlusion feedback stays a narrow cream contour backed by muted green
+  // ink. It is never a permanent cyan outline or a second painted body.
+  for (const [width, color] of [[3.4, '#3f6359d9'], [1.1, '#f0e7c8']] as const) {
     trace(); ctx.lineWidth = width; ctx.strokeStyle = color; ctx.stroke();
     ctx.beginPath();
     ctx.ellipse(0, 2, 24, 9, 0, .15, Math.PI - .15);

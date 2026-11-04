@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { GameSession } from '../../src/game/session';
+import { TERRITORY_CANNON_BALANCE } from '../../src/game/territoryCannon';
 import { MotherCoreController } from '../../src/game/motherCore';
 import { copyMobileMinimap, mobileChargeView, mobileCooldownViews, mobileHudMarkup, mobileHudView, setMobileDetailsOpen, updateMobileHud } from '../../src/ui/mobileHud';
 
@@ -7,6 +8,49 @@ afterEach(() => vi.unstubAllGlobals());
 const campaign = () => { const game = new GameSession(71, { campaign: true, milestone: 'G3' }); game.start(); return game; };
 
 describe('touch battlefield status', () => {
+  it('exposes the nearby cannon with its authoritative reload instead of the legacy pulse', () => {
+    const game = new GameSession(71, { mode: 'endless', territory: true }); game.start();
+    const state = game.state; Object.assign(state.player, TERRITORY_CANNON_BALANCE.origin);
+    expect(mobileHudView(state).interaction).toMatchObject({ label: '弹射', nearby: true });
+    state.territory!.cannon = { readyAt: state.elapsed + 12, serial: 0 };
+    expect(mobileHudView(state).interaction).toMatchObject({ label: '装填', nearby: true, hint: '装填 12秒' });
+    expect(mobileCooldownViews(state).interact).toEqual({ remaining: 12, ratio: .5, label: '12' });
+    state.player.x += 111;
+    expect(mobileHudView(state).interaction.nearby).toBe(false);
+  });
+
+  it('points an infected or fragile player to a healthy spring, not any healthy frontline', () => {
+    const game = new GameSession(71, { mode: 'endless', territory: true }); game.start(); const state = game.state;
+    state.player.hp = 14; state.playerInfection = { until: state.elapsed + 8, nextTickAt: state.elapsed + 1 };
+    expect(mobileHudView(state).warnings).toContainEqual({ kind: 'fatal', text: '耐久濒危 · 立即回泉' });
+    expect(mobileHudView(state).warnings.some(warning => warning.text.includes('前往健康生命泉'))).toBe(true);
+  });
+
+  it('presents territory 3 as an available nearby action while keeping player health and shot growth', () => {
+    const game = new GameSession(71, { mode: 'endless', territory: true }); game.start(); const state = game.state;
+    state.endless!.tutorial!.fired = true; state.endlessGrowth!.ranks.multishot = 1; state.cooldowns[3] = 20;
+    const caption = { textContent: '' }, attributes = new Map<string, string>();
+    const cleanse = { dataset: { cooldown: '3', active: 'false', ready: '', cooling: '' }, disabled: false,
+      style: { setProperty: vi.fn() }, querySelector: () => caption,
+      setAttribute: (name: string, value: string) => attributes.set(name, value) };
+    const nodes = new Map([...mobileHudMarkup.matchAll(/id="([^"]+)"/g)].map(match => [match[1], {
+      textContent: '', innerHTML: '', hidden: false, dataset: {} as Record<string, string>, style: { width: '' },
+    }]));
+    const root = nodes.get('mobile-controls')!;
+    Object.assign(root, { querySelectorAll: () => [cleanse], querySelector: (selector: string) => selector === '[data-touch-skill="3"]' ? cleanse : null });
+    vi.stubGlobal('document', { getElementById: (id: string) => nodes.get(id) ?? null });
+    const before = structuredClone(state); updateMobileHud(state);
+    expect(cleanse.disabled).toBe(false); expect(cleanse.dataset.cooling).toBe('false');
+    expect(caption.textContent).toBe('附近净化'); expect(attributes.get('aria-label')).toContain('不切换武器');
+    expect(attributes.get('aria-label')).not.toContain('拖向');
+    expect(nodes.get('mobile-hp')!.textContent).toBe('100/100');
+    expect(nodes.get('mobile-combat-readout')!.textContent).toMatch(/^余敌\d+ · 3弹$/);
+    expect(state).toEqual(before);
+    delete state.territory; updateMobileHud(state);
+    expect(caption.textContent).toBe('修复'); expect(attributes.get('aria-label')).toContain('按住瞄准');
+    expect(cleanse.disabled).toBe(true); expect(nodes.get('mobile-combat-readout')!.textContent).toBe('');
+  });
+
   it('shows charge progress independently from the normal dash cooldown', () => {
     const game = new GameSession(42, { mode: 'endless' }); game.start(); const state = game.state;
     state.elapsed = 8; state.player.dashReady = 9; state.chargedSlashReadyAt = 0;
@@ -83,7 +127,7 @@ describe('touch battlefield status', () => {
     expect(mobileHudView(state).notice).toBe('');
     state.elapsed = 20; state.messageUntil = 0;
     expect(mobileHudView(state).notice).toBe('');
-    expect(mobileHudMarkup).toContain('data-layout="moba-v3"');
+    expect(mobileHudMarkup).toContain('data-layout="moba-v4"');
   });
 
   it('shows genuine feedback for at most four simulation seconds and honors earlier message expiry', () => {

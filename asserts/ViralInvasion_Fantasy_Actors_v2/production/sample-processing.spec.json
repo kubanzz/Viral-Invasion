@@ -1,0 +1,370 @@
+{
+  "schemaVersion": 1,
+  "samples": [
+    {
+      "id": "fantasy.actor.hero.front_right.master",
+      "runId": "ad1fb31d-2823-4b85-82e6-78974145e195",
+      "rawPath": "D:/Workspace/Projects/xsj/Viral-Invasion/asserts/ViralInvasion_Fantasy_Actors_v2/raw/fantasy.actor.hero.front_right.master/ad1fb31d-2823-4b85-82e6-78974145e195-cross-v02.png",
+      "identityReview": {
+        "status": "accepted-for-processing",
+        "reviewer": "root + production_manifest",
+        "revision": "v02-cross-only",
+        "notes": "Root保留hero身份；仅中性灰医疗十字精确mask改为灰蓝，ROI及mask之外像素差均0。原pose/奶白头壳/深面罩/两点眼/短肢全部保留；尚需最终身份核准。"
+      },
+      "matte": {
+        "whiteMin": 240,
+        "chromaMax": 18,
+        "edgeWidth": 2,
+        "matteCleanup": true,
+        "keepLargestComponent": true,
+        "protectedPolygons": [
+          [
+            [
+              790,
+              350
+            ],
+            [
+              1160,
+              325
+            ],
+            [
+              1350,
+              550
+            ],
+            [
+              1090,
+              610
+            ],
+            [
+              870,
+              540
+            ]
+          ]
+        ],
+        "negativeSpaceSeeds": [
+          [
+            735,
+            1355
+          ],
+          [
+            990,
+            1600
+          ]
+        ],
+        "preservationProbes": [
+          {
+            "label": "奶白头壳",
+            "point": [
+              1050,
+              420
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "灰蓝医疗十字",
+            "point": [
+              1390,
+              490
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "左侧薄荷眼",
+            "point": [
+              1158,
+              866
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "右侧薄荷眼",
+            "point": [
+              1396,
+              806
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "屏幕左手奶白掌",
+            "point": [
+              495,
+              1460
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "屏幕右手奶白掌",
+            "point": [
+              1570,
+              1210
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "左臂与身体之间负空间",
+            "point": [
+              735,
+              1355
+            ],
+            "expect": "clear"
+          },
+          {
+            "label": "两腿之间负空间",
+            "point": [
+              990,
+              1600
+            ],
+            "expect": "clear"
+          }
+        ]
+      },
+      "registration": {
+        "sourceFootPx": [
+          1052.75,
+          1842
+        ],
+        "uniformScale": 0.25,
+        "footAnnotation": "横向取实际鞋底接触点near[825.5,1842]与far[1280,1647]的X中点1052.75；纵向取前侧最低鞋底1842，保留透视高度差。完整2048画布0.25缩放+接地平移，不用bbox fit，也不强行拉齐两足Y。"
+      },
+      "handGrips": {
+        "screenLeft": {
+          "sourcePoint": [
+            595,
+            1493
+          ],
+          "confidence": "visual-estimate ±12 source px",
+          "definition": "实际view下方手掌与拇指内凹的持物接触中心；不是旧绑定坐标。"
+        },
+        "screenRight": {
+          "sourcePoint": [
+            1570,
+            1250
+          ],
+          "confidence": "visual-estimate ±12 source px",
+          "definition": "实际view右侧C形手掌内凹的持物接触中心；不是旧绑定坐标。"
+        }
+      }
+    },
+    {
+      "id": "fantasy.actor.immune.front_right.master",
+      "runId": "289e5e8d-cfe7-4fd9-9ed7-7eead9539148",
+      "rawPath": "D:/Workspace/Projects/xsj/Viral-Invasion/asserts/ViralInvasion_Fantasy_Actors_v2/raw/fantasy.actor.immune.front_right.master/289e5e8d-cfe7-4fd9-9ed7-7eead9539148.png",
+      "identityReview": {
+        "status": "accepted-for-processing",
+        "reviewer": "root + production_manifest",
+        "revision": "r01",
+        "notes": "Root已允许保留immune身份；实际view为奶白豆团、少量大薄荷叶、清楚眼口与医疗十字，进入alpha/foot/小尺寸审查；不计动画完成。"
+      },
+      "matte": {
+        "whiteMin": 240,
+        "chromaMax": 18,
+        "edgeWidth": 2,
+        "matteCleanup": true,
+        "keepLargestComponent": true,
+        "protectedPolygons": [
+          [
+            [
+              1070,
+              700
+            ],
+            [
+              1360,
+              740
+            ],
+            [
+              1490,
+              920
+            ],
+            [
+              1400,
+              1050
+            ],
+            [
+              1130,
+              980
+            ]
+          ]
+        ],
+        "negativeSpaceSeeds": [
+          [
+            1050,
+            1670
+          ]
+        ],
+        "preservationProbes": [
+          {
+            "label": "奶白主体",
+            "point": [
+              1110,
+              790
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "医疗十字",
+            "point": [
+              980,
+              1320
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "近侧眼",
+            "point": [
+              1240,
+              1090
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "远侧眼",
+            "point": [
+              1530,
+              1055
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "左侧大叶片",
+            "point": [
+              510,
+              890
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "两枚叶足之间负空间",
+            "point": [
+              1050,
+              1670
+            ],
+            "expect": "clear"
+          }
+        ]
+      },
+      "registration": {
+        "sourceFootPx": [
+          1060,
+          1714
+        ],
+        "uniformScale": 0.25,
+        "footAnnotation": "横向取两枚叶状接地部位的中部，纵向取前侧叶足最低描边像素基线1714；完整2048画布0.25缩放后接地平移，无独立bbox fit。"
+      }
+    },
+    {
+      "id": "fantasy.actor.enemy.basic.master",
+      "runId": "d6c5fb30-de6c-409a-befc-a183a1c75e43",
+      "rawPath": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_Actors_v2\\raw\\fantasy.actor.enemy.basic.master\\d6c5fb30-de6c-409a-befc-a183a1c75e43.png",
+      "identityReview": {
+        "status": "accepted-for-processing",
+        "reviewer": "root + production_manifest",
+        "revision": "r02",
+        "notes": "Root与本agent实际view：近圆珊瑚短刺体、琥珀窄眼下压眉、深口两小牙；r01惊讶布丁版拒绝，不作为最终样板。烘焙接地阴影须精确去除。"
+      },
+      "matte": {
+        "whiteMin": 240,
+        "chromaMax": 18,
+        "edgeWidth": 2,
+        "matteCleanup": true,
+        "keepLargestComponent": true,
+        "protectedPolygons": [],
+        "negativeSpaceSeeds": [],
+        "removeShadowBelowContour": {
+          "roi": [
+            800,
+            1490,
+            470,
+            75
+          ],
+          "darkMax": [
+            190,
+            100,
+            85
+          ]
+        },
+        "preservationProbes": [
+          {
+            "label": "左侧琥珀眼",
+            "point": [
+              1040,
+              1090
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "右侧琥珀眼",
+            "point": [
+              1380,
+              1010
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "深色口",
+            "point": [
+              1220,
+              1230
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "近侧小牙",
+            "point": [
+              1170,
+              1210
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "远侧小牙",
+            "point": [
+              1310,
+              1190
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "底部棕轮廓",
+            "point": [
+              1030,
+              1540
+            ],
+            "expect": "opaque"
+          },
+          {
+            "label": "左侧烘焙影已去",
+            "point": [
+              825,
+              1520
+            ],
+            "expect": "clear"
+          },
+          {
+            "label": "右侧烘焙影已去",
+            "point": [
+              1230,
+              1525
+            ],
+            "expect": "clear"
+          },
+          {
+            "label": "脚点下方白背景",
+            "point": [
+              1030,
+              1550
+            ],
+            "expect": "clear"
+          }
+        ]
+      },
+      "registration": {
+        "sourceFootPx": [
+          1030,
+          1541
+        ],
+        "uniformScale": 0.25,
+        "footAnnotation": "依据实际底部crop，主体最低深棕轮廓y1541作为接地，未使用粉灰烘焙椭圆影；横向取主体接地中心1030。完整2048源画布0.25缩放+脚点平移，不按alpha bbox单独缩放。"
+      }
+    }
+  ]
+}

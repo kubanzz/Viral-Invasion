@@ -58,7 +58,7 @@ function fixture(traits: TraitId[] = ['CARAPACE', 'FISSION'], elapsed = 2) {
   return { target, combat, state };
 }
 const commands = (paint: Paint, method: string) => paint.path.filter(command => command.method === method);
-const ripple = (paints: Paint[]) => paints.filter(paint => paint.method === 'stroke' && ['#d1efe1', '#376b688f'].includes(String(paint.color)));
+const ripple = (paints: Paint[]) => paints.filter(paint => paint.method === 'stroke' && ['#8e6076', '#477565'].includes(String(paint.color)));
 function freeze(value: unknown): void {
   if (!value || typeof value !== 'object' || Object.isFrozen(value)) return;
   Object.freeze(value); for (const child of Object.values(value)) freeze(child);
@@ -117,7 +117,9 @@ describe('native mother body state accents', () => {
     expect(ripple(inactive.paints)).toHaveLength(0);
     for (const drawn of [disturbed, hidden, revealed, exposed, inactive]) {
       expect(drawn.gradients()).toBe(0);
-      expect(drawn.paints.some(paint => commands(paint, 'bezierCurveTo').length || commands(paint, 'quadraticCurveTo').length)).toBe(false);
+      expect(drawn.paints.some(paint => commands(paint, 'bezierCurveTo').length)).toBe(false);
+      expect(drawn.paints.filter(paint => ['stroke', 'fill'].includes(paint.method) && commands(paint, 'quadraticCurveTo').length)
+        .every(paint => paint.method === 'stroke' && ['#efe3ca', '#8e6076', '#477565'].includes(String(paint.color)))).toBe(true);
       expect(drawn.paints.filter(paint => paint.method === 'fill' && paint.color !== '#00000000')
         .every(paint => commands(paint, 'ellipse').every(command => command.args[2] <= 14 && command.args[3] <= 5))).toBe(true);
     }
@@ -150,7 +152,9 @@ describe('native mother body state accents', () => {
       [{ method: 'moveTo', args: [3, -73] }, { method: 'lineTo', args: [3, -59] }],
     ]);
     const reveal = ripple(draw.paints)[0];
-    expect(commands(reveal, 'ellipse')[0].args.slice(0, 4)).toEqual([4.5, -70.5, 89.5, 77.5]);
+    expect(commands(reveal, 'ellipse')).toEqual([]);
+    expect(commands(reveal, 'quadraticCurveTo')).toHaveLength(4);
+    expect(commands(reveal, 'moveTo')[0].args).toEqual([-29, -81.5]);
     expect(reveal.matrix[4]).toBe(f.target.x); expect(reveal.matrix[5]).toBe(f.target.y);
     expect(draw.balanced()).toBe(true); expect(JSON.stringify(f.state)).toBe(before);
   });
@@ -163,6 +167,25 @@ describe('native mother body state accents', () => {
     const fallback = recorder(); drawBattleTarget(fallback.ctx, f.target, f.state);
     expect(fallback.paints.filter(paint => paint.method === 'fill')).toHaveLength(1);
     expect(fallback.paints.some(paint => paint.text === '✓ 母巢核心已清除')).toBe(true);
+  });
+
+  it('keeps the membrane phase floor and temporary exposure independently readable without text or a shield disk', () => {
+    for (const remaining of [0, 1, 2]) for (const exposed of [false, true]) {
+      const f = fixture(); f.combat.membrane.remaining = remaining;
+      f.combat.membrane.floorRatio = remaining ? .5 : 0;
+      f.combat.exposedUntil = exposed ? f.state.elapsed + 1 : 0;
+      const geometry = { coreOffset: { x: 3, y: -66 }, bodyBounds: { left: -81, right: 90, top: -144, bottom: 3 } };
+      const before = JSON.stringify(f.state), draw = recorder(); freeze(f.state);
+      const receipt = drawMotherCoreAccents(draw.ctx, f.target, f.state, f.combat, geometry, { labels: false })!;
+      expect(receipt).toMatchObject({ remaining, total: 2, phaseFloorActive: remaining > 0, exposed, filledStages: remaining, visible: true });
+      expect(draw.paints.filter(paint => paint.method === 'fill' && paint.color === '#8f6f87')).toHaveLength(remaining);
+      expect(draw.paints.filter(paint => paint.method === 'stroke' && paint.color === '#985e69')).toHaveLength(exposed ? 1 : 0);
+      const stagePanel = draw.paints.find(paint => paint.method === 'fill' && paint.color === '#efe4cce6')!;
+      expect(commands(stagePanel, 'roundRect')[0].args.slice(2, 4)).toEqual([24, 9]);
+      expect(receipt.stageOrigin).toEqual({ x: 3, y: -43 });
+      expect(draw.paints.some(paint => paint.method === 'fillText' || paint.method === 'strokeText' || paint.color === '#fff9e9ed')).toBe(false);
+      expect(JSON.stringify(f.state)).toBe(before); expect(draw.balanced()).toBe(true);
+    }
   });
 
   it('retains the complete procedural fallback construction and its original shared status cues', () => {

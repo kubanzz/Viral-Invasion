@@ -39,8 +39,9 @@ export interface BeaconState extends Vec {
   rank?: ProtocolRank;
   /** A short command, bounded by this squad's original lifetime. */
   focus?: { targetId: string; until: number };
-  /** Challenge command: guard the tissue anchor inside this finite region. */
-  guard?: { kind: 'tissue'; radius: number };
+  /** Accepted orders retain their anchor even if the guarded territory is lost. */
+  guard?: { kind: 'tissue'; radius: number } | { kind: 'ground'; radius: number }
+    | { kind: 'territory'; regionId: import('./territoryTypes').TerritoryNodeId; radius: number };
   /** Physical birth anchor; a remote guard command never moves this past deployment reach. */
   deploymentOrigin?: Vec;
 }
@@ -48,6 +49,8 @@ export interface GrowthHistoryEntry { at: number; type: string; text: string }
 export interface GrowthState {
   runId: string; seed: number; lastElapsed: number; xp: number; level: number; nextXp: number | null; research: number;
   preparation?: RunPreparation; starterDebt?: 0 | 1;
+  /** The heart challenge's starting army is a required level capability. */
+  territoryBeaconRequired?: boolean;
   /** Independent run evidence: accepted equipment commits survive bounded logs and replacement. */
   carriedProtocols?: ProtocolId[];
   equipped: EquippedProtocol[]; draft: ProtocolDraft | null; pendingLevels: number[];
@@ -75,6 +78,7 @@ export interface GrowthState {
 export interface GrowthContext {
   hostEvents?: import('./hostEventTypes').HostEventState;
   endless?: boolean;
+  territory?: import('./territoryTypes').TerritoryState;
   immuneRank?: number;
   /** Exact host power × immune projection; command damage stays in base units. */
   cellDamageMultiplier?: number;
@@ -88,7 +92,7 @@ export interface GrowthContext {
   acceptedEvents?: readonly GameEvent[];
 }
 export interface DamageOrigin {
-  cause: 'basic' | 'protocol' | 'ability'; ability?: 'nova' | 'scan' | 'dash' | 'catalysis' | 'host-event' | 'charged-slash' | 'cannon-aftershock';
+  cause: 'basic' | 'protocol' | 'ability'; ability?: 'nova' | 'scan' | 'dash' | 'catalysis' | 'host-event' | 'charged-slash' | 'cannon-aftershock' | 'territory-cannon';
   basicTool?: Tool; immuneCellId?: string;
   rootId?: string; wasPulseExposed?: boolean; protocolId?: ProtocolId; allowChain?: boolean;
 }

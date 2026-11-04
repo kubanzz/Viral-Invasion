@@ -164,15 +164,16 @@ describe('actual-cell trace-hit feedback', () => {
     expect(selectImmuneTraceCues(laterBeacon).every(cue => laterBeacon.growth!.cells!.find(cell => cell.id === cue.cellId)!.beaconId === secondId)).toBe(true);
   });
 
-  it('draws a short cell-to-target line plus shape cue without changing gameplay or depending on a quality toggle', () => {
+  it('draws only local bite marks on the victim without a stretched cell-to-target line', () => {
     const state = fixture(), before = JSON.stringify(state); freeze(state);
     const first = canvas(), second = canvas(), visuals = new GrowthVisuals();
     visuals.drawProtocolHits(first.ctx, state, state.growth);
     visuals.drawProtocolHits(second.ctx, state, state.growth);
     expect(first.calls).toEqual(second.calls);
-    expect(first.calls.filter(call => call.method === 'moveTo' && call.args[0] === 425 && call.args[1] === 385)).toHaveLength(2);
+    expect(first.calls.filter(call => call.method === 'moveTo' && call.args[0] === 425 && call.args[1] === 385)).toHaveLength(0);
     expect(first.calls.some(call => call.method === 'moveTo' && call.args[0] === 400 && call.args[1] === 400)).toBe(false);
-    expect(first.calls.filter(call => call.method === 'lineTo')).toHaveLength(6);
+    expect(first.calls.filter(call => call.method === 'lineTo')).toHaveLength(4);
+    expect(first.calls.filter(call => call.method === 'arc').length).toBeGreaterThanOrEqual(2);
     expect(JSON.stringify(state)).toBe(before);
   });
 });

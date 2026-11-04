@@ -56,19 +56,18 @@ export class GrowthVisuals {
       for (let i = 0; i < points.length; i++) {
         const point = points[i];
         ctx.save(); ctx.globalAlpha = .18 + (i + 1) / points.length * .38;
-        line(ctx, { x: point.x - 3, y: point.y - 3 }, { x: point.x + 3, y: point.y + 3 }, '#adefdf', 2);
-        line(ctx, { x: point.x - 3, y: point.y + 3 }, { x: point.x + 3, y: point.y - 3 }, '#adefdf', 1);
+        ctx.beginPath(); ctx.ellipse(point.x, point.y, 2.5, 1.8, 0, 0, TAU); ctx.fillStyle = '#6b967d'; ctx.fill();
         ctx.restore();
       }
     }
     for (const beacon of immuneLegions(growth)) {
     if (beacon.organId !== state.battle.organId || beacon.until <= state.elapsed) continue;
-    ctx.save(); ctx.lineWidth = 1.5; ctx.setLineDash([5, 9]);
-    ellipse(ctx, beacon, beacon.radius, '#9df4dc04', '#a6e9ce66'); ctx.setLineDash([]);
+    ctx.save(); ctx.lineWidth = 1.5; ctx.setLineDash([6, 12]);
+    ellipse(ctx, beacon, beacon.guard?.radius ?? beacon.radius, '#9eb99604', '#507c6677'); ctx.setLineDash([]);
     const remaining = Number.isFinite(beacon.until) ? Math.max(0, Math.min(1, (beacon.until - state.elapsed) / (beacon.until - beacon.born))) : 1;
-    ellipse(ctx, beacon, 28, '#a4f3d412', '#a8e9cf77');
+    ellipse(ctx, beacon, 28, '#b7c7a50c', '#6c947966');
     ctx.beginPath(); ctx.arc(beacon.x, beacon.y, 33, -Math.PI / 2, -Math.PI / 2 + TAU * remaining);
-    ctx.strokeStyle = '#b7f4d8'; ctx.lineWidth = 3; ctx.stroke();
+    ctx.strokeStyle = '#6f9475'; ctx.lineWidth = 2.5; ctx.stroke();
     ctx.restore();
     }
   }
@@ -80,8 +79,10 @@ export class GrowthVisuals {
     const count = (growth?.cells ?? []).filter(cell => cell.beaconId === beacon.id && cell.organId === state.battle?.organId && cell.until > state.elapsed && (cell.hp ?? 1) > 0).length;
     const duration = Number.isFinite(beacon.until) ? `${(beacon.until - state.elapsed).toFixed(1)}s` : '常驻';
     if (labels) {
+      const guard = beacon.guard;
+      const region = guard?.kind === 'territory' ? state.territory?.nodes.find(node => node.id === guard.regionId) : undefined;
       labels.add({ id: `squad:${beacon.id}`, anchor: beacon, offset: { x: 0, y: -59 }, priority: 60,
-        lines: [{ text: `${beacon.mode === 'patrol' ? '✚ 免疫侦巡' : '✚ 免疫军团'} ×${count} · ${duration}`, color: '#c3efd5', size: 11 }] });
+        lines: [{ text: `${beacon.mode === 'patrol' ? '✚ 免疫侦巡' : '✚ 免疫军团'} ×${count} · ${region ? `驻防 ${region.name}` : guard?.kind === 'ground' ? '驻地留守' : duration}`, color: '#c3efd5', size: 11 }] });
     } else {
       drawImmuneSquadLabel(ctx, beacon, count, beacon.mode === 'patrol');
       if (beacon.mode !== 'patrol') {
@@ -97,12 +98,17 @@ export class GrowthVisuals {
     this.drawBeaconLabel(ctx, state, growth, labels, beaconId);
     if (beacon.mode === 'patrol') return;
     ctx.save(); ctx.translate(beacon.x, beacon.y); ctx.scale(1, 1 / .72);
-    ctx.beginPath(); ctx.ellipse(0, 2, 22, 8, 0, 0, TAU); ctx.fillStyle = '#284f4e'; ctx.fill(); ctx.strokeStyle = '#9bd8bc'; ctx.lineWidth = 1.5; ctx.stroke();
-    ctx.beginPath(); ctx.roundRect(-13, -23, 26, 24, 8); ctx.fillStyle = '#c3e3cf'; ctx.fill(); ctx.strokeStyle = '#3c7069'; ctx.stroke();
-    ctx.beginPath(); ctx.ellipse(0, -22, 13, 5, 0, 0, TAU); ctx.fillStyle = '#edebd6'; ctx.fill(); ctx.strokeStyle = '#b0d3bf'; ctx.stroke();
-    const y = -38 + Math.sin(state.elapsed * 3) * 1.5;
-    ctx.beginPath(); ctx.roundRect(-10, y - 10, 20, 20, 6); ctx.fillStyle = '#e3f3d6'; ctx.fill(); ctx.strokeStyle = '#4f9a89'; ctx.stroke();
-    line(ctx, { x: -5, y }, { x: 5, y }, '#428e7d', 3); line(ctx, { x: 0, y: y - 5 }, { x: 0, y: y + 5 }, '#428e7d', 3);
+    // A rooted three-leaf rosette is low and organic; it cannot be mistaken
+    // for the biped player or a hovering medical robot at phone size.
+    ctx.beginPath(); ctx.ellipse(0, 2, 23, 7, 0, 0, TAU); ctx.fillStyle = '#526e5940'; ctx.fill();
+    ctx.lineWidth = 1.8; ctx.strokeStyle = '#607e67';
+    for (const sign of [-1, 1]) {
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(sign * 27, -3, sign * 24, -17);
+      ctx.quadraticCurveTo(sign * 7, -20, 0, 0); ctx.closePath(); ctx.fillStyle = '#a8bc95'; ctx.fill(); ctx.stroke();
+    }
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.bezierCurveTo(-16, -9, -15, -28, 0, -34);
+    ctx.bezierCurveTo(15, -28, 16, -9, 0, 0); ctx.closePath(); ctx.fillStyle = '#eee6c9'; ctx.fill(); ctx.stroke();
+    line(ctx, { x: -5, y: -17 }, { x: 5, y: -17 }, '#6c9073', 3); line(ctx, { x: 0, y: -22 }, { x: 0, y: -12 }, '#6c9073', 3);
     ctx.restore();
   }
 
@@ -112,10 +118,13 @@ export class GrowthVisuals {
       if (mark.organId !== state.battle.organId || mark.until <= state.elapsed) continue;
       const target = state.targets.find(item => item.id === mark.targetId && item.hp > 0);
       if (!target) continue;
-      ctx.save(); ctx.translate(target.x, target.y); ctx.scale(1, 1 / .72); ctx.setLineDash([3, 4]); ctx.lineWidth = 1.3;
-      ctx.beginPath(); ctx.ellipse(0, -target.radius * .7, target.radius * 1.4, target.radius * 1.2, 0, 0, TAU); ctx.strokeStyle = '#b8f2e1'; ctx.stroke(); ctx.setLineDash([]);
+      ctx.save(); ctx.translate(target.x, target.y); ctx.scale(1, 1 / .72); ctx.lineWidth = 1.5;
       const y = -target.radius * .7;
-      for (const sign of [-1, 1]) line(ctx, { x: sign * (target.radius + 7), y: y - 5 }, { x: sign * (target.radius + 7), y: y + 5 }, '#cdf8e8', 2);
+      for (const sign of [-1, 1]) {
+        const x = sign * (target.radius + 6);
+        line(ctx, { x, y: y - 6 }, { x, y: y + 6 }, '#4a7966', 2);
+        line(ctx, { x, y: y - 6 }, { x: x - sign * 4, y: y - 6 }, '#4a7966', 2);
+      }
       ctx.restore();
     }
   }
@@ -157,13 +166,16 @@ export class GrowthVisuals {
     // This acknowledgement is essential in both quality modes. The origin is
     // the real cell's recorded bite position; the static beacon never shoots.
     for (const cue of selectImmuneTraceCues(state, growth)) {
-      labels?.reserveWorld?.({ left: cue.from.x - 5, right: cue.from.x + 5, top: cue.from.y - 5, bottom: cue.from.y + 5 });
       ctx.save(); ctx.globalAlpha = 1 - cue.progress;
-      ctx.setLineDash([3, 4]);
-      line(ctx, cue.from, cue.to, '#153c3a', 3.5);
-      line(ctx, cue.from, cue.to, '#d3ffe4', 1.5);
-      ctx.setLineDash([]);
-      const r = cue.targetRadius + 10;
+      // The real bite already happened in contact range. Keep its feedback
+      // on the victim rather than stretching a line as that victim moves.
+      const r = Math.min(18, cue.targetRadius * .7);
+      ctx.strokeStyle = '#f5f0d3'; ctx.lineWidth = 3;
+      for (const sign of [-1, 1]) {
+        ctx.beginPath(); ctx.arc(cue.to.x + sign * r * .44, cue.to.y, r * .55, sign < 0 ? -.9 : Math.PI - .9, sign < 0 ? .9 : Math.PI + .9); ctx.stroke();
+        ctx.strokeStyle = '#5e8b70'; ctx.lineWidth = 1.1; ctx.stroke();
+        ctx.strokeStyle = '#f5f0d3'; ctx.lineWidth = 3;
+      }
       for (const sign of [-1, 1]) {
         const x = cue.to.x + sign * r, y = cue.to.y + sign * r;
         labels?.reserveWorld?.({ left: x - 9, right: x + 9, top: y - 9, bottom: y + 9 });

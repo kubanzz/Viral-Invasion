@@ -1,0 +1,595 @@
+{
+  "version": "0.14.0",
+  "candidate": "candidate-2",
+  "startedAt": "2026-11-03T18:22:54.154Z",
+  "pass": true,
+  "checks": [
+    {
+      "name": "candidate-manifests-and-dist",
+      "pass": true,
+      "details": {
+        "sourceInputs": 367,
+        "outputFiles": 3,
+        "distIdenticalFiles": 4,
+        "gameSha256": "975531ae10bcf9b1bc36be9825c8831f9057b9c397ae83d7a08fabb964013f65",
+        "c1ToC2Delta": [
+          "src/ui/territoryHud.ts"
+        ],
+        "typecheck": {
+          "path": "artifacts/combat-v014/typecheck-final.json",
+          "sha256": "0377e0a655b265c62076d1093d294da1aa7ebd1208c422b69615eba2847e7b64",
+          "command": "node node_modules/typescript/bin/tsc --noEmit",
+          "exitCode": 0
+        }
+      }
+    },
+    {
+      "name": "unit-coverage",
+      "pass": true,
+      "details": {
+        "report": "artifacts/combat-v014/unit-coverage-final.json",
+        "passedAssertions": 1788,
+        "uniqueIdentities": 1783,
+        "duplicateIdentityGroups": 3,
+        "recoveredFailures": [
+          {
+            "file": "tests/unit/endless-loop.test.ts",
+            "fullName": "real session continuous challenge loop naturally clears 12 waves with public inputs/choices and reproduces the same seed, input and choices",
+            "occurrence": 1,
+            "attempts": [
+              {
+                "report": "unit-final.json",
+                "status": "failed",
+                "durationMs": 70690.13680000001,
+                "failureMessages": [
+                  "Error: Test timed out in 60000ms.\nIf this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".\n    at task (file:///D:/Workspace/Projects/xsj/Viral-Invasion/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2700:43)\n    at Object.<anonymous> (file:///D:/Workspace/Projects/xsj/Viral-Invasion/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2717:16)\n    at Object.<anonymous> (file:///D:/Workspace/Projects/xsj/Viral-Invasion/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2486:28)\n    at chain (file:///D:/Workspace/Projects/xsj/Viral-Invasion/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:1870:14)\n    at D:/Workspace/Projects/xsj/Viral-Invasion/tests/unit/endless-loop.test.ts:105:3\n    at file:///D:/Workspace/Projects/xsj/Viral-Invasion/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2781:52\n    at runWithSuite (file:///D:/Workspace/Projects/xsj/Viral-Invasion/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:3267:8)\n    at Object.collect (file:///D:/Workspace/Projects/xsj/Viral-Invasion/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2781:22)\n    at Object.collect (file:///D:/Workspace/Projects/xsj/Viral-Invasion/node_modules/vitest/dist/chunks/run.BPv-BBRv.js:2786:51)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)"
+                ]
+              },
+              {
+                "report": "unit-timing-retest.json",
+                "status": "passed",
+                "durationMs": 33585.1967,
+                "failureMessages": []
+              }
+            ]
+          }
+        ],
+        "rawReports": [
+          {
+            "path": "artifacts/combat-v014/unit-final.json",
+            "sha256": "65a7c972830d22146c077c4e91279d83751c47a72e0800bc767745a77591f918",
+            "reported": {
+              "total": 1787,
+              "passed": 1786,
+              "failed": 1,
+              "pending": 0
+            },
+            "success": false
+          },
+          {
+            "path": "artifacts/combat-v014/unit-timing-retest.json",
+            "sha256": "7734337bdb1c8e511aacd80bc50056f75f27d35d0a9a6e4706894fd663620805",
+            "reported": {
+              "total": 6,
+              "passed": 6,
+              "failed": 0,
+              "pending": 0
+            },
+            "success": true
+          },
+          {
+            "path": "artifacts/combat-v014/unit-hud-c2.json",
+            "sha256": "c4a5dfa8655ed9c821da33afa6e4111562f3ea83689b14a787630e48eb95cd86",
+            "reported": {
+              "total": 27,
+              "passed": 27,
+              "failed": 0,
+              "pending": 0
+            },
+            "success": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "six-system-seeds",
+      "pass": true,
+      "details": {
+        "path": "artifacts/combat-v014/system-six-seeds-final.json",
+        "sha256": "8f51868ffb8441464d305b5c94df40f69b1cb2c81ad91f1c59deecff21b6b147",
+        "complete": true,
+        "expectedSeeds": 6,
+        "completedSeeds": 6,
+        "outcomes": {
+          "wins": 6,
+          "losses": 0,
+          "publicMenuExits": 0,
+          "invariantFailures": 0
+        },
+        "scope": "Bounded smoke of seeds 1 through 6; no full 1000-seed or all-six-trait-sequence coverage claim."
+      }
+    },
+    {
+      "name": "art-runtime-and-preserved-inputs",
+      "pass": true,
+      "details": {
+        "runtimeBytes": 13497692,
+        "limitBytes": 20971520,
+        "spriteIds": 204,
+        "combatIds": 72,
+        "environments": 8,
+        "preservedImages": 140,
+        "preservedManifest": {
+          "path": "artifacts/combat-v014/art/preserved-inputs-before.json",
+          "sha256": "61b186c4d38bb353381910ad2a19369cbbfa3269a8a34eadcfbb2bbcf1af4484"
+        },
+        "approvedConcept": {
+          "path": "asserts/ViralInvasion_Fantasy_v1/references/territory-style-approved-v1.png",
+          "sha256": "8caaa9cabe4a229f6a091360f642436bc021cf03aafed4111e173760aafdfabe"
+        },
+        "previousDesktop": {
+          "path": "releases/Viral-Invasion-G4-v0.13.0.zip",
+          "sha256": "56b8f9e7125c789f6cb53ab361d9220a4a1d74e0e8b062985d5f120426d48814"
+        }
+      }
+    },
+    {
+      "name": "candidate-mobile-identity",
+      "pass": true,
+      "details": {
+        "path": "artifacts/combat-v014/mobile-candidate-2/package-report.json",
+        "sha256": "9ff036cdd977a9210670d3218df9afdeaadaca167f30cd1ec222355a31f9307d",
+        "html": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\combat-v014\\mobile-candidate-2\\Viral-Invasion-Mobile.html",
+        "htmlSha256": "462e2fabf0e62d366e38ed1704af2f626d2142f95d34ad798eeae741c0164606",
+        "zipSha256": "d6c1cd837fa904bd92c6d65ec3a7b34c81f061d9cfe0251c8ddfd3cfb57c901f"
+      }
+    },
+    {
+      "name": "layout-and-offline-public-inputs",
+      "pass": true,
+      "details": {
+        "path": "artifacts/combat-v014/layout-final/candidate-2/report.json",
+        "sha256": "5bf52e72ca924c7625549816d1067c3c4a0faf9ada756e86e1088463bd1d6dcf",
+        "passed": 10,
+        "failed": 0,
+        "channels": [
+          "chrome",
+          "msedge"
+        ],
+        "touchCases": 6,
+        "boundary": "Viewport/touch emulation is not a physical-phone test. No human preference, full-rescue or performance claim. The 48px/8px target checks cover visible compact-layout battlefield controls, including map/top actions. Desktop and modal controls have no target-size pass claim."
+      }
+    },
+    {
+      "name": "natural-desktop-final-2",
+      "pass": true,
+      "details": {
+        "path": "artifacts/combat-v014/natural-desktop-final-2/browser-report.json",
+        "sha256": "892393c7959d0cd2883204ec80d21917a9a514b478d49bdf46f203b83fbce253",
+        "loadedC2Directly": true,
+        "method": "Natural mouse/keyboard; read-only __viral.snapshot()/toScreen(); no game-state, actor, HP, inventory, clock or storage injection.",
+        "scope": "Desktop natural dual-front rescue and guard. Four-size modal/HUD checks use real resizing and mouse clicks with touch emulation enabled, not phone hardware or trusted touch-run evidence.",
+        "runId": "fa031041-3d74-4541-a4ac-7201e0e22eb6",
+        "maxAlive": 47,
+        "maxReserved": 47,
+        "victorySimulationSeconds": 295.93333333333334,
+        "finalSimulationSeconds": 306.35,
+        "sourceDamage": {
+          "source-west": 1200,
+          "source-east": 1200
+        },
+        "fullyPurifiedAtVictory": 4.416666666666656,
+        "finalFullyPurifiedSeconds": 14.83333333333365,
+        "recordSchemaVersion": 5,
+        "rescueAndGuardSameRun": true,
+        "handoffs": [
+          {
+            "lane": "north",
+            "startedTick": 17204,
+            "completedTick": 17346,
+            "beaconId": "71:2:scan:16209:beacon",
+            "squadId": "territory:wave:8:north:2",
+            "firstDeploymentObservedArrivals": 1
+          },
+          {
+            "lane": "south",
+            "startedTick": 9402,
+            "completedTick": 9867,
+            "beaconId": "71:2:scan:5201:beacon",
+            "squadId": "territory:wave:4:south:3",
+            "firstDeploymentObservedArrivals": 1
+          }
+        ],
+        "video": null
+      }
+    },
+    {
+      "name": "natural-touch-final-2",
+      "pass": true,
+      "details": {
+        "path": "artifacts/combat-v014/natural-touch-final-2/browser-report.json",
+        "sha256": "86ee8aeed3e6b934ce100f79c3b093b0cee035dd6573884827b2752fb3689b26",
+        "loadedC2Directly": true,
+        "method": "Trusted CDP multi-touch drives movement, primary aim/fire, contextual purification, garrison and area/charge attacks through actual controls. Read-only snapshots/DOM/projection; no state, HP, inventory, clock or storage injection.",
+        "scope": "Windows Chrome with real trusted CDP touch, touch-layout full rescue/guard. Not physical-phone hardware or human timing evidence. Modal navigation uses public DOM.",
+        "runId": "255a9d89-b5b1-4416-b138-76d2bbe3e1b4",
+        "maxAlive": 48,
+        "maxReserved": 48,
+        "victorySimulationSeconds": 211.91666666666666,
+        "finalSimulationSeconds": 223.18333333333334,
+        "sourceDamage": {
+          "source-west": 1200,
+          "source-east": 1200
+        },
+        "fullyPurifiedAtVictory": 18.866666666666877,
+        "finalFullyPurifiedSeconds": 29.933333333332914,
+        "recordSchemaVersion": 5,
+        "rescueAndGuardSameRun": true,
+        "handoffs": [
+          {
+            "lane": "north",
+            "startedTick": 10434,
+            "completedTick": 11234,
+            "beaconId": "71:2:scan:10046:beacon",
+            "squadId": "territory:wave:5:north:0",
+            "firstDeploymentObservedArrivals": 5
+          },
+          {
+            "lane": "south",
+            "startedTick": 6778,
+            "completedTick": 7126,
+            "beaconId": "71:2:scan:5739:beacon",
+            "squadId": "territory:wave:3:south:3",
+            "firstDeploymentObservedArrivals": 4
+          }
+        ],
+        "video": {
+          "path": "artifacts/combat-v014/natural-touch-final-2/touch-full-run.webm",
+          "bytes": 28454613,
+          "sha256": "f76faa16d3f84d903cf6880d5cd82d8b34b4072ebbe29362e72b951d0f43fff5"
+        }
+      }
+    },
+    {
+      "name": "garrison-pressure",
+      "pass": true,
+      "details": {
+        "path": "artifacts/combat-v014/pressure-final/garrison-report.json",
+        "sha256": "c8a95a9fd7e58e0f8ddcb5378828361b420f9b315bc103b7986b35daccb9fb71",
+        "scope": "Isolated production GameSession combat with supplied initial rank, healthy north front and an obstacle-free heart arena. Real Q deploys at the player feet, then real movement retreats to (1050,850). Player never fires, purifies, repairs, replaces cells or injects combat HP/damage/deaths. Finite squads use production warning, birth, navigation, attacks and capture. Does not measure browser input, natural progression, phone performance or human difficulty.",
+        "matureSingle": {
+          "held": 10,
+          "total": 10,
+          "tookDamageCount": 10,
+          "allRealBites": true,
+          "handoffs": 10
+        },
+        "baseThreeSquads": {
+          "held": 1,
+          "total": 10
+        },
+        "matureSixteenSquads": {
+          "held": 0,
+          "total": 10
+        }
+      }
+    },
+    {
+      "name": "native-art-supplied-state-review",
+      "pass": true,
+      "details": {
+        "path": "artifacts/combat-v014/visual-review/report.json",
+        "sha256": "d95a56eca6b6994eafa868624c18566dfabbd1b5e71d229dea8fa3aa6e061509",
+        "nativeSelectedFrames": 72,
+        "sourceEquivalentToC2": true,
+        "scope": "Explicit render-only fixture, supplied time and states; real GameSession initial structure and real native Phaser Renderer. No gameplay completion or natural timing claim.",
+        "boundary": "Pure rendering evidence from supplied fixture states; C2 rendering sources are byte-identical. This is not a natural full-run or phone test."
+      }
+    },
+    {
+      "name": "high-density-performance",
+      "pass": true,
+      "details": {
+        "path": "artifacts/combat-v014/performance-final/performance-report.json",
+        "sha256": "c0c2842359b2413aa07086d988579c6705afe5d7e6a6645715c66d9ee48ba1ec",
+        "evidenceKind": "Natural public-entry density; report actual population without claiming a 48-body sample",
+        "scope": "Desktop Windows browser and a touch HUD layout driven by keyboard/mouse; not phone hardware or a natural touch full run. Snapshot polling, navigation inputs and rAF observation overhead are included in measured frame times. No forced GC.",
+        "settings": {
+          "source": "Actual pause-menu effects button",
+          "sampleSeconds": 15,
+          "setupDeadlineSeconds": 120,
+          "gatherDeadlineSeconds": 45,
+          "targetDensity": 48,
+          "minimumDensity": 40,
+          "requiredHighDensitySeconds": 12,
+          "dpr": 1
+        },
+        "cases": [
+          {
+            "name": "desktop-standard",
+            "fps": 133.06932805322776,
+            "p95Ms": 13.60000000000582,
+            "maxMs": 27.80000000000291,
+            "minAlive": 45,
+            "maxAlive": 45,
+            "maxReserved": 45,
+            "sampleSeconds": 14.999699999999997,
+            "simulationSeconds": 14.966666666666669,
+            "highDensitySeconds": 14.999699999999997,
+            "at48Seconds": 0
+          },
+          {
+            "name": "desktop-low",
+            "fps": 132.20320912628608,
+            "p95Ms": 13.80000000000291,
+            "maxMs": 27.90000000000873,
+            "minAlive": 45,
+            "maxAlive": 45,
+            "maxReserved": 45,
+            "sampleSeconds": 15.007199999999997,
+            "simulationSeconds": 14.983333333333334,
+            "highDensitySeconds": 15.007199999999997,
+            "at48Seconds": 0
+          },
+          {
+            "name": "touch-layout-standard",
+            "fps": 127.99829335608861,
+            "p95Ms": 14.099999999991269,
+            "maxMs": 35.20000000001164,
+            "minAlive": 45,
+            "maxAlive": 45,
+            "maxReserved": 45,
+            "sampleSeconds": 15.000199999999998,
+            "simulationSeconds": 14.966666666666669,
+            "highDensitySeconds": 15.000199999999998,
+            "at48Seconds": 0
+          },
+          {
+            "name": "touch-layout-low",
+            "fps": 131.08489561141894,
+            "p95Ms": 13.89999999999418,
+            "maxMs": 34.89999999999418,
+            "minAlive": 45,
+            "maxAlive": 45,
+            "maxReserved": 45,
+            "sampleSeconds": 15.020799999999989,
+            "simulationSeconds": 15,
+            "highDensitySeconds": 15.020799999999989,
+            "at48Seconds": 0
+          }
+        ]
+      }
+    },
+    {
+      "name": "strict-48-supplied-initial-arena-performance",
+      "pass": true,
+      "details": {
+        "path": "artifacts/combat-v014/performance-48-candidate-2/final/report.json",
+        "sha256": "6c63dd83dccb88b33fe87242752120718a4dec2829a89376e21a1c2312f51ff9",
+        "evidenceKind": "Supplied initial 48-actor arena followed by production simulation and real input; distinct from natural public-entry 45-body samples",
+        "method": "Supplied initial 48-actor arena, followed by production GameSession.step, FixedClock, MotionInterpolation, Controller/TouchControls and native Phaser Renderer on its real frame loop. Not natural gameplay; not the complete C2 game.js entry or complete HUD; not phone hardware.",
+        "setup": "2 slime mages + 2 builders + 2 static nests + 4 fastlings + 38 basic viruses = 48. No FISSION. Wave 2, one ordinary finite future slot at 3600 seconds, empty same-wave territory/smart-support tasks. No spawning/hatching plans. Player starts at normal 100 HP. No shooting, dash, garrison, HP refill, actor replacement or state edits after initialization.",
+        "measurement": "Four sequential 15-second wall-time groups in one Chrome context; real keyboard on desktop and trusted CDP touch through production TouchControls at touch resolution. Each rendered frame and each fixed simulation step must retain exactly 48 live/reserved actors, playing phase and wave 2. Per-frame production diagnostics add observer overhead. No recording or forced GC during sampling.",
+        "matchedC2ProductionInputs": 103,
+        "device": {
+          "platform": "win32",
+          "release": "10.0.26200",
+          "cpu": "Intel(R) Core(TM) i7-10700K CPU @ 3.80GHz",
+          "logicalCpus": 16,
+          "memoryBytes": 68637700096,
+          "browser": "156.0.8078.74",
+          "mode": "headless",
+          "deviceScaleFactor": 1,
+          "contextHasTouch": true
+        },
+        "groups": [
+          {
+            "id": "desktop-standard",
+            "touch": false,
+            "low": false,
+            "inputScope": "Trusted keyboard events through production Controller; not full desktop HUD.",
+            "wallSeconds": 15,
+            "simulationSeconds": 15,
+            "steps": 900,
+            "alive": [
+              48,
+              48
+            ],
+            "reserved": [
+              48,
+              48
+            ],
+            "fps": 142.73333333333332,
+            "p95Ms": 7.200000000000728,
+            "maxMs": 62.200000000000045,
+            "minimumNativeEnemies": 32,
+            "maximumVisibleNativeEnemies": 48,
+            "maximumSlime": 2,
+            "slimePhases": [
+              "windup",
+              "flight",
+              "pool"
+            ],
+            "fullFrameEvidence": {
+              "path": "artifacts/combat-v014/performance-48-candidate-2/final/desktop-standard-frames.json",
+              "sha256": "62dec828556709ee108a982a6d83caa6f04db040dfb7d8e3ab851ae53ec9209d"
+            }
+          },
+          {
+            "id": "desktop-low",
+            "touch": false,
+            "low": true,
+            "inputScope": "Trusted keyboard events through production Controller; not full desktop HUD.",
+            "wallSeconds": 15.0067,
+            "simulationSeconds": 15,
+            "steps": 900,
+            "alive": [
+              48,
+              48
+            ],
+            "reserved": [
+              48,
+              48
+            ],
+            "fps": 142.3364230643646,
+            "p95Ms": 7.299999999999272,
+            "maxMs": 110.89999999999998,
+            "minimumNativeEnemies": 32,
+            "maximumVisibleNativeEnemies": 48,
+            "maximumSlime": 2,
+            "slimePhases": [
+              "windup",
+              "flight",
+              "pool"
+            ],
+            "fullFrameEvidence": {
+              "path": "artifacts/combat-v014/performance-48-candidate-2/final/desktop-low-frames.json",
+              "sha256": "1809c8f4116c7cee53eb4a7e966c533e0fad77e79bb2d9468830c0e580428514"
+            }
+          },
+          {
+            "id": "touch-resolution-standard",
+            "touch": true,
+            "low": false,
+            "inputScope": "Trusted CDP touch through production TouchControls; minimal movement-stick DOM, not complete mobile HUD.",
+            "wallSeconds": 15.0003,
+            "simulationSeconds": 15,
+            "steps": 900,
+            "alive": [
+              48,
+              48
+            ],
+            "reserved": [
+              48,
+              48
+            ],
+            "fps": 143.53046272407886,
+            "p95Ms": 7.299999999999272,
+            "maxMs": 14.200000000000045,
+            "minimumNativeEnemies": 37,
+            "maximumVisibleNativeEnemies": 48,
+            "maximumSlime": 2,
+            "slimePhases": [
+              "windup",
+              "flight",
+              "pool"
+            ],
+            "fullFrameEvidence": {
+              "path": "artifacts/combat-v014/performance-48-candidate-2/final/touch-resolution-standard-frames.json",
+              "sha256": "8840dd5b0729130922b122f59985e1f01bf1eaefb5446cbdcb36ed84d49a34ff"
+            }
+          },
+          {
+            "id": "touch-resolution-low",
+            "touch": true,
+            "low": true,
+            "inputScope": "Trusted CDP touch through production TouchControls; minimal movement-stick DOM, not complete mobile HUD.",
+            "wallSeconds": 15.0072,
+            "simulationSeconds": 15,
+            "steps": 900,
+            "alive": [
+              48,
+              48
+            ],
+            "reserved": [
+              48,
+              48
+            ],
+            "fps": 143.59773975158592,
+            "p95Ms": 7.200000000000728,
+            "maxMs": 14.100000000000364,
+            "minimumNativeEnemies": 35,
+            "maximumVisibleNativeEnemies": 48,
+            "maximumSlime": 2,
+            "slimePhases": [
+              "windup",
+              "flight",
+              "pool"
+            ],
+            "fullFrameEvidence": {
+              "path": "artifacts/combat-v014/performance-48-candidate-2/final/touch-resolution-low-frames.json",
+              "sha256": "49b922bb3006e42c48b6decce8acd6fe5b223de714f3242d83dc04d78260d381"
+            }
+          }
+        ],
+        "boundary": "Not natural full gameplay, not the complete game.js/HUD and not phone hardware; maximum frame stalls remain reported."
+      }
+    },
+    {
+      "name": "independent-final-offline-smoke",
+      "pass": true,
+      "details": {
+        "path": "artifacts/combat-v014/final-offline-smoke.json",
+        "sha256": "a42904bb4b7933667b888de12c4709e93e1778d33dbaf47e2cb9405641ced347",
+        "passed": 3,
+        "failed": 0,
+        "method": "Independent ZIP-decoded desktop entry and final single HTML; offline Chrome with public DOM inputs and read-only diagnostics.",
+        "cases": [
+          {
+            "name": "desktop-decoded",
+            "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\.tools\\release-v0.14.0-verified\\index.html",
+            "sha256": "f1ea69e090d6181f9c64d822ff82d3f9b5e6257bcf553aa4f97841168547833a"
+          },
+          {
+            "name": "mobile-final",
+            "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-Mobile.html",
+            "sha256": "462e2fabf0e62d366e38ed1704af2f626d2142f95d34ad798eeae741c0164606"
+          },
+          {
+            "name": "mobile-915-final",
+            "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-Mobile.html",
+            "sha256": "462e2fabf0e62d366e38ed1704af2f626d2142f95d34ad798eeae741c0164606"
+          }
+        ]
+      }
+    },
+    {
+      "name": "desktop-release-package",
+      "pass": true,
+      "details": {
+        "path": "artifacts/releases/v0.14.0/release-package.json",
+        "sha256": "dee55ab4578e0dc10409648e20db9e2f95f3fd22e87e1532ddb1d73e37f82df3",
+        "zip": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-G4-v0.14.0.zip",
+        "bytes": 10510838,
+        "entries": 5,
+        "independentDecode": true
+      }
+    },
+    {
+      "name": "mobile-release-package-and-fixed-archive",
+      "pass": true,
+      "details": {
+        "path": "artifacts/mobile-release/package-report.json",
+        "sha256": "adfbb6fea9e41d30d050bd6ada4ba2cb920bc410b74e0facab6f93920c663140",
+        "html": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-Mobile.html",
+        "htmlSha256": "462e2fabf0e62d366e38ed1704af2f626d2142f95d34ad798eeae741c0164606",
+        "htmlBytes": 15909823,
+        "zip": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\releases\\Viral-Invasion-Mobile.zip",
+        "zipSha256": "977ff713618535ae770e761025a900a62b8f438acd7e5311fc4be083c95b5656",
+        "zipBytes": 10489815,
+        "touchVideo": {
+          "path": "releases/Viral-Invasion-v0.14.0-Touch-Demo.webm",
+          "bytes": 28454613,
+          "sha256": "f76faa16d3f84d903cf6880d5cd82d8b34b4072ebbe29362e72b951d0f43fff5"
+        },
+        "entries": 2,
+        "independentDecode": true
+      }
+    }
+  ],
+  "manualPending": [
+    "Physical phone WebGL/audio/multitouch/safe-area/background experience",
+    "Five new players: clarity, one contest loop and voluntary replay",
+    "Human first-run 5–8 minute timing and difficulty distribution"
+  ],
+  "boundaries": [
+    "Natural completion times describe skilled automation, not human first runs.",
+    "Six system seeds are a bounded legacy-campaign regression, not a full 1000-seed challenge audit.",
+    "Native art supplied-state fixtures verify rendering and registration, not natural encounters or balance.",
+    "Windows desktop and touch-layout frame samples do not establish physical-phone or long-session performance."
+  ],
+  "gameSha256": "975531ae10bcf9b1bc36be9825c8831f9057b9c397ae83d7a08fabb964013f65",
+  "sourceInputCount": 367,
+  "finishedAt": "2026-11-03T18:22:55.948Z",
+  "failedChecks": []
+}

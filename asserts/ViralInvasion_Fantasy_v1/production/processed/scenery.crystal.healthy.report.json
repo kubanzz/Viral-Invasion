@@ -1,0 +1,135 @@
+{
+  "id": "scenery.crystal.healthy",
+  "kind": "cutout",
+  "sourceSha256": "26cd083e223e3aac6e6713cec95a0c57f8815fc8be7eaebb46021d51afce30a6",
+  "processing": {
+    "outer": {
+      "method": "border-connected-white-key",
+      "whiteMin": 225,
+      "chromaMax": 40,
+      "matteCleanup": true,
+      "edgeWidth": 2,
+      "removedPixels": 3002534,
+      "cleanedEdgePixels": 2777,
+      "limitations": "White foreground connected directly to a white backdrop is ambiguous. Inspect both black/white QA views before acceptance."
+    },
+    "negativeSpaces": {
+      "method": "reviewed-negative-space-white-matte-cleanup",
+      "kind": "crystal",
+      "clearedPixels": 0,
+      "softenedPixels": 0,
+      "nodeRegion": null,
+      "reason": "Only the coral-root and green-leaf lower region was cleared; cream petals and white highlights are preserved."
+    },
+    "components": {
+      "method": "retain-single-contiguous-reviewed-object",
+      "componentSizes": [
+        1191694,
+        16,
+        7,
+        5,
+        4,
+        4,
+        3,
+        3,
+        3,
+        2,
+        2,
+        2
+      ],
+      "retainedComponents": 1,
+      "removedPixels": 76,
+      "reason": "Source review confirms a single connected crystal/flower or a purple mycelium patch; detached grey-white paper-grain remnants are backdrop, not separate intended objects."
+    },
+    "paletteTreatment": "No palette, hue, saturation, brightness, contrast or tone changes; only white-matte removal."
+  },
+  "transform": {
+    "sourceCanvas": [
+      2048,
+      2048
+    ],
+    "targetCanvas": [
+      1024,
+      1024
+    ],
+    "sourceAnchor": [
+      0.5,
+      0.85
+    ],
+    "targetAnchor": [
+      0.5,
+      0.85
+    ],
+    "targetAnchorPixels": [
+      512,
+      870.4
+    ],
+    "requestedScale": 0.5,
+    "width": 1024,
+    "height": 1024,
+    "left": 0,
+    "top": 0,
+    "method": "shared-full-canvas-scale-and-translation",
+    "alphaBoundsUsedForScaling": false
+  },
+  "image": {
+    "sha256": "6ac999257df08b7eae598e4c09fdfa95cd43c01e922a065e5ac41dba8d4023a0",
+    "bytes": 845294,
+    "width": 1024,
+    "height": 1024,
+    "format": "png",
+    "channels": 4,
+    "hasAlphaChannel": true,
+    "alpha": {
+      "transparent": 747185,
+      "partial": 7904,
+      "opaque": 293487,
+      "transparentFraction": 0.7125711441040039,
+      "visible": 298844,
+      "borderVisible": 0,
+      "whiteVisible": 302
+    },
+    "bbox": [
+      205,
+      153,
+      831,
+      871
+    ],
+    "margins": {
+      "left": 205,
+      "top": 153,
+      "right": 193,
+      "bottom": 153,
+      "minimumFraction": 0.1494140625
+    },
+    "luma": {
+      "mean": 207.9137116548138,
+      "standardDeviation": 26.53099611815624,
+      "min": 35.858,
+      "max": 254.99999999999997
+    }
+  },
+  "output": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\scenery.crystal.healthy.png",
+  "previews": {
+    "black": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\scenery.crystal.healthy.qa-black.png",
+      "sha256": "aac5800b31554921cc6deffa78fe8ea0b8994ba32056047f8c7f2e387c18364f",
+      "bytes": 762355
+    },
+    "white": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\scenery.crystal.healthy.qa-white.png",
+      "sha256": "4c5f56c78aeb683327ad9b554910ee0c9e6cc634bee3151160762e31236c64d8",
+      "bytes": 760879
+    },
+    "alpha": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\scenery.crystal.healthy.qa-alpha.png",
+      "sha256": "e59f8cd8daa9a984435be7c2be688fb4d4f67213de84319a2f03fe345ef8dc26",
+      "bytes": 24699
+    },
+    "black-white": {
+      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Fantasy_v1\\production\\processed\\scenery.crystal.healthy.qa-black-white.png",
+      "sha256": "489123c688744ca52fe889239159d8621a38efafe17b916f21a4272965ec7238",
+      "bytes": 945065
+    }
+  }
+}

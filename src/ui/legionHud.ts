@@ -11,7 +11,7 @@ export function legionView(state: GameState) {
   const charges = growth?.antibodyCharges ?? 0;
   return { squads, count: local.length, charges, boosted: until > state.elapsed,
     enabled: state.phase === 'playing' && charges > 0 && cells.length > 0 && until <= state.elapsed,
-    status: `军团 ${squads}/2 · 当前 ${local.length} 体 · Q ${squads < 2 ? '部署 / 指挥' : '指挥'}`,
+    status: `军团 ${squads}/2 · 当前 ${local.length} 体 · Q ${state.territory ? squads < 2 ? '脚下驻防' : '调最近团到脚下' : squads < 2 ? '部署 / 指挥' : '指挥'}`,
     hint: until > state.elapsed ? `强化 ${(until - state.elapsed).toFixed(1)} 秒 · 病毒优先攻击军团` : charges ? '裂变 · 扣血 1/3 · 强化 8 秒' : '本局抗体已用完' };
 }
 

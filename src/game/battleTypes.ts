@@ -42,5 +42,5 @@ export interface BattleState {
   forcedFirstTrait?: TraitId; behaviorHistory?: BehaviorBin[]; evolutionDecisions?: EvolutionDecision[];
   encounter?: EncounterState;
 }
-export interface CampaignOptions { campaign?: boolean; mode?: 'campaign' | 'endless'; firstTrait?: TraitId; milestone?: 'G1' | 'G2' | 'G3'; encounterMode?: EncounterMode; counterGuide?: CounterGuideVariant; preparation?: RunPreparation }
+export interface CampaignOptions { campaign?: boolean; mode?: 'campaign' | 'endless'; /** Production challenge uses territory rules; omitted only by legacy regression fixtures. */ territory?: boolean; /** Persistent identity is supplied by the host; it never seeds combat or growth. */ recordId?: string; firstTrait?: TraitId; milestone?: 'G1' | 'G2' | 'G3'; encounterMode?: EncounterMode; counterGuide?: CounterGuideVariant; preparation?: RunPreparation }
 export interface TraitInfo { id: TraitId; name: string; symbol: string; ability: string; cost: string; counter: string }

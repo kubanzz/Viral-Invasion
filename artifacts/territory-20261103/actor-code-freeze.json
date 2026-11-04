@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "status": "code-frozen-waiting-stable115-art-handoff",
+  "createdAt": "2026-11-03T01:32:05.645Z",
+  "scope": "Owned actor renderer, animation/registration library, offline art pipeline and meaningful dispatch fixtures. Selection and generated runtime are deliberately not frozen until the parent hands off stable115 assets.",
+  "verification": {
+    "latestActorNativeHeroTests": "109/109 passed2026-11-03 09:31 local",
+    "latestTypecheck": "passed2026-11-03 09:31 local",
+    "artPipelineTests": "14/14 passed after canonical group validation change; production image pins must be rechecked after stable art handoff"
+  },
+  "remaining": [
+    "Bind stable115 handoff and retain only specifically reviewed SHA approvals",
+    "Review latest back18 and neutral thinRay8 actual Renderer output",
+    "Remove all4 preview masters after final asset approval",
+    "Final normal-mode exact115 ready/no fallback/no old-source verification remains with parent release workflow"
+  ],
+  "files": [
+    {
+      "path": "src/render/phaserRenderer.ts",
+      "sha256": "a6267d322e5e1285d92b4fb0a8381fb0a2e36637c43ca9949e5334b85b9821d7"
+    },
+    {
+      "path": "src/render/actorAnimation.ts",
+      "sha256": "27b31d7e3a59ba06010ec6205416ae667cf43494a557f6eba42f286a1a62cef5"
+    },
+    {
+      "path": "src/render/heroAnimation.ts",
+      "sha256": "2902b7b1993df7145fdbed53d287910f3fe062962d2e7cdf005fd0f1b00a2b30"
+    },
+    {
+      "path": "src/render/spriteGeometry.ts",
+      "sha256": "16261b404b2353a10f83caf756eb53707d318b4139d02c212821a2106a23699d"
+    },
+    {
+      "path": "src/render/phaserHost.ts",
+      "sha256": "b9a3e34425b82a4dbeb4ba5ee938f8358e854ebd139bbb0c6cfe3dd3f994165c"
+    },
+    {
+      "path": "scripts/art-sync.mjs",
+      "sha256": "9a32de20f60a017c6e46b934bfcf28cae66f0ef96ad35f2a537055e545804558"
+    },
+    {
+      "path": "tests/fixtures/actorAnimationAssets.ts",
+      "sha256": "cf186a77375ef268bd5c9bd7f3818fc46d28f7c8519fedae09179a966004a7a4"
+    },
+    {
+      "path": "tests/unit/actor-animation.test.ts",
+      "sha256": "a32d56740b6d76981fd0fa313c80c2fd3cbe1f5106774b494927b858c3760671"
+    },
+    {
+      "path": "tests/unit/native-art-dispatch.test.ts",
+      "sha256": "7f0b0b9a75b47d1659d7f82afe1daf7dc4ac549d7ed763877acddacb758b0e7d"
+    },
+    {
+      "path": "tests/unit/art-pipeline.test.ts",
+      "sha256": "b6f922594e83b4f8b0f446d382b4f09051078810c1c3f2d6576805aca6f14257"
+    }
+  ]
+}

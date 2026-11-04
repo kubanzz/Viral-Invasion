@@ -1,0 +1,34 @@
+import sharp from'sharp';import{readFile,writeFile}from'node:fs/promises';import{createHash}from'node:crypto';import{dirname,join}from'node:path';import{fileURLToPath}from'node:url';import{prepareParts,bakeLayeredFrame}from'./actor-animation-baker.mjs';
+const P=dirname(fileURLToPath(import.meta.url)),ROOT=dirname(P),sha=b=>createHash('sha256').update(b).digest('hex');
+const front=JSON.parse(await readFile(join(P,'hero-centered-hold-candidate-v03.fragment.json'),'utf8')),back=JSON.parse(await readFile(join(P,'hero-back-hold-candidate-v01.fragment.json'),'utf8'));
+const config={front_right:{source:front,grip:front.observedHands.screenLeft.palmGrip,wrist:front.observedHands.screenLeft.wrist,anatomy:'front near/screenLeft C'},back_right:{source:back,grip:back.observedHands.screenRight.palmGrip,wrist:back.observedHands.screenRight.wrist,anatomy:'same anatomical hand, rear larger near/screenRight C'}};
+for(const c of Object.values(config)){c.bytes=await readFile(join(ROOT,c.source.canonical.path));if(sha(c.bytes)!==c.source.canonical.sha256)throw Error('Held body SHA changed');c.mirrored=await sharp(c.bytes).flop().png().toBuffer();}
+const toolPath='processed/masters/fantasy.actor.weapon.emitter.master.png',weapon=await readFile(join(P,toolPath));if(sha(weapon)!=='9cfbaa84707026f12967e9c1993f16311e901b98b6bd845989eb4700ac32c535')throw Error('Weapon SHA changed');
+const flipped=await sharp(weapon).flip().png().toBuffer(),panels=[],smallPanels=[],records=[];
+const label=(s,w=256,h=28)=>Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'"><text x="5" y="18" fill="#eeeeee" font-family="Arial" font-size="12">'+s+'</text></svg>');
+for(let i=0;i<8;i++){
+ const theta=i*Math.PI/4,sy=Math.sin(theta),cx=Math.cos(theta),isBack=sy<-.001,mirror=cx<-.001,c=config[isBack?'back_right':'front_right'],body=mirror?c.mirrored:c.bytes;
+ const grip=[mirror?512-c.grip[0]:c.grip[0],c.grip[1]],wrist=[mirror?512-c.wrist[0]:c.wrist[0],c.wrist[1]],angle=Math.atan2(sy*.72,cx)*180/Math.PI,flip=cx<-.001;
+ const parts=await prepareParts([{id:'body',image:body,sourceRect:{left:0,top:0,width:512,height:512},sourceJoint:[256,435.2],targetJoint:[256,435.2],z:0},
+ {id:'tool',image:flip?flipped:weapon,sourceRect:{left:0,top:0,width:512,height:512},sourceJoint:[256,256],targetJoint:grip,z:10,
+ landmarks:{grip:[256,256],muzzle:[342.6985755384527,flip?512-201.25045325140576:201.25045325140576],axis:[342.6985755384527,256]}}]);
+ const frame=bakeLayeredFrame(parts,{}, {parts:{tool:{rotationDeg:angle}}}),out=await sharp(frame.data,{raw:{width:512,height:512,channels:4}}).png().toBuffer(),muzzle=frame.landmarks['tool.muzzle'];
+ const toolGrip=frame.landmarks['tool.grip'];if(Math.hypot(toolGrip[0]-grip[0],toolGrip[1]-grip[1])>1e-8)throw Error('Tool grip mismatch');
+ const {data:bd}=await sharp(body).ensureAlpha().raw().toBuffer({resolveWithObject:true});let occ=0,total=0;for(let dy=-7;dy<=7;dy++)for(let dx=-7;dx<=7;dx++){if(dx*dx+dy*dy>49)continue;const x=Math.round(muzzle[0]+dx),y=Math.round(muzzle[1]+dy);if(x<0||y<0||x>=512||y>=512)continue;total++;if(bd[(y*512+x)*4+3]>=200)occ++;}
+ const bodyLabel=(isBack?'BACK':'FRONT')+(mirror?' MIRROR':''),marker=Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512"><circle cx="'+grip[0]+'" cy="'+grip[1]+'" r="5" fill="none" stroke="#ff9c22" stroke-width="2"/><circle cx="'+muzzle[0]+'" cy="'+muzzle[1]+'" r="5" fill="none" stroke="#00caff" stroke-width="2"/></svg>');
+ const marked=await sharp(out).composite([{input:marker}]).png().toBuffer();panels.push({input:await sharp(marked).resize(256,256).flatten({background:'#b7c0be'}).png().toBuffer(),left:i%4*256,top:Math.floor(i/4)*284},{input:label(i*45+'deg '+bodyLabel+'; tool ABOVE'),left:i%4*256,top:Math.floor(i/4)*284+256});
+ smallPanels.push({input:await sharp(out).resize(78,78).flatten({background:'#b7c0be'}).png().toBuffer(),left:i*78,top:24});
+ const path='qa/hero-held-turn-'+String(i*45).padStart(3,'0')+'.png';await writeFile(join(P,path),out);
+ records.push({worldAngleDeg:i*45,bodySource:c.source.canonical,bodyDirection:isBack?'back_right':'front_right',mirrored:mirror,primaryAnatomicalHand:c.anatomy,handGrip:grip,wrist,weaponScale:1,weaponFlippedY:flip,projectedAngleDeg:angle,toolGrip,muzzle,axisPoint:frame.landmarks['tool.axis'],gripAlignmentError:Math.hypot(toolGrip[0]-grip[0],toolGrip[1]-grip[1]),muzzleBodyOverlapIfWholeGunBehind:occ/total,toolLayer:'above-full-body in this geometry-only QA; not runtime depth policy',png:{path,sha256:sha(out)},runtimeFrameCredit:0});
+}
+await sharp({create:{width:1024,height:568,channels:3,background:'#343434'}}).composite(panels).png().toFile(join(P,'qa/hero-held-front-back-eight-turn-contact.png'));
+smallPanels.unshift({input:label('ACTUAL1x ~64px BODY; real front/back + mirror; tool ABOVE body for geometry QA',624,24),left:0,top:0});await sharp({create:{width:624,height:102,channels:3,background:'#343434'}}).composite(smallPanels).png().toFile(join(P,'qa/hero-held-front-back-eight-turn-64px-1x.png'));
+const report={schemaVersion:1,status:'actual-front-back-mirrored-eight-turn-ready-for-main-review',runtimeFrameCredit:0,heroAnimationFramesProduced:0,
+ bodySources:{front:front.canonical,back:back.canonical},frontGrip:config.front_right.grip,backGrip:config.back_right.grip,anatomicalMapping:{front:'near screenLeft C',back:'larger near screenRight C'},foot:[256,435.2],
+ frontToBackGripProjectionDelta:config.back_right.grip.map((v,i)=>v-config.front_right.grip[i]),mirrorHorizontalGripDelta:{front:512-2*config.front_right.grip[0],back:512-2*config.back_right.grip[0]},
+ weapon:{path:toolPath,sha256:sha(weapon),grip:[256,256],muzzle:[342.6985755384527,201.25045325140576],axis:'+X',gripToMuzzleIsNotAxis:true,scale:1},
+ layerPolicy:'Weapon above full body for visible geometry diagnostic. Main collaboration owns correct partial occlusion and96canvas runtime implementation; whole-gun-behind overlap measured separately.',
+ orientationGate:'Actual rear source used for upper half-plane, correct mirrored image and mirrored grip used for left half-plane; NOT front-only eight-angle aim.',
+ qa:{contact:'qa/hero-held-front-back-eight-turn-contact.png',actualOneX:'qa/hero-held-front-back-eight-turn-64px-1x.png',orange:'actual grip',cyan:'computed muzzle'},views:records};
+await writeFile(join(P,'hero-held-eight-turn.fragment.json'),JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({contact:report.qa.contact,oneX:report.qa.actualOneX,front:front.canonical,back:back.canonical,frontGrip:report.frontGrip,backGrip:report.backGrip,gripDelta:report.frontToBackGripProjectionDelta,mirrorDelta:report.mirrorHorizontalGripDelta,views:records.map(r=>({angle:r.worldAngleDeg,body:r.bodyDirection,mirrored:r.mirrored,grip:r.handGrip,muzzle:r.muzzle,legacyMuzzleOverlap:r.muzzleBodyOverlapIfWholeGunBehind}))}));
+

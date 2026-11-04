@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "id": "infection.edge.b",
+      "outputPath": "production/processed/infection.edge.b.png",
+      "reportPath": "production/processed/infection.edge.b.report.json",
+      "runId": "ea198fd1-ea4a-495b-aab7-dc380e4d742b",
+      "rawPath": "raw/infection.edge.b/ea198fd1-ea4a-495b-aab7-dc380e4d742b.png",
+      "processing": {
+        "outer": {
+          "method": "border-connected-white-key",
+          "whiteMin": 225,
+          "chromaMax": 40,
+          "matteCleanup": true,
+          "edgeWidth": 2,
+          "removedPixels": 4007550,
+          "cleanedEdgePixels": 6543,
+          "limitations": "White foreground connected directly to a white backdrop is ambiguous. Inspect both black/white QA views before acceptance."
+        },
+        "negativeSpaces": {
+          "method": "reviewed-negative-space-white-matte-cleanup",
+          "kind": "overlay",
+          "clearedPixels": 2815,
+          "softenedPixels": 8952,
+          "reviewedHoles": [],
+          "reason": "Purple mycelium has no physical white pigment; white pixels are backdrop/holes."
+        },
+        "components": {
+          "method": "retain-mycelium-components-at-least-50-source-pixels",
+          "componentSizes": [
+            177107,
+            2089,
+            858,
+            639,
+            578,
+            416,
+            340,
+            238,
+            212,
+            133,
+            107,
+            96
+          ],
+          "retainedComponents": 18,
+          "removedPixels": 694,
+          "reason": "Source review confirms a single connected crystal/flower or a purple mycelium patch; detached grey-white paper-grain remnants are backdrop, not separate intended objects."
+        },
+        "arcExtraction": {
+          "method": "retain-upper-half-of-generated-ring-as-open-ground-edge-brush",
+          "sourceCanvas": [
+            2048,
+            2048
+          ],
+          "sourceRetainedRegion": [
+            0,
+            0,
+            2048,
+            1020
+          ],
+          "cutoffLogicalY": 510,
+          "featherLogicalRows": 4,
+          "logicalTranslation": [
+            0,
+            48
+          ],
+          "closedLoopDelivered": false,
+          "interiorFillDelivered": false,
+          "verticalProjectionApplied": false,
+          "paletteChanged": false
+        }
+      },
+      "registration": {
+        "transform": {
+          "sourceCanvas": [
+            2048,
+            2048
+          ],
+          "targetCanvas": [
+            1024,
+            1024
+          ],
+          "sourceAnchor": [
+            0.5,
+            0.5
+          ],
+          "targetAnchor": [
+            0.5,
+            0.5
+          ],
+          "targetAnchorPixels": [
+            512,
+            512
+          ],
+          "requestedScale": 0.5,
+          "width": 1024,
+          "height": 1024,
+          "left": 0,
+          "top": 48,
+          "method": "full-canvas-half-scale-then-reviewed-upper-arc-extraction-and-translation",
+          "alphaBoundsUsedForScaling": false
+        },
+        "state": "open-curved-ground-brush-no-state-pair"
+      },
+      "qaPaths": {
+        "black": "production/processed/infection.edge.b.qa-black.png",
+        "white": "production/processed/infection.edge.b.qa-white.png",
+        "alpha": "production/processed/infection.edge.b.qa-alpha.png",
+        "black-white": "production/processed/infection.edge.b.qa-black-white.png"
+      },
+      "visualReview": {
+        "state": "passed-production-black-white-alpha-review",
+        "rawReview": "Raw r02 was an extremely flat closed ring. Only its upper arc is retained; the entire lower half is absent.",
+        "mainVisualApproval": false,
+        "reviewedViews": [
+          "raw-original",
+          "black-background",
+          "white-background",
+          "alpha-channel"
+        ],
+        "notes": "Only the open upper arc is delivered as a low ground brush; no closed ring, fill disk, actor, UI, text, glow or wall."
+      }
+    }
+  ]
+}

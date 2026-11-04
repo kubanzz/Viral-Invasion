@@ -6,6 +6,7 @@ import { GameSession } from '../../src/game/session';
 import { createEndlessGrowth } from '../../src/game/endlessGrowth';
 import { healingPoints } from '../../src/game/healingPoints';
 import { BALANCE, type GameState, type Target, type Vec } from '../../src/game/types';
+import { TERRITORY_CANNON_BALANCE } from '../../src/game/territoryCannon';
 
 class ElementStub extends EventTarget {
   parentElement: ElementStub | null = null;
@@ -90,6 +91,202 @@ function fixture(stateOverride?: GameState) {
 }
 
 afterEach(() => vi.unstubAllGlobals());
+
+describe('territory context interaction preserves weapon control', () => {
+  const territory = (tool: 1 | 2 = 2) => {
+    const game = new GameSession(71, { mode: 'endless', territory: true }); game.start(); game.state.tool = tool;
+    const f = fixture(game.state); f.frame(); return f;
+  };
+
+  it('sends one keyboard 3 context edge without selecting repair, changing aim or interrupting held fire', () => {
+    const f = territory();
+    pointer(f.canvas, 'pointerdown', 1, 400, 180, undefined, 'mouse');
+    const aim = { x: 950, y: 50 }; f.input.setWorldAim(aim);
+    keyboard(f.browser, 'keydown', 'Digit3');
+    expect(f.frame()).toMatchObject({ territoryAction: true, tool: undefined, fire: true, aim });
+    expect(f.state.tool).toBe(2);
+    expect(f.frame()).toMatchObject({ territoryAction: false, tool: undefined, fire: true, aim });
+    const repeated = new Event('keydown'); Object.assign(repeated, { code: 'Digit3', repeat: true }); f.browser.dispatchEvent(repeated);
+    expect(f.frame().territoryAction).toBe(false);
+    keyboard(f.browser, 'keyup', 'Digit3'); keyboard(f.browser, 'keydown', 'Digit3');
+    expect(f.frame().territoryAction).toBe(true);
+  });
+
+  it('routes desktop button selection through the same context edge without cancelling charge', () => {
+    const f = territory(); keyboard(f.browser, 'keydown', 'Space'); f.frame();
+    f.input.select(3);
+    expect(f.frame()).toMatchObject({ territoryAction: true, tool: undefined, chargeHeld: true, chargeCancelled: false });
+    expect(f.state.tool).toBe(2);
+  });
+
+  it('makes mobile 3 an immediate one-shot tap while independent movement and attack fingers remain live', () => {
+    const f = territory(1); f.input.setWorldAim({ x: 800, y: 400 });
+    pointer(f.root, 'pointerdown', 1, 90, 50, f.move);
+    pointer(f.root, 'pointerdown', 2, 750, 300, f.attack);
+    const aim = f.frame().aim;
+    const button = f.skills['3'], r = button.getBoundingClientRect();
+    pointer(f.root, 'pointerdown', 3, r.left + 28, r.top + 28, button);
+    expect(f.input.resolvePreview(f.state, f.project)).toBeUndefined();
+    expect(f.root.dataset.gesture).toBe('idle');
+    expect(f.frame()).toMatchObject({ territoryAction: true, moveX: 1, fire: true, tool: 1, aim });
+    pointer(f.browser, 'pointermove', 3, 20, 20);
+    expect(f.frame()).toMatchObject({ territoryAction: false, moveX: 1, fire: true, aim });
+    pointer(f.browser, 'pointerup', 3, 20, 20);
+    expect(f.frame()).toMatchObject({ territoryAction: false, moveX: 1, fire: true, aim });
+  });
+
+  it('clears an unconsumed context action across pause/blur and leaves legacy tool 3 intact', () => {
+    const f = territory(); f.input.select(3); f.allow(false);
+    expect(f.frame()).toMatchObject({ fire: false }); f.allow(true);
+    expect(f.frame().territoryAction).toBe(false);
+    f.input.select(3); f.browser.dispatchEvent(new Event('blur'));
+    expect(f.frame().territoryAction).toBe(false);
+    delete f.state.territory; f.frame(); keyboard(f.browser, 'keydown', 'Digit3');
+    expect(f.frame()).toMatchObject({ tool: 3, territoryAction: false });
+    f.state.tool = 3;
+    const r = f.skills['3'].getBoundingClientRect(); pointer(f.root, 'pointerdown', 4, r.left + 28, r.top + 28, f.skills['3']);
+    expect(f.input.resolvePreview(f.state, f.project)?.kind).toBe(3);
+  });
+});
+
+describe('territory garrison and cannon gestures keep independent aim', () => {
+  const territory = () => {
+    const game = new GameSession(71, { mode: 'endless', territory: true }); game.start();
+    const f = fixture(game.state); f.frame(); return f;
+  };
+  it('garrison press acts immediately at the player without a targeting preview or waiting for release', () => {
+    const f = territory(), spring = f.state.territory!.nodes.find(node => node.id === 'heart-healing-1')!;
+    Object.assign(f.state.player, { x: spring.x + 30, y: spring.y });
+    const primary = { x: 2000, y: 800 }; f.input.setWorldAim(primary);
+    pointer(f.root, 'pointerdown', 1, 90, 50, f.move);
+    pointer(f.root, 'pointerdown', 2, 750, 300, f.attack);
+    const skill = f.skills.scan, r = skill.rect;
+    pointer(f.root, 'pointerdown', 3, r.left + 28, r.top + 28, skill);
+    const command = f.frame();
+    expect(command).toMatchObject({ fire: true, aim: primary, scan: true });
+    expect(command.scanAim).toBeUndefined(); expect(f.input.resolvePreview(f.state, f.project)).toBeUndefined();
+    pointer(f.browser, 'pointerup', 3, r.left + 28, r.top + 28);
+    expect(f.frame()).toMatchObject({ fire: true, aim: primary, scan: false });
+    expect(command.moveX).toBeGreaterThan(0); expect(f.frame().scan).toBe(false);
+    f.controls.destroy();
+  });
+  it('dragging the garrison button cannot issue a remote deployment or steer primary fire', () => {
+    const f = territory(), primary = { x: 800, y: 700 }; f.input.setWorldAim(primary);
+    pointer(f.root, 'pointerdown', 1, 750, 300, f.attack);
+    const skill = f.skills.scan, r = skill.rect;
+    pointer(f.root, 'pointerdown', 2, r.left + 28, r.top + 28, skill);
+    expect(f.frame()).toMatchObject({ scan: true, fire: true, aim: primary });
+    pointer(f.browser, 'pointermove', 2, r.left + 70, r.top + 28);
+    expect(f.input.resolvePreview(f.state, f.project)).toBeUndefined();
+    expect(f.input.getPresentation(f.state, f.project).aim).toEqual(primary);
+    pointer(f.browser, 'pointerup', 2, r.left + 70, r.top + 28);
+    expect(f.frame()).toMatchObject({ scan: false, fire: true, aim: primary });
+    f.controls.destroy();
+  });
+  it('holds E for a separate cannon preview and emits exactly one release, preserving legacy E interaction', () => {
+    const f = territory(); Object.assign(f.state.player, TERRITORY_CANNON_BALANCE.origin);
+    const aim = { x: 1800, y: 650 }; f.input.setWorldAim(aim);
+    keyboard(f.browser, 'keydown', 'KeyE');
+    expect(f.input.getPresentation(f.state, f.project)).toMatchObject({ aim, preview: { kind: 'cannon', origin: TERRITORY_CANNON_BALANCE.origin, radius: 240 } });
+    expect(f.frame()).toMatchObject({ cannonPressed: true, cannonHeld: true, cannonReleased: false, cannonAim: aim, interact: false });
+    expect(f.frame()).toMatchObject({ cannonPressed: false, cannonHeld: true });
+    keyboard(f.browser, 'keyup', 'KeyE');
+    expect(f.frame()).toMatchObject({ cannonReleased: true, cannonHeld: false, cannonAim: aim });
+    expect(f.frame().cannonReleased).toBe(false);
+    f.controls.destroy();
+    const old = fixture(); old.frame(); keyboard(old.browser, 'keydown', 'KeyE');
+    expect(old.frame().interact).toBe(true); old.controls.destroy();
+  });
+  it('releases the last displayed keyboard cannon marker when the camera moved after the simulation sample', () => {
+    const f = territory(); Object.assign(f.state.player, TERRITORY_CANNON_BALANCE.origin);
+    keyboard(f.browser, 'keydown', 'KeyE');
+    f.frame();
+    // A real camera update between simulation and painting changes pointer
+    // projection. The shell must agree with the marker the player saw.
+    f.camera.panX -= 35; f.camera.panY += 17;
+    const shown = f.input.getPresentation(f.state, f.project).preview!;
+    expect(shown.kind).toBe('cannon');
+    f.camera.panX += 80; f.camera.panY -= 45; f.frame();
+    expect(f.input.getPresentation(f.state, f.project).preview!.aim).toEqual(shown.aim);
+    keyboard(f.browser, 'keyup', 'KeyE');
+    const released = f.frame();
+    expect(released.cannonAim).toEqual(shown.aim); expect(released.cannonReleased).toBe(true);
+    f.controls.destroy();
+  });
+  it('retargets a held keyboard cannon only after a real mouse movement', () => {
+    const f = territory(); Object.assign(f.state.player, TERRITORY_CANNON_BALANCE.origin);
+    keyboard(f.browser, 'keydown', 'KeyE');
+    const first = f.input.getPresentation(f.state, f.project).preview!.aim;
+    f.camera.panX += 50; f.camera.panY += 20;
+    expect(f.input.getPresentation(f.state, f.project).preview!.aim).toEqual(first);
+    pointer(f.canvas, 'pointermove', 77, 550, 260, undefined, 'mouse');
+    const retargeted = f.input.getPresentation(f.state, f.project).preview!.aim;
+    expect(retargeted).not.toEqual(first);
+    keyboard(f.browser, 'keyup', 'KeyE');
+    expect(f.frame().cannonAim).toEqual(retargeted); f.controls.destroy();
+  });
+  it('a coalesced fresh E tap cannot reuse the preceding cannon target', () => {
+    const f = territory(); Object.assign(f.state.player, TERRITORY_CANNON_BALANCE.origin);
+    const previous = { x: 1600, y: 600 }; f.input.setWorldAim(previous);
+    keyboard(f.browser, 'keydown', 'KeyE'); f.frame();
+    f.input.getPresentation(f.state, f.project);
+    keyboard(f.browser, 'keyup', 'KeyE'); expect(f.frame().cannonAim).toEqual(previous);
+    const current = { x: 900, y: 1000 }; f.input.setWorldAim(current);
+    keyboard(f.browser, 'keydown', 'KeyE'); keyboard(f.browser, 'keyup', 'KeyE');
+    const fast = f.frame();
+    expect(fast).toMatchObject({ cannonPressed: true, cannonReleased: true, cannonHeld: false, cannonAim: current });
+    f.controls.destroy();
+  });
+  it('cannon touch release fires only the shell intent while held movement and shooting keep their aim', () => {
+    const f = territory(); Object.assign(f.state.player, TERRITORY_CANNON_BALANCE.origin);
+    const primary = { x: 1400, y: 700 }; f.input.setWorldAim(primary);
+    pointer(f.root, 'pointerdown', 1, 750, 300, f.attack);
+    pointer(f.root, 'pointerdown', 2, 90, 50, f.move);
+    pointer(f.root, 'pointerdown', 3, 50, 50, f.buttons.interact);
+    expect(f.frame()).toMatchObject({ cannonPressed: true, cannonHeld: true, fire: true, aim: primary });
+    pointer(f.browser, 'pointermove', 3, 120, 50);
+    const preview = f.input.resolvePreview(f.state, f.project)!;
+    expect(preview.kind).toBe('cannon'); expect(preview.aim).not.toEqual(primary);
+    expect(f.frame()).toMatchObject({ cannonHeld: true, cannonAim: preview.aim, aim: primary, fire: true });
+    pointer(f.browser, 'pointerup', 3, 120, 50);
+    const command = f.frame(); expect(command).toMatchObject({ cannonReleased: true, cannonAim: preview.aim, aim: primary, fire: true });
+    expect(command.moveX).toBeGreaterThan(0); f.controls.destroy();
+  });
+  it.each(['pointercancel', 'clear', 'cancel-zone'])('cancels a cannon gesture via %s without emitting a shot release', mode => {
+    const f = territory(); Object.assign(f.state.player, TERRITORY_CANNON_BALANCE.origin);
+    pointer(f.root, 'pointerdown', 1, 50, 50, f.buttons.interact); f.frame();
+    if (mode === 'clear') f.input.clear();
+    else if (mode === 'pointercancel') pointer(f.browser, 'pointercancel', 1, 50, 50);
+    else { pointer(f.browser, 'pointermove', 1, 350, 40); pointer(f.browser, 'pointerup', 1, 350, 40); }
+    expect(f.frame()).toMatchObject({ cannonReleased: false, cannonHeld: false, cannonCancelled: true });
+    expect(f.input.resolvePreview(f.state, f.project)).toBeUndefined(); f.controls.destroy();
+  });
+  it('marks an impossible landing red without substituting an undisclosed distant target', () => {
+    const f = territory(), origin = TERRITORY_CANNON_BALANCE.origin, aim = { x: origin.x + 350, y: origin.y };
+    Object.assign(f.state.player, origin);
+    f.state.world = { ...f.state.world!, obstacles: [{ id: 'sealed-landing', ...aim, radius: 120 }] };
+    f.input.beginTouchCannon(aim, origin);
+    expect(f.input.resolvePreview(f.state, f.project)).toMatchObject({ kind: 'cannon', aim, valid: false, cancelled: true, hint: '落点受阻 · 调整方向' });
+    f.input.endTouchCannon(true);
+    expect(f.frame()).toMatchObject({ cannonReleased: false, cannonCancelled: true });
+    f.controls.destroy();
+  });
+  it('clears owned movement, primary and Q while airborne and requires fresh controls after landing', () => {
+    const f = territory(), origin = TERRITORY_CANNON_BALANCE.origin;
+    pointer(f.root, 'pointerdown', 1, 90, 50, f.move);
+    pointer(f.root, 'pointerdown', 2, 750, 300, f.attack);
+    expect(f.frame().fire).toBe(true);
+    f.state.playerFlight = { id: 'flight', from: { ...origin }, to: { x: origin.x + 500, y: origin.y }, born: 0, landsAt: .75 };
+    f.controls.update();
+    pointer(f.root, 'pointerdown', 3, f.skills.scan.rect.left + 28, f.skills.scan.rect.top + 28, f.skills.scan);
+    expect(f.frame()).toMatchObject({ moveX: 0, moveY: 0, fire: false });
+    expect(f.input.resolvePreview(f.state, f.project)).toBeUndefined();
+    delete f.state.playerFlight; f.controls.update(); f.frame();
+    expect(f.frame()).toMatchObject({ moveX: 0, moveY: 0, fire: false, scan: false });
+    pointer(f.root, 'pointerdown', 4, 750, 300, f.attack); expect(f.frame().fire).toBe(true);
+    f.controls.destroy();
+  });
+});
 
 describe('challenge charge input edges and captured touch gestures', () => {
   const challenge = () => { const game = new GameSession(42, { mode: 'endless' }); game.start(); return fixture(game.state); };
