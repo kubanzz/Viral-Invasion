@@ -1,3 +1,8 @@
+import { drawLowCover, drawFrontPlatform, lowPropOpacity } from './lowCover';
+import { drawPlayerHealth, playerHealthView, type PlayerHealthView } from './playerHealth';
+import { drawTerritoryMarkerIcons, territoryMarkerLayouts, type TerritoryMarkerLayout } from './territoryMarkers';
+import { campStations } from '../game/campScene';
+import { drawExpeditionSignals, drawConstructionPreview, drawExpeditionFacilityFallback, drawExpeditionProjectiles } from './expeditionVisuals';
 import { immuneLegions } from '../game/immuneLegions';
 import { activeWorld, BALANCE, WORLD, type Effect, type GameState, type Target, type Vec, type WorldGeometry } from '../game/types';
 import { endlessCombatStats } from '../game/endlessGrowth';
@@ -72,6 +77,8 @@ export class CanvasScene {
   private dpr = 1;
   private readonly growthVisuals = new GrowthVisuals();
   private readonly labels = new SceneLabels();
+  private lastHealth: PlayerHealthView | null = null;
+  private lastMarkers: TerritoryMarkerLayout[] = [];
   private hudRects: readonly LabelRect[] = [];
   private readonly actorCanvases = new Map<string, HTMLCanvasElement>();
   private readonly fantasyGround = new FantasyGroundCache();
@@ -114,11 +121,15 @@ export class CanvasScene {
   prepareCamera(state: GameState, options: CameraFollowOptions = {}): void {
     const committed=options.aim?undefined:territoryCannonCameraFocus(state);
     const lift=territoryPlayerFlightHeight(state);
-    this.camera.follow(state.player,activeWorld(state),{...options,...committed,...(lift>0?{playerFrame:{left:-64,right:64,top:-112-lift,bottom:28}}:{})});
+    const compact = this.width <= 1024 || this.height <= 600;
+    const header = this.hudRects.filter(r => r.left < this.width / 2 + 36 && r.right > this.width / 2 - 36 && r.top < this.height * .4);
+    const viewport = options.viewport ?? (compact && state.phase !== 'menu' ? { left:8, right:this.width-8,
+      top:Math.min(this.height-100, Math.max(0, ...header.map(r => r.bottom)) + 10), bottom:this.height-18 } : undefined);
+    this.camera.follow(state.player,activeWorld(state),{...options,...committed,viewport,playerFrame:{left:-64,right:64,top:-148-lift,bottom:28}});
   }
 
   diagnostics(state: GameState) {
-    return { depthOrder: depthSort(this.entities(state)).map(entity => entity.id), occluded: isForegroundOccluded(state.player, activeWorld(state)), foregroundOpacity: foregroundOpacity(state.player, activeWorld(state)), layerOrder: LAYER_ORDER, labels: this.labels.diagnostics(), hudRects: this.hudRects.map(rect => ({ ...rect })), playerPresence: playerPresence(state), crosshair: this.lastCrosshair,
+    return { playerHealth: this.lastHealth, territoryMarkers: this.lastMarkers.map(m => ({ id:m.view.node.id, kind:m.view.kind, alert:m.view.alert, rect:m.rect })), depthOrder: depthSort(this.entities(state)).map(entity => entity.id), occluded: isForegroundOccluded(state.player, activeWorld(state)), foregroundOpacity: foregroundOpacity(state.player, activeWorld(state)), layerOrder: LAYER_ORDER, labels: this.labels.diagnostics(), hudRects: this.hudRects.map(rect => ({ ...rect })), playerPresence: playerPresence(state), crosshair: this.lastCrosshair,
       territoryVisuals: { geometry: this.territoryGeometry.diagnostics(), labelledNodeIds: this.territoryLabelled, offscreenAttacks: this.territoryIndicators,
         nodes: this.territoryFrame?.nodes.map(view => ({ id: view.node.id, status: view.status, infectionProgress: view.infectionProgress, purificationProgress: view.purificationProgress,
           purificationActive: view.purificationActive, pausedReason: view.pausedReason ?? null, incomingFrom: view.incomingFrom ?? null, attackerIds: view.attackerIds })) ?? [],
@@ -132,6 +143,9 @@ export class CanvasScene {
       ...state.targets.flatMap((target, index) => target.role === 'capsule' ? [] : [{ id: target.id, y: target.y, kind: 'target', index }]),
       ...(state.endless?.smartSupport?.plans.flatMap((plan,index)=>plan.buildUntil!==undefined&&plan.nestPosition&&state.targets.some(t=>t.id===plan.builderId&&t.hp>0)
         ?[{id:`${plan.id}:construction`,y:plan.nestPosition.y,kind:'smart-construction',index}]:[])??[]),
+      ...(!state.camp&&state.expedition?.pendingLoot&&state.expedition.lootPosition?[{id:'expedition:boss-loot',y:state.expedition.lootPosition.y,kind:'boss-loot'}]:[]),
+      ...(state.camp ? campStations(state).map((station,index)=>({id:`camp:${station.id}`,y:station.position.y,kind:'camp-station',index})) : []),
+      ...(state.territory?.construction?.task?[{id:state.territory.construction.task.id,y:state.territory.construction.task.y,kind:'player-construction'}]:[]),
       { id: 'tissue', y: state.tissue.y, kind: 'tissue' },
       ...(state.endless ? [] : [{ id: 'terminal', y: state.terminal.y, kind: 'terminal' }]),
       ...(state.battle?.graph.nodes.filter(node => node.kind === 'valve' || node.kind === 'gate' || node.kind === 'research' || node.kind === 'exit' || node.kind === 'healing').map(node => ({ id: node.id, y: node.y, kind: 'device' })) ?? []),
@@ -142,7 +156,7 @@ export class CanvasScene {
     ];
   }
 
-  render(state: GameState, aim: Vec, opts: { lowEffects?: boolean; cameraPrepared?: boolean; authoritativeState?: GameState; aimRange?: number; aimCancelled?: boolean; cannonPreview?:{aim:Vec;cancelled:boolean} } = {}): void {
+  render(state: GameState, aim: Vec, opts: { lowEffects?: boolean; cameraPrepared?: boolean; authoritativeState?: GameState; aimRange?: number; aimCancelled?: boolean; cannonPreview?:{aim:Vec;cancelled:boolean};constructionPreview?:{blueprintId:import('../game/construction').BlueprintId;position:Vec} } = {}): void {
     this.locomotion.observe(opts.authoritativeState ?? state); this.renderAim=aim;
     if (!opts.cameraPrepared) this.prepareCamera(state);
     this.territoryFrame = territoryRenderFrame(state, this.territoryGeometry);
@@ -166,6 +180,8 @@ export class CanvasScene {
       const ground = this.fantasyGround.prepare(state);
       ctx.drawImage(ground.canvas, ground.x, ground.y, ground.width, ground.height);
     }
+    drawExpeditionSignals(ctx, state, this.labels, false);
+    drawConstructionPreview(ctx,state,opts.constructionPreview);
     drawTerritorySignals(ctx, state, Boolean(opts.lowEffects), this.territoryFrame);
     drawSmartVirusSignals(ctx,state,Boolean(opts.lowEffects),this.labels);
     drawTerritoryCannonPreview(ctx,state,opts.cannonPreview);
@@ -187,6 +203,12 @@ export class CanvasScene {
       ctx.save(); this.camera.apply(ctx);
     }
     const raisedActorBodies = this.art?.actorBodies(state) ?? getRaisedActorBodies(state);
+    const playerBody = this.art?.playerBounds?.(state) ?? playerVisualBounds(state);
+    if (state.player.hp > 0 && !raisedActorBodies.some(body => body.kind === 'player')) raisedActorBodies.push({ id:'player', kind:'player', groundY:state.player.y, bodyBounds:playerBody });
+    const dangerLevel = this.dangerFeedback.update(opts.authoritativeState ?? state);
+    this.lastHealth = playerHealthView(state, this.camera, playerBody, dangerLevel);
+    if (this.lastHealth) this.labels.reserveScreen(this.lastHealth.rect);
+    territoryViewport.blocked = this.lastHealth ? [...this.hudRects, this.lastHealth.rect] : this.hudRects;
     const entities = depthSort(this.entities(state));
     const activeBuffers = new Set<string>();
     for (const [order, entity] of entities.entries()) {
@@ -196,6 +218,9 @@ export class CanvasScene {
       let entityPosition = { x: state.player.x, y: entity.y };
       if (this.art) {
         const point = entity.kind === 'target' ? state.targets[entity.index!] : entity.kind === 'tissue' ? state.tissue : entity.kind === 'terminal' ? state.terminal
+          : entity.kind === 'camp-station' ? campStations(state)[entity.index!].position
+          : entity.kind === 'player-construction' ? state.territory!.construction!.task!
+          : entity.kind === 'boss-loot' ? state.expedition!.lootPosition!
           : entity.kind === 'smart-construction' ? state.endless!.smartSupport!.plans[entity.index!].nestPosition!
           : entity.kind === 'obstacle' ? activeWorld(state).obstacles.find(item => item.id === entity.id)!
           : entity.kind === 'device' ? state.battle!.graph.nodes.find(item => item.id === entity.id)!
@@ -223,6 +248,7 @@ export class CanvasScene {
     drawCombatEffects(ctx, state, Boolean(opts.lowEffects));
     drawPlayerProjectiles(ctx, state, Boolean(opts.lowEffects), castId => this.art?.projectileOrigin?.(castId));
     drawTerritoryCannonShots(ctx,state,Boolean(opts.lowEffects));
+    drawExpeditionProjectiles(ctx,state,this.labels);
     this.growthVisuals.drawMarks(ctx, state, state.growth);
     this.growthVisuals.drawProtocolHits(ctx, state, state.growth, this.labels);
     drawTerritoryInvaders(ctx, state, this.labels, territoryViewport);
@@ -240,14 +266,18 @@ export class CanvasScene {
       drawHostEventLabels(state, this.labels);
       this.drawTissueMarker(ctx, state);
     }
-    this.territoryLabelled = drawTerritoryNodeAccents(ctx, state, this.territoryFrame, territoryViewport, this.labels);
+    this.territoryLabelled = drawTerritoryNodeAccents(ctx, state, this.territoryFrame, territoryViewport, this.labels, !!this.canvas.ownerDocument?.body?.classList.contains('touch-mode'));
     if (!this.art) drawPlayerPresence(ctx, state, playerPresence(state, raisedActorBodies));
     this.drawCrosshair(ctx, state, aim, opts.authoritativeState ?? state, opts.aimRange, opts.aimCancelled);
     ctx.restore();
     this.territoryIndicators = drawTerritoryAttackIndicators(ctx, this.territoryFrame, territoryViewport);
     for (const indicator of this.territoryIndicators) this.labels.reserveScreen(indicator.rect);
+    this.lastMarkers = territoryMarkerLayouts(state, this.territoryFrame, territoryViewport, !!this.canvas.ownerDocument?.body?.classList.contains('touch-mode'));
+    for (const marker of this.lastMarkers) this.labels.reserveScreen(marker.rect);
+    drawTerritoryMarkerIcons(ctx, this.lastMarkers);
     this.labels.draw(ctx);
-    drawPlayerDangerOverlay(ctx,state,this.dangerFeedback.update(opts.authoritativeState??state),this.width,this.height,
+    drawPlayerHealth(ctx, this.lastHealth);
+    drawPlayerDangerOverlay(ctx,state,dangerLevel,this.width,this.height,
       this.camera.worldToScreen(state.player),Boolean(opts.lowEffects));
     if (this.art) this.art.raster('signals', this.signalCanvas!, 10000);
     const map = document.querySelector<HTMLCanvasElement>('#tactical-map');
@@ -255,6 +285,7 @@ export class CanvasScene {
   }
 
   private paintEntity(ctx: CanvasRenderingContext2D, entity: {id: string; kind: string; index?: number}, state: GameState, raisedActorBodies: ReturnType<typeof getRaisedActorBodies>, low: boolean): void {
+      if(['camp-station','player-construction','boss-loot'].includes(entity.kind))drawExpeditionFacilityFallback(ctx,state,entity.kind,entity.index);
       if (entity.kind === 'player') this.drawPlayer(ctx, state);
       if (entity.kind === 'target') this.drawTarget(ctx, state.targets[entity.index!], state);
       if (entity.kind === 'tissue') this.drawTissue(ctx, state);
@@ -262,17 +293,14 @@ export class CanvasScene {
       if (entity.kind === 'obstacle') {
         const obstacle = activeWorld(state).obstacles.find(obstacle => obstacle.id === entity.id)!;
         const opacity = getRaisedObstacleOcclusion(state, obstacle, raisedActorBodies).upperOpacity;
-        this.drawFantasyObstacle(ctx, obstacle, fantasyOwnerAt(state, obstacle), opacity);
+        if (obstacle.id.startsWith('cover-')) drawLowCover(ctx, obstacle, obstacle.radius, fantasyOwnerAt(state, obstacle), lowPropOpacity(obstacle, obstacle.radius, raisedActorBodies));
+        else this.drawFantasyObstacle(ctx, obstacle, fantasyOwnerAt(state, obstacle), opacity);
       }
       if (entity.kind === 'device') this.drawBattleDevice(ctx, state.battle!.graph.nodes.find(node => node.id === entity.id)!, state);
       if (entity.kind === 'territory-node') {
         const node = visibleTerritory(state)?.nodes.find(item => item.id === entity.id); if (!node) return;
-        ctx.save();
-        if (state.player.hp > 0 && state.player.y <= node.y && boundsOverlap(playerVisualBounds(state), {
-          left: node.x - 34, right: node.x + 34, top: node.y * .72 - 79, bottom: node.y * .72 - 4 })) ctx.globalAlpha *= .22;
-        ctx.translate(node.x, node.y); ctx.scale(1, 1 / .72);
-        ctx.beginPath(); ctx.moveTo(-30, -5); ctx.lineTo(-18, -51); ctx.lineTo(0, -78); ctx.lineTo(23, -48); ctx.lineTo(33, -5); ctx.closePath();
-        ctx.fillStyle = node.owner === 'healthy' ? '#aacbb6' : '#80658c'; ctx.fill(); ctx.strokeStyle = node.owner === 'healthy' ? '#e0e6c6' : '#c7a5cc'; ctx.lineWidth = 2; ctx.stroke(); ctx.restore();
+        const bodies = raisedActorBodies.length ? raisedActorBodies : state.player.hp > 0 ? [{id:'player',kind:'player' as const,groundY:state.player.y,bodyBounds:playerVisualBounds(state)}] : [];
+        drawFrontPlatform(ctx, node, lowPropOpacity(node, 34, bodies, true));
       }
       if (entity.kind === 'beacon') this.growthVisuals.drawBeacon(ctx, state, state.growth, this.labels, entity.id);
       if (entity.kind === 'immune') {

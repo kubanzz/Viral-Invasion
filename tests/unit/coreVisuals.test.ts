@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { GameSession } from '../../src/game/session';
-import { MotherCoreController, MOTHER_CORE_BALANCE } from '../../src/game/motherCore';
+import { HEART_BOSS_BALANCE, MotherCoreController, MOTHER_CORE_BALANCE } from '../../src/game/motherCore';
 import type { MotherCoreAttack } from '../../src/game/motherCoreTypes';
 import { drawMotherCoreDangers } from '../../src/render/battleVisuals';
 
@@ -41,6 +41,22 @@ describe('mother core warning geometry', () => {
     expect(Math.atan2(last.y - 230, last.x - 730)).toBeCloseTo(Math.PI / 2 + MOTHER_CORE_BALANCE.sweepHalfAngle, 8);
     expect(Math.hypot(first.x - 730, first.y - 230)).toBeCloseTo(MOTHER_CORE_BALANCE.sweepRange, 8);
     expect(center.x).toBeCloseTo(730, 8); expect(center.y).toBeCloseTo(360, 8);
+  });
+
+  it('draws the longer expedition threat with its narrower locked angle and a side-step instruction', () => {
+    const { state, combat } = fixture('crystal-sweep');
+    state.world = { width: 2400, height: 1500, bounds: { left: 0, right: 2400, top: 0, bottom: 1500 },
+      obstacles: [], foreground: { x: 0, y: 0, width: 0, height: 0 } };
+    combat.heartExpedition = true;
+    Object.assign(combat.attack!, { origin: { x: 1000, y: 700 }, angle: 0,
+      range: HEART_BOSS_BALANCE.sweepRange, halfAngle: HEART_BOSS_BALANCE.sweepHalfAngle });
+    const { ctx, calls } = context(); drawMotherCoreDangers(ctx, state, combat);
+    const end = calls.findIndex(call => call.method === 'closePath');
+    const vertices = calls.slice(0, end).filter(call => call.method === 'lineTo').map(call => ({ x: Number(call.args[0]), y: Number(call.args[1]) }));
+    for (const vertex of [vertices[0], vertices[32], vertices.at(-1)!])
+      expect(Math.hypot(vertex.x - 1000, vertex.y - 700)).toBeCloseTo(HEART_BOSS_BALANCE.sweepRange, 8);
+    expect(Math.atan2(vertices[0].y - 700, vertices[0].x - 1000)).toBeCloseTo(-HEART_BOSS_BALANCE.sweepHalfAngle, 8);
+    expect(calls.some(call => call.method === 'fillText' && String(call.args[0]).includes('侧移'))).toBe(true);
   });
 
   it.each(['fission-burst', 'corrosion', 'brood'] as const)('uses serialized %s centers and radii, never the ordinary enemy radius', kind => {

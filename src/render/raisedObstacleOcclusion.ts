@@ -105,7 +105,8 @@ export function immuneVisualBounds(cell: ImmuneCellState, elapsed: number): Visu
 export function getRaisedActorBodies(state: GameState, art?: { player?: VisualBounds; targets?: ReadonlyMap<string, VisualBounds>; immune?: ReadonlyMap<string, VisualBounds>; beacon?: VisualBounds; beacons?: ReadonlyMap<string, VisualBounds> }): RaisedActorBody[] {
   const organ = state.battle?.organId === 'lung' ? 'lung' : 'heart';
   const obstacles = activeWorld(state).obstacles.map(obstacle => ({ obstacle, ...projectedRaisedObstacle(obstacle, organ) }));
-  const relevant = (groundY: number, bounds: VisualBounds) => obstacles.some(shape => groundY <= shape.obstacle.y && boundsOverlap(bounds, shape.upperBounds));
+  const relevant = (groundY: number, bounds: VisualBounds) => obstacles.some(shape => groundY <= shape.obstacle.y && boundsOverlap(bounds, shape.upperBounds))
+    || !!state.territory?.nodes.some(node => node.kind === 'front' && groundY <= node.y && boundsOverlap(bounds, {left:node.x-34,right:node.x+34,top:node.y*.72-40,bottom:node.y*.72+24}));
   const result: RaisedActorBody[] = [];
   if (state.player.hp > 0) { const bodyBounds = art?.player ?? playerVisualBounds(state); if (relevant(state.player.y, bodyBounds)) result.push({ id: 'player', kind: 'player', groundY: state.player.y, bodyBounds }); }
   for (const target of state.targets) if (target.hp > 0 || art?.targets?.has(target.id)) { const bodyBounds = art?.targets?.get(target.id) ?? targetVisualBounds(target, state); if (relevant(target.y, bodyBounds)) result.push({ id: target.id, kind: 'target', groundY: target.y, bodyBounds }); }

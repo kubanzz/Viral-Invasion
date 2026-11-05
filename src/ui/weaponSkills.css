@@ -1,0 +1,12 @@
+.weapon-context { position:fixed;left:50%;bottom:105px;transform:translateX(-50%);display:flex;align-items:center;gap:10px;z-index:14;padding:7px 10px;border:1px solid #81aa98;border-radius:10px;background:#f3f0dfee;color:#284e43;font-size:12px;pointer-events:auto; }
+.weapon-context[hidden] { display:none!important; }
+.weapon-context button { min-height:36px;display:flex;align-items:center;gap:6px; }
+.weapon-context [data-available=false] { opacity:.58; }
+body.territory-mode .tool-dock .tool { max-width:185px; }
+body.territory-mode .tool-dock .tool small { max-width:175px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+body.territory-mode .tool-dock .tool strong { display:flex;gap:7px;align-items:center;justify-content:center; }
+body.territory-mode .tool-dock .tool strong svg { width:20px;height:20px;flex:none; }
+body.touch-mode .weapon-context { display:none!important; }
+.weapon-skill-icon[data-weapon-skill-icon^="steady"] { color:#287d71; }
+.weapon-skill-icon[data-weapon-skill-icon^="piercing"] { color:#b66c2d; }
+@media(max-height:600px) { .weapon-context { bottom:82px;padding:3px 8px; } }

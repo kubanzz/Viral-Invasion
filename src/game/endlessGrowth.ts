@@ -71,6 +71,19 @@ export function endlessCombatStats(growth: EndlessGrowthState): EndlessCombatSta
 const display = (value: number): string => Number.isInteger(value) ? String(value) : String(Number(value.toFixed(3)));
 export const isEndlessBreakthrough = (wave: number): boolean => Number.isSafeInteger(wave) && wave >= 5 && wave % 5 === 0;
 
+/** Contextual presentation preserves historic campaign commands and all rolled numbers. */
+export function endlessUpgradeDescription(description: string, id: EndlessUpgradeId, territory = false): string {
+  if (!territory) return description;
+  if (id === 'nova') return '武器2技能每阶增加14范围，伤害倍率增加15%；只强化排异震环或束脉锚，不改变其他技能。';
+  if (id === 'catalysis') return '武器2技能主爆后0.35秒追加一次75%范围、40%伤害的余震，不再牵引或击退，不递归触发。';
+  if (id === 'dash') return description.split('斩击遵循障碍遮挡。')[0].replace(/蓄能剑气[^。]*。/g, '') + 'Space仅冲刺；斩击遵循障碍遮挡。';
+  if (id === 'power') return description.replace('基础净化', '武器').replace('强化现有攻击', '强化普攻和武器技能，军团与建筑不获得装备增幅');
+  if (id === 'multishot' || id === 'pierce' || id === 'haste') return description + '仅作用于普攻，不增加技能弹数、贯穿或施放速度。';
+  if (id !== 'immune') return description;
+  const numbers = description.split('。', 1)[0].replace(/，每团成员.*?体，常驻且有生命；/, '；');
+  return `${numbers}。基础驻防开局可用：Q在脚下部署，满两团时调最近军团到脚下；保留生命、人数与咬击冷却，不复活。守住两线可使军团升至Ⅲ阶；净化同线生命泉与前线即可解膜，无需军团等级或命中。`;
+}
+
 function optionFor(growth: EndlessGrowthState, id: EndlessUpgradeId, wave: number): EndlessUpgradeOption {
   const currentRank = rank(growth, id);
   const openingNova = wave === 1 && growth.level === 0 && id === 'nova' && currentRank === 0;

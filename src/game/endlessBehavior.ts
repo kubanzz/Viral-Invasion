@@ -11,7 +11,9 @@ export function recordEndlessBehavior(history: readonly BehaviorBin[], event: Ga
   const data = event.data;
   let behavior: BehaviorEvent | undefined;
   if (event.type === 'TARGET_HIT' && positiveFinite(data.damage)) {
-    if (data.cause === 'basic' && data.tool === 1) behavior = { tick: event.tick, kind: 'precisionDamage', amount: data.damage };
+    if (data.cause !== 'protocol' && data.damageCategory === 'precision') behavior = { tick: event.tick, kind: 'precisionDamage', amount: data.damage };
+    else if (data.cause !== 'protocol' && data.damageCategory === 'area') behavior = { tick: event.tick, kind: 'areaDamage', amount: data.damage };
+    else if (data.cause === 'basic' && data.tool === 1) behavior = { tick: event.tick, kind: 'precisionDamage', amount: data.damage };
     else if (data.cause === 'basic' && data.tool === 2) behavior = { tick: event.tick, kind: 'areaDamage', amount: data.damage };
     else if (data.cause === 'ability' && (data.ability === 'nova' || data.ability === 'scan' || data.ability === 'dash' || data.ability === 'catalysis'
       || data.ability === 'charged-slash' || data.ability === 'cannon-aftershock')) {

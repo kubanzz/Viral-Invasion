@@ -46,7 +46,7 @@ export function tacticalFeedback(event: GameEvent): Feedback | undefined {
       if (d.footDeployment !== true) return;
       if (d.withdrewFront === true && (d.previousRegionId === 'front-north' || d.previousRegionId === 'front-south')) {
         const lane = d.previousRegionId === 'front-north' ? '北' : '南';
-        return item(`${lane}前线撤防：最近军团正向脚下行军，原感染源可能恢复护膜。`, 2, 4, `:${lane}`);
+        return item(`${lane}前线撤防：最近军团正向脚下行军，节点失守才会恢复源膜。`, 2, 4, `:${lane}`);
       }
       return item('最近军团正向脚下行军并留守，生命与攻击冷却保留。', 1, 3, ':ground');
     }

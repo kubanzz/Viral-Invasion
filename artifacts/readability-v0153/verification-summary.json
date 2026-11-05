@@ -1,0 +1,98 @@
+{
+  "version": "0.15.3",
+  "pass": true,
+  "checks": [
+    {
+      "name": "current production and delivered package identity",
+      "pass": true,
+      "detail": {
+        "candidate": "candidate-final-3",
+        "inputs": 462,
+        "files": 4
+      }
+    },
+    {
+      "name": "full regression and final profile correction",
+      "pass": true,
+      "detail": {
+        "full": 1911,
+        "afterNeutralSaveCorrection": 66,
+        "systemSeeds": 6
+      }
+    },
+    {
+      "name": "candidate2 visual state matrix and Canvas fallback",
+      "pass": true,
+      "detail": [
+        {
+          "channel": "chrome",
+          "naturalInputs": 3,
+          "stateFrames": 72,
+          "canvasFallbacks": 9
+        },
+        {
+          "channel": "edge",
+          "naturalInputs": 3,
+          "stateFrames": 72,
+          "canvasFallbacks": 9
+        }
+      ]
+    },
+    {
+      "name": "footer-only exact byte equivalence from candidate2 to candidate3",
+      "pass": true,
+      "detail": {
+        "onlyChangedSource": "src/main.ts",
+        "changes": "three equal-length footer version literals",
+        "gameplayBytesEquivalent": true
+      }
+    },
+    {
+      "name": "candidate3 actual inputs, visible version and HP in both browsers",
+      "pass": true,
+      "detail": {
+        "naturalCases": 6,
+        "sizes": [
+          "1366×768",
+          "844×390",
+          "667×320"
+        ],
+        "visibleFooter": "v0.15.3"
+      }
+    },
+    {
+      "name": "limited camp behavior with explicit candidate2 source drift",
+      "pass": true,
+      "detail": {
+        "candidate": "candidate-final-2",
+        "realDeathLayouts": 2,
+        "componentFixtures": 8,
+        "originalReportPass": false,
+        "scope": "The original report remains false because its exact-source stability check saw the footer patch. Its behavior assertions pass; only the separately proven three-literal footer change is accepted here. No final full-natural victory claim."
+      }
+    },
+    {
+      "name": "offline self-contained resources and exact mobile composition",
+      "pass": true,
+      "detail": {
+        "embeddedPngs": 19,
+        "externalResources": [],
+        "dynamicScope": "allowlisted local HTTP; no new file-protocol or physical-phone claim"
+      }
+    },
+    {
+      "name": "final typecheck and whitespace",
+      "pass": true,
+      "detail": {
+        "typecheck": true,
+        "diffCheck": true
+      }
+    }
+  ],
+  "fullNaturalQualified": false,
+  "limitations": [
+    "Two candidate2 full-natural drivers stopped on navigation assumptions; their original failures are preserved.",
+    "No physical-phone or new-player test.",
+    "Browser state matrices are explicit supplied-state fixtures, separate from natural inputs."
+  ]
+}

@@ -3,6 +3,7 @@ import { IMMUNE_CELL_BALANCE, type ImmuneCellState } from '../game/immuneCells';
 import { heroFacingDirection, requestedHeroAnimation } from './heroAnimation';
 import { sourceRegisteredSpriteLayout, type RegisteredSpriteLayout, type SourceRegisteredSpriteAsset } from './spriteGeometry';
 import type { HeroLocomotion } from './heroLocomotion';
+import { isHeldWeaponAsset } from './weaponPresentation';
 
 export const ACTOR_PREFIX = 'fantasy.actor.';
 /** Fixed role canvases, locked by same-scene review; these never fit individual alpha bounds. */
@@ -114,7 +115,7 @@ export class ActorAnimationLibrary {
     const a=asset&&metadata(asset),reviewed=a?.approved===true&&a.group===id&&a.index===0&&a.frameCount===1&&Number.isFinite(a.fps)&&a.fps>0;
     if(registration){
       if(registration.canvas.width!==512)return;
-      if(id===ACTOR_STATIC_IDS.emitter){
+      if(id===ACTOR_STATIC_IDS.emitter||isHeldWeaponAsset(id)){
         const grip=registration.grip,muzzle=asset.sourceMuzzle??registration.muzzle;
         if(!grip||!finitePoint(muzzle,512,512)||Math.abs(registration.foot.x-grip.x)>1e-6||Math.abs(registration.foot.y-grip.y)>1e-6)return;
         if(asset.sourceMuzzle&&registration.muzzle&&(Math.abs(asset.sourceMuzzle.x-registration.muzzle.x)>1e-6

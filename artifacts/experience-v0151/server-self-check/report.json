@@ -1,0 +1,47 @@
+{
+  "scope": "Explicit non-game fixture verifies allowlist, immutable bytes and loopback server only; not gameplay evidence",
+  "pass": true,
+  "cases": [
+    {
+      "path": "/index.html",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "path": "/game.js",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "path": "/mobile.html",
+      "status": 200,
+      "pass": true
+    },
+    {
+      "path": "/package.json",
+      "status": 404,
+      "pass": true
+    },
+    {
+      "path": "/%2e%2e%2fpackage.json",
+      "status": 404,
+      "pass": true
+    },
+    {
+      "path": "/",
+      "status": 405,
+      "pass": true
+    },
+    {
+      "path": "/game.js",
+      "status": 403,
+      "pass": true
+    },
+    {
+      "name": "post-start filesystem mutation never changes served bytes",
+      "pass": true
+    }
+  ],
+  "priorAttempt": "report-attempt-1.json; fetch ignored custom Host, corrected harness uses node:http raw request",
+  "serverClosed": true
+}

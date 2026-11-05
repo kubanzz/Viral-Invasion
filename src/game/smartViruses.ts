@@ -8,15 +8,17 @@ import { isTerritoryPlayerAirborne } from './territoryCannon';
 import { activeWorld, BALANCE, type GameEvent, type GameState, type MessagePriority, type Target, type Vec, type WorldGeometry } from './types';
 import type { EndlessSpawnRole } from './endlessTypes';
 import type { SmartSupportPlan, SmartSupportWave, SlimeCast } from './smartVirusesTypes';
+import { advanceRituals, ritualArrangement, ritualArrangementValid, ritualSpawnReserved, spawnRitual } from './ritual';
 
 export const SMART_VIRUS_BALANCE = {
-  casterHp: 68, casterSpeed: 60, castRange: 450, castInner: 300, castOuter: 400,
+  casterHp: 136, casterSpeed: 60, castRange: 450, castInner: 300, castOuter: 400,
   castWindup: .9, slimeFlight: .45, castInterval: 5, slimeRadius: 75, slimeSeconds: 3, slimeSlow: .72, slimeCap: 2,
-  builderHp: 136, builderSpeed: 60, buildSeconds: 3, nestHp: 170, hatchInterval: 4, hatchBatch: 2,
+  builderHp: 204, builderSpeed: 60, buildSeconds: 3, nestHp: 238, firstHatchSeconds: 1, hatchInterval: 4, hatchBatch: 2,
   fastlingHp: 24, fastlingSpeed: 180, fastlingWindup: .45, fastlingInterval: 1.5, fastlingDamage: 4,
   warningSeconds: 4, spawnGrace: 1.5,
 } as const;
-export interface SmartVirusHost { state: GameState; emit(type: string, data: GameEvent['data']): void; message?(text:string,seconds?:number,priority?:MessagePriority):void }
+export interface SmartVirusHost { state: GameState; emit(type: string, data: GameEvent['data']): void; message?(text:string,seconds?:number,priority?:MessagePriority):void;
+  damagePlayer?(target: Target, amount: number, reason: string): boolean }
 const live = (state: GameState) => state.phase === 'playing' && !!state.territory && state.player.hp > 0 && state.tissue.hp > 0;
 const point = (p: Vec): Vec => ({ x: p.x, y: p.y });
 const EPS = 1e-7;
@@ -39,6 +41,7 @@ export function planSmartSupports(seed: number, wave: number, roles: readonly En
   if (wave === 2) reserve('caster', 1, 0);
   if (wave === 3) reserve('brood', 8, 0);
   if (wave >= 4) { reserve('caster', 1, 0); reserve('caster', 1, 1); reserve('brood', 8, 2); }
+  if (wave === 3 || wave >= 8 && (wave - 8) % 4 === 0) reserve('ritual', 4, 3);
   return { wave, plans, reservedSlots: plans.flatMap(plan => plan.slots) };
 }
 
@@ -72,6 +75,7 @@ function spawnPoint(state: GameState, plan: SmartSupportPlan, radius: number, an
     if (!nearby && state.territory?.stage !== 'guard' && territoryNodeAt(state.territory!, p)?.owner !== 'infected') continue;
     if (state.targets.some(t => t.hp > 0 && distance(t, p) < t.radius + radius + 3)) continue;
     if (distance(p, state.tissue) < state.tissue.radius + radius + 4) continue;
+    if (ritualSpawnReserved(state, p, radius)) continue;
     return p;
   }
 }
@@ -100,6 +104,7 @@ export function smartNestPosition(state: GameState, plan: SmartSupportPlan, buil
     if (territoryNodeAt(state.territory, p)?.owner !== 'infected' || !isLegalPosition(p, 30, activeWorld(state)) || !clearLane(state, builder, p)) continue;
     if (state.territory.nodes.some(n => n.kind === 'healing' && distance(n, p) < 120)) continue;
     if (state.targets.some(t => t.hp > 0 && t.id !== builder.id && distance(t, p) < t.radius + 36)) continue;
+    if (ritualSpawnReserved(state, p, 28)) continue;
     return p;
   }
 }
@@ -122,6 +127,25 @@ export function advanceSmartViruses(host: SmartVirusHost) {
     if (sourceGone || ['bossPending', 'boss', 'cleanup', 'victory'].includes(state.territory!.stage))
       cancelFuture(host, plan, 'source-cleared', state.territory!.stage === 'bossPending' && e.remainingToSpawn === 0);
     if (plan.status === 'canceled' || plan.status === 'complete') continue;
+    if (plan.kind === 'ritual') {
+      if (plan.wave !== 3 && state.territory!.stage !== 'guard') { cancelFuture(host, plan, 'guard-only'); continue; }
+      if (plan.status === 'pending') {
+        if (e.phase !== 'combat' || sourceGone || state.elapsed < e.phaseStartedAt + plan.departureOffset - SMART_VIRUS_BALANCE.warningSeconds) continue;
+        if (combatPopulation(state).reserved + 4 > combatPopulationLimit(state)) continue;
+        if (state.smartViruses?.ritual?.encounters.some(encounter => encounter.priestIds.concat(encounter.motherId).some(id => state.targets.some(t => t.id === id && t.hp > 0)))) continue;
+        plan.ritualPositions = ritualArrangement(state, plan);
+        if (!plan.ritualPositions) { cancelFuture(host, plan, 'no-ritual-position'); continue; }
+        plan.status = 'warning'; plan.warnedAt = state.elapsed;
+        host.emit('RITUAL_WARNING', { id: plan.id, wave: plan.wave, x: plan.ritualPositions[0].x, y: plan.ritualPositions[0].y, duration: 4 });
+        host.message?.('感染祭团即将出现：三名祭司法师维持母体护膜，优先剿灭法师。', 4, 2);
+      }
+      if (plan.status === 'warning' && state.elapsed + EPS >= plan.warnedAt! + 4) {
+        if (!ritualArrangementValid(state, plan.ritualPositions ?? [])) { cancelFuture(host, plan, 'ritual-warning-invalidated'); continue; }
+        spawnRitual(host, plan);
+      }
+      if (plan.status === 'active' && !plan.memberIds.some(id => state.targets.some(t => t.id === id && t.hp > 0))) plan.status = 'complete';
+      continue;
+    }
     if (plan.status === 'pending' || plan.status === 'warning') {
       if (e.phase !== 'combat' || sourceGone) continue;
       const due = e.phaseStartedAt + plan.departureOffset;
@@ -146,7 +170,9 @@ export function advanceSmartViruses(host: SmartVirusHost) {
         let born = 0;
         while (born < SMART_VIRUS_BALANCE.hatchBatch && smartRemainingSlots(plan).length) {
           const p = spawnPoint(state, plan, 12, nest, true); if (!p) break;
-          birth(host, plan, 'fastling', p); born++;
+          const child = birth(host, plan, 'fastling', p);
+          if (born === 1) child.springRaidLane = plan.laneId;
+          born++;
         }
         if (born) { plan.nextHatchAt = state.elapsed + SMART_VIRUS_BALANCE.hatchInterval; delete plan.blockedSince;
           host.emit('BROOD_HATCHED', { id: nest.id, count: born, remaining: smartRemainingSlots(plan).length }); }
@@ -155,6 +181,7 @@ export function advanceSmartViruses(host: SmartVirusHost) {
     }
     if (!smartRemainingSlots(plan).length && !plan.memberIds.some(id => state.targets.some(t => t.id === id && (t.hp > 0 || t.splitAt !== undefined)))) plan.status = 'complete';
   }
+  advanceRituals(host);
 }
 
 function moveSmart(state: GameState, actor: Target, goal: Vec, speed: number, dt: number) {
@@ -173,6 +200,7 @@ function moveSmart(state: GameState, actor: Target, goal: Vec, speed: number, dt
 export function advanceSmartVirusActor(host: SmartVirusHost, actor: Target, dt = BALANCE.step): boolean {
   const state = host.state, B = SMART_VIRUS_BALANCE;
   if (!state.territory || !actor.profession || actor.profession === 'fastling') return false;
+  if (actor.profession === 'ritual-mother' || actor.profession === 'ritual-priest') return true;
   if (actor.profession === 'brood-nest') return true;
   if (actor.profession === 'slime-caster') {
     const smart = state.smartViruses ??= { serial: 0, slime: [] };
@@ -204,6 +232,7 @@ export function advanceSmartVirusActor(host: SmartVirusHost, actor: Target, dt =
   }
   if (state.elapsed + EPS >= plan.buildUntil) {
     if (territoryNodeAt(state.territory, plan.nestPosition)?.owner !== 'infected') { cancelFuture(host, plan, 'ground-purified'); return false; }
+    if (ritualSpawnReserved(state, plan.nestPosition, 28)) return true;
     if (state.targets.some(t => t.hp > 0 && distance(t, plan.nestPosition!) < t.radius + 30)) {
       plan.blockedSince ??= state.elapsed;
       if (state.elapsed - plan.blockedSince >= 4) { cancelFuture(host, plan, 'construction-blocked'); return false; }
@@ -211,7 +240,7 @@ export function advanceSmartVirusActor(host: SmartVirusHost, actor: Target, dt =
     }
     const nest = birth(host, plan, 'brood-nest', plan.nestPosition); plan.nestId = nest.id; delete plan.buildUntil;
     delete plan.blockedSince;
-    plan.nextHatchAt = state.elapsed + B.hatchInterval;
+    plan.nextHatchAt = state.elapsed + B.firstHatchSeconds;
     host.emit('BROOD_CONSTRUCTED', { id: nest.id, builderId: actor.id, x: nest.x, y: nest.y, remaining: smartRemainingSlots(plan).length });
   }
   return true;
@@ -223,7 +252,7 @@ export function playerSlimeMultiplier(state: GameState): number {
     ? SMART_VIRUS_BALANCE.slimeSlow : 1;
 }
 export function smartSpringRaidGoal(state: GameState, actor: Target) {
-  if (!actor.springRaidLane || !state.territory || actor.profession || actor.territoryTask) return;
+  if (!actor.springRaidLane || !state.territory || actor.profession && actor.profession !== 'fastling' || actor.territoryTask) return;
   const lane = TERRITORY_LANES.find(l => l.id === actor.springRaidLane)!;
   const front = state.territory.nodes.find(n => n.id === lane.frontNodeId), spring = state.territory.nodes.find(n => n.id === lane.healingNodeId);
   return front?.owner === 'infected' && spring?.owner === 'healthy' ? spring : undefined;

@@ -18,6 +18,8 @@ function fixture(wave = 3) {
     batchSchedule: Array.from({ length: 8 }, (_, index) => ({ at: index, sector: 0, spread: .2, roles: roles.slice(index * 3, index * 3 + 3) })),
     territoryTasks: { wave, reservedSlots: [], squads: [] } });
   e.smartSupport = planSmartSupports(s.seed, wave, roles);
+  e.smartSupport.plans = e.smartSupport.plans.filter(plan => plan.kind !== 'ritual');
+  e.smartSupport.reservedSlots = e.smartSupport.plans.flatMap(plan => plan.slots);
   e.remainingToSpawn = e.smartSupport.reservedSlots.length;
   const host = { state: s, emit(type: string, data: GameEvent['data']) { events.push({ type, data, tick: s.tick }); } };
   const at = (seconds: number) => { s.elapsed = seconds; s.tick = Math.round(seconds * 60); advanceSmartViruses(host); };

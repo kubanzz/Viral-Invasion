@@ -40,7 +40,9 @@ export function recordOpeningDamage(opening: OpeningEvolutionState, event: GameE
     || !positiveFinite(d.damage) || !target || target.id !== d.id || target.role === 'event' || target.role === 'capsule'
     || d.eventTarget === true || d.ability === 'host-event' || d.cause === 'protocol' || d.protocolId !== undefined) return;
   let key: 'precisionDamage' | 'areaDamage' | undefined;
-  if (d.cause === 'basic') {
+  if (d.damageCategory === 'precision' || d.damageCategory === 'area') {
+    key = d.damageCategory === 'precision' ? 'precisionDamage' : 'areaDamage';
+  } else if (d.cause === 'basic') {
     const tool = d.basicTool ?? d.tool;
     if (tool === 1) key = 'precisionDamage';
     if (tool === 2) key = 'areaDamage';

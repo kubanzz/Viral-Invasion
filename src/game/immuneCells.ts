@@ -83,6 +83,49 @@ function nextWaypoint(from: Vec, to: Vec, geometry: WorldGeometry, radius: numbe
   return previous[index] === 0 ? point(nodes[index]) : point(from);
 }
 
+/** Uses the same bounded navigation graph as the actual construction march. */
+export function immuneRouteReachable(from: Vec, to: Vec, geometry: WorldGeometry, radius: number = IMMUNE_CELL_BALANCE.radius): boolean {
+  if (!validPosition(from, radius, geometry) || !validPosition(to, radius, geometry)) return false;
+  return distance(from, to) <= 1e-7 || distance(from, nextWaypoint(from, to, geometry, radius)) > 1e-7;
+}
+
+/** Workers choose nearby free work positions from their real approach side.
+ * Fixed ID-based orbit seats can put a settled worker across every other
+ * worker's path, so settled bodies are also real navigation obstacles. */
+function constructionSeats(cells: readonly ImmuneCellState[], beacon: CellBeacon, geometry: WorldGeometry): Map<string, Vec> {
+  const seats = new Map<string, Vec>(), reserved: { position: Vec; radius: number }[] = [];
+  const ordered = cells.slice().sort((a,b)=>distance(a,beacon)-distance(b,beacon)||stableId(a,b));
+  for (const cell of ordered) {
+    if (distance(cell, beacon) <= 60 && validPosition(cell, cell.radius, geometry)) {
+      seats.set(cell.id, point(cell)); reserved.push({ position: point(cell), radius: cell.radius }); continue;
+    }
+    const angle = Math.atan2(cell.y-beacon.y,cell.x-beacon.x), candidates: Vec[] = [];
+    for (const ring of [55, 42]) for (let i=0;i<24;i++) {
+      const offset=i===0?0:Math.ceil(i/2)*(i%2?1:-1)*Math.PI/12;
+      const p={x:beacon.x+Math.cos(angle+offset)*ring,y:beacon.y+Math.sin(angle+offset)*ring};
+      if(validPosition(p,cell.radius,geometry)&&reserved.every(other=>distance(p,other.position)>=cell.radius+other.radius+4))candidates.push(p);
+    }
+    candidates.sort((a,b)=>distance(cell,a)-distance(cell,b));
+    const seat=candidates[0]??point(beacon);seats.set(cell.id,seat);reserved.push({position:seat,radius:cell.radius});
+  }
+  return seats;
+}
+
+function advanceConstructionWorker(cell: ImmuneCellState, destination: Vec, squad: readonly ImmuneCellState[], index: number,
+  delta: number, geometry: WorldGeometry, speed: number, elapsed: number) {
+  const settled = squad.filter(other=>other.id!==cell.id&&distance(other,destination)>other.radius+cell.radius+1
+    &&distance(other,cell)>other.radius+cell.radius+.5);
+  const navigationWorld = settled.length ? { ...geometry, obstacles: [...geometry.obstacles,
+    ...settled.map(other=>({id:`worker:${other.id}`,x:other.x,y:other.y,
+      radius:other.radius+Math.min(3,Math.max(0,distance(other,cell)-other.radius-cell.radius-.5))}))] } : geometry;
+  // Recompute against the current physical workers; this state is small and
+  // moving workers must not keep a route through a newly settled colleague.
+  const waypoint=nextWaypoint(cell,destination,navigationWorld,cell.radius);
+  cell.waypoint=waypoint;cell.navigationAt=elapsed+ENDLESS_IMMUNE_CELL_BALANCE.navigationInterval;
+  moveCell(cell,waypoint,squad,index,delta,geometry,speed);
+  cell.activity=distance(cell,destination)<=5?'guarding':'returning';
+}
+
 export function summonImmuneCells(beacon: CellBeacon, context: GrowthContext, count = 3): ImmuneCellState[] {
   const total = Math.max(1, Math.min(IMMUNE_CELL_BALANCE.maximum, Math.floor(count)));
   const focus = context.endless && beacon.mode === 'protocol' ? activeImmuneFocusTarget(beacon, context) : undefined;
@@ -244,10 +287,22 @@ export function advanceImmuneCells(cells: readonly ImmuneCellState[], beacon: Ce
   const focus = activeImmuneFocusTarget(beacon, context);
   const challengeSquad = !!context.endless && beacon.mode === 'protocol';
   const damageMultiplier = context.endless && Number.isFinite(context.cellDamageMultiplier) && context.cellDamageMultiplier! > 0 ? context.cellDamageMultiplier! : 1;
+  const workSeats=beacon.constructionTaskId?constructionSeats(active,beacon,context.geometry??WORLD):undefined;
   for (const cell of active) {
     const delta = Math.max(0, Math.min(1 / 60, context.elapsed - cell.updatedAt));
     cell.updatedAt = context.elapsed;
     reconcileEventAttackClock(cell, context);
+    if(workSeats){
+      cell.targetId=null;
+      const destination=workSeats.get(cell.id)??point(beacon);
+      const direction=normalized(destination.x-cell.x,destination.y-cell.y);
+      if(direction.x||direction.y)cell.facing=Math.atan2(direction.y,direction.x);
+      const antibodyActive=(cell.antibodyUntil??0)>context.elapsed;
+      const speed=IMMUNE_CELL_BALANCE.speed*(antibodyActive?ANTIBODY_BALANCE.speedMultiplier:1)
+        *eventModifierFromState(context.hostEvents,context.organId,context.elapsed,'immuneMove',cell);
+      advanceConstructionWorker(cell,destination,active,Math.max(0,active.findIndex(c=>c.id===cell.id)),delta,context.geometry??WORLD,speed,context.elapsed);
+      continue;
+    }
     const previousTarget = cell.targetId;
     const index = Math.max(0, active.findIndex(value => value.id === cell.id));
     // A command can override automatic priorities, never physical reachability.
@@ -260,7 +315,9 @@ export function advanceImmuneCells(cells: readonly ImmuneCellState[], beacon: Ce
       ? nextWaypoint(cell, focusSeat, context.geometry ?? WORLD, cell.radius) : null;
     const canFocus = !!focus && !!focusSeat && (contact(cell, cell.radius, focus, context.geometry)
       || !!cachedRoute || !!focusRoute && distance(cell, focusRoute) > 1e-7);
-    const target = canFocus ? focus : chooseTarget(cell, beacon, context, traced, assigned, remainingHp);
+    // A real worker still moves through the ordinary navigation/collision
+    // pipeline, but construction never receives free attacks or bite resets.
+    const target = beacon.constructionTaskId ? undefined : canFocus ? focus : chooseTarget(cell, beacon, context, traced, assigned, remainingHp);
     const antibodyActive = (cell.antibodyUntil ?? 0) > context.elapsed;
     const speed = (challengeSquad && target ? canFocus && (cell.rallyUntil ?? 0) > context.elapsed
       ? ENDLESS_IMMUNE_CELL_BALANCE.rallySpeed : ENDLESS_IMMUNE_CELL_BALANCE.pursuitSpeed : IMMUNE_CELL_BALANCE.speed)

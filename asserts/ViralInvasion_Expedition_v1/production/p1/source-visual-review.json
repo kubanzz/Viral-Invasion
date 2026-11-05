@@ -1,0 +1,405 @@
+{
+  "schemaVersion": 1,
+  "scope": "P1 camp and icon source masters only",
+  "status": "all12-final-p1-sources-producer-reviewed",
+  "reviewer": "expedition_camp_icons producer actual-image inspection",
+  "mainRendererApproval": false,
+  "reviewEvidence": [
+    "production/p1/qa/registered-black-white-1.png",
+    "production/p1/qa/registered-black-white-2.png",
+    "production/p1/qa/registered-alpha.png",
+    "production/qa/sources/lootBag.fixed.v01.alpha.png",
+    "sources/lootBag/fixed/master_v01.png",
+    "sources/iconSteadyFlowGun/fixed/broken/master_v01.png",
+    "production/qa/sources/campSortie.fixed.v01.black-white.png",
+    "production/qa/sources/lootBag.fixed.v02.black-white.png",
+    "production/qa/sources/lootBag.fixed.v02.alpha.png",
+    "sources/lootBag/fixed/master_v02.png"
+  ],
+  "globalChecks": {
+    "actualRegisteredImagesInspected": 12,
+    "sourceSha256MatchesProcessingRecords": true,
+    "allFourBordersTransparent": true,
+    "visibleGroundShadowObserved": false,
+    "creamForegroundIntact": true,
+    "iconCompleteOnCanvas": true,
+    "normalBrokenWeaponIdentityConsistent": true,
+    "campSilhouettesDistinct": true,
+    "sourcePngModifiedByReview": 0,
+    "allSourcesPass": true,
+    "lootBagBowHolesCorrected": true
+  },
+  "passedSourceKeys": [
+    "campTentWarehouse/fixed",
+    "campForge/fixed",
+    "campSupply/fixed",
+    "campSortie/fixed",
+    "iconSteadyFlowGun/fixed/normal",
+    "iconSteadyFlowGun/fixed/broken",
+    "iconPiercingPulseGun/fixed/normal",
+    "iconPiercingPulseGun/fixed/broken",
+    "blueprintBasePod/fixed",
+    "blueprintRapidPod/fixed",
+    "repairBiomass/fixed",
+    "lootBag/fixed"
+  ],
+  "shaAuthority": "Fresh SHA256 comparison against current source-processing output paths, including lootBag v02.",
+  "notes": "Broken gun muzzle notches and dark cracks are intentional authored damage, not alpha defects. Departure platform selected right variant keeps a horizontal leaf tread to distinguish it from launch pods. No main approval is implied by this producer review.",
+  "revisionHistory": [
+    {
+      "sourceKey": "lootBag/fixed",
+      "currentPath": "sources/lootBag/fixed/master_v01.png",
+      "currentSha256": "8b12167f238cb3c12f4ece010ce7edbe916b6cca702bcc6c650eca7b1a0b49fe",
+      "reason": "Two enclosed white backdrop areas inside the bow loops remain opaque. The source alpha preview confirms solid fill, while the original raw cells show near-neutral white background at both seeds.",
+      "newVersionOnly": "v02",
+      "preserveV01": true,
+      "whiteMin": 185,
+      "chromaMax": 27,
+      "crop": {
+        "left": 1024,
+        "top": 1024,
+        "width": 1024,
+        "height": 1024
+      },
+      "holesInCroppedSourcePixels": [
+        [
+          410,
+          258
+        ],
+        [
+          690,
+          323
+        ]
+      ],
+      "seedRawRgba": [
+        [
+          255,
+          255,
+          255,
+          255
+        ],
+        [
+          253,
+          253,
+          253,
+          255
+        ]
+      ],
+      "reviewAfterRevisionRequired": true
+    }
+  ],
+  "sources": [
+    {
+      "key": "campTentWarehouse/fixed",
+      "path": "sources/campTentWarehouse/fixed/master_v01.png",
+      "sha256": "87281b3579fc63074a2a92408fed6ac373edd93b85a6628a200f1ee528091c19",
+      "dimensions": [
+        512,
+        512
+      ],
+      "reviewed": true,
+      "status": "producer-reviewed-pending-main-renderer",
+      "alpha": {
+        "transparent": 180861,
+        "partial": 1048,
+        "opaque": 80235,
+        "hiddenRgb": 0,
+        "borderVisible": 0,
+        "visible": 81283,
+        "bbox": [
+          52,
+          125,
+          460,
+          435
+        ]
+      },
+      "notes": "Distinct building silhouette, no observed ground shadow, cream foreground retained."
+    },
+    {
+      "key": "campForge/fixed",
+      "path": "sources/campForge/fixed/master_v01.png",
+      "sha256": "2cbabdf8ee78758a31bac89139dbcc959b6273eb95db23d62ed19d604ac9c6f6",
+      "dimensions": [
+        512,
+        512
+      ],
+      "reviewed": true,
+      "status": "producer-reviewed-pending-main-renderer",
+      "alpha": {
+        "transparent": 210686,
+        "partial": 665,
+        "opaque": 50793,
+        "hiddenRgb": 0,
+        "borderVisible": 0,
+        "visible": 51458,
+        "bbox": [
+          120,
+          145,
+          392,
+          435
+        ]
+      },
+      "notes": "Distinct building silhouette, no observed ground shadow, cream foreground retained."
+    },
+    {
+      "key": "campSupply/fixed",
+      "path": "sources/campSupply/fixed/master_v01.png",
+      "sha256": "d7fe665d1fd8e2cb9f6c87319274da42a2a3fe114d367d936bd383e6a9178502",
+      "dimensions": [
+        512,
+        512
+      ],
+      "reviewed": true,
+      "status": "producer-reviewed-pending-main-renderer",
+      "alpha": {
+        "transparent": 208453,
+        "partial": 681,
+        "opaque": 53010,
+        "hiddenRgb": 0,
+        "borderVisible": 0,
+        "visible": 53691,
+        "bbox": [
+          142,
+          115,
+          370,
+          435
+        ]
+      },
+      "notes": "Distinct building silhouette, no observed ground shadow, cream foreground retained."
+    },
+    {
+      "key": "campSortie/fixed",
+      "path": "sources/campSortie/fixed/master_v01.png",
+      "sha256": "344c38d8706df3039ac4621e8698328f49484c2e39c713f00cb767730f91f11b",
+      "dimensions": [
+        512,
+        512
+      ],
+      "reviewed": true,
+      "status": "producer-reviewed-pending-main-renderer",
+      "alpha": {
+        "transparent": 205561,
+        "partial": 745,
+        "opaque": 55838,
+        "hiddenRgb": 0,
+        "borderVisible": 0,
+        "visible": 56583,
+        "bbox": [
+          105,
+          150,
+          407,
+          435
+        ]
+      },
+      "notes": "Distinct building silhouette, no observed ground shadow, cream foreground retained."
+    },
+    {
+      "key": "iconSteadyFlowGun/fixed/normal",
+      "path": "sources/iconSteadyFlowGun/fixed/normal/master_v01.png",
+      "sha256": "0617bb568d0064ef6d6fe47964dba699430af8648dce45eae0bcb7d78a705a4a",
+      "dimensions": [
+        256,
+        256
+      ],
+      "reviewed": true,
+      "status": "producer-reviewed-pending-main-renderer",
+      "alpha": {
+        "transparent": 52516,
+        "partial": 88,
+        "opaque": 12932,
+        "hiddenRgb": 0,
+        "borderVisible": 0,
+        "visible": 13020,
+        "bbox": [
+          37,
+          47,
+          219,
+          209
+        ]
+      },
+      "notes": "Complete normal/broken identity pair, same raw-to-icon scale; intentional cracks and muzzle notches retained."
+    },
+    {
+      "key": "iconSteadyFlowGun/fixed/broken",
+      "path": "sources/iconSteadyFlowGun/fixed/broken/master_v01.png",
+      "sha256": "398f291b7dd10d7da5ecf03b191a26da3d88e2c9bb10c60d022c8594ec962792",
+      "dimensions": [
+        256,
+        256
+      ],
+      "reviewed": true,
+      "status": "producer-reviewed-pending-main-renderer",
+      "alpha": {
+        "transparent": 52749,
+        "partial": 203,
+        "opaque": 12584,
+        "hiddenRgb": 0,
+        "borderVisible": 0,
+        "visible": 12787,
+        "bbox": [
+          35,
+          50,
+          221,
+          206
+        ]
+      },
+      "notes": "Complete normal/broken identity pair, same raw-to-icon scale; intentional cracks and muzzle notches retained."
+    },
+    {
+      "key": "iconPiercingPulseGun/fixed/normal",
+      "path": "sources/iconPiercingPulseGun/fixed/normal/master_v01.png",
+      "sha256": "c2b0379622503e0ee055e96d0070ef0babfa703891c5500259bbf434ad41814a",
+      "dimensions": [
+        256,
+        256
+      ],
+      "reviewed": true,
+      "status": "producer-reviewed-pending-main-renderer",
+      "alpha": {
+        "transparent": 53873,
+        "partial": 173,
+        "opaque": 11490,
+        "hiddenRgb": 0,
+        "borderVisible": 0,
+        "visible": 11663,
+        "bbox": [
+          35,
+          42,
+          221,
+          214
+        ]
+      },
+      "notes": "Complete normal/broken identity pair, same raw-to-icon scale; intentional cracks and muzzle notches retained."
+    },
+    {
+      "key": "iconPiercingPulseGun/fixed/broken",
+      "path": "sources/iconPiercingPulseGun/fixed/broken/master_v01.png",
+      "sha256": "7aabd14a4f58050ee0f8830080e3e2f435f883cf73cf7a3edf21ccb26001f64c",
+      "dimensions": [
+        256,
+        256
+      ],
+      "reviewed": true,
+      "status": "producer-reviewed-pending-main-renderer",
+      "alpha": {
+        "transparent": 53877,
+        "partial": 85,
+        "opaque": 11574,
+        "hiddenRgb": 0,
+        "borderVisible": 0,
+        "visible": 11659,
+        "bbox": [
+          35,
+          43,
+          221,
+          213
+        ]
+      },
+      "notes": "Complete normal/broken identity pair, same raw-to-icon scale; intentional cracks and muzzle notches retained."
+    },
+    {
+      "key": "blueprintBasePod/fixed",
+      "path": "sources/blueprintBasePod/fixed/master_v01.png",
+      "sha256": "827be516d2b5dd17b38671ae5a48d2e2fd0062b190e059e8ef74cb83cc8334db",
+      "dimensions": [
+        256,
+        256
+      ],
+      "reviewed": true,
+      "status": "producer-reviewed-pending-main-renderer",
+      "alpha": {
+        "transparent": 42254,
+        "partial": 297,
+        "opaque": 22985,
+        "hiddenRgb": 0,
+        "borderVisible": 0,
+        "visible": 23282,
+        "bbox": [
+          31,
+          31,
+          225,
+          225
+        ]
+      },
+      "notes": "Complete physical item; no UI or quality glow; cream foreground retained."
+    },
+    {
+      "key": "blueprintRapidPod/fixed",
+      "path": "sources/blueprintRapidPod/fixed/master_v01.png",
+      "sha256": "13d0e79f8cb0167aa2a61f4880a411d393ddceccdb0066faddd32f435c5331ba",
+      "dimensions": [
+        256,
+        256
+      ],
+      "reviewed": true,
+      "status": "producer-reviewed-pending-main-renderer",
+      "alpha": {
+        "transparent": 41842,
+        "partial": 301,
+        "opaque": 23393,
+        "hiddenRgb": 0,
+        "borderVisible": 0,
+        "visible": 23694,
+        "bbox": [
+          29,
+          31,
+          227,
+          225
+        ]
+      },
+      "notes": "Complete physical item; no UI or quality glow; cream foreground retained."
+    },
+    {
+      "key": "repairBiomass/fixed",
+      "path": "sources/repairBiomass/fixed/master_v01.png",
+      "sha256": "fd0f31014254c55508e192141d55c4bd3d3bd6b75f4d2defa97494dc1b26d72c",
+      "dimensions": [
+        256,
+        256
+      ],
+      "reviewed": true,
+      "status": "producer-reviewed-pending-main-renderer",
+      "alpha": {
+        "transparent": 40006,
+        "partial": 384,
+        "opaque": 25146,
+        "hiddenRgb": 0,
+        "borderVisible": 0,
+        "visible": 25530,
+        "bbox": [
+          34,
+          31,
+          222,
+          225
+        ]
+      },
+      "notes": "Complete physical item; no UI or quality glow; cream foreground retained."
+    },
+    {
+      "key": "lootBag/fixed",
+      "path": "sources/lootBag/fixed/master_v02.png",
+      "sha256": "6a08832653c5c9231243bb4abd25d5ba5edb89874cf767a3b601ff0b396cd82a",
+      "dimensions": [
+        256,
+        256
+      ],
+      "reviewed": true,
+      "status": "producer-reviewed-pending-main-renderer",
+      "alpha": {
+        "transparent": 40149,
+        "partial": 434,
+        "opaque": 24953,
+        "hiddenRgb": 0,
+        "borderVisible": 0,
+        "visible": 25387,
+        "bbox": [
+          31,
+          31,
+          224,
+          225
+        ]
+      },
+      "notes": "v02 bow loops are truly transparent; cream bag and coral bow retain complete foreground."
+    }
+  ]
+}

@@ -17,7 +17,7 @@ describe('bounded tactical explanations and notification priority', () => {
     const session = create();
     session.emit('IMMUNE_SQUAD_REDIRECTED', { footDeployment: true, withdrewFront: true, previousRegionId: 'front-north' });
     expect(session.state.message).toContain('北前线撤防'); expect(session.state.message).toContain('向脚下行军');
-    expect(session.state.message).toContain('护膜');
+    expect(session.state.message).toContain('节点失守才会恢复源膜');
     const record = session.state.tacticalRecords!.find(item => item.eventType === 'IMMUNE_SQUAD_REDIRECTED')!;
     expect(record.key).toBe('IMMUNE_SQUAD_REDIRECTED:北');
     session.emit('IMMUNE_SQUAD_REDIRECTED', { footDeployment: true, withdrewFront: true, previousRegionId: 'front-north', beaconId: 'another-id' });

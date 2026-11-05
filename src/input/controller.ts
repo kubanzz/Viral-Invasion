@@ -1,9 +1,15 @@
 import { BALANCE, type GameState, type InputFrame, type Tool, type Vec } from '../game/types';
 import { TRACTION_BALANCE } from '../game/traction';
 import { territoryCannonAim, territoryCannonView } from '../game/territoryCannon';
+import type { WeaponSkillSlot, WeaponSkillView } from '../game/weaponSkillsTypes';
 export const BINDINGS = [
   ['W A S D', '八向移动'], ['鼠标 / 左键', '瞄准 / 使用工具'], ['Space', '冲刺 · 1.5秒冷却'],
-  ['Q', '脚下驻防 / 扫描'], ['R', '注射抗体 · 消耗1支'], ['1', '精确净化'], ['2', '范围清除'], ['3', '附近净化 / 组织修复'], ['E', '挑战按住瞄准落点、松手弹射；其他模式附近装置'], ['Esc', '暂停 / 继续'],
+  ['Q', '脚下驻防 / 扫描'], ['B', '蓝图与军团建设'], ['R', '注射抗体 · 消耗1支'], ['1', '精确净化'], ['2', '范围清除'], ['3', '附近净化 / 组织修复'], ['E', '靠近已建弹射荚，按住瞄准、松手弹射'], ['Esc', '暂停 / 继续'],
+];
+export const TERRITORY_BINDINGS = [
+  ['W A S D', '八向移动'], ['鼠标 / 左键', '瞄准 / 普通射击'], ['Space', '冲刺'],
+  ['1 / 2 / 3', '当前武器的三个技能'], ['F', '附近净化 / 抢修心核'], ['Q', '脚下驻防'],
+  ['B', '蓝图与军团建设'], ['R', '注射抗体'], ['E', '靠近设施交互'], ['Esc', '暂停 / 继续'],
 ];
 export type GameAction = 'dash' | 'scan' | 'interact' | 'antibody' | 'territory';
 export type ScreenToWorld = (point: Vec) => Vec;
@@ -11,7 +17,8 @@ export type AimState = Pick<GameState, 'player' | 'tool'> & Partial<Pick<GameSta
 export type TouchState = AimState & Partial<Pick<GameState, 'elapsed' | 'traction' | 'endlessGrowth'>>;
 export type SkillKind = 2 | 3 | 'scan';
 export interface SkillPresentation {
-  kind: SkillKind | 'charge' | 'cannon'; aim: Vec; range: number; cancelled: boolean; phase: 'preview' | 'guiding';
+  kind: SkillKind | 'charge' | 'cannon' | 'weapon'; aim: Vec; range: number; cancelled: boolean; phase: 'preview' | 'guiding';
+  weaponSlot?: WeaponSkillSlot;
   origin?: Vec; radius?: number;
   valid?: boolean; hint?: string;
 }
@@ -19,6 +26,7 @@ export interface TouchPresentation { aim: Vec; tool: Tool; preview?: SkillPresen
 type PreviewAim = { mode: 'world'; point: Vec } | { mode: 'stick'; vector: Vec };
 interface SkillPreview { kind: SkillKind; aim: PreviewAim; cancelled: boolean }
 interface SkillCommand { kind: SkillKind; aim: Vec; guide?: boolean }
+interface WeaponSkillPreview { slot: WeaponSkillSlot; aim: PreviewAim; cancelled: boolean; range: number; radius: number; aimMode: WeaponSkillView['aim'] }
 interface GuideInput { aim: Vec; initialAim: Vec; held: boolean; started: boolean; castId?: string }
 export const TOUCH_AIM = { deadZone: .15, range: 650 } as const;
 type AimSource = 'mouse' | 'stick' | 'world';
@@ -52,6 +60,8 @@ export class Controller {
   private skillPreview: SkillPreview | undefined;
   private skillCommands: SkillCommand[] = [];
   private skillRelease: { tool: Tool; aim: Vec } | undefined;
+  private weaponSkillPreview: WeaponSkillPreview | undefined;
+  private weaponSkillCommands: { slot: WeaponSkillSlot; aim?: Vec }[] = [];
   private guide: GuideInput | undefined;
   private aimSource: AimSource = 'mouse';
   private worldAim: Vec | undefined;
@@ -65,6 +75,7 @@ export class Controller {
   private chargeAim: Vec | undefined;
   private chargePreviewCancelled = false;
   private cannonOwner: 'keyboard' | 'touch' | undefined;
+  private cannonBuildingId: string | undefined;
   private cannonPressed = false;
   private cannonReleased = false;
   private cannonCancelled = false;
@@ -79,7 +90,8 @@ export class Controller {
   private readonly clearListeners = new Set<() => void>();
   pointer: Vec = { x: innerWidth / 2, y: innerHeight / 2 };
   constructor(private readonly canvas: HTMLCanvasElement, onPause: () => void, onBlur: () => void,
-    private readonly acceptsGameInput: () => boolean = () => true) {
+    private readonly acceptsGameInput: () => boolean = () => true,
+    private readonly gameState?: () => GameState) {
     window.addEventListener('keydown', e => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || (e.target instanceof HTMLElement && e.target.isContentEditable)) return;
       if (e.code === 'Escape') { if (!e.repeat) onPause(); return; }
@@ -89,11 +101,12 @@ export class Controller {
       const fresh = !this.keys.has(e.code);
       if (fresh) this.pressed.add(e.code);
       this.keys.add(e.code);
-      if (fresh && e.code === 'Space' && this.chargeEnabled && !this.chargeOwner) {
+      if (fresh && e.code === 'Space' && this.chargeEnabled && !this.isTerritory() && !this.chargeOwner) {
         this.chargeOwner = 'keyboard'; this.chargePressed = true; this.chargeAim = undefined;
       }
-      if (fresh && e.code === 'KeyE' && this.territoryMode && !this.cannonOwner) {
+      if (fresh && e.code === 'KeyE' && this.territoryMode && !this.cannonOwner && !this.weaponSkillPreview && !this.skillPreview && !this.guide && this.cannonUsable()) {
         this.cannonOwner = 'keyboard'; this.cannonPressed = true; this.cannonCancelled = false; this.cannonReleased = false;
+        this.cannonBuildingId = this.gameState?.().territory?.construction?.building?.id;
         this.cannonAim = undefined; this.cannonDisplayAim = undefined; this.cannonPointer = undefined;
       }
       if (/^Digit[123]$/.test(e.code)) this.select(Number(e.code.at(-1)) as Tool);
@@ -140,13 +153,15 @@ export class Controller {
     return false;
   }
 
+  private isTerritory(): boolean { return this.gameState ? !!this.gameState().territory : this.territoryMode; }
+
   private releaseCapture(pointerId: number): void {
     try { if (this.canvas.hasPointerCapture(pointerId)) this.canvas.releasePointerCapture(pointerId); } catch { /* The browser may already have cancelled it. */ }
   }
 
   select(tool: Tool): void {
     if (!this.accepts() || ![1, 2, 3].includes(tool)) return;
-    if (tool === 3 && this.territoryMode) { this.actions.add('territory'); return; }
+    if (this.isTerritory()) { this.queueWeaponSkill(tool); return; }
     if (this.activeTool !== tool) this.endCharge(true);
     if (this.activeTool !== tool && this.castHeld) { this.castBlocked = true; this.castEdges = []; this.castStep = false; }
     this.activeTool = tool; this.tool = tool;
@@ -155,19 +170,40 @@ export class Controller {
   /** Context interaction is separate from the held weapon and its aim/fire. */
   setTerritoryMode(enabled: boolean): void {
     if (this.territoryMode !== enabled) this.actions.delete('territory');
+    if (!enabled && this.cannonOwner) this.endCannon(true);
+    if (!enabled) { this.weaponSkillPreview = undefined; this.weaponSkillCommands = []; }
     this.territoryMode = enabled;
   }
 
   queueAction(action: GameAction): void { if (this.accepts()) this.actions.add(action); }
   queuePracticeHit(): void { if (this.accepts()) this.practiceHit = true; }
 
+  /** Weapon skills are commands, never tool selection or primary-aim ownership. */
+  queueWeaponSkill(slot: WeaponSkillSlot, aim?: Vec): void {
+    if (!this.accepts() || !this.isTerritory() || ![1, 2, 3].includes(slot) || aim && !finite(aim)) return;
+    // Keep one immediate intent per simulation frame. Rapid keys never queue a
+    // sequence that could fire later, and a facility gesture owns its preview.
+    if (this.weaponSkillCommands.length || this.cannonOwner || this.skillPreview || this.guide || this.chargeOwner || this.weaponSkillPreview && !aim) return;
+    this.weaponSkillCommands.push({ slot, ...(aim ? { aim: { ...aim } } : {}) });
+  }
+
+  beginWeaponSkillPreview(slot: WeaponSkillSlot, point: Vec, view: Pick<WeaponSkillView, 'range' | 'radius' | 'aim'>): boolean {
+    if (!this.accepts() || !this.isTerritory() || !finite(point) || this.weaponSkillPreview || this.cannonOwner || this.skillPreview || this.guide || this.chargeOwner) return false;
+    this.weaponSkillPreview = { slot, aim: { mode: 'world', point: { ...point } }, cancelled: false,
+      range: view.range, radius: view.radius, aimMode: view.aim };
+    return true;
+  }
+
   /** Cannon and garrison aim never replace the held primary weapon's aim. */
   queueScanAt(aim: Vec): void { if (this.accepts() && finite(aim)) this.scanCommand = { ...aim }; }
 
-  beginTouchCannon(aim: Vec, origin: Vec, range = 1100, radius = 240): void {
-    if (!this.accepts() || this.cannonOwner || !finite(aim) || !finite(origin)) return;
+  beginTouchCannon(aim: Vec, origin: Vec, range = 1100, radius = 240): boolean {
+    if (!this.accepts() || this.cannonOwner || this.weaponSkillPreview || this.skillPreview || this.guide || this.chargeOwner || !finite(aim) || !finite(origin) || !this.cannonUsable()) return false;
+    const view = territoryCannonView(this.gameState!());
     this.cannonOwner = 'touch'; this.cannonPressed = true; this.cannonPreviewCancelled = false; this.cannonCancelled = false; this.cannonReleased = false;
-    this.cannonAim = { ...aim }; this.cannonOrigin = { ...origin }; this.cannonRange = range; this.cannonRadius = radius;
+    this.cannonBuildingId = view.buildingId;
+    this.cannonAim = { ...aim }; this.cannonOrigin = { ...view.origin }; this.cannonRange = view.range; this.cannonRadius = view.radius;
+    return true;
   }
   updateTouchCannon(aim: Vec, cancelled = false): void {
     if (this.cannonOwner !== 'touch') return;
@@ -179,6 +215,7 @@ export class Controller {
   }
   private endCannon(cancelled: boolean): void {
     if (!this.cannonOwner) return;
+    if (this.gameState && !this.cannonUsable()) cancelled = true;
     // Rendering may have moved the camera since the last fixed step. Release
     // the last displayed ground marker instead of remapping an old pointer.
     if (!cancelled && this.cannonOwner === 'keyboard' && this.cannonDisplayAim) this.cannonAim = { ...this.cannonDisplayAim };
@@ -188,8 +225,17 @@ export class Controller {
     this.cannonPreviewCancelled = false;
   }
 
+  private cannonUsable(snapshot?: TouchState): boolean {
+    const state = this.gameState?.() ?? snapshot;
+    if (!state?.territory) return false;
+    const game = state as GameState, view = territoryCannonView(game);
+    return game.phase === 'playing' && game.player.hp > 0 && game.tissue.hp > 0
+      && game.territory?.stage !== 'victory' && view.exists && view.enabled && view.nearby && view.ready && !view.airborne
+      && (!(this.cannonOwner || this.cannonReleased) || !this.cannonBuildingId || this.cannonBuildingId === view.buildingId);
+  }
+
   beginTouchCharge(state: AimState, aim: Vec): void {
-    this.chargeEnabled = !!state.endless;
+    this.chargeEnabled = !!state.endless && !state.territory;
     if (!this.accepts() || !this.chargeEnabled || this.chargeOwner || !finite(aim)) return;
     this.chargeOwner = 'touch'; this.chargePressed = true; this.chargeAim = { ...aim };
     this.chargePreviewCancelled = false; this.actions.add('dash');
@@ -266,7 +312,6 @@ export class Controller {
     if (!this.accepts()) return;
     if (kind === 'scan' && this.territoryMode) { this.actions.add('scan'); return; }
     if (!finite(point)) return;
-    if (kind === 3 && this.territoryMode) { this.actions.add('territory'); return; }
     if (!(kind === 'scan' && this.territoryMode)) this.endCharge(true);
     this.skillPreview = { kind, aim: { mode: 'world', point: { ...point } }, cancelled: false };
     if (kind === 'scan' && this.territoryMode) return;
@@ -279,15 +324,19 @@ export class Controller {
   }
 
   setSkillPreviewVector(vector: Vec): void {
-    if (this.accepts() && this.skillPreview && finite(vector)) this.skillPreview.aim = { mode: 'stick', vector: { ...vector } };
+    if (!this.accepts() || !finite(vector)) return;
+    if (this.weaponSkillPreview) this.weaponSkillPreview.aim = { mode: 'stick', vector: { ...vector } };
+    else if (this.skillPreview) this.skillPreview.aim = { mode: 'stick', vector: { ...vector } };
   }
 
   setSkillPreviewPoint(point: Vec): void {
-    if (this.accepts() && this.skillPreview && finite(point)) this.skillPreview.aim = { mode: 'world', point: { ...point } };
+    if (!this.accepts() || !finite(point)) return;
+    if (this.weaponSkillPreview) this.weaponSkillPreview.aim = { mode: 'world', point: { ...point } };
+    else if (this.skillPreview) this.skillPreview.aim = { mode: 'world', point: { ...point } };
   }
 
-  setSkillCancelled(cancelled: boolean): void { if (this.skillPreview) this.skillPreview.cancelled = cancelled; }
-  cancelSkillPreview(): void { this.skillPreview = undefined; }
+  setSkillCancelled(cancelled: boolean): void { if (this.weaponSkillPreview) this.weaponSkillPreview.cancelled = cancelled; else if (this.skillPreview) this.skillPreview.cancelled = cancelled; }
+  cancelSkillPreview(): void { this.weaponSkillPreview = undefined; this.skillPreview = undefined; }
 
   private skillRange(kind: SkillKind): number { return kind === 2 ? TRACTION_BALANCE.range : kind === 3 ? BALANCE.range : BALANCE.scanRadius; }
 
@@ -300,13 +349,15 @@ export class Controller {
   }
 
   resolvePreview(state: TouchState, screenToWorld: ScreenToWorld): SkillPresentation | undefined {
+    if (this.cannonOwner && !this.cannonUsable(state)) { this.endCannon(true); return; }
+    const cannonState = this.gameState?.() ?? state as GameState;
     if (this.cannonOwner === 'keyboard' && state.territory) {
-      const cannon = territoryCannonView(state as GameState);
+      const cannon = territoryCannonView(cannonState);
       // A stationary mouse owns a world target while the remote camera pulls
       // back. Only a real pointer movement may retarget the held cannon.
       const moved = !this.cannonPointer || this.pointer.x !== this.cannonPointer.x || this.pointer.y !== this.cannonPointer.y;
       const aim = this.cannonDisplayAim && !moved ? this.cannonDisplayAim : this.getAim(state, screenToWorld);
-      const acceptedAim = territoryCannonAim(state as GameState, aim), displayAim = acceptedAim ?? aim;
+      const acceptedAim = territoryCannonAim(cannonState, aim), displayAim = acceptedAim ?? aim;
       this.cannonDisplayAim = { ...displayAim };
       this.cannonPointer = { ...this.pointer };
       return { kind: 'cannon', aim: displayAim, origin: { ...cannon.origin },
@@ -314,13 +365,22 @@ export class Controller {
         cancelled: !acceptedAim || !cannon.nearby || !cannon.ready, phase: 'preview' };
     }
     if (this.cannonOwner === 'touch' && this.cannonAim) {
-      const acceptedAim = territoryCannonAim(state as GameState, this.cannonAim);
+      const acceptedAim = territoryCannonAim(cannonState, this.cannonAim);
       return { kind: 'cannon', aim: acceptedAim ?? { ...this.cannonAim },
       origin: this.cannonOrigin && { ...this.cannonOrigin }, range: this.cannonRange, radius: this.cannonRadius,
       valid: !!acceptedAim, hint: acceptedAim ? '松手弹射 · 落地冲击清群' : '落点受阻 · 调整方向',
       cancelled: this.cannonPreviewCancelled || !acceptedAim, phase: 'preview' };
     }
     if (this.chargeOwner === 'touch' && this.chargeAim) return { kind: 'charge', aim: { ...this.chargeAim }, range: 650, cancelled: this.chargePreviewCancelled, phase: 'preview' };
+    const weapon = this.weaponSkillPreview;
+    if (weapon) {
+      let point = weapon.aimMode === 'self' ? { x: state.player.x, y: state.player.y }
+        : weapon.aim.mode === 'world' ? { ...weapon.aim.point } : this.resolveVector(weapon.aim.vector, weapon.range, state, screenToWorld);
+      const dx = point.x - state.player.x, dy = point.y - state.player.y, length = Math.hypot(dx, dy);
+      if (weapon.range > 0 && length > weapon.range) point = { x: state.player.x + dx / length * weapon.range, y: state.player.y + dy / length * weapon.range };
+      return { kind: 'weapon', weaponSlot: weapon.slot, aim: point, range: weapon.range, radius: weapon.radius,
+        cancelled: weapon.cancelled, phase: 'preview' };
+    }
     const preview = this.skillPreview;
     if (preview) return { kind: preview.kind, aim: preview.aim.mode === 'world' ? { ...preview.aim.point }
       : this.resolveVector(preview.aim.vector, this.skillRange(preview.kind), state, screenToWorld),
@@ -332,14 +392,18 @@ export class Controller {
   getPresentation(state: TouchState, screenToWorld: ScreenToWorld): TouchPresentation {
     this.syncSkillGuide(state);
     const preview = this.resolvePreview(state, screenToWorld);
-    const independent = preview?.kind === 'cannon' || preview?.kind === 'scan' && !!state.territory;
-    return { aim: !independent && preview ? preview.aim : this.getAim(state, screenToWorld), tool: typeof preview?.kind === 'number' ? preview.kind : state.tool, preview };
+    const independent = preview?.kind === 'weapon' || preview?.kind === 'cannon' || preview?.kind === 'scan' && !!state.territory;
+    return { aim: !independent && preview ? preview.aim : this.getAim(state, screenToWorld), tool: state.territory ? 1 : typeof preview?.kind === 'number' ? preview.kind : state.tool, preview };
   }
 
   commitSkillPreview(state: TouchState, screenToWorld: ScreenToWorld): void {
     if (!this.accepts()) return;
     const preview = this.resolvePreview(state, screenToWorld);
-    if (!this.skillPreview || !preview || preview.kind === 'charge' || preview.kind === 'cannon' || preview.cancelled) { this.cancelSkillPreview(); return; }
+    if (this.weaponSkillPreview) {
+      if (preview?.kind === 'weapon' && !preview.cancelled) this.queueWeaponSkill(this.weaponSkillPreview.slot, preview.aim);
+      this.weaponSkillPreview = undefined; return;
+    }
+    if (!this.skillPreview || !preview || preview.kind === 'charge' || preview.kind === 'cannon' || preview.kind === 'weapon' || preview.cancelled) { this.cancelSkillPreview(); return; }
     if (preview.kind === 'scan' && this.territoryMode) {
       this.queueScanAt(preview.aim); this.skillPreview = undefined; return;
     }
@@ -382,8 +446,8 @@ export class Controller {
   getAim(state: AimState, screenToWorld: ScreenToWorld): Vec {
     this.airborne = !!state.playerFlight;
     this.setTerritoryMode(!!state.territory);
-    this.chargeEnabled = !!state.endless;
-    if (this.tool === undefined) this.activeTool = state.tool;
+    this.chargeEnabled = !!state.endless && !state.territory;
+    if (this.tool === undefined) this.activeTool = state.territory ? 1 : state.tool;
     let aim: Vec;
     if (this.aimSource === 'stick') {
       aim = this.resolveVector(this.touchAim, this.touchAimRange, state, screenToWorld);
@@ -399,12 +463,13 @@ export class Controller {
     this.endCharge(true);
     this.chargePressed = false; this.chargeReleased = false; this.chargeAim = undefined;
     this.endCannon(true); this.cannonPressed = false; this.cannonReleased = false;
-    this.cannonAim = undefined; this.cannonDisplayAim = undefined; this.cannonPointer = undefined; this.cannonOrigin = undefined; this.scanCommand = undefined;
+    this.cannonAim = undefined; this.cannonDisplayAim = undefined; this.cannonPointer = undefined; this.cannonOrigin = undefined; this.cannonBuildingId = undefined; this.scanCommand = undefined;
     const mousePointer = this.mousePointer; this.mousePointer = undefined;
     this.keys.clear(); this.pressed.clear(); this.actions.clear(); this.practiceHit = false; this.tool = undefined;
     this.mouseHeld = false; this.mouseBlocked = false; this.castHeld = false; this.castBlocked = false; this.mousePressed = false; this.castStep = false;
     this.castEdges = []; this.releaseBarrier = true;
     this.attackHeld = false; this.attackPressed = false; this.attackBlocked = false; this.skillPreview = undefined; this.skillCommands = []; this.skillRelease = undefined; this.guide = undefined;
+    this.weaponSkillPreview = undefined; this.weaponSkillCommands = [];
     this.touchMove = { x: 0, y: 0 }; this.touchAim = { x: 0, y: 0 };
     this.touchAimRange = TOUCH_AIM.range; this.touchAimAutoFire = true;
     this.aimSource = 'mouse'; this.worldAim = undefined; this.lastAim = undefined;
@@ -414,6 +479,9 @@ export class Controller {
 
   frame(aim: Vec): InputFrame {
     if (!this.accepts()) return { moveX: 0, moveY: 0, aim, fire: false };
+    if ((this.cannonOwner || this.cannonReleased) && this.gameState && !this.cannonUsable()) {
+      this.endCannon(true); this.cannonReleased = false; this.cannonPressed = false; this.cannonCancelled = true;
+    }
     if (this.cannonOwner === 'keyboard') this.cannonAim = { ...aim };
     let fire: boolean;
     let atomic: Partial<InputFrame> | undefined;
@@ -456,7 +524,12 @@ export class Controller {
       ...(this.scanCommand ? { scanAim: { ...this.scanCommand } } : {}),
       interact: !this.territoryMode && this.pressed.has('KeyE') || this.actions.has('interact'), practiceHit: this.practiceHit,
       antibody: this.pressed.has('KeyR') || this.actions.has('antibody'),
-      territoryAction: this.territoryMode && this.actions.has('territory'), ...atomic, ...charge, ...cannon };
+      territoryAction: this.territoryMode && (this.pressed.has('KeyF') || this.actions.has('territory')), ...atomic, ...charge, ...cannon };
+    if (this.territoryMode) {
+      frame.tool = 1;
+      const command = this.weaponSkillCommands.shift();
+      if (command) (frame as InputFrame).weaponSkill = { slot: command.slot, aim: { ...(command.aim ?? aim) } };
+    }
     this.chargePressed = false; this.chargeReleased = false; this.chargeCancelled = false;
     this.cannonPressed = false; this.cannonReleased = false; this.cannonCancelled = false; this.scanCommand = undefined;
     this.pressed.clear(); this.actions.clear(); this.tool = undefined; this.practiceHit = false; return frame;

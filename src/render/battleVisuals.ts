@@ -493,6 +493,7 @@ function drawMotherCoreLocalAccents(ctx: CanvasRenderingContext2D, target: Targe
 export function drawMotherCoreDangers(ctx: CanvasRenderingContext2D, state: GameState, combat: MotherCoreState, labels?: SceneLabelSink): void {
   const attack = combat.attack;
   if (!attack || combat.organId !== state.battle?.organId || attack.resolveAt <= state.elapsed) return;
+  if (attack.kind === 'heart-pulse') return; // Expedition owns the exact expanding ring and safe gap.
   const remaining = attack.resolveAt - state.elapsed, duration = attack.resolveAt - attack.startedAt;
   const progress = Math.max(0, Math.min(1, (state.elapsed - attack.startedAt) / duration));
   const caption = (value: string, anchor: Vec, offset: Vec, color: string, size = 11) => {
@@ -515,7 +516,9 @@ export function drawMotherCoreDangers(ctx: CanvasRenderingContext2D, state: Game
       const distance = Math.min(attack.range, wallHit(attack.origin, direction, attack.range, activeWorld(state)) ?? attack.range);
       ctx.lineTo(attack.origin.x + direction.x * distance, attack.origin.y + direction.y * distance);
     }
-    ctx.closePath(); ctx.fillStyle = '#b7818528'; ctx.fill(); ctx.strokeStyle = '#825365'; ctx.stroke();
+    ctx.closePath();
+    ctx.fillStyle = combat.heartExpedition ? '#b05a7938' : '#b7818528'; ctx.fill();
+    ctx.strokeStyle = combat.heartExpedition ? '#a34368' : '#825365'; ctx.lineWidth = combat.heartExpedition ? 3 : 2; ctx.stroke();
     for (let i = 1; i <= 3; i++) {
       const radius = attack.range * i / 4, x = attack.origin.x + Math.cos(attack.angle) * radius, y = attack.origin.y + Math.sin(attack.angle) * radius;
       const block = wallHit(attack.origin, { x: Math.cos(attack.angle), y: Math.sin(attack.angle) }, radius, activeWorld(state));
@@ -545,7 +548,9 @@ export function drawMotherCoreDangers(ctx: CanvasRenderingContext2D, state: Game
     // Round warnings put their text just outside the actual impact/landing
     // radius, rather than inside the protected player or mother-core body.
     const offset = { x: 0, y: attack.kind === 'crystal-sweep' ? -32 : attack.radius + 24 };
-    caption(`${attack.kind === 'brood' ? '⋈ 有限分裂' : attack.kind === 'crystal-sweep' ? '◇ 晶壳横扫' : '⋈ 裂殖爆发'} ${remaining.toFixed(1)}s`, anchor, offset, '#ffe6b4', 11);
+    const name = attack.kind === 'brood' ? '⋈ 有限分裂'
+      : attack.kind === 'crystal-sweep' ? combat.heartExpedition ? '冲刷将至 · 侧移' : '◇ 晶壳横扫' : '⋈ 裂殖爆发';
+    caption(`${name} ${remaining.toFixed(1)}s`, anchor, offset, '#ffe6b4', 11);
   }
   ctx.restore();
 }
@@ -591,21 +596,25 @@ export function drawBattleLabels(ctx: CanvasRenderingContext2D, state: GameState
   if (labels) {
     for (const target of targets) {
       const full = target.role === 'source' || target.role === 'elite' || target.role === 'core' || target.role === 'nest', focused = aimed(target);
-      const tacticName = target.profession === 'slime-caster' ? '黏液法师' : target.profession === 'nest-builder' ? '筑巢者'
+      const tacticName = target.profession === 'ritual-mother' ? '仪式母体' : target.profession === 'ritual-priest' ? '祭司' : target.profession === 'slime-caster' ? '黏液法师' : target.profession === 'nest-builder' ? '筑巢者'
         : target.profession === 'fastling' && focused ? '高速幼体' : target.tactic && target.tactic !== 'melee' ? ENEMY_TACTIC_INFO[target.tactic].name : '';
       const exposed = (target.exposedUntil ?? 0) > time;
       const traced = state.growth?.marks.some(mark => mark.targetId === target.id && mark.organId === state.battle?.organId && mark.until > time) ?? false;
       const mimic = target.traits?.includes('MIMIC') && (target.revealedUntil ?? 0) <= time && state.scanUntil <= time && !exposed && !traced;
       if (mimic) continue;
       if (full || tacticName || focused || exposed) reserveTargetFeatures(labels, target, state);
-      const bar = full || !!tacticName || focused || target.hitUntil > time, symbols = target.traits?.map(id => TRAIT_SYMBOL[id]).join('') ?? '';
+      const bar = full || !!tacticName || focused || target.hp < target.maxHp || target.hitUntil > time, symbols = target.traits?.map(id => TRAIT_SYMBOL[id]).join('') ?? '';
       if (!full && !bar && (!symbols || !target.scanned)) continue;
       const role = target.role === 'nest' ? '小母巢' : target.role === 'core' ? '母巢' : target.role === 'elite' ? '精英' : '感染源';
       const name = full ? `${role}${tacticName ? ' · ' + tacticName : target.traits?.length ? ' · ' + target.traits.map(id => TRAIT_NAME[id]).join('·') : ''}` : tacticName || symbols;
       const baseY = -target.radius * 1.96 - (target.role === 'elite' || target.role === 'core' ? 17 : 7);
+      const casting = state.smartViruses?.ritual?.projectiles.some(projectile => projectile.actorId === target.id && projectile.phase === 'charging')
+        || state.smartViruses?.slime.some(cast => cast.actorId === target.id && cast.phase === 'windup');
+      const essential = !state.territory ? bar || exposed
+        : focused || exposed || target.hitUntil > time || !!casting || target.role === 'core';
       labels.add({ id: `target:${target.id}`, anchor: { x: target.x, y: target.y }, offset: { x: 0, y: baseY - 7 },
         priority: focused || exposed ? 90 : target.role === 'core' ? 85 : target.role === 'elite' ? 80 : target.role === 'source' || tacticName ? 70 : bar ? 65 : 35,
-        essential: bar || exposed, lines: name ? [{ text: name, color: full ? '#f4dcc2' : '#e6d0b9', size: full ? 10 : 11 }] : [],
+        essential, lines: name ? [{ text: name, color: full ? '#f4dcc2' : '#e6d0b9', size: full ? 10 : 11 }] : [],
         ...(bar ? { bar: { ratio: target.hp / target.maxHp, color: exposed ? '#ffe4a1' : '#f2bd9c', width: target.radius * 2 } } : {}) });
     }
     const groups: Target[][] = [];
@@ -623,7 +632,7 @@ export function drawBattleLabels(ctx: CanvasRenderingContext2D, state: GameState
   const occupied: LabelBox[] = [];
   for (const target of targets) {
     const full = target.role === 'source' || target.role === 'elite' || target.role === 'core' || target.role === 'nest';
-    const tacticName = target.profession === 'slime-caster' ? '黏液法师' : target.profession === 'nest-builder' ? '筑巢者'
+    const tacticName = target.profession === 'ritual-mother' ? '仪式母体' : target.profession === 'ritual-priest' ? '祭司' : target.profession === 'slime-caster' ? '黏液法师' : target.profession === 'nest-builder' ? '筑巢者'
       : target.profession === 'fastling' && aimed(target) ? '高速幼体' : target.tactic && target.tactic !== 'melee' ? ENEMY_TACTIC_INFO[target.tactic].name : '';
     const exposed = (target.exposedUntil ?? 0) > time;
     const traced = state.growth?.marks.some(mark => mark.targetId === target.id && mark.organId === state.battle?.organId && mark.until > time) ?? false;

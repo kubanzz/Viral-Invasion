@@ -12,6 +12,8 @@ import type { PlayerProjectile } from './playerProjectiles';
 import type { PlayerInfection, TerritoryNodeId, TerritorySourceId, TerritoryState } from './territoryTypes';
 import type { TerritoryPlayerFlight } from './territoryCannon';
 import type { SmartProfession, SmartVirusState } from './smartVirusesTypes';
+import type { BossLoot, ExpeditionLoadout } from './expedition';
+import type { WeaponCombatState } from './weaponSkillsTypes';
 export interface Vec { x: number; y: number }
 export interface WorldGeometry {
   width: number; height: number;
@@ -88,8 +90,12 @@ export interface GameState {
   playerInfection?: PlayerInfection | null;
   playerFlight?: TerritoryPlayerFlight;
   smartViruses?: SmartVirusState;
+  expedition?: { runId: string; loadout: ExpeditionLoadout; firstClear: boolean; pendingLoot?: BossLoot; lootCollected?: boolean; lootPosition?: Vec };
+  camp?: { introSeconds: number; introComplete: boolean };
   hostEvents?: HostEventState;
   playerProjectiles?: PlayerProjectile[];
+  weaponCombat?: WeaponCombatState;
+  repairReadyAt?: number;
   chargedSlash?: { startedAt: number; aim: Vec; fullNotified?: boolean; releasedAt?: number };
   chargedSlashReadyAt?: number;
   /** One accepted sweep per real dash; a high-rank return is a finite commitment. */
@@ -101,6 +107,7 @@ export interface GameState {
   runMetrics?: RunMetrics;
 }
 export interface InputFrame { moveX: number; moveY: number; aim: Vec; fire: boolean; tool?: Tool; scan?: boolean; scanAim?: Vec; dash?: boolean; interact?: boolean; practiceHit?: boolean; antibody?: boolean; territoryAction?: boolean;
+  weaponSkill?: { slot: import('./weaponSkillsTypes').WeaponSkillSlot; aim: Vec };
   cannonPressed?: boolean; cannonHeld?: boolean; cannonReleased?: boolean; cannonCancelled?: boolean; cannonAim?: Vec;
   chargePressed?: boolean; chargeHeld?: boolean; chargeReleased?: boolean; chargeCancelled?: boolean; chargeAim?: Vec }
 export const WORLD = { width: 1200, height: 800, bounds: { left: 65, right: 1135, top: 110, bottom: 735 }, obstacles: [{ id: 'fold-a', x: 440, y: 295, radius: 47 }, { id: 'fold-b', x: 1005, y: 575, radius: 53 }], foreground: { x: 155, y: 550, width: 190, height: 125 } } as const;

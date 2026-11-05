@@ -1,0 +1,4561 @@
+{
+  "game": "viral-invasion",
+  "version": "0.15.1",
+  "stage": "G4",
+  "format": "iife",
+  "browserTargets": [
+    "chrome110",
+    "edge110",
+    "safari17.6"
+  ],
+  "engine": {
+    "name": "Phaser",
+    "version": "4.2.1"
+  },
+  "art": {
+    "schemaVersion": 1,
+    "inputSignature": "dc023cfd48318188b1f94a0a667f2bf82617935da92b8bd2cc2daf041cefb541",
+    "selectionSha256": "a70cd7fa366ae5c87d884f52352c1e2d8075df24ede1df95b33e0f2dfc38ed54",
+    "pipelineSha256": "9a32de20f60a017c6e46b934bfcf28cae66f0ef96ad35f2a537055e545804558",
+    "selectedSourceCount": 286,
+    "spriteIdCount": 278,
+    "environmentCount": 8,
+    "runtimeBytes": 17062357,
+    "atlases": [
+      {
+        "key": "viral-art-0",
+        "w": 1944,
+        "h": 1692,
+        "bytes": 2041182,
+        "sha256": "850a4a2405d8662daaa336cce2d0964e223cc1b43df60fe1ed342326eea01b85"
+      },
+      {
+        "key": "viral-art-1",
+        "w": 1948,
+        "h": 1984,
+        "bytes": 2140179,
+        "sha256": "9b1415936aeb782f0bfc0942017384508ded7c5be65e2299707c5e4d995d63cc"
+      },
+      {
+        "key": "viral-art-2",
+        "w": 1824,
+        "h": 1992,
+        "bytes": 2022422,
+        "sha256": "6d4623a7e68020b97cb71e01ee0ae3ac76886e44ae8750e4d0726da5fe7e4724"
+      },
+      {
+        "key": "viral-art-3",
+        "w": 1956,
+        "h": 1992,
+        "bytes": 2306526,
+        "sha256": "dd4e04cf9e7b1c5648a6f07f76ba26db1c4f687f4778b7903ec7ce603f98c279"
+      },
+      {
+        "key": "viral-art-4",
+        "w": 1964,
+        "h": 1948,
+        "bytes": 2002721,
+        "sha256": "5e78e49dee04f3acd9af49a721d5989534508a3d3a2c672a7b852d3e1f4d4c6e"
+      },
+      {
+        "key": "viral-art-5",
+        "w": 1964,
+        "h": 652,
+        "bytes": 527139,
+        "sha256": "edba29da4e78bfc96d85945dec5cff6d0b58bc4f1b9ac5252d9b6ab719c45a57"
+      }
+    ],
+    "environments": {
+      "fantasy.lung.floor.infected": {
+        "width": 512,
+        "height": 512,
+        "bytes": 263789,
+        "sha256": "d77feca010880423202b347e856ab5f9fcdb5ac3baf3dc765b856bc905add71c"
+      },
+      "fantasy.lung.floor.healthy": {
+        "width": 512,
+        "height": 512,
+        "bytes": 249122,
+        "sha256": "f070f94c826ca4e2a139e31fc815b54f87cb31a319b8e7e18853418ad72925a6"
+      },
+      "fantasy.floor.infected": {
+        "width": 512,
+        "height": 512,
+        "bytes": 262484,
+        "sha256": "18fe1bb89ccf8ed965dd90ac928628cec1118a9758deaf17abbb889c66460d48"
+      },
+      "fantasy.floor.healthy": {
+        "width": 512,
+        "height": 512,
+        "bytes": 260912,
+        "sha256": "133abbbd114e5c526de3a867934bb54c9f7f636cc8031741fca7d1c846b8a186"
+      },
+      "fantasy.infection.edge.b": {
+        "width": 384,
+        "height": 384,
+        "bytes": 19290,
+        "sha256": "f1a4e899631eb50a225222a589a0083e7cff7705c8b6a6e0bd7816d4a6876700"
+      },
+      "fantasy.infection.patch.a": {
+        "width": 384,
+        "height": 384,
+        "bytes": 130607,
+        "sha256": "16c6ce37af1229bc88aed02c53722b3e6c15ecc7ac688d9d88529f38c7bb0299"
+      },
+      "fantasy.infection.patch.b": {
+        "width": 384,
+        "height": 384,
+        "bytes": 98903,
+        "sha256": "e68f5df44ddb1d40305b8c453baf2175d6dd95d1419d2f27650e2b683349f3a0"
+      },
+      "fantasy.infection.edge.a": {
+        "width": 384,
+        "height": 384,
+        "bytes": 18940,
+        "sha256": "4130a651bdf499572b3468dd64767afc9dcdf204b443b81873333b69a4798732"
+      }
+    },
+    "pendingAssetCount": 286,
+    "unreviewedCandidateCount": 1433,
+    "embedding": "PNG data URIs in classic game.js; no external asset paths or image fetches"
+  },
+  "sourceManifest": {
+    ".art-generated/art-runtime.json": "263f6c7e5091e9682d33d4aed4de2a1ba4a66b79cc37b9df38f0f154b0fb4eff",
+    "Docs/ViralInvasion_Mobile_Playtest.md": "178ae4cf0670962bc4ce6c2cd05bbeb8336eebea3abc2ce1bc7b3fdad5a04ae9",
+    "asserts/ViralInvasion_Expedition_v1/basePod/fixed/construction/00.png": "7dad03d82e39428fdbf542a8bd2da98bbb6d49b6287c12879be244fa94f3e5f3",
+    "asserts/ViralInvasion_Expedition_v1/basePod/fixed/construction/01.png": "5de602dbb48873af585883384e14b270c8c80165187b2002c8afe393005780cd",
+    "asserts/ViralInvasion_Expedition_v1/basePod/fixed/construction/02.png": "a3ad4838fb96a813a09aee42995d833999c188a6e8f28d9b6060ae6a79f62119",
+    "asserts/ViralInvasion_Expedition_v1/basePod/fixed/fire/00.png": "93160a9c4bc5ff4cf2a10fa79b4b8508332c98ec70841fa46dfa15aed1a00ce6",
+    "asserts/ViralInvasion_Expedition_v1/basePod/fixed/fire/01.png": "56fb9de493f1b1bd9343988c02ba3c1f9b67b54dc8ed5b5c67fd85e8584084cc",
+    "asserts/ViralInvasion_Expedition_v1/basePod/fixed/fire/02.png": "a3ad4838fb96a813a09aee42995d833999c188a6e8f28d9b6060ae6a79f62119",
+    "asserts/ViralInvasion_Expedition_v1/basePod/fixed/load/00.png": "67856dd93772e10a3aa6bb5187a34519a31e21467661ef95444dd38553372435",
+    "asserts/ViralInvasion_Expedition_v1/basePod/fixed/load/01.png": "1107bbb9645185e9894aec3635aca970434ff47e0adb893fd9c719a586fc5a32",
+    "asserts/ViralInvasion_Expedition_v1/basePod/fixed/ready/00.png": "492dccfcaf2739164711af71db9b115496473ab4971e4d776f29d71e31967fee",
+    "asserts/ViralInvasion_Expedition_v1/basePod/fixed/ready/01.png": "053f1b44e07910918726aedd4751b7f1da3bcf1040ca1be8bf8095e30c4ad519",
+    "asserts/ViralInvasion_Expedition_v1/blueprintBasePod/fixed/ready/00.png": "37d60a567c61514a4f393ecb3a637a70f5ca09c0d8779e76a0fa04633bc81728",
+    "asserts/ViralInvasion_Expedition_v1/blueprintRapidPod/fixed/ready/00.png": "013488a3597eeaf04da532cbd9904585c0a8dc5e08c63b01f73f4f412a72d819",
+    "asserts/ViralInvasion_Expedition_v1/campForge/fixed/construction/00.png": "2b31a724824e88f277aa3b55fdcd70f6fd7c1ac03dededca53cc7eac703dee95",
+    "asserts/ViralInvasion_Expedition_v1/campForge/fixed/ready/00.png": "24f659019803a78c1e1ed465ac77c80cacefc62105fb73eb394ae2185dfa37d8",
+    "asserts/ViralInvasion_Expedition_v1/campSortie/fixed/construction/00.png": "e88cea4bd35e000e40b5b2103493b99cd90b277c848b8b66c47174f039194995",
+    "asserts/ViralInvasion_Expedition_v1/campSortie/fixed/ready/00.png": "7a15df327b02f97b66e3513ca81badcf543fb592d17ffc568005a6670573b7ba",
+    "asserts/ViralInvasion_Expedition_v1/campSupply/fixed/construction/00.png": "1eb72ec9e421f5a30667a6bb6ffb50b7c137765ed06ce3bb60cc4510c8afc326",
+    "asserts/ViralInvasion_Expedition_v1/campSupply/fixed/ready/00.png": "134e81da0c09251e5a2172762b9cfad5b061b4939956ed7ea95749e0cc2df3e8",
+    "asserts/ViralInvasion_Expedition_v1/campTentWarehouse/fixed/construction/00.png": "6e7193d8848b8eeac4547e279a1872e9ca1cf502d435d98aeae52b741de58ebc",
+    "asserts/ViralInvasion_Expedition_v1/campTentWarehouse/fixed/ready/00.png": "7ae026c57e68c94a18fbed40b0c36b93db01c9d4d9071eaa6a8e8c890f525d54",
+    "asserts/ViralInvasion_Expedition_v1/heartDevourer/fixed/idle/00.png": "2fc9e38ac28032b84a6df4871df25bc091ff989cef465e93872e1ded7b315767",
+    "asserts/ViralInvasion_Expedition_v1/heartDevourer/fixed/idle/01.png": "c34e8224d4780e6357a48466fda2232e57b5161b0a3c8366708e91bcba8fc895",
+    "asserts/ViralInvasion_Expedition_v1/heartDevourer/fixed/phase2/00.png": "b3b4e7e5fdb6175c1bf72fe0a8deb009318024586d50057db0e7b3eba8f56142",
+    "asserts/ViralInvasion_Expedition_v1/heartDevourer/fixed/phase2/01.png": "372021136a4f68e88e03a67e880fc0dbe2ab88a87fae0eb5f0ee1f124ed881a3",
+    "asserts/ViralInvasion_Expedition_v1/heartDevourer/fixed/recovery/00.png": "01cc34947f55f4ad9c8808945f54adb8ceff6b2db0d530a29f96b0f43e96161f",
+    "asserts/ViralInvasion_Expedition_v1/heartDevourer/fixed/recovery/01.png": "e06b809d859a139c314d9a9766a808412c2c332cc1e6f93491708d0b606eb9d4",
+    "asserts/ViralInvasion_Expedition_v1/heartDevourer/fixed/windup/00.png": "34c16fa80ebbd8f307822a0c11351745a535ef8b911ca1b6ff966bde0af2ca5e",
+    "asserts/ViralInvasion_Expedition_v1/heartDevourer/fixed/windup/01.png": "fdc342769255e1d1e414e335e52b4fc56ccdf92c028c1037a768da9e4178381c",
+    "asserts/ViralInvasion_Expedition_v1/iconPiercingPulseGun/fixed/broken/00.png": "c426955c95f09fa90de9889ec65cd2db84763447d9da7fe2a277c88ef3198b5d",
+    "asserts/ViralInvasion_Expedition_v1/iconPiercingPulseGun/fixed/normal/00.png": "80025522081688ed9f8cfa28698ed83f6fbdfcf77c6e09001e71e0409009ca4f",
+    "asserts/ViralInvasion_Expedition_v1/iconSteadyFlowGun/fixed/broken/00.png": "732673173087211b77f3a677b1bc7f5eb2005940a619a3888ecba4b1fb585125",
+    "asserts/ViralInvasion_Expedition_v1/iconSteadyFlowGun/fixed/normal/00.png": "35ad7d2410a2b2be09c6c85663b5608bdb106bc7a704c1b9e3627fea296f8a40",
+    "asserts/ViralInvasion_Expedition_v1/lootBag/fixed/ready/00.png": "a60b2ad5eee7b65e2af3aec2b6e03fc96aa913608c46344d9548ee8eb519afc9",
+    "asserts/ViralInvasion_Expedition_v1/rapidPod/fixed/construction/00.png": "5ee44d46a1cddb0b1136daa3ee45a39f3e98f300c8b65e6890e7a3cf12a69088",
+    "asserts/ViralInvasion_Expedition_v1/rapidPod/fixed/construction/01.png": "aa8b1010ea5b94d16102910eaa296da933f4b4d6e5aa22359ddb06252d244472",
+    "asserts/ViralInvasion_Expedition_v1/rapidPod/fixed/construction/02.png": "9c54660b91f5469c32650e64482104f6dd331f38ecedb9316433726fac35356f",
+    "asserts/ViralInvasion_Expedition_v1/rapidPod/fixed/fire/00.png": "5259b7984af40cbad42c09aa8d80cf64a97596e5d75a966f07ef553c34fd9b50",
+    "asserts/ViralInvasion_Expedition_v1/rapidPod/fixed/fire/01.png": "8a289aff8f18619a866c06c1f4642e68ad65952fe607c58161623cc0a2abaa04",
+    "asserts/ViralInvasion_Expedition_v1/rapidPod/fixed/fire/02.png": "9c54660b91f5469c32650e64482104f6dd331f38ecedb9316433726fac35356f",
+    "asserts/ViralInvasion_Expedition_v1/rapidPod/fixed/load/00.png": "afe01390ebd06517b2284a107da7a647ad8b4b62fe43c41a42d489834042a114",
+    "asserts/ViralInvasion_Expedition_v1/rapidPod/fixed/load/01.png": "75dca2ce485affabdd50dc32cbc0c0497816e99d2d6c7814d0dcdd9ca259c839",
+    "asserts/ViralInvasion_Expedition_v1/rapidPod/fixed/ready/00.png": "1b49d71a3915823f4b5e05e634b41c97a93f5730b1bae3bdf8edfd4a99e22a9f",
+    "asserts/ViralInvasion_Expedition_v1/rapidPod/fixed/ready/01.png": "a0b74f9e8dae8db177478a36b437add99cf110bb118e3f37946d0f4f5e2ea8c2",
+    "asserts/ViralInvasion_Expedition_v1/repairBiomass/fixed/ready/00.png": "59064d0f9d25056e0aab94f7568405f732a7b4faddaa96e55d41afe4d1a3bb3a",
+    "asserts/ViralInvasion_Expedition_v1/ritualMatron/fixed/cast/00.png": "d90b5109b3a2a987ca6fae96f89745cc3a0f68c10b27e59f8e2cb2d1450f443f",
+    "asserts/ViralInvasion_Expedition_v1/ritualMatron/fixed/cast/01.png": "950426162c8ee5f7fe47d3c7e72257f1d3eb2fb905fc776e7b467e4da45fd8c0",
+    "asserts/ViralInvasion_Expedition_v1/ritualMatron/fixed/channel/00.png": "8dc4527451375f7a935d5cc2469f7d4bcedf56920f6249eae943a80084652d00",
+    "asserts/ViralInvasion_Expedition_v1/ritualMatron/fixed/channel/01.png": "527c92e607f667f15fff732a9e48347bc475a2ab7582a74d37527176b6407769",
+    "asserts/ViralInvasion_Expedition_v1/ritualMatron/fixed/defeated/00.png": "847e055d45dadf331c118fd73d0379fd296e585c2568c945d52d8fbba8d18f3c",
+    "asserts/ViralInvasion_Expedition_v1/ritualMatron/fixed/defeated/01.png": "4bb29224026c3a9a4a7e1619831c2c4769f0306303c353920f90623d9422e446",
+    "asserts/ViralInvasion_Expedition_v1/ritualMatron/fixed/idle/00.png": "d32bf60c727e71f69210a638a631e9db3bb288f7b07c18d4ba767ddd10972613",
+    "asserts/ViralInvasion_Expedition_v1/ritualMatron/fixed/idle/01.png": "6fd5a8d3a2cafa44f2134f9e751bfb6ba587ffc0099e8bfd15494177206277db",
+    "asserts/ViralInvasion_Expedition_v1/ritualMatron/fixed/windup/00.png": "9735d70135630b0ff1b8933aed233d188953889d4f6cf294637eb602ba9d356a",
+    "asserts/ViralInvasion_Expedition_v1/ritualMatron/fixed/windup/01.png": "e681ca8104becfed54bdb2ee4a47acace93eae10349062f060cce7de0eb6e7f7",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/back_right/cast/00.png": "3b85252e63254dcf77751ef962001eb655c9b27a327613c2afb3a10848cd518f",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/back_right/cast/01.png": "fcf63b32496706a03b6dc5cc29bba0886bf3926a2d902b6baf8e9d688d69f27d",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/back_right/channel/00.png": "e62b7bd926aed5d28ff1dd123366a145bacc984b9f25a955b2781dc79779b1cc",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/back_right/channel/01.png": "176f0809945f1fed9ae648d34b66e60d2be7b369bddce77ff199287802748ef3",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/back_right/defeated/00.png": "4483b29642c676dfd5aed13c60e2ba7e5ff002713f390950f7536a2e40c095d4",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/back_right/defeated/01.png": "5327594fe15b4b4607600afaec8450bf6453e1ef112bad22000ff8192ed73342",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/back_right/idle/00.png": "12be6b2662935a0f51f5e34fa1d9432f21acc0d90802bf674940ac925a1beddf",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/back_right/idle/01.png": "759fa7c60d1415976065b1c507a53ba314f0d3aca0482f804a0ad067dc47ea37",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/back_right/windup/00.png": "b544780d534a0f2bd018a3d000bf9e48fe19d451f3e84e565aa8872db73d00f1",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/back_right/windup/01.png": "81d2cc5bb0fbafa483340e2cc392940865eb3780ed38f02fb24b85304efca9f3",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/front_right/cast/00.png": "5803c41a7fa7bd2f542efcfb30aa195be7e787fff713daf1635814a02b9d07a4",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/front_right/cast/01.png": "812f8c2e74764b670737a84abd18a9da349ccf313fc0c7a903bfc22cf98570fe",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/front_right/channel/00.png": "2c7f1e300247da158374aaee63302a06aa7b0a677e847762d5e8df56c0962876",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/front_right/channel/01.png": "ee929b4562d0dc77995763a74ab08c71f3754b313a8fdcc6deafefa09cd27583",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/front_right/defeated/00.png": "aefc94cbc77e914d713dce52335691a03eb364d032c911543229809981f29e0a",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/front_right/defeated/01.png": "b6e0a37b95ff2f80b87e11de2c6644f47c3fab0cac7489fe8b2bf56413476185",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/front_right/idle/00.png": "eb37aa946409c09e8006ac2aef66c6844f8689aa6c20981850b5d0dcde82a006",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/front_right/idle/01.png": "c3fd0bddbbf739038d6fff8297bfc0d898fad2258149bdc90d43145eec114101",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/front_right/windup/00.png": "2a653a6c8de9e779dfa9b17c20278c34835320c61cf9a483dc8d0ed70035d4d9",
+    "asserts/ViralInvasion_Expedition_v1/ritualPriest/front_right/windup/01.png": "46f4643ece70024432e159e4c3c6886d8a8c133bde07cb596dec4644979410b3",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/addon/spore_crown.png": "c5c19843785aae89471ba47050fdeff14b248516586b0591cee436f93ee1f1ae",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/basic/dissolve/00.png": "888db7798201a512fc51b30af9ee08aa728d1510e65ea41a792ede9ef39f4f68",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/basic/hurt/00.png": "2b62656f8aff4b06fa282869928b263c0d6c67a88787611ab38ec44853b12f75",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/basic/walk/00.png": "c1c58714fc00a54af2806de7e50e3027feaa9eb00abc8ca4876e34835cc2e8cb",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/basic/walk/01.png": "8cd5867ed9c66a229ed393a2f30e0c226f42b46473d847b66ed9b6eed0be78b8",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/basic/walk/02.png": "522d1ff55f602c6c56358dae8c631aa0e8b4acd4aaf3e4cd2b1a6a7ecf8492cb",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/basic/walk/03.png": "1c8279a683c8a3274bd73290105bf6926addfbab3bac9175bf912217daaadac8",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/basic/windup/00.png": "ffc63e9a25edd9828d15eb1cf632f1f927caadfe8afde4be7ff0ea79ab2afc71",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/basic/windup/01.png": "34cb7cf2d340c94e80ed3ff97792288d04c5d6b65670d3d074ce44832f818268",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/carapace/dissolve/00.png": "b933bbeaf85e748be58865a4ac197c05660ffe96e2868a2be4636231841d52ac",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/carapace/hurt/00.png": "dff6c24bf4a3612e7dfb09beb2f526e48322f7edc213c15305356d468a9f6230",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/carapace/walk/00.png": "7a25b562c9cadbe41e1b8847e9610d099427393f24e9774e5f938da9ef15033d",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/carapace/walk/01.png": "def7651ae8731fcc6949499a821dfb898826f4970e32869e14be95be96043bdb",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/carapace/walk/02.png": "934bc88f4d0e20ba8f8fa9a009257f4ceabb1aa681f8fd8fcbc90bc250e097f3",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/carapace/walk/03.png": "a0ef5fbfbcc3fb0829910e529ea2921b7be815f67a267e30e05419ffeef9a50d",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/carapace/windup/00.png": "94b8c98091a0a0d3d1a27e666ff981051c9ef5a9e7d2ea1dc3583b7f4404d0d5",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/carapace/windup/01.png": "dc50af6575f4998ebed4be26fdee2796f5c9f965657c3ed449ba77acf2bfeaf0",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/elite/fungal_horns.png": "b9227be57b66ecba88f5ffa2e8a8ba997115be2ebe5329461183d84e6bd0d2c0",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/fission/child/dissolve/00.png": "f7f678c47267fca5722e78c9ef08b5b6430fc9cfc3f2f3b5ac3da3329edfc4a5",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/fission/child/hurt/00.png": "bf7bb701fc4ad67add5f358cd7d7e5935d823665be49590b6a1282a7bbb5f137",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/fission/child/walk/00.png": "5ebeb2f15271f231f8613cd7146af195147d8d1f3a2440b258f79f4ec225f5eb",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/fission/child/walk/01.png": "bd8b59993247a243e58bf0a912349850e0b133defc98e3380a8bf1d62a447830",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/fission/child/walk/02.png": "09c738a990a1958b19a15e12acb6a1d98ed3bdc0746cedb783b4d153c4d25552",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/fission/child/walk/03.png": "19eb409bcdf429a411cfbe6187e7e4e90e605d44ce86d212b297a5f612fe019e",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/fission/child/windup/00.png": "7582dc29d7003e5c85c82601eab127f47f0ab9c6a0b6326bfa141877474e82b5",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/fission/child/windup/01.png": "16a557c98232bc37d53ea0381f80a79ffb8e603ed1df9a4ffb4c653928f875d4",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/fission/parent/dissolve/00.png": "802503a7d666838f102c08e8eb78aab3c78f27bb15b92f44f224059f9c8a9a54",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/fission/parent/hurt/00.png": "fca127e38c082546222dccb76e220dfacb93a6063044e8945b52375d4f2a8603",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/fission/parent/walk/00.png": "56958454d7d52ad4d3cdec2c18fea1bd22a3f8474743852014843279c035e91e",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/fission/parent/walk/01.png": "861fad0cf50574a963d05c08496ed9143c110a37fe84d3ee9218f50422648379",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/fission/parent/walk/02.png": "60282185eec74854b6773d0c3695bd4b5177c8a2ca8e143ec029da62a74262b2",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/fission/parent/walk/03.png": "baa90100f3940b9e4fabb9ff1adcbf5d8ee86f1625d2f87508fe1a35a76ea760",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/fission/parent/windup/00.png": "e7663441c8061c22fa5bbcf08baa9f560edba8aa6c87386e721e522b29c92ca0",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/fission/parent/windup/01.png": "1868627a3aa867cd26dcb16d744d97ce4d239c6f54f53e0efb06469876d602bc",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/mimic/dissolve/00.png": "fbc652da2e90c8a8b81790dd836e8013bcf915770c2ab520b76f54487fef1ebe",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/mimic/hurt/00.png": "1819ea40525ddcf0e43c2a5204e85720c08e516b7875eedd17f78d9ccaf85492",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/mimic/walk/00.png": "2d765a53f873a432acefd7507feda2ef6655e363d1a28c8815816a8d1e302981",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/mimic/walk/01.png": "0ef79986dc602f28ae5e72a4e5c56f95c849b1526a26704da5c1984f3160b23b",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/mimic/walk/02.png": "09a3007523b2edabce19fa87e37444a88b15a2238848b235dea18e28b8cf5dfd",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/mimic/walk/03.png": "07d9c01a1681861c3583f60c1a98f37d9cf3d600671ebf973fd1f26fd670deb4",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/mimic/windup/00.png": "c4d830aa520d69426097fb378690e3e977896be6154a1d44cc3d948c142764a9",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/mimic/windup/01.png": "42958c508b4d21704b30a6822109b9da0d89807ff774b97710b712c5a8c72a3d",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/thinRay/dissolve/00.png": "5ee676879798cdce024e27a2dec038b753b5b1880c476f17abb1b98c1cd87f93",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/thinRay/hurt/00.png": "2fcd2b1afd3bcda5533bd0e60b15747f394b152ad97d8fa955da65bf1ab7574d",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/thinRay/walk/00.png": "3f3629b31a5e06fd1744bd4a4313c735cad5d74b74e5fd2c056ee4b2ae2e2870",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/thinRay/walk/01.png": "bd01ead9dae702a3592d3a97f6ca273377a8337afc9bd97646a98d3ca253e791",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/thinRay/walk/02.png": "a45483150f430bb3a531ba1e605d5c541b04d4084adad5b8d44418e997b7b3d8",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/thinRay/walk/03.png": "c4da152a74974c4085889ece0c9379a6002db77e8d0a327ec50701e9c9c17248",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/thinRay/windup/00.png": "60281920d4011958ea20e81f5f62716b93c7a40ee1472379e3335c06dae78681",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/enemy/thinRay/windup/01.png": "088ef5ce75fee7abc061396a4e995191e31487146c3298afe7bdbf4359bccbf5",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/back_right/dash/00.png": "bab38b6275a8dc95542da72c2887554f4d22ee3363861de5c8fc2952f73feb08",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/back_right/dash/01.png": "754dfc8b86b10a838ff931c34864e6b284c4d12ed9528a7edc08998c09bf03d8",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/back_right/dash/02.png": "2cbb10f00147042b99b5dec413cac979b68e0459910507326ea48d8da159d8a4",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/back_right/dash/03.png": "81996a60984d91ad527c17c2050155b588b8d5acd38b291d27fc4ad02d5d0650",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/back_right/hurt/00.png": "f3ccf8a19d89630607e8d328d2c37450a528b2ad88e9a3bdcb898c3edb71167c",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/back_right/hurt/01.png": "bae3b99267dae7dfb9c1a80827121998c493030c02dfafd94c781d1c2462e63d",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/back_right/idle/00.png": "3f323ea3005bd36fcca82a9f70e4a39243d47b9e1e31e8fe24606b95ee9eae4d",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/back_right/idle/01.png": "9f2ad7fecf3ccf7fc388fde59e75d43199079d39f8ef3639238d55dde03b5222",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/back_right/idle/02.png": "34b9a73e4e5dbf8d7ebe7e5574cff2971a642764c9fa6b9fe765974170127f16",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/back_right/idle/03.png": "e7be1d89180e296f79bddfc8165380430396744f4d66a053a7be32a8d99ec0a6",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/back_right/walk/00.png": "6f360086748b166826dc50a5956718aae94d1192533b491b9ce72cd20e78197a",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/back_right/walk/01.png": "c0e0d339d36355ec389ac6e31cb0017d0488d4cc06b6fd76f29ddb974dea1bfc",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/back_right/walk/02.png": "dc15de2df3670b280b5ae9204ef82ee6336fd7a400bb6c27f7ff30c035366754",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/back_right/walk/03.png": "7e5bfe924f4df4f630f5be777b4159987d73b39ed3005f2d18b53a5e6e1724dc",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/back_right/walk/04.png": "71766366671f1586d65fcb98d79b94366ff39dae7292a9c0afe47ad8c8c1d77c",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/back_right/walk/05.png": "cb1d9e95760634354f7d6a41beb63f7b7ec88b1252040731cbd73e50c51a92c2",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/back_right/walk/06.png": "2fc34bdd6f49695659b5401a520c3eb34c8fe46b86b6fbeade33ee276d389153",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/back_right/walk/07.png": "6591ee28fa0c45446e9051464c6026787e661ccd47d6694c36145d4f326bed1c",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/front_right/dash/00.png": "b5d89dba68d566352a5da0e891c2dfcf9fbae1eb0ea361d21f3aa6402e579e2b",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/front_right/dash/01.png": "5ebf8cb2c3f1ceadfc5f9967a3f5b54f6cdded3a642765317d605fdac83f2a3e",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/front_right/dash/02.png": "aee0520039723a289b0c5b9e35703582b885b12e4bd0d7cab82875d9054ec64e",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/front_right/dash/03.png": "fbd76d04b65ef96bca7a0092333dc08a0caf08b489e875f913750dc9e23dd2f0",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/front_right/hurt/00.png": "81c9886152d6112f3d357bf0b4c38f4ef1d7a6278a1f3c4385cbf7c005d1c500",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/front_right/hurt/01.png": "f4085309d9fc4bf18cc3ca9f2d3c997cc6785e21f26df3910961a834eb12cb2c",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/front_right/idle/00.png": "605ef201075207efbcf78e850fb721e0d929737132c37598d386edb7412607dc",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/front_right/idle/01.png": "e4055522e744ed6efcd9fa03c9fb63e6c68fbc0c8478c0996fd88f1c2162fe64",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/front_right/idle/02.png": "dd33a5ac028d8a7ee798956db685a21aeec881c7ddb198bef1bb9df53294830c",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/front_right/idle/03.png": "c930264d0cd733aec0d8c8557bb48e7a5293ca9585e3b86ebaa3b45cbf4ce5ff",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/front_right/walk/00.png": "5c97426a1bd12185c7e2809cbb0ae65a8930035029a197b31128712e80a39f76",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/front_right/walk/01.png": "db282dd77d49a6a1a84a6434d0777118a2a298b91154a5e7506b8533ae2a0fbb",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/front_right/walk/02.png": "ee606dde857f6c8377f1cfc7a18f724a67a24aa52b83242ddb1ccc5d22529543",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/front_right/walk/03.png": "3e77a4e2d8c834b4b584b8013e9f8e5be1afe9bca2c3a88c4ecc02f4ef9c61ec",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/front_right/walk/04.png": "13b1faea583ca050424f9ed7ce737d51c0406a613115151ffbdad3ff3ede0d51",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/front_right/walk/05.png": "6ec9c6f9858a0696dd4edf4c62ad8c7dd3df4d3cd209ea65029bf4543b0f3c6a",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/front_right/walk/06.png": "c4327a513163b2e3acbac336e68395e2c8f8e81546997c005890bf72d7fc623a",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/hero/front_right/walk/07.png": "948414a84f1257e1827226aaa9648cba8f0ae1dc0cd99ca4be6109d9745ca8a9",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/immune/back_right/bite/00.png": "fe30ddc5b0c4fb3f12747024c3e52b72e3e6648a4add475b099190fff341ea30",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/immune/back_right/bite/01.png": "14f5b3d4b4a3e22ac54d8f203667ecd3e71d78836877888ff4cebfab54c3e4ff",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/immune/back_right/bite/02.png": "099b24688d40b53f2f57dce032c2f3b012e535ce7ceb25f1b8764f7c2a375d7b",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/immune/back_right/bite/03.png": "b447aedbf276cd124825eea9ab7dcd576254af93b88607f378bf173ccb970492",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/immune/back_right/crawl/00.png": "7feb6f86ff045de6a18a2077cad177bd3af8ec19cd84fd90f0584702a493128c",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/immune/back_right/crawl/01.png": "c21970f5cdeab279287f4c3786d08173e12fe6dfa75426d23eaa52d3740de014",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/immune/back_right/crawl/02.png": "2ad07266921992747f109f3208487f7eabd5cf4afcb548ca43a7600ceec8d3ba",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/immune/back_right/crawl/03.png": "4523e1da08ec3e386907a1b61a7f94e141b4a1a52794a7fa41511c55aa82ac92",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/immune/beacon.png": "bfab5b64e9adb7102c87e9dc367997b7aceddfcca133a3a045158abcd3b91aae",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/immune/front_right/bite/00.png": "4aaf4e4cf4c10c2ea39c3381eed0ee76ab11078d76591827e2e49dac80d83632",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/immune/front_right/bite/01.png": "90813500ab21b9ae3441b0bcdaf27082f26af52be9fba788a962e3de1e9bf9aa",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/immune/front_right/bite/02.png": "61de558dd9dab1bbeaf1a21502d4fc60efc3a3d50045d5e20a6f7b5734c8f834",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/immune/front_right/bite/03.png": "f86b36bf86d7b9c10ac6333d0dbe37f8d87d2aa7bc29384267bd8e9a19310753",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/immune/front_right/crawl/00.png": "fd63d88f0967e41f28a65a91553ce4cb07974ebcb78b4a720176f5f5723bc844",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/immune/front_right/crawl/01.png": "b7aea42745346998dbc489f5c7a53e68a89b5f7275edae573c095a2b8f8f76b8",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/immune/front_right/crawl/02.png": "93803b020d6d9e5d6469bc23968fd485a0e21736d08bcf765cf24cc695785041",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/immune/front_right/crawl/03.png": "5c9f2e821b107be17035998cb96109de5cb79bbc94c046d8c1dbd64f38bf8fc9",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/mother/base/00.png": "6513ed8f7ffc08c7ce194e72b79c615d18b2bba557997a211ab0ecbc9df91dfd",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/mother/base/01.png": "a89a84f9177696025d01edb62eafc39c61949bbfa10d82ac4a72115a95051a75",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/mother/base/02.png": "a4788d1db28712b3a18603cfd6611a27eee0c385bc26759e0c982703d7ab3d66",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/mother/base/03.png": "b66defb1d4e058301e6571cb3a850fab2be0ba5dba49e2cab0d882d2369e8f25",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/mother/carapace.png": "6247b9398beaae730b5f83b01e64f6dfd95837c32d5d4b1f56d0ca5281d1f6f2",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/mother/core/00.png": "8a2856fc4b9b9dc73db7f814bc9d4ffee7517f77271292058630286c6b173690",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/mother/core/01.png": "94d264b07c06a4818a6054e6975a1a5b2bfd622bd97c0964965c68c995d5abdd",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/mother/fission.png": "be2d0295e0af9a675ad4ef79074802887de539ca8c30683d2f238731ad3843e2",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/mother/membrane.png": "3ff3b3b2e8c0f7a31f93d46388b9f50f56becbe26aec86db6af1f0d770c43f33",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/mother/mimic.png": "28b00e992dc84dd7f67c414c47cc19937ff28c151e726ca63633d11bd70eb7c7",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/mother/purified.png": "9c93d9437fcb9075a57b269c296a638b59cd1e8cdaddc5b63a5737696d426627",
+    "asserts/ViralInvasion_Fantasy_Actors_v2/weapon/emitter.png": "9cfbaa84707026f12967e9c1993f16311e901b98b6bd845989eb4700ac32c535",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/immuneCannon/fixed/fire/00.png": "d14247c229fa03ba0fc963c28581e94f714299a6dd5de3eb92849c080c85122a",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/immuneCannon/fixed/fire/01.png": "72a556e9d503a2cc654e1575d59fe54a166ecec7291bfb7f9e3fb5511aaf0700",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/immuneCannon/fixed/fire/02.png": "534f59d11b504590140d1eef6aecfb15594aa02d90740b2cc3ae0c4a50ead7ff",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/immuneCannon/fixed/load/00.png": "e5baab190f8245ab020c85e91c6e56d5dd87e361df0cad3d372779f4eee999a8",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/immuneCannon/fixed/load/01.png": "d87bf006ff6ad38cfa44013d0c88e3edb3b0153078254837647e469f30418727",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/immuneCannon/fixed/ready/00.png": "02f6fed63441f0fe169a1f8a33ac069ec2f8f3431dfe7ee15826e32198bc7013",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/immuneCannon/fixed/ready/01.png": "6919132a6297340c7b85ceba1e96e8e0a93bcc100be84f71073f7fcf1f6fff09",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/miniNest/fixed/construction/00.png": "8f5363415683bf0c240a49f580b568546ddb603d6b88b10f73cc73629c5cbbce",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/miniNest/fixed/construction/01.png": "c1152bfc523a52dc145307ef4e48082d13c35d4850b1daa69be081cf2fec18b8",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/miniNest/fixed/construction/02.png": "587e09e1e1b1d9deb767a0d634add69558e96b70e89b7eef55668ff5bf0670e3",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/miniNest/fixed/depleted/00.png": "c1118c3133e9813b4fd433453590f598144b252bd56b4862c00a41d5d9877f81",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/miniNest/fixed/depleted/01.png": "164d099f06714123183d600f3fa2403e49e541509b6e7580c2ae2a1decea0e70",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/miniNest/fixed/incubate/00.png": "eccc7599621e16cbe109dc5c3f22ba76b615106e3a179bd229b8747d80d5c344",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/miniNest/fixed/incubate/01.png": "3a57fc0a6b5a3886a7db63d572355a61a3adcd43e261bd8c018241dfb257b9cb",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/nestBuilder/back_right/build/00.png": "55052ac4124e35c42d9ed578f8b3f6612a96dcb63268226624b146b3f4a6721b",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/nestBuilder/back_right/build/01.png": "7c6d9cf8408fc476667d2e315b72fde52ee909d528abebb3d51247fcfd3d5b74",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/nestBuilder/back_right/build/02.png": "ceeccac2df6cb0e5b2edade4d7d8ecd0a550c338d7ed5f18318ddacd1c89f297",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/nestBuilder/back_right/idle/00.png": "0da809bfcfc2f8e23c791b529dc2a46e9a664014edd315b60f88c801fab36b3a",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/nestBuilder/back_right/idle/01.png": "4abd2ad3738c68b4ef5ec3c90a4613d887b36527b6c2e59a7b1c08d473d362c3",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/nestBuilder/back_right/walk/00.png": "31dcd57a30dea920763d16664cdbfb123f008d9a85ef31aacbc87ee6dbbd7ab2",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/nestBuilder/back_right/walk/01.png": "7aca01eaae2f89eef3afec193ed69da072545b7afc97e5ffda9f16c279b563ac",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/nestBuilder/back_right/walk/02.png": "44811ed0f3681d947bc1dc215f1382b84cb3315092b8941d6e5e1279e43651ac",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/nestBuilder/back_right/walk/03.png": "28cce2e5fc91703ff1367e2cdd90e2717af1f1270d2e38e5f03f8a0cd42b9214",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/nestBuilder/front_right/build/00.png": "a24f53355ee1441417e5c79bf8740d71adb78a8a935223709917fb66a9886736",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/nestBuilder/front_right/build/01.png": "f3d92a99bd896711323216994a46968226705537f34dbf8b8b2839037de99cec",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/nestBuilder/front_right/build/02.png": "4f78299d8e288f0080d7aff9469742fdf9265254b261279bdc622677195c99aa",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/nestBuilder/front_right/idle/00.png": "4da0f4c04e04134f81e6c12bfa7f5c22683d7d2dcd53a9fc9ddabdf0d4882163",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/nestBuilder/front_right/idle/01.png": "edf2f8ab6cd5f88418b5a13907392524655b2f261d73873cf2596f5675084925",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/nestBuilder/front_right/walk/00.png": "c7c9d22ba619ab654244c8a3edd661059268ea0f1bab4880f51fe4adc2094ee1",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/nestBuilder/front_right/walk/01.png": "c4574251d4ca7fc88c1f38b3a43c31ec43dc62cf9ca4b576d5c4c505665a429e",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/nestBuilder/front_right/walk/02.png": "a48bbe95b3515e19932f22a9810b14773da412fd0cbaa5573160b0f551dcb0df",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/nestBuilder/front_right/walk/03.png": "8f41f2ec3b91f573def901edbe2c111eedb9e6dbf662a2e2014fb21479924a82",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/back_right/cast/00.png": "f991c4e8833ef6f83f8a4befd77aa4aa789a6512c97e337e6148f7b8f4e1bc36",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/back_right/cast/01.png": "ae39f591db99dd7564ccb607bb2c84af6f70e40563a5557b0ac27744471a4167",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/back_right/cast/02.png": "172732e6f03b499117d6bdba395f52d094e9c2d9b1fe6699594d018b367ffeaa",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/back_right/idle/00.png": "81667689dcc09aa5d38919b8d04502ea01f8375cc9a886db077e6cb0913cf9f2",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/back_right/idle/01.png": "01e2627c3ca0ce5a31a0f862fe5e8be9a5bdbb14b08feee881b21eff6c33bfe1",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/back_right/walk/00.png": "78e788c2189c83f4ec3bb1e3232c32a99ac9a7a9ef5c87ef9249b0ba9f091837",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/back_right/walk/01.png": "33c2e71f38d67a07f2fee24bff037c1c066765cc4b4a3baccab20ddf2bec848e",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/back_right/walk/02.png": "29ac7ad49f90c98a77a458344a96340ed20947bc95d04bd75849c035f46ed23f",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/back_right/walk/03.png": "cda7d201094df923c03d34df8af113f64813f19c16a71840c6c00436403b09ff",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/back_right/windup/00.png": "4cbd062134d2f9cd428b15b6d601c2351313badf04a30fa5ee359bb61b33d43e",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/back_right/windup/01.png": "cfa53f7b24b5d265741a523e2231b97d391a00aa5d0e4c69c091125c65fde938",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/front_right/cast/00.png": "b8f8c18535f6cf29d711eeef542ac26b1bc0c8d8b11264c5759a55a29bdff38c",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/front_right/cast/01.png": "5232999f3f9f750606f7030a64f429f5652c521b3dc2fad03615a1f48948864f",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/front_right/cast/02.png": "30fa6088cba9e4fddcc22091e4bc4f6b05bb70f56eda57ec9bb8fd8e53e00f85",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/front_right/idle/00.png": "9f37d125face59c72315ec649cd0d0affdb660cabc46fba78551e334b3ec0ed2",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/front_right/idle/01.png": "031539b4363c88bed0fc3ef382392ebd9dddff76330d8f223bf54ad734616fc4",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/front_right/walk/00.png": "a4dcc343a22fc3b623d42202525779f15f634e831c07a495b1005df673e3ec6a",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/front_right/walk/01.png": "9135c6f14a8850a3139df970c394fc5bfc900f436d18a657a9b00d9603325c34",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/front_right/walk/02.png": "a9713c831df478e4252ed3df4659a7cd10ed08bf7b3fc18d634a0bd605f1e05e",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/front_right/walk/03.png": "f646abb4f07ea59e972cf1b73af6a0d5135e530133a4482388c233850324af75",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/front_right/windup/00.png": "1dec79c7edf6f6b5cbcd4d38ae9d302407320fa0505f9c4cf7f779955a5e1dcd",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/slimeMage/front_right/windup/01.png": "fef09873d4dd7edbebe92e62d3df7ce4f9cb80144af65e357ec65ef2203c0178",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/swiftLarva/back_right/attack/00.png": "480b7e96d8cf74ed5d9dedb586be737c59c32ead34931d7067dd178f1d614d50",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/swiftLarva/back_right/attack/01.png": "c87e217499ac03c517cd7be645d91c68d6432b9e5c522d9318b00f1f70ba8651",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/swiftLarva/back_right/attack/02.png": "60e2b4dbb1ac6665029f2cc34edf57ca24a4b3ca378de8f36a906f37d64f4788",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/swiftLarva/back_right/idle/00.png": "d94aa92a89f786de3ae6dc3fa26cf7dbecb06d259f7c60e18befaeb72976f9c9",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/swiftLarva/back_right/idle/01.png": "618e8b2940d600f8b618b883be2044e2cbba019584bad345fc88581b8590e5f6",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/swiftLarva/back_right/run/00.png": "c6969d3a9c7094516a44b5ff9d5fcc8f6fb5a0549c890c848bf31b949d2b353d",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/swiftLarva/back_right/run/01.png": "a4e60d23ebfb94145f4299bc493a0bc748b4f70ddaf14039b65ed536e892d31b",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/swiftLarva/back_right/run/02.png": "62083d07a43c7d2075ec3713e3ec537c80b629e1f44fee449a0c9f077b1a2735",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/swiftLarva/back_right/run/03.png": "8d5cdd2cdf8f588eef71446b275dc4b7f0e9ff248916cbcf9a23fc3f21b5fc55",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/swiftLarva/front_right/attack/00.png": "52a42bbd74c0ecc7e964cd8155c39061b668a562a1c833b647c954dfcfcd6f54",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/swiftLarva/front_right/attack/01.png": "82132aa6f8c0c74e672822502092a5c347587ddbcaea57e438b6aa75c98e52f2",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/swiftLarva/front_right/attack/02.png": "aac6b92f05c24fcdb3ca1ae2c0a1c60ba21028d86c26fbd56038d6af5d1c311d",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/swiftLarva/front_right/idle/00.png": "952812508f214a781498fc979d52bafea1a220a5c85e643f0441d005e4b7d999",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/swiftLarva/front_right/idle/01.png": "555314ec1d93b3c91ff83470e220a5a45f74ed989778f7dd9612b1893bb37c37",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/swiftLarva/front_right/run/00.png": "7355e7df64dc9d44b7bebd5aeacff4e3a6e6c3fdd53c4a32c8dd4a77d3f0e511",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/swiftLarva/front_right/run/01.png": "4a33f454ba660642b9157a53b2d094a86c1412001b52caef84c974e6f1300d71",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/swiftLarva/front_right/run/02.png": "61438aaa86416d586a5c321d82321a37406125db0c13181abf2278f10f48ff50",
+    "asserts/ViralInvasion_Fantasy_Combat_v3/swiftLarva/front_right/run/03.png": "466c10327dd125472b8aa3477ea33cb70d168533aabe6eef2a9e9460cfc9f866",
+    "asserts/ViralInvasion_Fantasy_v1/facilities/healing_node_healthy_v01.png": "6e8ef0cdea0448bec34ae21dc2b87ae8a5367b836fbbbaa6f032fddbdd5c4544",
+    "asserts/ViralInvasion_Fantasy_v1/facilities/healing_node_infected_v01.png": "09a398782ac6cc57395ad5ec0fc951984b211030e19a71bf0eaab8689f86d1c5",
+    "asserts/ViralInvasion_Fantasy_v1/facilities/healing_node_recovering_v01.png": "29484bf24772853451e9aaa9c2b10067899c340566580d83d90525ddb9bb5d19",
+    "asserts/ViralInvasion_Fantasy_v1/facilities/heart_core_base_v01.png": "c1e371fdb5f66941cc261d905d04e94e8ff93f23aa3eecd0dc1b7d24987cb542",
+    "asserts/ViralInvasion_Fantasy_v1/facilities/heart_valve_closed_v01.png": "55a8e14912f408e8ad2b70ec27543b7a6d2d4c46bc53520259e03161678c664e",
+    "asserts/ViralInvasion_Fantasy_v1/facilities/heart_valve_open_v01.png": "43ea3de4167fdd29e7df76c2b0926d412336526882afbc42caafbe4936710b31",
+    "asserts/ViralInvasion_Fantasy_v1/facilities/infection_source_v01.png": "929ce0f503100973b4c0e5a437c6c1d94d844320ef659c10060725aa3c0e38f5",
+    "asserts/ViralInvasion_Fantasy_v1/heart/ground_healthy_v02.png": "0bace3444c7615281e35a3a33f835eb4f5b778d68736e36c2e06ec3bc5d24a4f",
+    "asserts/ViralInvasion_Fantasy_v1/heart/ground_infected_v02.png": "3716c6da898e7f901f78517abadba0ae797c171b02b0812434083e772214b632",
+    "asserts/ViralInvasion_Fantasy_v1/lung/airway_closed_v01.png": "d1fc4c05dcbc57ecf8bd38be11308f6e2c15c8f45d780ae201bd1c5f2d2dd782",
+    "asserts/ViralInvasion_Fantasy_v1/lung/airway_open_v01.png": "1e667e0ecf9bd17d152b691d74dbdcb4bb3c962a4d9eaa8dbf46adba491fb3fe",
+    "asserts/ViralInvasion_Fantasy_v1/lung/ground_healthy_v02.png": "04a474d007c082392755035467ad8041c312d0676e42952458e273cad34da4c2",
+    "asserts/ViralInvasion_Fantasy_v1/lung/ground_infected_v02.png": "f65479913c06972ca20760b63d8aa99724e0c090bb7aff8fcb2c6ac877411859",
+    "asserts/ViralInvasion_Fantasy_v1/lung/plant_healthy_v01.png": "dd206b588d08481ce04cc7a52fa128ca11440b38cf1e6a96888eb28967ebb1aa",
+    "asserts/ViralInvasion_Fantasy_v1/lung/plant_infected_v01.png": "67c692eeff389d9e87c88760b96aedc62abae7f6714969eeb9f9b8dc6f840cd3",
+    "asserts/ViralInvasion_Fantasy_v1/lung/rock_healthy_v01.png": "27f646a3295ea711d22dca72610e7d6aa1e0d94849bf1b83d2a990866e990ff1",
+    "asserts/ViralInvasion_Fantasy_v1/lung/rock_infected_v01.png": "007a67534c8d40ea1bca35d77e2014dad878a5498f4479e98f0e7065024e1b17",
+    "asserts/ViralInvasion_Fantasy_v1/overlays/infection_edge_a_v01.png": "ab908d603244b6eaca5c95f89a30af0d303b5d48277ed071837fe1a16afe3e37",
+    "asserts/ViralInvasion_Fantasy_v1/overlays/infection_edge_b_v01.png": "0c2818f0eaa5e245e5a59d7d261c5e9a7e162ea984ac07989d314f67850377c2",
+    "asserts/ViralInvasion_Fantasy_v1/overlays/infection_patch_a_v01.png": "bc066e80908c886bea67737f113c73e9ed214b08843d24e320deeffc1b1994b9",
+    "asserts/ViralInvasion_Fantasy_v1/overlays/infection_patch_b_v01.png": "223926169bc1d4e9785d1f84c454785f3dec28be2cb25a14a94c9d3a1b4de0de",
+    "asserts/ViralInvasion_Fantasy_v1/scenery/crystal_healthy_v01.png": "6ac999257df08b7eae598e4c09fdfa95cd43c01e922a065e5ac41dba8d4023a0",
+    "asserts/ViralInvasion_Fantasy_v1/scenery/crystal_infected_v01.png": "271a2decd4450c1ec86349ca211d0f077827e8da152d6cecb0b84470bfc1197f",
+    "asserts/ViralInvasion_Fantasy_v1/scenery/pulse_tree_healthy_v01.png": "10ee6c5b4ecab7684ec129cc6f00d54302df97378dc6ca6a83b62066b0bad361",
+    "asserts/ViralInvasion_Fantasy_v1/scenery/pulse_tree_infected_v01.png": "07193f4c903cf86f7b4ec12289713f6cba86390cf15abca4ba51f692c68e25b8",
+    "asserts/art-selection.json": "a70cd7fa366ae5c87d884f52352c1e2d8075df24ede1df95b33e0f2dfc38ed54",
+    "index.html": "438255cb782efb020f72d1c3ad2263c8c91c6fd93977881bade6e4e76028459e",
+    "node_modules/eventemitter3/LICENSE": "3aecc12b1cb28832b5f65ab64291de96568c3f236a74d646281b4491f7bcadbf",
+    "node_modules/phaser/LICENSE.md": "d59c20a9deb5dc240614b428dce5246ae561d15efeeebea0e069d73f0a78fbff",
+    "node_modules/phaser/dist/phaser.esm.js": "df50bc49e7856363b625fdf4f2c4e2e577cfc1644690c026c3610c594aff372f",
+    "node_modules/phaser/package.json": "dd57d55f092bc5093a8e38f786932966ace026a10a5f59d28dcfd675acb37a2c",
+    "package-lock.json": "0e9c407ce068f1b417c70469c2c57e9efd198f86b85306fdc343d9a9d6b74fe1",
+    "package.json": "9098ab272cffabe0c7e0b38a67c1a47e240a0c7954b3bba16ae6e3129b8e8703",
+    "scripts/art-sync.mjs": "9a32de20f60a017c6e46b934bfcf28cae66f0ef96ad35f2a537055e545804558",
+    "scripts/build-offline.mjs": "e4ed8b249122efdabcc9c78b9c66c2064362a3f9730476f2a1758ba0ae86ac51",
+    "scripts/package-mobile.mjs": "0bdea0ea8014409a0d78decaf44fb2d5f204cbb4e2062fe59323abfe1e21f6cb",
+    "scripts/package-release.mjs": "6f86d5b244e29056dafa8a3f18b42edb4d1c93176aa543c727cb42f3befd8972",
+    "src/actors/collision.ts": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0",
+    "src/actors/enemyCrowd.ts": "cd9ebf849e63f516c5a123206d866ec396497b76307c1a62ae08ecf9b8fc489f",
+    "src/actors/enemyNavigation.ts": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd",
+    "src/audio.ts": "e344407b39aace5190fe9b14441189da7a534ba03e9f51cbce9970360fc92fa6",
+    "src/core/clock.ts": "2e65d1623f903f438f01ac80640ff5ef06cf400d32a888e27471d0326b3a46bd",
+    "src/core/events.ts": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+    "src/core/rng.ts": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+    "src/game/battle.ts": "b0a7b0f730479562a2da4eb1728f560c92f1496427f9ae8c2ee3372cdb60ff73",
+    "src/game/battleConfig.ts": "3365d6963f8edf43abdef1259483d3d21787a738abe1ccd81e2ebd6b1fdc609d",
+    "src/game/campScene.ts": "aa034349546225417b6471a44661cfc31e441ae46e35d45e6c5ae42ffe2df18b",
+    "src/game/campWeaponTrial.ts": "fde921ef7e32eab125bb34e5653122252a80bee80a4b3e7f8cd63312ac3b917c",
+    "src/game/campaign.ts": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+    "src/game/campaignEncounters.ts": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+    "src/game/catalysis.ts": "f7d4a5b0710ff3eac65809a7762effe910b79f63ab7a74735128d6e6b6288113",
+    "src/game/chargedSlash.ts": "bde88263277215d6173f6759ce197a639eac3b011d0a21a517330c7625969c8d",
+    "src/game/combatPopulation.ts": "5f8bd5128612512da7d974e302b54a4a858f9e7703fe49d1fa3d5fa741ffeacf",
+    "src/game/construction.ts": "ebf2d90916f1710e87fbf2ea6b4d81a0ef468ad959a8c350278819e72142cebc",
+    "src/game/constructionTypes.ts": "514b0933047f3a234b6fb9b0c8840d85a448b9c54a5894084df235c735349e79",
+    "src/game/counterLesson.ts": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+    "src/game/dashBlade.ts": "c7bb058f5b38bc3124fb8efd4739f661b42acee026f1ce1c008de1234dc6d771",
+    "src/game/dashTrail.ts": "2e0f6b4d4ab8321a1718aae30a56a4ea1b1cfd9c5f94b982653f7bc911b0d287",
+    "src/game/eliteTacticCycle.ts": "862b23512773a196d997dbd9062b18a9f17188f22449ba93dee98ead13c3e8dd",
+    "src/game/encounterConfig.ts": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+    "src/game/endless.ts": "63fd0e4feaa181be9b6a46176f9eb504d344a30d37e0ff47f8be5e68fc37ff74",
+    "src/game/endlessAssault.ts": "e60f8e6cec6e4b963614c467062efc05a89b0eacb1825b71dd0f3fba1503417a",
+    "src/game/endlessBehavior.ts": "9d01e26a8097cc194011523a70e61f47c1303088531a6e8654b1d3f73c986dc9",
+    "src/game/endlessEvolution.ts": "b3ad9b394634da947bf9aa7ff32d9b9ccb7774909771c524a078d490bba1db4f",
+    "src/game/endlessGrowth.ts": "12dac2d4654df205549457a981e1d924714af65e6259a921ebd598574984c065",
+    "src/game/endlessPacing.ts": "c0d9376d4225c2a6606956f05c51283e5587ab86741f3d615d9d653b5627c090",
+    "src/game/endlessSource.ts": "5a3cbfea571f371707a64c0526e1ebd2e36ac2da404051b37e4692203a51c6fe",
+    "src/game/endlessStrikeBalance.ts": "70b6fb73a94c0fac1baad402b2f41d47e9882b01b4847369aef7efd11660330b",
+    "src/game/enemyFacing.ts": "f2f97826b5fbae1d19bfcd718eac2c216800187c86003d11bcfc9c8c63cec24d",
+    "src/game/enemyPositioning.ts": "d01aff7f39ea4d4a3c34f306947452e93de57b93106a56c103bb64c9c097a878",
+    "src/game/enemyTacticInfo.ts": "ee6f959eb75b09e298f82dd78fbad5d6bb98ae0bbb7d7cef6701a0953030c5a8",
+    "src/game/enemyTactics.ts": "d0a393a0803ae53a84a59fceb9d74e0fe88cbdda50d79cfe4115f08ef68abfe6",
+    "src/game/evolution.ts": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+    "src/game/expedition.ts": "908fa5b15bbcccdbccc50d2c158667bf0a617a0e2dd31eb66711b382d5354eff",
+    "src/game/growth.ts": "3bd114a870395b03ef755fd6e6bbd020b8c6cdfb44877aca4ed4885ca4030c57",
+    "src/game/healingPoints.ts": "915eabdd233f7ad1e62610fd9be29a71ba326fec9bb7cbda327dd9b4f00de277",
+    "src/game/hostEvents.ts": "367fad03129ce257e847dedac946bb6d3cac522abb3f5e0922207f51f77fbfae",
+    "src/game/immuneCells.ts": "c3ad22cf8e77bdc32203846726fdaec408813bfcd78e423b8b1e48265f639b3c",
+    "src/game/immuneFocus.ts": "ae0a07dc07747100a2d271bc11989751a480972d76945378decc12b3d41cf9e1",
+    "src/game/immuneLegions.ts": "399fc580b5afe53b5b22ad7b4b7d5c874271cc7af8feb666773cdcb1d2b83ee0",
+    "src/game/motherCore.ts": "e041a9c6ef5eefdc9630df2dabe01f56b78ca774fb92f3aecf1905fbe80c390f",
+    "src/game/openingEvolution.ts": "98e3b977800044f5f57cb34edb8886d26d82b37c6d83ce84f8ad14a9efdcafe1",
+    "src/game/organConfig.ts": "f7984fa67337966b8342bf6dd2f5d8a1efc7b4baec5eb8ae03e032927a745bfc",
+    "src/game/organRules.ts": "7e6b4951b1c76ce6e0eb0964f41eedff20bb3cc71e14d8421c878b0aa53515f0",
+    "src/game/playerProjectiles.ts": "74914dac3d6c55b936b045a420c893403c4209f1770c375f40aea2c32bf78f54",
+    "src/game/preparation.ts": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+    "src/game/protocols.ts": "4e407a74e0b87b7bbba93c48c881cb729a0770f24a027cbc8d59f7f512449260",
+    "src/game/research.ts": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+    "src/game/ritual.ts": "a4b9a556cc8354e49bc05d8847e6aca121e03bf6fd09adfdde97adc2ecd75246",
+    "src/game/runMetrics.ts": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+    "src/game/session.ts": "add2870197595edc569a7791aea78aa788a3c1b5994203ab87e1280982532096",
+    "src/game/smartViruses.ts": "fcef0e118b312988ba595816d29854b80a7e6526ea7db635d4a1c103b7e57844",
+    "src/game/tacticalFeedback.ts": "60bd3338e430df898a426a5e0422cb7a071c1a31337c3439159567e9198129e1",
+    "src/game/territory.ts": "27afe9277edd834df91ef8a6546ea21da7c51404437481dfc32323a9275506da",
+    "src/game/territoryCannon.ts": "88ba64f3c8e9d575c2b264c5a3db913969bb4795e63539cd20998e7038035ccb",
+    "src/game/territoryNotices.ts": "fdc884628f22402dc6492fa95e2095755b21f5106645427fe540679822c517b8",
+    "src/game/traction.ts": "2ebdd2264eae46a3744b45371733aa35fc93a8c7f6b030d8a36c8163e2c4ad5e",
+    "src/game/types.ts": "04984b551ceab4342792fafd65bfd9e4a41191c192acbae4cc79a002698284b2",
+    "src/game/viralCapsules.ts": "d9fbb60d009eafb61b5237308a1ed60626cd424accd6acbe4db189abe0c45327",
+    "src/input/controller.ts": "4ff27d089fea5b61377ae5518ef7ebda83a52f3cfb6e7e1fda5b39f143b42b0e",
+    "src/input/touchControls.ts": "08d791b5af38a3954e2cecbdae7129f7f13e0dd3cae83ec7a3825d262a83b5c2",
+    "src/main.ts": "3c89caf7796ebe8cae3d12d678a4f9d16100465e8b8a836567932020b808ba21",
+    "src/meta/campProfile.ts": "19e3a260b66ecbaeec213d7dc7184972171662cf34a7085f61e78501b30e49a1",
+    "src/meta/endlessProfile.ts": "950418be2125cc6cd03404d27fcca34bfa76e296192ade78ecbb52067b4673d5",
+    "src/meta/profile.ts": "7fd5d16754e633e6f2364b74772c2f9154e68bd7e3abbd33391a617838d94c81",
+    "src/meta/runOptions.ts": "2afc173d0af2f55b907dae5baceda1d5f222af59ef6c021bb4a16170e0ee9c26",
+    "src/render/actorAnimation.ts": "4cab5ff88a78c501765bf8ee8ab3dfd2710a7e06521acdbb5d60c695bab66d56",
+    "src/render/actorFootPlant.ts": "c4499889079d74ca07e3a820db04ba869a7c3b2e0bff7298e93c9723fbef994f",
+    "src/render/artPresentation.ts": "c3f8ae2d5d7c288ccbdf892e9f65cf762683868d991dd1e22910f7e21a418479",
+    "src/render/battleVisuals.ts": "b28e617afcb66f4b40c45d68334405e9be96ef810b9214d5f0300c13edc65908",
+    "src/render/camera.ts": "6b207853a955ecbdd0f18336115ff9ba79cc259640a3df9f3f8a201ad68b6126",
+    "src/render/cameraFollowPolicy.ts": "0b16ced6bc0f0cfca5f71f1a140db672bba1a4ecc0afbb23cfb4f47b9f5db272",
+    "src/render/canvasScene.ts": "445eef0a14b9ec519bb99ed1b5093e8b629a882e7a4478557f670671850158b1",
+    "src/render/catalysisVisuals.ts": "719fd36fa0eeb54e7ec92d87202480ac8ac593682aed54221d505626067baacc",
+    "src/render/combatEffects.ts": "bbbe31e30acdd04d7384a97b233eed384ececc680c1a8b7eebe44a072caf87df",
+    "src/render/crosshairStatus.ts": "5c7d1751a6e586bb905e8acb0ebd574590cc47c76a483f58c91e9594f029f943",
+    "src/render/depthSort.ts": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+    "src/render/desktopAimViewport.ts": "7121f1e0e3a46f285a222e7f01585a64e9346b5108ef6a3778e402dfc939df53",
+    "src/render/eliteTacticCycleVisuals.ts": "973db60769fba9e70f83a1e1fff276f4011e6acebaf4f4b581671909f00c95f7",
+    "src/render/encounterVisuals.ts": "62e43895e405cd1300d735f59f150781cdf07b74036d5dbcc0b6f93011e01629",
+    "src/render/endlessVisuals.ts": "49f0da60be1c8963cab864e4c845c39956401a7670a6d56866c8115d59c45b2e",
+    "src/render/enemyTacticVisuals.ts": "27c6e91e71886a7533af3ed0706e80477cc7023d717df4ff3204031783b87951",
+    "src/render/expeditionArt.ts": "66b02f50580b8357a1e105db43cca3847f87af700e9e662af095cfe171fae58d",
+    "src/render/expeditionVisuals.ts": "369decbb6762a13857b23e6ee2db40dd244cf0c4a0a4d261d4798cdf8e7044a0",
+    "src/render/fantasyTerritory.ts": "b19dd4f406260fcdb78266e4a81ff221e87f1217b58045b754c29202d4ba7074",
+    "src/render/growthVisuals.ts": "da7e599f3043ae614394dbf7238cb216bb4e048762e0c4f8ff74957e00aa603b",
+    "src/render/heroAnimation.ts": "7ebe446d889db3bc0d2302e787deaef1660943563900482f9deacdb137a6ffd0",
+    "src/render/heroLocomotion.ts": "b18a33c357079798695706d3e1d464ff7f53192415173f2b76778e885489168a",
+    "src/render/heroRig.ts": "9ac59ab7b944617a0b4486ff2d2cff41be1502a49fe1b442c935fe0c3cf06df5",
+    "src/render/hostEventVisuals.ts": "6c7ef88f48a85bcf64473da8e4a77c69cbb8e624f0dade645e6a5b09b96ec381",
+    "src/render/immuneFocusVisuals.ts": "671ef27635c303f30d5d6328fe7c96a7d695174dc7821418bb4f49fae4fed787",
+    "src/render/immuneTraceCues.ts": "611926281627e1ba999a24184448e283b062503a4e23a6080c5e9a8c1e52fe63",
+    "src/render/immuneVisuals.ts": "4ded7b1536d71de696d2c9d388eb9c4194cbe66af40169c62d3802dfa1c7e297",
+    "src/render/layers.ts": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+    "src/render/lungVisuals.ts": "7bc495edd2c18da89ce1b8e6934e98ade262e982b953bf732593827e18ac7b77",
+    "src/render/motionInterpolation.ts": "1e4416377ee09a487b46a894737b4f56d5980b144e8f603071fb234a4ff39066",
+    "src/render/navigation.ts": "fd3dac19ab33f9fa0d3f8a58f2446129aa704e489de7db186862010bd26df50d",
+    "src/render/occlusion.ts": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+    "src/render/phaserHost.ts": "b9a3e34425b82a4dbeb4ba5ee938f8358e854ebd139bbb0c6cfe3dd3f994165c",
+    "src/render/phaserRenderer.ts": "a6f34086b0d10d4014a0b683ec9c10762714525b622337a31102d1efde9ddfda",
+    "src/render/playerDamageFeedback.ts": "9eb134877187ff0fef9243a8f3d4a8cfce2b3121566cdc36496e607f67c97093",
+    "src/render/playerPresence.ts": "46a89203866165f34e873b1400a794df538ba8f30295c086687e8a1f48e3f996",
+    "src/render/playerProjectileVisuals.ts": "f715f8e86c2fd9820fa6376d3eb6f882b570eeb86a471075c2f2f22b50b4c920",
+    "src/render/pulsePreview.ts": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+    "src/render/raisedObstacleGeometry.ts": "373e3f145fd521367be7adc93c8461b5407cfe384866f2eb59c2a3ee645a3df6",
+    "src/render/raisedObstacleOcclusion.ts": "d666252e70b2ba88394d6e1c0401f1c92ca31539cc62f8472282631e481e3883",
+    "src/render/renderer.ts": "fd8ccd12117953d32463d8e147f39c0b032bc853b0225ea1cb3185400af6be45",
+    "src/render/sceneLabels.ts": "0cceb5ffa23face8ee93aaff4b31c49a72b43fa760b724009c8fc4e80f108755",
+    "src/render/smartVirusVisuals.ts": "f6be83753975d13156b0af3448258a39106fb984fddf55fb4fa99f9e76bb31a5",
+    "src/render/spriteGeometry.ts": "16261b404b2353a10f83caf756eb53707d318b4139d02c212821a2106a23699d",
+    "src/render/territoryCannonVisuals.ts": "9015c014768cd939ce129eff4d82da342f2b42dcd6c535df0e376e2143dfe22f",
+    "src/render/toolFeedback.ts": "feb52b4474686bd31a62c5bdb0953e088d4126209a489b8a4d36033dff8bfb0b",
+    "src/style.css": "0f15967f4a581638a3159ec0bd97faf49cfed1c9ee8d8dfd5d154f8e6de7c815",
+    "src/ui/artIcons.ts": "6aca8e632ffa989ec19ef9979e0fc82358642d723fe0154084dfb7ee6a726f0c",
+    "src/ui/artTheme.css": "853c05c82afcdb5ac4e223b49161ebcd3303383167283e5bbb48a59d13312f41",
+    "src/ui/battleHud.ts": "70d1eaa780036c8839a0d4c97b9b73116b08b02204c305ed60114afda3e2f1ea",
+    "src/ui/camp.css": "879bd50afdacf4ff70e9824d2f34cf52b8a36947c7e0fa836245b482a272fe64",
+    "src/ui/campHud.ts": "7ab392fe0af080f927d514af28bb595b8bbde950af2fea10f1eb9c9c9f9fa0fe",
+    "src/ui/campWeaponTrial.ts": "26e2c384793baa0bf3921474a335109d72797a395fa0eccb68ad5c61af099574",
+    "src/ui/campaignHud.ts": "1bfe7edb49631f698c4bc2cf168f50dea0f2849bbb4cb69656ea002d4a69f31b",
+    "src/ui/catalysisHud.ts": "efa01b8d61f9298f34124f9e0774a05069ffd934b842817b341c511022d161b5",
+    "src/ui/construction.css": "93d0358ebcee8c75e29e46eb1f57e2dd55db8e596dae6be648564694689b8e1b",
+    "src/ui/constructionHud.ts": "f420776b7f245438d43c0ea657c9444b7b4b5e54cb62069f1749f45fae1f7750",
+    "src/ui/eliteTacticCycleHud.ts": "36f8c5b310d0672ea52c6c17a3bf4a0e5420fcc6d698ce20ab3ab4d16a025a8e",
+    "src/ui/encounter.css": "e5a9925b175251afb21833c663c4aa1ca7ff56370836b9de390fe62d5b9e7ffe",
+    "src/ui/encounterHud.ts": "1cb4ef363f9471a78f615c58301f66e04ce689be4f8475120ed045f86502877d",
+    "src/ui/endless.css": "fd16692c5fbfbc81697c9210a36d6430cd87bd9cdc2a9b8d39a82e34a58b9bd4",
+    "src/ui/endlessEvolutionWarning.ts": "bc456a3ad7e9cdb3a2c6f7edfceed3cb1a86648e1061e57adc52db070c383321",
+    "src/ui/endlessHud.ts": "bdb5b6070ce68a45d1ce6a7964044bfcd4de5347c574e5f46f1362457ad3e5a9",
+    "src/ui/endlessTutorial.ts": "436fa6964d2e5b823fdb3d44e21c93146ab349a9c6dcd278b8947de00147e2bf",
+    "src/ui/expeditionRewardHud.ts": "85d98d64f8d128d5986c048580a632965eb411c0d5b976d7a50450575bd2cb48",
+    "src/ui/growthHud.ts": "96bbe61bf71849bf43706d31750a4f039d83c3f68de3170c53b73865384bdf32",
+    "src/ui/hostEventHud.css": "b813df8f3909d1e7208202f64d0bb141ec7d05baf9e147ee674229b463db001b",
+    "src/ui/hostEventHud.ts": "0f7772e554b28672607c074415d2cc12da8bf7b6c5698ad25219bc05e6e22bb0",
+    "src/ui/hudLayout.ts": "2cebfc7b936a709ef8d1b27dab6c2fcabe3705dd988aaf2c86b14d7426d5fe1c",
+    "src/ui/immuneFocusHud.ts": "95e001cbb29334aec52e12f71b2f8497421625ec13d21e47cca54b3333f8c91d",
+    "src/ui/legionHud.ts": "36b86e518f002626085bd7b26d7462499d926332a3307fcb72e0678dc5726f81",
+    "src/ui/mainMenu.css": "a6b1cfb84c992a8a5e6c8b22d3d67c06331cb76d9f68bf2ae2d034bfe8df7b99",
+    "src/ui/mainMenu.ts": "6b178e4630f0ce8feba1f844a64daefbab8108ed63b2d38871127c49edac6f04",
+    "src/ui/mobile.css": "8c0cb906a8a461fa6cf824571e93a8bc8509b27df922fb2f8e8b9d8c5592f242",
+    "src/ui/mobileHud.ts": "1c4b40e4ad6b77d0f8248eaa4d00d472a86e74c7b351c104786009e049fc9547",
+    "src/ui/modalPointerIntent.ts": "99567c1bd88aa98152abfc0c2b303739b1fad4a1d570858fd605c0f4e7c99c4a",
+    "src/ui/profile.css": "e7a171fa930fc5c43a81550554c7f68abc7c8e11515bb55ef2098ca00fd35cc7",
+    "src/ui/profileHud.ts": "ce14fcd40a45ae663ffc94df955609f5ab7056d48fb7fe76264f020a6e473363",
+    "src/ui/research.css": "db48bcb15fbb3cc242530ab682b220a4caaafd73e939adf204a90d401da69bed",
+    "src/ui/responsiveLayout.ts": "ae41af07a0b91c340eecb860bbe80768a201cc28c4bd614078d9afd579589e54",
+    "src/ui/startingPlan.css": "8de9969303735e56cdab18a1070dc1068f3786e6276c71e76791f684bdc4b2d3",
+    "src/ui/startingPlanHud.ts": "bdf944c887ea8f1cb7860b853542d26e833db154ddd02bc818ef5500761ee2d2",
+    "src/ui/tacticalHistory.ts": "c159a53e514049043f0a41dfb07b435a8774630993d039d68832fbb1c4db137b",
+    "src/ui/territory.css": "259699414359812af5be34074dc13fbbe9ec5c3df0c63161537f1ff55bfd949b",
+    "src/ui/territoryHandoffView.ts": "80d3903f95f89d0a522f32e8dc0a9b5e6e9ab1a8cff286c7df776f99d920f6c8",
+    "src/ui/territoryHud.ts": "3f450d2a7a2854df666b0d7751708f48dc4dce683a479f35aefbff05225a975d",
+    "src/ui/touchCopy.ts": "5037c970de259abc61e27440929d742d8ce5b1871bc69f908411657e67d18d5e",
+    "src/ui/upgradeChoices.css": "21f77c50949a1f41a5dc5e5114d9f8a2826d4bb2af4d79516f13db1b8159b200",
+    "src/ui/upgradeChoices.ts": "ec97ea2c9a98ec4e8b0c919149999673983efba8fc27479ea997479b3f2af326"
+  },
+  "outputManifest": {
+    "index.html": "342f9d6dd3c1b1fcde4d0d12d274dd9ce08aaae7fc9c309fa9016c3896af33da",
+    "game.js": "c05fc66a04a241751950e35aed10e137ac6d8c2eb102048835822402ffb33d3b",
+    "game.css": "49c5ef2df0c66aad90dff39b681e903ff1411753993469ecae25fbeac9149fd0"
+  },
+  "inputs": {
+    ".art-generated/art-runtime.json": {
+      "bytes": 17062357,
+      "imports": []
+    },
+    "src/render/raisedObstacleGeometry.ts": {
+      "bytes": 6075,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/render/spriteGeometry.ts": {
+      "bytes": 8521,
+      "imports": [
+        {
+          "path": "src/render/raisedObstacleGeometry.ts",
+          "kind": "import-statement",
+          "original": "./raisedObstacleGeometry"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/expeditionArt.ts": {
+      "bytes": 9122,
+      "imports": [
+        {
+          "path": ".art-generated/art-runtime.json",
+          "kind": "import-statement",
+          "original": "../../.art-generated/art-runtime.json"
+        },
+        {
+          "path": "src/render/spriteGeometry.ts",
+          "kind": "import-statement",
+          "original": "./spriteGeometry"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/style.css": {
+      "bytes": 34632,
+      "imports": []
+    },
+    "src/game/immuneLegions.ts": {
+      "bytes": 316,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/core/clock.ts": {
+      "bytes": 1566,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/core/events.ts": {
+      "bytes": 887,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/core/rng.ts": {
+      "bytes": 680,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/game/types.ts": {
+      "bytes": 7444,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/actors/collision.ts": {
+      "bytes": 5520,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/battleConfig.ts": {
+      "bytes": 1757,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/game/evolution.ts": {
+      "bytes": 8002,
+      "imports": [
+        {
+          "path": "src/core/rng.ts",
+          "kind": "import-statement",
+          "original": "../core/rng"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/protocols.ts": {
+      "bytes": 8639,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/game/immuneFocus.ts": {
+      "bytes": 5236,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/protocols.ts",
+          "kind": "import-statement",
+          "original": "./protocols"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/traction.ts": {
+      "bytes": 7225,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/dashBlade.ts": {
+      "bytes": 1684,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/endlessGrowth.ts": {
+      "bytes": 13371,
+      "imports": [
+        {
+          "path": "src/core/rng.ts",
+          "kind": "import-statement",
+          "original": "../core/rng"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/immuneFocus.ts",
+          "kind": "import-statement",
+          "original": "./immuneFocus"
+        },
+        {
+          "path": "src/game/traction.ts",
+          "kind": "import-statement",
+          "original": "./traction"
+        },
+        {
+          "path": "src/game/dashBlade.ts",
+          "kind": "import-statement",
+          "original": "./dashBlade"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/actors/enemyNavigation.ts": {
+      "bytes": 6781,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "./collision"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/openingEvolution.ts": {
+      "bytes": 4554,
+      "imports": [
+        {
+          "path": "src/core/rng.ts",
+          "kind": "import-statement",
+          "original": "../core/rng"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/hostEvents.ts": {
+      "bytes": 34933,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/actors/enemyNavigation.ts",
+          "kind": "import-statement",
+          "original": "../actors/enemyNavigation"
+        },
+        {
+          "path": "src/game/endlessGrowth.ts",
+          "kind": "import-statement",
+          "original": "./endlessGrowth"
+        },
+        {
+          "path": "src/game/openingEvolution.ts",
+          "kind": "import-statement",
+          "original": "./openingEvolution"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/healingPoints.ts": {
+      "bytes": 4954,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/endlessGrowth.ts",
+          "kind": "import-statement",
+          "original": "./endlessGrowth"
+        },
+        {
+          "path": "src/game/hostEvents.ts",
+          "kind": "import-statement",
+          "original": "./hostEvents"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/organConfig.ts": {
+      "bytes": 6784,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/core/rng.ts",
+          "kind": "import-statement",
+          "original": "../core/rng"
+        },
+        {
+          "path": "./types",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "./battleConfig"
+        },
+        {
+          "path": "src/game/healingPoints.ts",
+          "kind": "import-statement",
+          "original": "./healingPoints"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/encounterConfig.ts": {
+      "bytes": 384,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/game/counterLesson.ts": {
+      "bytes": 1173,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "./battleConfig"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/actors/enemyCrowd.ts": {
+      "bytes": 6002,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "./collision"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/endlessPacing.ts": {
+      "bytes": 2360,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/game/combatPopulation.ts": {
+      "bytes": 1661,
+      "imports": [
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "./battleConfig"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/endlessStrikeBalance.ts": {
+      "bytes": 1321,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/game/enemyPositioning.ts": {
+      "bytes": 3649,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/enemyTactics.ts": {
+      "bytes": 7403,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/enemyPositioning.ts",
+          "kind": "import-statement",
+          "original": "./enemyPositioning"
+        },
+        {
+          "path": "src/game/endlessStrikeBalance.ts",
+          "kind": "import-statement",
+          "original": "./endlessStrikeBalance"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/enemyFacing.ts": {
+      "bytes": 1216,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/game/eliteTacticCycle.ts": {
+      "bytes": 3607,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/game/viralCapsules.ts": {
+      "bytes": 15594,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/endlessPacing.ts",
+          "kind": "import-statement",
+          "original": "./endlessPacing"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/combatPopulation.ts",
+          "kind": "import-statement",
+          "original": "./combatPopulation"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/constructionTypes.ts": {
+      "bytes": 1218,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/game/territoryCannon.ts": {
+      "bytes": 7220,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/constructionTypes.ts",
+          "kind": "import-statement",
+          "original": "./constructionTypes"
+        },
+        {
+          "path": "src/game/territory.ts",
+          "kind": "import-statement",
+          "original": "./territory"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/territory.ts": {
+      "bytes": 40150,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/endlessGrowth.ts",
+          "kind": "import-statement",
+          "original": "./endlessGrowth"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/territoryCannon.ts",
+          "kind": "import-statement",
+          "original": "./territoryCannon"
+        },
+        {
+          "path": "src/game/immuneLegions.ts",
+          "kind": "import-statement",
+          "original": "./immuneLegions"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/ritual.ts": {
+      "bytes": 14825,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/actors/enemyNavigation.ts",
+          "kind": "import-statement",
+          "original": "../actors/enemyNavigation"
+        },
+        {
+          "path": "src/core/rng.ts",
+          "kind": "import-statement",
+          "original": "../core/rng"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/territory.ts",
+          "kind": "import-statement",
+          "original": "./territory"
+        },
+        {
+          "path": "src/game/territoryCannon.ts",
+          "kind": "import-statement",
+          "original": "./territoryCannon"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/smartViruses.ts": {
+      "bytes": 20305,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/actors/enemyNavigation.ts",
+          "kind": "import-statement",
+          "original": "../actors/enemyNavigation"
+        },
+        {
+          "path": "src/actors/enemyCrowd.ts",
+          "kind": "import-statement",
+          "original": "../actors/enemyCrowd"
+        },
+        {
+          "path": "src/core/rng.ts",
+          "kind": "import-statement",
+          "original": "../core/rng"
+        },
+        {
+          "path": "src/game/combatPopulation.ts",
+          "kind": "import-statement",
+          "original": "./combatPopulation"
+        },
+        {
+          "path": "src/game/territory.ts",
+          "kind": "import-statement",
+          "original": "./territory"
+        },
+        {
+          "path": "src/game/territoryCannon.ts",
+          "kind": "import-statement",
+          "original": "./territoryCannon"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/ritual.ts",
+          "kind": "import-statement",
+          "original": "./ritual"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/battle.ts": {
+      "bytes": 61302,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/core/rng.ts",
+          "kind": "import-statement",
+          "original": "../core/rng"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "./battleConfig"
+        },
+        {
+          "path": "src/game/evolution.ts",
+          "kind": "import-statement",
+          "original": "./evolution"
+        },
+        {
+          "path": "src/game/organConfig.ts",
+          "kind": "import-statement",
+          "original": "./organConfig"
+        },
+        {
+          "path": "src/game/encounterConfig.ts",
+          "kind": "import-statement",
+          "original": "./encounterConfig"
+        },
+        {
+          "path": "src/game/counterLesson.ts",
+          "kind": "import-statement",
+          "original": "./counterLesson"
+        },
+        {
+          "path": "src/actors/enemyCrowd.ts",
+          "kind": "import-statement",
+          "original": "../actors/enemyCrowd"
+        },
+        {
+          "path": "src/game/endlessGrowth.ts",
+          "kind": "import-statement",
+          "original": "./endlessGrowth"
+        },
+        {
+          "path": "src/game/endlessPacing.ts",
+          "kind": "import-statement",
+          "original": "./endlessPacing"
+        },
+        {
+          "path": "src/game/combatPopulation.ts",
+          "kind": "import-statement",
+          "original": "./combatPopulation"
+        },
+        {
+          "path": "src/game/endlessStrikeBalance.ts",
+          "kind": "import-statement",
+          "original": "./endlessStrikeBalance"
+        },
+        {
+          "path": "src/actors/enemyNavigation.ts",
+          "kind": "import-statement",
+          "original": "../actors/enemyNavigation"
+        },
+        {
+          "path": "src/game/enemyTactics.ts",
+          "kind": "import-statement",
+          "original": "./enemyTactics"
+        },
+        {
+          "path": "src/game/enemyPositioning.ts",
+          "kind": "import-statement",
+          "original": "./enemyPositioning"
+        },
+        {
+          "path": "src/game/enemyFacing.ts",
+          "kind": "import-statement",
+          "original": "./enemyFacing"
+        },
+        {
+          "path": "src/game/eliteTacticCycle.ts",
+          "kind": "import-statement",
+          "original": "./eliteTacticCycle"
+        },
+        {
+          "path": "src/game/viralCapsules.ts",
+          "kind": "import-statement",
+          "original": "./viralCapsules"
+        },
+        {
+          "path": "src/game/hostEvents.ts",
+          "kind": "import-statement",
+          "original": "./hostEvents"
+        },
+        {
+          "path": "src/game/territory.ts",
+          "kind": "import-statement",
+          "original": "./territory"
+        },
+        {
+          "path": "src/game/immuneLegions.ts",
+          "kind": "import-statement",
+          "original": "./immuneLegions"
+        },
+        {
+          "path": "src/game/smartViruses.ts",
+          "kind": "import-statement",
+          "original": "./smartViruses"
+        },
+        {
+          "path": "src/game/territoryCannon.ts",
+          "kind": "import-statement",
+          "original": "./territoryCannon"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/immuneCells.ts": {
+      "bytes": 27298,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/immuneFocus.ts",
+          "kind": "import-statement",
+          "original": "./immuneFocus"
+        },
+        {
+          "path": "src/game/hostEvents.ts",
+          "kind": "import-statement",
+          "original": "./hostEvents"
+        },
+        {
+          "path": "src/game/territory.ts",
+          "kind": "import-statement",
+          "original": "./territory"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/research.ts": {
+      "bytes": 1415,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/game/preparation.ts": {
+      "bytes": 1484,
+      "imports": [
+        {
+          "path": "src/game/protocols.ts",
+          "kind": "import-statement",
+          "original": "./protocols"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/growth.ts": {
+      "bytes": 54913,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/core/rng.ts",
+          "kind": "import-statement",
+          "original": "../core/rng"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/protocols.ts",
+          "kind": "import-statement",
+          "original": "./protocols"
+        },
+        {
+          "path": "src/game/immuneCells.ts",
+          "kind": "import-statement",
+          "original": "./immuneCells"
+        },
+        {
+          "path": "src/game/immuneFocus.ts",
+          "kind": "import-statement",
+          "original": "./immuneFocus"
+        },
+        {
+          "path": "src/game/endlessGrowth.ts",
+          "kind": "import-statement",
+          "original": "./endlessGrowth"
+        },
+        {
+          "path": "src/game/research.ts",
+          "kind": "import-statement",
+          "original": "./research"
+        },
+        {
+          "path": "src/game/preparation.ts",
+          "kind": "import-statement",
+          "original": "./preparation"
+        },
+        {
+          "path": "src/game/territory.ts",
+          "kind": "import-statement",
+          "original": "./territory"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/organRules.ts": {
+      "bytes": 2917,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/organConfig.ts",
+          "kind": "import-statement",
+          "original": "./organConfig"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/campaignEncounters.ts": {
+      "bytes": 15407,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "./battleConfig"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/campaign.ts": {
+      "bytes": 29358,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/organConfig.ts",
+          "kind": "import-statement",
+          "original": "./organConfig"
+        },
+        {
+          "path": "src/game/organRules.ts",
+          "kind": "import-statement",
+          "original": "./organRules"
+        },
+        {
+          "path": "src/game/campaignEncounters.ts",
+          "kind": "import-statement",
+          "original": "./campaignEncounters"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/motherCore.ts": {
+      "bytes": 21950,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/tacticalFeedback.ts": {
+      "bytes": 9458,
+      "imports": [
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "./battleConfig"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/runMetrics.ts": {
+      "bytes": 19735,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/game/enemyTacticInfo.ts": {
+      "bytes": 815,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/game/endlessEvolution.ts": {
+      "bytes": 4487,
+      "imports": [
+        {
+          "path": "src/game/evolution.ts",
+          "kind": "import-statement",
+          "original": "./evolution"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/endlessBehavior.ts": {
+      "bytes": 2022,
+      "imports": [
+        {
+          "path": "src/game/evolution.ts",
+          "kind": "import-statement",
+          "original": "./evolution"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/endlessAssault.ts": {
+      "bytes": 2826,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/core/rng.ts",
+          "kind": "import-statement",
+          "original": "../core/rng"
+        },
+        {
+          "path": "src/game/endlessPacing.ts",
+          "kind": "import-statement",
+          "original": "./endlessPacing"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/endlessSource.ts": {
+      "bytes": 4049,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/core/rng.ts",
+          "kind": "import-statement",
+          "original": "../core/rng"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/endless.ts": {
+      "bytes": 53922,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/core/rng.ts",
+          "kind": "import-statement",
+          "original": "../core/rng"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "./battleConfig"
+        },
+        {
+          "path": "src/game/enemyTacticInfo.ts",
+          "kind": "import-statement",
+          "original": "./enemyTacticInfo"
+        },
+        {
+          "path": "src/game/enemyPositioning.ts",
+          "kind": "import-statement",
+          "original": "./enemyPositioning"
+        },
+        {
+          "path": "src/game/enemyTactics.ts",
+          "kind": "import-statement",
+          "original": "./enemyTactics"
+        },
+        {
+          "path": "src/game/endlessEvolution.ts",
+          "kind": "import-statement",
+          "original": "./endlessEvolution"
+        },
+        {
+          "path": "src/game/endlessBehavior.ts",
+          "kind": "import-statement",
+          "original": "./endlessBehavior"
+        },
+        {
+          "path": "src/game/eliteTacticCycle.ts",
+          "kind": "import-statement",
+          "original": "./eliteTacticCycle"
+        },
+        {
+          "path": "src/game/endlessPacing.ts",
+          "kind": "import-statement",
+          "original": "./endlessPacing"
+        },
+        {
+          "path": "src/game/endlessAssault.ts",
+          "kind": "import-statement",
+          "original": "./endlessAssault"
+        },
+        {
+          "path": "src/game/viralCapsules.ts",
+          "kind": "import-statement",
+          "original": "./viralCapsules"
+        },
+        {
+          "path": "src/game/endlessSource.ts",
+          "kind": "import-statement",
+          "original": "./endlessSource"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/combatPopulation.ts",
+          "kind": "import-statement",
+          "original": "./combatPopulation"
+        },
+        {
+          "path": "src/game/smartViruses.ts",
+          "kind": "import-statement",
+          "original": "./smartViruses"
+        },
+        {
+          "path": "src/game/territoryCannon.ts",
+          "kind": "import-statement",
+          "original": "./territoryCannon"
+        },
+        {
+          "path": "src/game/ritual.ts",
+          "kind": "import-statement",
+          "original": "./ritual"
+        },
+        {
+          "path": "src/game/openingEvolution.ts",
+          "kind": "import-statement",
+          "original": "./openingEvolution"
+        },
+        {
+          "path": "src/game/territory.ts",
+          "kind": "import-statement",
+          "original": "./territory"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/catalysis.ts": {
+      "bytes": 3475,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/endlessGrowth.ts",
+          "kind": "import-statement",
+          "original": "./endlessGrowth"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/dashTrail.ts": {
+      "bytes": 613,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/expedition.ts": {
+      "bytes": 3539,
+      "imports": [
+        {
+          "path": "src/core/rng.ts",
+          "kind": "import-statement",
+          "original": "../core/rng"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/playerProjectiles.ts": {
+      "bytes": 11716,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/expedition.ts",
+          "kind": "import-statement",
+          "original": "./expedition"
+        },
+        {
+          "path": "src/game/ritual.ts",
+          "kind": "import-statement",
+          "original": "./ritual"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/chargedSlash.ts": {
+      "bytes": 1022,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/game/territoryNotices.ts": {
+      "bytes": 1876,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/game/construction.ts": {
+      "bytes": 12156,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/immuneCells.ts",
+          "kind": "import-statement",
+          "original": "./immuneCells"
+        },
+        {
+          "path": "src/game/territory.ts",
+          "kind": "import-statement",
+          "original": "./territory"
+        },
+        {
+          "path": "src/game/constructionTypes.ts",
+          "kind": "import-statement",
+          "original": "./constructionTypes"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/session.ts": {
+      "bytes": 108857,
+      "imports": [
+        {
+          "path": "src/game/immuneLegions.ts",
+          "kind": "import-statement",
+          "original": "./immuneLegions"
+        },
+        {
+          "path": "src/core/clock.ts",
+          "kind": "import-statement",
+          "original": "../core/clock"
+        },
+        {
+          "path": "src/core/events.ts",
+          "kind": "import-statement",
+          "original": "../core/events"
+        },
+        {
+          "path": "src/core/rng.ts",
+          "kind": "import-statement",
+          "original": "../core/rng"
+        },
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/battle.ts",
+          "kind": "import-statement",
+          "original": "./battle"
+        },
+        {
+          "path": "src/game/growth.ts",
+          "kind": "import-statement",
+          "original": "./growth"
+        },
+        {
+          "path": "src/game/campaign.ts",
+          "kind": "import-statement",
+          "original": "./campaign"
+        },
+        {
+          "path": "src/game/motherCore.ts",
+          "kind": "import-statement",
+          "original": "./motherCore"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "./battleConfig"
+        },
+        {
+          "path": "src/game/organConfig.ts",
+          "kind": "import-statement",
+          "original": "./organConfig"
+        },
+        {
+          "path": "src/game/tacticalFeedback.ts",
+          "kind": "import-statement",
+          "original": "./tacticalFeedback"
+        },
+        {
+          "path": "src/game/runMetrics.ts",
+          "kind": "import-statement",
+          "original": "./runMetrics"
+        },
+        {
+          "path": "src/game/endless.ts",
+          "kind": "import-statement",
+          "original": "./endless"
+        },
+        {
+          "path": "src/game/endlessGrowth.ts",
+          "kind": "import-statement",
+          "original": "./endlessGrowth"
+        },
+        {
+          "path": "src/game/immuneCells.ts",
+          "kind": "import-statement",
+          "original": "./immuneCells"
+        },
+        {
+          "path": "src/game/catalysis.ts",
+          "kind": "import-statement",
+          "original": "./catalysis"
+        },
+        {
+          "path": "src/game/traction.ts",
+          "kind": "import-statement",
+          "original": "./traction"
+        },
+        {
+          "path": "src/game/dashBlade.ts",
+          "kind": "import-statement",
+          "original": "./dashBlade"
+        },
+        {
+          "path": "src/game/dashTrail.ts",
+          "kind": "import-statement",
+          "original": "./dashTrail"
+        },
+        {
+          "path": "src/game/healingPoints.ts",
+          "kind": "import-statement",
+          "original": "./healingPoints"
+        },
+        {
+          "path": "src/game/hostEvents.ts",
+          "kind": "import-statement",
+          "original": "./hostEvents"
+        },
+        {
+          "path": "src/game/playerProjectiles.ts",
+          "kind": "import-statement",
+          "original": "./playerProjectiles"
+        },
+        {
+          "path": "src/game/chargedSlash.ts",
+          "kind": "import-statement",
+          "original": "./chargedSlash"
+        },
+        {
+          "path": "src/game/territory.ts",
+          "kind": "import-statement",
+          "original": "./territory"
+        },
+        {
+          "path": "src/game/territoryCannon.ts",
+          "kind": "import-statement",
+          "original": "./territoryCannon"
+        },
+        {
+          "path": "src/game/territoryNotices.ts",
+          "kind": "import-statement",
+          "original": "./territoryNotices"
+        },
+        {
+          "path": "src/game/combatPopulation.ts",
+          "kind": "import-statement",
+          "original": "./combatPopulation"
+        },
+        {
+          "path": "src/game/smartViruses.ts",
+          "kind": "import-statement",
+          "original": "./smartViruses"
+        },
+        {
+          "path": "src/game/construction.ts",
+          "kind": "import-statement",
+          "original": "./construction"
+        },
+        {
+          "path": "src/game/expedition.ts",
+          "kind": "import-statement",
+          "original": "./expedition"
+        },
+        {
+          "path": "src/game/ritual.ts",
+          "kind": "import-statement",
+          "original": "./ritual"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/motionInterpolation.ts": {
+      "bytes": 7591,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/territoryCannon.ts",
+          "kind": "import-statement",
+          "original": "../game/territoryCannon"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/input/controller.ts": {
+      "bytes": 27805,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/game/traction.ts",
+          "kind": "import-statement",
+          "original": "../game/traction"
+        },
+        {
+          "path": "src/game/territoryCannon.ts",
+          "kind": "import-statement",
+          "original": "../game/territoryCannon"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/input/touchControls.ts": {
+      "bytes": 21494,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/game/endlessGrowth.ts",
+          "kind": "import-statement",
+          "original": "../game/endlessGrowth"
+        },
+        {
+          "path": "src/game/traction.ts",
+          "kind": "import-statement",
+          "original": "../game/traction"
+        },
+        {
+          "path": "src/game/territoryCannon.ts",
+          "kind": "import-statement",
+          "original": "../game/territoryCannon"
+        },
+        {
+          "path": "./controller",
+          "kind": "import-statement",
+          "external": true
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/campScene.ts": {
+      "bytes": 4227,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        },
+        {
+          "path": "src/game/immuneCells.ts",
+          "kind": "import-statement",
+          "original": "./immuneCells"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/expeditionVisuals.ts": {
+      "bytes": 9108,
+      "imports": [
+        {
+          "path": "src/game/construction.ts",
+          "kind": "import-statement",
+          "original": "../game/construction"
+        },
+        {
+          "path": "src/game/campScene.ts",
+          "kind": "import-statement",
+          "original": "../game/campScene"
+        },
+        {
+          "path": "src/game/motherCore.ts",
+          "kind": "import-statement",
+          "original": "../game/motherCore"
+        },
+        {
+          "path": "src/game/expedition.ts",
+          "kind": "import-statement",
+          "original": "../game/expedition"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/enemyTacticVisuals.ts": {
+      "bytes": 4148,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/enemyTactics.ts",
+          "kind": "import-statement",
+          "original": "../game/enemyTactics"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/endlessVisuals.ts": {
+      "bytes": 7794,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/combatEffects.ts": {
+      "bytes": 6103,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/render/endlessVisuals.ts",
+          "kind": "import-statement",
+          "original": "./endlessVisuals"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/playerProjectileVisuals.ts": {
+      "bytes": 8642,
+      "imports": [
+        {
+          "path": "src/game/chargedSlash.ts",
+          "kind": "import-statement",
+          "original": "../game/chargedSlash"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/camera.ts": {
+      "bytes": 9238,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/render/depthSort.ts": {
+      "bytes": 368,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/render/occlusion.ts": {
+      "bytes": 554,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/layers.ts": {
+      "bytes": 129,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/ui/immuneFocusHud.ts": {
+      "bytes": 1800,
+      "imports": [
+        {
+          "path": "src/game/immuneFocus.ts",
+          "kind": "import-statement",
+          "original": "../game/immuneFocus"
+        },
+        {
+          "path": "src/game/growth.ts",
+          "kind": "import-statement",
+          "original": "../game/growth"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/battleConfig"
+        },
+        {
+          "path": "src/game/enemyTacticInfo.ts",
+          "kind": "import-statement",
+          "original": "../game/enemyTacticInfo"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/immuneFocusVisuals.ts": {
+      "bytes": 1146,
+      "imports": [
+        {
+          "path": "src/ui/immuneFocusHud.ts",
+          "kind": "import-statement",
+          "original": "../ui/immuneFocusHud"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/catalysisHud.ts": {
+      "bytes": 1621,
+      "imports": [
+        {
+          "path": "src/game/catalysis.ts",
+          "kind": "import-statement",
+          "original": "../game/catalysis"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/catalysisVisuals.ts": {
+      "bytes": 1031,
+      "imports": [
+        {
+          "path": "src/ui/catalysisHud.ts",
+          "kind": "import-statement",
+          "original": "../ui/catalysisHud"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/eliteTacticCycleHud.ts": {
+      "bytes": 2768,
+      "imports": [
+        {
+          "path": "src/game/eliteTacticCycle.ts",
+          "kind": "import-statement",
+          "original": "../game/eliteTacticCycle"
+        },
+        {
+          "path": "src/game/enemyTacticInfo.ts",
+          "kind": "import-statement",
+          "original": "../game/enemyTacticInfo"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/eliteTacticCycleVisuals.ts": {
+      "bytes": 1295,
+      "imports": [
+        {
+          "path": "src/game/eliteTacticCycle.ts",
+          "kind": "import-statement",
+          "original": "../game/eliteTacticCycle"
+        },
+        {
+          "path": "src/ui/eliteTacticCycleHud.ts",
+          "kind": "import-statement",
+          "original": "../ui/eliteTacticCycleHud"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/artPresentation.ts": {
+      "bytes": 1361,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/render/battleVisuals.ts": {
+      "bytes": 43977,
+      "imports": [
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/battleConfig"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/enemyTacticInfo.ts",
+          "kind": "import-statement",
+          "original": "../game/enemyTacticInfo"
+        },
+        {
+          "path": "src/game/motherCore.ts",
+          "kind": "import-statement",
+          "original": "../game/motherCore"
+        },
+        {
+          "path": "src/render/immuneFocusVisuals.ts",
+          "kind": "import-statement",
+          "original": "./immuneFocusVisuals"
+        },
+        {
+          "path": "src/render/catalysisVisuals.ts",
+          "kind": "import-statement",
+          "original": "./catalysisVisuals"
+        },
+        {
+          "path": "src/render/eliteTacticCycleVisuals.ts",
+          "kind": "import-statement",
+          "original": "./eliteTacticCycleVisuals"
+        },
+        {
+          "path": "src/render/artPresentation.ts",
+          "kind": "import-statement",
+          "original": "./artPresentation"
+        },
+        {
+          "path": "src/game/enemyTactics.ts",
+          "kind": "import-statement",
+          "original": "../game/enemyTactics"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/pulsePreview.ts": {
+      "bytes": 858,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/battleConfig"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/immuneVisuals.ts": {
+      "bytes": 6467,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/render/immuneTraceCues.ts": {
+      "bytes": 2493,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/game/immuneLegions.ts",
+          "kind": "import-statement",
+          "original": "../game/immuneLegions"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/growthVisuals.ts": {
+      "bytes": 11723,
+      "imports": [
+        {
+          "path": "src/game/immuneLegions.ts",
+          "kind": "import-statement",
+          "original": "../game/immuneLegions"
+        },
+        {
+          "path": "src/game/growth.ts",
+          "kind": "import-statement",
+          "original": "../game/growth"
+        },
+        {
+          "path": "src/render/immuneVisuals.ts",
+          "kind": "import-statement",
+          "original": "./immuneVisuals"
+        },
+        {
+          "path": "src/render/immuneTraceCues.ts",
+          "kind": "import-statement",
+          "original": "./immuneTraceCues"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/encounterVisuals.ts": {
+      "bytes": 8679,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/render/lungVisuals.ts": {
+      "bytes": 12129,
+      "imports": [
+        {
+          "path": "src/game/organRules.ts",
+          "kind": "import-statement",
+          "original": "../game/organRules"
+        },
+        {
+          "path": "src/game/organConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/organConfig"
+        },
+        {
+          "path": "src/render/raisedObstacleGeometry.ts",
+          "kind": "import-statement",
+          "original": "./raisedObstacleGeometry"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/fantasyTerritory.ts": {
+      "bytes": 35208,
+      "imports": [
+        {
+          "path": "src/game/territory.ts",
+          "kind": "import-statement",
+          "original": "../game/territory"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/navigation.ts": {
+      "bytes": 7392,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/territory.ts",
+          "kind": "import-statement",
+          "original": "../game/territory"
+        },
+        {
+          "path": "src/render/fantasyTerritory.ts",
+          "kind": "import-statement",
+          "original": "./fantasyTerritory"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/raisedObstacleOcclusion.ts": {
+      "bytes": 11021,
+      "imports": [
+        {
+          "path": "src/game/immuneLegions.ts",
+          "kind": "import-statement",
+          "original": "../game/immuneLegions"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/render/battleVisuals.ts",
+          "kind": "import-statement",
+          "original": "./battleVisuals"
+        },
+        {
+          "path": "src/game/territoryCannon.ts",
+          "kind": "import-statement",
+          "original": "../game/territoryCannon"
+        },
+        {
+          "path": "src/render/immuneVisuals.ts",
+          "kind": "import-statement",
+          "original": "./immuneVisuals"
+        },
+        {
+          "path": "src/render/raisedObstacleGeometry.ts",
+          "kind": "import-statement",
+          "original": "./raisedObstacleGeometry"
+        },
+        {
+          "path": "src/render/raisedObstacleGeometry.ts",
+          "kind": "import-statement",
+          "original": "./raisedObstacleGeometry"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/sceneLabels.ts": {
+      "bytes": 17057,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/ui/touchCopy.ts": {
+      "bytes": 924,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/render/playerPresence.ts": {
+      "bytes": 5150,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/battleConfig"
+        },
+        {
+          "path": "src/render/occlusion.ts",
+          "kind": "import-statement",
+          "original": "./occlusion"
+        },
+        {
+          "path": "src/render/raisedObstacleGeometry.ts",
+          "kind": "import-statement",
+          "original": "./raisedObstacleGeometry"
+        },
+        {
+          "path": "src/render/raisedObstacleOcclusion.ts",
+          "kind": "import-statement",
+          "original": "./raisedObstacleOcclusion"
+        },
+        {
+          "path": "src/render/artPresentation.ts",
+          "kind": "import-statement",
+          "original": "./artPresentation"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/heroLocomotion.ts": {
+      "bytes": 2408,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/actorFootPlant.ts": {
+      "bytes": 3690,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/render/playerDamageFeedback.ts": {
+      "bytes": 8455,
+      "imports": [
+        {
+          "path": "src/game/hostEvents.ts",
+          "kind": "import-statement",
+          "original": "../game/hostEvents"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/game/territoryCannon.ts",
+          "kind": "import-statement",
+          "original": "../game/territoryCannon"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/territoryCannonVisuals.ts": {
+      "bytes": 5235,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/game/territoryCannon.ts",
+          "kind": "import-statement",
+          "original": "../game/territoryCannon"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/smartVirusVisuals.ts": {
+      "bytes": 10718,
+      "imports": [
+        {
+          "path": "src/game/smartViruses.ts",
+          "kind": "import-statement",
+          "original": "../game/smartViruses"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/render/spriteGeometry.ts",
+          "kind": "import-statement",
+          "original": "./spriteGeometry"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/crosshairStatus.ts": {
+      "bytes": 1329,
+      "imports": [
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/game/traction.ts",
+          "kind": "import-statement",
+          "original": "../game/traction"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/hostEventVisuals.ts": {
+      "bytes": 5429,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/render/canvasScene.ts": {
+      "bytes": 57335,
+      "imports": [
+        {
+          "path": "src/game/campScene.ts",
+          "kind": "import-statement",
+          "original": "../game/campScene"
+        },
+        {
+          "path": "src/render/expeditionVisuals.ts",
+          "kind": "import-statement",
+          "original": "./expeditionVisuals"
+        },
+        {
+          "path": "src/game/immuneLegions.ts",
+          "kind": "import-statement",
+          "original": "../game/immuneLegions"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/game/endlessGrowth.ts",
+          "kind": "import-statement",
+          "original": "../game/endlessGrowth"
+        },
+        {
+          "path": "src/render/enemyTacticVisuals.ts",
+          "kind": "import-statement",
+          "original": "./enemyTacticVisuals"
+        },
+        {
+          "path": "src/render/combatEffects.ts",
+          "kind": "import-statement",
+          "original": "./combatEffects"
+        },
+        {
+          "path": "src/render/playerProjectileVisuals.ts",
+          "kind": "import-statement",
+          "original": "./playerProjectileVisuals"
+        },
+        {
+          "path": "src/render/camera.ts",
+          "kind": "import-statement",
+          "original": "./camera"
+        },
+        {
+          "path": "src/render/depthSort.ts",
+          "kind": "import-statement",
+          "original": "./depthSort"
+        },
+        {
+          "path": "src/render/occlusion.ts",
+          "kind": "import-statement",
+          "original": "./occlusion"
+        },
+        {
+          "path": "src/render/layers.ts",
+          "kind": "import-statement",
+          "original": "./layers"
+        },
+        {
+          "path": "src/render/battleVisuals.ts",
+          "kind": "import-statement",
+          "original": "./battleVisuals"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/battleConfig"
+        },
+        {
+          "path": "src/actors/collision.ts",
+          "kind": "import-statement",
+          "original": "../actors/collision"
+        },
+        {
+          "path": "src/render/pulsePreview.ts",
+          "kind": "import-statement",
+          "original": "./pulsePreview"
+        },
+        {
+          "path": "src/render/growthVisuals.ts",
+          "kind": "import-statement",
+          "original": "./growthVisuals"
+        },
+        {
+          "path": "src/render/encounterVisuals.ts",
+          "kind": "import-statement",
+          "original": "./encounterVisuals"
+        },
+        {
+          "path": "src/game/protocols.ts",
+          "kind": "import-statement",
+          "original": "../game/protocols"
+        },
+        {
+          "path": "src/render/lungVisuals.ts",
+          "kind": "import-statement",
+          "original": "./lungVisuals"
+        },
+        {
+          "path": "src/render/navigation.ts",
+          "kind": "import-statement",
+          "original": "./navigation"
+        },
+        {
+          "path": "src/render/immuneVisuals.ts",
+          "kind": "import-statement",
+          "original": "./immuneVisuals"
+        },
+        {
+          "path": "src/render/raisedObstacleOcclusion.ts",
+          "kind": "import-statement",
+          "original": "./raisedObstacleOcclusion"
+        },
+        {
+          "path": "src/render/raisedObstacleGeometry.ts",
+          "kind": "import-statement",
+          "original": "./raisedObstacleGeometry"
+        },
+        {
+          "path": "src/render/sceneLabels.ts",
+          "kind": "import-statement",
+          "original": "./sceneLabels"
+        },
+        {
+          "path": "src/ui/touchCopy.ts",
+          "kind": "import-statement",
+          "original": "../ui/touchCopy"
+        },
+        {
+          "path": "../game/territory",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "src/render/playerPresence.ts",
+          "kind": "import-statement",
+          "original": "./playerPresence"
+        },
+        {
+          "path": "src/render/heroLocomotion.ts",
+          "kind": "import-statement",
+          "original": "./heroLocomotion"
+        },
+        {
+          "path": "src/render/actorFootPlant.ts",
+          "kind": "import-statement",
+          "original": "./actorFootPlant"
+        },
+        {
+          "path": "src/render/playerDamageFeedback.ts",
+          "kind": "import-statement",
+          "original": "./playerDamageFeedback"
+        },
+        {
+          "path": "src/render/territoryCannonVisuals.ts",
+          "kind": "import-statement",
+          "original": "./territoryCannonVisuals"
+        },
+        {
+          "path": "src/render/smartVirusVisuals.ts",
+          "kind": "import-statement",
+          "original": "./smartVirusVisuals"
+        },
+        {
+          "path": "src/game/territoryCannon.ts",
+          "kind": "import-statement",
+          "original": "../game/territoryCannon"
+        },
+        {
+          "path": "src/render/crosshairStatus.ts",
+          "kind": "import-statement",
+          "original": "./crosshairStatus"
+        },
+        {
+          "path": "src/render/hostEventVisuals.ts",
+          "kind": "import-statement",
+          "original": "./hostEventVisuals"
+        },
+        {
+          "path": "src/render/fantasyTerritory.ts",
+          "kind": "import-statement",
+          "original": "./fantasyTerritory"
+        }
+      ],
+      "format": "esm"
+    },
+    "node_modules/phaser/dist/phaser.esm.js": {
+      "bytes": 8800542,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/render/phaserHost.ts": {
+      "bytes": 13876,
+      "imports": [
+        {
+          "path": "node_modules/phaser/dist/phaser.esm.js",
+          "kind": "import-statement",
+          "original": "phaser"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/heroAnimation.ts": {
+      "bytes": 10232,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/render/spriteGeometry.ts",
+          "kind": "import-statement",
+          "original": "./spriteGeometry"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/toolFeedback.ts": {
+      "bytes": 799,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/heroRig.ts": {
+      "bytes": 5181,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/render/actorAnimation.ts": {
+      "bytes": 16463,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/game/immuneCells.ts",
+          "kind": "import-statement",
+          "original": "../game/immuneCells"
+        },
+        {
+          "path": "src/render/heroAnimation.ts",
+          "kind": "import-statement",
+          "original": "./heroAnimation"
+        },
+        {
+          "path": "src/render/spriteGeometry.ts",
+          "kind": "import-statement",
+          "original": "./spriteGeometry"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/phaserRenderer.ts": {
+      "bytes": 79228,
+      "imports": [
+        {
+          "path": "src/game/immuneLegions.ts",
+          "kind": "import-statement",
+          "original": "../game/immuneLegions"
+        },
+        {
+          "path": ".art-generated/art-runtime.json",
+          "kind": "import-statement",
+          "original": "../../.art-generated/art-runtime.json"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/render/canvasScene.ts",
+          "kind": "import-statement",
+          "original": "./canvasScene"
+        },
+        {
+          "path": "src/render/phaserHost.ts",
+          "kind": "import-statement",
+          "original": "./phaserHost"
+        },
+        {
+          "path": "src/render/occlusion.ts",
+          "kind": "import-statement",
+          "original": "./occlusion"
+        },
+        {
+          "path": "src/render/raisedObstacleOcclusion.ts",
+          "kind": "import-statement",
+          "original": "./raisedObstacleOcclusion"
+        },
+        {
+          "path": "src/render/raisedObstacleGeometry.ts",
+          "kind": "import-statement",
+          "original": "./raisedObstacleGeometry"
+        },
+        {
+          "path": "src/game/protocols.ts",
+          "kind": "import-statement",
+          "original": "../game/protocols"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/battleConfig"
+        },
+        {
+          "path": "src/render/spriteGeometry.ts",
+          "kind": "import-statement",
+          "original": "./spriteGeometry"
+        },
+        {
+          "path": "src/render/heroAnimation.ts",
+          "kind": "import-statement",
+          "original": "./heroAnimation"
+        },
+        {
+          "path": "src/render/immuneVisuals.ts",
+          "kind": "import-statement",
+          "original": "./immuneVisuals"
+        },
+        {
+          "path": "src/game/motherCore.ts",
+          "kind": "import-statement",
+          "original": "../game/motherCore"
+        },
+        {
+          "path": "src/render/battleVisuals.ts",
+          "kind": "import-statement",
+          "original": "./battleVisuals"
+        },
+        {
+          "path": "src/render/toolFeedback.ts",
+          "kind": "import-statement",
+          "original": "./toolFeedback"
+        },
+        {
+          "path": "src/render/heroRig.ts",
+          "kind": "import-statement",
+          "original": "./heroRig"
+        },
+        {
+          "path": "src/render/endlessVisuals.ts",
+          "kind": "import-statement",
+          "original": "./endlessVisuals"
+        },
+        {
+          "path": "src/render/fantasyTerritory.ts",
+          "kind": "import-statement",
+          "original": "./fantasyTerritory"
+        },
+        {
+          "path": "src/render/actorAnimation.ts",
+          "kind": "import-statement",
+          "original": "./actorAnimation"
+        },
+        {
+          "path": "src/render/heroLocomotion.ts",
+          "kind": "import-statement",
+          "original": "./heroLocomotion"
+        },
+        {
+          "path": "src/render/actorFootPlant.ts",
+          "kind": "import-statement",
+          "original": "./actorFootPlant"
+        },
+        {
+          "path": "src/game/territoryCannon.ts",
+          "kind": "import-statement",
+          "original": "../game/territoryCannon"
+        },
+        {
+          "path": "src/render/smartVirusVisuals.ts",
+          "kind": "import-statement",
+          "original": "./smartVirusVisuals"
+        },
+        {
+          "path": "src/render/territoryCannonVisuals.ts",
+          "kind": "import-statement",
+          "original": "./territoryCannonVisuals"
+        },
+        {
+          "path": "src/render/expeditionArt.ts",
+          "kind": "import-statement",
+          "original": "./expeditionArt"
+        },
+        {
+          "path": "src/game/campScene.ts",
+          "kind": "import-statement",
+          "original": "../game/campScene"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/render/renderer.ts": {
+      "bytes": 46,
+      "imports": [
+        {
+          "path": "src/render/phaserRenderer.ts",
+          "kind": "import-statement",
+          "original": "./phaserRenderer"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/audio.ts": {
+      "bytes": 11142,
+      "imports": [
+        {
+          "path": "src/render/playerDamageFeedback.ts",
+          "kind": "import-statement",
+          "original": "./render/playerDamageFeedback"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/tacticalHistory.ts": {
+      "bytes": 1183,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/ui/campaignHud.ts": {
+      "bytes": 25314,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/battleConfig"
+        },
+        {
+          "path": "src/game/organConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/organConfig"
+        },
+        {
+          "path": "src/ui/tacticalHistory.ts",
+          "kind": "import-statement",
+          "original": "./tacticalHistory"
+        },
+        {
+          "path": "src/game/healingPoints.ts",
+          "kind": "import-statement",
+          "original": "../game/healingPoints"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/battleHud.ts": {
+      "bytes": 11985,
+      "imports": [
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/battleConfig"
+        },
+        {
+          "path": "src/ui/campaignHud.ts",
+          "kind": "import-statement",
+          "original": "./campaignHud"
+        },
+        {
+          "path": "src/ui/tacticalHistory.ts",
+          "kind": "import-statement",
+          "original": "./tacticalHistory"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/artIcons.ts": {
+      "bytes": 2229,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/ui/upgradeChoices.css": {
+      "bytes": 3893,
+      "imports": []
+    },
+    "src/ui/upgradeChoices.ts": {
+      "bytes": 7767,
+      "imports": [
+        {
+          "path": "src/game/endlessGrowth.ts",
+          "kind": "import-statement",
+          "original": "../game/endlessGrowth"
+        },
+        {
+          "path": "src/game/protocols.ts",
+          "kind": "import-statement",
+          "original": "../game/protocols"
+        },
+        {
+          "path": "src/ui/artIcons.ts",
+          "kind": "import-statement",
+          "original": "./artIcons"
+        },
+        {
+          "path": "src/ui/upgradeChoices.css",
+          "kind": "import-statement",
+          "original": "./upgradeChoices.css"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/legionHud.ts": {
+      "bytes": 1996,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/ui/growthHud.ts": {
+      "bytes": 25746,
+      "imports": [
+        {
+          "path": "src/game/protocols.ts",
+          "kind": "import-statement",
+          "original": "../game/protocols"
+        },
+        {
+          "path": "src/game/research.ts",
+          "kind": "import-statement",
+          "original": "../game/research"
+        },
+        {
+          "path": "src/ui/immuneFocusHud.ts",
+          "kind": "import-statement",
+          "original": "./immuneFocusHud"
+        },
+        {
+          "path": "src/ui/catalysisHud.ts",
+          "kind": "import-statement",
+          "original": "./catalysisHud"
+        },
+        {
+          "path": "src/ui/upgradeChoices.ts",
+          "kind": "import-statement",
+          "original": "./upgradeChoices"
+        },
+        {
+          "path": "src/ui/legionHud.ts",
+          "kind": "import-statement",
+          "original": "./legionHud"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/research.css": {
+      "bytes": 3984,
+      "imports": []
+    },
+    "src/meta/profile.ts": {
+      "bytes": 29799,
+      "imports": [
+        {
+          "path": "../game/battleConfig",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "src/game/protocols.ts",
+          "kind": "import-statement",
+          "original": "../game/protocols"
+        },
+        {
+          "path": "src/game/preparation.ts",
+          "kind": "import-statement",
+          "original": "../game/preparation"
+        },
+        {
+          "path": "src/game/runMetrics.ts",
+          "kind": "import-statement",
+          "original": "../game/runMetrics"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/meta/runOptions.ts": {
+      "bytes": 1372,
+      "imports": [
+        {
+          "path": "src/meta/profile.ts",
+          "kind": "import-statement",
+          "original": "./profile"
+        },
+        {
+          "path": "src/game/preparation.ts",
+          "kind": "import-statement",
+          "original": "../game/preparation"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/startingPlanHud.ts": {
+      "bytes": 4462,
+      "imports": [
+        {
+          "path": "src/game/preparation.ts",
+          "kind": "import-statement",
+          "original": "../game/preparation"
+        },
+        {
+          "path": "src/game/protocols.ts",
+          "kind": "import-statement",
+          "original": "../game/protocols"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/profileHud.ts": {
+      "bytes": 15820,
+      "imports": [
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/battleConfig"
+        },
+        {
+          "path": "src/game/protocols.ts",
+          "kind": "import-statement",
+          "original": "../game/protocols"
+        },
+        {
+          "path": "src/game/runMetrics.ts",
+          "kind": "import-statement",
+          "original": "../game/runMetrics"
+        },
+        {
+          "path": "src/meta/profile.ts",
+          "kind": "import-statement",
+          "original": "../meta/profile"
+        },
+        {
+          "path": "src/ui/startingPlanHud.ts",
+          "kind": "import-statement",
+          "original": "./startingPlanHud"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/profile.css": {
+      "bytes": 19168,
+      "imports": []
+    },
+    "src/ui/encounterHud.ts": {
+      "bytes": 10459,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/battleConfig"
+        },
+        {
+          "path": "src/game/campaignEncounters.ts",
+          "kind": "import-statement",
+          "original": "../game/campaignEncounters"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/encounter.css": {
+      "bytes": 2154,
+      "imports": []
+    },
+    "src/ui/startingPlan.css": {
+      "bytes": 4833,
+      "imports": []
+    },
+    "src/ui/hudLayout.ts": {
+      "bytes": 3230,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/render/cameraFollowPolicy.ts": {
+      "bytes": 1407,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/render/desktopAimViewport.ts": {
+      "bytes": 1666,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/ui/endlessEvolutionWarning.ts": {
+      "bytes": 5578,
+      "imports": [
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/battleConfig"
+        },
+        {
+          "path": "src/ui/eliteTacticCycleHud.ts",
+          "kind": "import-statement",
+          "original": "./eliteTacticCycleHud"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/territoryHandoffView.ts": {
+      "bytes": 2345,
+      "imports": [
+        {
+          "path": "src/game/immuneLegions.ts",
+          "kind": "import-statement",
+          "original": "../game/immuneLegions"
+        },
+        {
+          "path": "src/game/territory.ts",
+          "kind": "import-statement",
+          "original": "../game/territory"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/expeditionRewardHud.ts": {
+      "bytes": 1541,
+      "imports": [
+        {
+          "path": "src/game/expedition.ts",
+          "kind": "import-statement",
+          "original": "../game/expedition"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/territoryHud.ts": {
+      "bytes": 22146,
+      "imports": [
+        {
+          "path": "src/game/territory.ts",
+          "kind": "import-statement",
+          "original": "../game/territory"
+        },
+        {
+          "path": "src/ui/territoryHandoffView.ts",
+          "kind": "import-statement",
+          "original": "./territoryHandoffView"
+        },
+        {
+          "path": "src/ui/expeditionRewardHud.ts",
+          "kind": "import-statement",
+          "original": "./expeditionRewardHud"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/endlessHud.ts": {
+      "bytes": 43255,
+      "imports": [
+        {
+          "path": "src/game/endlessGrowth.ts",
+          "kind": "import-statement",
+          "original": "../game/endlessGrowth"
+        },
+        {
+          "path": "src/game/enemyTacticInfo.ts",
+          "kind": "import-statement",
+          "original": "../game/enemyTacticInfo"
+        },
+        {
+          "path": "src/game/endless.ts",
+          "kind": "import-statement",
+          "original": "../game/endless"
+        },
+        {
+          "path": "src/game/endlessPacing.ts",
+          "kind": "import-statement",
+          "original": "../game/endlessPacing"
+        },
+        {
+          "path": "src/game/endlessSource.ts",
+          "kind": "import-statement",
+          "original": "../game/endlessSource"
+        },
+        {
+          "path": "src/game/endlessAssault.ts",
+          "kind": "import-statement",
+          "original": "../game/endlessAssault"
+        },
+        {
+          "path": "src/game/immuneFocus.ts",
+          "kind": "import-statement",
+          "original": "../game/immuneFocus"
+        },
+        {
+          "path": "src/game/viralCapsules.ts",
+          "kind": "import-statement",
+          "original": "../game/viralCapsules"
+        },
+        {
+          "path": "src/ui/endlessEvolutionWarning.ts",
+          "kind": "import-statement",
+          "original": "./endlessEvolutionWarning"
+        },
+        {
+          "path": "src/ui/catalysisHud.ts",
+          "kind": "import-statement",
+          "original": "./catalysisHud"
+        },
+        {
+          "path": "src/ui/eliteTacticCycleHud.ts",
+          "kind": "import-statement",
+          "original": "./eliteTacticCycleHud"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/ui/territoryHud.ts",
+          "kind": "import-statement",
+          "original": "./territoryHud"
+        },
+        {
+          "path": "src/ui/upgradeChoices.ts",
+          "kind": "import-statement",
+          "original": "./upgradeChoices"
+        },
+        {
+          "path": "src/game/healingPoints.ts",
+          "kind": "import-statement",
+          "original": "../game/healingPoints"
+        },
+        {
+          "path": "src/ui/campaignHud.ts",
+          "kind": "import-statement",
+          "original": "./campaignHud"
+        },
+        {
+          "path": "src/game/expedition.ts",
+          "kind": "import-statement",
+          "original": "../game/expedition"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/meta/endlessProfile.ts": {
+      "bytes": 26235,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/ui/endless.css": {
+      "bytes": 10060,
+      "imports": []
+    },
+    "src/ui/artTheme.css": {
+      "bytes": 25884,
+      "imports": []
+    },
+    "src/ui/hostEventHud.ts": {
+      "bytes": 14138,
+      "imports": [
+        {
+          "path": "src/game/hostEvents.ts",
+          "kind": "import-statement",
+          "original": "../game/hostEvents"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/battleConfig"
+        },
+        {
+          "path": "src/ui/endlessEvolutionWarning.ts",
+          "kind": "import-statement",
+          "original": "./endlessEvolutionWarning"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/hostEventHud.css": {
+      "bytes": 6846,
+      "imports": []
+    },
+    "src/ui/endlessTutorial.ts": {
+      "bytes": 3455,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/ui/mobileHud.ts": {
+      "bytes": 31152,
+      "imports": [
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "../game/types"
+        },
+        {
+          "path": "src/game/battleConfig.ts",
+          "kind": "import-statement",
+          "original": "../game/battleConfig"
+        },
+        {
+          "path": "src/game/hostEvents.ts",
+          "kind": "import-statement",
+          "original": "../game/hostEvents"
+        },
+        {
+          "path": "src/game/endlessGrowth.ts",
+          "kind": "import-statement",
+          "original": "../game/endlessGrowth"
+        },
+        {
+          "path": "src/ui/endlessHud.ts",
+          "kind": "import-statement",
+          "original": "./endlessHud"
+        },
+        {
+          "path": "src/ui/legionHud.ts",
+          "kind": "import-statement",
+          "original": "./legionHud"
+        },
+        {
+          "path": "src/ui/touchCopy.ts",
+          "kind": "import-statement",
+          "original": "./touchCopy"
+        },
+        {
+          "path": "src/ui/artIcons.ts",
+          "kind": "import-statement",
+          "original": "./artIcons"
+        },
+        {
+          "path": "src/game/immuneCells.ts",
+          "kind": "import-statement",
+          "original": "../game/immuneCells"
+        },
+        {
+          "path": "src/ui/endlessTutorial.ts",
+          "kind": "import-statement",
+          "original": "./endlessTutorial"
+        },
+        {
+          "path": "src/game/chargedSlash.ts",
+          "kind": "import-statement",
+          "original": "../game/chargedSlash"
+        },
+        {
+          "path": "src/ui/territoryHud.ts",
+          "kind": "import-statement",
+          "original": "./territoryHud"
+        },
+        {
+          "path": "src/game/territoryCannon.ts",
+          "kind": "import-statement",
+          "original": "../game/territoryCannon"
+        },
+        {
+          "path": "src/game/territory.ts",
+          "kind": "import-statement",
+          "original": "../game/territory"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/mobile.css": {
+      "bytes": 30176,
+      "imports": []
+    },
+    "src/ui/mainMenu.ts": {
+      "bytes": 2348,
+      "imports": [
+        {
+          "path": "src/ui/territoryHud.ts",
+          "kind": "import-statement",
+          "original": "./territoryHud"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/mainMenu.css": {
+      "bytes": 3486,
+      "imports": []
+    },
+    "src/ui/responsiveLayout.ts": {
+      "bytes": 909,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/ui/territory.css": {
+      "bytes": 7794,
+      "imports": []
+    },
+    "src/ui/modalPointerIntent.ts": {
+      "bytes": 2706,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/meta/campProfile.ts": {
+      "bytes": 15048,
+      "imports": [
+        {
+          "path": "src/game/expedition.ts",
+          "kind": "import-statement",
+          "original": "../game/expedition"
+        },
+        {
+          "path": "src/meta/endlessProfile.ts",
+          "kind": "import-statement",
+          "original": "./endlessProfile"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/campHud.ts": {
+      "bytes": 11438,
+      "imports": [
+        {
+          "path": "src/game/expedition.ts",
+          "kind": "import-statement",
+          "original": "../game/expedition"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/camp.css": {
+      "bytes": 12448,
+      "imports": []
+    },
+    "src/ui/constructionHud.ts": {
+      "bytes": 4777,
+      "imports": [
+        {
+          "path": "src/game/construction.ts",
+          "kind": "import-statement",
+          "original": "../game/construction"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/game/campWeaponTrial.ts": {
+      "bytes": 5354,
+      "imports": [
+        {
+          "path": "src/game/playerProjectiles.ts",
+          "kind": "import-statement",
+          "original": "./playerProjectiles"
+        },
+        {
+          "path": "src/game/endlessGrowth.ts",
+          "kind": "import-statement",
+          "original": "./endlessGrowth"
+        },
+        {
+          "path": "src/game/expedition.ts",
+          "kind": "import-statement",
+          "original": "./expedition"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./types"
+        }
+      ],
+      "format": "esm"
+    },
+    "src/ui/campWeaponTrial.ts": {
+      "bytes": 3224,
+      "imports": [],
+      "format": "esm"
+    },
+    "src/ui/construction.css": {
+      "bytes": 3496,
+      "imports": []
+    },
+    "src/main.ts": {
+      "bytes": 69527,
+      "imports": [
+        {
+          "path": "src/render/expeditionArt.ts",
+          "kind": "import-statement",
+          "original": "./render/expeditionArt"
+        },
+        {
+          "path": "src/style.css",
+          "kind": "import-statement",
+          "original": "./style.css"
+        },
+        {
+          "path": "src/game/session.ts",
+          "kind": "import-statement",
+          "original": "./game/session"
+        },
+        {
+          "path": "src/core/clock.ts",
+          "kind": "import-statement",
+          "original": "./core/clock"
+        },
+        {
+          "path": "src/render/motionInterpolation.ts",
+          "kind": "import-statement",
+          "original": "./render/motionInterpolation"
+        },
+        {
+          "path": "src/input/controller.ts",
+          "kind": "import-statement",
+          "original": "./input/controller"
+        },
+        {
+          "path": "src/input/touchControls.ts",
+          "kind": "import-statement",
+          "original": "./input/touchControls"
+        },
+        {
+          "path": "src/render/renderer.ts",
+          "kind": "import-statement",
+          "original": "./render/renderer"
+        },
+        {
+          "path": "src/game/types.ts",
+          "kind": "import-statement",
+          "original": "./game/types"
+        },
+        {
+          "path": "src/audio.ts",
+          "kind": "import-statement",
+          "original": "./audio"
+        },
+        {
+          "path": "src/ui/battleHud.ts",
+          "kind": "import-statement",
+          "original": "./ui/battleHud"
+        },
+        {
+          "path": "src/ui/growthHud.ts",
+          "kind": "import-statement",
+          "original": "./ui/growthHud"
+        },
+        {
+          "path": "src/ui/research.css",
+          "kind": "import-statement",
+          "original": "./ui/research.css"
+        },
+        {
+          "path": "src/meta/profile.ts",
+          "kind": "import-statement",
+          "original": "./meta/profile"
+        },
+        {
+          "path": "src/meta/runOptions.ts",
+          "kind": "import-statement",
+          "original": "./meta/runOptions"
+        },
+        {
+          "path": "src/ui/profileHud.ts",
+          "kind": "import-statement",
+          "original": "./ui/profileHud"
+        },
+        {
+          "path": "src/ui/profile.css",
+          "kind": "import-statement",
+          "original": "./ui/profile.css"
+        },
+        {
+          "path": "src/ui/encounterHud.ts",
+          "kind": "import-statement",
+          "original": "./ui/encounterHud"
+        },
+        {
+          "path": "src/ui/encounter.css",
+          "kind": "import-statement",
+          "original": "./ui/encounter.css"
+        },
+        {
+          "path": "src/ui/startingPlanHud.ts",
+          "kind": "import-statement",
+          "original": "./ui/startingPlanHud"
+        },
+        {
+          "path": "src/ui/startingPlan.css",
+          "kind": "import-statement",
+          "original": "./ui/startingPlan.css"
+        },
+        {
+          "path": "src/game/preparation.ts",
+          "kind": "import-statement",
+          "original": "./game/preparation"
+        },
+        {
+          "path": "src/ui/hudLayout.ts",
+          "kind": "import-statement",
+          "original": "./ui/hudLayout"
+        },
+        {
+          "path": "src/render/cameraFollowPolicy.ts",
+          "kind": "import-statement",
+          "original": "./render/cameraFollowPolicy"
+        },
+        {
+          "path": "src/render/desktopAimViewport.ts",
+          "kind": "import-statement",
+          "original": "./render/desktopAimViewport"
+        },
+        {
+          "path": "src/render/camera.ts",
+          "kind": "import-statement",
+          "original": "./render/camera"
+        },
+        {
+          "path": "src/ui/endlessHud.ts",
+          "kind": "import-statement",
+          "original": "./ui/endlessHud"
+        },
+        {
+          "path": "src/meta/endlessProfile.ts",
+          "kind": "import-statement",
+          "original": "./meta/endlessProfile"
+        },
+        {
+          "path": "src/game/endlessGrowth.ts",
+          "kind": "import-statement",
+          "original": "./game/endlessGrowth"
+        },
+        {
+          "path": "src/ui/endless.css",
+          "kind": "import-statement",
+          "original": "./ui/endless.css"
+        },
+        {
+          "path": "src/ui/artTheme.css",
+          "kind": "import-statement",
+          "original": "./ui/artTheme.css"
+        },
+        {
+          "path": "src/ui/artIcons.ts",
+          "kind": "import-statement",
+          "original": "./ui/artIcons"
+        },
+        {
+          "path": "src/ui/hostEventHud.ts",
+          "kind": "import-statement",
+          "original": "./ui/hostEventHud"
+        },
+        {
+          "path": "src/game/chargedSlash.ts",
+          "kind": "import-statement",
+          "original": "./game/chargedSlash"
+        },
+        {
+          "path": "./game/territoryCannon",
+          "kind": "import-statement",
+          "external": true
+        },
+        {
+          "path": "src/render/territoryCannonVisuals.ts",
+          "kind": "import-statement",
+          "original": "./render/territoryCannonVisuals"
+        },
+        {
+          "path": "src/game/hostEvents.ts",
+          "kind": "import-statement",
+          "original": "./game/hostEvents"
+        },
+        {
+          "path": "src/ui/hostEventHud.css",
+          "kind": "import-statement",
+          "original": "./ui/hostEventHud.css"
+        },
+        {
+          "path": "src/ui/mobileHud.ts",
+          "kind": "import-statement",
+          "original": "./ui/mobileHud"
+        },
+        {
+          "path": "src/ui/mobile.css",
+          "kind": "import-statement",
+          "original": "./ui/mobile.css"
+        },
+        {
+          "path": "src/ui/mainMenu.ts",
+          "kind": "import-statement",
+          "original": "./ui/mainMenu"
+        },
+        {
+          "path": "src/ui/endlessTutorial.ts",
+          "kind": "import-statement",
+          "original": "./ui/endlessTutorial"
+        },
+        {
+          "path": "src/ui/mainMenu.css",
+          "kind": "import-statement",
+          "original": "./ui/mainMenu.css"
+        },
+        {
+          "path": "src/ui/touchCopy.ts",
+          "kind": "import-statement",
+          "original": "./ui/touchCopy"
+        },
+        {
+          "path": "src/ui/responsiveLayout.ts",
+          "kind": "import-statement",
+          "original": "./ui/responsiveLayout"
+        },
+        {
+          "path": "src/ui/territoryHud.ts",
+          "kind": "import-statement",
+          "original": "./ui/territoryHud"
+        },
+        {
+          "path": "src/ui/territory.css",
+          "kind": "import-statement",
+          "original": "./ui/territory.css"
+        },
+        {
+          "path": "src/ui/modalPointerIntent.ts",
+          "kind": "import-statement",
+          "original": "./ui/modalPointerIntent"
+        },
+        {
+          "path": "src/meta/campProfile.ts",
+          "kind": "import-statement",
+          "original": "./meta/campProfile"
+        },
+        {
+          "path": "src/ui/campHud.ts",
+          "kind": "import-statement",
+          "original": "./ui/campHud"
+        },
+        {
+          "path": "src/ui/camp.css",
+          "kind": "import-statement",
+          "original": "./ui/camp.css"
+        },
+        {
+          "path": "src/ui/constructionHud.ts",
+          "kind": "import-statement",
+          "original": "./ui/constructionHud"
+        },
+        {
+          "path": "src/game/campWeaponTrial.ts",
+          "kind": "import-statement",
+          "original": "./game/campWeaponTrial"
+        },
+        {
+          "path": "src/ui/campWeaponTrial.ts",
+          "kind": "import-statement",
+          "original": "./ui/campWeaponTrial"
+        },
+        {
+          "path": "src/game/construction.ts",
+          "kind": "import-statement",
+          "original": "./game/construction"
+        },
+        {
+          "path": "src/game/campScene.ts",
+          "kind": "import-statement",
+          "original": "./game/campScene"
+        },
+        {
+          "path": "src/game/territoryCannon.ts",
+          "kind": "import-statement",
+          "original": "./game/territoryCannon"
+        },
+        {
+          "path": "src/game/territory.ts",
+          "kind": "import-statement",
+          "original": "./game/territory"
+        },
+        {
+          "path": "src/game/expedition.ts",
+          "kind": "import-statement",
+          "original": "./game/expedition"
+        },
+        {
+          "path": "src/ui/construction.css",
+          "kind": "import-statement",
+          "original": "./ui/construction.css"
+        }
+      ],
+      "format": "esm"
+    }
+  },
+  "outputs": {
+    "artifacts/experience-v0151/candidate-4/game.js": {
+      "imports": [],
+      "exports": [],
+      "entryPoint": "src/main.ts",
+      "cssBundle": "artifacts/experience-v0151/candidate-4/game.css",
+      "inputs": {
+        ".art-generated/art-runtime.json": {
+          "bytesInOutput": 17022520
+        },
+        "src/render/raisedObstacleGeometry.ts": {
+          "bytesInOutput": 2144
+        },
+        "src/render/spriteGeometry.ts": {
+          "bytesInOutput": 2786
+        },
+        "src/render/expeditionArt.ts": {
+          "bytesInOutput": 4188
+        },
+        "src/style.css": {
+          "bytesInOutput": 0
+        },
+        "src/game/immuneLegions.ts": {
+          "bytesInOutput": 75
+        },
+        "src/core/clock.ts": {
+          "bytesInOutput": 724
+        },
+        "src/core/events.ts": {
+          "bytesInOutput": 275
+        },
+        "src/core/rng.ts": {
+          "bytesInOutput": 361
+        },
+        "src/game/types.ts": {
+          "bytesInOutput": 497
+        },
+        "src/actors/collision.ts": {
+          "bytesInOutput": 1828
+        },
+        "src/game/battleConfig.ts": {
+          "bytesInOutput": 1783
+        },
+        "src/game/evolution.ts": {
+          "bytesInOutput": 3329
+        },
+        "src/game/protocols.ts": {
+          "bytesInOutput": 7192
+        },
+        "src/game/immuneFocus.ts": {
+          "bytesInOutput": 2065
+        },
+        "src/game/traction.ts": {
+          "bytesInOutput": 3411
+        },
+        "src/game/dashBlade.ts": {
+          "bytesInOutput": 720
+        },
+        "src/game/endlessGrowth.ts": {
+          "bytesInOutput": 8581
+        },
+        "src/actors/enemyNavigation.ts": {
+          "bytesInOutput": 2504
+        },
+        "src/game/openingEvolution.ts": {
+          "bytesInOutput": 1672
+        },
+        "src/game/hostEvents.ts": {
+          "bytesInOutput": 21004
+        },
+        "src/game/healingPoints.ts": {
+          "bytesInOutput": 2133
+        },
+        "src/game/organConfig.ts": {
+          "bytesInOutput": 4755
+        },
+        "src/game/encounterConfig.ts": {
+          "bytesInOutput": 229
+        },
+        "src/game/counterLesson.ts": {
+          "bytesInOutput": 579
+        },
+        "src/actors/enemyCrowd.ts": {
+          "bytesInOutput": 2116
+        },
+        "src/game/endlessPacing.ts": {
+          "bytesInOutput": 741
+        },
+        "src/game/combatPopulation.ts": {
+          "bytesInOutput": 700
+        },
+        "src/game/endlessStrikeBalance.ts": {
+          "bytesInOutput": 508
+        },
+        "src/game/enemyPositioning.ts": {
+          "bytesInOutput": 1267
+        },
+        "src/game/enemyTactics.ts": {
+          "bytesInOutput": 2687
+        },
+        "src/game/enemyFacing.ts": {
+          "bytesInOutput": 396
+        },
+        "src/game/eliteTacticCycle.ts": {
+          "bytesInOutput": 1538
+        },
+        "src/game/viralCapsules.ts": {
+          "bytesInOutput": 7709
+        },
+        "src/game/constructionTypes.ts": {
+          "bytesInOutput": 220
+        },
+        "src/game/territoryCannon.ts": {
+          "bytesInOutput": 3149
+        },
+        "src/game/territory.ts": {
+          "bytesInOutput": 19896
+        },
+        "src/game/ritual.ts": {
+          "bytesInOutput": 7738
+        },
+        "src/game/smartViruses.ts": {
+          "bytesInOutput": 10841
+        },
+        "src/game/battle.ts": {
+          "bytesInOutput": 36825
+        },
+        "src/game/immuneCells.ts": {
+          "bytesInOutput": 10531
+        },
+        "src/game/research.ts": {
+          "bytesInOutput": 1208
+        },
+        "src/game/preparation.ts": {
+          "bytesInOutput": 371
+        },
+        "src/game/growth.ts": {
+          "bytesInOutput": 35624
+        },
+        "src/game/organRules.ts": {
+          "bytesInOutput": 1994
+        },
+        "src/game/campaignEncounters.ts": {
+          "bytesInOutput": 11609
+        },
+        "src/game/campaign.ts": {
+          "bytesInOutput": 23750
+        },
+        "src/game/motherCore.ts": {
+          "bytesInOutput": 12751
+        },
+        "src/game/tacticalFeedback.ts": {
+          "bytesInOutput": 9089
+        },
+        "src/game/runMetrics.ts": {
+          "bytesInOutput": 12202
+        },
+        "src/game/enemyTacticInfo.ts": {
+          "bytesInOutput": 1063
+        },
+        "src/game/endlessEvolution.ts": {
+          "bytesInOutput": 1908
+        },
+        "src/game/endlessBehavior.ts": {
+          "bytesInOutput": 921
+        },
+        "src/game/endlessAssault.ts": {
+          "bytesInOutput": 940
+        },
+        "src/game/endlessSource.ts": {
+          "bytesInOutput": 1594
+        },
+        "src/game/endless.ts": {
+          "bytesInOutput": 29707
+        },
+        "src/game/catalysis.ts": {
+          "bytesInOutput": 1412
+        },
+        "src/game/dashTrail.ts": {
+          "bytesInOutput": 136
+        },
+        "src/game/expedition.ts": {
+          "bytesInOutput": 1457
+        },
+        "src/game/playerProjectiles.ts": {
+          "bytesInOutput": 4820
+        },
+        "src/game/chargedSlash.ts": {
+          "bytesInOutput": 416
+        },
+        "src/game/territoryNotices.ts": {
+          "bytesInOutput": 1739
+        },
+        "src/game/construction.ts": {
+          "bytesInOutput": 6009
+        },
+        "src/game/session.ts": {
+          "bytesInOutput": 69448
+        },
+        "src/render/motionInterpolation.ts": {
+          "bytesInOutput": 3168
+        },
+        "src/input/controller.ts": {
+          "bytesInOutput": 16614
+        },
+        "src/input/touchControls.ts": {
+          "bytesInOutput": 11942
+        },
+        "src/game/campScene.ts": {
+          "bytesInOutput": 2841
+        },
+        "src/render/expeditionVisuals.ts": {
+          "bytesInOutput": 7142
+        },
+        "src/render/enemyTacticVisuals.ts": {
+          "bytesInOutput": 2160
+        },
+        "src/render/endlessVisuals.ts": {
+          "bytesInOutput": 1776
+        },
+        "src/render/combatEffects.ts": {
+          "bytesInOutput": 3508
+        },
+        "src/render/playerProjectileVisuals.ts": {
+          "bytesInOutput": 4358
+        },
+        "src/render/camera.ts": {
+          "bytesInOutput": 3729
+        },
+        "src/render/depthSort.ts": {
+          "bytesInOutput": 126
+        },
+        "src/render/occlusion.ts": {
+          "bytesInOutput": 157
+        },
+        "src/render/layers.ts": {
+          "bytesInOutput": 93
+        },
+        "src/ui/immuneFocusHud.ts": {
+          "bytesInOutput": 834
+        },
+        "src/render/immuneFocusVisuals.ts": {
+          "bytesInOutput": 534
+        },
+        "src/ui/catalysisHud.ts": {
+          "bytesInOutput": 1050
+        },
+        "src/render/catalysisVisuals.ts": {
+          "bytesInOutput": 488
+        },
+        "src/ui/eliteTacticCycleHud.ts": {
+          "bytesInOutput": 1423
+        },
+        "src/render/eliteTacticCycleVisuals.ts": {
+          "bytesInOutput": 540
+        },
+        "src/render/artPresentation.ts": {
+          "bytesInOutput": 118
+        },
+        "src/render/battleVisuals.ts": {
+          "bytesInOutput": 21729
+        },
+        "src/render/pulsePreview.ts": {
+          "bytesInOutput": 231
+        },
+        "src/render/immuneVisuals.ts": {
+          "bytesInOutput": 2886
+        },
+        "src/render/immuneTraceCues.ts": {
+          "bytesInOutput": 1102
+        },
+        "src/render/growthVisuals.ts": {
+          "bytesInOutput": 6060
+        },
+        "src/render/encounterVisuals.ts": {
+          "bytesInOutput": 4309
+        },
+        "src/render/lungVisuals.ts": {
+          "bytesInOutput": 3203
+        },
+        "src/render/fantasyTerritory.ts": {
+          "bytesInOutput": 17189
+        },
+        "src/render/navigation.ts": {
+          "bytesInOutput": 4827
+        },
+        "src/render/raisedObstacleOcclusion.ts": {
+          "bytesInOutput": 4437
+        },
+        "src/render/sceneLabels.ts": {
+          "bytesInOutput": 7879
+        },
+        "src/ui/touchCopy.ts": {
+          "bytesInOutput": 848
+        },
+        "src/render/playerPresence.ts": {
+          "bytesInOutput": 2114
+        },
+        "src/render/heroLocomotion.ts": {
+          "bytesInOutput": 1114
+        },
+        "src/render/actorFootPlant.ts": {
+          "bytesInOutput": 1829
+        },
+        "src/render/playerDamageFeedback.ts": {
+          "bytesInOutput": 4981
+        },
+        "src/render/territoryCannonVisuals.ts": {
+          "bytesInOutput": 3220
+        },
+        "src/render/smartVirusVisuals.ts": {
+          "bytesInOutput": 6195
+        },
+        "src/render/crosshairStatus.ts": {
+          "bytesInOutput": 288
+        },
+        "src/render/hostEventVisuals.ts": {
+          "bytesInOutput": 3183
+        },
+        "src/render/canvasScene.ts": {
+          "bytesInOutput": 30947
+        },
+        "node_modules/phaser/dist/phaser.esm.js": {
+          "bytesInOutput": 1388850
+        },
+        "src/render/phaserHost.ts": {
+          "bytesInOutput": 7505
+        },
+        "src/render/heroAnimation.ts": {
+          "bytesInOutput": 4423
+        },
+        "src/render/toolFeedback.ts": {
+          "bytesInOutput": 292
+        },
+        "src/render/heroRig.ts": {
+          "bytesInOutput": 1828
+        },
+        "src/render/actorAnimation.ts": {
+          "bytesInOutput": 7944
+        },
+        "src/render/phaserRenderer.ts": {
+          "bytesInOutput": 47826
+        },
+        "src/render/renderer.ts": {
+          "bytesInOutput": 0
+        },
+        "src/audio.ts": {
+          "bytesInOutput": 6763
+        },
+        "src/ui/tacticalHistory.ts": {
+          "bytesInOutput": 943
+        },
+        "src/ui/campaignHud.ts": {
+          "bytesInOutput": 27392
+        },
+        "src/ui/battleHud.ts": {
+          "bytesInOutput": 12691
+        },
+        "src/ui/artIcons.ts": {
+          "bytesInOutput": 1359
+        },
+        "src/ui/upgradeChoices.css": {
+          "bytesInOutput": 0
+        },
+        "src/ui/upgradeChoices.ts": {
+          "bytesInOutput": 7096
+        },
+        "src/ui/legionHud.ts": {
+          "bytesInOutput": 1679
+        },
+        "src/ui/growthHud.ts": {
+          "bytesInOutput": 26039
+        },
+        "src/ui/research.css": {
+          "bytesInOutput": 0
+        },
+        "src/meta/profile.ts": {
+          "bytesInOutput": 20296
+        },
+        "src/meta/runOptions.ts": {
+          "bytesInOutput": 472
+        },
+        "src/ui/startingPlanHud.ts": {
+          "bytesInOutput": 3554
+        },
+        "src/ui/profileHud.ts": {
+          "bytesInOutput": 13838
+        },
+        "src/ui/profile.css": {
+          "bytesInOutput": 0
+        },
+        "src/ui/encounterHud.ts": {
+          "bytesInOutput": 9767
+        },
+        "src/ui/encounter.css": {
+          "bytesInOutput": 0
+        },
+        "src/ui/startingPlan.css": {
+          "bytesInOutput": 0
+        },
+        "src/ui/hudLayout.ts": {
+          "bytesInOutput": 1702
+        },
+        "src/render/cameraFollowPolicy.ts": {
+          "bytesInOutput": 372
+        },
+        "src/render/desktopAimViewport.ts": {
+          "bytesInOutput": 841
+        },
+        "src/ui/endlessEvolutionWarning.ts": {
+          "bytesInOutput": 4027
+        },
+        "src/ui/territoryHandoffView.ts": {
+          "bytesInOutput": 1549
+        },
+        "src/ui/expeditionRewardHud.ts": {
+          "bytesInOutput": 1505
+        },
+        "src/ui/territoryHud.ts": {
+          "bytesInOutput": 20970
+        },
+        "src/ui/endlessHud.ts": {
+          "bytesInOutput": 44322
+        },
+        "src/meta/endlessProfile.ts": {
+          "bytesInOutput": 9895
+        },
+        "src/ui/endless.css": {
+          "bytesInOutput": 0
+        },
+        "src/ui/artTheme.css": {
+          "bytesInOutput": 0
+        },
+        "src/ui/hostEventHud.ts": {
+          "bytesInOutput": 10098
+        },
+        "src/ui/hostEventHud.css": {
+          "bytesInOutput": 0
+        },
+        "src/ui/endlessTutorial.ts": {
+          "bytesInOutput": 4130
+        },
+        "src/ui/mobileHud.ts": {
+          "bytesInOutput": 22839
+        },
+        "src/ui/mobile.css": {
+          "bytesInOutput": 0
+        },
+        "src/ui/mainMenu.ts": {
+          "bytesInOutput": 2301
+        },
+        "src/ui/mainMenu.css": {
+          "bytesInOutput": 0
+        },
+        "src/ui/responsiveLayout.ts": {
+          "bytesInOutput": 195
+        },
+        "src/ui/territory.css": {
+          "bytesInOutput": 0
+        },
+        "src/ui/modalPointerIntent.ts": {
+          "bytesInOutput": 1174
+        },
+        "src/meta/campProfile.ts": {
+          "bytesInOutput": 10074
+        },
+        "src/ui/campHud.ts": {
+          "bytesInOutput": 10699
+        },
+        "src/ui/camp.css": {
+          "bytesInOutput": 0
+        },
+        "src/ui/constructionHud.ts": {
+          "bytesInOutput": 4313
+        },
+        "src/game/campWeaponTrial.ts": {
+          "bytesInOutput": 2899
+        },
+        "src/ui/campWeaponTrial.ts": {
+          "bytesInOutput": 1984
+        },
+        "src/ui/construction.css": {
+          "bytesInOutput": 0
+        },
+        "src/main.ts": {
+          "bytesInOutput": 45983
+        }
+      },
+      "bytes": 19416011
+    },
+    "artifacts/experience-v0151/candidate-4/game.css": {
+      "imports": [],
+      "inputs": {
+        "src/style.css": {
+          "bytesInOutput": 34200
+        },
+        "src/ui/upgradeChoices.css": {
+          "bytesInOutput": 3347
+        },
+        "src/ui/research.css": {
+          "bytesInOutput": 3472
+        },
+        "src/ui/profile.css": {
+          "bytesInOutput": 18981
+        },
+        "src/ui/encounter.css": {
+          "bytesInOutput": 2136
+        },
+        "src/ui/startingPlan.css": {
+          "bytesInOutput": 4824
+        },
+        "src/ui/endless.css": {
+          "bytesInOutput": 9656
+        },
+        "src/ui/artTheme.css": {
+          "bytesInOutput": 21803
+        },
+        "src/ui/hostEventHud.css": {
+          "bytesInOutput": 6221
+        },
+        "src/ui/mobile.css": {
+          "bytesInOutput": 28058
+        },
+        "src/ui/mainMenu.css": {
+          "bytesInOutput": 3095
+        },
+        "src/ui/territory.css": {
+          "bytesInOutput": 6969
+        },
+        "src/ui/camp.css": {
+          "bytesInOutput": 12069
+        },
+        "src/ui/construction.css": {
+          "bytesInOutput": 3479
+        }
+      },
+      "bytes": 158311
+    }
+  }
+}

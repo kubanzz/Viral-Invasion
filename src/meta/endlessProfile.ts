@@ -175,8 +175,11 @@ export class EndlessProfileStore {
 export const LEGACY_TERRITORY_PROFILE_STORAGE_KEY = 'viral-invasion:2:territory-profile';
 export const DUAL_FRONT_PROFILE_STORAGE_KEY = 'viral-invasion:3:territory-profile';
 export const GARRISON_PROFILE_STORAGE_KEY = 'viral-invasion:4:territory-profile';
-export const TERRITORY_PROFILE_STORAGE_KEY = 'viral-invasion:5:territory-profile';
-export const TERRITORY_PROFILE_SCHEMA_VERSION = 5 as const;
+export const COMBAT_PROFILE_STORAGE_KEY = 'viral-invasion:5:territory-profile';
+export const EXPEDITION_PROFILE_STORAGE_KEY = 'viral-invasion:6:territory-profile';
+export const WEAPON_SKILLS_PROFILE_STORAGE_KEY = 'viral-invasion:7:territory-profile';
+export const TERRITORY_PROFILE_STORAGE_KEY = 'viral-invasion:8:territory-profile';
+export const TERRITORY_PROFILE_SCHEMA_VERSION = 8 as const;
 export interface TerritoryRescueReceipt {
   runId: string; seed: number; atTick: number; elapsed: number; wave: number; clearedWaves: number;
   score: number; kills: number; bestCombo: number; level: number; playerHp: number; coreHp: number;
@@ -196,6 +199,9 @@ export interface TerritoryProfileData {
 export interface TerritoryProfileSnapshot {
   data: TerritoryProfileData; status: EndlessProfileStatus; legacyAvailable: boolean;
   previousGarrison?: Omit<TerritoryProfileData, 'schemaVersion'> & { schemaVersion: 4 };
+  previousCombat?: Omit<TerritoryProfileData, 'schemaVersion'> & { schemaVersion: 5 };
+  previousExpedition?: Omit<TerritoryProfileData, 'schemaVersion'> & { schemaVersion: 6 };
+  previousWeaponSkills?: Omit<TerritoryProfileData, 'schemaVersion'> & { schemaVersion: 7 };
 }
 export type TerritoryRecordResult =
   | { kind: 'recorded' | 'updated' | 'duplicate'; record?: TerritoryRunRecord; persisted: boolean }
@@ -266,11 +272,17 @@ export class TerritoryProfileStore {
   private dirty = false;
   private legacy = false;
   private previousGarrison?: TerritoryProfileSnapshot['previousGarrison'];
+  private previousCombat?: TerritoryProfileSnapshot['previousCombat'];
+  private previousExpedition?: TerritoryProfileSnapshot['previousExpedition'];
+  private previousWeaponSkills?: TerritoryProfileSnapshot['previousWeaponSkills'];
   private currentStatus: EndlessProfileStatus = { mode: 'session', code: 'unavailable', message: '救援成果暂存于本次页面。' };
   constructor(storage?: EndlessProfileStorage | null) {
     this.storage = storage === undefined ? defaultStorage() : storage;
     if (!this.storage) return;
     try { this.legacy = this.storage.getItem(ENDLESS_PROFILE_STORAGE_KEY) !== null
+      || this.storage.getItem(WEAPON_SKILLS_PROFILE_STORAGE_KEY) !== null
+      || this.storage.getItem(EXPEDITION_PROFILE_STORAGE_KEY) !== null
+      || this.storage.getItem(COMBAT_PROFILE_STORAGE_KEY) !== null
       || this.storage.getItem(GARRISON_PROFILE_STORAGE_KEY) !== null
       || this.storage.getItem(DUAL_FRONT_PROFILE_STORAGE_KEY) !== null
       || this.storage.getItem(LEGACY_TERRITORY_PROFILE_STORAGE_KEY) !== null; } catch { /* Legacy detection is optional. */ }
@@ -284,6 +296,36 @@ export class TerritoryProfileStore {
         }
       }
     } catch { /* Older scores remain untouched even when their optional preview is corrupt. */ }
+    try {
+      const raw = this.storage.getItem(COMBAT_PROFILE_STORAGE_KEY);
+      if (raw !== null && raw.length <= 256_000) {
+        const parsed: unknown = JSON.parse(raw);
+        if (object(parsed) && parsed.schemaVersion === 5) {
+          const data = parseTerritoryProfile({ ...parsed, schemaVersion: TERRITORY_PROFILE_SCHEMA_VERSION });
+          if (data) this.previousCombat = { ...data, schemaVersion: 5 };
+        }
+      }
+    } catch { /* v0.14 scores stay read-only even if their preview cannot be parsed. */ }
+    try {
+      const raw = this.storage.getItem(EXPEDITION_PROFILE_STORAGE_KEY);
+      if (raw !== null && raw.length <= 256_000) {
+        const parsed: unknown = JSON.parse(raw);
+        if (object(parsed) && parsed.schemaVersion === 6) {
+          const data = parseTerritoryProfile({ ...parsed, schemaVersion: TERRITORY_PROFILE_SCHEMA_VERSION });
+          if (data) this.previousExpedition = { ...data, schemaVersion: 6 };
+        }
+      }
+    } catch { /* Historical scores are previews, never the current ranking. */ }
+    try {
+      const raw = this.storage.getItem(WEAPON_SKILLS_PROFILE_STORAGE_KEY);
+      if (raw !== null && raw.length <= 256_000) {
+        const parsed: unknown = JSON.parse(raw);
+        if (object(parsed) && parsed.schemaVersion === 7) {
+          const data = parseTerritoryProfile({ ...parsed, schemaVersion: TERRITORY_PROFILE_SCHEMA_VERSION });
+          if (data) this.previousWeaponSkills = { ...data, schemaVersion: 7 };
+        }
+      }
+    } catch { /* v0.16 weapon-kit scores stay untouched if their preview is invalid. */ }
     try {
       const raw = this.storage.getItem(TERRITORY_PROFILE_STORAGE_KEY);
       this.currentStatus = { mode: 'persistent', code: 'empty', message: '双线救援战绩独立保存。' };
@@ -312,6 +354,9 @@ export class TerritoryProfileStore {
   get data(): TerritoryProfileData { return structuredClone(this.value); }
   get status(): EndlessProfileStatus { return { ...this.currentStatus }; }
   load(): TerritoryProfileSnapshot { return { data: this.data, status: this.status, legacyAvailable: this.legacy,
+    ...(this.previousWeaponSkills ? { previousWeaponSkills: structuredClone(this.previousWeaponSkills) } : {}),
+    ...(this.previousExpedition ? { previousExpedition: structuredClone(this.previousExpedition) } : {}),
+    ...(this.previousCombat ? { previousCombat: structuredClone(this.previousCombat) } : {}),
     ...(this.previousGarrison ? { previousGarrison: structuredClone(this.previousGarrison) } : {}) }; }
   save(): TerritoryProfileSnapshot { this.persist(); return this.load(); }
   private persist(): boolean {
@@ -321,7 +366,7 @@ export class TerritoryProfileStore {
       this.storage.setItem(TERRITORY_PROFILE_STORAGE_KEY, serialized);
       if (this.storage.getItem(TERRITORY_PROFILE_STORAGE_KEY) !== serialized) throw Error('Discarded write');
       this.dirty = false;
-      this.currentStatus = { mode: 'persistent', code: 'saved', message: '救援成果已保存；继续守卫不会撤销成功。' };
+      this.currentStatus = { mode: 'persistent', code: 'saved', message: '本次挑战记录已保存。' };
       return true;
     } catch {
       this.currentStatus = { mode: 'session', code: 'write-failed', message: '保存失败，成果仍在本次页面；可重试保存。' };

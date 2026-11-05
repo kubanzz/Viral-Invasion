@@ -6,6 +6,7 @@ import type { GameEvent, GameState, Target, Vec, WorldGeometry } from './types';
 import type { BeaconState, ProtocolRank } from './growthTypes';
 import type { TerritorySquadPlan } from './endlessTypes';
 import { immuneLegions } from './immuneLegions';
+import { TERRITORY_WORLD } from './organConfig';
 import type { TerritoryContextView, TerritoryLane, TerritoryLaneView, TerritoryNode, TerritoryNodeId, TerritoryNodeStatus, TerritoryNodeView, TerritoryPurificationPauseReason, TerritoryPurificationResult, TerritoryRuleEvent, TerritorySourceId, TerritoryState } from './territoryTypes';
 
 export type * from './territoryTypes';
@@ -63,7 +64,6 @@ function finishDefenseSquad(state: GameState, squad: TerritorySquadPlan): void {
   const defense = state.territory!.defense[squad.laneId];
   if (squad.defenseNodeId && !squad.defenseFailed && !defense.repelled)
     defense.repelProof = { squadId: squad.id, nodeId: squad.defenseNodeId };
-  if (defense.attempt?.squadId === squad.id) defense.attempt.cleared = true;
 }
 
 /** Accepted combat receipts only; no render state, elapsed wall time, or diagnostic-log scans. */
@@ -78,21 +78,6 @@ export function recordTerritoryCombatEvent(state: GameState, event: GameEvent): 
     for (const lane of TERRITORY_LANES) {
       const defense = territory.defense[lane.id];
       if (defense.repelProof?.nodeId === data.nodeId) delete defense.repelProof;
-      if (defense.attempt?.nodeId === data.nodeId) {
-        events.push({ type: 'TERRITORY_HANDOFF_FAILED', data: { laneId: lane.id, reason: 'captured', squadId: defense.attempt.squadId } });
-        delete defense.attempt;
-      }
-    }
-  }
-  if (event.type === 'TERRITORY_SQUAD_SPAWNED') {
-    const squad = squads.find(item => item.id === data.squadId), lane = squad && TERRITORY_LANES.find(item => item.id === squad.laneId);
-    if (squad && lane && territory.stage === 'rescue' && territoryBeaconRank(state) >= 3 && !territory.defense[lane.id].handoff) {
-      const front = territory.nodes.find(node => node.id === lane.frontNodeId)!;
-      const beacon = front.owner === 'healthy' ? territoryFrontGarrison(state, lane.frontNodeId, 2) : undefined;
-      if (beacon) {
-        territory.defense[lane.id].attempt = { squadId: squad.id, beaconId: beacon.id, nodeId: lane.frontNodeId, enteredDefense: false, invaderHit: false };
-        events.push({ type: 'TERRITORY_HANDOFF_STARTED', data: { laneId: lane.id, nodeId: lane.frontNodeId, squadId: squad.id, beaconId: beacon.id } });
-      }
     }
   }
   if (event.type === 'TARGET_HIT' && Number(data.damage) > 0 && data.ability !== 'host-event') {
@@ -103,14 +88,6 @@ export function recordTerritoryCombatEvent(state: GameState, event: GameEvent): 
         && item.owner === 'healthy' && within(target, item, TERRITORY_BALANCE.defenseRadius))
         .sort((a, b) => distance(target, a) - distance(target, b))[0];
       if (node && !squad.defenseNodeId) squad.defenseNodeId = node.id;
-      const attempt = territory.defense[squad.laneId].attempt;
-      if (attempt?.squadId === squad.id) {
-        const front = territory.nodes.find(item => item.id === attempt.nodeId)!;
-        if (within(target, front, TERRITORY_BALANCE.defenseRadius)) attempt.enteredDefense = true;
-        if (target.territoryTask?.kind === 'invade' && typeof data.immuneCellId === 'string'
-          && state.growth?.cells?.some(cell => cell.id === data.immuneCellId && cell.beaconId === attempt.beaconId
-            && (cell.hp ?? 1) > 0 && cell.until > state.elapsed)) attempt.invaderHit = true;
-      }
     }
   }
   if (event.type === 'TERRITORY_SQUAD_CLEARED') {
@@ -138,28 +115,6 @@ export function advanceTerritoryDefense(state: GameState, dt: number): Territory
         const rank = territoryBeaconRank(state), slot = state.growth?.equipped.find(item => item.id === 'IMMUNE_BEACON');
         if (slot) slot.rank = rank;
         events.push({ type: 'TERRITORY_DEFENSE_MILESTONE', data: { laneId: lane.id, nodeId: proof.nodeId, rank } });
-      }
-    }
-    const attempt = defense.attempt;
-    if (!attempt) continue;
-    const front = territory.nodes.find(node => node.id === attempt.nodeId)!;
-    const beacon = immuneLegions(state.growth).find(item => item.id === attempt.beaconId && item.organId === 'heart' && item.until > state.elapsed
-      && item.guard?.kind === 'territory' && item.guard.regionId === attempt.nodeId);
-    const alive = beacon && state.growth?.cells?.some(cell => cell.beaconId === beacon.id && cell.organId === 'heart' && (cell.hp ?? 1) > 0 && cell.until > state.elapsed);
-    if (front.owner !== 'healthy' || !alive) {
-      events.push({ type: 'TERRITORY_HANDOFF_FAILED', data: { laneId: lane.id, squadId: attempt.squadId, reason: front.owner !== 'healthy' ? 'captured' : 'garrison-lost' } });
-      delete defense.attempt; continue;
-    }
-    const squad = squads.find(item => item.id === attempt.squadId);
-    if (squad?.memberIds.some(id => state.targets.some(target => target.id === id && target.hp > 0 && within(target, front, TERRITORY_BALANCE.defenseRadius))))
-      attempt.enteredDefense = true;
-    if (attempt.cleared) {
-      if (!attempt.enteredDefense || !attempt.invaderHit) {
-        events.push({ type: 'TERRITORY_HANDOFF_FAILED', data: { laneId: lane.id, squadId: attempt.squadId, reason: 'no-immune-interception' } });
-        delete defense.attempt;
-      } else if (front.infectionProgress <= EPSILON) {
-        defense.handoff = true; delete defense.attempt;
-        events.push({ type: 'TERRITORY_HANDOFF_COMPLETED', data: { laneId: lane.id, nodeId: front.id, squadId: attempt.squadId, beaconId: attempt.beaconId } });
       }
     }
   }
@@ -202,6 +157,7 @@ export function createTerritoryState(): TerritoryState {
 
 /** Explicit opt-in. The ordinary endless/campaign fixtures keep their old rules. */
 export function initializeTerritory(state: GameState): void {
+  state.world = TERRITORY_WORLD;
   state.territory = createTerritoryState();
   state.playerInfection = null;
   syncTerritoryHealingNodes(state);
@@ -336,13 +292,12 @@ export function advancePlayerContactInfection(state: GameState, from: Vec, to: V
   return infected ? [infected] : [];
 }
 
-export function territorySourceShielded(state: Pick<GameState, 'territory'> & Partial<Pick<GameState, 'growth' | 'elapsed'>>, sourceId: TerritorySourceId): boolean {
+/** Infected suppliers sustain the membrane; army rank and combat history never gate access. */
+export function territorySourceShielded(state: Pick<GameState, 'territory'>, sourceId: TerritorySourceId): boolean {
   const territory = state.territory, lane = TERRITORY_LANES.find(lane => lane.sourceId === sourceId);
   if (!territory || !lane || territory.sources[sourceId]?.destroyed) return false;
-  return !territory.defense[lane.id].handoff
-    || territory.nodes.find(node => node.id === lane.frontNodeId)?.owner !== 'healthy'
-    || territory.nodes.find(node => node.id === lane.healingNodeId)?.owner !== 'healthy'
-    || !territoryFrontGarrison(state, lane.frontNodeId);
+  return territory.nodes.find(node => node.id === lane.frontNodeId)?.owner !== 'healthy'
+    || territory.nodes.find(node => node.id === lane.healingNodeId)?.owner !== 'healthy';
 }
 
 /** Current forward infection anchor, recomputed for warnings and again on birth. */
@@ -372,7 +327,7 @@ function nearbyInfected(state: GameState): TerritoryNode[] {
 export function territoryPurificationCandidate(state: GameState): TerritoryNode | undefined {
   return active(state) && state.player.hp > 0 && !isTerritoryPlayerAirborne(state) ? nearbyInfected(state).find(node => !requiredHealing(state, node)) : undefined;
 }
-function purificationPauseReason(state: GameState, node: TerritoryNode): TerritoryPurificationPauseReason | undefined {
+export function purificationPauseReason(state: GameState, node: TerritoryNode): TerritoryPurificationPauseReason | undefined {
   if (!active(state) || state.player.hp <= 0) return 'inactive';
   if (isTerritoryPlayerAirborne(state)) return 'airborne';
   if (requiredHealing(state, node)) return 'healing-required';
@@ -521,10 +476,14 @@ export function advanceTerritory(state: GameState, dt: number): TerritoryRuleEve
     if (node.kind !== 'healing' && node.kind !== 'front' || node.owner !== 'healthy' || node.permanent) continue;
     const before = node.infectionProgress, rate = territoryPollutionRate(state, node);
     node.infectionProgress = Math.max(0, Math.min(100, before + (rate > 0 ? rate : -TERRITORY_BALANCE.captureRecoveryPerSecond) * dt));
-    if (before === 0 && node.infectionProgress > 0) events.push({ type: 'TERRITORY_CONTESTED', data: { nodeId: node.id } });
+    if (before === 0 && node.infectionProgress > 0) {
+      node.contestedAt = state.elapsed;
+      events.push({ type: 'TERRITORY_CONTESTED', data: { nodeId: node.id } });
+    }
     if (before > 0 && node.infectionProgress === 0) events.push({ type: 'TERRITORY_CAPTURE_REPELLED', data: { nodeId: node.id } });
     if (node.infectionProgress >= 100 - EPSILON) {
       node.owner = 'infected'; node.infectionProgress = 100; node.purificationProgress = 0;
+      node.capturedAt = state.elapsed;
       events.push({ type: 'TERRITORY_CAPTURED', data: { nodeId: node.id } });
     }
   }
@@ -534,6 +493,7 @@ export function advanceTerritory(state: GameState, dt: number): TerritoryRuleEve
     if (purifying.purificationProgress >= 100 - EPSILON) {
       const first = !purifying.firstPurified;
       purifying.owner = 'healthy'; purifying.infectionProgress = 0; purifying.purificationProgress = 100; purifying.firstPurified = true;
+      delete purifying.capturedAt; delete purifying.contestedAt;
       territory.purification = null;
       events.push({ type: 'TERRITORY_PURIFIED', data: { nodeId: purifying.id, first, permanent: false, reason: 'player' } });
     }

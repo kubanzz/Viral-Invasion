@@ -37,3 +37,16 @@ body.endless-mode .endless-hud{display:block}
 @media(max-height:600px){.endless-wave-panel{width:188px}.endless-wave-panel #endless-objective{display:none}.endless-build-panel{top:225px;width:150px}.endless-build-panel p{font-size:8px}.endless-build-panel #endless-ability-2,.endless-build-panel #endless-ability-3{display:none}.endless-navigation{width:150px}.endless-navigation canvas{max-height:78px}.endless-navigation>p:not(#endless-tissue-route){display:none}.endless-vitals{padding:7px 9px}.endless-vitals .meter{margin:5px 0 7px}.endless-vitals p{font-size:9px}.endless-upgrade{min-height:175px}.endless-modal h2{font-size:21px}}
 @media(max-height:600px){body.endless-mode .growth-panel{left:16px;bottom:78px;width:188px;padding:7px 9px}body.endless-mode .growth-panel .growth-heading{font-size:9px;line-height:1.3}body.endless-mode .growth-panel .growth-heading b,body.endless-mode .growth-panel #growth-xp,body.endless-mode .growth-panel>.meter,body.endless-mode .growth-panel #research-hint{display:none}body.endless-mode .growth-panel .protocol-slots{gap:3px;margin-top:5px}body.endless-mode .growth-panel .protocol-slot{min-height:20px;padding:2px 5px;font-size:9px;gap:4px}body.endless-mode .growth-panel .protocol-slot span{font-size:11px;min-width:13px}body.endless-mode .growth-panel .protocol-slot small{font-size:8px}body.endless-mode .growth-panel .growth-details-entry{font-size:9px;padding:4px 6px;margin-top:5px}}
 @media(max-width:650px){.endless-upgrade-grid{grid-template-columns:1fr}.endless-upgrade{min-height:0;gap:8px}.endless-modal{padding:18px}.endless-build-summary dl{grid-template-columns:1fr;gap:3px}.endless-build-summary dd{margin-bottom:5px}}
+
+/* Rescue shows decisions on the battlefield; full statistics stay in paused details. */
+body.territory-mode #endless-hud > .endless-build-panel,
+body.territory-mode #endless-hud > .endless-wave-panel { display:none; }
+body.territory-mode #hud > .growth-panel { width:174px; padding:7px; bottom:92px; background:#f3f1e5e8; }
+body.territory-mode #hud > .growth-panel > :not(.legion-command):not(.growth-details-entry),
+body.territory-mode #hud > .growth-panel .legion-command > :not(button) { display:none; }
+body.territory-mode #hud > .growth-panel .legion-command { margin:0; }
+body.territory-mode #hud > .growth-panel .legion-command button { width:100%; min-height:38px; }
+body.territory-mode #hud > .growth-panel .growth-details-entry { margin-top:5px; width:100%; min-height:36px; }
+body.territory-mode #endless-hud > .endless-navigation { width:178px; }
+body.territory-mode #endless-hud > .endless-navigation > p { display:none; }
+body.territory-mode #endless-hud > .endless-navigation canvas { margin-bottom:0; }

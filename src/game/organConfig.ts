@@ -38,6 +38,14 @@ export const LUNG_WORLD: WorldGeometry = {
   ],
   foreground: { x: 1010, y: 1220, width: 285, height: 150 },
 };
+/** Rescue has open fighting lanes; historical campaign geometry stays intact. */
+export const TERRITORY_WORLD: WorldGeometry = {
+  ...HEART_WORLD,
+  obstacles: [
+    { id: 'cover-south', x: 1500, y: 1350, radius: 40 },
+    { id: 'cover-east', x: 2220, y: 650, radius: 40 },
+  ],
+};
 export const ORGAN_DEFINITIONS: Record<OrganId, OrganDefinition> = {
   heart: {
     id:'heart', geometry:HEART_WORLD, playerStart:{x:450,y:1070}, entry:{x:2100,y:330}, exit:{x:2170,y:280},

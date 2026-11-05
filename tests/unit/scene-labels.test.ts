@@ -155,6 +155,25 @@ describe('shared screen label layout', () => {
 });
 
 describe('battle label production collectors', () => {
+  it('keeps idle expedition profession labels short and local while a real charging priest retains priority', () => {
+    const session = new GameSession(71, { campaign: true, milestone: 'G3', mode: 'endless', territory: true });
+    session.start(); const state = session.state;
+    state.targets = [actor('mother', { profession: 'ritual-mother' }), actor('priest', { x: 800, profession: 'ritual-priest' })];
+    state.battle!.lastAim = { x: 0, y: 0 };
+    const read = () => { const labels: SceneLabel[] = []; drawBattleLabels(canvas().ctx, state, { add: label => labels.push(label) }); return labels; };
+    const idle = read();
+    expect(idle.find(label => label.id === 'target:mother')).toMatchObject({ essential: false, lines: [{ text: '仪式母体' }] });
+    expect(idle.find(label => label.id === 'target:priest')).toMatchObject({ essential: false, lines: [{ text: '祭司' }] });
+    state.smartViruses = { serial: 0, slime: [], ritual: { serial: 0, encounters: [], projectiles: [{
+      id: 'charge', actorId: 'priest', encounterId: 'ritual', wave: 3, hp: 68, radius: 16, x: 800, y: 400,
+      angle: 0, phase: 'charging', born: state.elapsed, firesAt: state.elapsed + 1, expiresAt: state.elapsed + 7,
+      aim: { x: state.player.x, y: state.player.y }, tracking: true,
+    }] } };
+    const charging = read();
+    expect(charging.find(label => label.id === 'target:priest')).toMatchObject({ essential: true });
+    expect(charging.find(label => label.id === 'target:mother')).toMatchObject({ essential: false });
+  });
+
   it('protects the real visible shell weak point/foot/head without revealing an unobserved MIMIC', () => {
     const state = battleState(), shell = actor('visible-shell', { role: 'elite', radius: 30, traits: ['CARAPACE'], exposedUntil: 8 });
     const hidden = actor('hidden-mimic', { x: 300, traits: ['MIMIC'], role: 'elite', scanned: true });

@@ -7,16 +7,16 @@ const clamp=(n:number)=>Math.max(0,Math.min(1,n));
 export function territoryCannonCameraFocus(state:GameState):{aim:Vec;aimRadius:number}|undefined{
   if(!state.territory||state.phase==='menu'||state.phase==='result'||state.territory.stage==='victory')return;
   const shot=state.playerFlight;
-  if(shot)return {aim:shot.to,aimRadius:TERRITORY_CANNON_BALANCE.radius};
+  if(shot)return {aim:shot.to,aimRadius:shot.radius??TERRITORY_CANNON_BALANCE.radius};
   for(let i=state.events.length-1;i>=0;i--){
     const event=state.events[i];
     if(event.type!=='TERRITORY_CANNON_EXPLODED')continue;
     const age=state.elapsed-event.tick*BALANCE.step;
-    return age>=0&&age<=.35?{aim:{x:Number(event.data.x),y:Number(event.data.y)},aimRadius:TERRITORY_CANNON_BALANCE.radius}:undefined;
+    return age>=0&&age<=.35?{aim:{x:Number(event.data.x),y:Number(event.data.y)},aimRadius:Number(event.data.radius)||TERRITORY_CANNON_BALANCE.radius}:undefined;
   }
 }
 export function territoryCannonBodyOpacity(state:GameState):number{
-  const p=TERRITORY_CANNON_BALANCE.origin,dx=Math.abs(state.player.x-p.x),dy=p.y-state.player.y;
+  const p=territoryCannonView(state).origin,dx=Math.abs(state.player.x-p.x),dy=p.y-state.player.y;
   return state.player.hp>0&&dx<58&&dy>=-12&&dy<110?.24:1;
 }
 function circle(ctx:CanvasRenderingContext2D,p:Vec,r:number,fill:string,stroke:string,width=2){
@@ -25,6 +25,7 @@ function circle(ctx:CanvasRenderingContext2D,p:Vec,r:number,fill:string,stroke:s
 export function drawTerritoryCannon(ctx:CanvasRenderingContext2D,state:GameState,_aim:Vec,labels?:SceneLabelSink,drawBody=true):void{
   if(!state.territory)return;
   const view=territoryCannonView(state),p=view.origin;
+  if(!view.exists)return;
   if(drawBody){ctx.save();ctx.globalAlpha*=territoryCannonBodyOpacity(state);ctx.translate(p.x,p.y);ctx.scale(1,1/.72);
     ctx.beginPath();ctx.ellipse(0,2,37,12,0,0,TAU);ctx.fillStyle='#698e7888';ctx.fill();
     // A fixed, upright living pod: no barrel and no continuous aim rotation.
@@ -36,7 +37,7 @@ export function drawTerritoryCannon(ctx:CanvasRenderingContext2D,state:GameState
     if(view.ready){ctx.beginPath();ctx.ellipse(0,-25,13,6,0,0,TAU);ctx.fillStyle='#527e70';ctx.fill();}
     ctx.beginPath();ctx.arc(0,0,43,-Math.PI/2,-Math.PI/2+TAU*Math.max(.01,view.progress));ctx.strokeStyle=view.ready?'#e3e9b8':'#96c9ad';ctx.lineWidth=3;ctx.stroke();ctx.restore();}
   labels?.add({id:'territory-cannon',anchor:p,offset:{x:0,y:view.nearby?-82:34},priority:view.nearby?79:35,essential:view.nearby,
-    lines:[{text:'免疫弹射荚',color:'#e1e9cb',size:12},{text:view.ready?view.nearby?'E / 弹射 · 选择落点':'复苏完成 · 靠近使用':`装填 ${view.remaining.toFixed(1)}秒`,color:view.ready?'#f1e4af':'#b3c5b6',size:10}]});
+    lines:[{text:view.blueprintId==='rapid-launch-pod'?'速装弹射荚':'基础弹射荚',color:'#e1e9cb',size:12},{text:!view.enabled?'所在区域失守 · 先夺回':view.ready?view.nearby?'E / 弹射 · 选择落点':'复苏完成 · 靠近使用':`装填 ${view.remaining.toFixed(1)}秒`,color:view.ready?'#f1e4af':'#b3c5b6',size:10}]});
 }
 export function drawTerritoryCannonPreview(ctx:CanvasRenderingContext2D,state:GameState,preview?:{aim:Vec;cancelled:boolean}):void{
   if(!state.territory||!preview)return;
@@ -55,7 +56,7 @@ export function drawTerritoryCannonShots(ctx:CanvasRenderingContext2D,state:Game
   if(shot){
     // The player is the only flying body. Ground marks never create a second
     // shell or character; the ordinary hero pass owns its lifted sprite.
-    ctx.save();circle(ctx,shot.to,TERRITORY_CANNON_BALANCE.radius,'#cde5b008','#b9d8b4',2);ctx.restore();
+    ctx.save();circle(ctx,shot.to,shot.radius??TERRITORY_CANNON_BALANCE.radius,'#cde5b008','#b9d8b4',2);ctx.restore();
   }
   for(const event of state.events){
     const age=state.elapsed-event.tick*BALANCE.step;

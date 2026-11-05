@@ -3,12 +3,16 @@ import { GameSession } from '../../src/game/session';
 import type { Target } from '../../src/game/types';
 import { launchTerritoryCannon, takeTerritoryCannonImpact, territoryCannonAim,territoryPlayerFlightHeight,isTerritoryPlayerAirborne,territoryCannonTargets, territoryCannonView, TERRITORY_CANNON_BALANCE as C } from '../../src/game/territoryCannon';
 import { isLegalPosition } from '../../src/actors/collision';
+import { initializeConstruction } from '../../src/game/construction';
 
 function session() {
   const game = new GameSession(71, { mode: 'endless', territory: true }); game.start();
   Object.assign(game.state.endless!, { phase: 'warning', phaseUntil: Infinity, remainingToSpawn: 1, batchSchedule: [], nextSpawnAt: Infinity });
   Object.assign(game.state.player, C.origin);
   game.state.world={...game.state.world!,obstacles:[]};
+  initializeConstruction(game.state, ['launch-pod']);
+  game.state.territory!.construction!.building = { id: 'test-built-pod', blueprintId: 'launch-pod',
+    x: C.origin.x, y: C.origin.y, builtAt: 0, nodeId: 'core' };
   return game;
 }
 const input = { moveX: 0, moveY: 0, fire: false, aim: { x: 1470, y: 720 } };

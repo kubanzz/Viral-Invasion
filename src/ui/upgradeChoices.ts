@@ -51,7 +51,7 @@ export function protocolChoiceCopy(option: Pick<DraftOption, 'protocolId' | 'tun
 }
 
 /** One benefit and one action per card; exact mechanics remain in its disclosure. */
-export function endlessChoiceCopy(option: EndlessUpgradeOption, growth: EndlessGrowthState): ChoiceCopy {
+export function endlessChoiceCopy(option: EndlessUpgradeOption, growth: EndlessGrowthState, weaponSkills = false): ChoiceCopy {
   const before = endlessCombatStats(growth), after = endlessCombatStats({ ...growth, ranks: { ...growth.ranks, [option.id]: option.nextRank } });
   const copies: Record<EndlessUpgradeId, ChoiceCopy> = {
     power: { summary: '提升攻击伤害，更快清除敌人。', action: '所有攻击自动生效', change: `伤害倍率 ×${number(before.damageMultiplier)} → ×${number(after.damageMultiplier)}`, caution: '' },
@@ -65,5 +65,15 @@ export function endlessChoiceCopy(option: EndlessUpgradeOption, growth: EndlessG
     immune: { summary: '增加军团成员并强化攻击，召集更快。', action: option.nextRank >= 3 ? '装备灯塔后，Q 点组织驻防 · R 注射抗体' : '按 Q 部署或指挥军团', change: `军团成员 ${Math.min(5, 3 + (growth.ranks.immune ?? 0))} → ${Math.min(5, 3 + option.nextRank)} 体；攻击 ×${number(after.cellDamageMultiplier)}`, caution: '常驻但会被击杀，最多两支军团' },
     catalysis: { summary: '主爆炸保持完整伤害，随后追加一次净化余震。', action: '用 2 发射能量炮，0.35秒后自动余震', change: '余震：75%半径 · 40%伤害', caution: '余震不递归产生余震或协议攻击' },
   };
-  return copies[option.id];
+  const result = { ...copies[option.id] };
+  if (weaponSkills) {
+    if (option.id === 'multishot' || option.id === 'pierce' || option.id === 'haste') {
+      result.action = '按住左键或射击盘持续普攻'; result.caution = '仅增强普攻，不增加武器技能弹数或施放速度';
+    }
+    if (option.id === 'nova') { result.summary = '增强当前武器2技能的爆破范围与伤害。'; result.action = '按2直接释放，手机点按或拖动技能2'; result.change = `每阶范围＋14 · 伤害倍率＋15%`; }
+    if (option.id === 'catalysis') { result.action = '武器2技能爆破后自动追加余震'; result.caution = '余震不重复位移，不递归触发'; }
+    if (option.id === 'dash') { result.summary = '增强实际冲刺落点的近身斩击。'; result.action = '点按Space或冲刺按钮'; result.change = `近身斩击 ${arrow(before.dashDamage, after.dashDamage)}`; result.caution = 'Space仅冲刺，武器招式由123释放'; }
+    if (option.id === 'immune') result.action = 'Q在脚下驻军 · 战术菜单使用抗体';
+  }
+  return result;
 }

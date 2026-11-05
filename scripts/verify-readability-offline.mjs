@@ -1,0 +1,20 @@
+/** Offline byte/resource verification; dynamic browser checks use allowlisted HTTP. */
+import assert from 'node:assert/strict';
+import { readFile, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { composeMobileHtml } from './package-mobile.mjs';
+const root='artifacts/readability-v0153',sha=b=>createHash('sha256').update(b).digest('hex');
+const metaBytes=await readFile(root+'/candidate-final-3/build-meta.json'),meta=JSON.parse(metaBytes);
+const index=await readFile('.tools/release-v0.15.3-verified/index.html','utf8'),game=await readFile('.tools/release-v0.15.3-verified/game.js','utf8');
+assert.equal(sha(Buffer.from(index)),meta.outputManifest['index.html']);assert.equal(sha(Buffer.from(game)),meta.outputManifest['game.js']);
+const mobile=await readFile('releases/Viral-Invasion-Mobile.html','utf8');assert.equal(mobile,composeMobileHtml(index,game));
+assert.equal(await readFile('releases/Viral-Invasion-Mobile-v0.15.3/Viral-Invasion-Mobile.html','utf8'),mobile);
+const scripts=[...index.matchAll(/<script\b([^>]*)>[\s\S]*?<\/script\s*>/gi)];assert.equal(scripts.length,1);assert(scripts[0][1].includes('./game.js'));assert(!scripts[0][1].includes('module'));
+assert(!/<script\b[^>]*\bsrc\s*=/i.test(mobile));
+const shell=index.replace(/<script\b[^>]*>[\s\S]*?<\/script\s*>/gi,'').replace(/<style\b[^>]*>[\s\S]*?<\/style\s*>/gi,'');
+const external=[...shell.matchAll(/(?:src|href)\s*=\s*['"](https?:[^'"]+)/gi)].map(m=>m[1]);assert.deepEqual(external,[]);
+const css=await readFile('dist/game.css','utf8'),urls=[...css.matchAll(/url\(\s*['"]?([^)'"]+)/gi)].map(m=>m[1].trim());assert(urls.every(url=>url.startsWith('data:')||url.startsWith('#')));
+const embeddedPngs=(game.match(/data:image\/png;base64,/g)||[]).length;assert(embeddedPngs>=meta.art.atlases.length+Object.keys(meta.art.environments).length);
+for(const[path,hash]of Object.entries(meta.sourceManifest))assert.equal(sha(await readFile(path)),hash,path);
+const report={version:meta.version,pass:true,metaSha256:sha(metaBytes),sources:Object.keys(meta.sourceManifest).length,desktopDecodedMatches:true,mobileExactComposition:true,mobileArchiveMatches:true,externalResources:external,cssUrls:urls.length,embeddedPngs,scope:'Independent package decoders already compare ZIP entries byte-for-byte. This check verifies decoded desktop files, exact single-HTML composition and self-contained resource references. Dynamic browser validation uses allowlisted local HTTP; no new file-protocol or physical-phone claim.'};
+await writeFile(root+'/offline-static.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report));

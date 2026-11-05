@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "version": "v0.15",
+  "title": "心脏远征",
+  "root": "ViralInvasion_Expedition_v1",
+  "idPrefix": "fantasy.expedition.",
+  "expectedRuntimeCount": 74,
+  "expectedAnimationGroupCount": 43,
+  "phases": {
+    "p0": { "expectedRuntimeCount": 50, "expectedAnimationGroupCount": 23, "receipt": "delivery-p0.json" },
+    "p1": { "expectedRuntimeCount": 24, "expectedAnimationGroupCount": 20 }
+  },
+  "canvas": [512, 512],
+  "foot": [256, 435.2],
+  "pivot": [0.5, 0.85],
+  "commonCanvasScale": 1,
+  "trim": false,
+  "leftDirections": "MirrorX of the corresponding authored front_right/back_right view. A front mirror is never a rear view.",
+  "sourceMethod": "Maliang source design and selected source images; offline registered layered/soft-body animation baking where declared. Never claim AI independently generated every animation frame.",
+  "worldWidthAuthority": "main-approved",
+  "registrationPolicy": "Lock full-canvas uniform source scale and foot/center transform per identity and direction. No independent alpha crop, per-frame fit or automatic recentering.",
+  "runtimeBudget": {
+    "totalMiB": 20,
+    "existingApproxMiB": 12.87,
+    "availableApproxMiB": 7.13,
+    "newConservativeMaxMiB": 5,
+    "samplingEstimateMethod": "Actual in-memory full-canvas sampled PNG bytes, multiplied by 4/3 base64 and 1.2 atlas allowance, plus 256KiB atlas metadata. Final package measured by main.",
+    "rawSourcesQaHistoryAndDeliveryRecordsCountTowardRuntime": false
+  },
+  "entities": [
+    {
+      "key": "basePod", "idPrefix": "fantasy.expedition.basePod", "phase": "p0", "kind": "facility",
+      "directions": ["fixed"], "states": { "construction": 3, "ready": 2, "load": 2, "fire": 3 },
+      "worldLogicalCanvasWidth": 128, "worldWidthStatus": "main-approved", "suggestedVisibleWorldHeight": 76,
+      "recommendedRuntimeTexture": 256, "groundWorldDiameterMax": 80
+    },
+    {
+      "key": "rapidPod", "idPrefix": "fantasy.expedition.rapidPod", "phase": "p0", "kind": "facility",
+      "directions": ["fixed"], "states": { "construction": 3, "ready": 2, "load": 2, "fire": 3 },
+      "worldLogicalCanvasWidth": 128, "worldWidthStatus": "main-approved", "suggestedVisibleWorldHeight": 76,
+      "recommendedRuntimeTexture": 256, "groundWorldDiameterMax": 80
+    },
+    {
+      "key": "ritualMatron", "idPrefix": "fantasy.expedition.ritualMatron", "phase": "p0", "kind": "actor",
+      "directions": ["fixed"], "states": { "idle": 2, "channel": 2, "windup": 2, "cast": 2, "defeated": 2 },
+      "worldLogicalCanvasWidth": 148, "worldWidthStatus": "main-approved", "suggestedVisibleWorldHeight": 100,
+      "recommendedRuntimeTexture": 256
+    },
+    {
+      "key": "ritualPriest", "idPrefix": "fantasy.expedition.ritualPriest", "phase": "p0", "kind": "actor",
+      "directions": ["front_right", "back_right"], "states": { "idle": 2, "channel": 2, "windup": 2, "cast": 2, "defeated": 2 },
+      "worldLogicalCanvasWidth": 104, "worldWidthStatus": "main-approved", "suggestedVisibleWorldHeight": 70,
+      "recommendedRuntimeTexture": 192
+    },
+    {
+      "key": "campTentWarehouse", "idPrefix": "fantasy.expedition.campTentWarehouse", "phase": "p1", "kind": "facility",
+      "directions": ["fixed"], "states": { "construction": 1, "ready": 1 },
+      "worldLogicalCanvasWidth": 144, "worldWidthStatus": "main-approved", "suggestedVisibleWorldHeight": 86,
+      "recommendedRuntimeTexture": 192
+    },
+    {
+      "key": "campForge", "idPrefix": "fantasy.expedition.campForge", "phase": "p1", "kind": "facility",
+      "directions": ["fixed"], "states": { "construction": 1, "ready": 1 },
+      "worldLogicalCanvasWidth": 128, "worldWidthStatus": "main-approved", "suggestedVisibleWorldHeight": 76,
+      "recommendedRuntimeTexture": 192
+    },
+    {
+      "key": "campSupply", "idPrefix": "fantasy.expedition.campSupply", "phase": "p1", "kind": "facility",
+      "directions": ["fixed"], "states": { "construction": 1, "ready": 1 },
+      "worldLogicalCanvasWidth": 112, "worldWidthStatus": "main-approved", "suggestedVisibleWorldHeight": 68,
+      "recommendedRuntimeTexture": 192
+    },
+    {
+      "key": "campSortie", "idPrefix": "fantasy.expedition.campSortie", "phase": "p1", "kind": "facility",
+      "directions": ["fixed"], "states": { "construction": 1, "ready": 1 },
+      "worldLogicalCanvasWidth": 144, "worldWidthStatus": "main-approved", "suggestedVisibleWorldHeight": 82,
+      "recommendedRuntimeTexture": 192
+    },
+    {
+      "key": "heartDevourer", "idPrefix": "fantasy.expedition.heartDevourer", "phase": "p1", "kind": "boss",
+      "directions": ["fixed"], "states": { "idle": 2, "windup": 2, "recovery": 2, "phase2": 2 },
+      "worldLogicalCanvasWidth": 224, "worldWidthStatus": "main-approved", "suggestedVisibleWorldHeight": 150,
+      "recommendedRuntimeTexture": 256,
+      "referencePolicy": "Upgrade the approved old mother only through new Expedition files; never overwrite old mother sources or runtime images."
+    },
+    {
+      "key": "iconSteadyFlowGun", "idPrefix": "fantasy.expedition.iconSteadyFlowGun", "phase": "p1", "kind": "icon",
+      "directions": ["fixed"], "states": { "normal": 1, "broken": 1 },
+      "canvas": [256, 256], "allowedCanvases": [[256, 256], [512, 512]], "pivot": [0.5, 0.5],
+      "anchorKind": "center", "worldLogicalCanvasWidth": null, "worldWidthStatus": "ui-icon-no-world-size", "recommendedRuntimeTexture": 128
+    },
+    {
+      "key": "iconPiercingPulseGun", "idPrefix": "fantasy.expedition.iconPiercingPulseGun", "phase": "p1", "kind": "icon",
+      "directions": ["fixed"], "states": { "normal": 1, "broken": 1 },
+      "canvas": [256, 256], "allowedCanvases": [[256, 256], [512, 512]], "pivot": [0.5, 0.5],
+      "anchorKind": "center", "worldLogicalCanvasWidth": null, "worldWidthStatus": "ui-icon-no-world-size", "recommendedRuntimeTexture": 128
+    },
+    {
+      "key": "blueprintBasePod", "idPrefix": "fantasy.expedition.blueprintBasePod", "phase": "p1", "kind": "icon",
+      "directions": ["fixed"], "states": { "ready": 1 },
+      "canvas": [256, 256], "allowedCanvases": [[256, 256], [512, 512]], "pivot": [0.5, 0.5],
+      "anchorKind": "center", "worldLogicalCanvasWidth": null, "worldWidthStatus": "ui-icon-no-world-size", "recommendedRuntimeTexture": 128
+    },
+    {
+      "key": "blueprintRapidPod", "idPrefix": "fantasy.expedition.blueprintRapidPod", "phase": "p1", "kind": "icon",
+      "directions": ["fixed"], "states": { "ready": 1 },
+      "canvas": [256, 256], "allowedCanvases": [[256, 256], [512, 512]], "pivot": [0.5, 0.5],
+      "anchorKind": "center", "worldLogicalCanvasWidth": null, "worldWidthStatus": "ui-icon-no-world-size", "recommendedRuntimeTexture": 128
+    },
+    {
+      "key": "repairBiomass", "idPrefix": "fantasy.expedition.repairBiomass", "phase": "p1", "kind": "icon",
+      "directions": ["fixed"], "states": { "ready": 1 },
+      "canvas": [256, 256], "allowedCanvases": [[256, 256], [512, 512]], "pivot": [0.5, 0.5],
+      "anchorKind": "center", "worldLogicalCanvasWidth": null, "worldWidthStatus": "ui-icon-no-world-size", "recommendedRuntimeTexture": 128
+    },
+    {
+      "key": "lootBag", "idPrefix": "fantasy.expedition.lootBag", "phase": "p1", "kind": "icon",
+      "directions": ["fixed"], "states": { "ready": 1 },
+      "canvas": [256, 256], "allowedCanvases": [[256, 256], [512, 512]], "pivot": [0.5, 0.5],
+      "anchorKind": "center", "worldLogicalCanvasWidth": null, "worldWidthStatus": "ui-icon-no-world-size", "recommendedRuntimeTexture": 128
+    }
+  ]
+}

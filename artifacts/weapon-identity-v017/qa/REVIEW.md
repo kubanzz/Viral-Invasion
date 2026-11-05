@@ -1,0 +1,13 @@
+# Candidate-1 weapon identity QA
+
+Scope: the browser receives an explicitly prepared, unlocked two-weapon camp profile. All subsequent camp equipment changes, trial actions, deployment, and combat inputs are real UI, keyboard, or trusted browser touch events. This is not a naturally completed rescue, naturally earned collection, physical-phone test, performance measurement, or human playtest.
+
+- `report.json`: 1366×768 mouse and Digit0/1/2/3 practice; 667×320 trusted touch practice. Both cases passed; 24 practice actions and 67 screenshots.
+- `multitouch-report.json`: 667×320 production challenge deployment with the same explicit collection fixture. Original movement and primary-fire fingers continued while the third finger previewed and released one storm. Primary shots advanced from 2 to 9; real storm projectiles entered the returning phase while the player moved. Releasing all fingers and pausing froze simulation. Passed.
+- Both reports checked all 469 attested production inputs and the served candidate output hashes before and after execution. No source/output drift or page errors were observed. The practice cases also observed no remote requests and no permanent inventory/material changes.
+- Camp equipment selected distinct `fantasy.weapon.steady.held` and `fantasy.weapon.piercing.held` assets; practice used the same identities. Each practice canvas stayed fully inside its content region, with no horizontal overflow and visible controls at least 48px.
+- Real sampled state confirmed guided-needle direction changes, a currently visible radius-155 pulse event with target damage, three primary needles during overdrive, outbound and returning crescent/storm phases, and a landed anchor with a real future detonation and damage.
+
+Visual review covered both actual camp held weapons, guided needles, overdrive side needles, the near-target repulsion ring, the prepared heavy blade, the anchor, returning storm, and the production three-pointer preview. The teal honeycomb gun and ivory/amber crescent bow have distinguishable silhouettes; projectile shapes and colors differ; the narrow trial controls remain readable.
+
+Preserved failed harness attempts: `pilot-1-report.json` records an overlay rebuild racing an immediately following locator operation, and the initial mobile toolbar tap landing during initialization. The harness now waits for the public UI frame transition and retries detached locators. `pilot-1-multitouch-report.json` records a CDP single-tap setup assumption; the final run uses trusted Playwright taps for setup, then real CDP simultaneous pointers for combat. These failures did not trigger production edits or relaxed gameplay assertions.

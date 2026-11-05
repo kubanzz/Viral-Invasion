@@ -102,7 +102,7 @@ export function drawSmartVirusSignals(ctx: CanvasRenderingContext2D, state: Game
     if (plan.status === 'warning') {
       const origin = state.territory.nodes.find(n => n.id === plan.sourceId)!;
       labels?.add({ id: `${plan.id}:warning`, anchor: origin, offset: { x: 0, y: -90 }, priority: 85, essential: true,
-        lines: [{ text: `${plan.laneId === 'north' ? '北' : '南'}线${plan.kind === 'caster' ? '黏液法师' : '筑巢者'}将抵达`, color: '#ebd3bb', size: 11 }] });
+        lines: [{ text: `${plan.laneId === 'north' ? '北' : '南'}线${plan.kind === 'caster' ? '黏液法师' : plan.kind === 'ritual' ? '精英祭团' : '筑巢者'}将抵达`, color: '#ebd3bb', size: 11 }] });
     }
   }
 }

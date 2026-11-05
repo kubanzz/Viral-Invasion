@@ -24,8 +24,9 @@ export function combatPopulation(state: Pick<GameState, 'targets' | 'endless'>) 
       reserved += count; if (current) pending += count;
     }
   }
-  let broodReserved = 0;
+  let broodReserved = 0, ritualReserved = 0;
   for (const plan of state.endless?.smartSupport?.plans ?? []) if (plan.status === 'active')
     broodReserved += plan.slots.filter(slot => !plan.bornSlots.includes(slot) && !plan.canceledSlots.includes(slot)).length;
-  return { reserved: reserved + broodReserved, parents, pending, broodReserved };
+  else if (plan.kind === 'ritual' && plan.status === 'warning') ritualReserved += 4;
+  return { reserved: reserved + broodReserved + ritualReserved, parents, pending, broodReserved, ritualReserved };
 }

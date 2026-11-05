@@ -120,7 +120,7 @@ export class BattleDirector {
     }
     if (this.b.milestone === 'G1') return;
     const data = event.data;
-    const kind = event.type === 'TARGET_HIT' && data.cause !== 'protocol' && data.ability !== 'host-event' && data.eventTarget !== true ? data.tool === 1 ? 'precisionDamage' : data.tool === 2 ? 'areaDamage' : undefined
+    const kind = event.type === 'TARGET_HIT' && data.cause !== 'protocol' && data.ability !== 'host-event' && data.eventTarget !== true ? data.damageCategory === 'precision' ? 'precisionDamage' : data.damageCategory === 'area' ? 'areaDamage' : data.tool === 1 ? 'precisionDamage' : data.tool === 2 ? 'areaDamage' : undefined
       : event.type === 'SCAN_COMPLETED' ? 'scan'
       : event.type === 'ROUTE_CHANGED' && data.open === false ? 'isolate'
       : event.type === 'ORGAN_INTEGRITY_CHANGED' && data.reason === 'repair' && Number(data.after) > Number(data.before) ? 'repair' : undefined;
@@ -349,7 +349,10 @@ export class BattleDirector {
   afterInput(): void {
     const state = this.s;
     if (!this.s.endless) { this.evolution(); this.spread(); }
-    advanceSmartViruses(this.host);
+    const director = this;
+    advanceSmartViruses({ get state() { return director.s; }, emit: (type, data) => this.host.emit(type, data),
+      message: (text, seconds, priority) => this.host.message(text, seconds, priority),
+      damagePlayer: (source, amount, reason) => this.damagePlayer(source, amount, reason) });
     if (this.s !== state || state.phase !== 'playing') return;
     advanceViralCapsules(this.capsuleHost());
     if (this.s !== state || state.phase !== 'playing') return;
@@ -622,7 +625,8 @@ export class BattleDirector {
       : target.profession === 'nest-builder' ? SMART_VIRUS_BALANCE.builderSpeed : B.enemySpeed * (pace?.speedMultiplier ?? 1)) * (target.traits?.includes('CARAPACE') ? B.carapaceSpeed : 1)
       * (target.traits?.includes('MIMIC') ? B.mimicSpeed : 1) * (this.host.slowFactor?.(target.id) ?? 1)
       * (isHostEventLightVirus(target) ? eventModifier(s, 'lightVirusMove') : 1);
-    const spacing = planEnemySpacing(s.targets.filter(target => target.role !== 'event'), activeWorld(s), {
+    const spacing = planEnemySpacing(s.targets.filter(target => target.role !== 'event'
+      && target.profession !== 'ritual-mother' && target.profession !== 'ritual-priest'), activeWorld(s), {
       maxStep: target => speed(target) * BALANCE.step * ENEMY_CROWD.separationSpeedFactor,
       isMigrating: target => !!this.host.isMigratingActor?.(target.id),
     });

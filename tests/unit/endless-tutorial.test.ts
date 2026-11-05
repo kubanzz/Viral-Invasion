@@ -7,7 +7,7 @@ describe('one actionable challenge instruction', () => {
   it('starts with shooting and gives touch players their own gesture', () => {
     const s=run().state,before=structuredClone(s);
     expect(endlessTutorialHint(s)).toContain('按住左键持续射击');
-    expect(endlessTutorialHint(s,true)).toContain('按住右下净化盘');
+    expect(endlessTutorialHint(s,true)).toContain('按住右下射击盘');
     expect(endlessTutorialHint(s)).not.toContain('Q');
     expect(s).toEqual(before);
   });

@@ -1,3 +1,5 @@
+import { territoryMarkerView } from '../game/territoryPresentation';
+import { territoryMarkerLayouts, queueTerritoryMarkerLabels } from './territoryMarkers';
 import { boundedRegionPolygon, TERRITORY_BALANCE, TERRITORY_LANES, territoryInvaderGoal, territoryLaneViews, territoryNodeAt, territoryNodeView } from '../game/territory';
 import { activeWorld, type GameState, type Vec, type WorldGeometry } from '../game/types';
 import type { TerritoryLaneView, TerritoryNode, TerritoryNodeView, TerritoryState } from '../game/territoryTypes';
@@ -162,7 +164,10 @@ export class FantasyGroundCache {
         if (node.owner !== 'infected') continue;
         const polygon = geometry.get(node.id)?.polygon ?? [];
         ctx.save(); traceTerritoryPolygon(ctx, polygon); ctx.clip();
-        tile(ctx, lung ? getImage('fantasy.lung.floor.infected') ?? getImage(FANTASY_ART.infectedFloor) : getImage(FANTASY_ART.infectedFloor), world, 'infected'); ctx.restore();
+        tile(ctx, lung ? getImage('fantasy.lung.floor.infected') ?? getImage(FANTASY_ART.infectedFloor) : getImage(FANTASY_ART.infectedFloor), world, 'infected');
+        if (visibleTerritory(state)) { ctx.fillStyle = '#cf4e6020'; ctx.fillRect(0, 0, world.width, world.height); }
+        ctx.restore();
+        if (visibleTerritory(state)) { ctx.save(); traceTerritoryPolygon(ctx, polygon); ctx.strokeStyle = '#a8485c99'; ctx.lineWidth = 2.5; ctx.stroke(); ctx.restore(); }
         const patch = getImage(FANTASY_ART.patches[node.kind === 'source' ? 1 : 0]);
         if (patch) {
           ctx.save(); traceTerritoryPolygon(ctx, polygon); ctx.clip();
@@ -283,17 +288,17 @@ function drawLiveRegion(ctx: CanvasRenderingContext2D, view: TerritoryNodeView, 
     const front = view.incomingFrom && territoryCaptureFront(node, geometry, view.incomingFrom, view.infectionProgress);
     if (front) {
       ctx.translate(node.x, node.y); ctx.rotate(front.angle); const extent = geometry.radius + 5;
-      ctx.fillStyle = '#73508250'; ctx.fillRect(front.entry - 4, -extent, front.cut - front.entry + 4, extent * 2);
+      ctx.fillStyle = '#cf4f6250'; ctx.fillRect(front.entry - 4, -extent, front.cut - front.entry + 4, extent * 2);
       const count = low ? 4 : 7;
       for (let index = 0; index < count; index++) {
         const y = (index / Math.max(1, count - 1) - .5) * extent * 1.6;
         ctx.beginPath(); ctx.moveTo(front.entry, y); ctx.bezierCurveTo(front.entry + (front.cut - front.entry) * .35, y + 15,
           front.entry + (front.cut - front.entry) * .7, y - 14, front.cut, y);
-        ctx.strokeStyle = '#745185b3'; ctx.lineWidth = 4; ctx.stroke();
+        ctx.strokeStyle = '#b44d66b3'; ctx.lineWidth = 4; ctx.stroke();
       }
       ctx.beginPath(); ctx.moveTo(front.cut, -extent);
       for (let y = -extent + 16, index = 0; y <= extent + 16; y += 16, index++) ctx.lineTo(front.cut + (index % 2 ? -4 : 5), y);
-      ctx.strokeStyle = '#cfadd5'; ctx.lineWidth = 5; ctx.stroke(); ctx.strokeStyle = '#765380'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.strokeStyle = '#f0a0a9'; ctx.lineWidth = 5; ctx.stroke(); ctx.strokeStyle = '#765380'; ctx.lineWidth = 2; ctx.stroke();
     } else {
       // After attackers are gone, show retained infection receding locally;
       // an unwitnessed attack direction is never invented from a static owner.
@@ -340,6 +345,13 @@ export function drawTerritorySignals(ctx: CanvasRenderingContext2D, state: GameS
     for (const view of frame.nodes) { const geometry = frame.geometry.get(view.node.id); if (geometry) drawLiveRegion(ctx, view, geometry, low); }
   }
   for (const node of territory.nodes) {
+    const signal = territoryMarkerView(state, node);
+    if (signal.alert) {
+      const pulse = low ? 0 : signal.alertAge % 1;
+      ctx.save(); ctx.strokeStyle = '#dc586b'; ctx.lineWidth = low ? 3 : 4 * (1 - pulse * .45);
+      ctx.globalAlpha = low ? .8 : 1 - pulse * .65;
+      ctx.beginPath(); ctx.ellipse(node.x, node.y, 58 + pulse * 38, 58 + pulse * 38, 0, 0, TAU); ctx.stroke(); ctx.restore();
+    }
     if (node.kind === 'healing' && node.owner === 'healthy') {
       const treating = territory.healingContact.nodeId === node.id;
       ctx.save(); ctx.setLineDash(treating ? [9, 5] : [4, 10]); ctx.lineWidth = treating ? 3 : 1.5;
@@ -379,9 +391,8 @@ export function drawTerritorySignals(ctx: CanvasRenderingContext2D, state: GameS
 /** World captions contain state only. The single HUD context owns action
  * instructions and the complete purification pause reason. */
 export function drawTerritoryNodeAccents(ctx: CanvasRenderingContext2D, state: GameState, frame: TerritoryRenderFrame | undefined,
-  viewport: TerritoryViewport, labels: SceneLabelSink): string[] {
+  viewport: TerritoryViewport, labels: SceneLabelSink, touch = false): string[] {
   if (!frame) return [];
-  const labelled: string[] = [];
   for (const lane of frame.lanes) {
     const source = state.targets.find(target => target.hp > 0 && target.role === 'source' && target.territorySourceId === lane.sourceId);
     if (!source || !lane.shielded) continue;
@@ -391,25 +402,7 @@ export function drawTerritoryNodeAccents(ctx: CanvasRenderingContext2D, state: G
     for (const side of [-1, 1]) { ctx.beginPath(); ctx.moveTo(side * 36, -70); ctx.lineTo(side * 43, -53); ctx.lineTo(side * 36, -37); ctx.stroke(); }
     ctx.restore();
   }
-  for (const view of frame.nodes) {
-    const node = view.node, near = Math.hypot(state.player.x - node.x, state.player.y - node.y) <= 440;
-    const active = view.infectionProgress > 0 && node.owner === 'healthy' || view.purificationActive || view.attackerIds.length > 0;
-    if (!onScreen(node, viewport) || !near && !active) continue;
-    const lane = frame.lanes.find(item => item.sourceId === node.id), source = node.kind === 'source';
-    const stateText = source ? node.permanent ? '已切断' : lane?.shielded ? '护膜完整' : '护膜解除'
-      : view.status === 'purifying' ? view.pausedReason ? '净化暂停' : '净化中'
-        : view.status === 'contested' ? view.recovering ? '侵染消退' : node.kind === 'healing' ? '污染中' : '侵染中' : view.status === 'infected' ? '感染' : '健康';
-    const purification = view.purificationActive || node.owner === 'infected' && view.purificationProgress > 0;
-    const progress = purification ? view.purificationProgress
-      : node.owner === 'healthy' ? view.infectionProgress : 0;
-    const color = view.status === 'infected' || view.status === 'contested' ? '#caa8d2' : '#d0e5bd';
-    labels.add({ id: `territory-node:${node.id}`, anchor: node, offset: { x: 0, y: node.kind === 'front' ? -116 : node.kind === 'core' ? -122 : -100 },
-      priority: active ? 88 : 45, essential: active || near,
-      lines: [{ text: `${node.name} · ${stateText}`, color, size: 10 }, ...(progress > 0 && !source ? [{ text: `${purification ? '净化' : '侵染'} ${Math.floor(progress)}%${node.kind === 'healing' && view.pollutionRate > 0 && !purification ? ` · +${view.pollutionRate}%/s` : ''}`, color, size: 10 }] : [])],
-      bar: progress > 0 && !source ? { ratio: ratio(progress), color: purification ? '#abd8b5' : '#a374b4', width: 56 } : undefined });
-    labelled.push(node.id);
-  }
-  return labelled;
+  return queueTerritoryMarkerLabels(state, territoryMarkerLayouts(state, frame, viewport, touch), viewport, labels);
 }
 
 export interface TerritoryAttackIndicator { nodeId: string; screen: Vec; angle: number; labelY: number | null; rect: LabelRect }

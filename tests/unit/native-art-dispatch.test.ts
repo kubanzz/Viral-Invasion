@@ -979,32 +979,17 @@ describe('actual Renderer native art dispatch through an isolated host', () => {
 
 describe('new complete actor groups through the actual Renderer dispatch', () => {
   function actors() { mocked.runtime.actorContract={version:2}; Object.assign(mocked.runtime.assets,fixtureActorAnimationAssets()); }
-  it('renders front tissue as an independent paired crystal node with real purification alpha and no healing asset or rule writes',async()=>{
+  it('routes front nodes to the shared low platform instead of the tall crystal sprite, without rule writes',async()=>{
     actors();const sample=state();sample.territory=createTerritoryState();sample.endless={wave:1,clearedWaves:0}as GameState['endless'];
     const node=sample.territory.nodes.find(node=>node.id==='front-north')!;
-    for(const [owner,box]of [['healthy',{x:170,y:130,width:680,height:740}],['infected',{x:140,y:90,width:740,height:800}]]as const){
-      const id=FANTASY_ART.front[owner];mocked.runtime.assets[id]={atlas:'fantasy-atlas',frame:id,width:1024,height:1024,pivot:{x:.5,y:.85},visibleBounds:box,
-        sourceSize:{width:1024,height:1024},sourceBounds:box,flags:[],status:'test-only'};
-    }
     mocked.entities.push({id:node.id,kind:'territory-node',y:node.y});const {renderer,host,scene}=await setup();
-    const before=JSON.stringify(sample);renderer.render(sample,sample.player);const infected=host.sprites.find(item=>item.id===node.id)!.config;
-    expect(infected.frame).toBe(FANTASY_ART.front.infected);expect(scene.fallbacks).toEqual([]);expect(JSON.stringify(sample)).toBe(before);
-    node.purificationProgress=50;renderer.render(sample,sample.player,{lowEffects:true});const overlay=host.sprites.find(item=>item.id===`${node.id}:purification`)!.config;
-    expect(overlay.frame).toBe(FANTASY_ART.front.healthy);expect(overlay.alpha).toBe(.4);expect(host.sprites.some(item=>String(item.config.frame).includes('healing'))).toBe(false);
-    node.owner='healthy';renderer.render(sample,sample.player);const healthy=host.sprites.find(item=>item.id===node.id)!.config;
-    for(const key of ['x','y','width','height','originX','originY']as const)expect(healthy[key]).toBeCloseTo(infected[key]!);
-    const foot=sourcePoint(healthy,mocked.runtime.assets[String(healthy.frame)],512,870.4),expected=renderer.camera.worldToScreen(node);
-    expect(foot.x).toBeCloseTo(expected.x,9);expect(foot.y).toBeCloseTo(expected.y,9);
-    node.owner='infected';node.purificationProgress=50;sample.player.x=node.x;sample.player.y=node.y-30;
-    for(const lowEffects of[false,true]){
-      const overlapBefore=JSON.stringify(sample);renderer.render(sample,sample.player,{lowEffects});
-      const base=host.sprites.find(item=>item.id===node.id)!.config,recovery=host.sprites.find(item=>item.id===`${node.id}:purification`)!.config;
-      expect(recovery.alpha).toBeCloseTo(.4*.22);expect(base.alpha!+(1-base.alpha!)*recovery.alpha!).toBeCloseTo(.22);
-      for(const key of ['x','y','width','height','originX','originY']as const)expect(base[key]).toBeCloseTo(infected[key]!);
-      expect(JSON.stringify(sample)).toBe(overlapBefore);
+    for(const owner of ['infected','healthy']as const)for(const lowEffects of[false,true]){
+      node.owner=owner;node.purificationProgress=50;const before=JSON.stringify(sample);
+      renderer.render(sample,sample.player,{lowEffects});
+      expect(scene.fallbacks).toEqual([node.id]);
+      expect(host.sprites.some(item=>item.id===node.id||item.id===node.id+':purification')).toBe(false);
+      expect(JSON.stringify(sample)).toBe(before);
     }
-    sample.player.y=node.y+100;renderer.render(sample,sample.player);
-    expect(host.sprites.find(item=>item.id===node.id)!.config.alpha).toBe(1);expect(host.sprites.find(item=>item.id===`${node.id}:purification`)!.config.alpha).toBe(.4);
   });
   it('equips the enlarged menu hero at its own actual palm and scaled96/128 source ratio, independent of the simulation player point',async()=>{
     actors();const sample=state();sample.phase='menu';sample.player.x=65;sample.player.y=125;sample.player.facing=-2.5;

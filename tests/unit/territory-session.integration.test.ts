@@ -81,30 +81,30 @@ describe('production territory session transactions', () => {
     game.resume(); Object.assign(state.player, { x: 900, y: 900 }); const hp = state.player.hp; step(game, 60); expect(state.player.hp).toBe(hp);
   });
 
-  it('tool 3 starts a timed purification instead of applying an instant heal', () => {
+  it('independent context action starts a timed purification instead of applying an instant heal', () => {
     const game = run(), state = game.state, node = infectedSpring(game);
     Object.assign(state.player, { x: node.x, y: node.y, hp: 50 });
-    step(game, 1, { tool: 3, fire: true, aim: node });
+    step(game, 1, { territoryAction: true, aim: node });
     expect(state.player.hp).toBe(50); expect(state.territory!.purification?.nodeId).toBe(node.id); expect(node.owner).toBe('infected');
     expect(node.purificationProgress).toBeCloseTo(100 / (TERRITORY_BALANCE.purificationSeconds * 60), 6);
     step(game, 59); expect(node.purificationProgress).toBeCloseTo(100 / TERRITORY_BALANCE.purificationSeconds, 6);
     step(game, 119); expect(node.owner).toBe('infected'); expect(node.purificationProgress).toBeLessThan(100);
     step(game, 1);
     expect(node.owner).toBe('healthy'); expect(state.endless!.score).toBe(100);
-    step(game, 120, { tool: 3, fire: true, aim: node }); expect(state.endless!.score).toBe(100);
+    step(game, 120, { territoryAction: true, aim: node }); expect(state.endless!.score).toBe(100);
   });
 
-  it('tool 3 still repairs the heart core without healing the rescue body', () => {
+  it('independent context action repairs the heart core without healing the rescue body', () => {
     const game = run(), state = game.state;
     Object.assign(state.player, { x: state.tissue.x - 90, y: state.tissue.y, hp: 50 }); state.tissue.hp = 43;
-    step(game, 1, { tool: 3, fire: true, aim: state.tissue });
+    step(game, 1, { territoryAction: true, aim: state.tissue });
     expect(state.tissue.hp).toBe(68); expect(state.player.hp).toBe(50);
     expect(state.events.some(event => event.type === 'ORGAN_INTEGRITY_CHANGED' && event.data.reason === 'repair')).toBe(true);
   });
 
   it('keeps earned purification progress when the player leaves then resumes on return', () => {
     const game = run(), state = game.state, node = infectedSpring(game);
-    Object.assign(state.player, { x: node.x, y: node.y }); step(game, 1, { tool: 3, fire: true, aim: node }); step(game, 60);
+    Object.assign(state.player, { x: node.x, y: node.y }); step(game, 1, { territoryAction: true, aim: node }); step(game, 60);
     const progress = node.purificationProgress; Object.assign(state.player, { x: 900, y: 900 }); step(game, 60);
     expect(node.purificationProgress).toBe(progress); Object.assign(state.player, { x: node.x, y: node.y }); step(game, 120);
     expect(node.owner).toBe('healthy');

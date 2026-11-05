@@ -7,6 +7,7 @@ import { createEndlessGrowth } from '../../src/game/endlessGrowth';
 import { healingPoints } from '../../src/game/healingPoints';
 import { BALANCE, type GameState, type Target, type Vec } from '../../src/game/types';
 import { TERRITORY_CANNON_BALANCE } from '../../src/game/territoryCannon';
+import { initializeConstruction } from '../../src/game/construction';
 
 class ElementStub extends EventTarget {
   parentElement: ElementStub | null = null;
@@ -16,6 +17,7 @@ class ElementStub extends EventTarget {
   hidden = false;
   disabled = false;
   isContentEditable = false;
+  open = false;
   captures = new Set<number>();
   released: number[] = [];
   constructor(public role: string, public rect = { left: 0, top: 0, width: 100, height: 100 }) { super(); }
@@ -27,10 +29,12 @@ class ElementStub extends EventTarget {
   append(...children: ElementStub[]) { for (const child of children) { child.parentElement = this; this.children.push(child); } }
   contains(element: ElementStub): boolean { return element === this || this.children.some(child => child.contains(element)); }
   private matches(selector: string) {
-    return selector.trim().split(',').some(part => part.trim() === '.stick-knob' ? this.role === 'knob'
+    return selector.trim().split(',').some(part => part.trim() === '#mobile-tactical-menu > summary' ? this.role === 'summary'
+      : part.trim() === '.stick-knob' ? this.role === 'knob'
       : part.trim() === '.mobile-stick[data-stick]' ? !!this.dataset.stick
         : part.trim() === '[data-touch-action]' ? !!this.dataset.touchAction
           : part.trim() === '[data-touch-skill]' ? !!this.dataset.touchSkill
+            : part.trim() === '[data-weapon-skill]' ? !!this.dataset.weaponSkill
             : part.trim() === '[data-touch-cancel]' ? this.dataset.touchCancel !== undefined
               : part.trim() === '[data-touch-guide]' ? this.dataset.touchGuide !== undefined : false);
   }
@@ -61,9 +65,9 @@ function fixture(stateOverride?: GameState) {
   const canvas = new ElementStub('canvas', { left: 10, top: 20, width: 844, height: 390 });
   let allowed = true, enabled = true;
   const canAccept = () => allowed && (!stateOverride || stateOverride.phase === 'playing');
-  const input = new Controller(canvas as unknown as HTMLCanvasElement, vi.fn(), vi.fn(), canAccept);
-  const camera = new Camera(844, 390); camera.panX = -40; camera.panY = -80;
   const state = stateOverride ?? { player: { x: 500, y: 400 }, tool: 1 } as GameState;
+  const input = new Controller(canvas as unknown as HTMLCanvasElement, vi.fn(), vi.fn(), canAccept, () => state);
+  const camera = new Camera(844, 390); camera.panX = -40; camera.panY = -80;
   const project = (point: Vec) => camera.screenToWorld(point);
   const root = new ElementStub('root'), move = new ElementStub('stick'), aim = new ElementStub('stick', { left: 700, top: 250, width: 100, height: 100 });
   move.dataset.stick = 'move'; aim.dataset.stick = 'aim';
@@ -76,17 +80,23 @@ function fixture(stateOverride?: GameState) {
     element.dataset.touchSkill = kind; element.append(new ElementStub('knob', { left: 0, top: 0, width: 16, height: 16 }));
     return [kind, element];
   }));
+  const weaponSkills = Object.fromEntries(['1', '2', '3'].map((slot, index) => {
+    const element = new ElementStub('weapon', { left: 600 - index * 70, top: 120 - index * 15, width: 52, height: 52 });
+    element.dataset.weaponSkill = slot; element.append(new ElementStub('knob', { left: 0, top: 0, width: 16, height: 16 }));
+    return [slot, element];
+  }));
   const cancel = new ElementStub('cancel', { left: 320, top: 20, width: 80, height: 40 }); cancel.dataset.touchCancel = ''; cancel.hidden = true;
   const guide = new ElementStub('guide', { left: 410, top: 20, width: 80, height: 40 }); guide.dataset.touchGuide = ''; guide.hidden = true;
-  const buttons = Object.fromEntries(['cast', 'dash', 'scan', 'interact', 'antibody'].map(action => {
+  const buttons = Object.fromEntries(['cast', 'dash', 'scan', 'interact', 'antibody', 'territory'].map(action => {
     const element = new ElementStub('button'); element.dataset.touchAction = action; return [action, element];
   }));
-  root.append(move, aim, attack, ...Object.values(skills), cancel, guide, ...Object.values(buttons));
+  const tactics = new ElementStub('details'), summary = new ElementStub('summary'); tactics.append(summary);
+  root.append(move, aim, attack, ...Object.values(skills), ...Object.values(weaponSkills), cancel, guide, ...Object.values(buttons), tactics);
   const onPreviewChange = vi.fn();
   const controls = new TouchControls({ root: root as unknown as HTMLElement, canvas: canvas as unknown as HTMLCanvasElement,
     input, getState: () => state, screenToWorld: project, canAccept, enabled: () => enabled, onPreviewChange });
   const frame = () => input.frame(input.getAim(state, project));
-  return { browser, document, input, canvas, camera, project, root, move, aim, attack, skills, cancel, guide, onPreviewChange, buttons, controls, state, frame,
+  return { browser, document, input, canvas, camera, project, root, move, aim, attack, skills, weaponSkills, cancel, guide, onPreviewChange, buttons, controls, state, frame, tactics, summary,
     allow(value: boolean) { allowed = value; }, enable(value: boolean) { enabled = value; } };
 }
 
@@ -98,33 +108,35 @@ describe('territory context interaction preserves weapon control', () => {
     const f = fixture(game.state); f.frame(); return f;
   };
 
-  it('sends one keyboard 3 context edge without selecting repair, changing aim or interrupting held fire', () => {
+  it('sends one keyboard F context edge without changing aim or interrupting held fire', () => {
     const f = territory();
     pointer(f.canvas, 'pointerdown', 1, 400, 180, undefined, 'mouse');
     const aim = { x: 950, y: 50 }; f.input.setWorldAim(aim);
-    keyboard(f.browser, 'keydown', 'Digit3');
-    expect(f.frame()).toMatchObject({ territoryAction: true, tool: undefined, fire: true, aim });
+    keyboard(f.browser, 'keydown', 'KeyF');
+    expect(f.frame()).toMatchObject({ territoryAction: true, tool: 1, fire: true, aim });
     expect(f.state.tool).toBe(2);
-    expect(f.frame()).toMatchObject({ territoryAction: false, tool: undefined, fire: true, aim });
-    const repeated = new Event('keydown'); Object.assign(repeated, { code: 'Digit3', repeat: true }); f.browser.dispatchEvent(repeated);
+    expect(f.frame()).toMatchObject({ territoryAction: false, tool: 1, fire: true, aim });
+    const repeated = new Event('keydown'); Object.assign(repeated, { code: 'KeyF', repeat: true }); f.browser.dispatchEvent(repeated);
     expect(f.frame().territoryAction).toBe(false);
-    keyboard(f.browser, 'keyup', 'Digit3'); keyboard(f.browser, 'keydown', 'Digit3');
+    keyboard(f.browser, 'keyup', 'KeyF'); keyboard(f.browser, 'keydown', 'KeyF');
     expect(f.frame().territoryAction).toBe(true);
   });
 
-  it('routes desktop button selection through the same context edge without cancelling charge', () => {
+  it('routes the independent context action without creating a charge attack', () => {
     const f = territory(); keyboard(f.browser, 'keydown', 'Space'); f.frame();
-    f.input.select(3);
-    expect(f.frame()).toMatchObject({ territoryAction: true, tool: undefined, chargeHeld: true, chargeCancelled: false });
+    f.input.queueAction('territory');
+    const frame = f.frame();
+    expect(frame).toMatchObject({ territoryAction: true, tool: 1 });
+    expect(frame.chargeHeld).toBeUndefined(); expect(frame.weaponSkill).toBeUndefined();
     expect(f.state.tool).toBe(2);
   });
 
-  it('makes mobile 3 an immediate one-shot tap while independent movement and attack fingers remain live', () => {
+  it('makes mobile purification an immediate one-shot tap while movement and attack fingers remain live', () => {
     const f = territory(1); f.input.setWorldAim({ x: 800, y: 400 });
     pointer(f.root, 'pointerdown', 1, 90, 50, f.move);
     pointer(f.root, 'pointerdown', 2, 750, 300, f.attack);
     const aim = f.frame().aim;
-    const button = f.skills['3'], r = button.getBoundingClientRect();
+    const button = f.buttons.territory, r = button.getBoundingClientRect();
     pointer(f.root, 'pointerdown', 3, r.left + 28, r.top + 28, button);
     expect(f.input.resolvePreview(f.state, f.project)).toBeUndefined();
     expect(f.root.dataset.gesture).toBe('idle');
@@ -136,10 +148,10 @@ describe('territory context interaction preserves weapon control', () => {
   });
 
   it('clears an unconsumed context action across pause/blur and leaves legacy tool 3 intact', () => {
-    const f = territory(); f.input.select(3); f.allow(false);
+    const f = territory(); f.input.queueAction('territory'); f.allow(false);
     expect(f.frame()).toMatchObject({ fire: false }); f.allow(true);
     expect(f.frame().territoryAction).toBe(false);
-    f.input.select(3); f.browser.dispatchEvent(new Event('blur'));
+    f.input.queueAction('territory'); f.browser.dispatchEvent(new Event('blur'));
     expect(f.frame().territoryAction).toBe(false);
     delete f.state.territory; f.frame(); keyboard(f.browser, 'keydown', 'Digit3');
     expect(f.frame()).toMatchObject({ tool: 3, territoryAction: false });
@@ -149,11 +161,120 @@ describe('territory context interaction preserves weapon control', () => {
   });
 });
 
-describe('territory garrison and cannon gestures keep independent aim', () => {
+describe('independent territory weapon skill input', () => {
   const territory = () => {
     const game = new GameSession(71, { mode: 'endless', territory: true }); game.start();
     const f = fixture(game.state); f.frame(); return f;
   };
+
+  it('routes all three keys as direct skills and never as purification or tool selection', () => {
+    const f = territory(), aim = { x: 800, y: 400 }; f.input.setWorldAim(aim);
+    for (const slot of [1, 2, 3] as const) {
+      keyboard(f.browser, 'keydown', `Digit${slot}`);
+      expect(f.frame()).toMatchObject({ tool: 1, territoryAction: false, weaponSkill: { slot, aim } });
+      expect(f.frame().weaponSkill).toBeUndefined();
+      keyboard(f.browser, 'keyup', `Digit${slot}`);
+    }
+    keyboard(f.browser, 'keydown', 'Space');
+    const dash = f.frame(); expect(dash.dash).toBe(true); expect(dash.chargeHeld).toBeUndefined();
+  });
+
+  it('never queues a rapid key chord for a later simulation frame', () => {
+    const f = territory(); keyboard(f.browser, 'keydown', 'Digit1'); keyboard(f.browser, 'keydown', 'Digit2'); keyboard(f.browser, 'keydown', 'Digit3');
+    expect(f.frame().weaponSkill?.slot).toBe(1);
+    expect(f.frame().weaponSkill).toBeUndefined();
+  });
+
+  it('keeps three captured fingers, separate aim, and continuous primary fire before and after a directed skill', () => {
+    const f = territory(); f.state.weaponCombat!.loadout.weaponId = 'piercing'; f.input.setWorldAim({ x: 800, y: 400 });
+    pointer(f.root, 'pointerdown', 1, 90, 50, f.move);
+    pointer(f.root, 'pointerdown', 2, 750, 300, f.attack);
+    const primaryAim = f.frame().aim, button = f.weaponSkills['2'], r = button.getBoundingClientRect();
+    pointer(f.root, 'pointerdown', 3, r.left + 26, r.top + 26, button);
+    expect(f.root.dataset.gesture).toBe('preview'); expect(f.root.dataset.pointerHeld).toBe('true');
+    pointer(f.browser, 'pointermove', 3, r.left + 58, r.top + 10);
+    const preview = f.input.resolvePreview(f.state, f.project)!;
+    expect(preview).toMatchObject({ kind: 'weapon', weaponSlot: 2 }); expect(preview.aim).not.toEqual(primaryAim);
+    expect(f.frame()).toMatchObject({ moveX: 1, fire: true, aim: primaryAim, tool: 1 });
+    expect(f.move.captures.has(1)).toBe(true); expect(f.attack.captures.has(2)).toBe(true); expect(button.captures.has(3)).toBe(true);
+    pointer(f.browser, 'pointerup', 3, r.left + 58, r.top + 10);
+    expect(f.frame()).toMatchObject({ moveX: 1, fire: true, aim: primaryAim, weaponSkill: { slot: 2, aim: preview.aim } });
+    expect(f.frame()).toMatchObject({ moveX: 1, fire: true, aim: primaryAim });
+  });
+
+  it('casts self overdrive on press with no ground preview and does not repeat while held', () => {
+    const f = territory(), button = f.weaponSkills['3'], r = button.getBoundingClientRect();
+    pointer(f.root, 'pointerdown', 3, r.left + 26, r.top + 26, button);
+    expect(f.input.resolvePreview(f.state, f.project)).toBeUndefined();
+    expect(f.frame().weaponSkill?.slot).toBe(3); expect(f.frame().weaponSkill).toBeUndefined();
+    pointer(f.browser, 'pointerup', 3, r.left + 26, r.top + 26);
+    expect(f.frame().weaponSkill).toBeUndefined();
+  });
+  it('casts the self ring on press while movement and primary fire remain captured', () => {
+    const f = territory(), button = f.weaponSkills['2'], r = button.getBoundingClientRect();
+    pointer(f.root, 'pointerdown', 1, 90, 50, f.move);
+    pointer(f.root, 'pointerdown', 2, 750, 300, f.attack);
+    pointer(f.root, 'pointerdown', 3, r.left + 26, r.top + 26, button);
+    expect(f.input.resolvePreview(f.state, f.project)).toBeUndefined();
+    expect(f.frame()).toMatchObject({ moveX: 1, fire: true, weaponSkill: { slot: 2 } });
+    expect(f.frame()).toMatchObject({ moveX: 1, fire: true });
+    expect(f.move.captures.has(1)).toBe(true); expect(f.attack.captures.has(2)).toBe(true);
+    pointer(f.browser, 'pointerup', 3, r.left + 26, r.top + 26);
+    expect(f.frame().weaponSkill).toBeUndefined();
+  });
+
+  it('makes weapon and facility previews mutually exclusive even across keyboard and touch entry points', () => {
+    const f = territory(); initializeConstruction(f.state, ['launch-pod']);
+    f.state.territory!.construction!.building = { id: 'exclusive-pod', blueprintId: 'launch-pod',
+      ...TERRITORY_CANNON_BALANCE.origin, nodeId: 'core', builtAt: 0 };
+    Object.assign(f.state.player, TERRITORY_CANNON_BALANCE.origin);
+    const aim = { x: f.state.player.x + 300, y: f.state.player.y };
+    expect(f.input.beginWeaponSkillPreview(1, aim, { range: 530, radius: 6, aim: 'direction' })).toBe(true);
+    keyboard(f.browser, 'keydown', 'KeyE'); expect(f.frame().cannonHeld).toBe(false);
+    expect(f.input.beginTouchCannon(aim, f.state.player)).toBe(false);
+    expect(f.input.resolvePreview(f.state, f.project)?.kind).toBe('weapon');
+    f.input.cancelSkillPreview(); keyboard(f.browser, 'keyup', 'KeyE'); keyboard(f.browser, 'keydown', 'KeyE');
+    expect(f.frame().cannonHeld).toBe(true);
+    expect(f.input.beginWeaponSkillPreview(1, aim, { range: 530, radius: 6, aim: 'direction' })).toBe(false);
+    f.input.select(2); expect(f.frame().weaponSkill).toBeUndefined();
+  });
+
+  it('cancels directed gestures and clears accepted-but-unconsumed intents on global input reset', () => {
+    const f = territory(), button = f.weaponSkills['1'], r = button.getBoundingClientRect();
+    f.input.setWorldAim({ x: 800, y: 400 }); pointer(f.root, 'pointerdown', 2, 750, 300, f.attack); f.frame();
+    pointer(f.root, 'pointerdown', 3, r.left + 26, r.top + 26, button);
+    pointer(f.browser, 'pointercancel', 3, r.left + 26, r.top + 26);
+    expect(f.frame().weaponSkill).toBeUndefined(); expect(f.frame().fire).toBe(true);
+    pointer(f.root, 'pointerdown', 4, r.left + 26, r.top + 26, button); f.input.clear();
+    expect(f.input.resolvePreview(f.state, f.project)).toBeUndefined(); expect(button.captures.size).toBe(0);
+    expect(f.frame()).toMatchObject({ fire: false, moveX: 0 });
+    pointer(f.browser, 'pointerup', 4, r.left + 26, r.top + 26);
+    expect(f.frame().weaponSkill).toBeUndefined();
+    keyboard(f.browser, 'keydown', 'Digit1'); f.browser.dispatchEvent(new Event('blur'));
+    expect(f.frame().weaponSkill).toBeUndefined();
+  });
+});
+
+describe('territory garrison and cannon gestures keep independent aim', () => {
+  const territory = () => {
+    const game = new GameSession(71, { mode: 'endless', territory: true }); game.start();
+    initializeConstruction(game.state, ['launch-pod']);
+    game.state.territory!.construction!.building = { id: 'gesture-pod', blueprintId: 'launch-pod',
+      ...TERRITORY_CANNON_BALANCE.origin, nodeId: 'core', builtAt: 0 };
+    const f = fixture(game.state); f.frame(); return f;
+  };
+  it('opens tactical details from a third touch pointer without stealing the two battle controls or double toggling', () => {
+    const f = territory();
+    pointer(f.root, 'pointerdown', 1, 90, 50, f.move); pointer(f.root, 'pointerdown', 2, 750, 300, f.attack);
+    pointer(f.root, 'pointerdown', 3, 500, 30, f.summary);
+    expect(f.tactics.open).toBe(true); expect(f.move.captures.has(1)).toBe(true); expect(f.attack.captures.has(2)).toBe(true);
+    const click = new Event('click', { cancelable: true }); Object.assign(click, { pointerType: 'touch', detail: 0 }); Object.defineProperty(click, 'target', { value: f.summary });
+    f.root.dispatchEvent(click); expect(click.defaultPrevented).toBe(true); expect(f.tactics.open).toBe(true);
+    pointer(f.browser, 'pointerup', 3, 500, 30); pointer(f.root, 'pointerdown', 4, 500, 30, f.summary);
+    expect(f.tactics.open).toBe(false); expect(f.frame()).toMatchObject({ fire: true });
+    const keyboardClick = new Event('click', { cancelable: true }); Object.assign(keyboardClick, { pointerType: '', detail: 0 }); Object.defineProperty(keyboardClick, 'target', { value: f.summary });
+    f.root.dispatchEvent(keyboardClick); expect(keyboardClick.defaultPrevented).toBe(false); f.controls.destroy();
+  });
   it('garrison press acts immediately at the player without a targeting preview or waiting for release', () => {
     const f = territory(), spring = f.state.territory!.nodes.find(node => node.id === 'heart-healing-1')!;
     Object.assign(f.state.player, { x: spring.x + 30, y: spring.y });
@@ -196,6 +317,49 @@ describe('territory garrison and cannon gestures keep independent aim', () => {
     f.controls.destroy();
     const old = fixture(); old.frame(); keyboard(old.browser, 'keydown', 'KeyE');
     expect(old.frame().interact).toBe(true); old.controls.destroy();
+  });
+  it('an absent facility or remote E press cannot acquire a preview, and walking closer while held cannot arm it', () => {
+    const f = territory(), origin = TERRITORY_CANNON_BALANCE.origin;
+    delete f.state.territory!.construction!.building; Object.assign(f.state.player, origin);
+    keyboard(f.browser, 'keydown', 'KeyE');
+    expect(f.frame()).toMatchObject({ cannonPressed: false, cannonHeld: false, cannonReleased: false });
+    expect(f.input.resolvePreview(f.state, f.project)).toBeUndefined();
+    f.state.territory!.construction!.building = { id: 'newly-built', blueprintId: 'launch-pod', ...origin, nodeId: 'core', builtAt: 0 };
+    expect(f.frame().cannonHeld).toBe(false);
+    keyboard(f.browser, 'keydown', 'KeyE'); expect(f.frame().cannonHeld).toBe(false);
+    keyboard(f.browser, 'keyup', 'KeyE');
+    f.state.player.x += 111; keyboard(f.browser, 'keydown', 'KeyE');
+    expect(f.input.resolvePreview(f.state, f.project)).toBeUndefined();
+    Object.assign(f.state.player, origin); expect(f.frame().cannonHeld).toBe(false);
+    keyboard(f.browser, 'keyup', 'KeyE'); expect(f.frame().cannonReleased).toBe(false);
+    keyboard(f.browser, 'keydown', 'KeyE'); expect(f.frame().cannonHeld).toBe(true);
+    f.controls.destroy();
+  });
+  it('crossing the interaction boundary cancels before the next sample even when no render ran', () => {
+    const f = territory(), origin = TERRITORY_CANNON_BALANCE.origin; Object.assign(f.state.player, origin);
+    keyboard(f.browser, 'keydown', 'KeyE'); expect(f.frame().cannonHeld).toBe(true);
+    f.state.player.x += 111;
+    expect(f.frame()).toMatchObject({ cannonHeld: false, cannonReleased: false, cannonCancelled: true });
+    expect(f.input.resolvePreview(f.state, f.project)).toBeUndefined();
+    Object.assign(f.state.player, origin); expect(f.frame().cannonHeld).toBe(false);
+    keyboard(f.browser, 'keyup', 'KeyE'); expect(f.frame().cannonReleased).toBe(false);
+    f.controls.destroy();
+  });
+  it.each(['infected', 'reloading', 'replacement'] as const)('cancels an owned E gesture when its facility becomes %s', reason => {
+    const f = territory(), origin = TERRITORY_CANNON_BALANCE.origin; Object.assign(f.state.player, origin);
+    keyboard(f.browser, 'keydown', 'KeyE'); expect(f.frame().cannonHeld).toBe(true);
+    if (reason === 'infected') f.state.territory!.nodes.find(n => n.id === 'core')!.owner = 'infected';
+    else if (reason === 'reloading') f.state.territory!.cannon = { readyAt: f.state.elapsed + 24, serial: 1 };
+    else f.state.territory!.construction!.building!.id = 'replacement-pod';
+    expect(f.input.resolvePreview(f.state, f.project)).toBeUndefined();
+    keyboard(f.browser, 'keyup', 'KeyE');
+    expect(f.frame()).toMatchObject({ cannonHeld: false, cannonReleased: false }); f.controls.destroy();
+  });
+  it('cannot queue a released E command from a facility retired before the simulation consumes it', () => {
+    const f = territory(); Object.assign(f.state.player, TERRITORY_CANNON_BALANCE.origin);
+    keyboard(f.browser, 'keydown', 'KeyE'); keyboard(f.browser, 'keyup', 'KeyE');
+    f.state.territory!.construction!.building!.id = 'replacement';
+    expect(f.frame()).toMatchObject({ cannonReleased: false, cannonCancelled: true }); f.controls.destroy();
   });
   it('releases the last displayed keyboard cannon marker when the camera moved after the simulation sample', () => {
     const f = territory(); Object.assign(f.state.player, TERRITORY_CANNON_BALANCE.origin);
@@ -251,6 +415,39 @@ describe('territory garrison and cannon gestures keep independent aim', () => {
     pointer(f.browser, 'pointerup', 3, 120, 50);
     const command = f.frame(); expect(command).toMatchObject({ cannonReleased: true, cannonAim: preview.aim, aim: primary, fire: true });
     expect(command.moveX).toBeGreaterThan(0); f.controls.destroy();
+  });
+  it('a remote touch press does not capture or activate after moving closer', () => {
+    const f = territory(), origin = TERRITORY_CANNON_BALANCE.origin;
+    Object.assign(f.state.player, { x: origin.x + 111, y: origin.y });
+    pointer(f.root, 'pointerdown', 9, 50, 50, f.buttons.interact);
+    expect(f.buttons.interact.captures.has(9)).toBe(false);
+    expect(f.input.resolvePreview(f.state, f.project)).toBeUndefined();
+    Object.assign(f.state.player, origin); f.controls.update(); pointer(f.browser, 'pointerup', 9, 50, 50);
+    expect(f.frame()).toMatchObject({ cannonPressed: false, cannonHeld: false, cannonReleased: false }); f.controls.destroy();
+  });
+  it('invalidates only the cannon finger when leaving range, preserving movement and shooting owners', () => {
+    const f = territory(), origin = TERRITORY_CANNON_BALANCE.origin; Object.assign(f.state.player, origin);
+    pointer(f.root, 'pointerdown', 1, 90, 50, f.move);
+    pointer(f.root, 'pointerdown', 2, 750, 300, f.attack);
+    pointer(f.root, 'pointerdown', 3, 50, 50, f.buttons.interact); expect(f.frame().cannonHeld).toBe(true);
+    f.state.player.x += 111; f.controls.update();
+    expect(f.buttons.interact.captures.has(3)).toBe(false);
+    expect(f.move.captures.has(1)).toBe(true); expect(f.attack.captures.has(2)).toBe(true);
+    const frame = f.frame(); expect(frame).toMatchObject({ cannonHeld: false, cannonReleased: false, fire: true });
+    expect(frame.moveX).toBeGreaterThan(0); f.controls.destroy();
+  });
+  it('touch release checks actual proximity even without an intervening update', () => {
+    const f = territory(); Object.assign(f.state.player, TERRITORY_CANNON_BALANCE.origin);
+    pointer(f.root, 'pointerdown', 3, 50, 50, f.buttons.interact); f.frame();
+    f.state.player.x += 111; pointer(f.browser, 'pointerup', 3, 50, 50);
+    expect(f.frame()).toMatchObject({ cannonHeld: false, cannonReleased: false, cannonCancelled: true }); f.controls.destroy();
+  });
+  it('uses the real rapid facility parameters instead of caller-supplied preview geometry', () => {
+    const f = territory(), building = f.state.territory!.construction!.building!;
+    building.blueprintId = 'rapid-launch-pod'; Object.assign(f.state.player, building);
+    expect(f.input.beginTouchCannon({ x: building.x + 400, y: building.y }, { x: 1, y: 1 }, 9999, 9999)).toBe(true);
+    expect(f.input.resolvePreview(f.state, f.project)).toMatchObject({ origin: { x: building.x, y: building.y }, range: 800, radius: 200 });
+    f.controls.destroy();
   });
   it.each(['pointercancel', 'clear', 'cancel-zone'])('cancels a cannon gesture via %s without emitting a shot release', mode => {
     const f = territory(); Object.assign(f.state.player, TERRITORY_CANNON_BALANCE.origin);

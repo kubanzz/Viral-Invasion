@@ -16,6 +16,15 @@ export const MOTHER_CORE_BALANCE = {
   mimicPeriod: 6, mimicDisturbance: 1.2,
   membraneFloor: .5, membraneTransition: .45,
 } as const;
+export const HEART_BOSS_BALANCE = {
+  hp: 1800, pulseWindup: 1.2, pulseDamage: 28, pulseSeconds: .9,
+  pulseInner: 80, pulseOuter: 650, pulseThickness: 24, pulseGapHalfAngle: .5,
+  // A side opening requires a readable move rather than automatically sheltering
+  // the player who stays on the same firing line throughout the windup.
+  pulseGapOffset: .95,
+  sweepWindup: 1.3, sweepRange: 620, sweepHalfAngle: .38, sweepPlayerDamage: 22,
+  recovery: 1.9,
+} as const;
 
 const point = (position: Vec): Vec => ({ x: position.x, y: position.y });
 const LEGAL_TRAITS: readonly TraitId[] = ['CARAPACE', 'FISSION', 'MIMIC'];
@@ -63,7 +72,8 @@ export class MotherCoreController {
       exposedUntil: 0, revealedUntil: 0, broodQueued: [], broodReleased: [], attackSerial: 0,
       attacksResolved: 0, scanInterrupts: 0, cleared: false, clearedAt: null, lastTick: options.tick - 1,
       introduced: false, lastScanTick: -1, lastPulseTick: -1,
-      seenTraits: [], membrane: { total: traits.length, remaining: traits.length, floorRatio: MOTHER_CORE_BALANCE.membraneFloor, thresholdReached: false } };
+      seenTraits: [], membrane: { total: traits.length, remaining: traits.length, floorRatio: MOTHER_CORE_BALANCE.membraneFloor, thresholdReached: false },
+      ...(options.heartExpedition ? { heartExpedition: true, secondPhase: false, pulseQueued: false, pulseUsed: false } : {}) };
   }
   private get base() { return { coreId: this.state.coreId, organId: this.state.organId }; }
   private log(type: string, data: Record<string, string | number | boolean>): MotherCoreCommand {
@@ -127,6 +137,10 @@ export class MotherCoreController {
     s.lastTick = context.tick;
     s.exposedUntil = Math.max(s.exposedUntil, context.core.exposedUntil ?? 0);
     s.revealedUntil = Math.max(s.revealedUntil, context.core.revealedUntil ?? 0);
+    if (s.heartExpedition && !s.secondPhase && context.core.hp <= context.core.maxHp / 2) {
+      s.secondPhase = true; s.pulseQueued = true;
+      commands.push(this.log('HEART_BOSS_SECOND_PHASE', { hp: context.core.hp, threshold: .5 }));
+    }
     if (s.traits.includes('FISSION')) for (const threshold of MOTHER_CORE_BALANCE.broodThresholds) {
       if (context.core.hp / context.core.maxHp <= threshold && !s.broodReleased.includes(threshold) && !s.broodQueued.includes(threshold)) s.broodQueued.push(threshold);
     }
@@ -135,24 +149,45 @@ export class MotherCoreController {
       s.facing = turnToward(s.facing, desired, MOTHER_CORE_BALANCE.turnSpeed * BALANCE.step);
     }
     if (s.attack && context.elapsed + 1e-9 >= s.attack.resolveAt) commands.push(...this.resolveAttack(context));
-    if (!s.attack && context.elapsed + 1e-9 >= s.nextActionAt) commands.push(...this.beginAttack(context));
+    if (s.pulse) commands.push(...this.advancePulse(context));
+    if (!s.attack && !s.pulse && context.elapsed + 1e-9 >= s.nextActionAt) commands.push(...this.beginAttack(context));
     commands.push(this.pose());
     return commands;
   }
 
   private beginAttack(context: MotherCoreContext): MotherCoreCommand[] {
     const s = this.state; const B = MOTHER_CORE_BALANCE;
+    if (s.heartExpedition && s.pulseQueued && !s.pulseUsed) {
+      s.pulseQueued = false; s.pulseUsed = true; s.phase = 'windup'; s.phaseStartedAt = context.elapsed;
+      const attack: MotherCoreAttack = { id: `${s.coreId}:attack:${++s.attackSerial}`, kind: 'heart-pulse', trait: s.activeTrait,
+        startedAt: context.elapsed, resolveAt: context.elapsed + HEART_BOSS_BALANCE.pulseWindup,
+        origin: point(context.core), aim: point(context.core),
+        angle: Math.atan2(context.player.y - context.core.y, context.player.x - context.core.x) + HEART_BOSS_BALANCE.pulseGapOffset,
+        range: HEART_BOSS_BALANCE.pulseOuter, radius: HEART_BOSS_BALANCE.pulseThickness,
+        halfAngle: HEART_BOSS_BALANCE.pulseGapHalfAngle, landings: [] };
+      s.attack = attack;
+      return [{ ...this.base, kind: 'telegraph', attack: structuredClone(attack) },
+        this.log('CORE_ATTACK_TELEGRAPHED', { attackId: attack.id, kind: attack.kind, trait: attack.trait,
+          resolveAt: attack.resolveAt, x: attack.origin.x, y: attack.origin.y, angle: attack.angle, range: attack.range,
+          radius: attack.radius, halfAngle: attack.halfAngle })];
+    }
     const priorityTrait = s.membrane.thresholdReached && s.membrane.remaining > 0 ? s.traits.find(trait => !s.seenTraits.includes(trait)) : undefined;
     const threshold = s.broodQueued[0] !== undefined && (!priorityTrait || priorityTrait === 'FISSION') ? s.broodQueued[0] : undefined;
     const trait = priorityTrait ?? (threshold !== undefined ? 'FISSION' : s.traits[s.phaseIndex % s.traits.length]);
     s.activeTrait = trait; s.phase = 'windup'; s.phaseStartedAt = context.elapsed;
+    const sweepWindup = s.heartExpedition ? HEART_BOSS_BALANCE.sweepWindup : B.sweepWindup;
+    const sweepRange = s.heartExpedition ? HEART_BOSS_BALANCE.sweepRange : B.sweepRange;
+    const sweepHalfAngle = s.heartExpedition ? HEART_BOSS_BALANCE.sweepHalfAngle : B.sweepHalfAngle;
+    // Expedition sweeps lock the actual current firing lane once, then never
+    // track a dodge during their visible windup. Campaign turning is unchanged.
+    if (s.heartExpedition && trait === 'CARAPACE') s.facing = Math.atan2(context.player.y - context.core.y, context.player.x - context.core.x);
     const attack: MotherCoreAttack = { id: `${s.coreId}:attack:${++s.attackSerial}`,
       kind: trait === 'CARAPACE' ? 'crystal-sweep' : trait === 'FISSION' ? 'fission-burst' : 'corrosion', trait,
-      startedAt: context.elapsed, resolveAt: context.elapsed + (trait === 'CARAPACE' ? B.sweepWindup : trait === 'FISSION' ? B.burstWindup : B.corrosionWindup),
+      startedAt: context.elapsed, resolveAt: context.elapsed + (trait === 'CARAPACE' ? sweepWindup : trait === 'FISSION' ? B.burstWindup : B.corrosionWindup),
       origin: point(context.core), aim: trait === 'MIMIC' ? point(context.tissue) : point(context.player),
-      angle: s.facing, range: trait === 'CARAPACE' ? B.sweepRange : 0,
+      angle: s.facing, range: trait === 'CARAPACE' ? sweepRange : 0,
       radius: trait === 'FISSION' ? B.burstRadius : trait === 'MIMIC' ? context.tissue.radius + 12 : 0,
-      halfAngle: trait === 'CARAPACE' ? B.sweepHalfAngle : 0, landings: [] };
+      halfAngle: trait === 'CARAPACE' ? sweepHalfAngle : 0, landings: [] };
     if (threshold !== undefined) {
       attack.kind = 'brood'; attack.threshold = threshold;
       attack.resolveAt = context.elapsed + B.broodWindup;
@@ -170,7 +205,11 @@ export class MotherCoreController {
     const s = this.state; const B = MOTHER_CORE_BALANCE; const attack = s.attack!;
     const commands: MotherCoreCommand[] = [];
     const canHurtPlayer = context.elapsed >= context.player.dashUntil;
-    if (attack.kind === 'brood') {
+    if (attack.kind === 'heart-pulse') {
+      s.pulse = { attack: structuredClone(attack), startedAt: context.elapsed, endsAt: context.elapsed + HEART_BOSS_BALANCE.pulseSeconds, hitPlayer: false };
+      commands.push(this.log('HEART_BOSS_PULSE_STARTED', { attackId: attack.id, angle: attack.angle,
+        endsAt: s.pulse.endsAt, radius: HEART_BOSS_BALANCE.pulseOuter }));
+    } else if (attack.kind === 'brood') {
       for (let index = 0; index < attack.landings.length; index++) commands.push({ ...this.base, kind: 'spawn',
         actorId: `${s.coreId}:brood:${attack.threshold}:${index}`, sourceId: s.coreId, position: point(attack.landings[index]),
         role: 'virus', traits: ['FISSION'], generation: 1, hp: B.childHp, radius: B.childRadius });
@@ -179,7 +218,7 @@ export class MotherCoreController {
     } else if (attack.kind === 'corrosion') {
       commands.push({ ...this.base, kind: 'damageTissue', amount: B.corrosionTissueDamage, attackId: attack.id, reason: 'core-corrosion' });
     } else if (attack.kind === 'crystal-sweep') {
-      if (canHurtPlayer && coneContains(attack, context.player, context.player.radius, context.geometry)) commands.push({ ...this.base, kind: 'damagePlayer', amount: B.sweepPlayerDamage, attackId: attack.id, reason: 'core-crystal-sweep' });
+      if (canHurtPlayer && coneContains(attack, context.player, context.player.radius, context.geometry)) commands.push({ ...this.base, kind: 'damagePlayer', amount: s.heartExpedition ? HEART_BOSS_BALANCE.sweepPlayerDamage : B.sweepPlayerDamage, attackId: attack.id, reason: 'core-crystal-sweep' });
       if (coneContains(attack, context.tissue, context.tissue.radius, context.geometry)) commands.push({ ...this.base, kind: 'damageTissue', amount: B.sweepTissueDamage, attackId: attack.id, reason: 'core-crystal-sweep' });
     } else {
       if (canHurtPlayer && distance(attack.aim, context.player) <= attack.radius + context.player.radius && lineClear(attack.aim, context.player, context.player.radius, context.geometry)) commands.push({ ...this.base, kind: 'damagePlayer', amount: B.burstPlayerDamage, attackId: attack.id, reason: 'core-fission-burst' });
@@ -188,7 +227,7 @@ export class MotherCoreController {
     s.attacksResolved++; s.attack = null; s.phase = 'recovery'; s.phaseStartedAt = context.elapsed;
     commands.push(...this.demonstrateTrait(attack.trait, context));
     if (attack.kind !== 'brood') s.phaseIndex++;
-    const recovery = attack.kind === 'brood' ? B.broodRecovery : B.recovery;
+    const recovery = attack.kind === 'brood' ? B.broodRecovery : s.heartExpedition ? HEART_BOSS_BALANCE.recovery : B.recovery;
     s.nextActionAt = context.elapsed + recovery;
     if (s.membrane.thresholdReached && s.membrane.remaining > 0) s.nextActionAt = Math.min(s.nextActionAt, context.elapsed + B.membraneTransition);
     s.exposedUntil = Math.max(s.exposedUntil, context.elapsed + recovery);
@@ -197,6 +236,24 @@ export class MotherCoreController {
       { ...this.base, kind: 'expose', until: s.exposedUntil, revealUntil: s.revealedUntil, reason: 'core-recovery' },
       { ...this.base, kind: 'effect', effect: attack.kind === 'corrosion' ? 'hit' : 'burst', from: attack.origin, to: attack.aim, radius: attack.radius || 50, duration: .45 },
       this.log('CORE_ATTACK_RESOLVED', { attackId: attack.id, kind: attack.kind, recovery, damageCommands: commands.filter(command => command.kind === 'damagePlayer' || command.kind === 'damageTissue').length }));
+    return commands;
+  }
+
+  private advancePulse(context: MotherCoreContext): MotherCoreCommand[] {
+    const pulse = this.state.pulse!;
+    const fraction = Math.max(0, Math.min(1, (context.elapsed - pulse.startedAt) / HEART_BOSS_BALANCE.pulseSeconds));
+    const radius = HEART_BOSS_BALANCE.pulseInner + fraction * (HEART_BOSS_BALANCE.pulseOuter - HEART_BOSS_BALANCE.pulseInner);
+    const length = distance(context.player, pulse.attack.origin), angle = Math.atan2(context.player.y - pulse.attack.origin.y, context.player.x - pulse.attack.origin.x);
+    const fromGap = Math.abs(Math.atan2(Math.sin(angle - pulse.attack.angle), Math.cos(angle - pulse.attack.angle)));
+    const commands: MotherCoreCommand[] = [];
+    if (!pulse.hitPlayer && context.elapsed >= context.player.dashUntil && fromGap > pulse.attack.halfAngle
+      && Math.abs(length - radius) <= HEART_BOSS_BALANCE.pulseThickness + context.player.radius
+      && lineClear(pulse.attack.origin, context.player, context.player.radius, context.geometry)) {
+      pulse.hitPlayer = true;
+      commands.push({ ...this.base, kind: 'damagePlayer', amount: HEART_BOSS_BALANCE.pulseDamage,
+        attackId: pulse.attack.id, reason: 'heart-boss-pulse' });
+    }
+    if (context.elapsed + 1e-9 >= pulse.endsAt) delete this.state.pulse;
     return commands;
   }
 
@@ -239,7 +296,7 @@ export class MotherCoreController {
     const s = this.state;
     if (s.cleared || context.core.id !== s.coreId || context.core.hp > 0) return [];
     s.cleared = true; s.clearedAt = context.elapsed; s.phase = 'defeated'; s.attack = null;
-    s.broodQueued = []; s.exposedUntil = 0; s.revealedUntil = 0;
+    s.broodQueued = []; s.exposedUntil = 0; s.revealedUntil = 0; delete s.pulse; s.pulseQueued = false;
     return [{ ...this.base, kind: 'cancelTelegraph' }, this.log('CORE_CLEARED', { actorId: s.coreId, traits: s.traits.join('+'), elapsed: context.elapsed, scanInterrupts: s.scanInterrupts, broodWaves: s.broodReleased.length })];
   }
 }

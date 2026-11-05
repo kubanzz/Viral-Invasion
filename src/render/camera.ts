@@ -121,12 +121,12 @@ export class Camera {
         y: clamp(y, ((viewport.top + 20) / this.scale - 150 - yFrame.top) / this.yScale,
           ((viewport.bottom - 20) / this.scale - 150 - yFrame.bottom) / this.yScale) };
     };
-    if (aim) {
+    if (aim || suppliedFrame) {
       const target = constrainFrame(targetX, targetY); targetX = target.x; targetY = target.y;
     }
     this.panX += (targetX - this.panX) * blend;
     this.panY += (targetY - this.panY) * blend;
-    if (aim) {
+    if (aim || suppliedFrame) {
       // A prior non-preview camera may already have the head under a status
       // bar. Do not preserve that invalid pose for several smoothing frames.
       const next = constrainFrame(this.panX, this.panY); this.panX = next.x; this.panY = next.y;

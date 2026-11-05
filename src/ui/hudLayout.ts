@@ -1,6 +1,6 @@
 import type { LabelRect } from '../render/sceneLabels';
 
-const hudPanels = '.topbar .brand,.top-actions,.objective,.telemetry,.growth-panel,.organ-overview,.dock-wrap,.evolution-card,.migration-card,.mother-core-panel,.evolution-feedback,.trait-strip,.message,.run-time,.endless-wave-panel,.endless-vitals,.endless-build-panel,.endless-navigation,.territory-hud,.host-event-card,.mobile-readouts,.mobile-top-actions,.mobile-objective,.mobile-warning-strip,.mobile-notice,.mobile-map,.mobile-stick,.mobile-skill,.mobile-aux,.mobile-cancel,.mobile-guide,.mobile-preview-label';
+const hudPanels = '.weapon-context,.mobile-tactical-menu,.mobile-tactical-panel,.construction-open,.construction-placement,.construction-discovery,.camp-toolbar,.topbar .brand,.top-actions,.objective,.telemetry,.growth-panel,.organ-overview,.dock-wrap,.evolution-card,.migration-card,.mother-core-panel,.evolution-feedback,.trait-strip,.message,.run-time,.endless-wave-panel,.endless-vitals,.endless-build-panel,.endless-navigation,.territory-hud,.host-event-card,.mobile-readouts,.mobile-top-actions,.mobile-objective,.mobile-warning-strip,.mobile-notice,.mobile-map,.mobile-stick,.mobile-skill,.mobile-aux,.mobile-cancel,.mobile-guide,.mobile-preview-label';
 const softenedUntil = new WeakMap<HTMLElement, number>();
 
 export interface HudReadOptions {
@@ -21,6 +21,9 @@ export function readVisibleHudRects(canvas: HTMLCanvasElement, options: HudReadO
   const visible = (element: HTMLElement) => {
     for (let node: HTMLElement | null = element; node; node = node.parentElement) {
       if (node.hidden) return false;
+      // Closed details can report descendant rectangles despite not painting them.
+      if (node.tagName === 'DETAILS' && !(node as HTMLDetailsElement).open && node !== element
+        && !node.querySelector(':scope > summary')?.contains(element)) return false;
       let style = styles.get(node);
       if (!style) { style = view.getComputedStyle(node); styles.set(node, style); }
       if (style.display === 'none' || style.visibility === 'hidden' || style.visibility === 'collapse' || style.opacity === '0') return false;

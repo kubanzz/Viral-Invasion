@@ -1,5 +1,6 @@
 import type { Effect, GameState, Vec } from '../game/types';
 import type { Camera } from './camera';
+import type { VisualBounds } from './raisedObstacleGeometry';
 import type { RaisedActorBody } from './raisedObstacleOcclusion';
 
 /** Rescue bosses and the hidden campaign retain independent rule owners. */
@@ -14,6 +15,7 @@ export interface ArtPresentation {
   nativeEntity(entity: SceneEntity, state: GameState, ctx: CanvasRenderingContext2D, depth: number): boolean;
   foreground(state: GameState, camera: Camera): void;
   actorBodies(state: GameState): RaisedActorBody[];
+  playerBounds?(state: GameState): VisualBounds;
   /** Optional drawing-only origin for a proven emission; simulation endpoints stay untouched. */
   effectOrigin?(effect: Effect, state: GameState): Vec | undefined;
   projectileOrigin?(castId: string): Vec | undefined;

@@ -18,6 +18,7 @@ import { activeWorld, type GameEvent, type GameState, type Target, type Vec } fr
 import { ENDLESS_POPULATION_LIMIT, combatPopulation } from './combatPopulation';
 import { cancelSmartSupports, planSmartSupports } from './smartViruses';
 import { isTerritoryPlayerAirborne } from './territoryCannon';
+import { ritualSpawnReserved } from './ritual';
 import { createOpeningEvolution, freezeOpeningEvolution, openingVariantSlots, recordOpeningDamage } from './openingEvolution';
 import type { TerritorySourceId } from './territoryTypes';
 import { TERRITORY_BALANCE, TERRITORY_LANES, territoryInvasionOrigin, territoryInvaderGoal } from './territory';
@@ -271,8 +272,8 @@ export class EndlessDirector {
       const sourceHint = e.source ? `远侧有限感染源：提前净化可截断最多 ${e.source.quotaSlots.length} 个尚未入场普通体。也可先守住组织，配额耗尽后自动枯竭。` : '';
       const assaultHint = assaultSlots.length ? `组织袭击分队 ${assaultSlots.length} 体：直奔中央组织，可拦截、2 聚拢或 Q 部署小队防守。` : '';
       const capsuleHint = capsulePlan ? `离体弹囊${capsulePlan.fork ? ' · 分叉型' : ''}：携带者施法或死亡会释放同一枚有限弹囊，预警后沿固定方向飞行；可用基础工具或实际细胞击落，侧移或借褶皱躲避。` : '';
-      const openingHint = wave >= 3 && wave <= 5 && evolution.opening?.selection ? `${wave === 5 ? '精英继承本次进化' : '少量病毒首次特化'} · ${TRAITS[evolution.opening.selection.trait].name}；${evolution.opening.selection.trait === 'CARAPACE' ? '炮弹、剑气或侧绕可突破晶壳。' : '母体死亡会产生两个脆弱小体，用炮弹、剑气清群。'}` : '';
-      this.host.message(`第 ${wave} 波 · ${e.title}，${e.warningSeconds} 秒后到达。${openingHint}${capsuleHint}${assaultHint}${sourceHint}${duetHint || adaptiveHint || supportHint || (wave === 3 ? '新敌：远距点射停在射程外。接近射杀或朝它 Q 部署细胞；窄线锁定后侧移可躲开。' : counter || '移动拉线，2 能量炮爆破，Q 召集免疫援助。')}`, e.warningSeconds, 2);
+      const openingHint = wave >= 3 && wave <= 5 && evolution.opening?.selection ? `${wave === 5 ? '精英继承本次进化' : '少量病毒首次特化'} · ${TRAITS[evolution.opening.selection.trait].name}；${evolution.opening.selection.trait === 'CARAPACE' ? this.state.weaponCombat ? '排异震环、束脉锚或侧绕可突破晶壳；回旋骨刃与蓄势穿心也可反制。' : '炮弹、剑气或侧绕可突破晶壳。' : this.state.weaponCombat ? '母体死亡会产生两个脆弱小体，用震环、束脉锚或往返骨刃清群。' : '母体死亡会产生两个脆弱小体，用炮弹、剑气清群。'}` : '';
+      this.host.message(`第 ${wave} 波 · ${e.title}，${e.warningSeconds} 秒后到达。${openingHint}${capsuleHint}${assaultHint}${sourceHint}${duetHint || adaptiveHint || supportHint || (wave === 3 ? state.territory ? '新敌远距点射：靠近射杀；Q在脚下驻军，窄线锁定后侧移。' : '新敌：远距点射停在射程外。接近射杀或朝它 Q 部署细胞；窄线锁定后侧移可躲开。' : counter || '移动拉线，2 能量炮爆破，Q 召集免疫援助。')}`, e.warningSeconds, 2);
       return;
     }
     const evolution = e.evolution;
@@ -627,6 +628,7 @@ export class EndlessDirector {
       if (geometry.obstacles.some(obstacle => distance(candidate, obstacle) <= radius + obstacle.radius + 5)) continue;
       if (state.targets.some(target => target.hp > 0 && distance(candidate, target) < target.radius + radius + 12)) continue;
       if (reserved.some(point => distance(candidate, point) < radius * 2 + 12)) continue;
+      if (ritualSpawnReserved(state, candidate, radius, 12)) continue;
       return candidate;
     }
     return;
@@ -645,6 +647,7 @@ export class EndlessDirector {
       if (geometry.obstacles.some(obstacle => distance(candidate, obstacle) < radius + obstacle.radius + 2)) return false;
       if (distance(candidate, state.tissue) < radius + state.tissue.radius + 40) return false;
       if (state.targets.some(target => target.hp > 0 && distance(candidate, target) < target.radius + radius + 12)) return false;
+      if (ritualSpawnReserved(state, candidate, radius, 12)) return false;
       if (role === 'ordinary') return true;
       // A shared thick lane must actually reach the player body; center LOS
       // alone may skim a fold which clips an 18-unit half-width ray short.

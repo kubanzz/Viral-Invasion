@@ -32,7 +32,7 @@ export function isImmuneGuardCommand(context: GrowthContext): boolean {
 }
 
 export function activeImmuneGuard(beacon: BeaconState | null | undefined, context: GrowthContext): boolean {
-  if (!context.endless || !activeBeacon(beacon, context) || beacon.mode !== 'protocol'
+  if (!context.endless || !activeBeacon(beacon, context) || beacon.constructionTaskId || beacon.mode !== 'protocol'
     || beacon.guard?.radius !== IMMUNE_GUARD_BALANCE.radius || context.tissue.hp <= 0) return false;
   const guard = beacon.guard;
   return guard.kind === 'ground' || guard.kind === 'tissue' || !!context.territory?.nodes.some(node => node.id === guard.regionId);
@@ -70,7 +70,7 @@ export function selectImmuneFocusTarget(context: GrowthContext, beacon: BeaconSt
 
 /** Pure validity shared by simulation and paused HUDs; no wall clock or mutation. */
 export function activeImmuneFocusTarget(beacon: BeaconState | null | undefined, context: GrowthContext): Target | undefined {
-  if (!activeBeacon(beacon, context) || activeImmuneGuard(beacon, context) || !beacon.focus || !Number.isFinite(beacon.focus.until)
+  if (!activeBeacon(beacon, context) || beacon.constructionTaskId || activeImmuneGuard(beacon, context) || !beacon.focus || !Number.isFinite(beacon.focus.until)
     || beacon.focus.until <= context.elapsed) return;
   return context.targets.find(target => target.id === beacon.focus!.targetId && inSquadRegion(target, beacon, context));
 }

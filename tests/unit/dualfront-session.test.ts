@@ -20,12 +20,13 @@ const hit = (game: GameSession, body: Target, amount: number, origin?: DamageOri
   (game as unknown as { damage(t: Target, n: number, o?: DamageOrigin): number }).damage(body, amount, origin);
 
 describe('dual-front production session utility and membrane acceptance', () => {
-  it('starts purification with a single context press, ignores distant aim and keeps weapon2', () => {
+  it('starts purification with a single context press, ignores distant aim and preserves independent weapon skills', () => {
     const game = session(), front = node(game, 'front-north');
     Object.assign(game.state.player, { x: front.x + 100, y: front.y, hp: 60 });
-    game.state.tool = 2;
+    const skillState = structuredClone(game.state.weaponCombat);
     step(game, { territoryAction: true });
-    expect(game.state.tool).toBe(2);
+    expect(game.state.tool).toBe(1);
+    expect(game.state.weaponCombat).toEqual(skillState);
     expect(game.state.territory!.purification?.nodeId).toBe(front.id);
     expect(game.state.player.hp).toBe(60); // A front is not a healing facility.
     for (let i = 0; i < 181; i++) step(game);

@@ -109,9 +109,9 @@ body.touch-mode #overlay-host { position:absolute; inset:0; z-index:20; pointer-
 body.touch-mode #overlay-host > .overlay { padding:calc(var(--mobile-top) + 8px) calc(var(--mobile-right) + 8px) calc(var(--mobile-bottom) + 8px) calc(var(--mobile-left) + 8px); box-sizing:border-box; pointer-events:auto; }
 body.touch-mode #app .modal { width:min(850px,100%); max-height:100%; max-height:calc(100dvh - var(--mobile-top) - var(--mobile-bottom) - 16px); padding:16px; border-radius:12px; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
 body.touch-mode #app .modal h2 { font-size:22px; }
-body.touch-mode #app .modal button,body.touch-mode #app .intro-card button,body.touch-mode #app .modal summary { min-height:44px; min-width:44px; }
+body.touch-mode #app .modal button,body.touch-mode #app .intro-card button,body.touch-mode #app .modal summary { min-height:48px; min-width:48px; }
 body.touch-mode #app .modal button { padding:10px 12px; }
-body.touch-mode #app .modal .actions { gap:7px; margin-top:14px; }
+body.touch-mode #app .modal .actions { gap:8px; margin-top:14px; }
 body.touch-mode #app .modal .help-grid { margin:12px 0; }
 body.touch-mode #app .modal .stats { margin:14px 0; }
 body.touch-mode #app .intro { overflow-y:auto; align-items:flex-start; }
@@ -161,6 +161,13 @@ body.touch-mode #app .endless-stage-complete .stats strong { font-size:23px; }
   body.touch-mode #app .endless-stage-complete .stats { margin:7px 0; }
   body.touch-mode #app .endless-stage-complete .actions { margin-top:9px; gap:6px; }
 }
+
+body.touch-mode #mobile-controls .mobile-skill[data-contextual=true] {
+  border-color:#d7ffd8; background:#386e58f5; box-shadow:0 0 0 2px #a9e8bc66;
+}
+body.touch-mode #mobile-controls .mobile-skill[data-touch-skill='3'] .mobile-caption { font-size:10px; }
+body.touch-mode.territory-mode .mobile-warning-strip { max-height:30px; }
+body.touch-mode.territory-mode .mobile-warning { font-size:11px; }
 @media (orientation:portrait) { body.touch-mode #app .draft-grid,body.touch-mode #app .endless-upgrade-grid,body.touch-mode #mobile-details-content { grid-template-columns:1fr; } body.touch-mode #app .modal .help-grid { grid-template-columns:1fr; } body.touch-mode #app .intro-card h1 { font-size:57px; } body.touch-mode #app .intro-card { padding-top:18px; } }
 
 #app .ability-charge { display:block; margin-top:3px; color:#277867; font-size:10px; white-space:nowrap; }
@@ -174,6 +181,15 @@ body.touch-mode #mobile-skill-preview[data-kind='2'],body.touch-mode #mobile-ski
 /* Fixed thumb slots: no reflow when contextual actions appear or disappear. */
 body.touch-mode #mobile-controls button[hidden] { display:none!important; }
 body.touch-mode #mobile-controls .mobile-top-actions button { width:48px; height:48px; }
+body.touch-mode #app > .construction-open { display:none!important; }
+body.touch-mode #mobile-controls .mobile-tactical-menu { position:absolute;right:calc(var(--mobile-right) + 120px);top:calc(var(--mobile-top) + 6px);margin:0;padding:0;border:0;width:48px;height:48px;z-index:29;pointer-events:auto; }
+body.touch-mode #mobile-controls .mobile-tactical-menu[hidden] { display:none!important; }
+body.touch-mode #mobile-controls .mobile-tactical-menu > summary { display:grid;place-items:center;width:48px;height:48px;box-sizing:border-box;border:1px solid #d1e8c0;border-radius:50%;background:#244d43ed;color:#f0efce;font-size:11px;font-weight:700;cursor:pointer;list-style:none;touch-action:manipulation; }
+body.touch-mode #mobile-controls .mobile-tactical-menu > summary::-webkit-details-marker { display:none; }
+body.touch-mode #mobile-controls .mobile-tactical-panel { position:absolute;right:0;top:56px;width:170px;height:50px;box-sizing:border-box;border:1px solid #a9c8af;border-radius:12px;background:#173e35f5;overflow:hidden; }
+body.touch-mode #mobile-controls .mobile-tactical-panel > .construction-open { display:block;position:static;width:168px;min-width:168px;max-width:none;height:48px;min-height:48px;box-sizing:border-box;border:0;border-radius:10px;margin:0;padding:0 8px;font-size:12px;background:#e3eacb;color:#244f43; }
+body.touch-mode #mobile-controls .mobile-objective { right:calc(var(--mobile-right) + 176px); }
+body.touch-mode.territory-mode #app .territory-hud { right:calc(var(--mobile-right) + 176px); }
 body.touch-mode .mobile-top-actions { gap:8px; }
 body.touch-mode #mobile-controls .mobile-attack { width:80px; height:80px; right:calc(var(--mobile-right) + 16px); bottom:calc(var(--mobile-bottom) + 16px); }
 body.touch-mode #mobile-controls .mobile-skill { width:52px; height:52px; }
@@ -204,4 +220,28 @@ body.touch-mode #mobile-stability-details { padding:10px; background:#def0dd; bo
   body.touch-mode .mobile-notice { max-height:28px; top:calc(var(--mobile-top) + 84px); width:min(240px,40vw); }
   body.touch-mode .mobile-warning-strip { left:calc(var(--mobile-left) + 138px); right:calc(var(--mobile-right) + 236px); top:calc(var(--mobile-top) + 94px); max-height:32px; }
   body.touch-mode .mobile-charge-state { font-size:8px; top:-15px; }
+}
+
+/* Weapon skills and world actions have separate fixed homes. */
+body.touch-mode #mobile-controls .mobile-territory-control { display:none; }
+body.touch-mode #mobile-controls[data-weapon-mode=true] .mobile-territory-control { display:block; }
+body.touch-mode #mobile-controls[data-weapon-mode=true] .mobile-legacy-control { display:none!important; }
+body.touch-mode .mobile-weapon-skill[data-weapon-skill='1'] { right:calc(var(--mobile-right) + 112px); bottom:calc(var(--mobile-bottom) + 16px); }
+body.touch-mode .mobile-weapon-skill[data-weapon-skill='2'] { right:calc(var(--mobile-right) + 108px); bottom:calc(var(--mobile-bottom) + 84px); }
+body.touch-mode .mobile-weapon-skill[data-weapon-skill='3'] { right:calc(var(--mobile-right) + 36px); bottom:calc(var(--mobile-bottom) + 116px); }
+body.touch-mode .mobile-skill-number { position:absolute; top:3px; left:4px; font-size:10px; line-height:12px; color:#fff4c9; pointer-events:none; }
+body.touch-mode .mobile-weapon-skill .mobile-caption { max-width:48px; overflow:hidden; text-overflow:ellipsis; font-size:9px; color:#315f54; text-shadow:none; }
+body.touch-mode .mobile-weapon-icon-slot { display:block; width:28px; height:28px; margin:auto; transform:translateY(-6px); color:#315f54; pointer-events:none; }
+body.touch-mode .mobile-weapon-icon-slot .weapon-skill-icon,body.touch-mode .mobile-weapon-icon-slot svg { display:block; width:100%; height:100%; }
+body.touch-mode #mobile-controls .mobile-garrison { left:calc(var(--mobile-left) + 136px); right:auto; bottom:calc(var(--mobile-bottom) + 42px); }
+body.touch-mode #mobile-controls .mobile-cleanse { left:calc(var(--mobile-left) + 192px); right:auto; bottom:calc(var(--mobile-bottom) + 42px); }
+body.touch-mode #mobile-controls .mobile-cleanse[data-contextual=true] { border-color:#d7ffd8; background:#386e58f5; box-shadow:0 0 0 2px #a9e8bc66; }
+body.touch-mode #mobile-controls[data-weapon-mode=true] .mobile-charge-ring { display:none; }
+body.touch-mode #mobile-controls .mobile-tactical-panel { height:106px; display:grid; grid-template-rows:48px 48px; gap:8px; }
+body.touch-mode #mobile-controls .mobile-menu-antibody { position:relative; width:168px; height:48px; min-width:168px; padding:0 12px; border:0; border-radius:10px; background:#e3eacb; color:#244f43; text-align:left; font-size:12px; }
+body.touch-mode .mobile-menu-antibody > b { float:right; }
+body.touch-mode .mobile-menu-antibody .mobile-cooldown { left:auto; right:10px; width:32px; background:#e3eacb; color:#244f43; text-shadow:none; font-size:13px; }
+@media (max-height:360px) {
+  body.touch-mode #mobile-controls .mobile-garrison { left:calc(var(--mobile-left) + 128px); bottom:calc(var(--mobile-bottom) + 40px); }
+  body.touch-mode #mobile-controls .mobile-cleanse { left:calc(var(--mobile-left) + 184px); bottom:calc(var(--mobile-bottom) + 40px); }
 }

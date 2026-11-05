@@ -159,7 +159,7 @@ describe('fantasy territory ground and state-pair registration', () => {
     expect(territoryCaptureFront(node,geometry,left,100)!.tip).toEqual({x:node.x,y:node.y});expect(JSON.stringify(sample)).toBe(before);
   });
 
-  it('shows nearby live purification state and exact progress without duplicating the HUD action or pause explanation',()=>{
+  it('shows compact live purification progress and its current pause reason',()=>{
     const sample=state(),node=sample.territory!.nodes.find(node=>node.id==='front-north')!;node.purificationProgress=37;
     sample.territory!.purification={nodeId:node.id,startedAt:0};sample.player.x=node.x+200;sample.player.y=node.y;
     const frame=territoryRenderFrame(sample)!,view=frame.nodes.find(item=>item.node.id===node.id)!;
@@ -167,9 +167,9 @@ describe('fantasy territory ground and state-pair registration', () => {
     const labels: {id:string;lines:readonly {text:string}[];bar?:{ratio:number}}[]=[],ctx=new Proxy({},{get:()=>()=>{},set:()=>true})as CanvasRenderingContext2D;
     const before=JSON.stringify(sample),viewport={width:667,height:320,scale:.62,project:(p:{x:number;y:number})=>({x:p.x-node.x+333,y:p.y-node.y+160})};
     drawTerritoryNodeAccents(ctx,sample,frame,viewport,{add:label=>labels.push(label)});
-    expect(labels.map(label=>label.id)).toEqual([`territory-node:${node.id}`]);expect(labels[0].bar?.ratio).toBe(.37);
+    expect(labels.map(label=>label.id)).toEqual([`territory-node:${node.id}`]);expect(labels[0].bar).toBeUndefined();
     expect(labels[0].lines.map(line=>line.text).join(' ')).toContain('净化暂停');expect(labels[0].lines.map(line=>line.text).join(' ')).toContain('37%');
-    expect(labels.flatMap(label=>label.lines).some(line=>/按3|范围|靠近|前置|按 3/.test(line.text))).toBe(false);expect(JSON.stringify(sample)).toBe(before);
+    expect(labels.flatMap(label=>label.lines).some(line=>/按3|范围|前置|按 3/.test(line.text))).toBe(false);expect(JSON.stringify(sample)).toBe(before);
   });
 
   it('draws source membranes only for the true shield state and feeds them from the actually infected supplier',()=>{

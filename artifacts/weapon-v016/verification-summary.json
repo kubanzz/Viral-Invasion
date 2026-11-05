@@ -1,0 +1,135 @@
+{
+  "version": "0.16.0",
+  "date": "2026-11-05",
+  "pass": true,
+  "finalCandidate": "candidate-3",
+  "sourceInputs": 465,
+  "checks": [
+    {
+      "name": "unit and integration regression",
+      "pass": true,
+      "report": "artifacts/weapon-v016/tests-verification.json",
+      "scope": "1958 unique cases; original four timeout cases rerun in isolation with original timeouts. Includes bounded 12-seed legacy campaign smoke, not a new 1000-seed qualification."
+    },
+    {
+      "name": "natural desktop full expedition",
+      "pass": true,
+      "report": "artifacts/weapon-v016/natural-desktop/final-candidate-2-retry-1/browser-report.json",
+      "scope": "Fresh white steady weapon; real keyboard/mouse; rescue -> reward -> repair piercing -> both weapon kits on both target layouts -> equip and depart again. No state/storage/clock injection."
+    },
+    {
+      "name": "natural touch full expedition",
+      "pass": true,
+      "report": "artifacts/weapon-v016/natural-touch/pilot-3/browser-report.json",
+      "scope": "Fresh white steady weapon, 844x390 trusted CDP multi-touch; same complete reward/camp/second-departure loop. Browser emulation, not physical phone."
+    },
+    {
+      "name": "three mobile sizes and pointer ownership",
+      "pass": true,
+      "report": "artifacts/weapon-v016/touch-candidate-2/report.json",
+      "scope": "667x320,844x390,915x412; actual CDP 123, aim separation, three-finger resumption, cancel and rotation. This short input test alone is not full rescue evidence."
+    },
+    {
+      "name": "camp component layout",
+      "pass": true,
+      "report": "artifacts/weapon-v016/camp-final-candidate-2/report.json",
+      "scope": "Four resolutions including 667x320; explicit component fixture, all click areas >=48px and 149px practice canvas on smallest screen; no natural reward claim."
+    },
+    {
+      "name": "48 actor stress",
+      "pass": true,
+      "report": "artifacts/weapon-v016/performance-48/report.json",
+      "scope": "Candidate-1 supplied initial 48-actor scene and production simulation/Renderer, four groups ~15s. Incomplete HUD and no shooting; not natural gameplay or phone hardware."
+    },
+    {
+      "name": "48 actor identity to candidate-2",
+      "pass": true,
+      "report": "artifacts/weapon-v016/performance-48-candidate-2-identity/identity-bridge.json",
+      "scope": "116 production module inputs and compiled performance fixture identical; candidate2Actual48Measurement=false. Retains worst frame 183.4ms."
+    },
+    {
+      "name": "final application identity",
+      "pass": true,
+      "report": "artifacts/weapon-v016/final-runtime-identity.json",
+      "scope": "Candidate-3 runtime game.js,game.css,index.html byte-identical to the actually played candidate-2. Only the package README generator wording changed."
+    },
+    {
+      "name": "final release identity",
+      "pass": true,
+      "report": "artifacts/weapon-v016/release-identity.json",
+      "scope": "Current 465 source inputs and dist match final candidate; independently decoded desktop/mobile ZIP bytes. Versioned mobile copies equal current fixed-name package."
+    },
+    {
+      "name": "packaged offline operation",
+      "pass": true,
+      "report": "artifacts/weapon-v016/offline-final-retry-2/report.json",
+      "scope": "Actual final archive bytes; Chrome/Edge desktop + 667/844 touch boot via allowlisted local HTTP then browser offline before combat. Fresh input after pause; no errors, external or post-offline HTTP. Not file cold-start or physical phone."
+    }
+  ],
+  "typecheck": {
+    "pass": true,
+    "command": "node node_modules/typescript/bin/tsc --noEmit",
+    "observedExitCode": 0
+  },
+  "fixedTargetBalance": {
+    "seconds": 30,
+    "whiteZeroGrowth": true,
+    "steadySingle": 6332.5,
+    "piercingSingle": 5166,
+    "steadyFiveLine": 6536.5,
+    "piercingFiveLine": 12516,
+    "singleLead": 0.225803329461866,
+    "fiveLineLead": 0.9147862005660521,
+    "scope": "Static durable targets, identical ready-skill order and primary-fire policy; not player retention or natural clear time."
+  },
+  "naturalClearSeconds": {
+    "desktop": 104,
+    "touchBrowser": 107,
+    "interpretation": "Skilled automated input with read-only map knowledge, not new-player timing; no claim that first-play 5-8 minute goal is met."
+  },
+  "runtimeBudget": {
+    "maximumBytes": 20971520,
+    "desktopConservativeBytes": 19793346,
+    "mobileHtmlBytes": 19626598,
+    "pass": true
+  },
+  "deliverables": {
+    "releases/Viral-Invasion-G4-v0.16.0.zip": {
+      "bytes": 13149596,
+      "sha256": "95cb0c98caa34bd54e74edd7dfca52da9794c7deb9f7f5dda9ea44b579cb530d"
+    },
+    "releases/Viral-Invasion-v0.16.0-Mobile.zip": {
+      "bytes": 13125170,
+      "sha256": "0438f1c1d024b30ca1e9ca0f34d32fa0a73824c2e66af69bcbbee26a1f8cdf6d"
+    },
+    "releases/Viral-Invasion-v0.16.0-Mobile.html": {
+      "bytes": 19626598,
+      "sha256": "2683d8211154b7c526ac3fb81817fa0e63bd074eb0dc7cca25c411f711cef729"
+    }
+  },
+  "media": {
+    "desktopScreenshot": "artifacts/weapon-v016/natural-desktop/final-candidate-2-retry-1/battle-skill-3.png",
+    "mobileScreenshot": "artifacts/weapon-v016/touch-candidate-2/667-layout.png",
+    "desktopVideo": "artifacts/weapon-v016/natural-desktop/final-candidate-2-retry-1/natural-expedition.webm",
+    "touchVideo": "artifacts/weapon-v016/natural-touch/pilot-3/natural-expedition.webm"
+  },
+  "pendingHumanValidation": [
+    "Physical phone and iPhone/Sitecase cold-start, storage, audio, background and actual hardware performance.",
+    "Five new players: understanding, skill combinations, purification, voluntary replay.",
+    "First-play 5-8 minute pacing; skilled automated routes took 104/107 simulation seconds."
+  ],
+  "retainedRawFailures": [
+    "unit-all-first.json",
+    "unit-all-second.json",
+    "unit-final.json",
+    "natural-desktop/pilot-1/browser-report.json",
+    "natural-desktop/final-candidate-2/browser-report.json",
+    "natural-touch/pilot-1/browser-report.json",
+    "natural-touch/pilot-2/browser-report.json",
+    "offline-final/report.json"
+  ],
+  "limitations": [
+    "48-actor measurement was candidate-1 supplied-state with no shooting and incomplete HUD; final identity chain is explicit, not a claimed fresh candidate-3 measurement.",
+    "Offline package tests loaded bytes through loopback then disconnected browser; they do not establish native file cold-start on physical devices."
+  ]
+}

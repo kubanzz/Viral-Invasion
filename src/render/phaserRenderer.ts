@@ -28,6 +28,9 @@ import { createActorFootPlant, heroSoleContact } from './actorFootPlant';
 import { territoryPlayerFlightHeight } from '../game/territoryCannon';
 import { combatActorFrame, combatCannonFrame, combatConstructionFrame, type CombatFrame } from './smartVirusVisuals';
 import { territoryCannonBodyOpacity } from './territoryCannonVisuals';
+import { sourceRegisteredSpriteFrame } from './expeditionArt';
+import { campStations } from '../game/campScene';
+import { heldWeaponFacing, heldWeaponPresentation, heldWeaponRecoilStrength } from './weaponPresentation';
 
 interface Asset extends HeroAnimationAsset, ActorAsset { atlas:string; frame:string; flags:string[]; status:string }
 interface RuntimeArt {inputSignature:string; actorContract?:{version:number}; atlases:{key:string;dataUri:string;data:object}[];assets:Record<string,Asset>;environments:Record<string,{dataUri:string;width:number;height:number;source?:string}>}
@@ -82,6 +85,7 @@ export class Renderer {
       nativeEntity:(entity,state,ctx,depth)=>this.nativeEntity(entity,state,ctx,depth),
       foreground:(state)=>this.foreground(state),
       actorBodies:state=>this.raisedBodies(state),
+      playerBounds:state=>this.playerPresentation(state).bounds,
       effectOrigin:effect=>this.beamOrigins.get(this.beamKey(effect)),
       projectileOrigin:castId=>this.projectileOrigins.get(castId),
       heroContact:()=>heroSoleContact(this.heroPresentation?.actorFrame),
@@ -141,7 +145,8 @@ export class Renderer {
       activeBodies:[...this.bodies].map(([id,bounds])=>({id,bounds})),
       heroAnimation:{enabledClips:this.newActors?(this.actorLibrary.ready('hero')?['idle','walk','hurt','dash']:[]):Object.keys(this.heroAnimation.clips),frame:frame?{id:frame.id,clip:frame.clip,index:frame.index,animated:frame.animated,flipX:frame.flipX,articulated:!!this.heroPresentation?.rig,gait:frame.gait,
         locomotion:{...this.locomotion.current},contact:heroSoleContact(this.heroPresentation?.actorFrame)??null}:null},
-      weapon:{assetId:this.heroPresentation?.tool?(this.heroPresentation.toolId??'weapon.emitter.painted'):null,mode:this.heroPresentation?.tool?'painted-static':'procedural-fallback'},
+      weapon:{...(heldWeaponPresentation(state)?{weaponId:heldWeaponPresentation(state)!.weaponId,requestedAssetId:heldWeaponPresentation(state)!.id}:{}),
+        assetId:this.heroPresentation?.tool?(this.heroPresentation.toolId??'weapon.emitter.painted'):null,mode:this.heroPresentation?.tool?'painted-static':'procedural-fallback'},
       provisional:this.newActors?actorGroups.filter(group=>!group.ready).map(group=>`actor-group-not-ready:${group.identity}`):[...(heroComplete?['additional-player-directions']:['continuous-player-animation']),
         ...(this.motherArtLayersReady()?['mother-static-layers','missing-continuous-mother-animation']:['mother-core']),
         ...(!this.heroPresentation?.tool?['painted-emitter-tool']:[]),
@@ -151,7 +156,7 @@ export class Renderer {
         ...(art.assets['enemy.fission.parent']&&art.assets['enemy.fission.child']?['fission-static-poses']:['fission-single-body']),
         ...(art.assets['immune.cell.idle']?['immune-static-poses']:['immune-squad'])]}};
   }
-  render(state:GameState,aim:Vec,opts:{lowEffects?:boolean;cameraPrepared?:boolean;authoritativeState?:GameState;aimRange?:number;aimCancelled?:boolean;cannonPreview?:{aim:Vec;cancelled:boolean}}={}):void {
+  render(state:GameState,aim:Vec,opts:{lowEffects?:boolean;cameraPrepared?:boolean;authoritativeState?:GameState;aimRange?:number;aimCancelled?:boolean;cannonPreview?:{aim:Vec;cancelled:boolean};constructionPreview?:{blueprintId:import('../game/construction').BlueprintId;position:Vec}}={}):void {
     if(!this.host.isReady)return;
     this.lowEffects=!!opts.lowEffects;
     this.locomotion.observe(opts.authoritativeState??state);
@@ -235,39 +240,46 @@ export class Renderer {
     let body=frame.layout?registeredSpriteBodyBounds(frame.layout,state.player,frame.flipX,frame.lift)
       :this.bounds(frame.id,state.player,86,frame.flipX,frame.lift);
     // The old weapon.emitter is a prototype and never enables replacement.
-    const painted=art.assets['weapon.emitter.painted'];
+    const requested=heldWeaponPresentation(state),toolId=requested&&art.assets[requested.id]?requested.id:'weapon.emitter.painted';
+    const painted=art.assets[toolId];
     const recoil=(toolFeedback(state)?.strength??0)*4;
     const toolPoint={x:state.player.x-Math.cos(state.player.facing)*recoil,y:state.player.y-Math.sin(state.player.facing)*recoil};
     const angle=Math.atan2(Math.sin(state.player.facing)*.72,Math.cos(state.player.facing));
     const heldGrip=frame.gait?{x:toolPoint.x+Math.cos(angle)*21,
       y:toolPoint.y*.72-19+frame.lift+Math.sin(angle)*3}:undefined;
-    const tool=painted&&!painted.aliasOf?aimedPaintedTool(painted,toolPoint,state.player.facing,frame.lift,heldGrip):undefined;
+    const tool=painted&&!painted.aliasOf?aimedPaintedTool(painted,toolPoint,state.player.facing,frame.lift,heldGrip,
+      requested&&toolId===requested.id?requested.canvasHeight/(painted.sourceSize?.height??512):undefined):undefined;
     const rig=frame.gait&&frame.layout?createHeroRig(art.assets[frame.id],frame.layout,state.player,frame.flipX,frame.lift,frame.gait,tool):undefined;
     if(rig)body=rig.bounds;
     const bounds=tool?{left:Math.min(body.left,tool.bounds.left),right:Math.max(body.right,tool.bounds.right),
       top:Math.min(body.top,tool.bounds.top),bottom:Math.max(body.bottom,tool.bounds.bottom)}:body;
-    return {frame,bounds,tool,rig};
+    return {frame,bounds,tool,rig,toolId:tool?toolId:undefined};
   }
   private prepareActorHero(state:GameState,inspectOnly=false):HeroPresentation {
-    const request=requestedActorHero(state,this.locomotion.current),actorFrame=this.actorAnimation.select('player',request,state,ACTOR_CANVAS.hero,!!this.options.actorPreview,inspectOnly,!!this.options.actorAnimationPreview);
+    const facing=heldWeaponFacing(state),posed=facing===state.player.facing?state:{...state,player:{...state.player,facing}};
+    const request=requestedActorHero(posed,this.locomotion.current),actorFrame=this.actorAnimation.select('player',request,state,ACTOR_CANVAS.hero,!!this.options.actorPreview,inspectOnly,!!this.options.actorAnimationPreview);
     if(!actorFrame)return {frame:{id:'',clip:null,index:0,animated:false,flipX:!!request.flipX,lift:0},
       bounds:playerVisualBounds(state),fallbackReason:'hero-group-not-ready'};
     const frame:HeroFramePresentation={id:actorFrame.id,clip:actorFrame.clip as HeroFramePresentation['clip'],index:actorFrame.index,
       animated:actorFrame.groupReady,flipX:!!actorFrame.flipX,lift:-territoryPlayerFlightHeight(state),layout:actorFrame.layout};
     const rig=createActorFootPlant(actorFrame,state.player);
     let bounds=rig?.bounds??registeredSpriteBodyBounds(actorFrame.layout,state.player,frame.flipX,frame.lift);
-    const emitter=this.actorLibrary.staticAsset(ACTOR_STATIC_IDS.emitter,!!this.options.actorPreview),r=actorFrame.registration;
-    const recoil=actorRecoilAngle(state.player.facing,toolFeedback(state)?.strength??0);
+    const toolId=this.emitterAssetId(state),emitter=this.actorLibrary.staticAsset(toolId,!!this.options.actorPreview),r=actorFrame.registration;
+    const recoil=actorRecoilAngle(facing,1)*heldWeaponRecoilStrength(state,toolFeedback(state)?.strength??0);
     const hand=r.grip?registeredSourcePoint(state.player,r.grip,r.foot,actorFrame.sourceScale,frame.flipX,frame.lift):undefined;
-    const tool=emitter&&hand?aimedPaintedTool(emitter.asset,state.player,state.player.facing,frame.lift,hand,this.emitterCanvasHeight()/emitter.registration.canvas.width,recoil):undefined;
+    const tool=emitter&&hand?aimedPaintedTool(emitter.asset,state.player,facing,frame.lift,hand,this.emitterCanvasHeight(state)/emitter.registration.canvas.width*emitter.registration.commonCanvasScale,recoil):undefined;
     if(tool)bounds={left:Math.min(bounds.left,tool.bounds.left),right:Math.max(bounds.right,tool.bounds.right),
       top:Math.min(bounds.top,tool.bounds.top),bottom:Math.max(bounds.bottom,tool.bounds.bottom)};
-    return {frame,bounds,tool,actorFrame,rig,toolId:tool?ACTOR_STATIC_IDS.emitter:undefined,
+    return {frame,bounds,tool,actorFrame,rig,toolId:tool?toolId:undefined,
       fallbackReason:!tool?'emitter-registration-or-group-not-ready':actorFrame.preview?'style-preview-only':undefined};
   }
-  private emitterCanvasHeight():number {
+  private emitterAssetId(state:GameState):string {
+    const requested=heldWeaponPresentation(state);
+    return requested&&this.actorLibrary.staticAsset(requested.id,!!this.options.actorPreview)?requested.id:ACTOR_STATIC_IDS.emitter;
+  }
+  private emitterCanvasHeight(state?:GameState):number {
     return this.options.actorPreview&&Number.isFinite(this.options.actorPreviewToolCanvasHeight)&&this.options.actorPreviewToolCanvasHeight!>0
-      ?this.options.actorPreviewToolCanvasHeight!:ACTOR_CANVAS.emitter;
+      ?this.options.actorPreviewToolCanvasHeight!:state&&this.emitterAssetId(state)===heldWeaponPresentation(state)?.id?heldWeaponPresentation(state)!.canvasHeight:ACTOR_CANVAS.emitter;
   }
   private emitActor(id:string,frame:ActorFrame,point:Vec,depth:number,alpha=1):VisualBounds {
     const body=registeredSpriteBodyBounds(frame.layout,point,!!frame.flipX,0),screen=this.camera.worldToScreen(point),scale=this.camera.scale;
@@ -393,7 +405,7 @@ export class Renderer {
     const origins=new Map<string,Vec>(),epsilon=1e-8;
     const fires=authoritativeState.events.filter(event=>event.type==='TOOL_FIRED'&&event.tick===authoritativeState.tick&&event.data.tool===1
       &&typeof event.data.x==='number'&&Number.isFinite(event.data.x)&&typeof event.data.y==='number'&&Number.isFinite(event.data.y));
-    const asset=art.assets[this.newActors?ACTOR_STATIC_IDS.emitter:'weapon.emitter.painted'];
+    const asset=art.assets[this.newActors?this.emitterAssetId(state):this.heroPresentation?.toolId??'weapon.emitter.painted'];
     for(const effect of state.effects){
       if(effect.kind!=='beam'||effect.born>state.elapsed||state.elapsed-effect.born>=effect.duration)continue;
       // Effect has no actor/facing identity. Only observe proven player shots at
@@ -417,9 +429,9 @@ export class Renderer {
   }
   private prepareProjectileOrigins(state:GameState,tool:AimedPaintedTool|undefined):void {
     const live=new Set((state.playerProjectiles??[]).map(shot=>shot.castId));
-    const asset=art.assets[this.newActors?ACTOR_STATIC_IDS.emitter:'weapon.emitter.painted'];
+    const asset=art.assets[this.newActors?this.emitterAssetId(state):this.heroPresentation?.toolId??'weapon.emitter.painted'];
     for(const event of state.events){
-      if(event.type!=='PLAYER_PROJECTILE_LAUNCHED'||event.data.kind==='sword')continue;
+      if(event.type!=='PLAYER_PROJECTILE_LAUNCHED'||event.data.kind==='sword'&&!event.data.weaponId)continue;
       const age=state.elapsed-event.tick*BALANCE.step,castId=String(event.data.castId);
       if(age>=0&&age<.14)live.add(castId);
       if(event.tick!==state.tick||this.projectileOrigins.has(castId)||!asset||!tool)continue;
@@ -487,8 +499,8 @@ export class Renderer {
       geometry:{coreOffset,bodyBounds:local}};
   }
   private artTargetBounds(target:Target,state:GameState):VisualBounds|undefined {
-    if(target.profession){const f=combatActorFrame(art.assets,target,state);return f?registeredSpriteBodyBounds(f.layout,target,f.flipX,0):undefined;}
-    if(target.role==='core')return this.motherComposition(target,state)?.bounds;
+    if(target.profession){const f=this.expeditionTargetFrame(target,state)??combatActorFrame(art.assets,target,state);return f?registeredSpriteBodyBounds(f.layout,target,f.flipX,0):undefined;}
+    if(target.role==='core'){const f=this.expeditionTargetFrame(target,state);return f?registeredSpriteBodyBounds(f.layout,target,f.flipX,0):this.motherComposition(target,state)?.bounds;}
     if(target.role==='source'&&art.assets[FANTASY_ART.source]){
       const layout=sourceRegisteredSpriteLayout(art.assets[FANTASY_ART.source],FANTASY_SOURCE_CANVAS,FANTASY_SOURCE_ANCHOR,target.radius*FANTASY_SOURCE_CANVAS_FACTOR/1024);
       if(layout)return registeredSpriteBodyBounds(layout,target,false,0);
@@ -590,7 +602,33 @@ export class Renderer {
     const p=this.camera.worldToScreen(cell),key=`immune-shadow:${cell.id}`;this.seenRasters.add(key);this.rasterKeys.add(key);
     this.host.setRasterLayer(key,buffer,1,96*this.camera.scale,64*this.camera.scale,p.x-48*this.camera.scale,p.y-32*this.camera.scale);
   }
+  private expeditionTargetFrame(target:Target,state:GameState) {
+    if(target.role==='core'&&target.hp>0&&state.territory?.bossCombat){
+      const combat=state.territory.bossCombat,action=combat.phase==='windup'?'windup':combat.phase==='recovery'?'recovery':combat.secondPhase?'phase2':'idle';
+      return sourceRegisteredSpriteFrame(art.assets,'heartDevourer',action,state.elapsed-combat.phaseStartedAt);
+    }
+    if(target.profession==='ritual-mother'||target.profession==='ritual-priest'){
+      const charge=state.smartViruses?.ritual?.projectiles.find(p=>p.actorId===target.id&&p.phase==='charging');
+      const fired=state.smartViruses?.ritual?.projectiles.find(p=>p.actorId===target.id&&p.phase==='flight'&&state.elapsed-p.firesAt<.35);
+      const encounter=state.smartViruses?.ritual?.encounters.find(e=>e.motherId===target.id||e.priestIds.includes(target.id));
+      const action=target.hp<=0?'defeated':charge?'windup':fired?'cast':encounter?.shieldBroken?'idle':'channel';
+      return sourceRegisteredSpriteFrame(art.assets,target.profession==='ritual-mother'?'ritualMatron':'ritualPriest',action,target.hp<=0?state.elapsed-(target.deadAt??state.elapsed):charge?state.elapsed-charge.born:fired?state.elapsed-fired.firesAt:state.elapsed,{facing:target.facing});
+    }
+  }
   private nativeEntity(entity:SceneEntity,state:GameState,ctx:CanvasRenderingContext2D,depth:number):boolean {
+    if(entity.kind==='boss-loot'){const p=state.expedition?.lootPosition;return !!p&&this.emit(entity.id,'fantasy.expedition.lootBag.fixed.ready.00',p,44,depth);}
+    if(entity.kind==='camp-station'){
+      const station=campStations(state)[entity.index!],identity=({warehouse:'campTentWarehouse',forge:'campForge',shop:'campSupply',departure:'campSortie'} as const)[station.id];
+      const f=sourceRegisteredSpriteFrame(art.assets,identity,state.camp?.introComplete?'ready':'construction',state.elapsed);
+      if(!f)return false;const bounds=registeredSpriteBodyBounds(f.layout,station.position,false,0);
+      const alpha=state.player.y<station.position.y&&boundsOverlap(bounds,this.playerPresentation(state).bounds)?.28:1;
+      this.emitCombat(entity.id,f,station.position,state,depth,alpha);return true;
+    }
+    if(entity.kind==='player-construction'){
+      const task=state.territory?.construction?.task;if(!task)return true;
+      const f=sourceRegisteredSpriteFrame(art.assets,task.blueprintId==='rapid-launch-pod'?'rapidPod':'basePod','construction',state.elapsed,{progress:task.seconds/6});
+      if(!f)return false;this.emitCombat(entity.id,f,task,state,depth,.85);return true;
+    }
     if(entity.kind==='smart-construction'){
       const plan=state.endless?.smartSupport?.plans[entity.index!],p=plan?.nestPosition;
       if(!plan||!p)return true;
@@ -599,16 +637,18 @@ export class Renderer {
     }
     if(entity.kind==='player'){
       if(this.newActors){
-        const presentation=this.playerPresentation(state),frame=presentation.actorFrame,tool=presentation.tool,request=requestedActorHero(state,this.locomotion.current);
+        const presentation=this.playerPresentation(state),frame=presentation.actorFrame,tool=presentation.tool,facing=heldWeaponFacing(state);
+        const request=requestedActorHero(facing===state.player.facing?state:{...state,player:{...state.player,facing}},this.locomotion.current);
         if(!frame||!tool&&!this.options.actorPreview){this.recordActor('player',request,state.player,state,frame,presentation.bounds,presentation.fallbackReason);return false;}
         const body=presentation.rig||presentation.frame.lift!==0?this.emitHero(state,depth):this.emitActor('player',frame,state.player,depth);this.bodies.set('player',presentation.bounds);
         this.recordActor('player',request,state.player,state,frame,body,frame.preview?'style-preview-only':undefined);
         this.painter.annotateArtEntity(ctx,entity,state,Math.max(32,state.player.x-body.left,body.right-state.player.x),Math.max(70,state.player.y*.72-body.top));
         if(tool){
           this.emitPaintedTool(state,tool,depth);
-          const asset=art.assets[ACTOR_STATIC_IDS.emitter],toolFrame=this.staticActor(ACTOR_STATIC_IDS.emitter,'weapon.emitter',this.emitterCanvasHeight());
+          const toolId=presentation.toolId??ACTOR_STATIC_IDS.emitter,identity=heldWeaponPresentation(state)?.identity??'weapon.emitter';
+          const asset=art.assets[toolId],toolFrame=this.staticActor(toolId,identity,this.emitterCanvasHeight(state));
           const muzzle=paintedToolMuzzle(asset,tool);
-          this.recordActor('player:tool',{identity:'weapon.emitter',action:actorLogicalAction(state)??'held',clip:'static',logicalAction:actorLogicalAction(state)},
+          this.recordActor('player:tool',{identity,action:actorLogicalAction(state)??'held',clip:'static',logicalAction:actorLogicalAction(state)},
             state.player,state,toolFrame,tool.bounds,toolFrame?.preview?'style-preview-only':undefined,
             {sourceFoot:null,sourceGrip:tool.sourceGrip,sourceMuzzle:asset.sourceMuzzle??toolFrame?.registration.muzzle??null,
               grip:tool.grip,muzzle:muzzle??null,rotation:tool.angle,flipY:tool.flipY,entityId:'player'});
@@ -626,7 +666,7 @@ export class Renderer {
         // tether is drawn over the character.
         if(!presentation.rig){ctx.strokeStyle='#24758b';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,-30+presentation.frame.lift);
           ctx.lineTo(tool.grip.x-p.x,tool.grip.y-p.y*.72);ctx.stroke();}
-        const point=paintedToolMuzzle(art.assets['weapon.emitter.painted'],tool);
+        const point=paintedToolMuzzle(art.assets[presentation.toolId??'weapon.emitter.painted'],tool);
         if(point)muzzle={x:point.x-p.x,y:point.y-p.y*.72};
       }else{
         const angle=Math.atan2(Math.sin(p.facing)*.72,Math.cos(p.facing)),distance=24-(feedback?.strength??0)*4,mx=Math.cos(p.facing)*distance,my=Math.sin(p.facing)*.72*distance;
@@ -651,7 +691,10 @@ export class Renderer {
       }ctx.restore();return true;
     }
     if(entity.kind==='target'){
-      const t=state.targets[entity.index!];if(t.role==='core')return this.nativeMother(entity,t,state,ctx,depth);
+      const t=state.targets[entity.index!];
+      const expeditionFrame=this.expeditionTargetFrame(t,state);
+      if(expeditionFrame){const b=this.emitCombat(t.id,expeditionFrame,t,state,depth);this.painter.annotateArtEntity(ctx,entity,state,Math.max(t.radius,t.x-b.left,b.right-t.x),Math.max(70,t.y*.72-b.top+8));if(t.role==='core'&&state.territory?.bossCombat){const local=expeditionFrame.layout.bounds,stage=drawMotherCoreAccents(ctx,t,state,state.territory.bossCombat,{coreOffset:{x:0,y:(local.top+local.bottom)/2},bodyBounds:local});if(stage)this.motherStages.push(stage);}return true;}
+      if(t.role==='core')return this.nativeMother(entity,t,state,ctx,depth);
       if(t.profession){
         if(t.hp<=0)return true;
         const f=combatActorFrame(art.assets,t,state);if(!f)return false;
@@ -741,28 +784,15 @@ export class Renderer {
     }
     if(entity.kind==='territory-node'){
       const node=visibleTerritory(state)?.nodes.find(item=>item.id===entity.id&&item.kind==='front');if(!node)return false;
-      const asset=art.assets[FANTASY_ART.front[node.owner]],layout=asset?sourceRegisteredSpriteLayout(asset,FANTASY_SOURCE_CANVAS,FANTASY_SOURCE_ANCHOR,140/1024):undefined;
-      if(!layout)return false;
-      const bounds=registeredSpriteBodyBounds(layout,node,false,0),restoreRatio=node.owner==='infected'?Math.max(0,Math.min(1,node.purificationProgress/100))*.8:0;
-      const healthy=art.assets[FANTASY_ART.front.healthy],restoredLayout=restoreRatio&&healthy?sourceRegisteredSpriteLayout(healthy,FANTASY_SOURCE_CANVAS,FANTASY_SOURCE_ANCHOR,140/1024):undefined;
-      if(restoredLayout){const restored=registeredSpriteBodyBounds(restoredLayout,node,false,0);
-        bounds.left=Math.min(bounds.left,restored.left);bounds.right=Math.max(bounds.right,restored.right);bounds.top=Math.min(bounds.top,restored.top);bounds.bottom=Math.max(bounds.bottom,restored.bottom);}
-      const opacity=this.fantasyObstacleActors(state).some(actor=>actor.groundY<=node.y&&boundsOverlap(actor.bodyBounds,bounds))?.22:1;
-      const overlayAlpha=restoredLayout?restoreRatio*opacity:0;
-      // Treat both state-pair layers as one faded prop: their combined opacity
-      // stays .22 rather than stacking a second opaque silhouette over an actor.
-      const baseAlpha=(opacity-overlayAlpha)/(1-overlayAlpha);
-      const body=this.fantasySprite(node.id,FANTASY_ART.front[node.owner],node,140,depth,baseAlpha);if(!body)return false;
-      if(restoredLayout){
-        const restored=this.fantasySprite(`${node.id}:purification`,FANTASY_ART.front.healthy,node,140,depth+.1,overlayAlpha);
-        if(restored){body.left=Math.min(body.left,restored.left);body.right=Math.max(body.right,restored.right);body.top=Math.min(body.top,restored.top);body.bottom=Math.max(body.bottom,restored.bottom);}
-      }
-      this.painter.annotateArtEntity(ctx,entity,state,Math.max(38,node.x-body.left,body.right-node.x),Math.max(80,node.y*.72-body.top+8));return true;
+      return false; // Shared low platform is painted by the Canvas entity pass.
     }
     if(entity.kind==='device'){
       const n=state.battle!.graph.nodes.find(n=>n.id===entity.id)!;
       if(state.territory&&n.kind==='valve'){
-        const f=combatCannonFrame(art.assets,state);if(!f)return false;
+        const building=state.territory.construction?.building;if(!building)return true;
+        const fired=[...state.events].reverse().find(e=>e.type==='TERRITORY_CANNON_FIRED'),age=fired?state.elapsed-fired.tick*BALANCE.step:Infinity;
+        const action=age>=0&&age<.35?'fire':(state.territory.cannon?.readyAt??0)>state.elapsed?'load':'ready';
+        const f=sourceRegisteredSpriteFrame(art.assets,building.blueprintId==='rapid-launch-pod'?'rapidPod':'basePod',action,action==='fire'?age:state.elapsed)??combatCannonFrame(art.assets,state);if(!f)return false;
         const b=this.emitCombat(n.id,{...f,flipX:false},n,state,depth,territoryCannonBodyOpacity(state));
         this.painter.annotateArtEntity(ctx,entity,state,Math.max(40,n.x-b.left,b.right-n.x),Math.max(80,n.y*.72-b.top+8));return true;
       }
@@ -788,7 +818,9 @@ export class Renderer {
       this.emit(n.id,n.kind==='valve'?`valve.${state.battle!.pulse.phase==='surge'?'open':'closed'}`:`gate.${closed?'closed':'open'}`,n,74,depth);this.painter.annotateArtEntity(ctx,entity,state,50,88);return true;
     }
     if(entity.kind==='obstacle'){
-      const o=activeWorld(state).obstacles.find(o=>o.id===entity.id)!,kind=fantasyObstacleKind(o.id),owner=fantasyOwnerAt(state,o);
+      const o=activeWorld(state).obstacles.find(o=>o.id===entity.id)!;
+      if(o.id.startsWith('cover-'))return false;
+      const kind=fantasyObstacleKind(o.id),owner=fantasyOwnerAt(state,o);
       const preferred=fantasySceneryId(state,kind,owner),fantasy=art.assets[preferred]?preferred:FANTASY_ART[kind][owner];
       const asset=art.assets[fantasy],layout=asset?sourceRegisteredSpriteLayout(asset,FANTASY_SOURCE_CANVAS,FANTASY_SOURCE_ANCHOR,o.radius*3.2/1024):undefined;
       if(layout){

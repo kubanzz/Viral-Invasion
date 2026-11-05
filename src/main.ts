@@ -1,3 +1,4 @@
+import { installExpeditionArtIcons } from './render/expeditionArt';
 import './style.css';
 import { GameSession } from './game/session';
 import { FixedClock } from './core/clock';
@@ -49,10 +50,27 @@ import { resolveTouchLayout } from './ui/responsiveLayout';
 import { territoryHudMarkup, updateTerritoryHud, territoryVictoryOverlay, territoryResultOverlay } from './ui/territoryHud';
 import './ui/territory.css';
 import { ModalPointerIntent } from './ui/modalPointerIntent';
+import { CampProfileStore } from './meta/campProfile';
+import { campOverlay, type CampSection } from './ui/campHud';
+import './ui/camp.css';
+import { constructionHudMarkup, constructionMenu, updateConstructionPlacement, updateConstructionDiscovery } from './ui/constructionHud';
+import { CampWeaponTrial } from './game/campWeaponTrial';
+import { startCampWeaponTrial } from './ui/campWeaponTrial';
+import { requestConstruction, resumeConstruction, cancelConstruction, type BlueprintId } from './game/construction';
+import { prepareCampScene, advanceCampScene, nearbyCampStation } from './game/campScene';
+import { territoryCannonView } from './game/territoryCannon';
+import { territoryContextView } from './game/territory';
+import { WEAPONS, weaponCombatProfile, type WeaponId } from './game/expedition';
+import { createWeaponCombat, weaponSkillViews } from './game/weaponSkills';
+import { dismissWeaponTutorial } from './ui/endlessTutorial';
+import { weaponSkillIconMarkup } from './ui/weaponSkillIcons';
+import './ui/construction.css';
+import './ui/weaponSkills.css';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
 const app = document.querySelector<HTMLDivElement>('#app')!;
 installArtIcons(document);
+installExpeditionArtIcons(document);
 const params = new URL(location.href).searchParams;
 const coarsePointer = matchMedia('(pointer: coarse)');
 const readTouchLayout = () => resolveTouchLayout({ width: innerWidth, height: innerHeight,
@@ -78,6 +96,16 @@ const debugHostEventId = HOST_EVENT_IDS.find(id => id === hostEventParam);
 let hostEventDebugReport = '';
 const profile = new ProfileStore();
 const endlessProfile = new TerritoryProfileStore();
+const campProfile = new CampProfileStore();
+let campSection: CampSection | null = null;
+let campNotice = '';
+let campTrial: CampWeaponTrial | undefined;
+let campTrialWeaponId: WeaponId | undefined;
+let campTrialCompleted = false;
+let stopCampTrial: (() => void) | undefined;
+let blueprintDiscovered = false;
+let buildMenuOpen = false;
+let buildPlacement: {blueprintId:BlueprintId;position:{x:number;y:number};locked?:boolean} | undefined;
 const session = new GameSession(initialSeed, { campaign: !trainingFixture, ...newRunOptions(profile.data, firstTrait), milestone });
 const clock = new FixedClock();
 const motion = new MotionInterpolation();
@@ -119,9 +147,10 @@ app.innerHTML = `
     <aside class="telemetry"><div class="readout"><label>战士耐久 <b id="hp-label">100 / 100</b></label><div class="meter"><i id="hp-meter"></i></div><p>训练靶不会攻击 · 自由练习</p></div><div class="readout"><label>心脏组织 <b id="tissue-label">25%</b></label><div class="meter"><i id="tissue-meter"></i></div><p>使用 3 修复组织节点<br>净化工具不能修复组织</p></div></aside>
     <div class="message" id="message">WASD 移动 · 点击靶标底部的瞄准环</div>
     <div class="dock-wrap"><div class="ability"><div class="ability-key">${artIconMarkup('dash')}<kbd>Space</kbd></div><span class="ability-name">冲刺</span><em id="dash-ready">就绪</em><small class="ability-charge" id="charged-slash-ready" hidden>长按蓄能剑气</small></div><div class="tool-dock">${([[1,'精确净化','单点 · 快速冷却'],[2,'牵引裂解','聚拢 · 延迟爆发'],[3,'组织修复','治疗 · +25 完整度']] as const).map(([id,title,subtitle])=>`<button class="tool" data-action="tool-${id}" aria-label="${id} ${title}"><kbd>${id}</kbd><strong>${id===3?artIconMarkup('heal'):''}${title}</strong><small>${subtitle}</small><i class="charge" id="charge-${id}"></i></button>`).join('')}</div><div class="ability"><div class="ability-key">${artIconMarkup('scan')}<kbd>Q</kbd></div><span class="ability-name">扫描</span><em id="scan-ready">就绪</em></div></div>
+    <div class="weapon-context" id="weapon-context" hidden><span id="weapon-primary-label">左键 · 普攻</span><button data-action="territory-action"><kbd>F</kbd><strong>净化组织</strong></button><button data-action="weapon-tutorial-dismiss" class="quiet">隐藏战技提示</button></div>
     <div class="micro-footer">G0 · 基础训练 / 架空生物幻想</div><div class="run-time" id="run-time"></div>
     ${hostEventHudMarkup}
-  </main>${hostEventAnnouncementMarkup}${mobileHudMarkup}<div id="overlay-host"></div>`;
+  </main>${hostEventAnnouncementMarkup}${mobileHudMarkup}${constructionHudMarkup}<div id="camp-toolbar" class="camp-toolbar" hidden></div><div id="overlay-host"></div>`;
 if (!trainingFixture) {
   app.classList.add('campaign');
   canvas.setAttribute('aria-label', '病毒入侵战场：WASD移动，鼠标瞄准，1精准净化，2范围控场，3抢修，Q召集免疫细胞，E交互');
@@ -148,7 +177,7 @@ function applyControlLayout(): void {
     else title.innerHTML = desktopToolTitles[index];
   });
   canvas.setAttribute('aria-label', touchMode
-    ? session.state.territory ? '病毒入侵战场：左杆移动，净化盘按住攻击；驻防和附近净化点按即用。能量炮拖动瞄准，松手施放；弹射器按住选择落点，松手起飞。'
+    ? session.state.territory ? '病毒入侵战场：左杆移动，射击盘按住攻击；驻防和净化组织点按即用。能量炮拖动瞄准，松手施放；弹射器按住选择落点，松手起飞。'
       : '病毒入侵战场：左杆移动，右下大盘按住攻击；技能拖动瞄准、松手施放，拖至取消区撤销。点击战场可精确选点。'
     : desktopCanvasLabel);
 }
@@ -156,15 +185,94 @@ applyControlLayout();
 const input = new Controller(canvas, () => togglePause(), () => {
   if (session.state.phase === 'playing') session.pause();
   clock.reset();
-}, canAcceptGameInput);
+}, canAcceptGameInput, () => session.state);
 const touchControls = new TouchControls({ root: document.querySelector<HTMLElement>('#mobile-controls')!, canvas, input,
   // A release commits the point the player just saw, including motion interpolation.
   getState: () => presentedState, screenToWorld: point => renderer.camera.screenToWorld(point), canAccept: canAcceptGameInput, enabled: () => touchMode });
 function canAcceptGameInput(): boolean {
-  return session.state.phase === 'playing' && !help && !history && !growthDetails && !profileOpen && !startingPlanOpen
+  return session.state.phase === 'playing' && !buildMenuOpen && !campSection && !help && !history && !growthDetails && !profileOpen && !startingPlanOpen
     && !migrationGuide && !mobileDetailsOpen && !portraitBlocked
     && !session.state.growth?.draft && !session.state.growth?.pendingResearch && !session.state.endlessGrowth?.draft;
 }
+function openBuildMenu():void {
+  if(!session.state.territory||session.state.camp||!canAcceptGameInput())return;
+  blueprintDiscovered=false;
+  buildPlacement=undefined;buildMenuOpen=true;session.pause();input.clear();clock.reset();overlayKey='';
+}
+function syncCampWeapon():void {
+  if(!session.state.camp)return;
+  const data=campProfile.data,id=data.equipped,item=data.weapons[id];
+  if(!item.repaired)return;
+  const loadout={weaponId:id,rarity:item.repaired,upgrade:item.upgrade};
+  session.state.weaponCombat=createWeaponCombat(loadout);
+  if(session.state.expedition)session.state.expedition.loadout={...loadout};
+}
+function enterCamp():void {
+  if(!campProfile.data.campUnlocked)return;
+  stopCampTrial?.();stopCampTrial=undefined;campTrial=undefined;campTrialWeaponId=undefined;campTrialCompleted=false;
+  if(!session.state.camp&&session.state.phase==='paused'&&session.state.territory?.stage==='victory'&&session.state.territory.rescueSnapshot)session.finishTerritoryRescue();
+  if(!session.state.territory)session.state=new GameSession(session.state.seed,{campaign:true,milestone:'G3',mode:'endless',territory:true}).state;
+  session.state=structuredClone(session.state);prepareCampScene(session.state,campProfile.data.campIntroSeen);
+  syncCampWeapon();
+  help=false;history=false;campSection=null;campNotice='';buildMenuOpen=false;buildPlacement=undefined;
+  document.body.classList.add('camp-world');input.clear();input.setTerritoryMode(false);clock.reset();motion.reset();overlayKey='';
+}
+function updateCampToolbar():void {
+  const bar=el('camp-toolbar');bar.hidden=!session.state.camp||!!campSection;bar.inert=!!campSection;if(!session.state.camp)return;
+  const data=campProfile.data,station=nearbyCampStation(session.state);
+  const text=`<strong>心脏营地 · 生质 ${data.materials}</strong><button data-action="camp-section" data-section="overview">营地菜单</button><button data-action="camp-section" data-section="departure">出击</button>${!session.state.camp.introComplete?'<button data-action="camp-skip-intro">完成搭建</button>':station?`<button data-action="camp-section" data-section="${station.id}">${station.name} E</button>`:''}`;
+  if(bar.innerHTML!==text)bar.innerHTML=text;
+}
+function handleExpeditionAction(action:string,button:HTMLButtonElement):boolean {
+  if(action==='camp-open'||action==='camp-open-forge'){enterCamp();if(action==='camp-open-forge'&&session.state.camp){campSection='forge';session.state.phase='paused';overlayKey='';}return true;}
+  if(action.startsWith('camp-')){
+    if(!session.state.camp)return true;
+    if(action==='camp-trial-fire'){campTrial?.trigger();return true;}
+    if(action==='camp-trial-reset'){campTrial?.reset();return true;}
+    if(action==='camp-trial-skill'){campTrial?.skill(Number(button.dataset.slot) as 1|2|3);return true;}
+    if(action==='camp-trial-layout'){campTrial?.layout(button.dataset.layout === 'line' ? 'line' : 'single');overlayKey='';return true;}
+    if(action==='camp-trial-cooldowns'){campTrial?.resetCooldowns();return true;}
+    if(action==='camp-trial'||action==='camp-equip-trial'){
+      const id=(button.dataset.weapon??campProfile.data.equipped) as WeaponId;
+      const item=campProfile.data.weapons[id];if(!item?.repaired)return true;
+      if(action==='camp-equip-trial'){const result=campProfile.equip(id);campNotice=result.message;if(!result.accepted&&campProfile.data.equipped!==id)return true;syncCampWeapon();}
+      stopCampTrial?.();stopCampTrial=undefined;
+      campTrialWeaponId=id;campTrial=new CampWeaponTrial({weaponId:id,rarity:item.repaired,upgrade:item.upgrade});
+      campSection='trial';session.state.phase='paused';input.clear();clock.reset();overlayKey='';return true;
+    }
+    if(action==='camp-section'){campSection=button.dataset.section as CampSection;session.state.phase='paused';}
+    else if(action==='camp-close'){campSection=null;session.state.phase='playing';}
+    else if(action==='camp-leave'){delete session.state.camp;session.state.phase='menu';campSection=null;document.body.classList.remove('camp-world');}
+    else if(action==='camp-deploy'){start((session.state.seed+7919)>>>0,undefined,false,'endless');return true;}
+    else if(action==='camp-skip-intro'){session.state.camp.introComplete=true;campProfile.finishCampIntro();}
+    else if(action==='camp-retry-save')campNotice=campProfile.save().status.message;
+    else {const id=button.dataset.weapon as WeaponId;const result=action==='camp-equip'?campProfile.equip(id):action==='camp-repair'?campProfile.repair(id):action==='camp-upgrade'?campProfile.upgrade(id):action==='camp-buy-antibody'?campProfile.buyAntibody():undefined;if(result)campNotice=result.message;}
+    syncCampWeapon();input.clear();clock.reset();overlayKey='';return true;
+  }
+  if(!action.startsWith('build-'))return false;
+  if(action==='build-open'){openBuildMenu();return true;}
+  if(action==='build-select'){
+    const id=button.dataset.blueprint as BlueprintId;if(!session.state.territory?.construction?.availableBlueprints.includes(id))return true;
+    buildMenuOpen=false;session.resume();const p=session.state.player;buildPlacement={blueprintId:id,position:{x:p.x+Math.cos(p.facing)*120,y:p.y+Math.sin(p.facing)*120}};
+  }else if(action==='build-confirm'&&buildPlacement){const result=requestConstruction(session.state,buildPlacement);for(const e of result.events)session.emit(e.type,e.data);if(result.accepted)buildPlacement=undefined;}
+  else if(action==='build-close'){buildMenuOpen=false;session.resume();}
+  else if(action==='build-cancel-placement')buildPlacement=undefined;
+  else if(action==='build-resume'||action==='build-cancel-task'){
+    buildMenuOpen=false;session.resume();const result=action==='build-resume'?resumeConstruction(session.state):cancelConstruction(session.state);for(const e of result.events)session.emit(e.type,e.data);
+  }
+  input.clear();clock.reset();overlayKey='';return true;
+}
+window.addEventListener('keydown',event=>{
+  if(event.repeat||event.ctrlKey||event.metaKey||event.altKey||event.target instanceof HTMLInputElement||event.target instanceof HTMLTextAreaElement)return;
+  if(session.state.camp&&campSection==='trial'&&campTrial&&!portraitBlocked&&document.hasFocus()){
+    const key=/^(?:Digit|Numpad)([0-3])$/.exec(event.code);
+    if(key){event.preventDefault();if(key[1]==='0')campTrial.trigger();else campTrial.skill(Number(key[1]) as 1|2|3);input.clear();return;}
+  }
+  if(event.code==='Enter'&&buildPlacement&&canAcceptGameInput()){const result=requestConstruction(session.state,buildPlacement);for(const e of result.events)session.emit(e.type,e.data);if(result.accepted)buildPlacement=undefined;input.clear();clock.reset();event.preventDefault();}
+  if(event.code==='KeyB'){event.preventDefault();if(buildMenuOpen){buildMenuOpen=false;session.resume();input.clear();clock.reset();overlayKey='';}else openBuildMenu();}
+  if(event.code==='KeyE'&&session.state.camp&&!campSection){const station=nearbyCampStation(session.state);if(station){campSection=station.id;session.state.phase='paused';input.clear();clock.reset();overlayKey='';}}
+});
+canvas.addEventListener('pointerdown',event=>{if(buildPlacement){const r=canvas.getBoundingClientRect();buildPlacement.position=renderer.camera.screenToWorld({x:event.clientX-r.left,y:event.clientY-r.top});buildPlacement.locked=true;event.preventDefault();event.stopImmediatePropagation();}},true);
 function syncTouchOrientation(): void {
   const next = touchMode && innerHeight > innerWidth;
   if (next !== portraitBlocked) { input.clear(); if (session.state.phase === 'playing') session.pause(); clock.reset(); }
@@ -180,9 +288,21 @@ function closeMobileDetails(): void {
 session.bus.on('event', event => {
   if (event.type === 'INPUT_RESET_REQUESTED') { input.clear(); resetClockAfterStep = true; }
   if (event.type === 'RUN_PAUSED' || event.type === 'RUN_ENDED') input.clear();
+  if (event.type === 'RUN_PAUSED' && session.state.camp && !campSection) { campSection='overview';overlayKey=''; }
   if (event.type === 'RUN_ENDED' && session.state.campaign && runId) profile.recordRun(session.state, runId);
   if (event.type === 'RUN_ENDED' && session.state.endless && runId) endlessProfile.recordRun(session.state, runId);
-  if (event.type === 'TERRITORY_RESCUE_COMPLETED') { endlessProfile.checkpoint(session.state); overlayKey = ''; }
+  if (event.type === 'CONSTRUCTION_BLUEPRINT_UNLOCKED') {
+    const saved=campProfile.unlockBasicBlueprint();blueprintDiscovered=true;
+    session.message(saved.persisted?'获得弹射荚蓝图：打开建造，派军团建立回防支点。':campProfile.status.message,6,3);overlayKey='';
+  }
+  if (event.type === 'CONSTRUCTION_STARTED' || event.type === 'CONSTRUCTION_COMPLETED') blueprintDiscovered=false;
+  if (event.type === 'RUN_ENDED' && runId && !session.state.territory?.rescueSnapshot) campProfile.abandonExpedition(runId);
+  if (event.type === 'TERRITORY_RESCUE_COMPLETED') {
+    endlessProfile.checkpoint(session.state);
+    const expedition=session.state.expedition;
+    if(expedition?.pendingLoot){campProfile.settleVictory(expedition.runId,expedition.pendingLoot);if(campProfile.status.mode==='session')campNotice=campProfile.status.message;}
+    overlayKey = '';
+  }
   if (event.type === 'MIGRATION_WARNING' && !migrationGuideSeen) migrationGuidePending = true;
   if (event.type === 'COUNTER_GUIDE_COMPLETED') profile.acknowledgeCounterGuide('completed');
   if (event.type === 'COUNTER_GUIDE_SKIPPED') profile.acknowledgeCounterGuide('skipped');
@@ -190,6 +310,8 @@ session.bus.on('event', event => {
 const el = (id: string) => document.getElementById(id)!;
 const formatTime = (seconds: number) => `${Math.floor(seconds/60).toString().padStart(2,'0')}:${Math.floor(seconds%60).toString().padStart(2,'0')}`;
 function togglePause() {
+  if(session.state.camp){campSection=campSection?null:'overview';session.state.phase=campSection?'paused':'playing';input.clear();clock.reset();overlayKey='';return;}
+  if(buildMenuOpen){buildMenuOpen=false;session.resume();input.clear();clock.reset();overlayKey='';return;}
   if (mobileDetailsOpen) { closeMobileDetails(); return; }
   if (startingPlanOpen) { startingPlanOpen = false; input.clear(); clock.reset(); return; }
   input.clear(); clock.reset();
@@ -204,6 +326,9 @@ function togglePause() {
   else if (session.state.phase === 'paused' && !portraitBlocked) session.resume();
 }
 function start(newSeed?: number, replay?: RunEncounterRecord | null, preserveCurrent = false, mode: 'campaign' | 'endless' = session.state.endless ? 'endless' : 'campaign') {
+  stopCampTrial?.();stopCampTrial=undefined;campTrial=undefined;campTrialWeaponId=undefined;campTrialCompleted=false;blueprintDiscovered=false;
+  if (runId && !session.state.territory?.rescueSnapshot) campProfile.abandonExpedition(runId);
+  delete session.state.camp; campSection=null; buildMenuOpen=false; buildPlacement=undefined; document.body.classList.remove('camp-world');
   setMobileDetailsOpen(false); mobileDetailsOpen = false; resumeAfterMobileDetails = false;
   input.clear(); clock.reset(); help = false; history = false; resumeAfterHelp = false; resumeAfterHistory = false;
   growthDetails = false; resumeAfterGrowthDetails = false;
@@ -215,6 +340,7 @@ function start(newSeed?: number, replay?: RunEncounterRecord | null, preserveCur
   // not silently borrow the newly selected menu preference.
   if (replay === null) options.preparation = preparationForPlan('field');
   sound.unlock(); session.start(newSeed ?? session.state.seed, preserveCurrent ? { mode, territory: mode === 'endless', recordId: runId } : { ...options, mode, territory: mode === 'endless', recordId: runId });
+  if (mode === 'endless') session.configureExpedition(campProfile.beginExpedition(runId,session.state.seed));
   input.setTerritoryMode(!!session.state.territory);
   hostEventDebugReport = '';
   if (debugHostEventId) {
@@ -271,7 +397,7 @@ app.addEventListener('pointerdown', event => {
   const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-action]');
   if (!button || button.disabled) return;
   const action = button.dataset.action!;
-  if (!action.startsWith('tool-') && action !== 'pause' && action !== 'mobile-details' && action !== 'mobile-map') return;
+  if (!action.startsWith('tool-') && action !== 'pause' && action !== 'mobile-details' && action !== 'mobile-map' && action !== 'build-open') return;
   // Secondary fingers do not consistently synthesize a click while a stick is
   // held. Activate these battle controls from their real pointerdown instead.
   event.preventDefault(); handledTouchButton = button; handledTouchAt = performance.now(); button.click();
@@ -283,6 +409,7 @@ app.addEventListener('click', event => {
   if (event.isTrusted && (event as PointerEvent).pointerType !== 'mouse'
     && handledTouchButton === button && performance.now() - handledTouchAt < 800) return;
   const action = button.dataset.action!;
+  if (handleExpeditionAction(action,button)) return;
   if (action === 'mobile-details' || action === 'mobile-map') {
     if (!touchMode || !canAcceptGameInput()) return;
     resumeAfterMobileDetails = true; mobileDetailsOpen = true; session.pause(); input.clear(); clock.reset(); updateOverlay(); return;
@@ -340,9 +467,11 @@ app.addEventListener('click', event => {
     if (action === 'draft-back') session.backToDraft(button.dataset.draft!);
     overlayKey = ''; button.blur(); return;
   }
+  if (action === 'territory-action') { input.queueAction('territory'); return; }
+  if (action === 'weapon-tutorial-dismiss') { dismissWeaponTutorial(session.state); return; }
   if (action.startsWith('tool-')) { input.select(Number(action.at(-1)) as Tool); return; }
   if (action === 'endless-start') { start(undefined, undefined, false, 'endless'); return; }
-  if (action === 'territory-save') { endlessProfile.save(); overlayKey = ''; input.clear(); clock.reset(); return; }
+  if (action === 'territory-save') { campProfile.save(); endlessProfile.save(); overlayKey = ''; input.clear(); clock.reset(); return; }
   if (action === 'territory-finish' || action === 'territory-guard') {
     if (action === 'territory-finish') session.finishTerritoryRescue();
     else if (session.continueTerritoryGuard()) endlessProfile.checkpoint(session.state);
@@ -371,6 +500,7 @@ app.addEventListener('click', event => {
   if (action === 'new') start((session.state.seed + 2654435761) >>> 0);
   if (action === 'pause' || action === 'continue') togglePause();
   if (action === 'menu') {
+    if(runId&&!session.state.territory?.rescueSnapshot)campProfile.abandonExpedition(runId);
     setMobileDetailsOpen(false); mobileDetailsOpen = false; resumeAfterMobileDetails = false; input.clear(); clock.reset();
     help = false; history = false; growthDetails = false; resumeAfterGrowthDetails = false; profileOpen = false; startingPlanOpen = false; migrationGuide = false; migrationGuidePending = false;
     // Leaving optional guard play settles its latest metrics through RUN_ENDED
@@ -391,9 +521,10 @@ app.addEventListener('click', event => {
 function updateOverlay() {
   const state = session.state;
   const draft = state.growth?.draft;
-  const key = `${state.territory?.stage}:${state.territory?.rescueSnapshot?.runId}:${endlessProfile.status.code}:${touchMode}:${!!state.endless}:${state.endless?.reward?.step}:${state.endless?.stageCheckpoint}:${state.endlessGrowth?.draft?.id}:${state.phase}:${help}:${lowEffects}:${history}:${growthDetails}:${profileOpen}:${startingPlanOpen}:${startingPlanSelection}:${migrationGuide}:${mobileDetailsOpen}:${portraitBlocked}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}:${state.growth?.pendingResearch?.id}:${state.battle?.encounter?.firstCounter.guideStatus}`;
+  const key = `${!!state.camp}:${campSection}:${campTrialWeaponId}:${campSection==='trial'?'':campTrialCompleted}:${campProfile.status.code}:${campNotice}:${buildMenuOpen}:${state.territory?.stage}:${state.territory?.rescueSnapshot?.runId}:${endlessProfile.status.code}:${touchMode}:${!!state.endless}:${state.endless?.reward?.step}:${state.endless?.stageCheckpoint}:${state.endlessGrowth?.draft?.id}:${state.phase}:${help}:${lowEffects}:${history}:${growthDetails}:${profileOpen}:${startingPlanOpen}:${startingPlanSelection}:${migrationGuide}:${mobileDetailsOpen}:${portraitBlocked}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}:${state.growth?.pendingResearch?.id}:${state.battle?.encounter?.firstCounter.guideStatus}`;
   if (key === overlayKey) return;
   overlayKey = key;
+  stopCampTrial?.();stopCampTrial=undefined;
   const challengeHome = state.phase === 'menu' && !trainingFixture && milestone === 'G3' && !help && !history;
   app.classList.toggle('challenge-home-active', challengeHome);
   el('hud').hidden = state.phase === 'menu' || state.phase === 'result';
@@ -403,7 +534,14 @@ function updateOverlay() {
   el('hud').inert = modalActive;
   const host = el('overlay-host');
   setMobileDetailsOpen(false);
-  if (challengeHome) { host.innerHTML = mainMenuOverlay(endlessProfile.load(), touchMode); return; }
+  if (state.camp) {
+    host.innerHTML=campSection?campOverlay(campProfile.load(),campSection,state.camp.introComplete?1:state.camp.introSeconds/6,campNotice,{trialCompleted:campTrialCompleted,trialWeaponId:campTrialWeaponId}):'';
+    const trialCanvas=host.querySelector<HTMLCanvasElement>('#camp-trial-canvas');
+    if(trialCanvas&&campTrial)stopCampTrial=startCampWeaponTrial(trialCanvas,campTrial,()=>!!session.state.camp&&campSection==='trial'&&!portraitBlocked&&document.hasFocus());
+    return;
+  }
+  if (buildMenuOpen) { host.innerHTML=constructionMenu(state);return; }
+  if (challengeHome) { host.innerHTML = mainMenuOverlay(endlessProfile.load(), touchMode, campProfile.data.campUnlocked); return; }
   if (mobileDetailsOpen) { host.innerHTML = mobileDetailsMarkup; setMobileDetailsOpen(true); return; }
   if (growthDetails) {
     host.innerHTML = growthDetailsOverlay(state, growthDetailsReturnLabel);
@@ -414,9 +552,10 @@ function updateOverlay() {
   if (profileOpen) { host.innerHTML = profileOverlay(profile.data, profile.status); return; }
   if (migrationGuide) { host.innerHTML = `<div class="overlay"><section class="modal" role="dialog" aria-modal="true" aria-label="首次迁移指引"><div class="eyebrow">THE NEXT CHAMBER / 首次迁移</div><h2>病毒要去另一个器官了。</h2><p>倒数已暂停。你可以去器官出口（见小地图）按 E 追击，或在隔离闸（见小地图）按 E 留守 2 秒封锁。放任会让肺部新增感染源，仍可补救。</p><p>追击后清掉迁移小体，或关闭肺部气道；器官图会显示心脏残留风险，出口可双向返回。此说明之后可在作战手册回看。</p><div class="actions"><button class="primary" data-action="close-migration-guide">明白了，继续作战</button></div></section></div>`; return; }
   if (state.endless) {
-    host.innerHTML = (!help ? territoryVictoryOverlay(state, endlessProfile.load()) ?? territoryResultOverlay(state, endlessProfile.load()) : null)
+    host.innerHTML = (!help ? territoryVictoryOverlay(state, endlessProfile.load()) ?? territoryResultOverlay(state, endlessProfile.load(), campProfile.data.campUnlocked) : null)
       ?? (!help && state.phase === 'paused' ? draftOverlay(state) : null)
       ?? endlessOverlay(state, help, lowEffects, endlessProfile.load(), touchMode) ?? '';
+    if(state.territory?.stage==='victory'&&campProfile.status.mode==='session')host.querySelector('.territory-victory')?.insertAdjacentHTML('beforeend','<p role="status">营地奖励保存失败，暂存于本页。请恢复存储后重试。</p><button data-action="territory-save">重试保存营地奖励</button>');
     return;
   }
   if (state.battle) {
@@ -503,21 +642,35 @@ function updateCommonHud() {
   const s = session.state;
   const tutorial = endlessTutorialHint(s, touchMode);
   if (tutorial) el('message').textContent = tutorial;
-  if (touchMode) el('message').textContent = touchCopy(el('message').textContent ?? '');
+  if (touchMode) el('message').textContent = touchCopy(el('message').textContent ?? '', !!s.territory);
   if (touchMode && mobileDetailsOpen) adaptTouchText(el('mobile-details-content'));
   updateMobileHud(s, { blocked: !canAcceptGameInput(), portrait: portraitBlocked });
   if (touchMode && !mobileAimViewport) refreshMobileAimViewport();
   touchControls.update();
   const combat = s.endlessGrowth ? endlessCombatStats(s.endlessGrowth) : undefined;
+  const equipment=s.expedition?weaponCombatProfile(s.expedition.loadout):undefined;
   document.querySelector('.status-chip')!.textContent = s.endless ? `${s.territory ? '心脏救援' : '连续挑战'} / ${s.endless.wave}` : s.battle?.organId === 'lung' ? 'LUNG / 02' : 'HEART / 01';
   el('dash-ready').textContent = s.player.dashReady > s.elapsed ? `${(s.player.dashReady-s.elapsed).toFixed(1)}s`:'就绪';
   el('dash-ready').previousElementSibling!.textContent = combat?.dashDamage ? '冲刺挥斩' : '冲刺';
   const chargeLabel = el('charged-slash-ready');
-  chargeLabel.hidden = !s.endless;
+  chargeLabel.hidden = !s.endless || !!s.weaponCombat;
   chargeLabel.textContent = s.chargedSlash ? `蓄能 ${Math.round(chargedSlashProgress(s.chargedSlash.startedAt, s.elapsed) * 100)}% · 松开发射` : (s.chargedSlashReadyAt ?? 0) > s.elapsed ? `剑气 ${(s.chargedSlashReadyAt! - s.elapsed).toFixed(1)}s` : '长按蓄能剑气';
   el('scan-ready').textContent = s.scanReady > s.elapsed ? `${(s.scanReady-s.elapsed).toFixed(1)}s`:'就绪';
   el('run-time').textContent = `SEED ${s.seed}　 /　${formatTime(s.elapsed)}`;
   document.querySelectorAll<HTMLButtonElement>('.tool').forEach((button,index)=>{
+    if (s.weaponCombat) {
+      const skill = weaponSkillViews(s)[index];
+      button.classList.remove('selected'); button.setAttribute('aria-pressed','false');
+      button.setAttribute('aria-label',`${skill.slot} ${skill.name}，${skill.description}`);
+      if (button.dataset.weaponSkillId !== skill.id) {
+        button.querySelector('strong')!.innerHTML = `${weaponSkillIconMarkup(skill.id)}<span>${skill.name}</span>`;
+        button.dataset.weaponSkillId = skill.id;
+      }
+      button.querySelector('small')!.textContent = skill.remaining > 0 ? `${skill.remaining.toFixed(1)}秒` : skill.description;
+      button.title = `${skill.name}：${skill.description} · 冷却${skill.cooldown}秒`;
+      el(`charge-${index+1}`).style.width = `${Math.max(0,1-skill.remaining/skill.cooldown)*100}%`;
+      return;
+    }
     const tool=(index+1) as Tool, cooldown = (tool === 1 ? combat?.primaryCooldown : tool === 2 ? combat?.areaCooldown : undefined) ?? BALANCE.cooldowns[tool];
     const selected = s.tool === tool && !(s.territory && tool === 3);
     button.classList.toggle('selected',selected);button.setAttribute('aria-pressed',String(selected));
@@ -525,7 +678,7 @@ function updateCommonHud() {
     if (tool === 1) {
       button.querySelector('strong')!.textContent = s.endless ? '粒子净化' : '精确净化';
       button.setAttribute('aria-label', `1 ${s.endless ? '粒子净化' : '精确净化'}`);
-      button.querySelector('small')!.textContent = combat ? `${combat.shotRays} 弹 · 贯穿 +${combat.pierceCount}` : '单点 · 快速冷却';
+      button.querySelector('small')!.textContent = combat ? `${equipment?WEAPONS[equipment.weaponId].name+' · ':''}${combat.shotRays} 弹 · 贯穿 +${combat.pierceCount+(equipment?.extraPierce??0)}` : '单点 · 快速冷却';
     }
     if (tool === 2) {
       button.querySelector('strong')!.textContent = s.endless ? '净化能量炮' : '牵引裂解';
@@ -534,19 +687,28 @@ function updateCommonHud() {
       if (!s.endless && s.traction) button.querySelector('small')!.textContent = s.traction.stage === 'guiding' ? '拖动鼠标 · 松手引爆' : s.traction.stage === 'aiming' ? '按住导流 / 轻点快放' : '聚拢中 · 即将爆发';
     }
     if (tool === 3 && s.territory) {
-      button.querySelector('strong')!.textContent = '附近净化';
+      button.querySelector('strong')!.textContent = territoryContextView(s).action === 'repair' ? '修复心核' : '净化组织';
       button.querySelector('small')!.textContent = '靠近按3 · 保留当前武器';
-      button.setAttribute('aria-label', '3 附近净化或修复心核，不切换武器');
+      button.setAttribute('aria-label', '3 净化附近组织或修复心核，不切换武器');
     } else if (tool === 3) {
       const title = button.querySelector('strong')!;
       if (title.innerHTML !== desktopToolTitles[index]) title.innerHTML = desktopToolTitles[index];
       button.querySelector('small')!.textContent = '治疗 · +25 完整度';
       button.setAttribute('aria-label', '3 组织修复');
     }
-    if (touchMode) button.querySelector('strong')!.textContent = tool === 2 && s.endless ? '能量炮' : tool === 3 && s.territory ? '附近净化' : touchToolLabels[index];
+    if (touchMode) button.querySelector('strong')!.textContent = tool === 2 && s.endless ? '能量炮' : tool === 3 && s.territory ? territoryContextView(s).action === 'repair' ? '修复心核' : '净化组织' : tool === 1 && s.territory ? '射击' : touchToolLabels[index];
   });
-  document.querySelector('.micro-footer')!.textContent = s.territory ? 'v0.14.0 · 脚下驻军 / 免疫弹射 / 智能病毒'
-    : s.endless ? 'v0.14.0 · 连续挑战回归场景' : `v0.14.0 · ${s.battle ? '器官联防' : '基础训练'} / 奇幻生态`;
+  const weaponContext = el('weapon-context'); weaponContext.hidden = !s.weaponCombat;
+  if (s.weaponCombat) {
+    canvas.setAttribute('aria-label', '心脏救援：WASD移动，左键普攻，123武器技能，F净化修复，Q脚下驻军，Space冲刺');
+    el('weapon-primary-label').textContent = `${WEAPONS[s.weaponCombat.loadout.weaponId].name} · 左键普攻`;
+    const context = territoryContextView(s), button = weaponContext.querySelector<HTMLButtonElement>('[data-action="territory-action"]')!;
+    button.querySelector('strong')!.textContent = context.action === 'repair' ? '修复心核' : '净化组织';
+    button.dataset.available = String(context.action === 'purify' || context.action === 'repair');
+    button.title = 'F：靠近感染组织净化，或抢修附近受损心核';
+  }
+  document.querySelector('.micro-footer')!.textContent = s.territory ? 'v0.17.0 · 蜂巢针枪 / 回旋刃弓'
+    : s.endless ? 'v0.17.0 · 连续挑战回归场景' : `v0.17.0 · ${s.battle ? '器官联防' : '基础训练'} / 奇幻生态`;
   document.querySelector('.dock-wrap .ability:last-child .ability-name')!.textContent = s.territory ? '脚下驻军' : s.battle ? '扫描 / 召集' : '扫描';
   document.querySelectorAll<HTMLButtonElement>('[data-action="sound"]').forEach(button => { button.textContent = `声音 ${sound.enabled?'开':'关'}`; });
   document.querySelector<HTMLButtonElement>('[data-action="pause"]')!.hidden = s.phase === 'menu' || s.phase === 'result';
@@ -563,7 +725,9 @@ function frame(now: number) {
   clock.advance(now, dt => {
     stepPositions.push({ x: session.state.player.x, y: session.state.player.y });
     motion.step(session.state, () => {
-      session.step(input.frame(input.getAim(session.state, point => renderer.camera.screenToWorld(point))), dt);
+      const commands=input.frame(input.getAim(session.state, point => renderer.camera.screenToWorld(point)));
+      if(session.state.camp){advanceCampScene(session.state,commands,dt);const camp=session.state.camp;if(!camp.introComplete&&camp.introSeconds>=6){camp.introComplete=true;campProfile.finishCampIntro();overlayKey='';}}
+      else session.step(commands,dt);
       renderer.witnessSimulation(session.state);
     });
     stepPositions.push({ x: session.state.player.x, y: session.state.player.y });
@@ -583,10 +747,14 @@ function frame(now: number) {
   const framing = touchMode || previewFraming?.kind === 'cannon' ? previewFraming : undefined;
   if (!cameraDecision.hold) prepareCombatCamera(presentedState, { deltaSeconds: dt, snap: cameraDecision.snap,
     ...(framing && !framing.cancelled ? { aim: framing.aim, viewport: touchMode?mobileAimViewport:desktopFlightViewport,
-      ...(framing.kind === 'cannon' ? { aimRadius: TERRITORY_CANNON_BALANCE.radius } : {}) } : {}) });
+      ...(framing.kind === 'cannon' ? { aimRadius: framing.radius??territoryCannonView(session.state).radius } : {}) } : {}) });
   lastFrame = now;
   const touchPresentation = input.getPresentation(presentedState, point => renderer.camera.screenToWorld(point));
   const cannonPreview = touchPresentation.preview?.kind === 'cannon' ? touchPresentation.preview : undefined;
+  if(buildPlacement&&!buildPlacement.locked&&!touchMode)buildPlacement.position=input.getAim(presentedState,point=>renderer.camera.screenToWorld(point));
+  updateConstructionPlacement(app,session.state,buildPlacement);
+  updateConstructionDiscovery(app,session.state,blueprintDiscovered&&!buildPlacement);
+  updateCampToolbar();
   updateTouchSkillPreview(touchPresentation.preview);
   // The preview label follows every displayed frame; include its current box,
   // and newly shown cancel/guide areas, before placing world labels this frame.
@@ -598,8 +766,10 @@ function frame(now: number) {
     cannonPreview ? input.getAim(presentedState, point => renderer.camera.screenToWorld(point)) : touchPresentation.aim, { lowEffects, cameraPrepared: true,
       authoritativeState: touchPresentation.preview && !cannonPreview ? { ...session.state, tool: touchPresentation.tool } : session.state,
       aimRange: cannonPreview ? undefined : touchPresentation.preview?.range, aimCancelled: touchPresentation.preview?.cancelled,
+      ...(buildPlacement?{constructionPreview:buildPlacement}:{}),
       ...(cannonPreview ? { cannonPreview: { aim: cannonPreview.aim, cancelled: cannonPreview.cancelled } } : {}) });
   sound.update(session.state);
+  if(campTrial&&campTrial.view.hits>0)campTrialCompleted=true;
   updateOverlay();
   decorateTouchOverlay();
   if (now-lastHud > 50) { updateHud(); lastHud=now; }
@@ -642,7 +812,7 @@ function decorateTouchOverlay(): void {
   host.dataset.touchDecorated = overlayKey;
   if (help) {
     const grid = host.querySelector('.help-grid');
-    if (grid) grid.innerHTML = session.state.endless ? `<div>左摇杆移动；右下净化盘按住连射、拖动瞄准</div><div>${session.state.territory ? '驻防：点按立即在脚下部署；满两支时调最近团到脚下' : '能量炮 / 免疫：按下预览、拖动瞄准、松手施放'}</div><div>${session.state.territory ? '附近净化点按即用；能量炮拖动瞄准后松手施放' : '修复：按下预览，拖向组织，松手施放'}</div>${session.state.territory ? '<div>靠近弹射器，按住弹射选择落点，松手起飞；红色落点不可降落</div>' : ''}<div>拖入 × 区域再松手可取消技能或蓄能</div><div>点冲刺立即位移；长按蓄能，拖动定向，松开发射剑气</div><div>满蓄1.25秒发射5道剑气；释放后独立冷却6秒</div>` : '<div>左摇杆移动，右下净化盘按住攻击、拖动瞄准</div><div>裂解 / 修复 / 免疫：按下预览，松手施放</div><div>拖入 × 区域再松手取消</div><div>解锁导流后拖入 ✓ 圈确认，再拖动引导，松手引爆</div><div>点冲刺位移；靠近装置点击交互</div>';
+    if (grid) grid.innerHTML = session.state.weaponCombat ? '<div>左杆移动，右盘按住普攻；123是武器技能</div><div>点按技能沿当前方向释放，拖动可单独瞄准，松手施放</div><div>左侧驻军在脚下部署；净化按钮靠近节点点按启动</div><div>冲刺只负责位移；靠近已建弹射荚按住弹射、松手起飞</div><div>拖至取消区松手取消；抗体与建设在战术菜单</div>' : session.state.endless ? `<div>左摇杆移动；右下射击盘按住连射、拖动瞄准</div><div>${session.state.territory ? '驻防：点按立即在脚下部署；满两支时调最近团到脚下' : '能量炮 / 免疫：按下预览、拖动瞄准、松手施放'}</div><div>${session.state.territory ? '净化组织点按即用；能量炮拖动瞄准后松手施放' : '修复：按下预览，拖向组织，松手施放'}</div>${session.state.territory ? '<div>靠近弹射器，按住弹射选择落点，松手起飞；红色落点不可降落</div>' : ''}<div>拖入 × 区域再松手可取消技能或蓄能</div><div>点冲刺立即位移；长按蓄能，拖动定向，松开发射剑气</div><div>满蓄1.25秒发射5道剑气；释放后独立冷却6秒</div>` : '<div>左摇杆移动，右下射击盘按住攻击、拖动瞄准</div><div>裂解 / 修复 / 免疫：按下预览，松手施放</div><div>拖入 × 区域再松手取消</div><div>解锁导流后拖入 ✓ 圈确认，再拖动引导，松手引爆</div><div>点冲刺位移；靠近装置点击交互</div>';
   }
   adaptTouchText(host);
   host.querySelectorAll('.intro-footnote').forEach(node => { node.textContent = '触屏 v3 候选 · 待 iPhone 复测 · 左杆移动 / 右侧技能轮盘 · 完全离线'; });
@@ -654,19 +824,20 @@ function updateTouchSkillPreview(preview: SkillPresentation | undefined): void {
   if (!preview || host.hidden) return;
   if (!host.firstElementChild) host.innerHTML = '<div class="mobile-preview-range"></div><div class="mobile-preview-ray"></div><div class="mobile-preview-target"></div><span class="mobile-preview-label"></span>';
   host.dataset.kind = String(preview.kind); host.dataset.cancelled = String(preview.cancelled);
-  const origin = renderer.camera.worldToScreen(preview.kind === 'cannon' ? TERRITORY_CANNON_BALANCE.origin : presentedState.player), aim = renderer.camera.worldToScreen(preview.aim), scale = renderer.camera.scale;
+  const origin = renderer.camera.worldToScreen(preview.kind === 'cannon' ? (preview.origin ?? territoryCannonView(presentedState).origin) : presentedState.player), aim = renderer.camera.worldToScreen(preview.aim), scale = renderer.camera.scale;
   const position = (selector: string, point: { x: number; y: number }, radius: number) => {
     const element = host.querySelector<HTMLElement>(selector)!;
     element.style.left = `${point.x}px`; element.style.top = `${point.y}px`;
     element.style.width = `${radius * scale * 2}px`; element.style.height = `${radius * scale * .72 * 2}px`;
   };
   position('.mobile-preview-range', origin, preview.range);
-  position('.mobile-preview-target', aim, preview.kind === 'cannon' ? TERRITORY_CANNON_BALANCE.radius : preview.kind === 2 ? session.state.endlessGrowth ? endlessCombatStats(session.state.endlessGrowth).areaRadius : session.state.traction?.radius ?? BALANCE.areaRadius : 30);
+  position('.mobile-preview-target', aim, preview.kind === 'weapon' ? preview.radius || 12 : preview.kind === 'cannon' ? (preview.radius ?? territoryCannonView(session.state).radius) : preview.kind === 2 ? session.state.endlessGrowth ? endlessCombatStats(session.state.endlessGrowth).areaRadius : session.state.traction?.radius ?? BALANCE.areaRadius : 30);
   const dx = aim.x - origin.x, dy = aim.y - origin.y, ray = host.querySelector<HTMLElement>('.mobile-preview-ray')!;
   ray.style.left = `${origin.x}px`; ray.style.top = `${origin.y}px`; ray.style.width = `${Math.hypot(dx, dy)}px`; ray.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
   const label = host.querySelector<HTMLElement>('.mobile-preview-label')!;
   label.textContent = preview.valid === false ? preview.hint ?? '落点受阻 · 调整方向'
     : preview.cancelled ? '松手取消' : preview.hint ? `${preview.hint} · 拖至 × 取消`
+      : preview.kind === 'weapon' ? `松手释放${weaponSkillViews(session.state).find(skill=>skill.slot===preview.weaponSlot)?.name ?? '武器技能'} · 拖至 × 取消`
       : preview.phase === 'guiding' ? '导流中 · 松手引爆' : `松手${preview.kind === 'cannon' ? '弹射' : preview.kind === 'charge' ? '发射剑气' : preview.kind === 2 ? session.state.endless ? '发射能量炮' : '裂解' : preview.kind === 3 ? '修复' : '指挥'} · 拖至 × 取消`;
   const halfWidth = label.offsetWidth / 2;
   const left = (mobileAimViewport?.left ?? 8) + halfWidth, right = (mobileAimViewport?.right ?? innerWidth - 8) - halfWidth;
@@ -684,7 +855,7 @@ function adaptTouchText(root: HTMLElement): void {
     if (node.nodeValue) {
       const text = node as Text, previous = adaptedTouchText.get(text);
       if (previous && text.nodeValue === previous.adapted) continue;
-      const original = text.nodeValue!, adapted = touchCopy(original);
+      const original = text.nodeValue!, adapted = touchCopy(original, !!session.state.territory);
       if (adapted !== original) { adaptedTouchText.set(text, { original, adapted }); text.nodeValue = adapted; }
     }
   }
@@ -704,8 +875,8 @@ renderer.ready.then(() => {
 
 // Read-only diagnostics for browser regression. Inputs always use the real DOM.
 Object.defineProperty(window, '__viral', { value: Object.freeze({
-  version: '0.14.0-combat', snapshot: () => session.snapshot(),
+  version: '0.17.0-weapon-identity', snapshot: () => session.snapshot(),
   toScreen: (point: { x: number; y: number }) => renderer.camera.worldToScreen(point),
   toWorld: (point: { x: number; y: number }) => renderer.camera.screenToWorld(point),
-  diagnostics: () => ({ ...renderer.diagnostics(session.state), touch: input.getPresentation(presentedState, point => renderer.camera.screenToWorld(point)) }),
+  diagnostics: () => ({ ...renderer.diagnostics(session.state), touch: input.getPresentation(presentedState, point => renderer.camera.screenToWorld(point)),campTrial:campTrial?structuredClone(campTrial.view):null }),
 }), writable: false });

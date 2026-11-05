@@ -1,0 +1,1368 @@
+{
+  "scope": "Standalone component fixture; explicit synthetic camp collection. Production component functions and skills; not natural gameplay, no live storage writes.",
+  "metadataPath": null,
+  "sourceBefore": {
+    "src/style.css": "0f15967f4a581638a3159ec0bd97faf49cfed1c9ee8d8dfd5d154f8e6de7c815",
+    "src/ui/mobile.css": "fdc9fedee83f355dfcd46c5706800b475eb0071da3871727928f7508f318ddea",
+    "src/ui/camp.css": "b36bd29a93a8a156caee982815b05787329215e752fd04fe35e12eb5774a0153",
+    "src/core/rng.ts": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+    "src/game/expedition.ts": "908fa5b15bbcccdbccc50d2c158667bf0a617a0e2dd31eb66711b382d5354eff",
+    "src/game/types.ts": "e43f353e06c83b1736920ae6049075726ebce994b09bc3265d4acd77bb437701",
+    "src/actors/collision.ts": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0",
+    "src/game/protocols.ts": "4e407a74e0b87b7bbba93c48c881cb729a0770f24a027cbc8d59f7f512449260",
+    "src/game/immuneFocus.ts": "ae0a07dc07747100a2d271bc11989751a480972d76945378decc12b3d41cf9e1",
+    "src/game/traction.ts": "2ebdd2264eae46a3744b45371733aa35fc93a8c7f6b030d8a36c8163e2c4ad5e",
+    "src/game/dashBlade.ts": "c7bb058f5b38bc3124fb8efd4739f661b42acee026f1ce1c008de1234dc6d771",
+    "src/game/endlessGrowth.ts": "9b74010bbd1df52b5619067df45aa814ae2a96846163ec4a3c7bd745d016250e",
+    "src/actors/enemyNavigation.ts": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd",
+    "src/game/constructionTypes.ts": "514b0933047f3a234b6fb9b0c8840d85a448b9c54a5894084df235c735349e79",
+    "src/game/territoryCannon.ts": "88ba64f3c8e9d575c2b264c5a3db913969bb4795e63539cd20998e7038035ccb",
+    "src/game/immuneLegions.ts": "399fc580b5afe53b5b22ad7b4b7d5c874271cc7af8feb666773cdcb1d2b83ee0",
+    "src/game/battleConfig.ts": "3365d6963f8edf43abdef1259483d3d21787a738abe1ccd81e2ebd6b1fdc609d",
+    "src/game/openingEvolution.ts": "8519a49436dd51799e1057bee8ebd7d8daa5edc6f23e6e81601e57fb15b986d7",
+    "src/game/hostEvents.ts": "367fad03129ce257e847dedac946bb6d3cac522abb3f5e0922207f51f77fbfae",
+    "src/game/healingPoints.ts": "915eabdd233f7ad1e62610fd9be29a71ba326fec9bb7cbda327dd9b4f00de277",
+    "src/game/organConfig.ts": "4563ddb4c24cb8b19400a29e48ce2fcbd4775f940adb0c19d92ede2ae8f5cb42",
+    "src/game/territory.ts": "028404582a0180306afbd8efe05e723b6da34c9bb6619d4a4f8962c33aa66e46",
+    "src/game/ritual.ts": "a4b9a556cc8354e49bc05d8847e6aca121e03bf6fd09adfdde97adc2ecd75246",
+    "src/game/playerProjectiles.ts": "ff420b51e1569188be2e316e933c2fe4e04808b036090e022e28538ac3d7e2ad",
+    "src/game/weaponSkills.ts": "7b901e257c52be4ca2093441ad0ce0a3f97a6eeb54920a20b36e05832d0da984",
+    "src/ui/campHud.ts": "4dd5f6737a114a44009e52759751037ef388e95b4e1d476fbad8b4bbfa659631",
+    "src/meta/endlessProfile.ts": "2f8e72e62396501ec613bca4a655a8d2688e34780c7e29f511238ec05c28aee1",
+    "src/meta/campProfile.ts": "ea15522719b8421646686af4adeb8823f2c524761290759dd9d1820e9da4fd77",
+    "src/game/campWeaponTrial.ts": "f068204bd30301fc1d015d74350ae93650cd2123a9457bcbd2cd608f721b1d0a",
+    "src/ui/campWeaponTrial.ts": "b6c60d4d1f74a67836aa790077d55b7f4e61311a696c46617454d0830222e473"
+  },
+  "sourceAfter": {
+    "src/style.css": "0f15967f4a581638a3159ec0bd97faf49cfed1c9ee8d8dfd5d154f8e6de7c815",
+    "src/ui/mobile.css": "fdc9fedee83f355dfcd46c5706800b475eb0071da3871727928f7508f318ddea",
+    "src/ui/camp.css": "b36bd29a93a8a156caee982815b05787329215e752fd04fe35e12eb5774a0153",
+    "src/core/rng.ts": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+    "src/game/expedition.ts": "908fa5b15bbcccdbccc50d2c158667bf0a617a0e2dd31eb66711b382d5354eff",
+    "src/game/types.ts": "e43f353e06c83b1736920ae6049075726ebce994b09bc3265d4acd77bb437701",
+    "src/actors/collision.ts": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0",
+    "src/game/protocols.ts": "4e407a74e0b87b7bbba93c48c881cb729a0770f24a027cbc8d59f7f512449260",
+    "src/game/immuneFocus.ts": "ae0a07dc07747100a2d271bc11989751a480972d76945378decc12b3d41cf9e1",
+    "src/game/traction.ts": "2ebdd2264eae46a3744b45371733aa35fc93a8c7f6b030d8a36c8163e2c4ad5e",
+    "src/game/dashBlade.ts": "c7bb058f5b38bc3124fb8efd4739f661b42acee026f1ce1c008de1234dc6d771",
+    "src/game/endlessGrowth.ts": "9b74010bbd1df52b5619067df45aa814ae2a96846163ec4a3c7bd745d016250e",
+    "src/actors/enemyNavigation.ts": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd",
+    "src/game/constructionTypes.ts": "514b0933047f3a234b6fb9b0c8840d85a448b9c54a5894084df235c735349e79",
+    "src/game/territoryCannon.ts": "88ba64f3c8e9d575c2b264c5a3db913969bb4795e63539cd20998e7038035ccb",
+    "src/game/immuneLegions.ts": "399fc580b5afe53b5b22ad7b4b7d5c874271cc7af8feb666773cdcb1d2b83ee0",
+    "src/game/battleConfig.ts": "3365d6963f8edf43abdef1259483d3d21787a738abe1ccd81e2ebd6b1fdc609d",
+    "src/game/openingEvolution.ts": "8519a49436dd51799e1057bee8ebd7d8daa5edc6f23e6e81601e57fb15b986d7",
+    "src/game/hostEvents.ts": "367fad03129ce257e847dedac946bb6d3cac522abb3f5e0922207f51f77fbfae",
+    "src/game/healingPoints.ts": "915eabdd233f7ad1e62610fd9be29a71ba326fec9bb7cbda327dd9b4f00de277",
+    "src/game/organConfig.ts": "4563ddb4c24cb8b19400a29e48ce2fcbd4775f940adb0c19d92ede2ae8f5cb42",
+    "src/game/territory.ts": "028404582a0180306afbd8efe05e723b6da34c9bb6619d4a4f8962c33aa66e46",
+    "src/game/ritual.ts": "a4b9a556cc8354e49bc05d8847e6aca121e03bf6fd09adfdde97adc2ecd75246",
+    "src/game/playerProjectiles.ts": "ff420b51e1569188be2e316e933c2fe4e04808b036090e022e28538ac3d7e2ad",
+    "src/game/weaponSkills.ts": "7b901e257c52be4ca2093441ad0ce0a3f97a6eeb54920a20b36e05832d0da984",
+    "src/ui/campHud.ts": "4dd5f6737a114a44009e52759751037ef388e95b4e1d476fbad8b4bbfa659631",
+    "src/meta/endlessProfile.ts": "2f8e72e62396501ec613bca4a655a8d2688e34780c7e29f511238ec05c28aee1",
+    "src/meta/campProfile.ts": "ea15522719b8421646686af4adeb8823f2c524761290759dd9d1820e9da4fd77",
+    "src/game/campWeaponTrial.ts": "f068204bd30301fc1d015d74350ae93650cd2123a9457bcbd2cd608f721b1d0a",
+    "src/ui/campWeaponTrial.ts": "b6c60d4d1f74a67836aa790077d55b7f4e61311a696c46617454d0830222e473"
+  },
+  "cases": [
+    {
+      "width": 1366,
+      "height": 768,
+      "screenshots": [
+        "warehouse-1366.png",
+        "steady-1366.png"
+      ],
+      "skills": {
+        "steady": {
+          "loadout": {
+            "weaponId": "steady",
+            "rarity": "white",
+            "upgrade": 0
+          },
+          "elapsed": 1.0332000000000003,
+          "shots": 0,
+          "hits": 6,
+          "totalDamage": 178.5,
+          "primaryDamage": 34,
+          "targetLimit": 1,
+          "summary": "稳流针枪 · 单体34.0 · 一发最多1体",
+          "targets": [
+            {
+              "x": 345,
+              "y": 110,
+              "radius": 26,
+              "hp": 821.4999999999999,
+              "maxHp": 1000,
+              "hitUntil": 1.7331666666666672,
+              "lastDamage": 68
+            }
+          ],
+          "projectiles": [],
+          "layout": "single",
+          "skills": [
+            {
+              "slot": 1,
+              "id": "steady-burst",
+              "weaponId": "steady",
+              "name": "集中连针",
+              "cooldown": 6,
+              "range": 530,
+              "radius": 6,
+              "aim": "direction",
+              "description": "0.32秒五针连射，逐针跟随当前瞄准；施放期间暂停普攻。",
+              "remaining": 5.1668,
+              "ready": false
+            },
+            {
+              "slot": 2,
+              "id": "steady-repulse",
+              "weaponId": "steady",
+              "name": "震荡抗体",
+              "cooldown": 10,
+              "range": 420,
+              "radius": 100,
+              "aim": "point",
+              "description": "小范围爆破并击退可移动病毒；无法移动建筑、母巢或已开始攻击的敌人。",
+              "remaining": 9.7166,
+              "ready": false
+            },
+            {
+              "slot": 3,
+              "id": "steady-overdrive",
+              "weaponId": "steady",
+              "name": "稳流超载",
+              "cooldown": 18,
+              "range": 0,
+              "radius": 6,
+              "aim": "self",
+              "description": "4秒内提升普攻射速；不加速技能、不刷新冷却。",
+              "remaining": 17.0667,
+              "ready": false
+            }
+          ],
+          "primaryReady": true,
+          "skillCasts": {
+            "1": 1,
+            "2": 1,
+            "3": 1
+          },
+          "primaryRemaining": 0,
+          "overdriveRemaining": 3.0666999999999995,
+          "effects": []
+        },
+        "piercing": {
+          "loadout": {
+            "weaponId": "piercing",
+            "rarity": "purple",
+            "upgrade": 1
+          },
+          "elapsed": 0.9501000000000005,
+          "shots": 0,
+          "hits": 2,
+          "totalDamage": 137.34,
+          "primaryDamage": 30.520000000000003,
+          "targetLimit": 2,
+          "summary": "贯脉针枪 · 单体30.5 · 一发最多2体",
+          "targets": [
+            {
+              "x": 345,
+              "y": 110,
+              "radius": 26,
+              "hp": 862.6600000000001,
+              "maxHp": 1000,
+              "hitUntil": 1.6501000000000006,
+              "lastDamage": 45.78
+            }
+          ],
+          "projectiles": [],
+          "layout": "single",
+          "skills": [
+            {
+              "slot": 1,
+              "id": "piercing-heavy",
+              "weaponId": "piercing",
+              "name": "贯脉重针",
+              "cooldown": 7,
+              "range": 700,
+              "radius": 12,
+              "aim": "direction",
+              "description": "锁定初始方向，准备0.35秒后从实际位置发射重针，最多贯穿六体。",
+              "remaining": 0,
+              "ready": true
+            },
+            {
+              "slot": 2,
+              "id": "piercing-gather",
+              "weaponId": "piercing",
+              "name": "束脉爆囊",
+              "cooldown": 10,
+              "range": 420,
+              "radius": 140,
+              "aim": "point",
+              "description": "爆囊落地后持续牵引附近病毒0.25秒，随后爆破，适合接贯脉重针。",
+              "remaining": 9.4667,
+              "ready": false
+            },
+            {
+              "slot": 3,
+              "id": "piercing-fan",
+              "weaponId": "piercing",
+              "name": "裂脉扇刃",
+              "cooldown": 16,
+              "range": 650,
+              "radius": 24,
+              "aim": "direction",
+              "description": "三道扇形穿刺刃，每次施放对同一目标最多命中一次。",
+              "remaining": 15.1334,
+              "ready": false
+            }
+          ],
+          "primaryReady": true,
+          "skillCasts": {
+            "1": 0,
+            "2": 1,
+            "3": 1
+          },
+          "primaryRemaining": 0,
+          "overdriveRemaining": 0,
+          "effects": []
+        }
+      },
+      "layout": {
+        "panelOverflow": true,
+        "canvas": {
+          "left": 403,
+          "right": 963,
+          "top": 328.09375,
+          "bottom": 549.296875,
+          "width": 560,
+          "height": 221.203125
+        },
+        "canvasInside": true,
+        "buttons": [
+          {
+            "action": "camp-close",
+            "width": 48,
+            "height": 48,
+            "left": 1054,
+            "right": 1102,
+            "top": 92.703125,
+            "bottom": 140.703125
+          },
+          {
+            "action": "camp-section",
+            "width": 160,
+            "height": 48,
+            "left": 267,
+            "right": 427,
+            "top": 151.703125,
+            "bottom": 199.703125
+          },
+          {
+            "action": "camp-section",
+            "width": 160,
+            "height": 48,
+            "left": 435,
+            "right": 595,
+            "top": 151.703125,
+            "bottom": 199.703125
+          },
+          {
+            "action": "camp-section",
+            "width": 160,
+            "height": 48,
+            "left": 603,
+            "right": 763,
+            "top": 151.703125,
+            "bottom": 199.703125
+          },
+          {
+            "action": "camp-section",
+            "width": 160,
+            "height": 48,
+            "left": 771,
+            "right": 931,
+            "top": 151.703125,
+            "bottom": 199.703125
+          },
+          {
+            "action": "camp-section",
+            "width": 160,
+            "height": 48,
+            "left": 939,
+            "right": 1099,
+            "top": 151.703125,
+            "bottom": 199.703125
+          },
+          {
+            "action": "camp-trial",
+            "width": 86,
+            "height": 57,
+            "left": 264,
+            "right": 350,
+            "top": 263.09375,
+            "bottom": 320.09375
+          },
+          {
+            "action": "camp-trial",
+            "width": 86,
+            "height": 57,
+            "left": 358,
+            "right": 444,
+            "top": 263.09375,
+            "bottom": 320.09375
+          },
+          {
+            "action": "camp-trial-fire",
+            "width": 58,
+            "height": 53,
+            "left": 264,
+            "right": 322,
+            "top": 622.296875,
+            "bottom": 675.296875
+          },
+          {
+            "action": "camp-trial-skill",
+            "slot": "1",
+            "width": 97.90625,
+            "height": 53,
+            "left": 330,
+            "right": 427.90625,
+            "top": 622.296875,
+            "bottom": 675.296875
+          },
+          {
+            "action": "camp-trial-skill",
+            "slot": "2",
+            "width": 97.90625,
+            "height": 53,
+            "left": 435.90625,
+            "right": 533.8125,
+            "top": 622.296875,
+            "bottom": 675.296875
+          },
+          {
+            "action": "camp-trial-skill",
+            "slot": "3",
+            "width": 97.90625,
+            "height": 53,
+            "left": 541.8125,
+            "right": 639.71875,
+            "top": 622.296875,
+            "bottom": 675.296875
+          },
+          {
+            "action": "camp-trial-cooldowns",
+            "width": 76.484375,
+            "height": 53,
+            "left": 647.71875,
+            "right": 724.203125,
+            "top": 622.296875,
+            "bottom": 675.296875
+          },
+          {
+            "action": "camp-trial-layout",
+            "width": 100,
+            "height": 69,
+            "left": 732.203125,
+            "right": 832.203125,
+            "top": 614.296875,
+            "bottom": 683.296875
+          },
+          {
+            "action": "camp-trial-layout",
+            "width": 100,
+            "height": 69,
+            "left": 840.203125,
+            "right": 940.203125,
+            "top": 614.296875,
+            "bottom": 683.296875
+          },
+          {
+            "action": "camp-trial-reset",
+            "width": 100,
+            "height": 69,
+            "left": 948.203125,
+            "right": 1048.203125,
+            "top": 614.296875,
+            "bottom": 683.296875
+          },
+          {
+            "action": "camp-section",
+            "width": 86,
+            "height": 69,
+            "left": 1056.203125,
+            "right": 1142.203125,
+            "top": 614.296875,
+            "bottom": 683.296875
+          },
+          {
+            "action": "camp-section",
+            "width": 100.09375,
+            "height": 69,
+            "left": 1150.203125,
+            "right": 1250.296875,
+            "top": 614.296875,
+            "bottom": 683.296875
+          },
+          {
+            "action": "camp-leave",
+            "width": 100,
+            "height": 69,
+            "left": 1258.296875,
+            "right": 1358.296875,
+            "top": 614.296875,
+            "bottom": 683.296875
+          }
+        ],
+        "unchanged": true,
+        "storageKeys": []
+      },
+      "pass": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\ntrue !== false\n\n    at file:///D:/Workspace/Projects/xsj/Viral-Invasion/scripts/verify-weapon-camp.mjs:93:14\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processImmediate (node:internal/timers:541:9)",
+      "video": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\weapon-v016\\camp-components\\video\\page@a38c66e91112b7672f46b02031732c6a.webm"
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "screenshots": [
+        "warehouse-844.png",
+        "steady-844.png"
+      ],
+      "skills": {
+        "steady": {
+          "loadout": {
+            "weaponId": "steady",
+            "rarity": "white",
+            "upgrade": 0
+          },
+          "elapsed": 0.9999000000000005,
+          "shots": 0,
+          "hits": 6,
+          "totalDamage": 178.5,
+          "primaryDamage": 34,
+          "targetLimit": 1,
+          "summary": "稳流针枪 · 单体34.0 · 一发最多1体",
+          "targets": [
+            {
+              "x": 345,
+              "y": 110,
+              "radius": 26,
+              "hp": 821.4999999999999,
+              "maxHp": 1000,
+              "hitUntil": 1.699866666666667,
+              "lastDamage": 68
+            }
+          ],
+          "projectiles": [],
+          "layout": "single",
+          "skills": [
+            {
+              "slot": 1,
+              "id": "steady-burst",
+              "weaponId": "steady",
+              "name": "集中连针",
+              "cooldown": 6,
+              "range": 530,
+              "radius": 6,
+              "aim": "direction",
+              "description": "0.32秒五针连射，逐针跟随当前瞄准；施放期间暂停普攻。",
+              "remaining": 5.1667,
+              "ready": false
+            },
+            {
+              "slot": 2,
+              "id": "steady-repulse",
+              "weaponId": "steady",
+              "name": "震荡抗体",
+              "cooldown": 10,
+              "range": 420,
+              "radius": 100,
+              "aim": "point",
+              "description": "小范围爆破并击退可移动病毒；无法移动建筑、母巢或已开始攻击的敌人。",
+              "remaining": 9.7167,
+              "ready": false
+            },
+            {
+              "slot": 3,
+              "id": "steady-overdrive",
+              "weaponId": "steady",
+              "name": "稳流超载",
+              "cooldown": 18,
+              "range": 0,
+              "radius": 6,
+              "aim": "self",
+              "description": "4秒内提升普攻射速；不加速技能、不刷新冷却。",
+              "remaining": 17.0833,
+              "ready": false
+            }
+          ],
+          "primaryReady": true,
+          "skillCasts": {
+            "1": 1,
+            "2": 1,
+            "3": 1
+          },
+          "primaryRemaining": 0,
+          "overdriveRemaining": 3.0832999999999995,
+          "effects": []
+        },
+        "piercing": {
+          "loadout": {
+            "weaponId": "piercing",
+            "rarity": "purple",
+            "upgrade": 1
+          },
+          "elapsed": 0.9500000000000007,
+          "shots": 0,
+          "hits": 2,
+          "totalDamage": 137.34,
+          "primaryDamage": 30.520000000000003,
+          "targetLimit": 2,
+          "summary": "贯脉针枪 · 单体30.5 · 一发最多2体",
+          "targets": [
+            {
+              "x": 345,
+              "y": 110,
+              "radius": 26,
+              "hp": 862.6600000000001,
+              "maxHp": 1000,
+              "hitUntil": 1.6500000000000008,
+              "lastDamage": 45.78
+            }
+          ],
+          "projectiles": [],
+          "layout": "single",
+          "skills": [
+            {
+              "slot": 1,
+              "id": "piercing-heavy",
+              "weaponId": "piercing",
+              "name": "贯脉重针",
+              "cooldown": 7,
+              "range": 700,
+              "radius": 12,
+              "aim": "direction",
+              "description": "锁定初始方向，准备0.35秒后从实际位置发射重针，最多贯穿六体。",
+              "remaining": 0,
+              "ready": true
+            },
+            {
+              "slot": 2,
+              "id": "piercing-gather",
+              "weaponId": "piercing",
+              "name": "束脉爆囊",
+              "cooldown": 10,
+              "range": 420,
+              "radius": 140,
+              "aim": "point",
+              "description": "爆囊落地后持续牵引附近病毒0.25秒，随后爆破，适合接贯脉重针。",
+              "remaining": 9.4666,
+              "ready": false
+            },
+            {
+              "slot": 3,
+              "id": "piercing-fan",
+              "weaponId": "piercing",
+              "name": "裂脉扇刃",
+              "cooldown": 16,
+              "range": 650,
+              "radius": 24,
+              "aim": "direction",
+              "description": "三道扇形穿刺刃，每次施放对同一目标最多命中一次。",
+              "remaining": 15.1334,
+              "ready": false
+            }
+          ],
+          "primaryReady": true,
+          "skillCasts": {
+            "1": 0,
+            "2": 1,
+            "3": 1
+          },
+          "primaryRemaining": 0,
+          "overdriveRemaining": 0,
+          "effects": []
+        }
+      },
+      "layout": {
+        "panelOverflow": false,
+        "canvas": {
+          "left": 310.453125,
+          "right": 681.53125,
+          "top": 81,
+          "bottom": 228,
+          "width": 371.078125,
+          "height": 147
+        },
+        "canvasInside": true,
+        "buttons": [
+          {
+            "action": "camp-close",
+            "width": 48,
+            "height": 48,
+            "left": 775,
+            "right": 823,
+            "top": 25,
+            "bottom": 73
+          },
+          {
+            "action": "camp-trial",
+            "width": 136,
+            "height": 48,
+            "left": 21,
+            "right": 157,
+            "top": 102.5,
+            "bottom": 150.5
+          },
+          {
+            "action": "camp-trial",
+            "width": 136,
+            "height": 48,
+            "left": 21,
+            "right": 157,
+            "top": 158.5,
+            "bottom": 206.5
+          },
+          {
+            "action": "camp-trial-fire",
+            "width": 46,
+            "height": 48,
+            "left": 442.546875,
+            "right": 488.546875,
+            "top": 253,
+            "bottom": 301
+          },
+          {
+            "action": "camp-trial-skill",
+            "slot": "1",
+            "width": 80.203125,
+            "height": 48,
+            "left": 496.546875,
+            "right": 576.75,
+            "top": 253,
+            "bottom": 301
+          },
+          {
+            "action": "camp-trial-skill",
+            "slot": "2",
+            "width": 80.203125,
+            "height": 48,
+            "left": 584.75,
+            "right": 664.953125,
+            "top": 253,
+            "bottom": 301
+          },
+          {
+            "action": "camp-trial-skill",
+            "slot": "3",
+            "width": 80.203125,
+            "height": 48,
+            "left": 672.953125,
+            "right": 753.15625,
+            "top": 253,
+            "bottom": 301
+          },
+          {
+            "action": "camp-trial-cooldowns",
+            "width": 61.84375,
+            "height": 48,
+            "left": 761.15625,
+            "right": 823,
+            "top": 253,
+            "bottom": 301
+          },
+          {
+            "action": "camp-trial-layout",
+            "width": 82,
+            "height": 48,
+            "left": 302.921875,
+            "right": 384.921875,
+            "top": 317,
+            "bottom": 365
+          },
+          {
+            "action": "camp-trial-layout",
+            "width": 82,
+            "height": 48,
+            "left": 392.921875,
+            "right": 474.921875,
+            "top": 317,
+            "bottom": 365
+          },
+          {
+            "action": "camp-trial-reset",
+            "width": 82,
+            "height": 48,
+            "left": 482.921875,
+            "right": 564.921875,
+            "top": 317,
+            "bottom": 365
+          },
+          {
+            "action": "camp-section",
+            "width": 70,
+            "height": 48,
+            "left": 572.921875,
+            "right": 642.921875,
+            "top": 317,
+            "bottom": 365
+          },
+          {
+            "action": "camp-section",
+            "width": 82.078125,
+            "height": 48,
+            "left": 650.921875,
+            "right": 733,
+            "top": 317,
+            "bottom": 365
+          },
+          {
+            "action": "camp-leave",
+            "width": 82,
+            "height": 48,
+            "left": 741,
+            "right": 823,
+            "top": 317,
+            "bottom": 365
+          }
+        ],
+        "unchanged": true,
+        "storageKeys": []
+      },
+      "pass": false,
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(item.layout.buttons.every(button => button.width >= 48 && button.height >= 48))\n\n    at file:///D:/Workspace/Projects/xsj/Viral-Invasion/scripts/verify-weapon-camp.mjs:95:14",
+      "video": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\weapon-v016\\camp-components\\video\\page@70e860d0194d71db17a1c7fd3b240b91.webm"
+    },
+    {
+      "width": 667,
+      "height": 320,
+      "screenshots": [
+        "warehouse-667.png",
+        "steady-667.png"
+      ],
+      "skills": {
+        "steady": {
+          "loadout": {
+            "weaponId": "steady",
+            "rarity": "white",
+            "upgrade": 0
+          },
+          "elapsed": 0.9999000000000006,
+          "shots": 0,
+          "hits": 6,
+          "totalDamage": 178.5,
+          "primaryDamage": 34,
+          "targetLimit": 1,
+          "summary": "稳流针枪 · 单体34.0 · 一发最多1体",
+          "targets": [
+            {
+              "x": 345,
+              "y": 110,
+              "radius": 26,
+              "hp": 821.4999999999999,
+              "maxHp": 1000,
+              "hitUntil": 1.6999000000000004,
+              "lastDamage": 68
+            }
+          ],
+          "projectiles": [],
+          "layout": "single",
+          "skills": [
+            {
+              "slot": 1,
+              "id": "steady-burst",
+              "weaponId": "steady",
+              "name": "集中连针",
+              "cooldown": 6,
+              "range": 530,
+              "radius": 6,
+              "aim": "direction",
+              "description": "0.32秒五针连射，逐针跟随当前瞄准；施放期间暂停普攻。",
+              "remaining": 5.1668,
+              "ready": false
+            },
+            {
+              "slot": 2,
+              "id": "steady-repulse",
+              "weaponId": "steady",
+              "name": "震荡抗体",
+              "cooldown": 10,
+              "range": 420,
+              "radius": 100,
+              "aim": "point",
+              "description": "小范围爆破并击退可移动病毒；无法移动建筑、母巢或已开始攻击的敌人。",
+              "remaining": 9.7167,
+              "ready": false
+            },
+            {
+              "slot": 3,
+              "id": "steady-overdrive",
+              "weaponId": "steady",
+              "name": "稳流超载",
+              "cooldown": 18,
+              "range": 0,
+              "radius": 6,
+              "aim": "self",
+              "description": "4秒内提升普攻射速；不加速技能、不刷新冷却。",
+              "remaining": 17.0834,
+              "ready": false
+            }
+          ],
+          "primaryReady": true,
+          "skillCasts": {
+            "1": 1,
+            "2": 1,
+            "3": 1
+          },
+          "primaryRemaining": 0,
+          "overdriveRemaining": 3.0833999999999997,
+          "effects": []
+        },
+        "piercing": {
+          "loadout": {
+            "weaponId": "piercing",
+            "rarity": "purple",
+            "upgrade": 1
+          },
+          "elapsed": 0.9667000000000006,
+          "shots": 0,
+          "hits": 2,
+          "totalDamage": 137.34,
+          "primaryDamage": 30.520000000000003,
+          "targetLimit": 2,
+          "summary": "贯脉针枪 · 单体30.5 · 一发最多2体",
+          "targets": [
+            {
+              "x": 345,
+              "y": 110,
+              "radius": 26,
+              "hp": 862.6600000000001,
+              "maxHp": 1000,
+              "hitUntil": 1.6667000000000005,
+              "lastDamage": 45.78
+            }
+          ],
+          "projectiles": [],
+          "layout": "single",
+          "skills": [
+            {
+              "slot": 1,
+              "id": "piercing-heavy",
+              "weaponId": "piercing",
+              "name": "贯脉重针",
+              "cooldown": 7,
+              "range": 700,
+              "radius": 12,
+              "aim": "direction",
+              "description": "锁定初始方向，准备0.35秒后从实际位置发射重针，最多贯穿六体。",
+              "remaining": 0,
+              "ready": true
+            },
+            {
+              "slot": 2,
+              "id": "piercing-gather",
+              "weaponId": "piercing",
+              "name": "束脉爆囊",
+              "cooldown": 10,
+              "range": 420,
+              "radius": 140,
+              "aim": "point",
+              "description": "爆囊落地后持续牵引附近病毒0.25秒，随后爆破，适合接贯脉重针。",
+              "remaining": 9.466699999999998,
+              "ready": false
+            },
+            {
+              "slot": 3,
+              "id": "piercing-fan",
+              "weaponId": "piercing",
+              "name": "裂脉扇刃",
+              "cooldown": 16,
+              "range": 650,
+              "radius": 24,
+              "aim": "direction",
+              "description": "三道扇形穿刺刃，每次施放对同一目标最多命中一次。",
+              "remaining": 15.1167,
+              "ready": false
+            }
+          ],
+          "primaryReady": true,
+          "skillCasts": {
+            "1": 0,
+            "2": 1,
+            "3": 1
+          },
+          "primaryRemaining": 0,
+          "overdriveRemaining": 0,
+          "effects": []
+        }
+      },
+      "layout": {
+        "panelOverflow": false,
+        "canvas": {
+          "left": 311.046875,
+          "right": 503.953125,
+          "top": 81,
+          "bottom": 158,
+          "width": 192.90625,
+          "height": 77
+        },
+        "canvasInside": true,
+        "buttons": [
+          {
+            "action": "camp-close",
+            "width": 48,
+            "height": 48,
+            "left": 598,
+            "right": 646,
+            "top": 25,
+            "bottom": 73
+          },
+          {
+            "action": "camp-trial",
+            "width": 136,
+            "height": 48,
+            "left": 21,
+            "right": 157,
+            "top": 67.5,
+            "bottom": 115.5
+          },
+          {
+            "action": "camp-trial",
+            "width": 136,
+            "height": 48,
+            "left": 21,
+            "right": 157,
+            "top": 123.5,
+            "bottom": 171.5
+          },
+          {
+            "action": "camp-trial-fire",
+            "width": 46,
+            "height": 48,
+            "left": 265.546875,
+            "right": 311.546875,
+            "top": 183,
+            "bottom": 231
+          },
+          {
+            "action": "camp-trial-skill",
+            "slot": "1",
+            "width": 80.203125,
+            "height": 48,
+            "left": 319.546875,
+            "right": 399.75,
+            "top": 183,
+            "bottom": 231
+          },
+          {
+            "action": "camp-trial-skill",
+            "slot": "2",
+            "width": 80.203125,
+            "height": 48,
+            "left": 407.75,
+            "right": 487.953125,
+            "top": 183,
+            "bottom": 231
+          },
+          {
+            "action": "camp-trial-skill",
+            "slot": "3",
+            "width": 80.203125,
+            "height": 48,
+            "left": 495.953125,
+            "right": 576.15625,
+            "top": 183,
+            "bottom": 231
+          },
+          {
+            "action": "camp-trial-cooldowns",
+            "width": 61.84375,
+            "height": 48,
+            "left": 584.15625,
+            "right": 646,
+            "top": 183,
+            "bottom": 231
+          },
+          {
+            "action": "camp-trial-layout",
+            "width": 82,
+            "height": 48,
+            "left": 125.921875,
+            "right": 207.921875,
+            "top": 247,
+            "bottom": 295
+          },
+          {
+            "action": "camp-trial-layout",
+            "width": 82,
+            "height": 48,
+            "left": 215.921875,
+            "right": 297.921875,
+            "top": 247,
+            "bottom": 295
+          },
+          {
+            "action": "camp-trial-reset",
+            "width": 82,
+            "height": 48,
+            "left": 305.921875,
+            "right": 387.921875,
+            "top": 247,
+            "bottom": 295
+          },
+          {
+            "action": "camp-section",
+            "width": 70,
+            "height": 48,
+            "left": 395.921875,
+            "right": 465.921875,
+            "top": 247,
+            "bottom": 295
+          },
+          {
+            "action": "camp-section",
+            "width": 82.078125,
+            "height": 48,
+            "left": 473.921875,
+            "right": 556,
+            "top": 247,
+            "bottom": 295
+          },
+          {
+            "action": "camp-leave",
+            "width": 82,
+            "height": 48,
+            "left": 564,
+            "right": 646,
+            "top": 247,
+            "bottom": 295
+          }
+        ],
+        "unchanged": true,
+        "storageKeys": []
+      },
+      "pass": false,
+      "error": "AssertionError [ERR_ASSERTION]: Trial must remain large enough to see targets\n    at file:///D:/Workspace/Projects/xsj/Viral-Invasion/scripts/verify-weapon-camp.mjs:94:14",
+      "video": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\weapon-v016\\camp-components\\video\\page@c680d1ae98c8fdd2e43bcce2d0aba22f.webm"
+    },
+    {
+      "width": 915,
+      "height": 412,
+      "screenshots": [
+        "warehouse-915.png",
+        "steady-915.png"
+      ],
+      "skills": {
+        "steady": {
+          "loadout": {
+            "weaponId": "steady",
+            "rarity": "white",
+            "upgrade": 0
+          },
+          "elapsed": 1.0000000000000007,
+          "shots": 0,
+          "hits": 6,
+          "totalDamage": 178.5,
+          "primaryDamage": 34,
+          "targetLimit": 1,
+          "summary": "稳流针枪 · 单体34.0 · 一发最多1体",
+          "targets": [
+            {
+              "x": 345,
+              "y": 110,
+              "radius": 26,
+              "hp": 821.4999999999999,
+              "maxHp": 1000,
+              "hitUntil": 1.7000000000000006,
+              "lastDamage": 68
+            }
+          ],
+          "projectiles": [],
+          "layout": "single",
+          "skills": [
+            {
+              "slot": 1,
+              "id": "steady-burst",
+              "weaponId": "steady",
+              "name": "集中连针",
+              "cooldown": 6,
+              "range": 530,
+              "radius": 6,
+              "aim": "direction",
+              "description": "0.32秒五针连射，逐针跟随当前瞄准；施放期间暂停普攻。",
+              "remaining": 5.166599999999999,
+              "ready": false
+            },
+            {
+              "slot": 2,
+              "id": "steady-repulse",
+              "weaponId": "steady",
+              "name": "震荡抗体",
+              "cooldown": 10,
+              "range": 420,
+              "radius": 100,
+              "aim": "point",
+              "description": "小范围爆破并击退可移动病毒；无法移动建筑、母巢或已开始攻击的敌人。",
+              "remaining": 9.7167,
+              "ready": false
+            },
+            {
+              "slot": 3,
+              "id": "steady-overdrive",
+              "weaponId": "steady",
+              "name": "稳流超载",
+              "cooldown": 18,
+              "range": 0,
+              "radius": 6,
+              "aim": "self",
+              "description": "4秒内提升普攻射速；不加速技能、不刷新冷却。",
+              "remaining": 17.0833,
+              "ready": false
+            }
+          ],
+          "primaryReady": true,
+          "skillCasts": {
+            "1": 1,
+            "2": 1,
+            "3": 1
+          },
+          "primaryRemaining": 0,
+          "overdriveRemaining": 3.0832999999999995,
+          "effects": []
+        },
+        "piercing": {
+          "loadout": {
+            "weaponId": "piercing",
+            "rarity": "purple",
+            "upgrade": 1
+          },
+          "elapsed": 0.9667000000000004,
+          "shots": 0,
+          "hits": 2,
+          "totalDamage": 137.34,
+          "primaryDamage": 30.520000000000003,
+          "targetLimit": 2,
+          "summary": "贯脉针枪 · 单体30.5 · 一发最多2体",
+          "targets": [
+            {
+              "x": 345,
+              "y": 110,
+              "radius": 26,
+              "hp": 862.6600000000001,
+              "maxHp": 1000,
+              "hitUntil": 1.6667000000000005,
+              "lastDamage": 45.78
+            }
+          ],
+          "projectiles": [],
+          "layout": "single",
+          "skills": [
+            {
+              "slot": 1,
+              "id": "piercing-heavy",
+              "weaponId": "piercing",
+              "name": "贯脉重针",
+              "cooldown": 7,
+              "range": 700,
+              "radius": 12,
+              "aim": "direction",
+              "description": "锁定初始方向，准备0.35秒后从实际位置发射重针，最多贯穿六体。",
+              "remaining": 0,
+              "ready": true
+            },
+            {
+              "slot": 2,
+              "id": "piercing-gather",
+              "weaponId": "piercing",
+              "name": "束脉爆囊",
+              "cooldown": 10,
+              "range": 420,
+              "radius": 140,
+              "aim": "point",
+              "description": "爆囊落地后持续牵引附近病毒0.25秒，随后爆破，适合接贯脉重针。",
+              "remaining": 9.4667,
+              "ready": false
+            },
+            {
+              "slot": 3,
+              "id": "piercing-fan",
+              "weaponId": "piercing",
+              "name": "裂脉扇刃",
+              "cooldown": 16,
+              "range": 650,
+              "radius": 24,
+              "aim": "direction",
+              "description": "三道扇形穿刺刃，每次施放对同一目标最多命中一次。",
+              "remaining": 15.1166,
+              "ready": false
+            }
+          ],
+          "primaryReady": true,
+          "skillCasts": {
+            "1": 0,
+            "2": 1,
+            "3": 1
+          },
+          "primaryRemaining": 0,
+          "overdriveRemaining": 0,
+          "effects": []
+        }
+      },
+      "layout": {
+        "panelOverflow": false,
+        "canvas": {
+          "left": 317.953125,
+          "right": 745.03125,
+          "top": 81,
+          "bottom": 250,
+          "width": 427.078125,
+          "height": 169
+        },
+        "canvasInside": true,
+        "buttons": [
+          {
+            "action": "camp-close",
+            "width": 48,
+            "height": 48,
+            "left": 836.5,
+            "right": 884.5,
+            "top": 25,
+            "bottom": 73
+          },
+          {
+            "action": "camp-trial",
+            "width": 136,
+            "height": 48,
+            "left": 30.5,
+            "right": 166.5,
+            "top": 113.5,
+            "bottom": 161.5
+          },
+          {
+            "action": "camp-trial",
+            "width": 136,
+            "height": 48,
+            "left": 30.5,
+            "right": 166.5,
+            "top": 169.5,
+            "bottom": 217.5
+          },
+          {
+            "action": "camp-trial-fire",
+            "width": 46,
+            "height": 48,
+            "left": 504.046875,
+            "right": 550.046875,
+            "top": 275,
+            "bottom": 323
+          },
+          {
+            "action": "camp-trial-skill",
+            "slot": "1",
+            "width": 80.203125,
+            "height": 48,
+            "left": 558.046875,
+            "right": 638.25,
+            "top": 275,
+            "bottom": 323
+          },
+          {
+            "action": "camp-trial-skill",
+            "slot": "2",
+            "width": 80.203125,
+            "height": 48,
+            "left": 646.25,
+            "right": 726.453125,
+            "top": 275,
+            "bottom": 323
+          },
+          {
+            "action": "camp-trial-skill",
+            "slot": "3",
+            "width": 80.203125,
+            "height": 48,
+            "left": 734.453125,
+            "right": 814.65625,
+            "top": 275,
+            "bottom": 323
+          },
+          {
+            "action": "camp-trial-cooldowns",
+            "width": 61.84375,
+            "height": 48,
+            "left": 822.65625,
+            "right": 884.5,
+            "top": 275,
+            "bottom": 323
+          },
+          {
+            "action": "camp-trial-layout",
+            "width": 82,
+            "height": 48,
+            "left": 364.421875,
+            "right": 446.421875,
+            "top": 339,
+            "bottom": 387
+          },
+          {
+            "action": "camp-trial-layout",
+            "width": 82,
+            "height": 48,
+            "left": 454.421875,
+            "right": 536.421875,
+            "top": 339,
+            "bottom": 387
+          },
+          {
+            "action": "camp-trial-reset",
+            "width": 82,
+            "height": 48,
+            "left": 544.421875,
+            "right": 626.421875,
+            "top": 339,
+            "bottom": 387
+          },
+          {
+            "action": "camp-section",
+            "width": 70,
+            "height": 48,
+            "left": 634.421875,
+            "right": 704.421875,
+            "top": 339,
+            "bottom": 387
+          },
+          {
+            "action": "camp-section",
+            "width": 82.078125,
+            "height": 48,
+            "left": 712.421875,
+            "right": 794.5,
+            "top": 339,
+            "bottom": 387
+          },
+          {
+            "action": "camp-leave",
+            "width": 82,
+            "height": 48,
+            "left": 802.5,
+            "right": 884.5,
+            "top": 339,
+            "bottom": 387
+          }
+        ],
+        "unchanged": true,
+        "storageKeys": []
+      },
+      "pass": false,
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(item.layout.buttons.every(button => button.width >= 48 && button.height >= 48))\n\n    at file:///D:/Workspace/Projects/xsj/Viral-Invasion/scripts/verify-weapon-camp.mjs:95:14",
+      "video": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\weapon-v016\\camp-components\\video\\page@d6a9de414ad0141f69bac79ca02f122e.webm"
+    }
+  ],
+  "errors": [],
+  "pass": false,
+  "serverClosed": true,
+  "browsersClosed": true,
+  "sourcesUnchanged": true
+}

@@ -44,6 +44,8 @@ export interface BeaconState extends Vec {
     | { kind: 'territory'; regionId: import('./territoryTypes').TerritoryNodeId; radius: number };
   /** Physical birth anchor; a remote guard command never moves this past deployment reach. */
   deploymentOrigin?: Vec;
+  /** The task owns this order until a later Q command explicitly releases it. */
+  constructionTaskId?: string;
 }
 export interface GrowthHistoryEntry { at: number; type: string; text: string }
 export interface GrowthState {
@@ -95,6 +97,11 @@ export interface DamageOrigin {
   cause: 'basic' | 'protocol' | 'ability'; ability?: 'nova' | 'scan' | 'dash' | 'catalysis' | 'host-event' | 'charged-slash' | 'cannon-aftershock' | 'territory-cannon';
   basicTool?: Tool; immuneCellId?: string;
   rootId?: string; wasPulseExposed?: boolean; protocolId?: ProtocolId; allowChain?: boolean;
+  weaponId?: import('./expedition').WeaponId;
+  skillId?: import('./weaponSkillsTypes').WeaponSkillId;
+  damageCategory?: import('./weaponSkillsTypes').WeaponDamageCategory;
+  armorResponse?: import('./weaponSkillsTypes').WeaponArmorResponse;
+  castId?: string;
 }
 interface ProtocolCommandBase { protocolId: ProtocolId; rootId: string; organId: OrganId }
 export type GrowthCommand =

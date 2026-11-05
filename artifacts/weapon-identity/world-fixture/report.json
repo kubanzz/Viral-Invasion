@@ -1,0 +1,759 @@
+{
+  "pass": true,
+  "method": "Explicit supplied states through the actual production Renderer, fixed camera and player pose; no natural-input or difficulty claim.",
+  "artInputSignature": "7d0a8533503528cee7eb166216a8a3812214269c7bd8414550a4347cb667d83d",
+  "sourceHashes": {
+    "src/render/phaserRenderer.ts": "4056b8647a347e65362910a68b7ceadb33c4dbeae3e05ea354a7e1bd412dfbf3",
+    "src/render/actorAnimation.ts": "2885a22a1f2e0778a66c31e6da399514709278eb5aab1318bdac11ae9acb4150",
+    "src/render/weaponPresentation.ts": "4ad1e913a20826b01bacf16d3baf5989e9bcc0b7feadc5672125e5b090b6f616",
+    "src/render/playerProjectileVisuals.ts": "a88a28fd5a0ec16cde8fefef2e34ecb8e73d6a666a832119c90b29241b0cc04f",
+    "asserts/art-selection.json": "e4a95384c2ee6e304b6250a9d224064235ce5847bf5f99bcad9927d446aa4b56"
+  },
+  "errors": [],
+  "entries": [
+    {
+      "weaponId": "steady",
+      "view": "right",
+      "facing": 0,
+      "selected": {
+        "weaponId": "steady",
+        "requestedAssetId": "fantasy.weapon.steady.held",
+        "assetId": "fantasy.weapon.steady.held",
+        "mode": "painted-static"
+      },
+      "tool": {
+        "actorId": "player:tool",
+        "entityId": "player",
+        "semanticId": "fantasy.weapon.steady.held",
+        "identity": "weapon.steady",
+        "action": "static",
+        "logicalAction": "held",
+        "clip": "static",
+        "requestedAction": "held",
+        "requestedClip": "static",
+        "requestedDirection": "radial",
+        "requestedAuthoredDirection": "radial",
+        "requestedFlipX": false,
+        "index": 0,
+        "frameIndex": 0,
+        "frame": "fantasy.weapon.steady.held",
+        "direction": "radial",
+        "authoredDirection": "radial",
+        "flipX": false,
+        "native": true,
+        "visible": true,
+        "groupReady": true,
+        "fallback": false,
+        "fallbackReason": null,
+        "candidate": false,
+        "motionMethod": "maliang-source-static-registered-weapon",
+        "source": {
+          "path": "ViralInvasion_Weapons_v2/weapons/steady_v02.png",
+          "sha256": "cb5b038acef2a169ad07ea26778e47af76648a533c514f0093549b986240ba03",
+          "sourceFrame": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          }
+        },
+        "sourceFoot": null,
+        "sourceGrip": {
+          "x": 160,
+          "y": 299.6363636363636
+        },
+        "sourceMuzzle": {
+          "x": 336.92149322872325,
+          "y": 164.62045489174207
+        },
+        "sourceScale": 0.125,
+        "commonCanvasScale": 1,
+        "worldFoot": {
+          "x": 1200,
+          "y": 750
+        },
+        "screenFoot": {
+          "x": 683,
+          "y": 384
+        },
+        "bodyBounds": {
+          "left": 1178.265625,
+          "right": 1230.765625,
+          "top": 474.79545454545456,
+          "bottom": 515.6704545454545
+        },
+        "grip": {
+          "x": 1198.890625,
+          "y": 507.5
+        },
+        "muzzle": {
+          "x": 1221.0058116535904,
+          "y": 490.62301140692233
+        },
+        "rotation": 0,
+        "ruleCue": [],
+        "flipY": false
+      },
+      "foot": {
+        "x": 683,
+        "y": 384
+      },
+      "cameraScale": 1.0666666666666667,
+      "screenshots": [
+        "steady-right-world.png",
+        "steady-right-player.png"
+      ]
+    },
+    {
+      "weaponId": "steady",
+      "view": "front-right",
+      "facing": 0.7853981633974483,
+      "selected": {
+        "weaponId": "steady",
+        "requestedAssetId": "fantasy.weapon.steady.held",
+        "assetId": "fantasy.weapon.steady.held",
+        "mode": "painted-static"
+      },
+      "tool": {
+        "actorId": "player:tool",
+        "entityId": "player",
+        "semanticId": "fantasy.weapon.steady.held",
+        "identity": "weapon.steady",
+        "action": "static",
+        "logicalAction": "held",
+        "clip": "static",
+        "requestedAction": "held",
+        "requestedClip": "static",
+        "requestedDirection": "radial",
+        "requestedAuthoredDirection": "radial",
+        "requestedFlipX": false,
+        "index": 0,
+        "frameIndex": 0,
+        "frame": "fantasy.weapon.steady.held",
+        "direction": "radial",
+        "authoredDirection": "radial",
+        "flipX": false,
+        "native": true,
+        "visible": true,
+        "groupReady": true,
+        "fallback": false,
+        "fallbackReason": null,
+        "candidate": false,
+        "motionMethod": "maliang-source-static-registered-weapon",
+        "source": {
+          "path": "ViralInvasion_Weapons_v2/weapons/steady_v02.png",
+          "sha256": "cb5b038acef2a169ad07ea26778e47af76648a533c514f0093549b986240ba03",
+          "sourceFrame": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          }
+        },
+        "sourceFoot": null,
+        "sourceGrip": {
+          "x": 160,
+          "y": 299.6363636363636
+        },
+        "sourceMuzzle": {
+          "x": 336.92149322872325,
+          "y": 164.62045489174207
+        },
+        "sourceScale": 0.125,
+        "commonCanvasScale": 1,
+        "worldFoot": {
+          "x": 1200,
+          "y": 750
+        },
+        "screenFoot": {
+          "x": 683,
+          "y": 384
+        },
+        "bodyBounds": {
+          "left": 1177.3786940043515,
+          "right": 1243.8677025994725,
+          "top": 468.9078532715203,
+          "bottom": 532.7553175852166
+        },
+        "grip": {
+          "x": 1198.890625,
+          "y": 507.5
+        },
+        "muzzle": {
+          "x": 1226.699162629967,
+          "y": 506.7257522510711
+        },
+        "rotation": 0.6240230529767568,
+        "ruleCue": [],
+        "flipY": false
+      },
+      "foot": {
+        "x": 683,
+        "y": 384
+      },
+      "cameraScale": 1.0666666666666667,
+      "screenshots": [
+        "steady-front-right-world.png",
+        "steady-front-right-player.png"
+      ]
+    },
+    {
+      "weaponId": "steady",
+      "view": "left",
+      "facing": 3.141592653589793,
+      "selected": {
+        "weaponId": "steady",
+        "requestedAssetId": "fantasy.weapon.steady.held",
+        "assetId": "fantasy.weapon.steady.held",
+        "mode": "painted-static"
+      },
+      "tool": {
+        "actorId": "player:tool",
+        "entityId": "player",
+        "semanticId": "fantasy.weapon.steady.held",
+        "identity": "weapon.steady",
+        "action": "static",
+        "logicalAction": "held",
+        "clip": "static",
+        "requestedAction": "held",
+        "requestedClip": "static",
+        "requestedDirection": "radial",
+        "requestedAuthoredDirection": "radial",
+        "requestedFlipX": false,
+        "index": 0,
+        "frameIndex": 0,
+        "frame": "fantasy.weapon.steady.held",
+        "direction": "radial",
+        "authoredDirection": "radial",
+        "flipX": false,
+        "native": true,
+        "visible": true,
+        "groupReady": true,
+        "fallback": false,
+        "fallbackReason": null,
+        "candidate": false,
+        "motionMethod": "maliang-source-static-registered-weapon",
+        "source": {
+          "path": "ViralInvasion_Weapons_v2/weapons/steady_v02.png",
+          "sha256": "cb5b038acef2a169ad07ea26778e47af76648a533c514f0093549b986240ba03",
+          "sourceFrame": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          }
+        },
+        "sourceFoot": null,
+        "sourceGrip": {
+          "x": 160,
+          "y": 299.6363636363636
+        },
+        "sourceMuzzle": {
+          "x": 336.92149322872325,
+          "y": 164.62045489174207
+        },
+        "sourceScale": 0.125,
+        "commonCanvasScale": 1,
+        "worldFoot": {
+          "x": 1200,
+          "y": 750
+        },
+        "screenFoot": {
+          "x": 683,
+          "y": 384
+        },
+        "bodyBounds": {
+          "left": 1169.234375,
+          "right": 1221.734375,
+          "top": 474.79545454545456,
+          "bottom": 515.6704545454545
+        },
+        "grip": {
+          "x": 1201.109375,
+          "y": 507.5
+        },
+        "muzzle": {
+          "x": 1178.9941883464096,
+          "y": 490.62301140692233
+        },
+        "rotation": 3.141592653589793,
+        "ruleCue": [],
+        "flipY": true
+      },
+      "foot": {
+        "x": 683,
+        "y": 384
+      },
+      "cameraScale": 1.0666666666666667,
+      "screenshots": [
+        "steady-left-world.png",
+        "steady-left-player.png"
+      ]
+    },
+    {
+      "weaponId": "steady",
+      "view": "back-right",
+      "facing": -0.7853981633974483,
+      "selected": {
+        "weaponId": "steady",
+        "requestedAssetId": "fantasy.weapon.steady.held",
+        "assetId": "fantasy.weapon.steady.held",
+        "mode": "painted-static"
+      },
+      "tool": {
+        "actorId": "player:tool",
+        "entityId": "player",
+        "semanticId": "fantasy.weapon.steady.held",
+        "identity": "weapon.steady",
+        "action": "static",
+        "logicalAction": "held",
+        "clip": "static",
+        "requestedAction": "held",
+        "requestedClip": "static",
+        "requestedDirection": "radial",
+        "requestedAuthoredDirection": "radial",
+        "requestedFlipX": false,
+        "index": 0,
+        "frameIndex": 0,
+        "frame": "fantasy.weapon.steady.held",
+        "direction": "radial",
+        "authoredDirection": "radial",
+        "flipX": false,
+        "native": true,
+        "visible": true,
+        "groupReady": true,
+        "fallback": false,
+        "fallbackReason": null,
+        "candidate": false,
+        "motionMethod": "maliang-source-static-registered-weapon",
+        "source": {
+          "path": "ViralInvasion_Weapons_v2/weapons/steady_v02.png",
+          "sha256": "cb5b038acef2a169ad07ea26778e47af76648a533c514f0093549b986240ba03",
+          "sourceFrame": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          }
+        },
+        "sourceFoot": null,
+        "sourceGrip": {
+          "x": 160,
+          "y": 299.6363636363636
+        },
+        "sourceMuzzle": {
+          "x": 336.92149322872325,
+          "y": 164.62045489174207
+        },
+        "sourceScale": 0.125,
+        "commonCanvasScale": 1,
+        "worldFoot": {
+          "x": 1200,
+          "y": 750
+        },
+        "screenFoot": {
+          "x": 683,
+          "y": 384
+        },
+        "bodyBounds": {
+          "left": 1165.918308741857,
+          "right": 1232.407317336978,
+          "top": 462.45942510576316,
+          "bottom": 526.3068894194595
+        },
+        "grip": {
+          "x": 1201.765625,
+          "y": 507.625
+        },
+        "muzzle": {
+          "x": 1209.8515542440298,
+          "y": 481.0067361017935
+        },
+        "rotation": -0.6240230529767568,
+        "ruleCue": [],
+        "flipY": false
+      },
+      "foot": {
+        "x": 683,
+        "y": 384
+      },
+      "cameraScale": 1.0666666666666667,
+      "screenshots": [
+        "steady-back-right-world.png",
+        "steady-back-right-player.png"
+      ]
+    },
+    {
+      "weaponId": "piercing",
+      "view": "right",
+      "facing": 0,
+      "selected": {
+        "weaponId": "piercing",
+        "requestedAssetId": "fantasy.weapon.piercing.held",
+        "assetId": "fantasy.weapon.piercing.held",
+        "mode": "painted-static"
+      },
+      "tool": {
+        "actorId": "player:tool",
+        "entityId": "player",
+        "semanticId": "fantasy.weapon.piercing.held",
+        "identity": "weapon.piercing",
+        "action": "static",
+        "logicalAction": "held",
+        "clip": "static",
+        "requestedAction": "held",
+        "requestedClip": "static",
+        "requestedDirection": "radial",
+        "requestedAuthoredDirection": "radial",
+        "requestedFlipX": false,
+        "index": 0,
+        "frameIndex": 0,
+        "frame": "fantasy.weapon.piercing.held",
+        "direction": "radial",
+        "authoredDirection": "radial",
+        "flipX": false,
+        "native": true,
+        "visible": true,
+        "groupReady": true,
+        "fallback": false,
+        "fallbackReason": null,
+        "candidate": false,
+        "motionMethod": "maliang-source-static-registered-weapon",
+        "source": {
+          "path": "ViralInvasion_Weapons_v2/weapons/piercing_v02.png",
+          "sha256": "c82b0786109657825ceea6bfc305442eb2af3f103b6fff087ae59ccc3babeaed",
+          "sourceFrame": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          }
+        },
+        "sourceFoot": null,
+        "sourceGrip": {
+          "x": 160,
+          "y": 299.6363636363636
+        },
+        "sourceMuzzle": {
+          "x": 429.41999999999996,
+          "y": 258.20000000000005
+        },
+        "sourceScale": 0.15625,
+        "commonCanvasScale": 1,
+        "worldFoot": {
+          "x": 1200,
+          "y": 750
+        },
+        "screenFoot": {
+          "x": 683,
+          "y": 384
+        },
+        "bodyBounds": {
+          "left": 1192.359375,
+          "right": 1251.515625,
+          "top": 469.1505681818182,
+          "bottom": 533.7755681818181
+        },
+        "grip": {
+          "x": 1198.890625,
+          "y": 507.5
+        },
+        "muzzle": {
+          "x": 1240.9875,
+          "y": 501.0255681818182
+        },
+        "rotation": 0,
+        "ruleCue": [],
+        "flipY": false
+      },
+      "foot": {
+        "x": 683,
+        "y": 384
+      },
+      "cameraScale": 1.0666666666666667,
+      "screenshots": [
+        "piercing-right-world.png",
+        "piercing-right-player.png"
+      ]
+    },
+    {
+      "weaponId": "piercing",
+      "view": "front-right",
+      "facing": 0.7853981633974483,
+      "selected": {
+        "weaponId": "piercing",
+        "requestedAssetId": "fantasy.weapon.piercing.held",
+        "assetId": "fantasy.weapon.piercing.held",
+        "mode": "painted-static"
+      },
+      "tool": {
+        "actorId": "player:tool",
+        "entityId": "player",
+        "semanticId": "fantasy.weapon.piercing.held",
+        "identity": "weapon.piercing",
+        "action": "static",
+        "logicalAction": "held",
+        "clip": "static",
+        "requestedAction": "held",
+        "requestedClip": "static",
+        "requestedDirection": "radial",
+        "requestedAuthoredDirection": "radial",
+        "requestedFlipX": false,
+        "index": 0,
+        "frameIndex": 0,
+        "frame": "fantasy.weapon.piercing.held",
+        "direction": "radial",
+        "authoredDirection": "radial",
+        "flipX": false,
+        "native": true,
+        "visible": true,
+        "groupReady": true,
+        "fallback": false,
+        "fallbackReason": null,
+        "candidate": false,
+        "motionMethod": "maliang-source-static-registered-weapon",
+        "source": {
+          "path": "ViralInvasion_Weapons_v2/weapons/piercing_v02.png",
+          "sha256": "c82b0786109657825ceea6bfc305442eb2af3f103b6fff087ae59ccc3babeaed",
+          "sourceFrame": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          }
+        },
+        "sourceFoot": null,
+        "sourceGrip": {
+          "x": 160,
+          "y": 299.6363636363636
+        },
+        "sourceMuzzle": {
+          "x": 429.41999999999996,
+          "y": 258.20000000000005
+        },
+        "sourceScale": 0.15625,
+        "commonCanvasScale": 1,
+        "worldFoot": {
+          "x": 1200,
+          "y": 750
+        },
+        "screenFoot": {
+          "x": 683,
+          "y": 384
+        },
+        "bodyBounds": {
+          "left": 1178.237352669494,
+          "right": 1264.0053739637221,
+          "top": 472.5618788637172,
+          "bottom": 559.5725621182928
+        },
+        "grip": {
+          "x": 1198.890625,
+          "y": 507.5
+        },
+        "muzzle": {
+          "x": 1236.8367258388162,
+          "y": 526.8431792439686
+        },
+        "rotation": 0.6240230529767568,
+        "ruleCue": [],
+        "flipY": false
+      },
+      "foot": {
+        "x": 683,
+        "y": 384
+      },
+      "cameraScale": 1.0666666666666667,
+      "screenshots": [
+        "piercing-front-right-world.png",
+        "piercing-front-right-player.png"
+      ]
+    },
+    {
+      "weaponId": "piercing",
+      "view": "left",
+      "facing": 3.141592653589793,
+      "selected": {
+        "weaponId": "piercing",
+        "requestedAssetId": "fantasy.weapon.piercing.held",
+        "assetId": "fantasy.weapon.piercing.held",
+        "mode": "painted-static"
+      },
+      "tool": {
+        "actorId": "player:tool",
+        "entityId": "player",
+        "semanticId": "fantasy.weapon.piercing.held",
+        "identity": "weapon.piercing",
+        "action": "static",
+        "logicalAction": "held",
+        "clip": "static",
+        "requestedAction": "held",
+        "requestedClip": "static",
+        "requestedDirection": "radial",
+        "requestedAuthoredDirection": "radial",
+        "requestedFlipX": false,
+        "index": 0,
+        "frameIndex": 0,
+        "frame": "fantasy.weapon.piercing.held",
+        "direction": "radial",
+        "authoredDirection": "radial",
+        "flipX": false,
+        "native": true,
+        "visible": true,
+        "groupReady": true,
+        "fallback": false,
+        "fallbackReason": null,
+        "candidate": false,
+        "motionMethod": "maliang-source-static-registered-weapon",
+        "source": {
+          "path": "ViralInvasion_Weapons_v2/weapons/piercing_v02.png",
+          "sha256": "c82b0786109657825ceea6bfc305442eb2af3f103b6fff087ae59ccc3babeaed",
+          "sourceFrame": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          }
+        },
+        "sourceFoot": null,
+        "sourceGrip": {
+          "x": 160,
+          "y": 299.6363636363636
+        },
+        "sourceMuzzle": {
+          "x": 429.41999999999996,
+          "y": 258.20000000000005
+        },
+        "sourceScale": 0.15625,
+        "commonCanvasScale": 1,
+        "worldFoot": {
+          "x": 1200,
+          "y": 750
+        },
+        "screenFoot": {
+          "x": 683,
+          "y": 384
+        },
+        "bodyBounds": {
+          "left": 1148.484375,
+          "right": 1207.640625,
+          "top": 469.1505681818182,
+          "bottom": 533.7755681818181
+        },
+        "grip": {
+          "x": 1201.109375,
+          "y": 507.5
+        },
+        "muzzle": {
+          "x": 1159.0125,
+          "y": 501.0255681818182
+        },
+        "rotation": 3.141592653589793,
+        "ruleCue": [],
+        "flipY": true
+      },
+      "foot": {
+        "x": 683,
+        "y": 384
+      },
+      "cameraScale": 1.0666666666666667,
+      "screenshots": [
+        "piercing-left-world.png",
+        "piercing-left-player.png"
+      ]
+    },
+    {
+      "weaponId": "piercing",
+      "view": "back-right",
+      "facing": -0.7853981633974483,
+      "selected": {
+        "weaponId": "piercing",
+        "requestedAssetId": "fantasy.weapon.piercing.held",
+        "assetId": "fantasy.weapon.piercing.held",
+        "mode": "painted-static"
+      },
+      "tool": {
+        "actorId": "player:tool",
+        "entityId": "player",
+        "semanticId": "fantasy.weapon.piercing.held",
+        "identity": "weapon.piercing",
+        "action": "static",
+        "logicalAction": "held",
+        "clip": "static",
+        "requestedAction": "held",
+        "requestedClip": "static",
+        "requestedDirection": "radial",
+        "requestedAuthoredDirection": "radial",
+        "requestedFlipX": false,
+        "index": 0,
+        "frameIndex": 0,
+        "frame": "fantasy.weapon.piercing.held",
+        "direction": "radial",
+        "authoredDirection": "radial",
+        "flipX": false,
+        "native": true,
+        "visible": true,
+        "groupReady": true,
+        "fallback": false,
+        "fallbackReason": null,
+        "candidate": false,
+        "motionMethod": "maliang-source-static-registered-weapon",
+        "source": {
+          "path": "ViralInvasion_Weapons_v2/weapons/piercing_v02.png",
+          "sha256": "c82b0786109657825ceea6bfc305442eb2af3f103b6fff087ae59ccc3babeaed",
+          "sourceFrame": {
+            "x": 0,
+            "y": 0,
+            "width": 512,
+            "height": 512
+          }
+        },
+        "sourceFoot": null,
+        "sourceGrip": {
+          "x": 160,
+          "y": 299.6363636363636
+        },
+        "sourceMuzzle": {
+          "x": 429.41999999999996,
+          "y": 258.20000000000005
+        },
+        "sourceScale": 0.15625,
+        "commonCanvasScale": 1,
+        "worldFoot": {
+          "x": 1200,
+          "y": 750
+        },
+        "screenFoot": {
+          "x": 683,
+          "y": 384
+        },
+        "bodyBounds": {
+          "left": 1174.0575370875576,
+          "right": 1259.8255583817859,
+          "top": 445.75408290679576,
+          "bottom": 532.7647661613713
+        },
+        "grip": {
+          "x": 1201.765625,
+          "y": 507.625
+        },
+        "muzzle": {
+          "x": 1232.1456436217654,
+          "y": 477.7733732323498
+        },
+        "rotation": -0.6240230529767568,
+        "ruleCue": [],
+        "flipY": false
+      },
+      "foot": {
+        "x": 683,
+        "y": 384
+      },
+      "cameraScale": 1.0666666666666667,
+      "screenshots": [
+        "piercing-back-right-world.png",
+        "piercing-back-right-player.png"
+      ]
+    }
+  ]
+}

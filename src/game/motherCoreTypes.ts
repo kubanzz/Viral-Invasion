@@ -2,7 +2,7 @@ import type { OrganId, TraitId } from './battleTypes';
 import type { Effect, GameEvent, Player, Target, Tissue, Vec, WorldGeometry } from './types';
 
 export type MotherCorePhase = 'awakening' | 'windup' | 'recovery' | 'defeated';
-export type MotherCoreAttackKind = 'crystal-sweep' | 'fission-burst' | 'corrosion' | 'brood';
+export type MotherCoreAttackKind = 'crystal-sweep' | 'fission-burst' | 'corrosion' | 'brood' | 'heart-pulse';
 export interface MotherCoreAttack {
   id: string; kind: MotherCoreAttackKind; trait: TraitId;
   startedAt: number; resolveAt: number;
@@ -21,10 +21,16 @@ export interface MotherCoreState {
   introduced: boolean; lastScanTick: number; lastPulseTick: number;
   seenTraits: TraitId[];
   membrane: { total: number; remaining: number; floorRatio: number; thresholdReached: boolean };
+  /** Heart expedition only; old campaign controllers do not opt into this phase. */
+  heartExpedition?: boolean;
+  secondPhase?: boolean;
+  pulseQueued?: boolean;
+  pulseUsed?: boolean;
+  pulse?: { attack: MotherCoreAttack; startedAt: number; endsAt: number; hitPlayer: boolean };
 }
 export interface MotherCoreOptions {
   coreId: string; organId: OrganId; traits: readonly TraitId[];
-  tick: number; elapsed: number; facing?: number;
+  tick: number; elapsed: number; facing?: number; heartExpedition?: boolean;
 }
 export interface MotherCoreContext {
   tick: number; elapsed: number; active: boolean;

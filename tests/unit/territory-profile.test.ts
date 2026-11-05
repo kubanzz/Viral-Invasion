@@ -3,8 +3,9 @@ import { GameSession } from '../../src/game/session';
 import type { GameState } from '../../src/game/types';
 import { createTerritoryState } from '../../src/game/territory';
 import { ENDLESS_PROFILE_STORAGE_KEY, LEGACY_TERRITORY_PROFILE_STORAGE_KEY, TERRITORY_PROFILE_STORAGE_KEY, TerritoryProfileStore,
-  DUAL_FRONT_PROFILE_STORAGE_KEY, GARRISON_PROFILE_STORAGE_KEY, emptyTerritoryProfile, parseTerritoryProfile, type EndlessProfileStorage } from '../../src/meta/endlessProfile';
+  DUAL_FRONT_PROFILE_STORAGE_KEY, GARRISON_PROFILE_STORAGE_KEY, COMBAT_PROFILE_STORAGE_KEY, EXPEDITION_PROFILE_STORAGE_KEY, WEAPON_SKILLS_PROFILE_STORAGE_KEY, emptyTerritoryProfile, parseTerritoryProfile, type EndlessProfileStorage } from '../../src/meta/endlessProfile';
 import { territoryLegacyMarkup } from '../../src/ui/territoryHud';
+import { mainMenuOverlay } from '../../src/ui/mainMenu';
 
 class Storage implements EndlessProfileStorage {
   items = new Map<string, string>(); writes: string[] = []; blocked = false; discard = false;
@@ -31,14 +32,64 @@ function fixture(success = true): GameState {
   return state;
 }
 
-describe('territory v3 dual-front rescue checkpoints', () => {
+describe('territory v8 weapon-identity checkpoints', () => {
+  it('previews v7 weapon-kit scores read-only in the menu while saving v8 separately', () => {
+    const prior = new TerritoryProfileStore(null); prior.checkpoint(fixture());
+    const old = { ...prior.data, schemaVersion: 7 }, bytes = JSON.stringify(old), storage = new Storage();
+    storage.items.set(WEAPON_SKILLS_PROFILE_STORAGE_KEY, bytes);
+    const store = new TerritoryProfileStore(storage), snapshot = store.load();
+    expect(snapshot.previousWeaponSkills).toEqual(old);
+    expect(snapshot.legacyAvailable).toBe(true); expect(snapshot.data).toMatchObject({ schemaVersion: 8, runs: 0, rescues: 0, bestScore: 0 });
+    expect(mainMenuOverlay(snapshot, false)).toContain('旧规则v7战绩');
+    expect(territoryLegacyMarkup(snapshot)).toContain('最高2200分');
+    snapshot.previousWeaponSkills!.bestScore = 1;
+    expect(store.load().previousWeaponSkills!.bestScore).toBe(2200);
+    expect(parseTerritoryProfile(old)).toBeNull();
+    expect(store.checkpoint(fixture()).kind).toBe('recorded');
+    expect(store.data).toMatchObject({ schemaVersion: 8, runs: 1, rescues: 1 });
+    expect(storage.items.get(WEAPON_SKILLS_PROFILE_STORAGE_KEY)).toBe(bytes);
+    expect(storage.writes.every(key => key.startsWith(TERRITORY_PROFILE_STORAGE_KEY))).toBe(true);
+  });
+  it('ignores corrupt and wrong-schema v7 previews without rewriting them or suppressing current saves', () => {
+    for (const bytes of ['{bad', JSON.stringify({ ...emptyTerritoryProfile(), schemaVersion: 6 }), JSON.stringify({ ...emptyTerritoryProfile(), schemaVersion: 7, rescues: 2 })]) {
+      const storage = new Storage(); storage.items.set(WEAPON_SKILLS_PROFILE_STORAGE_KEY, bytes);
+      const store = new TerritoryProfileStore(storage);
+      expect(store.load().previousWeaponSkills).toBeUndefined();
+      expect(store.data).toMatchObject({ schemaVersion: 8, runs: 0 });
+      store.checkpoint(fixture());
+      expect(storage.items.get(WEAPON_SKILLS_PROFILE_STORAGE_KEY)).toBe(bytes);
+      expect(store.data.rescues).toBe(1);
+    }
+  });
+  it('previews v6 expedition results without merging or rewriting their ranking', () => {
+    const prior = new TerritoryProfileStore(null); prior.checkpoint(fixture());
+    const old = { ...prior.data, schemaVersion: 6 }, bytes = JSON.stringify(old), storage = new Storage();
+    storage.items.set(EXPEDITION_PROFILE_STORAGE_KEY, bytes);
+    const store = new TerritoryProfileStore(storage), snapshot = store.load();
+    expect(snapshot.previousExpedition).toEqual(old);
+    expect(snapshot.legacyAvailable).toBe(true); expect(store.data).toMatchObject({ schemaVersion: 8, runs: 0, rescues: 0, bestScore: 0 });
+    store.checkpoint(fixture()); expect(store.data.rescues).toBe(1);
+    expect(storage.items.get(EXPEDITION_PROFILE_STORAGE_KEY)).toBe(bytes);
+    expect(storage.writes.every(key => key.startsWith(TERRITORY_PROFILE_STORAGE_KEY))).toBe(true);
+    snapshot.previousExpedition!.bestScore = 1;
+    expect(store.load().previousExpedition!.bestScore).toBe(2200);
+    expect(parseTerritoryProfile(old)).toBeNull();
+  });
+  it('exposes v5 combat results read-only while keeping the new ranking empty', () => {
+    const storage = new Storage(), old = { ...emptyTerritoryProfile(), schemaVersion: 5, runs: 1, rescues: 1, bestScore: 5500 };
+    const bytes = JSON.stringify(old); storage.items.set(COMBAT_PROFILE_STORAGE_KEY, bytes);
+    const store = new TerritoryProfileStore(storage);
+    expect(store.load().previousCombat).toEqual(old); expect(store.data).toMatchObject({ schemaVersion: 8, runs: 0, bestScore: 0 });
+    store.save(); expect(storage.items.get(COMBAT_PROFILE_STORAGE_KEY)).toBe(bytes);
+    expect(storage.writes.every(key => key.startsWith(TERRITORY_PROFILE_STORAGE_KEY))).toBe(true);
+  });
   it('shows valid v4 scores read-only and saves v5 runs without rewriting or mixing old scores', () => {
     const prior = new TerritoryProfileStore(null); prior.checkpoint(fixture());
     const old = { ...prior.data, schemaVersion: 4 }, bytes = JSON.stringify(old), storage = new Storage();
     storage.items.set(GARRISON_PROFILE_STORAGE_KEY, bytes);
     const store = new TerritoryProfileStore(storage), snapshot = store.load();
     expect(snapshot.previousGarrison).toEqual(old);
-    expect(snapshot.data).toMatchObject({ schemaVersion: 5, runs: 0, bestScore: 0 });
+    expect(snapshot.data).toMatchObject({ schemaVersion: 8, runs: 0, bestScore: 0 });
     expect(territoryLegacyMarkup(snapshot)).toContain('旧规则v4');
     expect(territoryLegacyMarkup(snapshot)).toContain('2200分');
     store.checkpoint(fixture());
@@ -54,7 +105,7 @@ describe('territory v3 dual-front rescue checkpoints', () => {
     expect(store.load().legacyAvailable).toBe(true); expect(store.data.runs).toBe(0);
     store.checkpoint(fixture());
     expect(storage.items.get(DUAL_FRONT_PROFILE_STORAGE_KEY)).toBe(old);
-    expect(store.data.schemaVersion).toBe(5);
+    expect(store.data.schemaVersion).toBe(8);
   });
 
   it('updates cumulative health time on the same run without changing the victory receipt', () => {
@@ -73,12 +124,12 @@ describe('territory v3 dual-front rescue checkpoints', () => {
     storage.items.set(LEGACY_TERRITORY_PROFILE_STORAGE_KEY, legacy);
     const store = new TerritoryProfileStore(storage);
     expect(store.load().legacyAvailable).toBe(true);
-    expect(store.data).toMatchObject({ schemaVersion: 5, runs: 0, bestScore: 0 });
+    expect(store.data).toMatchObject({ schemaVersion: 8, runs: 0, bestScore: 0 });
     expect(parseTerritoryProfile(JSON.parse(legacy))).toBeNull();
     expect(store.checkpoint(fixture())).toMatchObject({ kind: 'recorded', persisted: true });
     expect(storage.items.get(LEGACY_TERRITORY_PROFILE_STORAGE_KEY)).toBe(legacy);
     expect(storage.writes.every(key => key.startsWith(TERRITORY_PROFILE_STORAGE_KEY))).toBe(true);
-    expect(new TerritoryProfileStore(storage).data).toMatchObject({ schemaVersion: 5, runs: 1, bestScore: 2200 });
+    expect(new TerritoryProfileStore(storage).data).toMatchObject({ schemaVersion: 8, runs: 1, bestScore: 2200 });
   });
   it('starts independently and preserves the v1 file byte for byte', () => {
     const storage = new Storage(), legacy = '{"schemaVersion":1,"bestScore":999999}';

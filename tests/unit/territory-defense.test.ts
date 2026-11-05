@@ -124,7 +124,43 @@ describe('deterministic territorial military growth', () => {
   });
 });
 
-describe('finite garrison handoffs and source membranes', () => {
+describe('node-powered source membranes and optional garrisons', () => {
+  it.each(['north', 'south'] as const)('opens the %s source at rank I without deploying, waiting or earning a handoff', laneId => {
+    const { state } = fixture();
+    const frontId = laneId === 'north' ? 'front-north' : 'front-south';
+    const sourceId = laneId === 'north' ? 'source-west' : 'source-east';
+    expect(territoryBeaconRank(state)).toBe(1);
+    expect(territorySourceShielded(state, sourceId)).toBe(true);
+    node(state, frontId).owner = 'healthy';
+    expect(territorySourceShielded(state, sourceId)).toBe(false);
+    expect(state.territory!.defense[laneId].handoff).toBe(false);
+    expect(state.growth!.cells ?? []).toHaveLength(0);
+    expect(territorySourceShielded(state, laneId === 'north' ? 'source-east' : 'source-west')).toBe(true);
+  });
+  it('allows player-only cleanup without delaying access or reserving another squad', () => {
+    const { state } = fixture(); node(state, 'front-north').owner = 'healthy';
+    const budget = state.endless!.remainingToSpawn;
+    const events = clear(state, squad(state, 'north', 'front-north'));
+    expect(territorySourceShielded(state, 'source-west')).toBe(false);
+    expect(events.some(event => event.type.startsWith('TERRITORY_HANDOFF'))).toBe(false);
+    expect(state.endless!.remainingToSpawn).toBe(budget);
+  });
+  it.each(['redirect', 'death'] as const)('keeps the membrane open on garrison %s', mode => {
+    const { state } = fixture(); mature(state); const beacon = place(state, 'north');
+    if (mode === 'redirect') beacon.guard = { kind: 'territory', regionId: 'core', radius: 300 };
+    else for (const cell of state.growth!.cells!) cell.hp = 0;
+    advanceTerritoryDefense(state, BALANCE.step);
+    expect(territorySourceShielded(state, 'source-west')).toBe(false);
+  });
+  it.each(['front-north', 'heart-healing-1'] as const)('restores the membrane only after %s is captured, then opens on recapture', nodeId => {
+    const { state } = fixture(); node(state, 'front-north').owner = 'healthy';
+    const supplier = node(state, nodeId); supplier.infectionProgress = 99;
+    expect(territorySourceShielded(state, 'source-west')).toBe(false);
+    supplier.owner = 'infected'; expect(territorySourceShielded(state, 'source-west')).toBe(true);
+    supplier.owner = 'healthy'; expect(territorySourceShielded(state, 'source-west')).toBe(false);
+    state.territory!.sources['source-west'].destroyed = true; supplier.owner = 'infected';
+    expect(territorySourceShielded(state, 'source-west')).toBe(false);
+  });
   it('keeps a real fission parent and both actual offspring in the same finite squad until every child is cleared', () => {
     const { game, state } = fixture(), group = squad(state, 'north', 'heart-healing-1');
     group.members[0].traits = ['FISSION'];
@@ -142,57 +178,6 @@ describe('finite garrison handoffs and source membranes', () => {
     game.step({ moveX: 0, moveY: 0, fire: false, aim: state.player });
     expect(group.plan.status).toBe('complete');
     expect(state.territory!.defense.north.repelled).toBe(true);
-  });
-  it('binds only a mature, physically arrived garrison to its next finite squad; real invader contact permits player assistance', () => {
-    const { state } = fixture(); mature(state); place(state, 'north');
-    const group = squad(state, 'north', 'front-north'), defense = state.territory!.defense.north;
-    expect(defense.attempt?.squadId).toBe(group.plan.id);
-    expect(territorySourceShielded(state, 'source-west')).toBe(true);
-    const cell = state.growth!.cells![0];
-    receipt(state, 'TARGET_HIT', { id: group.members[0].id, damage: 1, immuneCellId: cell.id });
-    expect(clear(state, group).map(event => event.type)).toContain('TERRITORY_HANDOFF_COMPLETED');
-    expect(defense.handoff).toBe(true); expect(territorySourceShielded(state, 'source-west')).toBe(false);
-    cell.x = node(state, 'front-north').x + 240;
-    expect(territorySourceShielded(state, 'source-west')).toBe(false);
-  });
-  it('does not start a handoff at rank I, with one arrived body, or after an already-spawned squad', () => {
-    const first = fixture(); place(first.state, 'north');
-    squad(first.state, 'north', 'front-north'); expect(first.state.territory!.defense.north.attempt).toBeUndefined();
-    const second = fixture(); mature(second.state); place(second.state, 'north', 1);
-    squad(second.state, 'north', 'front-north'); expect(second.state.territory!.defense.north.attempt).toBeUndefined();
-    const third = fixture(); mature(third.state); const group = squad(third.state, 'north', 'heart-healing-1'); place(third.state, 'north');
-    advanceTerritoryDefense(third.state, BALANCE.step); expect(third.state.territory!.defense.north.attempt).toBeUndefined();
-    clear(third.state, group); expect(third.state.territory!.defense.north.handoff).toBe(false);
-  });
-  it('fails a player-only cleanup without reserving new births and can retry on a later finite squad', () => {
-    const { state } = fixture(); mature(state); place(state, 'north');
-    const originalBudget = state.endless!.remainingToSpawn;
-    clear(state, squad(state, 'north', 'front-north'));
-    expect(state.territory!.defense.north.handoff).toBe(false);
-    expect(state.territory!.defense.north.attempt).toBeUndefined();
-    expect(state.endless!.remainingToSpawn).toBe(originalBudget);
-    const second = squad(state, 'north', 'front-north', 1);
-    receipt(state, 'TARGET_HIT', { id: second.members[0].id, damage: 1, immuneCellId: state.growth!.cells![0].id });
-    clear(state, second); expect(state.territory!.defense.north.handoff).toBe(true);
-  });
-  it.each(['redirect', 'death', 'capture'] as const)('invalidates an ongoing handoff on %s without erasing military growth', mode => {
-    const { state } = fixture(); mature(state); const beacon = place(state, 'north');
-    squad(state, 'north', 'front-north');
-    if (mode === 'redirect') beacon.guard = { kind: 'territory', regionId: 'core', radius: 300 };
-    if (mode === 'death') for (const cell of state.growth!.cells!) cell.hp = 0;
-    if (mode === 'capture') node(state, 'front-north').owner = 'infected';
-    expect(advanceTerritoryDefense(state, BALANCE.step).map(event => event.type)).toContain('TERRITORY_HANDOFF_FAILED');
-    expect(state.territory!.defense.north.attempt).toBeUndefined(); expect(territoryBeaconRank(state)).toBe(3);
-  });
-  it('retains historical handoff but restores the membrane if its spring or army is lost', () => {
-    const { state } = fixture(); mature(state); const beacon = place(state, 'north');
-    state.territory!.defense.north.handoff = true;
-    expect(territorySourceShielded(state, 'source-west')).toBe(false);
-    node(state, 'heart-healing-1').owner = 'infected'; expect(territorySourceShielded(state, 'source-west')).toBe(true);
-    node(state, 'heart-healing-1').owner = 'healthy'; beacon.guard = undefined;
-    expect(territorySourceShielded(state, 'source-west')).toBe(true); expect(state.territory!.defense.north.handoff).toBe(true);
-    state.territory!.sources['source-west'].destroyed = true;
-    expect(territorySourceShielded(state, 'source-west')).toBe(false);
   });
 });
 

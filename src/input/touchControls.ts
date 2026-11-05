@@ -1,4 +1,5 @@
-import { BALANCE, type Vec } from '../game/types';
+import { BALANCE, type GameState, type Vec } from '../game/types';
+import { weaponSkillViews, type WeaponSkillSlot } from '../game/weaponSkills';
 import { endlessCombatStats } from '../game/endlessGrowth';
 import { TRACTION_BALANCE } from '../game/traction';
 import { isTerritoryPlayerAirborne, territoryCannonView } from '../game/territoryCannon';
@@ -15,7 +16,7 @@ export interface TouchControlsOptions {
   onPreviewChange?: (preview: SkillPresentation | undefined) => void;
 }
 
-type PointerKind = 'move' | 'aim' | 'attack' | 'skill' | 'guide' | 'cast' | 'action' | 'point' | 'charge' | 'context' | 'garrison' | 'cannon';
+type PointerKind = 'move' | 'aim' | 'attack' | 'skill' | 'weapon' | 'guide' | 'cast' | 'action' | 'point' | 'charge' | 'context' | 'garrison' | 'cannon';
 interface OwnedPointer {
   kind: PointerKind;
   element: HTMLElement;
@@ -24,17 +25,29 @@ interface OwnedPointer {
   dragged?: boolean;
   frozen?: boolean;
 }
-const actions = new Set<GameAction>(['dash', 'scan', 'interact', 'antibody']);
+const actions = new Set<GameAction>(['dash', 'scan', 'interact', 'antibody', 'territory']);
 
 /** DOM adapter only: all gameplay actions are consumed through Controller.frame. */
 export class TouchControls {
   private readonly pointers = new Map<number, OwnedPointer>();
+  /** Secondary touch pointers do not reliably synthesize a details click. */
+  private readonly touchSummaryActivation = new WeakMap<HTMLElement, number>();
   private readonly disposers: (() => void)[] = [];
   private readonly sticks: HTMLElement[];
 
   constructor(private readonly options: TouchControlsOptions) {
     this.sticks = [...options.root.querySelectorAll<HTMLElement>('.mobile-stick[data-stick]')];
     this.listen(options.root, 'pointerdown', event => { this.startControl(event as PointerEvent); this.present(); });
+    this.listen(options.root, 'click', event => {
+      const summary = (event.target as HTMLElement).closest<HTMLElement>('#mobile-tactical-menu > summary');
+      const activatedAt = summary ? this.touchSummaryActivation.get(summary) : undefined;
+      // Keyboard activation has detail=0 and must retain native accessibility.
+      // Consume only the compatibility click after our touch pointer action.
+      const compatibilityTouchClick = (event as PointerEvent).pointerType === 'touch' || (event as MouseEvent).detail !== 0;
+      if (summary && compatibilityTouchClick && activatedAt !== undefined && performance.now() - activatedAt < 800) {
+        event.preventDefault(); this.touchSummaryActivation.delete(summary);
+      }
+    });
     this.listen(options.canvas, 'pointerdown', event => this.startPoint(event as PointerEvent));
     this.listen(window, 'pointermove', event => { this.move(event as PointerEvent); this.present(); });
     this.listen(window, 'pointerup', event => { this.end(event as PointerEvent); this.present(); });
@@ -61,7 +74,17 @@ export class TouchControls {
 
   private startControl(event: PointerEvent): void {
     if (!this.accepts() || event.button !== 0 || this.pointers.has(event.pointerId)) return;
-    const element = (event.target as HTMLElement).closest<HTMLElement>('.mobile-stick[data-stick], [data-touch-action], [data-touch-skill]');
+    const summary = (event.target as HTMLElement).closest<HTMLElement>('#mobile-tactical-menu > summary');
+    if (event.pointerType === 'touch' && summary && this.options.root.contains(summary)) {
+      const menu = summary.parentElement as HTMLDetailsElement | null;
+      if (menu && !menu.hidden) {
+        event.preventDefault();
+        menu.open = !menu.open;
+        this.touchSummaryActivation.set(summary, performance.now());
+      }
+      return;
+    }
+    const element = (event.target as HTMLElement).closest<HTMLElement>('.mobile-stick[data-stick], [data-touch-action], [data-touch-skill], [data-weapon-skill]');
     if (!element || !this.options.root.contains(element) || (element as HTMLButtonElement).disabled) return;
     const stick = element.dataset.stick;
     if (stick === 'move' || stick === 'aim') {
@@ -80,6 +103,20 @@ export class TouchControls {
       this.capture(event, { kind: 'attack', element, start: { x: event.clientX, y: event.clientY } });
       this.options.input.setTouchAttack(true); return;
     }
+    const weaponSlot = Number(element.dataset.weaponSkill) as WeaponSkillSlot;
+    if ([1, 2, 3].includes(weaponSlot)) {
+      const state = this.options.getState();
+      if (!state.territory || this.owns('weapon') || this.owns('skill') || this.owns('guide') || this.owns('charge') || this.owns('cannon')) return;
+      const view = weaponSkillViews(state as GameState).find(skill => skill.slot === weaponSlot);
+      if (!view?.ready) return;
+      const aim = this.options.input.getAim(state, this.options.screenToWorld);
+      if (view.aim === 'self') {
+        this.options.input.queueWeaponSkill(weaponSlot, aim);
+        this.capture(event, { kind: 'action', element }); return;
+      }
+      if (!this.options.input.beginWeaponSkillPreview(weaponSlot, aim, view)) return;
+      this.capture(event, { kind: 'weapon', element, start: { x: event.clientX, y: event.clientY } }); return;
+    }
     const skill = element.dataset.touchSkill;
     if (skill === '2' || skill === '3' || skill === 'scan') {
       if (skill === 'scan' && this.options.getState().territory) {
@@ -87,13 +124,8 @@ export class TouchControls {
         this.capture(event, { kind: 'garrison', element });
         this.options.input.queueAction('scan'); return;
       }
-      if (skill === '3' && this.options.getState().territory) {
-        if (this.owns('context')) return;
-        this.options.input.setTerritoryMode(true);
-        this.capture(event, { kind: 'context', element });
-        this.options.input.queueAction('territory'); return;
-      }
-      if (this.owns('skill') || this.owns('guide') || this.owns('cannon')) return;
+      if (this.options.getState().territory) return;
+      if (this.owns('weapon') || this.owns('skill') || this.owns('guide') || this.owns('cannon')) return;
       const kind: SkillKind = skill === 'scan' ? 'scan' : Number(skill) as 2 | 3;
       const state = this.options.getState();
       const aim = this.options.input.getAim(state, this.options.screenToWorld);
@@ -102,13 +134,16 @@ export class TouchControls {
     }
     const action = element.dataset.touchAction;
     if (action === 'interact' && this.options.getState().territory) {
-      if (this.owns('cannon') || this.owns('skill') || this.owns('guide')) return;
+      if (this.owns('cannon') || this.owns('weapon') || this.owns('skill') || this.owns('guide')) return;
       const state = this.options.getState(), cannon = territoryCannonView(state as Parameters<typeof territoryCannonView>[0]);
       if (!cannon?.nearby || !cannon.ready) return;
       const aim = this.options.input.getAim(state, this.options.screenToWorld);
-      this.options.input.beginTouchCannon(aim, cannon.origin, cannon.range, cannon.radius);
+      if (!this.options.input.beginTouchCannon(aim, cannon.origin, cannon.range, cannon.radius)) return;
       this.capture(event, { kind: 'cannon', element, start: { x: event.clientX, y: event.clientY } });
-    } else if (action === 'dash' && this.options.getState().endless) {
+    } else if (action === 'territory' && this.options.getState().territory) {
+      if (this.owns('context')) return;
+      this.capture(event, { kind: 'context', element }); this.options.input.queueAction('territory');
+    } else if (action === 'dash' && this.options.getState().endless && !this.options.getState().territory) {
       if (this.owns('charge') || this.owns('skill') || this.owns('guide')) return;
       const state = this.options.getState(), aim = this.options.input.getAim(state, this.options.screenToWorld);
       this.capture(event, { kind: 'charge', element, start: { x: event.clientX, y: event.clientY } });
@@ -125,7 +160,7 @@ export class TouchControls {
   }
 
   private startPoint(event: PointerEvent): void {
-    if (event.pointerType !== 'touch' || !this.accepts() || this.owns('point') || this.owns('skill') || this.owns('guide') || this.owns('charge') || this.owns('cannon')) return;
+    if (event.pointerType !== 'touch' || !this.accepts() || this.owns('point') || this.owns('weapon') || this.owns('skill') || this.owns('guide') || this.owns('charge') || this.owns('cannon')) return;
     this.capture(event, { kind: 'point', element: this.options.canvas }); this.selectPoint(event);
   }
 
@@ -249,7 +284,7 @@ export class TouchControls {
         if (knob) knob.style.translate = `${dx * scale}px ${dy * scale}px`;
       }
     }
-    else if (pointer.kind === 'skill') this.updateSkill(pointer, event);
+    else if (pointer.kind === 'skill' || pointer.kind === 'weapon') this.updateSkill(pointer, event);
     else if (pointer.kind === 'guide') this.updateGuide(pointer, event);
     else if (pointer.kind === 'charge') this.updateCharge(pointer, event);
     else if (pointer.kind === 'cannon') this.updateCannon(pointer, event);
@@ -273,7 +308,7 @@ export class TouchControls {
     if (pointer.kind === 'attack') {
       this.options.input.releaseTouchAim(this.options.getState(), this.options.screenToWorld); this.options.input.setTouchAttack(false, event.type !== 'pointerup');
     }
-    if (pointer.kind === 'skill') {
+    if (pointer.kind === 'skill' || pointer.kind === 'weapon') {
       if (event.type !== 'pointerup' || this.hit('[data-touch-cancel]', event)) this.options.input.cancelSkillPreview();
       else this.options.input.commitSkillPreview(this.options.getState(), this.options.screenToWorld);
     }
@@ -312,7 +347,7 @@ export class TouchControls {
     if (cancel) cancel.hidden = !preview || preview.phase !== 'preview';
     if (guide) guide.hidden = !preview || preview.phase !== 'preview' || preview.kind !== 2 || !this.guideUnlocked();
     root.dataset.pointerHeld = String(this.pointers.size > 0);
-    for (const pointer of this.pointers.values()) if (pointer.kind === 'skill' || pointer.kind === 'guide' || pointer.kind === 'charge' || pointer.kind === 'cannon') pointer.element.dataset.cancelled = String(preview?.cancelled ?? false);
+    for (const pointer of this.pointers.values()) if (pointer.kind === 'skill' || pointer.kind === 'weapon' || pointer.kind === 'guide' || pointer.kind === 'charge' || pointer.kind === 'cannon') pointer.element.dataset.cancelled = String(preview?.cancelled ?? false);
     this.options.onPreviewChange?.(preview);
   }
 

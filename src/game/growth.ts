@@ -527,6 +527,9 @@ export class GrowthController {
       // Repoint the zone, never the bodies. Preserve every unit's independent
       // bite clock and lifetime; normal fixed updates perform the actual travel.
       this.state.beacon={...old,...point(guardOrder?.anchor ?? position)};
+      // Explicit Q owns the next order. A paused building must never restore
+      // this squad's superseded defense command after the player redirects it.
+      delete this.state.beacon.constructionTaskId;
       if(guardOrder)this.state.beacon.guard={...guardOrder.guard};else delete this.state.beacon.guard;
       const focus=guard?undefined:selectImmuneFocusTarget(context,this.state.beacon);
       if(focus)this.state.beacon.focus={targetId:focus.id,until:Math.min(context.elapsed+IMMUNE_FOCUS_BALANCE.duration,old.until)};
@@ -545,7 +548,7 @@ export class GrowthController {
         x:this.state.beacon.x,y:this.state.beacon.y,radius:IMMUNE_GUARD_BALANCE.radius,plannedUntil:old.until,newSquad:false,...(guardOrder?.guard.kind==='territory'?{regionId:guardOrder.guard.regionId}:{})}});
       this.remember('IMMUNE_SQUAD_REDIRECTED',context.territory
         ? withdrewFront
-          ? '最近军团向脚下行军；原前线撤防可能恢复感染源护膜。生命与攻击冷却保留。'
+          ? '最近军团向脚下行军；留意原前线，节点失守会恢复感染源护膜。生命与攻击冷却保留。'
           : '最近军团向脚下行军并留守；生命、人数与攻击冷却保留。'
         : '免疫军团转向新战线；保留当前生命与吞噬冷却，不消耗组织。',context.elapsed);
     }

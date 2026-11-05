@@ -242,7 +242,7 @@ describe('two fixed fronts and contextual objectives', () => {
     spring.owner = 'healthy'; run(state, 2); expect(front.owner).toBe('healthy');
   });
 
-  it('opens each source membrane after real prior handoff while its own front, spring and garrison remain healthy', () => {
+  it('opens each source membrane while its own front and spring remain healthy', () => {
     const state = fixture(), front = node(state, 'front-north'), spring = node(state, 'heart-healing-1');
     expect(territorySourceShielded(state, 'source-west')).toBe(true);
     state.growth = new GrowthController(71, 'source-membrane', { version: 1, starterProtocolId: 'IMMUNE_BEACON' }, 'endless').state;

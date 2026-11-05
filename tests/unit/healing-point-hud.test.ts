@@ -32,7 +32,7 @@ describe('Healing point HUD', () => {
 
   it('documents the different reclamation rules and labelled colored markers', () => {
     expect(campaignHudMarkup).toContain('两个治疗点'); expect(campaignHudMarkup).toContain('红色加号为已占领');
-    expect(endlessHudMarkup()).toContain('红色加号为已占领');
+    expect(endlessHudMarkup()).toContain('红色实心区域和节点为感染');
     expect(campaignOverlay(session().state, true, true, false, false)).toContain('消耗2研究样本才能夺回');
     expect(endlessOverlay(session(true).state, true, false)).toContain('本次不回血，4秒后可以正常治疗');
   });

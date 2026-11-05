@@ -21,6 +21,7 @@ export interface TerritoryDefenseAttempt {
 export interface TerritoryLaneDefense {
   /** First genuine defense, by the player or allies, grants the fixed beacon milestone. */
   repelled: boolean;
+  /** Legacy snapshots only. Source access and victory depend on node ownership. */
   handoff: boolean;
   attempt?: TerritoryDefenseAttempt;
   /** A cleared finite squad may wait for its last capture progress to recede across waves. */
@@ -46,6 +47,9 @@ export interface TerritoryNode extends Vec {
   permanent: boolean;
   /** Records the first actual purification; recapture cannot farm its reward. */
   firstPurified: boolean;
+  /** Simulation timestamps survive recent-event eviction and freeze on pause. */
+  contestedAt?: number;
+  capturedAt?: number;
 }
 
 export interface TerritorySourceState {
@@ -90,6 +94,7 @@ export interface TerritoryState {
   defense: Record<TerritoryLaneId, TerritoryLaneDefense>;
   stability: TerritoryStability;
   cannon?: TerritoryCannonState;
+  construction?: import('./constructionTypes').ConstructionState;
   /** Most recent actual contact/attack exposure in simulation seconds. */
   playerExposureAt: number;
   healingContact: { nodeId: string | null; seconds: number; healed?: number; exposure?: boolean };

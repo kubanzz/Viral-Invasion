@@ -26,7 +26,7 @@ describe('territory invasion integrates with finite waves and real navigation', 
     const game = waveFixture(3); frames(game, 1);
     const source = game.state.targets.find(target => target.role === 'source')!;
     Object.assign(game.state.player, { x: source.x + 100, y: source.y });
-    game.step({ moveX: 0, moveY: 0, fire: false, tool: 3, aim: source });
+    game.step({ moveX: 0, moveY: 0, fire: false, territoryAction: true, aim: source });
     expect(source.hp).toBe(TERRITORY_BALANCE.sourceHp);
     expect(game.state.territory!.sources[source.territorySourceId!].destroyed).toBe(false);
     expect(game.state.tool).toBe(1);

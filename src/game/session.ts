@@ -37,8 +37,14 @@ import { initializeTerritory, advanceTerritory, beginTerritoryPurification, infe
 import { launchTerritoryCannon, takeTerritoryCannonImpact, territoryCannonTargets, TERRITORY_CANNON_BALANCE,
   advanceTerritoryPlayerFlight,isTerritoryPlayerAirborne,initializeTerritoryCannon } from './territoryCannon';
 import type { TerritoryRuleEvent, TerritorySourceId } from './territoryTypes';
+import { territoryRuleNotice } from './territoryNotices';
 import { combatPopulation,combatPopulationLimit } from './combatPopulation';
 import { playerSlimeMultiplier } from './smartViruses';
+import { advanceConstruction, initializeConstruction, setConstructionBlueprints } from './construction';
+import { createBossLoot, DEFAULT_EXPEDITION_LOADOUT, type ExpeditionDeparture } from './expedition';
+import { clearRitualProjectiles, damageRitualProjectile, ritualMotherShielded, ritualProjectileTargets } from './ritual';
+import { createWeaponCombat, castWeaponSkill, advanceWeaponSkills, cancelWeaponAction,
+  weaponBlocksPrimary, weaponPrimaryCooldown } from './weaponSkills';
 
 // Exporting the clock here is convenient for hosts, while it remains independently testable.
 export { FixedClock };
@@ -83,6 +89,15 @@ export class GameSession {
     if (this.options.campaign) this.battleDirector = new BattleDirector(this);
     this.resetGrowth();
     this.resetCampaign();
+    this.prepareExpedition();
+  }
+
+  private prepareExpedition(): void {
+    if (!this.state.territory) return;
+    initializeConstruction(this.state);
+    this.state.expedition = { runId: this.state.territory.recordId ?? this.state.growth!.runId,
+      loadout: { ...DEFAULT_EXPEDITION_LOADOUT }, firstClear: true };
+    this.state.weaponCombat = createWeaponCombat(this.state.expedition.loadout);
   }
 
   private resetGrowth(): void {
@@ -157,6 +172,7 @@ export class GameSession {
     this.battleDirector = this.state.battle ? new BattleDirector(this) : undefined;
     this.resetGrowth();
     this.resetCampaign();
+    this.prepareExpedition();
     this.state.phase = 'playing';
     this.emit('RUN_STARTED', { seed: this.state.seed, mode: this.state.endless ? 'endless' : this.state.battle ? 'campaign' : 'training', startAtTick: 0,
       encounterConfig: this.state.endless ? 'endless-1' : this.state.battle?.encounter?.configId ?? (this.state.battle ? 'fixture-1' : 'training-1'),
@@ -168,6 +184,14 @@ export class GameSession {
   }
 
   restart(seed = this.state.seed): void { this.start(seed); }
+
+  configureExpedition(departure: ExpeditionDeparture): void {
+    if (!this.state.territory) return;
+    this.state.expedition = { runId: departure.runId, loadout: structuredClone(departure.loadout), firstClear: departure.firstClear };
+    this.state.weaponCombat = createWeaponCombat(this.state.expedition.loadout);
+    setConstructionBlueprints(this.state, departure.blueprints);
+    if (this.state.growth) this.state.growth.antibodyCharges = 2 + departure.extraAntibodies;
+  }
 
   pause(): void {
     if (this.state.phase !== 'playing') return;
@@ -202,6 +226,7 @@ export class GameSession {
     this.state = this.initial(seed);
     this.resetGrowth();
     this.resetCampaign();
+    this.prepareExpedition();
     this.effectId = 0;
   }
 
@@ -212,6 +237,8 @@ export class GameSession {
     this.state.phase = 'result';
     this.state.player.moving = false;
     this.cancelChargedSlash('run-ended');
+    cancelWeaponAction(state);
+    if (state.weaponCombat) state.weaponCombat.overdriveUntil = 0;
     if (this.state !== state || state.phase !== 'result') return;
     this.pendingProjectileShot = undefined;
     clearPlayerProjectiles(state);
@@ -262,6 +289,8 @@ export class GameSession {
   }
 
   emit(type: string, data: GameEvent['data']): void {
+    if (['ENDLESS_WAVE_CLEARED','TERRITORY_BOSS_STARTED','TERRITORY_RESCUE_COMPLETED','RUN_ENDED'].includes(type))
+      clearRitualProjectiles(this.state, type);
     const event: GameEvent = { type, tick: this.state.tick, data };
     const tutorial = this.state.endless?.tutorial;
     if (tutorial) {
@@ -356,7 +385,7 @@ export class GameSession {
     if (this.checkFailure()) return;
     if (state.traction && state.traction.organId !== (state.battle?.organId ?? 'heart')) this.clearTraction('organ-changed');
     if (this.state !== state || state.phase !== 'playing') return;
-    if (input.tool && !(state.territory && input.tool === 3) && input.tool !== state.tool) {
+    if (!state.weaponCombat && input.tool && !(state.territory && input.tool === 3) && input.tool !== state.tool) {
       this.cancelChargedSlash('tool-changed');
       if (this.state !== state || state.phase !== 'playing') return;
       this.pendingProjectileShot = undefined;
@@ -364,7 +393,7 @@ export class GameSession {
       this.emit('TOOL_SELECTED', { tool: input.tool });
     }
     if (this.state !== state || state.phase !== 'playing') return;
-    if (state.territory && (input.territoryAction || input.tool === 3)) {
+    if (state.territory && (input.territoryAction || !state.weaponCombat && input.tool === 3)) {
       this.contextTerritoryAction();
       if (this.state !== state || state.phase !== 'playing') return;
     }
@@ -376,13 +405,14 @@ export class GameSession {
     if (!input.fire) this.tractionAwaitRelease = false;
     const direction = normalized(input.aim.x - state.player.x, input.aim.y - state.player.y);
     if (direction.x || direction.y) state.player.facing = Math.atan2(direction.y, direction.x);
-    this.updateChargedSlash(input);
+    if (!state.weaponCombat) this.updateChargedSlash(input);
     if (this.state !== state || state.phase !== 'playing') return;
     const charging = !!state.chargedSlash && state.elapsed - state.chargedSlash.startedAt > CHARGED_SLASH_BALANCE.threshold;
     const move = normalized(input.moveX, input.moveY);
     state.player.moving = !!(move.x || move.y);
     if (input.dash) {
       if (state.elapsed >= state.player.dashReady) {
+        cancelWeaponAction(state);
         this.dashDirection = state.player.moving ? move : { x: Math.cos(state.player.facing), y: Math.sin(state.player.facing) };
         state.player.dashUntil = state.elapsed + BALANCE.dashDuration;
         state.player.dashReady = state.elapsed + BALANCE.dashCooldown;
@@ -442,10 +472,24 @@ export class GameSession {
       this.scan(input.scanAim);
       if (this.state !== state || state.phase !== 'playing') return;
     }
-    if (input.fire && !charging && (state.endless || state.tool !== 2 || tool2Pressed)) {
+    if (state.weaponCombat) {
+      state.tool = 1;
+      const session = this;
+      const host = { get state() { return session.state; },
+        damage: (target: Target, amount: number, origin: DamageOrigin) => this.damage(target, amount, origin),
+        emit: (type: string, data: GameEvent['data']) => this.emit(type, data),
+        effect: (kind: Effect['kind'], from: Vec, to: Vec, radius: number, duration: number) => this.effect(kind, from, to, radius, duration) };
+      if (input.weaponSkill && !dashing && !isTerritoryPlayerAirborne(state)) {
+        castWeaponSkill(host, input.weaponSkill.slot, input.weaponSkill.aim);
+      }
+      if (this.state !== state || state.phase !== 'playing') return;
+      advanceWeaponSkills(host, input.aim, dt);
+      if (this.state !== state || state.phase !== 'playing') return;
+    }
+    if (input.fire && !charging && !weaponBlocksPrimary(state) && (state.endless || state.tool !== 2 || tool2Pressed)) {
       this.fire(this.pendingProjectileShot?.tool === state.tool ? this.pendingProjectileShot.aim : input.aim);
       if (this.state !== state || state.phase !== 'playing') return;
-    } else if (state.endless && !charging && this.pendingProjectileShot?.tool === state.tool) {
+    } else if (state.endless && !charging && !weaponBlocksPrimary(state) && this.pendingProjectileShot?.tool === state.tool) {
       this.fire(this.pendingProjectileShot.aim);
       if (this.state !== state || state.phase !== 'playing') return;
     }
@@ -464,7 +508,7 @@ export class GameSession {
     }
     if (state.territory && input.cannonReleased && !input.cannonCancelled) {
       const result = launchTerritoryCannon(state, input.cannonAim ?? input.aim);
-      if(result.accepted){this.cancelChargedSlash('player-launched');this.clearTraction('player-launched');this.pendingProjectileShot=undefined;delete state.bladeOpening;delete state.bladeFollow;}
+      if(result.accepted){cancelWeaponAction(state);this.cancelChargedSlash('player-launched');this.clearTraction('player-launched');this.pendingProjectileShot=undefined;delete state.bladeOpening;delete state.bladeFollow;}
       this.applyTerritoryEvents(result.events);
       if (!result.accepted) this.message(result.reason === 'reload' ? '弹射荚正在复苏装填。' : result.reason==='aim'?'落点受阻：选择附近可站立的组织。':'靠近免疫弹射荚，按住E选择落点、松手弹射。', 2, 1);
     }
@@ -490,6 +534,13 @@ export class GameSession {
       if(this.state!==state||state.phase!=='playing')return;
       if (this.checkFailure()) return;
       this.applyTerritoryEvents(advanceTerritoryDefense(state, dt));
+      this.applyTerritoryEvents(advanceConstruction(state, dt));
+      const expedition = state.expedition;
+      if (expedition?.pendingLoot && !expedition.lootCollected && expedition.lootPosition && distance(state.player, expedition.lootPosition) <= 80) {
+        expedition.lootCollected = true;
+        this.emit('EXPEDITION_LOOT_COLLECTED', { id: expedition.pendingLoot.id });
+        this.message('战利品已暂存：完成最后净化后带回营地。', 4, 2);
+      }
       if (this.state !== state || state.phase !== 'playing') return;
       this.advanceTerritoryGoal();
       if (state.phase !== 'playing') return;
@@ -643,12 +694,12 @@ export class GameSession {
     }
     if (distance(state.player, state.tissue) <= TERRITORY_BALANCE.purificationRange
       && state.tissue.hp > 0 && state.tissue.hp < state.tissue.maxHp) {
-      if (state.elapsed + 1e-9 < state.cooldowns[3]) {
+      if (state.elapsed + 1e-9 < (state.repairReadyAt ?? 0)) {
         this.message('心核修复冷却中。', .7);
         this.emit('TERRITORY_ACTION_REJECTED', { reason: 'cooldown', nodeId: 'core' });
         return;
       }
-      state.cooldowns[3] = state.elapsed + BALANCE.cooldowns[3];
+      state.repairReadyAt = state.elapsed + BALANCE.cooldowns[3];
       const before = state.tissue.hp;
       state.tissue.hp = clamp(before + BALANCE.repair * eventModifier(state, 'playerActiveRepair')
         * eventModifier(state, 'tissueRepair', state.tissue), 0, state.tissue.maxHp);
@@ -662,7 +713,7 @@ export class GameSession {
       this.message(`心核修复 +${Math.round(amount)}。`, 2, 1);
       return;
     }
-    this.message('靠近感染组织按3净化；靠近受损心核按3修复。', 3);
+    this.message('靠近感染组织按F净化；靠近受损心核按F修复。', 3);
     this.emit('TERRITORY_ACTION_REJECTED', { reason: 'no-nearby-target' });
   }
 
@@ -676,7 +727,7 @@ export class GameSession {
       const accepted = tool === 1 ? launchPrimary(state, aim, combat, castId) : launchCannon(state, aim, combat, castId);
       if (!accepted) { this.pendingProjectileShot ??= { tool, aim: { ...aim } }; return; }
       this.pendingProjectileShot = undefined;
-      state.cooldowns[tool] = state.elapsed + (tool === 1 ? combat.primaryCooldown : combat.areaCooldown);
+      state.cooldowns[tool] = state.elapsed + (tool === 1 ? weaponPrimaryCooldown(state, combat) : combat.areaCooldown);
       state.player.actionUntil = state.elapsed + .15;
       state.shots++;
       this.emit('PLAYER_PROJECTILE_LAUNCHED', { kind: tool === 1 ? 'primary' : 'cannon', castId,
@@ -889,12 +940,20 @@ export class GameSession {
 
   private damage(target: Target, amount: number, origin: DamageOrigin = { cause: 'basic' }): number {
     const state = this.state;
+    if (target.id.startsWith('ritual:orb:')) return damageRitualProjectile(state, target.id, amount, (type, data) => this.emit(type, data));
     if (target.hp <= 0) return 0;
+    if (ritualMotherShielded(state, target)) {
+      if (state.tick % 45 === 0) this.message('祭团护膜：先剿灭三名祭司，停止追踪炮弹。', 2, 2);
+      return 0;
+    }
     if (target.role === 'source' && state.territory && target.territorySourceId
       && territorySourceShielded(state, target.territorySourceId)) {
       if (state.elapsed >= this.sourceProtectionNoticeAt + .5) {
         this.sourceProtectionNoticeAt = state.elapsed;
-        this.message('感染源护膜仍在：完成该线军团接防，保持生命泉、前线健康与存活驻防。', 3, 1);
+        const source = state.territory.sources[target.territorySourceId];
+        const supplier = [source.healingNodeId, source.frontNodeId].map(id => state.territory!.nodes.find(node => node.id === id))
+          .find(node => node?.owner === 'infected');
+        this.message(`感染源护膜由失守节点供能：先净化${supplier?.name ?? '同线生命泉和前线'}，切断供能即可攻击。`, 3, 1);
         this.emit('TERRITORY_SOURCE_PROTECTED', { sourceId: target.territorySourceId, actorId: target.id });
       }
       return 0;
@@ -902,7 +961,8 @@ export class GameSession {
     const suppressRewards = target.role === 'event' || origin.ability === 'host-event';
     const immuneCellId = this.verifiedImmuneBite(target, origin);
     const wasPulseExposed = origin.wasPulseExposed ?? (target.exposedUntil ?? 0) > state.elapsed;
-    if (this.battleDirector && (origin.cause === 'basic' || origin.ability === 'host-event')) amount = this.battleDirector.modifiedDamage(target, amount, origin.ability === 'host-event' ? 1 : origin.basicTool ?? state.tool);
+    if (this.battleDirector && (origin.armorResponse === 'needle' || origin.cause === 'basic' || origin.ability === 'host-event'))
+      amount = this.battleDirector.modifiedDamage(target, amount, origin.armorResponse === 'heavy' ? 2 : origin.armorResponse === 'needle' || origin.ability === 'host-event' ? 1 : origin.basicTool ?? state.tool);
     const rawDamage = amount;
     const coreContext = target.role === 'core' ? this.coreContext() : undefined;
     if (coreContext && this.motherController) {
@@ -925,6 +985,9 @@ export class GameSession {
       ...(target.role === 'event' ? { eventTarget: true } : {}),
       ...(origin.rootId ? { rootId: origin.rootId } : {}), ...(origin.protocolId ? { protocolId: origin.protocolId } : {}),
       ...(origin.ability ? { ability: origin.ability } : {}), ...(immuneCellId && actual > 0 ? { immuneCellId } : {}),
+      ...(origin.weaponId ? { weaponId: origin.weaponId } : {}), ...(origin.skillId ? { skillId: origin.skillId } : {}),
+      ...(origin.castId ? { castId: origin.castId } : {}),
+      ...(origin.damageCategory ? { damageCategory: origin.damageCategory } : {}),
       ...(origin.basicTool ? { basicTool: origin.basicTool } : {}) });
     if (this.state !== state || state.phase !== 'playing') return actual;
     if (claimed) {
@@ -1120,7 +1183,7 @@ export class GameSession {
     state.effects.at(-1)!.arcHalfAngle = halfAngle;
     state.player.actionUntil = Math.max(state.player.actionUntil, state.elapsed + DASH_BLADE_BALANCE.effectSeconds);
     let hits = 0;
-    for (const target of [...state.targets]) {
+    for (const target of [...state.targets, ...ritualProjectileTargets(state)]) {
       if (!dashBladeHits(anchor, direction, target, radius, halfAngle, activeWorld(state))) continue;
       const actual = this.damage(target, damage, { cause: 'ability', ability: 'dash', rootId: `endless:dash:${state.dashes}:${stage}` });
       if (this.state !== state || state.phase !== 'playing') return;
@@ -1138,6 +1201,7 @@ export class GameSession {
     this.clearTraction('wave-cleared');
     if (this.state !== state || state.phase !== 'playing') return;
     this.cancelChargedSlash('wave-cleared');
+    cancelWeaponAction(state);
     if (this.state !== state || state.phase !== 'playing') return;
     this.pendingProjectileShot = undefined;
     clearPlayerProjectiles(state);
@@ -1252,9 +1316,9 @@ export class GameSession {
       if (state.endless && event.type === 'TERRITORY_PURIFIED' && event.data.first === true) state.endless.score += 100;
       if (state.endless && event.type === 'TERRITORY_SOURCE_DESTROYED' && event.data.firstReward === true) state.endless.score += 500;
       this.emit(event.type, event.data);
-      if (event.type === 'TERRITORY_CAPTURED') this.message('生命泉失守！清除侵染者，靠近后用3启动净化。', 4, 2);
-      else if (event.type === 'TERRITORY_CONTESTED') this.message('生命泉正在被侵染：拦截带标记的侵染者，治疗仍然有效。', 4, 2);
-      else if (event.type === 'TERRITORY_PURIFIED') this.effect('success', state.player, state.player, 85, .65);
+      const notice = territoryRuleNotice(state, event);
+      if (notice) this.message(notice.text, notice.seconds, notice.priority);
+      if (event.type === 'TERRITORY_PURIFIED') this.effect('success', state.player, state.player, 85, .65);
       else if (event.type === 'TERRITORY_SOURCE_DESTROYED') this.message('感染源已净化：该侧不再派出新的侵染者，已入场敌人仍需处理。', 4, 2);
     }
     // The fixed-step tail advances objectives after contact, treatment and
@@ -1268,14 +1332,14 @@ export class GameSession {
   private resolveTerritoryCannon(): void {
     const state = this.state, shot = takeTerritoryCannonImpact(state);
     if (!shot) return;
-    this.effect('burst', shot.to, shot.to, TERRITORY_CANNON_BALANCE.radius, .6);
+    this.effect('burst', shot.to, shot.to, shot.radius ?? TERRITORY_CANNON_BALANCE.radius, .6);
     let hits = 0, damage = 0;
-    for (const target of territoryCannonTargets(state, shot.to)) {
+    for (const target of [...territoryCannonTargets(state, shot.to, shot.radius), ...ritualProjectileTargets(state).filter(t => distance(t, shot.to) <= (shot.radius ?? 240) + t.radius)]) {
       if (this.state !== state || state.phase !== 'playing') return;
-      const actual = this.damage(target, TERRITORY_CANNON_BALANCE.damage, { cause: 'ability', ability: 'territory-cannon', rootId: shot.id });
+      const actual = this.damage(target, shot.damage ?? TERRITORY_CANNON_BALANCE.damage, { cause: 'ability', ability: 'territory-cannon', rootId: shot.id });
       if (actual > 0) { hits++; damage += actual; }
     }
-    this.emit('TERRITORY_CANNON_EXPLODED', { id: shot.id, x: shot.to.x, y: shot.to.y, radius: TERRITORY_CANNON_BALANCE.radius, hits, damage });
+    this.emit('TERRITORY_CANNON_EXPLODED', { id: shot.id, x: shot.to.x, y: shot.to.y, radius: shot.radius ?? TERRITORY_CANNON_BALANCE.radius, hits, damage });
   }
 
   private advanceTerritoryGoal(): void {
@@ -1305,15 +1369,14 @@ export class GameSession {
     }
     if (territory.stage === 'bossPending' && !isTerritoryPlayerAirborne(state)&&endless.clearedWaves >= endless.wave && !state.endlessGrowth?.draft
       && !state.growth?.draft && !state.growth?.pendingResearch && this.territoryPopulation() === 0
-      && territory.defense.north.handoff && territory.defense.south.handoff
       && territory.nodes.filter(node => node.kind === 'healing' || node.kind === 'front').every(node => node.owner === 'healthy' && node.infectionProgress <= 1e-7)) {
       const trait = endless.evolution?.opening?.selection?.trait ?? 'CARAPACE';
       const id = `territory:mother:${state.growth!.runId}`;
       const target: Target = { id, x: 1500, y: 900, radius: MOTHER_CORE_BALANCE.radius, kind: 'single', role: 'core',
-        hp: MOTHER_CORE_BALANCE.hp, maxHp: MOTHER_CORE_BALANCE.hp, traits: [trait], facing: Math.PI, sourceId: id,
+        hp: 1800, maxHp: 1800, traits: [trait], facing: Math.PI, sourceId: id,
         hitUntil: 0, scanned: false, born: state.elapsed, blocksWaveClear: false };
       state.targets.push(target);
-      this.motherController = new MotherCoreController({ coreId: id, organId: 'heart', traits: [trait], tick: state.tick, elapsed: state.elapsed });
+      this.motherController = new MotherCoreController({ coreId: id, organId: 'heart', traits: [trait], tick: state.tick, elapsed: state.elapsed, heartExpedition: true });
       territory.stage = 'boss'; territory.bossId = id; territory.bossCombat = this.motherController.state;
       this.emit('ACTOR_SPAWNED', { id, role: 'core', sourceId: id, traits: trait });
       this.emit('TERRITORY_BOSS_STARTED', { id, trait, hp: target.hp });
@@ -1321,22 +1384,30 @@ export class GameSession {
     }
     if (territory.stage === 'boss' && territory.bossId && state.targets.some(target => target.id === territory.bossId && target.hp <= 0)) {
       territory.stage = 'cleanup';
+      if (state.expedition && !state.expedition.pendingLoot) {
+        const boss = state.targets.find(t => t.id === territory.bossId)!;
+        state.expedition.pendingLoot = createBossLoot(state.expedition.runId, state.seed, state.expedition.firstClear);
+        state.expedition.lootPosition = { x: boss.x, y: boss.y };
+        this.emit('EXPEDITION_BOSS_LOOT_DROPPED', { id: state.expedition.pendingLoot.id, rarity: state.expedition.pendingLoot.rarity, x: boss.x, y: boss.y });
+      }
       this.motherController = undefined;
       delete territory.bossCombat;
       this.emit('TERRITORY_FINAL_PURIFICATION_STARTED', { bossId: territory.bossId });
       this.message('母巢已击败：清理残敌，夺回剩余组织，完成最后净化。', 5, 2);
     }
-    if (territory.stage === 'cleanup' && territory.defense.north.handoff && territory.defense.south.handoff
+    if (territory.stage === 'cleanup'
       && territory.nodes.every(node => node.owner === 'healthy' && node.infectionProgress <= 1e-7)
       && this.territoryPopulation() === 0 && !isTerritoryPlayerAirborne(state)) {
       endless.score += 1000;
-      territory.stage = 'victory'; territory.campBuilt = false; territory.purification = null;
+      if (state.expedition?.pendingLoot) state.expedition.lootCollected = true;
+      territory.stage = 'victory'; territory.campBuilt = true; territory.purification = null;
       territory.rescueSnapshot = { runId: territory.recordId ?? state.growth!.runId, seed: state.seed, atTick: state.tick, elapsed: state.elapsed,
         wave: endless.wave, clearedWaves: endless.clearedWaves, score: endless.score, kills: endless.kills, bestCombo: endless.bestCombo,
         level: state.endlessGrowth?.level ?? 0, playerHp: state.player.hp, coreHp: state.tissue.hp,
         fullyPurifiedSeconds: territory.stability.totalSeconds, longestFullyPurifiedSeconds: territory.stability.bestSeconds };
       syncTerritoryHealingNodes(state);
       state.targets = []; state.playerInfection = null;
+      cancelWeaponAction(state);
       clearPlayerProjectiles(state); this.pendingProjectileShot = undefined;
       delete state.bladeOpening; delete state.bladeFollow;
       endHostEvent(state, 'run-ended'); this.applyHostEventCommands(drainHostEventCommands(state));

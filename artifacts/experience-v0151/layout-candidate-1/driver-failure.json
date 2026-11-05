@@ -1,0 +1,8 @@
+{
+  "pass": false,
+  "scope": "Initial layout-driver attempt; no product/layout conclusion was reached.",
+  "error": "response.body: Protocol error (Network.getResponseBody): Request content was evicted from inspector cache",
+  "cause": "Large inline product response exceeded the browser inspector's default response buffer before its bytes could be attested.",
+  "repair": "The verification driver now enables bounded 128MiB total / 48MiB per-resource CDP response buffers and immediately handles response-capture failures. Product and candidate bytes are unchanged.",
+  "cleanup": "After Node exited, no headless Chrome processes remained."
+}

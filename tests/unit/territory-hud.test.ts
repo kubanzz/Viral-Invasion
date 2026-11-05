@@ -32,19 +32,21 @@ function incoming(state: GameState) {
 }
 
 describe('two-front territory presentation contracts', () => {
-  it('does not claim a one-cell or not-yet-arrived garrison is ready for a new handoff', () => {
-    const game=new GameSession(71,{mode:'endless',territory:true});game.start();const state=game.state,front=node(state,'front-north');
-    front.owner='healthy';front.infectionProgress=0;
-    state.territory!.defense.north.repelled=true;state.territory!.defense.south.repelled=true;
-    Object.assign(state.player,{x:front.x,y:front.y});
-    game.step({moveX:0,moveY:0,aim:{x:2300,y:1400},fire:false,scan:true});
-    expect(territoryHudView(state)!.lines[0].status).toContain('驻军到位');
-    const cells=state.growth!.cells!;for(const cell of cells.slice(1))cell.hp=0;
-    const before=structuredClone(state);
-    expect(territoryHudView(state)!.lines[0].status).toContain('接防需2体到位');expect(state).toEqual(before);
-    cells[1].hp=20;cells[1].x=front.x+200;cells[1].y=front.y;
-    expect(territoryHudView(state)!.lines[0].status).toContain('驻军不足');
-    cells[1].x=front.x;expect(territoryHudView(state)!.lines[0].status).toContain('驻军到位');
+  it('guides players back to lost nodes after both sources are destroyed instead of asking them to wait', () => {
+    const state = fixture(); state.territory!.stage = 'bossPending';
+    for (const source of Object.values(state.territory!.sources)) source.destroyed = true;
+    const view = territoryHudView(state)!;
+    expect(view.objective).toContain('净化北线前沿');
+    expect(view.objective).not.toContain('等待');
+    expect(view.detail).toContain('收复失守节点');
+  });
+  it('reports source access independently of garrison arrival, losses and military growth', () => {
+    const state=fixture(), front=node(state,'front-north'); front.owner='healthy'; front.infectionProgress=0;
+    state.territory!.sources['source-west'].spawned=true;
+    const before=structuredClone(state), view=territoryHudView(state)!;
+    expect(view.lines[0]).toMatchObject({ sourceOpen:true, stationed:false, status:'源膜已解除' });
+    expect(view.sourceFocus?.sourceAccess.steps.map(step=>step.label)).toEqual(['净化生命泉','净化前线','攻击感染源']);
+    expect(state).toEqual(before);
   });
   it('shows cumulative healthy time and handover state without presenting a historic handover as a live garrison', () => {
     const state = fixture();
@@ -54,7 +56,7 @@ describe('two-front territory presentation contracts', () => {
     state.territory!.defense.south = { repelled: true, handoff: false };
     const before = structuredClone(state), view = territoryHudView(state)!;
     expect(view.stability).toBe('全域净化 01:23'); expect(view.stabilityDetail).toBe('当前连续 00:03 · 最长 00:54');
-    expect(view.lines[0]).toMatchObject({ handedOff: true, stationed: false, status: '接防已验 · 需要驻军' });
+    expect(view.lines[0]).toMatchObject({ sourceOpen: true, stationed: false, status: '节点已净化 · 第3波感染源苏醒' });
     expect(state).toEqual(before);
     state.territory!.stage = 'cleanup';
     expect(territoryHudView(state)!.objective).toContain('夺回剩余组织');
@@ -74,7 +76,7 @@ describe('two-front territory presentation contracts', () => {
     expect(territoryContextHint(state)).toBe(`${front.name}净化暂停：弹射中，落地后靠近继续 · 42%保留`);
     state.territory!.purification = null;
     expect(territoryContextHint(state)).toBe('弹射中，落地后靠近感染节点净化');
-    expect(territoryContextHint(state)).not.toContain('按3');
+    expect(territoryContextHint(state)).not.toContain('按F');
   });
   it.each([false, true])('explains counters for the caster and finite destructible nests with touch=%s', touch => {
     const help = territoryHelpMarkup(touch);
@@ -125,14 +127,14 @@ describe('two-front territory presentation contracts', () => {
   it('shows a percentage only for an existing active purification node, not an unstarted nearby candidate', () => {
     const state = fixture(), front = node(state, 'front-north'); Object.assign(state.player, { x: front.x, y: front.y });
     front.purificationProgress = 0;
-    expect(territoryContextHint(state)).toBe(`按3净化${front.name}`);
+    expect(territoryContextHint(state)).toBe(`按F净化${front.name}`);
     expect(territoryContextHint(state)).not.toContain('0%');
     state.territory!.purification = { nodeId: front.id, startedAt: state.elapsed };
     expect(territoryContextHint(state)).toBe(`${front.name}净化 0% · 留在附近`);
     front.purificationProgress = 31.5;
     expect(territoryContextHint(state)).toBe(`${front.name}净化 31% · 留在附近`);
     state.territory!.purification = null;
-    expect(territoryContextHint(state)).toBe(`按3净化${front.name}`);
+    expect(territoryContextHint(state)).toBe(`按F净化${front.name}`);
   });
 
   it('keeps one core readout, both lane states and one current goal without listing all node dots', () => {
@@ -141,7 +143,7 @@ describe('two-front territory presentation contracts', () => {
     expect(view.lines.map(line => ({ name: line.name, attacked: line.attacked, status: line.status }))).toEqual([
       { name: '北线', attacked: false, status: '前线待净化' }, { name: '南线', attacked: false, status: '前线待净化' },
     ]);
-    expect(view.objective).toContain('净化'); expect(view.objective).toContain('军团接防');
+    expect(view.objective).toContain('净化'); expect(view.objective).toContain('切断源膜供能');
     expect(territoryHudMarkup.match(/id="territory-objective"/g)).toHaveLength(1);
     expect(state).toEqual(before);
     state.territory!.stage = 'boss'; state.territory!.bossId = 'mother'; state.tissue.hp = 26;
@@ -151,9 +153,9 @@ describe('two-front territory presentation contracts', () => {
 
   it('shows one nearby context action without reticle aiming or a second attack instruction', () => {
     const state = fixture(), front = node(state, 'front-north'); Object.assign(state.player, { x: front.x, y: front.y });
-    expect(territoryContextHint(state)).toBe(`按3净化${front.name}`);
-    expect(territoryContextHint(state, true)).toBe(`点附近净化：${front.name}`);
-    expect(territoryHudView(state)!.contextHint).toBe(`按3净化${front.name}`);
+    expect(territoryContextHint(state)).toBe(`按F净化${front.name}`);
+    expect(territoryContextHint(state, true)).toBe(`点净化组织：${front.name}`);
+    expect(territoryHudView(state)!.contextHint).toBe(`按F净化${front.name}`);
     expect(endlessTutorialHint(state)).toBe('');
     const help = endlessOverlay(state, true, false)!;
     expect(help).toContain('允许移动射击'); expect(help).toContain('不切换武器');
@@ -268,10 +270,11 @@ describe('two-front territory presentation contracts', () => {
     expect(territoryHudView(state)!.lines[0].status).toBe('生命泉失守');
   });
 
-  it('keeps infection visible alongside a single context instruction', () => {
+  it('prioritizes infection guidance while retaining the nearby action as separate context', () => {
     const state = fixture(), front = node(state, 'front-north'); Object.assign(state.player, { x: front.x, y: front.y });
     state.playerInfection = { until: 12, nextTickAt: 6 };
-    expect(territoryHudView(state)!.detail).toMatch(/^感染 7秒.*按3净化/); expect(endlessTutorialHint(state, true)).toBe('');
+    expect(territoryHudView(state)!.detail).toMatch(/^感染 7秒.*前往健康生命泉/);
+    expect(territoryHudView(state)!.contextHint).toContain('按F净化'); expect(endlessTutorialHint(state, true)).toBe('');
     for (const spring of state.territory!.nodes.filter(item => item.kind === 'healing')) spring.owner = 'infected';
     expect(territoryHudView(state)!.infection).toContain('先夺回生命泉');
   });
@@ -283,7 +286,7 @@ describe('two-front territory presentation contracts', () => {
     state.territory!.stage = 'victory'; state.territory!.rescueSnapshot = { runId: state.growth!.runId, seed: state.seed,
       atTick: 12000, elapsed: 200, wave: 5, clearedWaves: 5, score: 2200, kills: 400, bestCombo: 80, level: 5, playerHp: 80, coreHp: 76, fullyPurifiedSeconds: 8, longestFullyPurifiedSeconds: 6 };
     const markup = territoryVictoryOverlay(state)!;
-    for (const action of ['territory-finish', 'territory-guard', 'growth-details']) expect(markup).toContain(`data-action="${action}"`);
+    for (const action of ['camp-open', 'territory-guard', 'growth-details']) expect(markup).toContain(`data-action="${action}"`);
     expect(markup).toContain('03:20'); expect(markup).toContain('76%'); expect(markup).not.toContain('endless-stage-continue');
     state.territory!.stage = 'guard'; state.phase = 'result'; state.result = { success: false, reason: '守卫失守。' };
     expect(territoryResultOverlay(state)).toContain('守卫结束，救援成果仍在'); expect(territoryResultOverlay(state)).toContain('2200分');
@@ -292,10 +295,10 @@ describe('two-front territory presentation contracts', () => {
   it('explains separately scored records and a shielded source route', () => {
     const state = fixture(), profile = new TerritoryProfileStore(null).load(); profile.legacyAvailable = true;
     const menu = mainMenuOverlay(profile, true);
-    expect(menu).toContain('解开源膜'); expect(menu).toContain('旧版战绩保留；双线救援单独计分');
+    expect(menu).toContain('切断源膜供能'); expect(menu).toContain('旧版战绩保留；双线救援单独计分');
     const help = endlessOverlay(state, true, false)!;
     expect(help).toContain('前线不治疗'); expect(help).toContain('源耐久保留');
-    expect(help).not.toContain('冒险直接拆源'); expect(help).toContain('双线接防'); expect(help).toContain('全域净化时间');
+    expect(help).not.toContain('冒险直接拆源'); expect(help).toContain('生命泉与前线都净化后，源膜立即解除'); expect(help).not.toContain('实战接防'); expect(help).toContain('全域净化时间');
   });
 
   it('pauses around territorial goals while retaining legacy mode pause copy', () => {

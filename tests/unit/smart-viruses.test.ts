@@ -12,7 +12,12 @@ function fixture(wave = 3) {
   state.world = { ...state.world!, obstacles: [] }; state.targets = []; Object.assign(state.player, { x: 1200, y: 1000 });
   Object.assign(e, { wave, phase: 'combat', phaseStartedAt: 0, remainingToSpawn: 0, canceledToSpawn: 0, spawnedIds: [], spawnSerial: 0 });
   const roles = Array.from({ length: 80 }, () => 'ordinary' as const), reserved = planTerritoryAssaults(wave, roles).reservedSlots;
-  e.smartSupport = planSmartSupports(state.seed, wave, roles, reserved); e.remainingToSpawn = e.smartSupport.reservedSlots.length;
+  e.smartSupport = planSmartSupports(state.seed, wave, roles, reserved);
+  // These fixtures isolate the eight-slot brood ledger; ritual's independent
+  // four-slot atomic reservation and cancellation are covered in ritual.test.
+  e.smartSupport.plans = e.smartSupport.plans.filter(plan => plan.kind !== 'ritual');
+  e.smartSupport.reservedSlots = e.smartSupport.plans.flatMap(plan => plan.slots);
+  e.remainingToSpawn = e.smartSupport.reservedSlots.length;
   const host = { state, emit(type: string, data: GameEvent['data']) { events.push({ type, tick: state.tick, data }); } };
   const at = (n: number) => { state.elapsed = n; state.tick = Math.round(n * 60); advanceSmartViruses(host); };
   return { game, state, e, host, events, at };
@@ -28,7 +33,7 @@ function buildNest(f: ReturnType<typeof fixture>) {
 }
 describe('finite smart-virus support economy', () => {
   it('teaches caster then brood, preserves opening lessons and invasion slots', () => {
-    for (const [wave, cost] of [[1, 0], [2, 1], [3, 8], [4, 10], [15, 10]]) {
+    for (const [wave, cost] of [[1, 0], [2, 1], [3, 12], [4, 10], [8, 14], [12, 14], [15, 10]]) {
       const roles = Array.from({ length: 80 }, () => 'ordinary' as const), forbidden = planTerritoryAssaults(wave, roles).reservedSlots;
       const plan = planSmartSupports(71, wave, roles, forbidden);
       expect(plan.reservedSlots).toHaveLength(cost); expect(new Set(plan.reservedSlots).size).toBe(cost);
@@ -58,6 +63,16 @@ describe('finite smart-virus support economy', () => {
     expect(f.state.targets.filter(t => t.profession === 'fastling')).toHaveLength(6);
     expect(f.state.targets.filter(t => t.profession === 'fastling').every(t => t.hp === 24 && t.generation === 1 && t.traits?.length === 0 && !t.territoryTask)).toBe(true);
   });
+  it('gives a full first-hatch warning and splits each pair between pursuit and actual spring raiding', () => {
+    const f = fixture(), { plan } = buildNest(f);
+    expect(plan.nextHatchAt! - f.state.elapsed).toBeCloseTo(1);
+    f.at(plan.nextHatchAt! - .01); expect(f.state.targets.some(t => t.profession === 'fastling')).toBe(false);
+    f.at(plan.nextHatchAt!);
+    const pair = f.state.targets.filter(t => t.profession === 'fastling'); expect(pair).toHaveLength(2);
+    expect(pair.filter(t => !!smartSpringRaidGoal(f.state, t))).toHaveLength(1);
+    f.state.territory!.nodes.filter(n => n.kind === 'front').forEach(n => n.owner = 'healthy');
+    expect(pair.filter(t => !!smartSpringRaidGoal(f.state, t))).toHaveLength(0);
+  });
   it('a completed nest survives its builder but destroying it cancels only unborn young', () => {
     const f = fixture(), { plan, builder, nest } = buildNest(f);
     builder.hp = 0; f.at(plan.nextHatchAt!); expect(f.state.targets.filter(t => t.profession === 'fastling')).toHaveLength(2);
@@ -68,7 +83,7 @@ describe('finite smart-virus support economy', () => {
   it('source cancellation is idempotent, preserves existing bodies, and guard is not canceled by historical dead sources', () => {
     const f = fixture(), { plan, nest } = buildNest(f);
     cancelSmartSupports(f.host, plan.sourceId); cancelSmartSupports(f.host, plan.sourceId);
-    expect(f.e.canceledToSpawn).toBe(6); expect(nest.hp).toBe(170); expect(f.e.remainingToSpawn).toBe(0);
+    expect(f.e.canceledToSpawn).toBe(6); expect(nest.hp).toBe(238); expect(f.e.remainingToSpawn).toBe(0);
     const guard = fixture(); guard.state.territory!.stage = 'guard'; Object.values(guard.state.territory!.sources).forEach(s => s.destroyed = true);
     guard.at(2); guard.at(6); expect(guard.state.targets.some(t => t.profession === 'nest-builder')).toBe(true);
   });
@@ -98,10 +113,11 @@ describe('readable control and actual lane objectives', () => {
     f.state.player.dashUntil = 1; expect(playerSlimeMultiplier(f.state)).toBe(1); f.state.player.dashUntil = 0;
     f.state.player.x += 200; expect(playerSlimeMultiplier(f.state)).toBe(1); f.state.player.x = p.x; f.state.elapsed = 4; expect(playerSlimeMultiplier(f.state)).toBe(1);
   });
-  it('ordinary raiders respect front loss while fastlings keep pursuing the player', () => {
+  it('ordinary and designated fastling raiders only target springs after front loss', () => {
     const f = fixture(), actor = make('raider', 900, 700, { springRaidLane: 'north' });
     expect(smartSpringRaidGoal(f.state, actor)?.id).toBe('heart-healing-1');
     f.state.territory!.nodes.find(n => n.id === 'front-north')!.owner = 'healthy'; expect(smartSpringRaidGoal(f.state, actor)).toBeUndefined();
-    actor.profession = 'fastling'; f.state.territory!.nodes.find(n => n.id === 'front-north')!.owner = 'infected'; expect(smartSpringRaidGoal(f.state, actor)).toBeUndefined();
+    actor.profession = 'fastling'; f.state.territory!.nodes.find(n => n.id === 'front-north')!.owner = 'infected'; expect(smartSpringRaidGoal(f.state, actor)?.id).toBe('heart-healing-1');
+    delete actor.springRaidLane; expect(smartSpringRaidGoal(f.state, actor)).toBeUndefined();
   });
 });

@@ -12,7 +12,7 @@
 .territory-hud > p[hidden],.territory-hud > small { display:none; }
 .territory-stability { display:block; margin-top:4px; font-size:10px; font-variant-numeric:tabular-nums; color:#64806a; }
 .territory-hud[data-fully-purified=true] .territory-stability { color:#247751; font-weight:700; }
-.territory-regions > span[data-handoff=true] { border-color:#479c7b; }
+.territory-regions > span[data-source-open=true] { border-color:#479c7b; }
 .territory-hud[data-infected=true] > p { color:#a3443d; }
 .territory-hud[data-healing=true]:not([data-infected=true]) > p { color:#287447; font-weight:700; }
 .territory-legacy-records { margin-top:8px; color:#637268; font-size:11px; text-align:left; }
@@ -56,6 +56,11 @@ body.touch-mode.territory-mode .mobile-combat-readout { display:block; margin-to
   body.touch-mode .territory-heading > b { padding-right:2px; }
   body.touch-mode .territory-regions { padding-top:11px; }
 }
+
+/* Compact screens keep the current objective and lane status; full steps remain in paused details. */
+@media(max-height:420px) {
+  body.touch-mode .territory-source-access { display:none; }
+}
 @media(max-height:400px) {
   #app .territory-victory { width:min(650px,96vw); max-height:96dvh; padding:13px 20px; }
   #app .territory-victory .endless-stage-seal { display:none; }
@@ -65,6 +70,52 @@ body.touch-mode.territory-mode .mobile-combat-readout { display:block; margin-to
   #app .territory-victory .stats { margin:9px 0; }
   #app .territory-victory .stats strong { font-size:23px; }
   #app .territory-victory .stats small { font-size:9px; }
-  #app .territory-victory .actions { margin-top:9px; flex-wrap:nowrap; }
-  #app .territory-victory .actions button { min-height:38px; padding:8px 15px; font-size:12px; white-space:nowrap; }
+  #app .territory-victory .actions { margin-top:9px; flex-wrap:wrap; gap:8px; }
+  #app .territory-victory .actions button { min-height:48px; min-width:48px; padding:8px 15px; font-size:12px; white-space:nowrap; }
 }
+
+/* One visible objective with an optional proof chain; diagnostic panels are elsewhere. */
+.territory-hud > small { display:inline-block; font-size:11px; color:#54776b; margin-left:12px; }
+.territory-stability { display:inline-block; }
+.territory-source-access { display:flex; align-items:center; gap:6px; margin-top:7px; font-size:11px; flex-wrap:wrap; }
+.territory-source-access[hidden] { display:none!important; }
+.territory-result-cause { font-weight:700; }
+.territory-victory[data-outcome=failed] .territory-result-cause,.territory-victory[data-outcome=failed] h2 { color:#9c493c; }
+.territory-result-progress { border:1px solid #c4cfb8; border-radius:10px; padding:10px 12px; text-align:left; margin:10px 0; background:#f3f1df; }
+.territory-result-progress ul { display:flex; flex-wrap:wrap; gap:6px 16px; list-style:none; padding:0; margin:8px 0; font-size:12px; }
+.territory-result-progress li[data-complete=true] { color:#357355; }.territory-result-progress p,.territory-camp-condition { font-size:12px; line-height:1.5; }
+.territory-source-access > b { color:#3d6c60; }
+.territory-source-access > span { border:1px solid #afc4b8; padding:3px 5px; border-radius:5px; color:#70887b; background:#f1f1df; }
+.territory-source-access > span[data-done=true] { color:#2e7858; background:#dfebd6; }
+.territory-source-access > span[data-current=true] { border-color:#5c9b77; color:#1d6149; font-weight:700; background:#d5edcc; }
+body.touch-mode .territory-hud { padding:6px 7px; }
+body.touch-mode .territory-heading > b,
+body.touch-mode .territory-regions > span,
+body.touch-mode .territory-regions > span > b,
+body.touch-mode .territory-regions > span > span { font-size:11px; }
+body.touch-mode .territory-regions > span > span { white-space:normal; line-height:1.2; max-height:27px; }
+body.touch-mode .territory-hud > strong { font-size:12px; line-height:1.3; }
+body.touch-mode .territory-hud > p { font-size:11px; line-height:1.3; }
+body.touch-mode .territory-stability,
+body.touch-mode .territory-hud > small { font-size:10px; color:#c8e3c8; }
+body.touch-mode .territory-hud > small { margin-left:7px; }
+body.touch-mode .territory-source-access { margin-top:4px; font-size:11px; gap:5px; flex-wrap:nowrap; }
+body.touch-mode .territory-source-access > b { color:#c7eac8; white-space:nowrap; }
+body.touch-mode .territory-source-access > span:not([data-current=true]) { display:none; }
+body.touch-mode .territory-source-access > span[data-current=true] { padding:2px 4px; }
+@media(max-height:360px) {
+  body.touch-mode .territory-hud { padding:4px 6px; }
+  body.touch-mode .territory-stability { position:static; background:none; }
+  body.touch-mode .territory-regions { padding-top:0; }
+  body.touch-mode .territory-hud > p { max-height:29px; }
+}
+
+/* The player carries the primary HP readout into the battlefield. */
+body.territory-mode #app .endless-vitals { display:none; }
+body.territory-mode.touch-mode .mobile-hp-line,
+body.territory-mode.touch-mode .mobile-hp-track { display:none; }
+
+.territory-regions > span[data-front=infected],
+.territory-regions > span[data-healing=infected] { border-color:#c35d6c; color:#a74756; }
+body.touch-mode .territory-regions > span[data-front=infected],
+body.touch-mode .territory-regions > span[data-healing=infected] { color:#ffc0c5; }

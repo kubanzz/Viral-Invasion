@@ -1,0 +1,833 @@
+{
+  "method": "Supplied initial 48-actor arena, followed by production GameSession.step, FixedClock, MotionInterpolation, Controller/TouchControls and native Phaser Renderer on its real frame loop. Not natural gameplay; not the complete v0.16 candidate game.js entry or complete HUD; not phone hardware.",
+  "setup": "1 ritual mother + 3 ritual priests + 1 slime mage + 1 builder + 1 static nest + 4 fastlings + 37 ordinary = 48. No FISSION. Real ritual charges/homing projectiles cap2; finite support/hatching queues absent. Supplied built base pod. Wave2 with one future ordinary at3600s. Player starts normal100HP; no shooting/dash/garrison/refill/replacement or state edits after initialization.",
+  "measurement": "Four sequential 15-second wall-time groups in one Chrome context; real keyboard on desktop and trusted CDP touch through production TouchControls at touch resolution. Each rendered frame and each fixed simulation step must retain exactly 48 live/reserved actors, playing phase and wave 2. Per-frame production diagnostics add observer overhead. No recording or forced GC during sampling.",
+  "startedAt": "2026-11-05T04:59:20.651Z",
+  "candidate": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\weapon-v016\\candidate-2",
+  "version": "0.16.0",
+  "groups": [],
+  "errors": [],
+  "sourceBefore": {
+    ".art-generated/art-runtime.json": "263f6c7e5091e9682d33d4aed4de2a1ba4a66b79cc37b9df38f0f154b0fb4eff",
+    "node_modules/phaser/dist/phaser.esm.js": "df50bc49e7856363b625fdf4f2c4e2e577cfc1644690c026c3610c594aff372f",
+    "src/actors/collision.ts": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0",
+    "src/actors/enemyCrowd.ts": "cd9ebf849e63f516c5a123206d866ec396497b76307c1a62ae08ecf9b8fc489f",
+    "src/actors/enemyNavigation.ts": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd",
+    "src/core/clock.ts": "2e65d1623f903f438f01ac80640ff5ef06cf400d32a888e27471d0326b3a46bd",
+    "src/core/events.ts": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+    "src/core/rng.ts": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+    "src/game/battle.ts": "51ede8b2896ad2a6ca9c8f9d9810798357ed12b950fc04c1c389482dc1e58ad2",
+    "src/game/battleConfig.ts": "3365d6963f8edf43abdef1259483d3d21787a738abe1ccd81e2ebd6b1fdc609d",
+    "src/game/campScene.ts": "aa034349546225417b6471a44661cfc31e441ae46e35d45e6c5ae42ffe2df18b",
+    "src/game/campaign.ts": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+    "src/game/campaignEncounters.ts": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+    "src/game/catalysis.ts": "f7d4a5b0710ff3eac65809a7762effe910b79f63ab7a74735128d6e6b6288113",
+    "src/game/chargedSlash.ts": "bde88263277215d6173f6759ce197a639eac3b011d0a21a517330c7625969c8d",
+    "src/game/combatPopulation.ts": "5f8bd5128612512da7d974e302b54a4a858f9e7703fe49d1fa3d5fa741ffeacf",
+    "src/game/construction.ts": "ebf2d90916f1710e87fbf2ea6b4d81a0ef468ad959a8c350278819e72142cebc",
+    "src/game/constructionTypes.ts": "514b0933047f3a234b6fb9b0c8840d85a448b9c54a5894084df235c735349e79",
+    "src/game/counterLesson.ts": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+    "src/game/dashBlade.ts": "c7bb058f5b38bc3124fb8efd4739f661b42acee026f1ce1c008de1234dc6d771",
+    "src/game/dashTrail.ts": "2e0f6b4d4ab8321a1718aae30a56a4ea1b1cfd9c5f94b982653f7bc911b0d287",
+    "src/game/eliteTacticCycle.ts": "862b23512773a196d997dbd9062b18a9f17188f22449ba93dee98ead13c3e8dd",
+    "src/game/encounterConfig.ts": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+    "src/game/endless.ts": "c0907151e178f88a7c2ed22e7fe960aa6351e7c00dafe61ee2ee3cf9f23f0fff",
+    "src/game/endlessAssault.ts": "e60f8e6cec6e4b963614c467062efc05a89b0eacb1825b71dd0f3fba1503417a",
+    "src/game/endlessBehavior.ts": "bfc1fa2e8950118aecb7378383d81a7e2ea3e8b8ac4c21cb67a88e289a356a92",
+    "src/game/endlessEvolution.ts": "b3ad9b394634da947bf9aa7ff32d9b9ccb7774909771c524a078d490bba1db4f",
+    "src/game/endlessGrowth.ts": "9b74010bbd1df52b5619067df45aa814ae2a96846163ec4a3c7bd745d016250e",
+    "src/game/endlessPacing.ts": "c0d9376d4225c2a6606956f05c51283e5587ab86741f3d615d9d653b5627c090",
+    "src/game/endlessSource.ts": "5a3cbfea571f371707a64c0526e1ebd2e36ac2da404051b37e4692203a51c6fe",
+    "src/game/endlessStrikeBalance.ts": "70b6fb73a94c0fac1baad402b2f41d47e9882b01b4847369aef7efd11660330b",
+    "src/game/enemyFacing.ts": "f2f97826b5fbae1d19bfcd718eac2c216800187c86003d11bcfc9c8c63cec24d",
+    "src/game/enemyPositioning.ts": "d01aff7f39ea4d4a3c34f306947452e93de57b93106a56c103bb64c9c097a878",
+    "src/game/enemyTacticInfo.ts": "ee6f959eb75b09e298f82dd78fbad5d6bb98ae0bbb7d7cef6701a0953030c5a8",
+    "src/game/enemyTactics.ts": "d0a393a0803ae53a84a59fceb9d74e0fe88cbdda50d79cfe4115f08ef68abfe6",
+    "src/game/evolution.ts": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+    "src/game/expedition.ts": "908fa5b15bbcccdbccc50d2c158667bf0a617a0e2dd31eb66711b382d5354eff",
+    "src/game/growth.ts": "350a132430782721a923c45b8d9cac8ac8101de24af2429fe2d525377b0d33dc",
+    "src/game/healingPoints.ts": "915eabdd233f7ad1e62610fd9be29a71ba326fec9bb7cbda327dd9b4f00de277",
+    "src/game/hostEvents.ts": "367fad03129ce257e847dedac946bb6d3cac522abb3f5e0922207f51f77fbfae",
+    "src/game/immuneCells.ts": "c3ad22cf8e77bdc32203846726fdaec408813bfcd78e423b8b1e48265f639b3c",
+    "src/game/immuneFocus.ts": "ae0a07dc07747100a2d271bc11989751a480972d76945378decc12b3d41cf9e1",
+    "src/game/immuneLegions.ts": "399fc580b5afe53b5b22ad7b4b7d5c874271cc7af8feb666773cdcb1d2b83ee0",
+    "src/game/motherCore.ts": "e041a9c6ef5eefdc9630df2dabe01f56b78ca774fb92f3aecf1905fbe80c390f",
+    "src/game/openingEvolution.ts": "8519a49436dd51799e1057bee8ebd7d8daa5edc6f23e6e81601e57fb15b986d7",
+    "src/game/organConfig.ts": "4563ddb4c24cb8b19400a29e48ce2fcbd4775f940adb0c19d92ede2ae8f5cb42",
+    "src/game/organRules.ts": "7e6b4951b1c76ce6e0eb0964f41eedff20bb3cc71e14d8421c878b0aa53515f0",
+    "src/game/playerProjectiles.ts": "ff420b51e1569188be2e316e933c2fe4e04808b036090e022e28538ac3d7e2ad",
+    "src/game/preparation.ts": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+    "src/game/protocols.ts": "4e407a74e0b87b7bbba93c48c881cb729a0770f24a027cbc8d59f7f512449260",
+    "src/game/research.ts": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+    "src/game/ritual.ts": "a4b9a556cc8354e49bc05d8847e6aca121e03bf6fd09adfdde97adc2ecd75246",
+    "src/game/runMetrics.ts": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+    "src/game/session.ts": "9eee10415815120645e8510c21539fbbf76cd1ecbcb50511123877ea121572ea",
+    "src/game/smartViruses.ts": "fcef0e118b312988ba595816d29854b80a7e6526ea7db635d4a1c103b7e57844",
+    "src/game/tacticalFeedback.ts": "b3fef29a2b907876aa1f15350827945325f3c00106898ec730202d1222d04c9b",
+    "src/game/territory.ts": "028404582a0180306afbd8efe05e723b6da34c9bb6619d4a4f8962c33aa66e46",
+    "src/game/territoryCannon.ts": "88ba64f3c8e9d575c2b264c5a3db913969bb4795e63539cd20998e7038035ccb",
+    "src/game/territoryNotices.ts": "830edd062c5db3c4ed3c696aa6518671b57c12c4dc044506906e5fd73ca17dc9",
+    "src/game/territoryPresentation.ts": "67a83215e561f388f2627b2c26a4c4500a90419d342f3d3948c5b6217445196f",
+    "src/game/traction.ts": "2ebdd2264eae46a3744b45371733aa35fc93a8c7f6b030d8a36c8163e2c4ad5e",
+    "src/game/types.ts": "e43f353e06c83b1736920ae6049075726ebce994b09bc3265d4acd77bb437701",
+    "src/game/viralCapsules.ts": "d9fbb60d009eafb61b5237308a1ed60626cd424accd6acbe4db189abe0c45327",
+    "src/game/weaponSkills.ts": "7b901e257c52be4ca2093441ad0ce0a3f97a6eeb54920a20b36e05832d0da984",
+    "src/input/controller.ts": "f023784c3ae04d42d3d0b73c3342a683eb623fa20f79783b3b512dba2a1c207a",
+    "src/input/touchControls.ts": "4f5db137b3299fdf9b98498edc0302179b17c7437bd26404561207194e3b47e8",
+    "src/render/actorAnimation.ts": "4cab5ff88a78c501765bf8ee8ab3dfd2710a7e06521acdbb5d60c695bab66d56",
+    "src/render/actorFootPlant.ts": "c4499889079d74ca07e3a820db04ba869a7c3b2e0bff7298e93c9723fbef994f",
+    "src/render/artPresentation.ts": "fef6b2db2dd8cd86c558fc25fc6b46ba6534e5cf2c61f8bae54b41868f584467",
+    "src/render/battleVisuals.ts": "ed2af605266430ab3a0025d95dab7e4990b8fee9bd0b4e94ef35e60e4734c0b3",
+    "src/render/camera.ts": "e7b7f4cfa6b8e296223b72b23bb7a2b8c9ee2a15d4ef029e659af8d6bf99fc69",
+    "src/render/canvasScene.ts": "b8f44acafcfd87c67240c57d355eaf4643ef26387ac48a1488b1e5519d1d1abd",
+    "src/render/catalysisVisuals.ts": "719fd36fa0eeb54e7ec92d87202480ac8ac593682aed54221d505626067baacc",
+    "src/render/combatEffects.ts": "bbbe31e30acdd04d7384a97b233eed384ececc680c1a8b7eebe44a072caf87df",
+    "src/render/crosshairStatus.ts": "5c7d1751a6e586bb905e8acb0ebd574590cc47c76a483f58c91e9594f029f943",
+    "src/render/depthSort.ts": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+    "src/render/eliteTacticCycleVisuals.ts": "973db60769fba9e70f83a1e1fff276f4011e6acebaf4f4b581671909f00c95f7",
+    "src/render/encounterVisuals.ts": "62e43895e405cd1300d735f59f150781cdf07b74036d5dbcc0b6f93011e01629",
+    "src/render/endlessVisuals.ts": "49f0da60be1c8963cab864e4c845c39956401a7670a6d56866c8115d59c45b2e",
+    "src/render/enemyTacticVisuals.ts": "27c6e91e71886a7533af3ed0706e80477cc7023d717df4ff3204031783b87951",
+    "src/render/expeditionArt.ts": "66b02f50580b8357a1e105db43cca3847f87af700e9e662af095cfe171fae58d",
+    "src/render/expeditionVisuals.ts": "369decbb6762a13857b23e6ee2db40dd244cf0c4a0a4d261d4798cdf8e7044a0",
+    "src/render/fantasyTerritory.ts": "635de210e849192e8ff1cf65ac9ff57ea750eb0ed0013bfacf93663cab9af41e",
+    "src/render/growthVisuals.ts": "da7e599f3043ae614394dbf7238cb216bb4e048762e0c4f8ff74957e00aa603b",
+    "src/render/heroAnimation.ts": "7ebe446d889db3bc0d2302e787deaef1660943563900482f9deacdb137a6ffd0",
+    "src/render/heroLocomotion.ts": "b18a33c357079798695706d3e1d464ff7f53192415173f2b76778e885489168a",
+    "src/render/heroRig.ts": "9ac59ab7b944617a0b4486ff2d2cff41be1502a49fe1b442c935fe0c3cf06df5",
+    "src/render/hostEventVisuals.ts": "6c7ef88f48a85bcf64473da8e4a77c69cbb8e624f0dade645e6a5b09b96ec381",
+    "src/render/immuneFocusVisuals.ts": "671ef27635c303f30d5d6328fe7c96a7d695174dc7821418bb4f49fae4fed787",
+    "src/render/immuneTraceCues.ts": "611926281627e1ba999a24184448e283b062503a4e23a6080c5e9a8c1e52fe63",
+    "src/render/immuneVisuals.ts": "4ded7b1536d71de696d2c9d388eb9c4194cbe66af40169c62d3802dfa1c7e297",
+    "src/render/layers.ts": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+    "src/render/lowCover.ts": "759a2ff5f924dc8cc75dc76331bb129e390b0753c14f2902341e20ff31bd2fae",
+    "src/render/lungVisuals.ts": "7bc495edd2c18da89ce1b8e6934e98ade262e982b953bf732593827e18ac7b77",
+    "src/render/motionInterpolation.ts": "1e4416377ee09a487b46a894737b4f56d5980b144e8f603071fb234a4ff39066",
+    "src/render/navigation.ts": "fd3dac19ab33f9fa0d3f8a58f2446129aa704e489de7db186862010bd26df50d",
+    "src/render/occlusion.ts": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+    "src/render/phaserHost.ts": "b9a3e34425b82a4dbeb4ba5ee938f8358e854ebd139bbb0c6cfe3dd3f994165c",
+    "src/render/phaserRenderer.ts": "99e974e4ea9e2dc03e982dd8a80f1065d6e782dc3eb942dee24c06f6225cce55",
+    "src/render/playerDamageFeedback.ts": "9eb134877187ff0fef9243a8f3d4a8cfce2b3121566cdc36496e607f67c97093",
+    "src/render/playerHealth.ts": "06615002fb1c27c26ba8472b2b320f047b94fc9255f9730c765b96000def41ea",
+    "src/render/playerPresence.ts": "46a89203866165f34e873b1400a794df538ba8f30295c086687e8a1f48e3f996",
+    "src/render/playerProjectileVisuals.ts": "b0d8f4a58fa427b3d36e699bd60317d6063af297112ae7f48cbd60c65da0e795",
+    "src/render/pulsePreview.ts": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+    "src/render/raisedObstacleGeometry.ts": "373e3f145fd521367be7adc93c8461b5407cfe384866f2eb59c2a3ee645a3df6",
+    "src/render/raisedObstacleOcclusion.ts": "81657e9c7f19f3221f4980cd7b6efae152c1b1f768a92d4960f2085a91876feb",
+    "src/render/sceneLabels.ts": "0cceb5ffa23face8ee93aaff4b31c49a72b43fa760b724009c8fc4e80f108755",
+    "src/render/smartVirusVisuals.ts": "f6be83753975d13156b0af3448258a39106fb984fddf55fb4fa99f9e76bb31a5",
+    "src/render/spriteGeometry.ts": "16261b404b2353a10f83caf756eb53707d318b4139d02c212821a2106a23699d",
+    "src/render/territoryCannonVisuals.ts": "9015c014768cd939ce129eff4d82da342f2b42dcd6c535df0e376e2143dfe22f",
+    "src/render/territoryMarkers.ts": "d1b2160fab1dc1cdd07e6206431797c49edc6cabda30c01d9fb5545223893828",
+    "src/render/toolFeedback.ts": "feb52b4474686bd31a62c5bdb0953e088d4126209a489b8a4d36033dff8bfb0b",
+    "src/ui/catalysisHud.ts": "efa01b8d61f9298f34124f9e0774a05069ffd934b842817b341c511022d161b5",
+    "src/ui/eliteTacticCycleHud.ts": "36f8c5b310d0672ea52c6c17a3bf4a0e5420fcc6d698ce20ab3ab4d16a025a8e",
+    "src/ui/immuneFocusHud.ts": "95e001cbb29334aec52e12f71b2f8497421625ec13d21e47cca54b3333f8c91d",
+    "src/ui/touchCopy.ts": "084156c164fadd45354722d64fc30017a001fa59aea0ccf8b951409e1ff70039"
+  },
+  "sourceComparison": [
+    {
+      "path": ".art-generated/art-runtime.json",
+      "actual": "263f6c7e5091e9682d33d4aed4de2a1ba4a66b79cc37b9df38f0f154b0fb4eff",
+      "candidate": "263f6c7e5091e9682d33d4aed4de2a1ba4a66b79cc37b9df38f0f154b0fb4eff",
+      "matches": true
+    },
+    {
+      "path": "node_modules/phaser/dist/phaser.esm.js",
+      "actual": "df50bc49e7856363b625fdf4f2c4e2e577cfc1644690c026c3610c594aff372f",
+      "candidate": "df50bc49e7856363b625fdf4f2c4e2e577cfc1644690c026c3610c594aff372f",
+      "matches": true
+    },
+    {
+      "path": "src/actors/collision.ts",
+      "actual": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0",
+      "candidate": "672668927cb089964a62a3d7a2ebe61bdb8662a40c1fa13cc53cb3d8749bbca0",
+      "matches": true
+    },
+    {
+      "path": "src/actors/enemyCrowd.ts",
+      "actual": "cd9ebf849e63f516c5a123206d866ec396497b76307c1a62ae08ecf9b8fc489f",
+      "candidate": "cd9ebf849e63f516c5a123206d866ec396497b76307c1a62ae08ecf9b8fc489f",
+      "matches": true
+    },
+    {
+      "path": "src/actors/enemyNavigation.ts",
+      "actual": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd",
+      "candidate": "74c28896e6b9220bc71e904425b9b8d2dac787d12e4ac65e7297e6b4c08fa6dd",
+      "matches": true
+    },
+    {
+      "path": "src/core/clock.ts",
+      "actual": "2e65d1623f903f438f01ac80640ff5ef06cf400d32a888e27471d0326b3a46bd",
+      "candidate": "2e65d1623f903f438f01ac80640ff5ef06cf400d32a888e27471d0326b3a46bd",
+      "matches": true
+    },
+    {
+      "path": "src/core/events.ts",
+      "actual": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+      "candidate": "af6e77c4c0af6ec108b85f20dbb0b0b9898abb19d8d2b733a6fdeddc0e49fafc",
+      "matches": true
+    },
+    {
+      "path": "src/core/rng.ts",
+      "actual": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+      "candidate": "a0dfe0c27e172067115c691edf5e2f0562206fffac1908c243779e25b5fb35a4",
+      "matches": true
+    },
+    {
+      "path": "src/game/battle.ts",
+      "actual": "51ede8b2896ad2a6ca9c8f9d9810798357ed12b950fc04c1c389482dc1e58ad2",
+      "candidate": "51ede8b2896ad2a6ca9c8f9d9810798357ed12b950fc04c1c389482dc1e58ad2",
+      "matches": true
+    },
+    {
+      "path": "src/game/battleConfig.ts",
+      "actual": "3365d6963f8edf43abdef1259483d3d21787a738abe1ccd81e2ebd6b1fdc609d",
+      "candidate": "3365d6963f8edf43abdef1259483d3d21787a738abe1ccd81e2ebd6b1fdc609d",
+      "matches": true
+    },
+    {
+      "path": "src/game/campScene.ts",
+      "actual": "aa034349546225417b6471a44661cfc31e441ae46e35d45e6c5ae42ffe2df18b",
+      "candidate": "aa034349546225417b6471a44661cfc31e441ae46e35d45e6c5ae42ffe2df18b",
+      "matches": true
+    },
+    {
+      "path": "src/game/campaign.ts",
+      "actual": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+      "candidate": "1259bd8de04665d9e253dd0ee03e3e00a4ae8bc63b3d375f4e8c10fa16f8e9e3",
+      "matches": true
+    },
+    {
+      "path": "src/game/campaignEncounters.ts",
+      "actual": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+      "candidate": "f958345b0521dbc9d546d6c394ba912b1711c62f55575097bb62af1f174a2c93",
+      "matches": true
+    },
+    {
+      "path": "src/game/catalysis.ts",
+      "actual": "f7d4a5b0710ff3eac65809a7762effe910b79f63ab7a74735128d6e6b6288113",
+      "candidate": "f7d4a5b0710ff3eac65809a7762effe910b79f63ab7a74735128d6e6b6288113",
+      "matches": true
+    },
+    {
+      "path": "src/game/chargedSlash.ts",
+      "actual": "bde88263277215d6173f6759ce197a639eac3b011d0a21a517330c7625969c8d",
+      "candidate": "bde88263277215d6173f6759ce197a639eac3b011d0a21a517330c7625969c8d",
+      "matches": true
+    },
+    {
+      "path": "src/game/combatPopulation.ts",
+      "actual": "5f8bd5128612512da7d974e302b54a4a858f9e7703fe49d1fa3d5fa741ffeacf",
+      "candidate": "5f8bd5128612512da7d974e302b54a4a858f9e7703fe49d1fa3d5fa741ffeacf",
+      "matches": true
+    },
+    {
+      "path": "src/game/construction.ts",
+      "actual": "ebf2d90916f1710e87fbf2ea6b4d81a0ef468ad959a8c350278819e72142cebc",
+      "candidate": "ebf2d90916f1710e87fbf2ea6b4d81a0ef468ad959a8c350278819e72142cebc",
+      "matches": true
+    },
+    {
+      "path": "src/game/constructionTypes.ts",
+      "actual": "514b0933047f3a234b6fb9b0c8840d85a448b9c54a5894084df235c735349e79",
+      "candidate": "514b0933047f3a234b6fb9b0c8840d85a448b9c54a5894084df235c735349e79",
+      "matches": true
+    },
+    {
+      "path": "src/game/counterLesson.ts",
+      "actual": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+      "candidate": "18c91b7303b9951112781be598fd5a1fb961cd4180d119df0f75382cba24b71d",
+      "matches": true
+    },
+    {
+      "path": "src/game/dashBlade.ts",
+      "actual": "c7bb058f5b38bc3124fb8efd4739f661b42acee026f1ce1c008de1234dc6d771",
+      "candidate": "c7bb058f5b38bc3124fb8efd4739f661b42acee026f1ce1c008de1234dc6d771",
+      "matches": true
+    },
+    {
+      "path": "src/game/dashTrail.ts",
+      "actual": "2e0f6b4d4ab8321a1718aae30a56a4ea1b1cfd9c5f94b982653f7bc911b0d287",
+      "candidate": "2e0f6b4d4ab8321a1718aae30a56a4ea1b1cfd9c5f94b982653f7bc911b0d287",
+      "matches": true
+    },
+    {
+      "path": "src/game/eliteTacticCycle.ts",
+      "actual": "862b23512773a196d997dbd9062b18a9f17188f22449ba93dee98ead13c3e8dd",
+      "candidate": "862b23512773a196d997dbd9062b18a9f17188f22449ba93dee98ead13c3e8dd",
+      "matches": true
+    },
+    {
+      "path": "src/game/encounterConfig.ts",
+      "actual": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+      "candidate": "5b526ee3866ed6dea00b84b94d0901b27ba083e17ce71248d5c5db0fa8d423da",
+      "matches": true
+    },
+    {
+      "path": "src/game/endless.ts",
+      "actual": "c0907151e178f88a7c2ed22e7fe960aa6351e7c00dafe61ee2ee3cf9f23f0fff",
+      "candidate": "c0907151e178f88a7c2ed22e7fe960aa6351e7c00dafe61ee2ee3cf9f23f0fff",
+      "matches": true
+    },
+    {
+      "path": "src/game/endlessAssault.ts",
+      "actual": "e60f8e6cec6e4b963614c467062efc05a89b0eacb1825b71dd0f3fba1503417a",
+      "candidate": "e60f8e6cec6e4b963614c467062efc05a89b0eacb1825b71dd0f3fba1503417a",
+      "matches": true
+    },
+    {
+      "path": "src/game/endlessBehavior.ts",
+      "actual": "bfc1fa2e8950118aecb7378383d81a7e2ea3e8b8ac4c21cb67a88e289a356a92",
+      "candidate": "bfc1fa2e8950118aecb7378383d81a7e2ea3e8b8ac4c21cb67a88e289a356a92",
+      "matches": true
+    },
+    {
+      "path": "src/game/endlessEvolution.ts",
+      "actual": "b3ad9b394634da947bf9aa7ff32d9b9ccb7774909771c524a078d490bba1db4f",
+      "candidate": "b3ad9b394634da947bf9aa7ff32d9b9ccb7774909771c524a078d490bba1db4f",
+      "matches": true
+    },
+    {
+      "path": "src/game/endlessGrowth.ts",
+      "actual": "9b74010bbd1df52b5619067df45aa814ae2a96846163ec4a3c7bd745d016250e",
+      "candidate": "9b74010bbd1df52b5619067df45aa814ae2a96846163ec4a3c7bd745d016250e",
+      "matches": true
+    },
+    {
+      "path": "src/game/endlessPacing.ts",
+      "actual": "c0d9376d4225c2a6606956f05c51283e5587ab86741f3d615d9d653b5627c090",
+      "candidate": "c0d9376d4225c2a6606956f05c51283e5587ab86741f3d615d9d653b5627c090",
+      "matches": true
+    },
+    {
+      "path": "src/game/endlessSource.ts",
+      "actual": "5a3cbfea571f371707a64c0526e1ebd2e36ac2da404051b37e4692203a51c6fe",
+      "candidate": "5a3cbfea571f371707a64c0526e1ebd2e36ac2da404051b37e4692203a51c6fe",
+      "matches": true
+    },
+    {
+      "path": "src/game/endlessStrikeBalance.ts",
+      "actual": "70b6fb73a94c0fac1baad402b2f41d47e9882b01b4847369aef7efd11660330b",
+      "candidate": "70b6fb73a94c0fac1baad402b2f41d47e9882b01b4847369aef7efd11660330b",
+      "matches": true
+    },
+    {
+      "path": "src/game/enemyFacing.ts",
+      "actual": "f2f97826b5fbae1d19bfcd718eac2c216800187c86003d11bcfc9c8c63cec24d",
+      "candidate": "f2f97826b5fbae1d19bfcd718eac2c216800187c86003d11bcfc9c8c63cec24d",
+      "matches": true
+    },
+    {
+      "path": "src/game/enemyPositioning.ts",
+      "actual": "d01aff7f39ea4d4a3c34f306947452e93de57b93106a56c103bb64c9c097a878",
+      "candidate": "d01aff7f39ea4d4a3c34f306947452e93de57b93106a56c103bb64c9c097a878",
+      "matches": true
+    },
+    {
+      "path": "src/game/enemyTacticInfo.ts",
+      "actual": "ee6f959eb75b09e298f82dd78fbad5d6bb98ae0bbb7d7cef6701a0953030c5a8",
+      "candidate": "ee6f959eb75b09e298f82dd78fbad5d6bb98ae0bbb7d7cef6701a0953030c5a8",
+      "matches": true
+    },
+    {
+      "path": "src/game/enemyTactics.ts",
+      "actual": "d0a393a0803ae53a84a59fceb9d74e0fe88cbdda50d79cfe4115f08ef68abfe6",
+      "candidate": "d0a393a0803ae53a84a59fceb9d74e0fe88cbdda50d79cfe4115f08ef68abfe6",
+      "matches": true
+    },
+    {
+      "path": "src/game/evolution.ts",
+      "actual": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+      "candidate": "e53f40a14326772e7bd1b4fdc25660a995b86454b94ec85b339d0312c5577501",
+      "matches": true
+    },
+    {
+      "path": "src/game/expedition.ts",
+      "actual": "908fa5b15bbcccdbccc50d2c158667bf0a617a0e2dd31eb66711b382d5354eff",
+      "candidate": "908fa5b15bbcccdbccc50d2c158667bf0a617a0e2dd31eb66711b382d5354eff",
+      "matches": true
+    },
+    {
+      "path": "src/game/growth.ts",
+      "actual": "350a132430782721a923c45b8d9cac8ac8101de24af2429fe2d525377b0d33dc",
+      "candidate": "350a132430782721a923c45b8d9cac8ac8101de24af2429fe2d525377b0d33dc",
+      "matches": true
+    },
+    {
+      "path": "src/game/healingPoints.ts",
+      "actual": "915eabdd233f7ad1e62610fd9be29a71ba326fec9bb7cbda327dd9b4f00de277",
+      "candidate": "915eabdd233f7ad1e62610fd9be29a71ba326fec9bb7cbda327dd9b4f00de277",
+      "matches": true
+    },
+    {
+      "path": "src/game/hostEvents.ts",
+      "actual": "367fad03129ce257e847dedac946bb6d3cac522abb3f5e0922207f51f77fbfae",
+      "candidate": "367fad03129ce257e847dedac946bb6d3cac522abb3f5e0922207f51f77fbfae",
+      "matches": true
+    },
+    {
+      "path": "src/game/immuneCells.ts",
+      "actual": "c3ad22cf8e77bdc32203846726fdaec408813bfcd78e423b8b1e48265f639b3c",
+      "candidate": "c3ad22cf8e77bdc32203846726fdaec408813bfcd78e423b8b1e48265f639b3c",
+      "matches": true
+    },
+    {
+      "path": "src/game/immuneFocus.ts",
+      "actual": "ae0a07dc07747100a2d271bc11989751a480972d76945378decc12b3d41cf9e1",
+      "candidate": "ae0a07dc07747100a2d271bc11989751a480972d76945378decc12b3d41cf9e1",
+      "matches": true
+    },
+    {
+      "path": "src/game/immuneLegions.ts",
+      "actual": "399fc580b5afe53b5b22ad7b4b7d5c874271cc7af8feb666773cdcb1d2b83ee0",
+      "candidate": "399fc580b5afe53b5b22ad7b4b7d5c874271cc7af8feb666773cdcb1d2b83ee0",
+      "matches": true
+    },
+    {
+      "path": "src/game/motherCore.ts",
+      "actual": "e041a9c6ef5eefdc9630df2dabe01f56b78ca774fb92f3aecf1905fbe80c390f",
+      "candidate": "e041a9c6ef5eefdc9630df2dabe01f56b78ca774fb92f3aecf1905fbe80c390f",
+      "matches": true
+    },
+    {
+      "path": "src/game/openingEvolution.ts",
+      "actual": "8519a49436dd51799e1057bee8ebd7d8daa5edc6f23e6e81601e57fb15b986d7",
+      "candidate": "8519a49436dd51799e1057bee8ebd7d8daa5edc6f23e6e81601e57fb15b986d7",
+      "matches": true
+    },
+    {
+      "path": "src/game/organConfig.ts",
+      "actual": "4563ddb4c24cb8b19400a29e48ce2fcbd4775f940adb0c19d92ede2ae8f5cb42",
+      "candidate": "4563ddb4c24cb8b19400a29e48ce2fcbd4775f940adb0c19d92ede2ae8f5cb42",
+      "matches": true
+    },
+    {
+      "path": "src/game/organRules.ts",
+      "actual": "7e6b4951b1c76ce6e0eb0964f41eedff20bb3cc71e14d8421c878b0aa53515f0",
+      "candidate": "7e6b4951b1c76ce6e0eb0964f41eedff20bb3cc71e14d8421c878b0aa53515f0",
+      "matches": true
+    },
+    {
+      "path": "src/game/playerProjectiles.ts",
+      "actual": "ff420b51e1569188be2e316e933c2fe4e04808b036090e022e28538ac3d7e2ad",
+      "candidate": "ff420b51e1569188be2e316e933c2fe4e04808b036090e022e28538ac3d7e2ad",
+      "matches": true
+    },
+    {
+      "path": "src/game/preparation.ts",
+      "actual": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+      "candidate": "542d9fec354deb4eda94cc895f850a17a23f306b574f230902dce3e8eec15d4e",
+      "matches": true
+    },
+    {
+      "path": "src/game/protocols.ts",
+      "actual": "4e407a74e0b87b7bbba93c48c881cb729a0770f24a027cbc8d59f7f512449260",
+      "candidate": "4e407a74e0b87b7bbba93c48c881cb729a0770f24a027cbc8d59f7f512449260",
+      "matches": true
+    },
+    {
+      "path": "src/game/research.ts",
+      "actual": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+      "candidate": "1a25ebc10439794d9772e3ca7fad5ef71ae1fbd421cafc81c7d784dc9376afa0",
+      "matches": true
+    },
+    {
+      "path": "src/game/ritual.ts",
+      "actual": "a4b9a556cc8354e49bc05d8847e6aca121e03bf6fd09adfdde97adc2ecd75246",
+      "candidate": "a4b9a556cc8354e49bc05d8847e6aca121e03bf6fd09adfdde97adc2ecd75246",
+      "matches": true
+    },
+    {
+      "path": "src/game/runMetrics.ts",
+      "actual": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+      "candidate": "13d8f4116a3b51ba18086ec8a0fe8fc0788c31a4b1b65bb663b68269866842e4",
+      "matches": true
+    },
+    {
+      "path": "src/game/session.ts",
+      "actual": "9eee10415815120645e8510c21539fbbf76cd1ecbcb50511123877ea121572ea",
+      "candidate": "9eee10415815120645e8510c21539fbbf76cd1ecbcb50511123877ea121572ea",
+      "matches": true
+    },
+    {
+      "path": "src/game/smartViruses.ts",
+      "actual": "fcef0e118b312988ba595816d29854b80a7e6526ea7db635d4a1c103b7e57844",
+      "candidate": "fcef0e118b312988ba595816d29854b80a7e6526ea7db635d4a1c103b7e57844",
+      "matches": true
+    },
+    {
+      "path": "src/game/tacticalFeedback.ts",
+      "actual": "b3fef29a2b907876aa1f15350827945325f3c00106898ec730202d1222d04c9b",
+      "candidate": "b3fef29a2b907876aa1f15350827945325f3c00106898ec730202d1222d04c9b",
+      "matches": true
+    },
+    {
+      "path": "src/game/territory.ts",
+      "actual": "028404582a0180306afbd8efe05e723b6da34c9bb6619d4a4f8962c33aa66e46",
+      "candidate": "028404582a0180306afbd8efe05e723b6da34c9bb6619d4a4f8962c33aa66e46",
+      "matches": true
+    },
+    {
+      "path": "src/game/territoryCannon.ts",
+      "actual": "88ba64f3c8e9d575c2b264c5a3db913969bb4795e63539cd20998e7038035ccb",
+      "candidate": "88ba64f3c8e9d575c2b264c5a3db913969bb4795e63539cd20998e7038035ccb",
+      "matches": true
+    },
+    {
+      "path": "src/game/territoryNotices.ts",
+      "actual": "830edd062c5db3c4ed3c696aa6518671b57c12c4dc044506906e5fd73ca17dc9",
+      "candidate": "830edd062c5db3c4ed3c696aa6518671b57c12c4dc044506906e5fd73ca17dc9",
+      "matches": true
+    },
+    {
+      "path": "src/game/territoryPresentation.ts",
+      "actual": "67a83215e561f388f2627b2c26a4c4500a90419d342f3d3948c5b6217445196f",
+      "candidate": "67a83215e561f388f2627b2c26a4c4500a90419d342f3d3948c5b6217445196f",
+      "matches": true
+    },
+    {
+      "path": "src/game/traction.ts",
+      "actual": "2ebdd2264eae46a3744b45371733aa35fc93a8c7f6b030d8a36c8163e2c4ad5e",
+      "candidate": "2ebdd2264eae46a3744b45371733aa35fc93a8c7f6b030d8a36c8163e2c4ad5e",
+      "matches": true
+    },
+    {
+      "path": "src/game/types.ts",
+      "actual": "e43f353e06c83b1736920ae6049075726ebce994b09bc3265d4acd77bb437701",
+      "candidate": "e43f353e06c83b1736920ae6049075726ebce994b09bc3265d4acd77bb437701",
+      "matches": true
+    },
+    {
+      "path": "src/game/viralCapsules.ts",
+      "actual": "d9fbb60d009eafb61b5237308a1ed60626cd424accd6acbe4db189abe0c45327",
+      "candidate": "d9fbb60d009eafb61b5237308a1ed60626cd424accd6acbe4db189abe0c45327",
+      "matches": true
+    },
+    {
+      "path": "src/game/weaponSkills.ts",
+      "actual": "7b901e257c52be4ca2093441ad0ce0a3f97a6eeb54920a20b36e05832d0da984",
+      "candidate": "7b901e257c52be4ca2093441ad0ce0a3f97a6eeb54920a20b36e05832d0da984",
+      "matches": true
+    },
+    {
+      "path": "src/input/controller.ts",
+      "actual": "f023784c3ae04d42d3d0b73c3342a683eb623fa20f79783b3b512dba2a1c207a",
+      "candidate": "f023784c3ae04d42d3d0b73c3342a683eb623fa20f79783b3b512dba2a1c207a",
+      "matches": true
+    },
+    {
+      "path": "src/input/touchControls.ts",
+      "actual": "4f5db137b3299fdf9b98498edc0302179b17c7437bd26404561207194e3b47e8",
+      "candidate": "4f5db137b3299fdf9b98498edc0302179b17c7437bd26404561207194e3b47e8",
+      "matches": true
+    },
+    {
+      "path": "src/render/actorAnimation.ts",
+      "actual": "4cab5ff88a78c501765bf8ee8ab3dfd2710a7e06521acdbb5d60c695bab66d56",
+      "candidate": "4cab5ff88a78c501765bf8ee8ab3dfd2710a7e06521acdbb5d60c695bab66d56",
+      "matches": true
+    },
+    {
+      "path": "src/render/actorFootPlant.ts",
+      "actual": "c4499889079d74ca07e3a820db04ba869a7c3b2e0bff7298e93c9723fbef994f",
+      "candidate": "c4499889079d74ca07e3a820db04ba869a7c3b2e0bff7298e93c9723fbef994f",
+      "matches": true
+    },
+    {
+      "path": "src/render/artPresentation.ts",
+      "actual": "fef6b2db2dd8cd86c558fc25fc6b46ba6534e5cf2c61f8bae54b41868f584467",
+      "candidate": "fef6b2db2dd8cd86c558fc25fc6b46ba6534e5cf2c61f8bae54b41868f584467",
+      "matches": true
+    },
+    {
+      "path": "src/render/battleVisuals.ts",
+      "actual": "ed2af605266430ab3a0025d95dab7e4990b8fee9bd0b4e94ef35e60e4734c0b3",
+      "candidate": "ed2af605266430ab3a0025d95dab7e4990b8fee9bd0b4e94ef35e60e4734c0b3",
+      "matches": true
+    },
+    {
+      "path": "src/render/camera.ts",
+      "actual": "e7b7f4cfa6b8e296223b72b23bb7a2b8c9ee2a15d4ef029e659af8d6bf99fc69",
+      "candidate": "e7b7f4cfa6b8e296223b72b23bb7a2b8c9ee2a15d4ef029e659af8d6bf99fc69",
+      "matches": true
+    },
+    {
+      "path": "src/render/canvasScene.ts",
+      "actual": "b8f44acafcfd87c67240c57d355eaf4643ef26387ac48a1488b1e5519d1d1abd",
+      "candidate": "b8f44acafcfd87c67240c57d355eaf4643ef26387ac48a1488b1e5519d1d1abd",
+      "matches": true
+    },
+    {
+      "path": "src/render/catalysisVisuals.ts",
+      "actual": "719fd36fa0eeb54e7ec92d87202480ac8ac593682aed54221d505626067baacc",
+      "candidate": "719fd36fa0eeb54e7ec92d87202480ac8ac593682aed54221d505626067baacc",
+      "matches": true
+    },
+    {
+      "path": "src/render/combatEffects.ts",
+      "actual": "bbbe31e30acdd04d7384a97b233eed384ececc680c1a8b7eebe44a072caf87df",
+      "candidate": "bbbe31e30acdd04d7384a97b233eed384ececc680c1a8b7eebe44a072caf87df",
+      "matches": true
+    },
+    {
+      "path": "src/render/crosshairStatus.ts",
+      "actual": "5c7d1751a6e586bb905e8acb0ebd574590cc47c76a483f58c91e9594f029f943",
+      "candidate": "5c7d1751a6e586bb905e8acb0ebd574590cc47c76a483f58c91e9594f029f943",
+      "matches": true
+    },
+    {
+      "path": "src/render/depthSort.ts",
+      "actual": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+      "candidate": "7586af9a07e742102b9ead4fb435fd816c905949d1cbd413918f4a6d69a79e6e",
+      "matches": true
+    },
+    {
+      "path": "src/render/eliteTacticCycleVisuals.ts",
+      "actual": "973db60769fba9e70f83a1e1fff276f4011e6acebaf4f4b581671909f00c95f7",
+      "candidate": "973db60769fba9e70f83a1e1fff276f4011e6acebaf4f4b581671909f00c95f7",
+      "matches": true
+    },
+    {
+      "path": "src/render/encounterVisuals.ts",
+      "actual": "62e43895e405cd1300d735f59f150781cdf07b74036d5dbcc0b6f93011e01629",
+      "candidate": "62e43895e405cd1300d735f59f150781cdf07b74036d5dbcc0b6f93011e01629",
+      "matches": true
+    },
+    {
+      "path": "src/render/endlessVisuals.ts",
+      "actual": "49f0da60be1c8963cab864e4c845c39956401a7670a6d56866c8115d59c45b2e",
+      "candidate": "49f0da60be1c8963cab864e4c845c39956401a7670a6d56866c8115d59c45b2e",
+      "matches": true
+    },
+    {
+      "path": "src/render/enemyTacticVisuals.ts",
+      "actual": "27c6e91e71886a7533af3ed0706e80477cc7023d717df4ff3204031783b87951",
+      "candidate": "27c6e91e71886a7533af3ed0706e80477cc7023d717df4ff3204031783b87951",
+      "matches": true
+    },
+    {
+      "path": "src/render/expeditionArt.ts",
+      "actual": "66b02f50580b8357a1e105db43cca3847f87af700e9e662af095cfe171fae58d",
+      "candidate": "66b02f50580b8357a1e105db43cca3847f87af700e9e662af095cfe171fae58d",
+      "matches": true
+    },
+    {
+      "path": "src/render/expeditionVisuals.ts",
+      "actual": "369decbb6762a13857b23e6ee2db40dd244cf0c4a0a4d261d4798cdf8e7044a0",
+      "candidate": "369decbb6762a13857b23e6ee2db40dd244cf0c4a0a4d261d4798cdf8e7044a0",
+      "matches": true
+    },
+    {
+      "path": "src/render/fantasyTerritory.ts",
+      "actual": "635de210e849192e8ff1cf65ac9ff57ea750eb0ed0013bfacf93663cab9af41e",
+      "candidate": "635de210e849192e8ff1cf65ac9ff57ea750eb0ed0013bfacf93663cab9af41e",
+      "matches": true
+    },
+    {
+      "path": "src/render/growthVisuals.ts",
+      "actual": "da7e599f3043ae614394dbf7238cb216bb4e048762e0c4f8ff74957e00aa603b",
+      "candidate": "da7e599f3043ae614394dbf7238cb216bb4e048762e0c4f8ff74957e00aa603b",
+      "matches": true
+    },
+    {
+      "path": "src/render/heroAnimation.ts",
+      "actual": "7ebe446d889db3bc0d2302e787deaef1660943563900482f9deacdb137a6ffd0",
+      "candidate": "7ebe446d889db3bc0d2302e787deaef1660943563900482f9deacdb137a6ffd0",
+      "matches": true
+    },
+    {
+      "path": "src/render/heroLocomotion.ts",
+      "actual": "b18a33c357079798695706d3e1d464ff7f53192415173f2b76778e885489168a",
+      "candidate": "b18a33c357079798695706d3e1d464ff7f53192415173f2b76778e885489168a",
+      "matches": true
+    },
+    {
+      "path": "src/render/heroRig.ts",
+      "actual": "9ac59ab7b944617a0b4486ff2d2cff41be1502a49fe1b442c935fe0c3cf06df5",
+      "candidate": "9ac59ab7b944617a0b4486ff2d2cff41be1502a49fe1b442c935fe0c3cf06df5",
+      "matches": true
+    },
+    {
+      "path": "src/render/hostEventVisuals.ts",
+      "actual": "6c7ef88f48a85bcf64473da8e4a77c69cbb8e624f0dade645e6a5b09b96ec381",
+      "candidate": "6c7ef88f48a85bcf64473da8e4a77c69cbb8e624f0dade645e6a5b09b96ec381",
+      "matches": true
+    },
+    {
+      "path": "src/render/immuneFocusVisuals.ts",
+      "actual": "671ef27635c303f30d5d6328fe7c96a7d695174dc7821418bb4f49fae4fed787",
+      "candidate": "671ef27635c303f30d5d6328fe7c96a7d695174dc7821418bb4f49fae4fed787",
+      "matches": true
+    },
+    {
+      "path": "src/render/immuneTraceCues.ts",
+      "actual": "611926281627e1ba999a24184448e283b062503a4e23a6080c5e9a8c1e52fe63",
+      "candidate": "611926281627e1ba999a24184448e283b062503a4e23a6080c5e9a8c1e52fe63",
+      "matches": true
+    },
+    {
+      "path": "src/render/immuneVisuals.ts",
+      "actual": "4ded7b1536d71de696d2c9d388eb9c4194cbe66af40169c62d3802dfa1c7e297",
+      "candidate": "4ded7b1536d71de696d2c9d388eb9c4194cbe66af40169c62d3802dfa1c7e297",
+      "matches": true
+    },
+    {
+      "path": "src/render/layers.ts",
+      "actual": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+      "candidate": "9bbbb9bec8f022cab25bf8facc359a167de75d5808a32d311472db3cfe4f1453",
+      "matches": true
+    },
+    {
+      "path": "src/render/lowCover.ts",
+      "actual": "759a2ff5f924dc8cc75dc76331bb129e390b0753c14f2902341e20ff31bd2fae",
+      "candidate": "759a2ff5f924dc8cc75dc76331bb129e390b0753c14f2902341e20ff31bd2fae",
+      "matches": true
+    },
+    {
+      "path": "src/render/lungVisuals.ts",
+      "actual": "7bc495edd2c18da89ce1b8e6934e98ade262e982b953bf732593827e18ac7b77",
+      "candidate": "7bc495edd2c18da89ce1b8e6934e98ade262e982b953bf732593827e18ac7b77",
+      "matches": true
+    },
+    {
+      "path": "src/render/motionInterpolation.ts",
+      "actual": "1e4416377ee09a487b46a894737b4f56d5980b144e8f603071fb234a4ff39066",
+      "candidate": "1e4416377ee09a487b46a894737b4f56d5980b144e8f603071fb234a4ff39066",
+      "matches": true
+    },
+    {
+      "path": "src/render/navigation.ts",
+      "actual": "fd3dac19ab33f9fa0d3f8a58f2446129aa704e489de7db186862010bd26df50d",
+      "candidate": "fd3dac19ab33f9fa0d3f8a58f2446129aa704e489de7db186862010bd26df50d",
+      "matches": true
+    },
+    {
+      "path": "src/render/occlusion.ts",
+      "actual": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+      "candidate": "869d57f651ca49294ccb2403a2d4c0bd7fc5bd7416558204106a49dfd3687c16",
+      "matches": true
+    },
+    {
+      "path": "src/render/phaserHost.ts",
+      "actual": "b9a3e34425b82a4dbeb4ba5ee938f8358e854ebd139bbb0c6cfe3dd3f994165c",
+      "candidate": "b9a3e34425b82a4dbeb4ba5ee938f8358e854ebd139bbb0c6cfe3dd3f994165c",
+      "matches": true
+    },
+    {
+      "path": "src/render/phaserRenderer.ts",
+      "actual": "99e974e4ea9e2dc03e982dd8a80f1065d6e782dc3eb942dee24c06f6225cce55",
+      "candidate": "99e974e4ea9e2dc03e982dd8a80f1065d6e782dc3eb942dee24c06f6225cce55",
+      "matches": true
+    },
+    {
+      "path": "src/render/playerDamageFeedback.ts",
+      "actual": "9eb134877187ff0fef9243a8f3d4a8cfce2b3121566cdc36496e607f67c97093",
+      "candidate": "9eb134877187ff0fef9243a8f3d4a8cfce2b3121566cdc36496e607f67c97093",
+      "matches": true
+    },
+    {
+      "path": "src/render/playerHealth.ts",
+      "actual": "06615002fb1c27c26ba8472b2b320f047b94fc9255f9730c765b96000def41ea",
+      "candidate": "06615002fb1c27c26ba8472b2b320f047b94fc9255f9730c765b96000def41ea",
+      "matches": true
+    },
+    {
+      "path": "src/render/playerPresence.ts",
+      "actual": "46a89203866165f34e873b1400a794df538ba8f30295c086687e8a1f48e3f996",
+      "candidate": "46a89203866165f34e873b1400a794df538ba8f30295c086687e8a1f48e3f996",
+      "matches": true
+    },
+    {
+      "path": "src/render/playerProjectileVisuals.ts",
+      "actual": "b0d8f4a58fa427b3d36e699bd60317d6063af297112ae7f48cbd60c65da0e795",
+      "candidate": "b0d8f4a58fa427b3d36e699bd60317d6063af297112ae7f48cbd60c65da0e795",
+      "matches": true
+    },
+    {
+      "path": "src/render/pulsePreview.ts",
+      "actual": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+      "candidate": "976e25df7e8d97efacf24fd163f6c6bf3720c85486baa89df516d1df7ec2b370",
+      "matches": true
+    },
+    {
+      "path": "src/render/raisedObstacleGeometry.ts",
+      "actual": "373e3f145fd521367be7adc93c8461b5407cfe384866f2eb59c2a3ee645a3df6",
+      "candidate": "373e3f145fd521367be7adc93c8461b5407cfe384866f2eb59c2a3ee645a3df6",
+      "matches": true
+    },
+    {
+      "path": "src/render/raisedObstacleOcclusion.ts",
+      "actual": "81657e9c7f19f3221f4980cd7b6efae152c1b1f768a92d4960f2085a91876feb",
+      "candidate": "81657e9c7f19f3221f4980cd7b6efae152c1b1f768a92d4960f2085a91876feb",
+      "matches": true
+    },
+    {
+      "path": "src/render/sceneLabels.ts",
+      "actual": "0cceb5ffa23face8ee93aaff4b31c49a72b43fa760b724009c8fc4e80f108755",
+      "candidate": "0cceb5ffa23face8ee93aaff4b31c49a72b43fa760b724009c8fc4e80f108755",
+      "matches": true
+    },
+    {
+      "path": "src/render/smartVirusVisuals.ts",
+      "actual": "f6be83753975d13156b0af3448258a39106fb984fddf55fb4fa99f9e76bb31a5",
+      "candidate": "f6be83753975d13156b0af3448258a39106fb984fddf55fb4fa99f9e76bb31a5",
+      "matches": true
+    },
+    {
+      "path": "src/render/spriteGeometry.ts",
+      "actual": "16261b404b2353a10f83caf756eb53707d318b4139d02c212821a2106a23699d",
+      "candidate": "16261b404b2353a10f83caf756eb53707d318b4139d02c212821a2106a23699d",
+      "matches": true
+    },
+    {
+      "path": "src/render/territoryCannonVisuals.ts",
+      "actual": "9015c014768cd939ce129eff4d82da342f2b42dcd6c535df0e376e2143dfe22f",
+      "candidate": "9015c014768cd939ce129eff4d82da342f2b42dcd6c535df0e376e2143dfe22f",
+      "matches": true
+    },
+    {
+      "path": "src/render/territoryMarkers.ts",
+      "actual": "d1b2160fab1dc1cdd07e6206431797c49edc6cabda30c01d9fb5545223893828",
+      "candidate": "d1b2160fab1dc1cdd07e6206431797c49edc6cabda30c01d9fb5545223893828",
+      "matches": true
+    },
+    {
+      "path": "src/render/toolFeedback.ts",
+      "actual": "feb52b4474686bd31a62c5bdb0953e088d4126209a489b8a4d36033dff8bfb0b",
+      "candidate": "feb52b4474686bd31a62c5bdb0953e088d4126209a489b8a4d36033dff8bfb0b",
+      "matches": true
+    },
+    {
+      "path": "src/ui/catalysisHud.ts",
+      "actual": "efa01b8d61f9298f34124f9e0774a05069ffd934b842817b341c511022d161b5",
+      "candidate": "efa01b8d61f9298f34124f9e0774a05069ffd934b842817b341c511022d161b5",
+      "matches": true
+    },
+    {
+      "path": "src/ui/eliteTacticCycleHud.ts",
+      "actual": "36f8c5b310d0672ea52c6c17a3bf4a0e5420fcc6d698ce20ab3ab4d16a025a8e",
+      "candidate": "36f8c5b310d0672ea52c6c17a3bf4a0e5420fcc6d698ce20ab3ab4d16a025a8e",
+      "matches": true
+    },
+    {
+      "path": "src/ui/immuneFocusHud.ts",
+      "actual": "95e001cbb29334aec52e12f71b2f8497421625ec13d21e47cca54b3333f8c91d",
+      "candidate": "95e001cbb29334aec52e12f71b2f8497421625ec13d21e47cca54b3333f8c91d",
+      "matches": true
+    },
+    {
+      "path": "src/ui/touchCopy.ts",
+      "actual": "084156c164fadd45354722d64fc30017a001fa59aea0ccf8b951409e1ff70039",
+      "candidate": "084156c164fadd45354722d64fc30017a001fa59aea0ccf8b951409e1ff70039",
+      "matches": true
+    }
+  ],
+  "releaseOutputs": {
+    "index.html": "65143c3801beff03f17062a8bfbbff448b917de7481d50fe1da6991c65c850e4",
+    "game.js": "6f332c62c1ae69d23729e097dc17f0dd1fa4028bd0f296536081f31e1bc34683",
+    "game.css": "bea3b95b60f684912a4fd42bcdb7a34661548b2b1928dced0fb9e8fea45a2e2e"
+  },
+  "harnessSourceSha256": "21351f954b38b4330ff5f95cb4b8af500c7bd37aa08c269ae462acf651bd5541",
+  "measurementScriptSha256": "25deaed6075fbae385091df8fe9d9845582b8d26f4c04c7db65276cc136025dc"
+}

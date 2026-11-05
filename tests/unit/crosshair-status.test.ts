@@ -37,4 +37,13 @@ describe('tool aiming geometry feedback', () => {
     expect(crosshairStatus(interpolated, aim)).toBe('in-range');
     expect(crosshairStatus(state, aim)).toBe('out-of-range');
   });
+  it('shows the shorter crescent primary range while respecting an explicitly previewed skill', () => {
+    const game = new GameSession(71, { mode: 'endless', territory: true }); game.start();
+    const state = game.state, point = { x: state.player.x + 450, y: state.player.y };
+    expect(crosshairStatus(state, point)).toBe('in-range');
+    state.weaponCombat!.loadout.weaponId = 'piercing';
+    expect(crosshairStatus(state, point)).toBe('out-of-range');
+    expect(crosshairStatus(state, point, 700)).toBe('in-range');
+    expect(crosshairStatus(state, { x: state.player.x + 400, y: state.player.y })).toBe('in-range');
+  });
 });
