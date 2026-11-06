@@ -7,6 +7,8 @@ import type { EndlessProfileStorage } from '../../src/meta/endlessProfile';
 import { campFirstSteps, campOverlay } from '../../src/ui/campHud';
 import { expeditionRewardMarkup } from '../../src/ui/expeditionRewardHud';
 import { weaponSkillDefinitions } from '../../src/game/weaponSkills';
+import { INTRO_FACILITY_IDS } from '../../src/game/campProgression';
+import { STARTER_COINS } from '../../src/game/microfront';
 
 class Storage implements EndlessProfileStorage {
   private values = new Map<string, string>();
@@ -18,6 +20,13 @@ const advance = (trial: CampWeaponTrial, seconds = .3) => { for (let t = 0; t < 
 function wonCamp() {
   const store = new CampProfileStore(new Storage()), run = store.beginExpedition('camp-experience', 71);
   store.settleVictory(run.runId, createBossLoot(run.runId, 71, run.firstClear)); return store;
+}
+function buildCamp(store: CampProfileStore): void {
+  expect(store.establishCamp().accepted).toBe(true);
+  for (const id of INTRO_FACILITY_IDS) {
+    expect(store.beginBuild(id).accepted).toBe(true);
+    expect(store.completeBuild(id).accepted).toBe(true);
+  }
 }
 
 describe('safe weapon practice with real production skills', () => {
@@ -108,6 +117,27 @@ describe('safe weapon practice with real production skills', () => {
 });
 
 describe('visible victory loot and first camp actions', () => {
+  it('lets the player build in a chosen order and use each finished facility before the camp is complete', () => {
+    const store = new CampProfileStore(new Storage());
+    expect(store.establishCamp().accepted).toBe(true);
+    expect(store.finishCampIntro().accepted).toBe(false);
+    expect(store.data.builtFacilities).toEqual([]);
+    expect(campOverlay(store.load(), 'forge')).not.toContain('data-action="camp-craft"');
+    expect(store.beginBuild('forge').accepted).toBe(true);
+    expect(store.beginBuild('warehouse').accepted).toBe(false);
+    expect(store.completeBuild('forge').accepted).toBe(true);
+    expect(store.data.prologue).toBe('building');
+    expect(campOverlay(store.load(), 'forge')).toContain('data-action="camp-craft"');
+    expect(campOverlay(store.load(), 'warehouse')).not.toContain('data-action="camp-equip"');
+    expect(campOverlay(store.load(), 'missions')).not.toContain('data-action="camp-deploy"');
+    for (const id of ['warehouse', 'summon', 'departure', 'shop'] as const) {
+      expect(store.beginBuild(id).accepted).toBe(true);
+      expect(store.completeBuild(id).accepted).toBe(true);
+    }
+    expect(store.data.prologue).toBe('ready');
+    expect(store.data.materials).toBe(0); expect(store.data.coins).toBe(STARTER_COINS);
+    expect(campOverlay(store.load(), 'missions')).toContain('出击 · 膜隙初染');
+  });
   it('renders the actual stable reward even when the victory and drop occur together', () => {
     const game = new GameSession(71, { campaign: true, milestone: 'G3', mode: 'endless', territory: true }); game.start();
     const state = game.state; state.expedition!.pendingLoot = { ...createBossLoot(state.expedition!.runId, 71, true), rarity: 'gold' };
@@ -132,11 +162,11 @@ describe('visible victory loot and first camp actions', () => {
     for (const slot of [1, 2, 3]) expect(markup).toContain(`data-slot="${slot}"`);
   });
   it('shows both weapon kits before acquisition, while keeping unrepaired guns unequippable', () => {
-    const store = new CampProfileStore(new Storage()), before = store.data;
+    const store = new CampProfileStore(new Storage()); buildCamp(store); const before = store.data;
     const markup = campOverlay(store.load(), 'warehouse');
     for (const id of ['steady', 'piercing'] as const) for (const skill of weaponSkillDefinitions(id)) expect(markup).toContain(skill.name);
     expect(markup).toContain('普攻 · 蜂巢速射'); expect(markup).toContain('普攻 · 往返骨刃');
-    expect(markup).toContain('获得条件'); expect(markup).toContain('心脏Boss掉落破损武器');
+    expect(markup).toContain('获得条件'); expect(markup).toContain('清剿掉落、碎片锻造或血流接引');
     expect(markup).toContain('data-weapon="piercing" disabled'); expect(markup).not.toContain('data-action="camp-trial" data-weapon="piercing"');
     expect(store.data).toEqual(before);
   });
@@ -148,7 +178,8 @@ describe('visible victory loot and first camp actions', () => {
     expect(markup).toContain(`${number(damage * 1.5)}伤害 · 范围150`);
     expect(markup).toContain(`去程${number(damage * 2)}／回程${number(damage)}伤害`);
     expect(markup).toContain('以下数值已计入当前品质与强化，不含局内成长');
-    const empty = campOverlay(new CampProfileStore(new Storage()).load(), 'warehouse');
+    const newCamp = new CampProfileStore(new Storage()); buildCamp(newCamp);
+    const empty = campOverlay(newCamp.load(), 'warehouse');
     expect(empty).toContain('以下为普通品质基础参数'); expect(empty).toContain('112伤害 · 最多6体');
   });
 });

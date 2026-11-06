@@ -2,6 +2,7 @@ import type { Effect, GameState, Vec } from '../game/types';
 import type { Camera } from './camera';
 import type { VisualBounds } from './raisedObstacleGeometry';
 import type { RaisedActorBody } from './raisedObstacleOcclusion';
+import type { CampFacility } from '../game/campLayout';
 
 /** Rescue bosses and the hidden campaign retain independent rule owners. */
 export function presentedMotherCombat(state: GameState) {
@@ -16,6 +17,9 @@ export interface ArtPresentation {
   foreground(state: GameState, camera: Camera): void;
   actorBodies(state: GameState): RaisedActorBody[];
   playerBounds?(state: GameState): VisualBounds;
+  campFacilityBounds?(state: GameState, facility: CampFacility): VisualBounds | undefined;
+  /** Already decoded embedded environment artwork; never starts a network load. */
+  image?(assetId: string): CanvasImageSource | undefined;
   /** Optional drawing-only origin for a proven emission; simulation endpoints stay untouched. */
   effectOrigin?(effect: Effect, state: GameState): Vec | undefined;
   projectileOrigin?(castId: string): Vec | undefined;

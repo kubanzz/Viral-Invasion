@@ -16,7 +16,7 @@ import { BATTLE_BALANCE as B } from './battleConfig';
 import { sourceTarget, getOrganDefinition } from './organConfig';
 import { recordTacticalEvent } from './tacticalFeedback';
 import { createRunMetrics, reduceRunMetrics } from './runMetrics';
-import { EndlessDirector, initializeEndless, cancelTerritoryAssaults } from './endless';
+import { EndlessDirector, initializeEndless, cancelTerritoryAssaults, configureMissionWaves } from './endless';
 import { createEndlessGrowth, offerEndlessUpgrade, chooseEndlessUpgrade, endlessCombatStats } from './endlessGrowth';
 import type { EndlessUpgradeId, PendingCatalysisBatch } from './endlessGrowthTypes';
 import { IMMUNE_CELL_BALANCE } from './immuneCells';
@@ -45,6 +45,8 @@ import { createBossLoot, DEFAULT_EXPEDITION_LOADOUT, type ExpeditionDeparture } 
 import { clearRitualProjectiles, damageRitualProjectile, ritualMotherShielded, ritualProjectileTargets } from './ritual';
 import { createWeaponCombat, castWeaponSkill, advanceWeaponSkills, cancelWeaponAction,
   weaponBlocksPrimary, weaponPrimaryCooldown } from './weaponSkills';
+import { emptyMissionHaul, MISSIONS } from './microfront';
+import { MISSION_COMBAT, prepareMissionField, missionFieldReady, missionDeathHaul, addMissionHaul } from './missionCombat';
 
 // Exporting the clock here is convenient for hosts, while it remains independently testable.
 export { FixedClock };
@@ -82,6 +84,8 @@ export class GameSession {
   private projectileSerial = 0;
   private pendingProjectileShot: { tool: 1 | 2; aim: Vec } | undefined;
   private sourceProtectionNoticeAt = -Infinity;
+  private missionLootIds = new Set<string>();
+  private missionEliteCleared = false;
 
   constructor(seed = 130026, private options: CampaignOptions = {}) {
     this.options = { ...options, ...(options.mode === 'endless' ? { campaign: true, milestone: 'G3' } : {}) };
@@ -111,6 +115,7 @@ export class GameSession {
   }
 
   private resetCampaign(): void {
+    this.missionLootIds.clear(); this.missionEliteCleared = false;
     this.campaignTransactions.clear(); this.deferredCampaign = []; this.motherController = undefined;
     this.catalysisSerial = 0; this.acceptedBiteTick = -1; this.acceptedBiteCells.clear();
     this.projectileSerial = 0;
@@ -187,10 +192,23 @@ export class GameSession {
 
   configureExpedition(departure: ExpeditionDeparture): void {
     if (!this.state.territory) return;
-    this.state.expedition = { runId: departure.runId, loadout: structuredClone(departure.loadout), firstClear: departure.firstClear };
+    this.state.expedition = { runId: departure.runId, loadout: structuredClone(departure.loadout), firstClear: departure.firstClear,
+      ...(departure.missionId ? { missionId: departure.missionId, modules: structuredClone(departure.modules ?? []), haul: emptyMissionHaul() } : {}) };
     this.state.weaponCombat = createWeaponCombat(this.state.expedition.loadout);
     setConstructionBlueprints(this.state, departure.blueprints);
     if (this.state.growth) this.state.growth.antibodyCharges = 2 + departure.extraAntibodies;
+    if (departure.missionId) {
+      this.missionLootIds.clear(); this.missionEliteCleared = false;
+      const growth = this.state.growth!;
+      growth.equipped = structuredClone(departure.modules ?? []);
+      growth.carriedProtocols = growth.equipped.map(item => item.id);
+      growth.draft = null; growth.pendingResearch = null; growth.pendingLevels = [];
+      growth.nextMilestoneWave = null; growth.nextXp = null; growth.pendingLogs = [];
+      if (this.state.endlessGrowth) this.state.endlessGrowth.draft = null;
+      prepareMissionField(this.state, departure.missionId); configureMissionWaves(this.state);
+      this.message(`${MISSIONS[departure.missionId].name}：按F净化节点，清除感染源与有限敌群；战利品自动收集，完成后回营。`, 8, 2);
+      this.emit('MISSION_STARTED', { missionId: departure.missionId, runId: departure.runId, waves: MISSION_COMBAT[departure.missionId].waves.length });
+    }
   }
 
   pause(): void {
@@ -326,6 +344,25 @@ export class GameSession {
       const actor = this.state.targets.find(target => target.id === data.id);
       if (actor?.role === 'source' && actor.territorySourceId && actor.hp <= 0)
         this.applyTerritoryEvents(destroyTerritorySource(this.state, actor.territorySourceId));
+      if (actor && actor.hp <= 0 && actor.role !== 'event' && actor.role !== 'capsule' && data.suppressRewards !== true
+        && this.state.expedition?.missionId && !this.missionLootIds.has(actor.id)) {
+        this.missionLootIds.add(actor.id);
+        if (actor.role === 'elite') this.missionEliteCleared = true;
+        const haul = missionDeathHaul(this.state, actor), expedition = this.state.expedition;
+        if (haul.coins || haul.materials || haul.items.length || Object.values(haul.fragments).some(count => count)) {
+        const receipt = { id: `mission-loot:${expedition.runId}:${actor.id}`, actorId: actor.id, x: actor.x, y: actor.y,
+          coins: haul.coins, materials: haul.materials, fragments: JSON.stringify(haul.fragments), items: JSON.stringify(haul.items) };
+        // The real death is committed before either presentation or persistence
+        // callbacks; repeated clear events cannot collect a second receipt.
+        addMissionHaul(expedition.haul ??= emptyMissionHaul(), haul);
+        const sourceState = this.state;
+        this.emit('MISSION_LOOT_DROPPED', receipt);
+        if (this.state !== sourceState) return;
+        this.emit('MISSION_LOOT_COLLECTED', receipt);
+        if (this.state !== sourceState) return;
+        this.effect('success', actor, actor, actor.radius + 14, .5);
+        }
+      }
     }
     // Directors can open/close a warning synchronously in this accepted tick.
     syncHostEventSafety(this.state);
@@ -1198,6 +1235,11 @@ export class GameSession {
     const state = this.state;
     if (!state.endless || !state.endlessGrowth || state.phase !== 'playing') return;
     if (!Number.isSafeInteger(wave) || wave < 1 || state.endless.reward && wave <= state.endless.reward.wave) return;
+    if (state.expedition?.missionId) {
+      state.endless.reward = { wave, step: 'complete' };
+      this.emit('MISSION_WAVE_COMPLETED', { missionId: state.expedition.missionId, wave });
+      return;
+    }
     this.clearTraction('wave-cleared');
     if (this.state !== state || state.phase !== 'playing') return;
     this.cancelChargedSlash('wave-cleared');
@@ -1291,7 +1333,7 @@ export class GameSession {
   /** Victory is an immutable checkpoint; continuing never starts a second run. */
   continueTerritoryGuard(): boolean {
     const state = this.state, territory = state.territory, endless = state.endless;
-    if (state.phase !== 'paused' || territory?.stage !== 'victory' || !territory.rescueSnapshot || !endless
+    if (state.expedition?.missionId || state.phase !== 'paused' || territory?.stage !== 'victory' || !territory.rescueSnapshot || !endless
       || state.endlessGrowth?.draft || state.growth?.draft || state.growth?.pendingResearch) return false;
     territory.stage = 'guard';
     endless.phase = 'intermission'; endless.phaseStartedAt = state.elapsed; endless.phaseUntil = state.elapsed + 1;
@@ -1345,35 +1387,43 @@ export class GameSession {
   private advanceTerritoryGoal(): void {
     const state = this.state, territory = state.territory, endless = state.endless;
     if (!territory || !endless || state.phase !== 'playing' || state.player.hp <= 0 || state.tissue.hp <= 0) return;
-    if (territory.stage === 'rescue' && endless.wave >= 3 && endless.phase === 'combat') {
+    const mission = state.expedition?.missionId;
+    if (territory.stage === 'rescue' && endless.wave >= (mission ? 1 : 3) && endless.phase === 'combat') {
       for (const sourceId of ['source-west', 'source-east'] as TerritorySourceId[]) {
         const source = territory.sources[sourceId], node = territory.nodes.find(item => item.id === sourceId)!;
         if (source.spawned || source.destroyed || this.territoryPopulation() >= combatPopulationLimit(state)) continue;
         const id = `territory:${sourceId}`;
         source.unlocked = true; source.spawned = true; source.actorId = id;
-        state.targets.push({ id, x: node.x, y: node.y, kind: 'single', role: 'source', hp: TERRITORY_BALANCE.sourceHp, maxHp: TERRITORY_BALANCE.sourceHp, radius: 34,
+        const hp = mission ? MISSION_COMBAT[mission].sourceHp : TERRITORY_BALANCE.sourceHp;
+        state.targets.push({ id, x: node.x, y: node.y, kind: 'single', role: 'source', hp, maxHp: hp, radius: 34,
           hitUntil: 0, scanned: false, traits: [], sourceId: id, born: state.elapsed, territorySourceId: sourceId, blocksWaveClear: false });
         state.battle!.graph.nodes.push({ id, kind: 'source', x: node.x, y: node.y, active: true, infected: true });
         this.effect('evolution', node, node, 65, .8);
-        this.emit('TERRITORY_SOURCE_ACTIVATED', { id, sourceId, x: node.x, y: node.y, hp: TERRITORY_BALANCE.sourceHp });
+        this.emit('TERRITORY_SOURCE_ACTIVATED', { id, sourceId, x: node.x, y: node.y, hp });
       }
     }
-    if (territory.stage === 'rescue' && Object.values(territory.sources).every(source => source.destroyed)) {
+    if (mission && mission !== 'boundary') {
+      if (missionFieldReady(state, this.missionEliteCleared) && this.territoryPopulation() === 0 && !isTerritoryPlayerAirborne(state)) this.completeMission();
+      return;
+    }
+    if (territory.stage === 'rescue' && Object.values(territory.sources).every(source => source.destroyed)
+      && (!mission || endless.clearedWaves >= MISSION_COMBAT[mission].waves.length)) {
       territory.stage = 'bossPending';
       const canceled = endless.remainingToSpawn;
       endless.canceledToSpawn += canceled; endless.remainingToSpawn = 0; endless.batchIndex = endless.batchSchedule.length;
       endless.batchMemberIndex = 0; endless.nextSpawnAt = Infinity;
       cancelTerritoryAssaults(state, undefined, true);
       this.emit('TERRITORY_BOSS_UNLOCKED', { canceled, wave: endless.wave });
-      this.message('双感染源已清除！处理剩余敌人并选择强化，准备母巢决战。', 5, 2);
+      this.message(mission ? '双感染源与有限敌群已清除，准备母巢决战。' : '双感染源已清除！处理剩余敌人并选择强化，准备母巢决战。', 5, 2);
     }
     if (territory.stage === 'bossPending' && !isTerritoryPlayerAirborne(state)&&endless.clearedWaves >= endless.wave && !state.endlessGrowth?.draft
       && !state.growth?.draft && !state.growth?.pendingResearch && this.territoryPopulation() === 0
       && territory.nodes.filter(node => node.kind === 'healing' || node.kind === 'front').every(node => node.owner === 'healthy' && node.infectionProgress <= 1e-7)) {
       const trait = endless.evolution?.opening?.selection?.trait ?? 'CARAPACE';
       const id = `territory:mother:${state.growth!.runId}`;
+      const bossHp = mission ? MISSION_COMBAT[mission].bossHp : 1800;
       const target: Target = { id, x: 1500, y: 900, radius: MOTHER_CORE_BALANCE.radius, kind: 'single', role: 'core',
-        hp: 1800, maxHp: 1800, traits: [trait], facing: Math.PI, sourceId: id,
+        hp: bossHp, maxHp: bossHp, traits: [trait], facing: Math.PI, sourceId: id,
         hitUntil: 0, scanned: false, born: state.elapsed, blocksWaveClear: false };
       state.targets.push(target);
       this.motherController = new MotherCoreController({ coreId: id, organId: 'heart', traits: [trait], tick: state.tick, elapsed: state.elapsed, heartExpedition: true });
@@ -1414,7 +1464,20 @@ export class GameSession {
       this.pause();
       this.emit('TERRITORY_RESCUE_COMPLETED', { runId: territory.rescueSnapshot.runId, score: endless.score, coreHp: state.tissue.hp });
       this.emit('INPUT_RESET_REQUESTED', { reason: 'territory-victory' });
+      if (mission) this.finish(true, `${MISSIONS[mission].name}完成：感染已清除，战利品已带回营地。`);
     }
+  }
+
+  private completeMission(): void {
+    const state = this.state, territory = state.territory!, endless = state.endless!, expedition = state.expedition!;
+    const mission = expedition.missionId!;
+    territory.stage = 'victory'; territory.purification = null;
+    territory.rescueSnapshot = { runId: expedition.runId, seed: state.seed, atTick: state.tick, elapsed: state.elapsed,
+      wave: endless.wave, clearedWaves: endless.clearedWaves, score: endless.score, kills: endless.kills,
+      bestCombo: endless.bestCombo, level: 0, playerHp: state.player.hp, coreHp: state.tissue.hp,
+      fullyPurifiedSeconds: territory.stability.totalSeconds, longestFullyPurifiedSeconds: territory.stability.bestSeconds };
+    this.emit('TERRITORY_RESCUE_COMPLETED', { runId: expedition.runId, missionId: mission, score: endless.score, coreHp: state.tissue.hp });
+    this.finish(true, `${MISSIONS[mission].name}完成：感染已清除，战利品已带回营地。`);
   }
 
   slowFactor(targetId: string): number { return this.growthController?.slowFactor(targetId, this.state.battle!.organId, this.state.elapsed) ?? 1; }

@@ -64,11 +64,28 @@ export function sourceRegisteredSpriteFrame(assets: Readonly<Record<string, Sour
 }
 
 export const EXPEDITION_ICON_IDS: Readonly<Record<string, string>> = {
-  warehouse: `${EXPEDITION_ART_PREFIX}campTentWarehouse.fixed.ready.00`,
-  forge: `${EXPEDITION_ART_PREFIX}campForge.fixed.ready.00`,
-  shop: `${EXPEDITION_ART_PREFIX}campSupply.fixed.ready.00`,
+  warehouse: 'microfront.camp.warehouse',
+  forge: 'microfront.camp.forge',
+  shop: 'microfront.camp.shop',
+  summon: 'microfront.camp.summon',
+  'gold-antibody': 'microfront.gold-antibody',
+  'model-fragment': 'microfront.fragment',
+  'forge-core': 'microfront.forge-core',
+  'module-PULSE_BREAK': 'microfront.reward.module.PULSE_BREAK',
+  'module-PURIFY_CHAIN': 'microfront.reward.module.PURIFY_CHAIN',
+  'module-IMMUNE_BEACON': 'microfront.reward.module.IMMUNE_BEACON',
+  'module-EXPOSE_TRACE': 'microfront.reward.module.EXPOSE_TRACE',
+  'summon-hero-weapon-steady': 'microfront.summon.hero.weapon-steady',
+  'summon-hero-weapon-piercing': 'microfront.summon.hero.weapon-piercing',
+  'summon-hero-module-PULSE_BREAK': 'microfront.summon.hero.module-PULSE_BREAK',
+  'summon-hero-module-PURIFY_CHAIN': 'microfront.summon.hero.module-PURIFY_CHAIN',
+  'summon-hero-module-IMMUNE_BEACON': 'microfront.summon.hero.module-IMMUNE_BEACON',
+  'summon-hero-module-EXPOSE_TRACE': 'microfront.summon.hero.module-EXPOSE_TRACE',
+  'summon-hero-forge-core': 'microfront.summon.hero.forge-core',
+  'summon-hero-biomass': 'microfront.summon.hero.biomass',
+  'summon-hero-gold-antibody': 'microfront.summon.hero.gold-antibody',
   supply: `${EXPEDITION_ART_PREFIX}campSupply.fixed.ready.00`,
-  departure: `${EXPEDITION_ART_PREFIX}campSortie.fixed.ready.00`,
+  departure: 'microfront.camp.departure',
   deploy: `${EXPEDITION_ART_PREFIX}campSortie.fixed.ready.00`,
   'weapon-steady': 'fantasy.weapon.steady.held',
   'weapon-steady-broken': 'fantasy.weapon.steady.held',
@@ -82,7 +99,7 @@ export const EXPEDITION_ICON_IDS: Readonly<Record<string, string>> = {
 interface AtlasFrame { frame: { x: number; y: number; w: number; h: number } }
 export interface ExpeditionIconRuntime {
   inputSignature?: string;
-  assets: Readonly<Record<string, { atlas?: string; frame?: string; animation?: { approved?: boolean } }>>;
+  assets: Readonly<Record<string, { atlas?: string; frame?: string; animation?: { approved?: boolean }; status?: string; flags?: readonly string[] }>>;
   atlases: readonly { key: string; dataUri: string; data: { frames?: Record<string, AtlasFrame>; meta?: { size?: { w: number; h: number } } } }[];
 }
 /** Reuses actual generated atlas bytes. Missing/unreviewed art retains the code-native glyph. */
@@ -90,7 +107,12 @@ export function expeditionIconStyles(runtime: ExpeditionIconRuntime): { css: str
   const rules: string[] = [], installed: string[] = [];
   const atlasRules = new Map<string, { uri: string; selectors: string[] }>();
   for (const [name, id] of Object.entries(EXPEDITION_ICON_IDS)) {
-    const asset = runtime.assets[id]; if (!asset?.atlas || asset.animation?.approved !== true) continue;
+    const asset = runtime.assets[id];
+    const registeredStatic = id.startsWith('microfront.') && asset?.flags?.includes('microfront-v1')
+      && asset.status === 'producer-ready-pending-main-renderer';
+    const reviewedUiIcon = id.startsWith('microfront.reward.') && asset?.status === 'ui-reviewed' && asset.flags?.includes('reward-icons-v1');
+    const reviewedSummonHero = id.startsWith('microfront.summon.hero.') && asset?.status === 'ui-reviewed' && asset.flags?.includes('summon-hero-art-v1');
+    if (!asset?.atlas || asset.animation?.approved !== true && !registeredStatic && !reviewedUiIcon && !reviewedSummonHero) continue;
     const atlas = runtime.atlases.find(a => a.key === asset.atlas), frame = atlas?.data.frames?.[asset.frame ?? id]?.frame, size = atlas?.data.meta?.size;
     if (!atlas?.dataUri.startsWith('data:image/png;base64,') || !frame || !size || ![frame.x, frame.y, frame.w, frame.h, size.w, size.h].every(Number.isFinite)
       || frame.w <= 0 || frame.h <= 0 || frame.x < 0 || frame.y < 0 || frame.x + frame.w > size.w || frame.y + frame.h > size.h) continue;
@@ -98,6 +120,7 @@ export function expeditionIconStyles(runtime: ExpeditionIconRuntime): { css: str
     const x = size.w > frame.w ? frame.x / (size.w - frame.w) * 100 : 0, y = size.h > frame.h ? frame.y / (size.h - frame.h) * 100 : 0;
     const grouped = atlasRules.get(atlas.key) ?? { uri: atlas.dataUri, selectors: [] }; grouped.selectors.push(selector); atlasRules.set(atlas.key, grouped);
     rules.push(`${selector}{background-color:transparent;background-size:${size.w / frame.w * 100}% ${size.h / frame.h * 100}%;background-position:${x}% ${y}%;background-repeat:no-repeat;border:0;box-shadow:none;transform:none}${selector}::before,${selector}::after{display:none}`);
+    if (name.startsWith('module-')) rules.push(`${selector}>.mission-reward-glyph{display:none}`);
     installed.push(name);
   }
   const images = [...atlasRules.values()].map(group => `${group.selectors.join(',')}{background-image:url("${group.uri}")}`);

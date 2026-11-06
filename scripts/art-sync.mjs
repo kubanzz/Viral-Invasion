@@ -19,7 +19,7 @@ const samePath = (a, b) => resolve(a).toLowerCase() === resolve(b).toLowerCase()
 export function artToneFor(id, kind = 'sprite') {
   // Fantasy production assets have already passed the approved palette and
   // contrast review. Preserve those pixels; old actor grading stays separate.
-  if (id.startsWith('fantasy.')) return null;
+  if (id.startsWith('fantasy.') || id.startsWith('microfront.')) return null;
   if (/^(fx|icon)\./.test(id)) return null;
   if (kind === 'environment') return id.startsWith('heart.')
     ? { name: 'warm-matte', saturation: .70, brightness: .99, contrast: .94, lift: 7 }

@@ -113,7 +113,7 @@ export function advanceTerritoryDefense(state: GameState, dt: number): Territory
       else if (node.infectionProgress <= EPSILON) {
         defense.repelled = true; delete defense.repelProof;
         const rank = territoryBeaconRank(state), slot = state.growth?.equipped.find(item => item.id === 'IMMUNE_BEACON');
-        if (slot) slot.rank = rank;
+        if (slot && !state.expedition?.missionId) slot.rank = rank;
         events.push({ type: 'TERRITORY_DEFENSE_MILESTONE', data: { laneId: lane.id, nodeId: proof.nodeId, rank } });
       }
     }

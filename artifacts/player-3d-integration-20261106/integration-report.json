@@ -1,0 +1,72 @@
+{
+  "date": "2026-11-06",
+  "gameVersion": "0.18.0",
+  "status": "applied-to-current-workspace-and-dist",
+  "preview": "http://127.0.0.1:55589/index.html",
+  "model": {
+    "source": "asserts/ViralInvasion_Hero3D_v1/model/medic-hero-v1-animated.glb",
+    "sha256": "048ab89b2d724282fa8e36547e208b684c3df53c41558f3f53b58274c35feb5d",
+    "bytes": 3058152,
+    "format": "glTF 2.0 GLB",
+    "runtime": {
+      "name": "Three.js",
+      "version": "0.187.0"
+    },
+    "joints": 53,
+    "clips": 17,
+    "bodyLicense": "Tripo Free: non-commercial evaluation",
+    "animationLicense": "Mesh2Motion source motions: CC0",
+    "embedding": "data URI in classic game.js"
+  },
+  "build": {
+    "format": "iife",
+    "engine": {
+      "name": "Phaser",
+      "version": "4.2.1"
+    },
+    "outputManifest": {
+      "index.html": "a04039b423b2dd745349011fd644afe1dece3b48b18b8604f0c33dcf84cc0478",
+      "game.js": "0055159e7a2e507ea2c877b1a5d245bd27da36e512a3d9181e1b5a657360c272",
+      "game.css": "0545a581730f67c1eb012a3bc047985b1735d17966c473f67b6ae577fc4d665e"
+    },
+    "sourceManifestEntries": 492,
+    "sourceAndOutputHashesVerified": true
+  },
+  "validation": {
+    "typecheck": "passed",
+    "unit": {
+      "files": 5,
+      "passed": 39
+    },
+    "chromeE2E": {
+      "startTime": "2026-11-05T18:42:33.284Z",
+      "duration": 33807.507999999994,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "transport": "same-origin loopback HTTP; external HTTP blocked; not physical-mobile or new file-protocol acceptance"
+  },
+  "scope": [
+    "default menu/camp/mission",
+    "continuous quaternion yaw and relative-velocity skeletal animation weights",
+    "hand-bone projected existing PNG weapons",
+    "Phaser depth and frame loop preserved",
+    "WebGL1 sprite fallback on WebGL2/model failure",
+    "embedded GLB and texture; no remote model fetch"
+  ],
+  "limits": [
+    "Tripo Free body is non-commercial evaluation only",
+    "No foot IK, no 3D weapons or two-hand weapon IK",
+    "Fresh-profile piercing weapon remains locked; no end-to-end claim for that weapon",
+    "Physical mobile performance remains unmeasured"
+  ],
+  "evidence": {
+    "browserScreenshot": "game-integration.jpg",
+    "missionScreenshot": "game-default-mission.png",
+    "campScreenshot": "game-default-camp.png",
+    "testReport": "e2e-report.json",
+    "spec": "../../tests/e2e/hero-idle-production.spec.ts"
+  }
+}

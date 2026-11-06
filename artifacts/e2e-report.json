@@ -4,8 +4,8 @@
       "C:\\Users\\SEASUN\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
       "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\node_modules\\@playwright\\test\\cli.js",
       "test",
-      "tests/e2e/dualfront-clarity.spec.ts",
-      "--list"
+      "tests/e2e/hero-idle-production.spec.ts",
+      "--project=chrome"
     ],
     "configFile": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\playwright.config.ts",
     "rootDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
@@ -18,14 +18,18 @@
     "grep": {},
     "grepInvert": null,
     "maxFailures": 0,
-    "metadata": {},
+    "metadata": {
+      "actualWorkers": 1
+    },
     "preserveOutput": "always",
     "projects": [
       {
         "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/e2e-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {},
+        "metadata": {
+          "actualWorkers": 1
+        },
         "id": "chrome",
         "name": "chrome",
         "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
@@ -39,7 +43,9 @@
         "outputDir": "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/e2e-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {},
+        "metadata": {
+          "actualWorkers": 1
+        },
         "id": "edge",
         "name": "edge",
         "testDir": "D:/Workspace/Projects/xsj/Viral-Invasion/tests/e2e",
@@ -57,7 +63,9 @@
         "outputDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\e2e-results",
         "repeatEach": 1,
         "retries": 0,
-        "metadata": {},
+        "metadata": {
+          "actualWorkers": 1
+        },
         "name": "chrome",
         "testDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
         "snapshotDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
@@ -87,43 +95,6 @@
         "dependencies": [],
         "ignoreSnapshots": false,
         "__projectId": "chrome"
-      },
-      {
-        "grep": {},
-        "grepInvert": null,
-        "outputDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\e2e-results",
-        "repeatEach": 1,
-        "retries": 0,
-        "metadata": {},
-        "name": "edge",
-        "testDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
-        "snapshotDir": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e",
-        "testIgnore": [],
-        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
-        "timeout": 90000,
-        "use": {
-          "browserName": "chromium",
-          "headless": true,
-          "viewport": {
-            "width": 1366,
-            "height": 768
-          },
-          "deviceScaleFactor": 1,
-          "actionTimeout": 8000,
-          "screenshot": "only-on-failure",
-          "video": {
-            "mode": "on",
-            "size": {
-              "width": 1366,
-              "height": 768
-            }
-          },
-          "trace": "retain-on-failure",
-          "channel": "msedge"
-        },
-        "dependencies": [],
-        "ignoreSnapshots": false,
-        "__projectId": "edge"
       }
     ],
     "quiet": false,
@@ -160,184 +131,155 @@
   },
   "suites": [
     {
-      "title": "dualfront-clarity.spec.ts",
-      "file": "dualfront-clarity.spec.ts",
+      "title": "hero-idle-production.spec.ts",
+      "file": "hero-idle-production.spec.ts",
       "column": 0,
       "line": 0,
-      "specs": [],
+      "specs": [
+        {
+          "title": "offline default GLB uses genuine skeletal motion, continuous yaw and accepted gameplay receipts",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 45000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chrome",
+              "projectName": "chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 7875,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\hero-idle-production.spec.ts:157:138",
+                    "location": {
+                      "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\hero-idle-production.spec.ts",
+                      "column": 138,
+                      "line": 157
+                    },
+                    "snippet": "  155 |   await page.locator('#overlay-host [data-action=\"retry\"]').click(); await expect.poll(async () => (await state(page)).phase).toBe('playing');\n  156 |   const retried = await read(page); displayed(retried); expect(retried.elapsed).toBeLessThan(frozenState.elapsed);\n> 157 |   expect(retried.player.hp).toBe(100); expect(retried.shots).toBe(0); expect(retried.dashes).toBe(0); expect(retried.hero.frame!.paused).toBe(false); result.retried = retried;\n      |                                                                                                                                          ^\n  158 |   await page.screenshot({ path: info.outputPath('hero-3d-offline-production.png') });\n  159 |   expect(run.errors).toEqual([]); expect(run.remote, 'No model, runtime or texture HTTP fetch from the file:// game').toEqual([]);\n  160 |   evidence(info, 'hero-3d-offline-evidence.json', { scope: 'Real DOM inputs and read-only rAF observations; no simulation writes', ...result, errors: run.errors, remote: run.remote });"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\hero-idle-production.spec.ts",
+                        "column": 138,
+                        "line": 157
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mfalse\u001b[39m\nReceived: \u001b[31mtrue\u001b[39m\n\n  155 |   await page.locator('#overlay-host [data-action=\"retry\"]').click(); await expect.poll(async () => (await state(page)).phase).toBe('playing');\n  156 |   const retried = await read(page); displayed(retried); expect(retried.elapsed).toBeLessThan(frozenState.elapsed);\n> 157 |   expect(retried.player.hp).toBe(100); expect(retried.shots).toBe(0); expect(retried.dashes).toBe(0); expect(retried.hero.frame!.paused).toBe(false); result.retried = retried;\n      |                                                                                                                                          ^\n  158 |   await page.screenshot({ path: info.outputPath('hero-3d-offline-production.png') });\n  159 |   expect(run.errors).toEqual([]); expect(run.remote, 'No model, runtime or texture HTTP fetch from the file:// game').toEqual([]);\n  160 |   evidence(info, 'hero-3d-offline-evidence.json', { scope: 'Real DOM inputs and read-only rAF observations; no simulation writes', ...result, errors: run.errors, remote: run.remote });\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\hero-idle-production.spec.ts:157:138"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-05T18:19:23.107Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\e2e-results\\hero-idle-production-offli-4248b--accepted-gameplay-receipts-chrome\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\e2e-results\\hero-idle-production-offli-4248b--accepted-gameplay-receipts-chrome\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\hero-idle-production.spec.ts",
+                    "column": 138,
+                    "line": 157
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "83dd0888f1cdcb26b438-d2a358232ffe9f6f2b6f",
+          "file": "hero-idle-production.spec.ts",
+          "line": 118,
+          "column": 1
+        }
+      ],
       "suites": [
         {
-          "title": "desktop dual-front clarity",
-          "file": "dualfront-clarity.spec.ts",
-          "line": 169,
+          "title": "compact landscape 3D presentation",
+          "file": "hero-idle-production.spec.ts",
+          "line": 178,
           "column": 6,
           "specs": [
             {
-              "title": "public 0.12 entry exposes seven nodes and only one core/two lanes/one goal HUD",
-              "ok": true,
+              "title": "offline GLB survives independent trusted move/fire contacts and viewport resize",
+              "ok": false,
               "tags": [],
               "tests": [
                 {
-                  "timeout": 90000,
+                  "timeout": 35000,
                   "annotations": [],
                   "expectedStatus": "passed",
                   "projectId": "chrome",
                   "projectName": "chrome",
-                  "results": [],
-                  "status": "skipped"
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 4789,
+                      "error": {
+                        "message": "Error: cdpSession.send: Protocol error (Input.dispatchTouchEvent): Must send a TouchStart first to start a new touch.",
+                        "stack": "Error: cdpSession.send: Protocol error (Input.dispatchTouchEvent): Must send a TouchStart first to start a new touch.\n    at Fingers.send (D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\hero-idle-production.spec.ts:171:20)\n    at Fingers.release (D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\hero-idle-production.spec.ts:169:53)\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\hero-idle-production.spec.ts:213:31",
+                        "location": {
+                          "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\hero-idle-production.spec.ts",
+                          "column": 20,
+                          "line": 171
+                        },
+                        "snippet": "  169 |   async release() { this.points.clear(); await this.send('touchEnd', []); }\n  170 |   private async send(type: 'touchStart' | 'touchMove' | 'touchEnd', points: [number, Vec][]) {\n> 171 |     await this.cdp.send('Input.dispatchTouchEvent', { type, touchPoints: points.map(([id, point]) => ({ id, ...point, radiusX: 2, radiusY: 2, force: 1 })) });\n      |                    ^\n  172 |   }\n  173 | }\n  174 | async function center(page: Page, selector: string): Promise<Vec> {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\hero-idle-production.spec.ts",
+                            "column": 20,
+                            "line": 171
+                          },
+                          "message": "Error: cdpSession.send: Protocol error (Input.dispatchTouchEvent): Must send a TouchStart first to start a new touch.\n\n  169 |   async release() { this.points.clear(); await this.send('touchEnd', []); }\n  170 |   private async send(type: 'touchStart' | 'touchMove' | 'touchEnd', points: [number, Vec][]) {\n> 171 |     await this.cdp.send('Input.dispatchTouchEvent', { type, touchPoints: points.map(([id, point]) => ({ id, ...point, radiusX: 2, radiusY: 2, force: 1 })) });\n      |                    ^\n  172 |   }\n  173 | }\n  174 | async function center(page: Page, selector: string): Promise<Vec> {\n    at Fingers.send (D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\hero-idle-production.spec.ts:171:20)\n    at Fingers.release (D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\hero-idle-production.spec.ts:169:53)\n    at D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\hero-idle-production.spec.ts:213:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-05T18:19:32.076Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\e2e-results\\hero-idle-production-compa-c3a80-ontacts-and-viewport-resize-chrome\\test-failed-1.png"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\e2e-results\\hero-idle-production-compa-c3a80-ontacts-and-viewport-resize-chrome\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\tests\\e2e\\hero-idle-production.spec.ts",
+                        "column": 20,
+                        "line": 171
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
                 }
               ],
-              "id": "d9d340d7c9978c04fd55-dbdfb4ed0a9d580b8812",
-              "file": "dualfront-clarity.spec.ts",
-              "line": 171,
-              "column": 3
-            },
-            {
-              "title": "real WASD reaches a front and distant reticle plus held cannon survive one-key purification",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 90000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chrome",
-                  "projectName": "chrome",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "d9d340d7c9978c04fd55-b37db0aa7df409cd3450",
-              "file": "dualfront-clarity.spec.ts",
-              "line": 184,
-              "column": 3
-            },
-            {
-              "title": "leaving the real 150 range pauses accepted progress and returning resumes or exposes the actual blocker",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 90000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chrome",
-                  "projectName": "chrome",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "d9d340d7c9978c04fd55-0db2d1d3ba08a2962e90",
-              "file": "dualfront-clarity.spec.ts",
-              "line": 202,
-              "column": 3
-            },
-            {
-              "title": "public 0.12 entry exposes seven nodes and only one core/two lanes/one goal HUD",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 90000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "edge",
-                  "projectName": "edge",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "d9d340d7c9978c04fd55-60dbba7549c864d279b2",
-              "file": "dualfront-clarity.spec.ts",
-              "line": 171,
-              "column": 3
-            },
-            {
-              "title": "real WASD reaches a front and distant reticle plus held cannon survive one-key purification",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 90000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "edge",
-                  "projectName": "edge",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "d9d340d7c9978c04fd55-c39fa0925dce09895fdf",
-              "file": "dualfront-clarity.spec.ts",
-              "line": 184,
-              "column": 3
-            },
-            {
-              "title": "leaving the real 150 range pauses accepted progress and returning resumes or exposes the actual blocker",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 90000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "edge",
-                  "projectName": "edge",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "d9d340d7c9978c04fd55-56280c02f877257da166",
-              "file": "dualfront-clarity.spec.ts",
-              "line": 202,
-              "column": 3
-            }
-          ]
-        },
-        {
-          "title": "trusted Chrome touch dual-front clarity",
-          "file": "dualfront-clarity.spec.ts",
-          "line": 244,
-          "column": 6,
-          "specs": [
-            {
-              "title": "real joystick and primary attack remain live while a third finger taps 3 without a skill preview",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 90000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chrome",
-                  "projectName": "chrome",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "d9d340d7c9978c04fd55-7473d1af8de5c6d42e0b",
-              "file": "dualfront-clarity.spec.ts",
-              "line": 246,
-              "column": 3
-            },
-            {
-              "title": "real joystick and primary attack remain live while a third finger taps 3 without a skill preview",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 90000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "edge",
-                  "projectName": "edge",
-                  "results": [],
-                  "status": "skipped"
-                }
-              ],
-              "id": "d9d340d7c9978c04fd55-1e00079402538df5bc8c",
-              "file": "dualfront-clarity.spec.ts",
-              "line": 246,
+              "id": "83dd0888f1cdcb26b438-b20d9df3e902bc6b4025",
+              "file": "hero-idle-production.spec.ts",
+              "line": 180,
               "column": 3
             }
           ]
@@ -347,11 +289,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-11-03T05:50:07.729Z",
-    "duration": 209.02799999999996,
+    "startTime": "2026-11-05T18:19:22.355Z",
+    "duration": 15179.278,
     "expected": 0,
-    "skipped": 8,
-    "unexpected": 0,
+    "skipped": 0,
+    "unexpected": 2,
     "flaky": 0
   }
 }

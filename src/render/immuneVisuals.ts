@@ -78,7 +78,7 @@ function drawLifetime(ctx: CanvasRenderingContext2D, cell: ImmuneCellState, elap
  * Uses the same born/until alpha as immuneCellBody(); apply it separately to PNG.
  */
 export function drawImmuneCellAccents(ctx: CanvasRenderingContext2D, cell: ImmuneCellState, elapsed: number,
-  low = false, layer: ImmuneCellAccentLayer = 'all'): void {
+  low = false, layer: ImmuneCellAccentLayer = 'all', hideLifetime = false): void {
   if (cell.until <= elapsed) return;
   const body = immuneCellBody(cell, elapsed);
   ctx.save(); ctx.globalAlpha = body.alpha; ctx.translate(cell.x, cell.y);
@@ -87,20 +87,20 @@ export function drawImmuneCellAccents(ctx: CanvasRenderingContext2D, cell: Immun
     ctx.scale(1, 1 / .72);
     ctx.save(); ctx.translate(0, IMMUNE_BODY_LIFT); ctx.rotate(body.rotation);
     drawActivity(ctx, cell, elapsed, body, low); ctx.restore();
-    drawLifetime(ctx, cell, elapsed);
+    if (!hideLifetime) drawLifetime(ctx, cell, elapsed);
   }
   ctx.restore();
 }
 
 /** Render-only fallback: same complete procedural body, feedback and ordering. */
-export function drawImmuneCell(ctx: CanvasRenderingContext2D, cell: ImmuneCellState, elapsed: number, low = false): void {
+export function drawImmuneCell(ctx: CanvasRenderingContext2D, cell: ImmuneCellState, elapsed: number, low = false, hideLifetime = false): void {
   if (cell.until <= elapsed) return;
   const body = immuneCellBody(cell, elapsed);
   ctx.save(); ctx.globalAlpha = body.alpha; ctx.translate(cell.x, cell.y);
   drawGround(ctx, cell); ctx.scale(1, 1 / .72);
   ctx.save(); ctx.translate(0, IMMUNE_BODY_LIFT); ctx.rotate(body.rotation);
   drawBody(ctx, body); drawActivity(ctx, cell, elapsed, body, low); ctx.restore();
-  drawLifetime(ctx, cell, elapsed); ctx.restore();
+  if (!hideLifetime) drawLifetime(ctx, cell, elapsed); ctx.restore();
 }
 
 export function drawImmuneSquadLabel(ctx: CanvasRenderingContext2D, origin: Vec, count: number, patrol = false): void {

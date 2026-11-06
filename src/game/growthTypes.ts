@@ -78,6 +78,7 @@ export interface GrowthState {
   budgetTick: number; budgetUsed: number; skippedCommands: number;
 }
 export interface GrowthContext {
+  mission?: boolean;
   hostEvents?: import('./hostEventTypes').HostEventState;
   endless?: boolean;
   territory?: import('./territoryTypes').TerritoryState;

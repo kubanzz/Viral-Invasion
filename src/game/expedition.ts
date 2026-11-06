@@ -1,4 +1,6 @@
 import { SeedRng } from '../core/rng';
+import type { EquippedProtocol } from './growthTypes';
+import type { MissionHaul, MissionId } from './microfront';
 
 export type BlueprintId = 'launch-pod' | 'rapid-launch-pod';
 export type WeaponId = 'steady' | 'piercing';
@@ -24,9 +26,11 @@ export interface BossLoot {
 }
 export interface ExpeditionRuntime {
   runId: string; loadout: ExpeditionLoadout; firstClear: boolean; pendingLoot?: BossLoot; lootCollected?: boolean;
+  missionId?: MissionId; modules?: EquippedProtocol[]; haul?: MissionHaul;
 }
 export interface ExpeditionDeparture {
   runId: string; seed: number; loadout: ExpeditionLoadout; blueprints: BlueprintId[]; extraAntibodies: number; firstClear: boolean;
+  missionId?: MissionId; modules?: EquippedProtocol[]; haul?: MissionHaul;
 }
 export function rarityRank(value: WeaponRarity | null): number { return value === null ? -1 : RARITIES.indexOf(value); }
 function hash(value: string): number {

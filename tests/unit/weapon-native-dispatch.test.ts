@@ -10,6 +10,12 @@ const fixture = vi.hoisted(() => ({
   sprites: [] as { id: string; config: HostedSprite }[], bridge: undefined as ArtPresentation | undefined,
 }));
 vi.mock('../../.art-generated/art-runtime.json', () => ({ default: fixture.art }));
+// This suite exercises the existing registered PNG renderer, including the
+// unsupported-WebGL fallback. Genuine 3D rendering is covered in browser tests.
+vi.mock('../../src/render/player3D', () => ({ Player3D: class {
+  ready = Promise.resolve(); available = false;
+  observe() {} render() {} destroy() {} diagnostics() { return { enabled: true, ready: false }; }
+} }));
 vi.mock('../../src/render/phaserHost', () => ({ PhaserHost: class {
   ready = Promise.resolve(); isReady = true; scene = { anims: { create() {} } };
   resize() {} startFrameLoop() {} destroy() {} endFrame() {} removeRasterLayer() {} setRasterLayer() {}

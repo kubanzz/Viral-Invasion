@@ -295,7 +295,7 @@ describe('two-front territory presentation contracts', () => {
   it('explains separately scored records and a shielded source route', () => {
     const state = fixture(), profile = new TerritoryProfileStore(null).load(); profile.legacyAvailable = true;
     const menu = mainMenuOverlay(profile, true);
-    expect(menu).toContain('切断源膜供能'); expect(menu).toContain('旧版战绩保留；双线救援单独计分');
+    expect(menu).toContain('带队抵达'); expect(menu).toContain('旧版战绩保留；微域任务独立记录');
     const help = endlessOverlay(state, true, false)!;
     expect(help).toContain('前线不治疗'); expect(help).toContain('源耐久保留');
     expect(help).not.toContain('冒险直接拆源'); expect(help).toContain('生命泉与前线都净化后，源膜立即解除'); expect(help).not.toContain('实战接防'); expect(help).toContain('全域净化时间');

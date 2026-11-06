@@ -98,8 +98,12 @@ function recordedContext(): RecordedContext {
   return ctx as unknown as RecordedContext;
 }
 function canvas(): HTMLCanvasElement {
-  const ctx = recordedContext();
-  return { id: '', width: 1440, height: 900, getContext: () => ctx,
+  const ctx = recordedContext(), events = new EventTarget();
+  // This host records Canvas2D rendering. Returning its recorder for WebGL2
+  // falsely advertises GPU support and bypasses the real unsupported-GPU path.
+  return { id: '', width: 1440, height: 900, getContext: (kind: string) => kind === '2d' ? ctx : null,
+    addEventListener: events.addEventListener.bind(events), removeEventListener: events.removeEventListener.bind(events),
+    dispatchEvent: events.dispatchEvent.bind(events),
     getBoundingClientRect: () => ({ width: 1440, height: 900 }) } as unknown as HTMLCanvasElement;
 }
 function asset(id: string, visibleHeight = 40, sourceHeight = 600): FixtureAsset {
@@ -742,7 +746,16 @@ describe('actual Renderer native art dispatch through an isolated host', () => {
     expect(top.y - grip.y).toBeLessThanOrEqual(1e-9);
     expect(tool.depth).toBe(Math.sin(angle) < 0 ? body.depth - .1 : body.depth + .2);
     expect(scene.ctx.paints.some(paint => paint.method === 'fill' && paint.color === '#fffdf0' && paint.path.includes('roundRect'))).toBe(false);
-    expect(renderer.diagnostics(sample).art.weapon).toEqual({ assetId: 'weapon.emitter.painted', mode: 'painted-static' });
+    const weapon = renderer.diagnostics(sample).art.weapon;
+    expect(weapon).toMatchObject({ assetId: 'weapon.emitter.painted', mode: 'painted-static', gripSource: 'registered-sprite', forward: null });
+    const projectedOrigin = renderer.camera.worldToScreen({ x: 0, y: 0 });
+    const muzzle = sourcePoint(tool, source, source.sourceMuzzle!.x, source.sourceMuzzle!.y);
+    expect([weapon.grip!.x, weapon.grip!.y, weapon.muzzle!.x, weapon.muzzle!.y].every(Number.isFinite)).toBe(true);
+    // Diagnostics describe the same submitted native texture transform, in projected-world coordinates.
+    expect(weapon.grip!.x * scale + projectedOrigin.x).toBeCloseTo(grip.x, 10);
+    expect(weapon.grip!.y * scale + projectedOrigin.y).toBeCloseTo(grip.y, 10);
+    expect(weapon.muzzle!.x * scale + projectedOrigin.x).toBeCloseTo(muzzle.x, 10);
+    expect(weapon.muzzle!.y * scale + projectedOrigin.y).toBeCloseTo(muzzle.y, 10);
     expect(renderer.diagnostics(sample).art.provisional).not.toContain('painted-emitter-tool');
     const bounds = renderer.diagnostics(sample).art.activeBodies.find(item => item.id === 'player')!.bounds, offset = renderer.camera.worldToScreen({ x: 0, y: 0 });
     const b = source.sourceBounds!;
@@ -778,7 +791,8 @@ describe('actual Renderer native art dispatch through an isolated host', () => {
       const before = JSON.stringify(sample); renderer.render(sample, sample.player);
       expect(host.sprites.map(item => item.id)).toEqual(['player']);
       expect(scene.ctx.paints.filter(paint => paint.method === 'fill' && paint.color === '#fffdf0' && paint.path.includes('roundRect'))).toHaveLength(1);
-      expect(renderer.diagnostics(sample).art.weapon).toEqual({ assetId: null, mode: 'procedural-fallback' });
+      expect(renderer.diagnostics(sample).art.weapon).toEqual({ assetId: null, mode: 'procedural-fallback',
+        gripSource: 'registered-sprite', grip: null, muzzle: null, forward: null });
       expect(renderer.diagnostics(sample).art.provisional).toContain('painted-emitter-tool');
       expect(JSON.stringify(sample)).toBe(before);
     }

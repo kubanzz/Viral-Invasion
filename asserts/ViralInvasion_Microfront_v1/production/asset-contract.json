@@ -1,0 +1,684 @@
+{
+  "schemaVersion": 1,
+  "theme": "ViralInvasion_Microfront_v1",
+  "style": "柔和奶白、薄荷绿、暖珊瑚；2D手绘微观幻想；宽色块哑光；3/4斜俯视",
+  "setting": "病毒尺度的膜表面、组织液微区前哨；器官是大陆级区域，禁止完整器官或细胞成为小摆件",
+  "writeBoundary": "Only asserts/ViralInvasion_Microfront_v1. No game code, public art-selection or existing character writes.",
+  "expectedRuntimeCount": 12,
+  "conceptIsRuntime": false,
+  "objectContract": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "foot": [
+      512,
+      870
+    ],
+    "pivot": [
+      0.5,
+      0.849609375
+    ],
+    "visibleMaxAxisFraction": [
+      0.6,
+      0.75
+    ],
+    "minimumMarginPx": 8,
+    "trim": false,
+    "alphaRequired": true
+  },
+  "tileContract": {
+    "canvas": [
+      1024,
+      1024
+    ],
+    "alphaRequired": false,
+    "roads": false,
+    "characters": false,
+    "text": false,
+    "lowContrast": true,
+    "tileabilityRequiresVisualReview": true,
+    "automaticEdgeMutation": false,
+    "explicitDerivedTileMethod": "wrap-overlap-crossfade with broad15-40% raised-cosine bands; retained source and recipe; visual2x2 review required"
+  },
+  "iconContract": {
+    "canvas": [
+      512,
+      512
+    ],
+    "pivot": [
+      0.5,
+      0.5
+    ],
+    "alphaRequired": true,
+    "minimumMarginPx": 8,
+    "trim": false
+  },
+  "assets": [
+    {
+      "key": "ground.healthy",
+      "title": "健康微观地表",
+      "kind": "tile",
+      "path": "ground/healthy.png",
+      "targetCanvas": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "key": "ground.infected",
+      "title": "感染微观地表",
+      "kind": "tile",
+      "path": "ground/infected.png",
+      "targetCanvas": [
+        1024,
+        1024
+      ]
+    },
+    {
+      "key": "obstacle.protein-fibers",
+      "title": "蛋白纤维束障碍",
+      "kind": "sprite",
+      "path": "obstacles/protein-fibers.png",
+      "targetCanvas": [
+        1024,
+        1024
+      ],
+      "targetGround": [
+        512,
+        870
+      ]
+    },
+    {
+      "key": "obstacle.membrane-folds",
+      "title": "膜褶皱障碍",
+      "kind": "sprite",
+      "path": "obstacles/membrane-folds.png",
+      "targetCanvas": [
+        1024,
+        1024
+      ],
+      "targetGround": [
+        512,
+        870
+      ]
+    },
+    {
+      "key": "anchor.healthy",
+      "title": "健康稳态锚",
+      "kind": "sprite",
+      "path": "anchors/healthy.png",
+      "targetCanvas": [
+        1024,
+        1024
+      ],
+      "targetGround": [
+        512,
+        870
+      ]
+    },
+    {
+      "key": "anchor.infected",
+      "title": "感染稳态锚",
+      "kind": "sprite",
+      "path": "anchors/infected.png",
+      "targetCanvas": [
+        1024,
+        1024
+      ],
+      "targetGround": [
+        512,
+        870
+      ]
+    },
+    {
+      "key": "nutrient.healthy",
+      "title": "健康营养凝露节点",
+      "kind": "sprite",
+      "path": "nutrients/healthy.png",
+      "targetCanvas": [
+        1024,
+        1024
+      ],
+      "targetGround": [
+        512,
+        870
+      ]
+    },
+    {
+      "key": "nutrient.infected",
+      "title": "感染营养节点",
+      "kind": "sprite",
+      "path": "nutrients/infected.png",
+      "targetCanvas": [
+        1024,
+        1024
+      ],
+      "targetGround": [
+        512,
+        870
+      ]
+    },
+    {
+      "key": "summon.bloodstream-platform",
+      "title": "血流接引台",
+      "kind": "sprite",
+      "path": "summon/bloodstream-platform.png",
+      "targetCanvas": [
+        1024,
+        1024
+      ],
+      "targetGround": [
+        512,
+        870
+      ],
+      "intendedVisibleScaleRelativeWarehouse": 0.65
+    },
+    {
+      "key": "summon.golden-antibody",
+      "title": "金抗体灵幻体",
+      "kind": "sprite",
+      "path": "summon/golden-antibody.png",
+      "targetCanvas": [
+        1024,
+        1024
+      ],
+      "targetGround": [
+        512,
+        870
+      ]
+    },
+    {
+      "key": "icon.model-fragment",
+      "title": "型号碎片",
+      "kind": "icon",
+      "path": "icons/model-fragment.png",
+      "targetCanvas": [
+        512,
+        512
+      ]
+    },
+    {
+      "key": "icon.divine-forge-core",
+      "title": "神级锻造核心",
+      "kind": "icon",
+      "path": "icons/divine-forge-core.png",
+      "targetCanvas": [
+        512,
+        512
+      ]
+    }
+  ],
+  "expectedRequiredRuntimeCount": 12,
+  "expectedOptionalRuntimeCount": 7,
+  "optionalAssets": [
+    {
+      "title": "蛋白囊储存仓",
+      "kind": "sprite",
+      "path": "camp/warehouse.png",
+      "key": "camp.warehouse",
+      "targetCanvas": [
+        1024,
+        1024
+      ],
+      "targetGround": [
+        512,
+        870
+      ],
+      "pivot": [
+        0.5,
+        0.849609375
+      ],
+      "trim": false,
+      "applyWorldYScaleToArt": false,
+      "visibleMaxAxisFraction": [
+        0.6,
+        0.75
+      ],
+      "preserveLegacyEntityProportions": true,
+      "finalRuntimeScaleOwner": "root/Main Renderer",
+      "legacy": {
+        "sourceCanvas": [
+          512,
+          512
+        ],
+        "pivot": [
+          0.5,
+          0.85
+        ],
+        "foot": [
+          256,
+          435.2
+        ],
+        "alphaBoundsThreshold16": [
+          52,
+          125,
+          460,
+          435
+        ],
+        "visibleSize": [
+          408,
+          310
+        ],
+        "logicalWidth": 280,
+        "visibleWorldSizeApprox": [
+          223.125,
+          169.53125
+        ]
+      },
+      "batch": "C",
+      "required": false
+    },
+    {
+      "title": "蛋白编织工坊",
+      "kind": "sprite",
+      "path": "camp/workshop.png",
+      "key": "camp.workshop",
+      "targetCanvas": [
+        1024,
+        1024
+      ],
+      "targetGround": [
+        512,
+        870
+      ],
+      "pivot": [
+        0.5,
+        0.849609375
+      ],
+      "trim": false,
+      "applyWorldYScaleToArt": false,
+      "visibleMaxAxisFraction": [
+        0.6,
+        0.75
+      ],
+      "preserveLegacyEntityProportions": true,
+      "finalRuntimeScaleOwner": "root/Main Renderer",
+      "legacy": {
+        "sourceCanvas": [
+          512,
+          512
+        ],
+        "pivot": [
+          0.5,
+          0.85
+        ],
+        "foot": [
+          256,
+          435.2
+        ],
+        "alphaBoundsThreshold16": [
+          83,
+          96,
+          429,
+          435
+        ],
+        "visibleSize": [
+          346,
+          339
+        ],
+        "logicalWidth": 248,
+        "visibleWorldSizeApprox": [
+          167.59375,
+          164.203125
+        ]
+      },
+      "batch": "C",
+      "required": false
+    },
+    {
+      "title": "微流体补给囊",
+      "kind": "sprite",
+      "path": "camp/supply.png",
+      "key": "camp.supply",
+      "targetCanvas": [
+        1024,
+        1024
+      ],
+      "targetGround": [
+        512,
+        870
+      ],
+      "pivot": [
+        0.5,
+        0.849609375
+      ],
+      "trim": false,
+      "applyWorldYScaleToArt": false,
+      "visibleMaxAxisFraction": [
+        0.6,
+        0.75
+      ],
+      "preserveLegacyEntityProportions": true,
+      "finalRuntimeScaleOwner": "root/Main Renderer",
+      "legacy": {
+        "sourceCanvas": [
+          512,
+          512
+        ],
+        "pivot": [
+          0.5,
+          0.85
+        ],
+        "foot": [
+          256,
+          435.2
+        ],
+        "alphaBoundsThreshold16": [
+          142,
+          115,
+          370,
+          435
+        ],
+        "visibleSize": [
+          228,
+          320
+        ],
+        "logicalWidth": 168,
+        "visibleWorldSizeApprox": [
+          74.8125,
+          105
+        ]
+      },
+      "batch": "C",
+      "required": false
+    },
+    {
+      "title": "膜流出击接口",
+      "kind": "sprite",
+      "path": "camp/departure.png",
+      "key": "camp.departure",
+      "targetCanvas": [
+        1024,
+        1024
+      ],
+      "targetGround": [
+        512,
+        870
+      ],
+      "pivot": [
+        0.5,
+        0.849609375
+      ],
+      "trim": false,
+      "applyWorldYScaleToArt": false,
+      "visibleMaxAxisFraction": [
+        0.6,
+        0.75
+      ],
+      "preserveLegacyEntityProportions": true,
+      "finalRuntimeScaleOwner": "root/Main Renderer",
+      "legacy": {
+        "sourceCanvas": [
+          512,
+          512
+        ],
+        "pivot": [
+          0.5,
+          0.85
+        ],
+        "foot": [
+          256,
+          435.2
+        ],
+        "alphaBoundsThreshold16": [
+          105,
+          150,
+          407,
+          435
+        ],
+        "visibleSize": [
+          302,
+          285
+        ],
+        "logicalWidth": 190,
+        "visibleWorldSizeApprox": [
+          112.0703125,
+          105.76171875
+        ]
+      },
+      "batch": "C",
+      "required": false
+    },
+    {
+      "title": "整备院微观地表",
+      "kind": "camp-ground",
+      "path": "camp/ground/workshop.png",
+      "key": "camp.ground.workshop",
+      "targetCanvas": [
+        832,
+        1056
+      ],
+      "targetCenter": [
+        416,
+        528
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "contentRect": [
+        31,
+        33,
+        770,
+        990
+      ],
+      "trim": false,
+      "sourceYCompressed": false,
+      "applyWorldYScaleToArt": true,
+      "runtimeWorldYScale": 0.72,
+      "aspectCorrection": "生成画幅允许额外纯白留边；最终按旧参考有效矩形比例注册，不把3:4画幅拉伸成832:1056，也不裁去主体边缘。",
+      "legacy": {
+        "sourceCanvas": [
+          832,
+          1056
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "sourceAnchor": [
+          416,
+          528
+        ],
+        "contentRect": [
+          31,
+          33,
+          770,
+          990
+        ],
+        "worldSize": [
+          385,
+          495
+        ],
+        "worldCanvasSize": [
+          416,
+          528
+        ],
+        "worldCenterRelativeCore": [
+          -342.5,
+          12.5
+        ],
+        "sourceYCompressed": false,
+        "runtimeWorldYScale": 0.72
+      },
+      "batch": "C",
+      "required": false,
+      "worldSize": [
+        385,
+        495
+      ],
+      "worldCanvasSize": [
+        416,
+        528
+      ],
+      "worldCenter": [
+        -342.5,
+        12.5
+      ],
+      "worldPixelsPerUnit": 2,
+      "boundaryMode": "code-owned",
+      "sourceProjection": "orthographic-top-down-world-xy"
+    },
+    {
+      "title": "补给院微观地表",
+      "kind": "camp-ground",
+      "path": "camp/ground/supply.png",
+      "key": "camp.ground.supply",
+      "targetCanvas": [
+        800,
+        592
+      ],
+      "targetCenter": [
+        400,
+        296
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "contentRect": [
+        30,
+        31,
+        740,
+        530
+      ],
+      "trim": false,
+      "sourceYCompressed": false,
+      "applyWorldYScaleToArt": true,
+      "runtimeWorldYScale": 0.72,
+      "aspectCorrection": "生成画幅允许额外纯白留边；最终按旧参考有效矩形比例注册，不做不等比拉伸或主体裁切。",
+      "legacy": {
+        "sourceCanvas": [
+          800,
+          592
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "sourceAnchor": [
+          400,
+          296
+        ],
+        "contentRect": [
+          30,
+          31,
+          740,
+          530
+        ],
+        "worldSize": [
+          370,
+          265
+        ],
+        "worldCanvasSize": [
+          400,
+          296
+        ],
+        "worldCenterRelativeCore": [
+          335,
+          -102.5
+        ],
+        "sourceYCompressed": false,
+        "runtimeWorldYScale": 0.72
+      },
+      "batch": "C",
+      "required": false,
+      "worldSize": [
+        370,
+        265
+      ],
+      "worldCanvasSize": [
+        400,
+        296
+      ],
+      "worldCenter": [
+        335,
+        -102.5
+      ],
+      "worldPixelsPerUnit": 2,
+      "boundaryMode": "code-owned",
+      "sourceProjection": "orthographic-top-down-world-xy"
+    },
+    {
+      "title": "出击院微观地表",
+      "kind": "camp-ground",
+      "path": "camp/ground/departure.png",
+      "key": "camp.ground.departure",
+      "targetCanvas": [
+        800,
+        512
+      ],
+      "targetCenter": [
+        400,
+        256
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "contentRect": [
+        30,
+        31,
+        740,
+        450
+      ],
+      "trim": false,
+      "sourceYCompressed": false,
+      "applyWorldYScaleToArt": true,
+      "runtimeWorldYScale": 0.72,
+      "aspectCorrection": "生成画幅允许额外纯白留边；最终按旧参考有效矩形比例注册，不做不等比拉伸或主体裁切。",
+      "legacy": {
+        "sourceCanvas": [
+          800,
+          512
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "sourceAnchor": [
+          400,
+          256
+        ],
+        "contentRect": [
+          30,
+          31,
+          740,
+          450
+        ],
+        "worldSize": [
+          370,
+          225
+        ],
+        "worldCanvasSize": [
+          400,
+          256
+        ],
+        "worldCenterRelativeCore": [
+          335,
+          262.5
+        ],
+        "sourceYCompressed": false,
+        "runtimeWorldYScale": 0.72
+      },
+      "batch": "C",
+      "required": false,
+      "worldSize": [
+        370,
+        225
+      ],
+      "worldCanvasSize": [
+        400,
+        256
+      ],
+      "worldCenter": [
+        335,
+        262.5
+      ],
+      "worldPixelsPerUnit": 2,
+      "boundaryMode": "code-owned",
+      "sourceProjection": "orthographic-top-down-world-xy"
+    }
+  ]
+}

@@ -22,6 +22,7 @@ import { ritualSpawnReserved } from './ritual';
 import { createOpeningEvolution, freezeOpeningEvolution, openingVariantSlots, recordOpeningDamage } from './openingEvolution';
 import type { TerritorySourceId } from './territoryTypes';
 import { TERRITORY_BALANCE, TERRITORY_LANES, territoryInvasionOrigin, territoryInvaderGoal } from './territory';
+import { MISSION_COMBAT } from './missionCombat';
 export type { EndlessHost, EndlessState } from './endlessTypes';
 
 export const ENDLESS_BALANCE = {
@@ -85,6 +86,29 @@ export function endlessSupportTactics(seed: number, wave: number): EnemyTactic[]
 }
 
 function wavePlan(state: GameState, wave: number, inheritedTraits?: readonly TraitId[]): Pick<EndlessState, 'traits' | 'title' | 'eliteWave' | 'eliteRemaining' | 'warningSeconds' | 'totalToSpawn' | 'formation' | 'formationLabel' | 'batchSchedule' | 'supportRemaining' | 'source' | 'territoryTasks'> {
+  const mission = state.expedition?.missionId;
+  if (mission) {
+    const budgets = MISSION_COMBAT[mission].waves;
+    const eliteWave = mission !== 'membrane' && wave === budgets.length;
+    const baseBudget = budgets[Math.min(wave - 1, budgets.length - 1)];
+    const roles: EndlessSpawnRole[] = Array.from({ length: baseBudget }, (_, index) => eliteWave && index === 0 ? 'elite' : 'ordinary');
+    // Baseline cohorts are independent of sources. Only these appended four-body
+    // invasion squads may be canceled when their actual source is destroyed.
+    const squads: TerritorySquadPlan[] = TERRITORY_LANES.filter(lane => !state.territory?.sources[lane.sourceId].destroyed).map((lane, index) => {
+      const start = roles.length; roles.push('ordinary', 'ordinary', 'ordinary', 'ordinary');
+      return { id: `mission:wave:${wave}:${lane.id}`, wave, laneId: lane.id, sourceId: lane.sourceId,
+        slots: [start, start + 1, start + 2, start + 3], departureOffset: 4 + index * 10,
+        status: 'pending', memberIds: [] };
+    });
+    const totalToSpawn = roles.length;
+    const batchSchedule: EndlessBatch[] = [];
+    for (let index = 0; index < roles.length; index += 3)
+      batchSchedule.push({ at: Math.floor(index / 3) * 1.2, sector: (state.seed + wave + index) % 8, spread: .3, roles: roles.slice(index, index + 3) });
+    return { traits: eliteWave ? ['CARAPACE'] : [], title: `有限清剿 ${wave}/${budgets.length}`,
+      eliteWave, eliteRemaining: eliteWave ? 1 : 0, warningSeconds: eliteWave ? 4 : 2,
+      totalToSpawn, formation: 'front', formationLabel: '微域清剿', batchSchedule, supportRemaining: 0,
+      territoryTasks: { wave, squads, reservedSlots: squads.flatMap(squad => squad.slots) } };
+  }
   const seed = state.seed;
   const pacing = endlessPacing(wave);
   const eliteWave = wave % 5 === 0;
@@ -129,6 +153,19 @@ function wavePlan(state: GameState, wave: number, inheritedTraits?: readonly Tra
   return { traits, title, eliteWave, eliteRemaining, formation, formationLabel, batchSchedule, supportRemaining, ...(source ? { source } : {}),
     ...(state.territory ? { territoryTasks: planTerritoryAssaults(wave, roles) } : {}),
     warningSeconds: source ? ENDLESS_SOURCE_BALANCE.warningSeconds : eliteWave || wave === 3 || wave === 16 ? ENDLESS_BALANCE.traitWarningSeconds : ENDLESS_BALANCE.warningSeconds, totalToSpawn };
+}
+
+/** Re-plan the untouched first warning after the camp freezes its departure. */
+export function configureMissionWaves(state: GameState): void {
+  const e = state.endless;
+  if (!e || !state.expedition?.missionId) return;
+  const plan = wavePlan(state, 1);
+  Object.assign(e, plan, { wave: 1, clearedWaves: 0, phase: 'warning', phaseStartedAt: state.elapsed,
+    phaseUntil: state.elapsed + plan.warningSeconds, remainingToSpawn: plan.totalToSpawn,
+    canceledToSpawn: 0, nextSpawnAt: state.elapsed + plan.warningSeconds,
+    batchIndex: 0, batchMemberIndex: 0, spawnedIds: [], creditedKillIds: [] });
+  e.reward = undefined; e.smartSupport = undefined; e.stageCheckpoint = undefined;
+  if (state.battle) { state.battle.stage = 0; state.battle.stageLabel = `第1波 · ${plan.title}`; }
 }
 
 /** Called after initializeBattle; retains its large world and existing tool rules. */
@@ -201,13 +238,15 @@ export class EndlessDirector {
     if (!this.active()) return;
     const state = this.state, e = this.e, now = state.elapsed;
     this.ensureTerritoryTasks();
+    const mission = state.expedition?.missionId;
+    if (mission && e.phase === 'intermission' && e.wave >= MISSION_COMBAT[mission].waves.length) return;
     if (state.territory?.stage === 'bossPending' && e.phase === 'intermission') return;
     this.population();
     if (e.combo > 0 && now - e.lastKillAt > ENDLESS_BALANCE.comboSeconds) e.combo = 0;
     if (now + 1e-9 < e.phaseUntil || e.phase === 'combat') return;
     if (e.phase === 'intermission') {
       const wave = e.wave + 1, evolution = e.evolution ??= { history: [], recentPrimaries: [] };
-      if (wave >= 3 && wave <= 9) {
+      if (!mission && wave >= 3 && wave <= 9) {
         this.lockOpeningEvolution();
         if (this.state !== state || this.e !== e || !this.active()) return;
       }
@@ -320,7 +359,7 @@ export class EndlessDirector {
     // the finite queue may overlap it, with spawnBatch reserving every child.
     // A stationary optional source is not an attacker, but still counts toward
     // population and the independent wave-clear obligations below.
-    if (e.remainingToSpawn > 0 && !this.state.targets.some(target => target.hp > 0 && target.role !== 'source' && target.role !== 'event')
+    if (!state.expedition?.missionId && e.remainingToSpawn > 0 && !this.state.targets.some(target => target.hp > 0 && target.role !== 'source' && target.role !== 'event')
       && e.nextSpawnAt > now + .5 + 1e-9) {
       const previousSpawnAt = e.nextSpawnAt;
       e.nextSpawnAt = now + .5;
@@ -335,7 +374,7 @@ export class EndlessDirector {
       || e.pendingChildren > 0 || this.state.targets.some(target => target.hp > 0 && target.role !== 'event'
       && (!state.territory || target.blocksWaveClear !== false))) return;
     if (e.clearedWaves >= e.wave) return;
-    if (e.wave === 2) {
+    if (e.wave === 2 && !state.expedition?.missionId) {
       this.lockOpeningEvolution();
       if (this.state !== state || this.e !== e || !this.active() || e.phase !== 'combat') return;
     }
@@ -344,7 +383,7 @@ export class EndlessDirector {
     e.score = safeAdd(e.score, 50 + Math.min(100000, e.wave * 10));
     e.phase = 'intermission'; e.phaseStartedAt = now; e.phaseUntil = now + ENDLESS_BALANCE.intermissionSeconds;
     this.host.emit('ENDLESS_WAVE_CLEARED', { wave: e.wave, score: e.score, kills: e.kills, bestCombo: e.bestCombo });
-    this.host.message(`第 ${e.wave} 波清场！获得一次成长，${ENDLESS_BALANCE.intermissionSeconds} 秒休整后迎接下一波。`, 3, 2);
+    this.host.message(state.expedition?.missionId ? `第 ${e.wave} 波清场，收集战利品并继续净化任务节点。` : `第 ${e.wave} 波清场！获得一次成长，${ENDLESS_BALANCE.intermissionSeconds} 秒休整后迎接下一波。`, 3, 2);
     this.host.completeWave(e.wave);
   }
 
@@ -451,7 +490,8 @@ export class EndlessDirector {
       const standoff = wantsStandoff && playerDistance >= STANDOFF_BALANCE.inner - 1e-7
         && playerDistance <= STANDOFF_BALANCE.outer + 1e-7;
       const pacing = endlessPacing(e.wave);
-      const hp = e.wave <= 5 && !elite && !support && !sourceBody
+      const mission = state.expedition?.missionId;
+      const hp = mission ? elite ? MISSION_COMBAT[mission].eliteHp : MISSION_COMBAT[mission].ordinaryHp : e.wave <= 5 && !elite && !support && !sourceBody
         ? pacing.role === 'release' ? 34 : 68
         : Math.round(elite ? 170 * pacing.eliteHealthMultiplier : 68 * pacing.healthMultiplier * (sourceBody ? ENDLESS_SOURCE_BALANCE.healthInOrdinaryBodies : 1));
       const serial = ++this.state.battle!.nextActorId;
@@ -497,6 +537,7 @@ export class EndlessDirector {
       }
       this.host.effect('evolution', position, position, radius + 16, .7);
       this.host.emit('ACTOR_SPAWNED', { id, role: target.role!, generation: 0, sourceId: target.sourceId!, traits: traits.join('+'), wave: e.wave, slot: ordinal, tactic, posture: standoff ? 'standoff' : 'pursuit', formation: e.formation,
+        ...(mission ? { missionBaseBudget: true } : {}),
         ...(target.territoryTask ? { territorySourceId: target.territorySourceId!, territoryNodeId: target.territoryTask.nodeId, invader: true } : {}),
         ...(assault ? { assaultObjective: 'tissue', assaultFallback: !assaultPosition } : {}),
         ...(carrier ? { capsuleCarrier: true, capsuleObjective: carrier.objective, capsuleFork: carrier.fork, capsuleStock: carrier.stock } : {}),
@@ -533,10 +574,12 @@ export class EndlessDirector {
     const state = this.state, e = this.e;
     if (!state.territory) return;
     if (!e.territoryTasks || e.territoryTasks.wave !== e.wave)
-      e.territoryTasks = planTerritoryAssaults(e.wave, e.batchSchedule.flatMap(batch => batch.roles));
-    if (!e.smartSupport || e.smartSupport.wave !== e.wave) {
+      e.territoryTasks = state.expedition?.missionId ? wavePlan(state, e.wave).territoryTasks
+        : planTerritoryAssaults(e.wave, e.batchSchedule.flatMap(batch => batch.roles));
+    if (state.expedition?.missionId) e.smartSupport = { wave: e.wave, reservedSlots: [], plans: [] };
+    else if (!e.smartSupport || e.smartSupport.wave !== e.wave) {
       const roles = e.batchSchedule.flatMap(batch => batch.roles), capsule = viralCapsulePlan(e.wave, roles, e.source);
-      e.smartSupport = planSmartSupports(state.seed, e.wave, roles, [...e.territoryTasks.reservedSlots, ...(capsule ? [capsule.slot] : [])]);
+      e.smartSupport = planSmartSupports(state.seed, e.wave, roles, [...(e.territoryTasks?.reservedSlots ?? []), ...(capsule ? [capsule.slot] : [])]);
     }
     if (state.territory.stage === 'guard') return;
     for (const source of TERRITORY_LANES) if (state.territory.sources[source.sourceId].destroyed)
@@ -592,7 +635,8 @@ export class EndlessDirector {
         positions.push(point);
       }
       if (!origin || !goal || positions.length !== 4) { blocked('position'); continue; }
-      const hp = e.wave <= 5 ? endlessPacing(e.wave).role === 'release' ? 34 : 68 : Math.round(68 * endlessPacing(e.wave).healthMultiplier);
+      const mission = state.expedition?.missionId;
+      const hp = mission ? MISSION_COMBAT[mission].ordinaryHp : e.wave <= 5 ? endlessPacing(e.wave).role === 'release' ? 34 : 68 : Math.round(68 * endlessPacing(e.wave).healthMultiplier);
       const ids = positions.map(() => `virus-${++state.battle!.nextActorId}`);
       const members = positions.map((position, index): Target => ({ ...position, id: ids[index], kind: 'single', role: 'virus', radius: 22, hp, maxHp: hp,
         hitUntil: 0, scanned: false, traits: [], generation: 0, sourceId: sourceId(e.wave), born: now, tactic: 'melee',

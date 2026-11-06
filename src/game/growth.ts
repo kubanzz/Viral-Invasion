@@ -15,7 +15,7 @@ export type { GrowthCommand, GrowthContext, GrowthState, DamageOrigin, DraftInte
 
 export function growthContext(state: GameState): GrowthContext {
   const combat = state.endlessGrowth ? endlessCombatStats(state.endlessGrowth) : undefined;
-  return { hostEvents: state.hostEvents, endless: !!state.endless, territory: state.territory, tick: state.tick, elapsed: state.elapsed, active: state.phase === 'playing', organId: state.battle?.organId ?? 'heart',
+  return { mission: !!state.expedition?.missionId, hostEvents: state.hostEvents, endless: !!state.endless, territory: state.territory, tick: state.tick, elapsed: state.elapsed, active: state.phase === 'playing', organId: state.battle?.organId ?? 'heart',
     ...(combat ? { immuneRank: state.endlessGrowth!.ranks.immune ?? 0, cellDamageMultiplier: combat.damageMultiplier * combat.cellDamageMultiplier } : {}),
     rhythm: state.battle?.pulse.phase ?? 'rest', deviceOrigin: state.battle?.pulse.origin ?? state.terminal,
     player: state.player, aim: state.battle?.lastAim ?? state.player, tissue: state.tissue, targets: state.targets, tool: state.tool, geometry: activeWorld(state), rhythmCycle: state.battle?.pulse.cycleIndex,
@@ -154,7 +154,7 @@ export class GrowthController {
   private log(type: string, data: GameEvent['data']): void { this.state.pendingLogs.push({ type, data }); }
   private equipped(id: ProtocolId): EquippedProtocol | undefined { return this.state.equipped.find(slot=>slot.id===id); }
   private ensureTerritoryBeacon(context: GrowthContext): void {
-    if(!context.territory)return;
+    if(!context.territory||context.mission)return;
     const s=this.state;s.territoryBeaconRequired=true;
     const slot=this.equipped('IMMUNE_BEACON');
     // Production heart sessions pre-equip this slot. Missing-slot unit fixtures
@@ -238,7 +238,7 @@ export class GrowthController {
   /** The host calls once per fifth clear. Pending consecutive milestones use two numbers. */
   rewardEndlessMilestone(wave: number, context: GrowthContext): void {
     const s=this.state, last=s.lastMilestoneWave??0;
-    if(s.ended||!context.active||!context.endless||!Number.isSafeInteger(wave)||wave<5||wave%5!==0||wave<=last)return;
+    if(s.ended||context.mission||!context.active||!context.endless||!Number.isSafeInteger(wave)||wave<5||wave%5!==0||wave<=last)return;
     // A paused run cannot earn another wave. While a reward is waiting, only the
     // next consecutive milestone can extend its compact queue; gaps are not invented.
     if(s.nextMilestoneWave!=null&&wave!==last+5)return;
@@ -315,7 +315,7 @@ export class GrowthController {
   requestResearch(nodeId: string, context: GrowthContext): ResearchRequestResult {
     this.observeTime(context.elapsed);
     const s=this.state;
-    if(s.ended||!context.active)return{kind:'rejected',reason:'run-inactive'};
+    if(s.ended||context.mission||!context.active)return{kind:'rejected',reason:'run-inactive'};
     this.openNextLevel();
     if(s.draft)return{kind:'rejected',reason:'draft-active'};
     if(s.pendingResearch)return{kind:'rejected',reason:'research-pending'};
@@ -355,7 +355,7 @@ export class GrowthController {
   openResearch(nodeId: string, context: GrowthContext): ResearchResult {
     this.observeTime(context.elapsed);
     const s=this.state;
-    if(s.ended||!context.active)return{kind:'rejected',reason:'run-inactive'};
+    if(s.ended||context.mission||!context.active)return{kind:'rejected',reason:'run-inactive'};
     this.openNextLevel();
     if(s.draft||s.pendingResearch)return{kind:'rejected',reason:'draft-active'};
     if(s.research<B.researchCost)return{kind:'rejected',reason:'insufficient-samples',missing:B.researchCost-s.research};
@@ -482,7 +482,8 @@ export class GrowthController {
     this.ensureTerritoryBeacon(context);
     const beacons=this.immuneBeacons(context.elapsed);
     const previous={marks:this.state.marks.map(mark=>({...mark})),beacon:this.state.beacon,beacons:[...beacons],cells:this.state.cells,readyAt:this.state.beaconReadyAt,history:this.state.protocolHistory.slice()};
-    const commands:GrowthCommand[]=[],trace=this.equipped('EXPOSE_TRACE'),beacon=this.equipped('IMMUNE_BEACON');
+    const commands:GrowthCommand[]=[],trace=this.equipped('EXPOSE_TRACE'),beacon=this.equipped('IMMUNE_BEACON')
+      ??(context.mission?{id:'IMMUNE_BEACON' as const,tuning:'balanced' as const,rank:1 as const}:undefined);
     const guardOrder = beacon ? selectImmuneGuardCommand(context) : undefined, guard = !!guardOrder;
     const rootId=`${this.state.runId}:scan:${context.tick}`;
     if(trace) {
@@ -674,7 +675,7 @@ export class GrowthController {
     s.beacon=beacons.filter(value=>value.organId===context.organId).find(value=>value.id===s.beacon?.id)
       ??beacons.find(value=>value.organId===context.organId)??null;
     if(s.skippedCommands){logs.push({kind:'log',type:'PROTOCOL_BUDGET_SKIPPED',data:{tick:context.tick,skipped:s.skippedCommands,budget:B.commandBudget}});s.skippedCommands=0;}
-    this.openNextLevel();
+    if(!context.mission)this.openNextLevel();
     // Draft-open logs are emitted in the same frame, before the host pauses for the draft.
     logs.push(...s.pendingLogs.splice(0).map(log=>({kind:'log' as const,...log})));
     return logs;

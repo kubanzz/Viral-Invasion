@@ -1,0 +1,539 @@
+{
+  "scope": "Read-only core anatomical local frame audit; no candidate or source mutation.",
+  "source": {
+    "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\artifacts\\player-3d-acceptance\\qa\\retarget-investigation\\official-source\\skeleton.glb",
+    "sha256": "ad2b45b8d0032f38f139c1673ebcf4fe53bf396ca104aeb9d7275614b1741be4"
+  },
+  "target": {
+    "path": "D:\\Workspace\\Projects\\xsj\\Viral-Invasion\\asserts\\ViralInvasion_Hero3D_v1\\model\\medic-hero-v1-source.glb",
+    "sha256": "e560b907fe9204a0cc6bc9ab436c6e65b28662aeb442c1a268522b76aeb43e44"
+  },
+  "method": "Official GLTFLoader/MeshoptDecoder/Skeleton.pose. Main local axis = next mapped joint direction; lateral = left minus right thighs for pelvis, left minus right clavicle anchors for spine/neck/head; lateral projected perpendicular to main axis. No upper-arm A/T swing angles are used. Basis columns are anatomical left X, length Y, X cross Y Z. TargetLocal-to-SourceLocal quaternion maps the two local anatomical bases, not a guessed global pose offset.",
+  "comparisons": [
+    {
+      "source": {
+        "bone": "pelvis",
+        "next": "spine_01",
+        "lateralLeft": "thigh_l",
+        "lateralRight": "thigh_r",
+        "lengthAxis": [
+          0,
+          1,
+          1.72e-7
+        ],
+        "rawLateralAxis": [
+          1,
+          2e-9,
+          6.8e-8
+        ],
+        "projectedLateralAxis": [
+          1,
+          0,
+          6.8e-8
+        ],
+        "forwardSecondaryAxis": [
+          -6.8e-8,
+          -1.72e-7,
+          1
+        ],
+        "anatomicalFrameQuaternion": [
+          8.6e-8,
+          -3.4e-8,
+          0,
+          1
+        ]
+      },
+      "target": {
+        "bone": "mixamorigHips",
+        "next": "mixamorigSpine",
+        "lateralLeft": "mixamorigLeftUpLeg",
+        "lateralRight": "mixamorigRightUpLeg",
+        "lengthAxis": [
+          -0.076696266,
+          0.997054503,
+          -1e-8
+        ],
+        "rawLateralAxis": [
+          -7.1e-8,
+          0.00000119,
+          -1
+        ],
+        "projectedLateralAxis": [
+          2.1e-8,
+          -8e-9,
+          -1
+        ],
+        "forwardSecondaryAxis": [
+          0.997054503,
+          0.076696266,
+          2e-8
+        ],
+        "anatomicalFrameQuaternion": [
+          -0.027136218,
+          0.706585887,
+          0.027136212,
+          0.706585901
+        ]
+      },
+      "lengthAxisDifferenceDegrees": 4.398691974103426,
+      "signedSourceToTargetLateralRollAfterLengthAxisAlignmentDegrees": 90.00000308806983,
+      "targetLocalAnatomicalFrameToSourceLocalAnatomicalFrameQuaternion": [
+        0.02713628,
+        -0.706585909,
+        -0.027136272,
+        0.706585875
+      ],
+      "correctionRotationDegrees": 90.08438542881547
+    },
+    {
+      "source": {
+        "bone": "spine_01",
+        "next": "spine_02",
+        "lateralLeft": "clavicle_l",
+        "lateralRight": "clavicle_r",
+        "lengthAxis": [
+          0,
+          1,
+          -1.15e-7
+        ],
+        "rawLateralAxis": [
+          1,
+          9.27e-7,
+          2.13e-7
+        ],
+        "projectedLateralAxis": [
+          1,
+          0,
+          2.13e-7
+        ],
+        "forwardSecondaryAxis": [
+          -2.13e-7,
+          1.15e-7,
+          1
+        ],
+        "anatomicalFrameQuaternion": [
+          -5.7e-8,
+          -1.07e-7,
+          0,
+          1
+        ]
+      },
+      "target": {
+        "bone": "mixamorigSpine",
+        "next": "mixamorigSpine1",
+        "lateralLeft": "mixamorigLeftShoulder",
+        "lateralRight": "mixamorigRightShoulder",
+        "lengthAxis": [
+          -1.66e-7,
+          1,
+          7e-9
+        ],
+        "rawLateralAxis": [
+          0.071246984,
+          0.000001844,
+          -0.997458705
+        ],
+        "projectedLateralAxis": [
+          0.071246984,
+          1.8e-8,
+          -0.997458705
+        ],
+        "forwardSecondaryAxis": [
+          0.997458705,
+          1.65e-7,
+          0.071246984
+        ],
+        "anatomicalFrameQuaternion": [
+          -5.4e-8,
+          0.681451765,
+          6.3e-8,
+          0.731863028
+        ]
+      },
+      "lengthAxisDifferenceDegrees": 0.000011799386545725382,
+      "signedSourceToTargetLateralRollAfterLengthAxisAlignmentDegrees": 85.9143992163478,
+      "targetLocalAnatomicalFrameToSourceLocalAnatomicalFrameQuaternion": [
+        1.2e-8,
+        -0.681451843,
+        -2.4e-8,
+        0.731862955
+      ],
+      "correctionRotationDegrees": 85.91439928627327
+    },
+    {
+      "source": {
+        "bone": "spine_02",
+        "next": "spine_03",
+        "lateralLeft": "clavicle_l",
+        "lateralRight": "clavicle_r",
+        "lengthAxis": [
+          0,
+          1,
+          -7.6e-8
+        ],
+        "rawLateralAxis": [
+          1,
+          9.26e-7,
+          2.4e-7
+        ],
+        "projectedLateralAxis": [
+          1,
+          0,
+          2.4e-7
+        ],
+        "forwardSecondaryAxis": [
+          -2.4e-7,
+          7.6e-8,
+          1
+        ],
+        "anatomicalFrameQuaternion": [
+          -3.8e-8,
+          -1.2e-7,
+          0,
+          1
+        ]
+      },
+      "target": {
+        "bone": "mixamorigSpine1",
+        "next": "mixamorigSpine2",
+        "lateralLeft": "mixamorigLeftShoulder",
+        "lateralRight": "mixamorigRightShoulder",
+        "lengthAxis": [
+          2.12e-7,
+          1,
+          -1e-9
+        ],
+        "rawLateralAxis": [
+          0.062378291,
+          0.000001821,
+          -0.998052578
+        ],
+        "projectedLateralAxis": [
+          0.062378291,
+          -1.5e-8,
+          -0.998052578
+        ],
+        "forwardSecondaryAxis": [
+          0.998052578,
+          -2.12e-7,
+          0.062378291
+        ],
+        "anatomicalFrameQuaternion": [
+          7.2e-8,
+          0.684697637,
+          -7.8e-8,
+          0.72882724
+        ]
+      },
+      "lengthAxisDifferenceDegrees": 0.000012891699348793929,
+      "signedSourceToTargetLateralRollAfterLengthAxisAlignmentDegrees": 86.42367909721713,
+      "targetLocalAnatomicalFrameToSourceLocalAnatomicalFrameQuaternion": [
+        -1e-7,
+        -0.684697725,
+        1.04e-7,
+        0.728827158
+      ],
+      "correctionRotationDegrees": 86.42367905996362
+    },
+    {
+      "source": {
+        "bone": "spine_03",
+        "next": "neck_01",
+        "lateralLeft": "clavicle_l",
+        "lateralRight": "clavicle_r",
+        "lengthAxis": [
+          0,
+          1,
+          -1.36e-7
+        ],
+        "rawLateralAxis": [
+          1,
+          8.95e-7,
+          3.87e-7
+        ],
+        "projectedLateralAxis": [
+          1,
+          0,
+          3.87e-7
+        ],
+        "forwardSecondaryAxis": [
+          -3.87e-7,
+          1.36e-7,
+          1
+        ],
+        "anatomicalFrameQuaternion": [
+          -6.8e-8,
+          -1.94e-7,
+          0,
+          1
+        ]
+      },
+      "target": {
+        "bone": "mixamorigSpine2",
+        "next": "mixamorigNeck",
+        "lateralLeft": "mixamorigLeftShoulder",
+        "lateralRight": "mixamorigRightShoulder",
+        "lengthAxis": [
+          0.004779769,
+          0.999988525,
+          0.00032171
+        ],
+        "rawLateralAxis": [
+          0.067159061,
+          0.000001827,
+          -0.997742282
+        ],
+        "projectedLateralAxis": [
+          0.067159052,
+          -2.1e-8,
+          -0.997742282
+        ],
+        "forwardSecondaryAxis": [
+          0.997730833,
+          -0.004790583,
+          0.067158281
+        ],
+        "anatomicalFrameQuaternion": [
+          0.001749675,
+          0.682947874,
+          -0.001635876,
+          0.730463185
+        ]
+      },
+      "lengthAxisDifferenceDegrees": 0.2744817817641174,
+      "signedSourceToTargetLateralRollAfterLengthAxisAlignmentDegrees": 86.14919348809518,
+      "targetLocalAnatomicalFrameToSourceLocalAnatomicalFrameQuaternion": [
+        -0.001749725,
+        -0.682948015,
+        0.001635922,
+        0.730463052
+      ],
+      "correctionRotationDegrees": 86.14954519258882
+    },
+    {
+      "source": {
+        "bone": "neck_01",
+        "next": "head",
+        "lateralLeft": "clavicle_l",
+        "lateralRight": "clavicle_r",
+        "lengthAxis": [
+          0,
+          1,
+          1.1e-8
+        ],
+        "rawLateralAxis": [
+          1,
+          8.39e-7,
+          -2.49e-7
+        ],
+        "projectedLateralAxis": [
+          1,
+          0,
+          -2.49e-7
+        ],
+        "forwardSecondaryAxis": [
+          2.49e-7,
+          -1.1e-8,
+          1
+        ],
+        "anatomicalFrameQuaternion": [
+          6e-9,
+          1.24e-7,
+          0,
+          1
+        ]
+      },
+      "target": {
+        "bone": "mixamorigNeck",
+        "next": "mixamorigHead",
+        "lateralLeft": "mixamorigLeftShoulder",
+        "lateralRight": "mixamorigRightShoulder",
+        "lengthAxis": [
+          -7.36e-7,
+          1,
+          4.1e-8
+        ],
+        "rawLateralAxis": [
+          -0.124034913,
+          0.000001878,
+          -0.992277854
+        ],
+        "projectedLateralAxis": [
+          -0.124034913,
+          -5e-8,
+          -0.992277854
+        ],
+        "forwardSecondaryAxis": [
+          0.992277854,
+          7.35e-7,
+          -0.124034913
+        ],
+        "anatomicalFrameQuaternion": [
+          -2.62e-7,
+          0.749678235,
+          2.59e-7,
+          0.661802496
+        ]
+      },
+      "lengthAxisDifferenceDegrees": 0.00004220786122274553,
+      "signedSourceToTargetLateralRollAfterLengthAxisAlignmentDegrees": 97.12501238692084,
+      "targetLocalAnatomicalFrameToSourceLocalAnatomicalFrameQuaternion": [
+        2.66e-7,
+        -0.749678153,
+        -2.63e-7,
+        0.661802589
+      ],
+      "correctionRotationDegrees": 97.1250124039087
+    },
+    {
+      "source": {
+        "bone": "head",
+        "next": "head_leaf",
+        "lateralLeft": "clavicle_l",
+        "lateralRight": "clavicle_r",
+        "lengthAxis": [
+          0,
+          1,
+          4.3e-8
+        ],
+        "rawLateralAxis": [
+          1,
+          9.28e-7,
+          1.3e-7
+        ],
+        "projectedLateralAxis": [
+          1,
+          0,
+          1.3e-7
+        ],
+        "forwardSecondaryAxis": [
+          -1.3e-7,
+          -4.3e-8,
+          1
+        ],
+        "anatomicalFrameQuaternion": [
+          2.1e-8,
+          -6.5e-8,
+          0,
+          1
+        ]
+      },
+      "target": {
+        "bone": "mixamorigHead",
+        "next": "mixamorigHeadTop_End",
+        "lateralLeft": "mixamorigLeftShoulder",
+        "lateralRight": "mixamorigRightShoulder",
+        "lengthAxis": [
+          1.19e-7,
+          1,
+          4e-8
+        ],
+        "rawLateralAxis": [
+          -0.124034872,
+          0.000001872,
+          -0.992277859
+        ],
+        "projectedLateralAxis": [
+          -0.124034872,
+          5.5e-8,
+          -0.992277859
+        ],
+        "forwardSecondaryAxis": [
+          0.992277859,
+          -1.14e-7,
+          -0.124034872
+        ],
+        "anatomicalFrameQuaternion": [
+          5.8e-8,
+          0.749678222,
+          -2.4e-8,
+          0.661802511
+        ]
+      },
+      "lengthAxisDifferenceDegrees": 0.000006722620413208828,
+      "signedSourceToTargetLateralRollAfterLengthAxisAlignmentDegrees": 97.12503173549999,
+      "targetLocalAnatomicalFrameToSourceLocalAnatomicalFrameQuaternion": [
+        -4.4e-8,
+        -0.749678265,
+        8e-9,
+        0.661802462
+      ],
+      "correctionRotationDegrees": 97.12503178722358
+    }
+  ],
+  "summary": [
+    {
+      "sourceBone": "pelvis",
+      "targetBone": "mixamorigHips",
+      "lengthAxisDifferenceDegrees": 4.398691974103426,
+      "lateralRollDifferenceDegrees": 90.00000308806983,
+      "correctionQuaternion": [
+        0.02713628,
+        -0.706585909,
+        -0.027136272,
+        0.706585875
+      ]
+    },
+    {
+      "sourceBone": "spine_01",
+      "targetBone": "mixamorigSpine",
+      "lengthAxisDifferenceDegrees": 0.000011799386545725382,
+      "lateralRollDifferenceDegrees": 85.9143992163478,
+      "correctionQuaternion": [
+        1.2e-8,
+        -0.681451843,
+        -2.4e-8,
+        0.731862955
+      ]
+    },
+    {
+      "sourceBone": "spine_02",
+      "targetBone": "mixamorigSpine1",
+      "lengthAxisDifferenceDegrees": 0.000012891699348793929,
+      "lateralRollDifferenceDegrees": 86.42367909721713,
+      "correctionQuaternion": [
+        -1e-7,
+        -0.684697725,
+        1.04e-7,
+        0.728827158
+      ]
+    },
+    {
+      "sourceBone": "spine_03",
+      "targetBone": "mixamorigSpine2",
+      "lengthAxisDifferenceDegrees": 0.2744817817641174,
+      "lateralRollDifferenceDegrees": 86.14919348809518,
+      "correctionQuaternion": [
+        -0.001749725,
+        -0.682948015,
+        0.001635922,
+        0.730463052
+      ]
+    },
+    {
+      "sourceBone": "neck_01",
+      "targetBone": "mixamorigNeck",
+      "lengthAxisDifferenceDegrees": 0.00004220786122274553,
+      "lateralRollDifferenceDegrees": 97.12501238692084,
+      "correctionQuaternion": [
+        2.66e-7,
+        -0.749678153,
+        -2.63e-7,
+        0.661802589
+      ]
+    },
+    {
+      "sourceBone": "head",
+      "targetBone": "mixamorigHead",
+      "lengthAxisDifferenceDegrees": 0.000006722620413208828,
+      "lateralRollDifferenceDegrees": 97.12503173549999,
+      "correctionQuaternion": [
+        -4.4e-8,
+        -0.749678265,
+        8e-9,
+        0.661802462
+      ]
+    }
+  ],
+  "limits": "Landmark-derived local frame diagnostics. Neck/head inherit shoulder lateral direction by request; this does not validate gaze, weapon grip, skin deformation or contact. Corrections must be tested as a separate candidate and not stacked on prior bind A/T swing offsets."
+}

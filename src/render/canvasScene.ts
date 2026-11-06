@@ -1,7 +1,11 @@
 import { drawLowCover, drawFrontPlatform, lowPropOpacity } from './lowCover';
 import { drawPlayerHealth, playerHealthView, type PlayerHealthView } from './playerHealth';
 import { drawTerritoryMarkerIcons, territoryMarkerLayouts, type TerritoryMarkerLayout } from './territoryMarkers';
-import { campStations } from '../game/campScene';
+import { campStations, campBuildPoint, canEstablishCamp, canInteractCampStation } from '../game/campScene';
+import { campLayout, type CampCourtyardId } from '../game/campLayout';
+import { prepareCampCamera, resetCampCamera } from './campCamera';
+import { CAMP_GROUND_ASSET_IDS, CAMP_VISUAL_SIZES, campAreaLabels, campDecorations, drawCampGround } from './campVisuals';
+import { addCampSiteLabels, drawCampFoundations, campFacilityFallbackBounds, hitCampScreenTarget, type CampScreenTarget } from './campMarkers';
 import { drawExpeditionSignals, drawConstructionPreview, drawExpeditionFacilityFallback, drawExpeditionProjectiles } from './expeditionVisuals';
 import { immuneLegions } from '../game/immuneLegions';
 import { activeWorld, BALANCE, WORLD, type Effect, type GameState, type Target, type Vec, type WorldGeometry } from '../game/types';
@@ -90,6 +94,35 @@ export class CanvasScene {
   private readonly locomotion = new HeroLocomotionController();
   private readonly dangerFeedback = new PlayerDangerFeedback();
   private renderAim: Vec = {x:0,y:0};
+  private campCameraActive = false;
+
+  /** Targets use exactly the sprite registration and label placement of the visible frame. */
+  campTargets(state: GameState): CampScreenTarget[] {
+    if (!state.camp) return [];
+    const layout = campLayout(state), placements = this.labels.diagnostics().placements;
+    const built = new Set(layout.facilities.map(f => f.id));
+    return layout.sites.map(site => {
+      const complete = built.has(site.id);
+      const bounds = complete ? this.art?.campFacilityBounds?.(state, site) ?? campFacilityFallbackBounds(site) : {
+        left: site.footprint.left, right: site.footprint.right,
+        top: site.footprint.top * this.camera.yScale, bottom: site.footprint.bottom * this.camera.yScale,
+      };
+      const topLeft = this.camera.worldToScreen({ x: bounds.left, y: bounds.top / this.camera.yScale });
+      const bottomRight = this.camera.worldToScreen({ x: bounds.right, y: bounds.bottom / this.camera.yScale });
+      return { id: site.id, built: complete, eligible: canInteractCampStation(state, site.id), groundY: site.position.y,
+        body: { left: topLeft.x, top: topLeft.y, right: bottomRight.x, bottom: bottomRight.y },
+        labels: placements.filter(label => [`camp-attention:${site.id}`, `camp-name:${site.id}`, `camp-site:${site.id}`].includes(label.id)).map(label => ({ id: label.id, rect: { ...label.rect } })),
+      };
+    });
+  }
+  campHitTarget(state: GameState, point: Vec): CampScreenTarget | undefined {
+    return hitCampScreenTarget(this.campTargets(state), point);
+  }
+
+  private campProps(state: GameState) {
+    const painted = Object.entries(CAMP_GROUND_ASSET_IDS).filter(([, id]) => !!this.art?.image?.(id)).map(([id]) => id as CampCourtyardId);
+    return campDecorations(state, painted);
+  }
 
   /** UI updates this read-only presentation snapshot after its batched DOM read. */
   setHudRects(rects: readonly LabelRect[]): void { this.hudRects = rects.map(rect => ({ ...rect })); }
@@ -119,6 +152,12 @@ export class CanvasScene {
     this.camera.resize(this.width, this.height);
   }
   prepareCamera(state: GameState, options: CameraFollowOptions = {}): void {
+    if (state.camp) {
+      this.campCameraActive = true;
+      prepareCampCamera(this.camera, state, options, this.hudRects);
+      return;
+    }
+    if (this.campCameraActive) { this.camera.resize(this.width, this.height); resetCampCamera(this.camera); this.campCameraActive = false; }
     const committed=options.aim?undefined:territoryCannonCameraFocus(state);
     const lift=territoryPlayerFlightHeight(state);
     const compact = this.width <= 1024 || this.height <= 600;
@@ -129,7 +168,7 @@ export class CanvasScene {
   }
 
   diagnostics(state: GameState) {
-    return { playerHealth: this.lastHealth, territoryMarkers: this.lastMarkers.map(m => ({ id:m.view.node.id, kind:m.view.kind, alert:m.view.alert, rect:m.rect })), depthOrder: depthSort(this.entities(state)).map(entity => entity.id), occluded: isForegroundOccluded(state.player, activeWorld(state)), foregroundOpacity: foregroundOpacity(state.player, activeWorld(state)), layerOrder: LAYER_ORDER, labels: this.labels.diagnostics(), hudRects: this.hudRects.map(rect => ({ ...rect })), playerPresence: playerPresence(state), crosshair: this.lastCrosshair,
+    return { campTargets: this.campTargets(state), playerHealth: this.lastHealth, territoryMarkers: this.lastMarkers.map(m => ({ id:m.view.node.id, kind:m.view.kind, alert:m.view.alert, rect:m.rect })), depthOrder: depthSort(this.entities(state)).map(entity => entity.id), occluded: isForegroundOccluded(state.player, activeWorld(state)), foregroundOpacity: foregroundOpacity(state.player, activeWorld(state)), layerOrder: LAYER_ORDER, labels: this.labels.diagnostics(), hudRects: this.hudRects.map(rect => ({ ...rect })), playerPresence: playerPresence(state), crosshair: this.lastCrosshair,
       territoryVisuals: { geometry: this.territoryGeometry.diagnostics(), labelledNodeIds: this.territoryLabelled, offscreenAttacks: this.territoryIndicators,
         nodes: this.territoryFrame?.nodes.map(view => ({ id: view.node.id, status: view.status, infectionProgress: view.infectionProgress, purificationProgress: view.purificationProgress,
           purificationActive: view.purificationActive, pausedReason: view.pausedReason ?? null, incomingFrom: view.incomingFrom ?? null, attackerIds: view.attackerIds })) ?? [],
@@ -145,11 +184,12 @@ export class CanvasScene {
         ?[{id:`${plan.id}:construction`,y:plan.nestPosition.y,kind:'smart-construction',index}]:[])??[]),
       ...(!state.camp&&state.expedition?.pendingLoot&&state.expedition.lootPosition?[{id:'expedition:boss-loot',y:state.expedition.lootPosition.y,kind:'boss-loot'}]:[]),
       ...(state.camp ? campStations(state).map((station,index)=>({id:`camp:${station.id}`,y:station.position.y,kind:'camp-station',index})) : []),
+      ...(state.camp ? this.campProps(state).map((prop,index)=>({id:prop.id,y:prop.y,kind:'camp-decoration',index})) : []),
       ...(state.territory?.construction?.task?[{id:state.territory.construction.task.id,y:state.territory.construction.task.y,kind:'player-construction'}]:[]),
-      { id: 'tissue', y: state.tissue.y, kind: 'tissue' },
+      ...(state.camp?.prologue === 'arrival' ? [] : [{ id: 'tissue', y: state.tissue.y, kind: 'tissue' }]),
       ...(state.endless ? [] : [{ id: 'terminal', y: state.terminal.y, kind: 'terminal' }]),
-      ...(state.battle?.graph.nodes.filter(node => node.kind === 'valve' || node.kind === 'gate' || node.kind === 'research' || node.kind === 'exit' || node.kind === 'healing').map(node => ({ id: node.id, y: node.y, kind: 'device' })) ?? []),
-      ...(visibleTerritory(state)?.nodes.filter(node => node.kind === 'front').map(node => ({ id: node.id, y: node.y, kind: 'territory-node' })) ?? []),
+      ...(!state.camp ? state.battle?.graph.nodes.filter(node => node.kind === 'valve' || node.kind === 'gate' || node.kind === 'research' || node.kind === 'exit' || node.kind === 'healing').map(node => ({ id: node.id, y: node.y, kind: 'device' })) ?? [] : []),
+      ...(!state.camp ? visibleTerritory(state)?.nodes.filter(node => node.kind === 'front').map(node => ({ id: node.id, y: node.y, kind: 'territory-node' })) ?? [] : []),
       ...(immuneLegions(state.growth).filter(beacon => beacon.organId === state.battle?.organId && beacon.until > state.elapsed).map(beacon => ({ id: beacon.id, y: beacon.y, kind: 'beacon' }))),
       ...(state.growth?.cells?.flatMap((cell, index) => cell.organId === state.battle?.organId && cell.until > state.elapsed && (cell.hp ?? 1) > 0 ? [{ id: cell.id, y: cell.y, kind: 'immune', index }] : []) ?? []),
       ...activeWorld(state).obstacles.map(obstacle => ({ id: obstacle.id, y: obstacle.y, kind: 'obstacle' })),
@@ -159,7 +199,7 @@ export class CanvasScene {
   render(state: GameState, aim: Vec, opts: { lowEffects?: boolean; cameraPrepared?: boolean; authoritativeState?: GameState; aimRange?: number; aimCancelled?: boolean; cannonPreview?:{aim:Vec;cancelled:boolean};constructionPreview?:{blueprintId:import('../game/construction').BlueprintId;position:Vec} } = {}): void {
     this.locomotion.observe(opts.authoritativeState ?? state); this.renderAim=aim;
     if (!opts.cameraPrepared) this.prepareCamera(state);
-    this.territoryFrame = territoryRenderFrame(state, this.territoryGeometry);
+    this.territoryFrame = state.camp ? undefined : territoryRenderFrame(state, this.territoryGeometry);
     const territoryViewport = { width: this.width, height: this.height, scale: this.camera.scale, project: (point: Vec) => this.camera.worldToScreen(point), blocked: this.hudRects };
     let ctx = this.ctx;
     this.labels.begin({ width: this.width, height: this.height, scale: this.camera.scale,
@@ -169,7 +209,7 @@ export class CanvasScene {
     // Labels yield to the player's body and exact ground aim. Their shapes stay
     // in world space; only the surrounding explanatory text can move.
     this.reserveLabelPoint(state.player, 30, 78, 12);
-    this.reserveLabelPoint(aim, 17, 17, 17);
+    if (!state.camp) this.reserveLabelPoint(aim, 17, 17, 17);
     ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
     ctx.clearRect(0, 0, this.width, this.height);
     if (!this.art) { ctx.fillStyle = '#120d1b'; ctx.fillRect(0, 0, this.width, this.height); }
@@ -177,16 +217,25 @@ export class CanvasScene {
     ctx.save(); this.camera.apply(ctx);
     this.art?.environment(state, this.camera);
     if (!this.art) {
-      const ground = this.fantasyGround.prepare(state);
+      const ground = this.fantasyGround.prepare(state.camp ? { ...state, battle: undefined, territory: undefined } : state);
       ctx.drawImage(ground.canvas, ground.x, ground.y, ground.width, ground.height);
     }
-    drawExpeditionSignals(ctx, state, this.labels, false);
+    if (state.camp) {
+      drawCampGround(ctx, state, { workshop: this.art?.image?.(CAMP_GROUND_ASSET_IDS.workshop), supply: this.art?.image?.(CAMP_GROUND_ASSET_IDS.supply), departure: this.art?.image?.(CAMP_GROUND_ASSET_IDS.departure) });
+      drawCampFoundations(ctx, state);
+      for (const label of campAreaLabels(state)) this.labels.add({ ...label, theme: 'camp' });
+      addCampSiteLabels(state, this.labels, site => this.art?.campFacilityBounds?.(state, site));
+      if(state.camp.prologue==='arrival'){
+        const point=campBuildPoint(state);ctx.save();ctx.beginPath();ctx.ellipse(point.x,point.y,54,36,0,0,Math.PI*2);ctx.fillStyle='#c3eed875';ctx.fill();ctx.strokeStyle='#668f80';ctx.lineWidth=3;ctx.stroke();ctx.restore();
+        this.labels.add({id:'camp-arrival',anchor:point,offset:{x:0,y:-52},theme:'camp',priority:95,essential:true,lines:[{text:canEstablishCamp(state)?'E · 在此建立微观前哨':'带领小队抵达此处',size:14}]});
+      }
+    } else drawExpeditionSignals(ctx, state, this.labels, false);
     drawConstructionPreview(ctx,state,opts.constructionPreview);
-    drawTerritorySignals(ctx, state, Boolean(opts.lowEffects), this.territoryFrame);
+    if (!state.camp) drawTerritorySignals(ctx, state, Boolean(opts.lowEffects), this.territoryFrame);
     drawSmartVirusSignals(ctx,state,Boolean(opts.lowEffects),this.labels);
     drawTerritoryCannonPreview(ctx,state,opts.cannonPreview);
     this.drawAtmosphere(ctx, state, Boolean(opts.lowEffects));
-    this.drawGroundSignals(ctx, state, aim);
+    if (!state.camp) this.drawGroundSignals(ctx, state, aim);
     drawHostEventGround(ctx, state);
     drawEncounterGround(ctx, state, Boolean(opts.lowEffects), this.labels);
     this.growthVisuals.drawGround(ctx, state, state.growth, Boolean(opts.lowEffects));
@@ -206,7 +255,7 @@ export class CanvasScene {
     const playerBody = this.art?.playerBounds?.(state) ?? playerVisualBounds(state);
     if (state.player.hp > 0 && !raisedActorBodies.some(body => body.kind === 'player')) raisedActorBodies.push({ id:'player', kind:'player', groundY:state.player.y, bodyBounds:playerBody });
     const dangerLevel = this.dangerFeedback.update(opts.authoritativeState ?? state);
-    this.lastHealth = playerHealthView(state, this.camera, playerBody, dangerLevel);
+    this.lastHealth = state.camp ? null : playerHealthView(state, this.camera, playerBody, dangerLevel);
     if (this.lastHealth) this.labels.reserveScreen(this.lastHealth.rect);
     territoryViewport.blocked = this.lastHealth ? [...this.hudRects, this.lastHealth.rect] : this.hudRects;
     const entities = depthSort(this.entities(state));
@@ -219,6 +268,7 @@ export class CanvasScene {
       if (this.art) {
         const point = entity.kind === 'target' ? state.targets[entity.index!] : entity.kind === 'tissue' ? state.tissue : entity.kind === 'terminal' ? state.terminal
           : entity.kind === 'camp-station' ? campStations(state)[entity.index!].position
+          : entity.kind === 'camp-decoration' ? this.campProps(state)[entity.index!]
           : entity.kind === 'player-construction' ? state.territory!.construction!.task!
           : entity.kind === 'boss-loot' ? state.expedition!.lootPosition!
           : entity.kind === 'smart-construction' ? state.endless!.smartSupport!.plans[entity.index!].nestPosition!
@@ -253,8 +303,8 @@ export class CanvasScene {
     this.growthVisuals.drawProtocolHits(ctx, state, state.growth, this.labels);
     drawTerritoryInvaders(ctx, state, this.labels, territoryViewport);
     drawPlayerInfection(ctx, state, Boolean(opts.lowEffects));
-    drawPlayerDamage(ctx,state,Boolean(opts.lowEffects));
-    if (state.battle) {
+    if (!state.camp) drawPlayerDamage(ctx,state,Boolean(opts.lowEffects));
+    if (state.battle && !state.camp) {
       drawEncounterDangers(ctx, state, Boolean(opts.lowEffects), this.labels);
       this.drawBattleDangers(ctx, state);
       drawEnemyTacticDangers(ctx, state, this.labels);
@@ -266,18 +316,18 @@ export class CanvasScene {
       drawHostEventLabels(state, this.labels);
       this.drawTissueMarker(ctx, state);
     }
-    this.territoryLabelled = drawTerritoryNodeAccents(ctx, state, this.territoryFrame, territoryViewport, this.labels, !!this.canvas.ownerDocument?.body?.classList.contains('touch-mode'));
+    this.territoryLabelled = state.camp ? [] : drawTerritoryNodeAccents(ctx, state, this.territoryFrame, territoryViewport, this.labels, !!this.canvas.ownerDocument?.body?.classList.contains('touch-mode'));
     if (!this.art) drawPlayerPresence(ctx, state, playerPresence(state, raisedActorBodies));
-    this.drawCrosshair(ctx, state, aim, opts.authoritativeState ?? state, opts.aimRange, opts.aimCancelled);
+    if (!state.camp) this.drawCrosshair(ctx, state, aim, opts.authoritativeState ?? state, opts.aimRange, opts.aimCancelled); else this.lastCrosshair = null;
     ctx.restore();
     this.territoryIndicators = drawTerritoryAttackIndicators(ctx, this.territoryFrame, territoryViewport);
     for (const indicator of this.territoryIndicators) this.labels.reserveScreen(indicator.rect);
-    this.lastMarkers = territoryMarkerLayouts(state, this.territoryFrame, territoryViewport, !!this.canvas.ownerDocument?.body?.classList.contains('touch-mode'));
+    this.lastMarkers = state.camp ? [] : territoryMarkerLayouts(state, this.territoryFrame, territoryViewport, !!this.canvas.ownerDocument?.body?.classList.contains('touch-mode'));
     for (const marker of this.lastMarkers) this.labels.reserveScreen(marker.rect);
     drawTerritoryMarkerIcons(ctx, this.lastMarkers);
     this.labels.draw(ctx);
     drawPlayerHealth(ctx, this.lastHealth);
-    drawPlayerDangerOverlay(ctx,state,dangerLevel,this.width,this.height,
+    if (!state.camp) drawPlayerDangerOverlay(ctx,state,dangerLevel,this.width,this.height,
       this.camera.worldToScreen(state.player),Boolean(opts.lowEffects));
     if (this.art) this.art.raster('signals', this.signalCanvas!, 10000);
     const map = document.querySelector<HTMLCanvasElement>('#tactical-map');
@@ -309,7 +359,7 @@ export class CanvasScene {
           const extent = body.radius * 1.12 + 8;
           this.reserveLabelPoint(cell, extent, extent - IMMUNE_BODY_LIFT, Math.max(12, extent + IMMUNE_BODY_LIFT));
         }
-        drawImmuneCell(ctx, cell, state.elapsed, low);
+        drawImmuneCell(ctx, cell, state.elapsed, low, !!state.camp);
       }
   }
 
@@ -557,10 +607,10 @@ export class CanvasScene {
 
   private drawShadows(ctx: CanvasRenderingContext2D, state: GameState): void {
     for (const target of state.targets) if (target.hp > 0) ellipse(ctx, target.x + 3, target.y + (this.art ? 2 : 8), target.radius + 5, target.radius * (this.art ? .25 : .62), this.art ? '#71465d33' : '#180e2378');
-    ellipse(ctx, state.player.x + 3, state.player.y + 3, 25, this.art ? 7 : 13, this.art ? '#49747b45' : '#100e218a');
+    ellipse(ctx, state.player.x + 3, state.player.y + 3, state.camp ? 16 : 25, this.art ? (state.camp ? 5 : 7) : 13, this.art ? '#49747b45' : '#100e218a');
     if(!isTerritoryPlayerAirborne(state))drawHeroContactShadow(ctx,state.player,this.art?.heroContact?.());
     ellipse(ctx, state.tissue.x + 4, state.tissue.y + 3, 54, this.art ? 13 : 28, this.art ? '#754a6333' : '#150e2266');
-    ellipse(ctx, state.terminal.x + 4, state.terminal.y + 3, 47, this.art ? 12 : 24, this.art ? '#754a6333' : '#160d2366');
+    if (!state.camp) ellipse(ctx, state.terminal.x + 4, state.terminal.y + 3, 47, this.art ? 12 : 24, this.art ? '#754a6333' : '#160d2366');
     for (const o of activeWorld(state).obstacles) ellipse(ctx, o.x + 4, o.y + (this.art ? 2 : 15), o.radius + 8, o.radius * (this.art ? .22 : .7), this.art ? '#754a6333' : '#160e2277');
   }
 
@@ -620,6 +670,7 @@ export class CanvasScene {
   }
 
   private drawTissue(ctx: CanvasRenderingContext2D, state: GameState): void {
+    if(state.camp?.prologue==='arrival')return;
     const tissue = state.tissue, ratio = tissue.hp / tissue.maxHp, territory = visibleTerritory(state);
     ctx.save(); ctx.translate(tissue.x, tissue.y); ctx.scale(1, 1 / .72);
     // Geometry fallback only; the core is an independent facility, never the

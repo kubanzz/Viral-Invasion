@@ -1,0 +1,664 @@
+{
+  "schemaVersion": 1,
+  "theme": "ViralInvasion_Camp_v4",
+  "title": "批准分区营地 v4 运行美术",
+  "approvedReference": "Docs/camp-redesign-20261105/zoned-v4/camp-zoned-concept.png",
+  "layoutEvidence": [
+    "Docs/camp-redesign-20261105/zoned-v4/design-notes.md",
+    "Docs/camp-redesign-20261105/zoned-v4/zoned-camp.png"
+  ],
+  "referenceBoundary": "The concept is the only approved visual reference. The prototype is coordinate/scale evidence, not a replacement art style.",
+  "expectedRuntimeCount": 4,
+  "phases": {
+    "first": {
+      "keys": [
+        "ground.workshop",
+        "forge.workshop-ready"
+      ],
+      "receipt": "delivery-p0-first.json"
+    },
+    "complete": {
+      "keys": [
+        "ground.workshop",
+        "ground.supply",
+        "ground.departure",
+        "forge.workshop-ready"
+      ],
+      "receipt": "delivery.json"
+    }
+  },
+  "writeBoundary": "All new files only inside asserts/ViralInvasion_Camp_v4/. No source, art-selection, .art-generated or old image writes.",
+  "groundContract": {
+    "sourceProjection": "orthographic-top-down-world-xy",
+    "sourceYCompressed": false,
+    "runtimeWorldYScale": 0.72,
+    "worldPixelsPerUnit": 2,
+    "pivot": [
+      0.5,
+      0.5
+    ],
+    "trim": false,
+    "minimumTransparentMarginPx": 8,
+    "compressedPngBudgetBytes": 1572864,
+    "compressedPngBudgetMiB": 1.5,
+    "boundaryModes": [
+      "code-owned",
+      "image-baked-exact"
+    ],
+    "defaultBoundaryMode": "code-owned",
+    "boundaryPolicy": "Prefer open floor/plant bases and exact code-owned continuous low borders when generated borders or their single opening cannot be verified. Never label a wrong baked wall as code-owned.",
+    "boundaryVisualSuggestion": {
+      "material": "cream biological ceramic/low tissue curb",
+      "widthWorld": 8,
+      "cornerRadiusWorld": 16,
+      "entranceWidthWorld": 92
+    },
+    "rendering": "Keep the full image untrimmed. Place its center at worldCenter and draw to worldCanvasSize; compress the ground art Y by0.72 exactly once at runtime. Do not use visible alpha bounds as a new world footprint.",
+    "nonTargets": [
+      "buildings",
+      "characters",
+      "text",
+      "UI",
+      "inventory icons",
+      "large central decoration",
+      "isometric walls",
+      "perspective floor",
+      "baked scene backdrop"
+    ]
+  },
+  "assets": [
+    {
+      "key": "ground.workshop",
+      "id": "fantasy.camp.v4.ground.workshop",
+      "path": "ground/workshop.png",
+      "kind": "ground",
+      "targetCanvas": [
+        832,
+        1056
+      ],
+      "contentRect": [
+        31,
+        33,
+        770,
+        990
+      ],
+      "worldRect": [
+        -535,
+        -235,
+        -150,
+        260
+      ],
+      "worldSize": [
+        385,
+        495
+      ],
+      "worldCenter": [
+        -342.5,
+        12.5
+      ],
+      "worldPixelsPerUnit": 2,
+      "worldCanvasRect": [
+        -550.5,
+        -251.5,
+        -134.5,
+        276.5
+      ],
+      "worldCanvasSize": [
+        416,
+        528
+      ],
+      "projectedArtSize": [
+        416,
+        380.16
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "sourceAnchor": [
+        416,
+        528
+      ],
+      "sourceYCompressed": false,
+      "runtimeWorldYScale": 0.72,
+      "applyWorldYScaleToArt": true,
+      "worldToSourceMatrix": [
+        [
+          2,
+          0,
+          1101
+        ],
+        [
+          0,
+          2,
+          503
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "sourceToWorldMatrix": [
+        [
+          0.5,
+          0,
+          -550.5
+        ],
+        [
+          0,
+          0.5,
+          -251.5
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "floorPalette": "grey green",
+      "layoutIntent": "Large empty workshop/warehouse activity yard; sparse connected planting and orderly storage bases on rear/left outer edge.",
+      "entrance": {
+        "side": "east",
+        "widthWorld": 92,
+        "widthSource": 184,
+        "centerWorld": [
+          -150,
+          100
+        ],
+        "worldSegment": [
+          [
+            -150,
+            54
+          ],
+          [
+            -150,
+            146
+          ]
+        ],
+        "centerSource": [
+          801,
+          703
+        ],
+        "sourceSegment": [
+          [
+            801,
+            611
+          ],
+          [
+            801,
+            795
+          ]
+        ],
+        "fractionFromContentTop": 0.6767676767676768,
+        "otherEntrancesAllowed": false
+      },
+      "codeBoundaryPolylineWorld": [
+        [
+          -150,
+          146
+        ],
+        [
+          -150,
+          260
+        ],
+        [
+          -535,
+          260
+        ],
+        [
+          -535,
+          -235
+        ],
+        [
+          -150,
+          -235
+        ],
+        [
+          -150,
+          54
+        ]
+      ],
+      "codeBoundaryPolylineSource": [
+        [
+          801,
+          795
+        ],
+        [
+          801,
+          1023
+        ],
+        [
+          31,
+          1023
+        ],
+        [
+          31,
+          33
+        ],
+        [
+          801,
+          33
+        ],
+        [
+          801,
+          611
+        ]
+      ]
+    },
+    {
+      "key": "ground.supply",
+      "id": "fantasy.camp.v4.ground.supply",
+      "path": "ground/supply.png",
+      "kind": "ground",
+      "targetCanvas": [
+        800,
+        592
+      ],
+      "contentRect": [
+        30,
+        31,
+        740,
+        530
+      ],
+      "worldRect": [
+        150,
+        -235,
+        520,
+        30
+      ],
+      "worldSize": [
+        370,
+        265
+      ],
+      "worldCenter": [
+        335,
+        -102.5
+      ],
+      "worldPixelsPerUnit": 2,
+      "worldCanvasRect": [
+        135,
+        -250.5,
+        535,
+        45.5
+      ],
+      "worldCanvasSize": [
+        400,
+        296
+      ],
+      "projectedArtSize": [
+        400,
+        213.12
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "sourceAnchor": [
+        400,
+        296
+      ],
+      "sourceYCompressed": false,
+      "runtimeWorldYScale": 0.72,
+      "applyWorldYScaleToArt": true,
+      "worldToSourceMatrix": [
+        [
+          2,
+          0,
+          -270
+        ],
+        [
+          0,
+          2,
+          501
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "sourceToWorldMatrix": [
+        [
+          0.5,
+          0,
+          135
+        ],
+        [
+          0,
+          0.5,
+          -250.5
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "floorPalette": "warm ivory",
+      "layoutIntent": "Empty supply/rest yard; one continuous herb bed along rear/right outer edge, no scattered supply icons.",
+      "entrance": {
+        "side": "west",
+        "widthWorld": 92,
+        "widthSource": 184,
+        "centerWorld": [
+          150,
+          -40
+        ],
+        "worldSegment": [
+          [
+            150,
+            -86
+          ],
+          [
+            150,
+            6
+          ]
+        ],
+        "centerSource": [
+          30,
+          421
+        ],
+        "sourceSegment": [
+          [
+            30,
+            329
+          ],
+          [
+            30,
+            513
+          ]
+        ],
+        "fractionFromContentTop": 0.7358490566037735,
+        "otherEntrancesAllowed": false
+      },
+      "codeBoundaryPolylineWorld": [
+        [
+          150,
+          6
+        ],
+        [
+          150,
+          30
+        ],
+        [
+          520,
+          30
+        ],
+        [
+          520,
+          -235
+        ],
+        [
+          150,
+          -235
+        ],
+        [
+          150,
+          -86
+        ]
+      ],
+      "codeBoundaryPolylineSource": [
+        [
+          30,
+          513
+        ],
+        [
+          30,
+          561
+        ],
+        [
+          770,
+          561
+        ],
+        [
+          770,
+          31
+        ],
+        [
+          30,
+          31
+        ],
+        [
+          30,
+          329
+        ]
+      ]
+    },
+    {
+      "key": "ground.departure",
+      "id": "fantasy.camp.v4.ground.departure",
+      "path": "ground/departure.png",
+      "kind": "ground",
+      "targetCanvas": [
+        800,
+        512
+      ],
+      "contentRect": [
+        30,
+        31,
+        740,
+        450
+      ],
+      "worldRect": [
+        150,
+        150,
+        520,
+        375
+      ],
+      "worldSize": [
+        370,
+        225
+      ],
+      "worldCenter": [
+        335,
+        262.5
+      ],
+      "worldPixelsPerUnit": 2,
+      "worldCanvasRect": [
+        135,
+        134.5,
+        535,
+        390.5
+      ],
+      "worldCanvasSize": [
+        400,
+        256
+      ],
+      "projectedArtSize": [
+        400,
+        184.32
+      ],
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "sourceAnchor": [
+        400,
+        256
+      ],
+      "sourceYCompressed": false,
+      "runtimeWorldYScale": 0.72,
+      "applyWorldYScaleToArt": true,
+      "worldToSourceMatrix": [
+        [
+          2,
+          0,
+          -270
+        ],
+        [
+          0,
+          2,
+          -269
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "sourceToWorldMatrix": [
+        [
+          0.5,
+          0,
+          135
+        ],
+        [
+          0,
+          0.5,
+          134.5
+        ],
+        [
+          0,
+          0,
+          1
+        ]
+      ],
+      "floorPalette": "pale cool green",
+      "layoutIntent": "Departure forecourt kept empty; orderly equipment storage bases only on the outer edge, no inventory items baked in.",
+      "entrance": {
+        "side": "west",
+        "widthWorld": 92,
+        "widthSource": 184,
+        "centerWorld": [
+          150,
+          250
+        ],
+        "worldSegment": [
+          [
+            150,
+            204
+          ],
+          [
+            150,
+            296
+          ]
+        ],
+        "centerSource": [
+          30,
+          231
+        ],
+        "sourceSegment": [
+          [
+            30,
+            139
+          ],
+          [
+            30,
+            323
+          ]
+        ],
+        "fractionFromContentTop": 0.4444444444444444,
+        "otherEntrancesAllowed": false
+      },
+      "codeBoundaryPolylineWorld": [
+        [
+          150,
+          296
+        ],
+        [
+          150,
+          375
+        ],
+        [
+          520,
+          375
+        ],
+        [
+          520,
+          150
+        ],
+        [
+          150,
+          150
+        ],
+        [
+          150,
+          204
+        ]
+      ],
+      "codeBoundaryPolylineSource": [
+        [
+          30,
+          323
+        ],
+        [
+          30,
+          481
+        ],
+        [
+          770,
+          481
+        ],
+        [
+          770,
+          31
+        ],
+        [
+          30,
+          31
+        ],
+        [
+          30,
+          139
+        ]
+      ]
+    },
+    {
+      "key": "forge.workshop-ready",
+      "id": "fantasy.camp.v4.forge.workshopReady",
+      "path": "forge/workshop-ready.png",
+      "kind": "facility",
+      "targetCanvas": [
+        512,
+        512
+      ],
+      "pivot": [
+        0.5,
+        0.85
+      ],
+      "sourceAnchor": [
+        256,
+        435.2
+      ],
+      "foot": [
+        256,
+        435.2
+      ],
+      "trim": false,
+      "direction": "front_right",
+      "runtimeWorldYScale": 0.72,
+      "applyWorldYScaleToArt": false,
+      "projectionPolicy": "Project only the ground placement/foot world position through sceneY*0.72. Keep the upright front-right facility sprite art uncompressed.",
+      "suggestedWorldCanvasWidth": 240,
+      "worldWidthAuthority": "producer-recommendation-from-approved-concept-and-measured-roof-clearance-final-main-renderer-review",
+      "minimumTransparentMarginPx": 8,
+      "visualIntent": "One complete leaf-roof canopy, ivory biological ceramic supports, stone anvil and orderly material shelf, matching the lower-left approved concept workshop.",
+      "nonTargets": [
+        "large floor platform",
+        "characters",
+        "labels",
+        "text",
+        "UI",
+        "flying sparks",
+        "baked shadow plate"
+      ],
+      "optionalConstruction": "Not required for P0; main may fade in this ready sprite. No fake extra animation frame credit.",
+      "prototypePreviousWorldCanvasWidth": 156,
+      "suggestedWorldCanvasWidthRange": [
+        220,
+        240
+      ],
+      "scaleEvidence": {
+        "registeredCanopyUndersideYApprox": 228,
+        "footY": 435.2,
+        "sourceClearanceApprox": 207.2,
+        "heroCanvasReference": 76,
+        "heroVisibleWorldHeightApprox": 62.6,
+        "clearanceWorldAtWidth220": 89.03125,
+        "clearanceWorldAtWidth240": 97.125,
+        "reason": "New complete canopy needs clearance for characters; old156 value described the old small device. Main owns final scale."
+      }
+    }
+  ]
+}

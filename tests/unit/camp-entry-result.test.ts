@@ -55,11 +55,11 @@ describe('camp entry and unambiguous expedition outcomes',()=>{
     expect(territoryResultView(session.state)?.status).toBe('incomplete');
     expect(territoryResultOverlay(session.state,undefined,false)).not.toContain('data-action="camp-open"');
   });
-  it('shows separate challenge and camp entries with an explicit first-rescue lock',()=>{
+  it('starts with arrival and offers an already established micro camp without a rescue lock',()=>{
     const record=new TerritoryProfileStore(null).load();
     const locked=mainMenuOverlay(record,true,false), unlocked=mainMenuOverlay(record,true,true);
-    expect(locked).toContain('首次救援成功后解锁');expect(locked).toMatch(/data-action="camp-open" disabled/);
-    expect(unlocked).toContain('data-action="endless-start"');expect(unlocked).toContain('进入心脏营地 · 武器／锻造／补给');
+    expect(locked).toContain('带队抵达');expect(locked).not.toContain('首次救援成功后解锁');
+    expect(unlocked).toContain('data-action="endless-start"');expect(unlocked).toContain('返回微观营地');
     expect(unlocked).not.toMatch(/data-action="camp-open" disabled/);
   });
 });

@@ -1,0 +1,518 @@
+{
+  "schemaVersion": 1,
+  "theme": "ViralInvasion_Microfront_v1",
+  "batch": "C",
+  "status": "prompts-only-awaiting-root-concept-node",
+  "generationSubmitted": false,
+  "scope": "四件营地设施及三块院落地表的去植物化候选。只编写中文提示词，不修改旧图、代码、选材或已存在资产。",
+  "evidence": [
+    "D:/Workspace/Projects/xsj/Viral-Invasion/artifacts/camp-layout-v4/final/dist-desktop-1366x768-camp.png",
+    "D:/Workspace/Projects/xsj/Viral-Invasion/asserts/art-selection.json",
+    "D:/Workspace/Projects/xsj/Viral-Invasion/asserts/ViralInvasion_Camp_v4/delivery.json",
+    "D:/Workspace/Projects/xsj/Viral-Invasion/src/render/campArt.ts",
+    "D:/Workspace/Projects/xsj/Viral-Invasion/src/render/campVisuals.ts",
+    "D:/Workspace/Projects/xsj/Viral-Invasion/src/game/campLayout.ts"
+  ],
+  "continuation": {
+    "policy": "根会话概念图完成后，统一沿其真实节点续绘；旧图仅作镜头、轮廓、占地、尺度与布局证据，不继承叶片造型。",
+    "follow_up_node": "0656db7c-d203-4f52-b7f3-1bc89506d7ec",
+    "canvas": "3f74df77-de59-4781-8cce-6f0f94176cbc",
+    "submissionOwner": "root",
+    "doNotSubmitUntilBound": false
+  },
+  "commonStyle": "清新柔和的二维手绘微观幻想，奶油白、薄荷青与少量暖珊瑚，宽色块哑光、极细柔线、轻微纸感、柔和体积。设施是人工组装的层叠半透明生物膜瓣与蛋白骨架；不出现完整细胞、心脏或肺。",
+  "backgroundPolicy": {
+    "preferred": "模型确实支持原生透明输出时使用真实透明PNG，保留原生alpha。",
+    "fallback": "模型不支持原生透明输出时，使用RGB255/255/255的均匀纯白背景，不要棋盘格、灰底、纸张底、台面、地平线、渐变或投影盘；后续显式记录白底抠图，不冒称原生透明。",
+    "whiteMattePrompt": "为后续抠图输出均匀纯白背景，主体轮廓四周和所有不属于主体的孔洞均为同一纯白；奶油主体以柔和灰青外轮廓区分，内部半透明膜材质通过叠层与局部明暗表达，不使用白色外发光。",
+    "processingBoundary": "仅允许在新素材目录内进行声明过的去白底、等比缩放与锚点注册；不以裁切或不等比拉伸改变实体。"
+  },
+  "commonNegative": "无植物叶片、叶脉、叶柄、树冠、树干、树根、花草、木材、木桶、人类铁砧、锤子、石砧、石块、人体器官缩略模型、完整细胞摆件、角色、队友、UI、文字、数字、图标、标签、道路、范围圈、血条、水印、发光描边、强霓虹、厚重外投影、场景背景。",
+  "sources": {
+    "camp.warehouse": {
+      "title": "蛋白囊储存仓",
+      "kind": "sprite",
+      "path": "camp/warehouse.png",
+      "ratio": "1:1",
+      "resolution": "2K",
+      "reference": [
+        "D:/Workspace/Projects/xsj/Viral-Invasion/asserts/ViralInvasion_Expedition_v1/campTentWarehouse/fixed/ready/00.png"
+      ],
+      "legacy": {
+        "sourceCanvas": [
+          512,
+          512
+        ],
+        "pivot": [
+          0.5,
+          0.85
+        ],
+        "foot": [
+          256,
+          435.2
+        ],
+        "alphaBoundsThreshold16": [
+          52,
+          125,
+          460,
+          435
+        ],
+        "visibleSize": [
+          408,
+          310
+        ],
+        "logicalWidth": 280,
+        "visibleWorldSizeApprox": [
+          223.125,
+          169.53125
+        ]
+      },
+      "proposedRegistration": {
+        "targetCanvas": [
+          1024,
+          1024
+        ],
+        "targetGround": [
+          512,
+          870
+        ],
+        "pivot": [
+          0.5,
+          0.849609375
+        ],
+        "trim": false,
+        "applyWorldYScaleToArt": false,
+        "visibleMaxAxisFraction": [
+          0.6,
+          0.75
+        ],
+        "preserveLegacyEntityProportions": true,
+        "finalRuntimeScaleOwner": "root/Main Renderer"
+      },
+      "prompt": "全新独立生产素材，彻底删去营地大场景与对比构图，只画以下指定单体。旧单体参考只提供镜头、比例和功能布局，不继承叶子。制作一件可直接用于二维游戏的独立营地设施：蛋白囊储存仓。严格跟随本次已确定微观前哨概念节点的材质与风格；上传旧仓库图片只提供同一正交四分之三轻斜俯视镜头、整体宽高比例、正面偏右朝向、入口位置、底部中心和同屏实体尺度，禁止沿用旧图的叶片屋顶。仓体保持低矮圆润、横向宽于高的清楚轮廓，前侧保留一个宽敞开放的取放口；由三到四片厚薄分明、边缘钝圆的半透明奶白与薄荷色生物膜瓣重叠包覆，膜瓣没有叶尖、叶柄或叶脉。内部是规整但非机械的蛋白纤维弓肋与几枚简洁储存蛋白囊；入口旁原箱体位置改为一枚封闭奶白储囊，暖珊瑚细束带固定。只表现可使用的完整仓体，不画展示剖面、不画完整细胞。保持旧图的宽阔入口与底座关系，最下接地点位于画面底部中心；实体最长轴占正方画布约七成，四周完整留白。沿用当前游戏清新柔和二维手绘绘本感、奶油白和薄荷青、哑光宽色块、柔和体积与极细灰青轮廓。单件、正方形；均匀纯白背景，所有镂空为相同纯白，方便后续真实抠图。无植物叶片、叶脉、树根、木材、人类建筑瓦片、铁砧、石块、角色、场景、文字、UI、范围圈、水印和外发光，不烘入地面投影。",
+      "follow_up_node": [
+        "0656db7c-d203-4f52-b7f3-1bc89506d7ec"
+      ]
+    },
+    "camp.workshop": {
+      "title": "蛋白编织工坊",
+      "kind": "sprite",
+      "path": "camp/workshop.png",
+      "ratio": "1:1",
+      "resolution": "2K",
+      "reference": [
+        "D:/Workspace/Projects/xsj/Viral-Invasion/asserts/ViralInvasion_Camp_v4/forge/workshop-ready.png"
+      ],
+      "legacy": {
+        "sourceCanvas": [
+          512,
+          512
+        ],
+        "pivot": [
+          0.5,
+          0.85
+        ],
+        "foot": [
+          256,
+          435.2
+        ],
+        "alphaBoundsThreshold16": [
+          83,
+          96,
+          429,
+          435
+        ],
+        "visibleSize": [
+          346,
+          339
+        ],
+        "logicalWidth": 248,
+        "visibleWorldSizeApprox": [
+          167.59375,
+          164.203125
+        ]
+      },
+      "proposedRegistration": {
+        "targetCanvas": [
+          1024,
+          1024
+        ],
+        "targetGround": [
+          512,
+          870
+        ],
+        "pivot": [
+          0.5,
+          0.849609375
+        ],
+        "trim": false,
+        "applyWorldYScaleToArt": false,
+        "visibleMaxAxisFraction": [
+          0.6,
+          0.75
+        ],
+        "preserveLegacyEntityProportions": true,
+        "finalRuntimeScaleOwner": "root/Main Renderer"
+      },
+      "prompt": "全新独立生产素材，彻底删去营地大场景与对比构图，只画以下指定单体。旧单体参考只提供镜头、比例和功能布局，不继承叶子。制作一件可直接用于二维游戏的独立营地设施：蛋白编织工坊。严格跟随本次已确定微观前哨概念节点，旧工坊图片仅提供同一正交四分之三轻斜俯视镜头、整体轮廓高宽比例、左右支架间距、后侧材料架与前侧操作区的布局，以及地面接地点。彻底替换旧图的巨大叶棚和人类铁砧。新的上部罩棚由三片钝圆、无尖端、无叶脉的半透明薄荷乳白生物膜瓣轻轻错叠；两侧是奶油色弯曲蛋白束骨架，与膜瓣自然连接，没有树干或藤蔓。后侧横架保留整齐收纳的中空蛋白管与小型生质块。前侧原铁砧位置改为低矮圆润的分子组装座：三枚奶白蛋白夹瓣围成小开口，中间横向拉着两束细密蛋白丝，清楚表现编织和修复工具的功能，不画锤子、砧角、金属铁块或人类机械。前部操作座与后架之间留出清楚空隙，保持旧图罩棚下可站人的净空和实体占地。单件完整设施，底部中心接地，最长轴占正方画布约七成，四周留白。二维手绘绘本、奶油白、薄荷青、少量暖珊瑚、哑光宽色块、柔和体积、细而弱的灰青轮廓。均匀纯白背景和纯白内部孔隙，方便后续抠图；无植物叶片、叶脉、树根、木头、石头、铁砧、人物、火花、文字、UI、水印、地面平台和外投影。",
+      "follow_up_node": [
+        "0656db7c-d203-4f52-b7f3-1bc89506d7ec"
+      ]
+    },
+    "camp.supply": {
+      "title": "微流体补给囊",
+      "kind": "sprite",
+      "path": "camp/supply.png",
+      "ratio": "1:1",
+      "resolution": "2K",
+      "reference": [
+        "D:/Workspace/Projects/xsj/Viral-Invasion/asserts/ViralInvasion_Expedition_v1/campSupply/fixed/ready/00.png"
+      ],
+      "legacy": {
+        "sourceCanvas": [
+          512,
+          512
+        ],
+        "pivot": [
+          0.5,
+          0.85
+        ],
+        "foot": [
+          256,
+          435.2
+        ],
+        "alphaBoundsThreshold16": [
+          142,
+          115,
+          370,
+          435
+        ],
+        "visibleSize": [
+          228,
+          320
+        ],
+        "logicalWidth": 168,
+        "visibleWorldSizeApprox": [
+          74.8125,
+          105
+        ]
+      },
+      "proposedRegistration": {
+        "targetCanvas": [
+          1024,
+          1024
+        ],
+        "targetGround": [
+          512,
+          870
+        ],
+        "pivot": [
+          0.5,
+          0.849609375
+        ],
+        "trim": false,
+        "applyWorldYScaleToArt": false,
+        "visibleMaxAxisFraction": [
+          0.6,
+          0.75
+        ],
+        "preserveLegacyEntityProportions": true,
+        "finalRuntimeScaleOwner": "root/Main Renderer"
+      },
+      "prompt": "全新独立生产素材，彻底删去营地大场景与对比构图，只画以下指定单体。旧单体参考只提供镜头、比例和功能布局，不继承叶子。制作一件可直接用于二维游戏的独立营地设施：微流体补给囊。严格跟随本次已确定微观前哨概念节点；上传旧补给设施只提供同一正交四分之三轻斜俯视镜头、窄而直立的高宽比例、正面右侧出液口和小接液槽位置、底部中心与原有实体尺寸关系。保留低矮圆筒状奶油色生物陶瓷储囊、宽薄荷青环带、侧面短管和一体接液槽的清楚功能轮廓。旧图顶上整片叶子彻底替换为两层厚钝半透明膜盘盖：盖片呈弧形圆顶，平滑无叶尖、叶柄、主脉或纹理分叉，以短蛋白扣环连接，不像树叶或蘑菇。底部石块改为一圈三枚小型奶白蛋白支座，底部不生根。囊内仅用极轻淡青液面显示营养液，不放完整细胞或器官。最长轴占正方画布约七成，整体窄高比例严格参考旧图，底部中心接地且轮廓完整。清新二维手绘绘本、奶油白和薄荷青、少量暖珊瑚小扣件、哑光宽色块、柔和体积。单件、均匀纯白背景，孔洞和非主体区域纯白以便抠图；无植物、叶脉、树根、木材、石头、人类饮水机商标、角色、文字、UI、水印、场景地面、范围圈和外发光。",
+      "follow_up_node": [
+        "0656db7c-d203-4f52-b7f3-1bc89506d7ec"
+      ]
+    },
+    "camp.departure": {
+      "title": "膜流出击接口",
+      "kind": "sprite",
+      "path": "camp/departure.png",
+      "ratio": "1:1",
+      "resolution": "2K",
+      "reference": [
+        "D:/Workspace/Projects/xsj/Viral-Invasion/asserts/ViralInvasion_Expedition_v1/campSortie/fixed/ready/00.png"
+      ],
+      "legacy": {
+        "sourceCanvas": [
+          512,
+          512
+        ],
+        "pivot": [
+          0.5,
+          0.85
+        ],
+        "foot": [
+          256,
+          435.2
+        ],
+        "alphaBoundsThreshold16": [
+          105,
+          150,
+          407,
+          435
+        ],
+        "visibleSize": [
+          302,
+          285
+        ],
+        "logicalWidth": 190,
+        "visibleWorldSizeApprox": [
+          112.0703125,
+          105.76171875
+        ]
+      },
+      "proposedRegistration": {
+        "targetCanvas": [
+          1024,
+          1024
+        ],
+        "targetGround": [
+          512,
+          870
+        ],
+        "pivot": [
+          0.5,
+          0.849609375
+        ],
+        "trim": false,
+        "applyWorldYScaleToArt": false,
+        "visibleMaxAxisFraction": [
+          0.6,
+          0.75
+        ],
+        "preserveLegacyEntityProportions": true,
+        "finalRuntimeScaleOwner": "root/Main Renderer"
+      },
+      "prompt": "全新独立生产素材，彻底删去营地大场景与对比构图，只画以下指定单体。旧单体参考只提供镜头、比例和功能布局，不继承叶子。制作一件可直接用于二维游戏的独立营地设施：膜流出击接口。严格跟随本次已确定微观前哨概念节点，上传旧出击台只提供同一正交四分之三轻斜俯视镜头、低矮宽厚的高宽比例、斜向前方开放的罩体、底部中心与原实体尺寸。将旧图下方三片叶子和红色树根彻底替换为三枚奶白薄荷蛋白承托瓣与短而低的蛋白纤维连接肋。罩体保持旧图朝向和高度，但由两片半透明奶白生物膜弧罩组成，边缘薄荷色钝圆包边，上下错开形成清楚的前侧微流体通道开口；不画贝壳放射纹或叶脉。通道口内部只用一条很弱的青白流体亮带暗示可出发，亮度克制，不能变成发光传送门。整体是人工组装的微观接口设施，没有完整细胞、器官、花朵或树根。单件完整，底部中心接地，最长轴占正方画布约七成，四周均匀留白。当前游戏的清新柔和二维手绘绘本、奶油白与薄荷青、少量暖珊瑚连接扣、哑光宽色块和柔和体积。均匀纯白背景，内部非主体孔隙纯白，便于真实抠图；无叶片、叶柄、树干、树根、木材、石头、人物、文字、箭头、UI、范围圈、水印、外发光、地面平台和烘焙投影。",
+      "follow_up_node": [
+        "0656db7c-d203-4f52-b7f3-1bc89506d7ec"
+      ]
+    },
+    "camp.ground.workshop": {
+      "title": "整备院微观地表",
+      "kind": "camp-ground",
+      "path": "camp/ground/workshop.png",
+      "ratio": "3:4",
+      "resolution": "2K",
+      "reference": [
+        "D:/Workspace/Projects/xsj/Viral-Invasion/asserts/ViralInvasion_Camp_v4/ground/workshop.png"
+      ],
+      "legacy": {
+        "sourceCanvas": [
+          832,
+          1056
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "sourceAnchor": [
+          416,
+          528
+        ],
+        "contentRect": [
+          31,
+          33,
+          770,
+          990
+        ],
+        "worldSize": [
+          385,
+          495
+        ],
+        "worldCanvasSize": [
+          416,
+          528
+        ],
+        "worldCenterRelativeCore": [
+          -342.5,
+          12.5
+        ],
+        "sourceYCompressed": false,
+        "runtimeWorldYScale": 0.72
+      },
+      "proposedRegistration": {
+        "targetCanvas": [
+          832,
+          1056
+        ],
+        "targetCenter": [
+          416,
+          528
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "contentRect": [
+          31,
+          33,
+          770,
+          990
+        ],
+        "trim": false,
+        "sourceYCompressed": false,
+        "applyWorldYScaleToArt": true,
+        "runtimeWorldYScale": 0.72,
+        "aspectCorrection": "生成画幅允许额外纯白留边；最终按旧参考有效矩形比例注册，不把3:4画幅拉伸成832:1056，也不裁去主体边缘。"
+      },
+      "prompt": "全新独立生产素材，彻底删去营地大场景与对比构图，只画以下指定单体。旧单体参考只提供镜头、比例和功能布局，不继承叶子。制作一张可抠图的二维游戏整备院地表部件，严格正顶视、正交世界平面，不画透视、不做斜俯视地面。上传旧图仅作为精确布局、矩形长宽比、收纳底座位置和空地范围参考；跟随本次已确定微观前哨概念节点的材质。完整地表呈纵向钝角圆角矩形，有效内容宽高比例严格保持770比990；四周留均匀纯白边。旧图灰绿色低对比开放地面保持原比例，中央及右侧的大面积空地完整保留，不新增中央装饰、建筑、节点或道路。左侧原长条奶油收纳底座与下方细框托盘保持尺寸、位置和方向。把顶边与左边所有普通叶丛逐一替换为低矮、钝圆、不规则但连贯的膜褶与小型蛋白囊簇：褶片没有叶尖、叶柄、主脉、分叉脉纹或花瓣形，像叠在膜面上的凝胶皱褶；高度很低，不能形成树或墙。膜褶仍只占旧图边缘植物的原区域，不向中央空地蔓延。灰青底面保留温和纸感与稀疏细密蛋白纹理，不画完整细胞和器官。禁止擅自增加入口、围墙或缺口；边界、碰撞和门口由项目代码拥有。清新二维手绘绘本，奶油白、灰薄荷青、少量低饱和暖珊瑚；哑光、宽色块、低对比。地表本体完整不透明、外部均匀纯白以便抠成透明PNG，不画棋盘格、场景背景或地表外投影。无植物、叶脉、树根、木头、石头、角色、建筑、图标、文字、UI和水印。",
+      "follow_up_node": [
+        "0656db7c-d203-4f52-b7f3-1bc89506d7ec"
+      ]
+    },
+    "camp.ground.supply": {
+      "title": "补给院微观地表",
+      "kind": "camp-ground",
+      "path": "camp/ground/supply.png",
+      "ratio": "4:3",
+      "resolution": "2K",
+      "reference": [
+        "D:/Workspace/Projects/xsj/Viral-Invasion/asserts/ViralInvasion_Camp_v4/ground/supply.png"
+      ],
+      "legacy": {
+        "sourceCanvas": [
+          800,
+          592
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "sourceAnchor": [
+          400,
+          296
+        ],
+        "contentRect": [
+          30,
+          31,
+          740,
+          530
+        ],
+        "worldSize": [
+          370,
+          265
+        ],
+        "worldCanvasSize": [
+          400,
+          296
+        ],
+        "worldCenterRelativeCore": [
+          335,
+          -102.5
+        ],
+        "sourceYCompressed": false,
+        "runtimeWorldYScale": 0.72
+      },
+      "proposedRegistration": {
+        "targetCanvas": [
+          800,
+          592
+        ],
+        "targetCenter": [
+          400,
+          296
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "contentRect": [
+          30,
+          31,
+          740,
+          530
+        ],
+        "trim": false,
+        "sourceYCompressed": false,
+        "applyWorldYScaleToArt": true,
+        "runtimeWorldYScale": 0.72,
+        "aspectCorrection": "生成画幅允许额外纯白留边；最终按旧参考有效矩形比例注册，不做不等比拉伸或主体裁切。"
+      },
+      "prompt": "全新独立生产素材，彻底删去营地大场景与对比构图，只画以下指定单体。旧单体参考只提供镜头、比例和功能布局，不继承叶子。制作一张可抠图的二维游戏补给院地表部件，严格正顶视正交世界平面，完全沿用上传旧地表的布局、占地和空地范围，不画透视地板。跟随本次已确定微观前哨概念节点的材质。地表为横向钝角圆角矩形，有效内容宽高比例严格保持740比530，外侧留纯白边。保留旧图暖象牙色的大块开放膜面与细微纸感，中央、左侧和下侧空地保持干净，不能新增道路、建筑、装置或大型中心物。只替换旧图上边向右边连续转角的L形植物花床：奶油色低托槽维持旧位置和外形，占地不得变大；槽中改为稀疏低矮的半透明薄荷灰膜褶、几枚乳白营养蛋白囊和短钝的蛋白纤维环，相互自然衔接。所有褶片无叶尖、叶柄、叶脉、主脉或花瓣轮廓，绝不是普通绿植。右下角原少量碎叶区域改为贴地小凝胶粒，仍局限于原范围。边缘低矮，保持宽阔活动空地，围墙和唯一入口继续由项目代码负责，不擅自画新的墙、门或缺口。清新柔和二维手绘绘本，奶油白、薄荷青、极少暖珊瑚，哑光宽色块、低对比柔和层次，不画完整细胞或器官。地表本体完整不透明，外部均匀纯白方便后续抠成透明PNG，无棋盘格、外投影、草、叶脉、树根、木头、石头、人物、建筑、图标、文字、UI和水印。",
+      "follow_up_node": [
+        "0656db7c-d203-4f52-b7f3-1bc89506d7ec"
+      ]
+    },
+    "camp.ground.departure": {
+      "title": "出击院微观地表",
+      "kind": "camp-ground",
+      "path": "camp/ground/departure.png",
+      "ratio": "3:2",
+      "resolution": "2K",
+      "reference": [
+        "D:/Workspace/Projects/xsj/Viral-Invasion/asserts/ViralInvasion_Camp_v4/ground/departure.png"
+      ],
+      "legacy": {
+        "sourceCanvas": [
+          800,
+          512
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "sourceAnchor": [
+          400,
+          256
+        ],
+        "contentRect": [
+          30,
+          31,
+          740,
+          450
+        ],
+        "worldSize": [
+          370,
+          225
+        ],
+        "worldCanvasSize": [
+          400,
+          256
+        ],
+        "worldCenterRelativeCore": [
+          335,
+          262.5
+        ],
+        "sourceYCompressed": false,
+        "runtimeWorldYScale": 0.72
+      },
+      "proposedRegistration": {
+        "targetCanvas": [
+          800,
+          512
+        ],
+        "targetCenter": [
+          400,
+          256
+        ],
+        "pivot": [
+          0.5,
+          0.5
+        ],
+        "contentRect": [
+          30,
+          31,
+          740,
+          450
+        ],
+        "trim": false,
+        "sourceYCompressed": false,
+        "applyWorldYScaleToArt": true,
+        "runtimeWorldYScale": 0.72,
+        "aspectCorrection": "生成画幅允许额外纯白留边；最终按旧参考有效矩形比例注册，不做不等比拉伸或主体裁切。"
+      },
+      "prompt": "全新独立生产素材，彻底删去营地大场景与对比构图，只画以下指定单体。旧单体参考只提供镜头、比例和功能布局，不继承叶子。制作一张可抠图的二维游戏出击院地表部件，严格正顶视正交世界平面；上传旧图只提供布局、横向长宽比例、收纳底座与空地区域，跟随本次已确定微观前哨概念节点的微观材质。完整地表是横向钝角圆角矩形，有效内容宽高比例严格保持740比450，四周留纯白边。冷灰薄荷色低对比开放地面保留旧图全部中央空地与左侧通行区；右侧竖向奶油色长托盘保留原位置、尺寸和方向，不向中央移动、不新增装备或背包图标。把顶边、右边和右下角全部普通叶丛替换为低矮膜褶、乳白薄荷色蛋白囊、小型弯曲蛋白束扣环，密度和覆盖区域保持旧图，不增高、不长成墙。膜褶边缘钝圆、形状不规则，完全没有叶尖、叶柄、叶脉、花瓣、树冠或枝根；只表示膜表面的低矮分子支撑结构。底面只有少量细密蛋白纹理和柔和纸感，不画独立道路、箭头、发光轨道、完整细胞或器官。围墙、入口和碰撞由代码负责，不绘制新的门、缺口或高墙。清新柔和二维手绘绘本，奶油白、灰薄荷青、少量低饱和暖珊瑚，哑光宽色块、轻柔体积、低对比。地表本体完整不透明，外部均匀纯白以便后续抠成透明PNG；无棋盘格、场景背景、外投影、植物、草、木材、石头、角色、建筑、武器、文字、UI、图标和水印。",
+      "follow_up_node": [
+        "0656db7c-d203-4f52-b7f3-1bc89506d7ec"
+      ]
+    }
+  },
+  "reuseDecision": {
+    "tree": "不为C批次重复生产脉树替代图；营地原两棵脉树可复用A批次 obstacle.protein-fibers，最终尺度及摆放由主会话确认。",
+    "legacyPixels": "不直接沿用带叶脉或人类铁砧的整张旧图；只借用其布局、实体比例、配色和接入证据。",
+    "groundIsNotTile": "本批三张是有固定院落布局和边缘部件的地表补丁，不是A批次可平铺世界底纹。"
+  },
+  "canvas": "3f74df77-de59-4781-8cce-6f0f94176cbc"
+}

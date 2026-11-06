@@ -154,6 +154,16 @@ export class Soundscape {
     this.lastEvent = state.events.at(-1);
     this.lastTick = state.tick;
   }
+  /** Presentation-only cues; called once per reveal transition, with the sound setting respected. */
+  summonCue(phase: 'charge' | 'rarity' | 'item' | 'complete', rarity: 'white' | 'blue' | 'purple' | 'gold'): void {
+    if (phase === 'charge') { this.tone(180,.7,.018,520); this.tone(360,.45,.01,720,.18); }
+    if (phase === 'rarity') {
+      const root = rarity === 'gold' ? 523 : rarity === 'purple' ? 440 : rarity === 'blue' ? 392 : 330;
+      this.tone(root,.45,.022,root*2); this.tone(root*1.5,.35,.016,root*2,.08);
+      if (rarity === 'gold') this.tone(root*2,.7,.017,root*2.5,.16);
+    }
+    if (phase === 'item') { this.tone(660,.22,.018,990); this.tone(990,.4,.012,1320,.07); }
+  }
   /** Use simulation ticks so a paused panel cannot reset or flood a cue's cooldown. */
   private cue(group: string, tick: number, gap: number, play: () => void): void {
     if (tick - (this.cueTicks.get(group) ?? -Infinity) < gap) return;

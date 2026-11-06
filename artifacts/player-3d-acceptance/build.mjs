@@ -1,0 +1,12 @@
+import { build } from '../../node_modules/esbuild/lib/main.js';
+import { readFile, mkdir, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+const root = dirname(fileURLToPath(import.meta.url));
+await mkdir(join(root, 'dist'), { recursive: true });
+const result = await build({ entryPoints: [join(root, 'viewer.js')], bundle: true, format: 'iife', target: ['chrome110','edge110','safari17.6'], minify: true, write: false, legalComments: 'inline' });
+const script = result.outputFiles[0].text.replace(/<\/script/gi, '<\\/script');
+const html = (await readFile(join(root,'index.html'),'utf8')).replace('<!-- VIEWER_SCRIPT -->', () => `<script>${script}</script>`);
+await writeFile(join(root,'dist','viewer.html'),html);
+await writeFile(join(root,'dist','THREE-LICENSE.txt'),await readFile(join(root,'node_modules','three','LICENSE'),'utf8'));
+console.log(`Standalone viewer: ${join(root,'dist','viewer.html')}`);

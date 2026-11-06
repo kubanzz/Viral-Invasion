@@ -30,7 +30,11 @@ import { combatActorFrame, combatCannonFrame, combatConstructionFrame, type Comb
 import { territoryCannonBodyOpacity } from './territoryCannonVisuals';
 import { sourceRegisteredSpriteFrame } from './expeditionArt';
 import { campStations } from '../game/campScene';
+import { CAMP_GROUND_ASSET_IDS, CAMP_VISUAL_SIZES, campDecorations, campFixtureRaster } from './campVisuals';
+import type { CampCourtyardId } from '../game/campLayout';
+import { campFacilityFrame } from './campArt';
 import { heldWeaponFacing, heldWeaponPresentation, heldWeaponRecoilStrength } from './weaponPresentation';
+import { Player3D, type Player3DFrame } from './player3D';
 
 interface Asset extends HeroAnimationAsset, ActorAsset { atlas:string; frame:string; flags:string[]; status:string }
 interface RuntimeArt {inputSignature:string; actorContract?:{version:number}; atlases:{key:string;dataUri:string;data:object}[];assets:Record<string,Asset>;environments:Record<string,{dataUri:string;width:number;height:number;source?:string}>}
@@ -39,7 +43,7 @@ interface MotherArtComposition {
   alpha:number;lift:number;bounds:VisualBounds;geometry:MotherCoreAccentGeometry;
 }
 interface HeroPresentation { frame:HeroFramePresentation; bounds:VisualBounds; tool?:AimedPaintedTool; rig?:HeroRig;
-  actorFrame?:ActorFrame; toolId?:string; fallbackReason?:string }
+  actorFrame?:ActorFrame; toolId?:string; fallbackReason?:string; model3D?:Player3DFrame; muzzle?:Vec }
 const art = artRuntime as unknown as RuntimeArt;
 const TAU = Math.PI * 2;
 function ring(ctx:CanvasRenderingContext2D,p:Vec,r:number,color:string,width=1.5) {ctx.beginPath();ctx.ellipse(p.x,p.y,r,r,0,0,TAU);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke();}
@@ -49,6 +53,8 @@ export class Renderer {
   readonly ready:Promise<void>;
   readonly camera:Camera;
   private readonly host:PhaserHost;
+  private readonly player3D?:Player3D;
+  private player3DHeight=0;
   private readonly painter:CanvasScene;
   private readonly rasterKeys=new Set<string>();
   private readonly seenRasters=new Set<string>();
@@ -75,6 +81,7 @@ export class Renderer {
   private lastOrgan='';
   private lastPhase='';
   private lowEffects=false;
+  private campProps:ReturnType<typeof campDecorations>=[];
   private readonly immuneShadow=document.createElement('canvas');
   private readonly fantasyGround=new FantasyGroundCache();
   private readonly app=document.querySelector<HTMLElement>('#app');
@@ -86,9 +93,14 @@ export class Renderer {
       foreground:(state)=>this.foreground(state),
       actorBodies:state=>this.raisedBodies(state),
       playerBounds:state=>this.playerPresentation(state).bounds,
+      campFacilityBounds:(state,station)=>{
+        const frame=campFacilityFrame(art.assets,state,station);
+        return frame ? registeredSpriteBodyBounds(frame.layout,station.position,frame.flipX,0) : undefined;
+      },
+      image:id=>art.environments[id] ? this.host.scene.textures.get(`environment:${id}`).getSourceImage() as HTMLImageElement : undefined,
       effectOrigin:effect=>this.beamOrigins.get(this.beamKey(effect)),
       projectileOrigin:castId=>this.projectileOrigins.get(castId),
-      heroContact:()=>heroSoleContact(this.heroPresentation?.actorFrame),
+      heroContact:()=>this.heroPresentation?.model3D?undefined:heroSoleContact(this.heroPresentation?.actorFrame),
       raster:(key,source,depth,x=0,y=0,scale=1)=>{
         this.seenRasters.add(key);this.rasterKeys.add(key);
         // Full-screen textures use device pixels internally; the host places
@@ -100,22 +112,26 @@ export class Renderer {
     });
     this.camera=this.painter.camera;
     this.host=new PhaserHost(canvas,{atlases:art.atlases,images:Object.entries(art.environments).map(([id,image])=>({key:`environment:${id}`,dataUri:image.dataUri}))});
-    this.ready=this.host.ready.then(()=>{this.resize();this.createAnimations();});
+    // Explicit art-authoring fixtures keep their inspected PNG contract. The
+    // live game uses the skinned model in the same Phaser depth-sorted pass.
+    if(!options.actorPreview&&!options.actorAnimationPreview)this.player3D=new Player3D();
+    this.ready=Promise.all([this.host.ready,this.player3D?.ready]).then(()=>{this.resize();this.createAnimations();});
   }
   startFrameLoop(callback:(now:number)=>void):void {this.host.startFrameLoop(callback);}
   /** Observe accepted shots at their actual birth step, including steps between rendered frames. */
   witnessSimulation(state:GameState):void {
     this.locomotion.observe(state);
+    this.player3D?.observe(state);
     if(!this.host.isReady||state.phase!=='playing')return;
     this.syncBeamState(state);
-    this.prepareProjectileOrigins(state,this.prepareHeroPresentation(state,true).tool);
+    const presentation=this.prepareHeroPresentation(state,true),muzzle=this.presentationMuzzle(state,presentation);
+    this.prepareProjectileOrigins(state,muzzle);
     let fired=false;
     for(let i=state.events.length-1;i>=0;i--){const event=state.events[i];if(event.tick<state.tick)break;
       if(event.tick===state.tick&&event.type==='TOOL_FIRED'&&event.data.tool===1){fired=true;break;}}
     if(!fired)return;
     this.syncBeamState(state);
-    const tool=this.prepareHeroPresentation(state,true).tool;
-    for(const [key,origin] of this.birthBeamOrigins(state,state,tool))this.witnessedBeamOrigins.set(key,origin);
+    for(const [key,origin] of this.birthBeamOrigins(state,state,muzzle))this.witnessedBeamOrigins.set(key,origin);
   }
   resize():void {
     // Phaser writes pixel sizes inline. Release those before measuring the
@@ -127,7 +143,10 @@ export class Renderer {
   }
   prepareCamera(state:GameState,options?:CameraFollowOptions):void {this.painter.prepareCamera(state,options);}
   setHudRects(rects:Parameters<CanvasScene['setHudRects']>[0]):void {this.painter.setHudRects(rects);}
+  campHitTarget(state:GameState,point:Vec) {return this.painter.campHitTarget(state,point);}
   diagnostics(state:GameState) {
+    const player3D=this.player3D?.diagnostics();
+    const modelWeapon=this.heroPresentation?.model3D?.weapon;
     const heroComplete=(['idle','walk','hurt','dash'] as const).every(clip=>!!this.heroAnimation.clips[clip]);
     const frame=this.heroPresentation?.frame;
     const actorGroups=[...this.actorLibrary.statuses,...Object.values(ACTOR_STATIC_IDS).map(id=>({identity:id.replace('fantasy.actor.',''),
@@ -136,20 +155,25 @@ export class Renderer {
     const unexpectedActorIds=Object.keys(art.assets).filter(id=>id.startsWith('fantasy.actor.')&&!ACTOR_RUNTIME_IDS.includes(id));
     return {...this.painter.diagnostics(state),phaser:this.host.diagnostics(),art:{signature:art.inputSignature,selectedAssets:Object.keys(art.assets).length,
       fantasyGround:this.fantasyGround.diagnostics(),
-      actorFrames:this.newActors?this.actorFrames:[],
+      actorFrames:this.newActors?this.actorFrames:[],player3D:player3D??{enabled:false},
       ruleDirections:this.newActors?this.ruleDirections:[],
       motherStages:this.newActors?this.motherStages:[],
-      actorContract:{version:this.newActors?2:1,preview:!!this.options.actorPreview,animationPreview:!!this.options.actorAnimationPreview,groups:actorGroups,
+      actorContract:{version:this.newActors?2:1,heroRepresentation:this.player3D?.available?'skinned3d':'sprite',preview:!!this.options.actorPreview,animationPreview:!!this.options.actorAnimationPreview,groups:actorGroups,
         ready:this.newActors&&!this.options.actorPreview&&!this.options.actorAnimationPreview&&actorGroups.every(group=>group.ready)&&oldSourceIds.length===0&&unexpectedActorIds.length===0,
         oldSourceIds,unexpectedActorIds},
       activeBodies:[...this.bodies].map(([id,bounds])=>({id,bounds})),
-      heroAnimation:{enabledClips:this.newActors?(this.actorLibrary.ready('hero')?['idle','walk','hurt','dash']:[]):Object.keys(this.heroAnimation.clips),frame:frame?{id:frame.id,clip:frame.clip,index:frame.index,animated:frame.animated,flipX:frame.flipX,articulated:!!this.heroPresentation?.rig,gait:frame.gait,
+      heroAnimation:{representation:this.player3D?.available?'skinned3d':'sprite',enabledClips:player3D?.ready?player3D.clipNames:this.newActors?(this.actorLibrary.ready('hero')?['idle','walk','hurt','dash']:[]):Object.keys(this.heroAnimation.clips),frame:frame?{id:frame.id,clip:frame.clip,index:frame.index,animated:frame.animated,flipX:frame.flipX,articulated:!!this.heroPresentation?.rig,gait:frame.gait,
         locomotion:{...this.locomotion.current},contact:heroSoleContact(this.heroPresentation?.actorFrame)??null}:null},
       weapon:{...(heldWeaponPresentation(state)?{weaponId:heldWeaponPresentation(state)!.weaponId,requestedAssetId:heldWeaponPresentation(state)!.id}:{}),
-        assetId:this.heroPresentation?.tool?(this.heroPresentation.toolId??'weapon.emitter.painted'):null,mode:this.heroPresentation?.tool?'painted-static':'procedural-fallback'},
+        ...(modelWeapon?{weaponId:modelWeapon.id}:{}),
+        assetId:modelWeapon?`weapon3d:${modelWeapon.id}`:this.heroPresentation?.tool?(this.heroPresentation.toolId??'weapon.emitter.painted'):null,
+        mode:modelWeapon?'skinned3d':this.heroPresentation?.tool?'painted-static':this.heroPresentation?.model3D?'none':'procedural-fallback',
+        gripSource:modelWeapon?'bone-transform':this.heroPresentation?.model3D?'skinned-hand':'registered-sprite',
+        grip:modelWeapon?{x:state.player.x+modelWeapon.grip.x,y:state.player.y*.72+modelWeapon.grip.y+(this.heroPresentation?.frame.lift??0)}:this.heroPresentation?.tool?.grip??null,
+        muzzle:this.presentationMuzzle(state)??null,forward:modelWeapon?.forward??null},
       provisional:this.newActors?actorGroups.filter(group=>!group.ready).map(group=>`actor-group-not-ready:${group.identity}`):[...(heroComplete?['additional-player-directions']:['continuous-player-animation']),
         ...(this.motherArtLayersReady()?['mother-static-layers','missing-continuous-mother-animation']:['mother-core']),
-        ...(!this.heroPresentation?.tool?['painted-emitter-tool']:[]),
+        ...(!this.heroPresentation?.tool&&!modelWeapon?['painted-emitter-tool']:[]),
         ...(['fantasy.lung.floor.healthy','fantasy.lung.floor.infected'].every(id=>!!art.environments[id])
           &&['fantasy.lung.tree.healthy','fantasy.lung.tree.infected','fantasy.lung.rock.healthy','fantasy.lung.rock.infected',
             'fantasy.lung.airway.closed','fantasy.lung.airway.open'].every(id=>!!art.assets[id])?[]:['painted-lung']),
@@ -159,16 +183,25 @@ export class Renderer {
   render(state:GameState,aim:Vec,opts:{lowEffects?:boolean;cameraPrepared?:boolean;authoritativeState?:GameState;aimRange?:number;aimCancelled?:boolean;cannonPreview?:{aim:Vec;cancelled:boolean};constructionPreview?:{blueprintId:import('../game/construction').BlueprintId;position:Vec}}={}):void {
     if(!this.host.isReady)return;
     this.lowEffects=!!opts.lowEffects;
+    this.campProps=state.camp?campDecorations(state,Object.entries(CAMP_GROUND_ASSET_IDS).filter(([,id])=>!!art.environments[id]).map(([id])=>id as CampCourtyardId)):[];
     this.locomotion.observe(opts.authoritativeState??state);
+    this.player3D?.observe(opts.authoritativeState??state);
     this.host.beginFrame();this.seenRasters.clear();this.bodies.clear();this.obstacleActors=undefined;
     this.actorFrames.length=0;this.ruleDirections.length=0;this.motherStages.length=0;this.actorAnimation.beginFrame(state);
-    this.heroPresentation=this.prepareHeroPresentation(state);
-    this.prepareBeamOrigins(state,opts.authoritativeState??state);
-    this.prepareProjectileOrigins(opts.authoritativeState??state,this.heroPresentation.tool);
+    this.heroPresentation=state.phase==='menu'&&this.player3D?undefined:this.prepareHeroPresentation(state);
+    if(state.phase!=='menu'){
+      this.prepareBeamOrigins(state,opts.authoritativeState??state);
+      this.prepareProjectileOrigins(opts.authoritativeState??state,this.presentationMuzzle(state));
+    }
     if(state.phase==='menu'){
       this.effectSprites.clear();
       if(!opts.cameraPrepared)this.prepareCamera(state);this.environment(state,this.camera);
-      if(this.newActors){
+      if(this.player3D?.available){
+        const point=this.camera.screenToWorld({x:this.width*.76,y:this.height*.86});
+        const menuState={...state,player:{...state.player,...point,moving:false,facing:Math.PI/4}};
+        this.heroPresentation=this.prepare3DHero(menuState,Math.min(430,this.height*.58)/this.camera.scale);
+        if(this.heroPresentation)this.emit3DHero(menuState,500);
+      }else if(this.newActors){
         // This display anchor is independent of the live player. Enlarge body
         // and emitter together while preserving the inspected hand attachment.
         const point=this.camera.screenToWorld({x:this.width*.76,y:this.height*.86}),height=Math.min(430,this.height*.58)/this.camera.scale;
@@ -203,10 +236,10 @@ export class Renderer {
     if(organ!==this.lastOrgan){document.body.dataset.organ=organ;this.lastOrgan=organ;}
     if(state.phase!==this.lastPhase){this.app?.setAttribute('data-phase',state.phase);this.lastPhase=state.phase;}
   }
-  destroy():void {this.host.destroy();this.rasterKeys.clear();this.bodies.clear();this.heroAnimation.reset();this.actorAnimation.reset();this.actorFrames.length=0;this.heroPresentation=undefined;this.beamOrigins.clear();this.witnessedBeamOrigins.clear();this.projectileOrigins.clear();}
+  destroy():void {this.player3D?.destroy();this.host.destroy();this.rasterKeys.clear();this.bodies.clear();this.heroAnimation.reset();this.actorAnimation.reset();this.actorFrames.length=0;this.heroPresentation=undefined;this.beamOrigins.clear();this.witnessedBeamOrigins.clear();this.projectileOrigins.clear();}
   private createAnimations():void {if(this.newActors)return;for(const kind of ['scan','heal']){const frames=Object.keys(art.assets).filter(id=>id.startsWith(`fx.${kind}.`)).sort();if(frames.length>1)this.host.scene.anims.create({key:`art-${kind}`,frames:frames.map(id=>({key:art.assets[id].atlas,frame:art.assets[id].frame})),frameRate:kind==='scan'?12:10,repeat:0});}}
   private environment(state:GameState,camera:Camera):void {
-    const ground=this.fantasyGround.prepare(state,art.inputSignature,id=>art.environments[id]
+    const ground=this.fantasyGround.prepare(state.camp ? {...state,battle:undefined,territory:undefined} : state,art.inputSignature,id=>art.environments[id]
       ?this.host.scene.textures.get(`environment:${id}`).getSourceImage() as HTMLImageElement:undefined);
     const point=camera.worldToScreen(ground),key='fantasy-terrain';
     this.seenRasters.add(key);this.rasterKeys.add(key);
@@ -234,6 +267,10 @@ export class Renderer {
     return body;
   }
   private prepareHeroPresentation(state:GameState,preview=false):HeroPresentation {
+    if(this.player3D?.available){
+      const model=this.prepare3DHero(state,state.camp?52:86,preview);
+      if(model)return model;
+    }
     if(this.newActors)return this.prepareActorHero(state,preview);
     const selected=preview?this.heroAnimation.preview(state,this.locomotion.current):this.heroAnimation.select(state,this.locomotion.current);
     const frame={...selected,lift:selected.lift-territoryPlayerFlightHeight(state)};
@@ -255,9 +292,39 @@ export class Renderer {
       top:Math.min(body.top,tool.bounds.top),bottom:Math.max(body.bottom,tool.bounds.bottom)}:body;
     return {frame,bounds,tool,rig,toolId:tool?toolId:undefined};
   }
+  private prepare3DHero(state:GameState,height:number,inspectOnly=false):HeroPresentation|undefined {
+    const model=inspectOnly?(this.player3DHeight===height?this.player3D?.currentFrame:undefined)
+      :this.player3D?.render(state,{height,facing:heldWeaponFacing(state)});
+    if(!model)return;
+    if(!inspectOnly)this.player3DHeight=height;
+    const p=state.player,lift=-territoryPlayerFlightHeight(state);
+    let bounds:VisualBounds={left:p.x+model.bounds.left,right:p.x+model.bounds.right,
+      top:p.y*.72+model.bounds.top+lift,bottom:p.y*.72+model.bounds.bottom+lift};
+    const requested=heldWeaponPresentation(state),toolId=this.emitterAssetId(state);
+    const emitter=state.phase==='menu'?undefined:this.actorLibrary.staticAsset(toolId,!!this.options.actorPreview);
+    const hand=requested?.weaponId==='piercing'?model.leftGrip:model.grip;
+    const grip={x:p.x+hand.x,y:p.y*.72+hand.y+lift};
+    const facing=heldWeaponFacing(state),recoil=actorRecoilAngle(facing,1)*heldWeaponRecoilStrength(state,toolFeedback(state)?.strength??0);
+    const tool=!model.weapon&&emitter?aimedPaintedTool(emitter.asset,p,facing,lift,grip,
+      this.emitterCanvasHeight(state)/emitter.registration.canvas.width*emitter.registration.commonCanvasScale,recoil):undefined;
+    if(tool)bounds={left:Math.min(bounds.left,tool.bounds.left),right:Math.max(bounds.right,tool.bounds.right),
+      top:Math.min(bounds.top,tool.bounds.top),bottom:Math.max(bounds.bottom,tool.bounds.bottom)};
+    const clip=p.dashUntil>state.elapsed?'dash':p.hurtUntil>state.elapsed?'hurt':p.moving?'walk':'idle';
+    const muzzle=model.weapon?{x:p.x+model.weapon.muzzle.x,y:p.y*.72+model.weapon.muzzle.y+lift}:undefined;
+    return {model3D:model,bounds,tool,toolId:tool?toolId:undefined,muzzle,
+      frame:{id:'hero3d:medic-hero-v1',clip,index:0,animated:true,flipX:false,lift}};
+  }
+  private emit3DHero(state:GameState,depth:number):VisualBounds {
+    const presentation=this.playerPresentation(state),model=presentation.model3D!;
+    const point=this.camera.worldToScreen(state.player),scale=this.camera.scale,key='player3d';
+    this.seenRasters.add(key);this.rasterKeys.add(key);
+    this.host.setRasterLayer(key,model.canvas,depth,model.width*scale,model.height*scale,
+      point.x-model.foot.x*scale,point.y-model.foot.y*scale+presentation.frame.lift*scale,model.dirty);
+    return presentation.bounds;
+  }
   private prepareActorHero(state:GameState,inspectOnly=false):HeroPresentation {
     const facing=heldWeaponFacing(state),posed=facing===state.player.facing?state:{...state,player:{...state.player,facing}};
-    const request=requestedActorHero(posed,this.locomotion.current),actorFrame=this.actorAnimation.select('player',request,state,ACTOR_CANVAS.hero,!!this.options.actorPreview,inspectOnly,!!this.options.actorAnimationPreview);
+    const request=requestedActorHero(posed,this.locomotion.current),actorFrame=this.actorAnimation.select('player',request,state,state.camp?CAMP_VISUAL_SIZES.heroCanvas:ACTOR_CANVAS.hero,!!this.options.actorPreview,inspectOnly,!!this.options.actorAnimationPreview);
     if(!actorFrame)return {frame:{id:'',clip:null,index:0,animated:false,flipX:!!request.flipX,lift:0},
       bounds:playerVisualBounds(state),fallbackReason:'hero-group-not-ready'};
     const frame:HeroFramePresentation={id:actorFrame.id,clip:actorFrame.clip as HeroFramePresentation['clip'],index:actorFrame.index,
@@ -278,8 +345,9 @@ export class Renderer {
     return requested&&this.actorLibrary.staticAsset(requested.id,!!this.options.actorPreview)?requested.id:ACTOR_STATIC_IDS.emitter;
   }
   private emitterCanvasHeight(state?:GameState):number {
-    return this.options.actorPreview&&Number.isFinite(this.options.actorPreviewToolCanvasHeight)&&this.options.actorPreviewToolCanvasHeight!>0
+    const height=this.options.actorPreview&&Number.isFinite(this.options.actorPreviewToolCanvasHeight)&&this.options.actorPreviewToolCanvasHeight!>0
       ?this.options.actorPreviewToolCanvasHeight!:state&&this.emitterAssetId(state)===heldWeaponPresentation(state)?.id?heldWeaponPresentation(state)!.canvasHeight:ACTOR_CANVAS.emitter;
+    return state?.camp ? height*CAMP_VISUAL_SIZES.heroCanvas/ACTOR_CANVAS.hero : height;
   }
   private emitActor(id:string,frame:ActorFrame,point:Vec,depth:number,alpha=1):VisualBounds {
     const body=registeredSpriteBodyBounds(frame.layout,point,!!frame.flipX,0),screen=this.camera.worldToScreen(point),scale=this.camera.scale;
@@ -382,7 +450,7 @@ export class Renderer {
     return bounds;
   }
   private emitPaintedTool(state:GameState,tool:AimedPaintedTool,depth:number):void {
-    const offset=this.newActors&&this.options.actorPreview&&this.options.actorPreviewToolDepth
+    const offset=this.heroPresentation?.model3D?(Math.sin(tool.angle)<0?-.1:.2):this.newActors&&this.options.actorPreview&&this.options.actorPreviewToolDepth
       ?this.options.actorPreviewToolDepth==='front'?.2:-.1:(this.newActors||this.heroPresentation?.rig) ? .2 : Math.sin(tool.angle)<0?-.1:.2;
     this.emitToolSprite('player:tool',this.heroPresentation?.toolId??'weapon.emitter.painted',state.player,tool,depth+offset);
   }
@@ -394,6 +462,12 @@ export class Renderer {
       rotation:tool.angle,depth});
   }
   private beamKey(effect:Effect):string {return JSON.stringify([effect.id,effect.kind,effect.born,effect.duration,effect.radius,effect.from.x,effect.from.y,effect.to.x,effect.to.y]);}
+  /** Display-space origins only; serialized projectile and beam rules stay untouched. */
+  private presentationMuzzle(state:GameState,presentation:HeroPresentation|undefined=this.heroPresentation):Vec|undefined {
+    if(presentation?.muzzle)return presentation.muzzle;
+    const asset=art.assets[presentation?.toolId??(this.newActors?this.emitterAssetId(state):'weapon.emitter.painted')];
+    return asset&&presentation?.tool?paintedToolMuzzle(asset,presentation.tool):undefined;
+  }
   private syncBeamState(state:GameState):void {
     const run=`${state.seed}:${state.runMetrics?.runId??state.growth?.runId??''}`;
     if(run!==this.beamRun||state.elapsed<this.beamElapsed||state.tick<this.beamTick||state.phase==='menu'){
@@ -401,16 +475,15 @@ export class Renderer {
     }
     this.beamRun=run;this.beamElapsed=state.elapsed;this.beamTick=state.tick;
   }
-  private birthBeamOrigins(state:GameState,authoritativeState:GameState,tool:AimedPaintedTool|undefined):Map<string,Vec> {
+  private birthBeamOrigins(state:GameState,authoritativeState:GameState,muzzle:Vec|undefined):Map<string,Vec> {
     const origins=new Map<string,Vec>(),epsilon=1e-8;
     const fires=authoritativeState.events.filter(event=>event.type==='TOOL_FIRED'&&event.tick===authoritativeState.tick&&event.data.tool===1
       &&typeof event.data.x==='number'&&Number.isFinite(event.data.x)&&typeof event.data.y==='number'&&Number.isFinite(event.data.y));
-    const asset=art.assets[this.newActors?this.emitterAssetId(state):this.heroPresentation?.toolId??'weapon.emitter.painted'];
     for(const effect of state.effects){
       if(effect.kind!=='beam'||effect.born>state.elapsed||state.elapsed-effect.born>=effect.duration)continue;
       // Effect has no actor/facing identity. Only observe proven player shots at
       // their birth tick; an unseen historical beam keeps its serialized origin.
-      if(!asset||!tool||state.phase!=='playing'||Math.abs(effect.born-state.elapsed)>epsilon
+      if(!muzzle||state.phase!=='playing'||Math.abs(effect.born-state.elapsed)>epsilon
         ||Math.abs(effect.born-state.tick*BALANCE.step)>epsilon||Math.abs(effect.duration-.14)>epsilon||effect.radius!==0
         ||Math.hypot(effect.from.x-authoritativeState.player.x,effect.from.y-authoritativeState.player.y)>epsilon||fires.length!==1)continue;
       const fire=fires[0],dx=Number(fire.data.x)-effect.from.x,dy=Number(fire.data.y)-effect.from.y;
@@ -423,26 +496,24 @@ export class Renderer {
       const rayMatch=Array.from({length:rays},(_,index)=>index===0?0:Math.ceil(index/2)*(index%2?-1:1)*.14)
         .some(offset=>Math.abs(Math.atan2(Math.sin(beamAngle-facing-offset),Math.cos(beamAngle-facing-offset)))<epsilon);
       if(!rayMatch)continue;
-      const muzzle=paintedToolMuzzle(asset,tool);if(muzzle)origins.set(this.beamKey(effect),{x:muzzle.x,y:muzzle.y/.72});
+      origins.set(this.beamKey(effect),{x:muzzle.x,y:muzzle.y/.72});
     }
     return origins;
   }
-  private prepareProjectileOrigins(state:GameState,tool:AimedPaintedTool|undefined):void {
+  private prepareProjectileOrigins(state:GameState,muzzle:Vec|undefined):void {
     const live=new Set((state.playerProjectiles??[]).map(shot=>shot.castId));
-    const asset=art.assets[this.newActors?this.emitterAssetId(state):this.heroPresentation?.toolId??'weapon.emitter.painted'];
     for(const event of state.events){
       if(event.type!=='PLAYER_PROJECTILE_LAUNCHED'||event.data.kind==='sword'&&!event.data.weaponId)continue;
       const age=state.elapsed-event.tick*BALANCE.step,castId=String(event.data.castId);
       if(age>=0&&age<.14)live.add(castId);
-      if(event.tick!==state.tick||this.projectileOrigins.has(castId)||!asset||!tool)continue;
-      const muzzle=paintedToolMuzzle(asset,tool);
-      if(muzzle)this.projectileOrigins.set(castId,{x:muzzle.x,y:muzzle.y/.72});
+      if(event.tick!==state.tick||this.projectileOrigins.has(castId)||!muzzle)continue;
+      this.projectileOrigins.set(castId,{x:muzzle.x,y:muzzle.y/.72});
     }
     for(const key of this.projectileOrigins.keys())if(!live.has(key))this.projectileOrigins.delete(key);
   }
   private prepareBeamOrigins(state:GameState,authoritativeState:GameState=state):void {
     this.syncBeamState(state);
-    const alive=new Set<string>(),births=this.birthBeamOrigins(state,authoritativeState,this.heroPresentation?.tool);
+    const alive=new Set<string>(),births=this.birthBeamOrigins(state,authoritativeState,this.presentationMuzzle(state));
     for(const effect of state.effects){
       if(effect.kind!=='beam'||effect.born>state.elapsed||state.elapsed-effect.born>=effect.duration)continue;
       const key=this.beamKey(effect);alive.add(key);if(this.beamOrigins.has(key))continue;
@@ -598,7 +669,7 @@ export class Renderer {
     const buffer=this.immuneShadow;if(buffer.width!==96||buffer.height!==64){buffer.width=96;buffer.height=64;}
     const ctx=buffer.getContext('2d')!;ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,96,64);
     ctx.setTransform(1,0,0,.72,48-cell.x,32-cell.y*.72);
-    drawImmuneCellAccents(ctx,cell,state.elapsed,this.lowEffects,'ground');
+    drawImmuneCellAccents(ctx,cell,state.elapsed,this.lowEffects,'ground',!!state.camp);
     const p=this.camera.worldToScreen(cell),key=`immune-shadow:${cell.id}`;this.seenRasters.add(key);this.rasterKeys.add(key);
     this.host.setRasterLayer(key,buffer,1,96*this.camera.scale,64*this.camera.scale,p.x-48*this.camera.scale,p.y-32*this.camera.scale);
   }
@@ -616,12 +687,30 @@ export class Renderer {
     }
   }
   private nativeEntity(entity:SceneEntity,state:GameState,ctx:CanvasRenderingContext2D,depth:number):boolean {
+    if(entity.kind==='camp-decoration') {
+      const decoration=this.campProps[entity.index!],screen=this.camera.worldToScreen(decoration),scale=this.camera.scale;
+      if(decoration.kind==='fixture') {
+        const raster=campFixtureRaster(decoration.fixture),factor=decoration.height/raster.visibleHeight;
+        const body={left:decoration.x-raster.foot.x*factor,right:decoration.x+(raster.width-raster.foot.x)*factor,top:decoration.y*.72-raster.foot.y*factor,bottom:decoration.y*.72+(raster.height-raster.foot.y)*factor};
+        const canvas=raster.canvas,key=decoration.id;
+        this.seenRasters.add(key);this.rasterKeys.add(key);
+        this.host.setRasterLayer(key,canvas,depth,raster.width*factor*scale,raster.height*factor*scale,screen.x-raster.foot.x*factor*scale,screen.y-raster.foot.y*factor*scale);
+        this.bodies.set(entity.id,body);return true;
+      }
+      const a=art.assets[decoration.assetId];if(!a)return false;
+      const b=a.visibleBounds,factor=decoration.height/b.height,width=b.width*factor;
+      const body={left:decoration.x-width/2,right:decoration.x+width/2,top:decoration.y*.72-decoration.height,bottom:decoration.y*.72};
+      const alpha=state.player.y<=decoration.y&&boundsOverlap(body,this.playerPresentation(state).bounds)?.28:1;
+      this.host.sprite(entity.id,{texture:a.atlas,frame:a.frame,x:screen.x,y:screen.y,width:a.width*factor*scale,height:a.height*factor*scale,depth,originX:(b.x+b.width/2)/a.width,originY:(b.y+b.height)/a.height,alpha});
+      this.bodies.set(entity.id,body);return true;
+    }
     if(entity.kind==='boss-loot'){const p=state.expedition?.lootPosition;return !!p&&this.emit(entity.id,'fantasy.expedition.lootBag.fixed.ready.00',p,44,depth);}
     if(entity.kind==='camp-station'){
-      const station=campStations(state)[entity.index!],identity=({warehouse:'campTentWarehouse',forge:'campForge',shop:'campSupply',departure:'campSortie'} as const)[station.id];
-      const f=sourceRegisteredSpriteFrame(art.assets,identity,state.camp?.introComplete?'ready':'construction',state.elapsed);
+      const station=campStations(state)[entity.index!];
+      const f=campFacilityFrame(art.assets,state,station);
       if(!f)return false;const bounds=registeredSpriteBodyBounds(f.layout,station.position,false,0);
-      const alpha=state.player.y<station.position.y&&boundsOverlap(bounds,this.playerPresentation(state).bounds)?.28:1;
+      const covered=state.player.y<station.position.y&&boundsOverlap(bounds,this.playerPresentation(state).bounds);
+      const alpha=covered?.28:1;
       this.emitCombat(entity.id,f,station.position,state,depth,alpha);return true;
     }
     if(entity.kind==='player-construction'){
@@ -636,6 +725,13 @@ export class Renderer {
       this.emitCombat(entity.id,f,p,state,depth,.8);return true;
     }
     if(entity.kind==='player'){
+      if(this.heroPresentation?.model3D){
+        const body=this.emit3DHero(state,depth),tool=this.heroPresentation.tool;
+        this.bodies.set('player',body);
+        this.painter.annotateArtEntity(ctx,entity,state,Math.max(32,state.player.x-body.left,body.right-state.player.x),Math.max(70,state.player.y*.72-body.top));
+        if(tool)this.emitPaintedTool(state,tool,depth);
+        return true;
+      }
       if(this.newActors){
         const presentation=this.playerPresentation(state),frame=presentation.actorFrame,tool=presentation.tool,facing=heldWeaponFacing(state);
         const request=requestedActorHero(facing===state.player.facing?state:{...state,player:{...state.player,facing}},this.locomotion.current);
@@ -743,7 +839,7 @@ export class Renderer {
         if(!frame)return false;
         this.drawImmuneShadow(cell,state);this.bodies.set(cell.id,bounds!);
         this.painter.annotateArtEntity(ctx,entity,state,Math.max(23,cell.x-bounds!.left,bounds!.right-cell.x),Math.max(30,cell.y*.72-bounds!.top+5));
-        drawImmuneCellAccents(ctx,cell,state.elapsed,this.lowEffects,'overlay');return true;
+        drawImmuneCellAccents(ctx,cell,state.elapsed,this.lowEffects,'overlay',!!state.camp);return true;
       }
       const pose=this.immunePose(cell,state);if(!pose)return false;
       const body=immuneCellBody(cell,state.elapsed);if(body.alpha<=0||cell.organId!==state.battle?.organId)return true;
@@ -751,7 +847,7 @@ export class Renderer {
       this.emit(cell.id,pose.id,cell,pose.height,depth,{alpha:body.alpha,flipX:pose.flipX});
       const bounds=this.immuneBounds(cell,state);this.bodies.set(cell.id,bounds);
       this.painter.annotateArtEntity(ctx,entity,state,Math.max(23,cell.x-bounds.left,bounds.right-cell.x),Math.max(30,cell.y*.72-bounds.top+5));
-      drawImmuneCellAccents(ctx,cell,state.elapsed,this.lowEffects,'overlay');return true;
+      drawImmuneCellAccents(ctx,cell,state.elapsed,this.lowEffects,'overlay',!!state.camp);return true;
     }
     if(entity.kind==='beacon'){
       const beacon=immuneLegions(state.growth).find(beacon=>beacon.id===entity.id);
@@ -765,13 +861,15 @@ export class Renderer {
       this.painter.annotateArtEntity(ctx,entity,state,Math.max(24,beacon.x-body.left,body.right-beacon.x),Math.max(59,beacon.y*.72-body.top+5));return true;
     }
     if(entity.kind==='tissue'){
+      if(state.camp?.prologue==='arrival')return true;
       const fantasy=FANTASY_ART.core.healthy,asset=art.assets[fantasy];
       if(asset){
-        const layout=sourceRegisteredSpriteLayout(asset,FANTASY_SOURCE_CANVAS,FANTASY_SOURCE_ANCHOR,150/1024);
+        const size=state.camp?CAMP_VISUAL_SIZES.coreCanvas:150;
+        const layout=sourceRegisteredSpriteLayout(asset,FANTASY_SOURCE_CANVAS,FANTASY_SOURCE_ANCHOR,size/1024);
         if(layout){const body=registeredSpriteBodyBounds(layout,state.tissue,false,0);
           const covered=state.player.y<=state.tissue.y&&boundsOverlap(this.playerPresentation(state).bounds,body);
-          this.fantasySprite('tissue',fantasy,state.tissue,150,depth,covered?.28:1);
-          this.painter.annotateArtEntity(ctx,entity,state,Math.max(52,state.tissue.x-body.left,body.right-state.tissue.x),Math.max(76,state.tissue.y*.72-body.top+8));return true;}
+          this.fantasySprite('tissue',fantasy,state.tissue,size,depth,covered?.28:1);
+          if(!state.camp)this.painter.annotateArtEntity(ctx,entity,state,Math.max(52,state.tissue.x-body.left,body.right-state.tissue.x),Math.max(76,state.tissue.y*.72-body.top+8));return true;}
       }
       if(art.environments[FANTASY_ART.healthyFloor])return false;
       const tissue=state.tissue,id=tissue.hp>=tissue.maxHp?'tissue.restored':'tissue.unstable';if(!art.assets[id])return false;
@@ -819,8 +917,8 @@ export class Renderer {
     }
     if(entity.kind==='obstacle'){
       const o=activeWorld(state).obstacles.find(o=>o.id===entity.id)!;
-      if(o.id.startsWith('cover-'))return false;
-      const kind=fantasyObstacleKind(o.id),owner=fantasyOwnerAt(state,o);
+      if(o.id.startsWith('cover-')&&!state.expedition?.missionId)return false;
+      const kind=state.expedition?.missionId&&o.id.startsWith('cover-')?(o.id==='cover-south'?'rock':'tree'):fantasyObstacleKind(o.id),owner=fantasyOwnerAt(state,o);
       const preferred=fantasySceneryId(state,kind,owner),fantasy=art.assets[preferred]?preferred:FANTASY_ART[kind][owner];
       const asset=art.assets[fantasy],layout=asset?sourceRegisteredSpriteLayout(asset,FANTASY_SOURCE_CANVAS,FANTASY_SOURCE_ANCHOR,o.radius*3.2/1024):undefined;
       if(layout){

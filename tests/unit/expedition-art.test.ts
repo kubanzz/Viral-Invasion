@@ -73,4 +73,20 @@ describe('expedition atlas-backed UI icons', () => {
   it('retains code-native UI glyphs when a reviewed native frame is missing', () => {
     expect(expeditionIconStyles({ assets: {}, atlases: [] })).toEqual({ css: '', installed: [] });
   });
+  it('installs reviewed static reward icons and retains the glyph for an unreviewed icon', () => {
+    const reviewed = EXPEDITION_ICON_IDS['module-PULSE_BREAK'], pending = EXPEDITION_ICON_IDS['module-PURIFY_CHAIN'];
+    const runtime: ExpeditionIconRuntime = { assets: {
+      [reviewed]: { atlas: 'reward-atlas', frame: reviewed, status: 'ui-reviewed', flags: ['reward-icons-v1'] },
+      [pending]: { atlas: 'reward-atlas', frame: pending, status: 'candidate', flags: ['reward-icons-v1'] },
+    }, atlases: [{ key: 'reward-atlas', dataUri: 'data:image/png;base64,dGVzdA==', data: {
+      meta: { size: { w: 256, h: 128 } }, frames: {
+        [reviewed]: { frame: { x: 0, y: 0, w: 128, h: 128 } },
+        [pending]: { frame: { x: 128, y: 0, w: 128, h: 128 } },
+      },
+    } }] };
+    const styles = expeditionIconStyles(runtime);
+    expect(styles.installed).toEqual(['module-PULSE_BREAK']);
+    expect(styles.css).toContain('[data-camp-art="module-PULSE_BREAK"]>.mission-reward-glyph{display:none}');
+    expect(styles.css).not.toContain('module-PURIFY_CHAIN');
+  });
 });

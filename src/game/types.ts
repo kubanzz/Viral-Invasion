@@ -1,6 +1,8 @@
 import type { BattleState, TraitId } from './battleTypes';
 import type { GrowthState } from './growthTypes';
 import type { CampaignState } from './campaignTypes';
+import type { CampStationId } from './campLayout';
+import type { CampStationAttention } from './campAttention';
 import type { RunMetrics } from './runMetrics';
 import type { EndlessState } from './endlessTypes';
 import type { EndlessGrowthState } from './endlessGrowthTypes';
@@ -12,7 +14,7 @@ import type { PlayerProjectile } from './playerProjectiles';
 import type { PlayerInfection, TerritoryNodeId, TerritorySourceId, TerritoryState } from './territoryTypes';
 import type { TerritoryPlayerFlight } from './territoryCannon';
 import type { SmartProfession, SmartVirusState } from './smartVirusesTypes';
-import type { BossLoot, ExpeditionLoadout } from './expedition';
+import type { ExpeditionRuntime } from './expedition';
 import type { WeaponCombatState } from './weaponSkillsTypes';
 export interface Vec { x: number; y: number }
 export interface WorldGeometry {
@@ -90,8 +92,12 @@ export interface GameState {
   playerInfection?: PlayerInfection | null;
   playerFlight?: TerritoryPlayerFlight;
   smartViruses?: SmartVirusState;
-  expedition?: { runId: string; loadout: ExpeditionLoadout; firstClear: boolean; pendingLoot?: BossLoot; lootCollected?: boolean; lootPosition?: Vec };
-  camp?: { introSeconds: number; introComplete: boolean };
+  expedition?: ExpeditionRuntime & { lootPosition?: Vec };
+  camp?: {
+    introSeconds: number; introComplete: boolean; prologue?: 'arrival' | 'building' | 'ready';
+    builtFacilities?: CampStationId[]; activeConstruction?: CampStationId; constructionSeconds?: number;
+    attention?: Partial<Record<CampStationId, CampStationAttention>>;
+  };
   hostEvents?: HostEventState;
   playerProjectiles?: PlayerProjectile[];
   weaponCombat?: WeaponCombatState;

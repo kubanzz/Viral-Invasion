@@ -4,6 +4,8 @@ export interface LabelRect { left: number; right: number; top: number; bottom: n
 export interface SceneLabelLine { text: string; color?: string; size?: number }
 export interface SceneLabel {
   id: string; anchor: Vec; offset?: Vec; priority: number; essential?: boolean;
+  theme?: 'camp';
+  campTone?: 'gold' | 'blue';
   lines: readonly SceneLabelLine[];
   bar?: { ratio: number; color: string; width?: number };
 }
@@ -198,10 +200,12 @@ export class SceneLabels implements SceneLabelSink {
       if (leader) {
         ctx.beginPath(); ctx.moveTo(leader.from.x, leader.from.y); ctx.lineTo(leader.to.x, leader.to.y); ctx.strokeStyle = '#d6e6ca88'; ctx.lineWidth = 1; ctx.stroke();
       }
-      ctx.fillStyle = '#191724b8'; ctx.beginPath(); ctx.roundRect(chosen.rect.left, chosen.rect.top, chosen.rect.right - chosen.rect.left, chosen.rect.bottom - chosen.rect.top, 4); ctx.fill();
+      ctx.fillStyle = label.theme === 'camp' ? label.campTone === 'gold' ? '#f7d67a' : label.campTone === 'blue' ? '#d0eafb' : '#fff3deed' : '#191724b8'; ctx.beginPath(); ctx.roundRect(chosen.rect.left, chosen.rect.top, chosen.rect.right - chosen.rect.left, chosen.rect.bottom - chosen.rect.top, label.theme === 'camp' ? 7 : 4); ctx.fill();
+      if (label.theme === 'camp') { ctx.strokeStyle = label.campTone === 'gold' ? '#99701f' : label.campTone === 'blue' ? '#3c7ca5' : '#b5b397aa'; ctx.lineWidth = label.campTone ? 2 : 1; ctx.stroke(); }
       for (const line of measured.lines) {
-        ctx.font = font(line.size); ctx.strokeStyle = '#171622ee'; ctx.lineWidth = 2.5; ctx.strokeText(line.text, chosen.baseline.x, chosen.baseline.y + line.y);
-        ctx.fillStyle = line.color; ctx.fillText(line.text, chosen.baseline.x, chosen.baseline.y + line.y);
+        ctx.font = font(line.size);
+        if (label.theme !== 'camp') { ctx.strokeStyle = '#171622ee'; ctx.lineWidth = 2.5; ctx.strokeText(line.text, chosen.baseline.x, chosen.baseline.y + line.y); }
+        ctx.fillStyle = label.theme === 'camp' ? label.campTone === 'gold' ? '#68470d' : label.campTone === 'blue' ? '#245675' : '#355847' : line.color; ctx.fillText(line.text, chosen.baseline.x, chosen.baseline.y + line.y);
       }
       if (measured.bar) {
         const bar = measured.bar, x = chosen.baseline.x - bar.width / 2, y = chosen.baseline.y + bar.y;

@@ -3,6 +3,8 @@ import { CAMP_PROFILE_STORAGE_KEY, CampProfileStore, emptyCampProfile, parseCamp
 import { createBossLoot, DEFAULT_EXPEDITION_LOADOUT, weaponCombatProfile, type BossLoot, type WeaponRarity } from '../../src/game/expedition';
 import type { EndlessProfileStorage } from '../../src/meta/endlessProfile';
 import { campOverlay } from '../../src/ui/campHud';
+import { INTRO_FACILITY_IDS } from '../../src/game/campProgression';
+import { STARTER_COINS, type DrawReceipt } from '../../src/game/microfront';
 
 class Storage implements EndlessProfileStorage {
   values = new Map<string, string>(); blocked = false; discarded = false; writes: string[] = [];
@@ -15,10 +17,81 @@ function win(store: CampProfileStore, runId = 'first', seed = 15) {
   return { run, loot, result: store.settleVictory(runId, loot) };
 }
 function seedStore(overrides: Partial<ReturnType<typeof emptyCampProfile>>) {
-  const storage = new Storage(); storage.values.set(CAMP_PROFILE_STORAGE_KEY, JSON.stringify({ ...emptyCampProfile(), legacyMigrationChecked: true, ...overrides }));
+  const established = overrides.campUnlocked ? { prologue: 'ready', campIntroSeen: true, builtFacilities: [...INTRO_FACILITY_IDS] } : {};
+  const storage = new Storage(); storage.values.set(CAMP_PROFILE_STORAGE_KEY, JSON.stringify({ ...emptyCampProfile(), legacyMigrationChecked: true, ...established, ...overrides }));
   return { storage, store: new CampProfileStore(storage) };
 }
 describe('permanent camp and finite expedition entitlements', () => {
+  it('starts a new profile with five thousand coins and keeps the grant across reloads', () => {
+    const storage = new Storage(), store = new CampProfileStore(storage);
+    expect(STARTER_COINS).toBe(5000); expect(emptyCampProfile().coins).toBe(STARTER_COINS);
+    expect(store.data.coins).toBe(STARTER_COINS);
+    expect(new CampProfileStore(storage).data.coins).toBe(STARTER_COINS);
+    expect(new CampProfileStore(null).data.coins).toBe(STARTER_COINS);
+  });
+  it.each([0, 72, 6000])('preserves a previously granted balance of %i without another starting grant', coins => {
+    const { store, storage } = seedStore({ coins });
+    expect(store.data.coins).toBe(coins); store.save();
+    expect(new CampProfileStore(storage).data.coins).toBe(coins);
+    const old = { ...store.data, schemaVersion: 2 };
+    expect(parseCampProfile(old)?.coins).toBe(coins);
+  });
+  it.each([0, 170, 6200])('tops up a pre-grant balance of %i once while preserving every existing entitlement', coins => {
+    const storage = new Storage(), data = emptyCampProfile();
+    Object.assign(data, { coins, campUnlocked: true, campIntroSeen: true, prologue: 'ready',
+      builtFacilities: [...INTRO_FACILITY_IDS], legacyMigrationChecked: true, completedMissions: ['membrane'],
+      selectedMissionId: 'corridor', materials: 73, fragments: { PULSE_BREAK: 8 }, cores: 2,
+      pity: 9, seenMissionIds: ['membrane'], equippedModules: ['PULSE_BREAK'], itemSerial: 1 });
+    data.inventory.push({ id: 'owned-module', templateId: 'PULSE_BREAK', kind: 'module', rarity: 'purple', repaired: true });
+    const historical: DrawReceipt = { id: 'draw:old-guarantee', count: 1, cost: 100, pityBefore: 9, pityAfter: 0,
+      results: [{ kind: 'core', rarity: 'gold', quantity: 1 }] };
+    data.transactions.push({ kind: 'draw', id: historical.id, receipt: historical });
+    delete data.starterGrantVersion;
+    storage.values.set(CAMP_PROFILE_STORAGE_KEY, JSON.stringify(data));
+    expect(parseCampProfile(data)?.coins).toBe(coins);
+    const store = new CampProfileStore(storage), expected = { ...data, coins: Math.max(coins, STARTER_COINS), starterGrantVersion: 1 };
+    expect(store.data).toEqual(expected); expect(store.status.mode).toBe('persistent');
+    expect(JSON.parse(storage.values.get(CAMP_PROFILE_STORAGE_KEY)!)).toEqual(expected);
+    const writesAfterGrant = storage.writes.length;
+    const restored = new CampProfileStore(storage);
+    expect(restored.data).toEqual(expected); expect(storage.writes).toHaveLength(writesAfterGrant);
+    expect(restored.drawAntibodies(1, 'old-guarantee').receipt).toEqual(historical);
+    expect(restored.data).toEqual(expected);
+  });
+  it('never refills new-player coins after purchases and repeated reloads', () => {
+    const storage = new Storage(), store = new CampProfileStore(storage);
+    store.establishCamp();
+    for (const id of INTRO_FACILITY_IDS) { expect(store.beginBuild(id).accepted).toBe(true); expect(store.completeBuild(id).accepted).toBe(true); }
+    expect(store.drawAntibodies(10, 'spent-starter').accepted).toBe(true);
+    expect(store.data.coins).toBe(4000); expect(store.data.starterGrantVersion).toBe(1);
+    for (let count = 0; count < 3; count++) expect(new CampProfileStore(storage).data.coins).toBe(4000);
+  });
+  it('keeps a blocked migration and purchases in this session until the combined snapshot can be saved', () => {
+    const storage = new Storage(), data = emptyCampProfile();
+    Object.assign(data, { coins: 170, campUnlocked: true, campIntroSeen: true, prologue: 'ready',
+      builtFacilities: [...INTRO_FACILITY_IDS], legacyMigrationChecked: true });
+    delete data.starterGrantVersion;
+    const originalBytes = JSON.stringify(data); storage.values.set(CAMP_PROFILE_STORAGE_KEY, originalBytes); storage.blocked = true;
+    const store = new CampProfileStore(storage);
+    expect(store.status).toMatchObject({ mode: 'session', code: 'write-failed' });
+    expect(store.data).toMatchObject({ coins: STARTER_COINS, starterGrantVersion: 1 });
+    expect(storage.values.get(CAMP_PROFILE_STORAGE_KEY)).toBe(originalBytes);
+    const draw = store.drawAntibodies(10, 'session-starter');
+    expect(draw.accepted).toBe(true); expect(draw.persisted).toBe(false); expect(store.data.coins).toBe(4000);
+    expect(store.drawAntibodies(10, 'session-starter').receipt).toEqual(draw.receipt); expect(store.data.coins).toBe(4000);
+    expect(storage.values.get(CAMP_PROFILE_STORAGE_KEY)).toBe(originalBytes);
+    storage.blocked = false; expect(store.save().status.mode).toBe('persistent');
+    const restored = new CampProfileStore(storage);
+    expect(restored.data).toMatchObject({ coins: 4000, starterGrantVersion: 1 });
+    expect(restored.drawAntibodies(10, 'session-starter').receipt).toEqual(draw.receipt);
+    expect(new CampProfileStore(storage).data.coins).toBe(4000);
+  });
+  it('rejects unsupported grant markers instead of granting coins again', () => {
+    const data = emptyCampProfile();
+    expect(parseCampProfile({ ...data, starterGrantVersion: 0 })).toBeNull();
+    expect(parseCampProfile({ ...data, starterGrantVersion: 2 })).toBeNull();
+    expect(parseCampProfile({ ...data, starterGrantVersion: false })).toBeNull();
+  });
   it('keeps the free gun and only permanently unlocks the teaching blueprint', () => {
     const storage = new Storage(), store = new CampProfileStore(storage);
     expect(store.data.weapons.steady.repaired).toBe('white'); expect(store.data.campUnlocked).toBe(false);
@@ -217,8 +290,9 @@ describe('expedition weapons and readable camp panels', () => {
     const store = new CampProfileStore(new Storage()); win(store);
     const forge = campOverlay(store.load(), 'forge'); expect(forge).toContain('camp-repair'); expect(forge).toContain('10生质');
     const shop = campOverlay(store.load(), 'shop'); expect(shop).toContain('出击总计 2 支'); expect(shop).toContain('camp-buy-antibody');
-    const intro = campOverlay(store.load(), 'overview', .5); expect(intro).toContain('width:50%'); expect(intro).toContain('camp-skip-intro');
-    const departure = campOverlay(store.load(), 'departure'); expect(departure).toContain('camp-deploy'); expect(departure).toContain('速装弹射荚');
+    const newCamp = new CampProfileStore(new Storage()); newCamp.establishCamp();
+    const intro = campOverlay(newCamp.load(), 'overview', .5); expect(intro).toContain('基础建设 0 / 5'); expect(intro).toContain('逐座确认'); expect(intro).not.toContain('camp-skip-intro');
+    const departure = campOverlay(store.load(), 'departure'); expect(departure).toContain('camp-deploy'); expect(departure).toContain('侦查报告已送达');
     expect(campOverlay(store.load(), 'warehouse', 1, '<script>')).toContain('&lt;script&gt;');
   });
 });

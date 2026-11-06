@@ -1,0 +1,66 @@
+{
+  "pass": true,
+  "artifactPolicy": "File-entry behavior was tested against immutable offline files. Desktop output hashes were sealed before the nine-case run and matched again afterward; the ZIP is unchanged from independent decoding. Workspace source changes are informational and are not treated as mutations of this frozen package.",
+  "completedAt": "2026-11-06T06:38:33.521Z",
+  "desktop": {
+    "entry": "desktop/index.html",
+    "route": "package-final-r2/report.json",
+    "casesPassed": 9,
+    "originalRouteOverallPass": false,
+    "originalWorkspaceSourceAssertion": false,
+    "sourceStartDiffersFromBuild": [
+      "src/main.ts"
+    ],
+    "outputChecks": [
+      {
+        "path": "index.html",
+        "pass": true
+      },
+      {
+        "path": "game.js",
+        "pass": true
+      },
+      {
+        "path": "game.css",
+        "pass": true
+      }
+    ],
+    "zipUnchanged": true
+  },
+  "natural": {
+    "report": "package-natural/report.json",
+    "pass": true,
+    "baseBirths": 240,
+    "baseDeaths": 240,
+    "secondMission": "corridor"
+  },
+  "mobile": {
+    "report": "mobile-package-final-input-recovery/report.json",
+    "pass": true,
+    "standalone": true
+  },
+  "startupSmoke": {
+    "report": "package-runtime-smoke-final.json",
+    "pass": true
+  },
+  "unit": {
+    "report": "broad-unit.json",
+    "filesPassed": 211,
+    "testsPassed": 2161,
+    "excluded": [
+      "tests/unit/full-system-seeds.test.ts"
+    ]
+  },
+  "currentWorkspaceSourceDriftFromBuildSidecar": [
+    "src/main.ts",
+    "src/ui/campSummon.css"
+  ],
+  "limitation": "The long full-system seed audit was interrupted after roughly nine minutes and is excluded from the successful broad rerun. Later parallel source edits are preserved but are not claimed to be included in this verified package.",
+  "preservedProcessEvidence": [
+    "package-final/report.json",
+    "package-final-r2/report.json",
+    "mobile-package-final/report.json",
+    "mobile-package-final-retry/report.json",
+    "package-smoke.json"
+  ]
+}

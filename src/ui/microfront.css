@@ -1,0 +1,117 @@
+.microfront-assignment{font-size:12px;line-height:1.5;color:#526e64;padding-bottom:5px;font-weight:700}
+.microfront-result{max-width:700px;max-height:88dvh;overflow:auto;text-align:left}
+.microfront-result ul{max-height:180px;overflow:auto;padding-left:22px;line-height:1.7}
+body.microfront-mission .growth-panel,body.microfront-mission .endless-build-panel{display:none}body.microfront-mission .territory-heading{gap:6px}
+@media(max-width:1024px),(max-height:600px){.microfront-assignment{font-size:10px;padding-bottom:2px}.microfront-result{max-height:90dvh;padding:18px}.microfront-result h2{font-size:24px}.microfront-result .actions{display:flex;flex-wrap:wrap;gap:8px}.microfront-result .actions button{flex:1;min-width:120px}}
+
+.camp-resource-icon{display:inline-block;width:24px;height:24px;vertical-align:middle;background-size:contain;background-repeat:no-repeat;background-position:center;margin-right:4px}.camp-wallet .camp-resource-icon{width:18px;height:18px}
+
+/* Reward receipt: fixed actions, a scrollable showcase, and real item quality. */
+#app .mission-result-overlay{padding:20px;background:rgba(17,34,31,.65);backdrop-filter:blur(7px)}
+#app .mission-result-panel{display:flex;flex-direction:column;width:min(740px,100%);max-width:740px;max-height:calc(100dvh - 40px);min-height:0;padding:0;overflow:hidden;border:1px solid #b6c2ae;border-radius:22px;background:#f3f0e5;box-shadow:0 25px 100px #081e2355}
+.mission-result-header{display:flex;align-items:center;gap:16px;flex-shrink:0;padding:24px 30px 20px}
+.mission-result-seal{width:64px;height:64px;flex-shrink:0;color:#458675}
+.mission-reward-glyph{display:block;width:100%;height:100%}
+#app .mission-result-header .mission-result-location{margin:0 0 4px;color:#738579;font-size:12px;letter-spacing:2px;line-height:1.4}
+#app .mission-result-header h2{margin:0;color:#285b51;font-size:30px;letter-spacing:3px;font-family:"Microsoft YaHei",sans-serif;font-weight:750;line-height:1.3}
+#app .mission-first-clear{margin-left:auto;flex-shrink:0;padding:5px 10px;border:1px solid #c2cfb7;border-radius:5px;color:#657d54;background:#e6ecd9;font-size:11px;letter-spacing:1px}
+.mission-result-scroll{min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#6a8b7c #1b3735}
+#app .mission-loot{position:relative;isolation:isolate;margin:0 20px;padding:20px 24px 0;border:1px solid #4e7260;border-radius:14px;overflow:hidden;background:radial-gradient(ellipse at 50% 0,#41645655,transparent 70%),linear-gradient(135deg,#233f3c,#192d2e);box-shadow:inset 0 1px 0 #c5e2b817}
+.mission-loot::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background-image:radial-gradient(circle,#d8eac5a3 0 .7px,transparent 1.5px),radial-gradient(circle,#d8eac538 0 .7px,transparent 1.5px);background-size:137px 113px,91px 79px;background-position:29px 15px,70px 49px;opacity:.3}
+.mission-loot-heading{display:flex;align-items:center;gap:14px;margin:0 0 20px}
+#app .mission-loot-heading h3{margin:0;color:#cddfcd;font-size:12px;font-weight:500;letter-spacing:3px;white-space:nowrap}
+.mission-loot-heading::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,#b2c9a838,transparent)}
+#app .mission-loot-heading>span{order:1;color:#d3d7ad;font-size:13px}
+#app .microfront-result .mission-loot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:18px 16px;list-style:none;margin:0 0 20px;padding:0;max-height:none;overflow:visible;line-height:1.4}
+.mission-loot-card{--loot-color:#adcbc1;--loot-glow:#8ebba116;--loot-wash:#bbd9c00d;min-width:0;text-align:center;animation:mission-loot-reveal .45s both;animation-delay:var(--reveal-delay)}
+.mission-loot-card[data-rarity=blue]{--loot-color:#77bdeb;--loot-glow:#6aadeb33;--loot-wash:#83bdeb17}
+.mission-loot-card[data-rarity=purple]{--loot-color:#c29bec;--loot-glow:#bc87eb40;--loot-wash:#b88be520}
+.mission-loot-card[data-rarity=gold]{--loot-color:#f4cf78;--loot-glow:#f4c86445;--loot-wash:#edbc5a25}
+.mission-loot-frame{position:relative;display:grid;place-items:center;height:122px;border:1px solid var(--loot-color);border-radius:10px;background:radial-gradient(ellipse at 50% 85%,var(--loot-glow),transparent 70%),linear-gradient(140deg,var(--loot-wash),#102b2b88);box-shadow:0 0 18px var(--loot-glow),inset 0 0 18px var(--loot-wash);overflow:hidden}
+.mission-loot-frame::before{content:"";position:absolute;inset:5px;border:1px solid var(--loot-color);border-radius:6px;opacity:.13;pointer-events:none}
+.mission-loot-card:is([data-rarity=gold],[data-rarity=purple]) .mission-loot-frame::after{content:"";position:absolute;inset:-100% -80%;background:linear-gradient(115deg,transparent 43%,#fff7d926 49%,transparent 55%);transform:translateX(-70%);animation:mission-loot-shine 1.3s ease-out both;animation-delay:calc(var(--reveal-delay) + .2s);pointer-events:none}
+.mission-loot-frame>.mission-reward-art,.mission-loot-frame>.mission-reward-glyph{display:block;width:84px;height:84px;filter:drop-shadow(0 5px 8px #061c2780)}
+#app .mission-result-panel .mission-loot-tag{position:absolute;z-index:1;top:9px;left:10px;color:var(--loot-color);font-size:10px;letter-spacing:1px;line-height:1}
+.mission-loot-quantity{position:absolute;right:9px;bottom:7px;color:#f9f8de;font-size:17px;font-variant-numeric:tabular-nums;font-weight:650;line-height:1;text-shadow:0 1px 4px #0e2428}
+#app .mission-result-panel .mission-loot-name{display:block;margin:10px 0 0;color:#dce8dd;font-size:12px;font-weight:500;line-height:1.5;overflow-wrap:anywhere}
+.mission-fragment-mark{position:absolute;left:7px;bottom:5px;width:27px;height:27px;border-radius:5px;background:#163a37e6}
+#app .mission-result-panel .mission-loot-repair{position:absolute;top:7px;right:7px;padding:3px 5px;border-radius:3px;color:#efd6a8;background:#3c372bec;font-size:9px;line-height:1}
+.mission-loot-card:is([data-kind=weapon],[data-template=steady],[data-template=piercing]) .mission-reward-art{width:min(110px,calc(100% - 10px));height:auto;aspect-ratio:1}
+.mission-resource-row{display:flex;align-items:center;justify-content:center;gap:42px;margin:0 -24px;padding:13px 24px;border-top:1px solid #a8c8b324;background:#102c2c40}
+.mission-resource{display:flex;align-items:center;gap:8px;font-size:12px}
+.mission-resource-art{display:block;width:32px;height:32px;flex-shrink:0}
+#app .mission-resource>span{color:#b0c5b8}
+.mission-resource b{color:#e7eed7;font-size:19px;letter-spacing:.5px;font-variant-numeric:tabular-nums}
+#app .mission-resource[data-kind=coins] b{color:#f3d58f}
+#app .mission-loot .mission-loot-empty{margin:18px 0 32px;text-align:center;color:#adc5ba;font-size:13px;letter-spacing:1px}
+#app .mission-retained{margin:12px 24px 0;color:#7e745e;font-size:11px;text-align:center;line-height:1.5}
+.mission-result-footer{padding:20px;flex-shrink:0}
+#app .mission-result-footer .actions{display:flex;gap:10px;flex-wrap:nowrap;margin:0}
+#app .mission-result-footer .actions button{min-width:0;min-height:46px;padding:11px 18px;border-radius:9px;font-size:13px;flex:1}
+#app .mission-result-footer .actions .primary{flex:1.65;background:#367b6d;border-color:#2c6c61;font-weight:650;box-shadow:0 3px 8px #204e4620}
+#app .mission-result-footer .actions .primary:hover{background:#296658}
+#app .mission-result-footer .actions .primary span{margin-left:12px;color:#c6ead5}
+#app .mission-result-footer .actions button:not(.primary){background:#e8ecdf;border-color:#c6d0bd;color:#557162}
+.mission-save-warning{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:10px 12px;border:1px solid #d9bd91;border-radius:8px;background:#f4e8d4}
+#app .mission-save-warning p{margin:0;color:#895a31;font-size:11px;line-height:1.5}
+#app .mission-save-warning button{margin-left:auto;flex-shrink:0;padding:6px 9px;min-height:36px;font-size:11px}
+.is-withdrawn .mission-result-seal{color:#8c8d70}
+@keyframes mission-loot-reveal{from{opacity:0;transform:translateY(13px) scale(.92)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes mission-loot-shine{from{transform:translateX(-70%)}to{transform:translateX(70%)}}
+.is-low-effects .mission-loot-card{animation:none}
+.is-low-effects .mission-loot-frame::after{display:none}
+@media(prefers-reduced-motion:reduce){.mission-loot-card{animation:none}.mission-loot-frame::after{display:none}}
+@media(max-width:520px){
+  #app .mission-result-overlay{padding:12px}
+  #app .mission-result-panel{max-height:calc(100dvh - 24px);border-radius:16px}
+  .mission-result-header{padding:18px;gap:10px}
+  .mission-result-seal{width:48px;height:48px}
+  #app .mission-result-header h2{font-size:24px;letter-spacing:2px}
+  #app .mission-first-clear{padding:4px 6px;font-size:10px;letter-spacing:0}
+  #app .mission-loot{margin:0 12px;padding:16px 14px 0}
+  #app .microfront-result .mission-loot-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 10px}
+  .mission-loot-frame{height:100px}
+  .mission-loot-frame>.mission-reward-art,.mission-loot-frame>.mission-reward-glyph{width:70px;height:70px}
+  .mission-resource-row{gap:24px;margin:0 -14px;padding:10px 14px}
+  .mission-result-footer{padding:14px 12px}
+}
+@media(max-height:600px){
+  #app .mission-result-overlay{padding:10px}
+  #app .mission-result-panel{width:min(700px,100%);max-height:calc(100dvh - 20px);border-radius:14px}
+  .mission-result-header{gap:10px;padding:10px 20px}
+  .mission-result-seal{width:44px;height:44px}
+  #app .mission-result-header .mission-result-location{margin-bottom:2px;font-size:10px}
+  #app .mission-result-header h2{font-size:23px;letter-spacing:2px}
+  #app .mission-loot{margin:0 12px;padding:12px 16px 0;border-radius:9px}
+  .mission-loot-heading{margin-bottom:11px}
+  #app .mission-loot-heading h3{font-size:10px}
+  #app .microfront-result .mission-loot-grid{grid-template-columns:repeat(auto-fit,minmax(85px,1fr));gap:12px;margin-bottom:12px}
+  .mission-loot-frame{height:90px}
+  .mission-loot-frame>.mission-reward-art,.mission-loot-frame>.mission-reward-glyph{width:66px;height:66px}
+  #app .mission-result-panel .mission-loot-name{margin-top:5px;font-size:11px}
+  #app .mission-result-panel .mission-loot-tag{top:7px;left:8px;font-size:9px}
+  .mission-loot-card:is([data-kind=weapon],[data-template=steady],[data-template=piercing]) .mission-reward-art{width:min(85px,calc(100% - 10px));height:auto}
+  .mission-loot-quantity{font-size:15px}
+  .mission-resource-row{gap:36px;margin:0 -16px;padding:6px 16px}
+  .mission-resource-art{width:27px;height:27px}
+  .mission-resource b{font-size:17px}
+  .mission-result-footer{padding:12px}
+  #app .mission-result-footer .actions button{min-height:42px;padding:8px 14px;font-size:12px}
+  #app .mission-retained{margin-top:6px;font-size:10px}
+  .mission-save-warning{padding:6px 9px;margin-bottom:8px}
+}
+@media(max-height:360px){
+  .mission-result-header{padding:8px 18px}
+  .mission-result-seal{width:38px;height:38px}
+  #app .mission-result-header h2{font-size:21px}
+  #app .mission-loot{padding-top:9px}
+  .mission-loot-heading{margin-bottom:8px}
+  .mission-loot-frame{height:68px}
+  .mission-loot-frame>.mission-reward-art,.mission-loot-frame>.mission-reward-glyph{width:54px;height:54px}
+  .mission-loot-card:is([data-kind=weapon],[data-template=steady],[data-template=piercing]) .mission-reward-art{width:min(68px,calc(100% - 10px));height:auto}
+  #app .mission-result-panel .mission-loot-name{font-size:10px;margin-top:4px}
+  #app .microfront-result .mission-loot-grid{margin-bottom:9px}
+  .mission-resource-row{padding-block:4px}
+  .mission-resource-art{width:24px;height:24px}
+  .mission-result-footer{padding:10px 12px}
+}

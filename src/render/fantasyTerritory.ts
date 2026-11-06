@@ -64,7 +64,7 @@ export function fantasyOwnerAt(state: GameState, position: Vec): TerritoryNode['
 /** Only terrain geometry and committed ownership invalidate this raster. */
 export function fantasyGroundKey(state: GameState, artSignature = ''): string {
   const world = activeWorld(state), b = world.bounds;
-  return [artSignature, state.battle?.organId ?? 'training', world.width, world.height,
+  return [artSignature, state.camp ? 'camp' : state.battle?.organId ?? 'training', world.width, world.height,
     b.left, b.top, b.right, b.bottom,
     ...fantasyRegions(state).flatMap(node => [node.id, node.x, node.y, node.owner])].join(':');
 }
@@ -182,9 +182,11 @@ export class FantasyGroundCache {
         ctx.restore();
       }
       this.boundaries(ctx, regions, world.bounds, geometry, getImage);
-      const b = world.bounds;
-      ctx.strokeStyle = '#697b7050'; ctx.lineWidth = 2;
-      ctx.strokeRect(b.left, b.top, b.right - b.left, b.bottom - b.top);
+      if (!state.camp) {
+        const b = world.bounds;
+        ctx.strokeStyle = '#697b7050'; ctx.lineWidth = 2;
+        ctx.strokeRect(b.left, b.top, b.right - b.left, b.bottom - b.top);
+      }
       this.key = key; this.revisions++;
     }
     return { canvas: this.canvas, x: -PADDING, y: -PADDING, width, height, dirty, key, revisions: this.revisions };

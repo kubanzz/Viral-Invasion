@@ -1,6 +1,10 @@
 # Viral Invasion · 病毒入侵
 
-在巨人体内作战的生物幻想动作小游戏。当前工作区为 **v0.17.0 / 蜂巢针枪与回旋刃弓**。两把武器拥有不同的持握轮廓、普攻弹道与技能节奏：薄荷多管枪追踪速射、贴身震环、超载齐射；琥珀月牙弓往返收割、蓄势贯穿、投锚聚敌。123释放技能，F净化，营地换装与试枪，原有收藏和强化保留。净化同线生命泉与前线即可解除源膜，拆除双源并挑战母巢；军团协防守点。
+在宿主体内微区作战的生物幻想动作小游戏。当前工作区为 **v0.18.0 / 微观前哨与血流接引**。带领六名抗体拟生体抵达缓流膜湾，亲手建立前哨；接收侦查情报，清剿感染并带回装备、型号碎片与材料。回营锻造、配装、试枪，再次出征。全部正式任务取消局中三选一，使用金币进行血流接引，初始5000金币，单抽十连共享50抽内出金保底；先预告品质，再揭晓实际物品，演出可跳过。神级装备也能通过清剿材料定向打造。
+
+**2026-11-06 v0.18.0流程改版：** 膜隙初染、纤维回廊、缓流边界依次解锁，可重复清剿；固定有限敌群、三槽永久模组、失败与撤离保留一半普通收获。旧收藏、强化、生质及战绩保留。器官作为大区域，游玩场景改为膜、纤维、凝露与生物材料前哨。[规则、接口与验证边界](Docs/ViralInvasion_Microfront_v0.18.0.md)。以下条目保留历史版本背景与规则，以本版任务及成长规则为准。
+
+**2026-11-06 三维主角与武器：** 默认主角替换为已设计、绑骨并包含17段动作的医疗巡护员；连续转向、方向移动混合和移动瞄准使用 Three.js 标准动画系统。蜂巢针枪与回旋刃弓使用独立三维网格、手骨挂接及动态弓弦，修正旧 PNG 武器的透视与遮挡问题。模型内嵌离线构建，不支持 WebGL2 时沿用 PNG 玩家。[主角接入与许可](Docs/ViralInvasion_Hero3D_Integration_20261106.md) · [武器握持优化](Docs/ViralInvasion_Weapons3D_20261106.md)。
 
 **2026-11-05 v0.17.0 双武器身份重做：** 蜂群追针／排异震环／蜂巢超载，对应蓄势穿心／束脉锚／回缝风暴。回刃真实往返，走位改变回收路线；营地、仓库、战利品和试枪同步新外观，战绩v8独立。[设计与规则](Docs/ViralInvasion_WeaponIdentity_v0.17.0.md)。
 
@@ -48,7 +52,7 @@
 
 页面随浏览器窗口自适应：宽度 ≤1024px 或高度 ≤600px 时切为移动布局，鼠标电脑放大后恢复桌面布局；真实触屏设备保留轮盘。战斗中的布局切换会暂停并清空输入，继续后沿用本局进度。
 
-工作区双击 `Start-Game.cmd` 会先同步素材、校验构建并按需重建；也可用 Chrome / Edge 打开 `dist/index.html`。下载并完整解压 [v0.17.0离线包](releases/Viral-Invasion-G4-v0.17.0.zip)后可双击 `Open-Game.cmd`，无需网络、账号或服务器。手机使用[单HTML](releases/Viral-Invasion-Mobile.html)或[手机ZIP](releases/Viral-Invasion-Mobile.zip)；本版固定归档在`releases/Viral-Invasion-Mobile-v0.17.0/`。[v0.15.0远征包](releases/Viral-Invasion-G4-v0.15.0.zip)、[v0.12.0旧双线包](releases/Viral-Invasion-G4-v0.12.0.zip)保留历史规则。[v0.11.0离线包](releases/Viral-Invasion-G4-v0.11.0.zip)保留旧五区规则，[v0.10.0离线包](releases/Viral-Invasion-G4-v0.10.0.zip)保留历史角色。
+工作区双击 `Start-Game.cmd` 会先同步素材、校验构建并按需重建；也可用 Chrome / Edge 打开 `dist/index.html`。下载并完整解压 [v0.18.0离线包](releases/Viral-Invasion-G4-v0.18.0.zip)后可双击 `Open-Game.cmd`，无需网络、账号或服务器。手机使用[单HTML](releases/Viral-Invasion-Mobile.html)或[手机ZIP](releases/Viral-Invasion-Mobile.zip)；当前单HTML与ZIP为v0.18.0；`releases/Viral-Invasion-Mobile-v0.17.0/`保留历史归档。[v0.15.0远征包](releases/Viral-Invasion-G4-v0.15.0.zip)、[v0.12.0旧双线包](releases/Viral-Invasion-G4-v0.12.0.zip)保留历史规则。[v0.11.0离线包](releases/Viral-Invasion-G4-v0.11.0.zip)保留旧五区规则，[v0.10.0离线包](releases/Viral-Invasion-G4-v0.10.0.zip)保留历史角色。
 
 工作区启动器会自动识别本机 Node（含 Codex 自带运行时），优先使用已安装的 Chrome，其次 Edge，避免 Windows 将 HTML 交给旧版 Internet Explorer。请在资源管理器中双击 `Start-Game.cmd`；聊天里的文件链接可能只打开脚本预览。
 

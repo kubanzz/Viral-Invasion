@@ -1,0 +1,101 @@
+{
+  "date": "2026-11-06",
+  "status": "applied-to-current-game-source-and-build",
+  "preview": "http://127.0.0.1:57017/index.html",
+  "gameVersion": "0.18.0",
+  "frameworks": {
+    "phaser": "4.2.1",
+    "three": "0.187.0"
+  },
+  "weapons": [
+    {
+      "id": "steady",
+      "source": "asserts/ViralInvasion_Weapons3D_v1/model/steady.glb",
+      "sha256": "c5c5628bf0bd47493b79223218fc1a0c4a97bab45fae24739e68f2d80e44559e",
+      "bytes": 75052,
+      "triangles": 1984,
+      "meshes": 5,
+      "embedding": "data URI in classic game.js",
+      "attachment": "rigid child of calibrated hand bone in the same Three scene"
+    },
+    {
+      "id": "piercing",
+      "source": "asserts/ViralInvasion_Weapons3D_v1/model/piercing.glb",
+      "sha256": "d24643e0e719ddf693605e82066928eb9b48e642b167a29aebe2f6073d65d104",
+      "bytes": 70488,
+      "triangles": 1756,
+      "meshes": 4,
+      "embedding": "data URI in classic game.js",
+      "attachment": "rigid child of calibrated hand bone in the same Three scene"
+    }
+  ],
+  "heroSha256": "048ab89b2d724282fa8e36547e208b684c3df53c41558f3f53b58274c35feb5d",
+  "rendering": "Rigid GLBs are actual calibrated hand-bone children in the same Three scene, with dynamic bowstring and official CCD IK; legacy PNG is retained for fallback/explicit previews/UI.",
+  "rules": "Presentation only: simulation damage, cooldowns, projectile collisions and persistence unchanged.",
+  "tests": {
+    "typecheck": "passed",
+    "unit": {
+      "files": 8,
+      "passed": 55,
+      "report": "unit-results.json"
+    },
+    "browser": {
+      "startTime": "2026-11-06T05:15:09.688Z",
+      "duration": 62009.185,
+      "expected": 5,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "report": "e2e-report.json",
+    "errors": [],
+    "externalRequests": [],
+    "transport": {
+      "protocol": "http:",
+      "kind": "same-origin-http",
+      "offline": false,
+      "allowedOrigin": "http://127.0.0.1:57017",
+      "entry": "http://127.0.0.1:57017/index.html?seed=71"
+    },
+    "bowFixture": "Isolated profile created through public CampProfileStore reward APIs; UI repair/equip/deploy and genuine skill input. No natural unlock claim or user-save mutation."
+  },
+  "measured": {
+    "steadyIdleMaximumAngleDegrees": 0.201,
+    "bowReadyHandGap": 0.00915,
+    "bowDrawingMaximumHandGap": 0.00598,
+    "modelUnits": "Hero bind height approximately 1.0; values are renderer geometry, not finger-contact perfection."
+  },
+  "attestation": {
+    "preview": "http://127.0.0.1:57017/index.html",
+    "testedGameJs": "846e227f845cbab08c2dfd2df00f5f729a562a7e94233683e3e015b181dd5d99",
+    "outputHashesVerified": true,
+    "frozenBuild": "artifacts/weapon-3d-optimization-20261106/build",
+    "concurrentSourceChanges": [
+      "src/render/expeditionArt.ts",
+      "src/ui/microfront.css",
+      "src/ui/microfrontHud.ts",
+      "src/ui/missionRewardIcons.ts"
+    ],
+    "weaponSourceMatches": true
+  },
+  "sourceChanges": [
+    "src/render/heldWeapons3D.ts",
+    "src/render/player3D.ts",
+    "src/render/player3DMotion.ts",
+    "src/render/phaserRenderer.ts",
+    "scripts/build-held-weapons-3d.mjs",
+    "scripts/build-offline.mjs",
+    "vite.config.ts",
+    "vitest.config.ts"
+  ],
+  "limitations": [
+    "Existing source animation fidelity and finger poses remain; no claim of perfect contact in every pose.",
+    "Desktop Chromium touch emulation does not establish physical mobile performance.",
+    "Tripo Free body retains its existing non-commercial evaluation restriction; this task used no Tripo credits."
+  ],
+  "screenshots": [
+    "game-needle-3d.png",
+    "game-bow-3d.png"
+  ],
+  "documentation": "../../Docs/ViralInvasion_Weapons3D_20261106.md"
+}
