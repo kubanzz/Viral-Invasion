@@ -18,10 +18,12 @@ assert.ok(configs.length, 'Known --case');
 await mkdir(output, { recursive: true });
 const sourcePaths = ['src/main.ts', 'src/meta/campProfile.ts', 'src/game/types.ts', 'src/game/campProgression.ts', 'src/game/campLayout.ts',
   'src/game/campScene.ts', 'src/game/campAttention.ts', 'src/render/campMarkers.ts', 'src/render/campCamera.ts', 'src/render/campVisuals.ts',
-  'src/render/canvasScene.ts', 'src/render/phaserRenderer.ts', 'src/render/sceneLabels.ts', 'src/render/campArt.ts', 'src/render/artPresentation.ts', 'src/ui/campHud.ts', 'src/ui/camp.css'];
+  'src/render/canvasScene.ts', 'src/render/phaserRenderer.ts', 'src/render/sceneLabels.ts', 'src/render/campArt.ts', 'src/render/artPresentation.ts', 'src/ui/campHud.ts', 'src/ui/camp.css',
+  'src/ui/campEquipmentHud.ts', 'src/ui/campEquipmentState.ts', 'src/ui/campEquipment.css'];
 const hashes = async () => Object.fromEntries(await Promise.all(sourcePaths.map(async path => [path, createHash('sha256').update(await readFile(path)).digest('hex')])));
 const runtimeEntryPath = new URL(entry).protocol === 'file:' ? fileURLToPath(new URL(entry)) : undefined;
-const runtimePaths = runtimeEntryPath ? [runtimeEntryPath, join(dirname(runtimeEntryPath), 'game.js'), join(dirname(runtimeEntryPath), 'game.css')] : [];
+const externalRuntime = runtimeEntryPath && /<script\b[^>]*src=["']\.\/game\.js["']/.test(await readFile(runtimeEntryPath, 'utf8'));
+const runtimePaths = runtimeEntryPath ? [runtimeEntryPath, ...(externalRuntime ? [join(dirname(runtimeEntryPath), 'game.js'), join(dirname(runtimeEntryPath), 'game.css')] : [])] : [];
 const runtimeHashes = async () => Object.fromEntries(await Promise.all(runtimePaths.map(async path => [path, createHash('sha256').update(await readFile(path)).digest('hex')])));
 const report = { startedAt: new Date().toISOString(), entry, pass: false, cases: [], fixtures: [], sourceAtStart: await hashes(),
   passBasis: runtimeEntryPath ? 'Frozen runtime artifact hashes; workspace source hashes are informational.' : 'Live source hashes remain unchanged throughout execution.',
@@ -31,15 +33,18 @@ const report = { startedAt: new Date().toISOString(), entry, pass: false, cases:
 const helper = await build({ stdin: { contents: "export {emptyCampProfile,CAMP_PROFILE_STORAGE_KEY} from './src/meta/campProfile';export {campLayout,isCampPositionLegal} from './src/game/campLayout';", resolveDir: process.cwd() }, bundle: true, write: false, platform: 'node', format: 'esm' });
 const model = await import('data:text/javascript;base64,' + Buffer.from(helper.outputFiles[0].contents).toString('base64'));
 const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-const browser = await chromium.launch({ channel: 'chrome', headless: true });
+const browser = await chromium.launch({ channel: option('--channel') ?? 'chrome', headless: true });
+report.channel = option('--channel') ?? 'chrome';
 
 async function makeCase(config, kind, fixture) {
-  const result = { ...config, kind, scope: fixture ? 'Explicit initial storage fixture; actual production DOM input after load.' : 'Fresh context, natural controls; no storage or simulation writes.', walks: [], observations: [], screenshots: [], errors: [], pass: false };
+  const result = { ...config, kind, scope: fixture ? 'Explicit initial storage fixture; actual production DOM input after load.' : 'Fresh context, natural controls; no storage or simulation writes.', walks: [], observations: [], screenshots: [], errors: [], remoteRequests: [], pass: false };
   (fixture ? report.fixtures : report.cases).push(result);
   const context = await browser.newContext({ viewport: { width: config.width, height: config.height }, hasTouch: config.touch, isMobile: config.touch, deviceScaleFactor: 1 });
+  if (runtimeEntryPath) await context.setOffline(true);
   if (fixture) await context.addInitScript(({ key, json }) => { if (sessionStorage.getItem('camp-acceptance-fixture') !== 'installed') { localStorage.setItem(key, json); sessionStorage.setItem('camp-acceptance-fixture', 'installed'); } }, { key: model.CAMP_PROFILE_STORAGE_KEY, json: JSON.stringify(fixture) });
   const page = await context.newPage(), cdp = await context.newCDPSession(page), held = new Set(); let touching = false;
   page.on('pageerror', error => result.errors.push(error.message));
+  page.on('request', request => { if (/^https?:/.test(request.url())) result.remoteRequests.push(request.url()); });
   const snapshot = () => page.evaluate(() => window.__viral.snapshot());
   const profile = () => page.evaluate(() => window.__viral.campProfile().data);
   const diagnostics = () => page.evaluate(() => window.__viral.diagnostics());
@@ -125,10 +130,25 @@ async function makeCase(config, kind, fixture) {
     if (config.touch) await page.touchscreen.tap(selected.x, selected.y); else await page.mouse.click(selected.x, selected.y);
     result.observations.push({ action: 'real-target-click', id, part, selected, target: item });
   }
-  async function close() { await activate('[data-action="camp-close"]'); await page.waitForFunction(() => window.__viral.snapshot().phase === 'playing'); }
+  async function close() {
+    const before = await snapshot();
+    await activate('.camp-close[data-action="camp-close"]');
+    await page.waitForFunction(() => window.__viral.snapshot().phase === 'playing');
+    const after = await snapshot();
+    assert.ok(after.camp, 'Returning from a service keeps the camp active');
+    assert.ok(distance(after.player, before.player) < .1, 'Returning to camp preserves the player position');
+  }
   async function openBuilt(id, part = 'label') {
     await clickTarget(id, part); const section = id === 'departure' ? 'missions' : id;
-    await page.locator(`.camp-nav [data-section="${section}"][aria-current="page"]`).waitFor({ timeout: 6000 });
+    const titles = { warehouse: '装备仓库', forge: '锻造台', shop: '补给站', missions: '侦查情报', summon: '血流接引' };
+    await page.locator('#camp-title').filter({ hasText: titles[section] }).waitFor({ timeout: 6000 });
+    assert.equal(await page.locator('.camp-nav').count(), 0, 'Building services do not show global navigation');
+    assert.equal(await page.locator('.camp-panel [data-action="camp-leave"]').count(), 0, 'Building services cannot leave for the main menu');
+    const equipment = id === 'warehouse' || id === 'forge';
+    const back = page.locator(equipment ? '.camp-close[data-action="camp-close"]' : '.camp-footer [data-action="camp-close"]');
+    if (equipment) assert.equal(await back.getAttribute('aria-label'), '返回营地');
+    else assert.equal(await back.innerText(), '返回营地');
+    assert.ok(await back.isVisible(), 'Return to camp remains visible, including summon and short screens');
     assert.equal((await snapshot()).phase, 'paused');
   }
   async function construct(id, options = {}) {
@@ -151,7 +171,7 @@ async function makeCase(config, kind, fixture) {
     assert.deepEqual(wallet(await profile()), wallet(before), 'Intro construction does not consume the initial wallet');
     await capture(`built-${id}`);
   }
-  async function finish() { assert.deepEqual(result.errors, []); result.pass = true; }
+  async function finish() { assert.deepEqual(result.errors, []); assert.deepEqual(result.remoteRequests, []); result.pass = true; }
   async function dispose() { await release(); await context.close(); await writeFile(join(output, `${config.name}-${kind}.json`), JSON.stringify(result, null, 2)); }
   return { result, page, snapshot, profile, diagnostics, load, enterCamp, activate, capture, walkRelative, target, clickTarget, close, openBuilt, construct, finish, dispose };
 }
@@ -168,15 +188,23 @@ async function freshCase(config) {
     await c.walkRelative([{ x: -205, y: -20 }, { x: -205, y: 222 }, { x: -350, y: 222 }]); await c.construct('forge', { keyboard: !config.touch });
     await c.walkRelative([{ x: -205, y: 222 }, { x: -205, y: 100 }, { x: -95, y: 100 }, { x: 100, y: 100 }, { x: 100, y: -40 }, { x: 220, y: -40 }, { x: 250, y: 0 }, { x: 335, y: 0 }]);
     await c.construct('shop', { reload: true });
-    await c.walkRelative([{ x: 100, y: 270 }, { x: 100, y: -40 }, { x: 220, y: -40 }, { x: 220, y: -85 }]); await c.construct('summon');
-    await c.walkRelative([{ x: 220, y: -40 }, { x: 100, y: -40 }, { x: 100, y: 250 }, { x: 205, y: 250 }, { x: 205, y: 340 }, { x: 335, y: 340 }]); await c.construct('departure');
+    await c.walkRelative([{ x: 0, y: 270 }, { x: 0, y: 90 }, { x: 90, y: 90 }]); await c.construct('summon');
+    await c.walkRelative([{ x: 90, y: 250 }, { x: 205, y: 250 }, { x: 205, y: 340 }, { x: 335, y: 340 }]); await c.construct('departure');
     await c.page.waitForFunction(() => window.__viral.snapshot().camp?.prologue === 'ready');
     const ready = await c.snapshot(), profile = await c.profile(); assert.equal(ready.camp.builtFacilities.length, 5);
     assert.equal(ready.camp.attention?.departure?.kind, 'mission'); assert.ok(!profile.seenMissionIds.includes('membrane'));
     await c.capture('ready-new-intelligence');
     await c.openBuilt('departure', 'label'); await c.close();
     assert.equal((await c.snapshot()).camp.attention?.departure, undefined, 'Viewing new intelligence clears its unread marker');
-    await c.walkRelative([{ x: 205, y: 340 }, { x: 205, y: 250 }, { x: 100, y: 250 }, { x: 100, y: 100 }, { x: -205, y: 100 }, { x: -205, y: -110 }, { x: -220, y: -110 }]);
+    await c.walkRelative([{ x: 205, y: 340 }, { x: 205, y: 250 }, { x: 90, y: 250 }, { x: 90, y: 90 }]);
+    await c.capture('independent-summon-node'); await c.openBuilt('summon', 'body');
+    const summonBefore = await c.profile();
+    await c.activate('[data-action="camp-draw"][data-count="1"]');
+    if (await c.page.locator('[data-action="camp-summon-skip"]').isVisible()) await c.activate('[data-action="camp-summon-skip"]');
+    await c.page.locator('.camp-draw-results').waitFor({ state: 'visible', timeout: 10000 });
+    assert.equal((await c.profile()).coins, summonBefore.coins - 100, 'World node opens a real single draw transaction');
+    await c.capture('summon-result-back-visible'); await c.close();
+    await c.walkRelative([{ x: 0, y: 100 }, { x: -205, y: 100 }, { x: -205, y: -110 }, { x: -220, y: -110 }]);
     await c.openBuilt('warehouse', 'roof'); await c.capture('warehouse-side-roof-open'); await c.close();
     await c.walkRelative([{ x: -205, y: -110 }, { x: -205, y: -190 }, { x: -350, y: -190 }]);
     await c.openBuilt('warehouse', 'roof'); await c.capture('warehouse-rear-roof-open');

@@ -1,4 +1,5 @@
 import type { TemplateId } from '../game/microfront';
+import { isWeaponId } from '../game/expedition';
 
 const glyph = (paths: string, className = ''): string => `<svg class="mission-reward-glyph ${className}" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">${paths}</svg>`;
 
@@ -11,7 +12,7 @@ const modulePaths: Record<string, string> = {
 
 /** Selected PNGs share the existing atlas installer; each module retains a distinct fallback. */
 export function missionTemplateIcon(id: TemplateId): string {
-  if (id === 'steady' || id === 'piercing') return `<span class="mission-reward-art" data-camp-art="weapon-${id}" aria-hidden="true"></span>`;
+  if (isWeaponId(id)) return `<span class="mission-reward-art" data-camp-art="weapon-${id}" aria-hidden="true"></span>`;
   return `<span class="mission-reward-art" data-camp-art="module-${id}" aria-hidden="true">${glyph(modulePaths[id] ?? modulePaths.PULSE_BREAK)}</span>`;
 }
 

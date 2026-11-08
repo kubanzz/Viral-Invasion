@@ -75,7 +75,7 @@ describe('truthful source supply progress and territory control copy', () => {
     state.endless!.score = 1234; state.endless!.combo = 7;
     const before = structuredClone(state), markup = endlessOverlay(state, false, false)!;
     expect(markup).toContain('贯脉·回旋刃弓'); expect(markup).toContain('30.5伤害');
-    expect(markup).toContain('蓄势穿心'); expect(markup).toContain('回缝风暴'); expect(markup).not.toContain('蜂群追针');
+    expect(markup).toContain('裂脉重刃'); expect(markup).toContain('回缝刃潮'); expect(markup).not.toContain('猎群追针');
     expect(markup).toContain('每程最多2体'); expect(markup).toContain('间隔0.3s'); expect(markup).toContain('得分1234');
     expect(markup).toContain('连击7'); expect(markup).toContain('净化生命泉'); expect(markup).not.toContain('等待下一队反扑');
     expect(state).toEqual(before);

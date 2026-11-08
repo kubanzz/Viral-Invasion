@@ -43,17 +43,17 @@ describe('weapon skill commitments and real projectile receipts', () => {
     expect(castWeaponSkill(f.host, 1, f.aim)).toBe(false); expect(weaponSkillViews(f.state)).toEqual([]);
     expect(f.state.playerProjectiles).toEqual([]);
   });
-  it('fires five timed needles, reads current aim for each, and snapshots damage/metadata at cast', () => {
+  it('fires eight timed needles, reads current aim for each, and snapshots damage/metadata at cast', () => {
     const f = fixture(), right = f.add('right', 350, 300, { radius: 22 }), down = f.add('down', 100, 650, { radius: 22 });
     expect(castWeaponSkill(f.host, 1, f.aim)).toBe(true);
-    expect(f.state.playerProjectiles).toHaveLength(1); expect(f.state.weaponCombat!.reservedProjectiles).toBe(4);
+    expect(f.state.playerProjectiles).toHaveLength(1); expect(f.state.weaponCombat!.reservedProjectiles).toBe(7);
     expect(castWeaponSkill(f.host, 3, f.aim)).toBe(false);
     expect(f.state.weaponCombat!.cooldowns[3]).toBe(0);
     expect(launchPrimary(f.state, f.aim, f.stats(), 'forbidden')).toBe(false);
     f.state.endlessGrowth!.ranks.power = 10;
     f.step(55, { x: 100, y: 900 });
-    expect(right.hp).toBeCloseTo(100000 - 22.1); expect(down.hp).toBeCloseTo(100000 - 4 * 22.1);
-    expect(f.receipts).toHaveLength(5);
+    expect(right.hp).toBeCloseTo(100000 - 20.4); expect(down.hp).toBeCloseTo(100000 - 7 * 20.4);
+    expect(f.receipts).toHaveLength(8);
     expect(f.receipts.every(hit => hit.origin.cause === 'ability' && hit.origin.skillId === 'steady-burst'
       && hit.origin.damageCategory === 'precision' && hit.origin.armorResponse === 'needle')).toBe(true);
     expect(new Set(f.receipts.map(hit => hit.origin.rootId)).size).toBe(1);
@@ -62,67 +62,67 @@ describe('weapon skill commitments and real projectile receipts', () => {
   it('prepares the heavy needle automatically, locks direction and launches from the actual position', () => {
     const f = fixture('piercing'); f.add('old-line', 350); const actual = f.add('new-line', 450, 360);
     expect(castWeaponSkill(f.host, 1, f.aim)).toBe(true);
-    f.step(20); expect(f.state.playerProjectiles).toEqual([]); expect(f.receipts).toEqual([]);
+    f.step(10); expect(f.state.playerProjectiles).toEqual([]); expect(f.receipts).toEqual([]);
     Object.assign(f.state.player, { x: 200, y: 360 }); f.step(25, { x: 200, y: 900 });
-    expect(actual.hp).toBe(100000 - 112); expect(f.state.targets[0].hp).toBe(100000);
+    expect(actual.hp).toBe(100000 - 140); expect(f.state.targets[0].hp).toBe(100000);
     expect(f.receipts[0].origin).toMatchObject({ weaponId: 'piercing', skillId: 'piercing-heavy', damageCategory: 'precision', armorResponse: 'heavy' });
   });
-  it('limits heavy penetration to six bodies and leaves multishot/pierce upgrades to the primary', () => {
+  it('limits heavy penetration to eight bodies and leaves multishot/pierce upgrades to the primary', () => {
     const f = fixture('piercing'); f.state.endlessGrowth!.ranks = { multishot: 2, pierce: 3 };
-    for (let n = 0; n < 8; n++) f.add(`line:${n}`, 220 + n * 65);
+    for (let n = 0; n < 10; n++) f.add(`line:${n}`, 220 + n * 65);
     castWeaponSkill(f.host, 1, f.aim); f.step(60);
-    expect(f.receipts).toHaveLength(6); expect(f.events.filter(e => e.type === 'PLAYER_PROJECTILE_LAUNCHED')).toHaveLength(1);
+    expect(f.receipts).toHaveLength(8); expect(f.events.filter(e => e.type === 'PLAYER_PROJECTILE_LAUNCHED')).toHaveLength(1);
   });
-  it('shares one fan receipt per leg even when a wide boss overlaps all three blades', () => {
+  it('limits the five-blade fan to two receipts per body per leg even against a wide boss', () => {
     const f = fixture('piercing'), boss = f.add('boss', 280, 300, { radius: 100, role: 'core' });
-    f.add('behind', 470, 300, { radius: 70 }); castWeaponSkill(f.host, 3, f.aim); f.step(50);
-    expect(f.receipts.map(hit => hit.id).sort()).toEqual(['behind', 'behind', 'boss', 'boss']); expect(boss.hp).toBe(100000 - 84);
+    f.add('behind', 470, 300, { radius: 70 }); castWeaponSkill(f.host, 3, f.aim); f.step(90);
+    expect(f.receipts.map(hit => hit.id).sort()).toEqual(['behind', 'behind', 'behind', 'behind', 'boss', 'boss', 'boss', 'boss']); expect(boss.hp).toBe(100000 - 168);
     expect(f.receipts.every(hit => hit.origin.damageCategory === 'area' && hit.origin.armorResponse === 'heavy')).toBe(true);
   });
   it('applies permanent and local damage exactly once, while nova changes only skill 2', () => {
     const f = fixture(); f.state.weaponCombat = createWeaponCombat({ weaponId: 'steady', rarity: 'gold', upgrade: 3 });
     f.state.endlessGrowth!.ranks = { power: 1, nova: 2, multishot: 2, pierce: 3 };
-    const target = f.add('blast', 250); castWeaponSkill(f.host, 2, f.aim); f.step(20);
-    expect(100000 - target.hp).toBeCloseTo(34 * 1.18 * 1.18 * 2 * 1.3);
-    expect(f.events.find(e => e.type === 'PLAYER_CANNON_EXPLODED')!.data.radius).toBe(183);
-    expect(f.receipts).toHaveLength(1);
+    const target = f.add('blast', 250, 300, { role: 'event' }); castWeaponSkill(f.host, 2, f.aim); f.step(20);
+    expect(100000 - target.hp).toBeCloseTo(34 * 1.18 * 1.18 * 3 * 1.3);
+    expect(f.events.find(e => e.type === 'PLAYER_CANNON_EXPLODED')!.data.radius).toBe(218);
+    expect(f.receipts).toHaveLength(2);
   });
-  it('gathers gradually over one second before the blast and schedules one harmless-to-control aftershock', () => {
+  it('gathers gradually over eight tenths before the blast and schedules one harmless-to-control aftershock', () => {
     const f = fixture('piercing'); f.state.endlessGrowth!.ranks = { catalysis: 1, nova: 1 };
     const victim = f.add('pull', 280, 350); castWeaponSkill(f.host, 2, { x: 250, y: 300 });
     f.step(10); expect(f.receipts).toEqual([]);
     const before = { x: victim.x, y: victim.y }; f.step(5);
     const midpointTravel = Math.hypot(victim.x - before.x, victim.y - before.y);
     expect(midpointTravel).toBeGreaterThan(0); expect(midpointTravel).toBeLessThan(50); expect(f.receipts).toEqual([]);
-    f.step(58); expect(f.receipts).toHaveLength(1);
+    f.step(48); expect(f.receipts).toHaveLength(1);
     const after = { x: victim.x, y: victim.y };
-    expect(Math.hypot(after.x - before.x, after.y - before.y)).toBeLessThanOrEqual(80.000001);
+    expect(Math.hypot(after.x - before.x, after.y - before.y)).toBeLessThanOrEqual(110.000001);
     expect(Math.hypot(after.x - 250, after.y - 300)).toBeLessThan(Math.hypot(before.x - 250, before.y - 300));
     f.step(25); expect(f.receipts).toHaveLength(2); expect({ x: victim.x, y: victim.y }).toEqual(after);
     expect(f.receipts[1].amount).toBeCloseTo(f.receipts[0].amount * .4);
     expect(f.receipts[1].origin.allowChain).toBe(false);
     expect(f.events.filter(e => e.type === 'PLAYER_CANNON_AFTERSHOCK')).toHaveLength(1);
   });
-  it('pushes at most seventy from the player, gives heavy bodies .35 displacement and respects committed/fixed actors', () => {
+  it('pushes at most eighty from the player, gives heavy bodies .35 displacement and respects committed/fixed actors', () => {
     const f = fixture();
     const ordinary = f.add('ordinary', 235, 325), heavy = f.add('heavy', 235, 275, { traits: ['CARAPACE'] });
     const fixed = f.add('fixed', 240, 340, { profession: 'ritual-priest' });
     const windup = f.add('windup', 240, 260, { attackAt: 10 });
     const starts = f.state.targets.map(t => ({ x: t.x, y: t.y }));
     castWeaponSkill(f.host, 2, { x: 230, y: 300 }); f.step(20);
-    expect(Math.hypot(ordinary.x - starts[0].x, ordinary.y - starts[0].y)).toBeCloseTo(70);
-    expect(Math.hypot(heavy.x - starts[1].x, heavy.y - starts[1].y)).toBeCloseTo(24.5);
+    expect(Math.hypot(ordinary.x - starts[0].x, ordinary.y - starts[0].y)).toBeCloseTo(80);
+    expect(Math.hypot(heavy.x - starts[1].x, heavy.y - starts[1].y)).toBeCloseTo(28);
     expect({ x: fixed.x, y: fixed.y }).toEqual(starts[2]); expect({ x: windup.x, y: windup.y }).toEqual(starts[3]);
   });
   it('keeps shared reservations under 192 and never spends a cooldown for a rejected burst', () => {
     const f = fixture();
-    for (let n = 0; n < 188; n++) expect(launchPrimary(f.state, f.aim, f.stats(), `fill:${n}`)).toBe(true);
+    for (let n = 0; n < 185; n++) expect(launchPrimary(f.state, f.aim, f.stats(), `fill:${n}`)).toBe(true);
     expect(castWeaponSkill(f.host, 1, f.aim)).toBe(false); expect(f.state.weaponCombat!.cooldowns[1]).toBe(0);
     f.state.playerProjectiles!.pop(); expect(castWeaponSkill(f.host, 1, f.aim)).toBe(true);
-    expect(playerProjectilePopulation(f.state)).toBe(192); expect(f.state.playerProjectiles).toHaveLength(188);
+    expect(playerProjectilePopulation(f.state)).toBe(192); expect(f.state.playerProjectiles).toHaveLength(185);
     expect(castWeaponSkill(f.host, 2, f.aim)).toBe(false); expect(f.state.weaponCombat!.cooldowns[2]).toBe(0);
-    cancelWeaponAction(f.state); expect(playerProjectilePopulation(f.state)).toBe(188);
-    expect(f.state.weaponCombat!.cooldowns[1]).toBe(6);
+    cancelWeaponAction(f.state); expect(playerProjectilePopulation(f.state)).toBe(185);
+    expect(f.state.weaponCombat!.cooldowns[1]).toBe(5);
   });
   it('freezes actions during pause and cancels future needles without refunding the accepted cast', () => {
     const f = fixture(); castWeaponSkill(f.host, 1, f.aim); f.step(5);
@@ -131,7 +131,7 @@ describe('weapon skill commitments and real projectile receipts', () => {
     cancelWeaponAction(f.state); expect(f.state.weaponCombat!.reservedProjectiles).toBe(0);
     f.state.phase = 'playing'; f.step(60);
     expect(f.events.filter(e => e.type === 'PLAYER_PROJECTILE_LAUNCHED')).toHaveLength(2);
-    expect(f.state.weaponCombat!.cooldowns[1]).toBe(6);
+    expect(f.state.weaponCombat!.cooldowns[1]).toBe(5);
   });
   it('does not resurrect cancelled burst reservations after reentrant event handling', () => {
     const f = fixture(); castWeaponSkill(f.host, 1, f.aim);
@@ -151,7 +151,7 @@ describe('weapon skill commitments and real projectile receipts', () => {
     expect(weaponPrimaryCooldown(f.state, f.stats())).toBe(9 * BALANCE.step);
     f.state.endlessGrowth!.ranks.haste = 100;
     expect(weaponPrimaryCooldown(f.state, f.stats())).toBe(5 * BALANCE.step);
-    expect(castWeaponSkill(f.host, 3, f.aim)).toBe(false); f.step(240);
+    expect(castWeaponSkill(f.host, 3, f.aim)).toBe(false); f.step(300);
     expect(weaponPrimaryCooldown(f.state, f.stats())).toBe(6 * BALANCE.step);
     expect(f.state.weaponCombat!.cooldowns[3]).toBe(18);
   });
@@ -179,7 +179,7 @@ export function measureWeaponKit(weaponId: WeaponId, count: 1 | 5): number {
 }
 
 describe('thirty-second white-weapon zero-growth identity baseline', () => {
-  it('keeps steady at least 15% ahead against one durable target', () => {
+  it('keeps steady at least 15% ahead against one durable target after both kits are strengthened', () => {
     const steady = measureWeaponKit('steady', 1), piercing = measureWeaponKit('piercing', 1);
     console.info(JSON.stringify({ condition: '30s-single', steady, piercing, ratio: steady / piercing }));
     expect(steady / piercing).toBeGreaterThanOrEqual(1.15);

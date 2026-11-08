@@ -39,7 +39,7 @@ export function activeImmuneGuard(beacon: BeaconState | null | undefined, contex
 }
 
 function inSquadRegion(target: Target, beacon: BeaconState, context: GrowthContext): boolean {
-  return target.role !== 'core' && Number.isFinite(target.hp) && target.hp > 0
+  return (target.role !== 'core' || beacon.legionId === 'seraph') && Number.isFinite(target.hp) && target.hp > 0
     && !!target.id && Number.isFinite(target.x) && Number.isFinite(target.y)
     && Number.isFinite(target.radius) && target.radius > 0
     && isLegalPosition(target, target.radius, context.geometry)

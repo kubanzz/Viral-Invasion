@@ -2,12 +2,13 @@ import type { GameState, Target } from './types';
 import type { MissionHaul, MissionId, TemplateId } from './microfront';
 import { MODULE_IDS } from './microfront';
 import type { WeaponRarity } from './expedition';
+import { HEART_BOSS_BALANCE } from './motherCore';
 
 /** Finite cohorts use fixed health; permanent equipment adds options, not an entry fee. */
 export const MISSION_COMBAT = {
   membrane: { waves: [60, 80, 100], ordinaryHp: 34, eliteHp: 170, sourceHp: 238, bossHp: 0 },
   corridor: { waves: [70, 90, 110, 130], ordinaryHp: 51, eliteHp: 238, sourceHp: 340, bossHp: 0 },
-  boundary: { waves: [80, 100, 120, 140, 160], ordinaryHp: 68, eliteHp: 306, sourceHp: 544, bossHp: 1100 },
+  boundary: { waves: [80, 100, 120, 140, 160], ordinaryHp: 68, eliteHp: 306, sourceHp: 544, bossHp: HEART_BOSS_BALANCE.hp },
 } as const;
 export const MISSION_LOOT_POLICY = { ordinaryDropDenominator: 8, ordinaryCoins: 2, ordinaryMaterials: 1 } as const;
 

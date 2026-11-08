@@ -27,6 +27,7 @@ export type { EndlessHost, EndlessState } from './endlessTypes';
 
 export const ENDLESS_BALANCE = {
   warningSeconds: 2, traitWarningSeconds: 8, intermissionSeconds: 1,
+  missionEmptyBatchDelay: .4,
   batchSize: 3, batchInterval: 2, minimumBatchInterval: 1.2,
   minimumSpawnDistance: 340, spawnRingInner: 420, spawnRingOuter: 600,
   spawnGrace: 1.5, maximumActors: ENDLESS_POPULATION_LIMIT,
@@ -64,7 +65,7 @@ export function cancelTerritoryAssaults(state: GameState, source?: TerritorySour
   if (!e || !plan) return 0;
   let canceled = 0;
   for (const squad of plan.squads) {
-    if (source && squad.sourceId !== source || squad.status !== 'pending' && squad.status !== 'warning') continue;
+    if (source && (squad.kind === 'carrier' || squad.sourceId !== source) || squad.status !== 'pending' && squad.status !== 'warning') continue;
     squad.status = 'canceled'; squad.blocked = undefined; canceled += squad.slots.length;
   }
   if (!budgetAlreadyCanceled) {
@@ -100,6 +101,18 @@ function wavePlan(state: GameState, wave: number, inheritedTraits?: readonly Tra
         slots: [start, start + 1, start + 2, start + 3], departureOffset: 4 + index * 10,
         status: 'pending', memberIds: [] };
     });
+    if (wave >= 2 && wave <= budgets.length) {
+      // Replace four baseline ordinary slots; these carriers are independent of
+      // the optional source reinforcements and never expand a mission's budget.
+      const slots = roles.slice(0, baseBudget).flatMap((role, index) => role === 'ordinary' ? [index] : []).slice(-4);
+      if (slots.length === 4) {
+        const laneId = mission === 'membrane' || wave % 2 === 0 ? 'north' : 'south';
+        const lane = TERRITORY_LANES.find(lane => lane.id === laneId)!;
+        squads.push({ id: `mission:wave:${wave}:carrier`, kind: 'carrier', wave, laneId,
+          sourceId: lane.sourceId, slots, departureOffset: 4 + squads.length * TERRITORY_BALANCE.assaultIntervalSeconds,
+          status: 'pending', memberIds: [] });
+      }
+    }
     const totalToSpawn = roles.length;
     const batchSchedule: EndlessBatch[] = [];
     for (let index = 0; index < roles.length; index += 3)
@@ -359,10 +372,12 @@ export class EndlessDirector {
     // the finite queue may overlap it, with spawnBatch reserving every child.
     // A stationary optional source is not an attacker, but still counts toward
     // population and the independent wave-clear obligations below.
-    if (!state.expedition?.missionId && e.remainingToSpawn > 0 && !this.state.targets.some(target => target.hp > 0 && target.role !== 'source' && target.role !== 'event')
-      && e.nextSpawnAt > now + .5 + 1e-9) {
+    const emptyBatchDelay = state.expedition?.missionId ? ENDLESS_BALANCE.missionEmptyBatchDelay : .5;
+    const attackingBody = this.state.targets.some(target => target.hp > 0 && (state.expedition?.missionId
+      ? target.role === 'virus' || target.role === 'elite' : target.role !== 'source' && target.role !== 'event'));
+    if (e.remainingToSpawn > 0 && !attackingBody && e.nextSpawnAt > now + emptyBatchDelay + 1e-9) {
       const previousSpawnAt = e.nextSpawnAt;
-      e.nextSpawnAt = now + .5;
+      e.nextSpawnAt = now + emptyBatchDelay;
       this.host.emit('ENDLESS_PURSUIT_ACCELERATED', { wave: e.wave, batch: e.batchIndex + 1,
         previousSpawnAt, nextSpawnAt: e.nextSpawnAt, reducedBy: previousSpawnAt - e.nextSpawnAt });
     }
@@ -606,13 +621,19 @@ export class EndlessDirector {
     for (const squad of plan.squads) {
       if (squad.status === 'active' && !squad.memberIds.some(id => state.targets.some(target => target.id === id
         && (target.hp > 0 || target.splitAt !== undefined)))) {
-        squad.status = 'complete'; this.host.emit('TERRITORY_SQUAD_CLEARED', { squadId: squad.id, wave: e.wave, sourceId: squad.sourceId });
+        squad.status = 'complete'; this.host.emit('TERRITORY_SQUAD_CLEARED', { squadId: squad.id, wave: e.wave, sourceId: squad.sourceId,
+          kind: squad.kind ?? 'source', carrier: squad.kind === 'carrier' });
         if (this.state !== state || this.e !== e || !this.active()) return;
       }
       if (squad.status !== 'pending' && squad.status !== 'warning') continue;
       const latestDeparture = Math.max(-Infinity, ...plan.squads.map(item => item.bornAt ?? -Infinity));
       const scheduledDeparture = Math.max(e.phaseStartedAt + squad.departureOffset, latestDeparture + TERRITORY_BALANCE.assaultIntervalSeconds);
-      const origin = territoryInvasionOrigin(state, squad.sourceId);
+      const laneOrigin = territoryInvasionOrigin(state, squad.sourceId);
+      const bounds = activeWorld(state).bounds;
+      const sourceNode = state.territory.nodes.find(node => node.id === squad.sourceId);
+      const origin = squad.kind === 'carrier' && laneOrigin
+        ? { x: squad.laneId === 'north' ? bounds.left + 70 : bounds.right - 70, y: sourceNode?.y ?? laneOrigin.y }
+        : laneOrigin;
       const probe: Target = { id: 'squad-plan', x: 0, y: 0, hp: 1, maxHp: 1, radius: 22, kind: 'single', hitUntil: 0, scanned: false,
         territorySourceId: squad.sourceId, territoryTask: { kind: 'invade', nodeId: state.territory.sources[squad.sourceId].frontNodeId } };
       const goal = territoryInvaderGoal(state, probe);
@@ -620,7 +641,8 @@ export class EndlessDirector {
       if (squad.status === 'pending' && now + 1e-7 >= scheduledDeparture - TERRITORY_BALANCE.assaultWarningSeconds) {
         squad.status = 'warning'; squad.warnedAt = now;
         this.host.emit('TERRITORY_SQUAD_WARNING', { squadId: squad.id, wave: e.wave, laneId: squad.laneId, sourceId: squad.sourceId,
-          nodeId: goal?.id ?? 'core', x: origin?.x ?? 0, y: origin?.y ?? 0, duration: TERRITORY_BALANCE.assaultWarningSeconds });
+          nodeId: goal?.id ?? 'core', x: origin?.x ?? 0, y: origin?.y ?? 0, duration: TERRITORY_BALANCE.assaultWarningSeconds,
+          kind: squad.kind ?? 'source', carrier: squad.kind === 'carrier' });
         if (this.state !== state || this.e !== e || !this.active()) return;
       }
       if (squad.status !== 'warning' || now + 1e-7 < Math.max(scheduledDeparture, squad.warnedAt! + TERRITORY_BALANCE.assaultWarningSeconds)
@@ -630,7 +652,7 @@ export class EndlessDirector {
       if (this.population().reserved + 4 > ENDLESS_BALANCE.maximumActors) { blocked('population'); continue; }
       const positions: Vec[] = [];
       for (let member = 0; member < 4; member++) {
-        const point = this.invasionPosition(squad.sourceId, squad.slots[0] + member, 22, positions);
+        const point = this.invasionPosition(squad.sourceId, squad.slots[0] + member, 22, positions, origin);
         if (!point) break;
         positions.push(point);
       }
@@ -642,6 +664,7 @@ export class EndlessDirector {
         hitUntil: 0, scanned: false, traits: [], generation: 0, sourceId: sourceId(e.wave), born: now, tactic: 'melee',
         facing: Math.atan2(goal.y - position.y, goal.x - position.x), attackReady: now + ENDLESS_BALANCE.spawnGrace,
         territorySourceId: squad.sourceId, territoryTask: { kind: index === 0 ? 'invade' : 'escort', nodeId: goal.id, squadId: squad.id,
+          squadKind: squad.kind ?? 'source',
           ...(index > 0 ? { leaderId: ids[0] } : {}) }, waveId: e.wave, blocksWaveClear: true }));
       // Commit the entire four-body reservation before any synchronous event callback.
       state.targets.push(...members); e.spawnedIds.push(...ids); e.spawnSerial += 4; e.remainingToSpawn -= 4;
@@ -649,17 +672,18 @@ export class EndlessDirector {
       for (let index = 0; index < members.length; index++) {
         const member = members[index]; this.host.effect('evolution', member, member, 38, .7);
         this.host.emit('ACTOR_SPAWNED', { id: member.id, role: 'virus', sourceId: member.sourceId!, wave: e.wave, slot: squad.slots[index], generation: 0, traits: '',
-          tactic: 'melee', territorySourceId: squad.sourceId, territoryNodeId: goal.id, squadId: squad.id, invader: index === 0, escort: index > 0 });
+          tactic: 'melee', territorySourceId: squad.sourceId, territoryNodeId: goal.id, squadId: squad.id, invader: index === 0, escort: index > 0,
+          kind: squad.kind ?? 'source', carrier: squad.kind === 'carrier', ...(squad.kind === 'carrier' ? { missionBaseBudget: true } : {}) });
         if (this.state !== state || this.e !== e || !this.active()) return;
       }
       this.host.emit('TERRITORY_SQUAD_SPAWNED', { squadId: squad.id, wave: e.wave, sourceId: squad.sourceId, laneId: squad.laneId,
-        nodeId: goal.id, x: origin.x, y: origin.y, count: 4 });
+        nodeId: goal.id, x: origin.x, y: origin.y, count: 4, kind: squad.kind ?? 'source', carrier: squad.kind === 'carrier' });
       if (this.state !== state || this.e !== e || !this.active()) return;
     }
   }
 
-  private invasionPosition(sourceId: TerritorySourceId, ordinal: number, radius: number, reserved: readonly Vec[] = []): Vec | undefined {
-    const state = this.state, geometry = activeWorld(state), anchor = territoryInvasionOrigin(state, sourceId);
+  private invasionPosition(sourceId: TerritorySourceId, ordinal: number, radius: number, reserved: readonly Vec[] = [], origin?: Vec): Vec | undefined {
+    const state = this.state, geometry = activeWorld(state), anchor = origin ?? territoryInvasionOrigin(state, sourceId);
     if (!anchor) return;
     const rng = new SeedRng(state.seed ^ Math.imul(this.e.wave, 0x494e5641) ^ ordinal);
     const rotation = rng.next() * Math.PI * 2;

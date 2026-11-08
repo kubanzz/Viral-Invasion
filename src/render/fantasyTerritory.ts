@@ -1,4 +1,5 @@
 import { territoryMarkerView } from '../game/territoryPresentation';
+import { anchorDangerView } from '../game/anchorDanger';
 import { territoryMarkerLayouts, queueTerritoryMarkerLabels } from './territoryMarkers';
 import { boundedRegionPolygon, TERRITORY_BALANCE, TERRITORY_LANES, territoryInvaderGoal, territoryLaneViews, territoryNodeAt, territoryNodeView } from '../game/territory';
 import { activeWorld, type GameState, type Vec, type WorldGeometry } from '../game/types';
@@ -116,7 +117,7 @@ export class FantasyTerritoryGeometryCache {
 }
 
 function tile(ctx: CanvasRenderingContext2D, image: CanvasImageSource | undefined,
-  world: WorldGeometry, owner: TerritoryNode['owner']): void {
+  world: WorldGeometry, owner: TerritoryNode['owner'], paintBounds?: FantasyRegionGeometry['bounds']): void {
   const left = -PADDING, top = -PADDING, width = world.width + PADDING * 2, height = world.height + PADDING * 2;
   ctx.fillStyle = owner === 'healthy' ? '#c5b2a0' : '#82788d';
   ctx.fillRect(left, top, width, height);
@@ -124,7 +125,10 @@ function tile(ctx: CanvasRenderingContext2D, image: CanvasImageSource | undefine
     // Author-painted flat tiles remain world-anchored; camera motion never
     // resamples/rebuilds the ownership mask or grades the approved colours.
     const size = 640;
-    for (let y = top; y < top + height; y += size) for (let x = left; x < left + width; x += size)
+    const startX = left + Math.floor((Math.max(left, paintBounds?.left ?? left) - left) / size) * size;
+    const startY = top + Math.floor((Math.max(top, paintBounds?.top ?? top) - top) / size) * size;
+    const endX = Math.min(left + width, paintBounds?.right ?? left + width), endY = Math.min(top + height, paintBounds?.bottom ?? top + height);
+    for (let y = startY; y < endY; y += size) for (let x = startX; x < endX; x += size)
       ctx.drawImage(image, x, y, size, size);
     return;
   }
@@ -135,6 +139,18 @@ function tile(ctx: CanvasRenderingContext2D, image: CanvasImageSource | undefine
     ctx.beginPath(); ctx.moveTo(left, y);
     ctx.bezierCurveTo(width * .25, y + 45, width * .65, y - 45, width, y + 12); ctx.stroke();
   }
+}
+
+/** Committed and expanding infection use the same opaque, world-anchored paint.
+ * Only their clip differs, so capture never swaps a tint for a different floor. */
+function paintInfectedRegion(ctx: CanvasRenderingContext2D, node: FantasyRegion, state: GameState,
+  image?: (id: string) => CanvasImageSource | undefined, paintBounds?: FantasyRegionGeometry['bounds']): void {
+  const world = activeWorld(state), lung = state.battle?.organId === 'lung';
+  tile(ctx, lung ? image?.('fantasy.lung.floor.infected') ?? image?.(FANTASY_ART.infectedFloor) : image?.(FANTASY_ART.infectedFloor), world, 'infected', paintBounds);
+  if (visibleTerritory(state)) { ctx.fillStyle = '#cf4e6020'; ctx.fillRect(0, 0, world.width, world.height); }
+  const patch = image?.(FANTASY_ART.patches[node.kind === 'source' ? 1 : 0]);
+  if (patch) ctx.drawImage(patch, node.x - 150, node.y - 150, 300, 300);
+  if (visibleTerritory(state) && node.kind !== 'source') tissueVeins(ctx, node, '#5c466c99', 235, true);
 }
 
 /** One shared world-space ground producer for native, menu and 2D fallback. */
@@ -164,21 +180,15 @@ export class FantasyGroundCache {
         if (node.owner !== 'infected') continue;
         const polygon = geometry.get(node.id)?.polygon ?? [];
         ctx.save(); traceTerritoryPolygon(ctx, polygon); ctx.clip();
-        tile(ctx, lung ? getImage('fantasy.lung.floor.infected') ?? getImage(FANTASY_ART.infectedFloor) : getImage(FANTASY_ART.infectedFloor), world, 'infected');
-        if (visibleTerritory(state)) { ctx.fillStyle = '#cf4e6020'; ctx.fillRect(0, 0, world.width, world.height); }
+        paintInfectedRegion(ctx, node, state, getImage, geometry.get(node.id)?.bounds);
         ctx.restore();
         if (visibleTerritory(state)) { ctx.save(); traceTerritoryPolygon(ctx, polygon); ctx.strokeStyle = '#a8485c99'; ctx.lineWidth = 2.5; ctx.stroke(); ctx.restore(); }
-        const patch = getImage(FANTASY_ART.patches[node.kind === 'source' ? 1 : 0]);
-        if (patch) {
-          ctx.save(); traceTerritoryPolygon(ctx, polygon); ctx.clip();
-          ctx.drawImage(patch, node.x - 150, node.y - 150, 300, 300); ctx.restore();
-        }
       }
       if (visibleTerritory(state)) for (const node of regions) {
         const polygon = geometry.get(node.id)?.polygon;
-        if (!polygon?.length || node.kind === 'source') continue;
+        if (!polygon?.length || node.kind === 'source' || node.owner === 'infected') continue;
         ctx.save(); traceTerritoryPolygon(ctx, polygon); ctx.clip();
-        tissueVeins(ctx, node, node.owner === 'healthy' ? '#a4c9ad88' : '#5c466c99', 235, node.owner === 'infected');
+        tissueVeins(ctx, node, '#a4c9ad88', 235);
         ctx.restore();
       }
       this.boundaries(ctx, regions, world.bounds, geometry, getImage);
@@ -255,57 +265,39 @@ export interface TerritoryViewport {
 export interface TerritoryRenderFrame {
   nodes: readonly TerritoryNodeView[]; lanes: readonly TerritoryLaneView[];
   geometry: ReadonlyMap<string, FantasyRegionGeometry>;
+  anchorAttacked: boolean;
 }
 const defaultGeometry = new FantasyTerritoryGeometryCache();
 export function territoryRenderFrame(state: GameState, cache = defaultGeometry): TerritoryRenderFrame | undefined {
   const territory = visibleTerritory(state); if (!territory || state.phase === 'menu') return;
   return { nodes: territory.nodes.flatMap(node => { const view = territoryNodeView(state, node); return view ? [view] : []; }),
-    lanes: territoryLaneViews(state), geometry: cache.prepare(territory.nodes, activeWorld(state).bounds) };
+    lanes: territoryLaneViews(state), geometry: cache.prepare(territory.nodes, activeWorld(state).bounds), anchorAttacked: anchorDangerView(state).attacked };
 }
 const ratio = (progress: number) => Math.max(0, Math.min(1, Number.isFinite(progress) ? progress / 100 : 0));
 const onScreen = (point: Vec, viewport?: TerritoryViewport) => !viewport || (() => { const p = viewport.project(point); return p.x >= 0 && p.x <= viewport.width && p.y >= 0 && p.y <= viewport.height; })();
 
-/** The leading plane travels from the real attacker's side of the cached
- * region to its node. No simulation clock manufactures capture progress. */
-export function territoryCaptureFront(node: Vec, geometry: FantasyRegionGeometry, incoming: Vec, progress: number) {
-  const dx = node.x - incoming.x, dy = node.y - incoming.y, length = Math.hypot(dx, dy);
-  if (length < 1e-6) return;
-  const axis = { x: dx / length, y: dy / length }, entry = Math.min(...geometry.polygon.map(p => (p.x - node.x) * axis.x + (p.y - node.y) * axis.y));
-  const cut = entry * (1 - ratio(progress));
-  return { angle: Math.atan2(axis.y, axis.x), entry, cut, axis, tip: { x: node.x + axis.x * cut, y: node.y + axis.y * cut } };
-}
+/** A node's real progress owns its mask; attacker direction and order cannot flip it. */
+export const territoryCaptureRadius = (geometry: FantasyRegionGeometry, progress: number) => geometry.radius * Math.sqrt(ratio(progress));
 
-function drawLiveRegion(ctx: CanvasRenderingContext2D, view: TerritoryNodeView, geometry: FantasyRegionGeometry, low: boolean): void {
+function drawLiveRegion(ctx: CanvasRenderingContext2D, state: GameState, view: TerritoryNodeView, geometry: FantasyRegionGeometry,
+  image?: (id: string) => CanvasImageSource | undefined): void {
   const node = view.node, purifying = node.owner === 'infected' && view.purificationProgress > 0;
   if (node.owner === 'healthy' && view.infectionProgress <= 0 || node.owner === 'infected' && !purifying) return;
   ctx.save(); traceTerritoryPolygon(ctx, geometry.polygon); ctx.clip();
   if (purifying) {
-    const radius = geometry.radius * Math.sqrt(ratio(view.purificationProgress));
+    const radius = territoryCaptureRadius(geometry, view.purificationProgress);
     ctx.beginPath(); ctx.ellipse(node.x, node.y, radius, radius, 0, 0, TAU); ctx.clip();
     ctx.fillStyle = '#b5d9b65c'; ctx.fillRect(geometry.bounds.left, geometry.bounds.top, geometry.bounds.right - geometry.bounds.left, geometry.bounds.bottom - geometry.bounds.top);
     tissueVeins(ctx, node, '#d4edc8c9', Math.max(45, radius), false);
     ctx.beginPath(); ctx.ellipse(node.x, node.y, Math.max(1, radius - 2), Math.max(1, radius - 2), 0, 0, TAU);
     ctx.strokeStyle = view.pausedReason ? '#c7d0b9' : '#d5edc5'; ctx.lineWidth = 4; ctx.setLineDash(view.pausedReason ? [5, 7] : []); ctx.stroke();
   } else {
-    const front = view.incomingFrom && territoryCaptureFront(node, geometry, view.incomingFrom, view.infectionProgress);
-    if (front) {
-      ctx.translate(node.x, node.y); ctx.rotate(front.angle); const extent = geometry.radius + 5;
-      ctx.fillStyle = '#cf4f6250'; ctx.fillRect(front.entry - 4, -extent, front.cut - front.entry + 4, extent * 2);
-      const count = low ? 4 : 7;
-      for (let index = 0; index < count; index++) {
-        const y = (index / Math.max(1, count - 1) - .5) * extent * 1.6;
-        ctx.beginPath(); ctx.moveTo(front.entry, y); ctx.bezierCurveTo(front.entry + (front.cut - front.entry) * .35, y + 15,
-          front.entry + (front.cut - front.entry) * .7, y - 14, front.cut, y);
-        ctx.strokeStyle = '#b44d66b3'; ctx.lineWidth = 4; ctx.stroke();
-      }
-      ctx.beginPath(); ctx.moveTo(front.cut, -extent);
-      for (let y = -extent + 16, index = 0; y <= extent + 16; y += 16, index++) ctx.lineTo(front.cut + (index % 2 ? -4 : 5), y);
-      ctx.strokeStyle = '#f0a0a9'; ctx.lineWidth = 5; ctx.stroke(); ctx.strokeStyle = '#765380'; ctx.lineWidth = 2; ctx.stroke();
-    } else {
-      // After attackers are gone, show retained infection receding locally;
-      // an unwitnessed attack direction is never invented from a static owner.
-      tissueVeins(ctx, node, '#8b6c9caa', 60 + ratio(view.infectionProgress) * 150, true);
-    }
+    const radius = territoryCaptureRadius(geometry, view.infectionProgress);
+    ctx.beginPath(); ctx.ellipse(node.x, node.y, radius, radius, 0, 0, TAU); ctx.clip();
+    paintInfectedRegion(ctx, node, state, image, { left: Math.max(geometry.bounds.left, node.x - radius), top: Math.max(geometry.bounds.top, node.y - radius),
+      right: Math.min(geometry.bounds.right, node.x + radius), bottom: Math.min(geometry.bounds.bottom, node.y + radius) });
+    ctx.beginPath(); ctx.ellipse(node.x, node.y, Math.max(0, radius - 2), Math.max(0, radius - 2), 0, 0, TAU);
+    ctx.strokeStyle = view.recovering ? '#b38eac' : '#f0a0a9'; ctx.lineWidth = 3; ctx.stroke();
   }
   ctx.restore();
 }
@@ -340,11 +332,12 @@ function drawLane(ctx: CanvasRenderingContext2D, lane: TerritoryLaneView, frame:
 }
 
 /** Live progress/health signals are separate from the cached ownership mask. */
-export function drawTerritorySignals(ctx: CanvasRenderingContext2D, state: GameState, low = false, frame = territoryRenderFrame(state)): void {
+export function drawTerritorySignals(ctx: CanvasRenderingContext2D, state: GameState, low = false, frame = territoryRenderFrame(state),
+  image?: (id: string) => CanvasImageSource | undefined): void {
   const territory = visibleTerritory(state); if (!territory) return;
   if (frame) {
+    for (const view of frame.nodes) { const geometry = frame.geometry.get(view.node.id); if (geometry) drawLiveRegion(ctx, state, view, geometry, image); }
     for (const lane of frame.lanes) drawLane(ctx, lane, frame, low, state);
-    for (const view of frame.nodes) { const geometry = frame.geometry.get(view.node.id); if (geometry) drawLiveRegion(ctx, view, geometry, low); }
   }
   for (const node of territory.nodes) {
     const signal = territoryMarkerView(state, node);
@@ -422,7 +415,7 @@ export function territoryAttackIndicators(frame: TerritoryRenderFrame | undefine
   const center = { x: (safe.left + safe.right) / 2, y: (safe.top + safe.bottom) / 2 }, result: TerritoryAttackIndicator[] = [];
   const overlaps = (a: LabelRect, b: LabelRect) => a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
   for (const view of frame.nodes) {
-    const attacked = view.infecting || view.node.kind === 'core' && view.attackerIds.length > 0 || view.purificationActive && view.pausedReason === 'invader';
+    const attacked = view.node.kind === 'core' ? frame.anchorAttacked : view.infecting || view.purificationActive && view.pausedReason === 'invader';
     if (!attacked || onScreen(view.node, viewport)) continue;
     const p = viewport.project(view.node), dx = p.x - center.x, dy = p.y - center.y;
     const fraction = Math.min(Math.abs(dx) < 1e-6 ? Infinity : (safe.right - safe.left) / 2 / Math.abs(dx),
@@ -493,6 +486,7 @@ export function territoryInvaderMarkers(state: GameState) {
 export function drawTerritoryInvaders(ctx: CanvasRenderingContext2D, state: GameState, labels?: SceneLabelSink, viewport?: TerritoryViewport): void {
   for (const { target, goal } of territoryInvaderMarkers(state)) {
     if (!goal) continue;
+    const carrier = target.territoryTask?.squadKind === 'carrier';
     const angle = Math.atan2(goal.y - target.y, goal.x - target.x), length = Math.min(64, Math.hypot(goal.x - target.x, goal.y - target.y));
     ctx.save(); ctx.strokeStyle = '#e9ddbe'; ctx.lineWidth = 4;
     ctx.beginPath(); ctx.ellipse(target.x, target.y, target.radius + 6, target.radius + 6, 0, .2, Math.PI - .2); ctx.stroke();
@@ -500,12 +494,14 @@ export function drawTerritoryInvaders(ctx: CanvasRenderingContext2D, state: Game
     ctx.translate(target.x, target.y); ctx.rotate(angle);
     ctx.setLineDash([3, 5]); ctx.beginPath(); ctx.moveTo(target.radius + 9, 0); ctx.lineTo(length + target.radius + 9, 0); ctx.stroke(); ctx.setLineDash([]);
     ctx.beginPath(); ctx.moveTo(length + target.radius + 2, -5); ctx.lineTo(length + target.radius + 9, 0); ctx.lineTo(length + target.radius + 2, 5); ctx.stroke(); ctx.restore();
-    const y = target.y - (target.radius * 2 + 14) / .72;
+    // Carrier identity stays below the body, clear of the compact mission HUD.
+    // Older source specialists retain their established overhead marker.
+    const y = carrier ? target.y + (target.radius + 6) / .72 : target.y - (target.radius * 2 + 14) / .72;
     ctx.save(); ctx.translate(target.x, y); ctx.scale(1, 1 / .72);
     ctx.beginPath(); ctx.moveTo(0, -8); ctx.lineTo(8, 0); ctx.lineTo(0, 8); ctx.lineTo(-8, 0); ctx.closePath();
     ctx.fillStyle = '#83658e'; ctx.fill(); ctx.strokeStyle = '#f4ead1'; ctx.lineWidth = 1.5; ctx.stroke(); ctx.restore();
-    if (onScreen(target, viewport)) labels?.add({ id: `territory-invader:${target.id}`, anchor: target, offset: { x: 0, y: -target.radius * 2 - 30 },
-      priority: 84, essential: true, lines: [{ text: `侵染 → ${goal.name}`, color: '#ead1ee', size: 10 }] });
+    if (onScreen(target, viewport)) labels?.add({ id: `territory-invader:${target.id}`, anchor: target, offset: { x: 0, y: carrier ? target.radius + 24 : -target.radius * 2 - 30 },
+      priority: 84, essential: true, lines: [{ text: `${carrier ? '携疫' : '侵染'} → ${goal.name}`, color: '#ead1ee', size: 10 }] });
   }
 }
 

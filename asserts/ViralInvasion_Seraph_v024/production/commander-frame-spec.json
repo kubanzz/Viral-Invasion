@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "role": "commander",
+  "familyScale": 0.66,
+  "sources": [
+    {
+      "direction": "front",
+      "receiptKey": "commander.front.sheet.v03",
+      "version": "v03",
+      "cellGround": [
+        296,
+        548
+      ],
+      "poseDescriptions": {
+        "idle.0": "Steady long-blade guard, command mantle naturally half-open.",
+        "idle.1": "Shoulder/chest lift, open-hand gesture and mantle opening differ.",
+        "move.0": "A extension phase: leading foot extended, rear leg bent; mantle trails.",
+        "move.1": "B passing phase: knee raised, both leg shapes compressed; mantle closer.",
+        "move.2": "A-prime extension phase: similar to0 with smaller knee/arm/mantle differences; not a wholly new gait phase.",
+        "move.3": "B-prime passing phase: similar to1 with smaller knee/arm/mantle differences; not a wholly new gait phase.",
+        "attack.0": "Windup1: sword raised behind shoulder, elbows bent, knees flexed; no forward release.",
+        "attack.1": "Windup2: body compresses/leans further, blade still behind shoulder and elbow bent; no forward release.",
+        "attack.2": "Release-hit: strong forward sword extension with lunge, opened trailing command mantle.",
+        "attack.3": "Recovery: torso rises, sword returns diagonally to side and mantle closes."
+      },
+      "sourceReview": "Actual source2368x1776 inspected; correct4x3 ten-pose layout. Front keeps approved crown/chest/command mantle; idle blade is on the approved side. Attack has two shoulder-back windups, then release and recovery."
+    },
+    {
+      "direction": "back",
+      "receiptKey": "commander.back.sheet.v03",
+      "version": "v03",
+      "includeActions": [
+        "idle",
+        "attack"
+      ],
+      "cellGround": [
+        296,
+        548
+      ],
+      "poseDescriptions": {
+        "idle.0": "Steady long-blade guard, command mantle naturally half-open.",
+        "idle.1": "Shoulder/chest lift, open-hand gesture and mantle opening differ.",
+        "move.0": "Extended leading foot and trailing leg; mantle trails behind.",
+        "move.1": "Raised-knee passing pose; mantle closer to back.",
+        "move.2": "Different step extension and knee/ankle geometry; mantle changes.",
+        "move.3": "Raised-leg passing pose, arm and cloak positions differ.",
+        "attack.0": "Windup1: sword raised behind shoulder, elbows bent, knees flexed; no forward release.",
+        "attack.1": "Windup2: body compresses/leans further, blade still behind shoulder and elbow bent; no forward release.",
+        "attack.2": "Release-hit: strong forward sword extension with lunge, opened trailing command mantle.",
+        "attack.3": "Recovery: torso rises, sword returns diagonally to side and mantle closes."
+      },
+      "sourceReview": "Actual back source inspected: no frontal face/complete chest core in selected idle/attack cells, two distinct retained-sword windups then extension and recovery. Move cells excluded because sword omitted."
+    },
+    {
+      "direction": "back",
+      "receiptKey": "commander.back.sheet.v02",
+      "version": "v02",
+      "includeActions": [
+        "move"
+      ],
+      "cellGround": [
+        296,
+        548
+      ],
+      "poseDescriptions": {
+        "idle.0": "Steady long-blade guard, command mantle naturally half-open.",
+        "idle.1": "Shoulder/chest lift, open-hand gesture and mantle opening differ.",
+        "move.0": "Extended leading foot and trailing leg; mantle trails behind.",
+        "move.1": "Raised-knee passing pose; mantle closer to back.",
+        "move.2": "Different step extension and knee/ankle geometry; mantle changes.",
+        "move.3": "Raised-leg passing pose, arm and cloak positions differ.",
+        "attack.0": "Windup1: sword raised behind shoulder, elbows bent, knees flexed; no forward release.",
+        "attack.1": "Windup2: body compresses/leans further, blade still behind shoulder and elbow bent; no forward release.",
+        "attack.2": "Release-hit: strong forward sword extension with lunge, opened trailing command mantle.",
+        "attack.3": "Recovery: torso rises, sword returns diagonally to side and mantle closes."
+      },
+      "sourceReview": "Actual four back move cells inspected: complete held sword, clear leg/knee/wing positions, no frontal face. Same approved identity. Other v02 cells excluded. Final black-background QA found orphan paper speckles; technical cleanup uses background-neutral238/chroma20 and only the large connected actor contour per cell, preserving the connected crown/blade/mantle and softalpha. No redraw or binaryalpha.",
+      "whiteMin": 238,
+      "chromaMax": 20,
+      "primaryComponentOnly": true
+    }
+  ],
+  "poseValidation": {
+    "reviewer": "Codex v024_commander actual source-sheet inspection",
+    "actualAiPaintedPoses": 20,
+    "staticCopies": 0,
+    "localRigOrWarp": false,
+    "attackSemantics": [
+      "windup-1",
+      "windup-2",
+      "release-hit",
+      "recovery"
+    ],
+    "sourceSelection": "frontv03 all10; backv03 idle2+attack4; backv02 move4. All592px sourcecells use one familyScale.66. Background-connected component isolation may extend beyond a nominal grid cell to preserve complete blade tips, without bbox fitting.",
+    "rejectedSources": [
+      "commander.front.sheet.v01/v02: weapon side inconsistent with approved identity; retained raw only",
+      "commander.back.sheet.v01: attack frontal twist; retained raw only",
+      "commander.back.sheet.v03 move row: weapon omitted; excluded from runtime"
+    ],
+    "frontMoveVisiblePhases": "A/B/A-prime/B-prime: two clearly different extension/passing stance phases with smaller knee/arm/mantle variations between frames0/2 and1/3. Do not claim four strongly distinct locomotion silhouettes.",
+    "familyScaleEvidence": "One common .66 scale preserves the longest back release blade completely inside512; no individual frame bbox scaling. AI source blade extends across the nominal592 cell, so connected pose extraction retains those pixels without taking its neighbor.",
+    "backMoveCleanup": "Only backv02 move4: neutral paper matte238/chroma20 plus primary connected actor component removes orphan paper flecks; source geometry/colors retained, no palette or binaryalpha."
+  }
+}

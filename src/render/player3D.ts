@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import playerModelUrl from '../../asserts/ViralInvasion_Hero3D_v1/model/medic-hero-v1-animated.glb';
 import { HeldWeapons3D, type HeldWeapon3DFrame } from './heldWeapons3D';
+import { createBladeClips, BLADE_CLIP_NAMES, bladeHipTwist } from './bladeAnimationClips';
+import { createBladeMotionV020Clips, BLADE_V020_CLIP_NAMES } from '../../asserts/ViralInvasion_BladeMotion_v020/bladeMotion';
+import { createBladeMotionV022Clips, BLADE_V022_CLIP_NAMES } from '../../asserts/ViralInvasion_BladeMotion_v022/bladeMotion';
 import type { GameState, Vec } from '../game/types';
 import { Player3DMotionController, type Player3DMotionFrame, type Player3DAnimationEvent,
   BOW_READY_TIME, type Player3DLocomotionClip, type Player3DUpperClip } from './player3DMotion';
@@ -11,7 +14,7 @@ const ELEVATION = Math.asin(.72);
 const VIEW_SIZE = 1.6;
 const GROUND_OFFSET = .023;
 const BASE_CLIPS: readonly Player3DLocomotionClip[] = ['Idle_Subtle', 'Jog', 'Walk_Backwards', 'Strafe_left', 'Strafe_right', 'Sprint'];
-const UPPER_CLIPS: readonly Player3DUpperClip[] = ['Pistol_Idle', 'Pistol_Shoot', 'Bow_Ready', 'Bow Pull Back', 'Bow Pull Hold', 'Bow Release'];
+const UPPER_CLIPS: readonly Player3DUpperClip[] = ['Pistol_Idle', 'Pistol_Shoot', 'Bow_Ready', 'Bow Pull Back', 'Bow Pull Hold', 'Bow Release', ...BLADE_CLIP_NAMES, ...BLADE_V020_CLIP_NAMES];
 const upperBone = (name: string): boolean => /mixamorig(?:Spine|Neck|Head|LeftShoulder|RightShoulder|LeftArm|RightArm|LeftForeArm|RightForeArm|LeftHand|RightHand)/.test(name);
 
 export interface Player3DFrame {
@@ -50,11 +53,18 @@ export class Player3D {
   private readonly bases = new Map<Player3DLocomotionClip, BaseSlots>();
   private readonly uppers = new Map<Player3DUpperClip, ActionSlot>();
   private hit?: ActionSlot;
+  private bladeFull?: ActionSlot;
+  private bladeCharge?: ActionSlot;
+  private bladeFinish?: ActionSlot;
   private readonly joints: THREE.Bone[] = [];
   private rightHand?: THREE.Object3D;
   private rightFinger?: THREE.Object3D;
   private leftHand?: THREE.Object3D;
   private leftFinger?: THREE.Object3D;
+  private hips?: THREE.Object3D;
+  private readonly unmixedHips = new THREE.Quaternion();
+  private readonly hipRotation = new THREE.Quaternion();
+  private hipTwist = 0;
   private projectedBindHeight = .8;
   private resolution = 0;
   private runKey = '';
@@ -69,6 +79,7 @@ export class Player3D {
   private error?: string;
   private sha256: string | null = null;
   private clipNames: string[] = [];
+  private authoredClipNames: string[] = [];
   private triangles = 0;
   private meshCount = 0;
   private skinnedMeshCount = 0;
@@ -167,12 +178,19 @@ export class Player3D {
     if (this.joints.length !== 53 || this.clipNames.length !== 17) throw new Error('角色骨架或动作数量不符合已验收资产。');
     this.rightHand = this.model.getObjectByName('mixamorigRightHand'); this.rightFinger = this.model.getObjectByName('mixamorigRightHandMiddle1');
     this.leftHand = this.model.getObjectByName('mixamorigLeftHand'); this.leftFinger = this.model.getObjectByName('mixamorigLeftHandMiddle1');
+    this.hips = this.model.getObjectByName('mixamorigHips');
     if (!this.rightHand || !this.leftHand) throw new Error('角色缺少可用手骨，无法附着武器。');
-    const weapons = await HeldWeapons3D.load(this.model, gltf.animations);
+    const pistolReference = gltf.animations.find(clip => clip.name === 'Pistol_Idle');
+    if (!pistolReference) throw new Error('缺少刀动作参考骨架。');
+    const oldBladeClips = createBladeClips(pistolReference);
+    const previousBladeClips = [...oldBladeClips, ...createBladeMotionV020Clips(this.model, [...gltf.animations, ...oldBladeClips])];
+    const bladeClips = [...previousBladeClips, ...createBladeMotionV022Clips(this.model, [...gltf.animations, ...previousBladeClips])];
+    this.authoredClipNames = bladeClips.map(clip => clip.name);
+    const weapons = await HeldWeapons3D.load(this.model, [...gltf.animations, ...bladeClips]);
     if (this.destroyed) { weapons.dispose(); return; }
     this.weapons = weapons;
     this.mixer = new THREE.AnimationMixer(this.model);
-    const clips = new Map(gltf.animations.map(clip => [clip.name, clip]));
+    const clips = new Map([...gltf.animations, ...bladeClips].map(clip => [clip.name, clip]));
     const draw = clips.get('Bow Pull Back');
     if (!draw) throw new Error('缺少持弓校准动作。');
     const ready = draw.clone(); ready.name = 'Bow_Ready'; ready.duration = 1;
@@ -191,6 +209,9 @@ export class Player3D {
     }
     const hurt = clips.get('Hit_Chest'); if (!hurt) throw new Error('缺少受击动作。');
     this.hit = this.slot(hurt.clone(), hurt.name);
+    this.bladeFull = this.slot(clips.get('Blade_FourfoldDash_v020')!.clone(), 'Blade_FourfoldDash_v020');
+    this.bladeCharge = this.slot(clips.get('Blade_ChargeDraw_v022')!.clone(), 'Blade_ChargeDraw_v022');
+    this.bladeFinish = this.slot(clips.get('Blade_FinishSettle_v022')!.clone(), 'Blade_FinishSettle_v022');
     await this.renderer!.compileAsync(this.scene, this.camera);
     if (this.destroyed) return;
     this.available = true;
@@ -229,6 +250,8 @@ export class Player3D {
       for (const slots of this.bases.values()) for (const slot of [slots.lower, slots.upper]) slot.action.reset().setLoop(THREE.LoopRepeat, Infinity).play();
       for (const slot of this.uppers.values()) slot.action.reset().setLoop(THREE.LoopRepeat, Infinity).play();
       this.hit?.action.reset().play();
+      this.bladeFull?.action.reset().play();
+      this.bladeCharge?.action.reset().play(); this.bladeFinish?.action.reset().play();
     }
     const delta = Math.min(.1, motion.delta);
     this.armWeight = initial ? (motion.upperClip ? 1 : 0) : THREE.MathUtils.damp(this.armWeight, motion.upperClip ? 1 : 0, 24, delta);
@@ -255,16 +278,30 @@ export class Player3D {
       }
     }
     if (this.hit) {
-      this.setWeight(this.hit, this.hurtWeight, delta, initial);
-      if (motion.fullBodyEvent) {
+      this.setWeight(this.hit, motion.fullBodyEvent?.clip === 'Hit_Chest' ? this.hurtWeight : 0, delta, initial);
+      if (motion.fullBodyEvent?.clip === 'Hit_Chest') {
         if (this.fullEventId !== motion.fullBodyEvent.id) { this.hit.action.reset().play(); this.fullEventId = motion.fullBodyEvent.id; }
         this.event(this.hit, motion.fullBodyEvent);
       }
     }
+    for (const slot of [this.bladeFull, this.bladeCharge, this.bladeFinish]) if (slot) {
+      this.setWeight(slot, motion.fullBodyEvent?.clip === slot.source ? this.hurtWeight : 0, delta, initial);
+      if (motion.fullBodyEvent?.clip === slot.source) this.event(slot, motion.fullBodyEvent);
+    }
     this.desiredRotation.setFromAxisAngle(this.up, motion.bodyYaw);
     if (initial) this.turn.quaternion.copy(this.desiredRotation);
     else if (!motion.paused) this.turn.quaternion.slerp(this.desiredRotation, 1 - Math.exp(-24 * delta));
-    this.mixer.update(motion.paused ? 0 : delta); this.scene.updateMatrixWorld(true);
+    // Remove the last presentation-only yaw before evaluating the mixer, so a
+    // paused/repeated draw cannot accumulate torsion into the rig.
+    if (this.hips && this.hipTwist !== 0) this.hips.quaternion.copy(this.unmixedHips);
+    this.mixer.update(motion.paused ? 0 : delta);
+    const event = motion.upperEvent;
+    this.hipTwist = motion.fullBodyEvent ? 0 : bladeHipTwist(event?.clip, event?.age ?? 0, event?.duration ?? 0, motion.moving);
+    if (this.hips) {
+      this.unmixedHips.copy(this.hips.quaternion);
+      if (this.hipTwist !== 0) this.hips.quaternion.multiply(this.hipRotation.setFromAxisAngle(this.up, this.hipTwist));
+    }
+    this.scene.updateMatrixWorld(true);
     this.weapons?.update(state, motion); this.scene.updateMatrixWorld(true);
     const resolution = Math.min(height > 180 ? 768 : 384, Math.max(256, Math.ceil(height * Math.min(2, devicePixelRatio || 1) * 2.8 / 64) * 64));
     if (resolution !== this.resolution) { this.resolution = resolution; this.renderer.setSize(resolution, resolution, false); }
@@ -302,13 +339,14 @@ export class Player3D {
     return { enabled: true, ready: this.available, error: this.error ?? null, threeVersion: THREE.REVISION,
       expectedSha256: EXPECTED_SHA256, sha256: this.sha256, hashVerified: this.sha256 ? this.sha256 === EXPECTED_SHA256 : null,
       jointCount: this.joints.length, clipNames: [...this.clipNames], triangles: this.triangles, meshCount: this.meshCount,
+        authoredBladeClips: [...this.authoredClipNames],
       skinnedMeshCount: this.skinnedMeshCount, textureSizes: this.textureSizes, drawCount: this.drawCount,
       canvas: { width: this.canvas.width, height: this.canvas.height },
       weapon3D: this.weapons?.diagnostics() ?? { ready: false, active: false },
       frame: frame && motion ? { bodyFacing: frame.facing, bodyYaw: Math.PI / 2 - frame.facing, paused: motion.paused, poseTime: motion.time,
         moving: motion.moving, dashing: motion.dashing, speed: motion.speed, stridePhase: motion.stridePhase,
         locomotionWeights: Object.fromEntries([...this.bases].map(([name, slots]) => [name, slots.lower.weight])),
-        upperClip: motion.upperClip ?? null, fullBodyClip: motion.fullBodyEvent?.clip ?? null,
+        upperClip: motion.upperClip ?? null, fullBodyClip: motion.fullBodyEvent?.clip ?? null, hipTwist: this.hipTwist,
         upperWeights: Object.fromEntries([...this.uppers].map(([name, slot]) => [name, slot.weight])), hurtWeight: this.hit?.weight ?? 0,
         width: frame.width, height: frame.height, foot: frame.foot, grip: frame.grip, leftGrip: frame.leftGrip, weapon: frame.weapon, bounds: frame.bounds, version: frame.version } : null };
   }
@@ -336,7 +374,8 @@ export class Player3D {
     this.weapons?.dispose(); this.weapons = undefined;
     if (this.model) { this.mixer?.stopAllAction(); this.mixer?.uncacheRoot(this.model); this.releaseModel(this.model); this.turn.remove(this.model); }
     this.bases.clear(); this.uppers.clear(); this.joints.length = 0;
-    this.hit = undefined; this.rightHand = undefined; this.rightFinger = undefined; this.leftHand = undefined; this.leftFinger = undefined;
+    this.authoredClipNames = [];
+    this.hit = undefined; this.bladeFull = undefined; this.bladeCharge = undefined; this.bladeFinish = undefined; this.rightHand = undefined; this.rightFinger = undefined; this.leftHand = undefined; this.leftFinger = undefined;
     this.pose = undefined; this.scene.clear();
     this.renderer?.dispose(); this.renderer?.forceContextLoss(); this.renderer = undefined; this.model = undefined; this.mixer = undefined;
   }

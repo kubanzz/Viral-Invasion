@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { CAMP_CONSTRUCTION_SECONDS, CAMP_FACILITY_PROGRESS, INTRO_FACILITY_IDS, campHasFacility, campIntroBuilt, canBuildCampFacility, nextCampFacility } from '../../src/game/campProgression';
 import { CAMP_FACILITIES, type CampStationId } from '../../src/game/campLayout';
-import { CAMP_PROFILE_STORAGE_KEY, CampProfileStore, emptyCampProfile, parseCampProfile } from '../../src/meta/campProfile';
+import { CAMP_PROFILE_SCHEMA_VERSION, CAMP_PROFILE_STORAGE_KEY, CampProfileStore, emptyCampProfile, parseCampProfile } from '../../src/meta/campProfile';
 import type { EndlessProfileStorage } from '../../src/meta/endlessProfile';
 import { STARTER_COINS } from '../../src/game/microfront';
 
@@ -22,7 +22,7 @@ function stored(data: ReturnType<typeof emptyCampProfile>) {
 describe('player-built introductory camp', () => {
   it('keeps the five introductory requirements explicit while sharing facility metadata with geometry', () => {
     expect(INTRO_FACILITY_IDS).toEqual(['warehouse', 'forge', 'shop', 'summon', 'departure']);
-    expect(CAMP_FACILITIES.map(facility => facility.id)).toEqual(INTRO_FACILITY_IDS);
+    expect(CAMP_FACILITIES.map(facility => facility.id)).toEqual([...INTRO_FACILITY_IDS, 'farm', 'house']);
     const arrival = emptyCampProfile(), established = { ...arrival, campUnlocked: true, prologue: 'building' as const };
     for (const id of INTRO_FACILITY_IDS) {
       const definition = CAMP_FACILITY_PROGRESS[id], geometry = CAMP_FACILITIES.find(facility => facility.id === id)!;
@@ -105,8 +105,8 @@ describe('camp schema and content read state', () => {
     Object.assign(data, { campUnlocked: true, campIntroSeen: true, prologue: 'ready', completedMissions: ['membrane'],
       inventory: [...data.inventory, { id: 'old:module', templateId: 'PULSE_BREAK', kind: 'module', rarity: 'purple', repaired: true }] });
     const parsed = parseCampProfile({ ...data, schemaVersion: 2 })!;
-    expect(parsed.schemaVersion).toBe(3); expect(parsed.builtFacilities).toEqual(INTRO_FACILITY_IDS);
-    expect(parsed.seenMissionIds).toEqual(['membrane', 'corridor']); expect(parsed.seenEquipmentQuality).toEqual({ steady: 'white', PULSE_BREAK: 'purple' });
+    expect(parsed.schemaVersion).toBe(CAMP_PROFILE_SCHEMA_VERSION); expect(parsed.builtFacilities).toEqual(INTRO_FACILITY_IDS);
+    expect(parsed.seenMissionIds).toEqual(['membrane', 'corridor']); expect(parsed.seenEquipmentQuality).toEqual({ steady: 'purple', PULSE_BREAK: 'purple' });
     expect(parseCampProfile({ ...data, schemaVersion: 1 })?.builtFacilities).toEqual(INTRO_FACILITY_IDS);
   });
 
@@ -114,9 +114,9 @@ describe('camp schema and content read state', () => {
     const data = { ...emptyCampProfile(), schemaVersion: 2, campUnlocked: true, prologue: 'building' };
     const storage = new Storage(); storage.setItem(CAMP_PROFILE_STORAGE_KEY, JSON.stringify(data));
     const store = new CampProfileStore(storage);
-    expect(store.data).toMatchObject({ schemaVersion: 3, prologue: 'building', campIntroSeen: false, builtFacilities: [] });
+    expect(store.data).toMatchObject({ schemaVersion: CAMP_PROFILE_SCHEMA_VERSION, prologue: 'building', campIntroSeen: false, builtFacilities: [] });
     expect(store.finishCampIntro().code).toBe('incomplete'); expect(store.beginBuild('warehouse').accepted).toBe(true);
-    expect(JSON.parse(storage.getItem(CAMP_PROFILE_STORAGE_KEY)!).schemaVersion).toBe(3);
+    expect(JSON.parse(storage.getItem(CAMP_PROFILE_STORAGE_KEY)!).schemaVersion).toBe(CAMP_PROFILE_SCHEMA_VERSION);
     expect(parseCampProfile({ ...emptyCampProfile(), schemaVersion: 2 })?.builtFacilities).toEqual([]);
   });
 
@@ -124,7 +124,7 @@ describe('camp schema and content read state', () => {
     const data = { ...emptyCampProfile(), schemaVersion: 2, campUnlocked: true, prologue: 'arrival', legacyMigrationChecked: true };
     const storage = new Storage(); storage.setItem(CAMP_PROFILE_STORAGE_KEY, JSON.stringify(data));
     const store = new CampProfileStore(storage);
-    expect(store.data).toMatchObject({ schemaVersion: 3, prologue: 'ready', campIntroSeen: true, builtFacilities: INTRO_FACILITY_IDS });
+    expect(store.data).toMatchObject({ schemaVersion: CAMP_PROFILE_SCHEMA_VERSION, prologue: 'ready', campIntroSeen: true, builtFacilities: INTRO_FACILITY_IDS });
     expect(new CampProfileStore(storage).data).toEqual(store.data);
     expect(parseCampProfile({ ...emptyCampProfile(), schemaVersion: 2, prologue: 'ready' })).toBeNull();
     expect(parseCampProfile({ ...emptyCampProfile(), schemaVersion: 2, prologue: 'building' })).toBeNull();

@@ -36,7 +36,7 @@ describe('production weapon skill input and lifecycle integration', () => {
   it('dispatches slot 2 as a weapon skill while normal fire stays independent', () => {
     const f = arena(); f.target('capsule-target', 1300);
     f.step({ weaponSkill: { slot: 2, aim: f.aim }, fire: true });
-    expect(f.state.tool).toBe(1); expect(f.state.weaponCombat!.cooldowns[2]).toBeGreaterThan(10);
+    expect(f.state.tool).toBe(1); expect(f.state.weaponCombat!.cooldowns[2]).toBeCloseTo(f.state.elapsed + 9);
     expect(f.state.cooldowns[2]).toBe(0); expect(f.state.playerProjectiles).toHaveLength(0);
     f.advance(40, { fire: true });
     const hits = f.events.filter(event => event.type === 'TARGET_HIT');
@@ -49,7 +49,7 @@ describe('production weapon skill input and lifecycle integration', () => {
     f.advance(600, { fire: true, weaponSkill: { slot: 3, aim: f.aim } });
     expect(f.state.elapsed).toBe(elapsed); expect(f.state.weaponCombat).toEqual(runtime); expect(f.state.playerProjectiles).toEqual(shots);
     f.game.resume(); f.advance(35);
-    expect(f.events.filter(event => event.type === 'PLAYER_PROJECTILE_LAUNCHED' && event.data.skillId === 'steady-burst')).toHaveLength(5);
+    expect(f.events.filter(event => event.type === 'PLAYER_PROJECTILE_LAUNCHED' && event.data.skillId === 'steady-burst')).toHaveLength(8);
     expect(f.state.weaponCombat!.reservedProjectiles).toBe(0);
   });
   it('cancels the unlaunched tail on dash without refunding a cooldown or resurrecting needles', () => {

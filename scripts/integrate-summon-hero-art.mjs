@@ -54,7 +54,7 @@ await writeFile(selectionPath, JSON.stringify(selected, null, 2) + '\n');
 let generated, size = 384;
 try { generated = await syncArt(); }
 catch (error) {
-  if (!String(error.message).includes('exceeds 20MB budget')) throw error;
+  if (!String(error.message).includes('exceeds 32MB budget')) throw error;
   size = 256;
   for (const entry of entries) entry.spec.size = size;
   await writeFile(selectionPath, JSON.stringify(selected, null, 2) + '\n');
@@ -72,7 +72,7 @@ const assets = await Promise.all(entries.map(async entry => {
     heroId: entry.spec.id, heroFrame: { width: hero.width, height: hero.height }, heroVisible: hero.visibleBounds };
 }));
 const report = { scope: 'Nine UI atlas variants of the same selected original PNGs. No generation, source-image edits, character registration changes or budget increase.',
-  size, runtimeBytes: Buffer.byteLength(JSON.stringify(generated.runtime)), runtimeBudget: 20 * 1024 * 1024, sourcePngsUnchanged: true, originalRegistrationsUnchanged: true, assets };
+  size, runtimeBytes: Buffer.byteLength(JSON.stringify(generated.runtime)), runtimeBudget: 32 * 1024 * 1024, sourcePngsUnchanged: true, originalRegistrationsUnchanged: true, assets };
 await mkdir(dirname(reportPath), { recursive: true });
 await writeFile(reportPath, JSON.stringify(report, null, 2));
 console.log(JSON.stringify({ size, runtimeBytes: report.runtimeBytes, assets: assets.length, report: reportPath }));

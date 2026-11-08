@@ -1,42 +1,65 @@
 import { wallHit } from '../actors/collision';
 import { activeWorld, type GameState, type Vec } from '../game/types';
 import { drawCombatReceiptFeedback } from './endlessVisuals';
+import { drawWeaponUltimateEffects, type WeaponEffectImage, type WeaponEffectScreenScale } from './weaponUltimateVisuals';
+import type { CombatVfxOptions } from './combatVfxOptions';
 
 const TAU = Math.PI * 2;
 function ring(ctx: CanvasRenderingContext2D, center: Vec, radius: number): void {
   ctx.beginPath(); ctx.arc(center.x, center.y, radius, 0, TAU); ctx.stroke();
 }
 
+/** The leading edge crosses quickly; the wide tail catches up and breaks away.
+ * Values stay inside the accepted cone even when a wall truncates the blade. */
+export function slashSweepWindow(progress: number): { tail: number; head: number; alpha: number; width: number; coreAlpha: number } {
+  const clamp = (n: number) => Math.max(0, Math.min(1, n));
+  const p = clamp(progress), strike = clamp(p / .43);
+  const head = .18 + .82 * (1 - (1 - strike) ** 3);
+  const tail = clamp((p - .13) / .82) ** 1.7;
+  return { tail: Math.min(head - .015, tail), head, alpha: (1 - p) ** 1.5,
+    width: .16 * (1 - p * .7), coreAlpha: (1 - clamp((p - .12) / .51)) ** 2 };
+}
+
 /** Only reads simulation geometry. Raster assets and collision remain independent. */
-export function drawCombatEffects(ctx: CanvasRenderingContext2D, state: GameState, lowEffects = false): void {
+export function drawCombatEffects(ctx: CanvasRenderingContext2D, state: GameState, lowEffects = false, image?: WeaponEffectImage, showBladeHint = true, screenScale?: WeaponEffectScreenScale, options: CombatVfxOptions = {}): void {
   const world = activeWorld(state);
-  drawCombatReceiptFeedback(ctx, state, lowEffects);
-  for (const effect of state.effects) if (effect.kind === 'slash') {
-    const age = state.elapsed - effect.born;
+  if (!options.nativeVfx) drawCombatReceiptFeedback(ctx, state, lowEffects);
+  drawWeaponUltimateEffects(ctx, state, lowEffects, image, showBladeHint, screenScale, options);
+  const now = state.phase === 'playing' ? state.visualTime ?? state.elapsed : state.elapsed;
+  for (const effect of state.effects) if (effect.kind === 'slash' && !options.nativeVfx) {
+    const age = now - effect.born;
     if (age < 0 || age >= effect.duration) continue;
     const progress = age / effect.duration, half = effect.arcHalfAngle ?? Math.PI * .6;
     const facing = Math.atan2(effect.to.y - effect.from.y, effect.to.x - effect.from.x);
-    const steps = lowEffects ? 24 : 48, edge: Vec[] = [];
+    const sweep = slashSweepWindow(progress);
+    const receipt = state.events.find(event => event.type === 'WEAPON_MELEE_SWING' && Math.abs(event.tick / 60 - effect.born) < .009);
+    const reverse = receipt?.data.combo === 2;
+    const steps = lowEffects ? 18 : 36, edge: Vec[] = [];
     for (let i = 0; i <= steps; i++) {
-      const angle = facing - half + i / steps * half * 2, direction = { x: Math.cos(angle), y: Math.sin(angle) };
+      const phase = sweep.tail + i / steps * (sweep.head - sweep.tail);
+      const angle = facing - half + (reverse ? 1 - phase : phase) * half * 2, direction = { x: Math.cos(angle), y: Math.sin(angle) };
       const range = Math.min(effect.radius, wallHit(effect.from, direction, effect.radius, world) ?? effect.radius);
       edge.push({ x: effect.from.x + direction.x * range, y: effect.from.y + direction.y * range });
     }
-    ctx.save(); ctx.globalAlpha = Math.max(0, 1 - progress); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.moveTo(effect.from.x, effect.from.y);
-    for (const p of edge) ctx.lineTo(p.x, p.y);
-    ctx.closePath(); ctx.fillStyle = '#bfd0aa20'; ctx.fill();
-    // One tapered cream blade, with its outer edge on the real clipped hit
-    // boundary. The inner silhouette avoids three overlapping neon outlines.
+    ctx.save(); ctx.globalAlpha = sweep.alpha; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    // A moving tapered ribbon follows the outer collision boundary. It never
+    // becomes a filled cone, and the brightest nose outlives the broad tail differently.
     ctx.beginPath();
     edge.forEach((p, i) => { if (!i) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
     for (let i = edge.length - 1; i >= 0; i--) {
-      const taper = Math.sin(i / (edge.length - 1) * Math.PI), inset = 1 - .13 * taper;
+      const taper = Math.sin(i / (edge.length - 1) * Math.PI), inset = 1 - sweep.width * taper;
       ctx.lineTo(effect.from.x + (edge[i].x - effect.from.x) * inset, effect.from.y + (edge[i].y - effect.from.y) * inset);
     }
-    ctx.closePath(); ctx.fillStyle = '#f7eacb'; ctx.fill();
+    ctx.closePath(); ctx.fillStyle = state.weaponCombat?.loadout.weaponId === 'redblade' ? '#ffd99c' : '#f7eacb'; ctx.fill();
     ctx.beginPath(); edge.forEach((p, i) => { if (!i) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
-    ctx.strokeStyle = '#548b78'; ctx.lineWidth = 1.8; ctx.stroke();
+    ctx.strokeStyle = state.weaponCombat?.loadout.weaponId === 'redblade' ? '#bc6657' : '#548b78'; ctx.lineWidth = 1.8; ctx.stroke();
+    if (!lowEffects && sweep.coreAlpha > .01) {
+      ctx.globalAlpha = sweep.coreAlpha * .9; ctx.strokeStyle = '#fff9dc'; ctx.lineWidth = 2;
+      ctx.beginPath();
+      const start = Math.max(0, edge.length - Math.ceil(edge.length * .35));
+      for (let i = start; i < edge.length; i++) { const p = edge[i]; if (i === start) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); }
+      ctx.stroke();
+    }
     ctx.restore();
   }
   const cast = state.traction;

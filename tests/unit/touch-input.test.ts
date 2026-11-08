@@ -8,6 +8,7 @@ import { healingPoints } from '../../src/game/healingPoints';
 import { BALANCE, type GameState, type Target, type Vec } from '../../src/game/types';
 import { TERRITORY_CANNON_BALANCE } from '../../src/game/territoryCannon';
 import { initializeConstruction } from '../../src/game/construction';
+import { createWeaponCombat } from '../../src/game/weaponSkills';
 
 class ElementStub extends EventTarget {
   parentElement: ElementStub | null = null;
@@ -35,6 +36,7 @@ class ElementStub extends EventTarget {
         : part.trim() === '[data-touch-action]' ? !!this.dataset.touchAction
           : part.trim() === '[data-touch-skill]' ? !!this.dataset.touchSkill
             : part.trim() === '[data-weapon-skill]' ? !!this.dataset.weaponSkill
+            : part.trim() === '[data-weapon-ultimate]' ? this.dataset.weaponUltimate !== undefined
             : part.trim() === '[data-touch-cancel]' ? this.dataset.touchCancel !== undefined
               : part.trim() === '[data-touch-guide]' ? this.dataset.touchGuide !== undefined : false);
   }
@@ -85,22 +87,183 @@ function fixture(stateOverride?: GameState) {
     element.dataset.weaponSkill = slot; element.append(new ElementStub('knob', { left: 0, top: 0, width: 16, height: 16 }));
     return [slot, element];
   }));
+  const ultimate = new ElementStub('ultimate', { left: 760, top: 65, width: 52, height: 52 }); ultimate.dataset.weaponUltimate = '';
+  ultimate.append(new ElementStub('knob', { left: 0, top: 0, width: 16, height: 16 }));
   const cancel = new ElementStub('cancel', { left: 320, top: 20, width: 80, height: 40 }); cancel.dataset.touchCancel = ''; cancel.hidden = true;
   const guide = new ElementStub('guide', { left: 410, top: 20, width: 80, height: 40 }); guide.dataset.touchGuide = ''; guide.hidden = true;
   const buttons = Object.fromEntries(['cast', 'dash', 'scan', 'interact', 'antibody', 'territory'].map(action => {
     const element = new ElementStub('button'); element.dataset.touchAction = action; return [action, element];
   }));
   const tactics = new ElementStub('details'), summary = new ElementStub('summary'); tactics.append(summary);
-  root.append(move, aim, attack, ...Object.values(skills), ...Object.values(weaponSkills), cancel, guide, ...Object.values(buttons), tactics);
+  root.append(move, aim, attack, ...Object.values(skills), ...Object.values(weaponSkills), ultimate, cancel, guide, ...Object.values(buttons), tactics);
   const onPreviewChange = vi.fn();
   const controls = new TouchControls({ root: root as unknown as HTMLElement, canvas: canvas as unknown as HTMLCanvasElement,
     input, getState: () => state, screenToWorld: project, canAccept, enabled: () => enabled, onPreviewChange });
   const frame = () => input.frame(input.getAim(state, project));
-  return { browser, document, input, canvas, camera, project, root, move, aim, attack, skills, weaponSkills, cancel, guide, onPreviewChange, buttons, controls, state, frame, tactics, summary,
+  return { browser, document, input, canvas, camera, project, root, move, aim, attack, skills, weaponSkills, ultimate, cancel, guide, onPreviewChange, buttons, controls, state, frame, tactics, summary,
     allow(value: boolean) { allowed = value; }, enable(value: boolean) { enabled = value; } };
 }
 
 afterEach(() => vi.unstubAllGlobals());
+
+describe('sustained thunder input and active ultimate recast', () => {
+  const thunder = () => {
+    const game = new GameSession(71, { mode: 'endless', territory: true }); game.start();
+    game.state.weaponCombat = createWeaponCombat({ weaponId: 'thunder', rarity: 'gold', upgrade: 0 });
+    game.state.weaponCombat.ultimateEnergy = 100;
+    const f = fixture(game.state); f.frame();
+    return { ...f, game };
+  };
+  it('reports real held intent separately from a quick press receipt and clears it on blur', () => {
+    const f = thunder();
+    pointer(f.canvas, 'pointerdown', 1, 400, 180, undefined, 'mouse');
+    expect(f.frame()).toMatchObject({ fire: true, primaryHeld: true });
+    pointer(f.browser, 'pointerup', 1, 400, 180, undefined, 'mouse');
+    expect(f.frame().primaryHeld).toBe(false);
+    pointer(f.canvas, 'pointerdown', 2, 400, 180, undefined, 'mouse');
+    pointer(f.browser, 'pointerup', 2, 400, 180, undefined, 'mouse');
+    expect(f.frame()).toMatchObject({ fire: true, primaryHeld: false });
+    pointer(f.root, 'pointerdown', 3, 750, 300, f.attack);
+    expect(f.frame().primaryHeld).toBe(true);
+    f.browser.dispatchEvent(new Event('blur'));
+    expect(f.frame()).toMatchObject({ fire: false, primaryHeld: false });
+  });
+  it('delivers exactly the short-press pulse to a real session without retaining a released channel', () => {
+    const f = thunder();
+    f.state.world = { width: 1200, height: 800, bounds: { left: 20, right: 1180, top: 20, bottom: 780 }, obstacles: [], foreground: { x: 0, y: 0, width: 0, height: 0 } };
+    Object.assign(f.state.player, { x: 500, y: 400 });
+    const body: Target = { id: 'short-press-body', x: 620, y: 400, radius: 18, kind: 'single', role: 'virus', hp: 10000, maxHp: 10000, hitUntil: 0, scanned: false };
+    f.state.targets = [body];
+    pointer(f.canvas, 'pointerdown', 1, 400, 180, undefined, 'mouse');
+    pointer(f.browser, 'pointerup', 1, 400, 180, undefined, 'mouse');
+    const tap = f.frame(); expect(tap).toMatchObject({ fire: true, primaryHeld: false });
+    f.game.step(tap);
+    const remaining = body.hp;
+    expect(remaining).toBeLessThan(10000); expect(f.state.weaponCombat?.thunder?.channel).toBeUndefined();
+    for (let n = 0; n < 20; n++) f.game.step(f.frame());
+    expect(body.hp).toBe(remaining); expect(f.state.weaponCombat?.thunder?.channel).toBeUndefined();
+  });
+  it('does not turn a cancelled or blocked primary pointer into a short-press pulse', () => {
+    const f = thunder();
+    const before = f.state.shots;
+    pointer(f.canvas, 'pointerdown', 1, 400, 180, undefined, 'mouse');
+    pointer(f.canvas, 'pointercancel', 1, 400, 180, undefined, 'mouse');
+    const cancelled = f.frame(); expect(cancelled).toMatchObject({ fire: false, primaryHeld: false });
+    f.game.step(cancelled); expect(f.state.shots).toBe(before); expect(f.state.weaponCombat?.thunder?.channel).toBeUndefined();
+    f.allow(false); pointer(f.canvas, 'pointerdown', 2, 400, 180, undefined, 'mouse'); pointer(f.browser, 'pointerup', 2, 400, 180, undefined, 'mouse');
+    f.allow(true); const blocked = f.frame(); expect(blocked).toMatchObject({ fire: false, primaryHeld: false });
+    f.game.step(blocked); expect(f.state.shots).toBe(before); expect(f.state.weaponCombat?.thunder?.channel).toBeUndefined();
+  });
+  it('keeps movement and held electricity while a third finger previews and releases thunder step', () => {
+    const f = thunder();
+    pointer(f.root, 'pointerdown', 1, 90, 50, f.move);
+    pointer(f.root, 'pointerdown', 2, 750, 300, f.attack);
+    const skill = f.weaponSkills['3'], rect = skill.getBoundingClientRect();
+    pointer(f.root, 'pointerdown', 3, rect.left + 26, rect.top + 26, skill);
+    expect(f.input.resolvePreview(f.state, f.project)).toMatchObject({ kind: 'weapon', weaponSlot: 3 });
+    expect(f.frame()).toMatchObject({ moveX: 1, fire: true, primaryHeld: true });
+    pointer(f.browser, 'pointerup', 3, rect.left + 26, rect.top + 26);
+    expect(f.frame()).toMatchObject({ moveX: 1, fire: true, primaryHeld: true, weaponSkill: { slot: 3 } });
+    pointer(f.browser, 'pointerup', 2, 750, 300);
+    expect(f.frame().primaryHeld).toBe(false);
+  });
+  it('starts and recasts the thunder storm with direct taps while two fingers remain held', () => {
+    const f = thunder();
+    pointer(f.root, 'pointerdown', 1, 90, 50, f.move);
+    pointer(f.root, 'pointerdown', 2, 750, 300, f.attack);
+    pointer(f.root, 'pointerdown', 3, 786, 91, f.ultimate);
+    expect(f.input.resolvePreview(f.state, f.project)).toBeUndefined();
+    const start = f.frame(); expect(start).toMatchObject({ moveX: 1, primaryHeld: true, weaponUltimate: expect.any(Object) });
+    f.game.step(start); pointer(f.browser, 'pointerup', 3, 786, 91);
+    for (let n = 0; n < 23; n++) f.game.step(f.frame());
+    pointer(f.root, 'pointerdown', 4, 786, 91, f.ultimate);
+    const finish = f.frame(); expect(finish).toMatchObject({ moveX: 1, primaryHeld: true, weaponUltimate: expect.any(Object) });
+    expect(f.input.resolvePreview(f.state, f.project)).toBeUndefined();
+    f.game.step(finish); expect(f.game.state.weaponCombat!.ultimateEnergy).toBe(0);
+    pointer(f.browser, 'pointerup', 4, 786, 91);
+    expect(f.frame().weaponUltimate).toBeUndefined();
+  });
+});
+
+describe('blade trace input ownership', () => {
+  function drawing() {
+    const game = new GameSession(71, { mode: 'endless', territory: true }); game.start();
+    game.state.weaponCombat = createWeaponCombat({ weaponId: 'redblade', rarity: 'gold', upgrade: 0 });
+    const f = fixture(game.state); f.frame();
+    game.state.weaponCombat.bladeTrace = { castId: 'trace-input', phase: 'drawing', startedAt: 0, deadline: 3, until: 4.58,
+      damage: 45, marks: [], path: [], route: [], routeIndex: 0, lastAt: 0, manual: false, hitIds: [], elapsedDistance: 0, speed: 1800 };
+    return f;
+  }
+  it('projects held mouse samples to world coordinates and suppresses primary and dash', () => {
+    const f = drawing(); keyboard(f.browser, 'keydown', 'Space');
+    pointer(f.canvas, 'pointerdown', 9, 300, 160, undefined, 'mouse');
+    pointer(f.canvas, 'pointermove', 9, 420, 220, undefined, 'mouse');
+    const frame = f.frame();
+    expect(frame.fire).toBe(false); expect(frame.dash).toBe(false);
+    expect(frame.bladeTrace?.points).toContainEqual(f.project({ x: 410, y: 200 }));
+    expect(f.frame().bladeTrace?.points ?? []).toHaveLength(0);
+    f.input.clear(); expect(f.frame().bladeTrace).toBeUndefined();
+  });
+  it('lets a touch draw on the battlefield while another finger continues moving', () => {
+    const f = drawing(); pointer(f.root, 'pointerdown', 1, 90, 50, f.move);
+    pointer(f.canvas, 'pointerdown', 2, 310, 170);
+    pointer(f.browser, 'pointermove', 2, 410, 230);
+    const frame = f.frame(); expect(frame.moveX).toBe(1); expect(frame.fire).toBe(false);
+    expect(frame.bladeTrace?.points).toContainEqual(f.project({ x: 400, y: 210 }));
+    pointer(f.browser, 'pointerup', 2, 430, 240);
+    expect(f.frame().bladeTrace?.released).toBe(true); expect(f.frame().moveX).toBe(1);
+    f.controls.destroy();
+  });
+  it('locks both movement sources during execution and emits no delayed skill commands', () => {
+    const f = drawing(); f.state.weaponCombat!.bladeTrace!.phase = 'executing';
+    keyboard(f.browser, 'keydown', 'KeyW'); keyboard(f.browser, 'keydown', 'Digit2'); keyboard(f.browser, 'keydown', 'Digit4');
+    const frame = f.frame(); expect(frame.moveX).toBe(0); expect(frame.moveY).toBe(0);
+    expect(frame.weaponSkill).toBeUndefined(); expect(frame.weaponUltimate).toBeUndefined();
+    delete f.state.weaponCombat!.bladeTrace; expect(f.frame().weaponSkill).toBeUndefined();
+  });
+});
+
+describe('independent kill-charge ultimate input', () => {
+  const ready = () => {
+    const game = new GameSession(71, { mode: 'endless', territory: true }); game.start();
+    game.state.weaponCombat!.ultimateEnergy = 100;
+    const f = fixture(game.state); f.frame(); f.input.setWorldAim({ x: game.state.player.x + 200, y: game.state.player.y });
+    return f;
+  };
+  it('emits one Digit4 edge without changing held aim or primary fire', () => {
+    const f = ready(); pointer(f.canvas, 'pointerdown', 1, 400, 180, undefined, 'mouse');
+    const aim = f.frame().aim; keyboard(f.browser, 'keydown', 'Digit4');
+    expect(f.frame()).toMatchObject({ fire: true, aim, weaponUltimate: { aim } });
+    expect(f.frame().weaponUltimate).toBeUndefined();
+    const repeated = new Event('keydown'); Object.assign(repeated, { code: 'Digit4', repeat: true }); f.browser.dispatchEvent(repeated);
+    expect(f.frame().weaponUltimate).toBeUndefined();
+    f.input.clear(); expect(f.frame().weaponUltimate).toBeUndefined();
+  });
+  it('keeps two held fingers while a third releases exactly one ultimate', () => {
+    const f = ready(); pointer(f.root, 'pointerdown', 1, 90, 50, f.move); pointer(f.root, 'pointerdown', 2, 750, 300, f.attack);
+    pointer(f.root, 'pointerdown', 3, 786, 91, f.ultimate);
+    expect(f.input.resolvePreview(f.state, f.project)?.weaponUltimate).toBe(true);
+    expect(f.frame()).toMatchObject({ moveX: 1, fire: true });
+    pointer(f.browser, 'pointerup', 3, 786, 91);
+    expect(f.frame()).toMatchObject({ moveX: 1, fire: true, weaponUltimate: expect.any(Object) });
+    expect(f.frame().weaponUltimate).toBeUndefined();
+  });
+  it('cancels on a drag outside the wheel, native cancellation and a global input gate', () => {
+    const f = ready();
+    pointer(f.root, 'pointerdown', 3, 786, 91, f.ultimate); pointer(f.browser, 'pointermove', 3, 650, 91);
+    expect(f.input.resolvePreview(f.state, f.project)?.cancelled).toBe(true);
+    pointer(f.browser, 'pointerup', 3, 650, 91); expect(f.frame().weaponUltimate).toBeUndefined();
+    pointer(f.root, 'pointerdown', 4, 786, 91, f.ultimate); pointer(f.browser, 'pointercancel', 4); expect(f.frame().weaponUltimate).toBeUndefined();
+    pointer(f.root, 'pointerdown', 5, 786, 91, f.ultimate); f.allow(false); f.controls.update();
+    expect(f.ultimate.captures.size).toBe(0); f.allow(true); expect(f.frame().weaponUltimate).toBeUndefined();
+  });
+  it('never arms a mobile ultimate before full energy or in a legacy mode', () => {
+    const f = ready(); f.state.weaponCombat!.ultimateEnergy = 99;
+    pointer(f.root, 'pointerdown', 3, 786, 91, f.ultimate);
+    expect(f.input.resolvePreview(f.state, f.project)).toBeUndefined(); expect(f.frame().weaponUltimate).toBeUndefined();
+    const legacy = fixture(); keyboard(legacy.browser, 'keydown', 'Digit4'); expect(legacy.frame().weaponUltimate).toBeUndefined();
+  });
+});
 
 describe('territory context interaction preserves weapon control', () => {
   const territory = (tool: 1 | 2 = 2) => {

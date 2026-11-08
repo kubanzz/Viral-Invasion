@@ -14,6 +14,9 @@ import { isTerritoryPlayerAirborne, territoryCannonView } from '../game/territor
 import { territoryContextView } from '../game/territory';
 import { weaponSkillViews, weaponPrimaryCooldown } from '../game/weaponSkills';
 import { weaponSkillIconMarkup } from './weaponSkillIcons';
+import { weaponUltimateView } from '../game/weaponUltimates';
+import { weaponUltimateIconMarkup } from './weaponSkillIcons';
+import { anchorDangerView } from '../game/anchorDanger';
 
 const escape = (value: string) => value.replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]!));
 const seconds = (readyAt: number, elapsed: number) => Math.max(0, readyAt - elapsed);
@@ -22,12 +25,12 @@ const cooldownRing = '<svg class="mobile-cooldown-ring" viewBox="0 0 64 64" aria
 /** Kept outside #hud: modals make that element inert while paused. */
 export const mobileHudMarkup = `<section id="mobile-controls" aria-label="触屏操作" data-layout="moba-v4" data-active="false" data-phase="menu">
   <button type="button" id="mobile-map-button" class="mobile-map" data-action="mobile-map" aria-label="打开战况与完整地图"><canvas id="mobile-minimap" width="192" height="116" aria-hidden="true"></canvas></button>
-  <div class="mobile-readouts" aria-label="战场状态"><div class="mobile-hp-line"><span>耐久</span><b id="mobile-hp">100</b></div><div class="mobile-hp-track"><i id="mobile-hp-fill"></i></div><div class="mobile-status-line"><span id="mobile-organ-readout">心脏 <b id="mobile-tissue">70%</b></span><span class="mobile-campaign-readout">感 <b id="mobile-infection">0%</b></span><span class="mobile-campaign-readout">稳 <b id="mobile-vitality">100%</b></span></div><div class="mobile-organ-track"><i id="mobile-tissue-fill"></i></div><div id="mobile-combat-readout" class="mobile-combat-readout"></div></div>
+  <div class="mobile-status-stack"><div class="mobile-readouts" aria-label="战场状态"><div class="mobile-hp-line"><span>耐久</span><b id="mobile-hp">100</b></div><div class="mobile-hp-track"><i id="mobile-hp-fill"></i></div><div class="mobile-status-line"><span id="mobile-organ-readout">心脏 <b id="mobile-tissue">70%</b></span><span class="mobile-campaign-readout">感 <b id="mobile-infection">0%</b></span><span class="mobile-campaign-readout">稳 <b id="mobile-vitality">100%</b></span></div><div class="mobile-organ-track"><i id="mobile-tissue-fill"></i></div><div id="mobile-combat-readout" class="mobile-combat-readout"></div></div>
+  <div class="mobile-notice" id="mobile-notice" role="status" aria-live="polite" hidden></div></div>
   <nav class="mobile-top-actions"><button type="button" data-action="mobile-details" aria-label="打开战况与地图">☷</button><button type="button" data-action="pause" aria-label="暂停游戏">Ⅱ</button></nav>
   <details class="mobile-tactical-menu" id="mobile-tactical-menu" hidden><summary aria-label="展开战术操作">战术</summary><div class="mobile-tactical-panel"><button type="button" id="mobile-build-open" class="construction-open mobile-build-open" data-action="build-open" aria-label="蓝图与军团建设">蓝图与建造</button><button type="button" class="mobile-menu-antibody" data-touch-action="antibody" data-cooldown="antibody" aria-label="注射抗体"><span>抗体强化</span><b id="mobile-menu-antibody-charges">2</b><span class="mobile-cooldown" id="mobile-menu-antibody-ready"></span></button></div></details>
   <div class="mobile-objective"><span id="mobile-objective-text"></span><b id="mobile-wave"></b></div>
   <div class="mobile-warning-strip" id="mobile-warnings" role="status" aria-live="polite" hidden></div>
-  <div class="mobile-notice" id="mobile-notice" role="status" aria-live="polite" hidden></div>
   <div class="mobile-stick" data-stick="move" aria-label="移动摇杆"><span class="stick-knob"></span><span class="stick-label">移动</span></div>
   <button type="button" class="mobile-stick mobile-attack" data-stick="attack" data-cooldown="attack" aria-label="射击，按住并拖动瞄准"><span class="attack-glyph" aria-hidden="true"></span><span class="stick-knob"></span>${cooldownRing}<span class="mobile-cooldown" id="mobile-cast-ready"></span><span class="mobile-caption" id="mobile-cast-label">射击</span></button>
   <div class="mobile-actions">
@@ -35,6 +38,7 @@ export const mobileHudMarkup = `<section id="mobile-controls" aria-label="触屏
     <button type="button" class="mobile-skill mobile-legacy-control" data-touch-skill="3" data-cooldown="3" aria-label="修复，按住瞄准组织或治疗点，松手施放">${artIconMarkup('heal')}<span class="stick-knob"></span>${cooldownRing}<span class="mobile-cooldown" id="mobile-heal-ready"></span><span class="mobile-caption">修复</span></button>
     <button type="button" class="mobile-skill mobile-legacy-control" data-touch-skill="scan" data-cooldown="scan" aria-label="扫描与军团指挥，按住瞄准，松手施放">${artIconMarkup('scan')}<span class="stick-knob"></span>${cooldownRing}<span class="mobile-cooldown" id="mobile-scan-ready"></span><span class="mobile-caption">免疫</span></button>
     ${([1, 2, 3] as const).map(slot => `<button type="button" class="mobile-skill mobile-weapon-skill mobile-territory-control" data-weapon-skill="${slot}" aria-label="武器技能${slot}"><span class="mobile-weapon-icon-slot"></span><span class="mobile-skill-number">${slot}</span><span class="stick-knob"></span>${cooldownRing}<span class="mobile-cooldown" id="mobile-weapon-${slot}-ready"></span><span class="mobile-caption">技能${slot}</span></button>`).join('')}
+    <button type="button" class="mobile-skill mobile-weapon-ultimate mobile-territory-control" data-weapon-ultimate aria-label="大招，击杀病毒或攻击母巢充能"><span class="mobile-weapon-icon-slot"></span><span class="mobile-skill-number">4</span><span class="stick-knob"></span><span class="mobile-ultimate-energy" id="mobile-ultimate-energy">0%</span><span class="mobile-caption">大招</span></button>
     <button type="button" class="mobile-aux mobile-territory-control mobile-garrison" data-touch-action="scan" data-cooldown="scan" aria-label="脚下驻防，点按立即部署">${artIconMarkup('scan')}${cooldownRing}<span class="mobile-cooldown" id="mobile-garrison-ready"></span><span class="mobile-caption">驻防</span><span id="mobile-garrison-count" class="mobile-charge"></span></button>
     <button type="button" class="mobile-aux mobile-territory-control mobile-cleanse" data-touch-action="territory" aria-label="净化附近感染组织，不切换武器">${artIconMarkup('heal')}<span class="mobile-caption">净化</span></button>
     <button type="button" class="mobile-aux" data-touch-action="dash" data-cooldown="dash" aria-label="冲刺">${artIconMarkup('dash')}${cooldownRing}<span class="mobile-cooldown" id="mobile-dash-ready"></span><span class="mobile-caption">冲刺</span><span class="mobile-charge-state" id="mobile-charge-ready" hidden>长按剑气</span><svg class="mobile-charge-ring" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="26" /></svg></button>
@@ -48,7 +52,7 @@ export const mobileHudMarkup = `<section id="mobile-controls" aria-label="触屏
   <div id="mobile-rotate-notice" role="dialog" aria-modal="true" aria-label="请横屏游玩" hidden><div><span aria-hidden="true">↻</span><h2>请横屏游玩</h2><p>战斗已暂停。横屏后点击继续，重新按下摇杆。</p></div></div>
 </section>`;
 
-export const mobileDetailsMarkup = `<div class="overlay mobile-details-overlay"><section class="modal mobile-details-dialog" role="dialog" aria-modal="true" aria-label="战况与地图"><header><div><div class="eyebrow">FIELD STATUS</div><h2>战况与地图</h2></div><button type="button" data-action="mobile-close-details">返回</button></header><p class="mobile-details-help">当前战斗已暂停。查看器官风险、军团、协议和地图。</p><p id="mobile-stability-details" hidden></p><div id="mobile-details-content"></div><div class="actions"><button type="button" data-action="help">操作指南</button><button type="button" data-action="history">战术记录</button><button type="button" class="primary" data-action="mobile-close-details">返回战场</button></div></section></div>`;
+export const mobileDetailsMarkup = `<div class="overlay mobile-details-overlay"><section class="modal mobile-details-dialog" role="dialog" aria-modal="true" aria-label="战况与地图"><header><div><div class="eyebrow">FIELD STATUS</div><h2>战况与地图</h2></div><button type="button" data-action="mobile-close-details">返回</button></header><p class="mobile-details-help">当前战斗已暂停。查看器官风险、军团、协议和地图。</p><p id="mobile-stability-details" hidden></p><div id="microfront-battle-details" hidden></div><div id="mobile-details-content"></div><div class="actions"><button type="button" data-action="help">操作指南</button><button type="button" data-action="history">战术记录</button><button type="button" class="primary" data-action="mobile-close-details">返回战场</button></div></section></div>`;
 
 const detailSelectors = '.objective,.telemetry,.growth-panel,.organ-overview,.endless-wave-panel,.endless-vitals,.endless-build-panel,.endless-navigation,.host-event-card,.mother-core-panel,.evolution-card,#endless-evolution-warning';
 const movedPanels: { element: HTMLElement; marker: Comment }[] = [];
@@ -128,14 +132,16 @@ export function mobileHudView(state: GameState): MobileHudView {
   const noHealthySpring = !!state.territory && !state.territory.nodes.some(node => node.kind === 'healing' && node.owner === 'healthy');
   if (state.playerInfection && state.playerInfection.until > state.elapsed) warnings.push({ kind: 'fatal', text: `已感染 ${Math.ceil(state.playerInfection.until - state.elapsed)}秒 · ${noHealthySpring ? '先夺回生命泉' : '前往健康生命泉'}` });
   if (state.player.hp / hostEventMaxHp(state) <= .3) warnings.unshift({ kind: 'fatal', text: noHealthySpring ? '耐久低 · 先夺回生命泉' : state.player.hp / hostEventMaxHp(state) <= .15 ? '耐久濒危 · 立即回泉' : '耐久低 · 前往健康生命泉' });
+  if (anchorDangerView(state).attacked) warnings.unshift({ kind: 'anchor', text: `${state.expedition?.missionId ? '稳态锚' : '心核'}受袭 · 返回防守` });
   const pending = state.endless?.evolution?.pending;
   if (pending) warnings.push({ kind: 'mutation', text: `${pending.decision.generation}代 ${pending.decision.traits.map(trait => TRAITS[trait].name).join('/')} ${Math.max(0, pending.appliesAt - state.elapsed).toFixed(1)}s` });
   const opening = state.endless?.evolution?.opening;
   if (opening?.selection && state.endless!.wave >= 3 && state.endless!.wave <= 9 && state.endless!.phase !== 'intermission') {
     const trait = opening.selection.trait;
+    const weaponId = state.weaponCombat?.loadout.weaponId;
     const counter = state.weaponCombat ? trait === 'CARAPACE'
-      ? state.weaponCombat.loadout.weaponId === 'piercing' ? '骨刃/穿心/绕后' : '震环/绕后'
-      : state.weaponCombat.loadout.weaponId === 'piercing' ? '束脉锚/回刃清小体' : '震环清小体'
+      ? weaponId === 'piercing' ? '重刃/绕后' : weaponId === 'thunder' ? '感电/连爆' : weaponId === 'redblade' ? '疾斩/连斩' : '双震/绕后'
+      : weaponId === 'piercing' ? '涡锚/刃潮清小体' : weaponId === 'thunder' ? '群电/连爆清小体' : weaponId === 'redblade' ? '回斩/剑域清小体' : '双震清小体'
       : trait === 'CARAPACE' ? '炮弹/剑气/绕后' : '击破后清小体';
     warnings.push({ kind: 'opening-evolution', text: `${TRAITS[trait].symbol}${TRAITS[trait].name} · ${counter}` });
   }
@@ -153,7 +159,7 @@ export function mobileHudView(state: GameState): MobileHudView {
   const core = state.campaign?.core;
   if (core?.status === 'active') {
     const combat = core.combat, target = state.targets.find(candidate => candidate.id === core.actorId);
-    const phase = combat ? ({ awakening: '苏醒', windup: '蓄力', recovery: '破绽', defeated: '净化' } as const)[combat.phase] : '作战';
+    const phase = combat ? ({ awakening: '苏醒', windup: '蓄力', lunging: '扑击中', recovery: '破绽', defeated: '净化' } as const)[combat.phase] : '作战';
     const remaining = combat?.attack ? `${Math.max(0, combat.attack.resolveAt - state.elapsed).toFixed(1)}s` : '';
     warnings.push({ kind: 'core', text: `巢${target ? `${Math.ceil(target.hp / target.maxHp * 100)}% ` : ''}${phase}${remaining}${combat?.membrane.remaining ? ` 膜${combat.membrane.remaining}` : ''}` });
   }
@@ -178,9 +184,9 @@ export function mobileHudView(state: GameState): MobileHudView {
     Object.assign(interaction, { label: !cannon.exists ? '建造' : !cannon.enabled ? '停用' : cannon.ready ? '弹射' : '装填',
       hint: !cannon.exists ? '战术栏选择蓝图，派军团施工' : !cannon.enabled ? '先净化建筑所在区域' : cannon.ready ? '按住选落点，松手弹射' : `装填 ${Math.ceil(cannon.remaining)}秒`, nearby: cannon.nearby });
   }
-  return { hp: `${Math.ceil(state.player.hp)}/${hostEventMaxHp(state)}`, tissue: `${Math.ceil(state.tissue.hp / state.tissue.maxHp * 100)}%`,
-    organ: state.battle?.organId === 'lung' ? '肺部' : '心脏', infection: state.battle && !state.endless ? `${Math.ceil(state.battle.pressure.infection)}%` : '', vitality: state.battle && !state.endless ? `${Math.ceil(state.battle.pressure.vitality)}%` : '',
-    objective: shortObjective(state), notice: endlessTutorialHint(state, true) || activeNotice(state), wave: state.endless ? `第${state.endless.wave}波 · 剩余${endlessRemaining(state)}` : '', warnings: warnings.map(warning => ({ ...warning, text: touchCopy(warning.text, !!state.territory) })), interaction };
+  return { hp: `${Math.ceil(state.player.hp)}/${hostEventMaxHp(state)}`, tissue: state.expedition?.missionId ? `${Math.ceil(Math.max(0, state.tissue.hp))}/${state.tissue.maxHp}` : `${Math.ceil(state.tissue.hp / state.tissue.maxHp * 100)}%`,
+    organ: state.expedition?.missionId ? '稳态锚' : state.battle?.organId === 'lung' ? '肺部' : '心脏', infection: state.battle && !state.endless ? `${Math.ceil(state.battle.pressure.infection)}%` : '', vitality: state.battle && !state.endless ? `${Math.ceil(state.battle.pressure.vitality)}%` : '',
+    objective: shortObjective(state), notice: endlessTutorialHint(state, true) || activeNotice(state), wave: state.territory ? territoryHudView(state, true)?.wave ?? '' : state.endless ? `第${state.endless.wave}波 · 剩余${endlessRemaining(state)}` : '', warnings: warnings.map(warning => ({ ...warning, text: touchCopy(warning.text, !!state.territory) })), interaction };
 }
 
 export interface MobileHudFlags { blocked?: boolean; portrait?: boolean }
@@ -255,7 +261,7 @@ export function updateMobileHud(state: GameState, flags: MobileHudFlags = {}): v
   if (organ?.firstChild) organ.firstChild.textContent = `${view.organ} `;
   set('mobile-objective-text', view.objective); set('mobile-wave', view.wave);
   const combat = state.endlessGrowth ? endlessCombatStats(state.endlessGrowth) : undefined;
-  set('mobile-combat-readout', state.territory ? `余敌${endlessRemaining(state)} · ${combat?.shotRays ?? 1}弹` : '');
+  set('mobile-combat-readout', state.territory ? state.expedition?.missionId ? view.wave : `余敌${endlessRemaining(state)} · ${combat?.shotRays ?? 1}弹` : '');
   const notice = document.getElementById('mobile-notice');
   if (notice) { if (notice.textContent !== view.notice) notice.textContent = view.notice; notice.hidden = !view.notice; }
   const strip = document.getElementById('mobile-warnings');
@@ -325,6 +331,24 @@ export function updateMobileHud(state: GameState, flags: MobileHudFlags = {}): v
     set(`mobile-weapon-${slot}-ready`, skill && skill.remaining > 0 ? skill.remaining >= 10 ? String(Math.ceil(skill.remaining)) : skill.remaining.toFixed(1) : '');
     button.disabled = !active || !state.territory || button.dataset.active !== 'true' && !skill?.ready;
     if (skill) button.setAttribute('aria-label', `${slot}号武器技能：${skill.name}。${skill.aim === 'self' ? '点按释放' : '点按沿当前瞄准释放，按住拖动可调整，松手释放'}。${skill.description}`);
+  }
+  const ultimateButton = root.querySelector<HTMLButtonElement>('[data-weapon-ultimate]');
+  const ultimate = state.territory ? weaponUltimateView(state) : undefined;
+  if (ultimateButton) {
+    const ratio = ultimate ? Math.max(0, Math.min(1, ultimate.energy / ultimate.required)) : 0;
+    ultimateButton.style.setProperty('--ultimate-energy', String(ratio));
+    ultimateButton.dataset.ready = String(!!(ultimate?.ready || ultimate?.canRecast));
+    ultimateButton.dataset.recast = String(!!ultimate?.canRecast);
+    ultimateButton.dataset.ultimateActive = String(!!ultimate?.active);
+    ultimateButton.disabled = !active || !ultimate || ultimateButton.dataset.active !== 'true' && !(ultimate.ready || ultimate.canRecast);
+    const caption = ultimateButton.querySelector<HTMLElement>('.mobile-caption');
+    if (caption) caption.textContent = ultimate?.canRecast ? '立即裁决' : ultimate?.weaponId === 'thunder' ? '万雷归一' : ultimate?.name ?? '大招';
+    const icon = ultimateButton.querySelector<HTMLElement>('.mobile-weapon-icon-slot');
+    if (icon && ultimate && icon.dataset.skillId !== ultimate.id) {
+      icon.innerHTML = weaponUltimateIconMarkup(ultimate.id); icon.dataset.skillId = ultimate.id;
+    }
+    set('mobile-ultimate-energy', ultimate?.active ? `${ultimate.remaining.toFixed(1)}秒` : ultimate?.ready ? '就绪' : `${Math.floor(ratio * 100)}%`);
+    ultimateButton.setAttribute('aria-label', ultimate ? `${ultimate.name}，能量${Math.floor(ratio * 100)}%。${ultimate.canRecast ? '点按立即裁决，收束雷暴。' : ultimate.ready ? ultimate.aim === 'self' ? '点按释放。' : '松手释放，拖出或拖至取消按钮取消。' : '击杀病毒或攻击母巢充能。'}${ultimate.description}` : '大招，击杀病毒或攻击母巢充能');
   }
   const cooldownIds: Record<MobileCooldownKey, string> = { attack: 'mobile-cast-ready', 2: 'mobile-area-ready', 3: 'mobile-heal-ready', scan: 'mobile-scan-ready', dash: 'mobile-dash-ready', interact: 'mobile-interact-ready', antibody: 'mobile-antibody-ready' };
   for (const button of root.querySelectorAll<HTMLButtonElement>('[data-cooldown]')) {

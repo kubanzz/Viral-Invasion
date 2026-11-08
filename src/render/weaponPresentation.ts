@@ -7,6 +7,10 @@ export const HELD_WEAPON_ART = {
     ink: '#285b59', accent: '#53c9b3', light: '#fffbed' },
   piercing: { id: 'fantasy.weapon.piercing.held', identity: 'weapon.piercing', canvasHeight: 80,
     ink: '#704c30', accent: '#d98b35', light: '#ffe9b3' },
+  thunder: { id: 'fantasy.weapon.thunder.held', identity: 'weapon.thunder', canvasHeight: 76,
+    ink: '#45406d', accent: '#a38cdb', light: '#e7fff4' },
+  redblade: { id: 'fantasy.weapon.redblade.held', identity: 'weapon.redblade', canvasHeight: 98,
+    ink: '#84483f', accent: '#e78d79', light: '#ffe5ac' },
 } as const satisfies Record<WeaponId, { id: string; identity: string; canvasHeight: number; ink: string; accent: string; light: string }>;
 
 export function heldWeaponPresentation(state: Pick<GameState, 'phase' | 'weaponCombat' | 'expedition' | 'territory' | 'camp'>) {
@@ -22,6 +26,10 @@ export function isHeldWeaponAsset(id: string): boolean {
 /** Charging locks the painted weapon to the same direction as the committed
  * projectile. Its birth tick keeps that direction after preparation is removed. */
 export function heldWeaponFacing(state: Pick<GameState, 'player' | 'weaponCombat' | 'events' | 'tick'>): number {
+  const thunderDash = state.weaponCombat?.thunder?.dash;
+  if (thunderDash) return Math.atan2(thunderDash.direction.y, thunderDash.direction.x);
+  const dash = state.weaponCombat?.meleeDash;
+  if (dash) return Math.atan2(dash.direction.y, dash.direction.x);
   const preparation = state.weaponCombat?.preparation;
   if (preparation) return Math.atan2(preparation.direction.y, preparation.direction.x);
   if (state.weaponCombat?.loadout.weaponId !== 'piercing') return state.player.facing;
@@ -44,6 +52,8 @@ export function heldWeaponRecoilStrength(state: Pick<GameState, 'phase' | 'weapo
   let strength = Math.max(0, Math.min(1, primaryStrength));
   const weapon = heldWeaponPresentation(state); if (!weapon) return strength;
   const sampled = state.phase === 'playing' ? state.visualTime ?? state.elapsed : state.elapsed;
+  if (weapon.weaponId === 'thunder' && state.weaponCombat?.thunder?.channel?.links.length)
+    strength = Math.max(strength, .12 + .035 * Math.sin(sampled * 63));
   for (let i = state.events.length - 1; i >= 0; i--) {
     const event = state.events[i];
     if (event.type !== 'PLAYER_PROJECTILE_LAUNCHED' || event.tick > state.tick || event.data.weaponId !== weapon.weaponId || !event.data.skillId) continue;

@@ -200,5 +200,6 @@ describe('G1 battle rules', () => {
   // This asserts 72,000 simulated ticks and bounded state, not a 20-second
   // product performance budget. The unchanged v076 path also takes ~19s in
   // isolation; leave headroom for workers/OS scheduling on developer machines.
-  }, 45000);
+  // Opt-in slow-host headroom changes only wall time, never simulated ticks or assertions.
+  }, process.env.VI_SLOW_SIM_TESTS === '1' ? 180000 : 45000);
 });

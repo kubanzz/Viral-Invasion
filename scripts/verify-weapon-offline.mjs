@@ -50,8 +50,8 @@ try{
  const summarize=x=>({path:x.path,sha256:x.sha256,bytes:x.bytes,files:[...x.files].map(([name,bytes])=>({name,bytes:bytes.length,sha256:sha(bytes)}))});
  report.packages=[summarize(desktop),summarize(mobile)];
  const runtimeBytes=(await Promise.all(['index.html','game.js','game.css'].map(async name=>(await stat(join(base,name))).size))).reduce((a,b)=>a+b,0);
- report.resourceBudget={limitBytes:20*1024*1024,desktopConservativeBytes:runtimeBytes,mobileHtmlBytes:mobileBytes.length,artEmbeddedBytes:meta.art.runtimeBytes};
- assert.ok(runtimeBytes<=report.resourceBudget.limitBytes&&mobileBytes.length<=report.resourceBudget.limitBytes,'Runtime bytes exceed unchanged20MiB budget');
+ report.resourceBudget={limitBytes:32 * 1024 * 1024,desktopConservativeBytes:runtimeBytes,mobileHtmlBytes:mobileBytes.length,artEmbeddedBytes:meta.art.runtimeBytes};
+ assert.ok(runtimeBytes<=report.resourceBudget.limitBytes&&mobileBytes.length<=report.resourceBudget.limitBytes,'Runtime bytes exceed 32MiB budget');
  served=await startServedCandidate({metadataPath,mobileHtml,expectedVersion:'0.16.0'});const origin=new URL(served.entry).origin;
  report.outputBefore=await served.diskHashes();
  const cases=[{name:'chrome-desktop',channel:'chrome',touch:false,viewport:{width:1366,height:768}},

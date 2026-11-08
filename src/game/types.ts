@@ -1,8 +1,6 @@
 import type { BattleState, TraitId } from './battleTypes';
 import type { GrowthState } from './growthTypes';
 import type { CampaignState } from './campaignTypes';
-import type { CampStationId } from './campLayout';
-import type { CampStationAttention } from './campAttention';
 import type { RunMetrics } from './runMetrics';
 import type { EndlessState } from './endlessTypes';
 import type { EndlessGrowthState } from './endlessGrowthTypes';
@@ -43,7 +41,7 @@ export interface Target extends Vec {
   waveId?: number;
   blocksWaveClear?: boolean;
   territorySourceId?: TerritorySourceId;
-  territoryTask?: { kind: 'invade' | 'escort'; nodeId: TerritoryNodeId; squadId?: string; leaderId?: string };
+  territoryTask?: { kind: 'invade' | 'escort'; nodeId: TerritoryNodeId; squadId?: string; leaderId?: string; squadKind?: 'source' | 'carrier' };
   splitAt?: number; splitPositions?: Vec[];
   attackTarget?: 'player' | 'tissue' | 'immune';
   /** A real immune body selected when the telegraph starts; never retarget mid-attack. */
@@ -93,11 +91,7 @@ export interface GameState {
   playerFlight?: TerritoryPlayerFlight;
   smartViruses?: SmartVirusState;
   expedition?: ExpeditionRuntime & { lootPosition?: Vec };
-  camp?: {
-    introSeconds: number; introComplete: boolean; prologue?: 'arrival' | 'building' | 'ready';
-    builtFacilities?: CampStationId[]; activeConstruction?: CampStationId; constructionSeconds?: number;
-    attention?: Partial<Record<CampStationId, CampStationAttention>>;
-  };
+  camp?: import('./campScene').CampSceneState;
   hostEvents?: HostEventState;
   playerProjectiles?: PlayerProjectile[];
   weaponCombat?: WeaponCombatState;
@@ -113,7 +107,11 @@ export interface GameState {
   runMetrics?: RunMetrics;
 }
 export interface InputFrame { moveX: number; moveY: number; aim: Vec; fire: boolean; tool?: Tool; scan?: boolean; scanAim?: Vec; dash?: boolean; interact?: boolean; practiceHit?: boolean; antibody?: boolean; territoryAction?: boolean;
+  /** Actual held primary intent, independent of a queued one-shot command. */
+  primaryHeld?: boolean;
   weaponSkill?: { slot: import('./weaponSkillsTypes').WeaponSkillSlot; aim: Vec };
+  weaponUltimate?: { aim: Vec };
+  bladeTrace?: { points: Vec[]; released?: boolean; tolerance?: number };
   cannonPressed?: boolean; cannonHeld?: boolean; cannonReleased?: boolean; cannonCancelled?: boolean; cannonAim?: Vec;
   chargePressed?: boolean; chargeHeld?: boolean; chargeReleased?: boolean; chargeCancelled?: boolean; chargeAim?: Vec }
 export const WORLD = { width: 1200, height: 800, bounds: { left: 65, right: 1135, top: 110, bottom: 735 }, obstacles: [{ id: 'fold-a', x: 440, y: 295, radius: 47 }, { id: 'fold-b', x: 1005, y: 575, radius: 53 }], foreground: { x: 155, y: 550, width: 190, height: 125 } } as const;

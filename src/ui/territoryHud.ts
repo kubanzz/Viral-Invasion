@@ -1,20 +1,54 @@
 import { territoryMarkerView } from '../game/territoryPresentation';
 import type { GameState } from '../game/types';
 import type { TerritoryProfileSnapshot } from '../meta/endlessProfile';
-import { territoryBeaconRank, territoryContextView, territoryFrontGarrison, territoryLaneViews, territoryNodeView } from '../game/territory';
+import { TERRITORY_BALANCE, territoryBeaconRank, territoryContextView, territoryFrontGarrison, territoryLaneViews, territoryNodeView } from '../game/territory';
 import { territorySourceAccessView } from './territorySourceAccessView';
 import { expeditionRewardMarkup } from './expeditionRewardHud';
+import { anchorDangerView } from '../game/anchorDanger';
+import { HEART_BOSS_BALANCE } from '../game/motherCore';
+import { MISSION_COMBAT } from '../game/missionCombat';
 
 const escape = (value: string) => value.replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]!));
 const time = (seconds: number) => `${Math.floor(seconds / 60).toString().padStart(2, '0')}:${Math.floor(seconds % 60).toString().padStart(2, '0')}`;
+export const HEART_BOSS_STAGE_NAMES = ['晶膜', '裂殖', '噬心'] as const;
+const ROMAN_STAGES = ['Ⅰ', 'Ⅱ', 'Ⅲ'] as const;
+const isCarrier = (target: GameState['targets'][number]) => target.hp > 0 && target.territoryTask?.kind === 'invade' && target.territoryTask.squadKind === 'carrier';
+function carrierInLane(state: GameState, sourceId: string): boolean {
+  return state.targets.some(target => isCarrier(target) && target.territorySourceId === sourceId);
+}
+function carrierIncoming(state: GameState, squadId?: string): boolean {
+  return !!squadId && state.endless?.territoryTasks?.squads.some(squad => squad.id === squadId && squad.kind === 'carrier') === true;
+}
 
-/** Alerts describe real attackers only; static infected terrain is not an alarm. */
+/** A bar is one real damage phase, not a cosmetic subdivision of total HP. */
+export function heartBossHudView(state: GameState) {
+  const combat = state.territory?.bossCombat, heart = combat?.heartBoss;
+  const boss = state.targets.find(target => target.id === combat?.coreId && target.hp > 0);
+  if (!combat?.heartExpedition || !heart || !boss || state.camp || state.territory?.stage !== 'boss') return null;
+  const barMax = boss.maxHp / HEART_BOSS_BALANCE.bars, barHp = Math.max(0, Math.min(barMax, boss.hp - barMax * (HEART_BOSS_BALANCE.bars - heart.stage)));
+  const broken = heart.brokenUntil > state.elapsed;
+  return { stage: heart.stage, stageName: HEART_BOSS_STAGE_NAMES[heart.stage - 1], remainingBars: HEART_BOSS_BALANCE.bars + 1 - heart.stage,
+    hp: Math.ceil(barHp), maxHp: barMax, health: Math.max(0, Math.min(1, barHp / barMax)),
+    toughness: heart.toughness, toughnessMax: heart.toughnessMax, broken,
+    hint: broken ? `破韧 ${(heart.brokenUntil - state.elapsed).toFixed(1)}s · 趁现在进攻`
+      : heart.transitionUntil > state.elapsed ? '外壳崩裂 · 下一阶段'
+        : combat.attack?.kind === 'heart-guard-call' ? '护卫即将出现 · 及时清理'
+          : combat.attack?.kind === 'heart-pulse' || combat.pulse ? '脉冲扩散 · 朝缺口闪避'
+            : combat.attack?.kind === 'heart-lunge' || combat.locomotion?.lunge ? '锁向扑击 · 向侧面闪避'
+            : combat.attack?.kind === 'heart-marked-strike' ? '落击锁定 · 离开标记'
+              : combat.attack?.sweepStep === 2 ? '二连横扫 · 再次侧移'
+                : combat.attack?.kind === 'crystal-sweep' ? '横扫锁向 · 侧移躲避' : '观察前摇 · 削韧打断' };
+}
+
+/** Real capture and an advertised finite carrier squad can warn; static terrain cannot. */
 export function territoryInvasionWarning(state: GameState): string {
   if (!state.territory || !state.endless) return '';
+  if (anchorDangerView(state).attacked) return `${state.expedition?.missionId ? '稳态锚' : '心核'}受袭 · 返回防守`;
   return territoryLaneViews(state).flatMap(lane => {
     const name = lane.laneId === 'north' ? '北线' : '南线';
-    return lane.warning ? [`${name}受袭 · ${lane.warning.seconds.toFixed(1)}秒失守`]
-      : lane.attackedNodeIds.includes('core') ? [`${name}侵染者正在攻击心核`] : [];
+    return lane.warning ? [`${name}${carrierInLane(state, lane.sourceId) ? '携疫者侵染' : '受袭'} · ${lane.warning.seconds.toFixed(1)}秒失守`]
+      : carrierInLane(state, lane.sourceId) ? [`${name}携疫者入场 · 拦截以保护节点`]
+        : carrierIncoming(state, lane.incoming?.squadId) ? [`${name}携疫队${lane.incoming!.blocked ? '集结中' : ` ${lane.incoming!.seconds.toFixed(1)}秒后抵达`}`] : [];
   }).join('；');
 }
 
@@ -30,29 +64,40 @@ export function territoryContextHint(state: GameState, touch = false): string {
   if (context.reason === 'airborne') return '弹射中，落地后靠近感染节点净化';
   if (context.pausedReason === 'healing-required' || context.reason === 'healing-required') return `先夺回对应生命泉，再净化${name}`;
   if (context.pausedReason === 'out-of-range') return `${name}净化暂停：离开范围，靠近后继续 · ${progress}%`;
-  if (context.pausedReason === 'invader') return `${name}净化暂停：清除侵染者继续 · ${progress}%`;
+  if (context.pausedReason === 'invader') {
+    const attackers = node ? territoryNodeView(state, node.id)?.attackerIds ?? [] : [];
+    return `${name}净化暂停：清除${state.targets.some(target => attackers.includes(target.id) && isCarrier(target)) ? '携疫者' : '侵染者'}继续 · ${progress}%`;
+  }
   if (context.pausedReason === 'contaminant') return `${name}净化暂停：清除贴泉病毒继续 · ${progress}%`;
   if (context.pausedReason === 'hurt') return `${name}净化暂停：躲开攻击后继续 · ${progress}%保留`;
   if (node && state.territory.purification && state.territory.purification.nodeId === node.id) return `${name}净化 ${progress}% · 留在附近`;
   if (context.action === 'purify' && node) { const marker = territoryMarkerView(state, node, touch); if (marker.kind === 'blocked') return `${name}：${marker.reason}`; }
   if (context.action === 'purify') return touch ? `点净化组织：${name}` : `按F净化${name}`;
   if (context.action === 'repair') return touch ? '点修复心核' : '按F修复心核';
+  const protectedNearby = state.territory.nodes.map(region => territoryNodeView(state, region.id)!)
+    .filter(view => (view.protectionRemaining ?? 0) > 0 && Math.hypot(view.node.x - state.player.x, view.node.y - state.player.y) <= TERRITORY_BALANCE.purificationRange)
+    .sort((a, b) => Math.hypot(a.node.x - state.player.x, a.node.y - state.player.y) - Math.hypot(b.node.x - state.player.x, b.node.y - state.player.y))[0];
+  if (protectedNearby) return `${protectedNearby.node.name}净化保护 ${Math.ceil(protectedNearby.protectionRemaining!)}秒`;
   return '';
 }
 
 export function territoryHudView(state: GameState, touch = false) {
   const territory = state.territory;
   if (!territory || !state.endless) return null;
-  const sources = Object.values(territory.sources).filter(source => source.destroyed).length;
+  const missionId = state.expedition?.missionId, mission = missionId ? MISSION_COMBAT[missionId] : undefined;
+  const sourceIds = missionId === 'membrane' ? ['source-west'] as const : ['source-west', 'source-east'] as const;
+  const sources = sourceIds.filter(id => territory.sources[id].destroyed).length, allSourcesCleared = sources === sourceIds.length;
   const boss = territory.bossId ? state.targets.find(target => target.id === territory.bossId && target.hp > 0) : undefined;
   const laneViews = territoryLaneViews(state);
   const attacked = laneViews.find(lane => lane.attackedNodeIds.length > 0);
   const lostHealing = laneViews.find(lane => lane.healing.node.owner === 'infected');
   const lostFront = laneViews.find(lane => lane.front.node.owner === 'infected');
   const openSource = laneViews.find(lane => !territory.sources[lane.sourceId].destroyed && territory.sources[lane.sourceId].spawned && !lane.shielded);
+  const activeCarrier = laneViews.find(lane => carrierInLane(state, lane.sourceId));
+  const incomingCarrier = laneViews.find(lane => carrierIncoming(state, lane.incoming?.squadId));
   const currentPurification = territory.nodes.find(node => node.id === territory.purification?.nodeId && node.owner === 'infected');
   const purificationPaused = currentPurification && !!territoryContextView(state).pausedReason;
-  const coreCritical = state.tissue.hp < 30 && (territoryNodeView(state, 'core')?.attackerIds.length ?? 0) > 0;
+  const anchorDanger = anchorDangerView(state), coreCritical = (state.expedition?.missionId ? anchorDanger.critical : state.tissue.hp < 30) && anchorDanger.attacked;
   const rank = territoryBeaconRank(state);
   const blockers = state.targets.filter(target => target.hp > 0 && target.role !== 'event' && target.blocksWaveClear !== false);
   const remainingNests = blockers.filter(target => target.role === 'nest');
@@ -60,34 +105,45 @@ export function territoryHudView(state: GameState, touch = false) {
     && !state.endless.territoryTasks?.squads.some(squad => squad.status === 'pending' || squad.status === 'warning')
     && !state.targets.some(target => target.splitAt !== undefined || target.hp > 0 && (target.role === 'virus' || target.role === 'elite'))
     && remainingNests.length > 0 && blockers.every(target => target.role === 'nest');
+  const missionClearGoal = mission && allSourcesCleared
+    ? mission.bossHp > 0
+      ? state.endless.clearedWaves < mission.waves.length ? `感染源已清 · 完成全部${mission.waves.length}波后迎战母巢` : '感染源已清 · 清理余敌，准备迎战母巢'
+      : missionId === 'corridor' ? `感染源已清 · 清完${mission.waves.length}波敌群并击败精英` : `感染源已清 · 清完${mission.waves.length}波敌群即可通关`
+    : mission ? `守住双线，清剿第${state.endless.wave}/${mission.waves.length}波敌群` : '守住双线，等待第3波感染源苏醒';
   let objective = territory.stage === 'guard' ? '救援成功 · 继续守卫'
     : territory.stage === 'victory' ? '心核救援成功'
     : coreCritical ? '心核危急，清除袭击者并修复'
-    : territory.stage === 'boss' ? `净化母巢${boss ? ` ${Math.ceil(boss.hp)} / ${boss.maxHp}` : ''}`
+    : state.expedition?.missionId && anchorDanger.attacked ? '心核受袭，返回防守'
+    : territory.stage === 'boss' ? territory.bossCombat?.heartBoss ? '净化噬心母巢 · 躲开前摇，削韧反击' : `净化母巢${boss ? ` ${Math.ceil(boss.hp)} / ${boss.maxHp}` : ''}`
     : onlyNestsRemain && !attacked && (territory.stage === 'rescue' || territory.stage === 'bossPending' || territory.stage === 'cleanup')
       ? `拆除剩余小母巢${remainingNests.length > 1 ? `（${remainingNests.length}座）` : ''} · 跟随小地图巢标记`
     : territory.stage === 'bossPending' && !lostHealing && !lostFront ? '感染源已清 · 清完余敌后迎战母巢'
     : territory.stage === 'cleanup' ? '母巢已清 · 夺回剩余组织并清理残敌'
       : currentPurification ? `${purificationPaused ? '恢复' : '保护'}${currentPurification.name}净化`
-        : attacked ? `守住${attacked.laneId === 'north' ? '北线' : '南线'}，清除${attacked.healing.attackerIds.length ? '贴泉病毒' : '侵染者'}`
-      : openSource ? `击破${openSource.source.node.name} · ${sources}/2已清`
+        : attacked ? `守住${attacked.laneId === 'north' ? '北线' : '南线'}，清除${carrierInLane(state, attacked.sourceId) ? '携疫者' : attacked.healing.attackerIds.length ? '贴泉病毒' : '侵染者'}`
+      : activeCarrier ? `拦截${activeCarrier.laneId === 'north' ? '北线' : '南线'}携疫者，保护节点`
+      : incomingCarrier ? `${incomingCarrier.laneId === 'north' ? '北线' : '南线'}携疫队来袭，准备拦截`
+      : openSource ? `击破${openSource.source.node.name} · ${sources}/${sourceIds.length}已清`
       : lostHealing ? `夺回${lostHealing.healing.node.name}，恢复补给`
         : lostFront ? `净化${lostFront.front.node.name}，切断源膜供能`
-          : '守住双线，等待第3波感染源苏醒';
+          : missionClearGoal;
   const ritual=state.smartViruses?.ritual?.encounters.find(encounter=>!encounter.shieldBroken&&encounter.priestIds.some(id=>state.targets.some(t=>t.id===id&&t.hp>0&&Math.hypot(t.x-state.player.x,t.y-state.player.y)<650)));
   if(ritual&&territory.stage==='rescue'&&!coreCritical&&!currentPurification){const remaining=ritual.priestIds.filter(id=>state.targets.some(t=>t.id===id&&t.hp>0)).length;objective=`精英祭团 · 先剿灭祭司（剩${remaining}名）`;}
   const lines = laneViews.map(lane => {
     const warning = lane.warning;
     const stationed = !!territoryFrontGarrison(state, lane.frontNodeId);
     const sourceAccess = territorySourceAccessView(state, lane.laneId)!;
-    const status = warning ? `受袭 ${Math.floor(warning.progress)}% · ${warning.seconds.toFixed(1)}s`
+    const carrier = carrierInLane(state, lane.sourceId), incomingIsCarrier = carrierIncoming(state, lane.incoming?.squadId);
+    const protectedNode = [lane.front, lane.healing].find(view => (view.protectionRemaining ?? 0) > 0);
+    const status = warning ? `${carrier ? '携疫侵染' : '受袭'} ${Math.floor(warning.progress)}% · ${warning.seconds.toFixed(1)}s`
       : lane.attackedNodeIds.includes('core') ? '心核受袭'
       : lane.attackedNodeIds.length > 0 ? lane.healing.attackerIds.length ? '净化受扰，清除贴泉病毒' : '净化受扰，清除侵染者'
-      : lane.incoming ? lane.incoming.blocked ? '敌群集结' : `进攻准备 ${lane.incoming.seconds.toFixed(1)}s`
+      : carrier ? '携疫者入场 · 及时拦截'
+      : lane.incoming ? lane.incoming.blocked ? incomingIsCarrier ? '携疫队集结' : '敌群集结' : `${incomingIsCarrier ? '携疫来袭' : '进攻准备'} ${lane.incoming.seconds.toFixed(1)}s`
       : lane.healing.node.owner === 'infected' ? '生命泉失守'
         : lane.front.node.owner === 'infected' ? '前线待净化'
           : territory.stage === 'guard' ? '防线稳定'
-            : territory.sources[lane.sourceId].destroyed ? '感染源已净化'
+            : protectedNode ? `${protectedNode.node.kind === 'front' ? '前线' : '凝露'}保护 ${Math.ceil(protectedNode.protectionRemaining!)}s`
               : sourceAccess.status;
     return { id: lane.laneId, name: lane.laneId === 'north' ? '北线' : '南线', status, attacked: lane.attackedNodeIds.length > 0,
       sourceOpen: !lane.shielded, stationed, sourceAccess,
@@ -108,6 +164,7 @@ export function territoryHudView(state: GameState, touch = false) {
     : territory.stage === 'cleanup' ? '清完余敌，夺回全部组织；Q可帮助守点'
     : territory.stage === 'guard' ? '守住北南双线与心核'
     : territory.stage === 'victory' ? '救援成果保留，可结束或继续守卫'
+    : mission && allSourcesCleared ? missionClearGoal
     : '净化同线生命泉与前线即可解膜；Q军团帮助守点';
   const sourceFocus = lines.filter(line => line.sourceAccess.active).sort((a, b) => {
     const at = territory.nodes.find(node => node.id === (a.id === 'north' ? 'front-north' : 'front-south'))!;
@@ -116,12 +173,32 @@ export function territoryHudView(state: GameState, touch = false) {
   })[0];
   const remaining = state.targets.filter(target => target.hp > 0 && target.blocksWaveClear !== false).length
     + state.endless.remainingToSpawn + state.endless.pendingChildren;
+  const residuals = state.targets.filter(target => target.hp > 0 && target.role !== 'event' && target.role !== 'source' && target.role !== 'core').length + state.endless.pendingChildren;
+  const requiredNodes = laneViews.filter(lane => missionId !== 'membrane' || lane.sourceId === 'source-west')
+    .flatMap(lane => !mission || mission.bossHp > 0 || !territory.sources[lane.sourceId].destroyed || lane.front.node.owner === 'infected'
+      ? [lane.front, lane.healing] : [lane.front]);
+  const pendingNodes = requiredNodes.filter(view => view.node.owner !== 'healthy' || (!mission || mission.bossHp > 0) && view.infectionProgress > 1e-7).length;
+  const wavesCleared = !!mission && state.endless.clearedWaves >= mission.waves.length;
+  const bossStage = territory.bossCombat?.heartBoss?.stage;
+  const guards = state.targets.filter(target => target.hp > 0 && target.sourceId === `${territory.bossId}:guard`).length;
+  const progressIndex = territory.stage === 'victory' ? mission?.bossHp ? 2 : 1
+    : territory.stage === 'cleanup' ? 2 : territory.stage === 'boss' || territory.stage === 'bossPending' ? 1
+      : mission?.bossHp === 0 && wavesCleared && allSourcesCleared ? 1 : 0;
+  const progressPath = mission ? (mission.bossHp > 0 ? ['清剿清源', '母巢决战', '最后净化'] : ['清剿清源', '目标收尾'])
+    .map((label, index) => ({ label, current: territory.stage !== 'victory' && index === progressIndex, done: territory.stage === 'victory' || index < progressIndex })) : [];
+  const wave = !mission ? `第${state.endless.wave}波 · 余敌${remaining}`
+    : territory.stage === 'victory' ? '清剿已完成'
+      : territory.stage === 'boss' ? `母巢决战${bossStage ? ` · 第${ROMAN_STAGES[bossStage - 1]}/Ⅲ阶段` : ''}${guards ? ` · 护卫${guards}` : ''}`
+        : territory.stage === 'cleanup' ? `收尾净化 · 残敌${residuals} · 待净化${pendingNodes}`
+          : territory.stage === 'bossPending' ? `准备母巢 · 待净化${pendingNodes}${residuals ? ` · 残敌${residuals}` : ''}`
+            : wavesCleared ? `目标收尾 · 感染源${sources}/${sourceIds.length} · 待净化${pendingNodes}`
+              : `第${state.endless.wave}/${mission.waves.length}波 · 本波剩余${remaining}`;
   return { objective, core: `心核 ${Math.ceil(state.tissue.hp)} / ${state.tissue.maxHp}`,
     stability: `全域净化 ${time(territory.stability.totalSeconds)}`,
     stabilityDetail: `当前连续 ${time(territory.stability.currentSeconds)} · 最长 ${time(territory.stability.bestSeconds)}`,
     fullyPurified: territory.stability.active, beaconRank: rank,
-    wave: `第${state.endless.wave}波 · 余敌${remaining}`, sourceFocus,
-    detail: urgentDetail || invasionWarning || healing || routineDetail,
+    wave, progressPath, sourceProgress: { cleared: sources, total: sourceIds.length }, sourceFocus,
+    detail: state.expedition?.missionId && anchorDanger.attacked ? invasionWarning : urgentDetail || invasionWarning || healing || routineDetail,
     keyDetail: !!(urgentDetail || invasionWarning), invasionWarning, contextHint, lines,
     infection, healing: (contact.healed ?? 0) > 0, regions: territory.nodes.map(region => ({ id: region.id, name: region.name,
       healthy: region.owner === 'healthy', permanent: region.permanent,
@@ -131,16 +208,52 @@ export function territoryHudView(state: GameState, touch = false) {
 export const territoryHudMarkup = `<section id="territory-hud" class="territory-hud" aria-label="救援目标与领地状态" hidden>
   <div class="territory-heading"><b id="territory-core"></b><div id="territory-regions" class="territory-regions"></div></div>
   <strong id="territory-objective"></strong><p id="territory-detail"></p><span id="territory-stability" class="territory-stability"></span><small id="territory-wave"></small>
+  <div id="territory-progress" class="territory-progress" aria-label="通关阶段" hidden></div>
   <div id="territory-source-access" class="territory-source-access" hidden></div>
+</section><section id="heart-boss-hud" class="heart-boss-hud" aria-label="噬心母巢阶段与韧性" hidden>
+  <header><strong>噬心母巢 <span id="heart-boss-stage"></span></strong><b id="heart-boss-bars"></b></header>
+  <div id="heart-boss-health" class="heart-boss-health" role="progressbar" aria-label="当前阶段生命"><i></i><span></span></div>
+  <div id="heart-boss-toughness" class="heart-boss-toughness" role="progressbar" aria-label="母巢韧性"><i></i></div>
+  <p id="heart-boss-hint"></p>
 </section>`;
+
+export function territoryStagePathMarkup(steps: readonly { label: string; current: boolean; done: boolean }[]): string {
+  return steps.map(step => `<span data-current="${step.current}" data-done="${step.done}"${step.current ? ' aria-current="step"' : ''}>${escape(step.label)}</span>`).join('');
+}
+
+export function updateHeartBossHud(state: GameState): void {
+  if (typeof document === 'undefined') return;
+  const root = document.getElementById('heart-boss-hud'), view = heartBossHudView(state);
+  if (!root) return;
+  root.hidden = !view || !['playing', 'paused'].includes(state.phase);
+  if (!view) return;
+  root.dataset.stage = String(view.stage); root.dataset.broken = String(view.broken);
+  const stage = document.getElementById('heart-boss-stage'), bars = document.getElementById('heart-boss-bars'), hint = document.getElementById('heart-boss-hint');
+  if (stage) stage.textContent = `${['Ⅰ', 'Ⅱ', 'Ⅲ'][view.stage - 1]} · ${view.stageName}`;
+  if (bars) bars.textContent = `×${view.remainingBars}`;
+  if (hint) hint.textContent = view.hint;
+  for (const [id, value, max] of [['heart-boss-health', view.hp, view.maxHp], ['heart-boss-toughness', view.toughness, view.toughnessMax]] as const) {
+    const bar = document.getElementById(id); if (!bar) continue;
+    bar.setAttribute('aria-valuenow', String(value)); bar.setAttribute('aria-valuemax', String(max)); bar.setAttribute('aria-valuemin', '0');
+    const fill = bar.querySelector<HTMLElement>('i'); if (fill) fill.style.width = `${Math.max(0, Math.min(1, value / max)) * 100}%`;
+    const label = bar.querySelector('span'); if (label) label.textContent = `${value} / ${max}`;
+  }
+}
 
 export function updateTerritoryHud(state: GameState): void {
   if (typeof document === 'undefined') return;
+  updateHeartBossHud(state);
   const root = document.getElementById('territory-hud'), view = territoryHudView(state, !!document.body?.classList.contains('touch-mode'));
   if (!root) return;
   root.hidden = !view || !['playing', 'paused'].includes(state.phase);
   if (!view) return;
   root.dataset.infected = String(!!view.infection);
+  const progress = document.getElementById('territory-progress');
+  if (progress) {
+    progress.hidden = view.progressPath.length === 0;
+    const markup = territoryStagePathMarkup(view.progressPath);
+    if (progress.innerHTML !== markup) progress.innerHTML = markup;
+  }
   root.dataset.healing = String(view.healing);
   root.dataset.fullyPurified = String(view.fullyPurified);
   root.title = view.stabilityDetail;
@@ -231,7 +344,7 @@ export function territoryHelpMarkup(touch: boolean): string {
 }
 
 export function territoryLegacyMarkup(profile?: TerritoryProfileSnapshot): string {
-  return [profile?.previousWeaponSkills,profile?.previousExpedition,profile?.previousCombat,profile?.previousGarrison].filter(old=>!!old).map(old=>
+  return [profile?.previousWeaponIdentity,profile?.previousWeaponSkills,profile?.previousExpedition,profile?.previousCombat,profile?.previousGarrison].filter(old=>!!old).map(old=>
     `<details class="territory-legacy-records"><summary>旧规则v${old!.schemaVersion}战绩 · 救援${old!.rescues}次 · 最高${old!.bestScore}分</summary><p>旧记录保留，与当前规则分别统计。</p><ul>${old!.recentRuns.slice(0,3).map(record=>`<li>${record.rescue.success?'救援成功':'救援结束'} · ${record.score}分 · ${time(record.durationSeconds)} · SEED ${record.seed}</li>`).join('')}</ul></details>`).join('');
 }
 

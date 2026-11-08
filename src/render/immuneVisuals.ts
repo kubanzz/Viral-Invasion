@@ -1,12 +1,13 @@
 import type { ImmuneCellState } from '../game/immuneCells';
 import type { Vec } from '../game/types';
+import { seraphPresentationRole } from './legionPresentation';
 
 const TAU = Math.PI * 2;
 const font = '"Microsoft YaHei", "Segoe UI", sans-serif';
 export const IMMUNE_BODY_LIFT = -13;
 /** The very same local vertices are used for drawing and occlusion bounds. */
 export function immuneCellBody(cell: ImmuneCellState, elapsed: number) {
-  const alpha = cell.until <= elapsed || (cell.hp ?? 1) <= 0 ? 0 : Math.max(0, Math.min(1, (elapsed - cell.born) / .2, (cell.until - elapsed) / .35));
+  const alpha = cell.until <= elapsed || (cell.hp ?? 1) <= 0 ? 0 : Math.max(0, Math.min(1, (elapsed - cell.born) / .2, (cell.until - elapsed) / .35)) * (cell.echo ? .48 : 1);
   const crawling = cell.activity === 'seeking' || cell.activity === 'returning', biting = elapsed < cell.attackUntil;
   const pulse = Math.sin(elapsed * (crawling ? 13 : 4) + cell.born * 3), radius = cell.radius + (biting ? 3 : 0);
   const outline = Array.from({ length: 37 }, (_, index) => {
@@ -49,6 +50,8 @@ function drawBody(ctx: CanvasRenderingContext2D, body: ImmuneBody): void {
 }
 
 function drawActivity(ctx: CanvasRenderingContext2D, cell: ImmuneCellState, elapsed: number, body: ImmuneBody, low: boolean): void {
+  // The dedicated effect pass owns authoritative Seraph windup/release/hit accents.
+  if (cell.legionId === 'seraph') return;
   const { crawling, biting, pulse, radius } = body;
   if (!low && crawling) for (const sign of [-1, 1]) {
     ctx.beginPath(); ctx.ellipse(-radius - 4, sign * 4 + pulse, 1.8, 1.3, 0, 0, TAU); ctx.fillStyle = '#97b598'; ctx.fill();
@@ -57,6 +60,31 @@ function drawActivity(ctx: CanvasRenderingContext2D, cell: ImmuneCellState, elap
     const open = .3 + Math.min(1, (cell.attackUntil - elapsed) / .24) * .35;
     ctx.beginPath(); ctx.arc(0, 0, radius + 5, -open, open); ctx.strokeStyle = '#496f59'; ctx.lineWidth = 4; ctx.stroke();
     ctx.strokeStyle = '#f3e7bc'; ctx.lineWidth = 2; ctx.stroke();
+  }
+}
+
+/** Distinct commander/wing silhouette while the registered painted family loads. */
+function drawSeraphBody(ctx: CanvasRenderingContext2D, cell: ImmuneCellState, body: ImmuneBody): void {
+  const role=seraphPresentationRole(cell),leader=role==='commander',r=cell.radius,spread=(body.biting ? .5 : 1)+(body.crawling?body.pulse*.08:0);
+  for(const sign of [-1,1]){
+    ctx.beginPath();ctx.moveTo(-r*.3,sign*r*.45);ctx.quadraticCurveTo(-r*1.7,sign*r*2.1*spread,-r*1.9,sign*r*.85);
+    ctx.lineTo(-r*.95,sign*r*.7);ctx.lineTo(-r*1.25,sign*r*.18);ctx.closePath();
+    ctx.fillStyle='#d6e9dd';ctx.fill();ctx.strokeStyle='#c5ab70';ctx.lineWidth=1.4;ctx.stroke();
+  }
+  ctx.beginPath();ctx.moveTo(r*1.15,0);ctx.lineTo(r*.25,-r*.8);ctx.lineTo(-r*.8,-r*.65);ctx.lineTo(-r,0);
+  ctx.lineTo(-r*.8,r*.65);ctx.lineTo(r*.25,r*.8);ctx.closePath();ctx.fillStyle='#f7f1db';ctx.fill();ctx.strokeStyle='#b49a60';ctx.lineWidth=2;ctx.stroke();
+  ctx.beginPath();ctx.ellipse(0,0,r*.4,r*.52,0,0,TAU);ctx.fillStyle='#3c8c7b';ctx.fill();
+  if(leader){
+    ctx.beginPath();ctx.moveTo(-r*.4,-r*.8);ctx.lineTo(-r*.55,-r*1.35);ctx.lineTo(0,-r*1.05);ctx.lineTo(r*.35,-r*1.5);
+    ctx.lineTo(r*.6,-r*.65);ctx.strokeStyle='#d0ae62';ctx.lineWidth=2.8;ctx.stroke();
+    if(body.biting)stroke(ctx,{x:r*.5,y:r*.5},{x:r*2.1,y:-r*.25},'#fff4bc',4);
+  }else if(role==='prism'){
+    stroke(ctx,{x:r*.4,y:r*.75},{x:r*1.6,y:-r*.9},'#d5ba7d',2.4);
+    ctx.beginPath();ctx.moveTo(r*1.6,-r*1.25);ctx.lineTo(r*1.9,-r*.9);ctx.lineTo(r*1.6,-r*.55);ctx.lineTo(r*1.3,-r*.9);ctx.closePath();
+    ctx.fillStyle='#b2ece0';ctx.fill();ctx.strokeStyle='#f8e5b5';ctx.lineWidth=1.5;ctx.stroke();
+  }else{
+    stroke(ctx,{x:-r*.3,y:r*.75},{x:r*2.1,y:-r*.55},'#dfc180',2.5);
+    stroke(ctx,{x:r*1.65,y:-r*.25},{x:r*2.1,y:-r*.55},'#fff5d7',3.5);
   }
 }
 
@@ -99,7 +127,8 @@ export function drawImmuneCell(ctx: CanvasRenderingContext2D, cell: ImmuneCellSt
   ctx.save(); ctx.globalAlpha = body.alpha; ctx.translate(cell.x, cell.y);
   drawGround(ctx, cell); ctx.scale(1, 1 / .72);
   ctx.save(); ctx.translate(0, IMMUNE_BODY_LIFT); ctx.rotate(body.rotation);
-  drawBody(ctx, body); drawActivity(ctx, cell, elapsed, body, low); ctx.restore();
+  if(cell.legionId==='seraph')drawSeraphBody(ctx,cell,body);else drawBody(ctx, body);
+  drawActivity(ctx, cell, elapsed, body, low); ctx.restore();
   if (!hideLifetime) drawLifetime(ctx, cell, elapsed); ctx.restore();
 }
 

@@ -50,6 +50,8 @@ export interface TerritoryNode extends Vec {
   /** Simulation timestamps survive recent-event eviction and freeze on pause. */
   contestedAt?: number;
   capturedAt?: number;
+  /** Formal missions grant a short respite after actual player purification. */
+  protectedUntil?: number;
 }
 
 export interface TerritorySourceState {
@@ -97,6 +99,8 @@ export interface TerritoryState {
   construction?: import('./constructionTypes').ConstructionState;
   /** Most recent actual contact/attack exposure in simulation seconds. */
   playerExposureAt: number;
+  /** Last accepted enemy hit on the protected anchor, in paused simulation time. */
+  coreLastHitAt?: number;
   healingContact: { nodeId: string | null; seconds: number; healed?: number; exposure?: boolean };
   bossId?: string;
   bossCombat?: MotherCoreState;
@@ -141,6 +145,8 @@ export interface TerritoryNodeView {
   pollutionRate: number;
   purificationProgress: number;
   purificationActive: boolean;
+  /** Positive simulation seconds only while a reclaimed mission node is protected. */
+  protectionRemaining?: number;
   pausedReason?: TerritoryPurificationPauseReason;
   requiredNodeId?: TerritoryHealingId;
   /** Real current attackers, never a static infected owner's existence. */

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { Soundscape } from '../../src/audio';
 import { GameSession } from '../../src/game/session';
 import type { GameEvent, GameState, Target } from '../../src/game/types';
+import { createWeaponCombat } from '../../src/game/weaponSkills';
 
 interface ScheduledTone { start: number; stop: number; from: number; to: number; volume: number }
 interface NodeLifecycle { connected: boolean; disconnectCalls: number }
@@ -37,10 +38,100 @@ function audioFixture() {
   };
   return { sound, scheduled, clock, oscillators, gains, finishDue };
 }
+
+describe('continuous thunder audio', () => {
+  it('can silence a live electric loop synchronously without another animation frame or changing the sound preference', () => {
+    const { sound, oscillators, gains } = audioFixture();
+    const session = new GameSession(25, { mode: 'endless', territory: true }); session.start();
+    const s = session.state; s.events = []; s.weaponCombat = createWeaponCombat({ weaponId: 'thunder', rarity: 'gold', upgrade: 0 });
+    s.weaponCombat.thunder = { marks: [], trails: [], channel: { castId: 'held', startedAt: 0, nextAt: .1,
+      links: [{ targetId: 'a', from: s.player, to: s.player, main: true }] } };
+    sound.update(s); expect(oscillators[0].connected).toBe(true);
+    sound.silence(); expect(oscillators[0].connected).toBe(false); expect(gains[0].connected).toBe(false);
+    expect(sound.enabled).toBe(true);
+  });
+  it('owns one sustained voice, follows connection count, and silences release, pause and mute', () => {
+    const { sound, scheduled, oscillators, gains } = audioFixture();
+    const session = new GameSession(25, { mode: 'endless', territory: true }); session.start();
+    const s = session.state; s.events = [];
+    s.weaponCombat = createWeaponCombat({ weaponId: 'thunder', rarity: 'gold', upgrade: 0 });
+    s.weaponCombat.thunder = { marks: [], trails: [], channel: { castId: 'held', startedAt: 0, nextAt: .1,
+      links: [{ targetId: 'a', from: { x: 0, y: 0 }, to: { x: 1, y: 1 }, main: true }] } };
+    sound.update(s); expect(scheduled).toHaveLength(1); expect(oscillators[0].connected).toBe(true);
+    const firstVolume = scheduled[0].volume;
+    s.weaponCombat.thunder.channel!.links.push(...Array.from({ length: 7 }, (_, i) => ({
+      targetId: String(i), from: { x: 0, y: 0 }, to: { x: 1, y: 1 }, main: false,
+    })));
+    sound.update(s); expect(scheduled).toHaveLength(1); expect(scheduled[0].volume).toBeGreaterThan(firstVolume);
+    delete s.weaponCombat.thunder.channel; sound.update(s);
+    expect(oscillators[0].connected).toBe(false); expect(gains[0].connected).toBe(false);
+    s.weaponCombat.thunder.channel = { castId: 'again', startedAt: 0, nextAt: .1, links: [{ targetId: 'a', from: s.player, to: s.player, main: true }] };
+    sound.update(s); expect(scheduled).toHaveLength(2);
+    s.phase = 'paused'; sound.update(s); expect(oscillators.every(o => !o.connected)).toBe(true);
+    s.phase = 'playing'; sound.update(s); expect(scheduled).toHaveLength(3);
+    sound.toggle(); expect(oscillators.every(o => !o.connected)).toBe(true);
+    sound.update(s); expect(scheduled).toHaveLength(3);
+    sound.toggle(); sound.update(s); expect(scheduled).toHaveLength(4);
+    s.player.hp = 0; sound.update(s); expect(oscillators.every(o => !o.connected)).toBe(true);
+  });
+
+  it('sounds landmarks once and never plays one note per electric damage receipt', () => {
+    const { sound, scheduled } = audioFixture();
+    const hits = Array.from({ length: 48 }, () => event('TARGET_HIT', 60, { weaponId: 'thunder', cause: 'basic', damage: 12 }));
+    sound.update(state(hits)); expect(scheduled).toHaveLength(0);
+    const events = [...hits, event('THUNDER_DETONATE', 60), event('THUNDER_DETONATE', 60),
+      event('THUNDER_DASH_STARTED', 90), event('THUNDER_STORM_COLLAPSE', 120),
+      event('WEAPON_ULTIMATE_PULSE', 135, { weaponId: 'thunder', final: true })];
+    sound.update(state(events)); expect(scheduled).toHaveLength(9);
+    sound.update(state(events)); expect(scheduled).toHaveLength(9);
+  });
+});
 const event = (type: string, tick: number, data: GameEvent['data'] = {}): GameEvent => ({ type, tick, data });
 const state = (events: GameEvent[], tick = Math.max(0, ...events.map(item => item.tick)), seed = 91): GameState => ({ seed, tick, events } as GameState);
 
 describe('event-driven sound feedback', () => {
+  it('reserves the ultimate terminal accent even when an ordinary pulse just sounded', () => {
+    const { sound, scheduled } = audioFixture();
+    const events = [event('WEAPON_ULTIMATE_PULSE', 60, { weaponId: 'steady', final: false }),
+      event('WEAPON_ULTIMATE_PULSE', 61, { weaponId: 'thunder', final: true })];
+    sound.update(state(events)); expect(scheduled).toHaveLength(4);
+    expect(scheduled[0].volume).toBeLessThan(scheduled[1].volume);
+    expect(scheduled.slice(1).map(tone => tone.from)).toEqual([90, 1520, 220]);
+    sound.update(state(events)); expect(scheduled).toHaveLength(4);
+  });
+  it('gives an accepted blade sweep one softer launch and one contact accent for a crowd', () => {
+    const { sound, scheduled } = audioFixture();
+    const events = [event('WEAPON_MELEE_SWING', 60, { weaponId: 'redblade' }), event('WEAPON_MELEE_SWEEP', 60, { weaponId: 'redblade' }),
+      ...Array.from({ length: 48 }, (_, i) => event('WEAPON_MELEE_HIT', 60, { targetId: String(i), damage: 12 })),
+      ...Array.from({ length: 48 }, (_, i) => event('TARGET_HIT', 60, { id: String(i), weaponId: 'redblade', cause: 'basic', basicTool: 1, damage: 12 }))];
+    sound.update(state(events)); expect(scheduled.map(tone => tone.from)).toEqual([730, 155, 970]);
+    expect(scheduled[1].volume).toBeGreaterThan(scheduled[0].volume);
+    sound.update(state(events)); expect(scheduled).toHaveLength(3);
+  });
+  it('keeps ordinary deaths quieter than a source-clear landmark', () => {
+    const { sound, scheduled } = audioFixture();
+    sound.update(state([event('TARGET_CLEARED', 60)])); expect(scheduled).toHaveLength(2);
+    const ordinary = Math.max(...scheduled.map(t => t.volume));
+    sound.update(state([event('TARGET_CLEARED', 60), event('INFECTION_SOURCE_CLEARED', 72)]));
+    expect(scheduled).toHaveLength(4); expect(Math.max(...scheduled.slice(2).map(t => t.volume))).toBeGreaterThan(ordinary * 2);
+  });
+  it('rates the anchor warning by real attacks, freezes on pause and respects mute without replay', () => {
+    const { sound, scheduled, oscillators } = audioFixture();
+    const game = new GameSession(71, { mode: 'endless', territory: true }); game.start();
+    const s = game.state; s.events = []; s.targets = []; s.tick = 60; s.elapsed = 1;
+    const attacker: Target = { id: 'anchor-a', role: 'virus', kind: 'single', hp: 100, maxHp: 100, radius: 22,
+      x: s.tissue.x, y: s.tissue.y, hitUntil: 0, scanned: false };
+    s.targets = [attacker]; sound.update(s); expect(scheduled).toHaveLength(0);
+    attacker.attackAt = 100; attacker.attackTarget = 'tissue'; sound.update(s);
+    expect(scheduled.map(t => t.from)).toEqual([740, 740]);
+    s.tick = 239; s.elapsed = 239 / 60; sound.update(s); expect(scheduled).toHaveLength(2);
+    s.phase = 'paused'; sound.update(s); expect(oscillators.every(t => !t.connected)).toBe(true);
+    s.phase = 'playing'; s.tick = 240; s.elapsed = 4; sound.update(s); expect(scheduled).toHaveLength(4);
+    sound.toggle(); s.tick = 420; s.elapsed = 7; sound.update(s); sound.toggle(); sound.update(s); expect(scheduled).toHaveLength(4);
+    attacker.attackTarget = 'immune'; s.tick = 600; s.elapsed = 10; sound.update(s); expect(scheduled).toHaveLength(4);
+    game.emit('ORGAN_INTEGRITY_CHANGED', { organId: 'heart', before: 100, after: 90, reason: 'enemy-attack' }); sound.update(s);
+    expect(scheduled.map(t => t.from)).toEqual([740, 740, 740, 740, 740, 740]);
+  });
   it('plays infection ticks only for accepted damage and heavy-cannon fire separately from its landing',()=>{
     const {sound,scheduled}=audioFixture();
     const events=[event('PLAYER_INFECTED',1),event('PLAYER_HURT',2,{reason:'infection',damage:0}),
@@ -320,8 +411,76 @@ describe('event-driven sound feedback', () => {
     sound.update(state([first, hurt, event('TARGET_HIT', 61)], 61));
     expect(scheduled).toHaveLength(2);
     sound.update(state([first, hurt, event('TARGET_HIT', 64)], 64));
+    expect(scheduled).toHaveLength(2); // ordinary autonomous hits now use an eight-tick window
+    sound.update(state([first, hurt, event('TARGET_HIT', 68)], 68));
     expect(scheduled).toHaveLength(3);
     expect(oscillators[2].connected && gains[2].connected).toBe(true);
     expect(oscillators[2].disconnectCalls).toBe(0); expect(gains[2].disconnectCalls).toBe(0);
+  });
+  it('plays blade trace stages and four landmark punctures once per cast without per-frame or collateral sounds', () => {
+    const { sound, scheduled } = audioFixture();
+    const cue = (type: string, tick: number, mark = 0) => event(type, tick, { castId: 'blade-a', mark, manual: true });
+    const started = cue('BLADE_TRACE_STARTED', 1), committed = cue('BLADE_TRACE_COMMITTED', 10);
+    const events = [event('WEAPON_ULTIMATE_CAST', 1, { weaponId: 'redblade' }), started, started,
+      ...Array.from({ length: 4 }, (_, mark) => cue('BLADE_TRACE_MARK_CONNECTED', 5 + mark, mark)), committed,
+      cue('BLADE_TRACE_COMMITTED', 11), cue('BLADE_TRACE_RELEASED', 49),
+      ...Array.from({ length: 120 }, (_, n) => cue('BLADE_TRACE_SEGMENT', 50 + n)),
+      ...Array.from({ length: 4 }, (_, mark) => cue('BLADE_TRACE_IMPACT', 70 + mark * 8, mark)),
+      cue('BLADE_TRACE_IMPACT', 104, 0), cue('BLADE_TRACE_FINISHED', 180),
+      ...Array.from({ length: 48 }, () => event('TARGET_HIT', 180, { skillId: 'redblade-ultimate', cause: 'weapon' })),
+      ...Array.from({ length: 48 }, () => cue('BLADE_TRACE_HIT', 180)), cue('BLADE_TRACE_FINISHED', 181)];
+    sound.update(state(events));
+    expect(scheduled.map(tone => tone.from)).toEqual([440, 970, 970, 970, 970, 120, 1420, 1560, 180,
+      920, 96, 1010, 96, 1100, 96, 1190, 96, 145, 820]);
+    const hum = scheduled.find(tone => tone.from === 120)!, eye = scheduled.find(tone => tone.from === 1420)!;
+    expect(hum.stop - hum.start).toBeCloseTo(.4); expect(eye.start - hum.start).toBeCloseTo(.4);
+    sound.update(state([...events, cue('BLADE_TRACE_IMPACT', 190, 2), cue('BLADE_TRACE_FINISHED', 191)]));
+    expect(scheduled).toHaveLength(19);
+    sound.update(state([event('BLADE_TRACE_COMMITTED', 1, { castId: 'blade-a' })], 1, 92));
+    expect(scheduled.slice(-2).map(tone => tone.from)).toEqual([120, 1420]);
+  });
+  it('keeps automatic point completion quiet and cancels the delayed eye cue on mute or pause', () => {
+    for (const action of ['mute', 'pause'] as const) {
+      const { sound, scheduled, oscillators, clock } = audioFixture();
+      const events = [event('BLADE_TRACE_MARK_CONNECTED', 1, { castId: 'blade-a', mark: 0, manual: false }),
+        event('BLADE_TRACE_COMMITTED', 2, { castId: 'blade-a' })];
+      sound.update(state(events)); expect(scheduled).toHaveLength(2); expect(scheduled[1].start).toBeGreaterThan(clock.now);
+      if (action === 'mute') sound.toggle();
+      else sound.update({ ...state(events), phase: 'paused' });
+      expect(oscillators.every(tone => !tone.connected && tone.onended === null)).toBe(true);
+      expect(scheduled.every(tone => tone.stop === clock.now)).toBe(true);
+      if (action === 'mute') sound.toggle();
+      sound.update(state(events)); expect(scheduled).toHaveLength(2);
+    }
+  });
+  it('voices real Seraph attack phases and impacts once, with a fixed burst budget and no duplicate ordinary hit cue', () => {
+    const { sound, scheduled } = audioFixture();
+    const cue = (type: string, tick: number, data: GameEvent['data'] = {}) => event(`LEGION_SERAPH_${type}`, tick,
+      { actionId: 'seraph-a', cellId: 'commander', role: 'commander', fromX: 100, fromY: 100, x: 150, y: 100,
+        part: 0, sequence: 1, targetId: 'target', ...data });
+    const events = [cue('WINDUP', 1), cue('RELEASED', 15), cue('HIT', 16, { damage: 12 }), cue('HIT', 17, { damage: 12 }),
+      event('TARGET_HIT', 16, { damage: 12, cause: 'protocol', immuneCellId: 'commander', legionId: 'seraph' }),
+      cue('HIT', 30, { damage: 0, actionId: 'miss' })];
+    sound.update(state(events));
+    expect(scheduled.map(tone => tone.from)).toEqual([520, 1240, 140, 170, 1760]);
+    sound.update(state(events)); expect(scheduled).toHaveLength(5);
+    const burst = ['commander', 'lancer', 'prism'].flatMap(role => ['HIT', 'RELEASED', 'WINDUP'].map(type =>
+      cue(type, 60, { role, actionId: `burst:${role}:${type}`, damage: 8 })));
+    sound.update(state([...events, ...burst], 60));
+    expect(scheduled.length - 5).toBeLessThanOrEqual(8);
+  });
+  it('silences Seraph notes on death and organ exit and never turns a paused event into a replay', () => {
+    const e = event('LEGION_SERAPH_ECHO', 60, { actionId: 'echo', cellId: 'echo-cell', role: 'lancer',
+      fromX: 100, fromY: 100, x: 140, y: 100, part: 0, sequence: 1 });
+    for (const exit of ['death', 'organ', 'pause'] as const) {
+      const { sound, scheduled, oscillators } = audioFixture();
+      const session = new GameSession(71); session.start();
+      const game = session.state; game.events = [e]; game.tick = 60; game.elapsed = 1;
+      sound.update(game); expect(scheduled).toHaveLength(2);
+      const stopped = exit === 'pause' ? { ...game, phase: 'paused' }
+        : exit === 'death' ? { ...game, player: { hp: 0 } } : { ...game, battle: { organId: 'lung' } };
+      sound.update(stopped as GameState); expect(oscillators.every(tone => !tone.connected)).toBe(true);
+      sound.update(game); expect(scheduled).toHaveLength(2);
+    }
   });
 });

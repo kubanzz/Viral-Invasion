@@ -9,6 +9,7 @@ import { activeWorld, BALANCE, type GameEvent, type GameState, type MessagePrior
 import type { EndlessSpawnRole } from './endlessTypes';
 import type { SmartSupportPlan, SmartSupportWave, SlimeCast } from './smartVirusesTypes';
 import { advanceRituals, ritualArrangement, ritualArrangementValid, ritualSpawnReserved, spawnRitual } from './ritual';
+import { bladeEnemyMovementFactor } from './bladeTechniques';
 
 export const SMART_VIRUS_BALANCE = {
   casterHp: 136, casterSpeed: 60, castRange: 450, castInner: 300, castOuter: 400,
@@ -192,7 +193,7 @@ function moveSmart(state: GameState, actor: Target, goal: Vec, speed: number, dt
     routeWorlds.set(state, route);
   }
   const next = navigator(state).waypoint(actor, goal, route.world, state.elapsed), d = normalized(next.x - actor.x, next.y - actor.y);
-  const step = Math.min(speed * dt, distance(actor, goal));
+  const step = Math.min(speed * dt * bladeEnemyMovementFactor(state, actor), distance(actor, goal));
   const p = moveEnemyThroughCrowd(actor, { x: d.x * step, y: d.y * step }, state.targets, activeWorld(state));
   actor.x = p.x; actor.y = p.y; if (d.x || d.y) actor.facing = Math.atan2(d.y, d.x);
 }

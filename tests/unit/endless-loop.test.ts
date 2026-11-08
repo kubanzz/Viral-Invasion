@@ -148,7 +148,8 @@ describe('real session continuous challenge loop', () => {
     console.info(JSON.stringify({ proof: 'natural-input-12-wave', seed: 71, elapsed: a.state.elapsed,
       clearedWaves: a.state.endless!.clearedWaves, maxLiving, maxTelegraphs, frozenChecks, pendingFissionTicks, dualModalPauses,
       hp: a.state.player.hp, tissue: a.state.tissue.hp, inputSha256: hash.digest('hex'), choices: choicesA }));
-  }, 60000);
+  // Slow-host opt-in preserves the full 12-wave deterministic input/choice replay.
+  }, process.env.VI_SLOW_SIM_TESTS === '1' ? 240000 : 60000);
 
   it('loses naturally with no attacks, grants no clear reward after death and resets the same seed on restart', () => {
     const session = new GameSession(71, { mode: 'endless' }); session.start(); const runId = session.state.growth!.runId;

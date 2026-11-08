@@ -91,6 +91,23 @@ export const EXPEDITION_ICON_IDS: Readonly<Record<string, string>> = {
   'weapon-steady-broken': 'fantasy.weapon.steady.held',
   'weapon-piercing': 'fantasy.weapon.piercing.held',
   'weapon-piercing-broken': 'fantasy.weapon.piercing.held',
+  'weapon-thunder': 'fantasy.weapon.thunder.held',
+  'weapon-thunder-broken': 'fantasy.weapon.thunder.held',
+  'weapon-redblade': 'fantasy.weapon.redblade.held',
+  'weapon-redblade-broken': 'fantasy.weapon.redblade.held',
+  'summon-hero-weapon-thunder': 'fantasy.weapon.thunder.held',
+  'summon-hero-weapon-redblade': 'fantasy.weapon.redblade.held',
+  ...Object.fromEntries(['steady-burst','steady-repulse','steady-overdrive','steady-ultimate',
+    'piercing-heavy','piercing-gather','piercing-fan','piercing-ultimate',
+    'thunder-spear','thunder-cage','thunder-overdrive','thunder-ultimate',
+    'redblade-dash','redblade-gather','redblade-execute','redblade-parry','redblade-domain','redblade-ultimate']
+    .map(id=>[`skill-${id}`,`fantasy.weapon.icon.${id}`])),
+  'legion-seraph': 'sanctum.portrait.seraph',
+  'seraph-commander': 'seraph24.commander.front.idle.00',
+  'seraph-lancer': 'seraph24.lancer.front.idle.00',
+  'seraph-prism': 'seraph24.prism.front.idle.00',
+  'food': 'sanctum.icon.food',
+  'crop-seed': 'sanctum.crop.seed', 'crop-grow': 'sanctum.crop.grow', 'crop-ripe': 'sanctum.crop.ripe',
   'blueprint-launch-pod': `${EXPEDITION_ART_PREFIX}blueprintBasePod.fixed.ready.00`,
   'blueprint-rapid-launch-pod': `${EXPEDITION_ART_PREFIX}blueprintRapidPod.fixed.ready.00`,
   biomass: `${EXPEDITION_ART_PREFIX}repairBiomass.fixed.ready.00`,
@@ -107,12 +124,15 @@ export function expeditionIconStyles(runtime: ExpeditionIconRuntime): { css: str
   const rules: string[] = [], installed: string[] = [];
   const atlasRules = new Map<string, { uri: string; selectors: string[] }>();
   for (const [name, id] of Object.entries(EXPEDITION_ICON_IDS)) {
+    // Reworked thunder techniques use their current code-native silhouettes.
+    if (['skill-thunder-spear', 'skill-thunder-cage', 'skill-thunder-overdrive'].includes(name)) continue;
     const asset = runtime.assets[id];
     const registeredStatic = id.startsWith('microfront.') && asset?.flags?.includes('microfront-v1')
       && asset.status === 'producer-ready-pending-main-renderer';
     const reviewedUiIcon = id.startsWith('microfront.reward.') && asset?.status === 'ui-reviewed' && asset.flags?.includes('reward-icons-v1');
     const reviewedSummonHero = id.startsWith('microfront.summon.hero.') && asset?.status === 'ui-reviewed' && asset.flags?.includes('summon-hero-art-v1');
-    if (!asset?.atlas || asset.animation?.approved !== true && !registeredStatic && !reviewedUiIcon && !reviewedSummonHero) continue;
+    const reviewedSanctum = asset?.status === 'ui-reviewed' && (asset.flags?.includes('sanctum-v020-reviewed') || asset.flags?.includes('living-world-v023-reviewed') || asset.flags?.includes('seraph-v024-reviewed'));
+    if (!asset?.atlas || asset.animation?.approved !== true && !registeredStatic && !reviewedUiIcon && !reviewedSummonHero && !reviewedSanctum) continue;
     const atlas = runtime.atlases.find(a => a.key === asset.atlas), frame = atlas?.data.frames?.[asset.frame ?? id]?.frame, size = atlas?.data.meta?.size;
     if (!atlas?.dataUri.startsWith('data:image/png;base64,') || !frame || !size || ![frame.x, frame.y, frame.w, frame.h, size.w, size.h].every(Number.isFinite)
       || frame.w <= 0 || frame.h <= 0 || frame.x < 0 || frame.y < 0 || frame.x + frame.w > size.w || frame.y + frame.h > size.h) continue;
@@ -121,6 +141,8 @@ export function expeditionIconStyles(runtime: ExpeditionIconRuntime): { css: str
     const grouped = atlasRules.get(atlas.key) ?? { uri: atlas.dataUri, selectors: [] }; grouped.selectors.push(selector); atlasRules.set(atlas.key, grouped);
     rules.push(`${selector}{background-color:transparent;background-size:${size.w / frame.w * 100}% ${size.h / frame.h * 100}%;background-position:${x}% ${y}%;background-repeat:no-repeat;border:0;box-shadow:none;transform:none}${selector}::before,${selector}::after{display:none}`);
     if (name.startsWith('module-')) rules.push(`${selector}>.mission-reward-glyph{display:none}`);
+    if (name.startsWith('skill-')) rules.push(`${selector}>svg{visibility:hidden}`);
+    if (name.startsWith('crop-')) rules.push(`${selector}>span{visibility:hidden}`);
     installed.push(name);
   }
   const images = [...atlasRules.values()].map(group => `${group.selectors.join(',')}{background-image:url("${group.uri}")}`);

@@ -6,6 +6,7 @@ import { ritualMotherShielded } from '../../src/game/ritual';
 import type { GameEvent, InputFrame, Target } from '../../src/game/types';
 import type { RitualProjectile } from '../../src/game/ritualTypes';
 import { createWeaponCombat } from '../../src/game/weaponSkills';
+import { HEART_BOSS_BALANCE } from '../../src/game/motherCore';
 
 /** These are supplied late-battle states followed by real production input,
  * collision, damage, phase and storage transactions; not natural-play evidence. */
@@ -63,7 +64,7 @@ describe('production session intercepts non-biological projectiles', () => {
     f.state.smartViruses!.ritual!.projectiles = [projectile('energy-a', 1300), projectile('energy-b', 1320, 778)];
     const before = f.rewards(); f.step({ weaponSkill: { slot: 2, aim: { x: 1900, y: 750 } } });
     expect(f.events.find(e => e.type === 'PLAYER_CANNON_EXPLODED')?.data).toMatchObject({
-      x: 1200, y: 750, radius: 155, visual: 'pulse-ring', skillId: 'steady-repulse',
+      x: 1200, y: 750, radius: 190, visual: 'pulse-ring', skillId: 'steady-repulse',
     });
     expect(f.events.filter(e => e.type === 'RITUAL_PROJECTILE_HIT').map(e => e.data.damage)).toEqual([68, 68]);
     expect(f.events.filter(e => e.type === 'RITUAL_PROJECTILE_INTERCEPTED')).toHaveLength(2);
@@ -75,29 +76,31 @@ describe('production session intercepts non-biological projectiles', () => {
     f.step({ weaponSkill: { slot: 2, aim: { x: 1500, y: 750 } } });
     const blast = f.events.find(e => e.type === 'PLAYER_CANNON_EXPLODED')!; expect(blast).toBeDefined();
     expect(f.events.filter(e => e.type === 'RITUAL_PROJECTILE_INTERCEPTED')).toHaveLength(1);
-    // Supplied late-battle fixture: a separately injured, still-flying body arrives after the main explosion.
-    const later = projectile('aftershock', Number(blast.data.x) + 185); later.hp = 25;
+    // The reinforced repulse also emits a second pulse at .25s. Supply this
+    // separate injured body after both pulses so this test isolates catalysis.
+    f.advance(16);
+    const later = projectile('aftershock', Number(blast.data.x) + 165); later.hp = 25;
     f.state.smartViruses!.ritual!.projectiles = [later];
-    const before = f.rewards(); f.advance(20);
-    expect(later.hp).toBe(25); expect(later.x).toBeLessThan(1385);
+    const before = f.rewards(); f.advance(3);
+    expect(later.hp).toBe(25); expect(later.x).toBeLessThan(1365);
     expect(f.events.some(e => e.type === 'PLAYER_CANNON_AFTERSHOCK')).toBe(false); f.advance(5);
     const shock = f.events.find(e => e.type === 'PLAYER_CANNON_AFTERSHOCK')!;
-    expect(shock.data).toMatchObject({ x: 1200, y: 750, radius: 155 * .75 }); expect(shock.tick - blast.tick).toBe(21);
+    expect(shock.data).toMatchObject({ x: 1200, y: 750, radius: 190 * .75 }); expect(shock.tick - blast.tick).toBe(21);
     expect(f.events.some(e => e.type === 'RITUAL_PROJECTILE_INTERCEPTED' && e.data.id === later.id)).toBe(true);
     expect(f.events.find(e => e.type === 'RITUAL_PROJECTILE_HIT' && e.data.id === later.id)?.data.damage).toBe(25);
     expect(f.state.smartViruses!.ritual!.projectiles).toEqual([]); expect(f.rewards()).toEqual(before); expect(f.state.player.hp).toBe(100);
   });
-  it('the actual storm outward and return legs together intercept a full 68-HP moving homing body', () => {
+  it('the reinforced storm outward and return legs together intercept a durable moving homing body', () => {
     const f = arena('provided-sword');
     const loadout = { weaponId: 'piercing' as const, rarity: 'white' as const, upgrade: 0 };
     f.state.expedition!.loadout = loadout; f.state.weaponCombat = createWeaponCombat(loadout);
     // A legal in-flight heading while its homing turn catches up to a player who changed sides.
     // It remains a real moving/tracking projectile; no per-frame state or clock intervention occurs.
-    const orb = projectile('sword', 1360); orb.angle = 0;
+    const orb = projectile('sword', 1360); orb.angle = 0; orb.hp = 124;
     f.state.smartViruses!.ritual!.projectiles = [orb];
     const before = f.rewards(); f.step({ weaponSkill: { slot: 3, aim: { x: 1700, y: 750 } } });
     for (let n = 0; n < 40 && !f.events.some(e => e.type === 'RITUAL_PROJECTILE_HIT'); n++) f.step();
-    expect(orb.hp).toBe(12); expect(orb.x).toBeGreaterThan(1360);
+    expect(orb.hp).toBe(68); expect(orb.x).toBeGreaterThan(1360);
     expect(f.events.filter(e => e.type === 'RITUAL_PROJECTILE_INTERCEPTED')).toHaveLength(0);
     expect(f.events.find(e => e.type === 'PLAYER_PROJECTILE_HIT' && e.data.targetId === orb.id)?.data).toMatchObject({
       visual: 'storm-crescent', flightPhase: 'outbound', damage: 56,
@@ -108,7 +111,7 @@ describe('production session intercepts non-biological projectiles', () => {
     expect(f.events.some(e => e.type === 'WEAPON_SKILL_CAST' && e.data.skillId === 'piercing-fan')).toBe(true);
     expect(f.events.some(e => e.type === 'PLAYER_PROJECTILE_HIT' && e.data.kind === 'sword')).toBe(true);
     expect(f.events.filter(e => e.type === 'RITUAL_PROJECTILE_INTERCEPTED')).toHaveLength(1);
-    expect(f.events.filter(e => e.type === 'RITUAL_PROJECTILE_HIT' && e.data.id === orb.id).map(e => e.data.damage)).toEqual([56, 12]);
+    expect(f.events.filter(e => e.type === 'RITUAL_PROJECTILE_HIT' && e.data.id === orb.id).map(e => e.data.damage)).toEqual([56, 56, 12]);
     expect(f.events.find(e => e.type === 'PLAYER_PROJECTILE_HIT' && e.data.targetId === orb.id && e.data.flightPhase === 'returning')?.data.damage).toBe(12);
     expect(f.state.smartViruses!.ritual!.projectiles).toEqual([]); expect(f.state.player.hp).toBe(100); expect(f.rewards()).toEqual(before);
   });
@@ -171,9 +174,10 @@ function readyBoss(runId: string) {
   Object.assign(f.state.player, { x: 1300, y: 900 });
   f.step(); expect(territory.stage).toBe('boss');
   const boss = f.state.targets.find(t => t.id === territory.bossId)!;
-  expect(boss.maxHp).toBe(1800); expect(territory.bossCombat!.heartExpedition).toBe(true);
+  expect(boss.maxHp).toBe(HEART_BOSS_BALANCE.hp); expect(territory.bossCombat!.heartExpedition).toBe(true);
   // Supply the late recovery window; actual input must deliver the finishing hit.
   boss.hp = 34; boss.exposedUntil = 100;
+  territory.bossCombat!.heartBoss!.stage = 3;
   territory.bossCombat!.membrane.remaining = 0; territory.bossCombat!.membrane.floorRatio = 0;
   territory.bossCombat!.seenTraits = [...territory.bossCombat!.traits];
   return { ...f, boss, territory };

@@ -1,0 +1,233 @@
+{
+  "schemaVersion": 1,
+  "theme": "ViralInvasion_Sanctum_v020",
+  "targetRuntimeBudgetBytes": 1572864,
+  "hardRuntimeBudgetBytes": 2097152,
+  "expectedRuntimeCount": 74,
+  "budgetPolicy": "Original target1.5MiB; user explicitly allows maximum2MiB. Raw/source/reference/QA files excluded.",
+  "plannedBudgetBytes": {
+    "static": 614400,
+    "animation": 716800,
+    "bossLayersAndFx": 204800
+  },
+  "writeBoundary": "Only ViralInvasion_Sanctum_v020 outputs and production metadata. Frozen runtime PNGs are immutable; never modify old packages, game code or public selection.",
+  "staticProducerWriteBoundary": "Static producer owns static outputs and production/static-* only; actor and boss producers own their respective files. Final merger reads all producer fragments and writes delivery/audit metadata only.",
+  "fragmentInputs": [
+    "production/static-fragment.json",
+    "production/actor-delivery.fragment.json",
+    "boss-delivery.fragment.json"
+  ],
+  "actorCanvas": [
+    512,
+    512
+  ],
+  "actorFoot": [
+    256,
+    435.2
+  ],
+  "buildingCanvas": [
+    1024,
+    1024
+  ],
+  "buildingFoot": [
+    512,
+    870
+  ],
+  "wingInstantiation": {
+    "assetKey": "actor.wing.front",
+    "instanceCount": 3,
+    "duplicatePngSets": false
+  },
+  "familyPolicy": "SourceGround plus explicit uniformScale establishes each fixed canvas. Crop stages share one scaleFamily and uniformScale. Animation frames must reuse actor registration templates; never rescale each frame by its alpha bbox.",
+  "assets": [
+    {
+      "key": "actor.leader.front",
+      "kind": "actor",
+      "path": "actors/leader/front-static.png",
+      "canvas": [
+        512,
+        512
+      ],
+      "foot": [
+        256,
+        435.2
+      ],
+      "requiredForStaticReady": true,
+      "id": "sanctum.seraph.leader.front"
+    },
+    {
+      "key": "actor.wing.front",
+      "kind": "actor",
+      "path": "actors/wing/front-static.png",
+      "canvas": [
+        512,
+        512
+      ],
+      "foot": [
+        256,
+        435.2
+      ],
+      "requiredForStaticReady": true,
+      "id": "sanctum.seraph.wing.front"
+    },
+    {
+      "key": "building.farm",
+      "kind": "building",
+      "path": "buildings/farm.png",
+      "canvas": [
+        1024,
+        1024
+      ],
+      "foot": [
+        512,
+        870
+      ],
+      "requiredForStaticReady": true,
+      "id": "microfront.camp.farm"
+    },
+    {
+      "key": "building.resthouse",
+      "kind": "building",
+      "path": "buildings/resthouse.png",
+      "canvas": [
+        1024,
+        1024
+      ],
+      "foot": [
+        512,
+        870
+      ],
+      "requiredForStaticReady": true,
+      "id": "microfront.camp.house"
+    },
+    {
+      "key": "crop.seed",
+      "kind": "crop",
+      "path": "crops/seed.png",
+      "canvas": [
+        1024,
+        1024
+      ],
+      "foot": [
+        512,
+        870
+      ],
+      "scaleFamily": "nutrition-pod-v020",
+      "requiredForStaticReady": true,
+      "id": "sanctum.crop.seed"
+    },
+    {
+      "key": "crop.grow",
+      "kind": "crop",
+      "path": "crops/grow.png",
+      "canvas": [
+        1024,
+        1024
+      ],
+      "foot": [
+        512,
+        870
+      ],
+      "scaleFamily": "nutrition-pod-v020",
+      "requiredForStaticReady": true,
+      "id": "sanctum.crop.grow"
+    },
+    {
+      "key": "crop.ripe",
+      "kind": "crop",
+      "path": "crops/ripe.png",
+      "canvas": [
+        1024,
+        1024
+      ],
+      "foot": [
+        512,
+        870
+      ],
+      "scaleFamily": "nutrition-pod-v020",
+      "requiredForStaticReady": true,
+      "id": "sanctum.crop.ripe"
+    },
+    {
+      "key": "icon.food",
+      "kind": "icon",
+      "path": "icons/food.png",
+      "canvas": [
+        128,
+        128
+      ],
+      "requiredForStaticReady": true
+    },
+    {
+      "key": "icon.redblade-2",
+      "kind": "icon",
+      "path": "icons/redblade-2.png",
+      "canvas": [
+        128,
+        128
+      ],
+      "requiredForStaticReady": true
+    },
+    {
+      "key": "icon.redblade-3",
+      "kind": "icon",
+      "path": "icons/redblade-3.png",
+      "canvas": [
+        128,
+        128
+      ],
+      "requiredForStaticReady": true
+    },
+    {
+      "key": "icon.redblade-4",
+      "kind": "icon",
+      "path": "icons/redblade-4.png",
+      "canvas": [
+        128,
+        128
+      ],
+      "requiredForStaticReady": true
+    },
+    {
+      "key": "icon.sanctum",
+      "kind": "icon",
+      "path": "icons/sanctum.png",
+      "canvas": [
+        128,
+        128
+      ],
+      "requiredForStaticReady": true
+    },
+    {
+      "key": "portrait.leader",
+      "kind": "portrait",
+      "path": "portrait/leader.png",
+      "canvas": [
+        512,
+        768
+      ],
+      "requiredForStaticReady": false
+    },
+    {
+      "key": "fx.redblade-pierce-afterimage",
+      "kind": "fx",
+      "path": "fx/redblade-pierce-afterimage.png",
+      "canvas": [
+        512,
+        512
+      ],
+      "requiredForStaticReady": false
+    },
+    {
+      "key": "fx.redblade-sheathe-flash",
+      "kind": "fx",
+      "path": "fx/redblade-sheathe-flash.png",
+      "canvas": [
+        512,
+        512
+      ],
+      "requiredForStaticReady": false
+    }
+  ],
+  "bossBaseRegistrationPolicy": "Boss fragment owns canonical current-base alignment. Preserve its actual870.4 foot and declared0.4px difference to requested870 when evidence requires it; merger does not alter boss pixels or registration."
+}

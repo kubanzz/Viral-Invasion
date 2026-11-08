@@ -7,6 +7,7 @@ import type { GameEvent, InputFrame, Target } from '../../src/game/types';
 import type { MissionId } from '../../src/game/microfront';
 import { distance, normalized } from '../../src/actors/collision';
 import { waypoint } from '../helpers/g3Driver';
+import { HEART_BOSS_BALANCE } from '../../src/game/motherCore';
 
 function mission(id: MissionId = 'membrane', modules: ExpeditionDeparture['modules'] = []) {
   const game = new GameSession(20261105, { mode: 'endless', territory: true }); game.start();
@@ -138,11 +139,14 @@ describe('finite microfront missions', () => {
     step(f.game); expect(f.state.territory!.stage).toBe('rescue');
     Object.assign(e, { wave: 5, clearedWaves: 5 }); step(f.game);
     expect(f.state.territory!.stage).toBe('boss');
-    expect(f.state.targets.find(target => target.role === 'core')?.hp).toBe(1100);
+    expect(f.state.targets.find(target => target.role === 'core')?.hp).toBe(HEART_BOSS_BALANCE.hp);
     expect(f.state.result).toBeNull();
     const boss = f.state.targets.find(target => target.role === 'core')!;
     f.state.territory!.bossCombat!.membrane.remaining = 0;
     f.state.territory!.bossCombat!.seenTraits = [...f.state.territory!.bossCombat!.traits];
+    // Supply the final phase; this test checks mission settlement, while the
+    // controller suite verifies all three real damage phases independently.
+    f.state.territory!.bossCombat!.heartBoss!.stage = 3; boss.hp = HEART_BOSS_BALANCE.barHp;
     acceptedDamage(f.game, boss, boss.maxHp * 10); step(f.game);
     expect(f.state.result?.success).toBe(true);
     expect(f.state.expedition!.haul!.items).toHaveLength(0);
@@ -183,7 +187,7 @@ describe('finite microfront missions', () => {
     expect(births.every(event => cleared.has(event.data.id))).toBe(true);
     for (const [index, budget] of MISSION_COMBAT.membrane.waves.entries())
       expect(births.filter(event => event.data.wave === index + 1)).toHaveLength(budget);
-    expect(f.events.some(event => event.type === 'ENDLESS_PURSUIT_ACCELERATED')).toBe(false);
+    expect(f.events.some(event => event.type === 'ENDLESS_PURSUIT_ACCELERATED')).toBe(true);
     expect(s.expedition!.haul!.materials).toBeGreaterThan(0);
   }, 20000);
 });

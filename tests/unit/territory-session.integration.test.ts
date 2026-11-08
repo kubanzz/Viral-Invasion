@@ -5,6 +5,7 @@ import { TERRITORY_BALANCE } from '../../src/game/territory';
 import { BATTLE_BALANCE } from '../../src/game/battleConfig';
 import { TerritoryProfileStore } from '../../src/meta/endlessProfile';
 import { supplyTerritoryDefense } from '../fixtures/territoryDefense';
+import { HEART_BOSS_BALANCE } from '../../src/game/motherCore';
 
 const idle = (game: GameSession, extra: Partial<InputFrame> = {}): InputFrame => ({ moveX: 0, moveY: 0,
   fire: false, aim: { x: game.state.player.x + 100, y: game.state.player.y }, ...extra });
@@ -54,10 +55,14 @@ function bossFixture(recordId?: string) {
 }
 function defeatBoss(game: GameSession) {
   const state = game.state, boss = state.targets.find(target => target.id === state.territory!.bossId)!;
-  // Supply the completed membrane state as a fixture; the final hit still uses real damage/death.
-  state.territory!.bossCombat!.membrane.remaining = 0;
-  state.territory!.bossCombat!.seenTraits = [...state.territory!.bossCombat!.traits];
-  damage(game, boss, boss.maxHp * 10);
+  // Real accepted damage must cross all three phases; keep the final fixed-step
+  // tail for each caller's checkpoint/same-tick death assertion.
+  for (let bar = 1; bar <= HEART_BOSS_BALANCE.bars; bar++) {
+    expect(state.territory!.bossCombat!.heartBoss!.stage).toBe(bar);
+    expect(damage(game, boss, boss.maxHp * 10)).toBe(HEART_BOSS_BALANCE.barHp);
+    expect(boss.hp).toBe(HEART_BOSS_BALANCE.hp - HEART_BOSS_BALANCE.barHp * bar);
+    if (bar < HEART_BOSS_BALANCE.bars) step(game);
+  }
 }
 
 describe('production territory session transactions', () => {

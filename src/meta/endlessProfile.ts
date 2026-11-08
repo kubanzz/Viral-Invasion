@@ -178,8 +178,9 @@ export const GARRISON_PROFILE_STORAGE_KEY = 'viral-invasion:4:territory-profile'
 export const COMBAT_PROFILE_STORAGE_KEY = 'viral-invasion:5:territory-profile';
 export const EXPEDITION_PROFILE_STORAGE_KEY = 'viral-invasion:6:territory-profile';
 export const WEAPON_SKILLS_PROFILE_STORAGE_KEY = 'viral-invasion:7:territory-profile';
-export const TERRITORY_PROFILE_STORAGE_KEY = 'viral-invasion:8:territory-profile';
-export const TERRITORY_PROFILE_SCHEMA_VERSION = 8 as const;
+export const WEAPON_IDENTITY_PROFILE_STORAGE_KEY = 'viral-invasion:8:territory-profile';
+export const TERRITORY_PROFILE_STORAGE_KEY = 'viral-invasion:9:territory-profile';
+export const TERRITORY_PROFILE_SCHEMA_VERSION = 9 as const;
 export interface TerritoryRescueReceipt {
   runId: string; seed: number; atTick: number; elapsed: number; wave: number; clearedWaves: number;
   score: number; kills: number; bestCombo: number; level: number; playerHp: number; coreHp: number;
@@ -202,6 +203,7 @@ export interface TerritoryProfileSnapshot {
   previousCombat?: Omit<TerritoryProfileData, 'schemaVersion'> & { schemaVersion: 5 };
   previousExpedition?: Omit<TerritoryProfileData, 'schemaVersion'> & { schemaVersion: 6 };
   previousWeaponSkills?: Omit<TerritoryProfileData, 'schemaVersion'> & { schemaVersion: 7 };
+  previousWeaponIdentity?: Omit<TerritoryProfileData, 'schemaVersion'> & { schemaVersion: 8 };
 }
 export type TerritoryRecordResult =
   | { kind: 'recorded' | 'updated' | 'duplicate'; record?: TerritoryRunRecord; persisted: boolean }
@@ -275,11 +277,13 @@ export class TerritoryProfileStore {
   private previousCombat?: TerritoryProfileSnapshot['previousCombat'];
   private previousExpedition?: TerritoryProfileSnapshot['previousExpedition'];
   private previousWeaponSkills?: TerritoryProfileSnapshot['previousWeaponSkills'];
+  private previousWeaponIdentity?: TerritoryProfileSnapshot['previousWeaponIdentity'];
   private currentStatus: EndlessProfileStatus = { mode: 'session', code: 'unavailable', message: '救援成果暂存于本次页面。' };
   constructor(storage?: EndlessProfileStorage | null) {
     this.storage = storage === undefined ? defaultStorage() : storage;
     if (!this.storage) return;
     try { this.legacy = this.storage.getItem(ENDLESS_PROFILE_STORAGE_KEY) !== null
+      || this.storage.getItem(WEAPON_IDENTITY_PROFILE_STORAGE_KEY) !== null
       || this.storage.getItem(WEAPON_SKILLS_PROFILE_STORAGE_KEY) !== null
       || this.storage.getItem(EXPEDITION_PROFILE_STORAGE_KEY) !== null
       || this.storage.getItem(COMBAT_PROFILE_STORAGE_KEY) !== null
@@ -327,6 +331,16 @@ export class TerritoryProfileStore {
       }
     } catch { /* v0.16 weapon-kit scores stay untouched if their preview is invalid. */ }
     try {
+      const raw = this.storage.getItem(WEAPON_IDENTITY_PROFILE_STORAGE_KEY);
+      if (raw !== null && raw.length <= 256_000) {
+        const parsed: unknown = JSON.parse(raw);
+        if (object(parsed) && parsed.schemaVersion === 8) {
+          const data = parseTerritoryProfile({ ...parsed, schemaVersion: TERRITORY_PROFILE_SCHEMA_VERSION });
+          if (data) this.previousWeaponIdentity = { ...data, schemaVersion: 8 };
+        }
+      }
+    } catch { /* v0.17 scores remain read-only under the new ultimate rules. */ }
+    try {
       const raw = this.storage.getItem(TERRITORY_PROFILE_STORAGE_KEY);
       this.currentStatus = { mode: 'persistent', code: 'empty', message: '双线救援战绩独立保存。' };
       if (raw !== null) {
@@ -354,6 +368,7 @@ export class TerritoryProfileStore {
   get data(): TerritoryProfileData { return structuredClone(this.value); }
   get status(): EndlessProfileStatus { return { ...this.currentStatus }; }
   load(): TerritoryProfileSnapshot { return { data: this.data, status: this.status, legacyAvailable: this.legacy,
+    ...(this.previousWeaponIdentity ? { previousWeaponIdentity: structuredClone(this.previousWeaponIdentity) } : {}),
     ...(this.previousWeaponSkills ? { previousWeaponSkills: structuredClone(this.previousWeaponSkills) } : {}),
     ...(this.previousExpedition ? { previousExpedition: structuredClone(this.previousExpedition) } : {}),
     ...(this.previousCombat ? { previousCombat: structuredClone(this.previousCombat) } : {}),

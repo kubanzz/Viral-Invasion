@@ -3,6 +3,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { CCDIKSolver } from 'three/addons/animation/CCDIKSolver.js';
 import steadyUrl from '../../asserts/ViralInvasion_Weapons3D_v1/model/steady.glb';
 import piercingUrl from '../../asserts/ViralInvasion_Weapons3D_v1/model/piercing.glb';
+import thunderUrl from '../../asserts/ViralInvasion_WeaponUltimates_v1/model/thunder.glb';
+import redbladeUrl from '../../asserts/ViralInvasion_WeaponUltimates_v1/model/redblade.glb';
+import { WEAPON_IDS } from '../game/expedition';
 import type { WeaponId } from '../game/expedition';
 import type { GameState, Vec } from '../game/types';
 import type { Player3DMotionFrame } from './player3DMotion';
@@ -27,10 +30,12 @@ interface HeldModel {
   meshes: number;
   sha256: string | null;
 }
-const URLS: Record<WeaponId, string> = { steady: steadyUrl, piercing: piercingUrl };
+const URLS: Record<WeaponId, string> = { steady: steadyUrl, piercing: piercingUrl, thunder: thunderUrl, redblade: redbladeUrl };
 const EXPECTED: Record<WeaponId, string> = {
   steady: 'c5c5628bf0bd47493b79223218fc1a0c4a97bab45fae24739e68f2d80e44559e',
   piercing: 'd24643e0e719ddf693605e82066928eb9b48e642b167a29aebe2f6073d65d104',
+  thunder: '1c38700016cd42ab8dd4a27a6525afa6c4f0989329424fa1207d410854806a3a',
+  redblade: '6d6f4d155b60ae6106efcaa4d682cebf0cfb940ee0574a76cfde38cd94a6e961',
 };
 
 async function loadRigid(id: WeaponId): Promise<{ root: THREE.Group; sha256: string | null }> {
@@ -86,8 +91,8 @@ export class HeldWeapons3D {
 
   private async initialize(model: THREE.Group, clips: readonly THREE.AnimationClip[]): Promise<void> {
     // Load sequentially so a failure cannot strand a successful parallel GLB after disposal.
-    for (const id of ['steady', 'piercing'] as const) {
-      const loaded = await loadRigid(id), hand = model.getObjectByName(id === 'steady' ? 'mixamorigRightHand' : 'mixamorigLeftHand');
+    for (const id of WEAPON_IDS) {
+      const loaded = await loadRigid(id), hand = model.getObjectByName(id === 'piercing' ? 'mixamorigLeftHand' : 'mixamorigRightHand');
       if (!hand) { this.release(loaded.root); throw new Error('三维武器缺少手骨'); }
       const socket = new THREE.Group(); socket.name = 'weaponSocket:' + id;
       const grip = loaded.root.getObjectByName('grip'), muzzle = loaded.root.getObjectByName('muzzle');
@@ -111,13 +116,13 @@ export class HeldWeapons3D {
     const lower = lowerReference.clone(); lower.tracks = lower.tracks.filter(track => !upper(track));
     mixer.clipAction(lower).play();
     for (const [id, item] of this.models) {
-      const reference = clips.find(clip => clip.name === (id === 'steady' ? 'Pistol_Idle' : 'Bow Pull Hold'));
+      const reference = clips.find(clip => clip.name === (id === 'piercing' ? 'Bow Pull Hold' : id === 'redblade' ? 'Blade_Ready' : 'Pistol_Idle'));
       if (!reference) throw new Error('三维武器缺少校准动作');
       // Use exactly the game's lower-idle + upper-weapon masks. Calibrating a
       // full-body pistol clip would bake its different hip yaw into the socket.
       const upperReference = reference.clone(); upperReference.tracks = upperReference.tracks.filter(upper);
       const action = mixer.clipAction(upperReference).reset().play(); mixer.setTime(0); model.updateMatrixWorld(true);
-      const finger = model.getObjectByName(id === 'steady' ? 'mixamorigRightHandMiddle1' : 'mixamorigLeftHandMiddle1');
+      const finger = model.getObjectByName(id === 'piercing' ? 'mixamorigLeftHandMiddle1' : 'mixamorigRightHandMiddle1');
       this.contact(item.hand, finger, this.a);
       item.socket.position.copy(this.a); item.socket.quaternion.identity(); item.socket.scale.setScalar(1);
       item.hand.attach(item.socket); // Keep the calibrated reference-world orientation as a fixed local bone transform.

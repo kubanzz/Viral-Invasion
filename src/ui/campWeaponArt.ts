@@ -13,6 +13,26 @@ interface HeldAsset extends SourceRegisteredSpriteAsset {
 interface Atlas { key: string; dataUri: string; data: { frames: Record<string, { frame: { x: number; y: number; w: number; h: number } }> } }
 const runtime = artRuntime as unknown as { assets: Record<string, HeldAsset>; atlases: Atlas[] };
 const images = new Map<string, HTMLImageElement>();
+const effectImages = new Map<string, HTMLCanvasElement>();
+
+function atlasImage(atlas: Atlas): HTMLImageElement | undefined {
+  let image = images.get(atlas.key);
+  if (!image) { image = new Image(); image.src = atlas.dataUri; images.set(atlas.key, image); }
+  return image.complete && image.naturalWidth > 0 ? image : undefined;
+}
+
+/** Decode a registered frame once so trial effects share the battlefield PNGs. */
+export function campWeaponEffectImage(id: string): CanvasImageSource | undefined {
+  const cached = effectImages.get(id); if (cached) return cached;
+  const asset = runtime.assets[id], atlas = asset && runtime.atlases.find(item => item.key === asset.atlas);
+  const frame = atlas?.data.frames[asset.frame]?.frame;
+  if (!atlas || !frame) return;
+  const image = atlasImage(atlas); if (!image) return;
+  const canvas = document.createElement('canvas'); canvas.width = frame.w; canvas.height = frame.h;
+  const context = canvas.getContext('2d'); if (!context) return;
+  context.drawImage(image, frame.x, frame.y, frame.w, frame.h, 0, 0, frame.w, frame.h);
+  effectImages.set(id, canvas); return canvas;
+}
 
 /** Reuses the selected held PNG and its real grip, rather than a generic range gun. */
 export function drawCampWeaponArt(ctx: CanvasRenderingContext2D, weaponId: WeaponId, grip: Vec): Vec | undefined {
@@ -20,9 +40,7 @@ export function drawCampWeaponArt(ctx: CanvasRenderingContext2D, weaponId: Weapo
   const registration = asset && actorRegistration(asset as ActorAsset);
   const atlas = asset && runtime.atlases.find(item => item.key === asset.atlas), frame = atlas?.data.frames[asset.frame]?.frame;
   if (!registration?.grip || !registration.muzzle || asset.animation?.approved !== true || !atlas || !frame) return;
-  let image = images.get(atlas.key);
-  if (!image) { image = new Image(); image.src = atlas.dataUri; images.set(atlas.key, image); }
-  if (!image.complete || image.naturalWidth === 0) return;
+  const image = atlasImage(atlas); if (!image) return;
   const scale = definition.canvasHeight / registration.canvas.height * registration.commonCanvasScale;
   const layout = sourceRegisteredSpriteLayout(asset, registration.canvas, registration.grip, scale);
   if (!layout) return;

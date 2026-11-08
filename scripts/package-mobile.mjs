@@ -130,7 +130,8 @@ export async function packageMobile({ workspaceRoot = DEFAULT_WORKSPACE, distDir
 
 async function main() {
   if (process.argv.length > 2) throw new Error('Usage: node scripts/package-mobile.mjs (build first with npm run build)');
-  const report = await packageMobile();
+  const report = await packageMobile({ distDirectory: process.env.VI_DIST_DIR ?? 'dist',
+    releaseDirectory: process.env.VI_RELEASE_DIR ?? 'releases', reportPath: process.env.VI_MOBILE_PACKAGE_REPORT ?? 'artifacts/mobile-release/package-report.json' });
   console.log(JSON.stringify(report));
 }
 if (process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url) main().catch(error => {

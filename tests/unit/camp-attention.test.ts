@@ -1,17 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import { campEquipmentBest, campStationAttention } from '../../src/game/campAttention';
 import { CAMP_FACILITIES } from '../../src/game/campLayout';
-import type { WeaponRarity } from '../../src/game/expedition';
+import { isWeaponId, type WeaponRarity } from '../../src/game/expedition';
 import type { TemplateId } from '../../src/game/microfront';
 import { emptyCampProfile, type CampProfileData } from '../../src/meta/campProfile';
 
 function ready(): CampProfileData {
-  return { ...emptyCampProfile(), campUnlocked: true, campIntroSeen: true, prologue: 'ready',
+  const initial = emptyCampProfile(); initial.inventory[0].rarity = 'white'; initial.weapons.steady.repaired = 'white';
+  return { ...initial, campUnlocked: true, campIntroSeen: true, prologue: 'ready',
     builtFacilities: CAMP_FACILITIES.map(station => station.id), seenMissionIds: ['membrane'], seenEquipmentQuality: { steady: 'white' } };
 }
 function item(profile: CampProfileData, templateId: TemplateId, rarity: WeaponRarity, repaired = true): void {
   profile.inventory.push({ id: `owned:${profile.inventory.length}`, templateId, rarity, repaired,
-    kind: templateId === 'steady' || templateId === 'piercing' ? 'weapon' : 'module' });
+    kind: isWeaponId(templateId) ? 'weapon' : 'module' });
 }
 
 describe('camp building attention follows available content', () => {
@@ -23,7 +24,7 @@ describe('camp building attention follows available content', () => {
   it('shows build prompts only on unbuilt plots and suspends them while the squad is busy', () => {
     const profile = ready(); profile.prologue = 'building'; profile.builtFacilities = ['warehouse'];
     expect(campStationAttention(profile)).toEqual({ forge: { kind: 'build', label: '可建造', count: 1 },
-      shop: { kind: 'build', label: '可建造', count: 1 }, summon: { kind: 'build', label: '可建造', count: 1 },
+      shop: { kind: 'build', label: '可建造', count: 1 }, summon: { kind: 'build', label: '可激活', count: 1 },
       departure: { kind: 'build', label: '可建造', count: 1 } });
     profile.activeConstruction = 'forge';
     expect(campStationAttention(profile)).toEqual({});
@@ -103,6 +104,16 @@ describe('camp building attention follows available content', () => {
     const profile = ready(); profile.fragments.PULSE_BREAK = 20; profile.materials = 40; profile.cores = 0;
     expect(campStationAttention(profile).forge).toEqual({ kind: 'craft', label: '可打造', count: 1 });
     profile.materials = 0;
+    expect(campStationAttention(profile).forge).toBeUndefined();
+  });
+
+  it('announces a legendary reforge only after its first draw and with gold recipe resources', () => {
+    const profile = ready(); profile.weapons.steady.upgrade = 3;
+    profile.fragments.thunder = 20; profile.materials = 40; profile.cores = 1;
+    expect(campStationAttention(profile).forge).toBeUndefined();
+    profile.unlockedLegendaryWeapons.push('thunder');
+    expect(campStationAttention(profile).forge).toEqual({ kind: 'craft', label: '可打造', count: 1 });
+    profile.cores = 0;
     expect(campStationAttention(profile).forge).toBeUndefined();
   });
 

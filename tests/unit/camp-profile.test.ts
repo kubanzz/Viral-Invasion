@@ -16,9 +16,10 @@ function win(store: CampProfileStore, runId = 'first', seed = 15) {
   const run = store.beginExpedition(runId, seed), loot = createBossLoot(runId, seed, run.firstClear);
   return { run, loot, result: store.settleVictory(runId, loot) };
 }
-function seedStore(overrides: Partial<ReturnType<typeof emptyCampProfile>>) {
+function seedStore(overrides: Omit<Partial<ReturnType<typeof emptyCampProfile>>, 'weapons'> & { weapons?: Partial<ReturnType<typeof emptyCampProfile>['weapons']> }) {
   const established = overrides.campUnlocked ? { prologue: 'ready', campIntroSeen: true, builtFacilities: [...INTRO_FACILITY_IDS] } : {};
-  const storage = new Storage(); storage.values.set(CAMP_PROFILE_STORAGE_KEY, JSON.stringify({ ...emptyCampProfile(), legacyMigrationChecked: true, ...established, ...overrides }));
+  const initial = emptyCampProfile();
+  const storage = new Storage(); storage.values.set(CAMP_PROFILE_STORAGE_KEY, JSON.stringify({ ...initial, legacyMigrationChecked: true, ...established, ...overrides, weapons: { ...initial.weapons, ...overrides.weapons } }));
   return { storage, store: new CampProfileStore(storage) };
 }
 describe('permanent camp and finite expedition entitlements', () => {
@@ -94,7 +95,7 @@ describe('permanent camp and finite expedition entitlements', () => {
   });
   it('keeps the free gun and only permanently unlocks the teaching blueprint', () => {
     const storage = new Storage(), store = new CampProfileStore(storage);
-    expect(store.data.weapons.steady.repaired).toBe('white'); expect(store.data.campUnlocked).toBe(false);
+    expect(store.data.weapons.steady.repaired).toBe('purple'); expect(store.data.campUnlocked).toBe(false);
     expect(store.unlockBasicBlueprint().accepted).toBe(true); expect(store.unlockBasicBlueprint().accepted).toBe(false);
     store.beginExpedition('failed', 1); store.abandonExpedition('failed');
     const restored = new CampProfileStore(storage);
@@ -119,7 +120,7 @@ describe('permanent camp and finite expedition entitlements', () => {
   it('banks one deterministic first reward and unlocks the camp atomically', () => {
     const storage = new Storage(), store = new CampProfileStore(storage), { loot, result } = win(store);
     expect(result.accepted).toBe(true); expect(result.persisted).toBe(true);
-    expect(loot.weaponId).toBe('piercing'); expect(['purple', 'gold']).toContain(loot.rarity);
+    expect(loot.weaponId).toBe('piercing'); expect(loot.rarity).toBe('purple');
     expect(store.data).toMatchObject({ campUnlocked: true, victories: 1, materials: 40 }); expect(store.data.activeExpedition).toBeUndefined();
     expect(store.data.blueprints).toEqual(['rapid-launch-pod', 'launch-pod']);
     expect(store.data.weapons.piercing.pending).toBe(loot.rarity); expect(store.data.weapons.piercing.repaired).toBeNull();
@@ -255,7 +256,7 @@ describe('permanent camp and finite expedition entitlements', () => {
   it('reports a corrupt new save without overwriting it during construction', () => {
     const storage = new Storage(); storage.values.set(CAMP_PROFILE_STORAGE_KEY, '{bad'); const store = new CampProfileStore(storage);
     expect(store.status.code).toBe('corrupt'); expect(storage.values.get(CAMP_PROFILE_STORAGE_KEY)).toBe('{bad');
-    expect(store.data.weapons.steady.repaired).toBe('white');
+    expect(store.data.weapons.steady.repaired).toBe('purple');
   });
   it('rejects forged collections, negative resources, and unsupported identifiers', () => {
     const data = emptyCampProfile(); expect(parseCampProfile(data)).toEqual(data);
@@ -266,7 +267,7 @@ describe('permanent camp and finite expedition entitlements', () => {
 });
 describe('expedition weapons and readable camp panels', () => {
   it('caps only permanent weapon damage, preserving local multipliers and total-two pierce', () => {
-    expect(weaponCombatProfile(DEFAULT_EXPEDITION_LOADOUT)).toMatchObject({ baseDamage: 34, primaryDamage: 34, extraPierce: 0 });
+    expect(weaponCombatProfile(DEFAULT_EXPEDITION_LOADOUT)).toMatchObject({ baseDamage: 34, primaryDamage: 34 * 1.06, extraPierce: 0 });
     const stats = weaponCombatProfile({ weaponId: 'piercing', rarity: 'gold', upgrade: 3 }, 2.5);
     expect(stats.extraPierce).toBe(1); expect(stats.permanentMultiplier).toBeCloseTo(1.18);
     expect(stats.primaryDamage).toBeCloseTo(28 * 1.18 * 2.5);
@@ -278,7 +279,7 @@ describe('expedition weapons and readable camp panels', () => {
       expect(createBossLoot(`roll-${seed}`, seed, true)).toEqual(a); expect(a.weaponId).toBe('piercing');
       first[a.rarity] = (first[a.rarity] ?? 0) + 1; repeat[b.rarity] = (repeat[b.rarity] ?? 0) + 1;
     }
-    expect(first.blue).toBeUndefined(); expect(first.gold).toBeGreaterThan(60); expect(first.gold).toBeLessThan(140);
+    expect(first).toEqual({ purple: 1000 });
     expect(repeat.blue).toBeGreaterThan(540); expect(repeat.blue).toBeLessThan(660);
   });
   it('accepts a valid reward independent of object key insertion order', () => {
@@ -291,7 +292,7 @@ describe('expedition weapons and readable camp panels', () => {
     const forge = campOverlay(store.load(), 'forge'); expect(forge).toContain('camp-repair'); expect(forge).toContain('10生质');
     const shop = campOverlay(store.load(), 'shop'); expect(shop).toContain('出击总计 2 支'); expect(shop).toContain('camp-buy-antibody');
     const newCamp = new CampProfileStore(new Storage()); newCamp.establishCamp();
-    const intro = campOverlay(newCamp.load(), 'overview', .5); expect(intro).toContain('基础建设 0 / 5'); expect(intro).toContain('逐座确认'); expect(intro).not.toContain('camp-skip-intro');
+    const intro = campOverlay(newCamp.load(), 'overview', .5); expect(intro).toContain('基础建设 0 / 5'); expect(intro).toContain('逐处确认'); expect(intro).not.toContain('camp-skip-intro');
     const departure = campOverlay(store.load(), 'departure'); expect(departure).toContain('camp-deploy'); expect(departure).toContain('侦查报告已送达');
     expect(campOverlay(store.load(), 'warehouse', 1, '<script>')).toContain('&lt;script&gt;');
   });

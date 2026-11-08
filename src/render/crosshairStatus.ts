@@ -2,6 +2,7 @@ import { distance, normalized, wallHit } from '../actors/collision';
 import { TRACTION_BALANCE } from '../game/traction';
 import { activeWorld, BALANCE, type GameState, type Vec } from '../game/types';
 import { PLAYER_PROJECTILE_BALANCE } from '../game/playerProjectiles';
+import { REDBLADE_PRIMARY } from '../game/weaponMelee';
 
 export type CrosshairStatus = 'in-range' | 'out-of-range' | 'blocked';
 
@@ -9,7 +10,7 @@ export type CrosshairStatus = 'in-range' | 'out-of-range' | 'blocked';
  * target remain separate; the authoritative session decides every action. */
 export function crosshairStatus(state: GameState, aim: Vec, presentationRange?: number): CrosshairStatus {
   const gap = distance(state.player, aim);
-  const weaponRange = state.weaponCombat?.loadout.weaponId === 'piercing' ? PLAYER_PROJECTILE_BALANCE.crescent.range
+  const weaponRange = state.weaponCombat?.loadout.weaponId === 'redblade' ? Math.max(...REDBLADE_PRIMARY.radii) : state.weaponCombat?.loadout.weaponId === 'piercing' ? PLAYER_PROJECTILE_BALANCE.crescent.range
     : state.weaponCombat ? PLAYER_PROJECTILE_BALANCE.primary.range : undefined;
   const range = presentationRange !== undefined && Number.isFinite(presentationRange) && presentationRange > 0
     ? presentationRange : weaponRange ?? (state.tool === 2 ? TRACTION_BALANCE.range : BALANCE.range);

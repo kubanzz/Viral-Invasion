@@ -32,6 +32,9 @@ export class Camera {
   offsetY = 0;
   panX = 0;
   panY = 0;
+  /** Transient presentation impulse in CSS pixels, independent of follow easing. */
+  joltX = 0;
+  joltY = 0;
   private followScope = '';
   private framingScale: number | undefined;
   readonly yScale = .72;
@@ -134,13 +137,13 @@ export class Camera {
     this.followScope = key;
   }
   worldToScreen(point: Vec): Vec {
-    return { x: this.offsetX + (point.x + this.panX + 120) * this.scale, y: this.offsetY + ((point.y + this.panY) * this.yScale + 150) * this.scale };
+    return { x: this.offsetX + this.joltX + (point.x + this.panX + 120) * this.scale, y: this.offsetY + this.joltY + ((point.y + this.panY) * this.yScale + 150) * this.scale };
   }
   screenToWorld(point: Vec): Vec {
-    return { x: (point.x - this.offsetX) / this.scale - 120 - this.panX, y: ((point.y - this.offsetY) / this.scale - 150) / this.yScale - this.panY };
+    return { x: (point.x - this.offsetX - this.joltX) / this.scale - 120 - this.panX, y: ((point.y - this.offsetY - this.joltY) / this.scale - 150) / this.yScale - this.panY };
   }
   apply(ctx: CanvasRenderingContext2D): void {
-    ctx.translate(this.offsetX + (120 + this.panX) * this.scale, this.offsetY + (150 + this.panY * this.yScale) * this.scale);
+    ctx.translate(this.offsetX + this.joltX + (120 + this.panX) * this.scale, this.offsetY + this.joltY + (150 + this.panY * this.yScale) * this.scale);
     ctx.scale(this.scale, this.scale * this.yScale);
   }
 }

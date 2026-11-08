@@ -1,6 +1,6 @@
 import { immuneLegions } from '../game/immuneLegions';
 import artRuntime from '../../.art-generated/art-runtime.json';
-import { activeWorld, BALANCE, type Effect, type GameState, type Target, type Vec } from '../game/types';
+import { activeWorld, BALANCE, type Effect, type GameEvent, type GameState, type Target, type Vec } from '../game/types';
 import { CanvasScene } from './canvasScene';
 import { PhaserHost } from './phaserHost';
 import type { SceneEntity } from './artPresentation';
@@ -13,6 +13,9 @@ import { BATTLE_BALANCE } from '../game/battleConfig';
 import { aimedPaintedTool, paintedToolMuzzle, registeredSourcePoint, registeredSpriteBodyBounds, sourceRegisteredSpriteLayout, spriteBodyBounds, type AimedPaintedTool, type RegisteredSpriteLayout } from './spriteGeometry';
 import { approvedHeroAnimationClips, HeroAnimationController, type HeroAnimationAsset, type HeroFramePresentation } from './heroAnimation';
 import { drawImmuneCellAccents, immuneCellBody } from './immuneVisuals';
+import { legionPaintedPose } from './legionPresentation';
+import { campLifeBodies, campLifeBodyFrame } from './campLifePresentation';
+import { livingBossFrame, livingBossPose } from './livingBossPresentation';
 import type { ImmuneCellState } from '../game/immuneCells';
 import { motherCoreDisturbed } from '../game/motherCore';
 import type { MotherCoreState } from '../game/motherCoreTypes';
@@ -32,9 +35,11 @@ import { sourceRegisteredSpriteFrame } from './expeditionArt';
 import { campStations } from '../game/campScene';
 import { CAMP_GROUND_ASSET_IDS, CAMP_VISUAL_SIZES, campDecorations, campFixtureRaster } from './campVisuals';
 import type { CampCourtyardId } from '../game/campLayout';
-import { campFacilityFrame } from './campArt';
+import { campFacilityFrame, campFacilityOpacity, campFacilityPresentationBounds } from './campArt';
 import { heldWeaponFacing, heldWeaponPresentation, heldWeaponRecoilStrength } from './weaponPresentation';
 import { Player3D, type Player3DFrame } from './player3D';
+import { CombatVfxRuntime, type CombatVfxProjection } from './combatVfxRuntime';
+import { combatVfxAssetProvider } from './combatVfxAssets';
 
 interface Asset extends HeroAnimationAsset, ActorAsset { atlas:string; frame:string; flags:string[]; status:string }
 interface RuntimeArt {inputSignature:string; actorContract?:{version:number}; atlases:{key:string;dataUri:string;data:object}[];assets:Record<string,Asset>;environments:Record<string,{dataUri:string;width:number;height:number;source?:string}>}
@@ -53,12 +58,15 @@ export class Renderer {
   readonly ready:Promise<void>;
   readonly camera:Camera;
   private readonly host:PhaserHost;
+  private combatVfx?:CombatVfxRuntime;
+  private readonly entityDepths=new Map<string,{y:number;depth:number}>();
   private readonly player3D?:Player3D;
   private player3DHeight=0;
   private readonly painter:CanvasScene;
   private readonly rasterKeys=new Set<string>();
   private readonly seenRasters=new Set<string>();
   private readonly bodies=new Map<string,VisualBounds>();
+  private readonly effectImages=new Map<string,HTMLCanvasElement>();
   private obstacleActors:{groundY:number;bodyBounds:VisualBounds}[]|undefined;
   private readonly effectSprites=new Set<string>();
   private readonly heroAnimation=new HeroAnimationController(approvedHeroAnimationClips(art.assets));
@@ -88,18 +96,17 @@ export class Renderer {
   constructor(private readonly canvas:HTMLCanvasElement,private readonly options:{actorPreview?:boolean;actorAnimationPreview?:boolean;actorPreviewEnemyCanvasFactor?:number;
     actorPreviewToolCanvasHeight?:number;actorPreviewToolDepth?:'front'|'back'}={}) {
     this.painter=new CanvasScene(document.createElement('canvas'),{
+      nativeCombatVfx:true,
       environment:(state,camera)=>this.environment(state,camera),
-      nativeEntity:(entity,state,ctx,depth)=>this.nativeEntity(entity,state,ctx,depth),
+      nativeEntity:(entity,state,ctx,depth)=>{this.entityDepths.set(entity.id,{y:entity.y,depth});return this.nativeEntity(entity,state,ctx,depth);},
       foreground:(state)=>this.foreground(state),
       actorBodies:state=>this.raisedBodies(state),
       playerBounds:state=>this.playerPresentation(state).bounds,
-      campFacilityBounds:(state,station)=>{
-        const frame=campFacilityFrame(art.assets,state,station);
-        return frame ? registeredSpriteBodyBounds(frame.layout,station.position,frame.flipX,0) : undefined;
-      },
-      image:id=>art.environments[id] ? this.host.scene.textures.get(`environment:${id}`).getSourceImage() as HTMLImageElement : undefined,
+      campFacilityBounds:(state,station)=>campFacilityPresentationBounds(art.assets,state,station),
+      image:id=>this.embeddedImage(id),
       effectOrigin:effect=>this.beamOrigins.get(this.beamKey(effect)),
       projectileOrigin:castId=>this.projectileOrigins.get(castId),
+      primaryMuzzle:state=>{const muzzle=this.presentationMuzzle(state);return muzzle?{x:muzzle.x,y:muzzle.y/.72}:undefined;},
       heroContact:()=>this.heroPresentation?.model3D?undefined:heroSoleContact(this.heroPresentation?.actorFrame),
       raster:(key,source,depth,x=0,y=0,scale=1)=>{
         this.seenRasters.add(key);this.rasterKeys.add(key);
@@ -115,9 +122,11 @@ export class Renderer {
     // Explicit art-authoring fixtures keep their inspected PNG contract. The
     // live game uses the skinned model in the same Phaser depth-sorted pass.
     if(!options.actorPreview&&!options.actorAnimationPreview)this.player3D=new Player3D();
-    this.ready=Promise.all([this.host.ready,this.player3D?.ready]).then(()=>{this.resize();this.createAnimations();});
+    this.ready=Promise.all([this.host.ready,this.player3D?.ready]).then(()=>{this.resize();this.createAnimations();this.combatVfx=new CombatVfxRuntime(this.host.scene,combatVfxAssetProvider(art.assets));});
   }
   startFrameLoop(callback:(now:number)=>void):void {this.host.startFrameLoop(callback);}
+  acceptSeraphEvent(event:GameEvent):void { this.painter.acceptSeraphEvent(event); }
+  acceptCombatEvent(event:GameEvent):void { this.combatVfx?.accept(event); this.painter.acceptSeraphEvent(event); }
   /** Observe accepted shots at their actual birth step, including steps between rendered frames. */
   witnessSimulation(state:GameState):void {
     this.locomotion.observe(state);
@@ -144,6 +153,7 @@ export class Renderer {
   prepareCamera(state:GameState,options?:CameraFollowOptions):void {this.painter.prepareCamera(state,options);}
   setHudRects(rects:Parameters<CanvasScene['setHudRects']>[0]):void {this.painter.setHudRects(rects);}
   campHitTarget(state:GameState,point:Vec) {return this.painter.campHitTarget(state,point);}
+  campGardenHitTarget(state:GameState,point:Vec) {return this.painter.campGardenHitTarget(state,point);}
   diagnostics(state:GameState) {
     const player3D=this.player3D?.diagnostics();
     const modelWeapon=this.heroPresentation?.model3D?.weapon;
@@ -153,7 +163,7 @@ export class Renderer {
       ready:!!this.actorLibrary.staticAsset(id),missing:this.actorLibrary.staticAsset(id)?[]:[id],issues:[]}))];
     const oldSourceIds=Object.entries({...art.assets,...art.environments}).filter(([,asset])=>asset.source?.startsWith('ViralInvasion_Art_v1/')).map(([id])=>id);
     const unexpectedActorIds=Object.keys(art.assets).filter(id=>id.startsWith('fantasy.actor.')&&!ACTOR_RUNTIME_IDS.includes(id));
-    return {...this.painter.diagnostics(state),phaser:this.host.diagnostics(),art:{signature:art.inputSignature,selectedAssets:Object.keys(art.assets).length,
+    return {...this.painter.diagnostics(state),phaser:this.host.diagnostics(),combatVfx:this.combatVfx?.diagnostics(),art:{signature:art.inputSignature,selectedAssets:Object.keys(art.assets).length,
       fantasyGround:this.fantasyGround.diagnostics(),
       actorFrames:this.newActors?this.actorFrames:[],player3D:player3D??{enabled:false},
       ruleDirections:this.newActors?this.ruleDirections:[],
@@ -182,11 +192,12 @@ export class Renderer {
   }
   render(state:GameState,aim:Vec,opts:{lowEffects?:boolean;cameraPrepared?:boolean;authoritativeState?:GameState;aimRange?:number;aimCancelled?:boolean;cannonPreview?:{aim:Vec;cancelled:boolean};constructionPreview?:{blueprintId:import('../game/construction').BlueprintId;position:Vec}}={}):void {
     if(!this.host.isReady)return;
+    this.host.scene.cameras?.main?.setBackgroundColor?.(state.camp?'#e4e8d9':'#120d1b');
     this.lowEffects=!!opts.lowEffects;
     this.campProps=state.camp?campDecorations(state,Object.entries(CAMP_GROUND_ASSET_IDS).filter(([,id])=>!!art.environments[id]).map(([id])=>id as CampCourtyardId)):[];
     this.locomotion.observe(opts.authoritativeState??state);
     this.player3D?.observe(opts.authoritativeState??state);
-    this.host.beginFrame();this.seenRasters.clear();this.bodies.clear();this.obstacleActors=undefined;
+    this.host.beginFrame();this.seenRasters.clear();this.bodies.clear();this.entityDepths.clear();this.obstacleActors=undefined;
     this.actorFrames.length=0;this.ruleDirections.length=0;this.motherStages.length=0;this.actorAnimation.beginFrame(state);
     this.heroPresentation=state.phase==='menu'&&this.player3D?undefined:this.prepareHeroPresentation(state);
     if(state.phase!=='menu'){
@@ -229,6 +240,7 @@ export class Renderer {
           frame?'emitter-registration-or-group-not-ready':'hero-group-not-ready',{entityId:'menu:hero',sourceFoot:null});
       }else this.emit('menu:hero','hero.selected',this.camera.screenToWorld({x:this.width*.76,y:this.height*.86}),Math.min(430,this.height*.58),500);
     }else{this.painter.render(state,aim,opts);this.drawAtlasEffects(state,!!opts.lowEffects);}
+    this.combatVfx?.syncFrame(state,this.combatProjection(state),{lowEffects:!!opts.lowEffects,reducedMotion:typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches});
     for(const key of this.rasterKeys)if(!this.seenRasters.has(key)){this.host.removeRasterLayer(key);this.rasterKeys.delete(key);}
     this.host.endFrame();
     this.actorAnimation.endFrame();
@@ -236,7 +248,29 @@ export class Renderer {
     if(organ!==this.lastOrgan){document.body.dataset.organ=organ;this.lastOrgan=organ;}
     if(state.phase!==this.lastPhase){this.app?.setAttribute('data-phase',state.phase);this.lastPhase=state.phase;}
   }
-  destroy():void {this.player3D?.destroy();this.host.destroy();this.rasterKeys.clear();this.bodies.clear();this.heroAnimation.reset();this.actorAnimation.reset();this.actorFrames.length=0;this.heroPresentation=undefined;this.beamOrigins.clear();this.witnessedBeamOrigins.clear();this.projectileOrigins.clear();}
+  private combatProjection(state:GameState):CombatVfxProjection {
+    const projectGround=(point:Vec)=>this.camera.worldToScreen(point);
+    const sorted=[...this.entityDepths.values()].sort((a,b)=>a.y-b.y);
+    return {projectGround,projectUpright:(point,height)=>{const p=projectGround(point);return {x:p.x,y:p.y-height*this.camera.scale};},
+      depthAt:y=>{const next=sorted.find(entry=>entry.y>=y);return next?next.depth-.25:(sorted.at(-1)?.depth??100)+.25;},
+      entityDepth:id=>this.entityDepths.get(id)?.depth,
+      anchorScreen:(id,kind)=>{
+        if(id==='player'||!id){if(kind!=='foot'){const muzzle=this.presentationMuzzle(state);if(muzzle)return projectGround({x:muzzle.x,y:muzzle.y/this.camera.yScale});}return projectGround(state.player);}
+        const body=state.targets.find(t=>t.id===id)??state.growth?.cells?.find(c=>c.id===id);return body?projectGround(body):undefined;},
+      groundDepth:25,frontDepth:9500,criticalDepth:10000,scale:this.camera.scale};
+  }
+  destroy():void {this.combatVfx?.dispose();this.painter.resetSeraphVfx();this.player3D?.destroy();this.host.destroy();this.rasterKeys.clear();this.bodies.clear();this.effectImages.clear();this.heroAnimation.reset();this.actorAnimation.reset();this.actorFrames.length=0;this.heroPresentation=undefined;this.beamOrigins.clear();this.witnessedBeamOrigins.clear();this.projectileOrigins.clear();}
+  private embeddedImage(id:string):CanvasImageSource|undefined {
+    if (art.environments[id]) return this.host.scene.textures.get(`environment:${id}`).getSourceImage() as HTMLImageElement;
+    const asset=art.assets[id]; if(!asset||!(id.startsWith('fantasy.weapon.fx.')||id.startsWith('sanctum.')))return;
+    const cached=this.effectImages.get(id);if(cached)return cached;
+    const texture=this.host.scene.textures.get(asset.atlas),frame=texture.get(asset.frame);
+    if(!frame||frame.cutWidth<=0||frame.cutHeight<=0)return;
+    const canvas=document.createElement('canvas');canvas.width=frame.cutWidth;canvas.height=frame.cutHeight;
+    const ctx=canvas.getContext('2d');if(!ctx)return;
+    ctx.drawImage(texture.getSourceImage() as HTMLImageElement,frame.cutX,frame.cutY,frame.cutWidth,frame.cutHeight,0,0,canvas.width,canvas.height);
+    this.effectImages.set(id,canvas);return canvas;
+  }
   private createAnimations():void {if(this.newActors)return;for(const kind of ['scan','heal']){const frames=Object.keys(art.assets).filter(id=>id.startsWith(`fx.${kind}.`)).sort();if(frames.length>1)this.host.scene.anims.create({key:`art-${kind}`,frames:frames.map(id=>({key:art.assets[id].atlas,frame:art.assets[id].frame})),frameRate:kind==='scan'?12:10,repeat:0});}}
   private environment(state:GameState,camera:Camera):void {
     const ground=this.fantasyGround.prepare(state.camp ? {...state,battle:undefined,territory:undefined} : state,art.inputSignature,id=>art.environments[id]
@@ -360,15 +394,21 @@ export class Renderer {
   }
   private emitCombat(id:string,frame:CombatFrame,point:Vec,state:GameState,depth:number,alpha=1):VisualBounds {
     const a=art.assets[frame.id],layout=frame.layout,screen=this.camera.worldToScreen(point),scale=this.camera.scale;
+    const seraph=state.growth?.cells?.find(cell=>cell.id===id&&cell.legionId==='seraph');
     const body=registeredSpriteBodyBounds(layout,point,frame.flipX,0);
     this.host.sprite(id,{texture:a.atlas,frame:a.frame,x:screen.x,y:screen.y,width:layout.width*scale,height:layout.height*scale,
       originX:frame.flipX?1-layout.originX:layout.originX,originY:layout.originY,flipX:frame.flipX,depth,alpha,
       ...(id!=='valve'&&state.targets.some(t=>t.id===id&&t.hitUntil>state.elapsed)?{tint:0xfff3c7}:{})});
-    const parts=frame.id.split('.'),clip=parts.at(-2)!,identity=parts.slice(0,3).join('.'),size=a.sourceSize!;
-    const registered:ActorFrame={identity,action:clip,clip,id:frame.id,index:Number(parts.at(-1)),asset:a,
-      registration:{canvas:size,foot:{x:size.width*.5,y:size.height*.85},commonCanvasScale:1},layout,
+    const parts=frame.id.split('.'),living=a.flags?.includes('living-world-v023-reviewed')&&frame.id.startsWith('sanctum.boss.'),
+      pose=living?livingBossPose(point as Target,state):undefined,clip=living?parts.at(-1)!:parts.at(-2)!,identity=living?'living-boss':parts.slice(0,3).join('.'),size=a.sourceSize!;
+    const registered:ActorFrame={identity,action:pose?.action??clip,clip,id:frame.id,index:living?0:Number(parts.at(-1)),asset:a,
+      registration:{canvas:size,foot:{x:size.width*.5,y:size.height*(living ? .849609375 : .85)},commonCanvasScale:1},layout,
       sourceScale:layout.width/(a.width*(a.sourceBounds!.width!/a.visibleBounds.width)),groupReady:true,preview:false,flipX:frame.flipX};
-    this.recordActor(id,registered,point,state,registered,body);this.bodies.set(id,body);return body;
+    this.recordActor(id,registered,point,state,registered,body,undefined,{
+      ...(living?{presentationMethod:'registered full-body artwork with simulation-clock breath and gait',moving:pose?.moving}:{}),
+      ...(seraph?{seraphRole:seraph.seraphRole??(seraph.legionRole==='leader'?'commander':'lancer'),echo:!!seraph.echo,
+        seraphAction:seraph.seraphAction?{...seraph.seraphAction}:null,sourceSize:a.sourceSize,registeredArtwork:a.flags?.includes('seraph-v024-reviewed')??false}:{}),
+    });this.bodies.set(id,body);return body;
   }
   private recordActor(id:string,request:ActorRequest,point:Vec,state:GameState,frame?:ActorFrame,body?:VisualBounds,fallbackReason?:string,
     extra:Record<string,unknown>={}) {
@@ -639,6 +679,10 @@ export class Renderer {
     return {id,height:cell.radius*2.4*ratio,flipX:Math.cos(cell.facing)<0};
   }
   private immuneBounds(cell:ImmuneCellState,state:GameState):VisualBounds {
+    const painted=legionPaintedPose(art.assets,cell,state.elapsed);
+    if(painted){const layout=sourceRegisteredSpriteLayout(art.assets[painted.id],{width:512,height:512},{x:256,y:435.2},painted.sourceScale);
+      if(layout)return registeredSpriteBodyBounds(layout,cell,painted.flipX);}
+    if(cell.legionId==='seraph')return immuneVisualBounds(cell,state.elapsed);
     if(this.newActors){const frame=this.actorAnimation.select(cell.id,requestedActorImmune(cell,state),state,cell.radius*ACTOR_CANVAS.immuneRadiusFactor,!!this.options.actorPreview,false,!!this.options.actorAnimationPreview);
       return frame?registeredSpriteBodyBounds(frame.layout,cell,!!frame.flipX):immuneVisualBounds(cell,state.elapsed);}
     const pose=this.immunePose(cell,state);return pose?this.bounds(pose.id,cell,pose.height,pose.flipX):immuneVisualBounds(cell,state.elapsed);
@@ -674,6 +718,8 @@ export class Renderer {
     this.host.setRasterLayer(key,buffer,1,96*this.camera.scale,64*this.camera.scale,p.x-48*this.camera.scale,p.y-32*this.camera.scale);
   }
   private expeditionTargetFrame(target:Target,state:GameState) {
+    const livingBoss = livingBossFrame(art.assets, target, state);
+    if(livingBoss)return livingBoss;
     if(target.role==='core'&&target.hp>0&&state.territory?.bossCombat){
       const combat=state.territory.bossCombat,action=combat.phase==='windup'?'windup':combat.phase==='recovery'?'recovery':combat.secondPhase?'phase2':'idle';
       return sourceRegisteredSpriteFrame(art.assets,'heartDevourer',action,state.elapsed-combat.phaseStartedAt);
@@ -687,6 +733,15 @@ export class Renderer {
     }
   }
   private nativeEntity(entity:SceneEntity,state:GameState,ctx:CanvasRenderingContext2D,depth:number):boolean {
+    if(entity.kind==='camp-life') {
+      const body=campLifeBodies(state)[entity.index!];if(!body)return true;
+      const frame=campLifeBodyFrame(art.assets,body);
+      if(!frame)return false;
+      const bounds=registeredSpriteBodyBounds(frame.layout,body,false,0);
+      const covered=body.kind!=='crop'&&state.player.y<body.y&&boundsOverlap(bounds,this.playerPresentation(state).bounds);
+      this.emitCombat(body.id,frame,body,state,depth,covered?.28:1);
+      return true;
+    }
     if(entity.kind==='camp-decoration') {
       const decoration=this.campProps[entity.index!],screen=this.camera.worldToScreen(decoration),scale=this.camera.scale;
       if(decoration.kind==='fixture') {
@@ -707,11 +762,13 @@ export class Renderer {
     if(entity.kind==='boss-loot'){const p=state.expedition?.lootPosition;return !!p&&this.emit(entity.id,'fantasy.expedition.lootBag.fixed.ready.00',p,44,depth);}
     if(entity.kind==='camp-station'){
       const station=campStations(state)[entity.index!];
+      if(station.id==='farm'||station.id==='house')return true;
       const f=campFacilityFrame(art.assets,state,station);
       if(!f)return false;const bounds=registeredSpriteBodyBounds(f.layout,station.position,false,0);
       const covered=state.player.y<station.position.y&&boundsOverlap(bounds,this.playerPresentation(state).bounds);
-      const alpha=covered?.28:1;
-      this.emitCombat(entity.id,f,station.position,state,depth,alpha);return true;
+      const alpha=campFacilityOpacity(station,Boolean(covered));
+      this.emitCombat(entity.id,f,station.position,state,depth,alpha);
+      return true;
     }
     if(entity.kind==='player-construction'){
       const task=state.territory?.construction?.task;if(!task)return true;
@@ -789,7 +846,18 @@ export class Renderer {
     if(entity.kind==='target'){
       const t=state.targets[entity.index!];
       const expeditionFrame=this.expeditionTargetFrame(t,state);
-      if(expeditionFrame){const b=this.emitCombat(t.id,expeditionFrame,t,state,depth);this.painter.annotateArtEntity(ctx,entity,state,Math.max(t.radius,t.x-b.left,b.right-t.x),Math.max(70,t.y*.72-b.top+8));if(t.role==='core'&&state.territory?.bossCombat){const local=expeditionFrame.layout.bounds,stage=drawMotherCoreAccents(ctx,t,state,state.territory.bossCombat,{coreOffset:{x:0,y:(local.top+local.bottom)/2},bodyBounds:local});if(stage)this.motherStages.push(stage);}return true;}
+      if(expeditionFrame){
+        const b=this.emitCombat(t.id,expeditionFrame,t,state,depth);
+        this.painter.annotateArtEntity(ctx,entity,state,Math.max(t.radius,t.x-b.left,b.right-t.x),Math.max(70,t.y*.72-b.top+8));
+        if(t.role==='core'&&state.territory?.bossCombat){
+          const phase=state.territory.bossCombat.heartBoss?.stage;
+          const candidates=phase===1?['sanctum.boss.crystal']:phase===2?['sanctum.boss.fission']:['sanctum.boss.devourer'];
+          const id=phase&&!art.assets[candidates[0]]?.flags?.includes('living-world-v023-reviewed')?candidates.find(key=>art.assets[key]):undefined,asset=id?art.assets[id]:undefined;
+          if(id&&asset){const layout=sourceRegisteredSpriteLayout(asset,{width:1024,height:1024},{x:512,y:870},224/1024);if(layout)this.emitCombat(`${t.id}:stage`,{id,layout,flipX:false},t,state,depth+.05);}
+          const local=expeditionFrame.layout.bounds,stage=drawMotherCoreAccents(ctx,t,state,state.territory.bossCombat,{coreOffset:{x:0,y:(local.top+local.bottom)/2},bodyBounds:local});if(stage)this.motherStages.push(stage);
+        }
+        return true;
+      }
       if(t.role==='core')return this.nativeMother(entity,t,state,ctx,depth);
       if(t.profession){
         if(t.hp<=0)return true;
@@ -831,6 +899,16 @@ export class Renderer {
     }
     if(entity.kind==='immune'){
       const cell=state.growth?.cells?.[entity.index!];if(!cell)return false;
+      const painted=legionPaintedPose(art.assets,cell,state.elapsed);
+      if(painted){
+        const body=immuneCellBody(cell,state.elapsed);if(body.alpha<=0||cell.organId!==state.battle?.organId)return true;
+        const layout=sourceRegisteredSpriteLayout(art.assets[painted.id],{width:512,height:512},{x:256,y:435.2},painted.sourceScale);if(!layout)return false;
+        this.drawImmuneShadow(cell,state);
+        const bounds=this.emitCombat(cell.id,{id:painted.id,layout,flipX:painted.flipX},cell,state,depth,body.alpha);this.bodies.set(cell.id,bounds);
+        this.painter.annotateArtEntity(ctx,entity,state,Math.max(30,cell.x-bounds.left,bounds.right-cell.x),Math.max(40,cell.y*.72-bounds.top+5));
+        drawImmuneCellAccents(ctx,cell,state.elapsed,this.lowEffects,'overlay',!!state.camp);return true;
+      }
+      if(cell.legionId==='seraph')return false;
       if(this.newActors){
         const body=immuneCellBody(cell,state.elapsed);if(body.alpha<=0||cell.organId!==state.battle?.organId)return true;
         const request=requestedActorImmune(cell,state),frame=this.actorAnimation.select(cell.id,request,state,cell.radius*ACTOR_CANVAS.immuneRadiusFactor,!!this.options.actorPreview,false,!!this.options.actorAnimationPreview);

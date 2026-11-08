@@ -42,6 +42,8 @@ export interface EndlessBatch {
 /** Four existing ordinary budget slots become one finite objective squad. */
 export interface TerritorySquadPlan {
   id: string;
+  /** Mission baseline slots may form an independent carrier squad after sources fall. */
+  kind?: 'carrier';
   wave: number;
   laneId: TerritoryLaneId;
   sourceId: TerritorySourceId;

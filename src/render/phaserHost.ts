@@ -3,6 +3,8 @@ import type { SpriteMesh } from './heroRig';
 
 /** Built by the art pipeline. Runtime loading never reads JSON or PNG via XHR. */
 export interface PhaserArtData {
+  /** Transparent overlay hosts share scenery with their existing Canvas view. */
+  transparent?: boolean;
   atlases?: readonly { key: string; dataUri: string; data: object }[];
   images?: readonly { key: string; dataUri: string }[];
 }
@@ -104,6 +106,7 @@ export class PhaserHost {
       height: Math.round(this.cssHeight * this.dpr),
       banner: false,
       backgroundColor: '#120d1b',
+      transparent: artData.transparent ?? false,
       audio: { noAudio: true },
       input: { keyboard: false, mouse: false, touch: false, gamepad: false },
       scale: {

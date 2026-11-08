@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CampProfileStore, CAMP_PROFILE_STORAGE_KEY, emptyCampProfile, parseCampProfile } from '../../src/meta/campProfile';
+import { CampProfileStore, CAMP_PROFILE_SCHEMA_VERSION, CAMP_PROFILE_STORAGE_KEY, emptyCampProfile, parseCampProfile } from '../../src/meta/campProfile';
 import { createBossLoot } from '../../src/game/expedition';
 import { DRAW_COST, DRAW_PITY_LIMIT, DRAW_RARITY_WEIGHTS, STARTER_COINS, emptyMissionHaul, MODULE_IDS, type DrawReceipt, type MissionHaul } from '../../src/game/microfront';
 import type { EndlessProfileStorage } from '../../src/meta/endlessProfile';
@@ -11,9 +11,10 @@ class Storage implements EndlessProfileStorage {
   setItem(key: string, value: string) { if (this.blocked) throw Error('quota'); this.values.set(key, value); }
   removeItem(key: string) { this.values.delete(key); }
 }
-function ready(overrides: Partial<ReturnType<typeof emptyCampProfile>> = {}) {
+function ready(overrides: Omit<Partial<ReturnType<typeof emptyCampProfile>>, 'weapons'> & { weapons?: Partial<ReturnType<typeof emptyCampProfile>['weapons']> } = {}) {
   const storage = new Storage();
-  storage.setItem(CAMP_PROFILE_STORAGE_KEY, JSON.stringify({ ...emptyCampProfile(), coins: 0, campUnlocked: true, campIntroSeen: true, prologue: 'ready', builtFacilities: [...INTRO_FACILITY_IDS], legacyMigrationChecked: true, ...overrides }));
+  const initial = emptyCampProfile();
+  storage.setItem(CAMP_PROFILE_STORAGE_KEY, JSON.stringify({ ...initial, coins: 0, campUnlocked: true, campIntroSeen: true, prologue: 'ready', builtFacilities: [...INTRO_FACILITY_IDS], legacyMigrationChecked: true, ...overrides, weapons: { ...initial.weapons, ...overrides.weapons } }));
   return { storage, store: new CampProfileStore(storage) };
 }
 
@@ -184,7 +185,7 @@ describe('microfront camp economy and saved transactions', () => {
     const old = { ...legacy, schemaVersion: 1, campUnlocked: true, materials: 57,
       weapons: { steady: { repaired: 'purple', pending: null, upgrade: 2 }, piercing: { repaired: null, pending: 'gold', upgrade: 0 } } };
     const parsed = parseCampProfile(old)!;
-    expect(parsed).toMatchObject({ schemaVersion: 3, prologue: 'ready', builtFacilities: INTRO_FACILITY_IDS, materials: 57, coins: 0, fragments: {}, cores: 0, transactions: [] });
+    expect(parsed).toMatchObject({ schemaVersion: CAMP_PROFILE_SCHEMA_VERSION, prologue: 'ready', builtFacilities: INTRO_FACILITY_IDS, materials: 57, coins: 0, fragments: {}, cores: 0, transactions: [] });
     expect(parsed.inventory).toHaveLength(2); expect(parsed.weapons.steady.upgrade).toBe(2); expect(parsed.inventory.find(item => item.templateId === 'piercing')?.repaired).toBe(false);
     expect(parseCampProfile({ ...parsed, pity: DRAW_PITY_LIMIT - 1 })).not.toBeNull();
     expect(parseCampProfile({ ...parsed, pity: DRAW_PITY_LIMIT })).toBeNull(); expect(parseCampProfile({ ...parsed, coins: -1 })).toBeNull();
@@ -192,7 +193,7 @@ describe('microfront camp economy and saved transactions', () => {
   it('keeps repaired inventory, stronger saved equipment and model upgrades consistent across reloads', () => {
     const initial = emptyCampProfile();
     const { store, storage } = ready({ materials: 100,
-      weapons: { steady: { repaired: 'white', pending: null, upgrade: 2 }, piercing: { repaired: null, pending: 'purple', upgrade: 0 } },
+      weapons: { steady: { repaired: 'purple', pending: null, upgrade: 2 }, piercing: { repaired: null, pending: 'purple', upgrade: 0 } },
       inventory: [...initial.inventory, { id: 'owned:gold', templateId: 'steady', kind: 'weapon', rarity: 'gold', repaired: true }] });
     expect(store.data.weapons.steady).toEqual({ repaired: 'gold', pending: null, upgrade: 2 });
     expect(store.repair('piercing').accepted).toBe(true); store.upgrade('piercing');
@@ -201,7 +202,7 @@ describe('microfront camp economy and saved transactions', () => {
     expect(restored.data.inventory.filter(item => item.templateId === 'piercing')).toHaveLength(1);
     restored.equip('piercing');
     expect(restored.decompose('owned:gold').accepted).toBe(true);
-    expect(restored.data.weapons.steady).toEqual({ repaired: 'white', pending: null, upgrade: 2 });
+    expect(restored.data.weapons.steady).toEqual({ repaired: 'purple', pending: null, upgrade: 2 });
     expect(restored.decompose('starter:steady').code).toBe('protected');
     expect(new CampProfileStore(storage).data.inventory.some(item => item.id === 'owned:gold')).toBe(false);
   });

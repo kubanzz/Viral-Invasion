@@ -1,0 +1,269 @@
+/* Equipment workspaces keep the selection and its primary action in view. */
+#app .camp-equipment-panel {
+  --eq-ink: #284e43;
+  --eq-muted: #637c6b;
+  --eq-line: #cbd6c2;
+  --eq-green: #37765e;
+  width: min(1000px, 100%);
+  height: min(680px, calc(100svh - 40px));
+  max-height: calc(100svh - 24px);
+  padding: 24px;
+  border: 1px solid #cad8bf;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #fcf5e5, #edf2e3);
+  color: var(--eq-ink);
+  box-shadow: 0 20px 70px #173e374d;
+}
+#app .camp-equipment-panel .camp-header {
+  min-height: 52px;
+  gap: 18px;
+  margin: 0 0 18px;
+}
+#app .camp-equipment-panel .camp-header h2 { margin: 0; font-size: 25px; line-height: 1.35; white-space: nowrap; }
+#app .camp-equipment-panel .camp-header > div:first-child > p { display: none; }
+#app .camp-equipment-panel .camp-close { margin-left: auto; min-width: 44px; width: 44px; min-height: 44px; height: 44px; padding: 0; border-radius: 10px; }
+#app .camp-equipment-panel .camp-content { display: flex; min-height: 0; overflow: hidden; }
+#app .camp-equipment-panel button { min-height: 44px; border-radius: 9px; font-size: 14px; line-height: 1.4; }
+#app .camp-equipment-panel button:hover:not(:disabled) { border-color: #7f9e83; background-color: #eaf0df; }
+#app .camp-equipment-panel button.primary { color: #fffbed; background: var(--eq-green); border-color: var(--eq-green); }
+#app .camp-equipment-panel button.primary:hover:not(:disabled) { background: #2c674f; border-color: #2c674f; }
+#app .camp-equipment-panel button:disabled { opacity: .56; }
+#app .camp-equipment-panel .camp-wallet { margin-left: auto; flex-wrap: nowrap; gap: 12px; color: var(--eq-muted); font-size: 12px; }
+#app .camp-equipment-panel .camp-wallet span { padding: 0; border: 0; background: none; border-radius: 0; }
+#app .camp-equipment-panel .camp-wallet b { color: var(--eq-ink); font-size: 14px; font-variant-numeric: tabular-nums; }
+#app .camp-equipment-panel .camp-wallet + .camp-close { margin-left: 0; }
+#app .camp-equipment-panel .eq-tabs { display: flex; gap: 4px; flex-shrink: 0; align-self: stretch; align-items: center; }
+#app .camp-equipment-panel .eq-tab { position: relative; min-width: 76px; padding: 8px 16px; border-color: transparent; border-radius: 8px; color: var(--eq-muted); background: none; white-space: nowrap; }
+#app .camp-equipment-panel .eq-tab[aria-selected="true"] { color: #285e49; background: #deead7; font-weight: 700; }
+#app .camp-equipment-panel .eq-workspace { display: grid; grid-template-columns: minmax(220px, .8fr) minmax(0, 1.7fr); gap: 28px; width: 100%; min-height: 0; flex: 1; }
+#app .camp-equipment-panel .eq-list { display: flex; flex-direction: column; gap: 7px; min-width: 0; min-height: 0; overflow: auto; padding: 1px 12px 6px 1px; scrollbar-width: thin; scrollbar-color: #b4c8b2 transparent; }
+#app .camp-equipment-panel .eq-list > h3,
+#app .camp-equipment-panel .eq-list-heading { margin: 8px 9px 3px; font-size: 12px; line-height: 1.5; color: var(--eq-muted); font-weight: 500; }
+#app .camp-equipment-panel .eq-item { display: flex; position: relative; align-items: center; gap: 12px; flex-shrink: 0; width: 100%; min-height: 82px; padding: 11px 12px; text-align: left; color: var(--eq-ink); border: 1px solid transparent; background: #fffaf04d; }
+#app .camp-equipment-panel .eq-item.is-selected { background: #e0ecd9; border-color: #8aac88; box-shadow: inset 3px 0 0 #4f8464; }
+#app .camp-equipment-panel .eq-item.is-locked { color: #758171; }
+#app .camp-equipment-panel .eq-item.is-locked .eq-item-icon { opacity: .45; filter: grayscale(.8); }
+#app .camp-equipment-panel .eq-item-icon { display: block; flex: 0 0 50px; width: 50px; height: 50px; }
+#app .camp-equipment-panel .eq-item-copy { flex: 1; min-width: 0; }
+#app .camp-equipment-panel .eq-item-copy strong { display: block; font-size: 14px; font-weight: 600; line-height: 1.5; overflow-wrap: anywhere; }
+#app .camp-equipment-panel .eq-item-copy small { display: block; color: var(--eq-muted); font-size: 12px; line-height: 1.5; margin-top: 5px; }
+#app .camp-equipment-panel .eq-item-state { flex-shrink: 0; color: #487452; font-size: 12px; line-height: 1.4; }
+#app .camp-equipment-panel .eq-detail { display: flex; flex-direction: column; min-width: 0; min-height: 0; border-left: 1px solid var(--eq-line); padding-left: 28px; }
+#app .camp-equipment-panel .eq-detail-scroll { flex: 1; min-width: 0; min-height: 0; overflow: auto; padding: 2px 10px 14px 1px; scrollbar-width: thin; scrollbar-color: #b4c8b2 transparent; }
+#app .camp-equipment-panel .eq-detail p { font-size: 14px; line-height: 1.65; margin: 12px 0; }
+#app .camp-equipment-panel .eq-detail h3 { color: var(--eq-ink); font-size: 25px; line-height: 1.4; margin: 6px 0 10px; }
+#app .camp-equipment-panel .eq-detail h4 { margin: 18px 0 8px; font-size: 14px; line-height: 1.5; }
+#app .camp-equipment-panel .eq-detail-header { display: flex; gap: 24px; align-items: center; min-height: 148px; padding: 4px 0 18px; }
+#app .camp-equipment-panel .eq-detail-header > div { min-width: 0; }
+#app .camp-equipment-panel .eq-hero-icon { display: block; width: 140px; height: 140px; flex: 0 0 140px; filter: drop-shadow(0 9px 8px #445c4b1f); }
+#app .camp-equipment-panel .eq-kicker { color: var(--eq-muted); font-size: 12px; line-height: 1.5; margin: 0 0 6px; }
+#app .camp-equipment-panel .eq-tags { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+#app .camp-equipment-panel .eq-tag { display: inline-flex; align-items: center; border-radius: 5px; background: #e1ebd8; color: #55714e; padding: 3px 7px; font-size: 12px; line-height: 1.35; }
+#app .camp-equipment-panel .eq-tag.is-pending { background: #f3e4c7; color: #91652b; }
+#app .camp-equipment-panel .eq-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 15px 0; padding: 14px 0; border-block: 1px solid var(--eq-line); }
+#app .camp-equipment-panel .eq-stats > div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; min-width: 0; }
+#app .camp-equipment-panel .eq-stats span { font-size: 12px; color: var(--eq-muted); }
+#app .camp-equipment-panel .eq-stats strong { font-size: 19px; color: #376b50; font-weight: 600; font-variant-numeric: tabular-nums; }
+#app .camp-equipment-panel .eq-subnav { display: flex; flex-wrap: wrap; gap: 7px; margin: 16px 0 8px; }
+#app .camp-equipment-panel .eq-subnav button { min-width: 88px; padding: 8px 12px; font-size: 12px; color: var(--eq-muted); background: transparent; border-color: #c4d1bb; }
+#app .camp-equipment-panel .eq-subnav button[aria-pressed="true"] { color: #2b674d; background: #e4eddc; border-color: #8daf8b; }
+#app .camp-equipment-panel .eq-detail-links { display: flex; flex-wrap: wrap; gap: 8px 12px; margin: 14px 0 0; }
+#app .camp-equipment-panel .eq-detail-links button { padding: 8px 0; min-width: 72px; min-height: 44px; border-color: transparent; background: none; color: #4d7860; font-size: 12px; text-align: left; }
+#app .camp-equipment-panel .eq-detail-links button:hover:not(:disabled) { background: none; border-color: transparent; color: #285d45; text-decoration: underline; text-underline-offset: 3px; }
+#app .camp-equipment-panel .eq-list-group { margin: 14px 9px 3px; color: #7f8c75; font-size: 12px; font-weight: 500; }
+#app .camp-equipment-panel .eq-maintenance-result { color: #50734d; font-size: 12px; }
+#app .camp-equipment-panel .eq-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-shrink: 0; margin-top: auto; padding: 14px 0 0; border-top: 1px solid var(--eq-line); }
+#app .camp-equipment-panel .eq-actions button { min-width: 118px; min-height: 48px; padding: 10px 18px; white-space: normal; }
+#app .camp-equipment-panel .eq-actions > .primary { min-width: 160px; }
+#app .camp-equipment-panel .eq-actions { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; }
+#app .camp-equipment-panel .eq-action-buttons { display: flex; align-items: center; gap: 8px; grid-column: 2; grid-row: 1 / span 2; }
+#app .camp-equipment-panel .eq-action-buttons > .primary { min-width: 148px; }
+#app .camp-equipment-panel .eq-actions p { flex: 1; margin: 0; font-size: 12px; color: var(--eq-muted); }
+#app .camp-equipment-panel .eq-actions .eq-feedback { color: #3a7351; font-weight: 600; }
+#app .camp-equipment-panel .eq-loadout-summary { padding: 4px 10px 16px; margin-bottom: 5px; border-bottom: 1px solid var(--eq-line); }
+#app .camp-equipment-panel .eq-loadout-summary span,
+#app .camp-equipment-panel .eq-loadout-summary small { display: block; color: var(--eq-muted); font-size: 12px; line-height: 1.55; }
+#app .camp-equipment-panel .eq-loadout-summary strong { display: block; color: #426b4e; font-size: 14px; line-height: 1.5; margin: 5px 0; }
+#app .camp-equipment-panel .eq-list-title small { margin-left: 6px; font-size: 12px; font-weight: 400; }
+#app .camp-equipment-panel .eq-role { font-weight: 600; color: #49724e; }
+#app .camp-equipment-panel .eq-muted { color: var(--eq-muted); font-size: 12px; }
+#app .camp-equipment-panel .eq-skill-shortcut { display: flex; align-items: center; gap: 14px; width: 100%; padding: 10px 12px; background: transparent; border-color: var(--eq-line); text-align: left; }
+#app .camp-equipment-panel .eq-skill-icons { display: flex; gap: 5px; flex: 1; }
+#app .camp-equipment-panel .eq-skill-icons .weapon-skill-icon { display: inline-flex; width: 34px; height: 34px; }
+#app .camp-equipment-panel .eq-skill-icons .weapon-skill-icon svg { width: 100%; height: 100%; }
+#app .camp-equipment-panel .eq-skill-shortcut > span:last-child { font-size: 12px; color: var(--eq-muted); }
+#app .camp-equipment-panel .eq-skill-shortcut b { font-size: 20px; margin-left: 8px; font-weight: 400; }
+#app .camp-equipment-panel .eq-hint,
+#app .camp-equipment-panel .eq-empty,
+#app .camp-equipment-panel .eq-empty p { color: var(--eq-muted); font-size: 12px; line-height: 1.65; }
+#app .camp-equipment-panel .eq-empty { padding: 18px 8px; }
+#app .camp-equipment-panel .eq-empty h3 { font-size: 20px; }
+#app .camp-equipment-panel .eq-costs { display: grid; gap: 8px; padding: 14px 0; margin: 12px 0; border-block: 1px solid var(--eq-line); }
+#app .camp-equipment-panel .eq-cost,
+#app .camp-equipment-panel .eq-costs > div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14px; line-height: 1.5; }
+#app .camp-equipment-panel .eq-cost small { font-size: 12px; color: var(--eq-muted); }
+#app .camp-equipment-panel .eq-cost > span:nth-child(2) { flex: 1; }
+#app .camp-equipment-panel .eq-cost strong { font-size: 15px; font-variant-numeric: tabular-nums; font-weight: 600; }
+#app .camp-equipment-panel .eq-cost-icon { display: block; flex: 0 0 28px; width: 28px; height: 28px; }
+#app .camp-equipment-panel .eq-cost.is-short,
+#app .camp-equipment-panel .eq-short { color: #9a632c; }
+#app .camp-equipment-panel .eq-rarities { display: flex; gap: 7px; margin: 14px 0; }
+#app .camp-equipment-panel .eq-rarities button { flex: 1; min-width: 0; padding: 8px 10px; background: transparent; }
+#app .camp-equipment-panel .eq-rarities [aria-pressed="true"] { background: #e0ebd7; border-color: #7fa27c; box-shadow: inset 0 -2px 0 #62895e; }
+#app .camp-equipment-panel .eq-rarities .camp-quality { margin: 0; background: none; font-size: 14px; }
+#app .camp-equipment-panel .eq-segmented { display: flex; gap: 6px; margin: 8px 0 12px; }
+#app .camp-equipment-panel .eq-segmented button { flex: 1; background: transparent; }
+#app .camp-equipment-panel .eq-segmented button[aria-pressed="true"] { background: #e0ebd7; border-color: #8aac88; color: #2b664b; }
+#app .camp-equipment-panel .eq-slots { display: flex; gap: 7px; margin: 4px 0 16px; }
+#app .camp-equipment-panel .eq-slot { flex: 1; min-width: 0; padding: 8px; border: 1px solid var(--eq-line); border-radius: 8px; background: #e7eedf; color: var(--eq-muted); text-align: center; font-size: 12px; }
+#app .camp-equipment-panel .eq-module-slots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 16px 0; }
+#app .camp-equipment-panel .eq-module-slots button,
+#app .camp-equipment-panel .eq-empty-slot { display: flex; align-items: center; justify-content: center; gap: 6px; min-width: 0; min-height: 60px; border: 1px solid #c3d0b9; border-radius: 8px; background: #e7eedf; padding: 8px; color: var(--eq-muted); font-size: 12px; }
+#app .camp-equipment-panel .eq-empty-slot { border-style: dashed; background: transparent; }
+#app .camp-equipment-panel .eq-slot-icon { display: block; flex: 0 0 30px; width: 30px; height: 30px; }
+#app .camp-equipment-panel .eq-fragment-ledger dl { display: grid; gap: 0; margin: 10px 0; }
+#app .camp-equipment-panel .eq-fragment-ledger dl > div { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--eq-line); font-size: 14px; }
+#app .camp-equipment-panel .eq-fragment-ledger dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+#app .camp-equipment-panel .eq-salvage { border-block: 1px solid var(--eq-line); padding: 0 0 5px; margin: 14px 0; }
+#app .camp-equipment-panel .eq-salvage p strong { font-size: 22px; color: #50774d; font-weight: 600; }
+#app .camp-equipment-panel .eq-salvage p span { color: #8e9d84; margin-inline: 12px; }
+#app .camp-equipment-panel .eq-protected { color: #98632e; font-size: 12px; }
+#app .camp-equipment-panel .eq-empty-list { font-size: 12px; color: var(--eq-muted); padding: 12px; }
+#app .camp-equipment-panel button.eq-destructive { background: #a36a4e; border-color: #a36a4e; }
+#app .camp-equipment-panel button.eq-destructive:hover:not(:disabled) { background: #8e583e; border-color: #8e583e; }
+#app .camp-equipment-panel .eq-danger,
+#app .camp-equipment-panel button.eq-danger { color: #9a5941; border-color: #d3b29b; background: #f8ece0; }
+#app .camp-equipment-panel .eq-skill-list { grid-column: auto; margin: 0; padding: 0; border: 0; }
+#app .camp-equipment-panel .eq-skill-list > p,
+#app .camp-equipment-panel .eq-skill-list .camp-kit-basis { font-size: 12px; line-height: 1.7; }
+#app .camp-equipment-panel .eq-skill-list ol { display: grid; grid-template-columns: 1fr; list-style: none; padding: 0; margin: 12px 0; gap: 10px; }
+#app .camp-equipment-panel .eq-skill-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; padding: 12px 0; border: 0; border-bottom: 1px solid var(--eq-line); border-radius: 0; background: transparent; }
+#app .camp-equipment-panel .eq-skill-list li strong { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+#app .camp-equipment-panel .eq-skill-list li small { color: var(--eq-muted); font-size: 12px; }
+#app .camp-equipment-panel .eq-skill-list li span { grid-column: 1 / -1; display: block; font-size: 14px; line-height: 1.65; }
+#app .camp-equipment-panel .eq-skill-list .weapon-skill-icon { display: inline-flex; flex: 0 0 28px; width: 28px; height: 28px; }
+#app .camp-equipment-panel .eq-skill-list .weapon-skill-icon svg { display: block; width: 100%; height: 100%; }
+#app .camp-equipment-panel .eq-skill-list li .weapon-skill-icon { grid-column: auto; }
+#app .camp-equipment-panel .camp-footer { flex: 0 0 auto; margin: 10px 0 0; padding: 8px 0 0; min-height: 0; }
+#app .camp-equipment-panel .camp-footer:empty { display: none; }
+#app .camp-equipment-panel .camp-footer:not(:has(.camp-storage)) { display: none; }
+#app .camp-equipment-panel .camp-footer p { margin: 0; font-size: 12px; }
+#app .camp-equipment-panel .camp-footer:has(.camp-storage) { display: block; }
+#app .camp-equipment-panel .camp-footer-actions:empty { display: none; }
+#app .camp-equipment-panel .camp-footer .camp-storage { display: block; position: relative; width: 100%; max-width: none; min-height: 44px; max-height: 44px; padding: 4px 112px 4px 0; overflow: hidden; font-size: 12px; line-height: 18px; }
+#app .camp-equipment-panel .camp-storage button { position: absolute; right: 0; top: 0; min-width: 100px; height: 44px; margin: 0; }
+#app .camp-equipment-panel:focus { outline: none; }
+
+@media (max-width: 1024px), (max-height: 600px) {
+  #app .camp-equipment-panel { width: 100%; height: calc(100svh - 24px); max-height: calc(100svh - 24px); padding: 12px; border-radius: 14px; }
+  #app .camp-equipment-panel .camp-header { min-height: 44px; gap: 12px; margin-bottom: 10px; }
+  #app .camp-equipment-panel .camp-header h2 { font-size: 20px; }
+  #app .camp-equipment-panel .eq-tab { min-width: 64px; padding: 8px 12px; }
+  #app .camp-equipment-panel .eq-workspace { grid-template-columns: minmax(166px, .8fr) minmax(0, 1.7fr); gap: 16px; }
+  #app .camp-equipment-panel .eq-list { gap: 5px; padding-right: 5px; }
+  #app .camp-equipment-panel .eq-item { min-height: 68px; gap: 8px; padding: 8px; }
+  #app .camp-equipment-panel .eq-item-icon { flex-basis: 40px; width: 40px; height: 40px; }
+  #app .camp-equipment-panel .eq-item-state { font-size: 12px; }
+  #app .camp-equipment-panel .eq-detail { padding-left: 16px; }
+  #app .camp-equipment-panel .eq-detail-scroll { padding-right: 6px; padding-bottom: 10px; }
+  #app .camp-equipment-panel .eq-detail-header { min-height: 90px; gap: 16px; padding: 0 0 8px; }
+  #app .camp-equipment-panel .eq-hero-icon { flex-basis: 86px; width: 86px; height: 86px; }
+  #app .camp-equipment-panel .eq-detail h3 { font-size: 20px; margin: 3px 0 7px; }
+  #app .camp-equipment-panel .eq-detail p { margin: 8px 0; }
+  #app .camp-equipment-panel .eq-stats { gap: 10px; margin: 10px 0; padding: 10px 0; }
+  #app .camp-equipment-panel .eq-stats strong { font-size: 17px; }
+  #app .camp-equipment-panel .eq-actions { padding-top: 10px; gap: 8px; }
+  #app .camp-equipment-panel .eq-actions button { min-height: 44px; min-width: 104px; padding: 8px 12px; }
+  #app .camp-equipment-panel .eq-actions > .primary { min-width: 132px; }
+  #app .camp-equipment-panel .eq-action-buttons > .primary { min-width: 132px; }
+  #app .camp-equipment-panel .eq-actions { grid-template-columns: minmax(0, 1fr) auto; gap: 3px 10px; }
+  #app .camp-equipment-panel .eq-action-buttons { grid-column: 2; grid-row: 1 / span 2; justify-content: flex-end; }
+  #app .camp-equipment-panel .eq-actions p { margin: 0; font-size: 12px; line-height: 1.45; }
+  #app .camp-equipment-panel .eq-actions .eq-action-hint { text-align: left; }
+  #app .camp-equipment-panel .eq-loadout-summary { padding: 2px 8px 10px; margin-bottom: 0; }
+  #app .camp-equipment-panel .eq-loadout-summary > span { display: none; }
+  #app .camp-equipment-panel .eq-subnav { margin: 10px 0 6px; }
+  #app .camp-equipment-panel .eq-detail-links { margin-top: 8px; }
+  #app .camp-equipment-panel .eq-costs { padding: 10px 0; margin: 8px 0; }
+  #app .camp-equipment-panel .eq-rarities { margin: 10px 0; }
+}
+@media (max-height: 450px) {
+  #app .camp-equipment-panel .eq-detail-header { min-height: 54px; gap: 12px; padding-bottom: 5px; }
+  #app .camp-equipment-panel .eq-hero-icon { flex-basis: 54px; width: 54px; height: 54px; }
+  #app .camp-equipment-panel .eq-detail-header .eq-kicker { display: none; }
+  #app .camp-equipment-panel .eq-detail-header > div { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; }
+  #app .camp-equipment-panel .eq-detail-header h3 { margin: 0; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-section="forge"] .eq-detail .eq-role { display: none; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="craft"] .eq-rarities { margin: 4px 0; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="craft"] .eq-costs { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 6px 0; margin: 6px 0; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="craft"] .eq-cost { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 3px 5px; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="craft"] .eq-cost-icon { width: 24px; height: 24px; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="craft"] .eq-cost > span:nth-child(2) { font-size: 12px; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="craft"] .eq-cost > strong { grid-column: 1 / -1; text-align: center; font-size: 15px; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"][data-eq-detail="summary"] .eq-detail-scroll { display: grid; grid-template-columns: minmax(0, 1fr) 100px; align-content: start; column-gap: 12px; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"] .eq-detail-header,
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"] .eq-segmented,
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"] .eq-detail-links { grid-column: 1 / -1; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"] .eq-detail-links { grid-row: 5; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"] .eq-segmented { margin: 4px 0; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"] .eq-maintenance-result { display: block; grid-column: 1 / -1; grid-row: 3; margin: 4px 0; font-size: 12px; line-height: 1.45; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"] .eq-maintenance-result .camp-quality { padding: 0; margin-right: 2px; background: none; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"] .eq-stats { grid-column: 1; grid-row: 3; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 6px 0; margin: 6px 0; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"] .eq-stats > div { display: block; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"] .eq-stats span,
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"] .eq-stats strong { display: block; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"] .eq-costs { grid-column: 2; grid-row: 3; padding: 6px 0; margin: 6px 0; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"] .eq-cost { display: block; font-size: 12px; text-align: right; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"] .eq-cost-icon { display: none; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"] .eq-cost strong { display: block; font-size: 17px; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"]:has(.eq-maintenance-result) .eq-stats,
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"]:has(.eq-maintenance-result) .eq-costs { grid-row: 4; }
+}
+@media (max-height: 360px) {
+  #app .camp-equipment-panel .camp-header { gap: 10px; margin-bottom: 8px; }
+  #app .camp-equipment-panel .camp-header h2 { font-size: 18px; }
+  #app .camp-equipment-panel .eq-tab { min-width: 58px; padding: 8px 10px; font-size: 14px; }
+  #app .camp-equipment-panel .camp-wallet { gap: 8px; }
+  #app .camp-equipment-panel .camp-wallet b { font-size: 13px; }
+  #app .camp-equipment-panel .eq-item { min-height: 62px; gap: 6px; padding: 7px; }
+  #app .camp-equipment-panel .eq-item-icon { flex-basis: 34px; width: 34px; height: 34px; }
+  #app .camp-equipment-panel .eq-item-copy small { margin-top: 3px; }
+  #app .camp-equipment-panel .eq-detail-header { min-height: 36px; gap: 10px; padding-bottom: 0; }
+  #app .camp-equipment-panel .eq-hero-icon { flex-basis: 36px; width: 36px; height: 36px; }
+  #app .camp-equipment-panel .eq-detail-header .eq-kicker { display: none; }
+  #app .camp-equipment-panel .eq-detail h3 { font-size: 18px; }
+  #app .camp-equipment-panel .eq-stats { gap: 7px; }
+  #app .camp-equipment-panel .eq-list > h3 { margin-top: 4px; }
+  #app .camp-equipment-panel .eq-item-state { max-width: 36px; }
+  #app .camp-equipment-panel .eq-loadout-summary { display: none; }
+  #app .camp-equipment-panel .eq-list-group { margin-top: 5px; }
+  #app .camp-equipment-panel .eq-detail .eq-role { margin: 4px 0 8px; }
+  #app .camp-equipment-panel .eq-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 8px 0; margin: 8px 0; }
+  #app .camp-equipment-panel .eq-stats > div { display: block; }
+  #app .camp-equipment-panel .eq-stats span { display: block; }
+  #app .camp-equipment-panel .eq-stats strong { display: block; margin-top: 3px; }
+  #app .camp-equipment-panel .eq-actions .eq-action-hint { max-width: 100%; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"] .eq-segmented { margin: 0; }
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"] .eq-stats,
+  #app .camp-equipment-panel .eq-workspace[data-eq-tab="maintenance"] .eq-costs { padding: 4px 0; margin: 4px 0; }
+  #app .camp-equipment-panel .eq-actions { padding-top: 8px; }
+  #app .camp-equipment-panel .camp-footer { margin-top: 6px; padding-top: 6px; }
+}
+@media (max-width: 500px) {
+  #app .camp-equipment-panel .camp-header { flex-wrap: wrap; gap: 6px 10px; }
+  #app .camp-equipment-panel .camp-header > div:first-child { flex: 1; }
+  #app .camp-equipment-panel .eq-tabs { order: 3; width: 100%; }
+  #app .camp-equipment-panel .eq-tab { flex: 1; }
+  #app .camp-equipment-panel .eq-workspace { grid-template-columns: minmax(110px, .7fr) minmax(0, 1.3fr); gap: 10px; }
+  #app .camp-equipment-panel .eq-detail { padding-left: 10px; }
+  #app .camp-equipment-panel .eq-item { flex-wrap: wrap; }
+  #app .camp-equipment-panel .eq-item-icon { display: none; }
+  #app .camp-equipment-panel .eq-item-state { margin-left: auto; }
+  #app .camp-equipment-panel .eq-detail-header { flex-direction: column; align-items: flex-start; gap: 5px; }
+  #app .camp-equipment-panel .eq-stats { grid-template-columns: 1fr; }
+  #app .camp-equipment-panel .eq-actions { flex-wrap: wrap; }
+  #app .camp-equipment-panel .eq-actions { grid-template-columns: 1fr; }
+  #app .camp-equipment-panel .eq-action-buttons { grid-column: 1; grid-row: 1; }
+  #app .camp-equipment-panel .eq-actions button { flex: 1; min-width: 0; }
+  #app .camp-equipment-panel .eq-actions > .primary { min-width: 0; }
+}

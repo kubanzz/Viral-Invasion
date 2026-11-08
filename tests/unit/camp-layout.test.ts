@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { GameSession } from '../../src/game/session';
-import { advanceCampScene, campStationDistance, campStations, canInteractCampStation, ensureCampPlayerLegal, nearbyCampStation, prepareCampScene } from '../../src/game/campScene';
+import { advanceCampScene, campStationDistance, campStations, canInteractCampStation, canUseCampSummon, ensureCampPlayerLegal, nearbyCampStation, prepareCampScene } from '../../src/game/campScene';
 import { CAMP_COURTYARDS, CAMP_WALL_CORNER_RADIUS, CAMP_WALL_THICKNESS, campInteractionLineClear,
-  campLayout, campWallTrace, isCampPositionLegal, type CampStationId } from '../../src/game/campLayout';
+  campLayout, campCourtyardBoundaryTraces, isCampPositionLegal, type CampStationId } from '../../src/game/campLayout';
 import { BALANCE, type GameState, type Vec } from '../../src/game/types';
 
 function camp(introComplete = true): GameState {
@@ -34,7 +34,7 @@ describe('approved three-courtyard camp geometry', () => {
     expect(state.player).toMatchObject(layout.spawn);
     expect(isCampPositionLegal(state.player, state.player.radius, layout)).toBe(true);
     expect(state.world!.foreground.x).toBeGreaterThan(state.world!.bounds.right);
-    expect(CAMP_COURTYARDS.map(c => c.gate.width)).toEqual([92, 92, 92]);
+    expect(CAMP_COURTYARDS.map(c => c.gate.width)).toEqual([136, 136, 136]);
   });
 
   it('leaves a newly departed battle with its original combat geometry', () => {
@@ -46,41 +46,39 @@ describe('approved three-courtyard camp geometry', () => {
     expect(departure.state.world!.bounds).not.toEqual(state.world!.bounds);
   });
 
-  const routes: Record<CampStationId, Vec[]> = {
+  const routes: Partial<Record<CampStationId, Vec[]>> = {
     warehouse: [{ x: 0, y: 100 }, { x: -210, y: 100 }, { x: -230, y: 100 }, { x: -386, y: -20 }],
     forge: [{ x: 0, y: 100 }, { x: -210, y: 100 }, { x: -220, y: 222 }, { x: -350, y: 222 }],
     shop: [{ x: 85, y: 270 }, { x: 85, y: -40 }, { x: 220, y: -40 }, { x: 250, y: 0 }, { x: 335, y: 0 }],
     departure: [{ x: 85, y: 250 }, { x: 205, y: 250 }, { x: 205, y: 340 }, { x: 335, y: 340 }],
-    summon: [{ x: 85, y: 270 }, { x: 85, y: -40 }, { x: 220, y: -40 }, { x: 220, y: -85 }],
+    summon: [{ x: 0, y: 90 }, { x: 90, y: 90 }],
   };
-  for (const id of ['warehouse', 'forge', 'shop', 'departure'] as const) {
+  for (const id of ['warehouse', 'forge', 'shop', 'departure', 'summon'] as const) {
     it(`walks from the actual spawn through courtyard entrances to ${id}`, () => {
       const state = camp();
-      for (const point of routes[id]) walkTo(state, point);
+      for (const point of routes[id]!) walkTo(state, point);
       expect(nearbyCampStation(state)?.id).toBe(id);
     });
   }
 
   for (const courtyard of CAMP_COURTYARDS) {
-    it(`blocks the ${courtyard.id} wall, admits its 92-wide door, and does not tunnel at long frame deltas`, () => {
-      const state = camp(), layout = campLayout(state), gate = courtyard.gate;
-      const outside = gate.side === 'east' ? 50 : -50, direction = gate.side === 'east' ? -1 : 1;
-      setPlayer(state, { x: gate.center.x + outside, y: gate.center.y - 100 });
-      advanceCampScene(state, { moveX: direction, moveY: 0, aim: state.player, fire: false }, 1);
-      const blocked = state.player.x - layout.origin.x;
-      expect(gate.side === 'east' ? blocked > gate.center.x : blocked < gate.center.x).toBe(true);
-      expect(isCampPositionLegal(state.player, state.player.radius, layout)).toBe(true);
-      for (const offset of [-26, 0, 26]) {
-        setPlayer(state, { x: gate.center.x + outside, y: gate.center.y + offset });
-        advanceCampScene(state, { moveX: direction, moveY: 0, aim: state.player, fire: false }, .5);
-        const inside = state.player.x - layout.origin.x;
-        expect(gate.side === 'east' ? inside < gate.center.x : inside > gate.center.x).toBe(true);
-        expect(isCampPositionLegal(state.player, state.player.radius, layout)).toBe(true);
+    it(`admits broad approaches across all four open ${courtyard.id} sides`, () => {
+      const state = camp(), layout = campLayout(state), r = courtyard.rect;
+      const probes = [
+        [{ x: r.left - 38, y: (r.top+r.bottom)/2 }, { x: r.left + 38, y: (r.top+r.bottom)/2 }],
+        [{ x: r.right - 38, y: (r.top+r.bottom)/2 }, { x: r.right + 38, y: (r.top+r.bottom)/2 }],
+        [{ x: (r.left+r.right)/2, y: r.top - 38 }, { x: (r.left+r.right)/2, y: r.top + 38 }],
+        [{ x: (r.left+r.right)/2, y: r.bottom - 38 }, { x: (r.left+r.right)/2, y: r.bottom + 38 }],
+      ];
+      for (const [from,to] of probes) {
+        const start=relative(state,from),end=relative(state,to);
+        Object.assign(state.player,start);
+        expect(isCampPositionLegal(start,state.player.radius,layout)).toBe(true);
+        for(let n=0;n<25;n++)advanceCampScene(state,{moveX:to.x-from.x,moveY:to.y-from.y,aim:end,fire:false},1/60);
+        expect(isCampPositionLegal(state.player,state.player.radius,layout)).toBe(true);
+        const travelled=Math.hypot(state.player.x-start.x,state.player.y-start.y);
+        expect(travelled).toBeGreaterThan(76);
       }
-      setPlayer(state, { x: gate.center.x + outside, y: gate.center.y + 32 });
-      advanceCampScene(state, { moveX: direction, moveY: 0, aim: state.player, fire: false }, .5);
-      const clippedDoorEdge = state.player.x - layout.origin.x;
-      expect(gate.side === 'east' ? clippedDoorEdge > gate.center.x : clippedDoorEdge < gate.center.x).toBe(true);
     });
   }
 
@@ -119,21 +117,13 @@ describe('approved three-courtyard camp geometry', () => {
     }
   });
 
-  it('uses round end caps while preserving exactly 92 units of visible and physical gate clearance', () => {
-    const state = camp(), layout = campLayout(state), radius = state.player.radius;
-    for (const courtyard of layout.courtyards) {
-      const { gate } = courtyard, trace = campWallTrace(courtyard), halfWall = CAMP_WALL_THICKNESS / 2;
-      expect(Math.abs(trace[0].y-gate.center.y)-halfWall).toBe(gate.width/2);
-      expect(Math.abs(trace[trace.length-1].y-gate.center.y)-halfWall).toBe(gate.width/2);
-      for (const sign of [-1, 1]) {
-        const at = (offset: number) => ({ x: gate.center.x, y: gate.center.y + sign * offset });
-        expect(isCampPositionLegal(at(gate.width/2-radius), radius, layout)).toBe(true);
-        expect(isCampPositionLegal(at(gate.width/2-radius+.25), radius, layout)).toBe(false);
-        const clearY = gate.center.y + sign * gate.width/2;
-        expect(campInteractionLineClear({ x: gate.center.x-40, y: clearY }, { x: gate.center.x+40, y: clearY }, layout)).toBe(true);
-        const blockedY = clearY + sign * .25;
-        expect(campInteractionLineClear({ x: gate.center.x-40, y: blockedY }, { x: gate.center.x+40, y: blockedY }, layout)).toBe(false);
-      }
+  it('retains four small rounded corner colliders without a continuous enclosing fence', () => {
+    const state=camp(),layout=campLayout(state);
+    for(const c of CAMP_COURTYARDS){
+      const traces=campCourtyardBoundaryTraces(c);expect(traces).toHaveLength(4);
+      const length=traces.flatMap(points=>points.slice(1).map((p,n)=>Math.hypot(p.x-points[n].x,p.y-points[n].y))).reduce((a,b)=>a+b,0);
+      expect(length).toBeLessThan(340);
+      expect(layout.wallSegments.filter(s=>s.courtyardId===c.id)).toHaveLength(32);
     }
   });
 
@@ -165,7 +155,7 @@ describe('approved three-courtyard camp geometry', () => {
     }
   });
 
-  it('does not allow nearby interactions through courtyard walls or inside completed bodies', () => {
+  it('does not allow interactions inside completed bodies or beyond grounded service reach', () => {
     const state = camp();
     for (const id of ['warehouse', 'forge', 'shop', 'departure'] as const) {
       const station = campStations(state).find(s => s.id === id)!;
@@ -177,17 +167,23 @@ describe('approved three-courtyard camp geometry', () => {
     const warehouse = campStations(state).find(s => s.id === 'warehouse')!;
     Object.assign(state.player, warehouse.position); expect(nearbyCampStation(state)).toBeUndefined();
     setPlayer(state, { x: 123, y: -145 });
-    expect(campStationDistance(state.player, campLayout(state).sites.find(site => site.id === 'summon')!)).toBeLessThan(64);
     expect(isCampPositionLegal(state.player, state.player.radius, campLayout(state))).toBe(true);
     expect(canInteractCampStation(state, 'summon')).toBe(false);
   });
 
-  it('allows a clicked eligible target even when another nearby station is closer', () => {
-    const state = camp(); setPlayer(state, { x: 277, y: -109 });
-    expect(canInteractCampStation(state, 'shop')).toBe(true);
-    expect(canInteractCampStation(state, 'summon')).toBe(true);
-    expect(nearbyCampStation(state)?.id).toBe('shop');
-    for (let i = 0; i < 5; i++) expect(nearbyCampStation(state)?.id).toBe('shop');
+  it('makes the road-side summon node walkable and usable only after activation and within reach', () => {
+    const state = camp(), layout = campLayout(state), node = layout.facilities.find(site => site.id === 'summon')!;
+    expect(node.courtyardId).toBeUndefined();expect(node.blocksMovement).toBe(false);
+    expect(node.position).toEqual(relative(state, { x: 132, y: 90 }));
+    for (const point of [{ x: 85, y: 90 }, { x: 90, y: 90 }, { x: 132, y: 90 }]) {
+      setPlayer(state, point);expect(isCampPositionLegal(state.player, state.player.radius, layout)).toBe(true);
+      expect(nearbyCampStation(state)?.id).toBe('summon');expect(canUseCampSummon(state)).toBe(true);
+      expect(canInteractCampStation(state, 'shop')).toBe(false);
+    }
+    state.camp!.builtFacilities = ['shop'];expect(canUseCampSummon(state)).toBe(false);
+    expect(campLayout(state).completedCourtyards.map(c => c.id)).toEqual(['supply']);
+    state.camp!.builtFacilities.push('summon');expect(canUseCampSummon(state)).toBe(true);
+    setPlayer(state, { x: 0, y: 270 });expect(canUseCampSummon(state)).toBe(false);
   });
 
   it('shows planned sites while enabling only finished building and courtyard collisions', () => {
@@ -212,7 +208,7 @@ describe('approved three-courtyard camp geometry', () => {
 
   it('moves a player clear when a completed courtyard appears around their position', () => {
     const state = camp(); state.camp!.builtFacilities = ['warehouse'];
-    setPlayer(state, { x: -150, y: -50 });
+    setPlayer(state, { x: -150, y: -200 });
     expect(isCampPositionLegal(state.player, state.player.radius, campLayout(state))).toBe(true);
     state.camp!.builtFacilities.push('forge');
     expect(isCampPositionLegal(state.player, state.player.radius, campLayout(state))).toBe(false);

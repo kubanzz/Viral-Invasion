@@ -3,6 +3,9 @@ import { BALANCE, type GameState, type Vec } from '../game/types';
 import type { PlayerProjectile } from '../game/playerProjectiles';
 import { WEAPON_SKILL_BALANCE } from '../game/weaponSkills';
 import { HELD_WEAPON_ART } from './weaponPresentation';
+import type { WeaponEffectImage } from './weaponUltimateVisuals';
+import { isWeaponId } from '../game/expedition';
+import type { CombatVfxOptions } from './combatVfxOptions';
 
 const TAU = Math.PI * 2;
 const clamp = (value: number) => Math.max(0, Math.min(1, value));
@@ -53,7 +56,7 @@ function drawAnchor(ctx: CanvasRenderingContext2D, shot: PlayerProjectile, now: 
 /** Compact medicine capsules follow real collision bodies. Muzzle flashes and
  * local impacts stay readable without turning volleys into bars or rays. */
 export function drawPlayerProjectiles(ctx: CanvasRenderingContext2D, state: GameState, lowEffects = false,
-  muzzleFor?: (castId: string) => Vec | undefined): void {
+  muzzleFor?: (castId: string) => Vec | undefined, image?: WeaponEffectImage, options: CombatVfxOptions = {}): void {
   if (!state.endless && !state.weaponCombat) return;
   ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
   if (state.weaponCombat && state.weaponCombat.overdriveUntil > state.elapsed && !state.playerFlight) {
@@ -80,7 +83,7 @@ export function drawPlayerProjectiles(ctx: CanvasRenderingContext2D, state: Game
   }
   for (const shot of state.playerProjectiles ?? []) {
     if (shot.kind === 'aftershock') continue;
-    if (shot.origin.skillId === 'piercing-gather' && shot.detonateAt !== undefined) {
+    if ((shot.origin.skillId === 'piercing-gather' || shot.origin.skillId === 'thunder-cage') && shot.detonateAt !== undefined) {
       drawAnchor(ctx, shot, state.visualTime ?? state.elapsed, lowEffects);
       continue;
     }
@@ -89,7 +92,15 @@ export function drawPlayerProjectiles(ctx: CanvasRenderingContext2D, state: Game
       y: shot.previous.y + (shot.y - shot.previous.y) * alpha };
     const p = projectileDrawPosition(presented, muzzleFor?.(shot.castId));
     const angle = Math.atan2(shot.direction.y, shot.direction.x);
-    if (shot.visual === 'crescent' || shot.visual === 'storm-crescent') {
+    if (shot.visual === 'thunder-needle' || shot.visual === 'thunder-beam' || shot.visual === 'thunder-spear') {
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(angle);
+      const length = shot.visual === 'thunder-beam' ? 45 : shot.visual === 'thunder-spear' ? 34 : 16;
+      ctx.strokeStyle = '#7264a4'; ctx.lineWidth = shot.radius * 1.4;
+      ctx.beginPath(); ctx.moveTo(-length, 0); ctx.lineTo(length * .5, 0); ctx.stroke();
+      ctx.strokeStyle = '#d7ffef'; ctx.lineWidth = Math.max(2, shot.radius * .5); ctx.stroke();
+      if (!lowEffects) { ctx.strokeStyle = '#b4a1d9'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(-length, -5); ctx.lineTo(-length * .5, 4); ctx.lineTo(-4, -4); ctx.lineTo(length * .5, 0); ctx.stroke(); }
+      ctx.restore();
+    } else if (shot.visual === 'crescent' || shot.visual === 'storm-crescent' || shot.visual === 'ultimate-wheel') {
       const returning = shot.flightPhase === 'returning';
       if (returning) {
         // A small chevron uses the real velocity. It does not predict a future path.
@@ -99,7 +110,10 @@ export function drawPlayerProjectiles(ctx: CanvasRenderingContext2D, state: Game
       }
       ctx.save(); ctx.translate(p.x, p.y);
       ctx.rotate(angle + ((state.visualTime ?? state.elapsed) - shot.born) * (returning ? -13 : 13));
-      crescent(ctx, shot.radius, returning, lowEffects); ctx.restore();
+      const texture = shot.visual === 'ultimate-wheel' ? image?.('fantasy.weapon.fx.piercing-ultimate') : undefined;
+      if (texture && !lowEffects) ctx.drawImage(texture, -shot.radius, -shot.radius, shot.radius * 2, shot.radius * 2);
+      else crescent(ctx, shot.radius, returning, lowEffects);
+      ctx.restore();
     } else if (shot.kind === 'sword') {
       ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(angle);
       // A filled crescent has a clear nose and two tips, separate from a round
@@ -145,12 +159,12 @@ export function drawPlayerProjectiles(ctx: CanvasRenderingContext2D, state: Game
     const age = state.elapsed - event.tick * BALANCE.step;
     if (age < -1e-7 || age > .5) continue;
     const d = event.data;
-    if (event.type === 'PLAYER_PROJECTILE_LAUNCHED' && age < .08 && (d.kind !== 'sword' || d.weaponId)) {
+    if (!options.nativeVfx && event.type === 'PLAYER_PROJECTILE_LAUNCHED' && d.weaponId !== 'redblade' && age < .08 && (d.kind !== 'sword' || d.weaponId)) {
       const p = muzzleFor?.(String(d.castId)) ?? { x: Number(d.x), y: Number(d.y) };
       const angle = Math.atan2(Number(d.aimY) - Number(d.y), Number(d.aimX) - Number(d.x));
       ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(angle); ctx.globalAlpha = 1 - age / .08;
       const blade = d.weaponId === 'piercing' || !d.weaponId && state.weaponCombat?.loadout.weaponId === 'piercing';
-      const palette = HELD_WEAPON_ART[blade ? 'piercing' : 'steady'];
+      const palette = HELD_WEAPON_ART[isWeaponId(d.weaponId) ? d.weaponId : blade ? 'piercing' : 'steady'];
       if (blade) { ctx.beginPath(); ctx.moveTo(0, -9); ctx.quadraticCurveTo(17, 0, 0, 9); ctx.strokeStyle = palette.accent; ctx.lineWidth = 3; ctx.stroke(); }
       else { ctx.beginPath(); ctx.ellipse(7, 0, d.kind === 'cannon' ? 9 : 6, d.kind === 'cannon' ? 5 : 3.5, 0, 0, TAU);
         ctx.fillStyle = state.weaponCombat && state.weaponCombat.overdriveUntil > state.elapsed ? '#d4ffed' : palette.light;
@@ -158,7 +172,7 @@ export function drawPlayerProjectiles(ctx: CanvasRenderingContext2D, state: Game
       if (!lowEffects) { point(ctx, 10, -4, 1.5, palette.accent); point(ctx, 10, 4, 1.3, palette.light); }
       ctx.restore();
     }
-    if (event.type === 'PLAYER_PROJECTILE_HIT' && age < .12) {
+    if (!options.nativeVfx && event.type === 'PLAYER_PROJECTILE_HIT' && age < .12) {
       const key = `${event.tick}:${d.targetId}`, previous = impacts.get(key);
       impacts.set(key, { x: Number(d.x), y: Number(d.y), age, killed: !!d.killed || !!previous?.killed,
         blade: d.weaponId === 'piercing' || !!previous?.blade });
@@ -169,11 +183,13 @@ export function drawPlayerProjectiles(ctx: CanvasRenderingContext2D, state: Game
       ctx.save(); ctx.globalAlpha = 1 - progress;
       // The faint footprint always matches the radius used for damage.
       const blade = d.weaponId === 'piercing' || d.skillId === 'piercing-gather';
+      const redblade = d.weaponId === 'redblade';
       const selfPulse = d.skillId === 'steady-repulse';
-      point(ctx, x, y, radius, blade ? '#d49b4f18' : selfPulse ? '#75c5ad18' : '#85b79b18');
+      point(ctx, x, y, radius, redblade ? '#d47e5818' : d.weaponId === 'thunder' ? '#9d88d418' : blade ? '#d49b4f18' : selfPulse ? '#75c5ad18' : '#85b79b18');
+      if (options.nativeVfx) { ctx.restore(); continue; }
       point(ctx, x, y, radius * Math.max(.04, .30 * (1 - progress * 3)), blade ? '#fff0c5' : '#effff1');
       ctx.beginPath(); ctx.arc(x, y, radius * Math.min(1, .15 + progress * 3.5), 0, TAU);
-      ctx.strokeStyle = blade ? '#b67e37' : '#439a86'; ctx.lineWidth = 4 * (1 - progress) + 1.5; ctx.stroke();
+      ctx.strokeStyle = redblade ? '#bb6651' : d.weaponId === 'thunder' ? '#8a72b9' : blade ? '#b67e37' : '#439a86'; ctx.lineWidth = 4 * (1 - progress) + 1.5; ctx.stroke();
       if (selfPulse) {
         const r = radius * Math.min(1, .2 + progress * 2.8);
         ctx.beginPath();
@@ -189,7 +205,7 @@ export function drawPlayerProjectiles(ctx: CanvasRenderingContext2D, state: Game
       }
       ctx.restore();
     }
-    if (event.type === 'PLAYER_PROJECTILE_RETURNED' && age < .14) {
+    if (!options.nativeVfx && event.type === 'PLAYER_PROJECTILE_RETURNED' && age < .14) {
       ctx.save(); ctx.globalAlpha = (1 - age / .14) * .8;
       ctx.beginPath(); ctx.arc(Number(d.x), Number(d.y), 8 + age * 40, -Math.PI * .7, Math.PI * .7);
       ctx.strokeStyle = '#d39a46'; ctx.lineWidth = 2; ctx.stroke(); ctx.restore();

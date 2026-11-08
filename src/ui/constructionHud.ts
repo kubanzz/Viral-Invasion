@@ -6,6 +6,7 @@ export const constructionHudMarkup = `<button class="construction-open" data-act
 /** An actual unlock owns the one-time callout, not an unrelated wave timer. */
 export function updateConstructionDiscovery(root: HTMLElement, state: GameState, discovered: boolean): void {
   const visible = discovered && state.phase === 'playing' && !!state.territory && !state.camp
+    && !state.weaponCombat?.bladeTrace
     && !state.growth?.draft && !state.endlessGrowth?.draft && state.territory.stage === 'rescue'
     && !state.territory.construction?.building && !state.territory.construction?.task;
   const notice = root.querySelector<HTMLElement>('#construction-discovery');

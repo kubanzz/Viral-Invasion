@@ -1,5 +1,8 @@
 import { clamp, distance, moveWithCollision, normalized, wallHit } from '../actors/collision';
 import { SeedRng } from '../core/rng';
+import { playerIncomingDamage } from './weaponMelee';
+import { bladeEnemyMovementFactor, resolveBladeIncomingDamage } from './bladeTechniques';
+import type { DamageOrigin } from './growthTypes';
 import { activeWorld, BALANCE, isDiagnosticTarget, type Effect, type GameEvent, type GameState, type InputFrame, type MessagePriority, type Target, type Tool, type Vec, type WorldGeometry } from './types';
 import type { BattleState, CampaignOptions, TraitId } from './battleTypes';
 import { BATTLE_BALANCE as B, TRAITS } from './battleConfig';
@@ -32,6 +35,7 @@ export interface BattleHost {
   effect(kind: Effect['kind'], from: Vec, to: Vec, radius: number, duration: number): void;
   finish(success: boolean, reason: string): void;
   slowFactor?(targetId: string): number;
+  damage?(target: Target, amount: number, origin: DamageOrigin): number;
   isMigratingActor?(targetId: string): boolean;
 }
 
@@ -498,9 +502,18 @@ export class BattleDirector {
     const { s, b } = this;
     if (s.player.hp <= 0 || isTerritoryPlayerAirborne(s) || s.elapsed < s.player.dashUntil || amount <= 0) return false;
     const before = s.player.hp;
-    s.player.hp = Math.max(0, before - amount); b.stats.playerDamage += before - s.player.hp;
-    s.player.hurtUntil = s.elapsed + .5;
+    const director = this;
+    const incoming = resolveBladeIncomingDamage({ get state() { return director.s; },
+      damage: (body, damage, origin) => this.host.damage?.(body, damage, origin) ?? 0,
+      emit: (type, data) => this.host.emit(type, data), effect: (kind, from, to, radius, duration) => {
+        const effect = this.host.effect(kind, from, to, radius, duration) as unknown as Effect | undefined;
+        return effect ?? { id: -1, kind, from: { ...from }, to: { ...to }, radius, duration, born: s.elapsed };
+      } },
+      amount, { source: target, id: `${target.id}:${target.attackAt ?? s.tick}:${reason}`, reflectable: reason === 'viral-capsule' });
     accepted?.();
+    if (incoming <= 0) return true;
+    s.player.hp = Math.max(0, before - playerIncomingDamage(s, incoming)); b.stats.playerDamage += before - s.player.hp;
+    s.player.hurtUntil = s.elapsed + .5;
     this.host.effect('hit', s.player, s.player, 22, .3);
     this.host.emit('PLAYER_HURT', { damage: before - s.player.hp, remainingHp: s.player.hp, reason, actorId: target.id });
     return true;
@@ -531,7 +544,7 @@ export class BattleDirector {
     const { s } = this, charge = target.charge!;
     const from = { x: target.x, y: target.y }, remaining = distance(from, charge.to);
     const direction = normalized(charge.to.x - from.x, charge.to.y - from.y);
-    const travel = Math.min(remaining, charge.speed * BALANCE.step);
+    const travel = Math.min(remaining, charge.speed * BALANCE.step * bladeEnemyMovementFactor(s, target));
     const to = moveWithCollision(from, { x: direction.x * travel, y: direction.y * travel }, target.radius, activeWorld(s));
     target.x = to.x; target.y = to.y;
     // Only the real travelled segment can hurt. The drawn promised lane never

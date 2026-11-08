@@ -1,8 +1,12 @@
 import type { GameEvent, GameState } from './game/types';
 import { PlayerDangerFeedback } from './render/playerDamageFeedback';
+import { anchorDangerView, isAnchorAttackDamage } from './game/anchorDanger';
+import { BLADE_TECHNIQUES } from './game/bladeTechniques';
+import { seraphCue, type SeraphCue } from './render/seraphVfx';
 
 type AudioContextFactory = () => AudioContext | undefined;
 const defaultContext: AudioContextFactory = () => typeof AudioContext === 'undefined' ? undefined : new AudioContext();
+export const SERAPH_SOUND_BUDGET = { tonesPerUpdate: 8, rememberedEvents: 128, ordinaryGapTicks: 10, windupGapTicks: 12, focusGapTicks: 30, echoGapTicks: 60 } as const;
 
 export class Soundscape {
   enabled = true;
@@ -11,10 +15,15 @@ export class Soundscape {
   private lastTick = -1;
   private run = '';
   private readonly cueTicks = new Map<string, number>();
-  private readonly activeTones = new Set<{ oscillator: OscillatorNode; cleanup: () => void }>();
+  private readonly bladeCues = new Set<string>();
+  private readonly seraphCues = new Set<string>();
+  private seraphToneBudget: number = SERAPH_SOUND_BUDGET.tonesPerUpdate;
+  private seraphOrgan = '';
+  private readonly activeTones = new Set<{ oscillator: OscillatorNode; cleanup: () => void; group?: 'seraph' }>();
   private readonly dangerFeedback = new PlayerDangerFeedback();
   private nextHeartbeat = 0;
   private lastPhase?: GameState['phase'];
+  private thunderHum?: { oscillator: OscillatorNode; gain: GainNode; cleanup: () => void };
 
   constructor(private readonly createContext: AudioContextFactory = defaultContext) {}
 
@@ -27,28 +36,39 @@ export class Soundscape {
   }
   toggle() {
     this.enabled = !this.enabled;
-    if (!this.enabled) {
-      // Disconnect immediately, including notes scheduled for the future.
-      // Re-enabling must not make an old sound audible again.
-      for (const tone of this.activeTones) {
-        try { tone.oscillator.stop(this.context?.currentTime ?? 0); } catch { /* Already ended. */ }
-        tone.cleanup();
-      }
-    }
+    if (!this.enabled) this.silence();
     return this.enabled;
+  }
+  /** Blur/visibility callbacks must stop a sustained voice before rAF is suspended. */
+  silence(): void {
+    for (const tone of [...this.activeTones]) {
+      try { tone.oscillator.stop(this.context?.currentTime ?? 0); } catch { /* Already ended. */ }
+      tone.cleanup();
+    }
   }
   update(state: GameState) {
     const run = `${state.seed}:${state.growth?.runId ?? 'training'}`;
     if (run !== this.run || state.tick < this.lastTick) {
-      this.lastEvent = undefined; this.cueTicks.clear(); this.run = run;
+      this.lastEvent = undefined; this.cueTicks.clear(); this.bladeCues.clear(); this.seraphCues.clear(); this.run = run;
       this.dangerFeedback.reset(); this.nextHeartbeat=state.tick;
     }
+    const seraphOrgan = state.battle?.organId ?? '';
+    if (seraphOrgan !== this.seraphOrgan || !!state.camp || (state.player?.hp ?? 1) <= 0) {
+      for (const tone of [...this.activeTones]) if (tone.group === 'seraph') {
+        try { tone.oscillator.stop(this.context?.currentTime ?? 0); } catch { /* Already ended. */ } tone.cleanup();
+      }
+    }
+    this.seraphOrgan = seraphOrgan;
     if(state.phase==='paused'||state.phase==='menu'||state.phase==='result'){
       if(this.lastPhase!==state.phase)for(const tone of [...this.activeTones]){try{tone.oscillator.stop(this.context?.currentTime??0);}catch{/* Already ended. */}tone.cleanup();}
       this.lastPhase=state.phase;
       if(state.phase!=='result'){this.lastEvent=state.events.at(-1);this.lastTick=state.tick;return;}
     }
     this.lastPhase=state.phase;
+    this.updateThunderHum(state);
+    if (state.phase === 'playing' && anchorDangerView(state).attacked) this.cue('anchor-warning', state.tick, 180, () => {
+      this.tone(740, .09, .028, 520); this.tone(740, .09, .028, 520, .14);
+    });
     if(state.player){
       const danger=this.dangerFeedback.update(state);
       if(state.phase==='playing'&&danger!=='healthy'&&state.tick>=this.nextHeartbeat){
@@ -58,10 +78,48 @@ export class Soundscape {
       }else if(danger==='healthy')this.nextHeartbeat=state.tick;
     }
     const index = this.lastEvent ? state.events.indexOf(this.lastEvent) : -1;
+    this.seraphToneBudget = SERAPH_SOUND_BUDGET.tonesPerUpdate;
     const projectileLaunches = new Set(state.events.filter(event => event.type === 'PLAYER_PROJECTILE_LAUNCHED')
       .map(event => `${event.tick}:${event.data.kind === 'primary' ? 1 : event.data.kind === 'cannon' ? 2 : 'sword'}`));
+    const milestoneTicks = new Set(state.events.filter(event => event.type !== 'TARGET_CLEARED' && /CLEARED|DESTROYED/.test(event.type)).map(event => event.tick));
     for (const event of state.events.slice(index + 1)) {
       const type = event.type;
+      if (type === 'THUNDER_DETONATE') this.cue('thunder-detonate', event.tick, 1, () => {
+        this.tone(1320, .08, .019, 310); this.tone(135, .24, .03, 48, .07);
+      });
+      if (type === 'THUNDER_ROD_PLANTED') this.cue('thunder-rod', event.tick, 1, () => {
+        this.tone(240, .12, .019, 710); this.tone(1120, .1, .012, 540, .06);
+      });
+      if (type === 'THUNDER_DASH_STARTED') this.cue('thunder-step', event.tick, 1, () => {
+        this.tone(1480, .15, .026, 180); this.tone(270, .12, .013, 640);
+      });
+      if (type === 'THUNDER_STORM_COLLAPSE') this.cue('thunder-collapse', event.tick, 1, () => {
+        this.tone(110, .22, .027, 440); this.tone(440, .22, .014, 1440);
+      });
+      if (type.startsWith('LEGION_SERAPH_') && event.tick <= state.tick && !state.camp && (state.player?.hp ?? 1) > 0 && state.phase !== 'result') this.seraphBattleCue(event);
+      if (type === 'WEAPON_ENERGY_CHANGED' && event.data.ready === true) this.cue('weapon-ultimate-ready', event.tick, 1, () => {
+        this.tone(660, .09, .018, 880); this.tone(990, .15, .018, 1320, .1);
+      });
+      if (type === 'WEAPON_ULTIMATE_CAST' && event.data.weaponId !== 'redblade') this.cue('weapon-ultimate', event.tick, 1, () => {
+        this.tone(180, .25, .035, 480); this.tone(720, .16, .02, 1080, .08);
+      });
+      // Stage/landmark events, never the 60 Hz movement segments or each collateral target hit.
+      if (type.startsWith('BLADE_TRACE_') && event.tick <= state.tick) this.bladeTraceCue(event);
+      if (type === 'WEAPON_ULTIMATE_PULSE') this.cue(event.data.final ? 'ultimate-terminal' : 'ultimate-pulse', event.tick, event.data.final ? 1 : 10, () => {
+        if (event.data.weaponId === 'thunder' && event.data.final) {
+          this.tone(90, .42, .04, 30); this.tone(1520, .12, .025, 160); this.tone(220, .32, .023, 50, .07); return;
+        }
+        this.tone(event.data.final ? 110 : 320, event.data.final ? .28 : .08, event.data.final ? .032 : .012, event.data.final ? 48 : 160);
+      });
+      if (type === 'WEAPON_MELEE_SWING' || type === 'WEAPON_MELEE_SWEEP') this.cue('blade-swing', event.tick, 7, () => {
+        this.tone(730, .065, .012, 170);
+      });
+      if (type === 'WEAPON_MELEE_HIT' && Number(event.data.damage) > 0) this.cue('blade-contact', event.tick, 5, () => {
+        // The blade has one directional swish and a separate, short contact body.
+        // A crowd hit in the same sweep cannot turn into one voice per enemy.
+        this.tone(155, .09, .024, 64); this.tone(970, .035, .008, 390);
+      });
+      if (type === 'WEAPON_CHAIN_HIT') this.cue('thunder-chain', event.tick, 5, () => this.tone(1200, .055, .016, 420));
       if (type === 'ENDLESS_OPENING_EVOLUTION_WARNING') this.cue('opening-evolution-warning', event.tick, 1, () => {
         this.tone(390, .1, .018, 520); this.tone(520, .16, .018, 430, .13);
       });
@@ -69,14 +127,14 @@ export class Soundscape {
         this.tone(event.data.trait === 'FISSION' ? 470 : 590, .12, .02, 760);
         if (event.data.elite === true) this.tone(300, .18, .018, 430, .1);
       });
-      if (type === 'TOOL_FIRED' && !projectileLaunches.has(`${event.tick}:${event.data.tool}`) && (event.data.tool === 1 || event.data.tool === 2 || event.data.tool === 3)) this.cue(`fire:${event.data.tool}`, event.tick, 4, () => {
+      if (type === 'TOOL_FIRED' && !(event.data.tool === 1 && state.weaponCombat?.loadout.weaponId === 'thunder') && !projectileLaunches.has(`${event.tick}:${event.data.tool}`) && (event.data.tool === 1 || event.data.tool === 2 || event.data.tool === 3)) this.cue(`fire:${event.data.tool}`, event.tick, 4, () => {
         // One short, distinguishable launch cue per accepted action. Impact and
         // successful repair have separate, rate-limited cues below.
         if (event.data.tool === 1) this.tone(820, .06, .022, 390);
         else if (event.data.tool === 2) this.tone(230, .09, .018, 430);
         else if (event.data.tool === 3) this.tone(560, .09, .018, 830);
       });
-      if (type === 'PLAYER_PROJECTILE_LAUNCHED' && event.data.kind !== 'sword') this.cue(`fire:${event.data.kind === 'primary' ? 1 : 2}`, event.tick, 4, () => {
+      if (type === 'PLAYER_PROJECTILE_LAUNCHED' && event.data.kind !== 'sword' && event.data.weaponId !== 'redblade') this.cue(`fire:${event.data.kind === 'primary' ? 1 : 2}`, event.tick, 4, () => {
         if (event.data.kind === 'primary') this.tone(1180, .055, .028, 540);
         else { this.tone(210, .16, .027, 520); this.tone(680, .07, .013, 330, .025); }
       });
@@ -105,7 +163,7 @@ export class Soundscape {
         if (type === 'HOST_EVENT_ENDED' || type === 'HOST_EVENT_CANCELLED' && event.data.triggered !== false)
           this.cue('exercise-ended', event.tick, 1, () => this.tone(660, .18, .014, 440));
       }
-      if (type === 'TARGET_HIT') {
+      if (type === 'TARGET_HIT' && Number(event.data.damage ?? 1) > 0 && event.data.weaponId !== 'thunder' && event.data.weaponId !== 'redblade' && event.data.skillId !== 'redblade-ultimate' && event.data.legionId !== 'seraph') {
         // `tool` can be the currently selected tool for autonomous damage.
         // Only explicit basicTool provenance identifies a player's tool hit.
         const data = event.data;
@@ -115,19 +173,22 @@ export class Soundscape {
           this.cue('hit:tool2', event.tick, 4, () => this.tone(340, .075, .022, 180));
         else if (data.cause === 'protocol' && (data.protocolId === 'IMMUNE_BEACON'
           || typeof data.immuneCellId === 'string' && data.immuneCellId))
-          this.cue('hit:cell', event.tick, 4, () => this.tone(450, .04, .012, 320));
+          this.cue('hit:cell', event.tick, 8, () => this.tone(450, .035, .009, 320));
         else if (data.cause === 'ability')
-          this.cue('hit:ability', event.tick, 4, () => this.tone(700, .055, .014, 460));
-        else this.cue('hit:other', event.tick, 4, () => this.tone(520, .045, .018, 270));
+          this.cue('hit:ability', event.tick, 6, () => this.tone(700, .045, .011, 460));
+        else this.cue('hit:other', event.tick, 8, () => this.tone(520, .035, .012, 270));
       }
-      if (/CLEARED|DESTROYED/.test(type)) this.cue('clear', event.tick, 10, () => { this.tone(660, .13, .045, 990); this.tone(990, .18, .02, 1320); });
+      if (type === 'TARGET_CLEARED' && !milestoneTicks.has(event.tick)) this.cue('ordinary-clear', event.tick, 12, () => {
+        this.tone(300, .065, .009, 110); this.tone(160, .09, .006, 70, .015);
+      });
+      else if (type !== 'TARGET_CLEARED' && /CLEARED|DESTROYED/.test(type)) this.cue('clear', event.tick, 10, () => { this.tone(660, .13, .032, 990); this.tone(990, .18, .016, 1320); });
       if (/SCAN/.test(type)) this.cue('scan', event.tick, 12, () => this.tone(180, .25, .025, 720));
       if (type === 'ORGAN_INTEGRITY_CHANGED') {
         const before = Number(event.data.before), after = Number(event.data.after);
         if (Number.isFinite(before) && Number.isFinite(after)) {
           if (event.data.reason === 'repair' && after > before) this.cue('repair', event.tick, 12, () => this.tone(580, .18, .025, 800));
           else if (after < before && event.data.reason === 'protocol-pressure') this.cue('protocol-pressure', event.tick, 30, () => this.tone(320, .09, .012, 270));
-          else if (after < before) this.cue('organ-damage', event.tick, 20, () => this.tone(250, .14, .025, 130));
+          else if (after < before && !isAnchorAttackDamage(state, event)) this.cue('organ-damage', event.tick, 20, () => this.tone(250, .14, .025, 130));
         }
       }
       if (type === 'PROTOCOL_EQUIPPED' || type === 'COMBAT_UPGRADE_COMMITTED') this.cue('evolution', event.tick, 18, () => {
@@ -154,6 +215,36 @@ export class Soundscape {
     this.lastEvent = state.events.at(-1);
     this.lastTick = state.tick;
   }
+  /** One sustained voice, owned by actual live connections rather than hit events. */
+  private updateThunderHum(state: GameState): void {
+    const count = state.phase === 'playing' && (state.player?.hp ?? 0) > 0
+      ? state.weaponCombat?.thunder?.channel?.links.length ?? 0 : 0;
+    const ctx = this.context;
+    if (!count || !this.enabled || !ctx || ctx.state !== 'running') {
+      if (this.thunderHum) {
+        try { this.thunderHum.oscillator.stop(ctx?.currentTime ?? 0); } catch { /* Already ended. */ }
+        this.thunderHum.cleanup();
+      }
+      return;
+    }
+    if (!this.thunderHum) {
+      const oscillator = ctx.createOscillator(), gain = ctx.createGain();
+      oscillator.type = 'triangle';
+      const active = { oscillator, cleanup: () => {
+        if (this.thunderHum?.oscillator !== oscillator) return;
+        this.thunderHum = undefined; oscillator.onended = null;
+        oscillator.disconnect(); gain.disconnect(); this.activeTones.delete(active);
+      } };
+      this.thunderHum = { oscillator, gain, cleanup: active.cleanup };
+      this.activeTones.add(active); oscillator.onended = active.cleanup;
+      oscillator.frequency.setValueAtTime(110 + Math.min(16, count) * 4, ctx.currentTime);
+      gain.gain.setValueAtTime(.009 + Math.min(16, count) * .001, ctx.currentTime);
+      oscillator.connect(gain).connect(ctx.destination); oscillator.start(ctx.currentTime);
+    } else {
+      this.thunderHum.oscillator.frequency.setValueAtTime(110 + Math.min(16, count) * 4, ctx.currentTime);
+      this.thunderHum.gain.gain.setValueAtTime(.009 + Math.min(16, count) * .001, ctx.currentTime);
+    }
+  }
   /** Presentation-only cues; called once per reveal transition, with the sound setting respected. */
   summonCue(phase: 'charge' | 'rarity' | 'item' | 'complete', rarity: 'white' | 'blue' | 'purple' | 'gold'): void {
     if (phase === 'charge') { this.tone(180,.7,.018,520); this.tone(360,.45,.01,720,.18); }
@@ -164,20 +255,77 @@ export class Soundscape {
     }
     if (phase === 'item') { this.tone(660,.22,.018,990); this.tone(990,.4,.012,1320,.07); }
   }
+  /** Short voiced landmarks, never a note for every travelling frame or echo particle. */
+  private seraphBattleCue(event: GameEvent): void {
+    const cue = seraphCue(event);
+    if (!cue || this.seraphCues.has(cue.key)) return;
+    this.seraphCues.add(cue.key);
+    if (this.seraphCues.size > SERAPH_SOUND_BUDGET.rememberedEvents) this.seraphCues.delete(this.seraphCues.values().next().value!);
+    const gap = cue.kind === 'focus' ? SERAPH_SOUND_BUDGET.focusGapTicks : cue.kind === 'echo' ? SERAPH_SOUND_BUDGET.echoGapTicks
+      : cue.kind === 'windup' ? SERAPH_SOUND_BUDGET.windupGapTicks : SERAPH_SOUND_BUDGET.ordinaryGapTicks;
+    this.cue(`seraph:${cue.kind}:${cue.kind === 'focus' || cue.kind === 'echo' ? 'squad' : cue.role}`, event.tick, gap, () => this.playSeraphCue(cue));
+  }
+  private playSeraphCue(cue: SeraphCue): void {
+    const note = (frequency: number, duration: number, volume: number, end: number, delay = 0) => {
+      if (this.seraphToneBudget-- > 0) this.tone(frequency, duration, volume, end, delay, 'seraph');
+    };
+    if (cue.kind === 'windup') note(cue.role === 'prism' ? 740 : 520, .09, .008, 880);
+    if (cue.kind === 'release') {
+      if (cue.role === 'commander') { note(1240, .11, .017, 350); note(140, .1, .012, 70); }
+      else if (cue.role === 'prism') { note(1500, .12, .011, 1850); note(920, .09, .008, 1380, .035); }
+      else note(1100, .075, .013, 460);
+    }
+    if (cue.kind === 'hit') {
+      if (cue.role === 'commander') { note(170, .11, .016, 80); note(1760, .065, .011, 850); }
+      else note(cue.role === 'prism' ? 1840 : 1260, .065, .011, cue.role === 'prism' ? 920 : 550);
+    }
+    if (cue.kind === 'focus') { note(523, .1, .014, 784); note(784, .12, .009, 1046, .07); }
+    if (cue.kind === 'echo') { note(660, .14, .012, 1320); note(990, .1, .008, 1485, .08); }
+  }
+  private bladeTraceCue(event: GameEvent): void {
+    const stage = event.type;
+    if (!['BLADE_TRACE_STARTED', 'BLADE_TRACE_MARK_CONNECTED', 'BLADE_TRACE_COMMITTED',
+      'BLADE_TRACE_RELEASED', 'BLADE_TRACE_IMPACT', 'BLADE_TRACE_FINISHED'].includes(stage)) return;
+    const landmark = stage === 'BLADE_TRACE_MARK_CONNECTED' || stage === 'BLADE_TRACE_IMPACT';
+    if (landmark && (!Number.isInteger(event.data.mark) || Number(event.data.mark) < 0 || Number(event.data.mark) > 3)) return;
+    const key = `${stage}:${String(event.data.castId)}:${landmark ? String(event.data.mark) : ''}`;
+    if (this.bladeCues.has(key)) return;
+    this.bladeCues.add(key);
+    if (this.bladeCues.size > 64) this.bladeCues.delete(this.bladeCues.values().next().value!);
+    if (stage === 'BLADE_TRACE_STARTED') this.tone(440, .09, .014, 660);
+    // Automatic completion remains readable without playing four synthetic connection clicks at once.
+    if (stage === 'BLADE_TRACE_MARK_CONNECTED' && event.data.manual === true) this.tone(970, .045, .012, 1360);
+    if (stage === 'BLADE_TRACE_COMMITTED') {
+      const eyeOpens = Math.min(.4, BLADE_TECHNIQUES.trace.windup * .64);
+      this.tone(120, eyeOpens, .026, 82);
+      this.tone(1420, .055, .018, 2200, eyeOpens);
+    }
+    if (stage === 'BLADE_TRACE_RELEASED') {
+      this.tone(1560, .11, .028, 260); this.tone(180, .16, .026, 54);
+    }
+    if (stage === 'BLADE_TRACE_IMPACT') {
+      this.tone(920 + Math.max(0, Math.min(3, Number(event.data.mark) || 0)) * 90, .065, .018, 170);
+      this.tone(96, .1, .022, 48);
+    }
+    if (stage === 'BLADE_TRACE_FINISHED') {
+      this.tone(145, .26, .032, 48); this.tone(820, .12, .019, 260, .035);
+    }
+  }
   /** Use simulation ticks so a paused panel cannot reset or flood a cue's cooldown. */
   private cue(group: string, tick: number, gap: number, play: () => void): void {
     if (tick - (this.cueTicks.get(group) ?? -Infinity) < gap) return;
     this.cueTicks.set(group, tick); play();
   }
-  private tone(frequency: number, duration: number, volume: number, end: number, delay = 0) {
+  private tone(frequency: number, duration: number, volume: number, end: number, delay = 0, group?: 'seraph') {
     const ctx = this.context;
     if (!ctx || !this.enabled || ctx.state !== 'running') return;
     const at = ctx.currentTime + delay;
     const oscillator = ctx.createOscillator(); const gain = ctx.createGain();
-    oscillator.type = 'sine'; oscillator.frequency.setValueAtTime(frequency, at); oscillator.frequency.exponentialRampToValueAtTime(end, at + duration);
+    oscillator.type = frequency < 220 || frequency > 900 && duration < .14 ? 'triangle' : 'sine';
+    oscillator.frequency.setValueAtTime(frequency, at); oscillator.frequency.exponentialRampToValueAtTime(end, at + duration);
     gain.gain.setValueAtTime(volume, at); gain.gain.exponentialRampToValueAtTime(.001, at + duration);
     let disconnected = false;
-    const active = { oscillator, cleanup: () => {
+    const active = { oscillator, group, cleanup: () => {
       if (disconnected) return;
       disconnected = true;
       oscillator.onended = null;

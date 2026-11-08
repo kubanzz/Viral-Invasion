@@ -10,6 +10,10 @@ const fixture = vi.hoisted(() => ({
   sprites: [] as { id: string; config: HostedSprite }[], bridge: undefined as ArtPresentation | undefined,
 }));
 vi.mock('../../.art-generated/art-runtime.json', () => ({ default: fixture.art }));
+// This fixture owns registered weapon geometry; the native VFX lifecycle has a separate real-Phaser suite.
+vi.mock('../../src/render/combatVfxRuntime', () => ({ CombatVfxRuntime: class {
+  accept() {} syncFrame() {} dispose() {} diagnostics() { return { backend:'fixture' }; }
+} }));
 // This suite exercises the existing registered PNG renderer, including the
 // unsupported-WebGL fallback. Genuine 3D rendering is covered in browser tests.
 vi.mock('../../src/render/player3D', () => ({ Player3D: class {
@@ -27,7 +31,7 @@ vi.mock('../../src/render/canvasScene', async () => {
   return { CanvasScene: class {
     camera = new Camera(1440, 900);
     constructor(_canvas: HTMLCanvasElement, readonly bridge: ArtPresentation) { fixture.bridge = bridge; }
-    resize() {} prepareCamera() {} setHudRects() {} annotateArtEntity() {} diagnostics() { return {}; }
+    resize() {} prepareCamera() {} setHudRects() {} annotateArtEntity() {} acceptSeraphEvent() {} resetSeraphVfx() {} diagnostics() { return {}; }
     render(state: GameState) { this.bridge.nativeEntity?.({ id: 'player', kind: 'player', y: state.player.y }, state,
       {} as CanvasRenderingContext2D, 100); }
   } };

@@ -494,6 +494,7 @@ export function drawMotherCoreDangers(ctx: CanvasRenderingContext2D, state: Game
   const attack = combat.attack;
   if (!attack || combat.organId !== state.battle?.organId || attack.resolveAt <= state.elapsed) return;
   if (attack.kind === 'heart-pulse') return; // Expedition owns the exact expanding ring and safe gap.
+  if (attack.kind === 'heart-marked-strike' || attack.kind === 'heart-guard-call' || attack.kind === 'heart-lunge') return; // Heart overlay owns exact locked circles/corridors.
   const remaining = attack.resolveAt - state.elapsed, duration = attack.resolveAt - attack.startedAt;
   const progress = Math.max(0, Math.min(1, (state.elapsed - attack.startedAt) / duration));
   const caption = (value: string, anchor: Vec, offset: Vec, color: string, size = 11) => {

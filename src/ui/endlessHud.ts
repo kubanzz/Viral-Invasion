@@ -1,6 +1,9 @@
 import { weaponPrimaryCooldown, weaponSkillViews } from '../game/weaponSkills';
+import { weaponUltimateView } from '../game/weaponUltimates';
+import { REDBLADE_PRIMARY } from '../game/weaponMelee';
 import { PLAYER_PROJECTILE_BALANCE } from '../game/playerProjectiles';
 import { territoryMarkerView } from '../game/territoryPresentation';
+import { anchorDangerView } from '../game/anchorDanger';
 import { territoryRenderFrame } from '../render/fantasyTerritory';
 import { createEndlessGrowth, endlessCombatStats, endlessUpgradeDescription, ENDLESS_UPGRADES, ENDLESS_UPGRADE_IDS } from '../game/endlessGrowth';
 import { ENEMY_TACTIC_INFO } from '../game/enemyTacticInfo';
@@ -87,7 +90,7 @@ function baseThreatCopy(state: GameState, upcoming = false): string {
   if (cycleStatus) return `${cycleStatus} · ${eliteCycleCounter(state, active!)}`;
   if (active?.tactic) return tacticCopy(active.tactic);
   if (upcoming && (state.endless?.supportRemaining ?? 0) > 0) return tacticCopy('thin-ray');
-  return state.endless?.wave === 1 ? '移动避开敌群，持续射击；清波后选择一次强化。' : state.weaponCombat ? '左键普攻 · 123武器技能 · F净化组织 · Q脚下驻军。' : '1 持续净化 · 2 聚拢爆破 · Q 召集或指挥小队。';
+  return state.endless?.wave === 1 ? state.weaponCombat ? '移动避开敌群，持续攻击；击杀病毒或攻击母巢充能，满条按4释放大招。' : '移动避开敌群，持续射击；清波后选择一次强化。' : state.weaponCombat ? '左键普攻 · 123战技 · 4充能大招 · F净化 · Q驻军。' : '1 持续净化 · 2 聚拢爆破 · Q 召集或指挥小队。';
 }
 function threatCopy(state: GameState, upcoming = false): string {
   const capsules = state.targets.filter(target => target.hp > 0 && target.viralCapsule);
@@ -130,7 +133,7 @@ const text = (id: string, value: string) => { const node = document.getElementBy
 const meter = (id: string, ratio: number) => { const node = document.getElementById(id); if (node) node.style.width = `${Math.max(0, Math.min(100, ratio * 100))}%`; };
 
 /** A small fixed Canvas, no history, RAF, player-state writes or global node cache. */
-function drawMap(state: GameState, lowEffects = false): void {
+export function drawEndlessMinimap(state: GameState, lowEffects = false): void {
   const canvas = document.getElementById('endless-minimap') as HTMLCanvasElement | null;
   if (!canvas) return;
   const ctx = canvas.getContext('2d'); if (!ctx) return;
@@ -173,8 +176,10 @@ function drawMap(state: GameState, lowEffects = false): void {
     const p = point(source.position); ctx.strokeStyle = '#ffd09b'; ctx.lineWidth = 2;
     ctx.strokeRect(p.x - 4, p.y - 4, 8, 8);
   }
-  const tissue = point(state.tissue); ctx.strokeStyle = '#b9f7cd'; ctx.lineWidth = 2.5;
-  ctx.beginPath(); ctx.moveTo(tissue.x - 4, tissue.y); ctx.lineTo(tissue.x + 4, tissue.y); ctx.moveTo(tissue.x, tissue.y - 4); ctx.lineTo(tissue.x, tissue.y + 4); ctx.stroke();
+  if (!state.territory) {
+    const tissue = point(state.tissue); ctx.strokeStyle = '#b9f7cd'; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(tissue.x - 4, tissue.y); ctx.lineTo(tissue.x + 4, tissue.y); ctx.moveTo(tissue.x, tissue.y - 4); ctx.lineTo(tissue.x, tissue.y + 4); ctx.stroke();
+  }
   for (const node of state.territory ? [] : healingPoints(state)) {
     const p = point(node); ctx.strokeStyle = node.infection >= 100 ? '#f47f78' : node.infection > 0 ? '#e9bd61' : '#88ddcc'; ctx.lineWidth = 2.5;
     ctx.beginPath(); ctx.moveTo(p.x - 4, p.y); ctx.lineTo(p.x + 4, p.y); ctx.moveTo(p.x, p.y - 4); ctx.lineTo(p.x, p.y + 4); ctx.stroke();
@@ -182,13 +187,15 @@ function drawMap(state: GameState, lowEffects = false): void {
   }
   for (const node of state.territory?.nodes ?? []) {
     const p = point(node), marker = territoryMarkerView(state, node), infected = node.owner === 'infected';
-    const warning = marker.alert !== null;
+    const anchorAttacked = node.kind === 'core' && anchorDangerView(state).attacked;
+    const warning = marker.alert !== null || anchorAttacked;
     ctx.strokeStyle = infected || warning ? '#ffadb1' : '#9df4bd'; ctx.fillStyle = infected ? '#e05d70' : warning ? '#d98d66' : '#9df4bd'; ctx.lineWidth = 2;
     if (node.kind === 'source') { ctx.fillRect(p.x - 4, p.y - 4, 8, 8); ctx.strokeRect(p.x - 4, p.y - 4, 8, 8);
       if (marker.kind === 'dormant' || marker.kind === 'shielded') { ctx.strokeStyle = '#2d303b'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(p.x - 2, p.y); ctx.lineTo(p.x + 2, p.y); ctx.stroke(); }
-    } else if (node.kind === 'front') { ctx.beginPath(); ctx.moveTo(p.x, p.y - 5); ctx.lineTo(p.x + 5, p.y); ctx.lineTo(p.x, p.y + 5); ctx.lineTo(p.x - 5, p.y); ctx.closePath(); ctx.fill(); ctx.stroke(); }
+    } else if (node.kind === 'front' || node.kind === 'core') { ctx.beginPath(); ctx.moveTo(p.x, p.y - 5); ctx.lineTo(p.x + 5, p.y); ctx.lineTo(p.x, p.y + 5); ctx.lineTo(p.x - 5, p.y); ctx.closePath(); ctx.fill(); ctx.stroke(); }
     else { ctx.fillRect(p.x - 4, p.y - 1.5, 8, 3); ctx.fillRect(p.x - 1.5, p.y - 4, 3, 8); }
-    if (warning) { const pulse = lowEffects ? 0 : marker.alertAge % 1; ctx.save(); ctx.strokeStyle = '#ff8e9e'; ctx.globalAlpha = 1 - pulse * .6; ctx.lineWidth = 1.7; ctx.beginPath(); ctx.arc(p.x, p.y, 7 + pulse * 5, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); }
+    if (warning) { const pulse = lowEffects ? 0 : (anchorAttacked ? state.elapsed : marker.alertAge) % 1; ctx.save(); ctx.strokeStyle = '#ff8e9e'; ctx.globalAlpha = 1 - pulse * .6; ctx.lineWidth = anchorAttacked ? 2.5 : 1.7; ctx.beginPath(); ctx.arc(p.x, p.y, 7 + pulse * 5, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); }
+    if (anchorAttacked) { ctx.save(); ctx.fillStyle = '#ffb8b1'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('!', p.x, p.y - 12); ctx.restore(); }
     if (node.purificationProgress > 0 && infected) { ctx.beginPath(); ctx.arc(p.x, p.y, 7, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * node.purificationProgress / 100); ctx.strokeStyle = '#b8efd1'; ctx.lineWidth = 1.5; ctx.stroke(); }
   }
   for (const beacon of activeGuardBeacons(state)) {
@@ -247,7 +254,7 @@ export function updateEndlessHud(state: GameState, lowEffects = false): void {
   const guard = guards.length ? `细胞驻防 ${guardCount}只 · ${guards.some(beacon => !Number.isFinite(beacon.until)) ? '持续驻防，可被击杀' : `${number(Math.max(...guards.map(beacon => beacon.until)) - state.elapsed)}s`}；` : '';
   text('endless-tissue-route', healingPointInteractionHint(state) ?? (guard + (Math.hypot(dx, dy) < 100 ? '已在组织附近 · 3 瞄准十字节点抢修' : `组织在${dy < -60 ? '北' : dy > 60 ? '南' : ''}${dx < -60 ? '西' : dx > 60 ? '东' : ''}侧 · ${Math.round(Math.hypot(dx, dy))}m`)));
   if (state.territory) text('endless-tissue-route', '＋ 生命泉可治疗 · ◇ 前线需先恢复同线生命泉 · □ 感染源');
-  drawMap(state, lowEffects);
+  drawEndlessMinimap(state, lowEffects || (typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches));
 }
 
 function modal(content: string, label: string, extra = ''): string {
@@ -259,7 +266,10 @@ function buildSummary(state: GameState): string {
   const loadout = state.weaponCombat?.loadout ?? state.expedition?.loadout;
   const territory = territoryHudView(state), weapon = loadout ? weaponCombatProfile(loadout, stats.damageMultiplier) : undefined;
   const skills = state.weaponCombat ? weaponSkillViews(state) : [];
-  const primary = weapon?.weaponId === 'piercing'
+  const ultimate = weaponUltimateView(state);
+  const primary = weapon?.weaponId === 'redblade' ? `近身三连斩 · ${REDBLADE_PRIMARY.factors.map(factor => number(weapon.primaryDamage * factor)).join('／')}伤害 · 半径${REDBLADE_PRIMARY.radii.join('／')} · 扇形命中多体`
+    : weapon?.weaponId === 'thunder' ? `主弹${number(weapon.primaryDamage)}伤害 · 命中传导雷链 · 间隔${number(weaponPrimaryCooldown(state, stats), 3)}s`
+    : weapon?.weaponId === 'piercing'
     ? `${stats.shotRays}刃 · 去程${number(weapon.primaryDamage)}伤害／回程${number(weapon.primaryDamage * PLAYER_PROJECTILE_BALANCE.crescent.returnDamageFactor)}伤害 · 每程最多${1 + stats.pierceCount + weapon.extraPierce}体 · 间隔${number(weaponPrimaryCooldown(state, stats), 3)}s`
     : `${stats.shotRays}弹 × ${number(weapon?.primaryDamage ?? BALANCE.damage[1] * stats.damageMultiplier)}伤害 · 每弹额外贯穿${stats.pierceCount + (weapon?.extraPierce ?? 0)}体 · 间隔${number(weaponPrimaryCooldown(state, stats), 3)}s`;
   return `<div class="endless-build-summary"><h3>本局战斗进化 · Lv.${growth?.level ?? 0}</h3>${territory ? `<p>第${state.endless!.wave}波 · 已清${state.endless!.clearedWaves}波 · 得分${state.endless!.score} · 连击${state.endless!.combo} / 最长${state.endless!.bestCombo}</p><p>${territory.stability} · ${territory.stabilityDetail}</p>${territory.lines.map(line => `<p><strong>${line.name}：</strong>${escape(line.status)}<br>${line.sourceAccess.steps.map(step => `${step.done ? '✓' : step.current ? '▶' : '○'}${step.label}`).join(' → ')}</p>`).join('')}` : ''}<p>${ENDLESS_UPGRADE_IDS.filter(id => growth?.ranks[id]).map(id => `${ENDLESS_UPGRADES[id].title} ${growth!.ranks[id]}阶`).join(' · ') || '尚未获得战斗进化'}</p>
@@ -267,7 +277,7 @@ function buildSummary(state: GameState): string {
     ${skills.length ? skills.map(skill => `<dt>${skill.slot} · ${skill.name}</dt><dd>${skill.description} · 冷却${skill.cooldown}秒</dd>`).join('') : `<dt>净化能量炮</dt><dd>爆炸半径${number(stats.areaRadius)} · ${number(80 * stats.damageMultiplier * stats.areaDamageMultiplier)}伤害 · 射程420 · 冷却${number(stats.areaCooldown, 2)}s${stats.catalysisDamage > 0 ? `；${catalysisToolCopy(stats)?.detail}` : ''}</dd>
     <dt>冲刺 / Q爆发</dt><dd>${number(stats.dashDamage * stats.damageMultiplier)} / ${number(stats.scanDamage * stats.damageMultiplier)}伤害（0表示未解锁）</dd>
     <dt>蓄能净化斩</dt><dd>开局可用 · 3道 / 满蓄5道 · ${number((45 + (growth?.ranks.dash ?? 0) * 15) * stats.damageMultiplier)}—${number((80 + (growth?.ranks.dash ?? 0) * 15) * stats.damageMultiplier)}伤害 · 满蓄1.25s · 独立冷却6s</dd>
-    `}<dt>免疫与耐久</dt><dd>细胞伤害×${number(stats.cellDamageMultiplier * stats.damageMultiplier, 2)} · 军团持续存在，可被击杀 · 最多2团 · 小队冷却×${number(stats.cellCooldownMultiplier, 2)} · Q ${number(stats.scanCooldown, 2)}s · 最大耐久${stats.maxHp}</dd>${state.territory ? '<dt>修复 / 净化</dt><dd>靠近按F净化感染节点；无可净化节点时修复附近心核。保持当前武器。生命泉提供治疗，前线不治疗。</dd>' : ''}</dl>
+    `}${ultimate ? `<dt>4 · ${ultimate.name}</dt><dd>${ultimate.description} · 能量${Math.floor(ultimate.energy)} / ${ultimate.required}；普通病毒＋2、精英＋12，母巢总耐久每降低1%＋2；大招伤害不回充。</dd>` : ''}<dt>免疫与耐久</dt><dd>细胞伤害×${number(stats.cellDamageMultiplier * stats.damageMultiplier, 2)} · 军团持续存在，可被击杀 · 最多2团 · 小队冷却×${number(stats.cellCooldownMultiplier, 2)} · Q ${number(stats.scanCooldown, 2)}s · 最大耐久${stats.maxHp}</dd>${state.territory ? '<dt>修复 / 净化</dt><dd>靠近按F净化感染节点；无可净化节点时修复附近心核。保持当前武器。生命泉提供治疗，前线不治疗。</dd>' : ''}</dl>
     ${growth?.lastChoice ? `<p class="endless-latest">最近获得 · ${escape(growth.lastChoice.title)}：${escape(endlessUpgradeDescription(growth.lastChoice.description,growth.lastChoice.upgradeId,!!state.territory))}</p>` : ''}
     ${openingEvolutionDetailText(state) ? `<p class="endless-opening-observation"><strong>首阶段进化观察：</strong>${escape(openingEvolutionDetailText(state))}</p>` : ''}</div>`;
 }

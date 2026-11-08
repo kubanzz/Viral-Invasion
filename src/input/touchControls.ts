@@ -1,5 +1,6 @@
 import { BALANCE, type GameState, type Vec } from '../game/types';
 import { weaponSkillViews, type WeaponSkillSlot } from '../game/weaponSkills';
+import { weaponUltimateView } from '../game/weaponUltimates';
 import { endlessCombatStats } from '../game/endlessGrowth';
 import { TRACTION_BALANCE } from '../game/traction';
 import { isTerritoryPlayerAirborne, territoryCannonView } from '../game/territoryCannon';
@@ -16,7 +17,7 @@ export interface TouchControlsOptions {
   onPreviewChange?: (preview: SkillPresentation | undefined) => void;
 }
 
-type PointerKind = 'move' | 'aim' | 'attack' | 'skill' | 'weapon' | 'guide' | 'cast' | 'action' | 'point' | 'charge' | 'context' | 'garrison' | 'cannon';
+type PointerKind = 'move' | 'aim' | 'attack' | 'skill' | 'weapon' | 'guide' | 'cast' | 'action' | 'point' | 'charge' | 'context' | 'garrison' | 'cannon' | 'blade-trace';
 interface OwnedPointer {
   kind: PointerKind;
   element: HTMLElement;
@@ -84,7 +85,7 @@ export class TouchControls {
       }
       return;
     }
-    const element = (event.target as HTMLElement).closest<HTMLElement>('.mobile-stick[data-stick], [data-touch-action], [data-touch-skill], [data-weapon-skill]');
+    const element = (event.target as HTMLElement).closest<HTMLElement>('.mobile-stick[data-stick], [data-touch-action], [data-touch-skill], [data-weapon-skill], [data-weapon-ultimate]');
     if (!element || !this.options.root.contains(element) || (element as HTMLButtonElement).disabled) return;
     const stick = element.dataset.stick;
     if (stick === 'move' || stick === 'aim') {
@@ -103,6 +104,17 @@ export class TouchControls {
       this.capture(event, { kind: 'attack', element, start: { x: event.clientX, y: event.clientY } });
       this.options.input.setTouchAttack(true); return;
     }
+    if (element.dataset.weaponUltimate !== undefined) {
+      const state = this.options.getState();
+      if (!state.territory || this.owns('weapon') || this.owns('skill') || this.owns('guide') || this.owns('charge') || this.owns('cannon')) return;
+      const view = weaponUltimateView(state as GameState);
+      if (view?.canRecast || view?.ready && (view.weaponId === 'redblade' || view.weaponId === 'thunder' && view.aim === 'self')) {
+        this.options.input.queueWeaponUltimate(this.options.input.getAim(state, this.options.screenToWorld));
+        this.capture(event, { kind: 'action', element }); return;
+      }
+      if (!view?.ready || !this.options.input.beginWeaponUltimatePreview(this.options.input.getAim(state, this.options.screenToWorld), view)) return;
+      this.capture(event, { kind: 'weapon', element, start: { x: event.clientX, y: event.clientY } }); return;
+    }
     const weaponSlot = Number(element.dataset.weaponSkill) as WeaponSkillSlot;
     if ([1, 2, 3].includes(weaponSlot)) {
       const state = this.options.getState();
@@ -110,7 +122,7 @@ export class TouchControls {
       const view = weaponSkillViews(state as GameState).find(skill => skill.slot === weaponSlot);
       if (!view?.ready) return;
       const aim = this.options.input.getAim(state, this.options.screenToWorld);
-      if (view.aim === 'self') {
+      if (view.aim === 'self' || view.id === 'redblade-parry') {
         this.options.input.queueWeaponSkill(weaponSlot, aim);
         this.capture(event, { kind: 'action', element }); return;
       }
@@ -161,7 +173,18 @@ export class TouchControls {
 
   private startPoint(event: PointerEvent): void {
     if (event.pointerType !== 'touch' || !this.accepts() || this.owns('point') || this.owns('weapon') || this.owns('skill') || this.owns('guide') || this.owns('charge') || this.owns('cannon')) return;
+    if (this.options.getState().weaponCombat?.bladeTrace?.phase === 'drawing') {
+      if (this.owns('blade-trace')) return;
+      this.capture(event, { kind: 'blade-trace', element: this.options.canvas }); this.tracePoint(event); return;
+    }
     this.capture(event, { kind: 'point', element: this.options.canvas }); this.selectPoint(event);
+  }
+
+  private tracePoint(event: PointerEvent): void {
+    const rect = this.options.canvas.getBoundingClientRect(), project = this.options.screenToWorld;
+    const origin = project({ x: 0, y: 0 }), tolerance = project({ x: 22, y: 0 });
+    this.options.input.queueBladeTracePoint(project({ x: event.clientX - rect.left, y: event.clientY - rect.top }),
+      Math.hypot(tolerance.x - origin.x, tolerance.y - origin.y));
   }
 
   private selectPoint(event: PointerEvent): void {
@@ -221,7 +244,9 @@ export class TouchControls {
     // Outside the expanded wheel, retain the last valid world point while the
     // finger travels to a confirmation/cancellation target.
     if (length > radius + 8) {
-      input.setSkillPreviewPoint(preview.aim); pointer.frozen = true; return;
+      input.setSkillPreviewPoint(preview.aim);
+      if (preview.weaponUltimate) input.setSkillCancelled(true);
+      pointer.frozen = true; return;
     }
     const dragged = pointer.dragged || !!pointer.start && Math.hypot(event.clientX - pointer.start.x, event.clientY - pointer.start.y) >= 7;
     if (!dragged) return;
@@ -289,6 +314,7 @@ export class TouchControls {
     else if (pointer.kind === 'charge') this.updateCharge(pointer, event);
     else if (pointer.kind === 'cannon') this.updateCannon(pointer, event);
     else if (pointer.kind === 'point') this.selectPoint(event);
+    else if (pointer.kind === 'blade-trace') this.tracePoint(event);
     else if (pointer.kind === 'cast' && pointer.start && pointer.worldStart) {
       const delta = { x: event.clientX - pointer.start.x, y: event.clientY - pointer.start.y };
       if (Math.hypot(delta.x, delta.y) < 7) return;
@@ -303,12 +329,14 @@ export class TouchControls {
     const pointer = this.pointers.get(event.pointerId);
     if (!pointer) return;
     this.pointers.delete(event.pointerId);
+    if (pointer.kind === 'blade-trace') { if (event.type === 'pointerup') this.tracePoint(event); this.options.input.releaseBladeTrace(); }
     if (pointer.kind === 'move') this.options.input.setTouchMove({ x: 0, y: 0 });
     if (pointer.kind === 'aim') this.options.input.releaseTouchAim(this.options.getState(), this.options.screenToWorld);
     if (pointer.kind === 'attack') {
       this.options.input.releaseTouchAim(this.options.getState(), this.options.screenToWorld); this.options.input.setTouchAttack(false, event.type !== 'pointerup');
     }
     if (pointer.kind === 'skill' || pointer.kind === 'weapon') {
+      if (pointer.element.dataset.weaponUltimate !== undefined && event.type === 'pointerup') this.updateSkill(pointer, event);
       if (event.type !== 'pointerup' || this.hit('[data-touch-cancel]', event)) this.options.input.cancelSkillPreview();
       else this.options.input.commitSkillPreview(this.options.getState(), this.options.screenToWorld);
     }

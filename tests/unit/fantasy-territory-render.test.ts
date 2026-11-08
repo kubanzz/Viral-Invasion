@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createTerritoryState } from '../../src/game/territory';
 import type { GameState } from '../../src/game/types';
 import { drawPlayerInfection, drawTerritoryInvaders, drawTerritoryNodeAccents, drawTerritorySignals, FANTASY_ART, FANTASY_SOURCE_ANCHOR, FANTASY_SOURCE_CANVAS, FantasyGroundCache, FantasyTerritoryGeometryCache,
-  fantasyGroundKey, fantasyOwnerAt, fantasyRegions, fantasySceneryId, territoryAttackIndicators, territoryCaptureFront, territoryInvaderMarkers, territoryRenderFrame, visibleTerritory } from '../../src/render/fantasyTerritory';
+  fantasyGroundKey, fantasyOwnerAt, fantasyRegions, fantasySceneryId, territoryAttackIndicators, territoryCaptureRadius, territoryInvaderMarkers, territoryRenderFrame, visibleTerritory } from '../../src/render/fantasyTerritory';
 import { registeredSpriteBodyBounds, sourceRegisteredSpriteLayout } from '../../src/render/spriteGeometry';
 import { CanvasScene } from '../../src/render/canvasScene';
 import { GameSession } from '../../src/game/session';
@@ -15,6 +15,24 @@ function state(): GameState {
   } as unknown as GameState;
 }
 afterEach(() => vi.unstubAllGlobals());
+
+function paintRecorder() {
+  const calls: { method: string; args: unknown[]; fill: unknown }[] = [], clips: { method: string; args: unknown[] }[][] = [];
+  let path: { method: string; args: unknown[] }[] = [], depth = 0;
+  const properties: Record<string, unknown> = {}, stack: Record<string, unknown>[] = [];
+  const ctx = new Proxy(properties, {
+    get: (target, key: string) => key in target ? target[key] : (...args: unknown[]) => {
+      calls.push({ method: key, args, fill: target.fillStyle });
+      if (key === 'beginPath') path = [];
+      if (['moveTo', 'lineTo', 'closePath', 'ellipse'].includes(key)) path.push({ method: key, args });
+      if (key === 'clip') clips.push([...path]);
+      if (key === 'save') { stack.push({ ...properties }); depth++; }
+      if (key === 'restore') { for (const property of Object.keys(properties)) delete properties[property]; Object.assign(properties, stack.pop()); depth--; }
+    },
+    set: (target, key: string, value) => { target[key] = value; return true; },
+  }) as unknown as CanvasRenderingContext2D;
+  return { ctx, calls, clips, depth: () => depth };
+}
 
 describe('fantasy territory ground and state-pair registration', () => {
   it('derives ownership from the actual region and never uses clear-wave progress or missing tissue HP', () => {
@@ -150,13 +168,64 @@ describe('fantasy territory ground and state-pair registration', () => {
     node.x+=10;expect(territoryRenderFrame(sample,cache)!.geometry.get(node.id)!.polygon).not.toBe(polygon);expect(cache.diagnostics().revisions).toBe(2);
   });
 
-  it('moves capture from the actual attack side toward the node using only real progress',()=>{
-    const sample=state(),frame=territoryRenderFrame(sample)!,node=sample.territory!.nodes.find(node=>node.id==='heart-healing-1')!,geometry=frame.geometry.get(node.id)!;
-    const before=JSON.stringify(sample),left={x:node.x-100,y:node.y},right={x:node.x+100,y:node.y};
-    const early=territoryCaptureFront(node,geometry,left,25)!,late=territoryCaptureFront(node,geometry,left,75)!;
-    expect(early.tip.x).toBeLessThan(late.tip.x);expect(late.tip.x).toBeLessThan(node.x);expect(early.tip.y).toBe(node.y);
-    expect(territoryCaptureFront(node,geometry,right,25)!.tip.x).toBeGreaterThan(node.x);
-    expect(territoryCaptureFront(node,geometry,left,100)!.tip).toEqual({x:node.x,y:node.y});expect(JSON.stringify(sample)).toBe(before);
+  it.each([false, true])('expands each infection from its own center independently of attack direction and order (low=%s)', low => {
+    const sample = state(), node = sample.territory!.nodes.find(node => node.id === 'heart-healing-1')!;
+    node.infectionProgress = 25;
+    const frame = territoryRenderFrame(sample)!, view = frame.nodes.find(view => view.node.id === node.id)!, geometry = frame.geometry.get(node.id)!;
+    const before = JSON.stringify(sample), first = paintRecorder();
+    drawTerritorySignals(first.ctx, sample, low, { ...frame, lanes: [], nodes: [{ ...view, incomingFrom: { x: node.x - 100, y: node.y }, attackerIds: ['left', 'right'] }] });
+    const second = paintRecorder();
+    drawTerritorySignals(second.ctx, sample, low, { ...frame, lanes: [], nodes: [{ ...view, incomingFrom: { x: node.x + 100, y: node.y }, attackerIds: ['right', 'left'] }] });
+    expect(second.calls).toEqual(first.calls);
+    expect(first.clips).toHaveLength(2);
+    expect(first.clips[0].some(command => command.method === 'lineTo')).toBe(true);
+    expect(first.clips[1]).toEqual([{ method: 'ellipse', args: [node.x, node.y, geometry.radius / 2, geometry.radius / 2, 0, 0, Math.PI * 2] }]);
+    expect(first.depth()).toBe(0); expect(second.depth()).toBe(0); expect(JSON.stringify(sample)).toBe(before);
+  });
+
+  it('keeps simultaneous radial masks separate and shrinks retained infection through the same centered mask', () => {
+    const sample = state(), nodes = sample.territory!.nodes.filter(node => node.kind === 'healing');
+    nodes[0].infectionProgress = 75; nodes[1].infectionProgress = 25;
+    const frame = territoryRenderFrame(sample)!, render = paintRecorder();
+    drawTerritorySignals(render.ctx, sample, true, { ...frame, lanes: [], nodes: frame.nodes.filter(view => nodes.includes(view.node)) });
+    const radial = render.clips.filter(path => path.length === 1 && path[0].method === 'ellipse').map(path => path[0].args as number[]);
+    expect(radial.map(args => args.slice(0, 2))).toEqual(nodes.map(node => [node.x, node.y]));
+    expect(radial[0][2]).toBeGreaterThan(radial[1][2]); expect(render.depth()).toBe(0);
+    nodes[0].infectionProgress = 10;
+    const recovering = territoryRenderFrame(sample)!, recovered = paintRecorder();
+    expect(recovering.nodes.find(view => view.node.id === nodes[0].id)?.recovering).toBe(true);
+    drawTerritorySignals(recovered.ctx, sample, true, { ...recovering, lanes: [], nodes: [recovering.nodes.find(view => view.node.id === nodes[0].id)!] });
+    expect(recovered.clips[1][0].args.slice(0, 2)).toEqual([nodes[0].x, nodes[0].y]);
+    expect(Number(recovered.clips[1][0].args[2])).toBeLessThan(radial[0][2]);
+  });
+
+  it('covers the complete polygon at capture and uses the same infected floor recipe before and after ownership commits', () => {
+    const sample = state(), node = sample.territory!.nodes.find(node => node.id === 'heart-healing-1')!;
+    for (const region of sample.territory!.nodes) { region.owner = 'healthy'; region.infectionProgress = 0; }
+    node.infectionProgress = 99;
+    const frame = territoryRenderFrame(sample)!, geometry = frame.geometry.get(node.id)!, live = paintRecorder();
+    const floor = {} as CanvasImageSource, patch = {} as CanvasImageSource;
+    const getter = (id: string) => id === FANTASY_ART.infectedFloor ? floor : id === FANTASY_ART.patches[0] ? patch : undefined;
+    drawTerritorySignals(live.ctx, sample, false, { ...frame, lanes: [], nodes: [frame.nodes.find(view => view.node.id === node.id)!] }, getter);
+    const painted = live.calls.filter(call => call.method === 'drawImage');
+    expect(painted.some(call => call.args[0] === floor)).toBe(true); expect(painted.some(call => call.args[0] === patch)).toBe(true);
+    const floorTiles = painted.filter(call => call.args[0] === floor);
+    expect(floorTiles.length).toBeLessThan(15);
+    for (const { args } of floorTiles) {
+      const x = Number(args[1]), y = Number(args[2]);
+      expect((x + 180) % 640).toBe(0); expect((y + 180) % 640).toBe(0);
+      expect(x).toBeLessThan(geometry.bounds.right); expect(x + 640).toBeGreaterThan(geometry.bounds.left);
+      expect(y).toBeLessThan(geometry.bounds.bottom); expect(y + 640).toBeGreaterThan(geometry.bounds.top);
+    }
+    for (const point of geometry.polygon) expect(Math.hypot(point.x - node.x, point.y - node.y)).toBeLessThanOrEqual(territoryCaptureRadius(geometry, 100) + 1e-8);
+    expect(territoryCaptureRadius(geometry, 0)).toBe(0); expect(territoryCaptureRadius(geometry, Number.NaN)).toBe(0);
+    expect(territoryCaptureRadius(geometry, 99)).toBeGreaterThan(geometry.radius * .99);
+    const committed = paintRecorder();
+    vi.stubGlobal('document', { createElement: () => ({ width: 0, height: 0, getContext: () => committed.ctx }) });
+    node.owner = 'infected'; node.infectionProgress = 100;
+    new FantasyGroundCache().prepare(sample, 'same-art', getter);
+    expect(committed.calls.filter(call => call.method === 'drawImage')).toEqual(painted);
+    expect(committed.calls.filter(call => call.method === 'fillRect' && call.fill === '#82788d')).toEqual(live.calls.filter(call => call.method === 'fillRect' && call.fill === '#82788d'));
   });
 
   it('shows compact live purification progress and its current pause reason',()=>{
@@ -197,6 +266,21 @@ describe('fantasy territory ground and state-pair registration', () => {
     expect(territoryAttackIndicators(territoryRenderFrame(sample),viewport)).toEqual([]);
   });
 
+  it('keeps the offscreen anchor warning through a real hit but ignores nearby uncommitted enemies', () => {
+    const sample = state(), core = sample.territory!.nodes.find(node => node.id === 'core')!;
+    const enemy = { id: 'near-core', kind: 'single', role: 'virus', hp: 30, x: core.x, y: core.y, radius: 18,
+      territorySourceId: 'source-west', territoryTask: { kind: 'invade', nodeId: 'core' } };
+    sample.targets = [enemy] as GameState['targets'];
+    const viewport = { width: 667, height: 320, scale: 1, project: (p: { x: number; y: number }) => ({ x: p.x - core.x + 1000, y: p.y - core.y + 800 }) };
+    expect(territoryAttackIndicators(territoryRenderFrame(sample), viewport)).toEqual([]);
+    Object.assign(enemy, { attackTarget: 'tissue', attackAt: sample.elapsed + .4 });
+    expect(territoryAttackIndicators(territoryRenderFrame(sample), viewport).map(item => item.nodeId)).toEqual(['core']);
+    sample.targets = []; sample.territory!.coreLastHitAt = sample.elapsed;
+    expect(territoryAttackIndicators(territoryRenderFrame(sample), viewport).map(item => item.nodeId)).toEqual(['core']);
+    sample.elapsed += 2;
+    expect(territoryAttackIndicators(territoryRenderFrame(sample), viewport)).toEqual([]);
+  });
+
   it.each([
     { width: 844, height: 390, boxes: [[214,734,9,81.5],[10,106,8,70],[120,202,10,71.59375],[742,836,6,50],[12,282,80,107.9375],
       [18,122,272,376],[740,828,290,378],[644,700,306,362],[676.8125,732.8125,226.8125,282.8125],[756,812,194,250],[594,638,312,356],[618,662,242,286],[662,706,168,212]] },
@@ -231,6 +315,24 @@ describe('fantasy territory ground and state-pair registration', () => {
     expect(captions).toEqual(['territory-invader:a', 'territory-invader:b']);
     sample.targets = [virus('ordinary', 30, false)] as GameState['targets'];
     expect(territoryInvaderMarkers(sample)).toEqual([]);
+  });
+
+  it('labels a live mission carrier by its assigned role without hiding it during node protection', () => {
+    const sample = state(), front = sample.territory!.nodes.find(node => node.id === 'front-north')!;
+    front.owner = 'healthy'; front.infectionProgress = 0; front.protectedUntil = sample.elapsed + 15;
+    sample.targets = [{ id: 'carrier', x: front.x, y: front.y, radius: 22, kind: 'single', role: 'virus', hp: 68, maxHp: 68,
+      hitUntil: 0, scanned: false, territorySourceId: 'source-west',
+      territoryTask: { kind: 'invade', nodeId: front.id, squadKind: 'carrier' } }];
+    const { ctx, calls, depth } = paintRecorder(), text: string[] = [];
+    let labelOffset = 0;
+    drawTerritoryInvaders(ctx, sample, { add: label => { text.push(...label.lines.map(line => line.text)); labelOffset = label.offset?.y ?? 0; } });
+    expect(text).toEqual([`携疫 → ${front.name}`]); expect(depth()).toBe(0);
+    expect(labelOffset).toBeGreaterThan(sample.targets[0].radius);
+    expect(calls.some(call => call.method === 'translate' && call.args[0] === front.x && Number(call.args[1]) > front.y)).toBe(true);
+    expect(territoryRenderFrame(sample)?.nodes.find(node => node.node.id === front.id)).toMatchObject({ infecting: false, protectionRemaining: 15 });
+    sample.targets[0].hp = 0; text.length = 0;
+    drawTerritoryInvaders(ctx, sample, { add: label => text.push(...label.lines.map(line => line.text)) });
+    expect(text).toEqual([]);
   });
 
   it('shows infection only while the real player status is active and preserves its contour in low effects', () => {

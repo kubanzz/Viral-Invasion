@@ -4,6 +4,7 @@ import { TerritoryProfileStore } from '../../src/meta/endlessProfile';
 import { DRAW_PITY_LIMIT, MODULE_IDS, type DrawReceipt } from '../../src/game/microfront';
 import { INTRO_FACILITY_IDS } from '../../src/game/campProgression';
 import { campOverlay } from '../../src/ui/campHud';
+import { createCampEquipmentState, type CampEquipmentState } from '../../src/ui/campEquipmentState';
 import { mainMenuOverlay } from '../../src/ui/mainMenu';
 
 function camp(ready = true): CampProfileSnapshot {
@@ -11,9 +12,15 @@ function camp(ready = true): CampProfileSnapshot {
   if (ready) Object.assign(data, { prologue: 'ready', campUnlocked: true, campIntroSeen: true, builtFacilities: [...INTRO_FACILITY_IDS] });
   return { data, status: { mode: 'persistent', code: 'loaded', message: '已保存' } };
 }
-function navigationButton(html: string, section: string): string {
-  const navigation = html.match(/<nav\b[^>]*aria-label="营地设施"[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? '';
-  return navigation.match(new RegExp(`<button\\b[^>]*data-section="${section}"[^>]*>[\\s\\S]*?<\\/button>`))?.[0] ?? '';
+function facilityCard(html: string, section: string): string {
+  const id = section === 'missions' ? 'departure' : section;
+  return html.match(new RegExp(`<article\\b[^>]*data-camp-facility="${id}"[^>]*>[\\s\\S]*?<\\/article>`))?.[0] ?? '';
+}
+function equipment(snapshot: CampProfileSnapshot, section: 'warehouse' | 'forge', state: Partial<CampEquipmentState> = {}): string {
+  return campOverlay(snapshot, section, 1, '', { equipment: { ...createCampEquipmentState(snapshot), ...state } });
+}
+function actionButton(html: string, action: string): string {
+  return html.match(new RegExp(`<button\\b[^>]*data-action="${action}"[^>]*>`))?.[0] ?? '';
 }
 
 describe('microfront camp player flow', () => {
@@ -35,7 +42,7 @@ describe('microfront camp player flow', () => {
     const snapshot = camp(false); snapshot.data.prologue = 'building'; snapshot.data.campUnlocked = true;
     for (const section of ['warehouse', 'forge', 'shop', 'summon', 'missions', 'trial'] as const) {
       const html = campOverlay(snapshot, section, .4);
-      expect(html).toContain('基础建设 0 / 5');
+      expect(html).not.toContain('camp-nav');
       expect(html).toContain('data-build-site=');
       expect(html).not.toContain('data-action="camp-establish"');
       expect(html).not.toContain('data-action="camp-draw"');
@@ -53,7 +60,7 @@ describe('microfront camp player flow', () => {
     expect(campOverlay(snapshot, 'summon')).not.toContain('data-action="camp-build"');
     const nearby = campOverlay(snapshot, 'summon', 0, '', { nearbyStationId: 'summon' });
     expect(nearby).toContain('data-action="camp-build" data-station="summon"');
-    expect(nearby).toContain('免费建造');
+    expect(nearby).toContain('免费激活');
     snapshot.data.activeConstruction = 'summon';
     const active = campOverlay(snapshot, 'summon', .5);
     expect(active).toContain('data-action="camp-skip-construction"');
@@ -67,9 +74,11 @@ describe('microfront camp player flow', () => {
   it('opens completed facilities during the initial build while keeping the first expedition locked', () => {
     const snapshot = camp(false); Object.assign(snapshot.data, { prologue: 'building', campUnlocked: true,
       builtFacilities: ['warehouse', 'forge', 'departure'] });
-    expect(campOverlay(snapshot, 'warehouse')).toContain('data-action="camp-equip"');
-    expect(campOverlay(snapshot, 'forge')).toContain('data-action="camp-craft"');
-    expect(campOverlay(snapshot, 'warehouse')).toContain('基础建设 3 / 5');
+    expect(campOverlay(snapshot, 'warehouse')).toContain('data-action="camp-trial"');
+    expect(campOverlay(snapshot, 'forge')).toContain('data-action="camp-upgrade"');
+    expect(equipment(snapshot, 'forge', { forgeTab: 'craft' })).toContain('data-action="camp-craft"');
+    expect(campOverlay(snapshot, 'overview')).toContain('基础建设 3 / 5');
+    expect(campOverlay(snapshot, 'warehouse')).not.toContain('camp-intro');
     expect(campOverlay(snapshot, 'shop')).not.toContain('data-action="camp-buy-antibody"');
     const departure = campOverlay(snapshot, 'missions');
     expect(departure).toContain('等待前哨整备完成');
@@ -94,18 +103,42 @@ describe('microfront camp player flow', () => {
     const snapshot = camp(); snapshot.data.materials = 10; snapshot.data.fragments.PULSE_BREAK = 5;
     snapshot.data.inventory.push({ id: 'new:bow', kind: 'weapon', templateId: 'piercing', rarity: 'blue', repaired: true });
     const html = campOverlay(snapshot, 'overview');
-    expect(navigationButton(html, 'warehouse')).toContain('新装备');
-    expect(navigationButton(html, 'missions')).toContain('新情报');
-    expect(navigationButton(html, 'forge')).toContain('可打造');
-    expect(navigationButton(html, 'shop')).not.toContain('camp-attention-badge');
-    expect(navigationButton(html, 'summon')).not.toContain('camp-attention-badge');
+    expect(facilityCard(html, 'warehouse')).toContain('新装备');
+    expect(facilityCard(html, 'missions')).toContain('新情报');
+    expect(facilityCard(html, 'forge')).toContain('可打造');
+    expect(facilityCard(html, 'shop')).not.toContain('camp-attention-badge');
+    expect(facilityCard(html, 'summon')).not.toContain('camp-attention-badge');
     snapshot.data.seenEquipmentQuality.piercing = 'blue'; snapshot.data.seenMissionIds = ['membrane'];
     const viewed = campOverlay(snapshot, 'overview');
-    expect(navigationButton(viewed, 'warehouse')).not.toContain('camp-attention-badge');
-    expect(navigationButton(viewed, 'missions')).not.toContain('camp-attention-badge');
-    expect(navigationButton(viewed, 'forge')).toContain('可打造');
+    expect(facilityCard(viewed, 'warehouse')).not.toContain('camp-attention-badge');
+    expect(facilityCard(viewed, 'missions')).not.toContain('camp-attention-badge');
+    expect(facilityCard(viewed, 'forge')).toContain('可打造');
     snapshot.data.materials = 0;
-    expect(navigationButton(campOverlay(snapshot, 'overview'), 'forge')).not.toContain('camp-attention-badge');
+    expect(facilityCard(campOverlay(snapshot, 'overview'), 'forge')).not.toContain('camp-attention-badge');
+  });
+
+  it('keeps each building focused and always closes back to the camp instead of leaving it', () => {
+    const snapshot = camp();snapshot.data.victories = 1;
+    for (const section of ['overview', 'warehouse', 'forge', 'shop', 'missions', 'summon', 'trial'] as const) {
+      const html = campOverlay(snapshot, section);
+      expect(html).not.toContain('data-action="camp-leave"');
+      expect(actionButton(html, 'camp-close')).toBeTruthy();
+      if (section === 'warehouse' || section === 'forge') {
+        expect(html).toContain('aria-label="返回营地"');
+        expect(html).not.toContain('class="camp-return"');
+      } else expect(html).toContain('class="camp-return" data-action="camp-close">返回营地');
+      expect(html).not.toContain('data-action="camp-section"');
+      if (section !== 'overview') expect(html).not.toContain('camp-first-steps');
+      if (section !== 'summon') expect(html).not.toContain('data-action="camp-draw"');
+    }
+    expect(facilityCard(campOverlay(snapshot, 'overview'), 'summon')).toContain('前往主路旁的光核');
+  });
+
+  it('returns practice to its originating forge even before a warehouse exists', () => {
+    const snapshot = camp(false);Object.assign(snapshot.data, { prologue: 'building', campUnlocked: true, builtFacilities: ['forge'] });
+    const html = campOverlay(snapshot, 'trial', 1, '', { trialOrigin: 'forge', trialWeaponId: 'steady' });
+    expect(html).toContain('camp-trial-canvas');expect(html).toContain('data-action="camp-trial-return">返回锻造');
+    expect(html).not.toContain('返回配装');expect(html).not.toContain('data-section="missions"');
   });
 
   it('shows real mission locks and makes a completed mission available for another expedition', () => {
@@ -126,27 +159,57 @@ describe('microfront camp player flow', () => {
 
   it('derives recipe affordability from each template’s fragments, shared materials and core', () => {
     const snapshot = camp(); snapshot.data.materials = 40; snapshot.data.fragments.PULSE_BREAK = 20;
-    let html = campOverlay(snapshot, 'forge');
-    expect(html).toContain('data-template="PULSE_BREAK" data-rarity="blue" >');
-    expect(html).toContain('data-template="PULSE_BREAK" data-rarity="gold" disabled');
-    expect(html).toContain('data-template="steady" data-rarity="blue" disabled');
+    const recipe = (template: 'PULSE_BREAK' | 'steady', rarity: 'blue' | 'gold') => equipment(snapshot, 'forge', {
+      forgeTab: 'craft', craftTemplateId: template, craftRarities: { [template]: rarity },
+    });
+    let html = recipe('PULSE_BREAK', 'blue');
+    expect(actionButton(html, 'camp-craft')).toContain('data-template="PULSE_BREAK"');
+    expect(actionButton(html, 'camp-craft')).not.toMatch(/\bdisabled\b/);
+    expect(actionButton(recipe('PULSE_BREAK', 'gold'), 'camp-craft')).toMatch(/\bdisabled\b/);
+    expect(actionButton(recipe('steady', 'blue'), 'camp-craft')).toMatch(/\bdisabled\b/);
     snapshot.data.cores = 1;
-    html = campOverlay(snapshot, 'forge');
-    expect(html).toContain('data-template="PULSE_BREAK" data-rarity="gold" >');
-    expect(html).toContain('20碎片 + 40生质 + 1核心');
-    expect(html).toContain('data-action="camp-upgrade"');
+    html = recipe('PULSE_BREAK', 'gold');
+    expect(actionButton(html, 'camp-craft')).toContain('data-rarity="gold"');
+    expect(actionButton(html, 'camp-craft')).not.toMatch(/\bdisabled\b/);
+    expect(html.match(/data-action="camp-craft"/g)).toHaveLength(1);
+    expect(html).not.toContain('data-action="camp-upgrade"');
+    expect(equipment(snapshot, 'forge', { forgeTab: 'maintenance' })).toContain('data-action="camp-upgrade"');
+  });
+
+  it('starts with the equipped weapon and keeps selection, trial and equip separate', () => {
+    const snapshot = camp();
+    snapshot.data.weapons.piercing = { repaired: 'purple', pending: null, upgrade: 1 };
+    snapshot.data.inventory.push({ id: 'usable:bow', templateId: 'piercing', kind: 'weapon', rarity: 'purple', repaired: true });
+    const before = structuredClone(snapshot), current = campOverlay(snapshot, 'warehouse');
+    expect(current).toContain('data-equipment-weapon="steady"');
+    expect(actionButton(current, 'camp-trial')).toContain('class="primary"');
+    expect(current).not.toContain('data-action="camp-equip"');
+    expect(current).not.toContain('data-camp-skill=');
+    expect(current).not.toContain('data-action="camp-decompose"');
+    const selected = equipment(snapshot, 'warehouse', { weaponId: 'piercing' });
+    expect(selected).toContain('data-equipment-weapon="piercing"');
+    expect(actionButton(selected, 'camp-equip')).toContain('class="primary"');
+    expect(actionButton(selected, 'camp-equip')).not.toMatch(/\bdisabled\b/);
+    expect(actionButton(selected, 'camp-trial')).toContain('data-weapon="piercing"');
+    expect(selected).toContain('回程伤害');
+    expect(snapshot).toEqual(before);
   });
 
   it('shows three equipped modules and prevents a fourth while still offering unequip', () => {
     const snapshot = camp();
     snapshot.data.inventory.push(...MODULE_IDS.map((id, index) => ({ id: `module-${index}`, kind: 'module' as const, templateId: id, rarity: 'blue' as const, repaired: true })));
     snapshot.data.equippedModules = MODULE_IDS.slice(0, 3);
-    const html = campOverlay(snapshot, 'warehouse');
+    const html = equipment(snapshot, 'warehouse', { warehouseTab: 'modules', moduleId: 'EXPOSE_TRACE' });
     expect(html).toContain('3 / 3 槽');
-    expect(html).toContain('data-module="EXPOSE_TRACE" disabled');
-    expect(html).toContain('data-module="PULSE_BREAK" >卸下模组');
-    expect(html).toContain('data-action="camp-decompose" data-item="module-0"');
-    expect(html).toContain('基础驻军和三个武器技能始终可用');
+    expect(actionButton(html, 'camp-module')).toContain('data-module="EXPOSE_TRACE"');
+    expect(actionButton(html, 'camp-module')).toMatch(/\bdisabled\b/);
+    const equipped = equipment(snapshot, 'warehouse', { warehouseTab: 'modules', moduleId: 'PULSE_BREAK' });
+    expect(actionButton(equipped, 'camp-module')).not.toMatch(/\bdisabled\b/);
+    expect(equipped).toContain('卸下');
+    expect(html).not.toContain('data-action="camp-decompose"');
+    const inventory = equipment(snapshot, 'warehouse', { warehouseTab: 'inventory', inventoryItemId: 'module-0' });
+    expect(actionButton(inventory, 'camp-decompose')).toContain('data-item="module-0"');
+    expect(actionButton(inventory, 'camp-decompose')).toMatch(/\bdisabled\b/);
   });
 
   it('discloses shared pity and costs without presenting an unaffordable ten draw', () => {
@@ -157,8 +220,8 @@ describe('microfront camp player flow', () => {
     expect(html).toContain('最多再接引 <b>1</b> 次必出金');
     expect(html).toContain(`aria-valuemax="${DRAW_PITY_LIMIT}" aria-valuenow="${DRAW_PITY_LIMIT - 1}"`);
     expect(html).toContain('普通 60%');
-    expect(html).toContain('神级 5%');
-    expect(html).toContain('神级武器40% · 神级模组40% · 锻造核心20%');
+    expect(html).toContain('传说 5%');
+    expect(html).toContain('传说武器40%（霆链·裁决铳／赤曜·斩疫刃等概率） · 传说模组40% · 锻造核心20%');
   });
 
   it('renders every confirmed draw exactly once and never mutates the receipt or camp', () => {

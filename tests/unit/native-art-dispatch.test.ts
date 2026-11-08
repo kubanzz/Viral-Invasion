@@ -18,6 +18,67 @@ interface TestScene { bridge: ArtPresentation; ctx: RecordedContext; fallbacks: 
 interface TestHost {
   sprites: { id: string; config: HostedSprite }[];
   rasters: { key: string; depth: number; paints: Paint[] }[];
+  vfxObjects: NativeVfxDisplay[];
+  vfxTextures: Set<string>;
+  detachedEmitters: NativeVfxDisplay[];
+}
+
+/** A display-object host for the real CombatVfxRuntime, independent of actor
+ * submissions above. Keep pooling and particle lifetime observable instead of
+ * mocking out the runtime when a rendering test contains accepted receipts. */
+class NativeVfxDisplay {
+  x = 0; y = 0; depth = 0; alpha = 1; active = true; visible = true; destroyed = false;
+  scaleX = 1; scaleY = 1; width = 0; height = 0; rotation = 0;
+  frame?: string | number; tint?: number; blend?: string | number;
+  points: { x: number; y: number }[] = []; colors?: number; alphas: number[] = [];
+  alive = 0; particleAge = 0; lifespan = 430;
+  anims = { stop() {} };
+  constructor(readonly kind: 'sprite' | 'rope' | 'emitter', public texture: string) {}
+  setPosition(x: number, y: number) { this.x = x; this.y = y; return this; }
+  setDepth(depth: number) { this.depth = depth; return this; }
+  setAlpha(alpha: number) { this.alpha = alpha; return this; }
+  setActive(active: boolean) { this.active = active; return this; }
+  setVisible(visible: boolean) { this.visible = visible; return this; }
+  setTexture(texture: string, frame?: string | number) { this.texture = texture; this.frame = frame; return this; }
+  setFrame(frame: string | number) { this.frame = frame; return this; }
+  setOrigin() { return this; }
+  setTint(tint: number) { this.tint = tint; return this; }
+  clearTint() { this.tint = undefined; return this; }
+  setColors(colors: number) { this.colors = colors; return this; }
+  setAlphas(alphas: number[]) { this.alphas = [...alphas]; return this; }
+  setPoints(points: { x: number; y: number }[]) { this.points = points.map(point => ({ ...point })); return this; }
+  setRotation(rotation: number) { this.rotation = rotation; return this; }
+  setBlendMode(blend: number | string) { this.blend = blend; return this; }
+  setDisplaySize(width: number, height: number) { this.width = width; this.height = height; return this; }
+  setScale(x: number, y = x) { this.scaleX = x; this.scaleY = y; return this; }
+  setConfig(config: { lifespan?: number }) { this.lifespan = config.lifespan ?? 430; this.particleAge = 0; return this; }
+  explode(count: number) { this.alive += count; return this; }
+  killAll() { this.alive = 0; return this; }
+  getAliveParticleCount() { return this.alive; }
+  preUpdate(_now: number, dt: number) { this.particleAge += dt; if (this.particleAge >= this.lifespan) this.alive = 0; }
+  destroy() { this.destroyed = true; }
+}
+
+function nativeVfxScene(host: Pick<TestHost, 'vfxObjects' | 'vfxTextures' | 'detachedEmitters'>) {
+  const create = (kind: NativeVfxDisplay['kind'], texture: string, x: number, y: number) => {
+    const object = new NativeVfxDisplay(kind, texture).setPosition(x, y); host.vfxObjects.push(object); return object;
+  };
+  const graphics = () => ({
+    lineStyle() { return this; }, strokeCircle() { return this; }, fillStyle() { return this; }, fillCircle() { return this; },
+    fillTriangle() { return this; }, fillRoundedRect() { return this; }, fillRect() { return this; }, destroy() {},
+    generateTexture(key: string) { host.vfxTextures.add(key); return this; },
+  });
+  return {
+    anims: { exists: (key: string) => mocked.animationKeys.has(key), create: vi.fn() },
+    add: {
+      graphics,
+      sprite: (x: number, y: number, texture: string, frame?: string | number) => create('sprite', texture, x, y).setFrame(frame!),
+      rope: (x: number, y: number, texture: string) => create('rope', texture, x, y),
+      particles: (x: number, y: number, texture: string, config: { lifespan?: number }) => create('emitter', texture, x, y).setConfig(config),
+    },
+    textures: { exists: (key: string) => host.vfxTextures.has(key), remove: (key: string) => host.vfxTextures.delete(key) },
+    sys: { updateList: { remove: (object: NativeVfxDisplay) => host.detachedEmitters.push(object) } },
+  };
 }
 const mocked = vi.hoisted(() => ({
   runtime: { inputSignature: 'isolated-native-dispatch', actorContract: undefined as {version:number}|undefined, atlases: [], environments: {}, assets: {} as Record<string, FixtureAsset> },
@@ -28,7 +89,8 @@ const mocked = vi.hoisted(() => ({
 vi.mock('../../.art-generated/art-runtime.json', () => ({ default: mocked.runtime }));
 vi.mock('../../src/render/phaserHost', () => ({ PhaserHost: class {
   readonly ready = Promise.resolve(); readonly isReady = true;
-  readonly scene = { anims: { exists: (key: string) => mocked.animationKeys.has(key), create: vi.fn() } };
+  vfxObjects: NativeVfxDisplay[] = []; vfxTextures = new Set<string>(); detachedEmitters: NativeVfxDisplay[] = [];
+  readonly scene = nativeVfxScene(this);
   sprites: TestHost['sprites'] = []; rasters: TestHost['rasters'] = [];
   constructor() { mocked.hosts.push(this); }
   resize() {} startFrameLoop() {} destroy() {} endFrame() {} removeRasterLayer() {}
@@ -49,7 +111,7 @@ vi.mock('../../src/render/canvasScene', async () => {
     constructor(canvas: HTMLCanvasElement, readonly bridge: ArtPresentation) {
       this.ctx = canvas.getContext('2d') as RecordedContext; mocked.scenes.push(this);
     }
-    resize() {} prepareCamera() {} setHudRects() {}
+    resize() {} prepareCamera() {} setHudRects() {} acceptSeraphEvent() {} resetSeraphVfx() {}
     annotateArtEntity(_ctx: CanvasRenderingContext2D, entity: SceneEntity, _state: GameState, halfWidth: number, above: number) {
       this.annotations.push({ id: entity.id, halfWidth, above });
     }
@@ -74,6 +136,7 @@ import { fixturePaintedToolAsset, PAINTED_TOOL_FIXTURE_GRIP } from '../fixtures/
 import { aimedPaintedTool, paintedToolMuzzle } from '../../src/render/spriteGeometry';
 import { createTerritoryState, territoryNodeAt } from '../../src/game/territory';
 import { FANTASY_ART, fantasyObstacleKind } from '../../src/render/fantasyTerritory';
+import { campStations, prepareCampScene } from '../../src/game/campScene';
 
 function recordedContext(): RecordedContext {
   const paints: Paint[] = [], rotations: number[] = [], stack: { alpha: number; fill: string; stroke: string }[] = [];
@@ -279,6 +342,28 @@ describe('actual Renderer native art dispatch through an isolated host', () => {
         expect(host.sprites.find(item => item.id === 'player')!.config.alpha ?? 1).toBe(1);
         expect(scene.annotations.some(annotation => annotation.id === 'tissue')).toBe(true);
         expect(scene.fallbacks).toEqual([]); expect(JSON.stringify(sample)).toBe(before);
+      }
+    }
+  });
+
+  it('keeps the independent summon core opaque when the player overlaps it while solid camp houses still fade', async () => {
+    Object.assign(mocked.runtime.assets, fixtureHeroAnimationAssets());
+    for (const id of ['microfront.camp.summon', 'microfront.camp.warehouse']) {
+      mocked.runtime.assets[id] = { atlas: 'camp-test', frame: id, width: 1024, height: 1024,
+        pivot: { x: .5, y: .85 }, visibleBounds: { x: 150, y: 180, width: 724, height: 690 },
+        sourceSize: { width: 1024, height: 1024 }, sourceBounds: { x: 150, y: 180, width: 724, height: 690 }, flags: [], status: 'test-only' };
+    }
+    const { renderer, host } = await setup(), sample = state();prepareCampScene(sample, true, 'ready', ['warehouse', 'summon']);
+    const stations = campStations(sample);
+    for (const [id, alpha] of [['summon', 1], ['warehouse', .28]] as const) {
+      const index = stations.findIndex(station => station.id === id), station = stations[index];
+      sample.player.x = station.position.x;sample.player.y = station.position.y - 12;
+      mocked.entities.length = 0;mocked.entities.push({ id: 'player', kind: 'player', y: sample.player.y },
+        { id: `camp:${id}`, kind: 'camp-station', index, y: station.position.y });
+      for (const lowEffects of [false, true]) {
+        renderer.render(sample, sample.player, { lowEffects });
+        expect(host.sprites.find(sprite => sprite.id === `camp:${id}`)?.config.alpha).toBe(alpha);
+        expect(host.sprites.find(sprite => sprite.id === 'player')?.config.alpha ?? 1).toBe(1);
       }
     }
   });
@@ -846,11 +931,16 @@ describe('actual Renderer native art dispatch through an isolated host', () => {
     game.step(heroInput({ fire: true, aim })); renderer.render(game.state, aim);
     const recoiled = host.sprites.find(sprite => sprite.id === 'player:tool')!.config.x;
     expect(scene.ctx.paints.some(paint => paint.color === '#d7fff5')).toBe(true);
+    expect(host.vfxTextures.size).toBeGreaterThan(0);
+    expect(host.vfxObjects.some(object => object.kind === 'sprite' && object.visible)).toBe(true);
+    expect(host.detachedEmitters.length).toBeGreaterThan(0);
     for (let i = 0; i < 9; i++) game.step(heroInput({ aim }));
     renderer.render(game.state, aim);
     const resting = host.sprites.find(sprite => sprite.id === 'player:tool')!.config.x;
     expect(resting - recoiled).toBeCloseTo(4 * renderer.camera.scale, 6);
     expect(scene.ctx.paints.some(paint => paint.color === '#d7fff5')).toBe(false);
+    renderer.destroy();
+    expect(host.vfxObjects.every(object => object.destroyed)).toBe(true); expect(host.vfxTextures.size).toBe(0);
   });
 
   it('uses authoritative shot identity and displayed muzzle when player position is interpolated', async () => {

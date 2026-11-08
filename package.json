@@ -1,6 +1,6 @@
 {
   "name": "viral-invasion",
-  "version": "0.18.0",
+  "version": "0.25.1",
   "viralInvasionStage": "G4",
   "private": true,
   "type": "module",
@@ -16,10 +16,10 @@
     "test:all": "npm test && npm run build && npm run test:e2e",
     "art:sync": "node scripts/art-sync.mjs",
     "art:check": "node scripts/art-sync.mjs --check",
-    "predev": "node scripts/art-sync.mjs",
-    "prebuild": "node scripts/art-sync.mjs",
-    "pretypecheck": "node scripts/art-sync.mjs",
-    "pretest": "node scripts/art-sync.mjs"
+    "predev": "node scripts/art-sync.mjs && node scripts/prologue-v3/sync_media.mjs",
+    "prebuild": "node scripts/art-sync.mjs && node scripts/prologue-v3/sync_media.mjs",
+    "pretypecheck": "node scripts/art-sync.mjs && node scripts/prologue-v3/sync_media.mjs",
+    "pretest": "node scripts/art-sync.mjs && node scripts/prologue-v3/sync_media.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",

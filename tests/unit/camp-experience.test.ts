@@ -2,9 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { CampWeaponTrial } from '../../src/game/campWeaponTrial';
 import { createBossLoot, weaponCombatProfile } from '../../src/game/expedition';
 import { GameSession } from '../../src/game/session';
-import { CampProfileStore } from '../../src/meta/campProfile';
+import { CampProfileStore, type CampProfileSnapshot } from '../../src/meta/campProfile';
 import type { EndlessProfileStorage } from '../../src/meta/endlessProfile';
 import { campFirstSteps, campOverlay } from '../../src/ui/campHud';
+import { createCampEquipmentState, type CampEquipmentState } from '../../src/ui/campEquipmentState';
 import { expeditionRewardMarkup } from '../../src/ui/expeditionRewardHud';
 import { weaponSkillDefinitions } from '../../src/game/weaponSkills';
 import { INTRO_FACILITY_IDS } from '../../src/game/campProgression';
@@ -28,6 +29,9 @@ function buildCamp(store: CampProfileStore): void {
     expect(store.completeBuild(id).accepted).toBe(true);
   }
 }
+function equipment(snapshot: CampProfileSnapshot, section: 'warehouse' | 'forge', state: Partial<CampEquipmentState> = {}): string {
+  return campOverlay(snapshot, section, 1, '', { equipment: { ...createCampEquipmentState(snapshot), ...state } });
+}
 
 describe('safe weapon practice with real production skills', () => {
   it('uses actual projectile penetration so a steady shot stops at the first body', () => {
@@ -46,13 +50,13 @@ describe('safe weapon practice with real production skills', () => {
     expect(trial.view.targets.slice(2).every(target => target.hp === 100)).toBe(true);
     expect(loadout).toEqual({ weaponId: 'piercing', rarity: 'purple', upgrade: 1 });
   });
-  it('uses the production five-needle burst and a separate skill cooldown', () => {
+  it('uses the reinforced production eight-needle burst and a separate skill cooldown', () => {
     const trial = new CampWeaponTrial({ weaponId: 'steady', rarity: 'white', upgrade: 0 });
     trial.layout('single'); expect(trial.view.targets[0].maxHp).toBe(1000);
     expect(trial.skill(1)).toBe(true); expect(trial.skill(1)).toBe(false); expect(trial.trigger()).toBe(false);
-    advance(trial, .9); expect(trial.view.hits).toBe(5);
-    expect(trial.view.totalDamage).toBeCloseTo(34 * .65 * 5); expect(trial.view.skillCasts[1]).toBe(1);
-    expect(trial.view.skills[0].remaining).toBeGreaterThan(5); expect(trial.view.shots).toBe(0);
+    advance(trial, .9); expect(trial.view.hits).toBe(8);
+    expect(trial.view.totalDamage).toBeCloseTo(34 * .6 * 8); expect(trial.view.skillCasts[1]).toBe(1);
+    expect(trial.view.skills[0].remaining).toBeGreaterThan(4); expect(trial.view.shots).toBe(0);
   });
   it('lets one production heavy needle travel through all five aligned targets', () => {
     const trial = new CampWeaponTrial({ weaponId: 'piercing', rarity: 'white', upgrade: 0 });
@@ -60,21 +64,21 @@ describe('safe weapon practice with real production skills', () => {
     advance(trial, .8); expect(trial.view.hits).toBe(5); expect(trial.view.targets.every(target => target.hp === 0)).toBe(true);
     expect(trial.view.totalDamage).toBe(500);
   });
-  it('runs the instant self ring, delayed anchor and one damage receipt per storm leg', () => {
+  it('runs the instant self ring, delayed anchor and bounded damage receipts across storm legs', () => {
     for (const weaponId of ['steady', 'piercing'] as const) {
       const trial = new CampWeaponTrial({ weaponId, rarity: 'white', upgrade: 0 });
       expect(trial.skill(2)).toBe(true); advance(trial, 1.4);
       expect(trial.view.hits).toBeGreaterThan(0); expect(trial.view.totalDamage).toBeGreaterThan(0);
-      expect(trial.view.skills[1].remaining).toBeGreaterThan(8);
+      expect(trial.view.skills[1].remaining).toBeGreaterThan(7);
     }
     const fan = new CampWeaponTrial({ weaponId: 'piercing', rarity: 'white', upgrade: 0 }); fan.layout('single');
-    expect(fan.skill(3)).toBe(true); advance(fan, 1.2);
-    expect(fan.view.hits).toBe(2); expect(fan.view.totalDamage).toBeCloseTo(28 * 3);
+    expect(fan.skill(3)).toBe(true); advance(fan, 2);
+    expect(fan.view.hits).toBe(4); expect(fan.view.totalDamage).toBeCloseTo(28 * 6);
   });
   it('shows overdrive as a primary-rate buff and resets practice cooldowns without restoring targets', () => {
     const ordinary = new CampWeaponTrial({ weaponId: 'steady', rarity: 'white', upgrade: 0 }); ordinary.trigger();
     const fast = new CampWeaponTrial({ weaponId: 'steady', rarity: 'white', upgrade: 0 });
-    expect(fast.skill(3)).toBe(true); expect(fast.view.overdriveRemaining).toBe(4); expect(fast.trigger()).toBe(true);
+    expect(fast.skill(3)).toBe(true); expect(fast.view.overdriveRemaining).toBe(5); expect(fast.trigger()).toBe(true);
     expect(fast.view.primaryRemaining).toBeLessThan(ordinary.view.primaryRemaining);
     advance(fast); const before = fast.view;
     fast.resetCooldowns(); expect(fast.view.skills.every(skill => skill.remaining === 0)).toBe(true);
@@ -95,8 +99,8 @@ describe('safe weapon practice with real production skills', () => {
   });
   it('expires overdrive with simulation time and keeps its spent skill cooldown independent', () => {
     const trial = new CampWeaponTrial({ weaponId: 'steady', rarity: 'white', upgrade: 0 });
-    expect(trial.skill(3)).toBe(true); advance(trial, 4.2);
-    expect(trial.view.overdriveRemaining).toBe(0); expect(trial.view.skills[2].remaining).toBeGreaterThan(13);
+    expect(trial.skill(3)).toBe(true); advance(trial, 5.2);
+    expect(trial.view.overdriveRemaining).toBe(0); expect(trial.view.skills[2].remaining).toBeGreaterThan(12);
     expect(trial.skill(3)).toBe(false); expect(trial.trigger()).toBe(true);
     expect(trial.view.primaryRemaining).toBeCloseTo(.18);
     trial.resetCooldowns(); expect(trial.view.overdriveRemaining).toBe(0);
@@ -107,7 +111,7 @@ describe('safe weapon practice with real production skills', () => {
     for (let i = 0; i < 90; i++) trial.advance(.021);
     expect(trial.skill(2)).toBe(true);
     const view = trial.view, ring = view.events.find(event => event.type === 'PLAYER_CANNON_EXPLODED');
-    expect(ring?.data).toMatchObject({ skillId: 'steady-repulse', radius: 155 });
+    expect(ring?.data).toMatchObject({ skillId: 'steady-repulse', radius: 190 });
     expect(view.elapsed - ring!.tick / 60).toBeCloseTo(0);
     expect(view.totalDamage).toBe(68);
     const copy = trial.snapshot(); copy.player.hp = 0; copy.events[0].data.skillId = 'mutated';
@@ -127,7 +131,8 @@ describe('visible victory loot and first camp actions', () => {
     expect(store.beginBuild('warehouse').accepted).toBe(false);
     expect(store.completeBuild('forge').accepted).toBe(true);
     expect(store.data.prologue).toBe('building');
-    expect(campOverlay(store.load(), 'forge')).toContain('data-action="camp-craft"');
+    expect(campOverlay(store.load(), 'forge')).toContain('data-action="camp-upgrade"');
+    expect(equipment(store.load(), 'forge', { forgeTab: 'craft' })).toContain('data-action="camp-craft"');
     expect(campOverlay(store.load(), 'warehouse')).not.toContain('data-action="camp-equip"');
     expect(campOverlay(store.load(), 'missions')).not.toContain('data-action="camp-deploy"');
     for (const id of ['warehouse', 'summon', 'departure', 'shop'] as const) {
@@ -150,36 +155,47 @@ describe('visible victory loot and first camp actions', () => {
   it('advances repair, equip and practice guidance from real collection state', () => {
     const store = wonCamp();
     expect(campFirstSteps(store.load())?.step).toBe('repair');
-    expect(campOverlay(store.load(), 'overview')).toContain('前往修复');
+    expect(campOverlay(store.load(), 'overview')).toContain('前往锻造台修复');
     store.repair('piercing'); expect(campFirstSteps(store.load())?.step).toBe('equip');
-    expect(campOverlay(store.load(), 'forge')).toContain('camp-equip-trial');
+    const forge = equipment(store.load(), 'forge', { forgeTab: 'maintenance', forgeWeaponId: 'piercing' });
+    expect(forge).toContain('data-action="camp-trial" data-weapon="piercing"');
+    expect(forge).not.toContain('camp-equip-trial');
     store.equip('piercing'); expect(campFirstSteps(store.load())?.step).toBe('trial');
     expect(campFirstSteps(store.load(), true)).toBeNull();
     const markup = campOverlay(store.load(), 'trial', 1, '', { trialWeaponId: 'piercing' });
     expect(markup).toContain('camp-trial-canvas'); expect(markup).toContain('camp-trial-fire');
-    expect(markup).toContain('不消耗物资、不计分'); expect(markup).toContain('往返收割');
+    expect(markup).toContain('不消耗物资、不计分'); expect(markup).toContain('回旋刃弓'); expect(markup).toContain('camp-trial-ultimate');
     expect(markup).toContain('camp-trial-cooldowns'); expect(markup).toContain('data-layout="single"'); expect(markup).toContain('data-layout="line"');
     for (const slot of [1, 2, 3]) expect(markup).toContain(`data-slot="${slot}"`);
   });
-  it('shows both weapon kits before acquisition, while keeping unrepaired guns unequippable', () => {
+  it('opens each selected weapon kit before acquisition while keeping unrepaired weapons unequippable', () => {
     const store = new CampProfileStore(new Storage()); buildCamp(store); const before = store.data;
-    const markup = campOverlay(store.load(), 'warehouse');
-    for (const id of ['steady', 'piercing'] as const) for (const skill of weaponSkillDefinitions(id)) expect(markup).toContain(skill.name);
-    expect(markup).toContain('普攻 · 蜂巢速射'); expect(markup).toContain('普攻 · 往返骨刃');
-    expect(markup).toContain('获得条件'); expect(markup).toContain('清剿掉落、碎片锻造或血流接引');
-    expect(markup).toContain('data-weapon="piercing" disabled'); expect(markup).not.toContain('data-action="camp-trial" data-weapon="piercing"');
+    const summary = campOverlay(store.load(), 'warehouse');
+    expect(summary).toContain('data-action="eq-select-weapon" data-weapon="piercing"');
+    expect(summary).not.toContain('data-camp-skill=');
+    for (const id of ['steady', 'piercing'] as const) {
+      const markup = equipment(store.load(), 'warehouse', { weaponId: id, detail: 'skills' });
+      for (const skill of weaponSkillDefinitions(id)) expect(markup).toContain(skill.name);
+      expect(markup).toContain(id === 'steady' ? '普攻 · 蜂巢速射' : '普攻 · 往返骨刃');
+      expect(markup.match(/data-camp-skill=/g)).toHaveLength(4);
+    }
+    const locked = equipment(store.load(), 'warehouse', { weaponId: 'piercing' });
+    expect(locked).not.toContain('data-action="camp-trial"');
+    expect(locked.match(/<button\b[^>]*data-action="camp-equip"[^>]*>/)?.[0]).toMatch(/\bdisabled\b/);
+    const info = equipment(store.load(), 'warehouse', { weaponId: 'piercing', detail: 'info' });
+    expect(info).toContain('获得条件'); expect(info).toContain('清剿掉落、碎片锻造或血流接引');
     expect(store.data).toEqual(before);
   });
   it('shows equipped-quality skill damage and honestly labels unowned baseline previews', () => {
     const store = wonCamp(); store.repair('piercing'); store.upgrade('piercing');
     const item = store.data.weapons.piercing, damage = weaponCombatProfile({ weaponId: 'piercing', rarity: item.repaired!, upgrade: item.upgrade }).primaryDamage;
-    const markup = campOverlay(store.load(), 'warehouse'), number = (value: number) => String(Number(value.toFixed(1)));
-    expect(markup).toContain(`${number(damage * 4)}伤害 · 最多6体`);
-    expect(markup).toContain(`${number(damage * 1.5)}伤害 · 范围150`);
+    const markup = equipment(store.load(), 'warehouse', { weaponId: 'piercing', detail: 'skills' }), number = (value: number) => String(Number(value.toFixed(1)));
+    expect(markup).toContain(`${number(damage * 5)}伤害 · 最多8体`);
+    expect(markup).toContain(`${number(damage * 2.5)}伤害 · 范围190`);
     expect(markup).toContain(`去程${number(damage * 2)}／回程${number(damage)}伤害`);
     expect(markup).toContain('以下数值已计入当前品质与强化，不含局内成长');
     const newCamp = new CampProfileStore(new Storage()); buildCamp(newCamp);
-    const empty = campOverlay(newCamp.load(), 'warehouse');
-    expect(empty).toContain('以下为普通品质基础参数'); expect(empty).toContain('112伤害 · 最多6体');
+    const empty = equipment(newCamp.load(), 'warehouse', { weaponId: 'piercing', detail: 'skills' });
+    expect(empty).toContain('以下为史诗品质预览'); expect(empty).toContain('148.4伤害 · 最多8体');
   });
 });

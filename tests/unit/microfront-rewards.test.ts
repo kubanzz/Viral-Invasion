@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { GameSession } from '../../src/game/session';
 import type { MissionHaul, MissionReceipt } from '../../src/game/microfront';
 import type { EndlessProfileStatus } from '../../src/meta/endlessProfile';
-import { missionResultOverlay } from '../../src/ui/microfrontHud';
+import { missionPauseOverlay, missionResultOverlay } from '../../src/ui/microfrontHud';
 
 function missionState() {
   const game = new GameSession(20261106, { mode: 'endless', territory: true }); game.start();
@@ -33,6 +33,26 @@ function resource(html: string, kind: 'coins' | 'materials') {
 const saved: EndlessProfileStatus = { mode: 'persistent', code: 'saved', message: '营地、装备与奖励已保存。' };
 
 describe('microfront reward presentation', () => {
+  it('renders both new legendary models as actual weapon cards and names their selected weapon artwork', () => {
+    const html = missionResultOverlay(missionState(), receipt({ items: [
+      { templateId: 'thunder', rarity: 'gold', repaired: true },
+      { templateId: 'redblade', rarity: 'gold', repaired: true },
+    ] }));
+    const loot = cards(html);
+    expect(loot.every(card => card['data-kind'] === 'weapon')).toBe(true);
+    for (const id of ['thunder', 'redblade']) expect(html).toContain(`data-camp-art="weapon-${id}"`);
+    expect(html).toContain('传说 · 霆链·裁决铳'); expect(html).toContain('传说 · 赤曜·斩疫刃');
+    expect(html).not.toContain('神级'); expect(html).not.toContain('module-thunder');
+  });
+  it('explains the independent ultimate and draw-unlocked legendary reforge in both help layouts', () => {
+    for (const touch of [false, true]) {
+      const html = missionPauseOverlay(missionState(), true, touch);
+      expect(html).toContain('4'); expect(html).toContain('满100后可释放');
+      expect(html).toContain('母巢总耐久每降低1%＋2'); expect(html).toContain('大招伤害不回充');
+      expect(html).toContain('首次通过血流接引抽取解锁');
+      expect(html).toContain('对应碎片定向重铸'); expect(html).not.toContain('神级装备也能靠碎片');
+    }
+  });
   it('shows the settled receipt amounts without reapplying completion rewards or reading the raw haul', () => {
     const state = missionState();
     state.expedition!.haul = { coins: 999, materials: 888, fragments: { steady: 100 }, items: [] };
@@ -101,9 +121,22 @@ describe('microfront reward presentation', () => {
     const actual = receipt({ coins: 13, materials: 2, fragments: { steady: 1 } }, outcome);
     const html = missionResultOverlay(state, actual, saved);
     expect(html).not.toContain('清剿完成');
-    expect(html).toMatch(/撤回|撤离/);
+    expect(html).toContain(outcome === 'failure' ? '清剿失败' : '已撤回前哨');
     expect(resource(html, 'coins')[0]['data-quantity']).toBe('13');
     expect(cards(html).filter(card => ['weapon', 'module'].includes(card['data-kind']))).toEqual([]);
+  });
+
+  it('states the actual failure briefly, prioritizes player death, and keeps voluntary withdrawal distinct', () => {
+    const s = missionState(); s.result = { success: false, reason: '救援体耐久耗尽：观察前摇并冲刺。' };
+    s.player.hp = 0; s.tissue.hp = 0;
+    let html = missionResultOverlay(s, receipt({}, 'failure'));
+    expect(html).toContain('清剿失败'); expect(html).toContain('玩家血量耗尽'); expect(html).not.toContain('观察前摇');
+    s.player.hp = 100; html = missionResultOverlay(s, receipt({}, 'failure'));
+    expect(html).toContain('稳态锚被摧毁'); expect(html).not.toContain('小队撤回前哨');
+    html = missionResultOverlay(s, receipt({}, 'withdrawn')); expect(html).toContain('已撤回前哨'); expect(html).not.toContain('mission-result-cause');
+    s.tissue.hp = 100; s.result.reason = '<img onerror=alert(1)>：后续建议';
+    expect(missionResultOverlay(s, receipt({}, 'failure'))).toContain('&lt;img onerror=alert(1)&gt;');
+    s.result = null; expect(missionResultOverlay(s)).toContain('任务目标未完成');
   });
 
   it('removes successful-save boilerplate and only offers retry when storage needs attention', () => {

@@ -1,39 +1,35 @@
 import { describe, expect, it } from 'vitest';
 import { CAMP_COURTYARDS, CAMP_WALL_THICKNESS, campLayout } from '../../src/game/campLayout';
 import type { GameState } from '../../src/game/types';
-import { CAMP_GROUND_ASSET_IDS, CAMP_VISUAL_SIZES, campAreaLabels, campBoundaryTrace, campDecorations,
-  campGroundPatchRect, drawCampGround, type CampGroundImages } from '../../src/render/campVisuals';
+import { CAMP_GROUND_ASSET_IDS, CAMP_VISUAL_SIZES, campAreaLabels, campBoundaryTraces, campDecorations,
+  campGroundPatchRect, drawCampGround, drawCampSummonGround, drawCampSummonLight, type CampGroundImages } from '../../src/render/campVisuals';
 
 const stateAt = (x = 1200, y = 900, camp = true) => ({ tissue: { x, y }, ...(camp ? { camp: { introSeconds: 8, introComplete: true } } : {}) }) as GameState;
 function groundRecording(ownerDocument?: Document) {
-  const draws: unknown[][] = [], strokes: unknown[] = [];
+  const draws: unknown[][] = [], strokes: unknown[] = [], arcs: unknown[][] = [];
   const target: Record<string, unknown> = { canvas: { ownerDocument } };
   const ctx = new Proxy(target, {
     get(object, key: string) {
       if (key in object) return object[key];
-      if (key === 'createLinearGradient') return () => ({ addColorStop() {} });
+      if (key === 'createLinearGradient' || key === 'createRadialGradient') return () => ({ addColorStop() {} });
+      if (key === 'arc') return (...args: unknown[]) => arcs.push(args);
       if (key === 'drawImage') return (...args: unknown[]) => draws.push(args);
       if (key === 'stroke') return () => strokes.push(object.strokeStyle);
       return () => {};
     },
   }) as unknown as CanvasRenderingContext2D;
-  return { ctx, draws, strokes };
+  return { ctx, draws, strokes, arcs };
 }
 
 describe('camp presentation shares the physical courtyard plan', () => {
-  it('keeps a single open curb with round ends outside each 92-unit model gate', () => {
+  it('paints four short rounded corner curbs with all district sides open', () => {
     for (const c of CAMP_COURTYARDS) {
-      const points = campBoundaryTrace(c), first = points[0], last = points[points.length - 1];
-      const clearance = c.gate.width / 2 + CAMP_WALL_THICKNESS / 2;
-      expect(first.x).toBe(c.gate.center.x);expect(last.x).toBe(c.gate.center.x);
-      expect(Math.abs(first.y - c.gate.center.y)).toBe(clearance);
-      expect(Math.abs(last.y - c.gate.center.y)).toBe(clearance);
-      expect(first.y).not.toBe(last.y);
-      for (let i = 1; i < points.length; i++) {
-        const a = points[i - 1], b = points[i];
-        if (Math.abs(a.x - c.gate.center.x) > .01 || Math.abs(b.x - c.gate.center.x) > .01) continue;
-        const low = Math.min(a.y, b.y), high = Math.max(a.y, b.y);
-        expect(high <= c.gate.center.y - c.gate.width / 2 || low >= c.gate.center.y + c.gate.width / 2).toBe(true);
+      const traces=campBoundaryTraces(c);expect(traces).toHaveLength(4);
+      for(const points of traces){
+        expect(points.length).toBeGreaterThan(2);
+        const xs=points.map(p=>p.x),ys=points.map(p=>p.y);
+        expect(Math.max(...xs)-Math.min(...xs)).toBeLessThanOrEqual(44);
+        expect(Math.max(...ys)-Math.min(...ys)).toBeLessThanOrEqual(44);
       }
     }
   });
@@ -105,12 +101,12 @@ describe('camp presentation shares the physical courtyard plan', () => {
     const painted = capture({ workshop: image, supply: image, departure: image });
     expect(painted.draws).toHaveLength(3);
     for (const color of ['#7b927d16', '#b7aa8816', '#7f9d9116', '#a9c39a', '#91ae8b', '#b9cda4']) expect(painted.fills).not.toContain(color);
-    expect(painted.strokes.filter(color => color === '#e2d6b9')).toHaveLength(3);
+    expect(painted.strokes.filter(color => color === '#e2d6b9')).toHaveLength(12);
   });
 
   it('preserves the approved hero, heart and facility scale relationship', () => {
     expect(CAMP_VISUAL_SIZES.heroCanvas).toBe(76);expect(CAMP_VISUAL_SIZES.coreCanvas).toBe(230);
-    expect(CAMP_VISUAL_SIZES.stationWidths).toEqual({ warehouse: 280, forge: 156, shop: 168, departure: 190, summon: 130 });
+    expect(CAMP_VISUAL_SIZES.stationWidths).toEqual({ warehouse: 280, forge: 156, shop: 168, departure: 190, summon: 130, farm: 240, house: 220 });
     expect(CAMP_VISUAL_SIZES.newForgeWidth).toBe(248);
   });
 
@@ -128,7 +124,7 @@ describe('camp presentation shares the physical courtyard plan', () => {
     s.camp.builtFacilities!.push('forge'); delete s.camp.activeConstruction;
     const workshop = groundRecording(); drawCampGround(workshop.ctx, s, images);
     expect(workshop.draws.map(draw => draw[0])).toEqual([images.workshop]);
-    expect(workshop.strokes.filter(color => color === '#e2d6b9')).toHaveLength(1);
+    expect(workshop.strokes.filter(color => color === '#e2d6b9')).toHaveLength(4);
     expect(campAreaLabels(s).map(label => label.lines[0].text)).toEqual(['整备区']);
     const decor = campDecorations(s);
     expect(decor.some(d => d.id === 'camp-decor:tree-west')).toBe(true);
@@ -138,14 +134,14 @@ describe('camp presentation shares the physical courtyard plan', () => {
 
   it('finishes districts independently and adds each district floor, label and planting only once', () => {
     const s = stateAt(); s.camp = { prologue: 'building', introComplete: false, introSeconds: 0, builtFacilities: ['shop'] };
-    expect(campAreaLabels(s)).toEqual([]); expect(campDecorations(s)).toEqual([]);
-    s.camp.builtFacilities!.push('summon');
     expect(campAreaLabels(s).map(label => label.lines[0].text)).toEqual(['补给区']);
     const supplyDecor = campDecorations(s);
     expect(supplyDecor.some(d => d.id === 'camp-decor:tree-east')).toBe(true);
     expect(supplyDecor.filter(d => d.id.startsWith('camp-decor:supply-leaf-'))).toHaveLength(4);
     expect(supplyDecor.some(d => /workshop|departure|tree-west/.test(d.id))).toBe(false);
     expect(campDecorations(s, ['supply']).map(d => d.id)).toEqual(['camp-decor:tree-east']);
+    s.camp.builtFacilities!.push('summon');
+    expect(campAreaLabels(s).map(label => label.lines[0].text)).toEqual(['补给区']);
 
     s.camp.builtFacilities!.push('departure');
     expect(campAreaLabels(s).map(label => label.lines[0].text)).toEqual(['补给区', '出击区']);
@@ -155,7 +151,10 @@ describe('camp presentation shares the physical courtyard plan', () => {
     s.camp.builtFacilities!.push('forge', 'warehouse'); s.camp.prologue = 'ready'; s.camp.introComplete = true;
     const completed = groundRecording(); drawCampGround(completed.ctx, s, images);
     expect(completed.draws.map(draw => draw[0])).toEqual([images.workshop, images.supply, images.departure]);
-    expect(campAreaLabels(s)).toHaveLength(3);
+    expect(campAreaLabels(s).filter(label=>label.id.startsWith('camp-area:'))).toHaveLength(3);
+    expect(campAreaLabels(s).filter(label=>label.id.startsWith('camp-planned:'))).toHaveLength(0);
+    s.camp!.overview=true;
+    expect(campAreaLabels(s).filter(label=>label.id.startsWith('camp-planned:'))).toHaveLength(3);
     expect(campDecorations(s).filter(d => d.id.startsWith('camp-decor:workshop-leaf-'))).toHaveLength(4);
   });
 
@@ -182,10 +181,35 @@ describe('camp presentation shares the physical courtyard plan', () => {
     expect(live.draws.at(-1)![0]).toBe(rasters[1].canvas);
     drawCampGround(live.ctx, s, images); expect(rasters).toHaveLength(2);
     s.camp.builtFacilities!.push('shop');
-    drawCampGround(live.ctx, s, images); expect(rasters).toHaveLength(2);
+    drawCampGround(live.ctx, s, images); expect(rasters).toHaveLength(3);
     s.camp.builtFacilities!.push('summon');
     drawCampGround(live.ctx, s, images); expect(rasters).toHaveLength(3);
     expect(rasters[2].recording.draws.map(draw => draw[0])).toEqual([workshop]);
-    expect(rasters[2].recording.strokes.filter(color => color === '#e2d6b9')).toHaveLength(2);
+    expect(rasters[2].recording.strokes.filter(color => color === '#e2d6b9')).toHaveLength(8);
+  });
+
+  it('keeps northern life roads and grounded facilities inside the actual cached raster',()=>{
+    let raster:HTMLCanvasElement|undefined;
+    const owner={createElement(){const recording=groundRecording();raster={width:0,height:0,getContext:()=>recording.ctx} as unknown as HTMLCanvasElement;return raster;}} as unknown as Document;
+    const live=groundRecording(owner),s=stateAt(0,0);
+    s.camp={introSeconds:0,introComplete:true,prologue:'ready',builtFacilities:['warehouse','forge','shop','summon','departure','farm','house']};
+    drawCampGround(live.ctx,s);const image=live.draws.at(-1)!;
+    expect(image[0]).toBe(raster);const left=image[1] as number,top=image[2] as number,right=left+raster!.width,bottom=top+raster!.height;
+    const layout=campLayout(s),rects=[layout.paths.spine,layout.paths.forecourt,...layout.paths.branches,...layout.facilities.map(f=>f.footprint)];
+    for(const r of rects){expect(r.left-left).toBeGreaterThanOrEqual(16);expect(r.top-top).toBeGreaterThanOrEqual(16);expect(right-r.right).toBeGreaterThanOrEqual(16);expect(bottom-r.bottom).toBeGreaterThanOrEqual(16);}
+    expect(top).toBeLessThan(-490);
+  });
+
+  it('guides players to the activated node while retaining a quiet persistent ring under reduced effects', () => {
+    const s = stateAt();s.elapsed = 2;s.camp!.builtFacilities = ['shop'];
+    const dormant = groundRecording();drawCampSummonGround(dormant.ctx, s);drawCampSummonLight(dormant.ctx, s);
+    expect(dormant.arcs).toHaveLength(0);
+    s.camp!.builtFacilities.push('summon');const lively = groundRecording(), quiet = groundRecording();
+    drawCampSummonGround(lively.ctx, s);drawCampSummonLight(lively.ctx, s);
+    drawCampSummonGround(quiet.ctx, s, true);drawCampSummonLight(quiet.ctx, s, true);
+    expect(quiet.strokes.length).toBeGreaterThan(0);expect(quiet.arcs.length).toBeGreaterThan(0);
+    expect(lively.arcs.length).toBeGreaterThan(quiet.arcs.length);
+    s.camp!.prologue = 'arrival';const arrival = groundRecording();drawCampSummonGround(arrival.ctx, s);drawCampSummonLight(arrival.ctx, s);
+    expect(arrival.arcs).toHaveLength(0);
   });
 });

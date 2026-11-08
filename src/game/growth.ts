@@ -1,6 +1,7 @@
 import { distance, normalized, wallHit, moveWithCollision } from '../actors/collision';
 import { SeedRng } from '../core/rng';
 import type { OrganId } from './battleTypes';
+import type { BeaconState } from './growthTypes';
 import { activeWorld, isDiagnosticTarget, type GameEvent, type GameState, type Target, type Vec, type WorldGeometry } from './types';
 import { GROWTH_BALANCE as B, makeDraftOption, PROTOCOL_IDS, PROTOCOLS, TUNINGS, getBeaconConfig, getChainConfig, getPulseConfig, getTraceConfig, PATROL_CONFIG, protocolRank, PROTOCOL_ACTIONS, chainRicochetPeriod } from './protocols';
 import type { DamageOrigin, DraftIntent, DraftOption, DraftResolution, EquippedProtocol, GrowthCommand, GrowthContext, GrowthState, GrowthHistoryEntry, ProtocolDraft, ProtocolId, ProtocolRank, ResearchResult, ResearchDirectionId, ResearchConfirmIntent, ResearchRequestIntent, ResearchRequestResult, ResearchConfirmResult, ResearchCancelResult } from './growthTypes';
@@ -10,12 +11,13 @@ import { endlessCombatStats } from './endlessGrowth';
 import { availableResearchDirections, RESEARCH_DIRECTIONS } from './research';
 import { parsePreparation, preparationForPlan, type RunPreparation } from './preparation';
 import { territoryBeaconRank } from './territory';
+import { configureLegionBeacon, legionCellStats, nextLegionDeployment } from './legionCombat';
 
 export type { GrowthCommand, GrowthContext, GrowthState, DamageOrigin, DraftIntent, DraftResolution } from './growthTypes';
 
 export function growthContext(state: GameState): GrowthContext {
   const combat = state.endlessGrowth ? endlessCombatStats(state.endlessGrowth) : undefined;
-  return { mission: !!state.expedition?.missionId, hostEvents: state.hostEvents, endless: !!state.endless, territory: state.territory, tick: state.tick, elapsed: state.elapsed, active: state.phase === 'playing', organId: state.battle?.organId ?? 'heart',
+  return { mission: !!state.expedition?.missionId, legions: state.expedition?.legions, hostEvents: state.hostEvents, endless: !!state.endless, territory: state.territory, tick: state.tick, elapsed: state.elapsed, active: state.phase === 'playing', organId: state.battle?.organId ?? 'heart',
     ...(combat ? { immuneRank: state.endlessGrowth!.ranks.immune ?? 0, cellDamageMultiplier: combat.damageMultiplier * combat.cellDamageMultiplier } : {}),
     rhythm: state.battle?.pulse.phase ?? 'rest', deviceOrigin: state.battle?.pulse.origin ?? state.terminal,
     player: state.player, aim: state.battle?.lastAim ?? state.player, tissue: state.tissue, targets: state.targets, tool: state.tool, geometry: activeWorld(state), rhythmCycle: state.battle?.pulse.cycleIndex,
@@ -465,7 +467,7 @@ export class GrowthController {
     const children = live.map(cell => {
       const hp = (cell.hp ?? cell.maxHp ?? IMMUNE_CELL_BALANCE.health) * ANTIBODY_BALANCE.healthRetained;
       cell.hp = hp; cell.maxHp ??= IMMUNE_CELL_BALANCE.health; cell.antibodyUntil = until;
-      return { ...cell, id: `${cell.id}:antibody:${serial}`, born: context.elapsed,
+      return { ...cell, id: `${cell.id}:antibody:${serial}`, echo: cell.legionId === 'seraph' || cell.echo, seraphAction: undefined, born: context.elapsed,
         waypoint: null, navigationAt: 0, updatedAt: context.elapsed };
     });
     s.cells = [...live, ...children]; s.antibodyCharges = (s.antibodyCharges ?? 0) - 1; s.antibodySerial = serial;
@@ -484,7 +486,20 @@ export class GrowthController {
     const previous={marks:this.state.marks.map(mark=>({...mark})),beacon:this.state.beacon,beacons:[...beacons],cells:this.state.cells,readyAt:this.state.beaconReadyAt,history:this.state.protocolHistory.slice()};
     const commands:GrowthCommand[]=[],trace=this.equipped('EXPOSE_TRACE'),beacon=this.equipped('IMMUNE_BEACON')
       ??(context.mission?{id:'IMMUNE_BEACON' as const,tuning:'balanced' as const,rank:1 as const}:undefined);
-    const guardOrder = beacon ? selectImmuneGuardCommand(context) : undefined, guard = !!guardOrder;
+    const deployment = nextLegionDeployment(context, beacons);
+    const canDeploy=beacons.length<IMMUNE_CELL_BALANCE.maximumLegions&&(!context.legions||!!deployment)
+      &&context.elapsed+1e-9>=this.state.beaconReadyAt;
+    // A deliberate enemy order belongs to the already deployed seraph before
+    // considering an empty ordinary slot. Use the common legal hit test so a
+    // dead, distant or embedded actor never cancels a valid defense order.
+    const commandedSeraph=beacons.find(unit=>unit.legionId==='seraph'&&selectImmuneFocusTarget(context,unit));
+    const probeConfig=beacon?getBeaconConfig(beacon.tuning,protocolRank(beacon)):PATROL_CONFIG;
+    const pendingSeraph:BeaconState|undefined=canDeploy&&deployment?.legionId==='seraph'?{
+      ...point(context.player),id:'seraph-command-probe',organId:context.organId,born:context.elapsed,until:Infinity,
+      radius:probeConfig.radius+30,damage:probeConfig.damage,interval:probeConfig.interval,nextAttackAt:0,
+      tuning:beacon?.tuning??'balanced',mode:beacon?'protocol':'patrol',legionId:'seraph'}:undefined;
+    const seraphEnemyOrder=!!commandedSeraph||!!pendingSeraph&&!!selectImmuneFocusTarget(context,pendingSeraph);
+    const guardOrder = beacon && !seraphEnemyOrder ? selectImmuneGuardCommand(context) : undefined, guard = !!guardOrder;
     const rootId=`${this.state.runId}:scan:${context.tick}`;
     if(trace) {
       const config=getTraceConfig(trace.tuning,protocolRank(trace));let count=0;
@@ -495,16 +510,17 @@ export class GrowthController {
       commands.push({kind:'log',type:'PROTOCOL_TRACE_APPLIED',data:{protocolId:'EXPOSE_TRACE',rootId,count,duration:config.duration,slow:config.factor}});
       this.remember('PROTOCOL_TRACE_APPLIED',`显影追踪 ${count} 体，持续 ${config.duration} 秒。`,context.elapsed);
     }
-    if(beacons.length<IMMUNE_CELL_BALANCE.maximumLegions&&context.elapsed+1e-9>=this.state.beaconReadyAt) {
+    if(canDeploy&&!commandedSeraph) {
       const config=beacon?getBeaconConfig(beacon.tuning,protocolRank(beacon)):{...PATROL_CONFIG,tissueCost:0};
-      const rank=protocolRank(beacon), count=beacon?Math.min(5,Math.max(rank+2,3+Math.floor(context.immuneRank??0))):1;
+      const rank=protocolRank(beacon), count=deployment?.legionId==='seraph'?4:beacon?Math.min(5,Math.max(rank+2,3+Math.floor(context.immuneRank??0))):1;
       const position=beaconPosition(context);
       this.state.beacon={...point(guardOrder?.anchor ?? position),id:`${rootId}:beacon`,organId:context.organId,born:context.elapsed,until:Infinity,
         radius:config.radius,damage:config.damage,interval:config.interval,nextAttackAt:context.elapsed+.1,tuning:beacon?.tuning??'balanced',mode:beacon?'protocol':'patrol',cellCount:count,rank};
+      configureLegionBeacon(this.state.beacon, deployment);
       if(guardOrder) { this.state.beacon.guard={...guardOrder.guard}; this.state.beacon.deploymentOrigin=point(position); }
       const focus=guard?undefined:selectImmuneFocusTarget(context,this.state.beacon);
       if(focus)this.state.beacon.focus={targetId:focus.id,until:Math.min(context.elapsed+IMMUNE_FOCUS_BALANCE.duration,this.state.beacon.until)};
-      this.state.cells=[...(this.state.cells??[]),...summonImmuneCells(this.state.beacon,context,count)];
+      this.state.cells=[...(this.state.cells??[]),...summonImmuneCells(this.state.beacon,context,this.state.beacon.cellCount ?? count)];
       this.state.beacons=[...beacons,this.state.beacon];
       this.state.beaconReadyAt=context.elapsed+config.cooldown;
       const base={protocolId:'IMMUNE_BEACON' as const,rootId,organId:context.organId};
@@ -520,7 +536,7 @@ export class GrowthController {
         x:this.state.beacon.x,y:this.state.beacon.y,radius:IMMUNE_GUARD_BALANCE.radius,plannedUntil:this.state.beacon.until,newSquad:true,...(guardOrder?.guard.kind==='territory'?{regionId:guardOrder.guard.regionId}:{})}});
       this.remember(beacon?'PROTOCOL_BEACON_CREATED':'IMMUNE_PATROL_CREATED',beacon?`${count} 只免疫细胞驻守，组织承压 −${config.tissueCost}；阵亡后空出军团位。`:'Q 召来一只常驻免疫侦巡细胞，可被病毒击杀。',context.elapsed);
     }else if(beacons.some(value=>value.organId===context.organId)) {
-      const position=beaconPosition(context),old=beacons.filter(value=>value.organId===context.organId)
+      const position=beaconPosition(context),old=commandedSeraph??beacons.filter(value=>value.organId===context.organId)
         .sort((a,b)=>distance(a,position)-distance(b,position)||a.id.localeCompare(b.id))[0];
       const previousRegionId = old.guard?.kind === 'territory' ? old.guard.regionId : '';
       const withdrewFront = !!context.territory && ['front-north','front-south'].includes(previousRegionId)
@@ -548,10 +564,20 @@ export class GrowthController {
       if(guard)commands.push({kind:'log',type:'IMMUNE_GUARD_ASSIGNED',data:{rootId,beaconId:old.id,organId:context.organId,
         x:this.state.beacon.x,y:this.state.beacon.y,radius:IMMUNE_GUARD_BALANCE.radius,plannedUntil:old.until,newSquad:false,...(guardOrder?.guard.kind==='territory'?{regionId:guardOrder.guard.regionId}:{})}});
       this.remember('IMMUNE_SQUAD_REDIRECTED',context.territory
-        ? withdrewFront
+        ? this.state.beacon.focus
+          ? '曜卫按准星合围指定感染体；生命、人数与攻击冷却保留。'
+          : withdrewFront
           ? '最近军团向脚下行军；留意原前线，节点失守会恢复感染源护膜。生命与攻击冷却保留。'
           : '最近军团向脚下行军并留守；生命、人数与攻击冷却保留。'
         : '免疫军团转向新战线；保留当前生命与吞噬冷却，不消耗组织。',context.elapsed);
+    }
+    if(this.state.beacon?.legionId==='seraph') {
+      const selected=this.state.beacon,focus=selected.focus;
+      if(focus) {
+        selected.seraphOrder={id:`${rootId}:seraph-order`,targetId:focus.targetId,startedAt:context.elapsed,until:focus.until};
+        commands.push({kind:'log',type:'LEGION_SERAPH_FOCUS',data:{beaconId:selected.id,orderId:selected.seraphOrder.id,focusId:selected.seraphOrder.id,
+          targetId:focus.targetId,x:context.aim.x,y:context.aim.y,fromX:context.player.x,fromY:context.player.y,duration:focus.until-context.elapsed}});
+      }else delete selected.seraphOrder;
     }
     const accepted=this.budget(context,commands);
     if(commands.length&&!accepted.length){this.state.marks=previous.marks;this.state.beacon=previous.beacon;this.state.beacons=previous.beacons;this.state.cells=previous.cells;this.state.beaconReadyAt=previous.readyAt;this.state.protocolHistory=previous.history;}
@@ -644,14 +670,16 @@ export class GrowthController {
     for(const beacon of beacons)if(beacon.organId===context.organId) {
       if(beacon.guard&&!activeImmuneGuard(beacon,context))delete beacon.guard;
       if(slot) {
-        const rank=protocolRank(slot),count=Math.min(5,Math.max(rank+2,3+Math.floor(context.immuneRank??0)));
+        const rank=protocolRank(slot),count=beacon.legionId==='seraph'?4:Math.min(5,Math.max(rank+2,3+Math.floor(context.immuneRank??0)));
         const previousCount=beacon.cellCount??(beacon.mode==='patrol'?1:3),config=getBeaconConfig(slot.tuning,rank);
         const wasPatrol=beacon.mode==='patrol';
-        beacon.mode='protocol';beacon.tuning=slot.tuning;beacon.radius=config.radius;beacon.damage=config.damage;
+        beacon.mode='protocol';beacon.tuning=slot.tuning;beacon.radius=config.radius+(beacon.legionId==='seraph'?30:0);beacon.damage=config.damage;
         beacon.interval=config.interval;beacon.rank=rank;beacon.cellCount=Math.max(previousCount,count);
         for(const cell of s.cells??[])if(cell.beaconId===beacon.id) {
-          cell.damage=config.damage/beacon.cellCount;cell.interval=config.interval;
-          const maxHp=IMMUNE_CELL_BALANCE.health+(rank-1)*12;
+          const cellIndex=cell.seraphSeat??(cell.seraphRole==='commander'||cell.legionRole==='leader'?0:cell.seraphRole==='prism'?3:cell.legionId==='seraph'?1:0);
+          const stats=legionCellStats(beacon,cellIndex,beacon.cellCount);
+          cell.damage=stats.damage;cell.interval=config.interval;
+          const maxHp=stats.health;
           if(maxHp>(cell.maxHp??IMMUNE_CELL_BALANCE.health)) {
             cell.hp??=IMMUNE_CELL_BALANCE.health;cell.maxHp=maxHp;
           }

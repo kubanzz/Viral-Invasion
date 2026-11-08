@@ -1,0 +1,12 @@
+{
+  "description": "Three first-look stills; these are commands, not an automatic long render.",
+  "blender": ".tools/blender/blender-4.5.15-windows-x64/blender.exe",
+  "script": "scripts/prologue-v3/render_prologue.py",
+  "common": ["--resolution", "960x540", "--quality", "draft", "--samples", "12"],
+  "trials": [
+    {"shot": "body", "frame": 72, "output": "artifacts/world-prologue-v3/render/trials/body.png", "note": "Automatically selects plates/body-overview.png when available; --body-plate overrides it."},
+    {"shot": "widefront", "frame": 72, "output": "artifacts/world-prologue-v3/render/trials/widefront.png", "note": "True oblique camera, microscopic original actors across a broad tissue front."},
+    {"shot": "orders", "frame": 60, "output": "artifacts/world-prologue-v3/render/trials/orders.png", "note": "Original GLB, original Idle_Subtle action, original PNG escort at different depths."}
+  ],
+  "final": {"resolution": "1280x720", "fps": 24, "quality": "final", "samples": 32, "totalFrames": 792}
+}

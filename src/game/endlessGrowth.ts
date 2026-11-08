@@ -74,11 +74,13 @@ export const isEndlessBreakthrough = (wave: number): boolean => Number.isSafeInt
 /** Contextual presentation preserves historic campaign commands and all rolled numbers. */
 export function endlessUpgradeDescription(description: string, id: EndlessUpgradeId, territory = false): string {
   if (!territory) return description;
-  if (id === 'nova') return '武器2技能每阶增加14范围，伤害倍率增加15%；只强化排异震环或束脉锚，不改变其他技能。';
+  if (id === 'nova') return '武器2技能每阶增加14范围，伤害倍率增加15%；裁决铳仅强化磁极覆盖范围和落地爆发，不提高持续电流。';
   if (id === 'catalysis') return '武器2技能主爆后0.35秒追加一次75%范围、40%伤害的余震，不再牵引或击退，不递归触发。';
   if (id === 'dash') return description.split('斩击遵循障碍遮挡。')[0].replace(/蓄能剑气[^。]*。/g, '') + 'Space仅冲刺；斩击遵循障碍遮挡。';
   if (id === 'power') return description.replace('基础净化', '武器').replace('强化现有攻击', '强化普攻和武器技能，军团与建筑不获得装备增幅');
-  if (id === 'multishot' || id === 'pierce' || id === 'haste') return description + '仅作用于普攻，不增加技能弹数、贯穿或施放速度。';
+  if (id === 'multishot') return description + ' 裁决铳改为每阶增加2个电击目标。';
+  if (id === 'pierce') return description + ' 裁决铳每阶额外跳电1体，每跳35%主弧伤害，不递归且每体每脉冲最多命中一次。';
+  if (id === 'haste') return description + '仅作用于普攻；裁决铳提高持续电流的伤害率，不加快技能施放。';
   if (id !== 'immune') return description;
   const numbers = description.split('。', 1)[0].replace(/，每团成员.*?体，常驻且有生命；/, '；');
   return `${numbers}。基础驻防开局可用：Q在脚下部署，满两团时调最近军团到脚下；保留生命、人数与咬击冷却，不复活。守住两线可使军团升至Ⅲ阶；净化同线生命泉与前线即可解膜，无需军团等级或命中。`;

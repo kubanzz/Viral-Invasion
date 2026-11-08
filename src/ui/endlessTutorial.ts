@@ -1,6 +1,7 @@
 import type { GameState } from '../game/types';
 import type { EndlessUpgradeId } from '../game/endlessGrowthTypes';
 import { weaponSkillViews } from '../game/weaponSkills';
+import { weaponUltimateView } from '../game/weaponUltimates';
 import { territoryContextView } from '../game/territory';
 import { hostEventMaxHp } from '../game/hostEvents';
 
@@ -35,13 +36,18 @@ export function endlessTutorialHint(state: GameState, touch = false): string {
       || state.territory.nodes.some(node => node.infectionProgress > 0)) return '';
     if (state.weaponCombat && !dismissed.has(state)) {
       const skills = weaponSkillViews(state);
-      if (!guide?.fired) return touch ? '左杆移动，按住右盘普攻；123是当前武器技能。' : '左键持续普攻；123直接释放武器技能，F单独净化组织。';
+      const ultimate = weaponUltimateView(state);
+      if (ultimate?.canRecast) return `${touch ? '再点4' : '再按4'}立即裁决：收束随身雷暴，感电病毒受到更强终结雷击。`;
+      if (ultimate?.ready) return `${ultimate.name}已就绪：${touch ? ultimate.weaponId === 'thunder' || ultimate.weaponId === 'redblade' ? '点按4号大招释放' : '点按4号大招，松手释放' : '按4释放'}；击杀病毒或攻击母巢可再次充能。`;
+      if (!guide?.fired) return touch ? '左杆移动，按住右盘普攻；123战技，4战斗充能大招。' : '左键持续普攻；123战技，4战斗充能大招，F净化组织。';
       if (state.elapsed >= 5 && state.elapsed < 45) {
         const slot = state.elapsed < 14 ? 1 : state.elapsed < 25 ? 2 : 3;
         const skill = skills[slot - 1];
         const tip = state.weaponCombat.loadout.weaponId === 'steady'
           ? ['扇出蜂针会有限追踪前方目标。', '脚下瞬发震环，适合贴身解围。', '普攻加速并追加两根侧针，适合反攻。'][slot - 1]
-          : ['锁定方向后蓄势贯穿，先排成直线。', '落地牵引1秒，接穿心贯穿敌群。', '发出后横移，回刃会向你收束。'][slot - 1];
+          : state.weaponCombat.loadout.weaponId === 'piercing' ? ['锁方向发射重刃，先排成直线。', '落地聚敌后接重刃贯穿。', '发出后横移，回刃会向你收束。'][slot - 1]
+            : state.weaponCombat.loadout.weaponId === 'thunder' ? ['长按电亮病毒，再引爆感电敌群。', '磁极聚怪；按住普攻为远处怪群供电。', '化雷穿过怪群，雷痕感电后接1连爆。'][slot - 1]
+              : ['沿瞄准方向突进，遇组织截停。', '拉拢身边病毒后回旋斩。', '连续扇斩，击杀可重置一次突进。'][slot - 1];
         if (state.weaponCombat.cooldowns[slot] === 0) return `${touch ? `点技能${slot}` : `按${slot}`}：${skill.name}。${tip}`;
       }
       if (state.elapsed >= 45 && state.elapsed < 52) return touch ? '净化单独操作：靠近感染节点，点左侧净化组织。' : '靠近感染节点按F净化；Q在脚下留下军团。';
@@ -49,9 +55,10 @@ export function endlessTutorialHint(state: GameState, touch = false): string {
     if (!guide?.fired) return touch ? '左杆移动，右盘射击；点“净化组织”夺回节点。' : 'WASD移动，左键射击；Q在脚下部署军团，离开后军团留守。';
     if (guide?.upgradeHint && state.elapsed < (guide.upgradeHintUntil ?? 0)) {
       if (guide.upgradeHint === 'immune') return touch ? '军团已增强：走到健康节点附近，点驻防在脚下留守。' : '军团已增强：走到健康前线附近按Q驻防，帮助守住节点。';
-      if (state.weaponCombat && guide.upgradeHint === 'nova') return state.weaponCombat.loadout.weaponId === 'steady'
-        ? `震环已增强：${touch ? '点技能2' : '按2'}在脚下解围，不需要瞄准。`
-        : `束脉锚已增强：${touch ? '点按沿当前方向释放，也可拖动瞄准' : '按2投到瞄准位置'}，持续聚敌后爆破。`;
+      if (state.weaponCombat && guide.upgradeHint === 'nova') {
+        const area = weaponSkillViews(state).find(skill => skill.slot === 2)!;
+        return `${area.name}已增强：${area.aim === 'self' ? `${touch ? '点技能2' : '按2'}在身边释放，不需要瞄准。` : `${touch ? '点按或拖动技能2瞄准' : '按2投到瞄准位置'}，聚敌后爆破。`}`;
+      }
       if (state.weaponCombat && guide.upgradeHint === 'dash') return '冲刺挥斩已增强；Space只冲刺，123负责武器技能。';
       if (state.weaponCombat && guide.upgradeHint === 'catalysis') return '技能2主爆后会追加一次余震，不重复牵引或击退。';
       return upgradeCopy(guide.upgradeHint, touch);

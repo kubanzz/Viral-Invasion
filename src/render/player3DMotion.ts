@@ -1,9 +1,14 @@
 import { BALANCE, type GameEvent, type GameState, type Vec } from '../game/types';
 import { HERO_STRIDE_DISTANCE } from './heroLocomotion';
 import { heldWeaponFacing } from './weaponPresentation';
+import { REDBLADE_PRIMARY } from '../game/weaponMelee';
+import { BLADE_TECHNIQUES } from '../game/bladeTechniques';
 
 export type Player3DLocomotionClip = 'Idle_Subtle' | 'Jog' | 'Walk_Backwards' | 'Strafe_left' | 'Strafe_right' | 'Sprint';
-export type Player3DUpperClip = 'Pistol_Idle' | 'Pistol_Shoot' | 'Bow_Ready' | 'Bow Pull Back' | 'Bow Pull Hold' | 'Bow Release';
+export type Player3DUpperClip = 'Pistol_Idle' | 'Pistol_Shoot' | 'Bow_Ready' | 'Bow Pull Back' | 'Bow Pull Hold' | 'Bow Release'
+  | 'Blade_Ready' | 'Blade_Slash_Right' | 'Blade_Slash_Left' | 'Blade_Finish' | 'Blade_Dash'
+  | 'Blade_Guard_v020' | 'Blade_Counter_v020' | 'Blade_FourfoldDash_v020' | 'Blade_FinishSheath_v020'
+  | 'Blade_ChargeDraw_v022' | 'Blade_FinishSettle_v022';
 /** The authored draw first raises the bow from the hip; ready presentation starts after that lift. */
 export const BOW_READY_TIME = .55;
 export interface Player3DAnimationEvent {
@@ -68,13 +73,14 @@ export class Player3DMotionController {
   private lastHurtUntil = 0;
   private shot?: TimedEvent;
   private hit?: TimedEvent;
+  private bladeFinish?: TimedEvent;
   private dashFacing?: number;
   private preparation?: { id: string; born: number; firesAt: number };
 
   reset(): void {
     this.scope = ''; this.accepted = undefined; this.velocity = { x: 0, y: 0 };
     this.travelled = 0; this.segment = undefined; this.lastVisualTime = undefined;
-    this.lastHurtUntil = 0; this.shot = undefined; this.hit = undefined;
+    this.lastHurtUntil = 0; this.shot = undefined; this.hit = undefined; this.bladeFinish = undefined;
     this.dashFacing = undefined; this.preparation = undefined;
   }
 
@@ -86,6 +92,7 @@ export class Player3DMotionController {
     const key = this.key(state), old = this.accepted;
     if (this.scope !== key || old && (state.tick < old.tick || state.elapsed + 1e-8 < old.elapsed)) this.reset();
     this.scope = key;
+    if (state.player.hp <= 0 || state.phase !== 'playing' && state.phase !== 'paused') this.bladeFinish = undefined;
   }
 
   /** Call with the authoritative endpoint, including fixed steps that have no rendered frame. */
@@ -94,7 +101,7 @@ export class Player3DMotionController {
     if (state.phase !== 'playing' || this.accepted?.tick === state.tick) return;
     const p = state.player, old = this.accepted;
     const receipts = state.events.filter(event => event.tick === state.tick);
-    const dashing = !!state.playerFlight || p.dashUntil > state.elapsed || receipts.some(event => event.type === 'PLAYER_DASHED');
+    const dashing = !!state.playerFlight || !!state.weaponCombat?.thunder?.dash || p.dashUntil > state.elapsed || state.weaponCombat?.bladeTrace?.phase === 'executing' || receipts.some(event => event.type === 'PLAYER_DASHED');
     this.accepted = { tick: state.tick, elapsed: state.elapsed, x: p.x, y: p.y, dashing };
     if (old) {
       const dt = state.elapsed - old.elapsed, dx = p.x - old.x, dy = p.y - old.y, gap = Math.hypot(dx, dy);
@@ -111,9 +118,15 @@ export class Player3DMotionController {
       }
     } else this.velocity = { x: 0, y: 0 };
 
+    const melee = receipts.find(event => event.type === 'WEAPON_MELEE_SWING')
+      ?? receipts.find(event => event.type === 'WEAPON_MELEE_SWEEP' && event.data.skillId !== 'redblade-dash');
+    const bladeDash = receipts.find(event => event.type === 'WEAPON_SKILL_CAST' && event.data.skillId === 'redblade-dash');
+    const bladeGather = receipts.find(event => event.type === 'PLAYER_CANNON_EXPLODED' && event.data.skillId === 'redblade-gather');
     const projectile = receipts.find(event => event.type === 'PLAYER_PROJECTILE_LAUNCHED');
     const tool = receipts.find(event => event.type === 'TOOL_FIRED' && (event.data.tool === 1 || event.data.tool === 2));
-    const shot = projectile ?? tool;
+    const bladeCounter = receipts.find(event => event.type === 'BLADE_PARRY_COUNTER');
+    const bladeFinish = receipts.find(event => event.type === 'BLADE_TRACE_FINISHED' || event.type === 'BLADE_DOMAIN_PULSE' && event.data.final);
+    const shot = bladeCounter ?? bladeFinish ?? bladeDash ?? bladeGather ?? melee ?? projectile ?? tool;
     if (shot) this.observeShot(state, shot);
 
     if ((receipts.some(event => event.type === 'PLAYER_HURT' && Number(event.data.damage) > 0)
@@ -130,6 +143,29 @@ export class Player3DMotionController {
   }
 
   private observeShot(state: GameState, receipt: GameEvent): void {
+    const blade = receipt.data.weaponId === 'redblade' || state.weaponCombat?.loadout.weaponId === 'redblade';
+    if (blade) {
+      if (receipt.type === 'BLADE_TRACE_FINISHED') {
+        // A cleared wave may remove its combat trace in this same fixed step.
+        // The accepted finish receipt still owns the complete authored settle.
+        this.bladeFinish = { id: 'finish-settle:' + String(receipt.data.castId), clip: 'Blade_FinishSettle_v022', born: state.elapsed,
+          duration: BLADE_TECHNIQUES.trace.recovery, sourceDuration: BLADE_TECHNIQUES.trace.recovery };
+        this.shot = undefined; return;
+      }
+      this.bladeFinish = undefined;
+      if (receipt.type === 'BLADE_PARRY_COUNTER' || receipt.type === 'BLADE_DOMAIN_PULSE') {
+        const counter = receipt.type === 'BLADE_PARRY_COUNTER';
+        this.shot = { id: this.scope + ':technique:' + receipt.tick + ':' + String(receipt.data.castId),
+          clip: counter ? 'Blade_Counter_v020' : 'Blade_FinishSheath_v020', born: state.elapsed,
+          duration: counter ? .34 : .18, sourceDuration: counter ? .34 : .18 }; return;
+      }
+      const index = Number(receipt.data.combo ?? (receipt.tick % 2 + 1)) - 1;
+      const duration = REDBLADE_PRIMARY.ticks[Math.max(0, Math.min(2, index))] / 60;
+      this.shot = { id: this.scope + ':blade:' + receipt.tick + ':' + String(receipt.data.castId ?? receipt.type),
+        clip: receipt.data.skillId === 'redblade-dash' ? 'Blade_Dash' : receipt.data.skillId === 'redblade-gather' || index === 2 ? 'Blade_Finish' : index === 1 ? 'Blade_Slash_Left' : 'Blade_Slash_Right',
+        born: state.elapsed, duration, sourceDuration: duration };
+      return;
+    }
     const bow = receipt.data.weaponId === 'piercing' || state.weaponCombat?.loadout.weaponId === 'piercing'
       || state.expedition?.loadout.weaponId === 'piercing';
     // A projectile receipt and TOOL_FIRED may describe one shot. Prefer the projectile once per tick.
@@ -153,9 +189,10 @@ export class Player3DMotionController {
     const delta = paused || this.lastVisualTime === undefined ? 0 : Math.max(0, time - this.lastVisualTime);
     this.lastVisualTime = time;
     const aimFacing = finite(facingOverride ?? heldWeaponFacing(state));
-    const dashing = state.phase !== 'menu' && (!!state.playerFlight || state.player.dashUntil > time);
+    const tracing = state.weaponCombat?.bladeTrace?.phase === 'executing';
+    const dashing = state.phase !== 'menu' && (!!state.playerFlight || !!state.weaponCombat?.thunder?.dash || state.player.dashUntil > time || tracing);
     const speed = Math.hypot(this.velocity.x, this.velocity.y), moving = speed > 1e-6 && !dashing;
-    const bodyFacing = dashing && this.dashFacing !== undefined ? this.dashFacing : aimFacing;
+    const bodyFacing = tracing ? state.player.facing : dashing && this.dashFacing !== undefined ? this.dashFacing : aimFacing;
     const weights = player3DDirectionalWeights(moving ? this.velocity : { x: 0, y: 0 }, bodyFacing);
     if (dashing) { for (const key of Object.keys(weights) as Player3DLocomotionClip[]) weights[key] = key === 'Sprint' ? 1 : 0; }
     let distance = this.travelled;
@@ -166,8 +203,16 @@ export class Player3DMotionController {
     }
     const weapon = state.weaponCombat?.loadout.weaponId ?? state.expedition?.loadout.weaponId;
     const armed = state.phase !== 'menu' && (!!weapon || !state.camp);
-    let upperClip: Player3DUpperClip | undefined = armed ? weapon === 'piercing' ? 'Bow_Ready' : 'Pistol_Idle' : undefined;
+    let upperClip: Player3DUpperClip | undefined = armed ? weapon === 'piercing' ? 'Bow_Ready' : weapon === 'redblade' ? 'Blade_Ready' : 'Pistol_Idle' : undefined;
     let upperEvent = this.eventAt(this.shot, time);
+    const thunderChannel = state.weaponCombat?.thunder?.channel;
+    if (weapon === 'thunder' && thunderChannel) upperEvent = {
+      id: 'electrocution:' + thunderChannel.castId, clip: 'Pistol_Shoot', age: 0,
+      duration: .75, timeScale: 0, timeOffset: .16, kind: 'hold',
+    };
+    const guard = state.weaponCombat?.bladeParry;
+    if (guard && !guard.resolved) upperEvent = { id: 'guard:' + guard.castId, clip: 'Blade_Guard_v020',
+      age: Math.max(0, time - guard.startedAt), duration: .45, timeScale: 1, kind: 'hold' };
     const preparation = this.preparation, livePreparation = state.weaponCombat?.preparation;
     if (weapon === 'piercing' && preparation && livePreparation?.castId === preparation.id && time + 1e-8 >= preparation.born) {
       const duration = Math.max(BALANCE.step, preparation.firesAt - preparation.born), age = Math.max(0, time - preparation.born);
@@ -176,7 +221,14 @@ export class Player3DMotionController {
     }
     if (dashing || state.phase === 'menu') { upperClip = undefined; upperEvent = undefined; }
     else if (upperEvent) upperClip = upperEvent.clip as Player3DUpperClip;
-    const fullBodyEvent = dashing ? undefined : this.eventAt(this.hit, time);
+    const trace = state.weaponCombat?.bladeTrace;
+    const fullBodyEvent: Player3DAnimationEvent | undefined = trace?.phase === 'windup'
+      ? { id: 'charge-draw:' + trace.castId, clip: 'Blade_ChargeDraw_v022', age: Math.max(0, time - (trace.windupStartedAt ?? time)), duration: BLADE_TECHNIQUES.trace.windup, timeScale: 1, kind: 'once' }
+      : trace?.phase === 'recovery'
+      ? { id: 'finish-settle:' + trace.castId, clip: 'Blade_FinishSettle_v022', age: Math.max(0, time - (trace.until - BLADE_TECHNIQUES.trace.recovery)), duration: BLADE_TECHNIQUES.trace.recovery, timeScale: 1, kind: 'once' }
+      : tracing && trace
+      ? { id: 'fourfold:' + trace.castId, clip: 'Blade_FourfoldDash_v020', age: Math.max(0, time - (trace.executionStartedAt ?? trace.startedAt)) % .32, duration: .32, timeScale: 1, kind: 'loop' }
+      : dashing ? undefined : this.eventAt(this.bladeFinish, time) ?? this.eventAt(this.hit, time);
     return { runKey: this.scope, time, delta, paused, armed, aimFacing, bodyFacing, bodyYaw: Math.PI / 2 - bodyFacing,
       moving, dashing, speed, distance, stridePhase: distance / HERO_STRIDE_DISTANCE % 1, locomotionWeights: weights,
       locomotionTimeScale: dashing ? 1.4 : moving ? Math.max(.35, Math.min(1.6, speed / BALANCE.speed)) : 0,

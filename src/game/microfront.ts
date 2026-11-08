@@ -1,10 +1,12 @@
-import type { WeaponId, WeaponRarity } from './expedition';
+import { WEAPON_IDS, type WeaponId, type WeaponRarity } from './expedition';
 import type { ProtocolId, ProtocolRank } from './growthTypes';
+import type { LegionId } from './legionCatalog';
+import type { EquipmentWishId } from './equipmentWish';
 
 export type MissionId = 'membrane' | 'corridor' | 'boundary';
 export type TemplateId = WeaponId | ProtocolId;
 export const MODULE_IDS: readonly ProtocolId[] = ['PULSE_BREAK', 'PURIFY_CHAIN', 'IMMUNE_BEACON', 'EXPOSE_TRACE'];
-export const TEMPLATE_IDS: readonly TemplateId[] = ['steady', 'piercing', ...MODULE_IDS];
+export const TEMPLATE_IDS: readonly TemplateId[] = [...WEAPON_IDS, ...MODULE_IDS];
 export interface MissionDefinition {
   id: MissionId; name: string; region: string; description: string; threat: string;
   objectives: readonly string[]; reward: string; completionMaterials: number;
@@ -43,13 +45,16 @@ export const DECOMPOSE_FRAGMENTS: Record<WeaponRarity, number> = { white: 1, blu
 export const DECOMPOSE_MATERIALS: Record<WeaponRarity, number> = { white: 2, blue: 5, purple: 10, gold: 20 };
 export const moduleRank = (rarity: WeaponRarity): ProtocolRank => rarity === 'gold' ? 3 : rarity === 'purple' ? 2 : 1;
 export interface AntibodyDrawResult {
-  rarity: WeaponRarity; kind: 'materials' | 'fragments' | 'weapon' | 'module' | 'core';
+  rarity: WeaponRarity; kind: 'materials' | 'fragments' | 'weapon' | 'module' | 'core' | 'legion';
   quantity: number; templateId?: TemplateId; itemId?: string;
+  legionId?: LegionId; duplicateMaterials?: number;
 }
 export interface DrawReceipt {
   id: string; count: 1 | 10; cost: number; results: AntibodyDrawResult[]; pityBefore: number; pityAfter: number;
   /** Absent on historical receipts, which used the original ten-pull guarantee. */
   pityLimit?: typeof DRAW_PITY_LIMIT;
+  pool?: 'equipment' | 'legion';
+  wish?: { target: EquipmentWishId; pityBefore: number; pityAfter: number; pityLimit: 100 };
 }
-export interface MissionReceipt { id: string; runId: string; missionId: MissionId; outcome: MissionOutcome; haul: MissionHaul; firstClear: boolean }
+export interface MissionReceipt { id: string; runId: string; missionId: MissionId; outcome: MissionOutcome; haul: MissionHaul; firstClear: boolean; campCycle?: { effective: boolean; foodConsumed: number; cropsAdvanced: number } }
 export type CampTransaction = { kind: 'draw'; id: string; receipt: DrawReceipt } | { kind: 'mission'; id: string; receipt: MissionReceipt };

@@ -1,0 +1,72 @@
+.sanctum-portrait-viewport{display:block;position:relative;aspect-ratio:4/3;width:100%}
+.sanctum-portrait-viewport>.summon-fitted-art{position:absolute;width:75%;height:100%;left:12.5%;top:0;overflow:visible}
+.camp-crop-art[data-camp-art]{width:100px;height:100px;margin:0 auto}
+.seraph-doctrine{width:100%;padding:14px;border:1px solid #c8b57d;border-radius:14px;background:linear-gradient(135deg,#fff8e7,#e8efe0);box-sizing:border-box}
+.seraph-formation-label{margin:0 0 10px!important;font-size:12px!important;color:#746337!important;letter-spacing:1px}
+.seraph-role-grid{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0;padding:0}
+.seraph-role-grid>li{display:flex;align-items:center;min-width:0;gap:7px;padding:8px;border:1px solid #c0cbaa;border-radius:10px;background:#fffcf17d}
+.seraph-role-portrait{display:block;flex:none;width:70px;height:76px}
+.seraph-role-grid strong{display:block!important;color:#496657!important;font-size:13px!important;line-height:1.5}
+.seraph-role-grid strong>b{margin-left:5px;font-size:11px;color:#9b793e}
+.seraph-role-grid li span:not(.seraph-role-portrait){color:#94723c!important;font-size:11px!important}
+.seraph-role-grid li p{font-size:11px!important;line-height:1.6;margin:5px 0 0!important;color:#65775d!important}
+.seraph-command-guide{display:grid;gap:7px;margin-top:12px;padding-top:10px;border-top:1px solid #c4cbaa}
+.seraph-command-guide p{margin:0!important;color:#61745b!important;font-size:12px!important;line-height:1.6}
+.seraph-command-guide b{display:inline-block;min-width:104px;color:#756133;margin-right:7px;font-weight:600}
+.camp-legion-collection-card.has-seraph-doctrine{flex-wrap:wrap;opacity:1}
+.camp-legion-collection-card.has-seraph-doctrine.is-locked>.legion-portrait{opacity:.65}
+.camp-legion-collection-copy{flex:1;min-width:0}
+.seraph-formation-summary{display:flex;flex-wrap:wrap;justify-content:center;gap:5px 10px;margin:5px 0!important;font-size:11px!important;line-height:1.6}
+.seraph-formation-summary span{white-space:nowrap;color:#66744f!important}
+.seraph-formation-summary b{margin-left:3px;font-size:11px;color:#92713a}
+.seraph-prize-summary{display:block;margin-top:5px;color:#8d783e;font-size:10px;line-height:1.5}
+.summon-seraph-detail{margin-top:5px}
+.summon-seraph-detail .seraph-formation-summary span{color:#d4d8b6!important}
+.summon-seraph-detail .seraph-formation-summary b{color:#e1c17d}
+.summon-seraph-detail p:not(.seraph-formation-summary){margin:2px 0;font-size:12px;color:#dfcf9d}
+.summon-seraph-detail>span{font-size:11px;color:#a9bda5}
+.summon-batch-card .seraph-prize-summary{color:#c6bb89;font-size:9px}
+.summon-legion-pool>.seraph-doctrine{margin-top:12px}
+@media(max-width:1024px),(max-height:600px){
+  .camp-crop-art[data-camp-art]{width:70px;height:70px}
+  .summon-legion-pool{display:flex;flex-direction:column}
+  .summon-legion-pool>.summon-pool-tabs{order:0;margin-bottom:5px}
+  .summon-legion-pool>.summon-controls{order:1;margin-top:4px;padding-bottom:6px}
+  .summon-legion-pool>.summon-pity{order:2;margin-top:5px}
+  .summon-legion-pool>.summon-legion-banner{order:3;min-height:115px}
+  .summon-legion-pool>.summon-legion-banner h3{font-size:21px;margin:4px 0 7px}
+  .summon-legion-pool>.summon-legion-banner p{font-size:11px}
+  .summon-legion-pool>.summon-legion-banner>.legion-portrait{width:140px;flex-shrink:0}
+  .summon-legion-pool>.seraph-doctrine{order:4;padding:10px}
+  .summon-legion-pool>.summon-rules{order:5}
+  .seraph-role-grid{gap:6px}
+  .seraph-role-grid>li{flex-direction:column;align-items:flex-start;padding:7px}
+  .seraph-role-portrait{align-self:center;width:62px;height:66px}
+  .seraph-role-grid strong{font-size:12px!important}
+  .seraph-command-guide p{font-size:11px!important}
+  .seraph-command-guide b{min-width:92px}
+  .summon-seraph-detail{margin-top:2px}
+  .summon-seraph-detail .seraph-formation-summary{font-size:10px!important;gap:3px 8px}
+  .summon-seraph-detail p:not(.seraph-formation-summary),.summon-seraph-detail>span{font-size:10px}
+}
+
+/* The four-point practice becomes one stable, focused surface until sheathing. */
+.camp-trial-canvas{aspect-ratio:28/11}
+#app .camp-trial-panel.camp-trial-trace-expanded{position:fixed;inset:max(6px,env(safe-area-inset-top)) max(6px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left));width:auto;height:auto;max-width:none;max-height:none;padding:10px;border-radius:16px;z-index:20;transition:none}
+#app .camp-trial-trace-expanded .camp-header{min-height:44px;margin:0 0 6px;gap:8px}
+#app .camp-trial-trace-expanded .camp-header h2{font-size:16px;margin:0}
+#app .camp-trial-trace-expanded .camp-header>div:first-child{max-width:none}
+#app .camp-trial-trace-expanded .camp-header>div:first-child>p,#app .camp-trial-trace-expanded .camp-trial-options,#app .camp-trial-trace-expanded .camp-trial-utility,#app .camp-trial-trace-expanded .camp-section-copy,#app .camp-trial-trace-expanded .camp-trial-actions{display:none!important}
+#app .camp-trial-trace-expanded .camp-content{display:flex;flex:1;min-height:0;overflow:hidden}
+#app .camp-trial-trace-expanded .camp-trial-stage{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);width:100%;height:100%;flex:1;gap:0;min-height:0}
+#app .camp-trial-trace-expanded .camp-trial-canvas{box-sizing:border-box;width:100%;height:100%;max-width:none;max-height:none;min-height:0;margin:0;aspect-ratio:auto;align-self:stretch;border-radius:10px;touch-action:none;transition:none}
+#app .camp-trial-trace-expanded .camp-footer{min-height:44px;margin-top:6px;padding-top:6px}
+#app .camp-trial-trace-expanded .camp-footer-actions{display:flex;justify-content:flex-end;width:100%;gap:8px}
+#app .camp-trial-trace-expanded .camp-footer-actions>button{width:auto;min-width:88px;min-height:44px;font-size:12px;flex:none}
+@media(max-height:450px){#app .camp-trial-panel.camp-trial-trace-expanded{padding:6px;border-radius:12px}#app .camp-trial-trace-expanded .camp-header{margin-bottom:4px}#app .camp-trial-trace-expanded .camp-footer{margin-top:4px;padding-top:4px}}
+@media(max-height:600px){
+  .summon-cinematic[data-layout=single][data-phase=item]:has(.summon-seraph-detail) .summon-theatre{display:grid;grid-template-columns:minmax(140px,.65fr) minmax(0,1fr);gap:20px;padding:0 34px}
+  .summon-cinematic[data-layout=single][data-phase=item]:has(.summon-seraph-detail) .summon-focus{width:min(200px,28vw);height:min(200px,28vw);justify-self:center}
+  .summon-cinematic[data-layout=single][data-phase=item]:has(.summon-seraph-detail) .summon-identity{width:100%;min-height:0}
+  #app .summon-cinematic:has(.summon-seraph-detail) .summon-unveiled h2{font-size:21px;letter-spacing:1px;line-height:1.35}
+}

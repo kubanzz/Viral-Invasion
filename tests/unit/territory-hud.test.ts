@@ -9,12 +9,23 @@ import { TerritoryProfileStore } from '../../src/meta/endlessProfile';
 import { endlessTutorialHint } from '../../src/ui/endlessTutorial';
 import { cancelTerritoryAssaults } from '../../src/game/endless';
 import { createTerritoryState } from '../../src/game/territory';
+import type { MissionId } from '../../src/game/microfront';
+import { MotherCoreController, HEART_BOSS_BALANCE } from '../../src/game/motherCore';
+import { mobileHudView } from '../../src/ui/mobileHud';
+import { missionBattleDetailsMarkup } from '../../src/ui/microfrontHud';
 
 function fixture() {
   const game = new GameSession(71, { mode: 'endless', territory: true }); game.start();
   const state = game.state; state.targets = []; state.elapsed = 5; state.tick = 300;
   state.endless!.tutorial!.fired = true;
   return state;
+}
+function missionFixture(missionId: MissionId) {
+  const game = new GameSession(71, { mode: 'endless', territory: true }); game.start();
+  game.configureExpedition({ runId: 'mission-hud', seed: 71, loadout: { weaponId: 'steady', rarity: 'purple', upgrade: 0 },
+    blueprints: [], extraAntibodies: 0, firstClear: true, missionId, modules: [] });
+  game.state.targets = []; game.state.elapsed = 5; game.state.tick = 300;
+  return game.state;
 }
 const node = (state: GameState, id: TerritoryNodeId) => state.territory!.nodes.find(candidate => candidate.id === id)!;
 function invade(state: GameState, id: TerritoryNodeId) {
@@ -32,6 +43,129 @@ function incoming(state: GameState) {
 }
 
 describe('two-front territory presentation contracts', () => {
+  it.each([['membrane', 3], ['corridor', 4], ['boundary', 5]] as const)('shows the finite wave count for %s without changing combat', (missionId, waves) => {
+    const state = missionFixture(missionId); state.endless!.wave = 2; state.endless!.remainingToSpawn = 7;
+    state.endless!.pendingChildren = 2;
+    const before = structuredClone(state), view = territoryHudView(state)!;
+    expect(view.wave).toBe(`第2/${waves}波 · 本波剩余9`);
+    expect(mobileHudView(state).wave).toBe(view.wave);
+    expect(state).toEqual(before);
+  });
+  it('explains the waves before the mother when both mission sources are cleared early', () => {
+    const state = missionFixture('boundary'); state.endless!.wave = 2; state.endless!.clearedWaves = 1;
+    for (const source of Object.values(state.territory!.sources)) source.destroyed = true;
+    for (const region of state.territory!.nodes) { region.owner = 'healthy'; region.infectionProgress = 0; }
+    const view = territoryHudView(state)!;
+    expect(view.objective).toBe('感染源已清 · 完成全部5波后迎战母巢');
+    expect(view.objective).not.toContain('等待第3波');
+    node(state, 'front-north').owner = 'infected';
+    expect(territoryHudView(state)!.objective).toContain('净化');
+    state.endless!.clearedWaves = 5; node(state, 'front-north').owner = 'healthy';
+    expect(territoryHudView(state)!.objective).toBe('感染源已清 · 清理余敌，准备迎战母巢');
+  });
+  it.each([['membrane', '清完3波敌群即可通关'], ['corridor', '清完4波敌群并击败精英']] as const)('keeps %s completion free of a nonexistent boss objective', (missionId, goal) => {
+    const state = missionFixture(missionId);
+    for (const source of Object.values(state.territory!.sources)) source.destroyed = true;
+    for (const region of state.territory!.nodes) { region.owner = 'healthy'; region.infectionProgress = 0; }
+    const view = territoryHudView(state)!;
+    expect(view.objective).toBe(`感染源已清 · ${goal}`);
+    expect(view.objective).not.toMatch(/母巢|第3波感染源苏醒/);
+  });
+  it('uses first-wave activation for mission sources while retaining the original territory rules', () => {
+    const state = missionFixture('boundary');
+    for (const region of state.territory!.nodes) { region.owner = 'healthy'; region.infectionProgress = 0; }
+    expect(territoryHudView(state)!.objective).toBe('守住双线，清剿第1/5波敌群');
+    expect(territoryHudView(state)!.lines[0].status).toBe('节点已净化 · 第1波感染源苏醒');
+    expect(territoryHudView(state)!.lines[0].sourceAccess.status).toBe('节点已净化 · 第1波感染源苏醒');
+    delete state.expedition;
+    expect(territoryHudView(state)!.objective).toBe('守住双线，等待第3波感染源苏醒');
+    expect(territoryHudView(state)!.lines[0].status).toBe('节点已净化 · 第3波感染源苏醒');
+    expect(territoryHudView(state)!.lines[0].sourceAccess.status).toBe('节点已净化 · 第3波感染源苏醒');
+    expect(territoryHudView(state)!.wave).toMatch(/^第1波 · 余敌/);
+  });
+  it('counts the one actual membrane source without treating the unused east lane as a completed objective', () => {
+    const state = missionFixture('membrane');
+    Object.assign(node(state, 'front-north'), { owner: 'healthy', infectionProgress: 0 });
+    state.territory!.sources['source-west'].spawned = true;
+    const before = structuredClone(state), view = territoryHudView(state)!;
+    expect(view.sourceProgress).toEqual({ cleared: 0, total: 1 });
+    expect(view.objective).toBe('击破西侧感染灶 · 0/1已清');
+    expect(view.lines[1].sourceAccess).toMatchObject({ required: false, active: false, status: '本次无感染源', steps: [] });
+    expect(view.lines[1].status).toBe('本次无感染源');
+    expect(state).toEqual(before);
+  });
+  it.each(['membrane', 'corridor', 'boundary'] as const)('marks %s as objective cleanup after the final cohort, without claiming victory', missionId => {
+    const state = missionFixture(missionId), waves = missionId === 'membrane' ? 3 : missionId === 'corridor' ? 4 : 5;
+    state.endless!.wave = waves; state.endless!.clearedWaves = waves;
+    state.endless!.remainingToSpawn = 0; state.endless!.pendingChildren = 0;
+    const view = territoryHudView(state)!;
+    expect(view.wave).toMatch(/^目标收尾 · 感染源0\//);
+    expect(view.wave).toContain('待净化');
+    expect(view.wave).not.toMatch(/已完成|成功|第(?:4\/3|5\/4|6\/5)波/);
+    expect(view.progressPath[0]).toMatchObject({ current: true, done: false });
+    expect(mobileHudView(state).wave).toBe(view.wave);
+    expect(view.progressPath.map(step => step.label)).toEqual(missionId === 'boundary' ? ['清剿清源', '母巢决战', '最后净化'] : ['清剿清源', '目标收尾']);
+    expect(missionBattleDetailsMarkup(state)).toContain('aria-label="通关阶段"');
+  });
+  it('replaces the cohort readout with preparation, real boss stage, guard count and final cleanup', () => {
+    const state = missionFixture('boundary'), territory = state.territory!;
+    state.endless!.wave = 5; state.endless!.clearedWaves = 5; state.endless!.remainingToSpawn = 0; state.endless!.pendingChildren = 0;
+    for (const source of Object.values(territory.sources)) source.destroyed = true;
+    for (const region of territory.nodes) { region.owner = 'healthy'; region.infectionProgress = 0; }
+    territory.stage = 'bossPending';
+    expect(territoryHudView(state)!.wave).toBe('准备母巢 · 待净化0');
+    expect(territoryHudView(state)!.progressPath[1].current).toBe(true);
+    territory.stage = 'boss'; territory.bossId = 'mother';
+    territory.bossCombat = new MotherCoreController({ coreId: 'mother', organId: 'heart', traits: ['CARAPACE'], tick: state.tick, elapsed: state.elapsed, heartExpedition: true }).state;
+    territory.bossCombat.heartBoss!.stage = 2;
+    state.targets = [{ id: 'mother', kind: 'single', role: 'core', x: 1500, y: 900, radius: 52, hp: 10000, maxHp: HEART_BOSS_BALANCE.hp, hitUntil: 0, scanned: false, blocksWaveClear: false },
+      { id: 'guard', sourceId: 'mother:guard', kind: 'single', role: 'virus', x: 2000, y: 1000, radius: 17, hp: 68, maxHp: 68, hitUntil: 0, scanned: false }];
+    expect(territoryHudView(state)!.wave).toBe('母巢决战 · 第Ⅱ/Ⅲ阶段 · 护卫1');
+    state.targets[1].hp = 0;
+    expect(territoryHudView(state)!.wave).toBe('母巢决战 · 第Ⅱ/Ⅲ阶段');
+    territory.stage = 'cleanup'; state.targets[0].hp = 0; state.targets[1].hp = 68;
+    node(state, 'front-south').owner = 'infected';
+    expect(territoryHudView(state)!.wave).toBe('收尾净化 · 残敌1 · 待净化1');
+    expect(territoryHudView(state)!.progressPath[2].current).toBe(true);
+    expect(mobileHudView(state).wave).toBe(territoryHudView(state)!.wave);
+    territory.stage = 'victory';
+    expect(territoryHudView(state)!.wave).toBe('清剿已完成');
+    expect(territoryHudView(state)!.progressPath.every(step => step.done && !step.current)).toBe(true);
+  });
+  it('identifies a finite carrier warning and its live invader without relabeling source squads', () => {
+    const state = missionFixture('boundary');
+    for (const region of state.territory!.nodes) { region.owner = 'healthy'; region.infectionProgress = 0; }
+    for (const source of Object.values(state.territory!.sources)) source.destroyed = true;
+    const squad = incoming(state); squad.kind = 'carrier';
+    expect(territoryHudView(state)!.objective).toBe('北线携疫队来袭，准备拦截');
+    expect(territoryHudView(state)!.lines[0].status).toMatch(/^携疫来袭 /);
+    expect(territoryInvasionWarning(state)).toMatch(/^北线携疫队 .*秒后抵达$/);
+    squad.kind = undefined;
+    expect(territoryHudView(state)!.lines[0].status).toMatch(/^进攻准备 /);
+    expect(territoryInvasionWarning(state)).toBe('');
+    squad.status = 'active'; invade(state, 'front-north');
+    state.targets[0].territoryTask!.squadKind = 'carrier';
+    expect(territoryHudView(state)!.objective).toContain('清除携疫者');
+    expect(territoryInvasionWarning(state)).toMatch(/^北线携疫者侵染 /);
+    state.targets[0].x -= 200;
+    expect(territoryHudView(state)!.objective).toBe('拦截北线携疫者，保护节点');
+    expect(territoryInvasionWarning(state)).toBe('北线携疫者入场 · 拦截以保护节点');
+    state.targets[0].hp = 0;
+    expect(territoryHudView(state)!.objective).not.toContain('携疫');
+    expect(territoryInvasionWarning(state)).toBe('');
+  });
+  it('shows a nearby temporary purification shield without a false loss countdown', () => {
+    const state = missionFixture('boundary'), front = node(state, 'front-north');
+    Object.assign(front, { owner: 'healthy', infectionProgress: 0, protectedUntil: state.elapsed + 15 });
+    Object.assign(state.player, { x: front.x, y: front.y });
+    expect(territoryContextHint(state)).toBe(`${front.name}净化保护 15秒`);
+    expect(territoryHudView(state)!.lines[0].status).toBe('前线保护 15s');
+    invade(state, 'front-north'); state.targets[0].territoryTask!.squadKind = 'carrier';
+    expect(territoryInvasionWarning(state)).not.toContain('失守');
+    expect(territoryHudView(state)!.lines[0].status).not.toContain('侵染');
+    state.elapsed += 5;
+    expect(territoryContextHint(state)).toBe(`${front.name}净化保护 10秒`);
+  });
   it('guides players back to lost nodes after both sources are destroyed instead of asking them to wait', () => {
     const state = fixture(); state.territory!.stage = 'bossPending';
     for (const source of Object.values(state.territory!.sources)) source.destroyed = true;

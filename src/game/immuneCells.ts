@@ -5,6 +5,8 @@ import { WORLD, type Target, type Vec, type WorldGeometry } from './types';
 import { activeImmuneFocusTarget, activeImmuneGuard } from './immuneFocus';
 import { eventModifierFromState } from './hostEvents';
 import { territoryInvaderGoal, territoryNodeContaminators, TERRITORY_LANES } from './territory';
+import { legionCellStats } from './legionCombat';
+import { advanceSeraphCell, cloneSeraphAction, type SeraphAction, type SeraphRole } from './seraphCombat';
 
 export const IMMUNE_CELL_BALANCE = { maximum: 20, maximumLegions: 2, health: 60, radius: 15, speed: 190, biteReach: 9, attackPose: .24, navigationInterval: .35 } as const;
 export const ANTIBODY_BALANCE = { charges: 2, duration: 8, speedMultiplier: 1.4, damageMultiplier: 1.5, healthRetained: 2 / 3 } as const;
@@ -26,6 +28,15 @@ export interface ImmuneCellState extends Vec {
   antibodyUntil?: number;
   /** Derived clock provenance, removed as soon as the event frequency returns to 1. */
   hostEventAttackFrequency?: number;
+  legionId?: import('./legionCatalog').LegionId;
+  legionRole?: 'leader' | 'wing' | 'guard';
+  seraphRole?: SeraphRole;
+  /** Permanent formation seat survives casualties, rank changes and R echoes. */
+  seraphSeat?: number;
+  seraphSequence?: number;
+  seraphAction?: SeraphAction;
+  echo?: boolean;
+  fed?: boolean;
 }
 
 export function livingImmuneCells(cells: readonly ImmuneCellState[], elapsed: number, organId?: OrganId): ImmuneCellState[] {
@@ -130,12 +141,14 @@ export function summonImmuneCells(beacon: CellBeacon, context: GrowthContext, co
   const total = Math.max(1, Math.min(IMMUNE_CELL_BALANCE.maximum, Math.floor(count)));
   const focus = context.endless && beacon.mode === 'protocol' ? activeImmuneFocusTarget(beacon, context) : undefined;
   return Array.from({ length: total }, (_, index) => {
+    const stats = legionCellStats(beacon, index, total);
     const angle = -Math.PI / 2 + index / total * Math.PI * 2;
-    const position = moveWithCollision(beacon.deploymentOrigin ?? beacon, { x: Math.cos(angle) * 30, y: Math.sin(angle) * 30 }, IMMUNE_CELL_BALANCE.radius, context.geometry);
+    const radius = beacon.legionId==='seraph' && index===0 ? 18 : IMMUNE_CELL_BALANCE.radius;
+    const position = moveWithCollision(beacon.deploymentOrigin ?? beacon, { x: Math.cos(angle) * 30, y: Math.sin(angle) * 30 }, radius, context.geometry);
     return { ...position, id: `${beacon.id}:cell:${index}`, beaconId: beacon.id, organId: beacon.organId, born: context.elapsed,
-      until: beacon.until, hp: IMMUNE_CELL_BALANCE.health + ((beacon.rank ?? 1) - 1) * 12,
-      maxHp: IMMUNE_CELL_BALANCE.health + ((beacon.rank ?? 1) - 1) * 12,
-      radius: IMMUNE_CELL_BALANCE.radius, facing: angle, damage: beacon.damage / total, interval: beacon.interval,
+      until: beacon.until, hp: stats.health, maxHp: stats.health,
+      legionId: beacon.legionId, legionRole: stats.role, seraphRole: stats.seraphRole, seraphSeat: beacon.legionId==='seraph'?index:undefined, fed: beacon.fed,
+      radius, facing: angle, damage: stats.damage, interval: beacon.interval,
       updatedAt: context.elapsed, attackReadyAt: context.elapsed + (focus
         ? ENDLESS_IMMUNE_CELL_BALANCE.focusedFirstBiteDelay + index * ENDLESS_IMMUNE_CELL_BALANCE.focusedFirstBiteStagger
         : .25 + index * .08), attackUntil: 0, targetId: null,
@@ -162,7 +175,7 @@ function chooseTarget(cell: ImmuneCellState, beacon: CellBeacon, context: Growth
   // Reserve planned damage so later cells never celebrate biting an already-cleared body.
   const guarding = activeImmuneGuard(beacon, context);
   const guardedContaminators = guarding && beacon.guard?.kind === 'territory' && context.territory
-    ? new Set(territoryNodeContaminators({ territory: context.territory, targets: context.targets, world: context.geometry }, beacon.guard.regionId).map(target => target.id))
+    ? new Set(territoryNodeContaminators({ territory: context.territory, targets: context.targets, world: context.geometry, elapsed: context.elapsed }, beacon.guard.regionId).map(target => target.id))
     : new Set<string>();
   const candidates = context.targets.filter(target => target.role !== 'core' && (remainingHp.get(target.id) ?? target.hp) > 0
     && distance(beacon, target) <= (guarding ? beacon.guard!.radius : beacon.radius) + target.radius);
@@ -276,10 +289,10 @@ function moveCell(cell: ImmuneCellState, waypoint: Vec, squad: readonly ImmuneCe
 
 /** One fixed-update movement and at most one bite per unit; no timer catch-up bursts. */
 export function advanceImmuneCells(cells: readonly ImmuneCellState[], beacon: CellBeacon | null, context: GrowthContext, traceIds: readonly string[] = []): { cells: ImmuneCellState[]; commands: GrowthCommand[] } {
-  if (!context.active) return { cells: cells.map(cell => ({ ...cell, waypoint: cell.waypoint && point(cell.waypoint) })), commands: [] };
+  if (!context.active) return { cells: cells.map(cell => ({ ...cell, waypoint: cell.waypoint && point(cell.waypoint), seraphAction: cloneSeraphAction(cell.seraphAction) })), commands: [] };
   if (!beacon || beacon.until <= context.elapsed || beacon.organId !== context.organId) return { cells: [], commands: [] };
   const active = cells.filter(cell => cell.beaconId === beacon.id && cell.organId === context.organId && cell.until > context.elapsed && (cell.hp ?? 1) > 0)
-    .slice().sort(stableId).slice(0, IMMUNE_CELL_BALANCE.maximum).map(cell => ({ ...cell, waypoint: cell.waypoint && point(cell.waypoint) }));
+    .slice().sort(stableId).slice(0, IMMUNE_CELL_BALANCE.maximum).map(cell => ({ ...cell, waypoint: cell.waypoint && point(cell.waypoint), seraphAction: cloneSeraphAction(cell.seraphAction) }));
   const commands: GrowthCommand[] = [], assigned = new Map<string, number>();
   const reserved: { position: Vec; radius: number }[] = [];
   const remainingHp = new Map(context.targets.map(target => [target.id, target.hp]));
@@ -293,6 +306,7 @@ export function advanceImmuneCells(cells: readonly ImmuneCellState[], beacon: Ce
     cell.updatedAt = context.elapsed;
     reconcileEventAttackClock(cell, context);
     if(workSeats){
+      delete cell.seraphAction;
       cell.targetId=null;
       const destination=workSeats.get(cell.id)??point(beacon);
       const direction=normalized(destination.x-cell.x,destination.y-cell.y);
@@ -321,9 +335,15 @@ export function advanceImmuneCells(cells: readonly ImmuneCellState[], beacon: Ce
     const antibodyActive = (cell.antibodyUntil ?? 0) > context.elapsed;
     const speed = (challengeSquad && target ? canFocus && (cell.rallyUntil ?? 0) > context.elapsed
       ? ENDLESS_IMMUNE_CELL_BALANCE.rallySpeed : ENDLESS_IMMUNE_CELL_BALANCE.pursuitSpeed : IMMUNE_CELL_BALANCE.speed)
+      * (cell.legionId==='ranger'?230/190:cell.legionId==='seraph'?210/190:1)
       * (antibodyActive ? ANTIBODY_BALANCE.speedMultiplier : 1)
       * eventModifierFromState(context.hostEvents, context.organId, context.elapsed, 'immuneMove', cell);
     if (target) assigned.set(target.id, (assigned.get(target.id) ?? 0) + 1);
+    if(cell.legionId==='seraph') {
+      commands.push(...advanceSeraphCell({cell,beacon,context,target,squad:active,index,delta,speed,canFocus,remainingHp,damageMultiplier,
+        helpers:{nextWaypoint,moveCell,contact,segmentClear}}));
+      continue;
+    }
     cell.targetId = target?.id ?? null;
     const orbit = index / Math.max(1, active.length) * Math.PI * 2;
     const seat = canFocus ? focusSeat : target && active.length > 1 ? contactPosition(cell, target, index, active.length, beacon, context.geometry, reserved) : null;
@@ -357,11 +377,12 @@ export function advanceImmuneCells(cells: readonly ImmuneCellState[], beacon: Ce
     cell.attackUntil = context.elapsed + IMMUNE_CELL_BALANCE.attackPose;
     cell.activity = 'biting';
     const remaining = remainingHp.get(target.id) ?? target.hp;
-    const amount = Math.min(cell.damage * (antibodyActive ? ANTIBODY_BALANCE.damageMultiplier : 1), remaining / damageMultiplier);
+    const amount = Math.min(cell.damage * (antibodyActive ? ANTIBODY_BALANCE.damageMultiplier : 1) * (target.role==='core'?.5:1), remaining / damageMultiplier);
+    const pursuitDamage = 0;
     remainingHp.set(target.id, Math.max(0, remaining - amount * damageMultiplier));
     const rootId = `${cell.id}:bite:${context.tick}`, base = { protocolId: 'IMMUNE_BEACON' as const, rootId, organId: context.organId };
     commands.push({ ...base, kind: 'effect', effect: 'hit', from: point(cell), to: point(target), radius: target.radius + 4, duration: .2 },
-      { ...base, kind: 'damage', targetId: target.id, amount, cause: 'protocol', hop: 0, immuneCellId: cell.id, biteClock },
+      { ...base, kind: 'damage', targetId: target.id, amount, pursuitDamage, cause: 'protocol', hop: 0, immuneCellId: cell.id, biteClock },
       { kind: 'log', type: beacon.mode === 'patrol' ? 'IMMUNE_PATROL_HIT' : 'PROTOCOL_BEACON_HIT', data: {
         protocolId: beacon.mode === 'patrol' ? 'BASE_PATROL' : 'IMMUNE_BEACON', rootId, cellId: cell.id, targetId: target.id,
         damage: amount, prioritizedTrace: traced.has(target.id), x: cell.x, y: cell.y,

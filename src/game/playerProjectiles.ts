@@ -19,7 +19,7 @@ export const PLAYER_PROJECTILE_BALANCE = {
   cannon: { speed: 900, radius: 12, range: 420 },
   sword: { speed: 1000, radius: 24, range: 650 },
   crescent: { speed: 800, radius: 13, range: 400, returnDamageFactor: .65, returnRange: 1000, lifetime: 2.2 },
-  overdrive: { sideDamageFactor: .35, sideSpread: .28 },
+  overdrive: { sideDamageFactor: .45, sideSpread: .28 },
   aftershock: { delay: .35, radiusFactor: .75, damageFactor: .4 },
 } as const;
 
@@ -47,9 +47,15 @@ export interface PlayerProjectile extends Vec {
   impactDelay?: number;
   displacement?: { kind: 'push' | 'pull'; maximum: number };
   movedByTargetId?: Record<string, number>;
-  visual?: 'hive-needle' | 'swarm-needle' | 'crescent' | 'heavy-blade' | 'storm-crescent' | 'pulse-ring' | 'anchor';
+  visual?: 'hive-needle' | 'swarm-needle' | 'crescent' | 'heavy-blade' | 'storm-crescent' | 'pulse-ring' | 'anchor'
+    | 'thunder-needle' | 'thunder-beam' | 'thunder-spear' | 'thunder-cage' | 'ultimate-needle' | 'ultimate-wheel';
   flightPhase?: 'outbound' | 'returning';
-  returnFlight?: { damageFactor: number; range: number; hitsRemaining: number; hitTargetIds: string[]; expiresAt: number };
+  returnFlight?: { damageFactor: number; range: number; hitsRemaining: number; hitTargetIds: string[]; expiresAt: number;
+    sharedHitTargetIds?: string[] };
+  sharedHitTargetIds?: string[];
+  sharedHitLimit?: number;
+  returnPulse?: { damage: number; radius: number };
+  chain?: { used: boolean; remaining: number };
   homing?: { targetId?: string; turnRate: number; remainingTurn: number; range: number; acquireCos: number; startsAt: number; acquired?: boolean };
   penetration?: { perTarget: number; maximum: number; count: number; baseDamage: number };
 }
@@ -99,6 +105,8 @@ function rotated(direction: Vec, angle: number): Vec {
 export function launchPrimary(state: GameState, aim: Vec, stats: EndlessCombatStats, castId: string): boolean {
   if (state.weaponCombat && state.elapsed + 1e-8 < state.weaponCombat.primaryBlockedUntil) return false;
   const loadout = state.weaponCombat?.loadout ?? state.expedition?.loadout;
+  // Thunder uses a held field through launchWeaponPrimary, never legacy bullets.
+  if (loadout?.weaponId === 'thunder') return false;
   const crescent = !!state.weaponCombat && loadout?.weaponId === 'piercing';
   const overdrive = !!state.weaponCombat && loadout?.weaponId === 'steady' && state.elapsed + 1e-8 < state.weaponCombat.overdriveUntil;
   const count = stats.shotRays + (overdrive ? 2 : 0), queue = admit(state, count);
@@ -115,6 +123,7 @@ export function launchPrimary(state: GameState, aim: Vec, stats: EndlessCombatSt
           armorResponse: crescent ? 'heavy' as const : 'needle' as const, castId } : {}) });
     shot.hitsRemaining += stats.pierceCount + (equipment?.extraPierce ?? 0);
     if (state.weaponCombat) shot.visual = crescent ? 'crescent' : 'hive-needle';
+    if (overdrive && side) shot.homing = { turnRate: 6, remainingTurn: .8, range: 530, acquireCos: Math.cos(.8), startsAt: state.elapsed + .025 };
     if (crescent) {
       const profile = PLAYER_PROJECTILE_BALANCE.crescent;
       shot.speed = profile.speed; shot.radius = profile.radius; shot.remaining = profile.range;
@@ -136,6 +145,8 @@ export interface WeaponVolleyOptions {
   homing?: Omit<NonNullable<PlayerProjectile['homing']>, 'startsAt'> & { delay?: number };
   returnFlight?: { damageFactor: number; range: number; lifetime: number };
   penetration?: { perTarget: number; maximum: number };
+  sharedHitLimit?: number;
+  returnPulse?: PlayerProjectile['returnPulse'];
 }
 
 /** Weapon kits use the same swept bodies, unified damage host and admission cap. */
@@ -148,15 +159,20 @@ export function launchWeaponVolley(state: GameState, aim: Vec, options: WeaponVo
     shot.speed = options.speed ?? shot.speed; shot.radius = options.radius ?? shot.radius;
     shot.remaining = options.range ?? shot.remaining; shot.hitsRemaining = options.hitsRemaining ?? 1;
     if (options.kind === 'cannon') shot.remaining = Math.min(shot.remaining, distance(state.player, aim));
-    if (options.shareHits) shot.hitTargetIds = sharedHits;
+    if (options.shareHits && (options.sharedHitLimit ?? 1) <= 1) shot.hitTargetIds = sharedHits;
+    else if (options.shareHits) { shot.sharedHitTargetIds = sharedHits; shot.sharedHitLimit = options.sharedHitLimit; }
     shot.explosionRadius = options.explosionRadius; shot.aftershock = options.aftershock;
     shot.impactDelay = options.impactDelay; shot.displacement = options.displacement;
     shot.visual = options.visual;
-    if (options.homing) shot.homing = { ...options.homing, startsAt: state.elapsed + (options.homing.delay ?? 0) };
+    shot.returnPulse = options.returnPulse;
+    if (options.homing) shot.homing = { ...options.homing, ...(options.homing.targetId ? { acquired: true } : {}),
+      startsAt: state.elapsed + (options.homing.delay ?? 0) };
     if (options.returnFlight) {
       shot.flightPhase = 'outbound'; shot.returnFlight = { damageFactor: options.returnFlight.damageFactor,
         range: options.returnFlight.range, hitsRemaining: shot.hitsRemaining,
-        hitTargetIds: options.shareHits ? sharedReturnHits : [], expiresAt: state.elapsed + options.returnFlight.lifetime };
+        hitTargetIds: options.shareHits && (options.sharedHitLimit ?? 1) <= 1 ? sharedReturnHits : [],
+        sharedHitTargetIds: options.shareHits && (options.sharedHitLimit ?? 1) > 1 ? sharedReturnHits : undefined,
+        expiresAt: state.elapsed + options.returnFlight.lifetime };
     }
     if (options.penetration) shot.penetration = { ...options.penetration, count: 0, baseDamage: shot.damage };
     queue.push(shot);
@@ -256,6 +272,7 @@ function beginReturn(host: PlayerProjectileHost, shot: PlayerProjectile): void {
   if (!back) return;
   shot.flightPhase = 'returning'; shot.damage *= back.damageFactor;
   shot.remaining = back.range; shot.hitsRemaining = back.hitsRemaining; shot.hitTargetIds = back.hitTargetIds;
+  shot.sharedHitTargetIds = back.sharedHitTargetIds;
   shot.direction = normalized(host.state.player.x - shot.x, host.state.player.y - shot.y);
   host.emit('PLAYER_PROJECTILE_RETURNED', { kind: shot.kind, castId: shot.castId, x: shot.x, y: shot.y,
     weaponId: shot.origin.weaponId ?? 'piercing' });
@@ -333,6 +350,26 @@ export function resolveWeaponPulse(host: PlayerProjectileHost, castId: string): 
 function advanceStep(host: PlayerProjectileHost, dt: number): void {
   const state = host.state, queue = state.playerProjectiles;
   if (!queue || state.phase !== 'playing' || (!state.endless && !state.weaponCombat && !state.territory)) return;
+  // Rebind cast ledgers after JSON/snapshot restoration. Shared array identity is
+  // an optimization, never the authority for the per-cast two-blade ceiling.
+  const ledgers = new Map<string, string[]>();
+  for (const shot of queue) {
+    if (!shot.sharedHitLimit) continue;
+    for (const [phase, values] of [['outbound', shot.flightPhase === 'returning' ? undefined : shot.sharedHitTargetIds],
+      ['returning', shot.flightPhase === 'returning' ? shot.sharedHitTargetIds : shot.returnFlight?.sharedHitTargetIds]] as const) {
+      if (!values) continue;
+      const key = shot.castId + ':' + phase, canonical = ledgers.get(key);
+      if (!canonical) ledgers.set(key, values);
+      else if (canonical !== values) for (const id of new Set(values)) {
+        const missing = values.filter(value => value === id).length - canonical.filter(value => value === id).length;
+        for (let n = 0; n < missing; n++) canonical.push(id);
+      }
+    }
+  }
+  for (const shot of queue) if (shot.sharedHitLimit) {
+    shot.sharedHitTargetIds = ledgers.get(shot.castId + ':' + (shot.flightPhase ?? 'outbound'));
+    if (shot.returnFlight) shot.returnFlight.sharedHitTargetIds = ledgers.get(shot.castId + ':returning');
+  }
   const world = activeWorld(state);
   for (const shot of [...queue]) {
     if (!stillActive(host, state, queue)) return;
@@ -356,7 +393,8 @@ function advanceStep(host: PlayerProjectileHost, dt: number): void {
     if (caughtAt !== null) travel = caughtAt;
     const block = sweptWall(shot, shot.direction, travel, shot.radius, world);
     const hits = attackable(state).flatMap(target => {
-      if (target.hp <= 0 || !protectedBody(state, target) && (shot.hitsRemaining <= 0 || shot.hitTargetIds.includes(target.id))) return [];
+      if (target.hp <= 0 || !protectedBody(state, target) && (shot.hitsRemaining <= 0 || shot.hitTargetIds.includes(target.id)
+        || !!shot.sharedHitTargetIds && shot.sharedHitTargetIds.filter(id => id === target.id).length >= (shot.sharedHitLimit ?? 1))) return [];
       const distance = rayCircle(shot, shot.direction, target, target.radius + shot.radius, travel);
       return distance === null || block !== null && distance >= block - 1e-7 ? [] : [{ target, distance }];
     }).sort((a, b) => a.distance - b.distance || a.target.id.localeCompare(b.target.id));
@@ -366,7 +404,8 @@ function advanceStep(host: PlayerProjectileHost, dt: number): void {
       if (hit.target.hp <= 0 || !protectedBody(state, hit.target) && shot.hitTargetIds.includes(hit.target.id) || !present(state, hit.target)) continue;
       if (shot.kind === 'cannon') { travelled = hit.distance; consumed = true; break; }
       shot.hitTargetIds.push(hit.target.id);
-      if (shot.kind === 'sword') for (const sibling of queue) {
+      shot.sharedHitTargetIds?.push(hit.target.id);
+      if (shot.kind === 'sword' && !shot.sharedHitTargetIds) for (const sibling of queue) {
         if (sibling.castId !== shot.castId) continue;
         const ledger = shot.flightPhase === 'returning' ? sibling.returnFlight?.hitTargetIds
           : sibling.flightPhase === 'returning' ? undefined : sibling.hitTargetIds;
@@ -385,6 +424,8 @@ function advanceStep(host: PlayerProjectileHost, dt: number): void {
           const index = ledger.indexOf(hit.target.id); if (index >= 0) ledger.splice(index, 1);
         }
         const ownIndex = shot.hitTargetIds.indexOf(hit.target.id); if (ownIndex >= 0) shot.hitTargetIds.splice(ownIndex, 1);
+        const sharedIndex = shot.sharedHitTargetIds?.lastIndexOf(hit.target.id) ?? -1;
+        if (sharedIndex >= 0) shot.sharedHitTargetIds!.splice(sharedIndex, 1);
         travelled = hit.distance; consumed = true; membraneBlocked = true; break;
       }
       if (shot.penetration) {
@@ -398,7 +439,26 @@ function advanceStep(host: PlayerProjectileHost, dt: number): void {
     }
     shot.x += shot.direction.x * travelled; shot.y += shot.direction.y * travelled;
     shot.remaining = Math.max(0, shot.remaining - travelled);
-    if (caughtAt !== null && block === null && !consumed) { remove(queue, shot); continue; }
+    if (caughtAt !== null && block === null && !consumed) {
+      remove(queue, shot);
+      if (shot.returnPulse) {
+        const pulse = shot.returnPulse; delete shot.returnPulse;
+        const center = { x: state.player.x, y: state.player.y };
+        host.effect('slash', center, { x: center.x + pulse.radius, y: center.y }, pulse.radius, .3).arcHalfAngle = Math.PI;
+        for (const target of attackable(state)) {
+          if (!stillActive(host, state, queue)) break;
+          const gap = distance(center, target);
+          if (target.hp <= 0 || gap > pulse.radius + target.radius) continue;
+          const wall = wallHit(center, normalized(target.x - center.x, target.y - center.y), gap, world);
+          if (wall !== null && wall < gap - target.radius) continue;
+          host.damage(target, pulse.damage, { ...shot.origin });
+        }
+        if (stillActive(host, state, queue)) host.emit('WEAPON_ULTIMATE_RETURNED', { castId: shot.castId,
+          weaponId: shot.origin.weaponId ?? '', ultimateId: shot.origin.ultimateId ?? '', x: center.x, y: center.y, radius: pulse.radius });
+        if (state.weaponCombat?.ultimate?.castId === shot.castId) delete state.weaponCombat.ultimate;
+      }
+      continue;
+    }
     if (consumed || shot.remaining <= 1e-8) {
       if (shot.flightPhase === 'outbound' && block === null && !membraneBlocked && shot.returnFlight) {
         beginReturn(host, shot); continue;
@@ -429,5 +489,8 @@ export function clearPlayerProjectiles(state: GameState): void {
   if (state.weaponCombat) {
     state.weaponCombat.reservedProjectiles = 0;
     delete state.weaponCombat.burst; delete state.weaponCombat.preparation;
+    delete state.weaponCombat.pendingActions; delete state.weaponCombat.ultimate; delete state.weaponCombat.meleeDash;
+    delete state.weaponCombat.executionRefund;
+    delete state.weaponCombat.thunder;
   }
 }

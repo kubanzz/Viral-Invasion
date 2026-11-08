@@ -46,6 +46,11 @@ export interface BeaconState extends Vec {
   deploymentOrigin?: Vec;
   /** The task owns this order until a later Q command explicitly releases it. */
   constructionTaskId?: string;
+  legionId?: import('./legionCatalog').LegionId;
+  legionSlot?: 0 | 1;
+  fed?: boolean;
+  pursuitReadyAt?: number;
+  seraphOrder?: { id: string; targetId: string; startedAt: number; until: number };
 }
 export interface GrowthHistoryEntry { at: number; type: string; text: string }
 export interface GrowthState {
@@ -79,6 +84,7 @@ export interface GrowthState {
 }
 export interface GrowthContext {
   mission?: boolean;
+  legions?: readonly import('./legionCatalog').LegionDeployment[];
   hostEvents?: import('./hostEventTypes').HostEventState;
   endless?: boolean;
   territory?: import('./territoryTypes').TerritoryState;
@@ -97,16 +103,23 @@ export interface GrowthContext {
 export interface DamageOrigin {
   cause: 'basic' | 'protocol' | 'ability'; ability?: 'nova' | 'scan' | 'dash' | 'catalysis' | 'host-event' | 'charged-slash' | 'cannon-aftershock' | 'territory-cannon';
   basicTool?: Tool; immuneCellId?: string;
+  seraphStrike?: import('./seraphCombat').SeraphStrike;
   rootId?: string; wasPulseExposed?: boolean; protocolId?: ProtocolId; allowChain?: boolean;
   weaponId?: import('./expedition').WeaponId;
   skillId?: import('./weaponSkillsTypes').WeaponSkillId;
   damageCategory?: import('./weaponSkillsTypes').WeaponDamageCategory;
   armorResponse?: import('./weaponSkillsTypes').WeaponArmorResponse;
   castId?: string;
+  /** Preserved through derived damage so an ultimate cannot recharge itself. */
+  ultimateId?: import('./weaponSkillsTypes').WeaponUltimateId;
+  toughnessDamage?: number;
+  execution?: 'ordinary';
 }
 interface ProtocolCommandBase { protocolId: ProtocolId; rootId: string; organId: OrganId }
 export type GrowthCommand =
   | (ProtocolCommandBase & { kind: 'damage'; targetId: string; amount: number; cause: 'protocol'; hop: number; allowChain?: boolean; immuneCellId?: string;
+      pursuitDamage?: number;
+      seraphStrike?: import('./seraphCombat').SeraphStrike;
       biteClock?: Pick<import('./immuneCells').ImmuneCellState, 'attackReadyAt' | 'attackUntil' | 'activity'> })
   | (ProtocolCommandBase & { kind: 'expose'; targetId: string; until: number; revealUntil: number })
   | (ProtocolCommandBase & { kind: 'effect'; effect: Effect['kind']; from: Vec; to: Vec; radius: number; duration: number })

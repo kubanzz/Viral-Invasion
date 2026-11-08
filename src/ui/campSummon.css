@@ -1,7 +1,8 @@
 /* A quiet camp lobby gives way to a dedicated, skippable reveal stage. */
 #app .camp-summon-panel .camp-content{padding-bottom:0;scrollbar-width:thin}
-#app .camp-summon-panel .camp-footer:not(:has(.camp-storage)){display:none}
-#app .camp-summon-panel .camp-footer-actions,#app .camp-summon-panel .camp-footer>.camp-notice{display:none}
+#app .camp-summon-panel .camp-footer{display:flex;align-items:center;justify-content:flex-end;gap:10px}
+#app .camp-summon-panel .camp-footer-actions{display:flex;margin-left:auto}
+#app .camp-summon-panel .camp-footer>.camp-notice{font-size:12px;margin:0}
 #app .summon-lobby{display:flex;flex-direction:column;max-width:820px;gap:16px;padding:8px 0 2px}
 .summon-lobby-hero{display:flex;align-items:center;justify-content:center;gap:34px;min-height:180px;padding:12px 24px;border:1px solid #b8cbb5;border-radius:16px;background:radial-gradient(ellipse at 25% 50%,#f5ecc5,#e4edda 54%,#eaf0df);overflow:hidden}
 .summon-idle-orbit{position:relative;display:grid;place-items:center;flex:0 0 140px;width:140px;height:140px}
@@ -233,3 +234,8 @@
   [data-layout=batch] .summon-cinematic-footer{min-height:51px;padding:5px 18px 9px}
 }
 @media(prefers-reduced-motion:reduce){.summon-cinematic *{animation:none!important;transition:none!important}}
+
+.summon-pool-tabs{display:flex;gap:8px;margin-bottom:15px;padding:4px;border:1px solid #adc2a52b;border-radius:30px;width:fit-content}.summon-pool-tabs button{border:0!important;border-radius:25px!important;min-height:38px;padding:8px 18px!important;background:transparent!important;color:#aebeac}.summon-pool-tabs button[aria-pressed=true]{background:#d0ba7c26!important;color:#eddbac}.summon-pool-tabs span{font-size:9px;margin-left:6px;opacity:.65}.summon-legion-banner{display:flex;align-items:center;justify-content:space-between;background:radial-gradient(ellipse at 80% 50%,#d3bc7230,transparent 65%);min-height:200px;gap:8px}.summon-legion-banner h3{font-size:30px;color:#efdaa4;margin:6px 0 12px}.summon-legion-banner p{font-size:13px;line-height:1.7;color:#c6cfb3}.summon-legion-banner>.legion-portrait{width:260px;margin:0}.summon-prize-art>.legion-portrait{width:100%;max-width:320px}.summon-batch-frame .legion-portrait{max-width:150px}.summon-legion-pool .summon-pity{margin-top:12px}
+@media(max-width:700px){.summon-pool-tabs{margin-bottom:4px}.summon-pool-tabs button{padding:6px 12px!important;font-size:11px}.summon-legion-banner{min-height:145px}.summon-legion-banner h3{font-size:22px}.summon-legion-banner p{font-size:11px}.summon-legion-banner>.legion-portrait{width:170px}.summon-pool-tabs span{display:none}}
+
+.summon-pool-tabs{border-color:#afc3a6}.summon-pool-tabs button{color:#647b57}.summon-pool-tabs button[aria-pressed=true]{color:#685427;background:#d8c38642!important}.summon-legion-banner{padding:12px 20px;border:1px solid #c7bc8f;border-radius:16px;background:radial-gradient(ellipse at 80% 50%,#e7d4a9,#f8efd9 65%)}.summon-legion-banner h3{color:#745c2b}.summon-legion-banner p{color:#6d7859}

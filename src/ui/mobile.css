@@ -229,6 +229,13 @@ body.touch-mode #mobile-controls[data-weapon-mode=true] .mobile-legacy-control {
 body.touch-mode .mobile-weapon-skill[data-weapon-skill='1'] { right:calc(var(--mobile-right) + 112px); bottom:calc(var(--mobile-bottom) + 16px); }
 body.touch-mode .mobile-weapon-skill[data-weapon-skill='2'] { right:calc(var(--mobile-right) + 108px); bottom:calc(var(--mobile-bottom) + 84px); }
 body.touch-mode .mobile-weapon-skill[data-weapon-skill='3'] { right:calc(var(--mobile-right) + 36px); bottom:calc(var(--mobile-bottom) + 116px); }
+body.touch-mode #mobile-controls .mobile-weapon-ultimate { right:calc(var(--mobile-right) + 16px); bottom:calc(var(--mobile-bottom) + 184px); width:52px; height:52px; border:2px solid #b99a55; background:#f0ead4; color:#755126; }
+body.touch-mode .mobile-weapon-ultimate::before { content:''; position:absolute; inset:-5px; border-radius:50%; padding:3px; background:conic-gradient(#e8be55 calc(var(--ultimate-energy,0)*1turn),#73887755 0); mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0); mask-composite:exclude; pointer-events:none; }
+body.touch-mode #mobile-controls .mobile-weapon-ultimate[data-ready=true] { border-color:#f6d879; box-shadow:0 0 12px #e9bc5980; background:#fff0bd; }
+body.touch-mode #mobile-controls .mobile-weapon-ultimate[data-ultimate-active=true] { background:#d4eadf; }
+body.touch-mode .mobile-ultimate-energy { position:absolute; left:0; right:0; bottom:11px; font-size:10px; line-height:12px; font-weight:700; pointer-events:none; }
+body.touch-mode .mobile-weapon-ultimate .mobile-caption { bottom:-17px; max-width:64px; left:50%; transform:translateX(-50%); white-space:nowrap; color:#72562a; font-size:9px; text-shadow:0 1px #fff5d9; }
+body.touch-mode .mobile-weapon-ultimate .mobile-weapon-icon-slot { width:23px; height:23px; transform:translateY(-8px); color:#99702f; }
 body.touch-mode .mobile-skill-number { position:absolute; top:3px; left:4px; font-size:10px; line-height:12px; color:#fff4c9; pointer-events:none; }
 body.touch-mode .mobile-weapon-skill .mobile-caption { max-width:48px; overflow:hidden; text-overflow:ellipsis; font-size:9px; color:#315f54; text-shadow:none; }
 body.touch-mode .mobile-weapon-icon-slot { display:block; width:28px; height:28px; margin:auto; transform:translateY(-6px); color:#315f54; pointer-events:none; }

@@ -1,12 +1,19 @@
 import { SeedRng } from '../core/rng';
 import type { EquippedProtocol } from './growthTypes';
 import type { MissionHaul, MissionId } from './microfront';
+import type { LegionDeployment } from './legionCatalog';
 
 export type BlueprintId = 'launch-pod' | 'rapid-launch-pod';
-export type WeaponId = 'steady' | 'piercing';
+export type BaseWeaponId = 'steady' | 'piercing';
+export type LegendaryWeaponId = 'thunder' | 'redblade';
+export type WeaponId = BaseWeaponId | LegendaryWeaponId;
 export type WeaponRarity = 'white' | 'blue' | 'purple' | 'gold';
 export const BLUEPRINT_IDS: readonly BlueprintId[] = ['launch-pod', 'rapid-launch-pod'];
-export const WEAPON_IDS: readonly WeaponId[] = ['steady', 'piercing'];
+export const BASE_WEAPON_IDS: readonly BaseWeaponId[] = ['steady', 'piercing'];
+export const LEGENDARY_WEAPON_IDS: readonly LegendaryWeaponId[] = ['thunder', 'redblade'];
+export const WEAPON_IDS: readonly WeaponId[] = [...BASE_WEAPON_IDS, ...LEGENDARY_WEAPON_IDS];
+export const isWeaponId = (value: unknown): value is WeaponId => WEAPON_IDS.includes(value as WeaponId);
+export const isLegendaryWeaponId = (value: unknown): value is LegendaryWeaponId => LEGENDARY_WEAPON_IDS.includes(value as LegendaryWeaponId);
 export const RARITIES: readonly WeaponRarity[] = ['white', 'blue', 'purple', 'gold'];
 export const RARITY_NAMES: Record<WeaponRarity, string> = { white: '普通', blue: '精良', purple: '史诗', gold: '传说' };
 export const RARITY_BONUS: Record<WeaponRarity, number> = { white: 0, blue: .03, purple: .06, gold: .09 };
@@ -14,12 +21,14 @@ export const DUPLICATE_MATERIALS: Record<WeaponRarity, number> = { white: 2, blu
 export const WEAPONS: Record<WeaponId, { name: string; damage: number; extraPierce: number; description: string }> = {
   steady: { name: '稳流·蜂巢针枪', damage: 34, extraPierce: 0, description: '快速针弹，蜂群追击；超载时追加两根侧针。' },
   piercing: { name: '贯脉·回旋刃弓', damage: 28, extraPierce: 1, description: '慢速宽月牙去回各贯穿两体，横移改变回收路线。' },
+  thunder: { name: '霆链·裁决铳', damage: 43, extraPierce: 0, description: '长按普攻持续电击周身病毒；磁极扩展电网，雷遁铺设雷痕，感电后断罪连爆与万雷归一收割。' },
+  redblade: { name: '赤曜·斩疫刃', damage: 42, extraPierce: 0, description: '架刀弹反，游走剑域；画线连接四曜弱点，沿亲绘路线穿心斩疫。' },
 };
 export const EXPEDITION_ECONOMY = { repair: 10, upgrade: [8, 12, 16] as readonly number[], antibody: 5, maximumExtraAntibodies: 2, bossMaterials: 40 } as const;
 
 /** A departure snapshot; camp mutations never change an already running battle. */
 export interface ExpeditionLoadout { weaponId: WeaponId; rarity: WeaponRarity; upgrade: number }
-export const DEFAULT_EXPEDITION_LOADOUT: Readonly<ExpeditionLoadout> = Object.freeze({ weaponId: 'steady', rarity: 'white', upgrade: 0 });
+export const DEFAULT_EXPEDITION_LOADOUT: Readonly<ExpeditionLoadout> = Object.freeze({ weaponId: 'steady', rarity: 'purple', upgrade: 0 });
 export interface BossLoot {
   id: string; runId: string; bossId: 'heart-mother'; weaponId: WeaponId; rarity: WeaponRarity;
   blueprintId: 'rapid-launch-pod'; materials: number;
@@ -27,10 +36,12 @@ export interface BossLoot {
 export interface ExpeditionRuntime {
   runId: string; loadout: ExpeditionLoadout; firstClear: boolean; pendingLoot?: BossLoot; lootCollected?: boolean;
   missionId?: MissionId; modules?: EquippedProtocol[]; haul?: MissionHaul;
+  legions?: LegionDeployment[];
 }
 export interface ExpeditionDeparture {
   runId: string; seed: number; loadout: ExpeditionLoadout; blueprints: BlueprintId[]; extraAntibodies: number; firstClear: boolean;
   missionId?: MissionId; modules?: EquippedProtocol[]; haul?: MissionHaul;
+  legions?: LegionDeployment[];
 }
 export function rarityRank(value: WeaponRarity | null): number { return value === null ? -1 : RARITIES.indexOf(value); }
 function hash(value: string): number {
@@ -41,7 +52,7 @@ function hash(value: string): number {
 /** Stable for one expedition; reopening the loot panel can never reroll it. */
 export function createBossLoot(runId: string, seed: number, firstClear: boolean): BossLoot {
   const rng = new SeedRng((seed ^ hash(runId) ^ 0x150b055) >>> 0), roll = rng.next();
-  const rarity: WeaponRarity = roll >= .9 ? 'gold' : firstClear || roll >= .6 ? 'purple' : 'blue';
+  const rarity: WeaponRarity = firstClear ? 'purple' : roll >= .9 ? 'gold' : roll >= .6 ? 'purple' : 'blue';
   return { id: `boss-loot:${runId}:heart`, runId, bossId: 'heart-mother', weaponId: firstClear || rng.next() >= .5 ? 'piercing' : 'steady',
     rarity, blueprintId: 'rapid-launch-pod', materials: EXPEDITION_ECONOMY.bossMaterials };
 }

@@ -1,11 +1,11 @@
-import type { CampProfileData } from '../meta/campProfile';
+import { canCraftTemplate, type CampProfileData } from '../meta/campProfile';
 import { CAMP_FACILITIES, type CampStationId } from './campLayout';
 import { campHasFacility, canBuildCampFacility } from './campProgression';
 import { EXPEDITION_ECONOMY, rarityRank, WEAPON_IDS, type WeaponRarity } from './expedition';
 import { CRAFT_RECIPES, isMissionUnlocked, MISSIONS, TEMPLATE_IDS, type TemplateId } from './microfront';
 
 export interface CampStationAttention {
-  kind: 'build' | 'mission' | 'equipment' | 'repair' | 'craft' | 'upgrade';
+  kind: 'build' | 'mission' | 'equipment' | 'repair' | 'craft' | 'upgrade' | 'harvest' | 'supply';
   label: string;
   count: number;
 }
@@ -26,7 +26,7 @@ export function campStationAttention(profile: CampProfileData): Partial<Record<C
   if (!profile.campUnlocked || profile.prologue === 'arrival') return attention;
 
   for (const station of CAMP_FACILITIES) {
-    if (canBuildCampFacility(profile, station.id)) attention[station.id] = { kind: 'build', label: '可建造', count: 1 };
+    if (canBuildCampFacility(profile, station.id)) attention[station.id] = { kind: 'build', label: station.id === 'summon' ? '可激活' : '可建造', count: 1 };
   }
 
   if (campHasFacility(profile, 'departure') && profile.prologue === 'ready') {
@@ -43,8 +43,9 @@ export function campStationAttention(profile: CampProfileData): Partial<Record<C
 
   if (campHasFacility(profile, 'forge')) {
     const repairs = WEAPON_IDS.filter(id => profile.weapons[id].pending && profile.materials >= EXPEDITION_ECONOMY.repair).length;
-    const crafts = TEMPLATE_IDS.filter(id => Object.values(CRAFT_RECIPES).some(recipe =>
-      (profile.fragments[id] ?? 0) >= recipe.fragments && profile.materials >= recipe.materials && profile.cores >= recipe.cores)).length;
+    const crafts = TEMPLATE_IDS.filter(id => Object.entries(CRAFT_RECIPES).some(([quality, recipe]) =>
+      canCraftTemplate(profile, id, quality as WeaponRarity)
+      && (profile.fragments[id] ?? 0) >= recipe.fragments && profile.materials >= recipe.materials && profile.cores >= recipe.cores)).length;
     const upgrades = WEAPON_IDS.filter(id => {
       const weapon = profile.weapons[id], cost = EXPEDITION_ECONOMY.upgrade[weapon.upgrade];
       return weapon.repaired && weapon.upgrade < 3 && cost !== undefined && profile.materials >= cost;
@@ -54,5 +55,11 @@ export function campStationAttention(profile: CampProfileData): Partial<Record<C
     else if (upgrades) attention.forge = { kind: 'upgrade', label: '可强化', count: upgrades };
   }
 
+  if (campHasFacility(profile, 'farm')) {
+    const ripe = profile.farmPlots.filter(plot => plot.planted && plot.growth >= 2).length;
+    if (ripe) attention.farm = {kind: 'harvest', label: '可以采摘', count: ripe};
+  }
+  if (campHasFacility(profile, 'house') && profile.food < profile.legionLoadout.filter(Boolean).length)
+    attention.house = {kind: 'supply', label: '口粮不足', count: 1};
   return attention;
 }

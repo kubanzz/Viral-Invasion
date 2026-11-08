@@ -1,4 +1,5 @@
 import { immuneLegions } from './immuneLegions';
+import { isAnchorAttackDamage } from './anchorDanger';
 import { FixedClock } from '../core/clock';
 import { EventBus } from '../core/events';
 import { SeedRng } from '../core/rng';
@@ -10,7 +11,7 @@ import { GrowthController, growthContext } from './growth';
 import type { DamageOrigin, DraftIntent, DraftResolution, GrowthCommand, ResearchConfirmIntent, ResearchRequestIntent, ResearchConfirmResult, ResearchCancelResult } from './growthTypes';
 import { CampaignDirector } from './campaign';
 import type { CampaignCommand, MigrationChoice } from './campaignTypes';
-import { MotherCoreController, MOTHER_CORE_BALANCE } from './motherCore';
+import { MotherCoreController, MOTHER_CORE_BALANCE, HEART_BOSS_BALANCE } from './motherCore';
 import type { MotherCoreCommand, MotherCoreContext } from './motherCoreTypes';
 import { BATTLE_BALANCE as B } from './battleConfig';
 import { sourceTarget, getOrganDefinition } from './organConfig';
@@ -20,6 +21,7 @@ import { EndlessDirector, initializeEndless, cancelTerritoryAssaults, configureM
 import { createEndlessGrowth, offerEndlessUpgrade, chooseEndlessUpgrade, endlessCombatStats } from './endlessGrowth';
 import type { EndlessUpgradeId, PendingCatalysisBatch } from './endlessGrowthTypes';
 import { IMMUNE_CELL_BALANCE } from './immuneCells';
+import { seraphActionEvent, seraphStrikeHits } from './seraphCombat';
 import { activeCatalysisBatch, activeCatalysisTargets, CATALYSIS_BALANCE, catalysisBurstTargets, makeCatalysisBatch } from './catalysis';
 import { advanceTraction, beginTraction, TRACTION_BALANCE, tractionBlastTargets, tractionMoveMultiplier } from './traction';
 import type { TractionCast } from './tractionTypes';
@@ -44,7 +46,10 @@ import { advanceConstruction, initializeConstruction, setConstructionBlueprints 
 import { createBossLoot, DEFAULT_EXPEDITION_LOADOUT, type ExpeditionDeparture } from './expedition';
 import { clearRitualProjectiles, damageRitualProjectile, ritualMotherShielded, ritualProjectileTargets } from './ritual';
 import { createWeaponCombat, castWeaponSkill, advanceWeaponSkills, cancelWeaponAction,
-  weaponBlocksPrimary, weaponPrimaryCooldown } from './weaponSkills';
+  weaponBlocksPrimary, weaponPrimaryCooldown, launchWeaponPrimary } from './weaponSkills';
+import { castWeaponUltimate, creditWeaponBossDamage, creditWeaponKill } from './weaponUltimates';
+import { playerIncomingDamage } from './weaponMelee';
+import { applyBladeTraceInput, bladeControlsLocked, bladeEnemyMovementFactor, resolveBladeIncomingDamage } from './bladeTechniques';
 import { emptyMissionHaul, MISSIONS } from './microfront';
 import { MISSION_COMBAT, prepareMissionField, missionFieldReady, missionDeathHaul, addMissionHaul } from './missionCombat';
 
@@ -86,6 +91,7 @@ export class GameSession {
   private sourceProtectionNoticeAt = -Infinity;
   private missionLootIds = new Set<string>();
   private missionEliteCleared = false;
+  private ultimateDamageContext?: DamageOrigin['ultimateId'];
 
   constructor(seed = 130026, private options: CampaignOptions = {}) {
     this.options = { ...options, ...(options.mode === 'endless' ? { campaign: true, milestone: 'G3' } : {}) };
@@ -193,6 +199,7 @@ export class GameSession {
   configureExpedition(departure: ExpeditionDeparture): void {
     if (!this.state.territory) return;
     this.state.expedition = { runId: departure.runId, loadout: structuredClone(departure.loadout), firstClear: departure.firstClear,
+      ...(departure.legions ? { legions: structuredClone(departure.legions) } : {}),
       ...(departure.missionId ? { missionId: departure.missionId, modules: structuredClone(departure.modules ?? []), haul: emptyMissionHaul() } : {}) };
     this.state.weaponCombat = createWeaponCombat(this.state.expedition.loadout);
     setConstructionBlueprints(this.state, departure.blueprints);
@@ -255,7 +262,7 @@ export class GameSession {
     this.state.phase = 'result';
     this.state.player.moving = false;
     this.cancelChargedSlash('run-ended');
-    cancelWeaponAction(state);
+    cancelWeaponAction(state, true);
     if (state.weaponCombat) state.weaponCombat.overdriveUntil = 0;
     if (this.state !== state || state.phase !== 'result') return;
     this.pendingProjectileShot = undefined;
@@ -307,9 +314,11 @@ export class GameSession {
   }
 
   emit(type: string, data: GameEvent['data']): void {
+    if (type === 'THUNDER_PULSE') this.state.shots++;
     if (['ENDLESS_WAVE_CLEARED','TERRITORY_BOSS_STARTED','TERRITORY_RESCUE_COMPLETED','RUN_ENDED'].includes(type))
       clearRitualProjectiles(this.state, type);
     const event: GameEvent = { type, tick: this.state.tick, data };
+    if (isAnchorAttackDamage(this.state, event)) this.state.territory!.coreLastHitAt = this.state.elapsed;
     const tutorial = this.state.endless?.tutorial;
     if (tutorial) {
       if (type === 'TOOL_FIRED' && data.tool === 1) tutorial.fired = true;
@@ -398,6 +407,8 @@ export class GameSession {
     dt = BALANCE.step;
     state.tick++;
     state.elapsed = state.tick * BALANCE.step;
+    if (bladeControlsLocked(state)) input = { moveX: 0, moveY: 0, aim: input.aim, fire: false,
+      chargeCancelled: true, cannonCancelled: true };
     advanceTerritoryPlayerFlight(state);
     if(wasAirborne)input={moveX:0,moveY:0,fire:false,aim:state.playerFlight?.to??state.player,chargeCancelled:true};
     this.applyHostEventCommands(advanceHostEvents(state, dt));
@@ -447,7 +458,7 @@ export class GameSession {
     const charging = !!state.chargedSlash && state.elapsed - state.chargedSlash.startedAt > CHARGED_SLASH_BALANCE.threshold;
     const move = normalized(input.moveX, input.moveY);
     state.player.moving = !!(move.x || move.y);
-    if (input.dash) {
+    if (input.dash && !bladeControlsLocked(state) && !state.weaponCombat?.bladeTrace && !state.weaponCombat?.thunder?.dash) {
       if (state.elapsed >= state.player.dashReady) {
         cancelWeaponAction(state);
         this.dashDirection = state.player.moving ? move : { x: Math.cos(state.player.facing), y: Math.sin(state.player.facing) };
@@ -458,7 +469,7 @@ export class GameSession {
       } else this.message('冲刺正在充能。', 1);
     }
     const dashing = state.elapsed < state.player.dashUntil;
-    const velocity = dashing ? this.dashDirection : move;
+    const velocity = bladeControlsLocked(state) ? { x: 0, y: 0 } : dashing ? this.dashDirection : state.weaponCombat?.meleeDash || state.weaponCombat?.thunder?.dash ? { x: 0, y: 0 } : move;
     const speed = (dashing ? BALANCE.dashSpeed : BALANCE.speed) * tractionMoveMultiplier(state) * eventModifier(state, 'playerMove', state.player)*playerSlimeMultiplier(state)
       * (charging ? CHARGED_SLASH_BALANCE.moveMultiplier : 1);
     const before = { x: state.player.x, y: state.player.y };
@@ -520,13 +531,28 @@ export class GameSession {
         castWeaponSkill(host, input.weaponSkill.slot, input.weaponSkill.aim);
       }
       if (this.state !== state || state.phase !== 'playing') return;
-      advanceWeaponSkills(host, input.aim, dt);
+      if (input.weaponUltimate && !dashing && !isTerritoryPlayerAirborne(state)) {
+        castWeaponUltimate(host, input.weaponUltimate.aim);
+      }
+      if (this.state !== state || state.phase !== 'playing') return;
+      applyBladeTraceInput(state, input.bladeTrace);
+      // A complete press/release between simulation steps retains one fire
+      // edge, but must never leave a held channel running after that edge.
+      if (state.weaponCombat.loadout.weaponId === 'thunder' && input.primaryHeld === false && input.fire
+        && (input.tool === undefined || input.tool === 1) && !charging && !dashing && !wasAirborne
+        && !isTerritoryPlayerAirborne(state) && !weaponBlocksPrimary(state)) {
+        launchWeaponPrimary(host, input.aim, endlessCombatStats(state.endlessGrowth ?? createEndlessGrowth(0)),
+          `weapon:thunder:tap:${++state.weaponCombat.serial}`);
+        if (this.state !== state || state.phase !== 'playing') return;
+      }
+      advanceWeaponSkills(host, input.aim, dt, !charging && !dashing && !isTerritoryPlayerAirborne(state)
+        && !weaponBlocksPrimary(state) && (input.primaryHeld ?? input.fire));
       if (this.state !== state || state.phase !== 'playing') return;
     }
-    if (input.fire && !charging && !weaponBlocksPrimary(state) && (state.endless || state.tool !== 2 || tool2Pressed)) {
+    if (state.weaponCombat?.loadout.weaponId !== 'thunder' && input.fire && !charging && !weaponBlocksPrimary(state) && (state.endless || state.tool !== 2 || tool2Pressed)) {
       this.fire(this.pendingProjectileShot?.tool === state.tool ? this.pendingProjectileShot.aim : input.aim);
       if (this.state !== state || state.phase !== 'playing') return;
-    } else if (state.endless && !charging && !weaponBlocksPrimary(state) && this.pendingProjectileShot?.tool === state.tool) {
+    } else if (state.weaponCombat?.loadout.weaponId !== 'thunder' && state.endless && !charging && !weaponBlocksPrimary(state) && this.pendingProjectileShot?.tool === state.tool) {
       this.fire(this.pendingProjectileShot.aim);
       if (this.state !== state || state.phase !== 'playing') return;
     }
@@ -761,13 +787,19 @@ export class GameSession {
     if (state.endless && combat && (tool === 1 || tool === 2)) {
       if (state.elapsed + 1e-9 < state.cooldowns[tool]) return;
       const castId = `player:${tool}:${++this.projectileSerial}`;
-      const accepted = tool === 1 ? launchPrimary(state, aim, combat, castId) : launchCannon(state, aim, combat, castId);
+      const session = this;
+      const accepted = tool === 1 && state.weaponCombat ? launchWeaponPrimary({ get state() { return session.state; },
+        damage: (target, amount, origin) => this.damage(target, amount, origin),
+        emit: (type, data) => this.emit(type, data),
+        effect: (kind, from, to, radius, duration) => this.effect(kind, from, to, radius, duration) }, aim, combat, castId)
+        : tool === 1 ? launchPrimary(state, aim, combat, castId) : launchCannon(state, aim, combat, castId);
       if (!accepted) { this.pendingProjectileShot ??= { tool, aim: { ...aim } }; return; }
       this.pendingProjectileShot = undefined;
       state.cooldowns[tool] = state.elapsed + (tool === 1 ? weaponPrimaryCooldown(state, combat) : combat.areaCooldown);
       state.player.actionUntil = state.elapsed + .15;
       state.shots++;
       this.emit('PLAYER_PROJECTILE_LAUNCHED', { kind: tool === 1 ? 'primary' : 'cannon', castId,
+        ...(state.weaponCombat ? { weaponId: state.weaponCombat.loadout.weaponId } : {}),
         count: tool === 1 ? combat.shotRays : 1, x: state.player.x, y: state.player.y, aimX: aim.x, aimY: aim.y });
       if (this.state !== state || state.phase !== 'playing') return;
       this.emit('TOOL_FIRED', { tool, x: aim.x, y: aim.y, hit: false, rays: tool === 1 ? combat.shotRays : 1,
@@ -975,7 +1007,15 @@ export class GameSession {
     else if (!armed && distance(cast.center, state.tissue) < state.tissue.radius + cast.radius) this.message('牵引裂解不能修复组织，请按 3。');
   }
 
-  private damage(target: Target, amount: number, origin: DamageOrigin = { cause: 'basic' }): number {
+  damage(target: Target, amount: number, origin: DamageOrigin = { cause: 'basic' }): number {
+    const inherited = this.ultimateDamageContext;
+    const effective = origin.ultimateId || !inherited ? origin : { ...origin, ultimateId: inherited };
+    this.ultimateDamageContext = effective.ultimateId;
+    try { return this.applyDamage(target, amount, effective); }
+    finally { this.ultimateDamageContext = inherited; }
+  }
+
+  private applyDamage(target: Target, amount: number, origin: DamageOrigin): number {
     const state = this.state;
     if (target.id.startsWith('ritual:orb:')) return damageRitualProjectile(state, target.id, amount, (type, data) => this.emit(type, data));
     if (target.hp <= 0) return 0;
@@ -997,14 +1037,16 @@ export class GameSession {
     }
     const suppressRewards = target.role === 'event' || origin.ability === 'host-event';
     const immuneCellId = this.verifiedImmuneBite(target, origin);
+    if(origin.seraphStrike&&!immuneCellId)return 0;
     const wasPulseExposed = origin.wasPulseExposed ?? (target.exposedUntil ?? 0) > state.elapsed;
     if (this.battleDirector && (origin.armorResponse === 'needle' || origin.cause === 'basic' || origin.ability === 'host-event'))
       amount = this.battleDirector.modifiedDamage(target, amount, origin.armorResponse === 'heavy' ? 2 : origin.armorResponse === 'needle' || origin.ability === 'host-event' ? 1 : origin.basicTool ?? state.tool);
+    if (origin.execution === 'ordinary' && target.role === 'virus') amount = Math.max(amount, target.hp);
     const rawDamage = amount;
     const coreContext = target.role === 'core' ? this.coreContext() : undefined;
     if (coreContext && this.motherController) {
-      const allowed = this.motherController.damageLimit(coreContext, amount);
-      if (allowed < amount && state.tick % 30 === 0) this.message(state.territory
+      const allowed = this.motherController.damageLimit(coreContext, amount, origin);
+      if (allowed < amount && !this.motherController.state.heartExpedition && state.tick % 30 === 0) this.message(state.territory
         ? '核膜保护至50%：躲开标出的攻击，母巢展示本次特性后即可击破。'
         : '核膜保护至 50%：躲开或反制标出的前摇，展示两种特性后即可击破。', 3);
       amount = allowed;
@@ -1013,7 +1055,12 @@ export class GameSession {
     const beforeHp = target.hp;
     target.hp = Math.max(0, target.hp - amount);
     const actual = beforeHp - target.hp;
-    if (immuneCellId && Number.isFinite(actual) && actual > 0) this.acceptedBiteCells.add(immuneCellId);
+    // Credit before callbacks can end the run or trigger derived damage. Only
+    // the HP actually removed after membrane and bar limits earns energy.
+    const bossEnergyGained = creditWeaponBossDamage(state, target, actual, origin);
+    if (actual > 0 && coreContext && this.motherController && origin.toughnessDamage)
+      this.applyCoreCommands(this.motherController.damageToughness(coreContext, origin.toughnessDamage, origin));
+    if (immuneCellId && Number.isFinite(actual) && actual > 0) this.acceptedBiteCells.add(origin.seraphStrike ? origin.rootId! : immuneCellId);
     const claimed = suppressRewards ? undefined : this.claimCatalysis(target, origin, actual, immuneCellId);
     target.hitUntil = state.elapsed + .18;
     if (origin.cause === 'basic') state.hits++;
@@ -1022,11 +1069,17 @@ export class GameSession {
       ...(target.role === 'event' ? { eventTarget: true } : {}),
       ...(origin.rootId ? { rootId: origin.rootId } : {}), ...(origin.protocolId ? { protocolId: origin.protocolId } : {}),
       ...(origin.ability ? { ability: origin.ability } : {}), ...(immuneCellId && actual > 0 ? { immuneCellId } : {}),
+      ...(origin.seraphStrike&&immuneCellId?{legionId:'seraph'}:{}),
       ...(origin.weaponId ? { weaponId: origin.weaponId } : {}), ...(origin.skillId ? { skillId: origin.skillId } : {}),
       ...(origin.castId ? { castId: origin.castId } : {}),
       ...(origin.damageCategory ? { damageCategory: origin.damageCategory } : {}),
       ...(origin.basicTool ? { basicTool: origin.basicTool } : {}) });
     if (this.state !== state || state.phase !== 'playing') return actual;
+    if (bossEnergyGained > 0) {
+      this.emit('WEAPON_ENERGY_CHANGED', { weaponId: state.weaponCombat!.loadout.weaponId,
+        gained: bossEnergyGained, energy: state.weaponCombat!.ultimateEnergy ?? 0, ready: state.weaponCombat!.ultimateEnergy === 100 });
+      if (this.state !== state || state.phase !== 'playing') return actual;
+    }
     if (claimed) {
       if (!this.currentCatalysisTransaction(claimed)) return actual;
       this.emit('CATALYSIS_CONSUMED', { batchId: claimed.batch.id, organId: claimed.batch.organId,
@@ -1034,6 +1087,12 @@ export class GameSession {
       if (!this.currentCatalysisTransaction(claimed)) return actual;
     }
     if (target.hp === 0) {
+      if (!suppressRewards) {
+        const gained = creditWeaponKill(state, target, origin);
+        if (gained > 0) this.emit('WEAPON_ENERGY_CHANGED', { weaponId: state.weaponCombat!.loadout.weaponId,
+          gained, energy: state.weaponCombat!.ultimateEnergy ?? 0, ready: state.weaponCombat!.ultimateEnergy === 100 });
+        if (this.state !== state || state.phase !== 'playing') return actual;
+      }
       this.emit(target.role === 'event' ? 'HOST_EVENT_TARGET_CLEARED' : 'TARGET_CLEARED', { id: target.id, kind: target.kind, suppressRewards });
       if (this.state !== state || state.phase !== 'playing') return actual;
       if (target.role === 'event') {
@@ -1060,11 +1119,22 @@ export class GameSession {
     const cell = state.growth?.cells?.find(unit => unit.id === origin.immuneCellId);
     const beacon = immuneLegions(state.growth).find(unit => unit.id === cell?.beaconId);
     if (!state.endless || origin.cause !== 'protocol'
-      || origin.protocolId !== 'IMMUNE_BEACON' || !origin.immuneCellId || target.role === 'core' || !beacon
+      || origin.protocolId !== 'IMMUNE_BEACON' || !origin.immuneCellId || target.role === 'core' && beacon?.legionId !== 'seraph' || !beacon
       || state.phase !== 'playing' || beacon.organId !== state.battle?.organId
       || Number.isNaN(beacon.until) || beacon.until <= state.elapsed) return;
     if (this.acceptedBiteTick !== state.tick) { this.acceptedBiteTick = state.tick; this.acceptedBiteCells.clear(); }
-    if (this.acceptedBiteCells.has(origin.immuneCellId)) return;
+    if (this.acceptedBiteCells.has(origin.seraphStrike?origin.rootId!:origin.immuneCellId)) return;
+    if(origin.seraphStrike) {
+      const strike=origin.seraphStrike,action=cell?.seraphAction;
+      if(!cell||cell.legionId!=='seraph'||!action||strike.actionId!==action.actionId||origin.castId!==action.actionId
+        ||strike.tick!==state.tick||action.releaseTick!==state.tick||action.releasedPart!==strike.part
+        ||origin.rootId!==`${action.actionId}:part:${strike.part}:${target.id}`
+        ||cell.updatedAt!==state.elapsed||cell.organId!==beacon.organId||(cell.hp??1)<=0||cell.until<=state.elapsed
+        ||cell.born>state.elapsed||![cell.x,cell.y,cell.radius,action.damage,action.startedAt].every(Number.isFinite)
+        ||action.damage<=0||action.startedAt>state.elapsed||!isLegalPosition(cell,cell.radius,activeWorld(state))
+        ||!seraphStrikeHits(cell,target,action,activeWorld(state)))return;
+      return cell.id;
+    }
     if (!cell || (cell.hp ?? 1) <= 0 || cell.beaconId !== beacon.id || cell.organId !== beacon.organId || Number.isNaN(cell.until) || cell.until <= state.elapsed
       || cell.born > state.elapsed || cell.targetId !== target.id || cell.activity !== 'biting'
       || ![cell.born, cell.updatedAt, cell.attackReadyAt, cell.attackUntil, cell.damage, cell.radius].every(Number.isFinite)
@@ -1150,11 +1220,28 @@ export class GameSession {
       if (!state.battle || command.organId !== state.battle.organId || state.phase === 'result') continue;
       if (command.kind === 'damage') {
         const target = state.targets.find(t => t.id === command.targetId && t.hp > 0);
+        const legion = command.immuneCellId ? immuneLegions(state.growth).find(unit => unit.id === state.growth?.cells?.find(cell => cell.id === command.immuneCellId)?.beaconId) : undefined;
+        const seraphCell=command.seraphStrike?state.growth?.cells?.find(cell=>cell.id===command.immuneCellId):undefined;
+        const seraphAction=seraphCell?.seraphAction;
+        const pursuit = legion?.legionId === 'seraph' && state.elapsed >= (legion.pursuitReadyAt ?? 0) ? command.pursuitDamage ?? 0 : 0;
         const multiplier = state.endlessGrowth ? endlessCombatStats(state.endlessGrowth) : undefined;
-        const actual = target ? this.damage(target, command.amount * (multiplier?.damageMultiplier ?? 1)
+        const actual = target ? this.damage(target, (command.amount + pursuit) * (multiplier?.damageMultiplier ?? 1)
           * (command.protocolId === 'IMMUNE_BEACON' ? multiplier?.cellDamageMultiplier ?? 1 : 1),
           { cause: 'protocol', rootId: command.rootId, protocolId: command.protocolId, allowChain: command.allowChain,
+            ...(command.seraphStrike?{seraphStrike:command.seraphStrike,castId:command.seraphStrike.actionId}:{}),
             ...(command.immuneCellId ? { immuneCellId: command.immuneCellId } : {}) }) : 0;
+        // TARGET_HIT callbacks may restart, pause or migrate the run. A strike
+        // receipt and shared pursuit clock belong only to this transaction.
+        if(this.state!==commandState||state.phase!=='playing'||state.battle?.organId!==command.organId)return;
+        if(actual>0&&seraphCell&&seraphAction&&legion&&target) {
+          this.emit('LEGION_SERAPH_HIT',{...seraphActionEvent(seraphCell,legion,seraphAction,seraphAction.releaseFrom??seraphCell,target,.24,command.seraphStrike!.part),
+            targetId:target.id,damage:actual,rootId:command.rootId});
+        }
+        if (actual > 0 && pursuit > 0 && legion) {
+          legion.pursuitReadyAt = state.elapsed + 6;
+          this.emit('LEGION_SACRED_PURSUIT', { beaconId: legion.id, targetId: command.targetId, damage: actual });
+          if (target) this.effect('chain', state.growth!.cells!.find(cell => cell.id === command.immuneCellId)!, target, 28, .35);
+        }
         if (plannedBites.has(command.rootId)) {
           if (actual > 0) acceptedBites.set(command.rootId, { targetId: command.targetId, damage: actual });
           else if (this.state === commandState && state.phase === 'playing' && command.biteClock) {
@@ -1236,6 +1323,10 @@ export class GameSession {
     if (!state.endless || !state.endlessGrowth || state.phase !== 'playing') return;
     if (!Number.isSafeInteger(wave) || wave < 1 || state.endless.reward && wave <= state.endless.reward.wave) return;
     if (state.expedition?.missionId) {
+      cancelWeaponAction(state, true);
+      clearPlayerProjectiles(state);
+      this.pendingProjectileShot = undefined;
+      delete state.bladeOpening; delete state.bladeFollow;
       state.endless.reward = { wave, step: 'complete' };
       this.emit('MISSION_WAVE_COMPLETED', { missionId: state.expedition.missionId, wave });
       return;
@@ -1243,7 +1334,7 @@ export class GameSession {
     this.clearTraction('wave-cleared');
     if (this.state !== state || state.phase !== 'playing') return;
     this.cancelChargedSlash('wave-cleared');
-    cancelWeaponAction(state);
+    cancelWeaponAction(state, true);
     if (this.state !== state || state.phase !== 'playing') return;
     this.pendingProjectileShot = undefined;
     clearPlayerProjectiles(state);
@@ -1421,7 +1512,7 @@ export class GameSession {
       && territory.nodes.filter(node => node.kind === 'healing' || node.kind === 'front').every(node => node.owner === 'healthy' && node.infectionProgress <= 1e-7)) {
       const trait = endless.evolution?.opening?.selection?.trait ?? 'CARAPACE';
       const id = `territory:mother:${state.growth!.runId}`;
-      const bossHp = mission ? MISSION_COMBAT[mission].bossHp : 1800;
+      const bossHp = HEART_BOSS_BALANCE.hp;
       const target: Target = { id, x: 1500, y: 900, radius: MOTHER_CORE_BALANCE.radius, kind: 'single', role: 'core',
         hp: bossHp, maxHp: bossHp, traits: [trait], facing: Math.PI, sourceId: id,
         hitUntil: 0, scanned: false, born: state.elapsed, blocksWaveClear: false };
@@ -1457,7 +1548,7 @@ export class GameSession {
         fullyPurifiedSeconds: territory.stability.totalSeconds, longestFullyPurifiedSeconds: territory.stability.bestSeconds };
       syncTerritoryHealingNodes(state);
       state.targets = []; state.playerInfection = null;
-      cancelWeaponAction(state);
+      cancelWeaponAction(state, true);
       clearPlayerProjectiles(state); this.pendingProjectileShot = undefined;
       delete state.bladeOpening; delete state.bladeFollow;
       endHostEvent(state, 'run-ended'); this.applyHostEventCommands(drainHostEventCommands(state));
@@ -1480,7 +1571,12 @@ export class GameSession {
     this.finish(true, `${MISSIONS[mission].name}完成：感染已清除，战利品已带回营地。`);
   }
 
-  slowFactor(targetId: string): number { return this.growthController?.slowFactor(targetId, this.state.battle!.organId, this.state.elapsed) ?? 1; }
+  slowFactor(targetId: string): number {
+    const normal = this.growthController?.slowFactor(targetId, this.state.battle!.organId, this.state.elapsed) ?? 1;
+    if (this.state.weaponCombat?.bladeTrace?.phase !== 'drawing') return normal;
+    const target = this.state.targets.find(body => body.id === targetId);
+    return normal * (target ? bladeEnemyMovementFactor(this.state, target) : 1);
+  }
 
   chooseDraft(intent: DraftIntent): DraftResolution {
     if (!this.growthController) return { kind: 'rejected', reason: 'no-growth' };
@@ -1565,14 +1661,17 @@ export class GameSession {
     if (state.territory && controller) {
       const core = state.targets.find(target => target.id === controller.state.coreId);
       return core ? { tick: state.tick, elapsed: state.elapsed, active: state.phase === 'playing', core,
-        player: state.player, tissue: state.tissue, geometry: activeWorld(state) } : undefined;
+        player: state.player, tissue: state.tissue, geometry: activeWorld(state),
+        movementFactor: (this.growthController?.slowFactor(core.id, state.battle!.organId, state.elapsed) ?? 1) * bladeEnemyMovementFactor(state, core),
+        liveGuardCount: state.targets.filter(target => target.hp > 0 && target.sourceId === `${core.id}:guard`).length } : undefined;
     }
     if (!campaign || !controller) return;
     const arena = campaign.arenas[controller.state.organId];
     const core = arena.targets.find(target => target.id === controller.state.coreId);
     if (!core) return;
     return { tick: state.tick, elapsed: state.elapsed, active: state.battle?.organId === arena.organId,
-      core, player: state.player, tissue: arena.tissue, geometry: arena.geometry };
+      core, player: state.player, tissue: arena.tissue, geometry: arena.geometry,
+      movementFactor: (this.growthController?.slowFactor(core.id, arena.organId, state.elapsed) ?? 1) * bladeEnemyMovementFactor(state, core) };
   }
 
   private checkFailure(): boolean {
@@ -1621,11 +1720,14 @@ export class GameSession {
       const core = arena?.targets.find(target => target.id === command.coreId);
       if (!arena || !core) continue;
       if (command.kind === 'pose') { core.traits = [...command.traits]; core.facing = command.facing; }
+      else if (command.kind === 'move' && core.hp > 0) Object.assign(core, moveWithCollision(core, command.delta, core.radius, arena.geometry));
       else if (command.kind === 'telegraph') { core.attackAt = command.attack.resolveAt; core.attackAim = { ...command.attack.aim }; core.attackRadius = command.attack.radius; core.attackTarget = command.attack.kind === 'corrosion' ? 'tissue' : 'player'; }
       else if (command.kind === 'cancelTelegraph') { core.attackAt = undefined; core.attackAim = undefined; core.attackTarget = undefined; }
       else if (command.kind === 'damagePlayer') {
         if (isTerritoryPlayerAirborne(state)) continue;
-        const before = state.player.hp; state.player.hp = Math.max(0, before - command.amount);
+        const incoming = resolveBladeIncomingDamage(this, command.amount, { source: core, id: command.attackId });
+        if (incoming <= 0) continue;
+        const before = state.player.hp; state.player.hp = Math.max(0, before - playerIncomingDamage(state, incoming));
         state.player.hurtUntil = state.elapsed + .5; state.battle!.stats.playerDamage += before - state.player.hp;
         this.emit('PLAYER_HURT', { damage: before - state.player.hp, remainingHp: state.player.hp, reason: command.reason, actorId: core.id, attackId: command.attackId });
       } else if (command.kind === 'damageTissue') this.organDamage(command.organId, command.amount, command.reason);

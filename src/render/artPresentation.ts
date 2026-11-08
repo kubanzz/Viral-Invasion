@@ -12,6 +12,8 @@ export function presentedMotherCombat(state: GameState) {
 export interface SceneEntity { id: string; y: number; kind: string; index?: number }
 /** A presentation-only bridge. No callback can advance the simulation. */
 export interface ArtPresentation {
+  /** Native VFX own decorative contacts; Canvas still owns exact danger geometry. */
+  nativeCombatVfx?: boolean;
   environment(state: GameState, camera: Camera): void;
   nativeEntity(entity: SceneEntity, state: GameState, ctx: CanvasRenderingContext2D, depth: number): boolean;
   foreground(state: GameState, camera: Camera): void;
@@ -23,6 +25,8 @@ export interface ArtPresentation {
   /** Optional drawing-only origin for a proven emission; simulation endpoints stay untouched. */
   effectOrigin?(effect: Effect, state: GameState): Vec | undefined;
   projectileOrigin?(castId: string): Vec | undefined;
+  /** The current visible muzzle converted back to ground-plane drawing coordinates. */
+  primaryMuzzle?(state: GameState): Vec | undefined;
   /** Registered support sole for the current native hero frame, in ground units. */
   heroContact?(): Vec | undefined;
   raster(key: string, canvas: HTMLCanvasElement, depth: number, x?: number, y?: number, scale?: number): void;

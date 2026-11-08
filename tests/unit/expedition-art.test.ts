@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { EXPEDITION_ART_SPECS, EXPEDITION_ICON_IDS, expeditionIconStyles, sourceRegisteredSpriteFrame, type ExpeditionArtIdentity,
   type ExpeditionIconRuntime, type ExpeditionSpriteAsset } from '../../src/render/expeditionArt';
+import { campFacilityFrame } from '../../src/render/campArt';
+import { CAMP_FACILITY_PROGRESS } from '../../src/game/campProgression';
+import type { GameState } from '../../src/game/types';
 
 function clip(identity: ExpeditionArtIdentity, action: string, direction = 'fixed') {
   const count = (EXPEDITION_ART_SPECS[identity].clips as Record<string, number>)[action], group = `fantasy.expedition.${identity}.${direction}.${action}`;
@@ -14,6 +17,17 @@ function clip(identity: ExpeditionArtIdentity, action: string, direction = 'fixe
   return assets;
 }
 describe('registered expedition native frames', () => {
+  it('anchors a trimmed summon core to its authored ground point without borrowing a supply house', () => {
+    const station = { ...CAMP_FACILITY_PROGRESS.summon, interactionPosition: { x: 90, y: 90 } }, state = { elapsed: 0 } as GameState;
+    const core: ExpeditionSpriteAsset = { width: 104, height: 184, visibleBounds: { x: 2, y: 2, width: 100, height: 180 },
+      sourceSize: { width: 800, height: 1000 }, sourceBounds: { x: 200, y: 100, width: 400, height: 720 },
+      pivot: { x: 52 / 104, y: 197 / 184 } };
+    const frame = campFacilityFrame({ 'microfront.camp.summon': core }, state, station)!;
+    expect(frame.id).toBe('microfront.camp.summon');expect(frame.layout.originY).toBeCloseTo(197 / 184);
+    expect(frame.layout.bounds.top).toBeCloseTo((100 - 880) * 130 / 800 - 2);
+    expect(frame.layout.bounds.bottom).toBeCloseTo((820 - 880) * 130 / 800 + 2);
+    expect(campFacilityFrame(clip('campSupply', 'ready'), state, station)).toBeUndefined();
+  });
   it('keeps the approved logical canvas and sole through construction states', () => {
     const assets = clip('basePod', 'construction');
     const first = sourceRegisteredSpriteFrame(assets, 'basePod', 'construction', 0, { progress: 0 })!;

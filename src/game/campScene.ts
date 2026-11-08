@@ -3,10 +3,23 @@ import { BALANCE, type GameState, type InputFrame, type Vec } from './types';
 import { IMMUNE_CELL_BALANCE, type ImmuneCellState } from './immuneCells';
 import { CAMP_INTERACTION_RADIUS, campInteractionLineClear, campLayout, campWorldGeometry, isCampPositionLegal, moveWithCampCollision,
   type CampFacility, type CampLayout, type CampStationId } from './campLayout';
+import type { FarmPlot, LegionDeployment } from './legionCatalog';
+import type { CampStationAttention } from './campAttention';
+import { CAMP_DORMITORY_OFFSETS } from './campProgression';
+
+export interface CampSceneState {
+  introSeconds: number; introComplete: boolean; prologue?: 'arrival' | 'building' | 'ready';
+  builtFacilities?: CampStationId[]; activeConstruction?: CampStationId; constructionSeconds?: number;
+  attention?: Partial<Record<CampStationId, CampStationAttention>>; farmPlots?: FarmPlot[]; food?: number; legions?: LegionDeployment[];
+  overview?: boolean;
+  farmAction?: { kind: 'plant'; index: number; startedAt: number; duration: number };
+  cropFeedback?: { index: number; kind: 'plant' | 'harvest' | 'water' | 'pests' | 'cancel' | 'ripe'; until: number; message?: string };
+}
 
 export type { CampStationId } from './campLayout';
 export const CAMP_STATION_NAMES: Record<CampStationId, string> = {
-  warehouse: '免疫仓库', forge: '生命锻造台', shop: '补给站', departure: '情报出击台', summon: '血流接引台',
+  warehouse: '免疫仓库', forge: '生命锻造台', shop: '补给站', departure: '情报出击台', summon: '血流接引点',
+  farm: '营养农场', house: '免疫居所',
 };
 /** Compatibility entry point; all consumers now share the same grounded layout. */
 export function campStations(state: GameState): CampFacility[] { return [...campLayout(state).facilities]; }
@@ -15,6 +28,17 @@ function campCell(id: string, position: Vec, elapsed: number, facing = 0): Immun
   return { ...position, id, beaconId: 'camp:residents', organId: 'heart', facing, updatedAt: elapsed,
     born: elapsed, until: Number.MAX_SAFE_INTEGER, radius: 14, hp: IMMUNE_CELL_BALANCE.health, maxHp: IMMUNE_CELL_BALANCE.health,
     targetId: null, waypoint: null, navigationAt: 0, attackReadyAt: 0, attackUntil: 0, interval: 1, damage: 0, activity: 'guarding' };
+}
+function campLegionResidents(state: GameState, layout: CampLayout) {
+  const home = layout.facilities.find(site => site.id === 'house')?.position;
+  if (!home) return [];
+  return ((state.camp as CampSceneState | undefined)?.legions ?? []).flatMap(squad => Array.from({length: squad.legionId === 'seraph' ? 4 : 3}, (_, index) => ({
+    id: `camp-resident:legion:${squad.slot}:${squad.legionId}:${index}`,
+    position: {x: home.x + CAMP_DORMITORY_OFFSETS[squad.slot].offset.x + (index % 2 ? 20 : -20),
+      y: home.y + CAMP_DORMITORY_OFFSETS[squad.slot].offset.y + 64 + Math.floor(index / 2) * 32},
+    legionId: squad.legionId, legionRole: squad.legionId === 'seraph' ? index === 0 ? 'leader' as const : 'wing' as const : 'guard' as const,
+    seraphRole: squad.legionId === 'seraph' ? index === 0 ? 'commander' as const : index === 3 ? 'prism' as const : 'lancer' as const : undefined, fed: squad.fed,
+  })));
 }
 function installCampCells(state: GameState, layout: CampLayout): void {
   if (!state.growth || !state.camp) return;
@@ -30,7 +54,9 @@ function installCampCells(state: GameState, layout: CampLayout): void {
         nearestLegalCampPosition(desired, 14, layout), state.elapsed), beaconId: 'camp:builders' };
     });
   } else if (state.camp.introComplete) {
-    state.growth.cells = layout.residents.map(resident => campCell(`camp-resident:${resident.id}`, resident.home, state.elapsed, resident.facing));
+    state.growth.cells = [...layout.residents.map(resident => campCell(`camp-resident:${resident.id}`, resident.home, state.elapsed, resident.facing)),
+      ...campLegionResidents(state, layout).map(resident => ({...campCell(resident.id,resident.position,state.elapsed,-Math.PI/2), legionId: resident.legionId, legionRole: resident.legionRole, seraphRole: resident.seraphRole, fed: resident.fed,
+        radius: resident.legionRole === 'leader' ? 18 : 14}))];
   } else if (state.camp.prologue === 'building') {
     state.growth.cells = layout.residents.map((resident, index) => {
       const station = layout.sites[index % layout.sites.length];
@@ -75,7 +101,9 @@ export function prepareCampScene(state: GameState, introComplete: boolean, prolo
 
 function advanceResidents(state: GameState, layout: CampLayout, dt: number): void {
   if (!state.growth || !state.camp?.introComplete) return;
-  if (!state.growth.cells || state.growth.cells.length !== layout.residents.length || state.growth.cells.some(cell => !cell.id.startsWith('camp-resident:'))) installCampCells(state, layout);
+  const stationed = campLegionResidents(state, layout);
+  if (!state.growth.cells || state.growth.cells.length !== layout.residents.length + stationed.length || state.growth.cells.some(cell => !cell.id.startsWith('camp-resident:'))
+    || stationed.some(resident => !state.growth!.cells!.some(cell => cell.id === resident.id))) installCampCells(state, layout);
   const cells = state.growth.cells;
   if (!cells) return;
   for (let index = 0; index < layout.residents.length; index++) {
@@ -94,6 +122,11 @@ function advanceResidents(state: GameState, layout: CampLayout, dt: number): voi
     cell.x = position.x; cell.y = position.y; cell.updatedAt = state.elapsed;
     cell.activity = moving ? 'returning' : 'guarding'; cell.waypoint = moving ? desired : null;
     cell.targetId = null; cell.damage = 0; cell.attackUntil = 0;
+  }
+  for (const resident of stationed) {
+    const cell = cells.find(unit => unit.id === resident.id); if (!cell) continue;
+    cell.x = resident.position.x; cell.y = resident.position.y; cell.updatedAt = state.elapsed;
+    cell.fed = resident.fed; cell.activity = 'guarding'; cell.damage = 0; cell.targetId = null;
   }
 }
 
@@ -141,7 +174,7 @@ function closestFacilityPoint(point: Vec, station: CampFacility): Vec {
   return { x: Math.max(r.left, Math.min(r.right, point.x)), y: Math.max(r.top, Math.min(r.bottom, point.y)) };
 }
 
-/** Distance to a grounded building edge, shared by interaction and camera framing. */
+/** Distance to the grounded building edge, independent of the walking camera. */
 export function campStationDistance(point: Vec, station: CampFacility): number {
   return distance(point, closestFacilityPoint(point, station));
 }
@@ -159,6 +192,12 @@ export function canInteractCampStation(state: GameState, id: CampStationId): boo
   return !!station && canInteractWithStation(state, station, layout);
 }
 
+/** Draws are authorized by the physical node, never by a global menu shortcut. */
+export function canUseCampSummon(state: GameState): boolean {
+  return !!state.camp && (state.camp.builtFacilities === undefined || state.camp.builtFacilities.includes('summon'))
+    && canInteractCampStation(state, 'summon');
+}
+
 export function nearbyCampStation(state: GameState): CampFacility | undefined {
   if (!state.camp || state.camp.prologue === 'arrival') return undefined;
   const layout = campLayout(state);
@@ -171,7 +210,8 @@ function nearestLegalCampPosition(point: Vec, radius: number, layout: CampLayout
   const b = layout.worldBounds, margin = radius + .5;
   const clamp = (v: number, low: number, high: number) => Math.max(low, Math.min(high, v));
   const candidates: Vec[] = [{ x: clamp(point.x, b.left + margin, b.right - margin), y: clamp(point.y, b.top + margin, b.bottom - margin) }];
-  for (const rect of [layout.coreFootprint, ...layout.facilities.map(f => f.footprint)]) {
+  for (const rect of [layout.coreFootprint, ...layout.facilities.flatMap(f => f.additionalFootprints ?? (f.blocksMovement !== false ? [f.footprint] : [])),
+    ...layout.plannedAreas.flatMap(area => [area.rect, area.barrier])]) {
     const left = rect.left - margin, right = rect.right + margin, top = rect.top - margin, bottom = rect.bottom + margin;
     candidates.push({ x: left, y: clamp(point.y, top, bottom) }, { x: right, y: clamp(point.y, top, bottom) },
       { x: clamp(point.x, left, right), y: top }, { x: clamp(point.x, left, right), y: bottom },

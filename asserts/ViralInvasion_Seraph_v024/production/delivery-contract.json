@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "theme": "ViralInvasion_Seraph_v024",
+  "productionGate": "Generate and show three front identity previews first. Expand into60 frames only after main aesthetic acceptance is relayed in this chat.",
+  "roles": {
+    "commander": {"displayName": "白冠统御者", "instances": 1, "suggestedVisibleHeightPx": 72, "identity": "large crown ring, deep mint chest core, long light blade, command mantle wings"},
+    "lancer": {"displayName": "悬翼枪卫", "instances": 2, "suggestedVisibleHeightPx": 54, "identity": "folding twin membrane wings, long thin thrusting spear", "duplicatePngFamilies": false},
+    "prism": {"displayName": "棱光咏卫", "instances": 1, "suggestedVisibleHeightPx": 58, "identity": "floating round wing structure, near-body prismatic focus, no sword or spear"}
+  },
+  "directions": ["front", "back"],
+  "actions": {
+    "idle": {"frameCount": 2, "fps": 4, "loop": true},
+    "move": {"frameCount": 4, "fps": 10, "loop": true},
+    "attack": {"frameCount": 4, "fps": 12, "loop": false, "stages": ["windup1", "windup2", "release-hit", "recovery"], "roleStageNames": {"commander": ["蓄势1", "蓄势2", "释放命中", "收势"], "lancer": ["蓄势1", "蓄势2", "释放命中", "收势"], "prism": ["聚能1", "聚能2", "释放光晶", "回收"]}}
+  },
+  "expectedAnimationFrameCount": 60,
+  "expectedPortraitCount": 1,
+  "runtimeIdPattern": "seraph24.{commander,lancer,prism}.{front,back}.{idle,move,attack}.{00..}",
+  "registration": {
+    "canvas": [512, 512],
+    "foot": [256, 435.2],
+    "pivot": [0.5, 0.85],
+    "trim": false,
+    "perFrameBboxScaleAllowed": false,
+    "policy": "One scale per approved role family; explicit measured ground/hover-reference translation. Preserve complete weapons and wings in each frame. Record all source-cell rectangles and transforms."
+  },
+  "animationEvidence": "Distinct AI-drawn poses with measured per-frame extraction and contact sheets. Static copies or whole-image jitter do not count as full animation.",
+  "suggestedAtlasSourceMax": {"commander": 160, "lancer": 128, "prism": 128},
+  "portrait": {"canvas": [512, 512], "transparent": true, "composition": "one commander centered, two instances of the same lancer family on the sides, one prism behind", "methodAllowed": "Local composition of approved fronts, fully disclosed; no extra generation required."},
+  "qa": {"backgrounds": ["black", "cream"], "visibleHeightPx": {"commander": 72, "lancer": 54, "prism": 58}, "required": ["actual source-pose review", "complete silhouette", "no clipped weapons/wings", "fixed registration", "SHA256", "actual soft alpha and hiddenRGB", "source provenance"]},
+  "writeBoundary": "Only ViralInvasion_Seraph_v024. Never alter src, art-selection, runtime packing, old assets or frozen deliveries.",
+  "runtimeBudgetResponsibility": "Main implementation replaces retired56 frames and verifies packed runtime remains below20MiB. This package supplies full512 source frames and size recommendations."
+}

@@ -4,6 +4,126 @@
 body.microfront-mission .growth-panel,body.microfront-mission .endless-build-panel{display:none}body.microfront-mission .territory-heading{gap:6px}
 @media(max-width:1024px),(max-height:600px){.microfront-assignment{font-size:10px;padding-bottom:2px}.microfront-result{max-height:90dvh;padding:18px}.microfront-result h2{font-size:24px}.microfront-result .actions{display:flex;flex-wrap:wrap;gap:8px}.microfront-result .actions button{flex:1;min-width:120px}}
 
+/* Combat brief: vitals above, one current objective below. */
+body.microfront-mission #app #territory-hud {
+  display:grid; grid-template-columns:minmax(90px,1fr) auto minmax(220px,1.8fr); align-items:center;
+  column-gap:18px; row-gap:10px; left:16px; right:auto; top:76px; width:min(740px,calc(100% - 280px));
+  max-width:none; padding:12px 14px; border:1px solid #a7caba36; border-radius:10px;
+  background:linear-gradient(115deg,#183632f2,#162e2cd9); color:#f5f5e9;
+  box-shadow:0 4px 18px #11272520; text-shadow:none;
+}
+body.microfront-mission #app .territory-heading { display:contents; }
+body.microfront-mission #app #microfront-assignment { grid-column:1; grid-row:1; display:flex; align-items:center; gap:7px; padding:0; min-width:0; line-height:1.3; }
+body.microfront-mission #microfront-assignment strong { color:#f1f1df; font-size:12px; font-weight:600; white-space:nowrap; }
+body.microfront-mission #microfront-assignment small { color:#b8cdbb; border:1px solid #b8cdbb38; border-radius:3px; padding:1px 4px; font-size:9px; font-weight:400; white-space:nowrap; }
+body.microfront-mission #microfront-assignment[data-threat=高危] small { color:#e8b7a0; border-color:#e8b7a045; }
+body.microfront-mission #app #territory-core {
+  grid-column:2; grid-row:1; position:relative; align-self:center; padding:0 0 7px; color:#d4e5d7;
+  font-size:11px; font-weight:500; white-space:nowrap; font-variant-numeric:tabular-nums;
+}
+body.microfront-mission #territory-core::before,body.microfront-mission #territory-core::after { content:''; position:absolute; left:0; bottom:0; height:3px; border-radius:2px; }
+body.microfront-mission #territory-core::before { width:100%; background:#dce9da20; }
+body.microfront-mission #territory-core::after { width:var(--anchor-health,100%); background:#a3d0ad; transition:width .2s ease; }
+body.microfront-mission #app #territory-hud[data-core-attacked=true] #territory-core{color:#ffb5a9}
+body.microfront-mission #app #territory-hud[data-core-attacked=true] #territory-objective{color:#ffb5a9}
+body.microfront-mission #app #territory-hud[data-core-critical=true] #territory-core { color:#ffc8b6; }
+body.microfront-mission #territory-hud[data-core-critical=true] #territory-core::after { background:#ed947b; }
+body.microfront-mission #app #territory-regions { grid-column:3; grid-row:1; display:flex; justify-content:flex-end; gap:7px; padding:0; min-width:0; }
+body.microfront-mission #app #territory-regions > span {
+  display:flex; flex:1 1 0; flex-direction:row; align-items:center; gap:6px; min-width:0; padding:4px 7px;
+  border:1px solid #b5d4c129; border-radius:5px; background:#c4dcc608; color:#c1d3c6; line-height:1.3;
+}
+body.microfront-mission #app #territory-regions > span > b { flex:none; font-size:10px; font-weight:600; color:#e4eadb; }
+body.microfront-mission #app #territory-regions > span > span { width:auto; max-height:none; font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+body.microfront-mission #app #territory-regions > span[data-attacked=true] { border-color:#e39b7460; background:#c4784d1c; color:#ffd0b1; }
+body.microfront-mission #app #territory-regions > span[data-attacked=true] > b { color:#ffd0b1; }
+body.microfront-mission #app #territory-objective {
+  grid-column:1/-1; grid-row:2; display:flex; align-items:baseline; gap:8px; min-width:0; padding-right:0;
+  margin:0; font-size:14px; font-weight:600; line-height:1.4; color:#f5f3df;
+}
+body.microfront-mission #territory-objective::before { content:''; flex:none; width:5px; height:5px; margin:0 1px 2px; transform:rotate(45deg); background:#a6d5b2; }
+body.microfront-mission #app #territory-detail { grid-column:1/-1; grid-row:4; margin:0; padding:7px 0 0; border-top:1px solid #b5d4c124; font-size:11px; line-height:1.45; color:#e2d5b5; max-height:none; }
+body.microfront-mission #app #territory-detail[hidden] { display:none; }
+body.microfront-mission #app #territory-hud[data-infected=true] #territory-detail { color:#ffbba7; }
+body.microfront-mission #app #territory-stability,body.microfront-mission #app #territory-source-access { display:none; }
+body.microfront-mission #app #territory-wave { grid-column:1/3; grid-row:3; position:static; margin:0; font-size:10px; color:#a8c4b4; font-variant-numeric:tabular-nums; }
+.territory-progress { display:flex; align-items:center; gap:7px; min-width:0; font-size:10px; line-height:1.4; color:#9cb6a7; }
+.territory-progress > span { white-space:nowrap; }
+.territory-progress > span + span::before { content:'›'; margin-right:7px; color:#8ca696; }
+.territory-progress > span[data-current=true] { color:#f0edcd; font-weight:650; }
+.territory-progress > span[data-done=true] { color:#aed1b0; }
+body.microfront-mission #app #territory-progress { grid-column:3; grid-row:3; justify-self:end; }
+body.microfront-mission #app #territory-progress[hidden] { display:none; }
+body.touch-mode.microfront-mission #app #territory-hud { top:calc(var(--mobile-top) + 10px); left:calc(var(--mobile-left) + 120px); right:calc(var(--mobile-right) + 176px); width:auto; }
+body.touch-mode.microfront-mission #app #territory-objective { padding-right:0; }
+body.touch-mode.microfront-mission #app #territory-wave { display:none; }
+.mobile-status-stack { display:contents; }
+body.touch-mode.microfront-mission #mobile-controls .mobile-status-stack { position:absolute; z-index:8; top:calc(var(--mobile-top) + 76px); left:calc(var(--mobile-left) + 10px); display:flex; flex-direction:column; gap:4px; width:104px; }
+body.touch-mode.microfront-mission #mobile-controls .mobile-readouts { position:static; width:100%; max-width:none; box-sizing:border-box; padding:5px 0; text-align:center; background:#183632dc; border:1px solid #a7caba26; border-radius:5px; }
+body.touch-mode.microfront-mission .mobile-combat-readout { margin:0; padding:0 3px; font-size:9.5px; line-height:1.4; font-weight:500; white-space:normal; overflow-wrap:anywhere; color:#dbe6d3; }
+body.touch-mode.microfront-mission #mobile-controls .mobile-notice { position:static; width:100%; box-sizing:border-box; font-size:10px; background:#183632ba; }
+body.touch-mode.microfront-mission #mobile-controls .mobile-top-actions button { border-radius:9px; background:#183632df; border-color:#a7caba42; }
+body.touch-mode.microfront-mission #mobile-controls [data-action=mobile-details] { font-size:0; }
+body.touch-mode.microfront-mission #mobile-controls [data-action=mobile-details]::after { content:'战况'; font-size:11px; }
+body.touch-mode.microfront-mission #mobile-controls .mobile-tactical-menu > summary { border-radius:9px; background:#183632df; border-color:#a7caba42; }
+body.touch-mode.microfront-mission #mobile-controls[data-active=false] .mobile-tactical-menu { visibility:hidden; pointer-events:none; }
+#microfront-warning,body.touch-mode.microfront-mission .mobile-warning-strip { display:none; }
+body.touch-mode.microfront-mission #app #microfront-warning { display:flex; grid-column:1/-1; grid-row:5; }
+body.touch-mode.microfront-mission #app #microfront-warning[hidden] { display:none; }
+body.touch-mode.microfront-mission #microfront-warning .mobile-warning { flex:1; padding:6px 8px; font-size:11px; line-height:1.4; }
+@media(max-width:880px) {
+  body.microfront-mission #app #territory-hud { column-gap:12px; grid-template-columns:auto minmax(190px,1fr); }
+  body.microfront-mission #app #microfront-assignment { display:none; }
+  body.microfront-mission #app #territory-core { grid-column:1; }
+  body.microfront-mission #app #territory-regions { grid-column:2; }
+  body.microfront-mission #app #territory-wave { grid-column:1; }
+  body.microfront-mission #app #territory-progress { grid-column:2; }
+}
+body.touch-mode.microfront-mission #app #territory-progress { grid-column:1/-1; justify-self:start; }
+@media(max-width:700px) {
+  body.touch-mode.microfront-mission #app #territory-hud { padding:10px; column-gap:10px; row-gap:9px; grid-template-columns:auto minmax(0,1fr); }
+  body.microfront-mission #app #territory-regions { gap:5px; }
+  body.microfront-mission #app #territory-regions > span { padding:4px; gap:4px; }
+  body.microfront-mission #app #territory-objective { font-size:13px; }
+}
+@media(max-height:420px) {
+  body.touch-mode.microfront-mission #app #territory-hud { padding:7px 8px; row-gap:3px; column-gap:8px; }
+  body.touch-mode.microfront-mission #app #territory-core { font-size:10px; padding-bottom:4px; }
+  body.touch-mode.microfront-mission #app #territory-regions { gap:4px; }
+  body.touch-mode.microfront-mission #app #territory-regions > span { padding:3px 4px; gap:4px; line-height:1.15; }
+  body.touch-mode.microfront-mission #app #territory-regions > span > :is(b,span) { font-size:9px; }
+  body.touch-mode.microfront-mission #app #territory-objective { font-size:12px; line-height:1.2; }
+  body.touch-mode.microfront-mission #app #territory-progress { gap:5px; font-size:9px; line-height:1.1; }
+  body.touch-mode.microfront-mission #app #territory-progress > span + span::before { margin-right:5px; }
+  body.touch-mode.microfront-mission #app #territory-detail { padding-top:3px; font-size:10px; line-height:1.15; }
+  body.touch-mode.microfront-mission #microfront-warning .mobile-warning { padding:3px 4px; font-size:10px; line-height:1.15; }
+}
+
+/* Paused battle details retain the complete source-access explanation and haul. */
+.mission-battle-details { padding:16px; margin:12px 0; border:1px solid #91ac9b66; border-radius:9px; background:#f1f1e4; color:#345c4e; text-align:left; }
+.mission-battle-details header { display:flex; justify-content:space-between; align-items:center; gap:14px; }
+#app .mission-battle-details h3 { margin:3px 0 0; font-size:18px; color:#284f43; }
+.mission-battle-details header small,.mission-battle-details header > b { font-size:11px; color:#60796a; }
+.mission-battle-details .mission-stage-path { margin-top:9px; color:#718273; }
+.mission-battle-details .mission-stage-path > span[data-current=true] { color:#284f43; }
+.mission-battle-details .mission-stage-path > span[data-done=true] { color:#3b8060; }
+.mission-battle-resources { display:flex; gap:32px; margin:16px 0; padding:12px 0; border-block:1px solid #8ba69238; }
+.mission-battle-resources dt { font-size:10px; color:#6b8171; }
+.mission-battle-resources dd { margin:3px 0 0; font-size:20px; font-weight:600; font-variant-numeric:tabular-nums; }
+.mission-battle-lanes { display:grid; grid-template-columns:1fr 1fr; gap:18px; font-size:12px; }
+.mission-battle-lanes > div > span { margin-left:9px; color:#69816f; }
+.mission-battle-lanes > [data-attacked=true] > span { color:#ac563a; }
+#app .mission-battle-lanes ol { padding-left:18px; margin:9px 0; line-height:1.9; }
+.mission-battle-lanes li { color:#7a897c; }
+.mission-battle-lanes li[data-done=true] { color:#3b8060; }
+.mission-battle-lanes li[data-current=true] { color:#284f43; font-weight:700; }
+#app .mission-battle-details > p { margin:12px 0 0; font-size:10px; color:#718273; }
+.mission-pause-tactics summary { cursor:pointer; padding:8px 0; color:#4e7563; font-size:12px; }
+body.microfront-mission #mobile-stability-details { display:none; }
+body.microfront-mission #mobile-details-content { grid-template-columns:1fr; }
+body.microfront-mission #app #mobile-details-content > :is(.growth-panel,.endless-wave-panel,.endless-vitals,.endless-build-panel,#endless-evolution-warning) { display:none!important; }
+@media(prefers-reduced-motion:reduce) { body.microfront-mission #territory-core::after { transition:none; } }
+
 .camp-resource-icon{display:inline-block;width:24px;height:24px;vertical-align:middle;background-size:contain;background-repeat:no-repeat;background-position:center;margin-right:4px}.camp-wallet .camp-resource-icon{width:18px;height:18px}
 
 /* Reward receipt: fixed actions, a scrollable showcase, and real item quality. */
@@ -14,6 +134,7 @@ body.microfront-mission .growth-panel,body.microfront-mission .endless-build-pan
 .mission-reward-glyph{display:block;width:100%;height:100%}
 #app .mission-result-header .mission-result-location{margin:0 0 4px;color:#738579;font-size:12px;letter-spacing:2px;line-height:1.4}
 #app .mission-result-header h2{margin:0;color:#285b51;font-size:30px;letter-spacing:3px;font-family:"Microsoft YaHei",sans-serif;font-weight:750;line-height:1.3}
+#app .mission-result-header .mission-result-cause{margin:6px 0 0;color:#9b4c48;font-size:14px;font-weight:650;line-height:1.4}
 #app .mission-first-clear{margin-left:auto;flex-shrink:0;padding:5px 10px;border:1px solid #c2cfb7;border-radius:5px;color:#657d54;background:#e6ecd9;font-size:11px;letter-spacing:1px}
 .mission-result-scroll{min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#6a8b7c #1b3735}
 #app .mission-loot{position:relative;isolation:isolate;margin:0 20px;padding:20px 24px 0;border:1px solid #4e7260;border-radius:14px;overflow:hidden;background:radial-gradient(ellipse at 50% 0,#41645655,transparent 70%),linear-gradient(135deg,#233f3c,#192d2e);box-shadow:inset 0 1px 0 #c5e2b817}

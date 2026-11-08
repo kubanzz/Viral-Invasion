@@ -6,7 +6,7 @@ import { activeWorld, type GameState, type Target, type Vec } from '../../src/ga
 import { CanvasScene } from '../../src/render/canvasScene';
 import { drawBattleTarget } from '../../src/render/battleVisuals';
 import { playerVisualBounds, targetVisualBounds } from '../../src/render/raisedObstacleOcclusion';
-import { drawCombatEffects } from '../../src/render/combatEffects';
+import { drawCombatEffects, slashSweepWindow } from '../../src/render/combatEffects';
 import { drawPlayerProjectiles } from '../../src/render/playerProjectileVisuals';
 import { HeroLocomotionController } from '../../src/render/heroLocomotion';
 
@@ -64,16 +64,27 @@ describe('new fantasy fallback geometry and essential effects',()=>{
     }
   });
 
-  it('keeps the real slash radius, cone and wall-clipped outside edge in normal and low effects',()=>{
+  it('sweeps within the real slash cone and wall-clipped radius in normal and low effects',()=>{
     const state=sample();state.campaign=undefined;state.world={width:1000,height:1000,bounds:{left:0,top:0,right:1000,bottom:1000},foreground:{x:0,y:0,width:0,height:0},obstacles:[{id:'wall',x:580,y:500,radius:45}]};
     state.effects=[{id:1,kind:'slash',born:5.9,duration:.3,from:{x:500,y:500},to:{x:700,y:500},radius:180,arcHalfAngle:.8}];state.targets=[];
     const before=JSON.stringify(state);
     for(const low of [false,true]){
       const drawn=drawing();drawCombatEffects(drawn.ctx,state,low);
       const edge=drawn.paints.find(p=>p.kind==='stroke'&&p.color==='#548b78')!.points;
-      expect(edge[0].x).toBeCloseTo(500+Math.cos(-.8)*180);expect(edge.at(-1)!.x).toBeCloseTo(500+Math.cos(.8)*180);
+      const sweep=slashSweepWindow((state.elapsed-5.9)/.3);
+      expect(edge[0].x).toBeCloseTo(500+Math.cos(-.8+sweep.tail*1.6)*180);
+      expect(edge.at(-1)!.x).toBeCloseTo(500+Math.cos(-.8+sweep.head*1.6)*180);
       for(const point of edge){const dx=point.x-500,dy=point.y/.72-500,range=Math.hypot(dx,dy),direction={x:dx/range,y:dy/range};expect(range).toBeCloseTo(Math.min(180,wallHit({x:500,y:500},direction,180,activeWorld(state))??180),6);}
       expect(drawn.balanced()).toBe(true);
+      // Across its life the blade reaches both accepted cone ends, while each
+      // individual frame exposes a directional window rather than the full fan.
+      const angles:number[]=[];
+      for(const progress of [0,.1,.3,.5,.8,.95]){
+        const frame=drawing();drawCombatEffects(frame.ctx,{...state,elapsed:5.9+progress*.3},low);
+        const path=frame.paints.find(p=>p.kind==='stroke'&&p.color==='#548b78')!.points;
+        angles.push(...path.map(p=>Math.atan2(p.y/.72-500,p.x-500)));
+      }
+      expect(Math.min(...angles)).toBeCloseTo(-.8);expect(Math.max(...angles)).toBeCloseTo(.8);
     }
     expect(JSON.stringify(state)).toBe(before);
   });

@@ -1,5 +1,6 @@
 import { distance, normalized, wallHit } from '../actors/collision';
 import { endlessCombatStats } from './endlessGrowth';
+import { playerIncomingDamage } from './weaponMelee';
 import { activeWorld, WORLD } from './types';
 import { isTerritoryPlayerAirborne } from './territoryCannon';
 import type { GameEvent, GameState, Target, Vec, WorldGeometry } from './types';
@@ -14,6 +15,7 @@ export type * from './territoryTypes';
 export const TERRITORY_BALANCE = {
   captureRadius: 120, captureSeconds: 10, captureRecoveryPerSecond: 10,
   purificationRange: 150, purificationSeconds: 3,
+  purificationProtectionSeconds: 15,
   purificationHurtPause: .8, defenseRadius: 300, garrisonArrivalRange: 150,
   healingRange: 150, healPerSecond: 3, cleanseSeconds: 1,
   healingBodyRadius: 36, ordinaryPollutionPerSecond: 2.5, ordinaryPollutionLimit: 3,
@@ -234,13 +236,21 @@ export function territoryInvaderGoal(state: Pick<GameState, 'territory'>, target
 }
 
 export function territoryInvaderAt(state: GameState, node: TerritoryNode): boolean {
+  if (territoryProtectionRemaining(state, node) > 0) return false;
   return state.targets.some(target => target.hp > 0 && (target.role === 'virus' || target.role === 'elite')
     && target.territoryTask?.kind === 'invade'
     && (!target.territorySourceId || TERRITORY_LANES.find(lane => lane.sourceId === target.territorySourceId)?.path.includes(node.id as never) === true)
     && within(target, node, TERRITORY_BALANCE.captureRadius));
 }
 
-export interface TerritoryPollutionContext { territory?: TerritoryState; targets: readonly Target[]; world?: WorldGeometry }
+export interface TerritoryPollutionContext { territory?: TerritoryState; targets: readonly Target[]; world?: WorldGeometry; elapsed?: number }
+/** Uses the same paused simulation clock as purification and hostile capture. */
+export function territoryProtectionRemaining(state: { elapsed?: number }, node: TerritoryNode): number {
+  if (node.owner !== 'healthy' || node.permanent || node.kind !== 'healing' && node.kind !== 'front'
+    || !Number.isFinite(node.protectedUntil) || !Number.isFinite(state.elapsed)) return 0;
+  const remaining = node.protectedUntil! - state.elapsed!;
+  return remaining > EPSILON ? remaining : 0;
+}
 const contagiousBody = (target: Target): boolean => target.hp > 0 && (target.role === 'virus' || target.role === 'elite');
 function clearBodyLine(from: Vec, to: Vec, world: WorldGeometry): boolean {
   const gap = distance(from, to);
@@ -258,7 +268,7 @@ function nodeInvader(state: TerritoryPollutionContext, node: TerritoryNode, targ
 /** One owner-independent authority for contamination, purification, captions and guard priorities. */
 export function territoryNodeContaminators(state: TerritoryPollutionContext, nodeOrId: TerritoryNode | TerritoryNodeId): Target[] {
   const node = typeof nodeOrId === 'string' ? state.territory?.nodes.find(item => item.id === nodeOrId) : nodeOrId;
-  if (!node || node.permanent || node.kind !== 'healing' && node.kind !== 'front') return [];
+  if (!node || node.permanent || node.kind !== 'healing' && node.kind !== 'front' || territoryProtectionRemaining(state, node) > 0) return [];
   return state.targets.filter(target => nodeInvader(state, node, target) || node.kind === 'healing' && contagiousBody(target)
     && within(target, node, TERRITORY_BALANCE.healingBodyRadius + target.radius)
     && clearBodyLine(target, node, state.world ?? WORLD));
@@ -336,9 +346,10 @@ export function purificationPauseReason(state: GameState, node: TerritoryNode): 
   if (territoryInvaderAt(state, node)) return 'invader';
   if (state.elapsed + EPSILON < state.territory!.purificationInterruptedUntil) return 'hurt';
 }
-export function territoryNodeStatus(state: Pick<GameState, 'territory'>, nodeOrId: TerritoryNode | TerritoryNodeId): TerritoryNodeStatus {
+export function territoryNodeStatus(state: Pick<GameState, 'territory'> & Partial<Pick<GameState, 'elapsed'>>, nodeOrId: TerritoryNode | TerritoryNodeId): TerritoryNodeStatus {
   const node = typeof nodeOrId === 'string' ? state.territory?.nodes.find(node => node.id === nodeOrId) : nodeOrId;
   if (!node) return 'healthy';
+  if (territoryProtectionRemaining(state, node) > 0) return 'healthy';
   if (node.owner === 'infected') return state.territory?.purification?.nodeId === node.id ? 'purifying' : 'infected';
   return node.infectionProgress > EPSILON ? 'contested' : 'healthy';
 }
@@ -346,6 +357,7 @@ export function territoryNodeView(state: GameState, nodeOrId: TerritoryNode | Te
   const node = typeof nodeOrId === 'string' ? state.territory?.nodes.find(node => node.id === nodeOrId) : nodeOrId;
   if (!node) return;
   const purificationActive = state.territory?.purification?.nodeId === node.id && node.owner === 'infected';
+  const protectionRemaining = territoryProtectionRemaining(state, node), infectionProgress = protectionRemaining > 0 ? 0 : node.infectionProgress;
   const attackers = node.kind === 'core' ? state.targets.filter(target => target.hp > 0 && (
     target.attackTarget === 'tissue' && (target.attackAt ?? 0) > state.elapsed
       || target.territoryTask?.kind === 'invade' && territoryInvaderGoal(state, target)?.id === node.id && within(target, node, TERRITORY_BALANCE.captureRadius)))
@@ -353,8 +365,9 @@ export function territoryNodeView(state: GameState, nodeOrId: TerritoryNode | Te
   const infecting = node.owner === 'healthy' && (node.kind === 'healing' || node.kind === 'front') && attackers.length > 0;
   const origins = attackers.map(target => ({ x: target.x, y: target.y }));
   const required = requiredHealing(state, node);
-  return { node, status: territoryNodeStatus(state, node), infecting, recovering: node.owner === 'healthy' && node.infectionProgress > 0 && !infecting,
-    infectionProgress: node.infectionProgress, pollutionRate: territoryPollutionRate(state, node), purificationProgress: node.purificationProgress, purificationActive,
+  return { node, status: territoryNodeStatus(state, node), infecting, recovering: node.owner === 'healthy' && infectionProgress > 0 && !infecting,
+    infectionProgress, pollutionRate: territoryPollutionRate(state, node), purificationProgress: node.purificationProgress, purificationActive,
+    ...(protectionRemaining > 0 ? { protectionRemaining } : {}),
     ...(purificationActive ? { pausedReason: purificationPauseReason(state, node) } : {}),
     ...(required ? { requiredNodeId: required.id as 'heart-healing-1' | 'heart-healing-2' } : {}),
     attackerIds: attackers.map(target => target.id), attackOrigins: origins, ...(origins[0] ? { incomingFrom: origins[0] } : {}) };
@@ -462,6 +475,7 @@ export function destroyTerritorySource(state: GameState, sourceId: TerritorySour
   const first = !node.firstPurified;
   node.owner = 'healthy'; node.infectionProgress = 0; node.purificationProgress = 100;
   node.permanent = true; node.firstPurified = true;
+  delete node.protectedUntil;
   return [
     { type: 'TERRITORY_SOURCE_DESTROYED', data: { sourceId, nodeId: node.id, healingNodeId: source.healingNodeId, firstReward } },
     { type: 'TERRITORY_PURIFIED', data: { nodeId: node.id, first, permanent: true, reason: 'source-destroyed' } },
@@ -474,8 +488,12 @@ export function advanceTerritory(state: GameState, dt: number): TerritoryRuleEve
   const territory = state.territory!, events: TerritoryRuleEvent[] = [];
   for (const node of territory.nodes) {
     if (node.kind !== 'healing' && node.kind !== 'front' || node.owner !== 'healthy' || node.permanent) continue;
+    // A protected node stays completely clean. Expiry does not accumulate a
+    // hidden debt or replay the protected part of a larger simulation step.
+    if (territoryProtectionRemaining(state, node) > 0) { node.infectionProgress = 0; continue; }
+    const captureDt = Number.isFinite(node.protectedUntil) ? Math.min(dt, Math.max(0, state.elapsed - node.protectedUntil!)) : dt;
     const before = node.infectionProgress, rate = territoryPollutionRate(state, node);
-    node.infectionProgress = Math.max(0, Math.min(100, before + (rate > 0 ? rate : -TERRITORY_BALANCE.captureRecoveryPerSecond) * dt));
+    node.infectionProgress = Math.max(0, Math.min(100, before + (rate > 0 ? rate : -TERRITORY_BALANCE.captureRecoveryPerSecond) * captureDt));
     if (before === 0 && node.infectionProgress > 0) {
       node.contestedAt = state.elapsed;
       events.push({ type: 'TERRITORY_CONTESTED', data: { nodeId: node.id } });
@@ -493,6 +511,8 @@ export function advanceTerritory(state: GameState, dt: number): TerritoryRuleEve
     if (purifying.purificationProgress >= 100 - EPSILON) {
       const first = !purifying.firstPurified;
       purifying.owner = 'healthy'; purifying.infectionProgress = 0; purifying.purificationProgress = 100; purifying.firstPurified = true;
+      if (state.expedition?.missionId) purifying.protectedUntil = state.elapsed + TERRITORY_BALANCE.purificationProtectionSeconds;
+      else delete purifying.protectedUntil;
       delete purifying.capturedAt; delete purifying.contestedAt;
       territory.purification = null;
       events.push({ type: 'TERRITORY_PURIFIED', data: { nodeId: purifying.id, first, permanent: false, reason: 'player' } });
@@ -525,7 +545,7 @@ export function advanceTerritory(state: GameState, dt: number): TerritoryRuleEve
     for (let tick = 0; tick < due; tick++) {
       infection.nextTickAt += interval;
       const before = state.player.hp;
-      state.player.hp = Math.max(0, before - TERRITORY_BALANCE.infectionDamage);
+      state.player.hp = Math.max(0, before - playerIncomingDamage(state, TERRITORY_BALANCE.infectionDamage));
       if (before > state.player.hp) events.push({ type: 'PLAYER_HURT', data: { reason: 'infection', actorId: infection.sourceId ?? '', damage: before - state.player.hp, remainingHp: state.player.hp } });
     }
     if (state.elapsed + EPSILON >= infection.until) {

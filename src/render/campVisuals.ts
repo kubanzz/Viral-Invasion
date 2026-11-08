@@ -1,18 +1,86 @@
-import { CAMP_COURTYARDS, CAMP_PATHS, CAMP_WALL_THICKNESS, campLayout, campWallTrace, type CampCourtyard,
+import { CAMP_COURTYARDS, CAMP_FACILITIES, CAMP_PATHS, CAMP_LIFE_PATHS, CAMP_PLANNED_AREAS, CAMP_LIFE_GARDEN_BOUNDS, CAMP_WALL_THICKNESS, campLayout, campCourtyardBoundaryTraces, type CampCourtyard,
   type CampCourtyardId, type CampRect, type CampStationId } from '../game/campLayout';
 import type { GameState, Vec } from '../game/types';
 import type { SceneLabel } from './sceneLabels';
+import {campPlanningLabels,drawCampLifeGardenGround} from './campPlanningVisuals';
 
 const TAU = Math.PI * 2;
 
 export const CAMP_VISUAL_SIZES = {
   heroCanvas: 76, coreCanvas: 230,
-  stationWidths: { warehouse: 280, forge: 156, shop: 168, departure: 190, summon: 130 } satisfies Record<CampStationId, number>,
+  stationWidths: { warehouse: 280, forge: 156, shop: 168, departure: 190, summon: 130, farm: 240, house: 220 } satisfies Record<CampStationId, number>,
   newForgeWidth: 248,
 } as const;
 export const CAMP_GROUND_ASSET_IDS: Readonly<Record<CampCourtyardId, string>> = {
   workshop: 'fantasy.camp.ground.workshop', supply: 'fantasy.camp.ground.supply', departure: 'fantasy.camp.ground.departure',
 };
+export const CAMP_SUMMON_NODE = { ringRadius: 36, coreHeight: 48, coreRadius: 17, beamHeight: 132 } as const;
+
+/** Local procedural fallback keeps new life facilities identifiable before optional art loads. */
+export function drawCampLifeFacility(ctx: CanvasRenderingContext2D, state: GameState, id: 'farm' | 'house'): void {
+  ctx.save();
+  if (id === 'farm') {
+    ctx.fillStyle = '#9eab7f';ctx.strokeStyle = '#6d8862';ctx.lineWidth = 3;
+    ctx.beginPath();ctx.roundRect(-110,-75,220,75,14);ctx.fill();ctx.stroke();
+    const plots = (state.camp as typeof state.camp & { farmPlots?: {planted:boolean;growth:number}[] })?.farmPlots;
+    for (let index=0; index<3; index++) {
+      const x=-72+index*72, plot=plots?.[index];
+      ctx.fillStyle='#7e6d4f';ctx.beginPath();ctx.roundRect(x-27,-62,54,50,8);ctx.fill();
+      if (!plot || plot.planted) for (const side of [-1,1]) {
+        const sx=x+side*12;ctx.strokeStyle='#cee0a2';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(sx,-24);ctx.lineTo(sx,-61);ctx.stroke();
+        ctx.fillStyle='#9fca85';ctx.beginPath();ctx.ellipse(sx-7,-45,11,5,.55,0,TAU);ctx.fill();ctx.beginPath();ctx.ellipse(sx+7,-39,11,5,-.55,0,TAU);ctx.fill();
+        if ((plot?.growth??2)>=2) {ctx.fillStyle='#f3d087';ctx.beginPath();ctx.ellipse(sx,-62,8,11,0,0,TAU);ctx.fill();}
+      }
+    }
+  } else {
+    ctx.fillStyle='#d5d0ac';ctx.strokeStyle='#6a8a74';ctx.lineWidth=3;
+    ctx.beginPath();ctx.roundRect(-66,-82,132,82,14);ctx.fill();ctx.stroke();
+    ctx.fillStyle='#88a681';ctx.beginPath();ctx.moveTo(-82,-75);ctx.quadraticCurveTo(-67,-121,0,-136);ctx.quadraticCurveTo(67,-121,82,-75);ctx.closePath();ctx.fill();ctx.stroke();
+    ctx.fillStyle='#487662';ctx.beginPath();ctx.roundRect(-17,-48,34,48,15);ctx.fill();
+    for(const x of [-43,43]) {ctx.fillStyle='#edcd89';ctx.beginPath();ctx.ellipse(x,-49,12,16,0,0,TAU);ctx.fill();ctx.stroke();}
+    ctx.strokeStyle='#ead7a1';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-8,-98);ctx.lineTo(8,-98);ctx.moveTo(0,-106);ctx.lineTo(0,-90);ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/** Animated guidance stays outside the camp's cached static floor. */
+export function drawCampSummonGround(ctx: CanvasRenderingContext2D, state: GameState, lowEffects = false): void {
+  if (!state.camp || state.camp.prologue === 'arrival') return;
+  const node = campLayout(state).facilities.find(site => site.id === 'summon');
+  if (!node) return;
+  const p = node.position, pulse = lowEffects ? 0 : Math.sin(state.elapsed * 2.2) * .5 + .5;
+  ctx.save();
+  const glow = ctx.createRadialGradient(p.x, p.y, 3, p.x, p.y, 56 + pulse * 6);
+  glow.addColorStop(0, '#ffe8a981'); glow.addColorStop(.55, '#f0c07138'); glow.addColorStop(1, '#f1c26f00');
+  ctx.fillStyle = glow;ctx.beginPath();ctx.arc(p.x, p.y, 62, 0, TAU);ctx.fill();
+  ctx.lineWidth = 2;ctx.strokeStyle = '#bb8c48';ctx.beginPath();ctx.arc(p.x, p.y, CAMP_SUMMON_NODE.ringRadius, 0, TAU);ctx.stroke();
+  ctx.lineWidth = 1.3;ctx.strokeStyle = '#fff5cc';ctx.beginPath();ctx.arc(p.x, p.y, 31 + pulse * 2, 0, TAU);ctx.stroke();
+  ctx.restore();
+}
+
+/** A soft upright beam and a few rising motes make the unique node visible from the road. */
+export function drawCampSummonLight(ctx: CanvasRenderingContext2D, state: GameState, lowEffects = false): void {
+  if (!state.camp || state.camp.prologue === 'arrival') return;
+  const node = campLayout(state).facilities.find(site => site.id === 'summon');
+  if (!node) return;
+  const pulse = lowEffects ? 0 : Math.sin(state.elapsed * 2.2) * .5 + .5;
+  ctx.save();ctx.translate(node.position.x, node.position.y);ctx.scale(1, 1 / .72);
+  if (!lowEffects) {
+    const beam = ctx.createLinearGradient(0, -CAMP_SUMMON_NODE.beamHeight, 0, 0);
+    beam.addColorStop(0, '#fff1b800');beam.addColorStop(.55, '#ffeab329');beam.addColorStop(1, '#f8d07b55');
+    ctx.fillStyle = beam;ctx.beginPath();ctx.moveTo(-9, -CAMP_SUMMON_NODE.beamHeight);ctx.lineTo(9, -CAMP_SUMMON_NODE.beamHeight);
+    ctx.lineTo(23, 0);ctx.quadraticCurveTo(0, 8, -23, 0);ctx.closePath();ctx.fill();
+    for (let i = 0; i < 7; i++) {
+      const t = (state.elapsed * .23 + i / 7) % 1, x = Math.sin(i * 2.4 + t * 3) * (13 + i % 3 * 4);
+      ctx.globalAlpha = Math.sin(t * Math.PI) * .8;ctx.fillStyle = i % 2 ? '#fff7cf' : '#efc77d';
+      ctx.beginPath();ctx.arc(x, -10 - t * 108, 1.4 + i % 2 * .6, 0, TAU);ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  const glow = ctx.createRadialGradient(0, -CAMP_SUMMON_NODE.coreHeight, 2, 0, -CAMP_SUMMON_NODE.coreHeight, 31 + pulse * 3);
+  glow.addColorStop(0, '#fff4c43b');glow.addColorStop(1, '#ffda9200');
+  ctx.fillStyle = glow;ctx.beginPath();ctx.arc(0, -CAMP_SUMMON_NODE.coreHeight, 35, 0, TAU);ctx.fill();ctx.restore();
+}
 export type CampGroundImages = Partial<Record<CampCourtyardId, CanvasImageSource>>;
 export type CampFixtureKind = 'material-bin' | 'supply-shelf' | 'bench' | 'dispatch-rack';
 export type CampDecoration = (Vec & { id: string; height: number }) & (
@@ -28,12 +96,10 @@ const colors = {
   departure: { floor: '#cad8ce', light: '#e0e8d9', grain: '#7f9d91', seed: 270 },
 } as const;
 
-/** The end caps sit outside the model's clear opening, so a round curb never narrows a gate. */
-export function campBoundaryTrace(courtyard: CampCourtyard, extraClearance = 0): Vec[] {
-  return campWallTrace(courtyard, extraClearance);
-}
+/** Visible corner traces are exactly the short grounded collision boundaries. */
+export const campBoundaryTraces = campCourtyardBoundaryTraces;
 
-/** Art is inset behind the authoritative low curb; floor transparency never creates a second entrance. */
+/** Floor material stays inside each district; open borders remain walkable. */
 export function campGroundPatchRect(courtyard: CampCourtyard): CampRect { return inset(courtyard.rect, CAMP_WALL_THICKNESS / 2 + 2); }
 
 type CampDecorationDefinition = CampDecoration & { groundPlanting?: CampCourtyardId };
@@ -73,10 +139,10 @@ export function campDecorations(state: GameState, paintedGrounds: readonly CampC
 export function campAreaLabels(state: GameState): SceneLabel[] {
   if (!state.camp || state.camp.prologue === 'arrival') return [];
   const names: Record<CampCourtyardId, string> = { workshop: '整备区', supply: '补给区', departure: '出击区' };
-  return campLayout(state).completedCourtyards.map(c => ({
+  return [...campLayout(state).completedCourtyards.map(c => ({
     id: `camp-area:${c.id}`, anchor: { x: (c.rect.left + c.rect.right) / 2, y: c.rect.bottom + 28 },
     priority: 64, essential: true, lines: [{ text: names[c.id], color: '#ecedd2', size: 15 }],
-  }));
+  })),...campPlanningLabels(state)];
 }
 
 function trace(ctx: CanvasRenderingContext2D, points: readonly Vec[], yOffset = 0): void {
@@ -137,34 +203,29 @@ function drawGroundTexture(ctx: CanvasRenderingContext2D, c: CampCourtyard, imag
 }
 
 function drawPlantingEdges(ctx: CanvasRenderingContext2D, c: CampCourtyard): void {
-  const r = inset(c.rect, 22), band: CampCourtyard = { ...c, rect: r, gate: { ...c.gate, center: { x: c.gate.side === 'east' ? r.right : r.left, y: c.gate.center.y } } };
-  const points = campBoundaryTrace(band, 19);
-  // Keep south-facing service positions clear instead of putting a hedge across their feet.
-  const clear = (p: Vec) => c.id === 'workshop' || Math.abs(p.y - r.bottom) > 3 || Math.abs(p.x - 335) > 67;
-  ctx.lineWidth = 13;ctx.lineCap = 'round';ctx.strokeStyle = '#a0b6958a';
-  let drawing = false;ctx.beginPath();
-  for (const p of points) { if (!clear(p)) { drawing = false;continue; } if (drawing) ctx.lineTo(p.x, p.y);else { ctx.moveTo(p.x, p.y);drawing = true; } }ctx.stroke();
-  for (let i = 0; i < points.length; i += 2) {
-    const p = points[i];if (!clear(p)) continue;
-    ellipse(ctx, p.x + 1, p.y + 1, 8, 4, '#6f956542');
-    leaf(ctx, p.x, p.y + 4, 10 + seed(i + 13) * 6, -.8, i % 4 ? '#a9c39a' : '#91ae8b');
-    leaf(ctx, p.x + 2, p.y + 3, 10 + seed(i + 73) * 5, .75, '#b9cda4');
-    if (i % 10 === 0) ellipse(ctx, p.x + 5, p.y - 3, 2.1, 2.6, '#eee8ba');
+  // Planting hugs the short corner curbs; open service fronts never look fenced in.
+  for (const points of campCourtyardBoundaryTraces(c)) {
+    const p = points[3], center = { x: (c.rect.left+c.rect.right)/2, y: (c.rect.top+c.rect.bottom)/2 };
+    const x = p.x + Math.sign(center.x-p.x)*17, y = p.y + Math.sign(center.y-p.y)*17;
+    ellipse(ctx, x, y+3, 13, 5, '#6f956542');
+    leaf(ctx, x, y+4, 15, -.8, '#a9c39a');leaf(ctx, x+3, y+3, 13, .75, '#b9cda4');
   }
 }
 
 function drawCurb(ctx: CanvasRenderingContext2D, c: CampCourtyard): void {
-  const points = campBoundaryTrace(c);
+  const corners = campCourtyardBoundaryTraces(c);
   ctx.save();ctx.lineCap = 'round';ctx.lineJoin = 'round';
-  trace(ctx, points, 7);ctx.strokeStyle = '#65765c35';ctx.lineWidth = CAMP_WALL_THICKNESS + 5;ctx.stroke();
-  trace(ctx, points, 4);ctx.strokeStyle = '#a8ad91';ctx.lineWidth = CAMP_WALL_THICKNESS;ctx.stroke();
-  trace(ctx, points);ctx.strokeStyle = '#e2d6b9';ctx.lineWidth = CAMP_WALL_THICKNESS;ctx.stroke();
-  trace(ctx, points, -1.5);ctx.strokeStyle = '#fff2d6';ctx.lineWidth = 2;ctx.stroke();
-  // Small joints follow the same line as the collider; there are no decorative gaps.
-  for (let i = 4; i < points.length - 3; i += 4) {
-    const p = points[i], a = points[i - 1], b = points[i + 1], length = Math.hypot(b.x - a.x, b.y - a.y);
-    const nx = -(b.y - a.y) / length, ny = (b.x - a.x) / length;
-    ctx.beginPath();ctx.moveTo(p.x + nx * 4.3, p.y + ny * 4.3);ctx.lineTo(p.x - nx * 4.3, p.y - ny * 4.3 + 1);ctx.strokeStyle = '#a8aa8a68';ctx.lineWidth = .8;ctx.stroke();
+  for (const points of corners) {
+    trace(ctx, points, 7);ctx.strokeStyle = '#65765c35';ctx.lineWidth = CAMP_WALL_THICKNESS + 5;ctx.stroke();
+    trace(ctx, points, 4);ctx.strokeStyle = '#a8ad91';ctx.lineWidth = CAMP_WALL_THICKNESS;ctx.stroke();
+    trace(ctx, points);ctx.strokeStyle = '#e2d6b9';ctx.lineWidth = CAMP_WALL_THICKNESS;ctx.stroke();
+    trace(ctx, points, -1.5);ctx.strokeStyle = '#fff2d6';ctx.lineWidth = 2;ctx.stroke();
+    // Each short corner follows its collider; the open sides have no invisible fence.
+    for (let i = 4; i < points.length - 3; i += 4) {
+      const p = points[i], a = points[i - 1], b = points[i + 1], length = Math.hypot(b.x - a.x, b.y - a.y);
+      const nx = -(b.y - a.y) / length, ny = (b.x - a.x) / length;
+      ctx.beginPath();ctx.moveTo(p.x + nx * 4.3, p.y + ny * 4.3);ctx.lineTo(p.x - nx * 4.3, p.y - ny * 4.3 + 1);ctx.strokeStyle = '#a8aa8a68';ctx.lineWidth = .8;ctx.stroke();
+    }
   }
   const g = c.gate, x = g.center.x, y = g.center.y;
   const threshold = ctx.createLinearGradient(x - 16, y, x + 16, y);threshold.addColorStop(0, '#eadbbd');threshold.addColorStop(.5, '#f6e8ca');threshold.addColorStop(1, '#e6d5b7');
@@ -178,12 +239,15 @@ function drawPaths(ctx: CanvasRenderingContext2D): void {
   ctx.save();ctx.beginPath();paths.forEach(r => rounded(ctx, r, 17));ctx.fillStyle = '#c6b59769';ctx.fill();
   ctx.beginPath();paths.forEach(r => rounded(ctx, inset(r, 2), 15));ctx.fillStyle = '#f0dfc0';ctx.fill();
   ctx.save();ctx.beginPath();paths.forEach(r => rounded(ctx, inset(r, 3), 14));ctx.clip();
-  for (let i = 0; i < 260; i++) {
-    const x = -163 + seed(i + 91) * 327, y = -120 + seed(i + 1091) * 550;
+  const interiors=paths.map(r=>inset(r,3)), areas=interiors.map(r=>(r.right-r.left)*(r.bottom-r.top)), totalArea=areas.reduce((sum,area)=>sum+area,0);
+  for (let i = 0; i < Math.ceil(totalArea/700); i++) {
+    let sample=seed(i+91)*totalArea, index=0;
+    while(index<areas.length-1&&sample>=areas[index])sample-=areas[index++];
+    const r=interiors[index],x=r.left+seed(i+491)*(r.right-r.left),y=r.top+seed(i+1091)*(r.bottom-r.top);
     ellipse(ctx, x, y, .7 + seed(i + 41) * 2.2, .4 + seed(i + 73) * 1.2, i % 3 ? '#fff6dc51' : '#bdab8b21');
   }
   ctx.strokeStyle = '#c4ad8b22';ctx.lineWidth = 1;
-  for (const y of [132, 207, 281, 356]) {ctx.beginPath();ctx.moveTo(-72, y);ctx.bezierCurveTo(-30, y - 3, 34, y + 4, 72, y);ctx.stroke();}
+  for (const y of [-365,-290,-215,-140,132,207,281,356]) {ctx.beginPath();ctx.moveTo(-72, y);ctx.bezierCurveTo(-30, y - 3, 34, y + 4, 72, y);ctx.stroke();}
   ctx.restore();ctx.restore();
 }
 
@@ -201,18 +265,24 @@ function drawForecourt(ctx: CanvasRenderingContext2D): void {
   }
 }
 
-const groundBounds: CampRect = { left: -552, top: -252, right: 537, bottom: 432 };
+// A facility expansion must enlarge the raster together with its authored road.
+// Upright roofs are drawn separately; only grounded footprints belong here.
+const groundRects: readonly CampRect[]=[...CAMP_COURTYARDS.map(c=>c.rect),CAMP_PATHS.forecourt,CAMP_PATHS.spine,...CAMP_PATHS.branches,...Object.values(CAMP_LIFE_PATHS),CAMP_LIFE_GARDEN_BOUNDS,...CAMP_PLANNED_AREAS.map(a=>a.rect),
+  ...CAMP_FACILITIES.map(f=>({left:f.position.x+f.footprint.left,top:f.position.y+f.footprint.top,right:f.position.x+f.footprint.right,bottom:f.position.y+f.footprint.bottom}))];
+const groundBounds: CampRect = {left:Math.floor(Math.min(...groundRects.map(r=>r.left))-22),top:Math.floor(Math.min(...groundRects.map(r=>r.top))-22),
+  right:Math.ceil(Math.max(...groundRects.map(r=>r.right))+22),bottom:Math.ceil(Math.max(...groundRects.map(r=>r.bottom))+22)};
 interface GroundCacheEntry { canvas: HTMLCanvasElement; images: readonly (CanvasImageSource | undefined)[]; courtyards: string }
 const groundCaches = new WeakMap<Document, GroundCacheEntry>();
 
-function drawStaticGround(ctx: CanvasRenderingContext2D, images: CampGroundImages, completed: readonly CampCourtyardId[]): void {
-  drawPaths(ctx);
+function drawStaticGround(ctx: CanvasRenderingContext2D, images: CampGroundImages, completed: readonly CampCourtyardId[],lifeReady=false): void {
+  if(lifeReady)drawCampLifeGardenGround(ctx);
   for (const courtyard of CAMP_COURTYARDS) {
     if (!completed.includes(courtyard.id)) continue;
     const image = images[courtyard.id];drawGroundTexture(ctx, courtyard, image);
     if (!image) drawPlantingEdges(ctx, courtyard);
     drawCurb(ctx, courtyard);
   }
+  drawPaths(ctx);
   drawForecourt(ctx);
 }
 
@@ -221,16 +291,16 @@ export function drawCampGround(ctx: CanvasRenderingContext2D, state: GameState, 
   if (!state.camp) return;
   if (state.camp.prologue === 'arrival') return;
   const { origin, completedCourtyards } = campLayout(state), owner = ctx.canvas.ownerDocument;
-  const completed = completedCourtyards.map(c => c.id), key = completed.join(',');
+  const completed = completedCourtyards.map(c => c.id),lifeReady=state.camp.prologue==='ready', key = `${completed.join(',')}:${lifeReady}`;
   const refs = CAMP_COURTYARDS.map(c => images[c.id]);
   let entry = owner ? groundCaches.get(owner) : undefined;
   if (owner && (!entry || entry.courtyards !== key || refs.some((image, i) => image !== entry!.images[i]))) {
     const canvas = owner.createElement('canvas');canvas.width = groundBounds.right - groundBounds.left;canvas.height = groundBounds.bottom - groundBounds.top;
     const cached = canvas.getContext('2d');
-    if (cached) {cached.translate(-groundBounds.left, -groundBounds.top);drawStaticGround(cached, images, completed);entry = { canvas, images: refs, courtyards: key };groundCaches.set(owner, entry);}
+    if (cached) {cached.translate(-groundBounds.left, -groundBounds.top);drawStaticGround(cached, images, completed,lifeReady);entry = { canvas, images: refs, courtyards: key };groundCaches.set(owner, entry);}
   }
   ctx.save();ctx.translate(origin.x, origin.y);
-  if (entry) ctx.drawImage(entry.canvas, groundBounds.left, groundBounds.top);else drawStaticGround(ctx, images, completed);
+  if (entry) ctx.drawImage(entry.canvas, groundBounds.left, groundBounds.top);else drawStaticGround(ctx, images, completed,lifeReady);
   ctx.restore();
 }
 

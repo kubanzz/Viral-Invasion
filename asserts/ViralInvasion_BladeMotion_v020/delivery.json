@@ -1,0 +1,602 @@
+{
+  "schemaVersion": 1,
+  "version": "0.20.0",
+  "status": "ready-for-integration; standalone preview and real-rig QA completed",
+  "module": {
+    "path": "bladeMotion.ts",
+    "sha256": "4a111a202a735f010ce2d402fbb7e42d7a89318586ef23c9cf1ab430d53c9145",
+    "exports": [
+      "createBladeMotionV020Clips(model, sourceClips)",
+      "createBladeReadyReferenceV020(sourceClips)",
+      "BLADE_MOTION_V020",
+      "BLADE_V020_CLIP_NAMES",
+      "isBladeV020UpperBone"
+    ]
+  },
+  "rig": {
+    "source": "../ViralInvasion_Hero3D_v1/model/medic-hero-v1-animated.glb",
+    "sha256": "048ab89b2d724282fa8e36547e208b684c3df53c41558f3f53b58274c35feb5d",
+    "skinJoints": 53,
+    "bonePrefix": "mixamorig",
+    "hand": "mixamorigRightHand",
+    "grip": "world contact RightHand -> RightHandMiddle1 at 45%",
+    "binding": "Existing Idle_Subtle lower + original Blade_Ready upper calibration. Keep existing socket transform; do not recalibrate from Guard.",
+    "boneNames": [
+      "mixamorigSpine",
+      "mixamorigSpine1",
+      "mixamorigSpine2",
+      "mixamorigLeftShoulder",
+      "mixamorigLeftArm",
+      "mixamorigLeftForeArm",
+      "mixamorigLeftHand",
+      "mixamorigLeftHandIndex1",
+      "mixamorigLeftHandIndex2",
+      "mixamorigLeftHandIndex3",
+      "mixamorigLeftHandMiddle1",
+      "mixamorigLeftHandMiddle2",
+      "mixamorigLeftHandMiddle3",
+      "mixamorigLeftHandPinky1",
+      "mixamorigLeftHandPinky2",
+      "mixamorigLeftHandPinky3",
+      "mixamorigLeftHandRing1",
+      "mixamorigLeftHandRing2",
+      "mixamorigLeftHandRing3",
+      "mixamorigLeftHandThumb1",
+      "mixamorigLeftHandThumb2",
+      "mixamorigLeftHandThumb3",
+      "mixamorigNeck",
+      "mixamorigHead",
+      "mixamorigRightShoulder",
+      "mixamorigRightArm",
+      "mixamorigRightForeArm",
+      "mixamorigRightHand",
+      "mixamorigRightHandIndex1",
+      "mixamorigRightHandIndex2",
+      "mixamorigRightHandIndex3",
+      "mixamorigRightHandMiddle1",
+      "mixamorigRightHandMiddle2",
+      "mixamorigRightHandMiddle3",
+      "mixamorigRightHandPinky1",
+      "mixamorigRightHandPinky2",
+      "mixamorigRightHandPinky3",
+      "mixamorigRightHandRing1",
+      "mixamorigRightHandRing2",
+      "mixamorigRightHandRing3",
+      "mixamorigRightHandThumb1",
+      "mixamorigRightHandThumb2",
+      "mixamorigRightHandThumb3",
+      "mixamorigHips",
+      "mixamorigLeftUpLeg",
+      "mixamorigLeftLeg",
+      "mixamorigLeftFoot",
+      "mixamorigLeftToeBase",
+      "mixamorigLeftToe_End",
+      "mixamorigRightUpLeg",
+      "mixamorigRightLeg",
+      "mixamorigRightFoot",
+      "mixamorigRightToeBase"
+    ]
+  },
+  "weapon": {
+    "source": "../ViralInvasion_WeaponUltimates_v1/model/redblade.glb",
+    "sha256": "6d6f4d155b60ae6106efcaa4d682cebf0cfb940ee0574a76cfde38cd94a6e961",
+    "nodes": [
+      "grip",
+      "muzzle",
+      "bladeTip",
+      "offhandGrip"
+    ],
+    "forward": "+Z",
+    "up": "+Y",
+    "socketLocalPosition": [
+      0.000727331,
+      0.037839535,
+      -0.004362057
+    ],
+    "socketLocalQuaternion": [
+      -0.551838126,
+      -0.132379334,
+      -0.231577704,
+      0.790140617
+    ]
+  },
+  "clips": [
+    {
+      "name": "Blade_Guard_v020",
+      "seconds": 0.45,
+      "layer": "upper",
+      "loop": false,
+      "perfectWindow": [
+        0,
+        0.18
+      ],
+      "markers": {
+        "guardOpen": 0,
+        "braced": 0.035,
+        "perfectClose": 0.18,
+        "guardClose": 0.45
+      },
+      "trackCount": 43,
+      "boneNames": [
+        "mixamorigSpine",
+        "mixamorigSpine1",
+        "mixamorigSpine2",
+        "mixamorigLeftShoulder",
+        "mixamorigLeftArm",
+        "mixamorigLeftForeArm",
+        "mixamorigLeftHand",
+        "mixamorigLeftHandIndex1",
+        "mixamorigLeftHandIndex2",
+        "mixamorigLeftHandIndex3",
+        "mixamorigLeftHandMiddle1",
+        "mixamorigLeftHandMiddle2",
+        "mixamorigLeftHandMiddle3",
+        "mixamorigLeftHandPinky1",
+        "mixamorigLeftHandPinky2",
+        "mixamorigLeftHandPinky3",
+        "mixamorigLeftHandRing1",
+        "mixamorigLeftHandRing2",
+        "mixamorigLeftHandRing3",
+        "mixamorigLeftHandThumb1",
+        "mixamorigLeftHandThumb2",
+        "mixamorigLeftHandThumb3",
+        "mixamorigNeck",
+        "mixamorigHead",
+        "mixamorigRightShoulder",
+        "mixamorigRightArm",
+        "mixamorigRightForeArm",
+        "mixamorigRightHand",
+        "mixamorigRightHandIndex1",
+        "mixamorigRightHandIndex2",
+        "mixamorigRightHandIndex3",
+        "mixamorigRightHandMiddle1",
+        "mixamorigRightHandMiddle2",
+        "mixamorigRightHandMiddle3",
+        "mixamorigRightHandPinky1",
+        "mixamorigRightHandPinky2",
+        "mixamorigRightHandPinky3",
+        "mixamorigRightHandRing1",
+        "mixamorigRightHandRing2",
+        "mixamorigRightHandRing3",
+        "mixamorigRightHandThumb1",
+        "mixamorigRightHandThumb2",
+        "mixamorigRightHandThumb3"
+      ],
+      "animatedBones": [
+        "mixamorigSpine",
+        "mixamorigSpine1",
+        "mixamorigSpine2",
+        "mixamorigLeftArm",
+        "mixamorigLeftForeArm",
+        "mixamorigRightArm",
+        "mixamorigRightForeArm",
+        "mixamorigRightHand"
+      ],
+      "rootTranslationMaximumRange": 0,
+      "maximumAdjacentJointStep": {
+        "degrees": 39.49260731722211,
+        "bone": "mixamorigRightHand",
+        "time": 0.01666666753590107,
+        "deltaSeconds": 0.01666666753590107
+      }
+    },
+    {
+      "name": "Blade_Counter_v020",
+      "seconds": 0.34,
+      "layer": "upper",
+      "loop": false,
+      "impactWindow": [
+        0.1,
+        0.17
+      ],
+      "markers": {
+        "unsheath": 0.055,
+        "hit": 0.115,
+        "hitClose": 0.17,
+        "recover": 0.34
+      },
+      "trackCount": 43,
+      "boneNames": [
+        "mixamorigSpine",
+        "mixamorigSpine1",
+        "mixamorigSpine2",
+        "mixamorigLeftShoulder",
+        "mixamorigLeftArm",
+        "mixamorigLeftForeArm",
+        "mixamorigLeftHand",
+        "mixamorigLeftHandIndex1",
+        "mixamorigLeftHandIndex2",
+        "mixamorigLeftHandIndex3",
+        "mixamorigLeftHandMiddle1",
+        "mixamorigLeftHandMiddle2",
+        "mixamorigLeftHandMiddle3",
+        "mixamorigLeftHandPinky1",
+        "mixamorigLeftHandPinky2",
+        "mixamorigLeftHandPinky3",
+        "mixamorigLeftHandRing1",
+        "mixamorigLeftHandRing2",
+        "mixamorigLeftHandRing3",
+        "mixamorigLeftHandThumb1",
+        "mixamorigLeftHandThumb2",
+        "mixamorigLeftHandThumb3",
+        "mixamorigNeck",
+        "mixamorigHead",
+        "mixamorigRightShoulder",
+        "mixamorigRightArm",
+        "mixamorigRightForeArm",
+        "mixamorigRightHand",
+        "mixamorigRightHandIndex1",
+        "mixamorigRightHandIndex2",
+        "mixamorigRightHandIndex3",
+        "mixamorigRightHandMiddle1",
+        "mixamorigRightHandMiddle2",
+        "mixamorigRightHandMiddle3",
+        "mixamorigRightHandPinky1",
+        "mixamorigRightHandPinky2",
+        "mixamorigRightHandPinky3",
+        "mixamorigRightHandRing1",
+        "mixamorigRightHandRing2",
+        "mixamorigRightHandRing3",
+        "mixamorigRightHandThumb1",
+        "mixamorigRightHandThumb2",
+        "mixamorigRightHandThumb3"
+      ],
+      "animatedBones": [
+        "mixamorigSpine",
+        "mixamorigSpine1",
+        "mixamorigSpine2",
+        "mixamorigLeftArm",
+        "mixamorigLeftForeArm",
+        "mixamorigRightArm",
+        "mixamorigRightForeArm",
+        "mixamorigRightHand"
+      ],
+      "rootTranslationMaximumRange": 0,
+      "maximumAdjacentJointStep": {
+        "degrees": 49.50451571879657,
+        "bone": "mixamorigRightHand",
+        "time": 0.032380953431129456,
+        "deltaSeconds": 0.016190476715564728
+      }
+    },
+    {
+      "name": "Blade_FourfoldDash_v020",
+      "seconds": 0.32,
+      "layer": "full",
+      "loop": true,
+      "impactWindow": [
+        0.08,
+        0.24
+      ],
+      "markers": {
+        "cycleOpen": 0,
+        "hit": 0.16,
+        "cycleClose": 0.32
+      },
+      "trackCount": 53,
+      "boneNames": [
+        "mixamorigHips",
+        "mixamorigLeftUpLeg",
+        "mixamorigLeftLeg",
+        "mixamorigLeftFoot",
+        "mixamorigLeftToeBase",
+        "mixamorigLeftToe_End",
+        "mixamorigRightUpLeg",
+        "mixamorigRightLeg",
+        "mixamorigRightFoot",
+        "mixamorigRightToeBase",
+        "mixamorigSpine",
+        "mixamorigSpine1",
+        "mixamorigSpine2",
+        "mixamorigLeftShoulder",
+        "mixamorigLeftArm",
+        "mixamorigLeftForeArm",
+        "mixamorigLeftHand",
+        "mixamorigLeftHandIndex1",
+        "mixamorigLeftHandIndex2",
+        "mixamorigLeftHandIndex3",
+        "mixamorigLeftHandMiddle1",
+        "mixamorigLeftHandMiddle2",
+        "mixamorigLeftHandMiddle3",
+        "mixamorigLeftHandPinky1",
+        "mixamorigLeftHandPinky2",
+        "mixamorigLeftHandPinky3",
+        "mixamorigLeftHandRing1",
+        "mixamorigLeftHandRing2",
+        "mixamorigLeftHandRing3",
+        "mixamorigLeftHandThumb1",
+        "mixamorigLeftHandThumb2",
+        "mixamorigLeftHandThumb3",
+        "mixamorigNeck",
+        "mixamorigHead",
+        "mixamorigRightShoulder",
+        "mixamorigRightArm",
+        "mixamorigRightForeArm",
+        "mixamorigRightHand",
+        "mixamorigRightHandIndex1",
+        "mixamorigRightHandIndex2",
+        "mixamorigRightHandIndex3",
+        "mixamorigRightHandMiddle1",
+        "mixamorigRightHandMiddle2",
+        "mixamorigRightHandMiddle3",
+        "mixamorigRightHandPinky1",
+        "mixamorigRightHandPinky2",
+        "mixamorigRightHandPinky3",
+        "mixamorigRightHandRing1",
+        "mixamorigRightHandRing2",
+        "mixamorigRightHandRing3",
+        "mixamorigRightHandThumb1",
+        "mixamorigRightHandThumb2",
+        "mixamorigRightHandThumb3"
+      ],
+      "animatedBones": [
+        "mixamorigHips",
+        "mixamorigLeftUpLeg",
+        "mixamorigLeftLeg",
+        "mixamorigLeftFoot",
+        "mixamorigLeftToeBase",
+        "mixamorigRightUpLeg",
+        "mixamorigRightLeg",
+        "mixamorigRightFoot",
+        "mixamorigRightToeBase",
+        "mixamorigSpine",
+        "mixamorigSpine1",
+        "mixamorigSpine2",
+        "mixamorigLeftArm",
+        "mixamorigLeftForeArm",
+        "mixamorigRightArm",
+        "mixamorigRightForeArm",
+        "mixamorigRightHand"
+      ],
+      "rootTranslationMaximumRange": 0,
+      "maximumAdjacentJointStep": {
+        "degrees": 29.53114622394783,
+        "bone": "mixamorigRightLeg",
+        "time": 0.23999999463558197,
+        "deltaSeconds": 0.015999987721443176
+      }
+    },
+    {
+      "name": "Blade_FinishSheath_v020",
+      "seconds": 0.18,
+      "layer": "upper",
+      "loop": false,
+      "impactWindow": [
+        0.06,
+        0.1
+      ],
+      "markers": {
+        "sheathStart": 0,
+        "hit": 0.08,
+        "bladeRest": 0.14,
+        "end": 0.18
+      },
+      "trackCount": 43,
+      "boneNames": [
+        "mixamorigSpine",
+        "mixamorigSpine1",
+        "mixamorigSpine2",
+        "mixamorigLeftShoulder",
+        "mixamorigLeftArm",
+        "mixamorigLeftForeArm",
+        "mixamorigLeftHand",
+        "mixamorigLeftHandIndex1",
+        "mixamorigLeftHandIndex2",
+        "mixamorigLeftHandIndex3",
+        "mixamorigLeftHandMiddle1",
+        "mixamorigLeftHandMiddle2",
+        "mixamorigLeftHandMiddle3",
+        "mixamorigLeftHandPinky1",
+        "mixamorigLeftHandPinky2",
+        "mixamorigLeftHandPinky3",
+        "mixamorigLeftHandRing1",
+        "mixamorigLeftHandRing2",
+        "mixamorigLeftHandRing3",
+        "mixamorigLeftHandThumb1",
+        "mixamorigLeftHandThumb2",
+        "mixamorigLeftHandThumb3",
+        "mixamorigNeck",
+        "mixamorigHead",
+        "mixamorigRightShoulder",
+        "mixamorigRightArm",
+        "mixamorigRightForeArm",
+        "mixamorigRightHand",
+        "mixamorigRightHandIndex1",
+        "mixamorigRightHandIndex2",
+        "mixamorigRightHandIndex3",
+        "mixamorigRightHandMiddle1",
+        "mixamorigRightHandMiddle2",
+        "mixamorigRightHandMiddle3",
+        "mixamorigRightHandPinky1",
+        "mixamorigRightHandPinky2",
+        "mixamorigRightHandPinky3",
+        "mixamorigRightHandRing1",
+        "mixamorigRightHandRing2",
+        "mixamorigRightHandRing3",
+        "mixamorigRightHandThumb1",
+        "mixamorigRightHandThumb2",
+        "mixamorigRightHandThumb3"
+      ],
+      "animatedBones": [
+        "mixamorigSpine",
+        "mixamorigSpine1",
+        "mixamorigSpine2",
+        "mixamorigLeftArm",
+        "mixamorigLeftForeArm",
+        "mixamorigLeftHand",
+        "mixamorigRightArm",
+        "mixamorigRightForeArm",
+        "mixamorigRightHand"
+      ],
+      "rootTranslationMaximumRange": 0,
+      "maximumAdjacentJointStep": {
+        "degrees": 25.484051617675032,
+        "bone": "mixamorigRightHand",
+        "time": 0.03272727131843567,
+        "deltaSeconds": 0.016363635659217834
+      }
+    }
+  ],
+  "integration": {
+    "when": "Call once after GLTFLoader parses the medic, before starting live AnimationMixer; model transforms are restored.",
+    "mixer": "Append returned clips to your clip Map; standard AnimationMixer only. Upper clips omit lower bones for locomotion blending; dash includes Sprint-derived lower body and must not also accumulate a second lower-body action at full weight.",
+    "events": "Gameplay receipts are authoritative. Markers synchronize VFX/audio/hit presentation; do not generate damage, move the player or change cooldowns from animation.",
+    "counter": "Interrupt guard on accepted parry/counter event; do not wait for guard .45s to end.",
+    "dash": "Repeat per accepted FourfoldDash action phase; local marker hit does not imply four gameplay hits or autonomous root motion.",
+    "sheath": "Pose only: existing redblade has no scabbard mesh, and this pack does not hide/scale the weapon to fake insertion."
+  },
+  "sources": {
+    "software": "Three.js 0.187.0 AnimationMixer, QuaternionKeyframeTrack, CCDIKSolver",
+    "newMotion": "Project-authored control poses, baked onto existing medic bones with official CCD IK; no paid generator or new character.",
+    "baseMotion": "Accepted Pistol_Idle and Sprint motions (Mesh2Motion original CC0) and current Blade_Ready calibration.",
+    "bodyLicense": "Original Tripo Free body remains non-commercial evaluation; this pack does not relicense body."
+  },
+  "qa": {
+    "typecheck": "passed (strict standalone module + preview)",
+    "numeric": {
+      "status": "passed",
+      "path": "qa/numeric-report.json",
+      "generatorSha256": "4a111a202a735f010ce2d402fbb7e42d7a89318586ef23c9cf1ab430d53c9145",
+      "sourceClipsUnchanged": true,
+      "boneCountUnchanged": true,
+      "failures": [],
+      "warnings": []
+    },
+    "export": {
+      "status": "passed",
+      "path": "qa/export-report.json",
+      "sha256": "a90beab51aa477e9dd24812bbd80a000f924f96bc1c19f2ee185bb250d288e40"
+    },
+    "visual": {
+      "status": "key-pose visual review passed",
+      "path": "qa/visual-report.json",
+      "proof": [
+        {
+          "path": "proof/guard-braced.jpg",
+          "clip": "Blade_Guard_v020",
+          "time": 0.035,
+          "view": "3/4",
+          "sha256": "a0a441c1f34812f7798f0936a051c0e0d895662c1ab3f54f0721bccf35ced1b5"
+        },
+        {
+          "path": "proof/counter-hit-front.jpg",
+          "clip": "Blade_Counter_v020",
+          "time": 0.115,
+          "view": "front",
+          "sha256": "ed4b76d4ae5cf169784f30950c8f244aa243f0984c7960e505aff4828da3a1ff"
+        },
+        {
+          "path": "proof/counter-hit-three-quarter.jpg",
+          "clip": "Blade_Counter_v020",
+          "time": 0.115,
+          "view": "3/4",
+          "sha256": "0ab6628772f489ed69069aa32eca8229d03badf131045f909dde31ea92018f29"
+        },
+        {
+          "path": "proof/fourfold-dash-side.jpg",
+          "clip": "Blade_FourfoldDash_v020",
+          "time": 0.16,
+          "view": "side",
+          "sha256": "d90db778fee623e43dbf1d1274e3062607e43d6306148c5b31a81503d187ca73"
+        },
+        {
+          "path": "proof/finish-sheath-front.jpg",
+          "clip": "Blade_FinishSheath_v020",
+          "time": 0.14,
+          "view": "front",
+          "sha256": "96eac39dd20e6a3ce68686d5bfb4dfdc4be99f10dbb2690b08038d8172af9916"
+        },
+        {
+          "path": "proof/counter-real-skeleton.jpg",
+          "clip": "Blade_Counter_v020",
+          "time": 0.115,
+          "view": "3/4 + real skeleton",
+          "sha256": "4fbd0b7ac9a8011e5e6fb566a17b269bd86c91d6e596e6a7a76229bcada3eae9"
+        }
+      ]
+    },
+    "http": {
+      "path": "preview/http-qa.json",
+      "moduleSha256": "4a111a202a735f010ce2d402fbb7e42d7a89318586ef23c9cf1ab430d53c9145"
+    }
+  },
+  "date": "2026-11-07",
+  "preview": {
+    "url": "http://127.0.0.1:54970/index.html",
+    "entry": "preview/index.html",
+    "rebuild": "node asserts/ViralInvasion_BladeMotion_v020/preview/build.mjs",
+    "serve": "node asserts/ViralInvasion_BladeMotion_v020/preview/server.mjs",
+    "bundledOriginalHero": true,
+    "bundledOriginalBlade": true
+  },
+  "artifacts": {
+    "clipJson": {
+      "path": "qa/blade-motion-clips.json",
+      "bytes": 736700,
+      "sha256": "8dc113758d054f0e56180bb7bba404eba22d8bc6dde3f1e93faeca4fb6a766f7",
+      "loader": "THREE.AnimationClip.parse(entry)"
+    },
+    "animationOnlyGlb": {
+      "path": "qa/blade-motion-animation-library.glb",
+      "bytes": 209264,
+      "sha256": "dc80f5dd70fc6b1d1ab9915d8668cba5d0acc1d29f077dc546c5fa99144fdc23",
+      "clips": [
+        {
+          "name": "Blade_Guard_v020",
+          "duration": 0.44999998807907104,
+          "tracks": 43
+        },
+        {
+          "name": "Blade_Counter_v020",
+          "duration": 0.3400000035762787,
+          "tracks": 43
+        },
+        {
+          "name": "Blade_FourfoldDash_v020",
+          "duration": 0.3199999928474426,
+          "tracks": 53
+        },
+        {
+          "name": "Blade_FinishSheath_v020",
+          "duration": 0.18000000715255737,
+          "tracks": 43
+        }
+      ],
+      "meshes": 0,
+      "skinCount": 0,
+      "roundtrip": [
+        {
+          "name": "Blade_Guard_v020",
+          "maximumQuaternionDegrees": 0.0000029575586669421963,
+          "boneBindingsUnchanged": true
+        },
+        {
+          "name": "Blade_Counter_v020",
+          "maximumQuaternionDegrees": 0.0000034150945850063755,
+          "boneBindingsUnchanged": true
+        },
+        {
+          "name": "Blade_FourfoldDash_v020",
+          "maximumQuaternionDegrees": 0.0000029575586669421963,
+          "boneBindingsUnchanged": true
+        },
+        {
+          "name": "Blade_FinishSheath_v020",
+          "maximumQuaternionDegrees": 0.0000029575586669421963,
+          "boneBindingsUnchanged": true
+        }
+      ],
+      "note": "Animation-only scene graph with named rig nodes, no copied body mesh/skin/textures. Import its clips and bind by bone name onto the accepted original medic rig. Nodes may decode as Object3D because this library contains no skin; this does not change clip bone bindings."
+    },
+    "readme": "README.md",
+    "shaInventory": "files.sha256.json"
+  },
+  "scope": {
+    "writes": "Only asserts/ViralInvasion_BladeMotion_v020/",
+    "gameSrcEdited": false,
+    "sharedArtSelectionEdited": false,
+    "originalHeroGlbEdited": false,
+    "originalWeaponGlbEdited": false,
+    "otherChatsMessaged": false
+  }
+}

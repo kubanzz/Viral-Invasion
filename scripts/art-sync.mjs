@@ -5,10 +5,10 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const SCRIPT_PATH = fileURLToPath(import.meta.url);
 const DEFAULT_WORKSPACE = resolve(dirname(SCRIPT_PATH), '..');
-const PIPELINE_VERSION = 4;
+const PIPELINE_VERSION = 5;
 const MAX_ATLAS_SIZE = 2048;
 const ATLAS_GUTTER = 4;
-const MAX_GENERATED_BYTES = 20 * 1024 * 1024;
+const MAX_GENERATED_BYTES = 32 * 1024 * 1024;
 const sha256 = value => createHash('sha256').update(value).digest('hex');
 const slash = value => value.split(sep).join('/');
 const samePath = (a, b) => resolve(a).toLowerCase() === resolve(b).toLowerCase();
@@ -19,7 +19,7 @@ const samePath = (a, b) => resolve(a).toLowerCase() === resolve(b).toLowerCase()
 export function artToneFor(id, kind = 'sprite') {
   // Fantasy production assets have already passed the approved palette and
   // contrast review. Preserve those pixels; old actor grading stays separate.
-  if (id.startsWith('fantasy.') || id.startsWith('microfront.')) return null;
+  if (id.startsWith('fantasy.') || id.startsWith('microfront.') || id.startsWith('sanctum.boss.') || id.startsWith('sanctum.crop.') || id.startsWith('seraph24.')) return null;
   if (/^(fx|icon)\./.test(id)) return null;
   if (kind === 'environment') return id.startsWith('heart.')
     ? { name: 'warm-matte', saturation: .70, brightness: .99, contrast: .94, lift: 7 }
@@ -139,7 +139,7 @@ async function renderSprite(sharp, bytes, spec) {
   const sourceAnchor = spec.pivotSource ?? [.5, .9];
   const anchorX = (info.width * sourceAnchor[0] - crop.x) * width / crop.width;
   const anchorY = (info.height * sourceAnchor[1] - crop.y) * height / crop.height;
-  const targetPivot = spec.centered ? [.5, .5] : [.5, .92];
+  const targetPivot = spec.vfx?.pivot ?? (spec.centered ? [.5, .5] : [.5, .92]);
   const left = Math.ceil(Math.max(spec.size * targetPivot[0], anchorX + margin));
   const top = Math.ceil(Math.max(spec.size * targetPivot[1], anchorY + margin));
   const right = Math.ceil(Math.max(spec.size * (1 - targetPivot[0]), width - anchorX + margin));
@@ -240,14 +240,30 @@ export async function syncArt(options = {}) {
   const sprites = [];
   for (const spec of selection.sprites) sprites.push(await renderSprite(sharp, local.get(spec.source).bytes, spec));
   const atlases = [], assets = {};
-  for (const [pageIndex, page] of packShelves(sprites).entries()) {
+  const vfxGroups = new Map();
+  for (const sprite of sprites) if (sprite.spec.vfx?.group) {
+    const group = sprite.spec.vfx.group;
+    if (!vfxGroups.has(group)) vfxGroups.set(group, []);
+    vfxGroups.get(group).push(sprite);
+  }
+  const pages = packShelves(sprites.filter(sprite => !sprite.spec.vfx?.group));
+  for (const [group, frames] of [...vfxGroups].sort(([a], [b]) => a.localeCompare(b, 'en'))) {
+    const columns = Math.ceil(Math.sqrt(frames.length)), rows = Math.ceil(frames.length / columns);
+    const compactLimit = Math.min(MAX_ATLAS_SIZE, Math.max(columns * (frames[0].width + ATLAS_GUTTER) + ATLAS_GUTTER,
+      rows * (frames[0].height + ATLAS_GUTTER) + ATLAS_GUTTER));
+    const sequencePages = packShelves(frames, compactLimit);
+    if (sequencePages.length !== 1) throw new Error(`VFX sequence must fit in one atlas page: ${group}`);
+    pages.push(...sequencePages);
+  }
+  for (const [pageIndex, page] of pages.entries()) {
     const key = `viral-art-${pageIndex}`;
-    const png = await sharp({ create: { width: page.width, height: page.height, channels: 4, background: '#00000000' } }).composite(page.sprites.map(sprite => ({ input: sprite.bytes, left: sprite.x, top: sprite.y }))).png({ compressionLevel: 9, adaptiveFiltering: false }).toBuffer();
+    const png = await sharp({ create: { width: page.width, height: page.height, channels: 4, background: '#00000000' } }).composite(page.sprites.map(sprite => ({ input: sprite.bytes, left: sprite.x, top: sprite.y }))).png({ compressionLevel: 9, adaptiveFiltering: true }).toBuffer();
     const frames = {};
     for (const sprite of page.sprites) {
       const { spec } = sprite;
       frames[spec.id] = { frame: { x: sprite.x, y: sprite.y, w: sprite.width, h: sprite.height }, rotated: false, trimmed: false, spriteSourceSize: { x: 0, y: 0, w: sprite.width, h: sprite.height }, sourceSize: { w: sprite.width, h: sprite.height } };
       const descriptor = { atlas: key, frame: spec.id, width: sprite.width, height: sprite.height, pivot: sprite.pivot, visibleBounds: sprite.visibleBounds, source: spec.source, sourceSha256: local.get(spec.source).sha256, sourceSize: sprite.sourceSize, sourceBounds: sprite.sourceBounds, touchesSourceEdge: sprite.touchesSourceEdge, status: spec.status ?? 'prototype', flags: spec.flags ?? [], tone: sprite.tone, ...(spec.animation ? { animation: spec.animation } : {}) };
+      if (spec.vfx) descriptor.vfx = structuredClone(spec.vfx);
       if (spec.sourceMuzzle) descriptor.sourceMuzzle = { ...spec.sourceMuzzle };
       else if (spec.actorRegistration?.muzzle) descriptor.sourceMuzzle = { ...spec.actorRegistration.muzzle };
       if (spec.sourceFrame) descriptor.sourceFrame = { ...spec.sourceFrame };
@@ -266,7 +282,7 @@ export async function syncArt(options = {}) {
     const metadata = await image.metadata();
     if (spec.crop) image = image.extract(spec.crop);
     const tone = artToneFor(spec.id, 'environment');
-    const { data: png, info } = await finishArtImage(image.resize({ width: spec.size, withoutEnlargement: true, kernel: 'lanczos3' }), tone).png({ compressionLevel: 9, adaptiveFiltering: false }).toBuffer({ resolveWithObject: true });
+    const { data: png, info } = await finishArtImage(image.resize({ width: spec.size, withoutEnlargement: true, kernel: 'lanczos3' }), tone).png({ compressionLevel: 9, adaptiveFiltering: true }).toBuffer({ resolveWithObject: true });
     environments[spec.id] = { dataUri: `data:image/png;base64,${png.toString('base64')}`, width: info.width, height: info.height, source: spec.source, sourceSha256: local.get(spec.source).sha256, sourceSize: { width: metadata.width, height: metadata.height }, crop: spec.crop ?? null, status: spec.status ?? 'prototype', flags: spec.flags ?? [], tone, bytes: png.length, sha256: sha256(png) };
     await writeChanged(join(outputDirectory, `${spec.id}.png`), png);
   }
@@ -275,7 +291,7 @@ export async function syncArt(options = {}) {
     report: { unknownCandidates, missing, pending, selectedAssetCount: required.length, selectedSourceCount: Object.keys(sourceManifest).length } };
   validateRuntime(runtime);
   const runtimeBytes = Buffer.from(JSON.stringify(runtime));
-  if (runtimeBytes.length > MAX_GENERATED_BYTES) throw new Error(`Generated runtime exceeds 20MB budget: ${runtimeBytes.length}`);
+  if (runtimeBytes.length > MAX_GENERATED_BYTES) throw new Error(`Generated runtime exceeds 32MiB budget: ${runtimeBytes.length}`);
   await writeChanged(runtimePath, runtimeBytes);
   await writeChanged(join(outputDirectory, 'art-sync-report.json'), JSON.stringify({ ...report, inputSignature, runtimeBytes: runtimeBytes.length, atlasBytes: atlases.reduce((sum, atlas) => sum + atlas.bytes, 0) }, null, 2));
   return { runtime, report, runtimePath, changed: true };

@@ -1,17 +1,27 @@
 import { drawLowCover, drawFrontPlatform, lowPropOpacity } from './lowCover';
 import { drawPlayerHealth, playerHealthView, type PlayerHealthView } from './playerHealth';
+import { anchorHealthView, drawAnchorHealth, type AnchorHealthView } from './anchorHealth';
 import { drawTerritoryMarkerIcons, territoryMarkerLayouts, type TerritoryMarkerLayout } from './territoryMarkers';
 import { campStations, campBuildPoint, canEstablishCamp, canInteractCampStation } from '../game/campScene';
 import { campLayout, type CampCourtyardId } from '../game/campLayout';
 import { prepareCampCamera, resetCampCamera } from './campCamera';
-import { CAMP_GROUND_ASSET_IDS, CAMP_VISUAL_SIZES, campAreaLabels, campDecorations, drawCampGround } from './campVisuals';
+import { CAMP_GROUND_ASSET_IDS, CAMP_VISUAL_SIZES, CAMP_SUMMON_NODE, campAreaLabels, campDecorations, drawCampGround, drawCampSummonGround, drawCampSummonLight } from './campVisuals';
 import { addCampSiteLabels, drawCampFoundations, campFacilityFallbackBounds, hitCampScreenTarget, type CampScreenTarget } from './campMarkers';
 import { drawExpeditionSignals, drawConstructionPreview, drawExpeditionFacilityFallback, drawExpeditionProjectiles } from './expeditionVisuals';
 import { immuneLegions } from '../game/immuneLegions';
-import { activeWorld, BALANCE, WORLD, type Effect, type GameState, type Target, type Vec, type WorldGeometry } from '../game/types';
+import { drawHeartBossOverlay } from './heartBossVisuals';
+import { activeWorld, BALANCE, WORLD, type Effect, type GameEvent, type GameState, type Target, type Vec, type WorldGeometry } from '../game/types';
 import { endlessCombatStats } from '../game/endlessGrowth';
 import { drawEnemyTacticDangers } from './enemyTacticVisuals';
 import { drawCombatEffects } from './combatEffects';
+import { drawThunderGroundEffects } from './thunderVfx';
+import { thunderScreenImpulse } from './thunderVfx';
+import { SeraphVfx } from './seraphVfx';
+import { drawBladeTraceMarkers } from './weaponUltimateVisuals';
+import { bladeCinematicView, drawBladeCinematic, drawBladeReleaseAccent } from './bladeCinematic';
+import { bladeTraceReducedMotion } from './bladeUltimateVfx';
+import { addCampGardenLabels, campGardenScreenPlots, drawCampGardenGround, hitCampGardenPlot } from './campFarmVisuals';
+import { campLifeBodies, drawCampLifeFallback } from './campLifePresentation';
 import { drawPlayerProjectiles } from './playerProjectileVisuals';
 import { Camera, type CameraFollowOptions } from './camera';
 import { depthSort } from './depthSort';
@@ -80,8 +90,10 @@ export class CanvasScene {
   private height = 900;
   private dpr = 1;
   private readonly growthVisuals = new GrowthVisuals();
+  private readonly seraphVfx = new SeraphVfx();
   private readonly labels = new SceneLabels();
   private lastHealth: PlayerHealthView | null = null;
+  private lastAnchorHealth: AnchorHealthView | null = null;
   private lastMarkers: TerritoryMarkerLayout[] = [];
   private hudRects: readonly LabelRect[] = [];
   private readonly actorCanvases = new Map<string, HTMLCanvasElement>();
@@ -95,6 +107,10 @@ export class CanvasScene {
   private readonly dangerFeedback = new PlayerDangerFeedback();
   private renderAim: Vec = {x:0,y:0};
   private campCameraActive = false;
+  private lastLowEffects = false;
+  private reducedBladeMotion(): boolean { return bladeTraceReducedMotion(); }
+  acceptSeraphEvent(event: GameEvent): void { this.seraphVfx.accept(event); }
+  resetSeraphVfx(): void { this.seraphVfx.reset(); }
 
   /** Targets use exactly the sprite registration and label placement of the visible frame. */
   campTargets(state: GameState): CampScreenTarget[] {
@@ -109,14 +125,26 @@ export class CanvasScene {
       };
       const topLeft = this.camera.worldToScreen({ x: bounds.left, y: bounds.top / this.camera.yScale });
       const bottomRight = this.camera.worldToScreen({ x: bounds.right, y: bounds.bottom / this.camera.yScale });
+      const ground = site.id === 'summon' ? this.camera.worldToScreen(site.position) : undefined;
       return { id: site.id, built: complete, eligible: canInteractCampStation(state, site.id), groundY: site.position.y,
         body: { left: topLeft.x, top: topLeft.y, right: bottomRight.x, bottom: bottomRight.y },
+        ...(ground ? { ground: { ...ground, radiusX: CAMP_SUMMON_NODE.ringRadius * this.camera.scale,
+          radiusY: CAMP_SUMMON_NODE.ringRadius * this.camera.scale * this.camera.yScale } } : {}),
         labels: placements.filter(label => [`camp-attention:${site.id}`, `camp-name:${site.id}`, `camp-site:${site.id}`].includes(label.id)).map(label => ({ id: label.id, rect: { ...label.rect } })),
       };
     });
   }
   campHitTarget(state: GameState, point: Vec): CampScreenTarget | undefined {
     return hitCampScreenTarget(this.campTargets(state), point);
+  }
+  campGardenPlots(state: GameState) { return campGardenScreenPlots(state, this.camera, this.labels.diagnostics().placements); }
+  campGardenHitTarget(state: GameState, point: Vec) { return hitCampGardenPlot(this.campGardenPlots(state), point); }
+  campExpansions(state: GameState) {
+    if (!state.camp) return [];
+    return campLayout(state).plannedAreas.map(area => {
+      const a = this.camera.worldToScreen({ x: area.rect.left, y: area.rect.top }), b = this.camera.worldToScreen({ x: area.rect.right, y: area.rect.bottom });
+      return { ...area, body: { left: a.x, right: b.x, top: a.y, bottom: b.y }, screen: this.camera.worldToScreen(area.entrance) };
+    });
   }
 
   private campProps(state: GameState) {
@@ -168,7 +196,7 @@ export class CanvasScene {
   }
 
   diagnostics(state: GameState) {
-    return { campTargets: this.campTargets(state), playerHealth: this.lastHealth, territoryMarkers: this.lastMarkers.map(m => ({ id:m.view.node.id, kind:m.view.kind, alert:m.view.alert, rect:m.rect })), depthOrder: depthSort(this.entities(state)).map(entity => entity.id), occluded: isForegroundOccluded(state.player, activeWorld(state)), foregroundOpacity: foregroundOpacity(state.player, activeWorld(state)), layerOrder: LAYER_ORDER, labels: this.labels.diagnostics(), hudRects: this.hudRects.map(rect => ({ ...rect })), playerPresence: playerPresence(state), crosshair: this.lastCrosshair,
+    return { seraphVfx: this.seraphVfx.diagnostics(), bladeCinematic: bladeCinematicView(state, this.width, this.height, this.lastLowEffects, this.reducedBladeMotion()), campTargets: this.campTargets(state), campGardenPlots: this.campGardenPlots(state), campExpansions: this.campExpansions(state), campDormitories: campLifeBodies(state).filter(body => body.kind === 'house'), playerHealth: this.lastHealth, anchorHealth: this.lastAnchorHealth, territoryMarkers: this.lastMarkers.map(m => ({ id:m.view.node.id, kind:m.view.kind, alert:m.view.alert, rect:m.rect })), depthOrder: depthSort(this.entities(state)).map(entity => entity.id), occluded: isForegroundOccluded(state.player, activeWorld(state)), foregroundOpacity: foregroundOpacity(state.player, activeWorld(state)), layerOrder: LAYER_ORDER, labels: this.labels.diagnostics(), hudRects: this.hudRects.map(rect => ({ ...rect })), playerPresence: playerPresence(state), crosshair: this.lastCrosshair,
       territoryVisuals: { geometry: this.territoryGeometry.diagnostics(), labelledNodeIds: this.territoryLabelled, offscreenAttacks: this.territoryIndicators,
         nodes: this.territoryFrame?.nodes.map(view => ({ id: view.node.id, status: view.status, infectionProgress: view.infectionProgress, purificationProgress: view.purificationProgress,
           purificationActive: view.purificationActive, pausedReason: view.pausedReason ?? null, incomingFrom: view.incomingFrom ?? null, attackerIds: view.attackerIds })) ?? [],
@@ -184,6 +212,7 @@ export class CanvasScene {
         ?[{id:`${plan.id}:construction`,y:plan.nestPosition.y,kind:'smart-construction',index}]:[])??[]),
       ...(!state.camp&&state.expedition?.pendingLoot&&state.expedition.lootPosition?[{id:'expedition:boss-loot',y:state.expedition.lootPosition.y,kind:'boss-loot'}]:[]),
       ...(state.camp ? campStations(state).map((station,index)=>({id:`camp:${station.id}`,y:station.position.y,kind:'camp-station',index})) : []),
+      ...campLifeBodies(state).map((body,index)=>({id:body.id,y:body.y,kind:'camp-life',index})),
       ...(state.camp ? this.campProps(state).map((prop,index)=>({id:prop.id,y:prop.y,kind:'camp-decoration',index})) : []),
       ...(state.territory?.construction?.task?[{id:state.territory.construction.task.id,y:state.territory.construction.task.y,kind:'player-construction'}]:[]),
       ...(state.camp?.prologue === 'arrival' ? [] : [{ id: 'tissue', y: state.tissue.y, kind: 'tissue' }]),
@@ -197,8 +226,11 @@ export class CanvasScene {
   }
 
   render(state: GameState, aim: Vec, opts: { lowEffects?: boolean; cameraPrepared?: boolean; authoritativeState?: GameState; aimRange?: number; aimCancelled?: boolean; cannonPreview?:{aim:Vec;cancelled:boolean};constructionPreview?:{blueprintId:import('../game/construction').BlueprintId;position:Vec} } = {}): void {
+    this.lastLowEffects = !!opts.lowEffects;
     this.locomotion.observe(opts.authoritativeState ?? state); this.renderAim=aim;
     if (!opts.cameraPrepared) this.prepareCamera(state);
+    const thunderJolt = thunderScreenImpulse(state, Boolean(opts.lowEffects));
+    this.camera.joltX = thunderJolt.x; this.camera.joltY = thunderJolt.y;
     this.territoryFrame = state.camp ? undefined : territoryRenderFrame(state, this.territoryGeometry);
     const territoryViewport = { width: this.width, height: this.height, scale: this.camera.scale, project: (point: Vec) => this.camera.worldToScreen(point), blocked: this.hudRects };
     let ctx = this.ctx;
@@ -222,16 +254,19 @@ export class CanvasScene {
     }
     if (state.camp) {
       drawCampGround(ctx, state, { workshop: this.art?.image?.(CAMP_GROUND_ASSET_IDS.workshop), supply: this.art?.image?.(CAMP_GROUND_ASSET_IDS.supply), departure: this.art?.image?.(CAMP_GROUND_ASSET_IDS.departure) });
+      drawCampSummonGround(ctx, state, Boolean(opts.lowEffects));
       drawCampFoundations(ctx, state);
+      drawCampGardenGround(ctx, state);
+      addCampGardenLabels(state, this.labels);
       for (const label of campAreaLabels(state)) this.labels.add({ ...label, theme: 'camp' });
       addCampSiteLabels(state, this.labels, site => this.art?.campFacilityBounds?.(state, site));
       if(state.camp.prologue==='arrival'){
         const point=campBuildPoint(state);ctx.save();ctx.beginPath();ctx.ellipse(point.x,point.y,54,36,0,0,Math.PI*2);ctx.fillStyle='#c3eed875';ctx.fill();ctx.strokeStyle='#668f80';ctx.lineWidth=3;ctx.stroke();ctx.restore();
         this.labels.add({id:'camp-arrival',anchor:point,offset:{x:0,y:-52},theme:'camp',priority:95,essential:true,lines:[{text:canEstablishCamp(state)?'E · 在此建立微观前哨':'带领小队抵达此处',size:14}]});
       }
-    } else drawExpeditionSignals(ctx, state, this.labels, false);
+    } else { drawExpeditionSignals(ctx, state, this.labels, false); drawHeartBossOverlay(ctx, state, Boolean(opts.lowEffects), this.labels); }
     drawConstructionPreview(ctx,state,opts.constructionPreview);
-    if (!state.camp) drawTerritorySignals(ctx, state, Boolean(opts.lowEffects), this.territoryFrame);
+    if (!state.camp) drawTerritorySignals(ctx, state, Boolean(opts.lowEffects), this.territoryFrame, id => this.art?.image?.(id));
     drawSmartVirusSignals(ctx,state,Boolean(opts.lowEffects),this.labels);
     drawTerritoryCannonPreview(ctx,state,opts.cannonPreview);
     this.drawAtmosphere(ctx, state, Boolean(opts.lowEffects));
@@ -239,6 +274,7 @@ export class CanvasScene {
     drawHostEventGround(ctx, state);
     drawEncounterGround(ctx, state, Boolean(opts.lowEffects), this.labels);
     this.growthVisuals.drawGround(ctx, state, state.growth, Boolean(opts.lowEffects));
+    drawThunderGroundEffects(ctx, state, Boolean(opts.lowEffects), id => this.art?.image?.(id), { nativeVfx: this.art?.nativeCombatVfx });
     this.drawShadows(ctx, state);
     if (this.art) {
       // Ground and foreground must remain separate for sprite depth sorting.
@@ -256,8 +292,10 @@ export class CanvasScene {
     if (state.player.hp > 0 && !raisedActorBodies.some(body => body.kind === 'player')) raisedActorBodies.push({ id:'player', kind:'player', groundY:state.player.y, bodyBounds:playerBody });
     const dangerLevel = this.dangerFeedback.update(opts.authoritativeState ?? state);
     this.lastHealth = state.camp ? null : playerHealthView(state, this.camera, playerBody, dangerLevel);
+    this.lastAnchorHealth = anchorHealthView(state, this.camera, [...this.hudRects, ...(this.lastHealth ? [this.lastHealth.rect] : [])]);
     if (this.lastHealth) this.labels.reserveScreen(this.lastHealth.rect);
-    territoryViewport.blocked = this.lastHealth ? [...this.hudRects, this.lastHealth.rect] : this.hudRects;
+    if (this.lastAnchorHealth) this.labels.reserveScreen(this.lastAnchorHealth.rect);
+    territoryViewport.blocked = [...this.hudRects, ...(this.lastHealth ? [this.lastHealth.rect] : []), ...(this.lastAnchorHealth ? [this.lastAnchorHealth.rect] : [])];
     const entities = depthSort(this.entities(state));
     const activeBuffers = new Set<string>();
     for (const [order, entity] of entities.entries()) {
@@ -268,6 +306,7 @@ export class CanvasScene {
       if (this.art) {
         const point = entity.kind === 'target' ? state.targets[entity.index!] : entity.kind === 'tissue' ? state.tissue : entity.kind === 'terminal' ? state.terminal
           : entity.kind === 'camp-station' ? campStations(state)[entity.index!].position
+          : entity.kind === 'camp-life' ? campLifeBodies(state)[entity.index!]
           : entity.kind === 'camp-decoration' ? this.campProps(state)[entity.index!]
           : entity.kind === 'player-construction' ? state.territory!.construction!.task!
           : entity.kind === 'boss-loot' ? state.expedition!.lootPosition!
@@ -295,8 +334,10 @@ export class CanvasScene {
     for (const id of this.actorCanvases.keys()) if (!activeBuffers.has(id)) this.actorCanvases.delete(id);
     if (this.art) this.art.foreground(state, this.camera);
     this.drawEffects(ctx, state, Boolean(opts.lowEffects));
-    drawCombatEffects(ctx, state, Boolean(opts.lowEffects));
-    drawPlayerProjectiles(ctx, state, Boolean(opts.lowEffects), castId => this.art?.projectileOrigin?.(castId));
+    drawCampSummonLight(ctx, state, Boolean(opts.lowEffects));
+    drawCombatEffects(ctx, state, Boolean(opts.lowEffects), id => this.art?.image?.(id), true, {x:this.camera.scale,y:this.camera.scale*this.camera.yScale,deferTraceMarkers:true,primaryMuzzle:this.art?.primaryMuzzle?.(state)}, {nativeVfx:this.art?.nativeCombatVfx,groundEffectsDrawn:true});
+    this.seraphVfx.draw(ctx, state, Boolean(opts.lowEffects), {nativeVfx:this.art?.nativeCombatVfx});
+    drawPlayerProjectiles(ctx, state, Boolean(opts.lowEffects), castId => this.art?.projectileOrigin?.(castId), id => this.art?.image?.(id), {nativeVfx:this.art?.nativeCombatVfx});
     drawTerritoryCannonShots(ctx,state,Boolean(opts.lowEffects));
     drawExpeditionProjectiles(ctx,state,this.labels);
     this.growthVisuals.drawMarks(ctx, state, state.growth);
@@ -327,15 +368,25 @@ export class CanvasScene {
     drawTerritoryMarkerIcons(ctx, this.lastMarkers);
     this.labels.draw(ctx);
     drawPlayerHealth(ctx, this.lastHealth);
+    drawAnchorHealth(ctx, this.lastAnchorHealth);
     if (!state.camp) drawPlayerDangerOverlay(ctx,state,dangerLevel,this.width,this.height,
       this.camera.worldToScreen(state.player),Boolean(opts.lowEffects));
+    if (state.weaponCombat?.bladeTrace) {
+      ctx.save(); this.camera.apply(ctx);
+      drawBladeTraceMarkers(ctx, state, Boolean(opts.lowEffects), true, {x:this.camera.scale,y:this.camera.scale*this.camera.yScale});
+      ctx.restore();
+    }
+    drawBladeReleaseAccent(ctx, state, this.width, this.height, Boolean(opts.lowEffects));
+    drawBladeCinematic(ctx, state, this.width, this.height, Boolean(opts.lowEffects), this.reducedBladeMotion());
     if (this.art) this.art.raster('signals', this.signalCanvas!, 10000);
     const map = document.querySelector<HTMLCanvasElement>('#tactical-map');
     if (map && state.campaign) drawNavigationMap(map, state, { topLeft: this.camera.screenToWorld({ x: 0, y: 0 }), bottomRight: this.camera.screenToWorld({ x: this.width, y: this.height }) });
   }
 
   private paintEntity(ctx: CanvasRenderingContext2D, entity: {id: string; kind: string; index?: number}, state: GameState, raisedActorBodies: ReturnType<typeof getRaisedActorBodies>, low: boolean): void {
-      if(['camp-station','player-construction','boss-loot'].includes(entity.kind))drawExpeditionFacilityFallback(ctx,state,entity.kind,entity.index);
+      if(['camp-station','player-construction','boss-loot'].includes(entity.kind)
+        && !(entity.kind === 'camp-station' && ['farm', 'house'].includes(campStations(state)[entity.index!]?.id)))drawExpeditionFacilityFallback(ctx,state,entity.kind,entity.index);
+      if(entity.kind === 'camp-life') { const body = campLifeBodies(state)[entity.index!]; if (body) drawCampLifeFallback(ctx, body); }
       if (entity.kind === 'player') this.drawPlayer(ctx, state);
       if (entity.kind === 'target') this.drawTarget(ctx, state.targets[entity.index!], state);
       if (entity.kind === 'tissue') this.drawTissue(ctx, state);

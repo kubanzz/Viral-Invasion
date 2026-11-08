@@ -5,6 +5,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import type { GameState, Vec } from '../../src/game/types';
 import { CampProfileStore, CAMP_PROFILE_STORAGE_KEY, emptyCampProfile, parseCampProfile } from '../../src/meta/campProfile';
 import { createBossLoot } from '../../src/game/expedition';
+import { campLayout, type CampStationId } from '../../src/game/campLayout';
 
 // Historical filename retained; the production contract is now the actual GLB,
 // not the superseded four-view PNG frames.
@@ -204,6 +205,36 @@ async function enterDefaultCamp(page: Page, context: BrowserContext, require3D =
   await expect.poll(async () => { const s = await state(page); return s.phase === 'playing' && s.camp?.prologue === 'arrival'; }).toBe(true);
   return run;
 }
+/** Follow the same open courtyard paths a player uses; never teleport or mutate diagnostics. */
+async function walkCampPath(page: Page, points: readonly Vec[]): Promise<void> {
+  const origin = campLayout(await state(page)).origin, held = new Set<string>();
+  try {
+    for (const point of points) {
+      const target = { x: origin.x + point.x, y: origin.y + point.y }, started = Date.now();
+      let current = await state(page);
+      while (Math.hypot(target.x - current.player.x, target.y - current.player.y) > 9) {
+        expect(Date.now() - started, `Walk to ${JSON.stringify(point)} from ${JSON.stringify(current.player)}`).toBeLessThan(15_000);
+        expect(current.phase).toBe('playing'); expect(current.camp).toBeTruthy();
+        const dx = target.x - current.player.x, dy = target.y - current.player.y;
+        const wanted = new Set([...(dx < -5 ? ['KeyA'] : dx > 5 ? ['KeyD'] : []), ...(dy < -5 ? ['KeyW'] : dy > 5 ? ['KeyS'] : [])]);
+        for (const key of held) if (!wanted.has(key)) { await page.keyboard.up(key); held.delete(key); }
+        for (const key of wanted) if (!held.has(key)) { await page.keyboard.down(key); held.add(key); }
+        await page.waitForTimeout(45); current = await state(page);
+      }
+      for (const key of held) await page.keyboard.up(key); held.clear();
+    }
+  } finally { for (const key of held) await page.keyboard.up(key); }
+}
+async function openCampStation(page: Page, id: CampStationId): Promise<void> {
+  await page.keyboard.press('KeyE');
+  const titles: Partial<Record<CampStationId, string>> = { warehouse: '装备仓库', forge: '锻造台', departure: '侦查情报' };
+  await expect(page.locator('#camp-title')).toHaveText(titles[id]!);
+}
+async function constructCampStation(page: Page, id: CampStationId): Promise<void> {
+  await page.keyboard.press('KeyE');
+  await expect.poll(async () => (await state(page)).camp?.activeConstruction).toBe(id);
+  await expect.poll(async () => (await state(page)).camp?.builtFacilities?.includes(id), { timeout: 10_000 }).toBe(true);
+}
 /** Compare only after releasing movement. Both diagnostics and the public camera
  * conversion are read synchronously; no private renderer or state is accessed. */
 async function alignedHero(page: Page, weaponId: 'steady' | 'piercing' = 'steady') {
@@ -297,7 +328,7 @@ test(transportName + ' default GLB uses genuine skeletal motion, continuous yaw 
 });
 
 test(transportName + ' fresh default entry reaches the camp, keeps the skinned grip and enters its real first mission', async ({ page, context }, info) => {
-  test.setTimeout(65_000);
+  test.setTimeout(120_000);
   const run = await enterDefaultCamp(page, context), checkpoints: Record<string, unknown> = {};
   const initial = await state(page); expect(initial.camp?.introComplete).toBe(false); checkpoints.arrival = initial;
   await startTrace(page, 700); await page.keyboard.down('KeyW');
@@ -309,7 +340,16 @@ test(transportName + ' fresh default entry reaches the camp, keeps the skinned g
   await advance(page, (await state(page)).elapsed); checkpoints.anchor = await alignedHero(page);
   await page.keyboard.press('KeyE');
   await expect.poll(async () => (await state(page)).camp?.prologue).toBe('building');
-  await expect.poll(async () => (await state(page)).camp?.introComplete, { timeout: 12_000 }).toBe(true);
+  await walkCampPath(page, [{ x: -200, y: 100 }, { x: -200, y: -20 }, { x: -386, y: -20 }]); await constructCampStation(page, 'warehouse');
+  await walkCampPath(page, [{ x: -205, y: -20 }, { x: -205, y: 222 }, { x: -350, y: 222 }]); await constructCampStation(page, 'forge');
+  await walkCampPath(page, [{ x: -205, y: 222 }, { x: -205, y: 100 }, { x: -95, y: 100 }, { x: 100, y: 100 },
+    { x: 100, y: -40 }, { x: 220, y: -40 }, { x: 250, y: 0 }, { x: 335, y: 0 }]); await constructCampStation(page, 'shop');
+  await walkCampPath(page, [{ x: 250, y: 0 }, { x: 220, y: -40 }, { x: 100, y: -40 }, { x: 100, y: 90 }, { x: 90, y: 90 }]);
+  await constructCampStation(page, 'summon');
+  await walkCampPath(page, [{ x: 90, y: 250 }, { x: 205, y: 250 }, { x: 205, y: 340 }, { x: 335, y: 340 }]);
+  await constructCampStation(page, 'departure');
+  await expect.poll(async () => (await state(page)).camp?.introComplete).toBe(true);
+  await openCampStation(page, 'departure');
   await expect(page.locator('.camp-panel [data-action="camp-deploy"]')).toBeEnabled();
   checkpoints.firstIntelligence = { state: await state(page), title: await page.locator('#camp-title').textContent() };
   await page.screenshot({ path: info.outputPath('hero-3d-' + transportName + '-default-intelligence.png') });
@@ -330,13 +370,15 @@ test(transportName + ' fresh default entry reaches the camp, keeps the skinned g
   expect(campDirections.some(sample => quaternionGap(sample.hero.weapon3D!.weaponWorldQuaternion, campDirections[0].hero.weapon3D!.weaponWorldQuaternion) > .2)).toBe(true);
   for (const sample of campDirections) expect(quaternionGap(sample.hero.weapon3D!.socketLocalQuaternion, campDirections[0].hero.weapon3D!.socketLocalQuaternion)).toBeLessThan(1e-4);
   await page.screenshot({ path: info.outputPath('hero-3d-' + transportName + '-default-camp.png') });
-  await page.locator('#camp-toolbar [data-action="camp-section"][data-section="missions"]').click();
-  await expect(page.locator('[data-mission-card="membrane"]')).toBeVisible();
-  await page.locator('.camp-nav [data-action="camp-section"][data-section="warehouse"]').click();
+  await walkCampPath(page, [{ x: 205, y: 340 }, { x: 205, y: 250 }, { x: 0, y: 250 }, { x: 0, y: 100 },
+    { x: -205, y: 100 }, { x: -205, y: -20 }, { x: -386, y: -20 }]);
+  await openCampStation(page, 'warehouse');
+  await page.locator('[data-action="eq-select-weapon"][data-weapon="piercing"]').click();
   const locked = page.locator('[data-camp-weapon="piercing"]');
   await expect(locked.locator('[data-action="camp-equip"]')).toBeDisabled();
   await expect(locked.locator('[data-action="camp-trial"]')).toHaveCount(0);
   checkpoints.secondWeapon = { status: 'locked-in-a-fresh-profile; switching-and-bow-rig-not-verified', explanation: await locked.innerText() };
+  await page.locator('[data-action="eq-select-weapon"][data-weapon="steady"]').click();
   await page.locator('[data-camp-weapon="steady"] [data-action="camp-trial"]').click();
   await expect(page.locator('#camp-trial-canvas')).toBeVisible();
   const frozenWorld = await state(page), frozenHero = await read(page);
@@ -347,7 +389,11 @@ test(transportName + ' fresh default entry reaches the camp, keeps the skinned g
   expect(await state(page)).toEqual(frozenWorld); expect((await read(page)).hero.frame!.poseTime).toBe(frozenHero.hero.frame!.poseTime);
   displayed(await read(page)); checkpoints.trial = { scope: 'Existing independent practice canvas; not a 3D battle animation claim', trial };
   await page.screenshot({ path: info.outputPath('hero-3d-' + transportName + '-default-trial.png') });
-  await page.locator('.camp-footer [data-action="camp-section"][data-section="missions"]').click();
+  await page.locator('[data-action="camp-trial-return"]').click();
+  await page.locator('.camp-close[data-action="camp-close"]').click();
+  await walkCampPath(page, [{ x: -205, y: -20 }, { x: -205, y: 100 }, { x: 0, y: 100 }, { x: 0, y: 250 },
+    { x: 205, y: 250 }, { x: 205, y: 340 }, { x: 335, y: 340 }]);
+  await openCampStation(page, 'departure');
   await page.locator('[data-action="camp-deploy"]').click();
   await expect.poll(async () => { const s = await state(page); return s.phase === 'playing' && !s.camp && s.expedition?.missionId === 'membrane'; }).toBe(true);
   await advance(page, (await state(page)).elapsed); checkpoints.mission = await alignedHero(page);
@@ -366,7 +412,7 @@ test(transportName + ' fresh default entry reaches the camp, keeps the skinned g
 });
 
 test(transportName + ' isolated owned-weapon profile repairs and equips the rigid bow, then draws its string through real mission input', async ({ page, context }, info) => {
-  test.setTimeout(45_000);
+  test.setTimeout(90_000);
   // Produce a valid entitlement through the same public store APIs used by
   // existing camp fixtures. This is neither a natural Boss clear nor a live
   // game-state write. The browser must still repair/equip/deploy through UI.
@@ -382,12 +428,14 @@ test(transportName + ' isolated owned-weapon profile repairs and equips the rigi
   await page.waitForFunction(() => (window.__viral?.diagnostics() as unknown as Diagnostics)?.art?.player3D?.ready);
   await page.locator('[data-action="endless-start"]').click();
   await expect.poll(async () => { const s = await state(page); return s.phase === 'playing' && s.camp?.introComplete === true; }).toBe(true);
-  await page.locator('#camp-toolbar [data-action="camp-section"][data-section="overview"]').click();
-  await page.locator('.camp-nav [data-action="camp-section"][data-section="forge"]').click();
-  await page.locator('.camp-legacy-weapons > summary').click();
+  await walkCampPath(page, [{ x: 0, y: 100 }, { x: -205, y: 100 }, { x: -205, y: 222 }, { x: -350, y: 222 }]);
+  await openCampStation(page, 'forge');
   await expect(page.locator('[data-action="camp-repair"][data-weapon="piercing"]')).toBeEnabled();
   await page.locator('[data-action="camp-repair"][data-weapon="piercing"]').click();
-  await page.locator('.camp-nav [data-action="camp-section"][data-section="warehouse"]').click();
+  await page.locator('.camp-close[data-action="camp-close"]').click();
+  await walkCampPath(page, [{ x: -205, y: 222 }, { x: -205, y: -20 }, { x: -386, y: -20 }]);
+  await openCampStation(page, 'warehouse');
+  await page.locator('[data-action="eq-select-weapon"][data-weapon="piercing"]').click();
   await expect(page.locator('[data-camp-weapon="piercing"] [data-action="camp-equip"]')).toBeEnabled();
   await page.locator('[data-camp-weapon="piercing"] [data-action="camp-equip"]').click();
   await page.locator('.camp-close[data-action="camp-close"]').click();
@@ -397,7 +445,9 @@ test(transportName + ' isolated owned-weapon profile repairs and equips the rigi
   expect(ready.hero.frame!.upperClip).toBe('Bow_Ready'); expect(ready.hero.weapon3D!.drawAmount).toBe(0);
   expect(ready.hero.weapon3D!.rightHandGap).toBeLessThan(.02); checkpoints.campReady = ready;
   await page.screenshot({ path: info.outputPath('hero-3d-' + transportName + '-bow-ready.png') });
-  await page.locator('#camp-toolbar [data-action="camp-section"][data-section="missions"]').click();
+  await walkCampPath(page, [{ x: -205, y: -20 }, { x: -205, y: 100 }, { x: 0, y: 100 }, { x: 0, y: 250 },
+    { x: 205, y: 250 }, { x: 205, y: 340 }, { x: 335, y: 340 }]);
+  await openCampStation(page, 'departure');
   await page.locator('[data-action="camp-deploy"]').click();
   await expect.poll(async () => { const s = await state(page); return s.phase === 'playing' && !s.camp && s.expedition?.loadout.weaponId === 'piercing'; }).toBe(true);
   await aim(page, .65); await advance(page, (await state(page)).elapsed, .25);

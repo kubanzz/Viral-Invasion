@@ -31,12 +31,12 @@ describe('camp foundation and rooftop markers', () => {
     const s = state(['warehouse', 'shop']), fake = canvas(), layout = campLayout(s);
     drawCampFoundations(fake.ctx, s);
     const outlines = fake.calls.filter(call => call.name === 'roundRect');
-    expect(outlines).toHaveLength(3);
-    for (const site of layout.sites.filter(site => !s.camp!.builtFacilities!.includes(site.id))) {
+    expect(outlines).toHaveLength(2);
+    for (const site of layout.sites.filter(site => site.id !== 'summon' && !s.camp!.builtFacilities!.includes(site.id))) {
       expect(outlines.some(call => call.args[0] === site.footprint.left && call.args[1] === site.footprint.top)).toBe(true);
     }
     expect(fake.calls.some(call => call.name === 'drawImage')).toBe(false);
-    expect(fake.calls.some(call => call.name === 'arc')).toBe(false);
+    expect(fake.calls.filter(call => call.name === 'arc')).toHaveLength(1);
     s.camp!.builtFacilities = [...INTRO_FACILITY_IDS]; fake.calls.length = 0;
     drawCampFoundations(fake.ctx, s); expect(fake.calls).toEqual([]);
   });
@@ -44,7 +44,7 @@ describe('camp foundation and rooftop markers', () => {
   it('reserves scaffold and progress visuals for the one active site while other plots wait', () => {
     const s = state(), fake = canvas(); s.camp!.activeConstruction = 'forge'; s.camp!.constructionSeconds = CAMP_CONSTRUCTION_SECONDS / 2;
     drawCampFoundations(fake.ctx, s);
-    expect(fake.calls.filter(call => call.name === 'arc')).toHaveLength(2);
+    expect(fake.calls.filter(call => call.name === 'arc')).toHaveLength(3);
     expect(fake.calls.some(call => call.name === 'drawImage')).toBe(false);
     const labels = requests(s), active = labels.find(label => label.id === 'camp-site:forge')!;
     expect(active.lines[1].text).toContain('50%'); expect(active.bar?.ratio).toBe(.5); expect(active.essential).toBe(true);
@@ -80,6 +80,14 @@ describe('camp foundation and rooftop markers', () => {
     expect(requests(s).some(label => label.id === 'camp-name:forge')).toBe(false);
   });
 
+  it('leaves a completed farm to its individual world crop labels', () => {
+    const s = state([...INTRO_FACILITY_IDS, 'farm']); s.camp!.prologue = 'ready';
+    const farm = campLayout(s).facilities.find(site => site.id === 'farm')!;
+    Object.assign(s.player, farm.interactionPosition);
+    s.camp!.attention = { farm: { kind: 'harvest', label: '可以采摘', count: 1 } };
+    expect(requests(s).filter(label => label.id === 'camp-name:farm' || label.id === 'camp-attention:farm')).toEqual([]);
+  });
+
   it('identifies each empty plot and gives the nearest plot a clear free-building action', () => {
     const s = state(), forge = campLayout(s).sites.find(site => site.id === 'forge')!;
     s.player.x = forge.position.x; s.player.y = forge.position.y;
@@ -95,6 +103,15 @@ describe('camp foundation and rooftop markers', () => {
     const before = structuredClone(s), fake = canvas(); drawCampFoundations(fake.ctx, s); const labels = requests(s);
     expect(labels.some(label => label.id === 'camp-attention:forge')).toBe(false);
     expect(labels.find(label => label.id === 'camp-site:forge')).toBeDefined(); expect(s).toEqual(before);
+  });
+
+  it('keeps the independent summon name visible from afar and charges a ring instead of building a house', () => {
+    const s = state(['summon']), name = requests(s).find(label => label.id === 'camp-name:summon');
+    expect(name?.lines.map(line => line.text)).toEqual(['血流接引点']);expect(name?.campTone).toBe('gold');
+    s.camp!.builtFacilities = ['warehouse', 'forge', 'shop', 'departure'];s.camp!.activeConstruction = 'summon';s.camp!.constructionSeconds = 1;
+    const fake = canvas();drawCampFoundations(fake.ctx, s);
+    expect(fake.calls.some(call => call.name === 'roundRect' || call.name === 'fillRect')).toBe(false);
+    expect(requests(s).find(label => label.id === 'camp-site:summon')?.lines[1].text).toBe('✦ 激活中 50%');
   });
 });
 
@@ -153,5 +170,14 @@ describe('screen-space camp selection follows the visible building', () => {
     expect(hitCampScreenTarget([completed, foundation], { x: 50, y: 80 })).toBe(foundation);
     foundation.labels.push({ id: 'camp-site:forge', rect: { left: 120, top: 60, right: 200, bottom: 100 } });
     expect(hitCampScreenTarget([completed, foundation], { x: 150, y: 80 })).toBe(foundation);
+  });
+
+  it('selects the summon core and its ground ring without selecting beam or empty ring corners', () => {
+    const node = target('summon');node.body = { left: 80, right: 120, top: 70, bottom: 120 };
+    node.ground = { x: 100, y: 150, radiusX: 36, radiusY: 26 };
+    expect(hitCampScreenTarget([node], { x: 100, y: 80 })).toBe(node);
+    expect(hitCampScreenTarget([node], { x: 64, y: 150 })).toBe(node);
+    expect(hitCampScreenTarget([node], { x: 65, y: 125 })).toBeUndefined();
+    expect(hitCampScreenTarget([node], { x: 100, y: 40 })).toBeUndefined();
   });
 });

@@ -1,6 +1,7 @@
 import { installExpeditionArtIcons } from './render/expeditionArt';
 import './style.css';
 import { GameSession } from './game/session';
+import { legionDeployment } from './game/legionCatalog';
 import { FixedClock } from './core/clock';
 import { MotionInterpolation } from './render/motionInterpolation';
 import { Controller, BINDINGS, type SkillPresentation } from './input/controller';
@@ -43,6 +44,7 @@ import './ui/hostEventHud.css';
 import { mobileHudMarkup, mobileDetailsMarkup, setMobileDetailsOpen, updateMobileHud } from './ui/mobileHud';
 import './ui/mobile.css';
 import { mainMenuOverlay } from './ui/mainMenu';
+import { playWorldPrologue, WORLD_PROLOGUE_STORAGE_KEY, type WorldPrologueHandle } from './ui/worldPrologue';
 import { endlessTutorialHint } from './ui/endlessTutorial';
 import './ui/mainMenu.css';
 import { touchCopy } from './ui/touchCopy';
@@ -51,19 +53,25 @@ import { territoryHudMarkup, updateTerritoryHud, territoryVictoryOverlay, territ
 import './ui/territory.css';
 import { ModalPointerIntent } from './ui/modalPointerIntent';
 import { CampProfileStore } from './meta/campProfile';
+import { firstMissionGiftOverlay } from './ui/firstMissionGift';
+import './ui/firstMissionGift.css';
 import { campOverlay, campSectionStation, campAttentionBadge, type CampSection } from './ui/campHud';
 import './ui/camp.css';
+import { createCampEquipmentState, normalizeCampEquipmentState, reduceCampEquipmentAction, type CampEquipmentState } from './ui/campEquipmentState';
 import { CampSummonSequence } from './ui/campSummonSequence';
 import { campSummonOverlay, updateCampSummonOverlay } from './ui/campSummonHud';
 import './ui/campSummon.css';
+import './ui/equipmentWish.css';
 import { constructionHudMarkup, constructionMenu, updateConstructionPlacement, updateConstructionDiscovery } from './ui/constructionHud';
 import { CampWeaponTrial } from './game/campWeaponTrial';
 import { startCampWeaponTrial } from './ui/campWeaponTrial';
 import { requestConstruction, resumeConstruction, cancelConstruction, type BlueprintId } from './game/construction';
-import { prepareCampScene, advanceCampScene, nearbyCampStation, campBuildPoint, canEstablishCamp, canInteractCampStation, ensureCampPlayerLegal } from './game/campScene';
+import { prepareCampScene, advanceCampScene, nearbyCampStation, campBuildPoint, canEstablishCamp, canInteractCampStation, canUseCampSummon, ensureCampPlayerLegal } from './game/campScene';
 import { campLayout, type CampStationId } from './game/campLayout';
 import { CAMP_FACILITY_PROGRESS, CAMP_CONSTRUCTION_SECONDS, INTRO_FACILITY_IDS, campHasFacility, nextCampFacility } from './game/campProgression';
 import { campStationAttention } from './game/campAttention';
+import { campCropAction, campFarmPlots, nearbyCampPlot, startCampFarmSeeding, advanceCampFarmSeeding, cancelCampFarmSeeding } from './game/campFarm';
+import { TouchActivationGuard } from './ui/touchActivation';
 import { MISSIONS, type DrawReceipt, type MissionId, type MissionOutcome, type MissionReceipt, type TemplateId } from './game/microfront';
 import { missionResultOverlay, missionPauseOverlay, updateMissionHud } from './ui/microfrontHud';
 import './ui/microfront.css';
@@ -71,10 +79,13 @@ import { territoryCannonView } from './game/territoryCannon';
 import { territoryContextView } from './game/territory';
 import { WEAPONS, weaponCombatProfile, type WeaponId, type WeaponRarity } from './game/expedition';
 import { createWeaponCombat, weaponSkillViews } from './game/weaponSkills';
+import { weaponUltimateView } from './game/weaponUltimates';
 import { dismissWeaponTutorial } from './ui/endlessTutorial';
-import { weaponSkillIconMarkup } from './ui/weaponSkillIcons';
+import { weaponSkillIconMarkup, weaponUltimateIconMarkup } from './ui/weaponSkillIcons';
 import './ui/construction.css';
 import './ui/weaponSkills.css';
+import './ui/sanctum.css';
+import './ui/campEquipment.css';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game')!;
 const app = document.querySelector<HTMLDivElement>('#app')!;
@@ -109,7 +120,13 @@ const campProfile = new CampProfileStore();
 let campSnapshot = campProfile.load();
 let campSection: CampSection | null = null;
 let campNotice = '';
+let firstMissionGiftNotice = '';
+type CampEquipmentSection = 'warehouse' | 'forge';
+let campEquipmentViews: Partial<Record<CampEquipmentSection, CampEquipmentState>> = {};
+const campEquipmentScroll = new Map<string, number>();
+let campEquipmentFocus: Record<string, string | undefined> | undefined;
 let lastDrawReceipt: DrawReceipt | null = null;
+let summonPool: 'equipment' | 'legion' = 'equipment';
 let lastMissionReceipt: MissionReceipt | undefined;
 let requestedMissionOutcome: MissionOutcome | undefined;
 let drawingAntibodies = false;
@@ -117,6 +134,7 @@ const summonSequence = new CampSummonSequence();
 let summonCueKey = -1;
 let campTrial: CampWeaponTrial | undefined;
 let campTrialWeaponId: WeaponId | undefined;
+let campTrialOrigin: 'warehouse' | 'forge' = 'warehouse';
 let campTrialCompleted = false;
 let stopCampTrial: (() => void) | undefined;
 let blueprintDiscovered = false;
@@ -126,7 +144,20 @@ const session = new GameSession(initialSeed, { campaign: !trainingFixture, ...ne
 const clock = new FixedClock();
 const motion = new MotionInterpolation();
 const renderer = new Renderer(canvas);
+const bladeCameraFrames = new WeakMap<object, { aim: { x: number; y: number }; aimRadius: number }>();
 function prepareCombatCamera(state: GameState, options: CameraFollowOptions = {}): void {
+  const trace = state.weaponCombat?.bladeTrace;
+  if (trace && trace.phase !== 'drawing') return;
+  if (trace?.phase === 'drawing') {
+    let frame = bladeCameraFrames.get(trace);
+    if (!frame) {
+      const points = [state.player, ...trace.marks], xs = points.map(point => point.x), ys = points.map(point => point.y);
+      const aim = { x: (Math.min(...xs)+Math.max(...xs))/2, y: (Math.min(...ys)+Math.max(...ys))/2 };
+      frame = { aim, aimRadius: Math.max(...points.map(point => Math.hypot(point.x-aim.x,point.y-aim.y)))+65 };
+      bladeCameraFrames.set(trace, frame);
+    }
+    options = { ...options, ...frame };
+  }
   renderer.prepareCamera(state, { ...options,
     ...((options.aimRadius??0)>0||!options.aim&&territoryCannonCameraFocus(state) ? { viewport: touchMode?mobileAimViewport:desktopFlightViewport } : {}),
     ...(touchMode && state.phase !== 'menu' ? { minimumScale: COMPACT_COMBAT_MINIMUM_SCALE } : {}) });
@@ -137,6 +168,9 @@ app.setAttribute('aria-busy', 'true');
 const sound = new Soundscape();
 sound.enabled = profile.data.settings.sound;
 let lowEffects = profile.data.settings.lowEffects;
+let worldPrologueSeen = false;
+try { worldPrologueSeen = localStorage.getItem(WORLD_PROLOGUE_STORAGE_KEY) === 'seen'; } catch { /* Viewing the story also works without persistent storage. */ }
+let worldPrologue: WorldPrologueHandle | undefined;
 let help = false;
 let resumeAfterHelp = false;
 let overlayKey = '';
@@ -182,6 +216,7 @@ if (!trainingFixture) {
   document.querySelector('.dock-wrap .ability:last-child .ability-name')!.textContent = '扫描 / 召集';
 }
 const touchToolLabels = ['净化', '裂解', '修复'] as const;
+document.querySelector('.tool-dock')!.insertAdjacentHTML('beforeend', '<button class="weapon-ultimate" data-action="weapon-ultimate" hidden><kbd>4</kbd><strong id="weapon-ultimate-name">大招</strong><small id="weapon-ultimate-energy">0 / 100</small><span class="weapon-energy-track"><i id="weapon-ultimate-fill"></i></span></button>');
 const desktopToolTitles = [...document.querySelectorAll('.tool strong')].map(title => title.innerHTML);
 const desktopCanvasLabel = canvas.getAttribute('aria-label') ?? '';
 const adaptedTouchText = new Map<Text, { original: string; adapted: string }>();
@@ -199,16 +234,20 @@ function applyControlLayout(): void {
 }
 applyControlLayout();
 const input = new Controller(canvas, () => togglePause(), () => {
-  if (session.state.phase === 'playing') session.pause();
+  sound.silence();
+  if (!worldPrologue?.active && session.state.phase === 'playing') session.pause();
   clock.reset();
 }, canAcceptGameInput, () => session.state);
 const touchControls = new TouchControls({ root: document.querySelector<HTMLElement>('#mobile-controls')!, canvas, input,
   // A release commits the point the player just saw, including motion interpolation.
   getState: () => presentedState, screenToWorld: point => renderer.camera.screenToWorld(point), canAccept: canAcceptGameInput, enabled: () => touchMode });
 function canAcceptGameInput(): boolean {
-  return session.state.phase === 'playing' && !buildMenuOpen && !campSection && !help && !history && !growthDetails && !profileOpen && !startingPlanOpen
-    && !migrationGuide && !mobileDetailsOpen && !portraitBlocked
+  return !worldPrologue?.active && session.state.phase === 'playing' && !buildMenuOpen && !campSection && !help && !history && !growthDetails && !profileOpen && !startingPlanOpen
+    && !migrationGuide && !mobileDetailsOpen && !portraitBlocked && !firstMissionGiftVisible()
     && !session.state.growth?.draft && !session.state.growth?.pendingResearch && !session.state.endlessGrowth?.draft;
+}
+function firstMissionGiftVisible(): boolean {
+  return (campProfile.firstMissionGiftAvailable || campProfile.targetedDrawGiftAvailable) && (!!session.state.camp || session.state.phase === 'result' && !!session.state.expedition?.missionId);
 }
 canvas.addEventListener('pointerdown', event => {
   if (event.button !== 0 || !session.state.camp || !canAcceptGameInput()) return;
@@ -218,6 +257,11 @@ canvas.addEventListener('pointerdown', event => {
     if (Math.hypot(world.x - anchor.x, world.y - anchor.y) > 60) return;
     event.preventDefault(); event.stopImmediatePropagation(); establishCamp(); return;
   }
+  const plot = renderer.campGardenHitTarget(session.state, point);
+  if (plot) {
+    event.preventDefault(); event.stopImmediatePropagation();
+    interactCampPlot(plot.index); return;
+  }
   const target = renderer.campHitTarget(session.state, point);
   if (!target) return;
   event.preventDefault(); event.stopImmediatePropagation();
@@ -225,7 +269,7 @@ canvas.addEventListener('pointerdown', event => {
   else { campNotice = `请靠近${CAMP_FACILITY_PROGRESS[target.id].name}，再点击操作。`; overlayKey = ''; }
 }, { capture: true, passive: false });
 function openBuildMenu():void {
-  if(!session.state.territory||session.state.camp||!canAcceptGameInput())return;
+  if(!session.state.territory||session.state.camp||session.state.weaponCombat?.bladeTrace||!canAcceptGameInput())return;
   blueprintDiscovered=false;
   buildPlacement=undefined;buildMenuOpen=true;session.pause();input.clear();clock.reset();overlayKey='';
 }
@@ -239,21 +283,47 @@ function syncCampWeapon():void {
 }
 function syncCampPresentation(): void {
   campSnapshot = campProfile.load();
+  for (const section of ['warehouse', 'forge'] as const) {
+    const view = campEquipmentViews[section];
+    if (view) campEquipmentViews[section] = normalizeCampEquipmentState(campSnapshot, view);
+  }
   const camp = session.state.camp, data = campSnapshot.data;
   if (!camp) return;
   if (camp.activeConstruction !== data.activeConstruction) camp.constructionSeconds = 0;
   camp.builtFacilities = [...data.builtFacilities]; camp.activeConstruction = data.activeConstruction;
   camp.prologue = data.prologue; camp.introComplete = data.campIntroSeen;
   camp.attention = campStationAttention(data);
+  camp.farmPlots = structuredClone(data.farmPlots); camp.food = data.food;
+  camp.legions = legionDeployment(data.legionLoadout, data.food);
 }
-function openCampSection(section: CampSection): void {
+let pendingFarmSeconds = 0;
+function flushCampFarmGrowth(): void {
+  const seconds = pendingFarmSeconds; pendingFarmSeconds = 0;
+  if (!session.state.camp || seconds <= 0) return;
+  const result = campProfile.advanceFarm(Math.min(1, seconds));
+  if (result.changed) syncCampPresentation();
+  if (result.matured.length) {
+    session.state.camp.cropFeedback = { index: result.matured[0], kind: 'ripe', until: session.state.elapsed + 2 };
+  }
+}
+function advanceCampFarmRuntime(dt: number): void {
+  if (!session.state.camp || !campFarmPlots(session.state).some(plot => plot.status !== 'empty' && plot.status !== 'ripe')) {
+    pendingFarmSeconds = 0; return;
+  }
+  pendingFarmSeconds += dt;
+  if (pendingFarmSeconds + 1e-8 >= 1) flushCampFarmGrowth();
+}
+function openCampSection(section: CampSection, fromStation = false): void {
   if (summonSequence.active) return;
-  if (!session.state.camp || portraitBlocked || !['overview','warehouse','forge','shop','departure','missions','summon','trial'].includes(section)) return;
+  if (!session.state.camp || portraitBlocked || !['overview','warehouse','forge','shop','departure','missions','summon','trial','farm','house'].includes(section)) return;
+  if ((section === 'summon' && !fromStation) || section === 'trial') return;
+  flushCampFarmGrowth(); cancelCampFarmSeeding(session.state);
   const station = campSectionStation(section), data = campSnapshot.data;
   if (station && campHasFacility(data, station) && !canInteractCampStation(session.state, station)) {
-    campNotice = `请靠近${CAMP_FACILITY_PROGRESS[station].name}，点击建筑或按E进入。`;
+    campNotice = `请靠近${CAMP_FACILITY_PROGRESS[station].name}，${station === 'summon' ? '点击光核' : '点击建筑'}或按E进入。`;
     campSection = null; session.state.phase = 'playing';
   } else {
+    campNotice = '';
     campSection = section; session.state.phase = 'paused';
     if (station && campHasFacility(data, station)) {
       if (section === 'warehouse') campProfile.markCampSectionSeen('warehouse');
@@ -261,10 +331,13 @@ function openCampSection(section: CampSection): void {
     }
   }
   syncCampPresentation(); input.clear(); clock.reset(); overlayKey = '';
+  if ((campSection === 'warehouse' || campSection === 'forge') && campHasFacility(campSnapshot.data, campSection)) {
+    campEquipmentViews[campSection] ??= createCampEquipmentState(campSnapshot);
+  }
 }
 function startCampConstruction(id: CampStationId): void {
   if (!session.state.camp || !canInteractCampStation(session.state, id)) {
-    campNotice = '先走到规划地基旁，再确认免费建造。'; overlayKey = ''; return;
+    campNotice = id === 'summon' ? '先走到主路旁的光环，再免费激活接引点。' : '先走到规划地基旁，再确认免费建造。'; overlayKey = ''; return;
   }
   const result = campProfile.beginBuild(id); campNotice = result.message;
   if (result.accepted) { campSection = null; session.state.phase = 'playing'; }
@@ -272,19 +345,96 @@ function startCampConstruction(id: CampStationId): void {
 }
 function interactCampStation(id: CampStationId): void {
   if (!canAcceptGameInput() || !session.state.camp || !canInteractCampStation(session.state, id)) return;
-  if (campHasFacility(campSnapshot.data, id)) openCampSection(id);
+  if (id === 'farm' && campHasFacility(campSnapshot.data, id)) {
+    const plot = nearbyCampPlot(session.state);
+    if (plot) interactCampPlot(plot.index);
+    else { campNotice = '走到田边，点击田地或按E播种、采摘。'; overlayKey = ''; }
+    return;
+  }
+  if (campHasFacility(campSnapshot.data, id)) openCampSection(id, true);
   else startCampConstruction(id);
 }
+function interactCampPlot(index: number): void {
+  if (!canAcceptGameInput() || !session.state.camp) return;
+  flushCampFarmGrowth();
+  const plot = campFarmPlots(session.state).find(plot => plot.index === index);
+  if (!plot) return;
+  if (!plot.eligible) { campNotice = '先走到这块田边，再点击作物或按E。'; overlayKey = ''; return; }
+  if (plot.action === 'plant') {
+    if (startCampFarmSeeding(session.state, index)) campNotice = '播种中，留在田边等待圆环完成。';
+  } else if (plot.action !== 'wait') {
+    const kind = plot.action;
+    const result = kind === 'harvest' ? campProfile.harvestCrop(index) : campProfile.careCrop(index, kind);
+    campNotice = result.message;
+    syncCampPresentation();
+    if (result.accepted) session.state.camp.cropFeedback = { index, kind, until: session.state.elapsed + 1.5 };
+  } else campNotice = campCropAction(plot);
+  input.clear(); overlayKey = '';
+}
+function renderWorldPrologueBackdrop(): void {
+  presentedState = session.state;
+  prepareCombatCamera(session.state, { snap: true });
+  renderer.render(session.state, input.getAim(session.state, point => renderer.camera.screenToWorld(point)),
+    { lowEffects, cameraPrepared: true, authoritativeState: session.state });
+}
+/** The story has its own presentation clock; no campaign or camp time advances. */
+function beginWorldPrologue(destination: 'camp' | 'menu'): void {
+  if (worldPrologue?.active || session.state.phase !== 'menu' || trainingFixture) return;
+  const returnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : undefined;
+  input.clear(); sound.unlock(); sound.silence(); clock.reset(); motion.reset();
+  app.inert = true; canvas.inert = true;
+  let arrived = false, completed = false;
+  const arrive = () => {
+    if (arrived || completed) return;
+    arrived = true;
+    enterCamp();
+    renderWorldPrologueBackdrop();
+    updateOverlay(); updateHud(); updateCampToolbar();
+  };
+  const finish = (remember = true) => {
+    if (completed) return;
+    // A skipped story reaches the same camp entry as a fully watched story.
+    if (destination === 'camp' && !arrived) arrive();
+    completed = true;
+    worldPrologue?.destroy(); worldPrologue = undefined;
+    if (remember) {
+      worldPrologueSeen = true;
+      try { localStorage.setItem(WORLD_PROLOGUE_STORAGE_KEY, 'seen'); } catch { /* Remember it for this page when storage is unavailable. */ }
+    }
+    app.inert = false; canvas.inert = false;
+    input.clear(); clock.reset(); motion.reset(); cameraFollowPolicy.reset(); lastFrame = undefined;
+    overlayKey = ''; syncTouchOrientation(); updateOverlay(); updateHud();
+    if (destination === 'menu') {
+      const focus = returnFocus?.isConnected ? returnFocus : document.querySelector<HTMLElement>('[data-action="world-prologue-replay"]');
+      focus?.focus({ preventScroll: true });
+    }
+  };
+  try {
+    worldPrologue = playWorldPrologue({ soundEnabled: sound.enabled, lowEffects,
+      onToggleSound: () => {
+        sound.unlock(); sound.toggle(); profile.updateSettings({ sound: sound.enabled });
+        return sound.enabled;
+      },
+      ...(destination === 'camp' ? { onArrival: arrive } : {}),
+      onComplete: () => finish() });
+    worldPrologue.setPaused(portraitBlocked);
+  } catch (error) {
+    console.error('序章画面未能启动，继续进入游戏。', error);
+    finish(false);
+  }
+}
 function enterCamp():void {
+  flushCampFarmGrowth(); cancelCampFarmSeeding(session.state);
   summonSequence.clear();
   if(session.state.expedition?.missionId && campProfile.data.activeExpedition && session.state.phase !== 'menu' && session.state.phase !== 'result') {
     requestedMissionOutcome='withdrawn';session.finish(false,'主动撤离：带回一半普通资源。');requestedMissionOutcome=undefined;
   }
-  stopCampTrial?.();stopCampTrial=undefined;campTrial=undefined;campTrialWeaponId=undefined;campTrialCompleted=false;
+  stopCampTrial?.();stopCampTrial=undefined;campTrial=undefined;campTrialWeaponId=undefined;campTrialOrigin='warehouse';campTrialCompleted=false;
   if(!session.state.camp&&session.state.phase==='paused'&&session.state.territory?.stage==='victory'&&session.state.territory.rescueSnapshot)session.finishTerritoryRescue();
   if(!session.state.territory)session.state=new GameSession(session.state.seed,{campaign:true,milestone:'G3',mode:'endless',territory:true}).state;
   campSnapshot = campProfile.load();
   session.state=structuredClone(session.state);prepareCampScene(session.state,campSnapshot.data.campIntroSeen,campSnapshot.data.prologue,campSnapshot.data.builtFacilities);
+  campEquipmentViews = {}; campEquipmentScroll.clear(); campEquipmentFocus = undefined;
   syncCampPresentation();syncCampWeapon();ensureCampPlayerLegal(session.state);
   help=false;history=false;campSection=null;campNotice='';buildMenuOpen=false;buildPlacement=undefined;
   document.body.classList.add('camp-world');input.clear();input.setTerritoryMode(false);clock.reset();motion.reset();overlayKey='';
@@ -295,7 +445,7 @@ function completeCampConstruction(): void {
   const result = campProfile.completeBuild(id);
   if (!result.accepted) return;
   syncCampPresentation();ensureCampPlayerLegal(session.state);
-  campNotice=campSnapshot.data.prologue==='ready'?'侦察队来报：首份情报已送达，靠近出击台查看。':result.message;
+  campNotice=result.message;
   if (campSection) { campSection = null; session.state.phase = 'playing'; }
   input.clear();motion.reset();overlayKey='';
 }
@@ -311,19 +461,20 @@ function establishCamp(): void {
 function settleCurrentMission(outcome: MissionOutcome): void {
   const expedition=session.state.expedition;
   if(!expedition?.missionId||!expedition.haul||campProfile.data.activeExpedition?.runId!==expedition.runId)return;
-  const settled=campProfile.settleMission(expedition.runId,outcome,expedition.haul,outcome==='success'?expedition.pendingLoot:undefined);
+  const settled=campProfile.settleMission(expedition.runId,outcome,expedition.haul,outcome==='success'?expedition.pendingLoot:undefined,
+    {combatSeconds:session.state.elapsed,kills:session.state.battle?.stats.kills??0});
   if(settled.receipt)lastMissionReceipt=settled.receipt;
   campNotice=settled.message;overlayKey='';
 }
 const campToolbarMarkup = new WeakMap<HTMLElement, string>();
 function updateCampToolbar():void {
-  const bar=el('camp-toolbar');bar.hidden=!session.state.camp||!!campSection;bar.inert=!!campSection;if(!session.state.camp)return;
-  const data=campSnapshot.data,station=nearbyCampStation(session.state),attention=session.state.camp.attention ?? {};
+  const bar=el('camp-toolbar');bar.hidden=!session.state.camp||!!campSection||firstMissionGiftVisible();bar.inert=!!campSection||firstMissionGiftVisible();if(!session.state.camp)return;
+  const data=campSnapshot.data,station=nearbyCampStation(session.state),plot=nearbyCampPlot(session.state),attention=session.state.camp.attention ?? {};
   const next = nextCampFacility(data), escapeText = (value: string) => value.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
-  const nearby = station ? `<button data-action="camp-interact" data-station="${station.id}" ${!campHasFacility(data, station.id) && !!data.activeConstruction ? 'disabled' : ''}>${campHasFacility(data, station.id) ? '进入' : '⚒ 建造'} ${station.name}${touchMode?'':' E'}${campAttentionBadge(attention[station.id])}</button>` : '';
+  const nearby = plot ? `<button data-action="camp-crop" data-plot="${plot.index}">${campCropAction(plot)}${touchMode?'':' E'}</button>` : station ? `<button data-action="camp-interact" data-station="${station.id}" ${!campHasFacility(data, station.id) && !!data.activeConstruction ? 'disabled' : ''}>${campHasFacility(data, station.id) ? station.id === 'summon' ? '接引' : station.id === 'farm' ? '田间操作' : '进入' : station.id === 'summon' ? '✦ 激活' : '⚒ 建造'} ${station.name}${touchMode?'':' E'}${campAttentionBadge(attention[station.id])}</button>` : '';
   const text=data.prologue==='arrival'?`<strong>缓流膜湾 · 带领小队前往锚定点</strong>${canEstablishCamp(session.state)?'<button data-action="camp-establish">建立前哨 E</button>':'<span>向前移动 · 靠近发光点</span>'}`
-    :data.prologue==='building'?`<strong>基础建设 ${data.builtFacilities.length} / 5</strong><button data-action="camp-section" data-section="overview">建设一览</button>${data.activeConstruction ? `<span class="camp-guidance">${CAMP_FACILITY_PROGRESS[data.activeConstruction].name}施工中</span><button data-action="camp-skip-construction">完成当前栋演出</button>` : next ? `<span class="camp-guidance">建议：${CAMP_FACILITY_PROGRESS[next].name} · 均可免费建造</span>${nearby}` : ''}`
-    :`<strong>缓流膜湾 · 金币 ${data.coins} · 生质 ${data.materials}</strong><button data-action="camp-section" data-section="overview">营地菜单</button><button data-action="camp-section" data-section="missions">侦查情报${campAttentionBadge(attention.departure)}</button>${nearby}`;
+    :data.prologue==='building'?`<strong>基础建设 ${data.builtFacilities.length} / 5</strong><button data-action="camp-section" data-section="overview">建设一览</button>${data.activeConstruction ? `<span class="camp-guidance">${CAMP_FACILITY_PROGRESS[data.activeConstruction].name}${data.activeConstruction === 'summon' ? '激活中' : '施工中'}</span><button data-action="camp-skip-construction">完成当前设施演出</button>` : next ? `<span class="camp-guidance">建议：${CAMP_FACILITY_PROGRESS[next].name} · ${next === 'summon' ? '主路旁免费激活' : '免费建造'}</span>${nearby}` : ''}`
+    :`<strong>缓流膜湾 · 金币 ${data.coins} · 生质 ${data.materials} · 口粮 ${data.food}</strong><button data-action="camp-section" data-section="overview">营地概览</button><button data-action="camp-view" aria-pressed="${Boolean(session.state.camp.overview)}">${session.state.camp.overview?'跟随角色':'营地全景'}</button>${data.activeConstruction ? `<span class="camp-guidance">${CAMP_FACILITY_PROGRESS[data.activeConstruction].name}施工中</span><button data-action="camp-skip-construction">完成当前设施演出</button>` : ''}${nearby}`;
   const status = campSnapshot.status;
   const content = text + (campNotice ? `<span class="camp-guidance" role="status">${escapeText(campNotice)}</span>` : '') + (status.mode === 'session' ? '<span class="camp-save-warning" role="status">进度暂存本页<button data-action="camp-retry-save">重试保存</button></span>' : '');
   if(campToolbarMarkup.get(bar)!==content) { campToolbarMarkup.set(bar,content);bar.innerHTML=content;refreshHudRects(); }
@@ -336,7 +487,57 @@ function refreshSummonPresentation(): void {
   }
   overlayKey = '';
 }
+function rememberCampEquipmentViewport(host: HTMLElement): void {
+  const workspace = host.querySelector<HTMLElement>('.eq-workspace');
+  if (!workspace) return;
+  const { eqSection, eqTab, eqSelection, eqDetail } = workspace.dataset;
+  const key = `${eqSection}:${eqTab}`;
+  const list = workspace.querySelector<HTMLElement>('.eq-list');
+  const detail = workspace.querySelector<HTMLElement>('.eq-detail-scroll');
+  if (list) campEquipmentScroll.set(`${key}:list`, list.scrollTop);
+  if (detail) campEquipmentScroll.set(`${key}:${eqSelection}:${eqDetail}`, detail.scrollTop);
+  if (campSection !== 'warehouse' && campSection !== 'forge' && campSection !== 'trial') {
+    campEquipmentFocus = undefined; return;
+  }
+  const focused = document.activeElement;
+  if (!campEquipmentFocus && focused instanceof HTMLButtonElement && focused.closest('.camp-equipment-panel'))
+    campEquipmentFocus = { ...focused.dataset };
+}
+function restoreCampEquipmentViewport(host: HTMLElement): void {
+  const workspace = host.querySelector<HTMLElement>('.eq-workspace');
+  if (!workspace) return;
+  const { eqSection, eqTab, eqSelection, eqDetail } = workspace.dataset;
+  const key = `${eqSection}:${eqTab}`;
+  const list = workspace.querySelector<HTMLElement>('.eq-list');
+  const detail = workspace.querySelector<HTMLElement>('.eq-detail-scroll');
+  if (list) {
+    list.scrollTop = campEquipmentScroll.get(`${key}:list`) ?? 0;
+    const selected = list.querySelector<HTMLElement>('[aria-pressed="true"],[aria-selected="true"]');
+    if (selected) {
+      const bounds = list.getBoundingClientRect(), item = selected.getBoundingClientRect();
+      if (item.top < bounds.top) list.scrollTop -= bounds.top - item.top;
+      else if (item.bottom > bounds.bottom) list.scrollTop += item.bottom - bounds.bottom;
+    }
+  }
+  if (detail) detail.scrollTop = campEquipmentScroll.get(`${key}:${eqSelection}:${eqDetail}`) ?? 0;
+  const panel = host.querySelector<HTMLElement>('.camp-equipment-panel');
+  const desired = campEquipmentFocus;
+  const target = desired && [...host.querySelectorAll<HTMLButtonElement>('.camp-equipment-panel button:not(:disabled)')]
+    .find(button => Object.entries(desired).every(([name, value]) => button.dataset[name] === value));
+  (target ?? (desired ? workspace.querySelector<HTMLElement>('.eq-actions .primary:not(:disabled)') : null)
+    ?? panel)?.focus({ preventScroll: true });
+  campEquipmentFocus = undefined;
+}
 function handleExpeditionAction(action:string,button:HTMLButtonElement):boolean {
+  if (action === 'claim-first-mission-gift' || action === 'claim-targeted-draw-gift') {
+    if (!firstMissionGiftVisible()) return true;
+    const claimed = action === 'claim-first-mission-gift' ? campProfile.claimFirstMissionGift() : campProfile.claimTargetedDrawGift();
+    firstMissionGiftNotice = claimed.accepted ? '' : claimed.message;
+    campNotice = claimed.message; syncCampPresentation(); input.clear(); clock.reset(); overlayKey = '';
+    if (claimed.accepted) canvas.focus({ preventScroll: true });
+    return true;
+  }
+  if (firstMissionGiftVisible()) return true;
   if (summonSequence.active) {
     summonSequence.update(performance.now());
     if (action === 'camp-summon-skip') summonSequence.skip();
@@ -345,38 +546,73 @@ function handleExpeditionAction(action:string,button:HTMLButtonElement):boolean 
     refreshSummonPresentation(); input.clear(); return true;
   }
   if(action==='camp-open'||action==='camp-open-forge'){enterCamp();if(action==='camp-open-forge')openCampSection('forge');return true;}
+  if (action.startsWith('eq-')) {
+    if (!session.state.camp || (campSection !== 'warehouse' && campSection !== 'forge')
+      || !campHasFacility(campSnapshot.data, campSection) || !canInteractCampStation(session.state, campSection)) return true;
+    const view = campEquipmentViews[campSection] ?? createCampEquipmentState(campSnapshot);
+    const next = reduceCampEquipmentAction(campSnapshot, view, action, button.dataset);
+    if (next) {
+      campEquipmentFocus = action === 'eq-detail' && button.dataset.detail === 'summary'
+        ? { action: 'eq-detail', detail: view.detail } : { ...button.dataset };
+      campEquipmentViews[campSection] = next; campNotice = '';
+      input.clear(); clock.reset(); overlayKey = '';
+    }
+    return true;
+  }
   if(action.startsWith('camp-')){
     if(!session.state.camp)return true;
+    if(action==='camp-crop'){interactCampPlot(Number(button.dataset.plot));return true;}
+    if(action==='camp-view'){flushCampFarmGrowth();cancelCampFarmSeeding(session.state);session.state.camp.overview=!session.state.camp.overview;input.clear();clock.reset();return true;}
     if(action==='camp-trial-fire'){campTrial?.trigger();return true;}
     if(action==='camp-trial-reset'){campTrial?.reset();return true;}
     if(action==='camp-trial-skill'){campTrial?.skill(Number(button.dataset.slot) as 1|2|3);return true;}
-    if(action==='camp-trial-layout'){campTrial?.layout(button.dataset.layout === 'line' ? 'line' : 'single');overlayKey='';return true;}
+    if(action==='camp-trial-layout'){campTrial?.layout(button.dataset.layout === 'melee' ? 'melee' : button.dataset.layout === 'line' ? 'line' : 'single');overlayKey='';return true;}
     if(action==='camp-trial-cooldowns'){campTrial?.resetCooldowns();return true;}
+    if(action==='camp-trial-ultimate'){campTrial?.ultimate();return true;}
+    if(action==='camp-trial-charge-ultimate'||action==='camp-trial-fill'){campTrial?.fillUltimate();return true;}
     if(action==='camp-trial'||action==='camp-equip-trial'){
-      if (!campHasFacility(campSnapshot.data, 'warehouse') || !(canInteractCampStation(session.state, 'warehouse') || campHasFacility(campSnapshot.data, 'forge') && canInteractCampStation(session.state, 'forge'))) return true;
+      const origin = campSection === 'trial' ? campTrialOrigin : campSection;
+      if ((origin !== 'warehouse' && origin !== 'forge') || !campHasFacility(campSnapshot.data, origin) || !canInteractCampStation(session.state, origin)) return true;
       const id=(button.dataset.weapon??campProfile.data.equipped) as WeaponId;
       const item=campProfile.data.weapons[id];if(!item?.repaired)return true;
       if(action==='camp-equip-trial'){const result=campProfile.equip(id);campNotice=result.message;if(!result.accepted&&campProfile.data.equipped!==id)return true;syncCampWeapon();}
       stopCampTrial?.();stopCampTrial=undefined;
-      campTrialWeaponId=id;campTrial=new CampWeaponTrial({weaponId:id,rarity:item.repaired,upgrade:item.upgrade});
+      campTrialOrigin=origin;campTrialWeaponId=id;campTrial=new CampWeaponTrial({weaponId:id,rarity:item.repaired,upgrade:item.upgrade});
       campSection='trial';session.state.phase='paused';input.clear();clock.reset();overlayKey='';return true;
     }
+    if(action==='camp-trial-return'){if(campSection==='trial')openCampSection(campTrialOrigin);return true;}
     if(action==='camp-section'){openCampSection(button.dataset.section as CampSection);return true;}
     else if(action==='camp-interact'){interactCampStation(button.dataset.station as CampStationId);return true;}
     else if(action==='camp-build'){startCampConstruction(button.dataset.station as CampStationId);return true;}
-    else if(action==='camp-close'){campSection=null;session.state.phase='playing';}
-    else if(action==='camp-leave'){delete session.state.camp;session.state.phase='menu';campSection=null;document.body.classList.remove('camp-world');}
+    else if(action==='camp-close'){campSection=null;campNotice='';session.state.phase='playing';stopCampTrial?.();stopCampTrial=undefined;}
+    else if(action==='camp-leave'){flushCampFarmGrowth();cancelCampFarmSeeding(session.state);delete session.state.camp;session.state.phase='menu';campSection=null;document.body.classList.remove('camp-world');}
     else if(action==='camp-deploy'){if(campProfile.data.prologue==='ready')start((session.state.seed+7919)>>>0,undefined,false,'endless');return true;}
     else if(action==='camp-establish'){establishCamp();return true;}
     else if(action==='camp-skip-construction'){completeCampConstruction();clock.reset();return true;}
     else if(action==='camp-mission')campNotice=campProfile.selectMission(button.dataset.mission as MissionId).message;
     else if(action==='camp-craft')campNotice=campProfile.craft(button.dataset.template as TemplateId,button.dataset.rarity as WeaponRarity).message;
-    else if(action==='camp-decompose')campNotice=campProfile.decompose(button.dataset.item!).message;
+    else if(action==='camp-decompose') {
+      const index = campSnapshot.data.inventory.findIndex(item => item.id === button.dataset.item);
+      const result = campProfile.decompose(button.dataset.item!); campNotice = result.message;
+      const view = campEquipmentViews.warehouse;
+      if (result.accepted && view && view.inventoryItemId === button.dataset.item)
+        view.inventoryItemId = campProfile.data.inventory[Math.min(index, campProfile.data.inventory.length - 1)]?.id ?? null;
+    }
     else if(action==='camp-module')campNotice=campProfile.equipModule(button.dataset.module as ProtocolId).message;
-    else if(action==='camp-draw'){
+    else if(action==='camp-summon-pool') { summonPool=button.dataset.pool==='legion'?'legion':'equipment'; lastDrawReceipt=null; }
+    else if(action==='camp-wish-target') {
+      if(campSection!=='summon'||!canUseCampSummon(session.state))return true;
+      campNotice=campProfile.selectEquipmentWish(button.dataset.wish as import('./game/equipmentWish').EquipmentWishId).message;
+    }
+    else if(['camp-plant','camp-harvest','camp-plant-all','camp-harvest-all'].includes(action))campNotice='走到田边，点击对应田地或按E照料、采摘。';
+    else if(action==='camp-legion-assign')campNotice=campProfile.assignLegion(Number(button.dataset.slot),
+      (button.dataset.legion||null) as import('./game/legionCatalog').LegionId|null).message;
+    else if(action==='camp-draw'||action==='camp-legion-draw'){
+      if(campSection!=='summon'||!canUseCampSummon(session.state))return true;
       if(drawingAntibodies)return true;drawingAntibodies=true;button.disabled=true;
       const requestId=globalThis.crypto?.randomUUID?.()??`summon:${Date.now()}:${Math.random()}`;
-      const result=campProfile.drawAntibodies(Number(button.dataset.count) as 1|10,requestId);
+      const result=action==='camp-legion-draw'?campProfile.drawLegions(Number(button.dataset.count) as 1|10,requestId)
+        :campProfile.drawAntibodies(Number(button.dataset.count) as 1|10,requestId);
       if(result.receipt){
         lastDrawReceipt=result.receipt;
         const reduced = lowEffects || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -406,12 +642,13 @@ window.addEventListener('keydown',event=>{
   if(event.repeat||event.ctrlKey||event.metaKey||event.altKey||event.target instanceof HTMLInputElement||event.target instanceof HTMLTextAreaElement)return;
   if(session.state.camp&&campSection==='trial'&&campTrial&&!portraitBlocked&&document.hasFocus()){
     const key=/^(?:Digit|Numpad)([0-3])$/.exec(event.code);
-    if(key){event.preventDefault();if(key[1]==='0')campTrial.trigger();else campTrial.skill(Number(key[1]) as 1|2|3);input.clear();return;}
+    if(key){event.preventDefault();if(key[1]==='0')campTrial.setPrimaryHeld(true,'keyboard');else campTrial.skill(Number(key[1]) as 1|2|3);input.clear();return;}
   }
   if(event.code==='Enter'&&buildPlacement&&canAcceptGameInput()){const result=requestConstruction(session.state,buildPlacement);for(const e of result.events)session.emit(e.type,e.data);if(result.accepted)buildPlacement=undefined;input.clear();clock.reset();event.preventDefault();}
   if(event.code==='KeyB'){event.preventDefault();if(buildMenuOpen){buildMenuOpen=false;session.resume();input.clear();clock.reset();overlayKey='';}else openBuildMenu();}
-  if(event.code==='KeyE'&&session.state.camp&&!campSection&&!event.repeat&&canAcceptGameInput()){if(session.state.camp.prologue==='arrival'){establishCamp();event.preventDefault();return;}const station=nearbyCampStation(session.state);if(station){interactCampStation(station.id);event.preventDefault();}}
+  if(event.code==='KeyE'&&session.state.camp&&!campSection&&!event.repeat&&canAcceptGameInput()){if(session.state.camp.prologue==='arrival'){establishCamp();event.preventDefault();return;}const plot=nearbyCampPlot(session.state);if(plot){interactCampPlot(plot.index);event.preventDefault();return;}const station=nearbyCampStation(session.state);if(station){interactCampStation(station.id);event.preventDefault();}}
 });
+window.addEventListener('keyup', event => { if (event.code === 'Digit0' || event.code === 'Numpad0') campTrial?.setPrimaryHeld(false,'keyboard'); });
 window.addEventListener('keydown', event => {
   if (!summonSequence.active) return;
   if (event.ctrlKey || event.metaKey || event.altKey) return;
@@ -428,13 +665,34 @@ window.addEventListener('keydown', event => {
   else if (event.target instanceof HTMLElement && event.target.closest('.summon-batch-slot') && ['ArrowUp','ArrowDown','PageUp','PageDown','Home','End'].includes(event.code)) { event.stopImmediatePropagation(); }
   else if (!['Enter','NumpadEnter','Space'].includes(event.code)) { event.preventDefault();event.stopImmediatePropagation(); }
 }, true);
+window.addEventListener('keydown', event => {
+  const panel = document.querySelector<HTMLElement>('.camp-equipment-panel');
+  if (!panel) return;
+  const tab = event.target instanceof HTMLElement ? event.target.closest<HTMLButtonElement>('.eq-tabs button') : null;
+  if (tab && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.code)) {
+    const tabs = [...panel.querySelectorAll<HTMLButtonElement>('.eq-tabs button')], index = tabs.indexOf(tab);
+    const next = event.code === 'Home' ? 0 : event.code === 'End' ? tabs.length - 1
+      : (index + (event.code === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+    event.preventDefault(); tabs[next]?.click(); return;
+  }
+  if (event.code !== 'Tab') return;
+  const buttons = [...panel.querySelectorAll<HTMLButtonElement>('button:not(:disabled)')];
+  const first = buttons[0], last = buttons[buttons.length - 1];
+  if (!first) return;
+  if (event.shiftKey && (document.activeElement === first || !buttons.includes(document.activeElement as HTMLButtonElement))) {
+    event.preventDefault(); last.focus();
+  } else if (!event.shiftKey && (document.activeElement === last || !buttons.includes(document.activeElement as HTMLButtonElement))) {
+    event.preventDefault(); first.focus();
+  }
+}, true);
 canvas.addEventListener('pointerdown',event=>{if(buildPlacement){const r=canvas.getBoundingClientRect();buildPlacement.position=renderer.camera.screenToWorld({x:event.clientX-r.left,y:event.clientY-r.top});buildPlacement.locked=true;event.preventDefault();event.stopImmediatePropagation();}},true);
 function syncTouchOrientation(): void {
   const next = touchMode && innerHeight > innerWidth;
-  if (next !== portraitBlocked) { input.clear(); if (session.state.phase === 'playing') session.pause(); clock.reset(); }
+  if (next !== portraitBlocked) { input.clear(); if (!worldPrologue?.active && session.state.phase === 'playing') session.pause(); clock.reset(); }
   portraitBlocked = next;
   document.body.classList.toggle('touch-portrait', next);
-  if (next && session.state.phase === 'playing') { input.clear(); session.pause(); clock.reset(); }
+  if (worldPrologue?.active) worldPrologue.setPaused(next);
+  else if (next && session.state.phase === 'playing') { input.clear(); session.pause(); clock.reset(); }
 }
 function closeMobileDetails(): void {
   setMobileDetailsOpen(false); mobileDetailsOpen = false;
@@ -442,6 +700,7 @@ function closeMobileDetails(): void {
   resumeAfterMobileDetails = false; input.clear(); clock.reset(); overlayKey = '';
 }
 session.bus.on('event', event => {
+  renderer.acceptCombatEvent(event);
   if (event.type === 'INPUT_RESET_REQUESTED') { input.clear(); resetClockAfterStep = true; }
   if (event.type === 'RUN_PAUSED' || event.type === 'RUN_ENDED') input.clear();
   if (event.type === 'RUN_PAUSED' && session.state.camp && !campSection) { campSection='overview';overlayKey=''; }
@@ -469,8 +728,20 @@ session.bus.on('event', event => {
 const el = (id: string) => document.getElementById(id)!;
 const formatTime = (seconds: number) => `${Math.floor(seconds/60).toString().padStart(2,'0')}:${Math.floor(seconds%60).toString().padStart(2,'0')}`;
 function togglePause() {
+  if (worldPrologue?.active) return;
+  if (firstMissionGiftVisible()) return;
   if (summonSequence.active) { summonSequence.skip(); refreshSummonPresentation(); input.clear(); return; }
-  if(session.state.camp){campSection=campSection?null:'overview';session.state.phase=campSection?'paused':'playing';input.clear();clock.reset();overlayKey='';return;}
+  if(session.state.camp){
+    if (campSection === 'trial') { openCampSection(campTrialOrigin); return; }
+    if (campSection === 'warehouse' || campSection === 'forge') {
+      const view = campEquipmentViews[campSection];
+      if (view && view.detail !== 'summary') {
+        campEquipmentFocus = { action: 'eq-detail', detail: view.detail };
+        view.detail = 'summary'; campNotice = ''; input.clear(); clock.reset(); overlayKey = ''; return;
+      }
+    }
+    campSection=campSection?null:'overview';session.state.phase=campSection?'paused':'playing';input.clear();clock.reset();overlayKey='';return;
+  }
   if(buildMenuOpen){buildMenuOpen=false;session.resume();input.clear();clock.reset();overlayKey='';return;}
   if (mobileDetailsOpen) { closeMobileDetails(); return; }
   if (startingPlanOpen) { startingPlanOpen = false; input.clear(); clock.reset(); return; }
@@ -487,11 +758,12 @@ function togglePause() {
 }
 function start(newSeed?: number, replay?: RunEncounterRecord | null, preserveCurrent = false, mode: 'campaign' | 'endless' = session.state.endless ? 'endless' : 'campaign') {
   if(!trainingFixture){mode='endless';if(campProfile.data.prologue!=='ready'){enterCamp();return;}}
+  flushCampFarmGrowth(); cancelCampFarmSeeding(session.state);
   stopCampTrial?.();stopCampTrial=undefined;campTrial=undefined;campTrialWeaponId=undefined;campTrialCompleted=false;blueprintDiscovered=false;
   if(session.state.expedition?.missionId)settleCurrentMission('withdrawn');
   else if (runId && !session.state.territory?.rescueSnapshot) campProfile.abandonExpedition(runId);
   lastMissionReceipt=undefined;
-  delete session.state.camp; campSection=null; buildMenuOpen=false; buildPlacement=undefined; document.body.classList.remove('camp-world');
+  delete session.state.camp; campSection=null; campEquipmentViews={};campEquipmentScroll.clear();campEquipmentFocus=undefined;buildMenuOpen=false; buildPlacement=undefined; document.body.classList.remove('camp-world');
   setMobileDetailsOpen(false); mobileDetailsOpen = false; resumeAfterMobileDetails = false;
   input.clear(); clock.reset(); help = false; history = false; resumeAfterHelp = false; resumeAfterHistory = false;
   growthDetails = false; resumeAfterGrowthDetails = false;
@@ -543,8 +815,7 @@ function closeMigrationGuide() {
   profile.acknowledgeMigrationGuide();
   session.resume(); input.clear(); clock.reset();
 }
-let handledTouchButton: HTMLButtonElement | undefined;
-let handledTouchAt = 0;
+const touchActivation = new TouchActivationGuard();
 const modalPointerIntent = new ModalPointerIntent();
 window.addEventListener('pointerdown', event => {
   const target = event.target instanceof Element ? event.target.closest<HTMLButtonElement>('button[data-action]') : null;
@@ -560,17 +831,18 @@ app.addEventListener('pointerdown', event => {
   const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-action]');
   if (!button || button.disabled) return;
   const action = button.dataset.action!;
-  if (!action.startsWith('tool-') && action !== 'pause' && action !== 'mobile-details' && action !== 'mobile-map' && action !== 'build-open') return;
+  if (!action.startsWith('tool-') && action !== 'pause' && action !== 'mobile-details' && action !== 'mobile-map' && action !== 'build-open'
+    && !(session.state.camp && ['camp-crop', 'camp-view', 'camp-interact'].includes(action))) return;
   // Secondary fingers do not consistently synthesize a click while a stick is
   // held. Activate these battle controls from their real pointerdown instead.
-  event.preventDefault(); handledTouchButton = button; handledTouchAt = performance.now(); button.click();
+  event.preventDefault(); touchActivation.handled(button.dataset, performance.now()); button.click();
 });
 app.addEventListener('click', event => {
+  if (worldPrologue?.active) return;
   const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-action]');
   if (!button) return;
   if (!modalPointerIntent.acceptsClick(event as PointerEvent, button, !!button.closest('.overlay'))) { event.preventDefault(); return; }
-  if (event.isTrusted && (event as PointerEvent).pointerType !== 'mouse'
-    && handledTouchButton === button && performance.now() - handledTouchAt < 800) return;
+  if (touchActivation.rejectsClick(event, button.dataset, performance.now())) { event.preventDefault(); return; }
   const action = button.dataset.action!;
   if (handleExpeditionAction(action,button)) return;
   if (action === 'mobile-details' || action === 'mobile-map') {
@@ -631,9 +903,15 @@ app.addEventListener('click', event => {
     overlayKey = ''; button.blur(); return;
   }
   if (action === 'territory-action') { input.queueAction('territory'); return; }
+  if (action === 'weapon-ultimate') { input.queueWeaponUltimate(); return; }
   if (action === 'weapon-tutorial-dismiss') { dismissWeaponTutorial(session.state); return; }
   if (action.startsWith('tool-')) { input.select(Number(action.at(-1)) as Tool); return; }
-  if (action === 'endless-start') { enterCamp(); return; }
+  if (action === 'endless-start') {
+    if (session.state.phase === 'menu' && !worldPrologueSeen && !trainingFixture && !params.has('fixture')) beginWorldPrologue('camp');
+    else enterCamp();
+    return;
+  }
+  if (action === 'world-prologue-replay') { beginWorldPrologue('menu'); return; }
   if (action === 'territory-save') { campProfile.save(); endlessProfile.save(); overlayKey = ''; input.clear(); clock.reset(); return; }
   if (action === 'territory-finish' || action === 'territory-guard') {
     if (action === 'territory-finish') session.finishTerritoryRescue();
@@ -684,20 +962,33 @@ app.addEventListener('click', event => {
 });
 function updateOverlay() {
   const state = session.state;
+  const giftVisible = firstMissionGiftVisible();
   const draft = state.growth?.draft;
+  const equipmentView = campSection === 'warehouse' || campSection === 'forge' ? campEquipmentViews[campSection] : undefined;
   const key = `${summonSequence.view?.key}:${!!state.camp}:${campSection}:${campTrialWeaponId}:${campSection==='trial'?'':campTrialCompleted}:${campProfile.status.code}:${campNotice}:${buildMenuOpen}:${state.territory?.stage}:${state.territory?.rescueSnapshot?.runId}:${endlessProfile.status.code}:${touchMode}:${!!state.endless}:${state.endless?.reward?.step}:${state.endless?.stageCheckpoint}:${state.endlessGrowth?.draft?.id}:${state.phase}:${help}:${lowEffects}:${history}:${growthDetails}:${profileOpen}:${startingPlanOpen}:${startingPlanSelection}:${migrationGuide}:${mobileDetailsOpen}:${portraitBlocked}:${draft?.id}:${draft?.status}:${draft?.selectedOptionId}:${state.growth?.pendingResearch?.id}:${state.battle?.encounter?.firstCounter.guideStatus}`;
-  if (key === overlayKey) return;
-  overlayKey = key;
+  const presentationKey = `${key}:${giftVisible}:${JSON.stringify(equipmentView)}`;
+  if (presentationKey === overlayKey) return;
+  overlayKey = presentationKey;
   stopCampTrial?.();stopCampTrial=undefined;
   const challengeHome = state.phase === 'menu' && !trainingFixture && milestone === 'G3' && !help && !history;
   app.classList.toggle('challenge-home-active', challengeHome);
   el('hud').hidden = state.phase === 'menu' || state.phase === 'result';
   // Keep keyboard navigation inside the visible overlay as well as mouse input.
-  const modalActive = profileOpen || migrationGuide || help || history || growthDetails || mobileDetailsOpen || state.phase !== 'playing';
+  const modalActive = giftVisible || profileOpen || migrationGuide || help || history || growthDetails || mobileDetailsOpen || state.phase !== 'playing';
   document.querySelector<HTMLElement>('.topbar')!.inert = modalActive;
   el('hud').inert = modalActive;
   const host = el('overlay-host');
+  rememberCampEquipmentViewport(host);
   setMobileDetailsOpen(false);
+  if (giftVisible) {
+    host.innerHTML = firstMissionGiftOverlay(firstMissionGiftNotice, campProfile.firstMissionGiftAvailable ? 'first' : 'targeted'); input.clear();
+    const claim = host.querySelector<HTMLButtonElement>('[data-action="claim-first-mission-gift"],[data-action="claim-targeted-draw-gift"]')!;
+    claim.focus({ preventScroll: true });
+    host.querySelector<HTMLElement>('.first-mission-gift')!.onkeydown = event => {
+      if (event.key === 'Tab') { event.preventDefault(); claim.focus({ preventScroll: true }); }
+    };
+    return;
+  }
   if (state.camp) {
     const summonView = summonSequence.view;
     const cinematic = host.querySelector<HTMLElement>('.summon-cinematic');
@@ -707,8 +998,9 @@ function updateOverlay() {
       }
       return;
     }
-    host.innerHTML=campSection?campOverlay(campSnapshot,campSection,(state.camp.constructionSeconds??0)/CAMP_CONSTRUCTION_SECONDS,summonSequence.active?'':campNotice,{trialCompleted:campTrialCompleted,trialWeaponId:campTrialWeaponId,nearbyStationId:nearbyCampStation(state)?.id},summonSequence.active?null:lastDrawReceipt)+campSummonOverlay(summonSequence.view):'';
-    if(drawingAntibodies||summonSequence.active)host.querySelectorAll<HTMLButtonElement>('[data-action="camp-draw"]').forEach(button=>button.disabled=true);
+    host.innerHTML=campSection?campOverlay(campSnapshot,campSection,(state.camp.constructionSeconds??0)/CAMP_CONSTRUCTION_SECONDS,summonSequence.active?'':campNotice,{trialCompleted:campTrialCompleted,trialWeaponId:campTrialWeaponId,trialOrigin:campTrialOrigin,nearbyStationId:nearbyCampStation(state)?.id,summonPool,equipment:equipmentView},summonSequence.active?null:lastDrawReceipt)+campSummonOverlay(summonSequence.view):'';
+    restoreCampEquipmentViewport(host);
+    if(drawingAntibodies||summonSequence.active)host.querySelectorAll<HTMLButtonElement>('[data-action="camp-draw"],[data-action="camp-legion-draw"]').forEach(button=>button.disabled=true);
     if(summonSequence.active){
       const underlying=host.querySelector<HTMLElement>('.camp-overlay');if(underlying){underlying.inert=true;underlying.setAttribute('aria-hidden','true');}
       (host.querySelector<HTMLButtonElement>('.summon-next')??host.querySelector<HTMLButtonElement>('[data-action="camp-summon-skip"]'))?.focus({preventScroll:true});
@@ -716,11 +1008,15 @@ function updateOverlay() {
       host.querySelector<HTMLElement>('.camp-content')?.scrollTo(0,0);
     }
     const trialCanvas=host.querySelector<HTMLCanvasElement>('#camp-trial-canvas');
-    if(trialCanvas&&campTrial)stopCampTrial=startCampWeaponTrial(trialCanvas,campTrial,()=>!!session.state.camp&&campSection==='trial'&&!portraitBlocked&&document.hasFocus());
+    if(trialCanvas&&campTrial)stopCampTrial=startCampWeaponTrial(trialCanvas,campTrial,()=>!!session.state.camp&&campSection==='trial'&&!portraitBlocked&&document.hasFocus(),()=>lowEffects);
     return;
   }
   if (buildMenuOpen) { host.innerHTML=constructionMenu(state);return; }
-  if (challengeHome) { host.innerHTML = mainMenuOverlay(endlessProfile.load(), touchMode, campProfile.data.campUnlocked,campProfile.data.prologue); return; }
+  if (challengeHome) {
+    host.innerHTML = mainMenuOverlay(endlessProfile.load(), touchMode, campProfile.data.campUnlocked,campProfile.data.prologue);
+    host.querySelector('.challenge-home-start')?.insertAdjacentHTML('afterend', '<button class="challenge-home-camp" data-action="world-prologue-replay">重看序章</button>');
+    return;
+  }
   if(state.expedition?.missionId&&state.phase==='result'&&!help){host.innerHTML=missionResultOverlay(state,lastMissionReceipt,campProfile.status,lowEffects);return;}
   if (mobileDetailsOpen) { host.innerHTML = mobileDetailsMarkup; setMobileDetailsOpen(true); return; }
   if (growthDetails) {
@@ -838,6 +1134,22 @@ function updateCommonHud() {
   chargeLabel.textContent = s.chargedSlash ? `蓄能 ${Math.round(chargedSlashProgress(s.chargedSlash.startedAt, s.elapsed) * 100)}% · 松开发射` : (s.chargedSlashReadyAt ?? 0) > s.elapsed ? `剑气 ${(s.chargedSlashReadyAt! - s.elapsed).toFixed(1)}s` : '长按蓄能剑气';
   el('scan-ready').textContent = s.scanReady > s.elapsed ? `${(s.scanReady-s.elapsed).toFixed(1)}s`:'就绪';
   el('run-time').textContent = `SEED ${s.seed}　 /　${formatTime(s.elapsed)}`;
+  const ultimate = s.weaponCombat ? weaponUltimateView(s) : undefined;
+  const ultimateButton = document.querySelector<HTMLButtonElement>('[data-action="weapon-ultimate"]')!;
+  ultimateButton.hidden = !ultimate || !!s.camp;
+  ultimateButton.disabled = !(ultimate?.ready || ultimate?.canRecast);
+  ultimateButton.dataset.ready = String(!!(ultimate?.ready || ultimate?.canRecast));
+  ultimateButton.dataset.recast = String(!!ultimate?.canRecast);
+  if (ultimate) {
+    if (ultimateButton.dataset.ultimateId !== ultimate.id) {
+      el('weapon-ultimate-name').innerHTML = `${weaponUltimateIconMarkup(ultimate.id)}<span>${ultimate.name}</span>`;
+      ultimateButton.dataset.ultimateId = ultimate.id;
+    }
+    el('weapon-ultimate-name').querySelector('span:last-child')!.textContent = ultimate.canRecast ? '立即裁决' : ultimate.weaponId === 'thunder' ? '万雷归一' : ultimate.name;
+    el('weapon-ultimate-energy').textContent = ultimate.active ? `释放中 ${ultimate.remaining.toFixed(1)}s` : ultimate.ready ? '充能完毕' : `${ultimate.energy} / ${ultimate.required}`;
+    el('weapon-ultimate-fill').style.width = `${Math.min(100, ultimate.energy / ultimate.required * 100)}%`;
+    ultimateButton.setAttribute('aria-label', `4 ${ultimate.canRecast ? '立即裁决，收束雷暴' : ultimate.name}，能量${ultimate.energy}/${ultimate.required}。${ultimate.description}`);
+  }
   document.querySelectorAll<HTMLButtonElement>('.tool').forEach((button,index)=>{
     if (s.weaponCombat) {
       const skill = weaponSkillViews(s)[index];
@@ -888,7 +1200,7 @@ function updateCommonHud() {
     button.dataset.available = String(context.action === 'purify' || context.action === 'repair');
     button.title = 'F：靠近感染节点净化，或抢修附近受损稳态锚';
   }
-  document.querySelector('.micro-footer')!.textContent = s.expedition?.missionId || s.camp ? 'v0.18.0 · 微观前哨 / 清剿锻造 / 血流接引' : s.territory ? 'v0.17.0 · 蜂巢针枪 / 回旋刃弓'
+  document.querySelector('.micro-footer')!.textContent = s.camp ? 'v0.23.0 · 蜜露田园 / 开放营地' : s.expedition?.missionId ? 'v0.23.0 · 猎袭母巢 / 四曜穿心' : s.territory ? 'v0.23.0 · 蜂巢 / 回刃 / 霆链 / 斩疫'
     : s.endless ? 'v0.17.0 · 连续挑战回归场景' : `v0.17.0 · ${s.battle ? '器官联防' : '基础训练'} / 奇幻生态`;
   document.querySelector('.dock-wrap .ability:last-child .ability-name')!.textContent = s.territory ? '脚下驻军' : s.battle ? '扫描 / 召集' : '扫描';
   document.querySelectorAll<HTMLButtonElement>('[data-action="sound"]').forEach(button => { button.textContent = `声音 ${sound.enabled?'开':'关'}`; });
@@ -900,6 +1212,7 @@ let lastTouchPreviewActive = false;
 const cameraFollowPolicy = new CameraFollowPolicy();
 let lastClockRevision = clock.revision;
 function frame(now: number) {
+  if (worldPrologue?.active) { syncTouchOrientation(); return; }
   if (summonSequence.active) {
     if (!session.state.camp || campSection !== 'summon') { summonSequence.clear(); overlayKey=''; }
     else if (summonSequence.update(now)) refreshSummonPresentation();
@@ -913,6 +1226,14 @@ function frame(now: number) {
       const commands=input.frame(input.getAim(session.state, point => renderer.camera.screenToWorld(point)));
       if(session.state.camp){
         advanceCampScene(session.state,commands,dt);
+        advanceCampFarmRuntime(dt);
+        const sow = advanceCampFarmSeeding(session.state);
+        if (sow?.completed) {
+          flushCampFarmGrowth();
+          const result = campProfile.plantCrop(sow.index); campNotice = result.message; syncCampPresentation();
+          if (result.accepted) session.state.camp.cropFeedback = { index: sow.index, kind: 'plant', until: session.state.elapsed + 1.5 };
+          overlayKey = '';
+        } else if (sow?.cancelled) { campNotice = '已离开田边，播种取消。'; overlayKey = ''; }
         const camp=session.state.camp;
         if(camp.activeConstruction){camp.constructionSeconds=(camp.constructionSeconds??0)+dt;if(camp.constructionSeconds>=CAMP_CONSTRUCTION_SECONDS)completeCampConstruction();}
       }
@@ -966,14 +1287,14 @@ function frame(now: number) {
 function syncControlLayout(): boolean {
   const next = readTouchLayout();
   if (next === touchMode) return false;
-  input.clear(); if (session.state.phase === 'playing') session.pause();
+  input.clear(); if (!worldPrologue?.active && session.state.phase === 'playing') session.pause();
   // Return the real map/status panels before the desktop HUD becomes visible.
   setMobileDetailsOpen(false); mobileDetailsOpen = false; resumeAfterMobileDetails = false;
   for (const [node, record] of adaptedTouchText) if (node.nodeValue === record.adapted) node.nodeValue = record.original;
   adaptedTouchText.clear();
   touchMode = next; applyControlLayout();
   mobileAimViewport = undefined; desktopFlightViewport=undefined;lastTouchPreviewActive = false;
-  handledTouchButton = undefined; handledTouchAt = 0;
+  touchActivation.clear();
   overlayKey = ''; delete el('overlay-host').dataset.touchDecorated;
   updateTouchSkillPreview(undefined);
   return true;
@@ -984,16 +1305,17 @@ function resizeViewport(): void {
   renderer.resize();
   if (changed) { updateOverlay(); decorateTouchOverlay(); updateHud(); }
   refreshMobileAimViewport(); prepareCombatCamera(session.state); refreshHudRects(); clock.reset();
+  if (worldPrologue?.active) renderWorldPrologueBackdrop();
 }
 window.addEventListener('resize', resizeViewport);
 window.visualViewport?.addEventListener('resize', resizeViewport);
 coarsePointer.addEventListener('change', resizeViewport);
 window.addEventListener('orientationchange', () => {
   if (!touchMode) return;
-  input.clear(); if (session.state.phase === 'playing') session.pause();
+  input.clear(); if (!worldPrologue?.active && session.state.phase === 'playing') session.pause();
   resizeViewport();
 });
-window.addEventListener('pagehide', () => { input.clear(); if (session.state.phase === 'playing') session.pause(); clock.reset(); });
+window.addEventListener('pagehide', () => { flushCampFarmGrowth(); cancelCampFarmSeeding(session.state); input.clear(); if (!worldPrologue?.active && session.state.phase === 'playing') session.pause(); clock.reset(); });
 function decorateTouchOverlay(): void {
   if (!touchMode) return;
   const host = el('overlay-host');
@@ -1026,7 +1348,7 @@ function updateTouchSkillPreview(preview: SkillPresentation | undefined): void {
   const label = host.querySelector<HTMLElement>('.mobile-preview-label')!;
   label.textContent = preview.valid === false ? preview.hint ?? '落点受阻 · 调整方向'
     : preview.cancelled ? '松手取消' : preview.hint ? `${preview.hint} · 拖至 × 取消`
-      : preview.kind === 'weapon' ? `松手释放${weaponSkillViews(session.state).find(skill=>skill.slot===preview.weaponSlot)?.name ?? '武器技能'} · 拖至 × 取消`
+      : preview.kind === 'weapon' ? `松手释放${preview.weaponUltimate ? weaponUltimateView(session.state)?.name : weaponSkillViews(session.state).find(skill=>skill.slot===preview.weaponSlot)?.name ?? '武器技能'} · 拖至 × 取消`
       : preview.phase === 'guiding' ? '导流中 · 松手引爆' : `松手${preview.kind === 'cannon' ? '弹射' : preview.kind === 'charge' ? '发射剑气' : preview.kind === 2 ? session.state.endless ? '发射能量炮' : '裂解' : preview.kind === 3 ? '修复' : '指挥'} · 拖至 × 取消`;
   const halfWidth = label.offsetWidth / 2;
   const left = (mobileAimViewport?.left ?? 8) + halfWidth, right = (mobileAimViewport?.right ?? innerWidth - 8) - halfWidth;
@@ -1064,9 +1386,14 @@ renderer.ready.then(() => {
 
 // Read-only diagnostics for browser regression. Inputs always use the real DOM.
 Object.defineProperty(window, '__viral', { value: Object.freeze({
-  version: '0.18.0-microfront', snapshot: () => session.snapshot(),
+  version: '0.25.1-finite-reinfection-opening', snapshot: () => session.snapshot(),
   campProfile: () => campProfile.load(),
   toScreen: (point: { x: number; y: number }) => renderer.camera.worldToScreen(point),
   toWorld: (point: { x: number; y: number }) => renderer.camera.screenToWorld(point),
-  diagnostics: () => ({ ...renderer.diagnostics(session.state), touch: input.getPresentation(presentedState, point => renderer.camera.screenToWorld(point)),campTrial:campTrial?structuredClone(campTrial.view):null }),
+  diagnostics: () => {
+    const diagnostics = renderer.diagnostics(session.state);
+    const trialCinematic = document.querySelector<HTMLCanvasElement>('.camp-trial-canvas')?.dataset.cinematic;
+    return { ...diagnostics, ...(campTrial && trialCinematic ? { bladeCinematic: JSON.parse(trialCinematic) as ReturnType<typeof import('./render/bladeCinematic').bladeCinematicView> } : {}),
+      touch: input.getPresentation(presentedState, point => renderer.camera.screenToWorld(point)), campTrial:campTrial?structuredClone(campTrial.view):null };
+  },
 }), writable: false });

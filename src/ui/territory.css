@@ -1,4 +1,13 @@
 .territory-hud[hidden] { display:none!important; }
+.heart-boss-hud[hidden]{display:none!important}
+.heart-boss-hud{position:absolute;top:185px;left:50%;transform:translateX(-50%);width:min(440px,calc(100% - 36px));z-index:7;padding:9px 13px 7px;border:1px solid #d7b6aa55;border-radius:8px;background:#26322fec;color:#f5e7cf;pointer-events:none;box-sizing:border-box}
+.heart-boss-hud header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-size:12px}
+.heart-boss-hud header strong{font-weight:600;letter-spacing:1px}.heart-boss-hud header span{font-size:10px;font-weight:400;color:#ddc2b2;margin-left:9px}.heart-boss-hud header>b{font-size:15px;color:#edbc9b}
+.heart-boss-health{height:12px;position:relative;overflow:hidden;background:#0d201f;margin-top:6px;border-radius:3px;border:1px solid #b9908055}.heart-boss-health>i{display:block;height:100%;background:linear-gradient(90deg,#9d5669,#d28586);transition:width .12s linear}.heart-boss-health>span{position:absolute;inset:0;text-align:center;font:9px/12px "Segoe UI",sans-serif;color:#fff1d8;text-shadow:0 1px #422a31}
+.heart-boss-toughness{height:3px;overflow:hidden;border-radius:2px;background:#0d201f;margin-top:4px}.heart-boss-toughness>i{display:block;height:100%;background:#ddc194;transition:width .12s linear}.heart-boss-hud[data-broken=true] .heart-boss-health>i{background:linear-gradient(90deg,#b88751,#edcf8c)}
+.heart-boss-hud>p{margin:5px 0 0;font-size:10px;line-height:1.3;color:#d6d1b9}.heart-boss-hud[data-broken=true]>p{color:#ffe0a3}
+body.touch-mode .heart-boss-hud{top:calc(var(--mobile-top) + 128px);width:min(360px,calc(100% - 48px));padding:6px 9px 5px}.heart-boss-hud[data-stage="3"]{border-color:#dc879260}
+@media(max-height:540px){body.touch-mode .heart-boss-hud{top:calc(var(--mobile-top) + 110px);width:280px;padding:4px 7px}.heart-boss-hud>p{margin-top:3px}.heart-boss-health{height:9px;margin-top:3px}.heart-boss-health>span{line-height:9px;font-size:8px}}
 .territory-hud { position:absolute; left:16px; right:232px; top:72px; max-width:750px; padding:10px 12px; border:1px solid #93b5a5; border-radius:9px; background:#f3f1e5ed; color:#315c53; pointer-events:none; }
 .territory-heading { display:flex; align-items:center; gap:14px; }
 .territory-heading > b { flex:none; font-size:13px; color:#37675d; }
